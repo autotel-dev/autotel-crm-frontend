@@ -1,14 +1,25 @@
-import { CardBody, Input, Label } from 'reactstrap'
-import { CommonIconsSwitchType } from '../../../../../Types/FormTypes'
+import { CardBody, Input, Label } from "reactstrap";
+import { CommonIconsSwitchType } from "../../../../../Types/FormTypes";
 
-const CommonIconsSwitch = ({ switchData,mediaBodyClassName,defaultUnChecked }: CommonIconsSwitchType) => {
+const CommonIconsSwitch = ({
+  switchData,
+  mediaBodyClassName,
+  defaultUnChecked,
+}: CommonIconsSwitchType) => {
   return (
     <CardBody className="common-flex flex-column switch-wrapper">
       {switchData.map((data, index) => (
         <div className="d-flex" key={index}>
-          <div className={`text-end flex-shrink-0  ${mediaBodyClassName ?mediaBodyClassName:""}`}>
+          <div
+            className={`text-end flex-shrink-0  ${
+              mediaBodyClassName ? mediaBodyClassName : ""
+            }`}
+          >
             <Label className="switch mb-0">
-              <Input type="checkbox" defaultChecked={defaultUnChecked? false :true}  />
+              <Input
+                type="checkbox"
+                defaultChecked={defaultUnChecked ? false : true}
+              />
               <span className={`switch-state bg-${data.color}`} />
             </Label>
           </div>
@@ -16,7 +27,7 @@ const CommonIconsSwitch = ({ switchData,mediaBodyClassName,defaultUnChecked }: C
         </div>
       ))}
     </CardBody>
-  )
-}
+  );
+};
 
-export default CommonIconsSwitch
+export default CommonIconsSwitch;

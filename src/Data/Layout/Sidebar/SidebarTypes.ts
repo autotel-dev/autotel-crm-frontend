@@ -20,5 +20,6 @@ export interface SubMenu {
 export interface SidebarMenuTypes {
   title: string;
   svgIcon?: string;
+  link?: string;
   subMenu?: SubMenu[];
 }

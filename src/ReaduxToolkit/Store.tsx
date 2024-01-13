@@ -13,6 +13,7 @@ import BookmarkSlice from "./Reducer/BookmarkSlice";
 import ToDoSlice from "./Reducer/ToDoSlice";
 import CitiesSlice from "./Reducer/CitiesSlice";
 import ProvinceSlice from "./Reducer/ProvinceSlice";
+import PackageSlice from "./Reducer/PackageSlice";
 
 const Store = configureStore({
   reducer: {
@@ -30,6 +31,7 @@ const Store = configureStore({
     bookmark: BookmarkSlice,
     cities: CitiesSlice,
     provinces: ProvinceSlice,
+    packages: PackageSlice,
   },
 });
 

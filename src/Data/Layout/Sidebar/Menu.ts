@@ -4,18 +4,19 @@ export const SidebarMenu: SidebarMenuTypes[] = [
   {
     title: "General",
     svgIcon: "home",
-    subMenu: [
-      {
-        svgIcon: "bonus-kit",
-        title: "Shopping Place",
-        link: `${process.env.PUBLIC_URL}/dashboards/shoppingplace`,
-      },
-      {
-        svgIcon: "bonus-kit",
-        title: "CRM Dashboard",
-        link: `${process.env.PUBLIC_URL}/dashboards/crmdashboard`,
-      },
-    ],
+    link: `${process.env.PUBLIC_URL}/dashboards/crmdashboard`,
+    // subMenu: [
+    //   {
+    //     svgIcon: "bonus-kit",
+    //     title: "Shopping Place",
+    //     link: `${process.env.PUBLIC_URL}/dashboards/shoppingplace`,
+    //   },
+    //   {
+    //     svgIcon: "bonus-kit",
+    //     title: "CRM Dashboard",
+    //     link: `${process.env.PUBLIC_URL}/dashboards/crmdashboard`,
+    //   },
+    // ],
   },
   {
     title: "Setup",
@@ -56,6 +57,11 @@ export const SidebarMenu: SidebarMenuTypes[] = [
         title: "Server Details",
         link: `${process.env.PUBLIC_URL}/dashboards/crmdashboard`,
       },
+      {
+        svgIcon: "bonus-kit",
+        title: "Server Management",
+        link: `${process.env.PUBLIC_URL}/dashboards/crmdashboard`,
+      },
     ],
   },
   {
@@ -78,35 +84,38 @@ export const SidebarMenu: SidebarMenuTypes[] = [
   {
     title: "Companies",
     svgIcon: "home",
-    subMenu: [
-      {
-        svgIcon: "bonus-kit",
-        title: "All Companies",
-        link: `${process.env.PUBLIC_URL}/dashboards/shoppingplace`,
-      },
-    ],
+    link: `${process.env.PUBLIC_URL}/dashboards/shoppingplace`,
+    // subMenu: [
+    //   {
+    //     svgIcon: "bonus-kit",
+    //     title: "All Companies",
+    //     link: `${process.env.PUBLIC_URL}/dashboards/shoppingplace`,
+    //   },
+    // ],
   },
   {
     title: "Support",
     svgIcon: "home",
-    subMenu: [
-      {
-        svgIcon: "bonus-kit",
-        title: "Support",
-        link: `${process.env.PUBLIC_URL}/support`,
-      },
-    ],
+    link: `${process.env.PUBLIC_URL}/support`,
+    // subMenu: [
+    //   {
+    //     svgIcon: "bonus-kit",
+    //     title: "Support",
+    //     link: `${process.env.PUBLIC_URL}/support`,
+    //   },
+    // ],
   },
   {
     title: "Tasks",
     svgIcon: "home",
-    subMenu: [
-      {
-        svgIcon: "bonus-kit",
-        title: "Tasks",
-        link: `${process.env.PUBLIC_URL}/tasks`,
-      },
-    ],
+    link: `${process.env.PUBLIC_URL}/tasks`,
+    // subMenu: [
+    //   {
+    //     svgIcon: "bonus-kit",
+    //     title: "Tasks",
+    //     link: `${process.env.PUBLIC_URL}/tasks`,
+    //   },
+    // ],
   },
 
   //   {

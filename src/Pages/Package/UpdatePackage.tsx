@@ -1,26 +1,65 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { Button, FormGroup, Label, Modal, ModalBody, Row } from "reactstrap";
+import {
+  Button,
+  FormGroup,
+  Input,
+  Label,
+  Modal,
+  ModalBody,
+  Row,
+} from "reactstrap";
 import { Cancel } from "../../utils/Constant";
 import { H3 } from "../../AbstractElements";
 import React from "react";
-import { PackageType } from "./PackageType/PackageType";
+import { useDispatch, useSelector } from "react-redux";
+import { getAll, update } from "../../Api";
+
+// import { PackageType } from "./PackageType/PackageType";
+import { CitiesType } from "../Cities/CityTypes/CityTypes";
+import { setId, setPackages } from "../../ReaduxToolkit/Reducer/PackageSlice";
 
 interface PropsTypes {
   isVisible: boolean; // Change 'boolean' to the actual type of isVisible
   setIsVisible: any;
+  id: any;
+  title: any;
+  price: any;
+  duration: any;
+  isActive: any;
+  setIsActive: any;
+  // setValue:any,
 }
 
 const UpdatePackage: React.FC<PropsTypes> = ({
   isVisible,
   setIsVisible = () => {},
+  id,
+  title,
+  price,
+  duration,
+  isActive,
+  setIsActive,
+  // setValue
 }) => {
+  const dispatch = useDispatch();
+  const [loading, setLoading] = useState(false);
+
   const {
     register,
     handleSubmit,
     reset,
+    setValue,
     formState: { errors },
-  } = useForm<PackageType>();
+  } = useForm<CitiesType>({
+    defaultValues: {
+      // Set the initial value from props
+      title: title,
+      price: price,
+      duration: duration,
+      isActive: isActive,
+    },
+  });
   const [addModal, setAddModal] = useState(false);
   const addToggle = () => {
     setAddModal(!addModal);
@@ -30,10 +69,16 @@ const UpdatePackage: React.FC<PropsTypes> = ({
       duration: "",
     });
   };
-
+  console.log(id);
+  console.log(title);
+  console.log(price);
+  console.log(duration);
+  console.log("isActive -- >", isActive);
+  // dispatch(setValue(value));
   console.log("is: ", isVisible);
 
-  const updatePackage: SubmitHandler<PackageType> = async (data) => {
+  const updateCity: SubmitHandler<CitiesType> = async (data) => {
+    setLoading(true);
     if (
       data.title !== "" &&
       data.price !== Number("") &&
@@ -45,21 +90,75 @@ const UpdatePackage: React.FC<PropsTypes> = ({
         duration: data.duration,
       };
       console.log(packag);
-      setAddModal(false);
-      reset({
-        title: "",
-        price: Number(""),
-        duration: "",
-      });
+      try {
+        await update(packag, { url: `package/update-package/${id}` }).then(
+          (data: any) => {
+            if (data.success == false) {
+              setLoading(false);
+              setIsVisible(!isVisible);
+            }
+            if (data.success) {
+              console.log(data);
+              setLoading(false);
+              setIsVisible(!isVisible);
+              reset({
+                title: "",
+                price: Number(""),
+                duration: "",
+              });
+              dispatch(setId(null));
+              // dispatch(setValue(""));
+              getAll({ url: "package/get-all-packages" }).then((data: any) => {
+                console.log(data);
+                if (data.statusCode == 200) {
+                  dispatch(setPackages(data.data));
+                }
+              });
+            }
+          }
+        );
+        // Handle successful post creation (e.g., show a success message, redirect, etc.)
+      } catch (error) {
+        // Handle error (e.g., show an error message)
+        console.error("Error creating post:", error);
+        setLoading(false);
+        setIsVisible(!isVisible);
+        reset({
+          title: "",
+          price: Number(""),
+          duration: "",
+        });
+      }
     }
   };
+
+  useEffect(() => {
+    setValue("title", title);
+  }, [title, setValue]);
+  useEffect(() => {
+    setValue("price", price);
+  }, [price, setValue]);
+  useEffect(() => {
+    setValue("duration", duration);
+  }, [duration, setValue]);
+
+  useEffect(() => {
+    setValue("isActive", isActive);
+  }, [isActive, setValue]);
+
   return (
     <Modal
+      centered
       isOpen={isVisible}
       toggle={() => {
         setIsVisible(!isVisible);
       }}
-      size="lg"
+      size="md"
+      onClosed={() => {
+        // setValue("")
+        setIsVisible(false);
+        console.log(title);
+      }}
     >
       <div className="modal-header">
         <H3 className="modal-title">Update City</H3>
@@ -67,14 +166,16 @@ const UpdatePackage: React.FC<PropsTypes> = ({
           color="transprant"
           className="btn-close"
           onClick={() => {
+            // setValue("")
             setIsVisible(!isVisible);
+            console.log(title);
           }}
         ></Button>
       </div>
       <ModalBody>
         <form
           className="form-bookmark needs-validation"
-          onSubmit={handleSubmit(updatePackage)}
+          onSubmit={handleSubmit(updateCity)}
         >
           <Row>
             <FormGroup className="col-md-12 create-group">
@@ -115,14 +216,32 @@ const UpdatePackage: React.FC<PropsTypes> = ({
               </span>
             </FormGroup>
           </Row>
-          <Button color="secondary" className="me-1">
-            Update
+          <div style={{ marginLeft: "10px" }}>
+            <Row>
+              <FormGroup check switch inline className="col-md-12 create-group">
+                <Input
+                  type="checkbox"
+                  role="switch"
+                  defaultChecked={isActive}
+                  value={isActive ? "on" : "off"}
+                  onChange={(e) => {
+                    setIsActive(!isActive);
+                    console.log(e.target.value);
+                  }}
+                />
+              </FormGroup>
+            </Row>
+          </div>
+          <Button color="primary" className="me-1">
+            {loading ? "Loading ..." : `Update`}
           </Button>
           &nbsp;&nbsp;
           <Button
-            color="primary"
+            color="secondary"
             onClick={() => {
+              // setValue("")
               setIsVisible(!isVisible);
+              console.log(title);
             }}
           >
             {Cancel}

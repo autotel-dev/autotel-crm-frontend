@@ -9,15 +9,15 @@ import { Cancel } from "../../utils/Constant";
 import { CheckCircle } from "react-feather";
 import { H3 } from "../../AbstractElements";
 import { CitiesType } from "./CityTypes/CityTypes";
-import { create } from "../../Api";
-import GetData from "./GetList";
+import { create, getAll } from "../../Api";
 import { useDispatch, useSelector } from "react-redux";
+import { setCities } from "../../ReaduxToolkit/Reducer/CitiesSlice";
+import Swal from "sweetalert2";
 
 const CreateNewCity = () => {
   const { cities } = useSelector((state: any) => state.cities);
   const dispatch = useDispatch();
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   var [citiesList, setCitiesList]: any = useState([]);
 
   const [loading, setLoading] = useState(false);
@@ -51,18 +51,16 @@ const CreateNewCity = () => {
             reset({
               name: "",
             });
-            GetData(
-              cities,
-              dispatch,
-              citiesList,
-              setCitiesList,
-              setIsUpdateModalOpen,
-              isUpdateModalOpen
-            );
+            getAll({ url: "city/get-all-cities" }).then((data: any) => {
+              console.log(data);
+              if (data.statusCode == 200) {
+                dispatch(setCities(data.data));
+              }
+            });
           }
         });
         // Handle successful post creation (e.g., show a success message, redirect, etc.)
-      } catch (error) {
+      } catch (error: any) {
         // Handle error (e.g., show an error message)
         console.error("Error creating post:", error);
         setLoading(false);
@@ -112,11 +110,11 @@ const CreateNewCity = () => {
                   </span>
                 </FormGroup>
               </Row>
-              <Button color="secondary" className="me-1">
+              <Button color="primary" className="me-1">
                 {loading ? "Loading ..." : `Add`}
               </Button>
               &nbsp;&nbsp;
-              <Button color="primary" onClick={addToggle}>
+              <Button color="secondary" onClick={addToggle}>
                 {Cancel}
               </Button>
             </form>

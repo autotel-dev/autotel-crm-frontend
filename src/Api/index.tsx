@@ -1,5 +1,6 @@
 // import { ProvinceType } from "../Pages/Province/ProvinceTypes/ProvinceTypes";
 
+import Swal from "sweetalert2";
 import errorAlert from "../Pages/Alerts/ErrorAlert";
 import successAlert from "../Pages/Alerts/SuccessAlert";
 import { CitiesType } from "../Pages/Cities/CityTypes/CityTypes";
@@ -76,6 +77,14 @@ export const create = async (
     });
     const result = await response.json();
     console.log(result);
+    if (result.success !== true) {
+      Swal.fire({
+        text: `${result.message}`,
+        icon: "info",
+        timer: 2000,
+        showCancelButton: false,
+      });
+    }
 
     if (!result["success"]) {
       throw new Error("Failed to create ");
@@ -102,6 +111,15 @@ export const update = async (
     const result = await response.json();
     console.log(result);
 
+    if (result.success !== true) {
+      Swal.fire({
+        text: `${result.message}`,
+        icon: "info",
+        timer: 2000,
+        showCancelButton: false,
+      });
+    }
+
     if (!result["success"]) {
       throw new Error("Failed to update");
       return;
@@ -122,6 +140,14 @@ export const deleteSingle = async (url: URLTypes): Promise<void> => {
     });
     const result = await response.json();
     console.log(result);
+    if (result.success !== true) {
+      Swal.fire({
+        text: `${result.message}`,
+        icon: "info",
+        timer: 2000,
+        showCancelButton: false,
+      });
+    }
 
     if (!result["success"]) {
       throw new Error("Failed to delete");
@@ -146,6 +172,14 @@ export const getAll = async (url: URLTypes): Promise<void> => {
     });
     const result = await response.json();
     console.log(result);
+    if (result.success !== true) {
+      Swal.fire({
+        text: `${result.message}`,
+        icon: "info",
+        timer: 2000,
+        showCancelButton: false,
+      });
+    }
 
     if (!result["success"]) {
       throw new Error("Failed to get-all");
@@ -167,6 +201,14 @@ export const getAllActive = async (url: URLTypes): Promise<void> => {
     });
     const result = await response.json();
     console.log(result);
+    if (result.success !== true) {
+      Swal.fire({
+        text: `${result.message}`,
+        icon: "info",
+        timer: 2000,
+        showCancelButton: false,
+      });
+    }
 
     if (!result["success"]) {
       throw new Error("Failed to get-all-active");

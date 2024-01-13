@@ -6,8 +6,14 @@ import { Button, FormGroup, Label, Modal, ModalBody, Row } from "reactstrap";
 import { Cancel } from "../../utils/Constant";
 import { H3 } from "../../AbstractElements";
 import { PackageType } from "./PackageType/PackageType";
+import { create, getAll } from "../../Api";
+import { setPackages } from "../../ReaduxToolkit/Reducer/PackageSlice";
+import { useDispatch } from "react-redux";
 
 const CreateNewPackage = () => {
+  const dispatch = useDispatch();
+
+  const [loading, setLoading] = useState(false);
   const {
     register,
     handleSubmit,
@@ -35,13 +41,44 @@ const CreateNewPackage = () => {
         price: data.price,
         duration: data.duration,
       };
+
       console.log(packag);
-      setAddModal(false);
-      reset({
-        title: "",
-        price: Number(""),
-        duration: "",
-      });
+      try {
+        await create(packag, { url: "package/create-package" }).then(
+          (data: any) => {
+            if (data.success) {
+              console.log(data);
+              setLoading(false);
+              setAddModal(false);
+              reset({
+                title: "",
+                price: Number(""),
+                duration: "",
+              });
+              getAll({ url: "package/get-all-packages" }).then(
+                (data: any) => {
+                  console.log(data);
+                  if (data.statusCode == 200) {
+                    dispatch(setPackages(data.data));
+                  }
+                }
+              );
+            }
+          }
+        );
+        // Handle successful post creation (e.g., show a success message, redirect, etc.)
+      } catch (error: any) {
+        // Handle error (e.g., show an error message)
+        console.error("Error creating post:", error);
+        setLoading(false);
+        console.log(packag);
+        setAddModal(false);
+        reset({
+          title: "",
+          price: Number(""),
+          duration: "",
+        });
+      }
     }
   };
   return (
@@ -57,7 +94,7 @@ const CreateNewPackage = () => {
         </button>
         <Modal isOpen={addModal} toggle={addToggle} size="lg">
           <div className="modal-header">
-            <H3 className="modal-title">Add City</H3>
+            <H3 className="modal-title">Add Package</H3>
             <Button
               color="transprant"
               className="btn-close"

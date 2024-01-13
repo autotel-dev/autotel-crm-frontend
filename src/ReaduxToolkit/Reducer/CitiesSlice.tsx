@@ -1,9 +1,12 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { getAll } from "../../Api";
 
 const initialState = {
   cities: [],
   loading: false,
   error: null,
+  id: null,
+  value: "",
 };
 
 const CitiesSlice = createSlice({
@@ -15,8 +18,14 @@ const CitiesSlice = createSlice({
       state.error = null;
       state.loading = false;
     },
+    setId: (state, action) => {
+      state.id = action.payload;
+    },
+    setValue: (state, action) => {
+      state.value = action.payload;
+    },
   },
 });
-export const { setCities } = CitiesSlice.actions;
+export const { setCities, setId, setValue } = CitiesSlice.actions;
 
 export default CitiesSlice.reducer;

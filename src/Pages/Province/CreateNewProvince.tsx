@@ -8,17 +8,13 @@ import { Button, FormGroup, Label, Modal, ModalBody, Row } from "reactstrap";
 import { Cancel } from "../../utils/Constant";
 import { CheckCircle } from "react-feather";
 import { H3 } from "../../AbstractElements";
-import { create } from "../../Api";
-import GetData from "./GetList";
+import { create, getAll } from "../../Api";
 import { useDispatch, useSelector } from "react-redux";
 import { ProvinceType } from "./ProvinceTypes/ProvinceTypes";
+import { setProvinces } from "../../ReaduxToolkit/Reducer/ProvinceSlice";
 
 const CreateNewProvince = () => {
-  const { provinces } = useSelector((state: any) => state.provinces);
   const dispatch = useDispatch();
-  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  var [provinceList, setProvinceList]: any = useState([]);
 
   const [loading, setLoading] = useState(false);
   const {
@@ -52,19 +48,19 @@ const CreateNewProvince = () => {
               reset({
                 name: "",
               });
-              GetData(
-                provinces,
-                dispatch,
-                provinceList,
-                setProvinceList,
-                setIsUpdateModalOpen,
-                isUpdateModalOpen
+              getAll({ url: "province/get-all-provinces" }).then(
+                (data: any) => {
+                  console.log(data);
+                  if (data.statusCode == 200) {
+                    dispatch(setProvinces(data.data));
+                  }
+                }
               );
             }
           }
         );
         // Handle successful post creation (e.g., show a success message, redirect, etc.)
-      } catch (error) {
+      } catch (error: any) {
         // Handle error (e.g., show an error message)
         console.error("Error creating post:", error);
         setLoading(false);
@@ -110,15 +106,15 @@ const CreateNewProvince = () => {
                     {...register("name", { required: true })}
                   />
                   <span style={{ color: "red" }}>
-                    {errors.name && "City name is required"}
+                    {errors.name && "Province name is required"}
                   </span>
                 </FormGroup>
               </Row>
-              <Button color="secondary" className="me-1">
+              <Button color="primary" className="me-1">
                 {loading ? "Loading ..." : `Add`}
               </Button>
               &nbsp;&nbsp;
-              <Button color="primary" onClick={addToggle}>
+              <Button color="secondary" onClick={addToggle}>
                 {Cancel}
               </Button>
             </form>

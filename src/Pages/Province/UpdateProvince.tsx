@@ -1,83 +1,127 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { Button, FormGroup, Label, Modal, ModalBody, Row } from "reactstrap";
+import {
+  Button,
+  FormGroup,
+  Input,
+  Label,
+  Modal,
+  ModalBody,
+  Row,
+} from "reactstrap";
 import { Cancel } from "../../utils/Constant";
 import { H3 } from "../../AbstractElements";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { update } from "../../Api";
-import GetData from "./GetList";
+import { getAll, update } from "../../Api";
 import { ProvinceType } from "./ProvinceTypes/ProvinceTypes";
+import { setId, setProvinces } from "../../ReaduxToolkit/Reducer/ProvinceSlice";
 
 interface PropsTypes {
   isVisible: boolean; // Change 'boolean' to the actual type of isVisible
   setIsVisible: any;
+  id: any;
+  value: any;
+  isActive: any;
+  setIsActive: any;
+  // setValue:any,
 }
 
 const UpdateProvince: React.FC<PropsTypes> = ({
   isVisible,
   setIsVisible = () => {},
+  id,
+  value,
+  isActive,
+  setIsActive,
+  // setValue
 }) => {
-  const { cities } = useSelector((state: any) => state.cities);
   const dispatch = useDispatch();
-  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  var [citiesList, setCitiesList]: any = useState([]);
   const [loading, setLoading] = useState(false);
+
   const {
     register,
     handleSubmit,
     reset,
+    setValue,
     formState: { errors },
-  } = useForm<ProvinceType>();
+  } = useForm<ProvinceType>({
+    defaultValues: {
+      // Set the initial value from props
+      name: value,
+      isActive: isActive,
+    },
+  });
   const [addModal, setAddModal] = useState(false);
   const addToggle = () => {
     setAddModal(!addModal);
     reset({
       name: "",
+      isActive: isActive,
     });
   };
-
+  console.log(id);
+  console.log(value);
+  console.log("isActive -- >", isActive);
+  // dispatch(setValue(value));
   console.log("is: ", isVisible);
 
-  const updateCity: SubmitHandler<ProvinceType> = async (data) => {
+  const updateProvince: SubmitHandler<ProvinceType> = async (data) => {
     setLoading(true);
     if (data.name !== "") {
       const province = {
         name: data.name,
+        isActive: isActive,
       };
       console.log(province);
       try {
-        // await update(city, { url: "city/update-city" }).then((data: any) => {
-        //   if (data.success) {
-        //     console.log(data);
-        //     setLoading(false);
-        //     setAddModal(false);
-        //     reset({
-        //       name: "",
-        //     });
-        //     GetData(
-        //       cities,
-        //       dispatch,
-        //       citiesList,
-        //       setCitiesList,
-        //       setIsVisible,
-        //       isVisible
-        //     );
-        //   }
-        // });
+        await update(province, { url: `province/update-province/${id}` }).then(
+          (data: any) => {
+            if (data.success == false) {
+              setLoading(false);
+              setIsVisible(!isVisible);
+            }
+            if (data.success) {
+              console.log(data);
+              setLoading(false);
+              setIsVisible(!isVisible);
+              reset({
+                name: "",
+              });
+              dispatch(setId(null));
+              // dispatch(setValue(""));
+              getAll({ url: "province/get-all-provinces" }).then(
+                (data: any) => {
+                  console.log(data);
+                  if (data.statusCode == 200) {
+                    dispatch(setProvinces(data.data));
+                  }
+                }
+              );
+            }
+          }
+        );
         // Handle successful post creation (e.g., show a success message, redirect, etc.)
       } catch (error) {
         // Handle error (e.g., show an error message)
         console.error("Error creating post:", error);
         setLoading(false);
-        setAddModal(false);
+        setIsVisible(!isVisible);
         reset({
           name: "",
         });
       }
     }
   };
+
+  useEffect(() => {
+    setValue("name", value);
+  }, [value, setValue]);
+
+  useEffect(() => {
+    setValue("isActive", isActive);
+  }, [isActive, setValue]);
+
   return (
     <Modal
       centered
@@ -86,43 +130,85 @@ const UpdateProvince: React.FC<PropsTypes> = ({
         setIsVisible(!isVisible);
       }}
       size="md"
+      onClosed={() => {
+        // setValue("")
+        setIsVisible(false);
+        console.log(value);
+      }}
     >
       <div className="modal-header">
-        <H3 className="modal-title">Update Province</H3>
+        <H3 className="modal-title">Update City</H3>
         <Button
           color="transprant"
           className="btn-close"
           onClick={() => {
+            // setValue("")
             setIsVisible(!isVisible);
+            console.log(value);
           }}
         ></Button>
       </div>
       <ModalBody>
         <form
           className="form-bookmark needs-validation"
-          onSubmit={handleSubmit(updateCity)}
+          onSubmit={handleSubmit(updateProvince)}
         >
           <Row>
             <FormGroup className="col-md-12 create-group">
-              <Label>Province Name</Label>
+              <Label>City Name</Label>
               <input
                 className="form-control"
                 type="text"
+                // defaultValue={value}
+                autoComplete="off"
                 {...register("name", { required: true })}
               />
               <span style={{ color: "red" }}>
-                {errors.name && "City name is required"}
+                {errors.name && "Province name is required"}
               </span>
             </FormGroup>
           </Row>
-          <Button color="secondary" className="me-1">
-            Update
+          {/* <div>
+            <Row>
+              <FormGroup check switch inline className="col-md-12 create-group">
+                <div className={`flex-shrink-0 icons-state"}`}>
+                  <Label className="switch mb-0">
+                    <Input
+                      type="checkbox"
+                      defaultChecked={isActive ? false : true}
+                    />
+                    <span className={`switch-state bg-primary`} />
+                  </Label>
+                </div>
+              </FormGroup>
+            </Row>
+          </div> */}
+          <div style={{ marginLeft: "10px" }}>
+            <Row>
+              <FormGroup check switch inline className="col-md-12 create-group">
+                <Input
+                  type="checkbox"
+                  role="switch"
+                  defaultChecked={isActive}
+                  value={isActive ? "on" : "off"}
+                  onChange={(e) => {
+                    setIsActive(!isActive);
+                    console.log(e.target.value);
+                  }}
+                />
+              </FormGroup>
+            </Row>
+          </div>
+          <Button color="primary" className="me-1">
+            {loading ? "Loading ..." : `Update`}
           </Button>
           &nbsp;&nbsp;
           <Button
-            color="primary"
+            color="secondary"
             onClick={() => {
+              // setValue("")
               setIsVisible(!isVisible);
+              console.log(value);
             }}
           >
             {Cancel}

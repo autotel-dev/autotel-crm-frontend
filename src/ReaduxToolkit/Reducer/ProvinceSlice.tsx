@@ -4,6 +4,8 @@ const initialState = {
   provinces: [],
   loading: false,
   error: null,
+  id: null,
+  value: "",
 };
 
 const ProvinceSlice = createSlice({
@@ -15,8 +17,14 @@ const ProvinceSlice = createSlice({
       state.error = null;
       state.loading = false;
     },
+    setId: (state, action) => {
+      state.id = action.payload;
+    },
+    setValue: (state, action) => {
+      state.value = action.payload;
+    },
   },
 });
-export const { setProvinces } = ProvinceSlice.actions;
+export const { setProvinces, setId, setValue } = ProvinceSlice.actions;
 
 export default ProvinceSlice.reducer;

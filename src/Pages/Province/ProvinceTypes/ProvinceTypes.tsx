@@ -1,5 +1,6 @@
 export interface ProvinceType {
     name: string;
+    isActive?:string
   }
   export interface ProvinceDataTableType {
     id: string;

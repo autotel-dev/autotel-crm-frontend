@@ -1,5 +1,9 @@
 export interface CitiesType {
-  name: string;
+  name?: string;
+  isActive?: string;
+  title?: string;
+  price?: number;
+  duration?: string;
 }
 export interface CitiesDataTableType {
   id: string;
