@@ -17,6 +17,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { getAll, update } from "../../Api";
 import {
   setCities,
+  setCitiesEnd,
+  setCitiesStart,
   setId,
   // setValue,
 } from "../../ReaduxToolkit/Reducer/CitiesSlice";
@@ -94,9 +96,11 @@ const UpdateCity: React.FC<PropsTypes> = ({
               });
               dispatch(setId(null));
               // dispatch(setValue(""));
+              dispatch(setCitiesStart());
               getAll({ url: "city/get-all-cities" }).then((data: any) => {
                 console.log(data);
                 if (data.statusCode == 200) {
+                  dispatch(setCitiesEnd());
                   dispatch(setCities(data.data));
                 }
               });

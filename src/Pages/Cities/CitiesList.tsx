@@ -15,11 +15,14 @@ import { getAll } from "../../Api";
 import { useDispatch, useSelector } from "react-redux";
 import {
   setCities,
+  setCitiesEnd,
+  setCitiesStart,
   setId,
   setValue,
 } from "../../ReaduxToolkit/Reducer/CitiesSlice";
 import "./tableStyle.css";
 import deleteAlert from "../Alerts/DeleteAlert";
+import Loader from "../../Layout/Loader/Loader";
 
 const CitiesList = () => {
   const { cities, loading, error, id, value } = useSelector(
@@ -27,14 +30,15 @@ const CitiesList = () => {
   );
   const dispatch = useDispatch();
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
-  const [loadingState, setLoadingState] = useState(false);
   const [cityName, setCityName] = useState("");
   const [isActive, setIsActive] = useState(false);
 
   useEffect(() => {
+    dispatch(setCitiesStart());
     getAll({ url: "city/get-all-cities" }).then((data: any) => {
       console.log(data);
       if (data.statusCode == 200) {
+        dispatch(setCitiesEnd());
         dispatch(setCities(data.data));
       }
     });
@@ -118,17 +122,21 @@ const CitiesList = () => {
                     paginationServer
                   /> */}
 
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>ID</th>
-                        <th>Name</th>
-                        <th>Status</th>
-                        <th>Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody>{renderTableRows()}</tbody>
-                  </table>
+                  {loading ? (
+                    <Loader />
+                  ) : (
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>ID</th>
+                          <th>Name</th>
+                          <th>Status</th>
+                          <th>Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>{renderTableRows()}</tbody>
+                    </table>
+                  )}
                 </div>
                 <UpdateCity
                   isVisible={isUpdateModalOpen}

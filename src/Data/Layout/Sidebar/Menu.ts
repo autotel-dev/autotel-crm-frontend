@@ -4,7 +4,7 @@ export const SidebarMenu: SidebarMenuTypes[] = [
   {
     title: "General",
     svgIcon: "home",
-    link: `${process.env.PUBLIC_URL}/dashboards/crmdashboard`,
+    link: `${process.env.PUBLIC_URL}/dashboards/shoppingplace`,
     // subMenu: [
     //   {
     //     svgIcon: "bonus-kit",
@@ -22,6 +22,11 @@ export const SidebarMenu: SidebarMenuTypes[] = [
     title: "Setup",
     svgIcon: "home",
     subMenu: [
+      {
+        svgIcon: "bonus-kit",
+        title: "Country",
+        link: `${process.env.PUBLIC_URL}/setup/countries`,
+      },
       {
         svgIcon: "bonus-kit",
         title: "City",
@@ -84,7 +89,7 @@ export const SidebarMenu: SidebarMenuTypes[] = [
   {
     title: "Companies",
     svgIcon: "home",
-    link: `${process.env.PUBLIC_URL}/dashboards/shoppingplace`,
+    link: `${process.env.PUBLIC_URL}/companies`,
     // subMenu: [
     //   {
     //     svgIcon: "bonus-kit",

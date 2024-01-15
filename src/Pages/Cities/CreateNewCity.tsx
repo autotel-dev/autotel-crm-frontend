@@ -2,7 +2,7 @@ import { PlusCircle } from "react-feather";
 import { Col } from "reactstrap";
 import { createNewCity } from "../../utils/Constant";
 import { Link } from "react-router-dom";
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Button, FormGroup, Label, Modal, ModalBody, Row } from "reactstrap";
 import { Cancel } from "../../utils/Constant";
@@ -11,14 +11,35 @@ import { H3 } from "../../AbstractElements";
 import { CitiesType } from "./CityTypes/CityTypes";
 import { create, getAll } from "../../Api";
 import { useDispatch, useSelector } from "react-redux";
-import { setCities } from "../../ReaduxToolkit/Reducer/CitiesSlice";
+import {
+  setCities,
+  setCitiesEnd,
+  setCitiesStart,
+} from "../../ReaduxToolkit/Reducer/CitiesSlice";
 import Swal from "sweetalert2";
+import SelectBox from "./components/SelectCountryBox";
 
 const CreateNewCity = () => {
   const { cities } = useSelector((state: any) => state.cities);
   const dispatch = useDispatch();
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
-  var [citiesList, setCitiesList]: any = useState([]);
+  var [countriesList, setCountriesList]: any = useState([]);
+  var [provincesList, setProvincesList]: any = useState([]);
+
+  useEffect(() => {
+    getAll({ url: "country/get-all-countries" }).then((data: any) => {
+      console.log(data);
+      if (data.statusCode == 200) {
+        setCountriesList(data.data);
+      }
+    });
+    getAll({ url: "province/get-all-provinces" }).then((data: any) => {
+      console.log(data);
+      if (data.statusCode == 200) {
+        setProvincesList(data.data);
+      }
+    });
+  }, []);
 
   const [loading, setLoading] = useState(false);
   const {
@@ -51,9 +72,11 @@ const CreateNewCity = () => {
             reset({
               name: "",
             });
+            dispatch(setCitiesStart());
             getAll({ url: "city/get-all-cities" }).then((data: any) => {
               console.log(data);
               if (data.statusCode == 200) {
+                dispatch(setCitiesEnd());
                 dispatch(setCities(data.data));
               }
             });
@@ -110,6 +133,22 @@ const CreateNewCity = () => {
                   </span>
                 </FormGroup>
               </Row>
+              <div
+                style={{
+                  marginBottom: "20px",
+                  display: "flex",
+                  justifyContent: "space-between",
+                }}
+              >
+                <SelectBox
+                  list={provincesList}
+                  placeholder={"Select Province"}
+                />
+                <SelectBox
+                  list={countriesList}
+                  placeholder={"Select Country"}
+                />
+              </div>
               <Button color="primary" className="me-1">
                 {loading ? "Loading ..." : `Add`}
               </Button>

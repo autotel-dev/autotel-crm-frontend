@@ -128,6 +128,8 @@ import CRMModule from "../Pages/CRMModule/CRMModule";
 import Support from "../Pages/Support/Support";
 import Login from "../Pages/Authentication/Login";
 import LoginForm from "../Pages/Auth/Auth";
+import Companies from "../Pages/Companies/Companies";
+import Countries from "../Pages/Countries/Countries";
 
 const routes = [
   // dashboard routes
@@ -623,6 +625,11 @@ const routes = [
     Component: <SearchResult />,
   },
   // Setup
+
+  {
+    path: `${process.env.PUBLIC_URL}/setup/countries`,
+    Component: <Countries />,
+  },
   {
     path: `${process.env.PUBLIC_URL}/setup/cities`,
     Component: <Cities />,
@@ -649,6 +656,11 @@ const routes = [
   {
     path: `${process.env.PUBLIC_URL}/tasks`,
     Component: <Tasks />,
+  },
+  // Companies
+  {
+    path: `${process.env.PUBLIC_URL}/companies`,
+    Component: <Companies />,
   },
 
   // {

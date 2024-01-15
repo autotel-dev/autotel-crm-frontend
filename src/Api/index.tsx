@@ -171,7 +171,7 @@ export const getAll = async (url: URLTypes): Promise<void> => {
       headers: header,
     });
     const result = await response.json();
-    console.log(result);
+    console.log("api --- >", result);
     if (result.success !== true) {
       Swal.fire({
         text: `${result.message}`,
@@ -182,15 +182,24 @@ export const getAll = async (url: URLTypes): Promise<void> => {
     }
 
     if (!result["success"]) {
-      throw new Error("Failed to get-all");
-      return;
+      Swal.fire({
+        text: `${result.message}`,
+        icon: "info",
+        timer: 2000,
+        showCancelButton: false,
+      });
     }
     return result;
 
     // Handle success (optional)
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error get-all:", error);
-    throw new Error("Failed to get-all");
+    Swal.fire({
+      text: `${error.message}`,
+      icon: "info",
+      timer: 2000,
+      showCancelButton: false,
+    });
   }
 };
 export const getAllActive = async (url: URLTypes): Promise<void> => {

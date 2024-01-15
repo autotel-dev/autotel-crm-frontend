@@ -36,15 +36,17 @@ const SidebarMain = ({setOpen,open}:PropsTypes) => {
           <SidebarBack />
           {SidebarMenu.map((data,index) => (
             <LI className={`sidebar-list`} key={index} >
-              <Link className={`sidebar-link sidebar-title ${sideMenu === data.title ? "active" : "" }`} to={Href} onClick={()=>handleClick(data)}>
+              <Link className={`sidebar-link sidebar-title ${sideMenu === data.title ? "active" : "" }`} to={data.link ? data.link : "#" } onClick={()=>handleClick(data)}>
                 <SVG className={`${sidebarIconType}-icon`} iconId={`${sidebarIconType === "fill" ? "fill-" : ""}${data.svgIcon}`} />
                 <span>{t(data.title)}</span>
               </Link>
-              <UL className= "sidebar-submenu custom-scrollbar simple-list"
+              {
+                data.link ? <div></div> :  <UL className= "sidebar-submenu custom-scrollbar simple-list"
                 style={{display : `${layout === "material-icon" ? data.title === sideMenu  ? "block" : "none" : ""}`}}>
                
                 <MenuList subMenuData={data} isOpen={isOpen} setIsOpen={setIsOpen} level={0} />
               </UL>
+              }
             </LI>
           ))}
           </SimpleBar>

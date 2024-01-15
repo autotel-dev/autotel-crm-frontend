@@ -13,10 +13,16 @@ const CitiesSlice = createSlice({
   name: "CitiesSlice",
   initialState,
   reducers: {
+    setCitiesStart: (state) => {
+      state.loading = true;
+    },
     setCities: (state, action) => {
       state.cities = action.payload;
       state.error = null;
       state.loading = false;
+    },
+    setCitiesEnd: (state) => {
+      state.loading = true;
     },
     setId: (state, action) => {
       state.id = action.payload;
@@ -26,6 +32,7 @@ const CitiesSlice = createSlice({
     },
   },
 });
-export const { setCities, setId, setValue } = CitiesSlice.actions;
+export const { setCities, setCitiesStart, setCitiesEnd, setId, setValue } =
+  CitiesSlice.actions;
 
 export default CitiesSlice.reducer;

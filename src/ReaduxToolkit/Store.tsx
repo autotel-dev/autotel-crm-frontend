@@ -14,6 +14,7 @@ import ToDoSlice from "./Reducer/ToDoSlice";
 import CitiesSlice from "./Reducer/CitiesSlice";
 import ProvinceSlice from "./Reducer/ProvinceSlice";
 import PackageSlice from "./Reducer/PackageSlice";
+import CountrySlice from "./Reducer/CountrySlice";
 
 const Store = configureStore({
   reducer: {
@@ -32,6 +33,7 @@ const Store = configureStore({
     cities: CitiesSlice,
     provinces: ProvinceSlice,
     packages: PackageSlice,
+    countries: CountrySlice,
   },
 });
 

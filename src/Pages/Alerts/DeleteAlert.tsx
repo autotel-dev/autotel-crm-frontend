@@ -5,6 +5,7 @@ import { deleteSingle, getAll } from "../../Api";
 import { setCities } from "../../ReaduxToolkit/Reducer/CitiesSlice";
 import { setProvinces } from "../../ReaduxToolkit/Reducer/ProvinceSlice";
 import { setPackages } from "../../ReaduxToolkit/Reducer/PackageSlice";
+import { setCountries } from "../../ReaduxToolkit/Reducer/CountrySlice";
 
 const deleteAlert = (
   alertData: alertTypes,
@@ -27,12 +28,15 @@ const deleteAlert = (
         uri = `city/delete-city`;
       } else if (type === "packageType") {
         uri = `package/delete-package`;
+      } else if (type === "countryType") {
+        uri = `country/delete-country`;
       }
+
       try {
         Swal.fire({
           text: "Loading...",
           icon: "info",
-          timer: 2000,
+          // timer: 2000,
           showCancelButton: false,
           showConfirmButton: false,
         });
@@ -40,11 +44,12 @@ const deleteAlert = (
         await deleteSingle({ url: `${uri}/${id}` }).then((data: any) => {
           if (data.success) {
             console.log(data);
-            // setLoadingState(false);
+
             setTimeout(() => {
               Swal.fire({
-                text: "Poof! Your city has been deleted!",
+                text: `${data.message}`,
                 icon: "success",
+                timer: 2000,
               });
             }, 2000);
             // Swal.fire({
@@ -68,7 +73,13 @@ const deleteAlert = (
                 console.log(data);
                 dispatch(setPackages(data.data));
               });
+            } else if (type == "countryType") {
+              getAll({ url: "country/get-all-countries" }).then((data: any) => {
+                console.log(data);
+                dispatch(setCountries(data.data));
+              });
             }
+
             // loading false
           }
         });
