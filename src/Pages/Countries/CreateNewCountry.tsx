@@ -15,6 +15,7 @@ import {
   setCountriesStart,
   setCountriesEnd,
   setCountries,
+  setFilterCountries,
 } from "../../ReaduxToolkit/Reducer/CountrySlice";
 
 const CreateNewCountry = () => {
@@ -54,10 +55,14 @@ const CreateNewCountry = () => {
               });
               dispatch(setCountriesStart());
               getAll({ url: "country/get-all-countries" }).then((data: any) => {
-                console.log(data);
-                if (data.statusCode == 200) {
-                  dispatch(setCountriesEnd());
-                  dispatch(setCountries(data.data));
+                console.log("api call --- >", data);
+                dispatch(setCountriesEnd());
+                if (data !== undefined) {
+                  if (data.success) {
+                    console.log("hhg");
+                    dispatch(setCountries(data.data));
+                    dispatch(setFilterCountries(data.data));
+                  }
                 }
               });
             }
@@ -118,7 +123,11 @@ const CreateNewCountry = () => {
                 {loading ? "Loading ..." : `Add`}
               </Button>
               &nbsp;&nbsp;
-              <Button color="secondary" onClick={addToggle}>
+              <Button
+                disabled={loading ? true : false}
+                color="secondary"
+                onClick={addToggle}
+              >
                 {Cancel}
               </Button>
             </form>

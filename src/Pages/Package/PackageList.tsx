@@ -7,9 +7,17 @@ import { useDispatch, useSelector } from "react-redux";
 import "./tableStyle.css";
 import deleteAlert from "../Alerts/DeleteAlert";
 import UpdatePackage from "./UpdatePackage";
-import { setId, setPackages } from "../../ReaduxToolkit/Reducer/PackageSlice";
+import {
+  setFilterPackages,
+  setId,
+  setPackages,
+  setPackagesEnd,
+  setPackagesStart,
+  setAllPackagesDuration,
+} from "../../ReaduxToolkit/Reducer/PackageSlice";
+import Loader from "../Loader/Loader";
 
-const ProvinceList = () => {
+const PackageList = () => {
   const { packages, loading, error, id } = useSelector(
     (state: any) => state.packages
   );
@@ -22,19 +30,39 @@ const ProvinceList = () => {
   const [isActive, setIsActive] = useState(false);
 
   useEffect(() => {
+    dispatch(setPackagesStart());
     getAll({ url: "package/get-all-packages" }).then((data: any) => {
-      console.log(data);
-      if (data.statusCode == 200) {
-        dispatch(setPackages(data.data));
+      console.log("api call --- >", data);
+      dispatch(setPackagesEnd());
+      if (data !== undefined) {
+        if (data.success) {
+          console.log("hhg");
+          dispatch(setPackages(data.data));
+          dispatch(setFilterPackages(data.data));
+        } else {
+          dispatch(setPackages([]));
+        }
+      }
+    });
+  }, []);
+  useEffect(() => {
+    getAll({ url: "package/get-package-duration-types" }).then((data: any) => {
+      console.log("api call package duartion --- >", data);
+      if (data !== undefined) {
+        if (data.success) {
+          console.log("hhg");
+          dispatch(setAllPackagesDuration(data.data));
+        }
       }
     });
   }, []);
   const renderTableRows = () => {
-    return packages.map((row: any) => (
+    return packages?.map((row: any) => (
       <tr key={row._id}>
         <td>{row._id}</td>
         <td>{row.title}</td>
         <td>{row.price}</td>
+        <td>{row.days}</td>
         <td>{row.duration}</td>
         <td>{row.isActive ? "Active" : "inActive"}</td>
         <td>
@@ -96,22 +124,48 @@ const ProvinceList = () => {
         <Row>
           <Col sm="12">
             <Card>
-              <CommonHeader title={provinceListHeading} />
+              <CommonHeader title="All Packages" />
               <CardBody>
                 <div className="table-responsive product-table">
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>ID</th>
-                        <th>Title</th>
-                        <th>Price</th>
-                        <th>Duration</th>
-                        <th>Status</th>
-                        <th>Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody>{renderTableRows()}</tbody>
-                  </table>
+                  {loading ? (
+                    // <div
+                    //   style={{
+                    //     textAlign: "center",
+                    //     fontSize: "25px",
+                    //     fontWeight: "bold",
+                    //   }}
+                    // >
+                    //   Loading....
+                    // </div>
+                    <Loader />
+                  ) : packages?.length > 0 && loading === false ? (
+                    <div>
+                      <table>
+                        <thead>
+                          <tr>
+                            <th>ID</th>
+                            <th>Title</th>
+                            <th>Price</th>
+                            <th>Days</th>
+                            <th>Duration</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody>{renderTableRows()}</tbody>
+                      </table>
+                    </div>
+                  ) : (
+                    <div
+                      style={{
+                        textAlign: "center",
+                        fontSize: "25px",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      No Packages Found
+                    </div>
+                  )}
                 </div>
                 <UpdatePackage
                   isVisible={isUpdateModalOpen}
@@ -132,4 +186,4 @@ const ProvinceList = () => {
   );
 };
 
-export default ProvinceList;
+export default PackageList;

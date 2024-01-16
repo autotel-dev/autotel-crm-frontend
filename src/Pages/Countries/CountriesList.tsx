@@ -12,6 +12,7 @@ import {
   setCountries,
   setCountriesEnd,
   setCountriesStart,
+  setFilterCountries,
   setId,
 } from "../../ReaduxToolkit/Reducer/CountrySlice";
 import UpdateCountry from "./UpdateCountry";
@@ -24,21 +25,24 @@ const CountriesList = () => {
   const dispatch = useDispatch();
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [countryName, setCountryName] = useState("");
+  const [isActive, setIsActive] = useState(false);
 
   useEffect(() => {
     dispatch(setCountriesStart());
-    getAll({ url: "country/get-all-countries" })
-      .then((data: any) => {
-        console.log("api call --- >", data);
+    getAll({ url: "country/get-all-countries" }).then((data: any) => {
+      console.log("api call --- >", data);
+      dispatch(setCountriesEnd());
+      if (data !== undefined) {
         if (data.success) {
           console.log("hhg");
-          dispatch(setCountriesEnd());
           dispatch(setCountries(data.data));
+          dispatch(setFilterCountries(data.data));
         }
-      })
-      .catch((error: any) => {
-        console.log(error);
-      });
+      }
+    });
+    // .catch((error: any) => {
+    //   console.log(error);
+    // });
   }, []);
   const renderTableRows = () => {
     return countries?.map((row: any) => (
@@ -86,6 +90,7 @@ const CountriesList = () => {
                 console.log("isUpdateModalOpen: ", isUpdateModalOpen);
                 dispatch(setId(row._id));
                 setCountryName(row.name);
+                setIsActive(row.isActive);
               }}
             >
               Edit
@@ -119,7 +124,19 @@ const CountriesList = () => {
                   {/* {loading ? (
                     <Loader />
                   ) : ( */}
-                  {countries?.length > 0 && loading === false ? (
+                  {loading ? (
+                    <div
+                      style={{
+                        textAlign: "center",
+                        fontSize: "25px",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      Loading....
+                    </div>
+
+                    // <Loader />
+                  ) : countries?.length > 0 && loading === false ? (
                     <div>
                       <table>
                         <thead>
@@ -141,7 +158,7 @@ const CountriesList = () => {
                         fontWeight: "bold",
                       }}
                     >
-                      No data Found
+                      No Countries Found
                     </div>
                   )}
 
@@ -152,6 +169,8 @@ const CountriesList = () => {
                   setIsVisible={setIsUpdateModalOpen}
                   id={id}
                   value={countryName}
+                  isActive={isActive}
+                  setIsActive={setIsActive}
 
                   // setValue={setCityName}
                 />

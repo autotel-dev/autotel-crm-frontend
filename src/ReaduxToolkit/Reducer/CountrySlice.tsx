@@ -3,10 +3,12 @@ import { getAll } from "../../Api";
 
 const initialState = {
   countries: [],
+  filterCountries: [],
   loading: false,
   error: null,
   id: null,
   value: "",
+  noDataFound:""
 };
 
 const CountrySlice = createSlice({
@@ -21,6 +23,11 @@ const CountrySlice = createSlice({
       state.error = null;
       state.loading = false;
     },
+    setFilterCountries: (state, action) => {
+      state.filterCountries = action.payload;
+      state.error = null;
+      state.loading = false;
+    },
     setCountriesEnd: (state) => {
       state.loading = false;
     },
@@ -30,12 +37,17 @@ const CountrySlice = createSlice({
     setValue: (state, action) => {
       state.value = action.payload;
     },
+    setNoDataFound: (state, action) => {
+      state.noDataFound = action.payload;
+    },
   },
 });
 export const {
   setCountries,
+  setFilterCountries,
   setCountriesStart,
   setCountriesEnd,
+  setNoDataFound,
   setId,
   setValue,
 } = CountrySlice.actions;

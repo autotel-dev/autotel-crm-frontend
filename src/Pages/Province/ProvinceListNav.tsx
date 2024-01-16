@@ -1,12 +1,18 @@
 import { Card, Col, Nav, NavItem, NavLink, Row } from "reactstrap";
 import { CheckCircle, Info, Target } from "react-feather";
-import { all, inactive,active } from "../../utils/Constant";
+import { all, inactive, active } from "../../utils/Constant";
 import { useAppDispatch, useAppSelector } from "../../ReaduxToolkit/Hooks";
 import { setActiveTab } from "../../ReaduxToolkit/Reducer/ProjectSlice";
 import CreateNewProvince from "./CreateNewProvince";
+import { useSelector } from "react-redux";
+import { setProvinces } from "../../ReaduxToolkit/Reducer/ProvinceSlice";
 const ProvinceListNav = () => {
   const { activeTab } = useAppSelector((state) => state.project);
   const dispatch = useAppDispatch();
+  const { provinces, filterProvinces } = useSelector(
+    (state: any) => state.provinces
+  );
+  var tempList: any = [];
   return (
     <Card>
       <Row>
@@ -15,7 +21,16 @@ const ProvinceListNav = () => {
             <NavItem>
               <NavLink
                 className={activeTab === "1" ? "active" : ""}
-                onClick={() => dispatch(setActiveTab("1"))}
+                onClick={() => {
+                  console.log(filterProvinces);
+
+                  dispatch(setActiveTab("1"));
+                  filterProvinces.map((item: any, index: any) => {
+                    tempList.push(item);
+                  });
+                  dispatch(setProvinces(tempList));
+                  tempList = [];
+                }}
               >
                 <Target />
                 {all}
@@ -24,7 +39,19 @@ const ProvinceListNav = () => {
             <NavItem>
               <NavLink
                 className={activeTab === "2" ? "active" : ""}
-                onClick={() => dispatch(setActiveTab("2"))}
+                onClick={() => {
+                  console.log(filterProvinces);
+
+                  dispatch(setActiveTab("2"));
+                  filterProvinces.map((item: any, index: any) => {
+                    if (!item.isActive) {
+                      tempList.push(item);
+                      console.log("isActive -- >", 1);
+                    }
+                  });
+                  dispatch(setProvinces(tempList));
+                  tempList = [];
+                }}
               >
                 <Info />
                 {inactive}
@@ -33,7 +60,19 @@ const ProvinceListNav = () => {
             <NavItem>
               <NavLink
                 className={activeTab === "3" ? "active" : ""}
-                onClick={() => dispatch(setActiveTab("3"))}
+                onClick={() => {
+                  console.log(filterProvinces);
+
+                  dispatch(setActiveTab("3"));
+                  filterProvinces.map((item: any, index: any) => {
+                    if (item.isActive) {
+                      tempList.push(item);
+                      console.log("isNotActive -- >", 1);
+                    }
+                  });
+                  dispatch(setProvinces(tempList));
+                  tempList = [];
+                }}
               >
                 <CheckCircle /> {active}
               </NavLink>

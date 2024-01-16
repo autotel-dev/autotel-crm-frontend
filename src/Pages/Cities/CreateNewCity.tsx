@@ -13,33 +13,20 @@ import { create, getAll } from "../../Api";
 import { useDispatch, useSelector } from "react-redux";
 import {
   setCities,
+  setFilterCities,
   setCitiesEnd,
   setCitiesStart,
+  setCountryId,
+  setProvinceId,
 } from "../../ReaduxToolkit/Reducer/CitiesSlice";
+import SelectProvinceBox from "./components/SelectProvinceBox";
+import SelectCountryBox from "./components/SelectCountryBox";
 import Swal from "sweetalert2";
-import SelectBox from "./components/SelectCountryBox";
 
 const CreateNewCity = () => {
-  const { cities } = useSelector((state: any) => state.cities);
+  const { provinceId, countryId } = useSelector((state: any) => state.cities);
   const dispatch = useDispatch();
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
-  var [countriesList, setCountriesList]: any = useState([]);
-  var [provincesList, setProvincesList]: any = useState([]);
-
-  useEffect(() => {
-    getAll({ url: "country/get-all-countries" }).then((data: any) => {
-      console.log(data);
-      if (data.statusCode == 200) {
-        setCountriesList(data.data);
-      }
-    });
-    getAll({ url: "province/get-all-provinces" }).then((data: any) => {
-      console.log(data);
-      if (data.statusCode == 200) {
-        setProvincesList(data.data);
-      }
-    });
-  }, []);
 
   const [loading, setLoading] = useState(false);
   const {
@@ -54,30 +41,42 @@ const CreateNewCity = () => {
     reset({
       name: "",
     });
+    dispatch(setCountryId(null));
+    dispatch(setProvinceId(null));
   };
 
   const addCity: SubmitHandler<CitiesType> = async (data) => {
     setLoading(true);
-    if (data.name !== "") {
+    if (data.name !== "" && provinceId !== null && countryId !== null) {
       const city = {
         name: data.name,
+        provinceId: provinceId,
+        countryId: countryId,
       };
       console.log(city);
       try {
         await create(city, { url: "city/create-city" }).then((data: any) => {
           if (data.success) {
             console.log(data);
+            dispatch(setProvinceId(null));
+            dispatch(setCountryId(null));
             setLoading(false);
             setAddModal(false);
             reset({
               name: "",
             });
+            dispatch(setCountryId(null));
+            dispatch(setProvinceId(null));
             dispatch(setCitiesStart());
             getAll({ url: "city/get-all-cities" }).then((data: any) => {
-              console.log(data);
-              if (data.statusCode == 200) {
-                dispatch(setCitiesEnd());
-                dispatch(setCities(data.data));
+              console.log("api call --- >", data);
+              dispatch(setCitiesEnd());
+              if (data !== undefined) {
+                if (data.success) {
+                  console.log("hhg");
+                  dispatch(setCities(data.data));
+                  dispatch(setFilterCities(data.data));
+                }
               }
             });
           }
@@ -91,7 +90,18 @@ const CreateNewCity = () => {
         reset({
           name: "",
         });
+        dispatch(setCountryId(null));
+        dispatch(setProvinceId(null));
       }
+    } else {
+      Swal.fire({
+        text: "Please Select all the fields",
+        icon: "info",
+        timer: 2000,
+        showCancelButton: false,
+        showConfirmButton: true,
+      });
+      setLoading(false);
     }
   };
 
@@ -140,20 +150,24 @@ const CreateNewCity = () => {
                   justifyContent: "space-between",
                 }}
               >
-                <SelectBox
-                  list={provincesList}
-                  placeholder={"Select Province"}
-                />
-                <SelectBox
-                  list={countriesList}
-                  placeholder={"Select Country"}
-                />
+                <div>
+                  <span>Select Province</span>
+                  <SelectProvinceBox placeholder={"Select Province"} />
+                </div>
+                <div>
+                  <span>Select Country</span>
+                  <SelectCountryBox placeholder={"Select Country"} />
+                </div>
               </div>
               <Button color="primary" className="me-1">
                 {loading ? "Loading ..." : `Add`}
               </Button>
               &nbsp;&nbsp;
-              <Button color="secondary" onClick={addToggle}>
+              <Button
+                disabled={loading ? true : false}
+                color="secondary"
+                onClick={addToggle}
+              >
                 {Cancel}
               </Button>
             </form>

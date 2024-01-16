@@ -1,17 +1,28 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Select } from "antd";
+import { useDispatch, useSelector } from "react-redux";
+import { setCountryId } from "../../../ReaduxToolkit/Reducer/CitiesSlice";
 interface propTypes {
-  list: any[];
   placeholder: any;
 }
 
-const SelectBox: React.FC<propTypes> = ({ list, placeholder }) => {
-  console.log(list);
+const SelectCountryBox: React.FC<propTypes> = ({ placeholder }) => {
+  const { countries } = useSelector((state: any) => state.cities);
+  console.log(countries);
+  const [countryList, setCountryList] = useState([]);
+  const dispatch = useDispatch();
 
+  const tempList: any = [];
+  useEffect(() => {
+    countries.map((item: any, index: any) => {
+      tempList.push({ value: `${item._id}`, label: `${item.name}` });
+    });
+    setCountryList(tempList);
+  }, []);
   return (
     <Select
       // showSearch
-      style={{ width: 200 }}
+      style={{ width: 200, height: 36 }}
       placeholder={placeholder}
       optionFilterProp="children"
       filterOption={(input: any, option: any) =>
@@ -22,23 +33,13 @@ const SelectBox: React.FC<propTypes> = ({ list, placeholder }) => {
           .toLowerCase()
           .localeCompare((optionB?.label ?? "").toLowerCase())
       }
-      onChange={(e) => console.log(e)}
-      options={[
-        {
-          value: "1",
-          label: "Not Identified",
-        },
-        {
-          value: "2",
-          label: "Closed",
-        },
-        {
-          value: "3",
-          label: "Communicated",
-        },
-      ]}
+      onChange={(e) => {
+        console.log(e);
+        dispatch(setCountryId(e));
+      }}
+      options={countryList}
     />
   );
 };
 
-export default SelectBox;
+export default SelectCountryBox;

@@ -7,7 +7,15 @@ import { useDispatch, useSelector } from "react-redux";
 import "./tableStyle.css";
 import deleteAlert from "../Alerts/DeleteAlert";
 import UpdateProvince from "./UpdateProvince";
-import { setId, setProvinces } from "../../ReaduxToolkit/Reducer/ProvinceSlice";
+import {
+  setCountries,
+  setId,
+  setProvinces,
+  setProvincesEnd,
+  setProvincesStart,
+  setFilterProvinces,
+} from "../../ReaduxToolkit/Reducer/ProvinceSlice";
+import Loader from "../Loader/Loader";
 
 const ProvinceList = () => {
   const { provinces, loading, error, id, value } = useSelector(
@@ -20,10 +28,27 @@ const ProvinceList = () => {
   const [isActive, setIsActive] = useState(false);
 
   useEffect(() => {
+    dispatch(setProvincesStart());
     getAll({ url: "province/get-all-provinces" }).then((data: any) => {
-      console.log(data);
-      if (data.statusCode == 200) {
-        dispatch(setProvinces(data.data));
+      console.log("api call --- >", data);
+      dispatch(setProvincesEnd());
+      if (data !== undefined) {
+        if (data.success) {
+          console.log("hhg");
+          dispatch(setProvinces(data.data));
+          dispatch(setFilterProvinces(data.data));
+        }
+      }
+    });
+  }, []);
+  useEffect(() => {
+    getAll({ url: "country/get-all-active-countries" }).then((data: any) => {
+      console.log("api call --- >", data);
+      if (data !== undefined) {
+        if (data.success) {
+          console.log("hhg");
+          dispatch(setCountries(data.data));
+        }
       }
     });
   }, []);
@@ -32,6 +57,7 @@ const ProvinceList = () => {
       <tr key={row._id}>
         <td>{row._id}</td>
         <td>{row.name}</td>
+        <td>{row.country?.name}</td>
         <td>{row.isActive ? "Active" : "inActive"}</td>
         <td>
           <div>
@@ -53,12 +79,7 @@ const ProvinceList = () => {
                   text: "Once deleted, you will not be able to recover this ",
                 };
                 const type = "provinceType";
-                deleteAlert(
-                  alertData,
-                  row._id,
-                  type,
-                  dispatch
-                );
+                deleteAlert(alertData, row._id, type, dispatch);
               }}
             >
               Delete
@@ -100,17 +121,43 @@ const ProvinceList = () => {
               <CommonHeader title={provinceListHeading} />
               <CardBody>
                 <div className="table-responsive product-table">
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>ID</th>
-                        <th>Name</th>
-                        <th>Status</th>
-                        <th>Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody>{renderTableRows()}</tbody>
-                  </table>
+                  {loading ? (
+                    <div
+                      style={{
+                        textAlign: "center",
+                        fontSize: "25px",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      Loading....
+                    </div>
+                  ) : // <Loader />
+                  provinces?.length > 0 && loading === false ? (
+                    <div>
+                      <table>
+                        <thead>
+                          <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Country</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody>{renderTableRows()}</tbody>
+                      </table>
+                    </div>
+                  ) : (
+                    <div
+                      style={{
+                        textAlign: "center",
+                        fontSize: "25px",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      No Province Found
+                    </div>
+                  )}
                 </div>
                 <UpdateProvince
                   isVisible={isUpdateModalOpen}

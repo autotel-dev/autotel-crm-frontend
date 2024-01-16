@@ -19,6 +19,7 @@ import {
   setCities,
   setCitiesEnd,
   setCitiesStart,
+  setFilterCities,
   setId,
   // setValue,
 } from "../../ReaduxToolkit/Reducer/CitiesSlice";
@@ -61,10 +62,6 @@ const UpdateCity: React.FC<PropsTypes> = ({
   const [addModal, setAddModal] = useState(false);
   const addToggle = () => {
     setAddModal(!addModal);
-    reset({
-      name: "",
-      isActive: isActive,
-    });
   };
   console.log(id);
   console.log(value);
@@ -91,17 +88,19 @@ const UpdateCity: React.FC<PropsTypes> = ({
               console.log(data);
               setLoading(false);
               setIsVisible(!isVisible);
-              reset({
-                name: "",
-              });
+
               dispatch(setId(null));
               // dispatch(setValue(""));
               dispatch(setCitiesStart());
               getAll({ url: "city/get-all-cities" }).then((data: any) => {
-                console.log(data);
-                if (data.statusCode == 200) {
-                  dispatch(setCitiesEnd());
-                  dispatch(setCities(data.data));
+                console.log("api call --- >", data);
+                dispatch(setCitiesEnd());
+                if (data !== undefined) {
+                  if (data.success) {
+                    console.log("hhg");
+                    dispatch(setCities(data.data));
+                    dispatch(setFilterCities(data.data));
+                  }
                 }
               });
             }
@@ -113,9 +112,6 @@ const UpdateCity: React.FC<PropsTypes> = ({
         console.error("Error creating post:", error);
         setLoading(false);
         setIsVisible(!isVisible);
-        reset({
-          name: "",
-        });
       }
     }
   };
@@ -195,6 +191,7 @@ const UpdateCity: React.FC<PropsTypes> = ({
           </Button>
           &nbsp;&nbsp;
           <Button
+            disabled={loading ? true : false}
             color="secondary"
             onClick={() => {
               // setValue("")

@@ -15,7 +15,13 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getAll, update } from "../../Api";
 import { ProvinceType } from "./ProvinceTypes/ProvinceTypes";
-import { setId, setProvinces } from "../../ReaduxToolkit/Reducer/ProvinceSlice";
+import {
+  setId,
+  setProvinces,
+  setProvincesEnd,
+  setProvincesStart,
+  setFilterProvinces,
+} from "../../ReaduxToolkit/Reducer/ProvinceSlice";
 
 interface PropsTypes {
   isVisible: boolean; // Change 'boolean' to the actual type of isVisible
@@ -85,16 +91,20 @@ const UpdateProvince: React.FC<PropsTypes> = ({
               console.log(data);
               setLoading(false);
               setIsVisible(!isVisible);
-              reset({
-                name: "",
-              });
+
               dispatch(setId(null));
               // dispatch(setValue(""));
+              dispatch(setProvincesStart());
               getAll({ url: "province/get-all-provinces" }).then(
                 (data: any) => {
-                  console.log(data);
-                  if (data.statusCode == 200) {
-                    dispatch(setProvinces(data.data));
+                  console.log("api call --- >", data);
+                  dispatch(setProvincesEnd());
+                  if (data !== undefined) {
+                    if (data.success) {
+                      console.log("hhg");
+                      dispatch(setProvinces(data.data));
+                      dispatch(setFilterProvinces(data.data));
+                    }
                   }
                 }
               );
@@ -107,9 +117,6 @@ const UpdateProvince: React.FC<PropsTypes> = ({
         console.error("Error creating post:", error);
         setLoading(false);
         setIsVisible(!isVisible);
-        reset({
-          name: "",
-        });
       }
     }
   };
@@ -137,7 +144,7 @@ const UpdateProvince: React.FC<PropsTypes> = ({
       }}
     >
       <div className="modal-header">
-        <H3 className="modal-title">Update City</H3>
+        <H3 className="modal-title">Update Province</H3>
         <Button
           color="transprant"
           className="btn-close"
@@ -155,7 +162,7 @@ const UpdateProvince: React.FC<PropsTypes> = ({
         >
           <Row>
             <FormGroup className="col-md-12 create-group">
-              <Label>City Name</Label>
+              <Label>Province Name</Label>
               <input
                 className="form-control"
                 type="text"
@@ -204,6 +211,7 @@ const UpdateProvince: React.FC<PropsTypes> = ({
           </Button>
           &nbsp;&nbsp;
           <Button
+            disabled={loading ? true : false}
             color="secondary"
             onClick={() => {
               // setValue("")

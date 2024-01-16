@@ -17,12 +17,15 @@ import {
   setCities,
   setCitiesEnd,
   setCitiesStart,
+  setCountries,
+  setFilterCities,
   setId,
+  setProvinces,
   setValue,
 } from "../../ReaduxToolkit/Reducer/CitiesSlice";
-import "./tableStyle.css";
 import deleteAlert from "../Alerts/DeleteAlert";
 import Loader from "../../Layout/Loader/Loader";
+import "./tableStyle.css";
 
 const CitiesList = () => {
   const { cities, loading, error, id, value } = useSelector(
@@ -36,10 +39,38 @@ const CitiesList = () => {
   useEffect(() => {
     dispatch(setCitiesStart());
     getAll({ url: "city/get-all-cities" }).then((data: any) => {
-      console.log(data);
-      if (data.statusCode == 200) {
-        dispatch(setCitiesEnd());
-        dispatch(setCities(data.data));
+      console.log("api call --- >", data);
+      dispatch(setCitiesEnd());
+      if (data !== undefined) {
+        if (data.success) {
+          console.log("hhg");
+          dispatch(setCities(data.data));
+          dispatch(setFilterCities(data.data));
+        }
+        // else{
+        //   dispatch
+        // }
+      }
+    });
+  }, []);
+
+  useEffect(() => {
+    getAll({ url: "country/get-all-active-countries" }).then((data: any) => {
+      console.log("api call --- >", data);
+      if (data !== undefined) {
+        if (data.success) {
+          console.log("hhg");
+          dispatch(setCountries(data.data));
+        }
+      }
+    });
+    getAll({ url: "province/get-all-active-provinces" }).then((data: any) => {
+      console.log("api call --- >", data);
+      if (data !== undefined) {
+        if (data.success) {
+          console.log("hhg");
+          dispatch(setProvinces(data.data));
+        }
       }
     });
   }, []);
@@ -48,6 +79,8 @@ const CitiesList = () => {
       <tr key={row.id}>
         <td>{row._id}</td>
         <td>{row.name}</td>
+        <td>{row.province?.name}</td>
+        <td>{row.country?.name}</td>
         <td>{row.isActive ? "Active" : "inActive"}</td>
         <td>
           <div>
@@ -123,19 +156,41 @@ const CitiesList = () => {
                   /> */}
 
                   {loading ? (
-                    <Loader />
+                    <div
+                      style={{
+                        textAlign: "center",
+                        fontSize: "25px",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      Loading....
+                    </div>
+                  ) : cities?.length > 0 && loading === false ? (
+                    <div>
+                      <table>
+                        <thead>
+                          <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Province</th>
+                            <th>Country</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody>{renderTableRows()}</tbody>
+                      </table>
+                    </div>
                   ) : (
-                    <table>
-                      <thead>
-                        <tr>
-                          <th>ID</th>
-                          <th>Name</th>
-                          <th>Status</th>
-                          <th>Actions</th>
-                        </tr>
-                      </thead>
-                      <tbody>{renderTableRows()}</tbody>
-                    </table>
+                    <div
+                      style={{
+                        textAlign: "center",
+                        fontSize: "25px",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      No Cities Found
+                    </div>
                   )}
                 </div>
                 <UpdateCity

@@ -20,6 +20,7 @@ import {
   setCountriesEnd,
   setCountries,
   setId,
+  setFilterCountries,
 } from "../../ReaduxToolkit/Reducer/CountrySlice";
 
 interface PropsTypes {
@@ -27,6 +28,8 @@ interface PropsTypes {
   setIsVisible: any;
   id: any;
   value: any;
+  isActive: any;
+  setIsActive: any;
 }
 
 const UpdateCountry: React.FC<PropsTypes> = ({
@@ -34,6 +37,8 @@ const UpdateCountry: React.FC<PropsTypes> = ({
   setIsVisible = () => {},
   id,
   value,
+  isActive,
+  setIsActive,
 
   // setValue
 }) => {
@@ -50,29 +55,32 @@ const UpdateCountry: React.FC<PropsTypes> = ({
     defaultValues: {
       // Set the initial value from props
       name: value,
+      isActive: isActive,
     },
   });
   const [addModal, setAddModal] = useState(false);
   const addToggle = () => {
     setAddModal(!addModal);
     reset({
-      name: "",
+      isActive: isActive,
     });
   };
   console.log(id);
   console.log(value);
-
+  console.log("isActive -- >", isActive);
+  // dispatch(setValue(value));
   console.log("is: ", isVisible);
 
-  const updateCity: SubmitHandler<Type> = async (data) => {
+  const updateCountry: SubmitHandler<Type> = async (data) => {
     setLoading(true);
     if (data.name !== "") {
-      const city = {
+      const country = {
         name: data.name,
+        isActive: isActive,
       };
-      console.log(city);
+      console.log(country);
       try {
-        await update(city, { url: `country/update-country/${id}` }).then(
+        await update(country, { url: `country/update-country/${id}` }).then(
           (data: any) => {
             if (data.success == false) {
               setLoading(false);
@@ -82,17 +90,19 @@ const UpdateCountry: React.FC<PropsTypes> = ({
               console.log(data);
               setLoading(false);
               setIsVisible(!isVisible);
-              reset({
-                name: "",
-              });
+
               dispatch(setId(null));
               // dispatch(setValue(""));
               dispatch(setCountriesStart());
               getAll({ url: "country/get-all-countries" }).then((data: any) => {
-                console.log(data);
-                if (data.statusCode == 200) {
-                  dispatch(setCountriesEnd());
-                  dispatch(setCountries(data.data));
+                console.log("api call --- >", data);
+                dispatch(setCountriesEnd());
+                if (data !== undefined) {
+                  if (data.success) {
+                    console.log("hhg");
+                    dispatch(setCountries(data.data));
+                    dispatch(setFilterCountries(data.data));
+                  }
                 }
               });
             }
@@ -104,16 +114,16 @@ const UpdateCountry: React.FC<PropsTypes> = ({
         console.error("Error creating post:", error);
         setLoading(false);
         setIsVisible(!isVisible);
-        reset({
-          name: "",
-        });
       }
     }
   };
-
   useEffect(() => {
     setValue("name", value);
   }, [value, setValue]);
+
+  useEffect(() => {
+    setValue("isActive", isActive);
+  }, [isActive, setValue]);
 
   return (
     <Modal
@@ -130,7 +140,7 @@ const UpdateCountry: React.FC<PropsTypes> = ({
       }}
     >
       <div className="modal-header">
-        <H3 className="modal-title">Update City</H3>
+        <H3 className="modal-title">Update Country</H3>
         <Button
           color="transprant"
           className="btn-close"
@@ -144,11 +154,11 @@ const UpdateCountry: React.FC<PropsTypes> = ({
       <ModalBody>
         <form
           className="form-bookmark needs-validation"
-          onSubmit={handleSubmit(updateCity)}
+          onSubmit={handleSubmit(updateCountry)}
         >
           <Row>
             <FormGroup className="col-md-12 create-group">
-              <Label>City Name</Label>
+              <Label>Country Name</Label>
               <input
                 className="form-control"
                 type="text"
@@ -157,15 +167,32 @@ const UpdateCountry: React.FC<PropsTypes> = ({
                 {...register("name", { required: true })}
               />
               <span style={{ color: "red" }}>
-                {errors.name && "City name is required"}
+                {errors.name && "Country name is required"}
               </span>
             </FormGroup>
           </Row>
+          <div style={{ marginLeft: "10px" }}>
+            <Row>
+              <FormGroup check switch inline className="col-md-12 create-group">
+                <Input
+                  type="checkbox"
+                  role="switch"
+                  defaultChecked={isActive}
+                  value={isActive ? "on" : "off"}
+                  onChange={(e) => {
+                    setIsActive(!isActive);
+                    console.log(e.target.value);
+                  }}
+                />
+              </FormGroup>
+            </Row>
+          </div>
           <Button color="primary" className="me-1">
             {loading ? "Loading ..." : `Update`}
           </Button>
           &nbsp;&nbsp;
           <Button
+            disabled={loading ? true : false}
             color="secondary"
             onClick={() => {
               // setValue("")

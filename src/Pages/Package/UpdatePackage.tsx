@@ -17,7 +17,17 @@ import { getAll, update } from "../../Api";
 
 // import { PackageType } from "./PackageType/PackageType";
 import { CitiesType } from "../Cities/CityTypes/CityTypes";
-import { setId, setPackages } from "../../ReaduxToolkit/Reducer/PackageSlice";
+import {
+  setFilterPackages,
+  setId,
+  setPackageDays,
+  setPackageDuration,
+  setPackages,
+  setPackagesEnd,
+  setPackagesStart,
+} from "../../ReaduxToolkit/Reducer/PackageSlice";
+import SelectPackageBox from "./components/SelectPackageBox";
+import { setProvincesEnd } from "../../ReaduxToolkit/Reducer/ProvinceSlice";
 
 interface PropsTypes {
   isVisible: boolean; // Change 'boolean' to the actual type of isVisible
@@ -44,6 +54,9 @@ const UpdatePackage: React.FC<PropsTypes> = ({
 }) => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
+  const { packageDuration, packageDays } = useSelector(
+    (state: any) => state.packages
+  );
 
   const {
     register,
@@ -56,7 +69,6 @@ const UpdatePackage: React.FC<PropsTypes> = ({
       // Set the initial value from props
       title: title,
       price: price,
-      duration: duration,
       isActive: isActive,
     },
   });
@@ -77,23 +89,27 @@ const UpdatePackage: React.FC<PropsTypes> = ({
   // dispatch(setValue(value));
   console.log("is: ", isVisible);
 
-  const updateCity: SubmitHandler<CitiesType> = async (data) => {
+  const updatePackage: SubmitHandler<CitiesType> = async (data) => {
     setLoading(true);
     if (
       data.title !== "" &&
       data.price !== Number("") &&
-      data.duration !== ""
+      packageDuration !== null &&
+      packageDays !== null
     ) {
       const packag = {
         title: data.title,
         price: data.price,
-        duration: data.duration,
+        duration: packageDuration,
+        days: Number(packageDays),
+        isActive: isActive,
       };
       console.log(packag);
       try {
         await update(packag, { url: `package/update-package/${id}` }).then(
           (data: any) => {
-            if (data.success == false) {
+            setLoading(false);
+            if (data.success === false) {
               setLoading(false);
               setIsVisible(!isVisible);
             }
@@ -101,17 +117,20 @@ const UpdatePackage: React.FC<PropsTypes> = ({
               console.log(data);
               setLoading(false);
               setIsVisible(!isVisible);
-              reset({
-                title: "",
-                price: Number(""),
-                duration: "",
-              });
-              dispatch(setId(null));
-              // dispatch(setValue(""));
+
+              dispatch(setPackageDuration(null));
+              dispatch(setPackageDays(null));
+              dispatch(setPackagesStart());
               getAll({ url: "package/get-all-packages" }).then((data: any) => {
-                console.log(data);
-                if (data.statusCode == 200) {
-                  dispatch(setPackages(data.data));
+                console.log("api call --- >", data);
+                dispatch(setPackagesEnd());
+                if (data !== undefined) {
+                  if (data.success) {
+                    console.log("hhg");
+                    setLoading(true);
+                    dispatch(setPackages(data.data));
+                    dispatch(setFilterPackages(data.data));
+                  }
                 }
               });
             }
@@ -123,11 +142,6 @@ const UpdatePackage: React.FC<PropsTypes> = ({
         console.error("Error creating post:", error);
         setLoading(false);
         setIsVisible(!isVisible);
-        reset({
-          title: "",
-          price: Number(""),
-          duration: "",
-        });
       }
     }
   };
@@ -138,9 +152,6 @@ const UpdatePackage: React.FC<PropsTypes> = ({
   useEffect(() => {
     setValue("price", price);
   }, [price, setValue]);
-  useEffect(() => {
-    setValue("duration", duration);
-  }, [duration, setValue]);
 
   useEffect(() => {
     setValue("isActive", isActive);
@@ -161,7 +172,7 @@ const UpdatePackage: React.FC<PropsTypes> = ({
       }}
     >
       <div className="modal-header">
-        <H3 className="modal-title">Update City</H3>
+        <H3 className="modal-title">Update Package</H3>
         <Button
           color="transprant"
           className="btn-close"
@@ -175,7 +186,7 @@ const UpdatePackage: React.FC<PropsTypes> = ({
       <ModalBody>
         <form
           className="form-bookmark needs-validation"
-          onSubmit={handleSubmit(updateCity)}
+          onSubmit={handleSubmit(updatePackage)}
         >
           <Row>
             <FormGroup className="col-md-12 create-group">
@@ -203,19 +214,15 @@ const UpdatePackage: React.FC<PropsTypes> = ({
               </span>
             </FormGroup>
           </Row>
-          <Row>
-            <FormGroup className="col-md-12 create-group">
-              <Label>Duration</Label>
-              <input
-                className="form-control"
-                type="text"
-                {...register("duration", { required: true })}
-              />
-              <span style={{ color: "red" }}>
-                {errors.duration && "Package duration is required"}
-              </span>
-            </FormGroup>
-          </Row>
+          <div
+            style={{
+              marginBottom: "20px",
+              display: "flex",
+              justifyContent: "space-between",
+            }}
+          >
+            <SelectPackageBox placeholder={"Select Duration"} />
+          </div>
           <div style={{ marginLeft: "10px" }}>
             <Row>
               <FormGroup check switch inline className="col-md-12 create-group">
@@ -237,6 +244,7 @@ const UpdatePackage: React.FC<PropsTypes> = ({
           </Button>
           &nbsp;&nbsp;
           <Button
+            disabled={loading ? true : false}
             color="secondary"
             onClick={() => {
               // setValue("")

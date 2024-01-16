@@ -3,10 +3,16 @@ import { getAll } from "../../Api";
 
 const initialState = {
   cities: [],
+  provinces: [],
+  countries: [],
+  filterCities: [],
   loading: false,
   error: null,
   id: null,
+  provinceId: null,
+  countryId: null,
   value: "",
+  noDataFound: "",
 };
 
 const CitiesSlice = createSlice({
@@ -21,18 +27,53 @@ const CitiesSlice = createSlice({
       state.error = null;
       state.loading = false;
     },
-    setCitiesEnd: (state) => {
-      state.loading = true;
+    setFilterCities: (state, action) => {
+      state.filterCities = action.payload;
+      state.error = null;
+      state.loading = false;
     },
+    setProvinces: (state, action) => {
+      state.provinces = action.payload;
+      state.error = null;
+      state.loading = false;
+    },
+    setCountries: (state, action) => {
+      state.countries = action.payload;
+      state.error = null;
+      state.loading = false;
+    },
+    setCitiesEnd: (state) => {
+      state.loading = false;
+    },
+    setProvinceId: (state, action) => {
+      state.provinceId = action.payload;
+    },
+    setCountryId: (state, action) => {
+      state.countryId = action.payload;
+    },
+
     setId: (state, action) => {
       state.id = action.payload;
     },
     setValue: (state, action) => {
       state.value = action.payload;
     },
+    setNoDataFound: (state, action) => {
+      state.noDataFound = action.payload;
+    },
   },
 });
-export const { setCities, setCitiesStart, setCitiesEnd, setId, setValue } =
-  CitiesSlice.actions;
+export const {
+  setCities,
+  setCountries,
+  setProvinces,
+  setCitiesStart,
+  setCitiesEnd,
+  setProvinceId,
+  setCountryId,
+  setFilterCities,
+  setId,
+  setValue,
+} = CitiesSlice.actions;
 
 export default CitiesSlice.reducer;

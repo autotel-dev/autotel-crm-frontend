@@ -76,8 +76,7 @@ export const create = async (
       body: JSON.stringify(postData),
     });
     const result = await response.json();
-    console.log(result);
-    if (result.success !== true) {
+    if (result.success !== true && result.statusCode !== 404) {
       Swal.fire({
         text: `${result.message}`,
         icon: "info",
@@ -85,16 +84,13 @@ export const create = async (
         showCancelButton: false,
       });
     }
+    console.log("api --- >", result);
 
-    if (!result["success"]) {
-      throw new Error("Failed to create ");
-      return;
-    }
     return result;
+
     // Handle success (optional)
-  } catch (error) {
-    console.error("Error creating :", error);
-    throw new Error("Failed to create ");
+  } catch (error: any) {
+    console.error("Error get-all:", error);
   }
 };
 
@@ -109,9 +105,7 @@ export const update = async (
       body: JSON.stringify(postData),
     });
     const result = await response.json();
-    console.log(result);
-
-    if (result.success !== true) {
+    if (result.success !== true && result.statusCode !== 404) {
       Swal.fire({
         text: `${result.message}`,
         icon: "info",
@@ -119,16 +113,13 @@ export const update = async (
         showCancelButton: false,
       });
     }
+    console.log("api --- >", result);
 
-    if (!result["success"]) {
-      throw new Error("Failed to update");
-      return;
-    }
     return result;
+
     // Handle success (optional)
-  } catch (error) {
-    console.error("Error update:", error);
-    throw new Error("Failed to update");
+  } catch (error: any) {
+    console.error("Error get-all:", error);
   }
 };
 
@@ -139,8 +130,8 @@ export const deleteSingle = async (url: URLTypes): Promise<void> => {
       headers: header,
     });
     const result = await response.json();
-    console.log(result);
-    if (result.success !== true) {
+    console.log("api --- >", result);
+    if (result.success !== true && result.statusCode !== 200) {
       Swal.fire({
         text: `${result.message}`,
         icon: "info",
@@ -148,16 +139,11 @@ export const deleteSingle = async (url: URLTypes): Promise<void> => {
         showCancelButton: false,
       });
     }
-
-    if (!result["success"]) {
-      throw new Error("Failed to delete");
-      return;
-    }
     return result;
+
     // Handle success (optional)
-  } catch (error) {
-    console.error("Error delete:", error);
-    throw new Error("Failed to delete");
+  } catch (error: any) {
+    console.error("Error get-all:", error);
   }
 };
 
@@ -171,17 +157,31 @@ export const getAll = async (url: URLTypes): Promise<void> => {
       headers: header,
     });
     const result = await response.json();
+    if (result.success !== true && result.statusCode !== 404) {
+      Swal.fire({
+        text: `${result.message}`,
+        icon: "info",
+        timer: 2000,
+        showCancelButton: false,
+      });
+    }
     console.log("api --- >", result);
-    if (result.success !== true) {
-      Swal.fire({
-        text: `${result.message}`,
-        icon: "info",
-        timer: 2000,
-        showCancelButton: false,
-      });
-    }
 
-    if (!result["success"]) {
+    return result;
+
+    // Handle success (optional)
+  } catch (error: any) {
+    console.error("Error get-all:", error);
+  }
+};
+export const getAllActive = async (url: URLTypes): Promise<void> => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/${url.url}`, {
+      method: "GET",
+      headers: header,
+    });
+    const result = await response.json();
+    if (result.success !== true && result.statusCode !== 404) {
       Swal.fire({
         text: `${result.message}`,
         icon: "info",
@@ -189,6 +189,8 @@ export const getAll = async (url: URLTypes): Promise<void> => {
         showCancelButton: false,
       });
     }
+    console.log("api --- >", result);
+
     return result;
 
     // Handle success (optional)
@@ -200,33 +202,5 @@ export const getAll = async (url: URLTypes): Promise<void> => {
       timer: 2000,
       showCancelButton: false,
     });
-  }
-};
-export const getAllActive = async (url: URLTypes): Promise<void> => {
-  try {
-    const response = await fetch(`${API_BASE_URL}/${url.url}`, {
-      method: "GET",
-      headers: header,
-    });
-    const result = await response.json();
-    console.log(result);
-    if (result.success !== true) {
-      Swal.fire({
-        text: `${result.message}`,
-        icon: "info",
-        timer: 2000,
-        showCancelButton: false,
-      });
-    }
-
-    if (!result["success"]) {
-      throw new Error("Failed to get-all-active");
-      return;
-    }
-    return result;
-    // Handle success (optional)
-  } catch (error) {
-    console.error("Error get-all-active:", error);
-    throw new Error("Failed to get-all-active");
   }
 };

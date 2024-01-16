@@ -2,10 +2,23 @@ import { Button, Card, CardBody, Col } from "reactstrap";
 import Swal from "sweetalert2";
 import alertTypes from "./AlertType";
 import { deleteSingle, getAll } from "../../Api";
-import { setCities } from "../../ReaduxToolkit/Reducer/CitiesSlice";
-import { setProvinces } from "../../ReaduxToolkit/Reducer/ProvinceSlice";
-import { setPackages } from "../../ReaduxToolkit/Reducer/PackageSlice";
-import { setCountries } from "../../ReaduxToolkit/Reducer/CountrySlice";
+import {
+  setCities,
+  setFilterCities,
+} from "../../ReaduxToolkit/Reducer/CitiesSlice";
+import {
+  setProvinces,
+  setFilterProvinces,
+} from "../../ReaduxToolkit/Reducer/ProvinceSlice";
+import {
+  setFilterPackages,
+  setPackages,
+  setPackagesEnd,
+} from "../../ReaduxToolkit/Reducer/PackageSlice";
+import {
+  setCountries,
+  setFilterCountries,
+} from "../../ReaduxToolkit/Reducer/CountrySlice";
 
 const deleteAlert = (
   alertData: alertTypes,
@@ -58,25 +71,149 @@ const deleteAlert = (
             // });
             if (type == "cityType") {
               getAll({ url: "city/get-all-cities" }).then((data: any) => {
-                console.log(data);
-                dispatch(setCities(data.data));
+                console.log("api call --- >", data);
+                if (data !== undefined) {
+                  if (data.success) {
+                    console.log("hhg");
+                    dispatch(setCities(data.data));
+                    dispatch(setFilterCities(data.data));
+                  } else {
+                    dispatch(setCities([]));
+                  }
+                } else {
+                  console.log("ier67i");
+                }
               });
             } else if (type == "provinceType") {
               getAll({ url: "province/get-all-provinces" }).then(
                 (data: any) => {
-                  console.log(data);
-                  dispatch(setProvinces(data.data));
+                  console.log("api call --- >", data);
+                  if (data !== undefined) {
+                    if (data.success) {
+                      console.log("hhg");
+                      dispatch(setProvinces(data.data));
+                      dispatch(setFilterProvinces(data.data));
+
+                      getAll({ url: "city/get-all-cities" }).then(
+                        (data: any) => {
+                          console.log("api call --- >", data);
+                          if (data !== undefined) {
+                            if (data.success) {
+                              console.log("hhg");
+                              dispatch(setCities(data.data));
+                              dispatch(setFilterCities(data.data));
+                            } else {
+                              dispatch(setCities([]));
+                            }
+                          } else {
+                            console.log("ier67i");
+                          }
+                        }
+                      );
+                    } else {
+                      dispatch(setProvinces([]));
+                      getAll({ url: "city/get-all-cities" }).then(
+                        (data: any) => {
+                          console.log("api call --- >", data);
+                          if (data !== undefined) {
+                            if (data.success) {
+                              console.log("hhg");
+                              dispatch(setCities(data.data));
+                              dispatch(setFilterCities(data.data));
+                            } else {
+                              dispatch(setCities([]));
+                            }
+                          } else {
+                            console.log("ier67i");
+                          }
+                        }
+                      );
+                    }
+                  }
                 }
               );
             } else if (type == "packageType") {
               getAll({ url: "package/get-all-packages" }).then((data: any) => {
-                console.log(data);
-                dispatch(setPackages(data.data));
+                console.log("api call --- >", data);
+                dispatch(setPackagesEnd());
+                if (data !== undefined) {
+                  if (data.success) {
+                    console.log("hhg");
+                    dispatch(setPackages(data.data));
+                    dispatch(setFilterPackages(data.data));
+                  } else {
+                    dispatch(setPackages([]));
+                  }
+                }
               });
             } else if (type == "countryType") {
               getAll({ url: "country/get-all-countries" }).then((data: any) => {
-                console.log(data);
-                dispatch(setCountries(data.data));
+                console.log("api call --- >", data);
+                if (data !== undefined) {
+                  if (data.success) {
+                    console.log("hhg");
+                    dispatch(setCountries(data.data));
+                    dispatch(setFilterCountries(data.data));
+                    getAll({ url: "province/get-all-provinces" }).then(
+                      (data: any) => {
+                        console.log("api call --- >", data);
+                        if (data !== undefined) {
+                          if (data.success) {
+                            console.log("hhg");
+                            dispatch(setProvinces(data.data));
+                            dispatch(setFilterProvinces(data.data));
+                          } else {
+                            dispatch(setProvinces([]));
+                          }
+                        }
+                      }
+                    );
+                    getAll({ url: "city/get-all-cities" }).then((data: any) => {
+                      console.log("api call --- >", data);
+                      if (data !== undefined) {
+                        if (data.success) {
+                          console.log("hhg");
+                          dispatch(setCities(data.data));
+                          dispatch(setFilterCities(data.data));
+                        } else {
+                          dispatch(setCities([]));
+                        }
+                      } else {
+                        console.log("ier67i");
+                      }
+                    });
+                  } else {
+                    dispatch(setCountries([]));
+                    getAll({ url: "province/get-all-provinces" }).then(
+                      (data: any) => {
+                        console.log("api call --- >", data);
+                        if (data !== undefined) {
+                          if (data.success) {
+                            console.log("hhg");
+                            dispatch(setProvinces(data.data));
+                            dispatch(setFilterProvinces(data.data));
+                          } else {
+                            dispatch(setProvinces([]));
+                          }
+                        }
+                      }
+                    );
+                    getAll({ url: "city/get-all-cities" }).then((data: any) => {
+                      console.log("api call --- >", data);
+                      if (data !== undefined) {
+                        if (data.success) {
+                          console.log("hhg");
+                          dispatch(setCities(data.data));
+                          dispatch(setFilterCities(data.data));
+                        } else {
+                          dispatch(setCities([]));
+                        }
+                      } else {
+                        console.log("ier67i");
+                      }
+                    });
+                  }
+                }
               });
             }
 

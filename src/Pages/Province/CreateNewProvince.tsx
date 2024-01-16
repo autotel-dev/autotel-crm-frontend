@@ -11,10 +11,20 @@ import { H3 } from "../../AbstractElements";
 import { create, getAll } from "../../Api";
 import { useDispatch, useSelector } from "react-redux";
 import { ProvinceType } from "./ProvinceTypes/ProvinceTypes";
-import { setProvinces } from "../../ReaduxToolkit/Reducer/ProvinceSlice";
+import {
+  setCountryId,
+  setId,
+  setProvinces,
+  setProvincesEnd,
+  setProvincesStart,
+  setFilterProvinces,
+} from "../../ReaduxToolkit/Reducer/ProvinceSlice";
+import SelectCountryBox from "./components/SelectCountryBox";
+import Swal from "sweetalert2";
 
 const CreateNewProvince = () => {
   const dispatch = useDispatch();
+  const { countryId } = useSelector((state: any) => state.provinces);
 
   const [loading, setLoading] = useState(false);
   const {
@@ -29,13 +39,15 @@ const CreateNewProvince = () => {
     reset({
       name: "",
     });
+    dispatch(setCountryId(null));
   };
 
   const addProvince: SubmitHandler<ProvinceType> = async (data) => {
     setLoading(true);
-    if (data.name !== "") {
+    if (data.name !== "" && countryId !== null) {
       const province = {
         name: data.name,
+        countryId: countryId,
       };
       console.log(province);
       try {
@@ -43,16 +55,24 @@ const CreateNewProvince = () => {
           (data: any) => {
             if (data.success) {
               console.log(data);
+              dispatch(setCountryId(null));
               setLoading(false);
               setAddModal(false);
               reset({
                 name: "",
               });
+              dispatch(setCountryId(null));
+              dispatch(setProvincesStart());
               getAll({ url: "province/get-all-provinces" }).then(
                 (data: any) => {
-                  console.log(data);
-                  if (data.statusCode == 200) {
-                    dispatch(setProvinces(data.data));
+                  console.log("api call --- >", data);
+                  dispatch(setProvincesEnd());
+                  if (data !== undefined) {
+                    if (data.success) {
+                      console.log("hhg");
+                      dispatch(setProvinces(data.data));
+                      dispatch(setFilterProvinces(data.data));
+                    }
                   }
                 }
               );
@@ -68,7 +88,17 @@ const CreateNewProvince = () => {
         reset({
           name: "",
         });
+        dispatch(setCountryId(null));
       }
+    } else {
+      Swal.fire({
+        text: "Please Select all the fields",
+        icon: "info",
+        timer: 2000,
+        showCancelButton: false,
+        showConfirmButton: true,
+      });
+      setLoading(false);
     }
   };
 
@@ -110,11 +140,24 @@ const CreateNewProvince = () => {
                   </span>
                 </FormGroup>
               </Row>
+              <div
+                style={{
+                  marginBottom: "20px",
+                  display: "flex",
+                  justifyContent: "space-between",
+                }}
+              >
+                <SelectCountryBox placeholder={"Select Country"} />
+              </div>
               <Button color="primary" className="me-1">
                 {loading ? "Loading ..." : `Add`}
               </Button>
               &nbsp;&nbsp;
-              <Button color="secondary" onClick={addToggle}>
+              <Button
+                disabled={loading ? true : false}
+                color="secondary"
+                onClick={addToggle}
+              >
                 {Cancel}
               </Button>
             </form>

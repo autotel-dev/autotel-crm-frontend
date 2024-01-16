@@ -29,13 +29,13 @@ export const SidebarMenu: SidebarMenuTypes[] = [
       },
       {
         svgIcon: "bonus-kit",
-        title: "City",
-        link: `${process.env.PUBLIC_URL}/setup/cities`,
+        title: "Province",
+        link: `${process.env.PUBLIC_URL}/setup/province`,
       },
       {
         svgIcon: "bonus-kit",
-        title: "Province",
-        link: `${process.env.PUBLIC_URL}/setup/province`,
+        title: "City",
+        link: `${process.env.PUBLIC_URL}/setup/cities`,
       },
       {
         svgIcon: "bonus-kit",
