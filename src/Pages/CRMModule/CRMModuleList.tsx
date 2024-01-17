@@ -7,7 +7,6 @@ import { getAll } from "../../Api";
 import { useDispatch, useSelector } from "react-redux";
 import "./tableStyle.css";
 import deleteAlert from "../Alerts/DeleteAlert";
-import Loader from "../../Layout/Loader/Loader";
 
 // import UpdateCountry from "./UpdateCountry";
 import { log } from "console";
@@ -20,6 +19,7 @@ import {
   setValue,
 } from "../../ReaduxToolkit/Reducer/CRMModuleSlice";
 import UpdateCRMModule from "./UpdateCRMModule";
+import Loader from "../Loader/Loader";
 
 const CRMModuleList = () => {
   const { crmModules, loading, error, id, value } = useSelector(
@@ -118,15 +118,17 @@ const CRMModuleList = () => {
               <CardBody>
                 <div className="table-responsive product-table">
                   {loading ? (
-                    <div
-                      style={{
-                        textAlign: "center",
-                        fontSize: "25px",
-                        fontWeight: "bold",
-                      }}
-                    >
-                      Loading....
-                    </div>
+                    // <div
+                    //   style={{
+                    //     textAlign: "center",
+                    //     fontSize: "25px",
+                    //     fontWeight: "bold",
+                    //   }}
+                    // >
+                    //   Loading....
+                    // </div>
+
+                    <Loader />
                   ) : // <Loader />
                   crmModules?.length > 0 && loading === false ? (
                     <div>

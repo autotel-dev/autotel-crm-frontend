@@ -28,7 +28,7 @@ const CommonForm = ({ alignLogo }: CommonFormPropsType) => {
   const [formData, setFormData] = useState({});
   const navigate = useNavigate();
   const header =
-    window.location.pathname === "/crm/superAdminLogin"
+    window.location.pathname === "/superAdminLogin"
       ? "Sign In to Super Admin Account"
       : "Sign in To Login Account";
 

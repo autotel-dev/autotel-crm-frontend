@@ -5,6 +5,7 @@ import errorAlert from "../Pages/Alerts/ErrorAlert";
 import successAlert from "../Pages/Alerts/SuccessAlert";
 import { CitiesType } from "../Pages/Cities/CityTypes/CityTypes";
 import header from "./header";
+import { setNoDataFound } from "../ReaduxToolkit/Reducer/NoDataFoundSlice";
 const api = `${process.env.PUBLIC_URL}/api`;
 export const ChatMemberApi = `${api}/chatMember.json`;
 export const ChatApi = `${api}/chats.json`;
@@ -24,7 +25,7 @@ interface loginTypes {
 export const login = async (postData: loginTypes): Promise<void> => {
   try {
     const response = await fetch(
-      window.location.pathname === "/crm/superAdminLogin"
+      window.location.pathname === "/superAdminLogin"
         ? `${API_BASE_URL}/auth/super-admin/login`
         : `${API_BASE_URL}/auth/company/login`,
       {
@@ -164,6 +165,9 @@ export const getAll = async (url: URLTypes): Promise<void> => {
         timer: 2000,
         showCancelButton: false,
       });
+    }
+    if (result.success !== true && result.statusCode === 404) {
+      setNoDataFound(result.message);
     }
     console.log("api --- >", result);
 

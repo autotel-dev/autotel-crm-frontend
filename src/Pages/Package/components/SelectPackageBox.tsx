@@ -11,7 +11,9 @@ interface propTypes {
 }
 
 const SelectPackageBox: React.FC<propTypes> = ({ placeholder }) => {
-  const { allPackagesDuration } = useSelector((state: any) => state.packages);
+  const { allPackagesDuration, packageDays, packageDuration } = useSelector(
+    (state: any) => state.packages
+  );
   console.log(allPackagesDuration);
   const [packageList, setPackageList] = useState([]);
   const dispatch = useDispatch();
@@ -31,7 +33,8 @@ const SelectPackageBox: React.FC<propTypes> = ({ placeholder }) => {
 
   return (
     <Select
-      // showSearch
+      defaultValue={packageDuration !== null ? packageDuration : ""}
+      showSearch
       style={{ width: 200, height: 36 }}
       placeholder={placeholder}
       optionFilterProp="children"

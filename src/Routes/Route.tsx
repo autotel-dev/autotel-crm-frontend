@@ -131,6 +131,7 @@ import LoginForm from "../Pages/Auth/Auth";
 import Companies from "../Pages/Companies/Companies";
 import Countries from "../Pages/Countries/Countries";
 import CreateCompanyForm from "../Pages/Companies/CreateCompanyForm/CreateCompanyForm";
+import ServerManagement from "../Pages/ServerManagement/ServerManagement";
 
 const routes = [
   // dashboard routes
@@ -646,6 +647,10 @@ const routes = [
   {
     path: `${process.env.PUBLIC_URL}/setup/crm_module`,
     Component: <CRMModule />,
+  },
+  {
+    path: `${process.env.PUBLIC_URL}/setup/server_management`,
+    Component: <ServerManagement />,
   },
 
   // Support

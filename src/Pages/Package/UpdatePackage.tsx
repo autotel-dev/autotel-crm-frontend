@@ -35,7 +35,6 @@ interface PropsTypes {
   id: any;
   title: any;
   price: any;
-  duration: any;
   isActive: any;
   setIsActive: any;
   // setValue:any,
@@ -47,7 +46,6 @@ const UpdatePackage: React.FC<PropsTypes> = ({
   id,
   title,
   price,
-  duration,
   isActive,
   setIsActive,
   // setValue
@@ -74,17 +72,16 @@ const UpdatePackage: React.FC<PropsTypes> = ({
   });
   const [addModal, setAddModal] = useState(false);
   const addToggle = () => {
-    setAddModal(!addModal);
-    reset({
-      title: "",
-      price: Number(""),
-      duration: "",
-    });
+    if (!loading) {
+      setIsVisible(!isVisible);
+      reset({
+        isActive: isActive,
+      });
+    }
   };
   console.log(id);
   console.log(title);
   console.log(price);
-  console.log(duration);
   console.log("isActive -- >", isActive);
   // dispatch(setValue(value));
   console.log("is: ", isVisible);
@@ -109,10 +106,7 @@ const UpdatePackage: React.FC<PropsTypes> = ({
         await update(packag, { url: `package/update-package/${id}` }).then(
           (data: any) => {
             setLoading(false);
-            if (data.success === false) {
-              setLoading(false);
-              setIsVisible(!isVisible);
-            }
+            setIsVisible(!isVisible);
             if (data.success) {
               console.log(data);
               setLoading(false);
@@ -161,9 +155,12 @@ const UpdatePackage: React.FC<PropsTypes> = ({
     <Modal
       centered
       isOpen={isVisible}
-      toggle={() => {
-        setIsVisible(!isVisible);
-      }}
+      toggle={
+        addToggle
+        //   () => {
+        //   setIsVisible(!isVisible);
+        // }
+      }
       size="md"
       onClosed={() => {
         // setValue("")

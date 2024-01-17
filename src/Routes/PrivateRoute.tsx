@@ -5,7 +5,7 @@ const PrivateRoute = () => {
   const token = localStorage.getItem("token");
   console.log(token);
 
-  const condition = window.location.pathname === "/crm/superAdminLogin"
+  const condition = window.location.pathname === "/superAdminLogin"
   ? "/superAdminLogin"
   : "/login";
 
@@ -17,8 +17,8 @@ const PrivateRoute = () => {
   return token !== null ? (
     <Outlet />
   ) : (
-    <Navigate to={`${process.env.PUBLIC_URL}/${
-      window.location.pathname === "/crm/superAdminLogin"
+    <Navigate to={`${process.env.PUBLIC_URL}${
+      window.location.pathname === "/superAdminLogin"
         ? "superAdminLogin"
         : "login"
     }`} />

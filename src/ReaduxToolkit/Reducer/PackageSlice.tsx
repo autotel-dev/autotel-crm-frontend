@@ -10,12 +10,16 @@ const initialState = {
   value: "",
   packageDays: null,
   packageDuration: null,
+  package: {},
 };
 
 const PackageSlice = createSlice({
   name: "PackageSlice",
   initialState,
   reducers: {
+    setPackage: (state, action) => {
+      state.package = action.payload;
+    },
     setPackagesStart: (state) => {
       state.loading = true;
     },
@@ -49,6 +53,7 @@ const PackageSlice = createSlice({
   },
 });
 export const {
+  setPackage,
   setPackages,
   setFilterPackages,
   setId,

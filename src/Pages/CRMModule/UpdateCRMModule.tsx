@@ -64,10 +64,12 @@ const UpdateCRMModule: React.FC<PropsTypes> = ({
   });
   const [addModal, setAddModal] = useState(false);
   const addToggle = () => {
-    setAddModal(!addModal);
-    reset({
-      isActive: isActive,
-    });
+    if (!loading) {
+      setIsVisible(!isVisible);
+      reset({
+        isActive: isActive,
+      });
+    }
   };
   console.log(id);
   console.log(value);
@@ -139,9 +141,12 @@ const UpdateCRMModule: React.FC<PropsTypes> = ({
     <Modal
       centered
       isOpen={isVisible}
-      toggle={() => {
-        setIsVisible(!isVisible);
-      }}
+      toggle={
+        addToggle
+        //   () => {
+        //   setIsVisible(!isVisible);
+        // }
+      }
       size="md"
       onClosed={() => {
         // setValue("")

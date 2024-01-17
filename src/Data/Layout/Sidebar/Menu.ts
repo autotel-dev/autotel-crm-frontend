@@ -65,7 +65,7 @@ export const SidebarMenu: SidebarMenuTypes[] = [
       {
         svgIcon: "bonus-kit",
         title: "Server Management",
-        link: `${process.env.PUBLIC_URL}/dashboards/crmdashboard`,
+        link: `${process.env.PUBLIC_URL}/setup/server_management`,
       },
     ],
   },
@@ -81,7 +81,7 @@ export const SidebarMenu: SidebarMenuTypes[] = [
       {
         svgIcon: "bonus-kit",
         title: "Module 2",
-        link: `${process.env.PUBLIC_URL}/dashboards/crmdashboard`,
+        link: `${process.env.PUBLIC_URL}/dashboards/shoppingplace`,
       },
     ],
   },

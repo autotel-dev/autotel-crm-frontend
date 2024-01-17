@@ -33,12 +33,14 @@ const CreateNewPackage = () => {
   } = useForm<PackageType>();
   const [addModal, setAddModal] = useState(false);
   const addToggle = () => {
-    setAddModal(!addModal);
-    reset({
-      title: "",
-      price: Number(""),
-      duration: "",
-    });
+    if (!loading) {
+      setAddModal(!addModal);
+      reset({
+        title: "",
+        price: Number(""),
+        duration: "",
+      });
+    }
   };
 
   const addPackage: SubmitHandler<PackageType> = async (data) => {
@@ -59,6 +61,8 @@ const CreateNewPackage = () => {
       try {
         await create(packag, { url: "package/create-package" }).then(
           (data: any) => {
+            setLoading(false);
+            setAddModal(false);
             if (data.success) {
               console.log(data);
               setLoading(false);

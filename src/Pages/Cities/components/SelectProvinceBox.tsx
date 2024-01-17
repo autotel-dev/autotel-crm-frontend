@@ -7,22 +7,28 @@ interface propTypes {
 }
 
 const SelectProvinceBox: React.FC<propTypes> = ({ placeholder }) => {
-  const { provinces } = useSelector((state: any) => state.cities);
+  const { provinces, countryId } = useSelector((state: any) => state.cities);
   console.log(provinces);
   const [provinceList, setProvinceList] = useState([]);
   const dispatch = useDispatch();
 
   const tempList: any = [];
   useEffect(() => {
+    console.log("provinces in select province xcity boz: ", provinces);
     provinces.map((item: any, index: any) => {
-      tempList.push({ value: `${item._id}`, label: `${item.name}` });
+      console.log("countryId -- >", countryId);
+      console.log("item -- >", item);
+
+      if (item.country === countryId) {
+        tempList.push({ value: `${item._id}`, label: `${item.name}` });
+      }
     });
     setProvinceList(tempList);
-  }, []);
+  });
 
   return (
     <Select
-      // showSearch
+      showSearch
       style={{ width: 200, height: 36 }}
       placeholder={placeholder}
       optionFilterProp="children"

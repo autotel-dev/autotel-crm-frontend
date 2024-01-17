@@ -24,13 +24,14 @@ import {
   setValue,
 } from "../../ReaduxToolkit/Reducer/CitiesSlice";
 import deleteAlert from "../Alerts/DeleteAlert";
-import Loader from "../../Layout/Loader/Loader";
 import "./tableStyle.css";
+import Loader from "../Loader/Loader";
 
 const CitiesList = () => {
   const { cities, loading, error, id, value } = useSelector(
     (state: any) => state.cities
   );
+  const [load, setLoad] = useState(false);
   const dispatch = useDispatch();
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [cityName, setCityName] = useState("");
@@ -38,8 +39,12 @@ const CitiesList = () => {
 
   useEffect(() => {
     dispatch(setCitiesStart());
+    setLoad(true);
     getAll({ url: "city/get-all-cities" }).then((data: any) => {
       console.log("api call --- >", data);
+      setTimeout(() => {
+        setLoad(false);
+      }, 3000);
       dispatch(setCitiesEnd());
       if (data !== undefined) {
         if (data.success) {
@@ -155,17 +160,19 @@ const CitiesList = () => {
                     paginationServer
                   /> */}
 
-                  {loading ? (
-                    <div
-                      style={{
-                        textAlign: "center",
-                        fontSize: "25px",
-                        fontWeight: "bold",
-                      }}
-                    >
-                      Loading....
-                    </div>
-                  ) : cities?.length > 0 && loading === false ? (
+                  {loading && load ? (
+                    // <div
+                    //   style={{
+                    //     textAlign: "center",
+                    //     fontSize: "25px",
+                    //     fontWeight: "bold",
+                    //   }}
+                    // >
+                    //   Loading....
+                    // </div>
+                    <Loader />
+                  ) : // <Loader />
+                  cities?.length > 0 && loading === false ? (
                     <div>
                       <table>
                         <thead>
@@ -191,6 +198,7 @@ const CitiesList = () => {
                     >
                       No Cities Found
                     </div>
+                    // <Loader />
                   )}
                 </div>
                 <UpdateCity

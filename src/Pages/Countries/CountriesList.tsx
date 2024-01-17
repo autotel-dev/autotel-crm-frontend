@@ -7,7 +7,6 @@ import { getAll } from "../../Api";
 import { useDispatch, useSelector } from "react-redux";
 import "./tableStyle.css";
 import deleteAlert from "../Alerts/DeleteAlert";
-import Loader from "../../Layout/Loader/Loader";
 import {
   setCountries,
   setCountriesEnd,
@@ -17,6 +16,7 @@ import {
 } from "../../ReaduxToolkit/Reducer/CountrySlice";
 import UpdateCountry from "./UpdateCountry";
 import { log } from "console";
+import Loader from "../Loader/Loader";
 
 const CountriesList = () => {
   const { countries, loading, error, id, value } = useSelector(
@@ -125,17 +125,17 @@ const CountriesList = () => {
                     <Loader />
                   ) : ( */}
                   {loading ? (
-                    <div
-                      style={{
-                        textAlign: "center",
-                        fontSize: "25px",
-                        fontWeight: "bold",
-                      }}
-                    >
-                      Loading....
-                    </div>
+                    // <div
+                    //   style={{
+                    //     textAlign: "center",
+                    //     fontSize: "25px",
+                    //     fontWeight: "bold",
+                    //   }}
+                    // >
+                    //   Loading....
+                    // </div>
 
-                    // <Loader />
+                    <Loader />
                   ) : countries?.length > 0 && loading === false ? (
                     <div>
                       <table>

@@ -122,15 +122,16 @@ const ProvinceList = () => {
               <CardBody>
                 <div className="table-responsive product-table">
                   {loading ? (
-                    <div
-                      style={{
-                        textAlign: "center",
-                        fontSize: "25px",
-                        fontWeight: "bold",
-                      }}
-                    >
-                      Loading....
-                    </div>
+                    // <div
+                    //   style={{
+                    //     textAlign: "center",
+                    //     fontSize: "25px",
+                    //     fontWeight: "bold",
+                    //   }}
+                    // >
+                    //   Loading....
+                    // </div>
+                    <Loader />
                   ) : // <Loader />
                   provinces?.length > 0 && loading === false ? (
                     <div>

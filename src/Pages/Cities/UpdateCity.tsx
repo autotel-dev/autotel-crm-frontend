@@ -61,7 +61,12 @@ const UpdateCity: React.FC<PropsTypes> = ({
   });
   const [addModal, setAddModal] = useState(false);
   const addToggle = () => {
-    setAddModal(!addModal);
+    if (!loading) {
+      setIsVisible(!isVisible);
+      reset({
+        isActive: isActive,
+      });
+    }
   };
   console.log(id);
   console.log(value);
@@ -128,9 +133,12 @@ const UpdateCity: React.FC<PropsTypes> = ({
     <Modal
       centered
       isOpen={isVisible}
-      toggle={() => {
-        setIsVisible(!isVisible);
-      }}
+      toggle={
+        addToggle
+        //   () => {
+        //   setIsVisible(!isVisible);
+        // }
+      }
       size="md"
       onClosed={() => {
         // setValue("")

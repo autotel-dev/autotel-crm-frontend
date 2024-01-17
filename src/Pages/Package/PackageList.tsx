@@ -14,6 +14,9 @@ import {
   setPackagesEnd,
   setPackagesStart,
   setAllPackagesDuration,
+  setPackageDays,
+  setPackageDuration,
+  setPackage,
 } from "../../ReaduxToolkit/Reducer/PackageSlice";
 import Loader from "../Loader/Loader";
 
@@ -26,7 +29,7 @@ const PackageList = () => {
   const [loadingState, setLoadingState] = useState(false);
   const [packageTitle, setPackageTitle] = useState("");
   const [packagePrice, setPackagePrice] = useState("");
-  const [packageDuration, setPackageDuration] = useState("");
+  // const [packageDuration, setPackageDuration] = useState("");
   const [isActive, setIsActive] = useState(false);
 
   useEffect(() => {
@@ -105,8 +108,10 @@ const PackageList = () => {
                 console.log("isUpdateModalOpen: ", isUpdateModalOpen);
                 dispatch(setId(row._id));
                 setPackageTitle(row.title);
+                dispatch(setPackage(row));
                 setPackagePrice(row.price);
-                setPackageDuration(row.duration);
+                dispatch(setPackageDuration(row.duration));
+                dispatch(setPackageDays(row.days));
                 setIsActive(row.isActive);
               }}
             >
@@ -173,7 +178,6 @@ const PackageList = () => {
                   id={id}
                   title={packageTitle}
                   price={packagePrice}
-                  duration={packageDuration}
                   isActive={isActive}
                   setIsActive={setIsActive}
                 />

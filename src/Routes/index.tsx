@@ -8,6 +8,10 @@ import LoginForm from "../Pages/Auth/Auth";
 const Routers = () => {
   const token = localStorage.getItem("token");
   console.log(token);
+
+   console.log("window.location.pathname: ", window.location.pathname)
+   console.log("process.env.PUBLIC_URL: ", process.env.PUBLIC_URL);
+   
   
 
   return (
@@ -34,8 +38,8 @@ const Routers = () => {
           <Route path={path} element={Component} key={i} />
         ))}
         <Route
-          path={`${process.env.PUBLIC_URL}/${
-            window.location.pathname === "/crm/superAdminLogin"
+          path={`${process.env.PUBLIC_URL}${
+            window.location.pathname === "/superAdminLogin"
               ? "superAdminLogin"
               : "login"
           }`}

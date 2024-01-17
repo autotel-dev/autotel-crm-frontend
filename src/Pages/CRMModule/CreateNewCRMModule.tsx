@@ -27,11 +27,13 @@ const CreateNewCRMModule = () => {
   } = useForm<Type>();
   const [addModal, setAddModal] = useState(false);
   const addToggle = () => {
-    setAddModal(!addModal);
-    reset({
-      name: "",
-      icon: "",
-    });
+    if (!loading) {
+      setAddModal(!addModal);
+      reset({
+        name: "",
+        icon: "",
+      });
+    }
   };
 
   const addCCRMModule: SubmitHandler<Type> = async (data) => {
@@ -45,6 +47,8 @@ const CreateNewCRMModule = () => {
       try {
         await create(crmModule, { url: "crm-module/create-module" }).then(
           (data: any) => {
+            setLoading(false);
+            setAddModal(false);
             if (data.success) {
               console.log(data);
               setLoading(false);

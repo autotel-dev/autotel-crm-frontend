@@ -16,6 +16,7 @@ import ProvinceSlice from "./Reducer/ProvinceSlice";
 import PackageSlice from "./Reducer/PackageSlice";
 import CountrySlice from "./Reducer/CountrySlice";
 import CRMModuleSlice from "./Reducer/CRMModuleSlice";
+import NoDataFoundSlice from "./Reducer/NoDataFoundSlice";
 
 const Store = configureStore({
   reducer: {
@@ -36,6 +37,7 @@ const Store = configureStore({
     packages: PackageSlice,
     countries: CountrySlice,
     crmModules: CRMModuleSlice,
+    noDataFoundSlice: NoDataFoundSlice,
   },
 });
 

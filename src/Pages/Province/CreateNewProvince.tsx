@@ -35,11 +35,13 @@ const CreateNewProvince = () => {
   } = useForm<ProvinceType>();
   const [addModal, setAddModal] = useState(false);
   const addToggle = () => {
-    setAddModal(!addModal);
-    reset({
-      name: "",
-    });
-    dispatch(setCountryId(null));
+    if (!loading) {
+      setAddModal(!addModal);
+      reset({
+        name: "",
+      });
+      dispatch(setCountryId(null));
+    }
   };
 
   const addProvince: SubmitHandler<ProvinceType> = async (data) => {
@@ -53,6 +55,8 @@ const CreateNewProvince = () => {
       try {
         await create(province, { url: "province/create-province" }).then(
           (data: any) => {
+            setLoading(false);
+            setAddModal(false);
             if (data.success) {
               console.log(data);
               dispatch(setCountryId(null));

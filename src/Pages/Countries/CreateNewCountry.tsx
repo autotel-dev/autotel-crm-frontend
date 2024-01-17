@@ -28,10 +28,12 @@ const CreateNewCountry = () => {
   } = useForm<Type>();
   const [addModal, setAddModal] = useState(false);
   const addToggle = () => {
-    setAddModal(!addModal);
-    reset({
-      name: "",
-    });
+    if (!loading) {
+      setAddModal(!addModal);
+      reset({
+        name: "",
+      });
+    }
   };
 
   const addCountry: SubmitHandler<Type> = async (data) => {
@@ -44,6 +46,8 @@ const CreateNewCountry = () => {
       try {
         await create(city, { url: "country/create-country" }).then(
           (data: any) => {
+            setLoading(false);
+            setAddModal(false);
             if (data.success) {
               console.log(data);
               setLoading(false);
