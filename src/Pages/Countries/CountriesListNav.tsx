@@ -6,7 +6,7 @@ import { setActiveTab } from "../../ReaduxToolkit/Reducer/ProjectSlice";
 import CreateNewCity from "./CreateNewCountry";
 import { setCountries } from "../../ReaduxToolkit/Reducer/CountrySlice";
 import { useSelector } from "react-redux";
-const CitiesListNav = () => {
+const CountriesListNav = () => {
   const { activeTab } = useAppSelector((state) => state.project);
   const dispatch = useAppDispatch();
   var tempList: any = [];
@@ -85,4 +85,4 @@ const CitiesListNav = () => {
   );
 };
 
-export default CitiesListNav;
+export default CountriesListNav;

@@ -36,6 +36,7 @@ const SelectCountryBox: React.FC<propTypes> = ({ placeholder }) => {
       onChange={(e) => {
         console.log(e);
         dispatch(setCountryId(e));
+        
       }}
       options={countryList}
     />

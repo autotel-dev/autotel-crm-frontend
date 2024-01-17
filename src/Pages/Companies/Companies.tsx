@@ -8,12 +8,16 @@ import { Link } from "react-router-dom";
 import CompaniesCardsFooter from "./CompaniesCardsFooter";
 import SocialMediaIcons from "./SocialMediaIcons";
 import { compainesCardData } from "./Data/CompaniesCardData";
+import CompaniesListNav from "./CompaniesListNav";
 
 const Companies = () => {
   return (
     <>
       <Breadcrumbs title="" mainTitle="Companies" parent="Companies" />
       <Container fluid>
+        <Col md={12} className="project-list">
+          <CompaniesListNav />
+        </Col>
         <Row className="user-cards-items user-card-wrapper">
           {compainesCardData.map((item) => (
             <Col

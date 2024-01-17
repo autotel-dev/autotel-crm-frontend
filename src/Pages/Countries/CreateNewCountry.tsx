@@ -1,8 +1,6 @@
 import { PlusCircle } from "react-feather";
 import { Col } from "reactstrap";
-import { createNewCity } from "../../utils/Constant";
-import { Link } from "react-router-dom";
-import { Fragment, useState } from "react";
+import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Button, FormGroup, Label, Modal, ModalBody, Row } from "reactstrap";
 import { Cancel } from "../../utils/Constant";

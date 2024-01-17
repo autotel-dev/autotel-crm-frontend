@@ -4,6 +4,7 @@ export interface Type {
   title?: string;
   price?: number;
   duration?: string;
+  icon?: string;
 }
 export interface CountriesDataTableType {
   id: string;

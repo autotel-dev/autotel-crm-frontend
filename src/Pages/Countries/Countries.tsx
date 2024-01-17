@@ -1,8 +1,8 @@
 import { Col, Container, Row } from "reactstrap";
 import Breadcrumbs from "../../CommonElements/Breadcrumbs/Breadcrumbs";
 import { setup } from "../../utils/Constant";
-import CitiesListNav from "./CountriesListNav";
-import CitiesList from "./CountriesList";
+import CountriesListNav from "./CountriesListNav";
+import CountriesList from "./CountriesList";
 
 const Countries = () => {
   return (
@@ -15,10 +15,10 @@ const Countries = () => {
       <Container fluid>
         <Row className="project-card">
           <Col md={12} className="project-list">
-            <CitiesListNav />
+            <CountriesListNav />
           </Col>
           <Col sm={12}>
-            <CitiesList />
+            <CountriesList />
           </Col>
         </Row>
       </Container>

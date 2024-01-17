@@ -130,6 +130,7 @@ import Login from "../Pages/Authentication/Login";
 import LoginForm from "../Pages/Auth/Auth";
 import Companies from "../Pages/Companies/Companies";
 import Countries from "../Pages/Countries/Countries";
+import CreateCompanyForm from "../Pages/Companies/CreateCompanyForm/CreateCompanyForm";
 
 const routes = [
   // dashboard routes
@@ -661,6 +662,11 @@ const routes = [
   {
     path: `${process.env.PUBLIC_URL}/companies`,
     Component: <Companies />,
+  },
+
+  {
+    path: `${process.env.PUBLIC_URL}/companies/createComapny`,
+    Component: <CreateCompanyForm />,
   },
 
   // {

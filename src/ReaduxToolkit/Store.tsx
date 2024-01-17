@@ -15,6 +15,7 @@ import CitiesSlice from "./Reducer/CitiesSlice";
 import ProvinceSlice from "./Reducer/ProvinceSlice";
 import PackageSlice from "./Reducer/PackageSlice";
 import CountrySlice from "./Reducer/CountrySlice";
+import CRMModuleSlice from "./Reducer/CRMModuleSlice";
 
 const Store = configureStore({
   reducer: {
@@ -34,6 +35,7 @@ const Store = configureStore({
     provinces: ProvinceSlice,
     packages: PackageSlice,
     countries: CountrySlice,
+    crmModules: CRMModuleSlice,
   },
 });
 

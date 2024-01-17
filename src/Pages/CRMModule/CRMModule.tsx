@@ -1,16 +1,16 @@
 import { Col, Container, Row } from "reactstrap";
 import Breadcrumbs from "../../CommonElements/Breadcrumbs/Breadcrumbs";
-import { crMmoduleList, setup } from "../../utils/Constant";
-import CRMModuleList from "./CRMModuleList";
+import { setup } from "../../utils/Constant";
 import CRMModuleListNav from "./CRMModuleListNav";
+import CRMModuleList from "./CRMModuleList";
 
 const CRMModule = () => {
   return (
     <>
       <Breadcrumbs
-        mainTitle={crMmoduleList}
+        mainTitle="CRM Module List"
         parent={setup}
-        title={crMmoduleList}
+        title="CRM Module List"
       />
       <Container fluid>
         <Row className="project-card">

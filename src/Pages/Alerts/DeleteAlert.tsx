@@ -19,6 +19,11 @@ import {
   setCountries,
   setFilterCountries,
 } from "../../ReaduxToolkit/Reducer/CountrySlice";
+import {
+  setCRMModules,
+  setCRMModulesEnd,
+  setFilterCRMModules,
+} from "../../ReaduxToolkit/Reducer/CRMModuleSlice";
 
 const deleteAlert = (
   alertData: alertTypes,
@@ -43,6 +48,8 @@ const deleteAlert = (
         uri = `package/delete-package`;
       } else if (type === "countryType") {
         uri = `country/delete-country`;
+      } else if (type === "crmModuleType") {
+        uri = `crm-module/delete-module`;
       }
 
       try {
@@ -146,6 +153,22 @@ const deleteAlert = (
                   }
                 }
               });
+            } else if (type == "crmModuleType") {
+              getAll({ url: "crm-module/get-all-modules" }).then(
+                (data: any) => {
+                  console.log("api call --- >", data);
+                  dispatch(setCRMModulesEnd());
+                  if (data !== undefined) {
+                    if (data.success) {
+                      console.log("hhg");
+                      dispatch(setCRMModules(data.data));
+                      dispatch(setFilterCRMModules(data.data));
+                    } else {
+                      dispatch(setCRMModules([]));
+                    }
+                  }
+                }
+              );
             } else if (type == "countryType") {
               getAll({ url: "country/get-all-countries" }).then((data: any) => {
                 console.log("api call --- >", data);

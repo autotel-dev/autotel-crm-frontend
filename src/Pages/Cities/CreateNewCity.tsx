@@ -151,12 +151,12 @@ const CreateNewCity = () => {
                 }}
               >
                 <div>
-                  <span>Select Province</span>
-                  <SelectProvinceBox placeholder={"Select Province"} />
-                </div>
-                <div>
                   <span>Select Country</span>
                   <SelectCountryBox placeholder={"Select Country"} />
+                </div>
+                <div>
+                  <span>Select Province</span>
+                  <SelectProvinceBox placeholder={"Select Province"} />
                 </div>
               </div>
               <Button color="primary" className="me-1">
