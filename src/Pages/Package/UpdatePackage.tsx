@@ -26,6 +26,7 @@ import {
   setPackagesEnd,
   setPackagesStart,
 } from "../../ReaduxToolkit/Reducer/PackageSlice";
+import { setNoDataFound } from "../../ReaduxToolkit/Reducer/NoDataFoundSlice";
 import SelectPackageBox from "./components/SelectPackageBox";
 import { setProvincesEnd } from "../../ReaduxToolkit/Reducer/ProvinceSlice";
 
@@ -119,6 +120,7 @@ const UpdatePackage: React.FC<PropsTypes> = ({
                 console.log("api call --- >", data);
                 dispatch(setPackagesEnd());
                 if (data !== undefined) {
+                  dispatch(setNoDataFound(data.message));
                   if (data.success) {
                     console.log("hhg");
                     setLoading(true);

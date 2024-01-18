@@ -26,11 +26,13 @@ import {
 import deleteAlert from "../Alerts/DeleteAlert";
 import "./tableStyle.css";
 import Loader from "../Loader/Loader";
+import { setNoDataFound } from "../../ReaduxToolkit/Reducer/NoDataFoundSlice";
 
 const CitiesList = () => {
   const { cities, loading, error, id, value } = useSelector(
     (state: any) => state.cities
   );
+  const { noDataFound } = useSelector((state: any) => state.noDataFound);
   const [load, setLoad] = useState(false);
   const dispatch = useDispatch();
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
@@ -39,14 +41,13 @@ const CitiesList = () => {
 
   useEffect(() => {
     dispatch(setCitiesStart());
-    setLoad(true);
+    // setLoad(true);
     getAll({ url: "city/get-all-cities" }).then((data: any) => {
       console.log("api call --- >", data);
-      setTimeout(() => {
-        setLoad(false);
-      }, 3000);
+
       dispatch(setCitiesEnd());
       if (data !== undefined) {
+        dispatch(setNoDataFound(data.message));
         if (data.success) {
           console.log("hhg");
           dispatch(setCities(data.data));
@@ -160,7 +161,7 @@ const CitiesList = () => {
                     paginationServer
                   /> */}
 
-                  {loading && load ? (
+                  {loading ? (
                     // <div
                     //   style={{
                     //     textAlign: "center",
@@ -196,7 +197,7 @@ const CitiesList = () => {
                         fontWeight: "bold",
                       }}
                     >
-                      No Cities Found
+                      {noDataFound !== "" ? noDataFound : "Faild to Fetch"}
                     </div>
                     // <Loader />
                   )}

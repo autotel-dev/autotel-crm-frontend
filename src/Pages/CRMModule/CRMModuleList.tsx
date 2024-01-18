@@ -18,6 +18,7 @@ import {
   setId,
   setValue,
 } from "../../ReaduxToolkit/Reducer/CRMModuleSlice";
+import { setNoDataFound } from "../../ReaduxToolkit/Reducer/NoDataFoundSlice";
 import UpdateCRMModule from "./UpdateCRMModule";
 import Loader from "../Loader/Loader";
 
@@ -25,6 +26,7 @@ const CRMModuleList = () => {
   const { crmModules, loading, error, id, value } = useSelector(
     (state: any) => state.crmModules
   );
+  const { noDataFound } = useSelector((state: any) => state.noDataFound);
   const dispatch = useDispatch();
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [moduleName, setModuleName] = useState("");
@@ -37,6 +39,7 @@ const CRMModuleList = () => {
       console.log("api call --- >", data);
       dispatch(setCRMModulesEnd());
       if (data !== undefined) {
+        dispatch(setNoDataFound(data.message));
         if (data.success) {
           console.log("hhg");
           dispatch(setCRMModules(data.data));
@@ -154,7 +157,7 @@ const CRMModuleList = () => {
                         fontWeight: "bold",
                       }}
                     >
-                      No Modules Found
+                      {noDataFound !== "" ? noDataFound : "Faild to Fetch"}
                     </div>
                   )}
 

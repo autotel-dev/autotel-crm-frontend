@@ -42,7 +42,7 @@ export const login = async (postData: loginTypes): Promise<void> => {
 
     if (!result["success"]) {
       console.log("result: ", result);
-      if (result.statusCode == 401) {
+      if (result.statusCode == 401 && result.success !== true) {
         var alertData = {
           title: "Invalid Login",
           text: result.message,
@@ -166,9 +166,7 @@ export const getAll = async (url: URLTypes): Promise<void> => {
         showCancelButton: false,
       });
     }
-    if (result.success !== true && result.statusCode === 404) {
-      setNoDataFound(result.message);
-    }
+
     console.log("api --- >", result);
 
     return result;

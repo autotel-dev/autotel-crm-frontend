@@ -14,6 +14,7 @@ import {
   setFilterCountries,
   setId,
 } from "../../ReaduxToolkit/Reducer/CountrySlice";
+import { setNoDataFound } from "../../ReaduxToolkit/Reducer/NoDataFoundSlice";
 import UpdateCountry from "./UpdateCountry";
 import { log } from "console";
 import Loader from "../Loader/Loader";
@@ -22,6 +23,7 @@ const CountriesList = () => {
   const { countries, loading, error, id, value } = useSelector(
     (state: any) => state.countries
   );
+  const { noDataFound } = useSelector((state: any) => state.noDataFound);
   const dispatch = useDispatch();
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [countryName, setCountryName] = useState("");
@@ -33,6 +35,7 @@ const CountriesList = () => {
       console.log("api call --- >", data);
       dispatch(setCountriesEnd());
       if (data !== undefined) {
+        dispatch(setNoDataFound(data.message));
         if (data.success) {
           console.log("hhg");
           dispatch(setCountries(data.data));
@@ -158,7 +161,7 @@ const CountriesList = () => {
                         fontWeight: "bold",
                       }}
                     >
-                      No Countries Found
+                      {noDataFound !== "" ? noDataFound : "Faild to Fetch"}
                     </div>
                   )}
 

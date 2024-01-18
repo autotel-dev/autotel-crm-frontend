@@ -23,6 +23,7 @@ import {
   setId,
   // setValue,
 } from "../../ReaduxToolkit/Reducer/CitiesSlice";
+import { setNoDataFound } from "../../ReaduxToolkit/Reducer/NoDataFoundSlice";
 
 interface PropsTypes {
   isVisible: boolean; // Change 'boolean' to the actual type of isVisible
@@ -101,6 +102,7 @@ const UpdateCity: React.FC<PropsTypes> = ({
                 console.log("api call --- >", data);
                 dispatch(setCitiesEnd());
                 if (data !== undefined) {
+                  dispatch(setNoDataFound(data.message));
                   if (data.success) {
                     console.log("hhg");
                     dispatch(setCities(data.data));

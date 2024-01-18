@@ -22,6 +22,7 @@ import {
   setProvincesStart,
   setFilterProvinces,
 } from "../../ReaduxToolkit/Reducer/ProvinceSlice";
+import { setNoDataFound } from "../../ReaduxToolkit/Reducer/NoDataFoundSlice";
 
 interface PropsTypes {
   isVisible: boolean; // Change 'boolean' to the actual type of isVisible
@@ -101,6 +102,7 @@ const UpdateProvince: React.FC<PropsTypes> = ({
                   console.log("api call --- >", data);
                   dispatch(setProvincesEnd());
                   if (data !== undefined) {
+                    dispatch(setNoDataFound(data.message));
                     if (data.success) {
                       console.log("hhg");
                       dispatch(setProvinces(data.data));

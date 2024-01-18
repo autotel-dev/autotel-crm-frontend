@@ -18,12 +18,14 @@ import {
   setPackageDuration,
   setPackage,
 } from "../../ReaduxToolkit/Reducer/PackageSlice";
+import { setNoDataFound } from "../../ReaduxToolkit/Reducer/NoDataFoundSlice";
 import Loader from "../Loader/Loader";
 
 const PackageList = () => {
   const { packages, loading, error, id } = useSelector(
     (state: any) => state.packages
   );
+  const { noDataFound } = useSelector((state: any) => state.noDataFound);
   const dispatch = useDispatch();
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [loadingState, setLoadingState] = useState(false);
@@ -38,6 +40,7 @@ const PackageList = () => {
       console.log("api call --- >", data);
       dispatch(setPackagesEnd());
       if (data !== undefined) {
+        dispatch(setNoDataFound(data.message));
         if (data.success) {
           console.log("hhg");
           dispatch(setPackages(data.data));
@@ -168,7 +171,7 @@ const PackageList = () => {
                         fontWeight: "bold",
                       }}
                     >
-                      No Packages Found
+                      {noDataFound !== "" ? noDataFound : "Faild to Fetch"}
                     </div>
                   )}
                 </div>

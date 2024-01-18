@@ -22,6 +22,7 @@ import {
   setId,
   setValue,
 } from "../../ReaduxToolkit/Reducer/CRMModuleSlice";
+import { setNoDataFound } from "../../ReaduxToolkit/Reducer/NoDataFoundSlice";
 import { Type } from "../Countries/CountryTypes/CountryTypes";
 
 interface PropsTypes {
@@ -106,6 +107,7 @@ const UpdateCRMModule: React.FC<PropsTypes> = ({
                   console.log("api call --- >", data);
                   dispatch(setCRMModulesEnd());
                   if (data !== undefined) {
+                    dispatch(setNoDataFound(data.message));
                     if (data.success) {
                       console.log("hhg");
                       dispatch(setCRMModules(data.data));

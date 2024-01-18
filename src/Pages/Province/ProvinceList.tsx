@@ -15,12 +15,14 @@ import {
   setProvincesStart,
   setFilterProvinces,
 } from "../../ReaduxToolkit/Reducer/ProvinceSlice";
+import { setNoDataFound } from "../../ReaduxToolkit/Reducer/NoDataFoundSlice";
 import Loader from "../Loader/Loader";
 
 const ProvinceList = () => {
   const { provinces, loading, error, id, value } = useSelector(
     (state: any) => state.provinces
   );
+  const { noDataFound } = useSelector((state: any) => state.noDataFound);
   const dispatch = useDispatch();
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [loadingState, setLoadingState] = useState(false);
@@ -33,6 +35,7 @@ const ProvinceList = () => {
       console.log("api call --- >", data);
       dispatch(setProvincesEnd());
       if (data !== undefined) {
+        dispatch(setNoDataFound(data.message));
         if (data.success) {
           console.log("hhg");
           dispatch(setProvinces(data.data));
@@ -156,7 +159,7 @@ const ProvinceList = () => {
                         fontWeight: "bold",
                       }}
                     >
-                      No Province Found
+                      {noDataFound !== "" ? noDataFound : "Faild to Fetch"}
                     </div>
                   )}
                 </div>

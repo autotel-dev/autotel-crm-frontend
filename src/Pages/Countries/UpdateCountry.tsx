@@ -22,6 +22,7 @@ import {
   setId,
   setFilterCountries,
 } from "../../ReaduxToolkit/Reducer/CountrySlice";
+import { setNoDataFound } from "../../ReaduxToolkit/Reducer/NoDataFoundSlice";
 
 interface PropsTypes {
   isVisible: boolean; // Change 'boolean' to the actual type of isVisible
@@ -100,6 +101,7 @@ const UpdateCountry: React.FC<PropsTypes> = ({
                 console.log("api call --- >", data);
                 dispatch(setCountriesEnd());
                 if (data !== undefined) {
+                  dispatch(setNoDataFound(data.message));
                   if (data.success) {
                     console.log("hhg");
                     dispatch(setCountries(data.data));

@@ -9,19 +9,52 @@ import {
   FormWizard2Heading,
 } from "../../../utils/Constant";
 import CustomHorizontalWizard from "./CustomHorizontalWizard";
+import { useEffect } from "react";
+import { getAll } from "../../../Api";
+import { useDispatch } from "react-redux";
+import {
+  setServers,
+  setCRMModules,
+} from "../../../ReaduxToolkit/Reducer/CompanySlice";
 // import BusinessVerticalWizard from "./BusinessVerticalWizard/BusinessVerticalWizard";
 
 const CreateCompanyForm = () => {
+  const dispatch = useDispatch();
+  useEffect(() => {
+    getAll({ url: "server-management/get-all-active-servers" }).then(
+      (data: any) => {
+        console.log("api call --- >", data);
+        if (data !== undefined) {
+          if (data.success) {
+            console.log("hhg");
+            dispatch(setServers(data.data.activeServers));
+          }
+        }
+      }
+    );
+  }, []);
+  useEffect(() => {
+    getAll({ url: "crm-module/get-all-active-modules" }).then((data: any) => {
+      console.log("api call --- >", data);
+      if (data !== undefined) {
+        if (data.success) {
+          console.log("hhg");
+          dispatch(setCRMModules(data.data));
+        }
+      }
+    });
+  }, []);
+
   return (
     <>
       <Breadcrumbs
-        mainTitle={FormWizard2Heading}
-        parent={FormLayouts}
-        title={FormWizard2Heading}
+        mainTitle="Create Comapany"
+        parent="Company"
+        title="Create Comapany"
       />
       <Container fluid>
         <Row>
-          <CustomHorizontalWizard heading={Customhorizontalwizard} xs={12} />
+          <CustomHorizontalWizard heading="" xs={12} />
 
           {/* <CustomHorizontalWizard
             heading={Customverticalwizard}

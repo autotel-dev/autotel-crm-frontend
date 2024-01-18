@@ -24,6 +24,7 @@ import {
   setCRMModulesEnd,
   setFilterCRMModules,
 } from "../../ReaduxToolkit/Reducer/CRMModuleSlice";
+import { setNoDataFound } from "../../ReaduxToolkit/Reducer/NoDataFoundSlice";
 
 const deleteAlert = (
   alertData: alertTypes,
@@ -80,6 +81,7 @@ const deleteAlert = (
               getAll({ url: "city/get-all-cities" }).then((data: any) => {
                 console.log("api call --- >", data);
                 if (data !== undefined) {
+                  dispatch(setNoDataFound(data.message));
                   if (data.success) {
                     console.log("hhg");
                     dispatch(setCities(data.data));
@@ -96,6 +98,7 @@ const deleteAlert = (
                 (data: any) => {
                   console.log("api call --- >", data);
                   if (data !== undefined) {
+                    dispatch(setNoDataFound(data.message));
                     if (data.success) {
                       console.log("hhg");
                       dispatch(setProvinces(data.data));
@@ -106,6 +109,7 @@ const deleteAlert = (
                           console.log("api call --- >", data);
                           if (data !== undefined) {
                             if (data.success) {
+                              dispatch(setNoDataFound(data.message));
                               console.log("hhg");
                               dispatch(setCities(data.data));
                               dispatch(setFilterCities(data.data));
@@ -123,6 +127,7 @@ const deleteAlert = (
                         (data: any) => {
                           console.log("api call --- >", data);
                           if (data !== undefined) {
+                            dispatch(setNoDataFound(data.message));
                             if (data.success) {
                               console.log("hhg");
                               dispatch(setCities(data.data));
@@ -144,6 +149,7 @@ const deleteAlert = (
                 console.log("api call --- >", data);
                 dispatch(setPackagesEnd());
                 if (data !== undefined) {
+                  dispatch(setNoDataFound(data.message));
                   if (data.success) {
                     console.log("hhg");
                     dispatch(setPackages(data.data));
@@ -159,6 +165,7 @@ const deleteAlert = (
                   console.log("api call --- >", data);
                   dispatch(setCRMModulesEnd());
                   if (data !== undefined) {
+                    dispatch(setNoDataFound(data.message));
                     if (data.success) {
                       console.log("hhg");
                       dispatch(setCRMModules(data.data));
@@ -173,6 +180,7 @@ const deleteAlert = (
               getAll({ url: "country/get-all-countries" }).then((data: any) => {
                 console.log("api call --- >", data);
                 if (data !== undefined) {
+                  dispatch(setNoDataFound(data.message));
                   if (data.success) {
                     console.log("hhg");
                     dispatch(setCountries(data.data));
@@ -194,6 +202,7 @@ const deleteAlert = (
                     getAll({ url: "city/get-all-cities" }).then((data: any) => {
                       console.log("api call --- >", data);
                       if (data !== undefined) {
+                        dispatch(setNoDataFound(data.message));
                         if (data.success) {
                           console.log("hhg");
                           dispatch(setCities(data.data));
@@ -211,6 +220,7 @@ const deleteAlert = (
                       (data: any) => {
                         console.log("api call --- >", data);
                         if (data !== undefined) {
+                          dispatch(setNoDataFound(data.message));
                           if (data.success) {
                             console.log("hhg");
                             dispatch(setProvinces(data.data));
@@ -224,6 +234,7 @@ const deleteAlert = (
                     getAll({ url: "city/get-all-cities" }).then((data: any) => {
                       console.log("api call --- >", data);
                       if (data !== undefined) {
+                        dispatch(setNoDataFound(data.message));
                         if (data.success) {
                           console.log("hhg");
                           dispatch(setCities(data.data));
