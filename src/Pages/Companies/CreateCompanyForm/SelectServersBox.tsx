@@ -24,6 +24,7 @@ const SelectServerBox: React.FC<propTypes> = ({ placeholder }) => {
         value: `${item._id}`,
         label: `${item.companyName}`,
         hostUrl: `${item.backendUrl}`,
+        server: `${item._id}`,
         item: `${item}`,
       });
     });
@@ -42,6 +43,7 @@ const SelectServerBox: React.FC<propTypes> = ({ placeholder }) => {
     <Select
       showSearch
       mode="multiple"
+      
       style={{ width: 500, height: 36 }}
       placeholder={placeholder}
       optionFilterProp="children"

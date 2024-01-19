@@ -11,13 +11,17 @@ import {
   Previous,
 } from "../../../utils/Constant";
 import SelectServerBox from "./SelectServersBox";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import AddServersComponent from "./AddServersComponent";
+import { setAllowedModules } from "../../../ReaduxToolkit/Reducer/CompanySlice";
 
 const CRMModules = ({ callbackActive }: BusinessFormCommonProps) => {
-  const { servers, serversAddItemsList, crmModules } = useSelector(
+  const { allowedModules, crmModules } = useSelector(
     (state: any) => state.companies
   );
+  const dispatch = useDispatch();
+
+  const [switches, setSwitches] = useState("off");
 
   const handleNextButton = () => {
     callbackActive(5);
@@ -60,11 +64,50 @@ const CRMModules = ({ callbackActive }: BusinessFormCommonProps) => {
                             <Label className="switch mb-0">
                               <Input
                                 type="checkbox"
-                                defaultChecked={item.isActive}
-                                value={item.isActive ? "on" : "off"}
+                                defaultChecked={switches == "on" ? true : false}
+                                value={switches === "on" ? "on" : "off"}
                                 onChange={(e) => {
-                                  //   setIsActive(!isActive);
+                                  if (switches === "on") {
+                                    setSwitches("off");
+                                  } else {
+                                    setSwitches("on");
+                                  }
+                                  const itemExist = allowedModules.some(
+                                    (i: any) => i === item.name
+                                  );
+                                  console.log(itemExist);
+
+                                  if (itemExist) {
+                                    // If the server exists, remove it from the array
+
+                                    const updatedAllowedModules =
+                                      allowedModules.filter(
+                                        (i: any) => i !== item.name
+                                      );
+                                    console.log("If condition");
+                                    console.log(
+                                      "allowedModules -- >",
+                                      updatedAllowedModules
+                                    );
+
+                                    dispatch(
+                                      setAllowedModules(updatedAllowedModules)
+                                    );
+                                  } else {
+                                    // If the server doesn't exist, add it to the array
+                                    console.log("else condition");
+                                    dispatch(
+                                      setAllowedModules([
+                                        ...allowedModules,
+                                        item.name,
+                                      ])
+                                    );
+                                  }
                                   console.log(e.target.value);
+                                  console.log(
+                                    "allowedModules -- >",
+                                    allowedModules
+                                  );
                                 }}
                               />
                               <span className={`switch-state bg-primary`} />

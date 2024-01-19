@@ -19,7 +19,7 @@ const CompanyInfoForm = ({ callbackActive }: BusinessFormCommonProps) => {
   const dispatch = useDispatch();
   const { createCompany } = useSelector((state: any) => state.companies);
   const [personalDetailsForm, setPersonalDetailsForm] = useState({
-    fullName: "",
+    companyName: "",
     phoneNo: "",
     city: "",
     address: "",
@@ -30,7 +30,7 @@ const CompanyInfoForm = ({ callbackActive }: BusinessFormCommonProps) => {
     cnicNumber: "",
   });
   const {
-    fullName,
+    companyName,
     phoneNo,
     city,
     address,
@@ -49,7 +49,7 @@ const CompanyInfoForm = ({ callbackActive }: BusinessFormCommonProps) => {
 
   const handleNextButton = () => {
     if (
-      fullName !== "" &&
+      companyName !== "" &&
       phoneNo !== "" &&
       city !== "" &&
       address !== "" &&
@@ -77,14 +77,14 @@ const CompanyInfoForm = ({ callbackActive }: BusinessFormCommonProps) => {
       <Row className="g-3">
         <Col xl={4} sm={6}>
           <Label>
-            Full Name
+            Company Name
             <span className="txt-danger">*</span>
           </Label>
           <Input
             type="text"
-            placeholder="Enter Full Name"
-            value={fullName}
-            name="fullName"
+            placeholder="Enter Company Name"
+            value={companyName}
+            name="companyName"
             onChange={getUserData}
           />
         </Col>

@@ -13,21 +13,45 @@ import { H3, Image, LI, UL } from "../../../AbstractElements";
 import { dynamicImage } from "../../../Service";
 import { popularBanksList } from "../../../Data/Forms/FormsLayout/FormWizardData";
 import CommonHeader from "../../../Common/CommonHeader";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  setCreateCompany,
+  setServer,
+  setServerCredentials,
+} from "../../../ReaduxToolkit/Reducer/CompanySlice";
 interface propTypes {
   server: any;
 }
 
 const AddServersComponent: React.FC<propTypes> = ({ server }) => {
-  const [bankDetailsForm, setBankDetailsForm] = useState({
+  const [addServersForm, setAddServersForm] = useState({
     emailAddress: "",
     password: "",
+    server: `${server.server}`,
+    hostUrl: `${server.hostUrl}`,
   });
-  const { emailAddress, password } = bankDetailsForm;
+  const dispatch = useDispatch();
+  const { createCompany, serverCredentials } = useSelector(
+    (state: any) => state.companies
+  );
+  const { emailAddress, password } = addServersForm;
   const getUserData = (event: ChangeEvent<HTMLInputElement>) => {
     let name = event.target.name;
     let value =
       name === "rememberNextTime" ? event.target.checked : event.target.value;
-    setBankDetailsForm({ ...bankDetailsForm, [name]: value });
+    setAddServersForm({ ...addServersForm, [name]: value });
+    dispatch(setServer(addServersForm));
+
+    // dispatch(
+    //   setCreateCompany({
+    //     ...createCompany,
+    //     serverCredentials: serverCredentials,
+    //   })
+    // );
+  };
+  const addServer = () => {
+    dispatch(setServerCredentials([...serverCredentials, addServersForm]));
+    console.log(serverCredentials);
   };
 
   //   const handleNextButton = () => {
@@ -81,17 +105,30 @@ const AddServersComponent: React.FC<propTypes> = ({ server }) => {
               onChange={getUserData}
             />
           </Col>
-          {/* <Col
-          xs={12}
-          className="text-end d-flex justify-content-end gap-2 align-center"
-        >
-          <Button color="primary" onClick={() => callbackActive(1)}>
-            {Previous}
-          </Button>
-          <Button color="primary" onClick={handleNextButton}>
-            {Continue}
-          </Button>
-        </Col> */}
+          <Col
+            xs={12}
+            className="text-end d-flex justify-content-end gap-2 align-center"
+          >
+            <Button
+              color="primary"
+              onClick={() => {
+                addServer();
+              }}
+              disabled={
+                serverCredentials.some(
+                  (item: any) => item.server === server.server
+                )
+                  ? true
+                  : false
+              }
+            >
+              {serverCredentials.some(
+                (item: any) => item.server === server.server
+              )
+                ? "Added"
+                : "Add"}
+            </Button>
+          </Col>
         </Row>
       </div>
     </Form>

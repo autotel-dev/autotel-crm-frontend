@@ -36,9 +36,8 @@ const AccountCredentials = ({ callbackActive }: BusinessFormCommonProps) => {
     if (emailAddress !== "" && password !== "") {
       dispatch(setServersAddItemsList([]));
       setFormData({
-        ...formData,
-        accountCredentialsForm,
-        createCompany,
+       ...accountCredentialsForm,
+        ...createCompany,
       });
       dispatch(setCreateCompany(formData));
       console.log("formData -->", formData);

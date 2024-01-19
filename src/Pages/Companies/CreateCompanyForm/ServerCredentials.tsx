@@ -11,13 +11,15 @@ import {
   Previous,
 } from "../../../utils/Constant";
 import SelectServerBox from "./SelectServersBox";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import AddServersComponent from "./AddServersComponent";
 
 const ServerCredentials = ({ callbackActive }: BusinessFormCommonProps) => {
   const { servers, serversAddItemsList } = useSelector(
     (state: any) => state.companies
   );
+  const { createCompany } = useSelector((state: any) => state.companies);
+  const dispatch = useDispatch();
 
   const handleNextButton = () => {
     if (servers.length > 0) {

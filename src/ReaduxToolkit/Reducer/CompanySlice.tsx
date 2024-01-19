@@ -7,7 +7,9 @@ const initialState = {
   crmModules: [],
   serversAddItemsList: [],
   filterCompanies: [],
-  server: null,
+  serverCredentials: [],
+  allowedModules: [],
+  server: {},
   loading: false,
   error: null,
   noDataFound: "",
@@ -41,6 +43,7 @@ const CompanySlice = createSlice({
       state.error = null;
       state.loading = false;
     },
+
     setCRMModules: (state, action) => {
       state.crmModules = action.payload;
       state.error = null;
@@ -55,7 +58,16 @@ const CompanySlice = createSlice({
     setServer: (state, action) => {
       state.server = action.payload;
     },
-
+    setServerCredentials: (state, action) => {
+      state.serverCredentials = action.payload;
+      state.error = null;
+      state.loading = false;
+    },
+    setAllowedModules: (state, action) => {
+      state.allowedModules = action.payload;
+      state.error = null;
+      state.loading = false;
+    },
     setNoDataFound: (state, action) => {
       state.noDataFound = action.payload;
     },
@@ -71,6 +83,8 @@ export const {
   setCRMModules,
   setServersAddItemsList,
   setServer,
+  setServerCredentials,
+  setAllowedModules,
   setNoDataFound,
 } = CompanySlice.actions;
 
