@@ -113,17 +113,6 @@ const CountriesList = () => {
               <CommonHeader title="All Countries" />
               <CardBody>
                 <div className="table-responsive product-table">
-                  {/* <DataTable
-                    // data={citiesTableData}
-                    data={cities}
-                    columns={citiesTableColumns}
-                    className="display dataTable no-footer"
-                    dense={true}
-                    noHeader
-                    pagination
-                    paginationServer
-                  /> */}
-
                   {/* {loading ? (
                     <Loader />
                   ) : ( */}
