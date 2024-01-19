@@ -46,10 +46,13 @@ const Layout = () => {
     <>
       <Loader />
       <TapTop />
+      {/* changing with belo line  */}
       <div className={`page-wrapper ${layout} ${layout === "material-icon" ? `compact-sidebar compact-small` : "" } `}>
       {/* <div className={`page-wrapper horizontal-wrapper `}> */}
 
-        <div className={`page-header ${open ? "sidebar-default" : ""} ${toggleSidebar ? "close_icon" : ""}  ${scroll ? "d-none" : "d-block"}`}>
+        {/* changing with belo line */}
+         <div className={`page-header ${open ? "sidebar-default" : ""} ${toggleSidebar ? "close_icon" : ""}  ${scroll ? "d-none" : "d-block"}`}>
+        {/* <div className={`page-header d-block`}> */}
           <Header />
         </div>
         <div className="page-body-wrapper">

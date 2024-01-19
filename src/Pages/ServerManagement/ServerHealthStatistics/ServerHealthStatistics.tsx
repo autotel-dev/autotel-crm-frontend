@@ -8,7 +8,7 @@ import DatabaseSize from "../../../assets/databaseSize.png";
 import ServerUptime from "../../../assets/serverUptime.png";
 
 const ServerHealthStatistics = () => {
-  const { serverHealthStatistics } = useSelector(
+  const { serverHealthStatistics, getTime } = useSelector(
     (state: any) => state.serverManagement
   );
   return (
@@ -18,8 +18,8 @@ const ServerHealthStatistics = () => {
           <Card className="total-earning">
             <CardBody>
               <Row>
-                <Col sm="8" className="box-col-7">
-                  <div className="d-flex">
+                <Col sm="12" className="box-col-7">
+                  {/* <div className="d-flex">
                     <Badge
                       color="transperant"
                       className={`bg-light-primary badge-rounded font-primary me-2`}
@@ -29,16 +29,39 @@ const ServerHealthStatistics = () => {
                     <div className="flex-grow-1">
                       <H3>Server Uptime</H3>
                     </div>
+                  </div> */}
+                  <div className="d-flex">
+                    <div className="flex-grow-1" style={{marginBottom:"20px"}}>
+                      <H3>Server Uptime</H3>
+                    </div>
                   </div>
-                  <p>{serverHealthStatistics.upTime}</p>
+                  <div className="d-flex">
+                    <Badge
+                      color="transperant"
+                      className={`bg-light-primary badge-rounded font-primary me-2`}
+                    >
+                      $
+                    </Badge>
+                    <div className="flex-grow-1">
+                      <H5>{serverHealthStatistics.upTime}</H5>
+                    </div>
+                  </div>
+                  {/* <H5>{serverHealthStatistics.upTime}</H5> */}
+                  <P className="d-flex">
+                    <span className={`bg-light-primary me-2`}>
+                      {/* <SVG iconId={data.icon} /> */}
+                    </span>
+                    <span className={` me-2`}>Updated At :</span>
+                    <span className="font-secondary">{getTime}</span>
+                  </P>
                 </Col>
-                <Col sm="4" className={`box-col-5`}>
+                {/* <Col sm="3" className={`box-col-5`}>
                   <img
                     src={ServerUptime}
                     alt="DatabaseSize"
                     style={{ width: "80%" }}
                   />
-                </Col>
+                </Col> */}
               </Row>
             </CardBody>
           </Card>
@@ -47,7 +70,7 @@ const ServerHealthStatistics = () => {
           <Card className="total-earning">
             <CardBody>
               <Row>
-                <Col sm="8" className="box-col-7">
+                <Col sm="12" className="box-col-7">
                   <div className="d-flex">
                     <Badge
                       color="transperant"
@@ -59,15 +82,22 @@ const ServerHealthStatistics = () => {
                       <H3>Database Size</H3>
                     </div>
                   </div>
-                  <p>{serverHealthStatistics.databaseSize}</p>
+                  <H5>{serverHealthStatistics.databaseSize}</H5>
+                  <P className="d-flex">
+                    <span className={`bg-light-primary me-2`}>
+                      {/* <SVG iconId={data.icon} /> */}
+                    </span>
+                    <span className={`font-secondary me-2`}>Updated At :</span>
+                    <span>{getTime}</span>
+                  </P>
                 </Col>
-                <Col sm="4" className={`box-col-5`}>
+                {/* <Col sm="3" className={`box-col-5`}>
                   <img
                     src={DatabaseSize}
                     alt="DatabaseSize"
                     style={{ width: "60%" }}
                   />
-                </Col>
+                </Col> */}
               </Row>
             </CardBody>
           </Card>

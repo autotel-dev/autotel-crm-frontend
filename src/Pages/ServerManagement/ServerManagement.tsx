@@ -16,6 +16,7 @@ import {
   setServerManagement,
   setServerManagementEnd,
   setServerManagementStart,
+  setTime,
 } from "../../ReaduxToolkit/Reducer/ServerManagementSlice";
 import { setNoDataFound } from "../../ReaduxToolkit/Reducer/NoDataFoundSlice";
 
@@ -23,8 +24,12 @@ const ServerManagement = () => {
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(setServerManagementStart());
+    const startTime = new Date().getTime();
     getAll({ url: "server-management/get-server-health-statistics" }).then(
       (data: any) => {
+        const startTime = new Date().toISOString()
+        console.log("startTime: ", startTime)
+        dispatch(setTime(startTime.toString()));
         console.log("api call --- >", data);
         dispatch(setServerManagementEnd());
         if (data !== undefined) {
@@ -41,9 +46,9 @@ const ServerManagement = () => {
     <Container fluid className="dashboard_default">
       <Row className="widget-grid">
         <Breadcrumbs
-          mainTitle={ShoppingPlaceDashboard}
-          parent={Dashboard}
-          title={Default}
+          mainTitle="Server Management"
+          parent="Server Management"
+          title=""
         />
         {/* <TotalEarning /> */}
 

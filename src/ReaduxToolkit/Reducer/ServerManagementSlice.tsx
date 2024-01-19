@@ -5,6 +5,7 @@ const initialState = {
   serverHealthStatistics: {},
   loading: false,
   error: null,
+  getTime: "",
 };
 
 const ServerManagementSlice = createSlice({
@@ -23,12 +24,16 @@ const ServerManagementSlice = createSlice({
     setServerManagementEnd: (state) => {
       state.loading = false;
     },
+    setTime: (state, action) => {
+      state.getTime = action.payload;
+    },
   },
 });
 export const {
   setServerManagementStart,
   setServerManagement,
   setServerManagementEnd,
+  setTime,
 } = ServerManagementSlice.actions;
 
 export default ServerManagementSlice.reducer;

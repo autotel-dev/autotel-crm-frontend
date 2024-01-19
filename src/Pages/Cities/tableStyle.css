@@ -5,9 +5,9 @@ table {
   
   th, td {
     padding: 8px;
-    width: 13%;
+    width: 10%;
     text-align: center;
-    border-bottom: 10px solid #DDD;
+    border-bottom: 1px solid #DDD;
   }
   
   tr:hover {background-color: #D6EEEE;}

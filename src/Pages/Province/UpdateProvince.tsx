@@ -179,24 +179,28 @@ const UpdateProvince: React.FC<PropsTypes> = ({
               <span style={{ color: "red" }}>
                 {errors.name && "Province name is required"}
               </span>
-            </FormGroup>
-          </Row>
-          {/* <div>
-            <Row>
-              <FormGroup check switch inline className="col-md-12 create-group">
-                <div className={`flex-shrink-0 icons-state"}`}>
+              <div className="d-flex">
+                <div
+                  className={`text-end flex-shrink-0 icon-state switch-outline
+                            }`}
+                >
                   <Label className="switch mb-0">
                     <Input
                       type="checkbox"
-                      defaultChecked={isActive ? false : true}
+                      defaultChecked={isActive}
+                      value={isActive ? "on" : "off"}
+                      onChange={(e) => {
+                        setIsActive(!isActive);
+                        console.log(e.target.value);
+                      }}
                     />
                     <span className={`switch-state bg-primary`} />
                   </Label>
                 </div>
-              </FormGroup>
-            </Row>
-          </div> */}
-          <div style={{ marginLeft: "10px" }}>
+              </div>
+            </FormGroup>
+          </Row>
+          {/* <div style={{ marginLeft: "10px" }}>
             <Row>
               <FormGroup check switch inline className="col-md-12 create-group">
                 <Input
@@ -211,7 +215,7 @@ const UpdateProvince: React.FC<PropsTypes> = ({
                 />
               </FormGroup>
             </Row>
-          </div>
+          </div> */}
           <Button color="primary" className="me-1">
             {loading ? "Loading ..." : `Update`}
           </Button>
