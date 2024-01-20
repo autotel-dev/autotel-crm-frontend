@@ -153,7 +153,7 @@ export const modalOneData = [
 export const numbers = [1, 2, 3, 4, 5, 6];
 
 export const customHorizontalWizardNavData = [
-  { activeTab: 1, iconName: "fa-user", tittle: "Company info" },
+  { activeTab: 1, iconName: "fa-user", tittle: "Server info" },
   { activeTab: 2, iconName: "fa-chain-broken", tittle: "Account Credentials" },
   { activeTab: 3, iconName: "fa-group", tittle: "Server Credentials" },
   { activeTab: 4, iconName: "fa-chain-broken", tittle: "CRM Modules" },

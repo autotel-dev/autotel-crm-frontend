@@ -56,7 +56,7 @@ const CRMModules = ({ callbackActive }: BusinessFormCommonProps) => {
                     >
                       <Col md={6}>{item.name}</Col>
                       <Col md={6}>
-                        <div className="d-flex" key={index}>
+                      <div className="d-flex" key={index}>
                           <div
                             className={`text-end flex-shrink-0 icon-state switch-outline
                             }`}

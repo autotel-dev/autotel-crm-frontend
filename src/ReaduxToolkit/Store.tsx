@@ -19,6 +19,7 @@ import CRMModuleSlice from "./Reducer/CRMModuleSlice";
 import NoDataFoundSlice from "./Reducer/NoDataFoundSlice";
 import CompanySlice from "./Reducer/CompanySlice";
 import ServerManagementSlice from "./Reducer/ServerManagementSlice";
+import ServerDetailsSlice from "./Reducer/ServerDetailsSlice";
 
 const Store = configureStore({
   reducer: {
@@ -42,6 +43,7 @@ const Store = configureStore({
     noDataFound: NoDataFoundSlice,
     companies: CompanySlice,
     serverManagement: ServerManagementSlice,
+    serverDetails: ServerDetailsSlice,
   },
 });
 

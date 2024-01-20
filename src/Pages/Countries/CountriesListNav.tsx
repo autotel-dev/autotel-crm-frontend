@@ -18,7 +18,7 @@ const CountriesListNav = () => {
       <Row>
         <Col md={6}>
           <Nav tabs className="border-tab">
-            <NavItem>
+            <NavItem style={{ cursor: "pointer" }}>
               <NavLink
                 className={activeTab === "1" ? "active" : ""}
                 onClick={() => {
@@ -36,7 +36,7 @@ const CountriesListNav = () => {
                 {all}
               </NavLink>
             </NavItem>
-            <NavItem>
+            <NavItem style={{ cursor: "pointer" }}>
               <NavLink
                 className={activeTab === "3" ? "active" : ""}
                 onClick={() => {
@@ -53,10 +53,10 @@ const CountriesListNav = () => {
                   tempList = [];
                 }}
               >
-                <CheckCircle /> {inactive}
+                <Info /> {inactive}
               </NavLink>
             </NavItem>
-            <NavItem>
+            <NavItem style={{ cursor: "pointer" }}>
               <NavLink
                 className={activeTab === "2" ? "active" : ""}
                 onClick={() => {
@@ -73,7 +73,7 @@ const CountriesListNav = () => {
                   tempList = [];
                 }}
               >
-                <Info />
+                <CheckCircle />
                 {active}
               </NavLink>
             </NavItem>

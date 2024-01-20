@@ -60,7 +60,7 @@ export const SidebarMenu: SidebarMenuTypes[] = [
       {
         svgIcon: "bonus-kit",
         title: "Server Details",
-        link: `${process.env.PUBLIC_URL}/dashboards/crmdashboard`,
+        link: `${process.env.PUBLIC_URL}/setup/server_details`,
       },
       {
         svgIcon: "bonus-kit",

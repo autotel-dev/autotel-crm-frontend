@@ -18,7 +18,7 @@ const ProvinceListNav = () => {
       <Row>
         <Col md={6}>
           <Nav tabs className="border-tab">
-            <NavItem>
+            <NavItem style={{ cursor: "pointer" }}>
               <NavLink
                 className={activeTab === "1" ? "active" : ""}
                 onClick={() => {
@@ -36,7 +36,7 @@ const ProvinceListNav = () => {
                 {all}
               </NavLink>
             </NavItem>
-            <NavItem>
+            <NavItem style={{ cursor: "pointer" }}>
               <NavLink
                 className={activeTab === "2" ? "active" : ""}
                 onClick={() => {
@@ -57,7 +57,7 @@ const ProvinceListNav = () => {
                 {inactive}
               </NavLink>
             </NavItem>
-            <NavItem>
+            <NavItem style={{ cursor: "pointer" }}>
               <NavLink
                 className={activeTab === "3" ? "active" : ""}
                 onClick={() => {

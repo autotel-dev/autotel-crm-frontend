@@ -132,6 +132,9 @@ import Companies from "../Pages/Companies/Companies";
 import Countries from "../Pages/Countries/Countries";
 import CreateCompanyForm from "../Pages/Companies/CreateCompanyForm/CreateCompanyForm";
 import ServerManagement from "../Pages/ServerManagement/ServerManagement";
+import Servers from "../Pages/ServerDetails/Servers";
+import CreateServerForm from "../Pages/ServerDetails/CreateServerForm/CreateServerForm";
+import UpdateServerForm from "../Pages/ServerDetails/UpdateServerForm.tsx/UpdateServerForm";
 
 const routes = [
   // dashboard routes
@@ -647,6 +650,18 @@ const routes = [
   {
     path: `${process.env.PUBLIC_URL}/setup/crm_module`,
     Component: <CRMModule />,
+  },
+  {
+    path: `${process.env.PUBLIC_URL}/setup/server_details`,
+    Component: <Servers />,
+  },
+  {
+    path: `${process.env.PUBLIC_URL}/setup/server_details/createNewServer`,
+    Component: <CreateServerForm />,
+  },
+  {
+    path: `${process.env.PUBLIC_URL}/setup/server_details/updareServer`,
+    Component: <UpdateServerForm />,
   },
   {
     path: `${process.env.PUBLIC_URL}/setup/server_management`,

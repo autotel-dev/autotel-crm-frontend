@@ -191,7 +191,11 @@ const UpdateCountry: React.FC<PropsTypes> = ({
                         console.log(e.target.value);
                       }}
                     />
-                    <span className={`switch-state bg-primary`} />
+                    <span
+                      className={`switch-state ${
+                        isActive ? "bg-primary" : "bg-secondary"
+                      }`}
+                    />
                   </Label>
                 </div>
               </div>

@@ -3,7 +3,6 @@ import { CheckCircle, Info, Target } from "react-feather";
 import { all, active, inactive } from "../../utils/Constant";
 import { useAppDispatch, useAppSelector } from "../../ReaduxToolkit/Hooks";
 import { setActiveTab } from "../../ReaduxToolkit/Reducer/ProjectSlice";
-import { setCountries } from "../../ReaduxToolkit/Reducer/CountrySlice";
 import { useSelector } from "react-redux";
 import CreateNewCRMModule from "./CreateNewCRMModule";
 import { setCRMModules } from "../../ReaduxToolkit/Reducer/CRMModuleSlice";
@@ -19,7 +18,7 @@ const CRMModuleListNav = () => {
       <Row>
         <Col md={6}>
           <Nav tabs className="border-tab">
-            <NavItem>
+            <NavItem style={{ cursor: "pointer" }}>
               <NavLink
                 className={activeTab === "1" ? "active" : ""}
                 onClick={() => {
@@ -37,7 +36,7 @@ const CRMModuleListNav = () => {
                 {all}
               </NavLink>
             </NavItem>
-            <NavItem>
+            <NavItem style={{ cursor: "pointer" }}>
               <NavLink
                 className={activeTab === "3" ? "active" : ""}
                 onClick={() => {
@@ -54,10 +53,10 @@ const CRMModuleListNav = () => {
                   tempList = [];
                 }}
               >
-                <CheckCircle /> {inactive}
+                <Info /> {inactive}
               </NavLink>
             </NavItem>
-            <NavItem>
+            <NavItem style={{ cursor: "pointer" }}>
               <NavLink
                 className={activeTab === "2" ? "active" : ""}
                 onClick={() => {
@@ -74,7 +73,7 @@ const CRMModuleListNav = () => {
                   tempList = [];
                 }}
               >
-                <Info />
+                <CheckCircle />
                 {active}
               </NavLink>
             </NavItem>

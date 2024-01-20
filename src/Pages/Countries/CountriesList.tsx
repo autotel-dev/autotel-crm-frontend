@@ -16,7 +16,6 @@ import {
 } from "../../ReaduxToolkit/Reducer/CountrySlice";
 import { setNoDataFound } from "../../ReaduxToolkit/Reducer/NoDataFoundSlice";
 import UpdateCountry from "./UpdateCountry";
-import { log } from "console";
 import Loader from "../Loader/Loader";
 
 const CountriesList = () => {

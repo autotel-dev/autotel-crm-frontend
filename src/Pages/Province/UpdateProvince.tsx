@@ -181,7 +181,7 @@ const UpdateProvince: React.FC<PropsTypes> = ({
               </span>
               <div className="d-flex">
                 <div
-                  className={`text-end flex-shrink-0 icon-state switch-outline
+                  className={`text-end flex-shrink-0 icon-state
                             }`}
                 >
                   <Label className="switch mb-0">
@@ -194,7 +194,11 @@ const UpdateProvince: React.FC<PropsTypes> = ({
                         console.log(e.target.value);
                       }}
                     />
-                    <span className={`switch-state bg-primary`} />
+                    <span
+                      className={`switch-state ${
+                        isActive ? "bg-primary" : "bg-secondary"
+                      }`}
+                    />
                   </Label>
                 </div>
               </div>

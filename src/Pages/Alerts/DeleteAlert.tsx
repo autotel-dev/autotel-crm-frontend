@@ -25,6 +25,10 @@ import {
   setFilterCRMModules,
 } from "../../ReaduxToolkit/Reducer/CRMModuleSlice";
 import { setNoDataFound } from "../../ReaduxToolkit/Reducer/NoDataFoundSlice";
+import {
+  setFilterServers,
+  setServers,
+} from "../../ReaduxToolkit/Reducer/ServerDetailsSlice";
 
 const deleteAlert = (
   alertData: alertTypes,
@@ -51,6 +55,8 @@ const deleteAlert = (
         uri = `country/delete-country`;
       } else if (type === "crmModuleType") {
         uri = `crm-module/delete-module`;
+      } else if (type === "serverType") {
+        uri = `server-management/delete-server`;
       }
 
       try {
@@ -77,6 +83,26 @@ const deleteAlert = (
             //   text: "Poof! Your city has been deleted!",
             //   icon: "success",
             // });
+
+            if (type == "serverType") {
+              getAll({ url: "server-management/get-all-servers" }).then(
+                (data: any) => {
+                  console.log("api call --- >", data);
+                  if (data !== undefined) {
+                    dispatch(setNoDataFound(data.message));
+                    if (data.success) {
+                      console.log("hhg");
+                      dispatch(setServers(data.data.allServers));
+                      dispatch(setFilterServers(data.data.allServers));
+                    } else {
+                      dispatch(setServers([]));
+                    }
+                  } else {
+                    console.log("ier67i");
+                  }
+                }
+              );
+            }
             if (type == "cityType") {
               getAll({ url: "city/get-all-cities" }).then((data: any) => {
                 console.log("api call --- >", data);
