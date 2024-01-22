@@ -445,12 +445,22 @@ const UpdateServerForm = () => {
                               )
                             }
                           />
-                          <Button onClick={togglePasswordVisibility}>
+                          <Button
+                            color="white"
+                            // className="bg-transparent"
+                            onClick={togglePasswordVisibility}
+                            style={{
+                              backgroundColor: "transparent",
+                              width: "80px",
+                              border:"1px solid #dee2e6"
+                            }}
+                          >
                             <FontAwesomeIcon
-                              color="primary"
+                              // color="secondary"
                               style={{
-                                backgroundColor: "transparent",
+                                color: "green",
                                 fontSize: "20px",
+                                marginRight: "20px",
                               }}
                               icon={showPassword ? faEye : faEyeSlash}
                             />

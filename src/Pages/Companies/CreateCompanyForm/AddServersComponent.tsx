@@ -54,13 +54,13 @@ const AddServersComponent: React.FC<propTypes> = ({ server }) => {
     console.log(serverCredentials);
   };
 
-  //   const handleNextButton = () => {
-  //     if (emailAddress !== "" && password !== "") {
-  //       callbackActive(3);
-  //     } else {
-  //       ShowError();
-  //     }
-  //   };
+    const handleNextButton = () => {
+      if (emailAddress !== "" && password !== "") {
+        // callbackActive(3);
+      } else {
+        ShowError();
+      }
+    };
   return (
     <Form
       onSubmit={(event) => event.preventDefault()}

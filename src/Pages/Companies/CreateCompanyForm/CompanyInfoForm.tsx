@@ -18,8 +18,8 @@ import { setCreateCompany } from "../../../ReaduxToolkit/Reducer/CompanySlice";
 const CompanyInfoForm = ({ callbackActive }: BusinessFormCommonProps) => {
   const dispatch = useDispatch();
   const { createCompany } = useSelector((state: any) => state.companies);
-  const [personalDetailsForm, setPersonalDetailsForm] = useState({
-    companyName: "",
+  const [companyInfoForm, setCompanyInfoForm] = useState({
+    fullName: "",
     phoneNo: "",
     city: "",
     address: "",
@@ -30,7 +30,7 @@ const CompanyInfoForm = ({ callbackActive }: BusinessFormCommonProps) => {
     cnicNumber: "",
   });
   const {
-    companyName,
+    fullName,
     phoneNo,
     city,
     address,
@@ -39,17 +39,17 @@ const CompanyInfoForm = ({ callbackActive }: BusinessFormCommonProps) => {
     gstNo,
     contactPersonNumber,
     cnicNumber,
-  } = personalDetailsForm;
+  } = companyInfoForm;
   const getUserData = (event: ChangeEvent<HTMLInputElement>) => {
     let name = event.target.name;
     let value =
       name === "rememberNextTime" ? event.target.checked : event.target.value;
-    setPersonalDetailsForm({ ...personalDetailsForm, [name]: value });
+    setCompanyInfoForm({ ...companyInfoForm, [name]: value });
   };
 
   const handleNextButton = () => {
     if (
-      companyName !== "" &&
+      fullName !== "" &&
       phoneNo !== "" &&
       city !== "" &&
       address !== "" &&
@@ -59,9 +59,15 @@ const CompanyInfoForm = ({ callbackActive }: BusinessFormCommonProps) => {
       contactPersonNumber !== "" &&
       cnicNumber !== ""
     ) {
-      dispatch(setCreateCompany(personalDetailsForm));
-      console.log("personalDetailsForm -->", personalDetailsForm);
+      // dispatch(setCreateCompany(companyInfoForm));
+      console.log("personalDetailsForm -->", companyInfoForm);
       console.log("createCompany--- >", createCompany);
+      dispatch(
+        setCreateCompany({
+          ...createCompany,
+          ...companyInfoForm,
+        })
+      );
 
       callbackActive(2);
     } else {
@@ -83,8 +89,8 @@ const CompanyInfoForm = ({ callbackActive }: BusinessFormCommonProps) => {
           <Input
             type="text"
             placeholder="Enter Company Name"
-            value={companyName}
-            name="companyName"
+            value={fullName}
+            name="fullName"
             onChange={getUserData}
           />
         </Col>

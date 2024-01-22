@@ -2,13 +2,16 @@ import React, { useEffect, useState } from "react";
 import { Select } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { setCountryId } from "../../../ReaduxToolkit/Reducer/ProvinceSlice";
-import { setServersAddItemsList } from "../../../ReaduxToolkit/Reducer/CompanySlice";
+import {
+  setServerCredentials,
+  setServersAddItemsList,
+} from "../../../ReaduxToolkit/Reducer/CompanySlice";
 interface propTypes {
   placeholder: any;
 }
 
 const SelectServerBox: React.FC<propTypes> = ({ placeholder }) => {
-  const { servers, serversAddItemsList } = useSelector(
+  const { servers, serversAddItemsList, serverCredentials } = useSelector(
     (state: any) => state.companies
   );
   console.log(servers);
@@ -43,7 +46,6 @@ const SelectServerBox: React.FC<propTypes> = ({ placeholder }) => {
     <Select
       showSearch
       mode="multiple"
-      
       style={{ width: 500, height: 36 }}
       placeholder={placeholder}
       optionFilterProp="children"
@@ -58,15 +60,22 @@ const SelectServerBox: React.FC<propTypes> = ({ placeholder }) => {
       onChange={(e, option) => {
         dispatch(setServersAddItemsList([]));
         console.log(e);
-        console.log(option);
-        // var temp: any = [];
-        // option?.map((item: any, index: any) => {
-        //   temp.push({
-        //     hostUrl: `${item.backendUrl}`,
-        //     server: `${item.value}`,
-        //   });
-        // });
+        console.log("options", option);
+
         dispatch(setServersAddItemsList(option));
+
+        serverCredentials.map((item: any, index: any) => {
+          const isMatch = e.some((id: any) => {
+            // Implement your own logic to check if the JSON objects match
+            // In this example, we're checking if both id and name match
+            if (id === item.server) {
+              console.log("The element found");
+            } else {
+              console.log("No match found.");
+            }
+          });
+        });
+
         console.log("reduxServerAdItemsList -- >", serversAddItemsList);
       }}
       options={serverList}

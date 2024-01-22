@@ -34,13 +34,14 @@ const AccountCredentials = ({ callbackActive }: BusinessFormCommonProps) => {
 
   const handleNextButton = () => {
     if (emailAddress !== "" && password !== "") {
-      dispatch(setServersAddItemsList([]));
-      setFormData({
-       ...accountCredentialsForm,
-        ...createCompany,
-      });
-      dispatch(setCreateCompany(formData));
-      console.log("formData -->", formData);
+      // dispatch(setServersAddItemsList([]));
+      dispatch(
+        setCreateCompany({
+          ...createCompany,
+          ...accountCredentialsForm,
+        })
+      );
+      console.log("formData -->", accountCredentialsForm);
       console.log("createCompany--- >", createCompany);
       callbackActive(3);
     } else {

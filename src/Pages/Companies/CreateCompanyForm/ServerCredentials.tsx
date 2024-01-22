@@ -13,16 +13,23 @@ import {
 import SelectServerBox from "./SelectServersBox";
 import { useDispatch, useSelector } from "react-redux";
 import AddServersComponent from "./AddServersComponent";
+import { setCreateCompany } from "../../../ReaduxToolkit/Reducer/CompanySlice";
 
 const ServerCredentials = ({ callbackActive }: BusinessFormCommonProps) => {
-  const { servers, serversAddItemsList } = useSelector(
+  const { servers, serversAddItemsList, serverCredentials } = useSelector(
     (state: any) => state.companies
   );
   const { createCompany } = useSelector((state: any) => state.companies);
   const dispatch = useDispatch();
 
   const handleNextButton = () => {
-    if (servers.length > 0) {
+    if (serverCredentials.length > 0) {
+      dispatch(
+        setCreateCompany({
+          ...createCompany,
+          serverCredentials: serverCredentials,
+        })
+      );
       callbackActive(4);
     } else {
       ShowError();

@@ -17,12 +17,20 @@ const FileAttachementComponent: React.FC<propTypes> = ({ heading }) => {
       code: "",
     },
   ];
+
+  const handleAdd = (file: any) => {
+    console.log("File added:", file.file);
+    // Do something with the file or its meta data
+    
+  };
   return (
     <Col lg={4}>
       <Card>
         <CommonHeader title={heading} subTitle={subTitle} headClass="pb-0" />
         <CardBody>
           <Dropzone
+            onChangeStatus={handleAdd}
+            accept="image/*"
             getUploadParams={getUploadParams}
             maxFiles={1}
             inputContent="Drop files here or click to upload."

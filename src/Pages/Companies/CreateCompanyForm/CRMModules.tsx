@@ -13,10 +13,13 @@ import {
 import SelectServerBox from "./SelectServersBox";
 import { useDispatch, useSelector } from "react-redux";
 import AddServersComponent from "./AddServersComponent";
-import { setAllowedModules } from "../../../ReaduxToolkit/Reducer/CompanySlice";
+import {
+  setAllowedModules,
+  setCreateCompany,
+} from "../../../ReaduxToolkit/Reducer/CompanySlice";
 
 const CRMModules = ({ callbackActive }: BusinessFormCommonProps) => {
-  const { allowedModules, crmModules } = useSelector(
+  const { allowedModules, crmModules, createCompany } = useSelector(
     (state: any) => state.companies
   );
   const dispatch = useDispatch();
@@ -24,6 +27,13 @@ const CRMModules = ({ callbackActive }: BusinessFormCommonProps) => {
   const [switches, setSwitches] = useState("off");
 
   const handleNextButton = () => {
+    dispatch(
+      setCreateCompany({
+        ...createCompany,
+        allowedModules: allowedModules,
+      })
+    );
+
     callbackActive(5);
   };
   return (
@@ -56,7 +66,7 @@ const CRMModules = ({ callbackActive }: BusinessFormCommonProps) => {
                     >
                       <Col md={6}>{item.name}</Col>
                       <Col md={6}>
-                      <div className="d-flex" key={index}>
+                        <div className="d-flex" key={index}>
                           <div
                             className={`text-end flex-shrink-0 icon-state switch-outline
                             }`}
@@ -73,7 +83,7 @@ const CRMModules = ({ callbackActive }: BusinessFormCommonProps) => {
                                     setSwitches("on");
                                   }
                                   const itemExist = allowedModules.some(
-                                    (i: any) => i === item.name
+                                    (i: any) => i === item._id
                                   );
                                   console.log(itemExist);
 
@@ -82,7 +92,7 @@ const CRMModules = ({ callbackActive }: BusinessFormCommonProps) => {
 
                                     const updatedAllowedModules =
                                       allowedModules.filter(
-                                        (i: any) => i !== item.name
+                                        (i: any) => i !== item._id
                                       );
                                     console.log("If condition");
                                     console.log(
@@ -99,7 +109,7 @@ const CRMModules = ({ callbackActive }: BusinessFormCommonProps) => {
                                     dispatch(
                                       setAllowedModules([
                                         ...allowedModules,
-                                        item.name,
+                                        item._id,
                                       ])
                                     );
                                   }
