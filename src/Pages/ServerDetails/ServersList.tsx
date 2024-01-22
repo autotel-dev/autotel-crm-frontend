@@ -91,9 +91,9 @@ const ServersList = () => {
                 border: "none",
               }}
               onClick={() => {
+                dispatch(setServer(row));
                 navigate(
-                  `${process.env.PUBLIC_URL}/setup/server_details/updareServer`,
-                  { state: { server: row } }
+                  `${process.env.PUBLIC_URL}/setup/server_details/updareServer`
                 );
               }}
             >

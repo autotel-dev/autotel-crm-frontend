@@ -1,13 +1,6 @@
 import { Container, Row } from "reactstrap";
 import Breadcrumbs from "../../../CommonElements/Breadcrumbs/Breadcrumbs";
-import {
-  Businesshorizontalwizard,
-  Businessverticalwizard,
-  Customhorizontalwizard,
-  Customverticalwizard,
-  FormLayouts,
-  FormWizard2Heading,
-} from "../../../utils/Constant";
+
 import CustomHorizontalWizard from "./CustomHorizontalWizard";
 import { useEffect } from "react";
 import { getAll } from "../../../Api";

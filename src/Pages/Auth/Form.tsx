@@ -5,8 +5,6 @@ import { Button, Form, FormGroup, Input, Label } from "reactstrap";
 import {
   EmailAddress,
   Password,
-  SignIn,
-  SignInAccount,
 } from "../../utils/Constant";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";

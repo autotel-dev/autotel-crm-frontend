@@ -84,18 +84,17 @@ const SuccessfullyFormSubmitted = ({
   };
 
   useEffect(() => {
-    setFormData({
-      ...formData,
-      ...serverInfo,
-      ...serverCredentials,
-      googleMapApiKey: apiKeys,
-      googleAccount: googleAccountCreadentials,
-      firebaseAccount: firebaseAccountCredentials,
-    });
+    // setFormData({
+    //   ...formData,
+    //   ...serverInfo,
+    //   ...serverCredentials,
+    //   googleMapApiKey: apiKeys,
+    //   googleAccount: googleAccountCreadentials,
+    //   firebaseAccount: firebaseAccountCredentials,
+    // });
     dispatch(
       setCreateServer({
         ...createServer,
-        ...formData,
       })
     );
     console.log("createServerRedux --- UseEffect -- >", createServer);

@@ -4,10 +4,10 @@ import ShowError from "./ShowError";
 import { Button, Col, Form, FormGroup, Input, Label, Row } from "reactstrap";
 import { Continue, PAN, Previous } from "../../../utils/Constant";
 import { useDispatch, useSelector } from "react-redux";
-import { setServerCredentials } from "../../../ReaduxToolkit/Reducer/ServerDetailsSlice";
+import { setCreateServer, setServerCredentials } from "../../../ReaduxToolkit/Reducer/ServerDetailsSlice";
 
 const ServerCredentials = ({ callbackActive }: BusinessFormCommonProps) => {
-  const { serverCredentials } = useSelector(
+  const { serverCredentials,createServer } = useSelector(
     (state: any) => state.serverDetails
   );
   const dispatch = useDispatch();
@@ -28,6 +28,12 @@ const ServerCredentials = ({ callbackActive }: BusinessFormCommonProps) => {
       dispatch(setServerCredentials(accountCredentialsForm));
       console.log("serverInfoForm -->", accountCredentialsForm);
       console.log("serverCredentials--- >", serverCredentials);
+      dispatch(
+        setCreateServer({
+          ...createServer,
+          ...accountCredentialsForm,
+        })
+      );
       callbackActive(3);
     } else {
       ShowError();

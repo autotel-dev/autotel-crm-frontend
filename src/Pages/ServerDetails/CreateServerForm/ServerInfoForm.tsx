@@ -4,11 +4,16 @@ import ShowError from "./ShowError";
 import { Button, Col, Form, FormGroup, Input, Label, Row } from "reactstrap";
 import { Continue } from "../../../utils/Constant";
 import { useDispatch, useSelector } from "react-redux";
-import { setServerInfo } from "../../../ReaduxToolkit/Reducer/ServerDetailsSlice";
+import {
+  setCreateServer,
+  setServerInfo,
+} from "../../../ReaduxToolkit/Reducer/ServerDetailsSlice";
 
 const ServerInfoForm = ({ callbackActive }: BusinessFormCommonProps) => {
   const dispatch = useDispatch();
-  const { serverInfo } = useSelector((state: any) => state.serverDetails);
+  const { serverInfo, createServer } = useSelector(
+    (state: any) => state.serverDetails
+  );
   const [serverInfoForm, setServerInfoForm] = useState({
     companyName: "",
     serviceProvider: "",
@@ -57,6 +62,12 @@ const ServerInfoForm = ({ callbackActive }: BusinessFormCommonProps) => {
       dispatch(setServerInfo(serverInfoForm));
       console.log("serverInfoForm -->", serverInfoForm);
       console.log("serverInfo--- >", serverInfo);
+      dispatch(
+        setCreateServer({
+          ...createServer,
+          ...serverInfoForm,
+        })
+      );
 
       callbackActive(2);
     } else {

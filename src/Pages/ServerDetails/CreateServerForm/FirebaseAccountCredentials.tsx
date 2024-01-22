@@ -4,12 +4,15 @@ import ShowError from "./ShowError";
 import { Button, Col, Form, FormGroup, Input, Label, Row } from "reactstrap";
 import { Continue, PAN, Previous } from "../../../utils/Constant";
 import { useDispatch, useSelector } from "react-redux";
-import { setFirebaseAccountCredentials } from "../../../ReaduxToolkit/Reducer/ServerDetailsSlice";
+import {
+  setCreateServer,
+  setFirebaseAccountCredentials,
+} from "../../../ReaduxToolkit/Reducer/ServerDetailsSlice";
 
 const FirebaseAccountCredentials = ({
   callbackActive,
 }: BusinessFormCommonProps) => {
-  const { firebaseAccountCreadentials } = useSelector(
+  const { firebaseAccountCredentials, createServer } = useSelector(
     (state: any) => state.serverDetails
   );
   const dispatch = useDispatch();
@@ -31,7 +34,13 @@ const FirebaseAccountCredentials = ({
       console.log("FirebaseAccountCredentialsForm -->", accountCredentialsForm);
       console.log(
         "firebaseAccountCreadentials --- >",
-        firebaseAccountCreadentials
+        firebaseAccountCredentials
+      );
+      dispatch(
+        setCreateServer({
+          ...createServer,
+          firebaseAccount: accountCredentialsForm,
+        })
       );
       callbackActive(5);
     } else {

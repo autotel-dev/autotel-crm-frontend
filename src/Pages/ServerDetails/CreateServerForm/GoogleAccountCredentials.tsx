@@ -6,12 +6,15 @@ import { Continue, PAN, Previous } from "../../../utils/Constant";
 import { setServersAddItemsList } from "../../../ReaduxToolkit/Reducer/CompanySlice";
 import { useDispatch, useSelector } from "react-redux";
 import { setCreateCompany } from "../../../ReaduxToolkit/Reducer/CompanySlice";
-import { setGoogleAccountCreadentials } from "../../../ReaduxToolkit/Reducer/ServerDetailsSlice";
+import {
+  setCreateServer,
+  setGoogleAccountCreadentials,
+} from "../../../ReaduxToolkit/Reducer/ServerDetailsSlice";
 
 const GoogleAccountCredentials = ({
   callbackActive,
 }: BusinessFormCommonProps) => {
-  const { googleAccountCreadentials } = useSelector(
+  const { googleAccountCreadentials, createServer } = useSelector(
     (state: any) => state.serverDetails
   );
   const dispatch = useDispatch();
@@ -32,6 +35,12 @@ const GoogleAccountCredentials = ({
       dispatch(setGoogleAccountCreadentials(accountCredentialsForm));
       console.log("GoogleaccountCredentialsForm -->", accountCredentialsForm);
       console.log("googleAccountCreadentials --- >", googleAccountCreadentials);
+      dispatch(
+        setCreateServer({
+          ...createServer,
+          googleAccount: accountCredentialsForm,
+        })
+      );
       callbackActive(4);
     } else {
       ShowError();

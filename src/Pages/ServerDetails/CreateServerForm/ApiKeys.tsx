@@ -4,10 +4,15 @@ import ShowError from "./ShowError";
 import { Button, Col, Form, FormGroup, Input, Label, Row } from "reactstrap";
 import { Continue, PAN, Previous } from "../../../utils/Constant";
 import { useDispatch, useSelector } from "react-redux";
-import { setApiKeys } from "../../../ReaduxToolkit/Reducer/ServerDetailsSlice";
+import {
+  setApiKeys,
+  setCreateServer,
+} from "../../../ReaduxToolkit/Reducer/ServerDetailsSlice";
 
 const ApiKeys = ({ callbackActive }: BusinessFormCommonProps) => {
-  const { apiKeys } = useSelector((state: any) => state.serverDetails);
+  const { apiKeys, createServer } = useSelector(
+    (state: any) => state.serverDetails
+  );
   const dispatch = useDispatch();
   const [googleMapApiKey, setGoogleMapApiKey] = useState("");
   const getUserData = (event: ChangeEvent<HTMLInputElement>) => {
@@ -22,6 +27,12 @@ const ApiKeys = ({ callbackActive }: BusinessFormCommonProps) => {
       dispatch(setApiKeys(googleMapApiKey));
       console.log("googleMapApiKey -->", googleMapApiKey);
       console.log("apiKeys --- >", apiKeys);
+      dispatch(
+        setCreateServer({
+          ...createServer,
+          googleMapApiKey: googleMapApiKey,
+        })
+      );
       callbackActive(6);
     } else {
       ShowError();

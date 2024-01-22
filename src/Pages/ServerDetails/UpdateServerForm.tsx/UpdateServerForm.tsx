@@ -1,352 +1,510 @@
 import { H2, Image } from "../../../AbstractElements";
-import { dynamicImage } from "../../../Service";
-import { SuccessfullyCompleted } from "../../../utils/Constant";
-import { BusinessFormCommonProps } from "../../../Types/Forms/FormLayout/FormWizardTypes";
+import Breadcrumbs from "../../../CommonElements/Breadcrumbs/Breadcrumbs";
 import ShowError from "../CreateServerForm/ShowError";
-import { Button, Col, Form, FormGroup, Input, Label, Row } from "reactstrap";
+import {
+  Button,
+  Card,
+  CardBody,
+  Col,
+  Form,
+  FormGroup,
+  InputGroup,
+  Input,
+  Label,
+  Row,
+  Container,
+} from "reactstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
+
+import { setNoDataFound } from "../../../ReaduxToolkit/Reducer/NoDataFoundSlice";
+import { create, getAll, update } from "../../../Api";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
-  setCreateServer,
   setServersStart,
   setServers,
   setServersEnd,
   setFilterServers,
-  setServerInfo,
-  setServerCredentials,
-  setGoogleAccountCreadentials,
-  setFirebaseAccountCredentials,
-  setApiKeys,
 } from "../../../ReaduxToolkit/Reducer/ServerDetailsSlice";
-import { setNoDataFound } from "../../../ReaduxToolkit/Reducer/NoDataFoundSlice";
-import { create, getAll } from "../../../Api";
-import { useLocation, useNavigate } from "react-router-dom";
-interface PropsTypes {
-  server: any;
-}
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 
+interface PropsTypes {
+  location: any;
+}
 const UpdateServerForm = () => {
-  const location = useLocation();
-  const { server } = location.state;
+  const { server } = useSelector((state: any) => state.serverDetails);
+  // const [server, setServer] = useState(location.state || {});
+  // const { server } = location?.state;
   console.log("server", server);
 
-  const {
-    createServer,
-    serverInfo,
-    serverCredentials,
-    googleAccountCreadentials,
-    firebaseAccountCredentials,
-    apiKeys,
-  } = useSelector((state: any) => state.serverDetails);
-  const [formData, setFormData] = useState({});
+  const [formData, setFormData]: any = useState({
+    companyName: server.companyName,
+    serviceProvider: server.serviceProvider,
+    ipAddress: server.ipAddress,
+    url: server.url,
+    multiCloudWebLogin: server.multiCloudWebLogin,
+    loginUserSoftware: server.loginUserSoftware,
+    loginPasswordSoftware: server.loginPasswordSoftware,
+    operatingSystem: server.operatingSystem,
+    loginUserServer: server.loginUserServer,
+    sshPort: server.sshPort,
+    serverSpecifications: server.serverSpecifications,
+    googleAccount: {
+      emailAddress: server.googleAccount.emailAddress,
+      password: server.googleAccount.password,
+    },
+    firebaseAccount: {
+      emailAddress: server.firebaseAccount.emailAddress,
+      password: server.firebaseAccount.password,
+    },
+    googleMapApiKey: server.googleMapApiKey,
+  });
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
-  const createServerSubmitted = async () => {
-    console.log("createServerRedux", createServer);
+  // Function to update the formData
+  const updateFormData = (field: any, value: any) => {
+    setFormData((prevFormData: any) => ({
+      ...prevFormData, // Copy the existing state
+      [field]: value, // Update the specific field
+    }));
+
+    console.log("formData-->", formData);
   };
 
-  useEffect(() => {
-    setFormData({
-      ...formData,
-      ...server,
-    });
+  // Function to update nested values in formData
+  const togglePasswordVisibility = (e: any) => {
+    e.preventDefault();
+    setShowPassword(!showPassword);
+  };
 
-    console.log("Update formData --- UseEffect -- >", formData);
-  }, [server]);
+  const updateNestedValue = (parentField: any, childField: any, value: any) => {
+    setFormData((prevFormData: any) => ({
+      ...prevFormData,
+      [parentField]: {
+        ...prevFormData[parentField],
+        [childField]: value,
+      },
+    }));
+    console.log("formData-->", formData);
+  };
+
+  const updateServerSubmitted = async (e: any) => {
+    e.preventDefault();
+    console.log("updatedFormData", formData);
+
+    try {
+      await update(formData, {
+        url: "server-management/update-server",
+      }).then((data: any) => {
+        setLoading(false);
+
+        if (data.success) {
+          console.log(data);
+          setLoading(false);
+          dispatch(setServersStart());
+          getAll({ url: "server-management/get-all-servers" }).then(
+            (data: any) => {
+              console.log("api call --- >", data);
+
+              // ----------------------
+              dispatch(setServersEnd());
+              if (data !== undefined) {
+                dispatch(setNoDataFound(data.message));
+                if (data.success) {
+                  console.log("hhg");
+                  dispatch(setServers(data.data.allServers));
+                  dispatch(setFilterServers(data.data.allServers));
+                  navigate(`${process.env.PUBLIC_URL}/setup/server_details`);
+                }
+              }
+            }
+          );
+        }
+      });
+      // Handle successful post creation (e.g., show a success message, redirect, etc.)
+    } catch (error: any) {
+      // Handle error (e.g., show an error message)
+      console.error("Error creating post:", error);
+      setLoading(false);
+    }
+  };
 
   return (
-    <div className="form-completed">
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          marginTop: "70px",
-        }}
-      >
-        <H2>Edit Server</H2>
-      </div>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          marginTop: "30px",
-        }}
-      >
-        <H2>Server Info</H2>
+    <>
+      <Breadcrumbs
+        mainTitle="Update Server Details"
+        parent="Update Server Details"
+        title=""
+      />
+      <Container fluid>
         <Row>
-          <Col
-            xs={9}
-            className="text-end d-flex justify-content-end gap-2 align-center"
-          ></Col>
+          <Col sm={12}>
+            <Card>
+              <CardBody>
+                <div className="form-completed">
+                  <Form>
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        marginTop: "30px",
+                      }}
+                    >
+                      <H2>Server Info</H2>
+                      <Row>
+                        <Col
+                          xs={9}
+                          className="text-end d-flex justify-content-end gap-2 align-center"
+                        ></Col>
+                      </Row>
+                    </div>
+
+                    <Row
+                      className="g-3"
+                      style={{ marginBottom: "65px", marginTop: "20px" }}
+                    >
+                      <Col xl={4} sm={6}>
+                        <Label>
+                          Company Name
+                          <span className="txt-danger">*</span>
+                        </Label>
+                        <Input
+                          type="text"
+                          placeholder="Enter Company Name"
+                          defaultValue={formData.companyName}
+                          name="companyName"
+                          onChange={(e) =>
+                            updateFormData("companyName", e.target.value)
+                          }
+                        />
+                      </Col>
+                      <Col xl={4} sm={6}>
+                        <Label>
+                          Service Provider
+                          <span className="txt-danger">*</span>
+                        </Label>
+                        <Input
+                          type="text"
+                          placeholder="Enter Service Provider"
+                          defaultValue={formData.serviceProvider}
+                          name="serviceProvider"
+                          onChange={(e) =>
+                            updateFormData("serviceProvider", e.target.value)
+                          }
+                        />
+                      </Col>
+                      <Col xl={4} xs={12}>
+                        <Label>
+                          IP Address
+                          <span className="txt-danger">*</span>
+                        </Label>
+                        <Input
+                          id="ipAddress"
+                          type="text"
+                          placeholder="IP Address"
+                          defaultValue={formData.ipAddress}
+                          name="ipAddress"
+                          onChange={(e) =>
+                            updateFormData("ipAddress", e.target.value)
+                          }
+                        />
+                      </Col>
+                      <Col xl={4} sm={6}>
+                        <Label>
+                          Server URL
+                          <span className="txt-danger">*</span>
+                        </Label>
+                        <Input
+                          type="text"
+                          placeholder="Enter Server URL"
+                          defaultValue={formData.url}
+                          name="url"
+                          onChange={(e) =>
+                            updateFormData("url", e.target.value)
+                          }
+                        />
+                      </Col>
+                      <Col xl={4} sm={6}>
+                        <Label>
+                          Login User Software
+                          <span className="txt-danger">*</span>
+                        </Label>
+                        <Input
+                          type="text"
+                          placeholder="Enter Login User Software"
+                          defaultValue={formData.loginUserSoftware}
+                          name="loginUserSoftware"
+                          onChange={(e) =>
+                            updateFormData("loginUserSoftware", e.target.value)
+                          }
+                        />
+                      </Col>
+                      <Col xl={4} xs={12}>
+                        <Label>
+                          Operating System
+                          <span className="txt-danger">*</span>
+                        </Label>
+                        <Input
+                          id="operatingSystem"
+                          type="text"
+                          placeholder="Enter Operating System"
+                          defaultValue={formData.operatingSystem}
+                          name="operatingSystem"
+                          onChange={(e) =>
+                            updateFormData("operatingSystem", e.target.value)
+                          }
+                        />
+                      </Col>
+                      <Col xl={4} xs={12}>
+                        <Label>
+                          Login User Server
+                          <span className="txt-danger">*</span>
+                        </Label>
+                        <Input
+                          id="loginUserServer"
+                          type="text"
+                          placeholder="Enter Login User Server"
+                          defaultValue={formData.loginUserServer}
+                          name="loginUserServer"
+                          onChange={(e) =>
+                            updateFormData("loginUserServer", e.target.value)
+                          }
+                        />
+                      </Col>
+                      <Col xl={4} xs={12}>
+                        <Label>
+                          SSH Port
+                          <span className="txt-danger">*</span>
+                        </Label>
+                        <Input
+                          id="sshPort"
+                          type="text"
+                          placeholder="Enter SSH Port"
+                          defaultValue={formData.sshPort}
+                          name="sshPort"
+                          onChange={(e) =>
+                            updateFormData("sshPort", e.target.value)
+                          }
+                        />
+                      </Col>
+                      <Col xl={4} xs={12}>
+                        <Label>
+                          Server Specifications
+                          <span className="txt-danger">*</span>
+                        </Label>
+                        <Input
+                          id="serverSpecifications"
+                          type="text"
+                          placeholder="Enter Server Specifications"
+                          defaultValue={formData.serverSpecifications}
+                          name="serverSpecifications"
+                          onChange={(e) =>
+                            updateFormData(
+                              "serverSpecifications",
+                              e.target.value
+                            )
+                          }
+                        />
+                      </Col>
+                    </Row>
+
+                    {/*  */}
+
+                    <H2>Server Credentials</H2>
+
+                    <Row
+                      className="g-3"
+                      style={{ marginBottom: "65px", marginTop: "20px" }}
+                    >
+                      <Col sm={6}>
+                        <Label>
+                          Multi Cloud Web Login
+                          <span className="txt-danger">*</span>
+                        </Label>
+                        <Input
+                          defaultValue={formData.multiCloudWebLogin}
+                          name="multiCloudWebLogin"
+                          type="email"
+                          placeholder="Enter Multi Cloud Web Login Email"
+                          onChange={(e) =>
+                            updateFormData("multiCloudWebLogin", e.target.value)
+                          }
+                        />
+                      </Col>
+                      <Col sm={6}>
+                        <Label>
+                          Login Password Software
+                          <span className="txt-danger">*</span>
+                        </Label>
+                        <Input
+                          type="password"
+                          placeholder="Enter Login Password Software"
+                          defaultValue={formData.loginPasswordSoftware}
+                          name="loginPasswordSoftware"
+                          onChange={(e) =>
+                            updateFormData(
+                              "loginPasswordSoftware",
+                              e.target.value
+                            )
+                          }
+                        />
+                      </Col>
+                    </Row>
+
+                    <H2>Google Account Credentials</H2>
+
+                    <Row
+                      className="g-3"
+                      style={{ marginBottom: "65px", marginTop: "20px" }}
+                    >
+                      <Col sm={6}>
+                        <Label>
+                          Email Address
+                          <span className="txt-danger">*</span>
+                        </Label>
+                        <Input
+                          defaultValue={formData.googleAccount.emailAddress}
+                          name="emailAddress"
+                          type="email"
+                          placeholder="Enter Enter Email Address"
+                          onChange={(e) =>
+                            updateNestedValue(
+                              "googleAccount",
+                              "emailAddress",
+                              e.target.value
+                            )
+                          }
+                        />
+                      </Col>
+                      <Col sm={6}>
+                        <Label>
+                          Password
+                          <span className="txt-danger">*</span>
+                        </Label>
+                        <Input
+                          defaultValue={formData.googleAccount.password}
+                          name="password"
+                          type="password"
+                          placeholder="Enter Password"
+                          onChange={(e) =>
+                            updateNestedValue(
+                              "googleAccount",
+                              "password",
+                              e.target.value
+                            )
+                          }
+                        />
+                      </Col>
+                    </Row>
+
+                    <H2>Firebase Account credentials</H2>
+
+                    <Row
+                      className="g-3"
+                      style={{ marginBottom: "65px", marginTop: "20px" }}
+                    >
+                      <Col sm={6}>
+                        <Label>
+                          Email Address
+                          <span className="txt-danger">*</span>
+                        </Label>
+                        <Input
+                          defaultValue={formData.firebaseAccount.emailAddress}
+                          name="emailAddress"
+                          type="email"
+                          placeholder="Enter Enter Email Address"
+                          onChange={(e) =>
+                            updateNestedValue(
+                              "firebaseAccount",
+                              "emailAddress",
+                              e.target.value
+                            )
+                          }
+                        />
+                      </Col>
+                      <Col sm={6}>
+                        <Label>
+                          Password
+                          <span className="txt-danger">*</span>
+                        </Label>
+                        <InputGroup>
+                          <Input
+                            defaultValue={formData.firebaseAccount.password}
+                            name="password"
+                            type={showPassword ? "text" : "password"}
+                            placeholder="Enter Password"
+                            onChange={(e) =>
+                              updateNestedValue(
+                                "firebaseAccount",
+                                "password",
+                                e.target.value
+                              )
+                            }
+                          />
+                          <Button onClick={togglePasswordVisibility}>
+                            <FontAwesomeIcon
+                              color="primary"
+                              style={{
+                                backgroundColor: "transparent",
+                                fontSize: "20px",
+                              }}
+                              icon={showPassword ? faEye : faEyeSlash}
+                            />
+                          </Button>
+                        </InputGroup>
+                      </Col>
+                    </Row>
+
+                    <H2>API Keys</H2>
+
+                    <Row
+                      className="g-3"
+                      style={{ marginBottom: "65px", marginTop: "20px" }}
+                    >
+                      <Col sm={6}>
+                        <Label>
+                          Google Maps API Key
+                          <span className="txt-danger">*</span>
+                        </Label>
+                        <Input
+                          defaultValue={formData.googleMapApiKey}
+                          name="googleMapApiKey"
+                          type="text"
+                          placeholder="Enter Google Maps API Key"
+                          onChange={(e) =>
+                            updateFormData("googleMapApiKey", e.target.value)
+                          }
+                        />
+                      </Col>
+                    </Row>
+                  </Form>
+                  <Row>
+                    <Col
+                      xs={12}
+                      className="text-end d-flex justify-content-end gap-2 align-center"
+                    >
+                      <Button color="primary">Print</Button>
+                      <Button
+                        color="primary"
+                        onClick={(e) => {
+                          updateServerSubmitted(e);
+                        }}
+                      >
+                        Submit
+                      </Button>
+                    </Col>
+                  </Row>
+                </div>
+              </CardBody>
+            </Card>
+          </Col>
         </Row>
-      </div>
-
-      <Form style={{ marginBottom: "65px", marginTop: "20px" }}>
-        <Row className="g-3">
-          <Col xl={4} sm={6}>
-            <Label>
-              Company Name
-              <span className="txt-danger">*</span>
-            </Label>
-            <Input
-              type="text"
-              placeholder="Enter Company Name"
-              defaultValue={serverInfo.companyName}
-              disabled
-              name="companyName"
-            />
-          </Col>
-          <Col xl={4} sm={6}>
-            <Label>
-              Service Provider
-              <span className="txt-danger">*</span>
-            </Label>
-            <Input
-              type="text"
-              placeholder="Enter Service Provider"
-              defaultValue={serverInfo.serviceProvider}
-              disabled
-              name="serviceProvider"
-            />
-          </Col>
-          <Col xl={4} xs={12}>
-            <Label>
-              IP Address
-              <span className="txt-danger">*</span>
-            </Label>
-            <Input
-              id="ipAddress"
-              type="text"
-              placeholder="IP Address"
-              defaultValue={serverInfo.ipAddress}
-              disabled
-              name="ipAddress"
-            />
-          </Col>
-          <Col xl={4} sm={6}>
-            <Label>
-              Server URL
-              <span className="txt-danger">*</span>
-            </Label>
-            <Input
-              type="text"
-              placeholder="Enter Server URL"
-              defaultValue={serverInfo.url}
-              disabled
-              name="url"
-            />
-          </Col>
-          <Col xl={4} sm={6}>
-            <Label>
-              Login User Software
-              <span className="txt-danger">*</span>
-            </Label>
-            <Input
-              type="text"
-              placeholder="Enter Login User Software"
-              defaultValue={serverInfo.loginUserSoftware}
-              disabled
-              name="loginUserSoftware"
-            />
-          </Col>
-          <Col xl={4} xs={12}>
-            <Label>
-              Operating System
-              <span className="txt-danger">*</span>
-            </Label>
-            <Input
-              id="operatingSystem"
-              type="text"
-              placeholder="Enter Operating System"
-              defaultValue={serverInfo.operatingSystem}
-              disabled
-              name="operatingSystem"
-            />
-          </Col>
-          <Col xl={4} xs={12}>
-            <Label>
-              Login User Server
-              <span className="txt-danger">*</span>
-            </Label>
-            <Input
-              id="loginUserServer"
-              type="text"
-              placeholder="Enter Login User Server"
-              defaultValue={serverInfo.loginUserServer}
-              disabled
-              name="loginUserServer"
-            />
-          </Col>
-          <Col xl={4} xs={12}>
-            <Label>
-              SSH Port
-              <span className="txt-danger">*</span>
-            </Label>
-            <Input
-              id="sshPort"
-              type="text"
-              placeholder="Enter SSH Port"
-              defaultValue={serverInfo.sshPort}
-              disabled
-              name="sshPort"
-            />
-          </Col>
-          <Col xl={4} xs={12}>
-            <Label>
-              Server Specifications
-              <span className="txt-danger">*</span>
-            </Label>
-            <Input
-              id="serverSpecifications"
-              type="text"
-              placeholder="Enter Server Specifications"
-              defaultValue={serverInfo.serverSpecifications}
-              disabled
-              name="serverSpecifications"
-            />
-          </Col>
-        </Row>
-      </Form>
-      {/*  */}
-
-      <H2>Server Credentials</H2>
-
-      <Form style={{ marginBottom: "65px", marginTop: "20px" }}>
-        <Row className="g-3">
-          <Col sm={6}>
-            <Label>
-              Multi Cloud Web Login
-              <span className="txt-danger">*</span>
-            </Label>
-            <Input
-              defaultValue={serverCredentials.multiCloudWebLogin}
-              disabled
-              name="multiCloudWebLogin"
-              type="email"
-              placeholder="Enter Multi Cloud Web Login Email"
-            />
-          </Col>
-          <Col sm={6}>
-            <Label>
-              Login Password Software
-              <span className="txt-danger">*</span>
-            </Label>
-            <Input
-              type="password"
-              placeholder="Enter Login Password Software"
-              defaultValue={serverCredentials.loginPasswordSoftware}
-              disabled
-              name="loginPasswordSoftware"
-            />
-          </Col>
-        </Row>
-      </Form>
-
-      <H2>Google Account Credentials</H2>
-
-      <Form style={{ marginBottom: "65px", marginTop: "20px" }}>
-        <Row className="g-3">
-          <Col sm={6}>
-            <Label>
-              Email Address
-              <span className="txt-danger">*</span>
-            </Label>
-            <Input
-              defaultValue={googleAccountCreadentials.emailAddress}
-              disabled
-              name="emailAddress"
-              type="email"
-              placeholder="Enter Enter Email Address"
-            />
-          </Col>
-          <Col sm={6}>
-            <Label>
-              Password
-              <span className="txt-danger">*</span>
-            </Label>
-            <Input
-              defaultValue={googleAccountCreadentials.password}
-              disabled
-              name="password"
-              type="password"
-              placeholder="Enter Password"
-            />
-          </Col>
-        </Row>
-      </Form>
-
-      <H2>Firebase Account credentials</H2>
-
-      <Form style={{ marginBottom: "65px", marginTop: "20px" }}>
-        <Row className="g-3">
-          <Col sm={6}>
-            <Label>
-              Email Address
-              <span className="txt-danger">*</span>
-            </Label>
-            <Input
-              defaultValue={firebaseAccountCredentials.emailAddress}
-              disabled
-              name="emailAddress"
-              type="email"
-              placeholder="Enter Enter Email Address"
-            />
-          </Col>
-          <Col sm={6}>
-            <Label>
-              Password
-              <span className="txt-danger">*</span>
-            </Label>
-            <Input
-              defaultValue={firebaseAccountCredentials.password}
-              disabled
-              name="password"
-              type="password"
-              placeholder="Enter Password"
-            />
-          </Col>
-        </Row>
-      </Form>
-
-      <H2>API Keys</H2>
-
-      <Form style={{ marginBottom: "65px", marginTop: "20px" }}>
-        <Row className="g-3">
-          <Col sm={6}>
-            <Label>
-              Google Maps API Key
-              <span className="txt-danger">*</span>
-            </Label>
-            <Input
-              defaultValue={apiKeys}
-              disabled
-              name="googleMapApiKey"
-              type="text"
-              placeholder="Enter Google Maps API Key"
-            />
-          </Col>
-        </Row>
-      </Form>
-
-      <Row>
-        <Col
-          xs={12}
-          className="text-end d-flex justify-content-end gap-2 align-center"
-        >
-          <Button color="primary">Print</Button>
-          <Button
-            color="primary"
-            onClick={() => {
-              //   createServerSubmitted();
-            }}
-          >
-            Submit
-          </Button>
-        </Col>
-      </Row>
-    </div>
+      </Container>
+    </>
   );
 };
 

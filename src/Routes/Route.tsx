@@ -661,7 +661,7 @@ const routes = [
   },
   {
     path: `${process.env.PUBLIC_URL}/setup/server_details/updareServer`,
-    Component: <UpdateServerForm />,
+    Component: <UpdateServerForm  />,
   },
   {
     path: `${process.env.PUBLIC_URL}/setup/server_management`,
