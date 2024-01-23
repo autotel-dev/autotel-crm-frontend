@@ -2,15 +2,27 @@ import { Card, CardBody, Col } from "reactstrap";
 import CommonHeader from "../../../Common/CommonHeader";
 import Dropzone from "react-dropzone-uploader";
 import { SingleFileUploads } from "../../../utils/Constant";
+import { useDispatch } from "react-redux";
+import {
+  setCNICFront,
+  setCNICBack,
+  setNTNFile,
+  setPTACertificate,
+  setOther,
+  setImageBackground,
+  setComapnyLogo,
+} from "../../../ReaduxToolkit/Reducer/CompanySlice";
 
 interface propTypes {
   heading: any;
+  category: any;
 }
 
-const FileAttachementComponent: React.FC<propTypes> = ({ heading }) => {
-  const getUploadParams = () => {
-    return { url: "https://httpbin.org/post" };
-  };
+const FileAttachementComponent: React.FC<propTypes> = ({
+  heading,
+  category,
+}) => {
+  const dispatch = useDispatch();
   const subTitle = [
     {
       text: "",
@@ -18,10 +30,70 @@ const FileAttachementComponent: React.FC<propTypes> = ({ heading }) => {
     },
   ];
 
-  const handleAdd = (file: any) => {
-    console.log("File added:", file.file);
-    // Do something with the file or its meta data
-    
+  interface type {
+    file: any;
+    meta: any;
+    remove: any;
+  }
+  const handleAdd = ({ file, meta, remove }: type, status: any) => {
+    if (category == "imageBackground") {
+      if (status === "done") {
+        console.log("File uploaded successfully:", file);
+        dispatch(setImageBackground(file));
+      } else if (status === "removed") {
+        console.log("File removed:", file);
+
+        dispatch(setImageBackground(null));
+      }
+    } else if (category == "companyLogo") {
+      if (status === "done") {
+        console.log("File uploaded successfully:", file);
+        dispatch(setComapnyLogo(file));
+      } else if (status === "removed") {
+        console.log("File removed:", file);
+        dispatch(setComapnyLogo(null));
+      }
+    } else if (category == "cnicBack") {
+      if (status === "done") {
+        console.log("File uploaded successfully:", file);
+        dispatch(setCNICBack(file));
+      } else if (status === "removed") {
+        console.log("File removed:", file);
+        dispatch(setCNICBack(null));
+      }
+    } else if (category == "cnicFront") {
+      if (status === "done") {
+        console.log("File uploaded successfully:", file);
+        dispatch(setCNICFront(file));
+      } else if (status === "removed") {
+        console.log("File removed:", file);
+        dispatch(setCNICFront(null));
+      }
+    } else if (category == "ptaCertificate") {
+      if (status === "done") {
+        console.log("File uploaded successfully:", file);
+        dispatch(setPTACertificate(file));
+      } else if (status === "removed") {
+        console.log("File removed:", file);
+        dispatch(setPTACertificate(null));
+      }
+    } else if (category == "ntnFile") {
+      if (status === "done") {
+        console.log("File uploaded successfully:", file);
+        dispatch(setNTNFile(file));
+      } else if (status === "removed") {
+        console.log("File removed:", file);
+        dispatch(setNTNFile(null));
+      }
+    } else if (category == "other") {
+      if (status === "done") {
+        console.log("File uploaded successfully:", file);
+        dispatch(setOther(file));
+      } else if (status === "removed") {
+        console.log("File removed:", file);
+        dispatch(setOther(null));
+      }
+    }
   };
   return (
     <Col lg={4}>
@@ -31,7 +103,6 @@ const FileAttachementComponent: React.FC<propTypes> = ({ heading }) => {
           <Dropzone
             onChangeStatus={handleAdd}
             accept="image/*"
-            getUploadParams={getUploadParams}
             maxFiles={1}
             inputContent="Drop files here or click to upload."
           />

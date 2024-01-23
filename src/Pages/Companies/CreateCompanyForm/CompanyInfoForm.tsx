@@ -14,6 +14,8 @@ import {
 } from "../../../utils/Constant";
 import { useDispatch, useSelector } from "react-redux";
 import { setCreateCompany } from "../../../ReaduxToolkit/Reducer/CompanySlice";
+import SelectCitiesBox from "./SelectCitiesBox";
+import SelectPackageBox from "./SelectPackageBox";
 
 const CompanyInfoForm = ({ callbackActive }: BusinessFormCommonProps) => {
   const dispatch = useDispatch();
@@ -21,18 +23,18 @@ const CompanyInfoForm = ({ callbackActive }: BusinessFormCommonProps) => {
   const [companyInfoForm, setCompanyInfoForm] = useState({
     fullName: "",
     phoneNo: "",
-    city: "",
     address: "",
     contactPersonName: "",
     ntn: "",
     gstNo: "",
     contactPersonNumber: "",
     cnicNumber: "",
+    packageExpirationDate: "",
   });
   const {
     fullName,
     phoneNo,
-    city,
+    packageExpirationDate,
     address,
     contactPersonName,
     ntn,
@@ -51,7 +53,7 @@ const CompanyInfoForm = ({ callbackActive }: BusinessFormCommonProps) => {
     if (
       fullName !== "" &&
       phoneNo !== "" &&
-      city !== "" &&
+      packageExpirationDate !== "" &&
       address !== "" &&
       contactPersonName !== "" &&
       ntn !== "" &&
@@ -107,7 +109,7 @@ const CompanyInfoForm = ({ callbackActive }: BusinessFormCommonProps) => {
             onChange={getUserData}
           />
         </Col>
-        <Col xl={4} xs={12}>
+        {/* <Col xl={4} xs={12}>
           <Label>
             City
             <span className="txt-danger">*</span>
@@ -119,8 +121,8 @@ const CompanyInfoForm = ({ callbackActive }: BusinessFormCommonProps) => {
             value={city}
             name="city"
             onChange={getUserData}
-          />
-        </Col>
+          /> */}
+        {/* </Col> */}
         <Col xl={4} sm={6}>
           <Label>
             Address
@@ -203,17 +205,36 @@ const CompanyInfoForm = ({ callbackActive }: BusinessFormCommonProps) => {
             onChange={getUserData}
           />
         </Col>
-        {/* <Col xs={12}>
-          <FormGroup check>
-            <Input id="invalid-check-wizard" type="checkbox" />
-            <Label
-              className="form-check-label mb-0 d-block"
-              htmlFor="invalid-check-wizard"
-            >
-              {AgreeToTermsAndConditions}
-            </Label>
-          </FormGroup>
-        </Col> */}
+
+        <Col xl={4} xs={12}>
+          <Label>
+            Package Expiration Date
+            <span className="txt-danger">*</span>
+          </Label>
+          <Input
+            id="packageExpirationDate"
+            type="date"
+            // placeholder="Enter CNIC Number"
+            value={packageExpirationDate}
+            name="packageExpirationDate"
+            onChange={getUserData}
+          />
+        </Col>
+        <Col xl={4} xs={12}>
+          <Label>
+            Select City
+            <span className="txt-danger">*</span>
+          </Label>
+          <SelectCitiesBox placeholder="Select City" />
+        </Col>
+        <Col xl={4} xs={12}>
+          <Label>
+            Select Package
+            <span className="txt-danger">*</span>
+          </Label>
+          <SelectPackageBox placeholder="Select Package" />
+        </Col>
+
         <Col xs={12} className="text-end">
           <Button color="primary" onClick={handleNextButton}>
             {Continue}

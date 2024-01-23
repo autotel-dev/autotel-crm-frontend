@@ -9,8 +9,65 @@ import CompaniesCardsFooter from "./CompaniesCardsFooter";
 import SocialMediaIcons from "./SocialMediaIcons";
 import { compainesCardData } from "./Data/CompaniesCardData";
 import CompaniesListNav from "./CompaniesListNav";
+import { useEffect } from "react";
+import { getAll } from "../../Api";
+import {
+  setServers,
+  setCRMModules,
+  setCities,
+  setPackages,
+} from "../../ReaduxToolkit/Reducer/CompanySlice";
+import { useDispatch } from "react-redux";
 
 const Companies = () => {
+  const dispatch = useDispatch();
+  useEffect(() => {
+    getAll({ url: "server-management/get-all-active-servers" }).then(
+      (data: any) => {
+        console.log("api call --- >", data);
+        if (data !== undefined) {
+          if (data.success) {
+            console.log("hhg");
+            dispatch(setServers(data.data.activeServers));
+          }
+        }
+      }
+    );
+  }, []);
+  useEffect(() => {
+    getAll({ url: "crm-module/get-all-active-modules" }).then((data: any) => {
+      console.log("api call --- >", data);
+      if (data !== undefined) {
+        if (data.success) {
+          console.log("hhg");
+          dispatch(setCRMModules(data.data));
+        }
+      }
+    });
+  }, []);
+
+  useEffect(() => {
+    getAll({ url: "city/get-all-active-cities" }).then((data: any) => {
+      console.log("api call --- >", data);
+      if (data !== undefined) {
+        if (data.success) {
+          console.log("hhg");
+          dispatch(setCities(data.data));
+        }
+      }
+    });
+  }, []);
+  useEffect(() => {
+    getAll({ url: "package/get-all-active-packages" }).then((data: any) => {
+      console.log("api call --- >", data);
+      if (data !== undefined) {
+        if (data.success) {
+          console.log("hhg");
+          dispatch(setPackages(data.data));
+        }
+      }
+    });
+  }, []);
   return (
     <>
       <Breadcrumbs title="" mainTitle="Companies" parent="Companies" />

@@ -2,10 +2,10 @@ import { TabContent, TabPane } from "reactstrap";
 import { BusinessFormCommonProps } from "../../../Types/Forms/FormLayout/FormWizardTypes";
 import AccountCredentials from "./AccountCredentials";
 import ServerCredentials from "./ServerCredentials";
-import SuccessfullyFormSubmitted from "./SuccessfullyFormSubmitted";
 import CompanyInfoForm from "./CompanyInfoForm";
 import CRMModules from "./CRMModules";
 import Attachements from "./Attachements";
+import SuccessfullyFormSubmitted from "./SuccessfullyFormSubmitted";
 
 const CustomFormTabContent = ({
   activeTab,
@@ -29,7 +29,7 @@ const CustomFormTabContent = ({
         <Attachements callbackActive={callbackActive} />
       </TabPane>
       <TabPane tabId={6}>
-        <SuccessfullyFormSubmitted />
+        <SuccessfullyFormSubmitted callbackActive={callbackActive} />
       </TabPane>
     </TabContent>
   );

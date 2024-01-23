@@ -5,6 +5,8 @@ const initialState = {
   companies: [],
   servers: [],
   crmModules: [],
+  cities: [],
+  packages: [],
   serversAddItemsList: [],
   filterCompanies: [],
   serverCredentials: [],
@@ -13,6 +15,13 @@ const initialState = {
   loading: false,
   error: null,
   noDataFound: "",
+  cnicFront: null,
+  cnicBack: null,
+  ntnFile: null,
+  ptaCertificate: null,
+  other: null,
+  imageBackground: null,
+  companyLogo: null,
 };
 
 const CompanySlice = createSlice({
@@ -49,6 +58,17 @@ const CompanySlice = createSlice({
       state.error = null;
       state.loading = false;
     },
+    setCities: (state, action) => {
+      state.cities = action.payload;
+      state.error = null;
+      state.loading = false;
+    },
+
+    setPackages: (state, action) => {
+      state.packages = action.payload;
+      state.error = null;
+      state.loading = false;
+    },
     setServersAddItemsList: (state, action) => {
       state.serversAddItemsList = action.payload;
       state.error = null;
@@ -71,6 +91,28 @@ const CompanySlice = createSlice({
     setNoDataFound: (state, action) => {
       state.noDataFound = action.payload;
     },
+    setCNICFront: (state, action) => {
+      state.cnicFront = action.payload;
+    },
+
+    setCNICBack: (state, action) => {
+      state.cnicBack = action.payload;
+    },
+    setNTNFile: (state, action) => {
+      state.ntnFile = action.payload;
+    },
+    setPTACertificate: (state, action) => {
+      state.ptaCertificate = action.payload;
+    },
+    setOther: (state, action) => {
+      state.other = action.payload;
+    },
+    setImageBackground: (state, action) => {
+      state.imageBackground = action.payload;
+    },
+    setComapnyLogo: (state, action) => {
+      state.companyLogo = action.payload;
+    },
   },
 });
 export const {
@@ -81,11 +123,20 @@ export const {
   setCompaniesEnd,
   setServers,
   setCRMModules,
+  setCities,
+  setPackages,
   setServersAddItemsList,
   setServer,
   setServerCredentials,
   setAllowedModules,
   setNoDataFound,
+  setCNICFront,
+  setCNICBack,
+  setNTNFile,
+  setPTACertificate,
+  setOther,
+  setImageBackground,
+  setComapnyLogo,
 } = CompanySlice.actions;
 
 export default CompanySlice.reducer;

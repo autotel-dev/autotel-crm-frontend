@@ -15,16 +15,22 @@ import { popularBanksList } from "../../../Data/Forms/FormsLayout/FormWizardData
 import { setServersAddItemsList } from "../../../ReaduxToolkit/Reducer/CompanySlice";
 import { useDispatch, useSelector } from "react-redux";
 import { setCreateCompany } from "../../../ReaduxToolkit/Reducer/CompanySlice";
+import FileAttachementComponent from "./FileAttachementComponent";
 
 const AccountCredentials = ({ callbackActive }: BusinessFormCommonProps) => {
-  const { createCompany } = useSelector((state: any) => state.companies);
+  const { createCompany, imageBackground, companyLogo } = useSelector(
+    (state: any) => state.companies
+  );
   const dispatch = useDispatch();
   const [accountCredentialsForm, setAccountCredentialsForm] = useState({
     emailAddress: "",
     password: "",
+    imageTitle: "",
+    companyTitle: "",
   });
   const [formData, setFormData] = useState({});
-  const { emailAddress, password } = accountCredentialsForm;
+  const { emailAddress, password, imageTitle, companyTitle } =
+    accountCredentialsForm;
   const getUserData = (event: ChangeEvent<HTMLInputElement>) => {
     let name = event.target.name;
     let value =
@@ -33,7 +39,12 @@ const AccountCredentials = ({ callbackActive }: BusinessFormCommonProps) => {
   };
 
   const handleNextButton = () => {
-    if (emailAddress !== "" && password !== "") {
+    if (
+      emailAddress !== "" &&
+      password !== "" &&
+      imageBackground !== null &&
+      companyLogo !== null
+    ) {
       // dispatch(setServersAddItemsList([]));
       dispatch(
         setCreateCompany({
@@ -81,6 +92,44 @@ const AccountCredentials = ({ callbackActive }: BusinessFormCommonProps) => {
             onChange={getUserData}
           />
         </Col>
+
+        <Col xl={6} sm={6}>
+          <Label>
+            Image Title
+            <span className="txt-danger">*</span>
+          </Label>
+          <Input
+            type="text"
+            placeholder="Enter Image Title"
+            value={imageTitle}
+            name="imageTitle"
+            onChange={getUserData}
+          />
+        </Col>
+        <Col xl={6} sm={6}>
+          <Label>
+            Company Title
+            <span className="txt-danger">*</span>
+          </Label>
+          <Input
+            type="text"
+            placeholder="Enter Company Title"
+            value={companyTitle}
+            name="companyTitle"
+            onChange={getUserData}
+          />
+        </Col>
+
+        <Row style={{ marginTop: "10px" }}>
+          <FileAttachementComponent
+            heading="Attach Image Background"
+            category="imageBackground"
+          />
+          <FileAttachementComponent
+            heading="Attach Company Logo"
+            category="companyLogo"
+          />
+        </Row>
         <Col
           xs={12}
           className="text-end d-flex justify-content-end gap-2 align-center"

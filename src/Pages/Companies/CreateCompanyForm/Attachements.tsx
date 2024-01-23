@@ -5,29 +5,19 @@ import { Card, CardBody } from "reactstrap";
 import CommonHeader from "../../../Common/CommonHeader";
 import Dropzone from "react-dropzone-uploader";
 import { Button, Col, Form, FormGroup, Input, Label, Row } from "reactstrap";
-import {
-  AgreeToTermsAndConditions,
-  ContactNumber,
-  Continue,
-  Email,
-  FirstName,
-  Lastname,
-  State,
-  ZipCode,
-} from "../../../utils/Constant";
+
 import FileAttachementComponent from "./FileAttachementComponent";
 import { setCreateCompany } from "../../../ReaduxToolkit/Reducer/CompanySlice";
 import { useDispatch, useSelector } from "react-redux";
 import { create } from "../../../Api";
-import axios from "axios";
 
 const Attachements = ({ callbackActive }: BusinessFormCommonProps) => {
-  const subTitle = [
-    {
-      text: "",
-      code: "",
-    },
-  ];
+  // const subTitle = [
+  //   {
+  //     text: "",
+  //     code: "",
+  //   },
+  // ];
   const [personalDetailsForm, setPersonalDetailsForm] = useState({
     imageTitle: "",
     companyTitle: "",
@@ -40,116 +30,42 @@ const Attachements = ({ callbackActive }: BusinessFormCommonProps) => {
     setPersonalDetailsForm({ ...personalDetailsForm, [name]: value });
   };
 
-  const { allowedModules, crmModules, createCompany } = useSelector(
-    (state: any) => state.companies
-  );
+  const { createCompany, cnicFront, cnicBack, ptaCertificate, ntnFile, other } =
+    useSelector((state: any) => state.companies);
   const dispatch = useDispatch();
 
-  const [cnicFront, setCnciFront] = useState(null);
-  const [cnicBack, setCnciBack] = useState(null);
-  const [ptaCertificate, setPtaCertificate] = useState(null);
-  const [ntnFile, setNtn] = useState(null);
-  const [other, setOther] = useState(null);
+  // const [cnicFront, setCnciFront] = useState(null);
+  // const [cnicBack, setCnciBack] = useState(null);
+  // const [ptaCertificate, setPtaCertificate] = useState(null);
+  // const [ntnFile, setNtn] = useState(null);
+  // const [other, setOther] = useState(null);
   const formData = new FormData();
 
-  const handleNextButton = () => {
-    // if (imageTitle !== "" && companyTitle !== "") {
-
-    //   callbackActive(6);
-    // } else {
-    //   ShowError();
-    // }
-
-    dispatch(
-      setCreateCompany({
-        ...createCompany,
-        // cnicFront: cnicFront,
-        // cnicBack: cnicBack,
-        // ptaCertificate: ptaCertificate,
-        // ntnFile: ntnFile,
-        // other: other,
-        packageExpirationDate: new Date(),
-        package: "657813241da464c48b1ae98d",
-      })
-    );
-  };
-
-  const onImageChange = (event: any) => {
-    setCnciFront(event.target.files[0]);
-  };
-
-  const handleSubmit = async (e: any) => {
+  const handleNextButton = (e: any) => {
     e.preventDefault();
-    const formData = new FormData();
-
-    formData.append("cnicNumber", createCompany.cnicNumber);
-    formData.append("contactPersonName", createCompany.contactPersonNumber);
-    formData.append("contactPersonNumber", createCompany.contactPersonNumber);
-    formData.append("emailAddress", createCompany.emailAddress);
-    formData.append("address", createCompany.address);
-    formData.append("city", createCompany.city);
-    formData.append("gstNo", createCompany.gstNo);
-    formData.append("ntn", createCompany.ntn);
-    formData.append("password", createCompany.password);
-    formData.append("phoneNo", createCompany.phoneNo);
-    formData.append(
-      "serverCredentials",
-      JSON.stringify(createCompany.serverCredentials)
-    );
-    formData.append(
-      "allowedModules",
-      JSON.stringify(createCompany.allowedModules)
-    );
-    formData.append("package", "657813241da464c48b1ae98d");
-    formData.append("packageExpirationDate", `${new Date()}`);
-    if (cnicFront !== null) {
-      formData.append("cnicFront", cnicFront);
-    }
-    if (cnicBack !== null) {
-      formData.append("cnicBack", cnicBack);
-    }
-    if (ptaCertificate !== null) {
-      formData.append("ptaCertificate", ptaCertificate);
-    }
-    if (ntnFile !== null) {
-      formData.append("ntnFile", ntnFile);
-    }
-    if (other !== null) {
-      formData.append("other", other);
-    }
-
-    formData.append("package", "657813241da464c48b1ae98d");
-    formData.append("packageExpirationDate", `${new Date()}`);
-    console.log("createCompany--- >", createCompany);
-    try {
-      const response = await axios.post(
-        "http://124.29.238.127:8080/api/v1/super-admin/create-company",
-        formData
+    if (
+      cnicFront !== null &&
+      cnicBack !== null &&
+      ptaCertificate !== null &&
+      ntnFile !== null &&
+      other !== null
+    ) {
+      dispatch(
+        setCreateCompany({
+          ...createCompany,
+        })
       );
-      console.log(response.data);
-    } catch (error) {
-      console.error("Error uploading file:", error);
+
+      callbackActive(6);
+    } else {
+      ShowError();
     }
-
-    // try {
-    //   await create(createCompany, {
-    //     url: "super-admin/create-company",
-    //   }).then((data: any) => {
-    //     // setLoading(false);
-
-    //     if (data.success) {
-    //       console.log(data);
-    //       // setLoading(false);
-    //       // dispatch(setServersStart());
-    //     }
-    //   });
-    //   // Handle successful post creation (e.g., show a success message, redirect, etc.)
-    // } catch (error: any) {
-    //   // Handle error (e.g., show an error message)
-    //   console.error("Error creating post:", error);
-    //   // setLoading(false);
-    // }
   };
+
+  // const onImageChange = (event: any) => {
+  //   setCnciFront(event.target.files[0]);
+  // };
+
   // const onImageChange = (event: any) => {
   //   console.log(event.target.files);
 
@@ -159,34 +75,58 @@ const Attachements = ({ callbackActive }: BusinessFormCommonProps) => {
   //   // }
   // };
 
-  const handleCNCIFront = (file: any) => {
-    console.log("simpleFile -- >", file);
-    console.log("updatedFile -- >", file.file);
+  // const handleCNCIFront = ({ file, meta, remove }: type, status: any) => {
+  //   if (status === "done") {
+  //     console.log("File uploaded successfully:", file);
+  //     setCnciFront(file);
+  //   } else if (status === "removed") {
+  //     console.log("File removed:", file);
+  //     setCnciFront(null);
+  //   }
+  // };
+  // const handleCNICBack = ({ file, meta, remove }: type, status: any) => {
+  //   if (status === "done") {
+  //     console.log("File uploaded successfully:", file);
+  //     setCnciBack(file);
+  //   } else if (status === "removed") {
+  //     console.log("File removed:", file);
+  //     setCnciBack(null);
+  //   }
+  // };
+  // const handlePTA = ({ file, meta, remove }: type, status: any) => {
+  //   if (status === "done") {
+  //     console.log("File uploaded successfully:", file);
+  //     setPtaCertificate(file);
+  //   } else if (status === "removed") {
+  //     console.log("File removed:", file);
+  //     setPtaCertificate(null);
+  //   }
+  // };
+  // const handleNTN = ({ file, meta, remove }: type, status: any) => {
+  //   if (status === "done") {
+  //     console.log("File uploaded successfully:", file);
+  //     setNtn(file);
+  //   } else if (status === "removed") {
+  //     console.log("File removed:", file);
+  //     setNtn(null);
+  //   }
+  // };
+  // const handleOther = ({ file, meta, remove }: type, status: any) => {
+  //   if (status === "done") {
+  //     console.log("File uploaded successfully:", file);
+  //     setOther(file);
+  //   } else if (status === "removed") {
+  //     console.log("File removed:", file);
+  //     setOther(null);
+  //   }
+  // };
 
-    setCnciFront(file.file);
-    // console.log("File added:", file.file);
-    // Do something with the file or its meta data
-  };
-  const handleCNCIBack = (file: any) => {
-    setCnciBack(file.file);
-    console.log("File added:", file.file);
-    // Do something with the file or its meta data
-  };
-  const handlePTA = (file: any) => {
-    setPtaCertificate(file.file);
-    console.log("File added:", file.file);
-    // Do something with the file or its meta data
-  };
-  const handleNTN = (file: any) => {
-    setNtn(file.file);
-    console.log("File added:", file.file);
-    // Do something with the file or its meta data
-  };
-  const handleOther = (file: any) => {
-    setOther(file.file);
-    console.log("File added:", file.file);
-    // Do something with the file or its meta data
-  };
+  interface type {
+    file: any;
+    meta: any;
+    remove: any;
+  }
+
   return (
     <Form
       onSubmit={(event) => event.preventDefault()}
@@ -220,14 +160,23 @@ const Attachements = ({ callbackActive }: BusinessFormCommonProps) => {
             marginRight: "15px",
           }}
         >
-          {/* <FileAttachementComponent heading="Attach CNIC Front" />
-          <FileAttachementComponent heading="Attach CNIC Back" />
-          <FileAttachementComponent heading="Attach PTA Certificate" />
-          <FileAttachementComponent heading="Attach NTN" />
-          <FileAttachementComponent heading="Attach Other" /> */}
+          <FileAttachementComponent
+            heading="Attach CNIC Front"
+            category="cnicFront"
+          />
+          <FileAttachementComponent
+            heading="Attach CNIC Back"
+            category="cnicBack"
+          />
+          <FileAttachementComponent
+            heading="Attach PTA Certificate"
+            category="ptaCertificate"
+          />
+          <FileAttachementComponent heading="Attach NTN" category="ntnFile" />
+          <FileAttachementComponent heading="Attach Other" category="other" />
 
-          <input type="file" accept="image/*" onChange={onImageChange} />
-          <Col lg={4}>
+          {/* <input type="file" accept="image/*" onChange={onImageChange} /> */}
+          {/* <Col lg={4}>
             <Card>
               <CommonHeader
                 title="Attach CNIC Front"
@@ -253,7 +202,7 @@ const Attachements = ({ callbackActive }: BusinessFormCommonProps) => {
               />
               <CardBody>
                 <Dropzone
-                  onChangeStatus={handleCNCIBack}
+                  onChangeStatus={handleCNICBack}
                   accept="image/*"
                   maxFiles={1}
                   inputContent="Drop files here or click to upload."
@@ -311,11 +260,11 @@ const Attachements = ({ callbackActive }: BusinessFormCommonProps) => {
                 />
               </CardBody>
             </Card>
-          </Col>
+          </Col> */}
         </Row>
       </div>
 
-      <div>
+      {/* <div>
         <Row className="g-3">
           <Col xs={12}>
             <Label
@@ -373,19 +322,17 @@ const Attachements = ({ callbackActive }: BusinessFormCommonProps) => {
           <Row style={{ marginTop: "10px" }}>
             <FileAttachementComponent heading="Attach Image Background" />
             <FileAttachementComponent heading="Attach Company Logo" />
-          </Row>
-        </Row>
-      </div>
+          </Row> */}
+      {/* </Row>
+      </div> */}
       <Row>
         <Col xs={12} className="text-end">
           <Button color="primary" onClick={handleNextButton}>
             Next
           </Button>
-        </Col>
-        <Col xs={12} className="text-end">
-          <Button color="primary" onClick={handleSubmit}>
+          {/* <Button color="primary" onClick={handleSubmit}>
             Submit
-          </Button>
+          </Button> */}
         </Col>
       </Row>
     </Form>
