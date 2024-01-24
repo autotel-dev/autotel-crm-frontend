@@ -4,8 +4,12 @@ export interface CitiesType {
   title?: string;
   price?: number;
   duration?: string;
-  
 }
+
+export interface FormData {
+  formData?: FormData;
+}
+
 export interface CitiesDataTableType {
   id: string;
   name: string;

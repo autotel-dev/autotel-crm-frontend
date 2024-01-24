@@ -1,6 +1,15 @@
 import { H2, Image } from "../../../AbstractElements";
 import { BusinessFormCommonProps } from "../../../Types/Forms/FormLayout/FormWizardTypes";
-import { Button, Col, Form, FormGroup, Input, Label, Row } from "reactstrap";
+import {
+  Button,
+  Col,
+  Form,
+  FormGroup,
+  Input,
+  InputGroup,
+  Label,
+  Row,
+} from "reactstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import {
@@ -18,6 +27,8 @@ import {
 import { setNoDataFound } from "../../../ReaduxToolkit/Reducer/NoDataFoundSlice";
 import { create, getAll } from "../../../Api";
 import { useNavigate } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 
 const SuccessfullyFormSubmitted = ({
   callbackActive,
@@ -34,6 +45,22 @@ const SuccessfullyFormSubmitted = ({
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  const [showPassword, setShowPassword] = useState(false);
+  const [firebaseShowPassword, setFireaseShowPassword] = useState(false);
+  const [googleShowPassword, setGoogleShowPassword] = useState(false);
+  const togglePasswordVisibility = (e: any) => {
+    e.preventDefault();
+    setShowPassword(!showPassword);
+  };
+  const toggleFirebasePasswordVisibility = (e: any) => {
+    e.preventDefault();
+    setFireaseShowPassword(!firebaseShowPassword);
+  };
+  const toggleGooglePasswordVisibility = (e: any) => {
+    e.preventDefault();
+    setGoogleShowPassword(!googleShowPassword);
+  };
 
   const createServerSubmitted = async () => {
     console.log("createServerRedux", createServer);
@@ -271,13 +298,36 @@ const SuccessfullyFormSubmitted = ({
               Login Password Software
               <span className="txt-danger">*</span>
             </Label>
-            <Input
-              type="password"
-              placeholder="Enter Login Password Software"
-              defaultValue={serverCredentials.loginPasswordSoftware}
-              disabled
-              name="loginPasswordSoftware"
-            />
+
+            <InputGroup>
+              <Input
+                type={showPassword ? "text" : "password"}
+                placeholder="Enter Login Password Software"
+                defaultValue={serverCredentials.loginPasswordSoftware}
+                disabled
+                name="loginPasswordSoftware"
+              />
+              <Button
+                color="white"
+                // className="bg-transparent"
+                onClick={togglePasswordVisibility}
+                style={{
+                  backgroundColor: "transparent",
+                  width: "80px",
+                  border: "1px solid #dee2e6",
+                }}
+              >
+                <FontAwesomeIcon
+                  // color="secondary"
+                  style={{
+                    color: "green",
+                    fontSize: "20px",
+                    marginRight: "20px",
+                  }}
+                  icon={showPassword ? faEye : faEyeSlash}
+                />
+              </Button>
+            </InputGroup>
           </Col>
         </Row>
       </Form>
@@ -304,13 +354,36 @@ const SuccessfullyFormSubmitted = ({
               Password
               <span className="txt-danger">*</span>
             </Label>
-            <Input
-              defaultValue={googleAccountCreadentials.password}
-              disabled
-              name="password"
-              type="password"
-              placeholder="Enter Password"
-            />
+
+            <InputGroup>
+              <Input
+                defaultValue={googleAccountCreadentials.password}
+                disabled
+                name="password"
+                type={googleShowPassword ? "text" : "password"}
+                placeholder="Enter Password"
+              />
+              <Button
+                color="white"
+                // className="bg-transparent"
+                onClick={toggleGooglePasswordVisibility}
+                style={{
+                  backgroundColor: "transparent",
+                  width: "80px",
+                  border: "1px solid #dee2e6",
+                }}
+              >
+                <FontAwesomeIcon
+                  // color="secondary"
+                  style={{
+                    color: "green",
+                    fontSize: "20px",
+                    marginRight: "20px",
+                  }}
+                  icon={googleShowPassword ? faEye : faEyeSlash}
+                />
+              </Button>
+            </InputGroup>
           </Col>
         </Row>
       </Form>
@@ -337,13 +410,35 @@ const SuccessfullyFormSubmitted = ({
               Password
               <span className="txt-danger">*</span>
             </Label>
-            <Input
-              defaultValue={firebaseAccountCredentials.password}
-              disabled
-              name="password"
-              type="password"
-              placeholder="Enter Password"
-            />
+            <InputGroup>
+              <Input
+                defaultValue={firebaseAccountCredentials.password}
+                disabled
+                name="password"
+                type={firebaseShowPassword ? "text" : "password"}
+                placeholder="Enter Password"
+              />
+              <Button
+                color="white"
+                // className="bg-transparent"
+                onClick={toggleFirebasePasswordVisibility}
+                style={{
+                  backgroundColor: "transparent",
+                  width: "80px",
+                  border: "1px solid #dee2e6",
+                }}
+              >
+                <FontAwesomeIcon
+                  // color="secondary"
+                  style={{
+                    color: "green",
+                    fontSize: "20px",
+                    marginRight: "20px",
+                  }}
+                  icon={firebaseShowPassword ? faEye : faEyeSlash}
+                />
+              </Button>
+            </InputGroup>
           </Col>
         </Row>
       </Form>

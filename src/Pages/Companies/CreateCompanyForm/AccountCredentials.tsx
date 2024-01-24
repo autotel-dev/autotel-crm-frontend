@@ -25,12 +25,11 @@ const AccountCredentials = ({ callbackActive }: BusinessFormCommonProps) => {
   const [accountCredentialsForm, setAccountCredentialsForm] = useState({
     emailAddress: "",
     password: "",
-    imageTitle: "",
-    companyTitle: "",
+    // imageTitle: "",
+    // companyTitle: "",
   });
   const [formData, setFormData] = useState({});
-  const { emailAddress, password, imageTitle, companyTitle } =
-    accountCredentialsForm;
+  const { emailAddress, password } = accountCredentialsForm;
   const getUserData = (event: ChangeEvent<HTMLInputElement>) => {
     let name = event.target.name;
     let value =
@@ -41,9 +40,9 @@ const AccountCredentials = ({ callbackActive }: BusinessFormCommonProps) => {
   const handleNextButton = () => {
     if (
       emailAddress !== "" &&
-      password !== "" &&
-      imageBackground !== null &&
-      companyLogo !== null
+      password !== ""
+      // imageBackground !== null &&
+      // companyLogo !== null
     ) {
       // dispatch(setServersAddItemsList([]));
       dispatch(
@@ -93,7 +92,7 @@ const AccountCredentials = ({ callbackActive }: BusinessFormCommonProps) => {
           />
         </Col>
 
-        <Col xl={6} sm={6}>
+        {/* <Col xl={6} sm={6}>
           <Label>
             Image Title
             <span className="txt-danger">*</span>
@@ -129,7 +128,7 @@ const AccountCredentials = ({ callbackActive }: BusinessFormCommonProps) => {
             heading="Attach Company Logo"
             category="companyLogo"
           />
-        </Row>
+        </Row> */}
         <Col
           xs={12}
           className="text-end d-flex justify-content-end gap-2 align-center"

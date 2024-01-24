@@ -6,8 +6,14 @@ import { useAppSelector } from "../../ReaduxToolkit/Hooks";
 const Sidebar = ({ setOpen, open }: PropsTypes) => {
   const { toggleSidebar } = useAppSelector((state) => state.layout);
   return (
-    // changing with belo line <div className={`sidebar-wrapper ${open ? "sidebar-default" : ""} ${toggleSidebar ? "close_icon" : ""}`} >
-    <div className={`sidebar-wrapper`}>
+    // changing with belo line
+    <div className={`sidebar-wrapper ${open ? "" : ""} ${toggleSidebar ? "close_icon" : ""}`} >
+    {/* <div
+      className={`sidebar-wrapper ${open ? "sidebar-default" : ""} ${
+        toggleSidebar ? "close_icon" : ""
+      }`}
+    > */}
+       {/* <div className={`sidebar-wrapper`}> */}
       <div>
         <div className="logo-wrapper">
           <Link to={`${process.env.PUBLIC_URL}/dashboards/shoppingplace`}>

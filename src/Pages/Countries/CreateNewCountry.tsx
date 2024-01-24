@@ -36,7 +36,7 @@ const CreateNewCountry = () => {
     }
   };
 
-  const addCountry: SubmitHandler<Type> = async (data) => {
+  const addCountry: SubmitHandler<Type> = async (data: any) => {
     setLoading(true);
     if (data.name !== "") {
       const city = {

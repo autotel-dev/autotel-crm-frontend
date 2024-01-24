@@ -32,7 +32,7 @@ const SuccessfullyFormSubmitted = ({
     imageBackground,
     companyLogo,
   } = useSelector((state: any) => state.companies);
-  const [formData, setFormData] = useState({});
+  // const [formData, setFormData] = useState({});
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -41,8 +41,9 @@ const SuccessfullyFormSubmitted = ({
     e.preventDefault();
     const formData = new FormData();
 
+    formData.append("fullName", createCompany.fullName);
     formData.append("cnicNumber", createCompany.cnicNumber);
-    formData.append("contactPersonName", createCompany.contactPersonNumber);
+    formData.append("contactPersonName", createCompany.contactPersonName);
     formData.append("contactPersonNumber", createCompany.contactPersonNumber);
     formData.append("emailAddress", createCompany.emailAddress);
     formData.append("address", createCompany.address);
@@ -59,6 +60,7 @@ const SuccessfullyFormSubmitted = ({
       "allowedModules",
       JSON.stringify(createCompany.allowedModules)
     );
+
     if (cnicFront !== null) {
       formData.append("cnicFront", cnicFront);
     }
@@ -69,10 +71,10 @@ const SuccessfullyFormSubmitted = ({
       formData.append("ptaCertificate", ptaCertificate);
     }
     if (ntnFile !== null) {
-      formData.append("ntnFile", ntnFile);
+      formData.append("ntnCertificate", ntnFile);
     }
     if (other !== null) {
-      formData.append("other", other);
+      formData.append("otherAttachment", other);
     }
 
     formData.append("package", createCompany.package);
@@ -86,10 +88,56 @@ const SuccessfullyFormSubmitted = ({
       console.log(`Key: ${key}, Value: ${value}`);
     }
 
+    // try {
+    //   await create(formData, {
+    //     url: "server-management/create-server",
+    //   }).then((data: any) => {
+    //     setLoading(false);
+
+    //     if (data.success) {
+    //       console.log(data);
+    //       setLoading(false);
+    //       // dispatch(setServersStart());
+    //       // getAll({ url: "server-management/get-all-servers" }).then(
+    //       //   (data: any) => {
+    //       //     console.log("api call --- >", data);
+    //       //     dispatch(setServerInfo({}));
+    //       //     dispatch(setServerCredentials({}));
+    //       //     dispatch(setGoogleAccountCreadentials({}));
+    //       //     dispatch(setFirebaseAccountCredentials({}));
+    //       //     dispatch(setApiKeys(""));
+    //       //     dispatch(setCreateServer({}));
+    //       //     // ----------------------
+    //       //     dispatch(setServersEnd());
+    //       //     if (data !== undefined) {
+    //       //       dispatch(setNoDataFound(data.message));
+    //       //       if (data.success) {
+    //       //         console.log("hhg");
+    //       //         dispatch(setServers(data.data.allServers));
+    //       //         dispatch(setFilterServers(data.data.allServers));
+    //       //         navigate(`${process.env.PUBLIC_URL}/setup/server_details`);
+    //       //       }
+    //       //     }
+    //       //   }
+    //       // );
+    //     }
+    //   });
+    //   // Handle successful post creation (e.g., show a success message, redirect, etc.)
+    // } catch (error: any) {
+    //   // Handle error (e.g., show an error message)
+    //   console.error("Error creating post:", error);
+    //   setLoading(false);
+    // }
+
     try {
       const response = await axios.post(
         "http://124.29.238.127:8080/api/v1/super-admin/create-company",
-        formData
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
       );
       console.log(response.data);
     } catch (error) {

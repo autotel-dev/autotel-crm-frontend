@@ -11,37 +11,35 @@ import { setToggleSidebar } from "../ReaduxToolkit/Reducer/LayoutSlice";
 import { addSidebarLayouts } from "../ReaduxToolkit/Reducer/ThemeCustomizerSlice";
 
 const Layout = () => {
-  const [open,setOpen] = useState<boolean>(false)
-  const {toggleSidebar,scroll} = useAppSelector((state) => state.layout);
+  const [open, setOpen] = useState<boolean>(false);
+  const { toggleSidebar, scroll } = useAppSelector((state) => state.layout);
   const { layout } = useAppSelector((state) => state.themeCustomizer);
-  const dispatch = useAppDispatch()
+  const dispatch = useAppDispatch();
   const compactSidebar = () => {
     const windowWidth = window.innerWidth;
     if (layout === "material-icon") {
-      if (windowWidth < 1200 ) {
-        dispatch(setToggleSidebar(true))
-      } 
-      else {
-        dispatch(setToggleSidebar(false))
+      if (windowWidth < 1200) {
+        dispatch(setToggleSidebar(true));
+      } else {
+        dispatch(setToggleSidebar(false));
       }
-    }else if(layout === "horizontal-wrapper"){
-      if (windowWidth < 992 ) {
-        dispatch(setToggleSidebar(true))
-        dispatch(addSidebarLayouts("material-icon"))
-      } 
-      else {
-        dispatch(setToggleSidebar(false))
+    } else if (layout === "horizontal-wrapper") {
+      if (windowWidth < 992) {
+        dispatch(setToggleSidebar(true));
+        dispatch(addSidebarLayouts("material-icon"));
+      } else {
+        dispatch(setToggleSidebar(false));
         // horizontal-wrapper
-        dispatch(addSidebarLayouts("horizontal-wrapper"))
+        dispatch(addSidebarLayouts("horizontal-wrapper"));
       }
     }
-  }; 
+  };
   useEffect(() => {
     compactSidebar();
     window.addEventListener("resize", () => {
       compactSidebar();
     });
-    }, [layout]);
+  }, [layout]);
   return (
     <>
       <Loader />
@@ -49,9 +47,9 @@ const Layout = () => {
       {/* changing with belo line  */}
       <div className={`page-wrapper ${layout} ${layout === "material-icon" ? `compact-sidebar compact-small` : "" } `}>
       {/* <div className={`page-wrapper horizontal-wrapper `}> */}
-
         {/* changing with belo line */}
-         <div className={`page-header ${open ? "sidebar-default" : ""} ${toggleSidebar ? "close_icon" : ""}  ${scroll ? "d-none" : "d-block"}`}>
+        <div className={`page-header ${open ? "" : ""} ${toggleSidebar ? "close_icon" : ""}  ${scroll ? "d-none" : "d-block"}`}>
+        {/* <div className={`page-header ${open ? "sidebar-default" : ""} ${toggleSidebar ? "close_icon" : ""}  ${scroll ? "d-none" : "d-block"}`}> */}
         {/* <div className={`page-header d-block`}> */}
           <Header />
         </div>

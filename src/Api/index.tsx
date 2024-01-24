@@ -6,6 +6,7 @@ import successAlert from "../Pages/Alerts/SuccessAlert";
 import { CitiesType } from "../Pages/Cities/CityTypes/CityTypes";
 import header from "./header";
 import { setNoDataFound } from "../ReaduxToolkit/Reducer/NoDataFoundSlice";
+import axios from "axios";
 const api = `${process.env.PUBLIC_URL}/api`;
 export const ChatMemberApi = `${api}/chatMember.json`;
 export const ChatApi = `${api}/chats.json`;
@@ -71,27 +72,21 @@ export const create = async (
   url: URLTypes
 ): Promise<void> => {
   try {
-    const response = await fetch(`${API_BASE_URL}/${url.url}`, {
-      method: "POST",
+    const response = await axios.post(`${API_BASE_URL}/${url.url}`, postData, {
       headers: header,
-      body: JSON.stringify(postData),
     });
-    const result = await response.json();
-    if (result.success !== true && result.statusCode !== 404) {
-      Swal.fire({
-        text: `${result.message}`,
-        icon: "info",
-        timer: 2000,
-        showCancelButton: false,
-      });
-    }
-    console.log("api --- >", result);
+
+    const result = response.data;
+    console.log("Response data:", response.data);
 
     return result;
-
-    // Handle success (optional)
   } catch (error: any) {
-    console.error("Error get-all:", error);
+    Swal.fire({
+      text: `${error.response.data.message}`,
+      icon: "info",
+      timer: 2000,
+      showCancelButton: false,
+    });
   }
 };
 
@@ -100,27 +95,21 @@ export const update = async (
   url: URLTypes
 ): Promise<void> => {
   try {
-    const response = await fetch(`${API_BASE_URL}/${url.url}`, {
-      method: "PUT",
+    const response = await axios.put(`${API_BASE_URL}/${url.url}`, postData, {
       headers: header,
-      body: JSON.stringify(postData),
     });
-    const result = await response.json();
-    if (result.success !== true && result.statusCode !== 404) {
-      Swal.fire({
-        text: `${result.message}`,
-        icon: "info",
-        timer: 2000,
-        showCancelButton: false,
-      });
-    }
-    console.log("api --- >", result);
+
+    const result = response.data;
+    console.log("Response data:", response.data);
 
     return result;
-
-    // Handle success (optional)
   } catch (error: any) {
-    console.error("Error get-all:", error);
+    Swal.fire({
+      text: `${error.response.data.message}`,
+      icon: "info",
+      timer: 2000,
+      showCancelButton: false,
+    });
   }
 };
 
@@ -206,3 +195,59 @@ export const getAllActive = async (url: URLTypes): Promise<void> => {
     });
   }
 };
+
+// export const create = async (
+//   postData: CitiesType,
+//   url: URLTypes
+// ): Promise<void> => {
+//   try {
+//     const response = await fetch(`${API_BASE_URL}/${url.url}`, {
+//       method: "POST",
+//       headers: header,
+//       body: JSON.stringify(postData),
+//     });
+//     const result = await response.json();
+//     if (result.success !== true && result.statusCode !== 404) {
+//       Swal.fire({
+//         text: `${result.message}`,
+//         icon: "info",
+//         timer: 2000,
+//         showCancelButton: false,
+//       });
+//     }
+//     console.log("api --- >", result);
+//     return result;
+//     // Handle success (optional)
+//   } catch (error: any) {
+//     console.error("Error get-all:", error);
+//   }
+// };
+
+// export const update = async (
+//   postData: CitiesType,
+//   url: URLTypes
+// ): Promise<void> => {
+//   try {
+//     const response = await fetch(`${API_BASE_URL}/${url.url}`, {
+//       method: "PUT",
+//       headers: header,
+//       body: JSON.stringify(postData),
+//     });
+//     const result = await response.json();
+//     if (result.success !== true && result.statusCode !== 404) {
+//       Swal.fire({
+//         text: `${result.message}`,
+//         icon: "info",
+//         timer: 2000,
+//         showCancelButton: false,
+//       });
+//     }
+//     console.log("api --- >", result);
+
+//     return result;
+
+//     // Handle success (optional)
+//   } catch (error: any) {
+//     console.error("Error get-all:", error);
+//   }
+// };

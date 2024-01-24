@@ -62,10 +62,28 @@ const UpdateServerForm = () => {
   });
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
+
   const navigate = useNavigate();
 
   // Function to update the formData
+
+  // Function to update nested values in formData
+  const [showPassword, setShowPassword] = useState(false);
+  const [firebaseShowPassword, setFireaseShowPassword] = useState(false);
+  const [googleShowPassword, setGoogleShowPassword] = useState(false);
+  const togglePasswordVisibility = (e: any) => {
+    e.preventDefault();
+    setShowPassword(!showPassword);
+  };
+  const toggleFirebasePasswordVisibility = (e: any) => {
+    e.preventDefault();
+    setFireaseShowPassword(!firebaseShowPassword);
+  };
+  const toggleGooglePasswordVisibility = (e: any) => {
+    e.preventDefault();
+    setGoogleShowPassword(!googleShowPassword);
+  };
+
   const updateFormData = (field: any, value: any) => {
     setFormData((prevFormData: any) => ({
       ...prevFormData, // Copy the existing state
@@ -74,13 +92,6 @@ const UpdateServerForm = () => {
 
     console.log("formData-->", formData);
   };
-
-  // Function to update nested values in formData
-  const togglePasswordVisibility = (e: any) => {
-    e.preventDefault();
-    setShowPassword(!showPassword);
-  };
-
   const updateNestedValue = (parentField: any, childField: any, value: any) => {
     setFormData((prevFormData: any) => ({
       ...prevFormData,
@@ -340,18 +351,41 @@ const UpdateServerForm = () => {
                           Login Password Software
                           <span className="txt-danger">*</span>
                         </Label>
-                        <Input
-                          type="password"
-                          placeholder="Enter Login Password Software"
-                          defaultValue={formData.loginPasswordSoftware}
-                          name="loginPasswordSoftware"
-                          onChange={(e) =>
-                            updateFormData(
-                              "loginPasswordSoftware",
-                              e.target.value
-                            )
-                          }
-                        />
+
+                        <InputGroup>
+                          <Input
+                            type={showPassword ? "text" : "password"}
+                            placeholder="Enter Login Password Software"
+                            defaultValue={formData.loginPasswordSoftware}
+                            name="loginPasswordSoftware"
+                            onChange={(e) =>
+                              updateFormData(
+                                "loginPasswordSoftware",
+                                e.target.value
+                              )
+                            }
+                          />
+                          <Button
+                            color="white"
+                            // className="bg-transparent"
+                            onClick={togglePasswordVisibility}
+                            style={{
+                              backgroundColor: "transparent",
+                              width: "80px",
+                              border: "1px solid #dee2e6",
+                            }}
+                          >
+                            <FontAwesomeIcon
+                              // color="secondary"
+                              style={{
+                                color: "green",
+                                fontSize: "20px",
+                                marginRight: "20px",
+                              }}
+                              icon={showPassword ? faEye : faEyeSlash}
+                            />
+                          </Button>
+                        </InputGroup>
                       </Col>
                     </Row>
 
@@ -385,19 +419,42 @@ const UpdateServerForm = () => {
                           Password
                           <span className="txt-danger">*</span>
                         </Label>
-                        <Input
-                          defaultValue={formData.googleAccount.password}
-                          name="password"
-                          type="password"
-                          placeholder="Enter Password"
-                          onChange={(e) =>
-                            updateNestedValue(
-                              "googleAccount",
-                              "password",
-                              e.target.value
-                            )
-                          }
-                        />
+
+                        <InputGroup>
+                          <Input
+                            defaultValue={formData.googleAccount.password}
+                            name="password"
+                            type={googleShowPassword ? "text" : "password"}
+                            placeholder="Enter Password"
+                            onChange={(e) =>
+                              updateNestedValue(
+                                "googleAccount",
+                                "password",
+                                e.target.value
+                              )
+                            }
+                          />
+                          <Button
+                            color="white"
+                            // className="bg-transparent"
+                            onClick={toggleGooglePasswordVisibility}
+                            style={{
+                              backgroundColor: "transparent",
+                              width: "80px",
+                              border: "1px solid #dee2e6",
+                            }}
+                          >
+                            <FontAwesomeIcon
+                              // color="secondary"
+                              style={{
+                                color: "green",
+                                fontSize: "20px",
+                                marginRight: "20px",
+                              }}
+                              icon={googleShowPassword ? faEye : faEyeSlash}
+                            />
+                          </Button>
+                        </InputGroup>
                       </Col>
                     </Row>
 
@@ -435,7 +492,7 @@ const UpdateServerForm = () => {
                           <Input
                             defaultValue={formData.firebaseAccount.password}
                             name="password"
-                            type={showPassword ? "text" : "password"}
+                            type={firebaseShowPassword ? "text" : "password"}
                             placeholder="Enter Password"
                             onChange={(e) =>
                               updateNestedValue(
@@ -448,11 +505,11 @@ const UpdateServerForm = () => {
                           <Button
                             color="white"
                             // className="bg-transparent"
-                            onClick={togglePasswordVisibility}
+                            onClick={toggleFirebasePasswordVisibility}
                             style={{
                               backgroundColor: "transparent",
                               width: "80px",
-                              border:"1px solid #dee2e6"
+                              border: "1px solid #dee2e6",
                             }}
                           >
                             <FontAwesomeIcon
@@ -462,7 +519,7 @@ const UpdateServerForm = () => {
                                 fontSize: "20px",
                                 marginRight: "20px",
                               }}
-                              icon={showPassword ? faEye : faEyeSlash}
+                              icon={firebaseShowPassword ? faEye : faEyeSlash}
                             />
                           </Button>
                         </InputGroup>

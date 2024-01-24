@@ -102,7 +102,8 @@ const FileAttachementComponent: React.FC<propTypes> = ({
         <CardBody>
           <Dropzone
             onChangeStatus={handleAdd}
-            accept="image/*"
+            // accept="image/*"
+            accept="image/*,application/pdf"
             maxFiles={1}
             inputContent="Drop files here or click to upload."
           />

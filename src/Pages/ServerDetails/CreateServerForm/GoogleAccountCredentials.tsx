@@ -1,7 +1,7 @@
 import { ChangeEvent, useState } from "react";
 import { BusinessFormCommonProps } from "../../../Types/Forms/FormLayout/FormWizardTypes";
 import ShowError from "./ShowError";
-import { Button, Col, Form, FormGroup, Input, Label, Row } from "reactstrap";
+import { Button, Col, Form, FormGroup, Input, InputGroup, Label, Row } from "reactstrap";
 import { Continue, PAN, Previous } from "../../../utils/Constant";
 import { setServersAddItemsList } from "../../../ReaduxToolkit/Reducer/CompanySlice";
 import { useDispatch, useSelector } from "react-redux";
@@ -10,6 +10,8 @@ import {
   setCreateServer,
   setGoogleAccountCreadentials,
 } from "../../../ReaduxToolkit/Reducer/ServerDetailsSlice";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 
 const GoogleAccountCredentials = ({
   callbackActive,
@@ -28,6 +30,12 @@ const GoogleAccountCredentials = ({
     let value =
       name === "rememberNextTime" ? event.target.checked : event.target.value;
     setAccountCredentialsForm({ ...accountCredentialsForm, [name]: value });
+  };
+
+  const [showPassword, setShowPassword] = useState(false);
+  const togglePasswordVisibility = (e: any) => {
+    e.preventDefault();
+    setShowPassword(!showPassword);
   };
 
   const handleNextButton = () => {
@@ -71,13 +79,36 @@ const GoogleAccountCredentials = ({
             Password
             <span className="txt-danger">*</span>
           </Label>
-          <Input
-            type="password"
-            placeholder="Enter Password"
-            value={[password]}
-            name="password"
-            onChange={getUserData}
-          />
+
+          <InputGroup>
+            <Input
+              type={showPassword ? "text" : "password"}
+              placeholder="Enter Password"
+              value={password}
+              name="password"
+              onChange={getUserData}
+            />
+            <Button
+              color="white"
+              // className="bg-transparent"
+              onClick={togglePasswordVisibility}
+              style={{
+                backgroundColor: "transparent",
+                width: "80px",
+                border: "1px solid #dee2e6",
+              }}
+            >
+              <FontAwesomeIcon
+                // color="secondary"
+                style={{
+                  color: "green",
+                  fontSize: "20px",
+                  marginRight: "20px",
+                }}
+                icon={showPassword ? faEye : faEyeSlash}
+              />
+            </Button>
+          </InputGroup>
         </Col>
         <Col
           xs={12}
