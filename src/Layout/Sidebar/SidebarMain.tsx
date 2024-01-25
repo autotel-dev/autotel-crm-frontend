@@ -19,14 +19,19 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState<string[]>([]);
   const [sideMenu, setSideMenu] = useState("");
+  const [isActive, setIsActive] = useState("");
   const [isClose, setIsClose] = useState(false);
   const { layout } = useAppSelector((state) => state.themeCustomizer);
   const handleClick = (item: SidebarMenuTypes) => {
     if (layout === "material-icon") {
       let menu: string = sideMenu;
       menu = sideMenu !== item.title ? item.title : "";
+      let clas: string = isActive;
+      // clas = sideMenu !== item.title ? "active" : "";
+      // setIsActive("active");
       setSideMenu(menu);
       setOpen(menu !== "" ? true : false);
+      // setIsClose(false);
     }
   };
   return (
@@ -39,7 +44,7 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
               <LI className={`sidebar-list`} key={index}>
                 <Link
                   className={`sidebar-link sidebar-title ${
-                    sideMenu === data.title ? "active" : ""
+                    sideMenu === data.title ? "" : ""
                   }`}
                   to={data.link ? data.link : "#"}
                   onClick={() => handleClick(data)}

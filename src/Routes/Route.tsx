@@ -135,6 +135,7 @@ import ServerManagement from "../Pages/ServerManagement/ServerManagement";
 import Servers from "../Pages/ServerDetails/Servers";
 import CreateServerForm from "../Pages/ServerDetails/CreateServerForm/CreateServerForm";
 import UpdateServerForm from "../Pages/ServerDetails/UpdateServerForm.tsx/UpdateServerForm";
+import VerifyOTP from "../Pages/VerifyOTP/VerifyOTP";
 
 const routes = [
   // dashboard routes
@@ -629,6 +630,16 @@ const routes = [
     path: `${process.env.PUBLIC_URL}/apps/searchresult`,
     Component: <SearchResult />,
   },
+
+  // --------------------------------------------------
+
+  // Verify OTP
+
+  // {
+  //   path: `${process.env.PUBLIC_URL}/verifyOTP`,
+  //   Component: <VerifyOTP />,
+  // },
+
   // Setup
 
   {
@@ -661,7 +672,7 @@ const routes = [
   },
   {
     path: `${process.env.PUBLIC_URL}/setup/server_details/updareServer`,
-    Component: <UpdateServerForm  />,
+    Component: <UpdateServerForm />,
   },
   {
     path: `${process.env.PUBLIC_URL}/setup/server_management`,

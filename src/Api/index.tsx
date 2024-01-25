@@ -90,6 +90,31 @@ export const create = async (
   }
 };
 
+export const createCom = async (
+  formData: FormData,
+  url: URLTypes
+): Promise<void> => {
+  try {
+    const response = await axios.post(`${url.url}`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+
+    const result = response.data;
+    console.log("Response data:", response.data);
+
+    return result;
+  } catch (error: any) {
+    Swal.fire({
+      text: `${error.response.data.message}`,
+      icon: "info",
+      timer: 2000,
+      showCancelButton: false,
+    });
+  }
+};
+
 export const update = async (
   postData: CitiesType,
   url: URLTypes

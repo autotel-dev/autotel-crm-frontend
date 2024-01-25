@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 
 import { setNoDataFound } from "../../../ReaduxToolkit/Reducer/NoDataFoundSlice";
-import { create, getAll } from "../../../Api";
+import { create, createCom, getAll } from "../../../Api";
 import { useNavigate } from "react-router-dom";
 import CommonHeader from "../../../Common/CommonHeader";
 import axios from "axios";
@@ -88,61 +88,59 @@ const SuccessfullyFormSubmitted = ({
       console.log(`Key: ${key}, Value: ${value}`);
     }
 
-    // try {
-    //   await create(formData, {
-    //     url: "server-management/create-server",
-    //   }).then((data: any) => {
-    //     setLoading(false);
-
-    //     if (data.success) {
-    //       console.log(data);
-    //       setLoading(false);
-    //       // dispatch(setServersStart());
-    //       // getAll({ url: "server-management/get-all-servers" }).then(
-    //       //   (data: any) => {
-    //       //     console.log("api call --- >", data);
-    //       //     dispatch(setServerInfo({}));
-    //       //     dispatch(setServerCredentials({}));
-    //       //     dispatch(setGoogleAccountCreadentials({}));
-    //       //     dispatch(setFirebaseAccountCredentials({}));
-    //       //     dispatch(setApiKeys(""));
-    //       //     dispatch(setCreateServer({}));
-    //       //     // ----------------------
-    //       //     dispatch(setServersEnd());
-    //       //     if (data !== undefined) {
-    //       //       dispatch(setNoDataFound(data.message));
-    //       //       if (data.success) {
-    //       //         console.log("hhg");
-    //       //         dispatch(setServers(data.data.allServers));
-    //       //         dispatch(setFilterServers(data.data.allServers));
-    //       //         navigate(`${process.env.PUBLIC_URL}/setup/server_details`);
-    //       //       }
-    //       //     }
-    //       //   }
-    //       // );
-    //     }
-    //   });
-    //   // Handle successful post creation (e.g., show a success message, redirect, etc.)
-    // } catch (error: any) {
-    //   // Handle error (e.g., show an error message)
-    //   console.error("Error creating post:", error);
-    //   setLoading(false);
-    // }
-
     try {
-      const response = await axios.post(
-        "http://124.29.238.127:8080/api/v1/super-admin/create-company",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
+      await createCom(formData, {
+        url: "http://124.29.238.127:8080/api/v1/super-admin/create-company",
+      }).then((data: any) => {
+        setLoading(false);
+
+        if (data.success) {
+          console.log(data);
+          setLoading(false);
+          // dispatch(setServersStart());
+          // getAll({ url: "server-management/get-all-servers" }).then(
+          //   (data: any) => {
+          //     console.log("api call --- >", data);
+          //     dispatch(setServerInfo({}));
+          //     dispatch(setServerCredentials({}));
+          //     dispatch(setGoogleAccountCreadentials({}));
+          //     dispatch(setFirebaseAccountCredentials({}));
+          //     dispatch(setApiKeys(""));
+          //     dispatch(setCreateServer({}));
+          //     // ----------------------
+          //     dispatch(setServersEnd());
+          //     if (data !== undefined) {
+          //       dispatch(setNoDataFound(data.message));
+          //       if (data.success) {
+          //         console.log("hhg");
+          //         dispatch(setServers(data.data.allServers));
+          //         dispatch(setFilterServers(data.data.allServers));
+          //         navigate(`${process.env.PUBLIC_URL}/setup/server_details`);
+          //       }
+          //     }
+          //   }
+          // );
         }
-      );
-      console.log(response.data);
-    } catch (error) {
-      console.error("Error uploading file:", error);
+      });
+    } catch (error: any) {
+      console.error("Error creating post:", error);
+      setLoading(false);
     }
+
+    // try {
+    //   const response = await axios.post(
+    //     "http://124.29.238.127:8080/api/v1/super-admin/create-company",
+    //     formData,
+    //     {
+    //       headers: {
+    //         "Content-Type": "multipart/form-data",
+    //       },
+    //     }
+    //   );
+    //   console.log(response.data);
+    // } catch (error) {
+    //   console.error("Error uploading file:", error);
+    // }
   };
 
   return (

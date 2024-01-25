@@ -4,15 +4,14 @@ import LayoutRoutes from "./LayoutRoutes";
 import { authRoutes } from "./AuthRoutes";
 import Login from "../Pages/Authentication/Login";
 import LoginForm from "../Pages/Auth/Auth";
+import VerifyOTP from "../Pages/VerifyOTP/VerifyOTP";
 
 const Routers = () => {
   const token = localStorage.getItem("token");
   console.log(token);
 
-   console.log("window.location.pathname: ", window.location.pathname)
-   console.log("process.env.PUBLIC_URL: ", process.env.PUBLIC_URL);
-   
-  
+  console.log("window.location.pathname: ", window.location.pathname);
+  console.log("process.env.PUBLIC_URL: ", process.env.PUBLIC_URL);
 
   return (
     <BrowserRouter basename={"/"}>
@@ -44,6 +43,10 @@ const Routers = () => {
               : "login"
           }`}
           element={<LoginForm />}
+        />
+        <Route
+          path={`${process.env.PUBLIC_URL}/verifyOTP`}
+          element={<VerifyOTP />}
         />
       </Routes>
     </BrowserRouter>

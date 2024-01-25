@@ -2,10 +2,7 @@ import { useState } from "react";
 import Logo from "./Logo";
 import { H3, P, H6 } from "../../AbstractElements";
 import { Button, Form, FormGroup, Input, Label } from "reactstrap";
-import {
-  EmailAddress,
-  Password,
-} from "../../utils/Constant";
+import { EmailAddress, Password } from "../../utils/Constant";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { login } from "../../Api";
@@ -57,6 +54,7 @@ const CommonForm = ({ alignLogo }: CommonFormPropsType) => {
 
             // successAlert();
             navigate(`${process.env.PUBLIC_URL}/dashboards/shoppingplace`);
+            // navigate(`${process.env.PUBLIC_URL}/verifyOTP`);
           }
 
           reset({

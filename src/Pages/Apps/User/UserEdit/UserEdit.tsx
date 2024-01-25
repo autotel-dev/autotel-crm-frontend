@@ -4,6 +4,7 @@ import { UserEdits, Users } from "../../../../utils/Constant";
 import EditMyProfile from "./EditMyProfile/EditMyProfile";
 import EditProfileForm from "./EditProfileForm/EditProfileForm";
 import AddProjectsAndUpload from "./AddProjectsAndUpload/AddProjectsAndUpload";
+import SecuritySettings from "./SecuritySettings/SecuritySettings";
 
 const UserEdit = () => {
   return (
@@ -15,6 +16,7 @@ const UserEdit = () => {
             <EditMyProfile />
             <EditProfileForm />
             <AddProjectsAndUpload />
+            <SecuritySettings />
           </Row>
         </div>
       </Container>
