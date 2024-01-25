@@ -12,6 +12,25 @@ import { create, createCom, getAll } from "../../../Api";
 import { useNavigate } from "react-router-dom";
 import CommonHeader from "../../../Common/CommonHeader";
 import axios from "axios";
+import { Document, Page, pdfjs } from "react-pdf";
+import "react-pdf/dist/esm/Page/AnnotationLayer.css";
+import {
+  setAllowedModules,
+  setCompanies,
+  setCompaniesEnd,
+  setCompaniesStart,
+  setCreateCompany,
+  setFilterCompanies,
+  setServerCredentials,
+  setServersAddItemsList,
+  setCNICFront,
+  setCNICBack,
+  setNTNFile,
+  setPTACertificate,
+  setOther,
+} from "../../../ReaduxToolkit/Reducer/CompanySlice";
+// import pdfFile from "../../../assets/";
+// pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
 const SuccessfullyFormSubmitted = ({
   callbackActive,
@@ -36,6 +55,44 @@ const SuccessfullyFormSubmitted = ({
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    console.log("CNICFront:", cnicFront);
+    console.log("CNICBack:", cnicBack);
+  });
+
+  function checkFileTypeByExtension(fileName: any) {
+    const imageExtensions = ["jpg", "jpeg", "png", "gif"];
+    const pdfExtension = "pdf";
+
+    const extension = fileName.split(".").pop().toLowerCase();
+
+    if (imageExtensions.includes(extension)) {
+      return "image";
+    } else if (extension === pdfExtension) {
+      return "pdf";
+    } else {
+      return "unknown";
+    }
+  }
+  const [numPages, setNumPages]: any = useState(null);
+  const [pageNumber, setPageNumber] = useState(1);
+
+  const onDocumentLoadSuccess = ({ numPages }: any) => {
+    setNumPages(numPages);
+  };
+
+  const nextPage = () => {
+    setPageNumber((prevPageNumber) => Math.min(prevPageNumber + 1, numPages));
+  };
+
+  const prevPage = () => {
+    setPageNumber((prevPageNumber) => Math.max(prevPageNumber - 1, 1));
+  };
+
+  const onDocumentLoadError = (error: any) => {
+    console.error("Error while loading the document:", error);
+  };
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
@@ -97,29 +154,32 @@ const SuccessfullyFormSubmitted = ({
         if (data.success) {
           console.log(data);
           setLoading(false);
-          // dispatch(setServersStart());
-          // getAll({ url: "server-management/get-all-servers" }).then(
-          //   (data: any) => {
-          //     console.log("api call --- >", data);
-          //     dispatch(setServerInfo({}));
-          //     dispatch(setServerCredentials({}));
-          //     dispatch(setGoogleAccountCreadentials({}));
-          //     dispatch(setFirebaseAccountCredentials({}));
-          //     dispatch(setApiKeys(""));
-          //     dispatch(setCreateServer({}));
-          //     // ----------------------
-          //     dispatch(setServersEnd());
-          //     if (data !== undefined) {
-          //       dispatch(setNoDataFound(data.message));
-          //       if (data.success) {
-          //         console.log("hhg");
-          //         dispatch(setServers(data.data.allServers));
-          //         dispatch(setFilterServers(data.data.allServers));
-          //         navigate(`${process.env.PUBLIC_URL}/setup/server_details`);
-          //       }
-          //     }
-          //   }
-          // );
+          dispatch(setCompaniesStart());
+          getAll({ url: "super-admin/get-all-companies" }).then((data: any) => {
+            console.log("api call --- >", data);
+            dispatch(setCreateCompany({}));
+            dispatch(setServerCredentials([]));
+
+            dispatch(setAllowedModules([]));
+            dispatch(setServersAddItemsList([]));
+            dispatch(setCNICFront(null));
+            dispatch(setCNICBack(null));
+            dispatch(setNTNFile(null));
+            dispatch(setPTACertificate(null));
+            dispatch(setOther(null));
+
+            // ----------------------
+            dispatch(setCompaniesEnd());
+            if (data !== undefined) {
+              dispatch(setNoDataFound(data.message));
+              if (data.success) {
+                console.log("hhg");
+                dispatch(setCompanies(data.data));
+                dispatch(setFilterCompanies(data.data));
+                navigate(`${process.env.PUBLIC_URL}/companies`);
+              }
+            }
+          });
         }
       });
     } catch (error: any) {
@@ -540,7 +600,8 @@ const SuccessfullyFormSubmitted = ({
       <Form style={{ marginBottom: "65px", marginTop: "20px" }}>
         <Row className="g-3">
           <div style={{ display: "flex", justifyContent: "space-between" }}>
-            {cnicFront !== null && (
+            {cnicFront !== null &&
+            checkFileTypeByExtension(cnicFront.name) == "image" ? (
               <div>
                 <Label>
                   CNIC Front
@@ -552,20 +613,32 @@ const SuccessfullyFormSubmitted = ({
                   style={{ width: "230px", height: "160px" }}
                 />
               </div>
+            ) : (
+              cnicFront !== null && (
+                <div>
+                  <Document
+                    file={cnicFront}
+                    onLoadSuccess={onDocumentLoadSuccess}
+                  >
+                    <Page pageNumber={pageNumber} />
+                  </Document>
+                </div>
+              )
             )}
-            {cnicBack !== null && (
-              <div>
-                <Label>
-                  CNIC Back
-                  <span className="txt-danger">*</span>
-                </Label>
-                <img
-                  src={URL.createObjectURL(cnicBack)}
-                  alt=""
-                  style={{ width: "230px", height: "160px" }}
-                />
-              </div>
-            )}
+            {cnicBack !== null &&
+              checkFileTypeByExtension(cnicBack.name) == "image" && (
+                <div>
+                  <Label>
+                    CNIC Back
+                    <span className="txt-danger">*</span>
+                  </Label>
+                  <img
+                    src={URL.createObjectURL(cnicBack)}
+                    alt=""
+                    style={{ width: "230px", height: "160px" }}
+                  />
+                </div>
+              )}
             {ntnFile !== null && (
               <div>
                 <Label>
@@ -620,7 +693,7 @@ const SuccessfullyFormSubmitted = ({
               handleSubmit(e);
             }}
           >
-            Submit
+            {loading ? "Loading..." : "Submit"}
           </Button>
         </Col>
       </Row>

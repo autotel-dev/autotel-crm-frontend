@@ -24,7 +24,7 @@ const CommonForm = ({ alignLogo }: CommonFormPropsType) => {
   const navigate = useNavigate();
   const header =
     window.location.pathname === "/superAdminLogin"
-      ? "Sign In to Super Admin Account"
+      ? "Sign In to Login Account"
       : "Sign in To Login Account";
 
   const {
@@ -44,17 +44,22 @@ const CommonForm = ({ alignLogo }: CommonFormPropsType) => {
       console.log(loginData);
       try {
         await login(loginData).then((data: any) => {
-          console.log("response: ", data.data);
-          if (data.statusCode == 200) {
+          console.log("response: ", data);
+          setLoading(false);
+          if (data.statusCode == 401) {
+            if (data.data.isOtpEnabled) {
+              navigate(`${process.env.PUBLIC_URL}/verifyOTP`);
+              localStorage.setItem("userId", data.data.userId);
+            }
+          } else if (data.statusCode == 200) {
             const token = data.data.authToken;
             console.log("response: ", data.data);
             console.log("token: ", token);
-            setLoading(false);
             localStorage.setItem("token", token);
+            localStorage.removeItem("userId");
 
-            // successAlert();
             navigate(`${process.env.PUBLIC_URL}/dashboards/shoppingplace`);
-            // navigate(`${process.env.PUBLIC_URL}/verifyOTP`);
+            // successAlert();
           }
 
           reset({

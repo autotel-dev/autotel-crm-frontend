@@ -29,6 +29,10 @@ import {
   setFilterServers,
   setServers,
 } from "../../ReaduxToolkit/Reducer/ServerDetailsSlice";
+import {
+  setCompanies,
+  setFilterCompanies,
+} from "../../ReaduxToolkit/Reducer/CompanySlice";
 
 const deleteAlert = (
   alertData: alertTypes,
@@ -57,6 +61,8 @@ const deleteAlert = (
         uri = `crm-module/delete-module`;
       } else if (type === "serverType") {
         uri = `server-management/delete-server`;
+      } else if (type === "companyType") {
+        uri = `super-admin/delete-company`;
       }
 
       try {
@@ -99,6 +105,24 @@ const deleteAlert = (
                     }
                   } else {
                     console.log("ier67i");
+                  }
+                }
+              );
+            }
+            if (type == "companyType") {
+              getAll({ url: "super-admin/get-all-companies" }).then(
+                (data: any) => {
+                  console.log("api call --- >", data);
+
+                  if (data !== undefined) {
+                    dispatch(setNoDataFound(data.message));
+                    if (data.success) {
+                      console.log("hhg");
+                      dispatch(setCompanies(data.data));
+                      dispatch(setFilterCompanies(data.data));
+                    } else {
+                      dispatch(setCompanies([]));
+                    }
                   }
                 }
               );

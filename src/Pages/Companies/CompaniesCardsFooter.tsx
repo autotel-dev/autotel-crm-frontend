@@ -1,7 +1,10 @@
+import { useDispatch } from "react-redux";
 import { H3, LI, UL } from "../../AbstractElements";
+import deleteAlert from "../Alerts/DeleteAlert";
 import { CardType } from "./DataType/CompaniesDataType";
 
 const CompaniesCardsFooter = ({ item }: CardType) => {
+  const dispatch = useDispatch();
   return (
     <>
       <UL
@@ -32,9 +35,33 @@ const CompaniesCardsFooter = ({ item }: CardType) => {
             borderRadius: "5px",
             border: "none",
             outline: "none",
+            margin: "5px",
           }}
         >
           Extend
+        </button>
+        <button
+          style={{
+            width: "100%",
+            padding: "10px",
+            color: "white",
+            fontSize: "14px",
+            background: "red",
+            borderRadius: "5px",
+            border: "none",
+            outline: "none",
+            margin: "5px",
+          }}
+          onClick={() => {
+            var alertData = {
+              title: "Are you sure?",
+              text: "Once deleted, you will not be able to recover this ",
+            };
+            const type = "companyType";
+            deleteAlert(alertData, item._id, type, dispatch);
+          }}
+        >
+          Delete
         </button>
       </div>
     </>

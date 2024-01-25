@@ -221,10 +221,12 @@ const CompanyInfoForm = ({ callbackActive }: BusinessFormCommonProps) => {
           />
         </Col>
         <Col xl={4} xs={12}>
-          <Label>
-            Select City
-            <span className="txt-danger">*</span>
-          </Label>
+          <div>
+            <Label>
+              Select City
+              <span className="txt-danger">*</span>
+            </Label>
+          </div>
           <SelectCitiesBox placeholder="Select City" />
         </Col>
         <Col xl={4} xs={12}>

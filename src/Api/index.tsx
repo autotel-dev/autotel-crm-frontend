@@ -23,27 +23,31 @@ interface loginTypes {
   password: string;
 }
 
+interface otpVerification {
+  userId: any; // Change 'boolean' to the actual type of isVisible
+  otpCode: string;
+}
+
 export const login = async (postData: loginTypes): Promise<void> => {
   try {
-    const response = await fetch(
-      window.location.pathname === "/superAdminLogin"
-        ? `${API_BASE_URL}/auth/super-admin/login`
-        : `${API_BASE_URL}/auth/company/login`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          // Add any other headers as needed (e.g., authorization token)
-        },
-        body: JSON.stringify(postData),
-      }
-    );
+    // window.location.pathname === "/superAdminLogin"
+    // ? `${API_BASE_URL}/auth/super-admin/login`
+    // : `${API_BASE_URL}/auth/company/login`,
+
+    const response = await fetch(`${API_BASE_URL}/auth/user/login`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        // Add any other headers as needed (e.g., authorization token)
+      },
+      body: JSON.stringify(postData),
+    });
     const result = await response.json();
     console.log(result);
 
     if (!result["success"]) {
       console.log("result: ", result);
-      if (result.statusCode == 401 && result.success !== true) {
+      if (result.statusCode !== 401) {
         var alertData = {
           title: "Invalid Login",
           text: result.message,
@@ -52,8 +56,52 @@ export const login = async (postData: loginTypes): Promise<void> => {
         errorAlert(alertData);
       }
 
-      throw new Error("Failed to login ");
-      return;
+      // throw new Error("Failed to login ");
+      return result;
+    }
+    if (result.statusCode == 200) {
+      successAlert();
+    }
+    return result;
+    // Handle success (optional)
+  } catch (error: any) {
+    console.error("Error creating login:", error);
+
+    // throw new Error("Failed to create ciloginty");
+  }
+};
+
+export const otpVerification = async (
+  verifyData: otpVerification
+): Promise<void> => {
+  try {
+    const response = await fetch(
+      `${API_BASE_URL}/auth/user/security/verify-security-code`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          // Add any other headers as needed (e.g., authorization token)
+        },
+        body: JSON.stringify(verifyData),
+      }
+    );
+    const result = await response.json();
+    console.log(result);
+
+    if (!result["success"]) {
+      console.log("result: ", result);
+      if (result.statusCode !== 401) {
+        var alertData = {
+          title: "Invalid Login",
+          text: result.message,
+        };
+        console.log("alertData: 1 ", alertData);
+        errorAlert(alertData);
+      }
+
+      // throw new Error("Failed to login ");
+      return result;
     }
     if (result.statusCode == 200) {
       successAlert();

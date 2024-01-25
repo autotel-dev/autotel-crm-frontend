@@ -7,7 +7,7 @@ export interface SocialMediaIconsPropsTypes {
 }
 
 export interface CompanyCardTypes {
-  id: number;
+  _id: number;
   avatar: string;
   icon: string;
   name: string;
