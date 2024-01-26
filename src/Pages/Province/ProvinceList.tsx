@@ -159,7 +159,7 @@ const ProvinceList = () => {
                         fontWeight: "bold",
                       }}
                     >
-                      {noDataFound !== "" ? noDataFound : "Faild to Fetch"}
+                      {noDataFound !== "" ? "No Provinces found" : "Faild to Fetch"}
                     </div>
                   )}
                 </div>

@@ -19,6 +19,8 @@ import {
 import { setNoDataFound } from "../../ReaduxToolkit/Reducer/NoDataFoundSlice";
 import Loader from "../Loader/Loader";
 import { useNavigate } from "react-router-dom";
+import CommonModal from "../../CommonElements/Ui-kits/CommonModal";
+import ChangePasswordModal from "./components/ChangePasswordModal";
 
 const ServersList = () => {
   const { servers, loading, error, id } = useSelector(
@@ -27,9 +29,16 @@ const ServersList = () => {
   const navigate = useNavigate();
   const { noDataFound } = useSelector((state: any) => state.noDataFound);
   const dispatch = useDispatch();
-  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
-  const [countryName, setCountryName] = useState("");
-  const [isActive, setIsActive] = useState(false);
+  const [modal, setModal] = useState(false);
+  const toggle = () => {
+    setModal(!modal);
+  };
+  const ModalData = {
+    isOpen: modal,
+    class: "modal-dialog-centered",
+    toggler: toggle,
+    bodyClass: "social-profile text-start",
+  };
 
   useEffect(() => {
     dispatch(setServersStart());
@@ -99,6 +108,22 @@ const ServersList = () => {
             >
               Edit
             </button>
+            <button
+              style={{
+                width: 60,
+                fontSize: 14,
+                padding: 3,
+                color: "white",
+                backgroundColor: "green",
+                borderRadius: "5px",
+                border: "none",
+              }}
+              onClick={() => {
+                toggle();
+              }}
+            >
+              Change Password
+            </button>
           </div>
         </td>
       </tr>
@@ -141,22 +166,16 @@ const ServersList = () => {
                         fontWeight: "bold",
                       }}
                     >
-                      {noDataFound !== "" ? noDataFound : "Faild to Fetch"}
+                      {noDataFound !== ""
+                        ? "No Servers found"
+                        : "Faild to Fetch"}
                     </div>
                   )}
-
-                  {/* )} */}
                 </div>
-                {/* <UpdateCountry
-                  isVisible={isUpdateModalOpen}
-                  setIsVisible={setIsUpdateModalOpen}
-                  id={id}
-                  value={countryName}
-                  isActive={isActive}
-                  setIsActive={setIsActive}
 
-                  // setValue={setCityName}
-                /> */}
+                <CommonModal modalData={ModalData}>
+                  <ChangePasswordModal toggle={toggle} />
+                </CommonModal>
               </CardBody>
             </Card>
           </Col>

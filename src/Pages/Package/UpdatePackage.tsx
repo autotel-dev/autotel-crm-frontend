@@ -106,8 +106,8 @@ const UpdatePackage: React.FC<PropsTypes> = ({
       try {
         await update(packag, { url: `package/update-package/${id}` }).then(
           (data: any) => {
-            setLoading(false);
-            setIsVisible(!isVisible);
+            // setLoading(false);
+            // setIsVisible(!isVisible);
             if (data.success) {
               console.log(data);
               setLoading(false);
@@ -213,6 +213,18 @@ const UpdatePackage: React.FC<PropsTypes> = ({
               </span>
 
               {/*  */}
+
+              {/*  */}
+              <div
+                style={{
+                  marginBottom: "20px",
+                  display: "flex",
+                  justifyContent: "space-between",
+                }}
+              >
+                <SelectPackageBox placeholder={"Select Duration"} />
+              </div>
+
               <div className="d-flex">
                 <div
                   className={`text-end flex-shrink-0 icon-state 
@@ -228,23 +240,13 @@ const UpdatePackage: React.FC<PropsTypes> = ({
                         console.log(e.target.value);
                       }}
                     />
-                   <span
+                    <span
                       className={`switch-state ${
                         isActive ? "bg-primary" : "bg-secondary"
                       }`}
                     />
                   </Label>
                 </div>
-              </div>
-              {/*  */}
-              <div
-                style={{
-                  marginBottom: "20px",
-                  display: "flex",
-                  justifyContent: "space-between",
-                }}
-              >
-                <SelectPackageBox placeholder={"Select Duration"} />
               </div>
             </FormGroup>
           </Row>

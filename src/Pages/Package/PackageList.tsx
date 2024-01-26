@@ -171,7 +171,7 @@ const PackageList = () => {
                         fontWeight: "bold",
                       }}
                     >
-                      {noDataFound !== "" ? noDataFound : "Faild to Fetch"}
+                      {noDataFound !== "" ? "No Packages Found" : "Faild to Fetch"}
                     </div>
                   )}
                 </div>

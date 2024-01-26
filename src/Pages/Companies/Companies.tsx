@@ -9,7 +9,7 @@ import CompaniesCardsFooter from "./CompaniesCardsFooter";
 import SocialMediaIcons from "./SocialMediaIcons";
 import { compainesCardData } from "./Data/CompaniesCardData";
 import CompaniesListNav from "./CompaniesListNav";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { getAll } from "../../Api";
 import {
   setServers,
@@ -28,6 +28,10 @@ import CompanyProfile from "../../assets/companyProfile.png";
 const Companies = () => {
   const dispatch = useDispatch();
   const { companies } = useSelector((state: any) => state.companies);
+  // const [modal, setModal] = useState(false);
+  // const toggle = () => {
+  //   setModal(!modal);
+  // };
 
   useEffect(() => {
     dispatch(setCompaniesStart());

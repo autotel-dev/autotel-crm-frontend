@@ -197,7 +197,7 @@ const CitiesList = () => {
                         fontWeight: "bold",
                       }}
                     >
-                      {noDataFound !== "" ? noDataFound : "Faild to Fetch"}
+                      {noDataFound !== "" ? "No Cities found" : "Faild to Fetch"}
                     </div>
                     // <Loader />
                   )}

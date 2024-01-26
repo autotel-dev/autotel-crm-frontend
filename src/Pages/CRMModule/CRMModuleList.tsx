@@ -157,7 +157,7 @@ const CRMModuleList = () => {
                         fontWeight: "bold",
                       }}
                     >
-                      {noDataFound !== "" ? noDataFound : "Faild to Fetch"}
+                      {noDataFound !== "" ? "No Modules found" : "Faild to Fetch"}
                     </div>
                   )}
 

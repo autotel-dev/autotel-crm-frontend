@@ -34,7 +34,8 @@ const CommonForm = ({ alignLogo }: CommonFormPropsType) => {
     formState: { errors },
   } = useForm<loginTypes>();
 
-  const loginData: SubmitHandler<loginTypes> = async (data) => {
+  const loginData: SubmitHandler<loginTypes> = async (data, e: any) => {
+    e.preventDefault();
     if (data.emailAddress !== "" && data.password !== "") {
       const loginData = {
         emailAddress: data.emailAddress,

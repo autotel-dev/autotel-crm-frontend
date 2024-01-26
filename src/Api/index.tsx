@@ -4,7 +4,7 @@ import Swal from "sweetalert2";
 import errorAlert from "../Pages/Alerts/ErrorAlert";
 import successAlert from "../Pages/Alerts/SuccessAlert";
 import { CitiesType } from "../Pages/Cities/CityTypes/CityTypes";
-import header from "./header";
+import header, { multipartHeader } from "./header";
 import { setNoDataFound } from "../ReaduxToolkit/Reducer/NoDataFoundSlice";
 import axios from "axios";
 const api = `${process.env.PUBLIC_URL}/api`;
@@ -137,6 +137,56 @@ export const create = async (
     });
   }
 };
+export const otpEnabled = async (
+  isSecurityEnabled: boolean,
+  url: URLTypes
+): Promise<void> => {
+  try {
+    const response = await axios.patch(
+      `${API_BASE_URL}/${url.url}`,
+      { isSecurityEnabled: isSecurityEnabled },
+      {
+        headers: header,
+      }
+    );
+
+    const result = response.data;
+    console.log("Response data:", response.data);
+
+    return result;
+  } catch (error: any) {
+    Swal.fire({
+      text: `${error.response.data.message}`,
+      icon: "info",
+      timer: 2000,
+      showCancelButton: false,
+    });
+  }
+};
+
+export const resendOTP = async (userId: any, url: URLTypes): Promise<void> => {
+  try {
+    const response = await axios.post(
+      `${API_BASE_URL}/${url.url}`,
+      { userId: userId },
+      {
+        headers: header,
+      }
+    );
+
+    const result = response.data;
+    console.log("Response data:", response.data);
+
+    return result;
+  } catch (error: any) {
+    Swal.fire({
+      text: `${error.response.data.message}`,
+      icon: "info",
+      timer: 2000,
+      showCancelButton: false,
+    });
+  }
+};
 
 export const createCom = async (
   formData: FormData,
@@ -144,10 +194,9 @@ export const createCom = async (
 ): Promise<void> => {
   try {
     const response = await axios.post(`${url.url}`, formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
+      headers: multipartHeader,
     });
+    console.log("api call -- >");
 
     const result = response.data;
     console.log("Response data:", response.data);

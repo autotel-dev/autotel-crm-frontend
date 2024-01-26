@@ -5,14 +5,14 @@ type propsType = {
   toggle: () => void;
 };
 
-const PasswordModal = ({ toggle }: propsType) => {
+const ChangePasswordModal = ({ toggle }: propsType) => {
   return (
     <div className="modal-toggle-wrapper">
-      <H3>{CionLogin}</H3>
-      <P>{"Fill in your information below to continue."}</P>
+      <H3>Change Password</H3>
+      <P>Please type your change password</P>
       <ChangePasswordForm toggle={toggle} />
     </div>
   );
 };
 
-export default PasswordModal;
+export default ChangePasswordModal;

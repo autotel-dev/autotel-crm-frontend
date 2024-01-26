@@ -699,6 +699,10 @@ const routes = [
     path: `${process.env.PUBLIC_URL}/companies/createComapny`,
     Component: <CreateCompanyForm />,
   },
+  {
+    path: `${process.env.PUBLIC_URL}/verifyOTP`,
+    Component: <VerifyOTP />,
+  },
 
   // {
   //   path: `${process.env.PUBLIC_URL}/${

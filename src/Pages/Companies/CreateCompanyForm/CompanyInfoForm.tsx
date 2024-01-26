@@ -220,7 +220,7 @@ const CompanyInfoForm = ({ callbackActive }: BusinessFormCommonProps) => {
             onChange={getUserData}
           />
         </Col>
-        <Col xl={4} xs={12}>
+        <Col md={6} xs={12}>
           <div>
             <Label>
               Select City
@@ -229,7 +229,7 @@ const CompanyInfoForm = ({ callbackActive }: BusinessFormCommonProps) => {
           </div>
           <SelectCitiesBox placeholder="Select City" />
         </Col>
-        <Col xl={4} xs={12}>
+        <Col md={6} xs={12}>
           <Label>
             Select Package
             <span className="txt-danger">*</span>

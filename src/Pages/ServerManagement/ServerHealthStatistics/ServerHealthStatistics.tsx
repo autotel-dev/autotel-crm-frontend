@@ -18,43 +18,33 @@ const ServerHealthStatistics = () => {
           <Card className="total-earning">
             <CardBody>
               <Row>
-                <Col sm="12" className="box-col-7">
-                  <div className="d-flex">
-                    <Badge
-                      color="transperant"
-                      className={`bg-light-primary badge-rounded font-primary me-2`}
-                    >
-                      $
-                    </Badge>
-                    <div className="flex-grow-1">
-                      <H3>Database Size</H3>
-                    </div>
+                <Col sm="12" style={{ marginTop: "6px" }}>
+                  <div className="flex-grow-1">
+                    <H1>Database Size</H1>
                   </div>
-                  <H5>{serverHealthStatistics.databaseSize}</H5>
+                  <h3 style={{ marginTop: "10px", marginBottom: "15px" }}>
+                    {serverHealthStatistics.databaseSize}
+                  </h3>
                   <P className="d-flex">
-                    <span className={`bg-light-primary me-2`}>
-                      {/* <SVG iconId={data.icon} /> */}
+                    <span style={{ fontSize: "12px" }}>Updated At :</span>
+                    <span
+                      style={{ fontSize: "12px" }}
+                      className={`font-secondary me-2`}
+                    >
+                      {getTime}
                     </span>
-                    <span className={`font-secondary me-2`}>Updated At :</span>
-                    <span>{getTime}</span>
                   </P>
                 </Col>
-                {/* <Col sm="3" className={`box-col-5`}>
-                  <img
-                    src={DatabaseSize}
-                    alt="DatabaseSize"
-                    style={{ width: "60%" }}
-                  />
-                </Col> */}
               </Row>
             </CardBody>
           </Card>
         </Col>
+
         <Col xl="4" lg="6" sm="12" className="box-col-4">
           <Card className="total-earning">
             <CardBody>
               <Row>
-                <Col sm="2" style={{ paddingRight: "0px" }}>
+                {/* <Col sm="2" style={{ paddingRight: "0px" }}>
                   <div className="d-flex">
                     <Badge
                       color="transperant"
@@ -62,9 +52,9 @@ const ServerHealthStatistics = () => {
                     >
                       $
                     </Badge>
-                  </div>
-                </Col>
-                <Col sm="10" style={{ marginTop: "6px", padding: "0px" }}>
+                  </div> */}
+                {/* </Col> */}
+                <Col sm="12" style={{ marginTop: "6px" }}>
                   <div className="flex-grow-1">
                     <H1>Server Uptime</H1>
                   </div>
@@ -72,16 +62,16 @@ const ServerHealthStatistics = () => {
                     {serverHealthStatistics.upTime}
                   </h3>
                   <P className="d-flex">
-                    <span className={`bg-light-primary me-2`}>
-                      {/* <SVG iconId={data.icon} /> */}
-                    </span>
+                    {/* <span className={`bg-light-primary me-2`}>
+                      <SVG iconId={data.icon} />
+                    </span> */}
+                    <span style={{ fontSize: "12px" }}>Updated At :</span>
                     <span
-                      className={`font-secondary me-2`}
                       style={{ fontSize: "12px" }}
+                      className={`font-secondary me-2`}
                     >
-                      Updated At :
+                      {getTime}
                     </span>
-                    <span style={{ fontSize: "12px" }}>{getTime}</span>
                   </P>
                 </Col>
                 {/* <Col sm="3" className={`box-col-5`}>

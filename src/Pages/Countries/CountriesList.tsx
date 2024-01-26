@@ -149,7 +149,9 @@ const CountriesList = () => {
                         fontWeight: "bold",
                       }}
                     >
-                      {noDataFound !== "" ? noDataFound : "Faild to Fetch"}
+                      {noDataFound !== ""
+                        ? "No Countries Found"
+                        : "Faild to Fetch"}
                     </div>
                   )}
 
