@@ -85,6 +85,31 @@ const ServerHealthStatistics = () => {
             </CardBody>
           </Card>
         </Col>
+        <Col xl="4" lg="6" sm="12" className="box-col-4">
+          <Card className="total-earning">
+            <CardBody>
+              <Row>
+                <Col sm="12" style={{ marginTop: "6px" }}>
+                  <div className="flex-grow-1">
+                    <H1>Media Size</H1>
+                  </div>
+                  <h3 style={{ marginTop: "10px", marginBottom: "15px" }}>
+                    {serverHealthStatistics.mediaSize}
+                  </h3>
+                  <P className="d-flex">
+                    <span style={{ fontSize: "12px" }}>Updated At :</span>
+                    <span
+                      style={{ fontSize: "12px" }}
+                      className={`font-secondary me-2`}
+                    >
+                      {getTime}
+                    </span>
+                  </P>
+                </Col>
+              </Row>
+            </CardBody>
+          </Card>
+        </Col>
       </Row>
     </>
   );

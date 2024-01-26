@@ -102,13 +102,21 @@ const UpdateServerForm = () => {
     }));
     console.log("formData-->", formData);
   };
-
+  // const removeKeyFromObject = (object: any, keyToRemove: any) => {
+  //   const newObj = { ...object }; // Create a shallow copy of the original object
+  //   delete newObj[keyToRemove]; // Remove the key
+  //   return newObj; // Return the new object without the removed key
+  // };
   const updateServerSubmitted = async (e: any) => {
     e.preventDefault();
+    // console.log("previousFormData", formData);
+
+    // const updatedObject = removeKeyFromObject(formData, "loginPasswordServer");
+    // setFormData(updatedObject);
     console.log("updatedFormData", formData);
 
     try {
-      await update(formData, {
+      await create(formData, {
         url: "server-management/update-server",
       }).then((data: any) => {
         setLoading(false);

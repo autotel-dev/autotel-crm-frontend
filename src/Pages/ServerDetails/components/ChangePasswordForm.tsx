@@ -1,6 +1,9 @@
 import { Button, Col, Form, Input, Label, Row } from "reactstrap";
 import { Checkmeout, Email, Password, Signin } from "../../../utils/Constant";
 import { useState } from "react";
+import header from "../../../Api/header";
+import Swal from "sweetalert2";
+import axios from "axios";
 type propsType = {
   toggle: () => void;
 };
@@ -41,6 +44,70 @@ const ChangePasswordForm = ({ toggle }: propsType) => {
 
     return password;
   };
+
+  const updateServerSubmitted = async (e: any) => {
+    e.preventDefault();
+    try {
+      const response = await axios.patch(
+        `http://localhost:8080/api/v1/server-management/change-server-password`,
+        {
+          updatedPassword: password,
+        },
+        {
+          headers: header,
+        }
+      );
+
+      const result = response.data;
+      console.log("Response data:", response.data);
+      toggle();
+
+      return result;
+    } catch (error: any) {
+      Swal.fire({
+        text: `${error.response.data.message}`,
+        icon: "info",
+        timer: 2000,
+        showCancelButton: false,
+      });
+    }
+
+    // try {
+    //   await create(formData, {
+    //     url: "server-management/update-server",
+    //   }).then((data: any) => {
+    //     setLoading(false);
+
+    //     if (data.success) {
+    //       console.log(data);
+    //       setLoading(false);
+    //       dispatch(setServersStart());
+    //       getAll({ url: "server-management/get-all-servers" }).then(
+    //         (data: any) => {
+    //           console.log("api call --- >", data);
+
+    //           // ----------------------
+    //           dispatch(setServersEnd());
+    //           if (data !== undefined) {
+    //             dispatch(setNoDataFound(data.message));
+    //             if (data.success) {
+    //               console.log("hhg");
+    //               dispatch(setServers(data.data.allServers));
+    //               dispatch(setFilterServers(data.data.allServers));
+    //               navigate(`${process.env.PUBLIC_URL}/setup/server_details`);
+    //             }
+    //           }
+    //         }
+    //       );
+    //     }
+    //   });
+    //   // Handle successful post creation (e.g., show a success message, redirect, etc.)
+    // } catch (error: any) {
+    //   // Handle error (e.g., show an error message)
+    //   console.error("Error creating post:", error);
+    //   setLoading(false);
+    // }
+  };
   return (
     <Form>
       <Row className="g-3">
@@ -79,8 +146,8 @@ const ChangePasswordForm = ({ toggle }: propsType) => {
             style={{ display: "block", width: "100%", textAlign: "center" }}
             color="primary"
             type="submit"
-            onClick={() => {
-              toggle();
+            onClick={(e) => {
+              updateServerSubmitted(e);
             }}
           >
             Change

@@ -28,8 +28,10 @@ const ServerCredentials = ({ callbackActive }: BusinessFormCommonProps) => {
   const [accountCredentialsForm, setAccountCredentialsForm] = useState({
     multiCloudWebLogin: "",
     loginPasswordSoftware: "",
+    loginPasswordServer: "",
   });
-  const { multiCloudWebLogin, loginPasswordSoftware } = accountCredentialsForm;
+  const { multiCloudWebLogin, loginPasswordSoftware, loginPasswordServer } =
+    accountCredentialsForm;
   const getUserData = (event: ChangeEvent<HTMLInputElement>) => {
     let name = event.target.name;
     let value =
@@ -37,9 +39,15 @@ const ServerCredentials = ({ callbackActive }: BusinessFormCommonProps) => {
     setAccountCredentialsForm({ ...accountCredentialsForm, [name]: value });
   };
   const [showPassword, setShowPassword] = useState(false);
+  const [showPasswordServer, setShowPasswordServer] = useState(false);
   const togglePasswordVisibility = (e: any) => {
     e.preventDefault();
     setShowPassword(!showPassword);
+  };
+
+  const togglePasswordServerVisibility = (e: any) => {
+    e.preventDefault();
+    setShowPasswordServer(!showPasswordServer);
   };
 
   const handleNextButton = () => {
@@ -110,6 +118,42 @@ const ServerCredentials = ({ callbackActive }: BusinessFormCommonProps) => {
                   marginRight: "20px",
                 }}
                 icon={showPassword ? faEye : faEyeSlash}
+              />
+            </Button>
+          </InputGroup>
+        </Col>
+        <Col sm={6}>
+          <Label>
+            Login Password Server
+            <span className="txt-danger">*</span>
+          </Label>
+
+          <InputGroup>
+            <Input
+              type={showPasswordServer ? "text" : "password"}
+              placeholder="Enter Login Password Server"
+              value={loginPasswordServer}
+              name="loginPasswordServer"
+              onChange={getUserData}
+            />
+            <Button
+              color="white"
+              // className="bg-transparent"
+              onClick={togglePasswordServerVisibility}
+              style={{
+                backgroundColor: "transparent",
+                width: "80px",
+                border: "1px solid #dee2e6",
+              }}
+            >
+              <FontAwesomeIcon
+                // color="secondary"
+                style={{
+                  color: "green",
+                  fontSize: "20px",
+                  marginRight: "20px",
+                }}
+                icon={showPasswordServer ? faEye : faEyeSlash}
               />
             </Button>
           </InputGroup>
