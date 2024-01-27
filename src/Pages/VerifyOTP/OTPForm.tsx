@@ -11,6 +11,9 @@ import errorAlert from "../Alerts/ErrorAlert";
 import OTPInput from "react-otp-input";
 import "./otpstyles.css";
 import Swal from "sweetalert2";
+import { setToken } from "../../ReaduxToolkit/Reducer/UserSlice";
+import { useDispatch } from "react-redux";
+import { jwtDecode } from "jwt-decode";
 // import OTPInput, { ResendOTP } from "otp-input-react";
 
 export interface CommonFormPropsType {
@@ -22,6 +25,7 @@ const OTPForm = ({ alignLogo }: CommonFormPropsType) => {
   const [loading, setLoading] = useState(false);
   const [decodedToken, setDecodedToken] = useState(null);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const header = "Verification Code";
   const [timer, setTimer] = useState(120); // Initial timer value in seconds
   const [isActive, setIsActive] = useState(true);
@@ -44,7 +48,6 @@ const OTPForm = ({ alignLogo }: CommonFormPropsType) => {
   const handleResend = () => {
     setTimer(120); // Reset the timer
     setIsActive(true); // Start the timer again
-    resendOTPCode();
   };
 
   // Format timer for display
@@ -78,6 +81,9 @@ const OTPForm = ({ alignLogo }: CommonFormPropsType) => {
             const token = data.data.authToken;
             console.log("response: ", data.data);
             console.log("token: ", token);
+            const decodedToken = jwtDecode(token);
+            console.log(decodedToken);
+            dispatch(setToken(decodedToken));
             const tokenParts = token.split(".");
             const payload = JSON.parse(atob(tokenParts[1]));
             setDecodedToken(payload);
@@ -115,6 +121,7 @@ const OTPForm = ({ alignLogo }: CommonFormPropsType) => {
             timer: 2000,
             showCancelButton: false,
           });
+          handleResend();
           console.log(data);
         } else {
         }
@@ -192,7 +199,7 @@ const OTPForm = ({ alignLogo }: CommonFormPropsType) => {
                     fontWeight: "bold",
                     cursor: "pointer",
                   }}
-                  onClick={handleResend}
+                  onClick={resendOTPCode}
                 >
                   Resend
                 </span>

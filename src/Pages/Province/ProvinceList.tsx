@@ -25,7 +25,6 @@ const ProvinceList = () => {
   const { noDataFound } = useSelector((state: any) => state.noDataFound);
   const dispatch = useDispatch();
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
-  const [loadingState, setLoadingState] = useState(false);
   const [provinceName, setProvinceName] = useState("");
   const [isActive, setIsActive] = useState(false);
 

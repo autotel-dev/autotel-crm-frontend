@@ -119,6 +119,7 @@ const ServersList = () => {
                 border: "none",
               }}
               onClick={() => {
+                dispatch(setId(row._id));
                 toggle();
               }}
             >

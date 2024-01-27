@@ -4,6 +4,7 @@ export interface CitiesType {
   title?: string;
   price?: number;
   duration?: string;
+  daysToAdd?: any;
 }
 
 export interface FormData {

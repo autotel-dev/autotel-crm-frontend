@@ -5,9 +5,13 @@ import { CardType } from "./DataType/CompaniesDataType";
 import ChangePasswordModal from "./components/ChangePasswordModal";
 import { useState } from "react";
 import CommonModal from "../../CommonElements/Ui-kits/CommonModal";
+import ExtendPackage from "./ExtendPackage";
 
 const CompaniesCardsFooter = ({ item }: CardType) => {
   const dispatch = useDispatch();
+  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
+  const [packageId, setPackageId] = useState("");
+  const [id, setId] = useState("");
   const [modal, setModal] = useState(false);
   const toggle = () => {
     setModal(!modal);
@@ -50,6 +54,12 @@ const CompaniesCardsFooter = ({ item }: CardType) => {
             outline: "none",
             margin: "5px",
           }}
+          onClick={() => {
+            setIsUpdateModalOpen(true);
+            console.log("isUpdateModalOpen: ", isUpdateModalOpen);
+            setId(item._id);
+            setPackageId(item.package);
+          }}
         >
           Extend
         </button>
@@ -67,17 +77,24 @@ const CompaniesCardsFooter = ({ item }: CardType) => {
           }}
           onClick={() => {
             // toggle();
-            var alertData = {
-              title: "Are you sure?",
-              text: "Once deleted, you will not be able to recover this ",
-            };
-            const type = "companyType";
-            deleteAlert(alertData, item._id, type, dispatch);
+            // var alertData = {
+            //   title: "Are you sure?",
+            //   text: "Once deleted, you will not be able to recover this ",
+            // };
+            // const type = "companyType";
+            // deleteAlert(alertData, item._id, type, dispatch);
+            // -------------------------
           }}
         >
           Change
         </button>
       </div>
+      <ExtendPackage
+        isVisible={isUpdateModalOpen}
+        setIsVisible={setIsUpdateModalOpen}
+        companyId={id}
+        packageId={packageId}
+      />
       {/* <CommonModal modalData={ModalData}>
         <ChangePasswordModal toggle={toggle} />
       </CommonModal> */}

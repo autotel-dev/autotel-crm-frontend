@@ -7,7 +7,7 @@ export interface SocialMediaIconsPropsTypes {
 }
 
 export interface CompanyCardTypes {
-  _id: number;
+  _id: any;
   avatar: string;
   icon: string;
   name: string;
@@ -15,6 +15,7 @@ export interface CompanyCardTypes {
   operator: string;
   complains: string;
   expiry: string;
+  package?: any;
 }
 export interface CardType {
   item: CompanyCardTypes;

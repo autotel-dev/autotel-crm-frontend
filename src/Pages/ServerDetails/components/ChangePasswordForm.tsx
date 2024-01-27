@@ -4,10 +4,25 @@ import { useState } from "react";
 import header from "../../../Api/header";
 import Swal from "sweetalert2";
 import axios from "axios";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  setFilterServers,
+  setId,
+  setServers,
+  setServersEnd,
+  setServersStart,
+} from "../../../ReaduxToolkit/Reducer/ServerDetailsSlice";
+import { setNoDataFound } from "../../../ReaduxToolkit/Reducer/NoDataFoundSlice";
+import { getAll } from "../../../Api";
+import { useNavigate } from "react-router-dom";
 type propsType = {
   toggle: () => void;
 };
 const ChangePasswordForm = ({ toggle }: propsType) => {
+  const { id } = useSelector((state: any) => state.serverDetails);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
   const [password, setPassword] = useState("");
 
   // Function to handle click event
@@ -47,9 +62,10 @@ const ChangePasswordForm = ({ toggle }: propsType) => {
 
   const updateServerSubmitted = async (e: any) => {
     e.preventDefault();
+    setLoading(true);
     try {
       const response = await axios.patch(
-        `http://localhost:8080/api/v1/server-management/change-server-password`,
+        `http://124.29.238.127:8080/api/v1/server-management/change-server-password/${id}`,
         {
           updatedPassword: password,
         },
@@ -57,13 +73,31 @@ const ChangePasswordForm = ({ toggle }: propsType) => {
           headers: header,
         }
       );
-
+        
       const result = response.data;
-      console.log("Response data:", response.data);
-      toggle();
+      console.log("Response data of change password:", response.data);
+      dispatch(setId(null));
+      dispatch(setServersStart());
+      getAll({ url: "server-management/get-all-servers" }).then((data: any) => {
+        console.log("api call --- >", data);
+        setLoading(false);
+        // ----------------------
+        dispatch(setServersEnd());
+        if (data !== undefined) {
+          dispatch(setNoDataFound(data.message));
+          if (data.success) {
+            console.log("hhg");
+            dispatch(setServers(data.data.allServers));
+            dispatch(setFilterServers(data.data.allServers));
+            toggle();
+            // navigate(`${process.env.PUBLIC_URL}/setup/server_details`);
+          }
+        }
+      });
 
       return result;
     } catch (error: any) {
+      setLoading(false);
       Swal.fire({
         text: `${error.response.data.message}`,
         icon: "info",
@@ -71,42 +105,6 @@ const ChangePasswordForm = ({ toggle }: propsType) => {
         showCancelButton: false,
       });
     }
-
-    // try {
-    //   await create(formData, {
-    //     url: "server-management/update-server",
-    //   }).then((data: any) => {
-    //     setLoading(false);
-
-    //     if (data.success) {
-    //       console.log(data);
-    //       setLoading(false);
-    //       dispatch(setServersStart());
-    //       getAll({ url: "server-management/get-all-servers" }).then(
-    //         (data: any) => {
-    //           console.log("api call --- >", data);
-
-    //           // ----------------------
-    //           dispatch(setServersEnd());
-    //           if (data !== undefined) {
-    //             dispatch(setNoDataFound(data.message));
-    //             if (data.success) {
-    //               console.log("hhg");
-    //               dispatch(setServers(data.data.allServers));
-    //               dispatch(setFilterServers(data.data.allServers));
-    //               navigate(`${process.env.PUBLIC_URL}/setup/server_details`);
-    //             }
-    //           }
-    //         }
-    //       );
-    //     }
-    //   });
-    //   // Handle successful post creation (e.g., show a success message, redirect, etc.)
-    // } catch (error: any) {
-    //   // Handle error (e.g., show an error message)
-    //   console.error("Error creating post:", error);
-    //   setLoading(false);
-    // }
   };
   return (
     <Form>
@@ -150,7 +148,7 @@ const ChangePasswordForm = ({ toggle }: propsType) => {
               updateServerSubmitted(e);
             }}
           >
-            Change
+            {loading ? "Loading..." : "Change"}
           </Button>
         </Col>
       </Row>

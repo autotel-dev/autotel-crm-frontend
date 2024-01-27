@@ -42,7 +42,6 @@ const UpdateServerForm = () => {
     companyName: server.companyName,
     serviceProvider: server.serviceProvider,
     ipAddress: server.ipAddress,
-    url: server.url,
     multiCloudWebLogin: server.multiCloudWebLogin,
     loginUserSoftware: server.loginUserSoftware,
     loginPasswordSoftware: server.loginPasswordSoftware,
@@ -102,23 +101,18 @@ const UpdateServerForm = () => {
     }));
     console.log("formData-->", formData);
   };
-  // const removeKeyFromObject = (object: any, keyToRemove: any) => {
-  //   const newObj = { ...object }; // Create a shallow copy of the original object
-  //   delete newObj[keyToRemove]; // Remove the key
-  //   return newObj; // Return the new object without the removed key
-  // };
+
   const updateServerSubmitted = async (e: any) => {
     e.preventDefault();
-    // console.log("previousFormData", formData);
-
-    // const updatedObject = removeKeyFromObject(formData, "loginPasswordServer");
-    // setFormData(updatedObject);
+    setLoading(true);
     console.log("updatedFormData", formData);
 
     try {
-      await create(formData, {
-        url: "server-management/update-server",
+      await update(formData, {
+        url: `server-management/update-server/${server._id}`,
       }).then((data: any) => {
+        console.log("update Server form updated");
+
         setLoading(false);
 
         if (data.success) {
@@ -240,7 +234,8 @@ const UpdateServerForm = () => {
                         <Input
                           type="text"
                           placeholder="Enter Server URL"
-                          defaultValue={formData.url}
+                          defaultValue={server.url}
+                          disabled
                           name="url"
                           onChange={(e) =>
                             updateFormData("url", e.target.value)
@@ -569,7 +564,7 @@ const UpdateServerForm = () => {
                           updateServerSubmitted(e);
                         }}
                       >
-                        Submit
+                        {loading ? "Loading..." : "Submit"}
                       </Button>
                     </Col>
                   </Row>
