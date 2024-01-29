@@ -48,14 +48,23 @@ const Layout = () => {
       {/* <div className={`page-wrapper ${layout} ${layout === "material-icon" ? `compact-sidebar compact-small` : "" } `}> */}
       <div className={`page-wrapper horizontal-wrapper `}>
         {/* changing with belo line */}
-        <div className={`page-header ${open ? "" : ""} ${toggleSidebar ? "close_icon" : ""}  ${scroll ? "d-none" : "d-block"}`}>
-        {/* <div className={`page-header ${open ? "sidebar-default" : ""} ${toggleSidebar ? "close_icon" : ""}  ${scroll ? "d-none" : "d-block"}`}> */}
-        {/* <div className={`page-header d-block`}> */}
+        <div
+          className={`page-header ${open ? "" : ""} ${
+            toggleSidebar ? "close_icon" : ""
+          }  ${scroll ? "d-none" : "d-block"}`}
+        >
+          {/* <div className={`page-header ${open ? "sidebar-default" : ""} ${toggleSidebar ? "close_icon" : ""}  ${scroll ? "d-none" : "d-block"}`}> */}
+          {/* <div className={`page-header d-block`}> */}
           <Header />
         </div>
         <div className="page-body-wrapper">
           <Sidebar setOpen={setOpen} open={open} />
-          <div className="page-body">
+          <div
+            className="page-body"
+            // style={{
+            //   backgroundColor: "yellow",
+            // }}
+          >
             <Outlet />
           </div>
           <Footer />

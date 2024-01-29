@@ -4,8 +4,6 @@ import {
   Default,
   ShoppingPlaceDashboard,
 } from "../../utils/Constant";
-import TotalEarning from "./TotalEarning/TotalEarning";
-import RecentOrders from "./RecentOrders/RecentOrders";
 import NewProduct from "./NewProduct/NewProduct";
 import Breadcrumbs from "../../CommonElements/Breadcrumbs/Breadcrumbs";
 import ServerHealthStatistics from "./ServerHealthStatistics/ServerHealthStatistics";
@@ -19,6 +17,7 @@ import {
   setTime,
 } from "../../ReaduxToolkit/Reducer/ServerManagementSlice";
 import { setNoDataFound } from "../../ReaduxToolkit/Reducer/NoDataFoundSlice";
+import RecentLogs from "./RecentOrders/RecentLogs";
 
 const ServerManagement = () => {
   const dispatch = useDispatch();
@@ -27,9 +26,10 @@ const ServerManagement = () => {
     const startTime = new Date().getTime();
     getAll({ url: "server-management/get-server-health-statistics" }).then(
       (data: any) => {
-        const startTime = new Date().toISOString()
-        console.log("startTime: ", startTime)
-        dispatch(setTime(startTime.toString()));
+        const options = { year: "numeric", month: "2-digit", day: "2-digit" };
+        const startTime = new Date().toISOString();
+        console.log("startTime: ", startTime);
+        dispatch(setTime(startTime.toString().slice(0, 10)));
         console.log("api call --- >", data);
         dispatch(setServerManagementEnd());
         if (data !== undefined) {
@@ -53,7 +53,7 @@ const ServerManagement = () => {
         {/* <TotalEarning /> */}
 
         <ServerHealthStatistics />
-        <RecentOrders />
+        <RecentLogs />
         <NewProduct />
       </Row>
     </Container>

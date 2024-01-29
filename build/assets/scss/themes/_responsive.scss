@@ -5,14 +5,10 @@
 @media (max-width:1800px) {
   .page-wrapper {
     .page-body-wrapper {
-      .page-body, 
-      footer {
-        margin-left: 100px !important;
-        [dir="rtl"] & {
-          margin-left: unset !important;
-          margin-right: 100px !important;
-        }
+      .page-body{
+        margin-left: 0px !important;
       }
+      
     }
   }
   .todo-wrap {

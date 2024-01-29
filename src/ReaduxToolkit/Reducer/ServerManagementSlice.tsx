@@ -3,6 +3,7 @@ import { getAll } from "../../Api";
 
 const initialState = {
   serverHealthStatistics: {},
+  recentLogs: [],
   loading: false,
   error: null,
   getTime: "",
@@ -27,6 +28,11 @@ const ServerManagementSlice = createSlice({
     setTime: (state, action) => {
       state.getTime = action.payload;
     },
+    setRecentLogs: (state, action) => {
+      state.recentLogs = action.payload;
+      state.error = null;
+      state.loading = false;
+    },
   },
 });
 export const {
@@ -34,6 +40,7 @@ export const {
   setServerManagement,
   setServerManagementEnd,
   setTime,
+  setRecentLogs,
 } = ServerManagementSlice.actions;
 
 export default ServerManagementSlice.reducer;

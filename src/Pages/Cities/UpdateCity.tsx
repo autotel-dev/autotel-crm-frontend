@@ -183,7 +183,7 @@ const UpdateCity: React.FC<PropsTypes> = ({
 
               <div className="d-flex">
                 <div
-                  className={`text-end flex-shrink-0 icon-state switch-outline
+                  className={`text-end flex-shrink-0 icon-state
                             }`}
                 >
                   <Label className="switch mb-0">

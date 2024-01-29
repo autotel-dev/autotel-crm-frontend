@@ -193,7 +193,7 @@ export const createCom = async (
   url: URLTypes
 ): Promise<void> => {
   try {
-    const response = await axios.post(`${url.url}`, formData, {
+    const response = await axios.post(`${API_BASE_URL}/${url.url}`, formData, {
       headers: multipartHeader,
     });
     console.log("api call -- >");

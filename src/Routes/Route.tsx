@@ -136,6 +136,7 @@ import Servers from "../Pages/ServerDetails/Servers";
 import CreateServerForm from "../Pages/ServerDetails/CreateServerForm/CreateServerForm";
 import UpdateServerForm from "../Pages/ServerDetails/UpdateServerForm.tsx/UpdateServerForm";
 import VerifyOTP from "../Pages/VerifyOTP/VerifyOTP";
+import RecentLogsFullTable from "../Pages/ServerManagement/RecentOrders/RecentLogsFullTable";
 
 const routes = [
   // dashboard routes
@@ -677,6 +678,10 @@ const routes = [
   {
     path: `${process.env.PUBLIC_URL}/setup/server_management`,
     Component: <ServerManagement />,
+  },
+  {
+    path: `${process.env.PUBLIC_URL}/AllLogs`,
+    Component: <RecentLogsFullTable />,
   },
 
   // Support

@@ -14,7 +14,7 @@ import { useState } from "react";
 import { otpEnabled } from "../../../../../Api";
 
 const SecuritySettings = () => {
-  const [isEnabled, setIsEnabled] = useState(false);
+  const [isEnabled, setIsEnabled] = useState(true);
   const [loading, setLoading] = useState(false);
 
   const otpEnabledChange = async () => {

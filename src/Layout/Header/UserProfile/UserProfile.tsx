@@ -18,6 +18,20 @@ const UserProfile = () => {
       setDecodedToken(decodedToken);
     }
   }, []);
+  function toPascalCase(str: any) {
+    // Convert string to lowercase and split into words
+    const words = str.toLowerCase().split("_");
+
+    // Capitalize the first letter of each word
+    const pascalCaseWords = words.map(
+      (word: any) => word.charAt(0).toUpperCase() + word.slice(1)
+    );
+
+    // Join the words back together
+    return pascalCaseWords.join(" ");
+  }
+
+
 
   return (
     <>
@@ -32,7 +46,7 @@ const UserProfile = () => {
             <div className="flex-grow-1 user">
               <span>{decodedToken.fullName}</span>
               <P className="mb-0 font-nunito">
-                {decodedToken.role}
+                {toPascalCase(decodedToken.role)} &nbsp;
                 <i className="middle fa fa-angle-down"></i>
               </P>
             </div>
