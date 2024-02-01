@@ -250,31 +250,6 @@ const UpdatePackage: React.FC<PropsTypes> = ({
               </div>
             </FormGroup>
           </Row>
-          {/* <div
-            style={{
-              marginBottom: "20px",
-              display: "flex",
-              justifyContent: "space-between",
-            }}
-          >
-            <SelectPackageBox placeholder={"Select Duration"} />
-          </div> */}
-          {/* <div style={{ marginLeft: "10px" }}>
-            <Row>
-              <FormGroup check switch inline className="col-md-12 create-group">
-                <Input
-                  type="checkbox"
-                  role="switch"
-                  defaultChecked={isActive}
-                  value={isActive ? "on" : "off"}
-                  onChange={(e) => {
-                    setIsActive(!isActive);
-                    console.log(e.target.value);
-                  }}
-                />
-              </FormGroup>
-            </Row>
-          </div> */}
           <Button color="primary" className="me-1">
             {loading ? "Loading ..." : `Update`}
           </Button>

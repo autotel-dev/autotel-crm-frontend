@@ -8,6 +8,7 @@ const initialState = {
   error: null,
   id: null,
   value: "",
+  noPackageFound: "",
   packageDays: null,
   packageDuration: null,
   package: {},
@@ -50,6 +51,9 @@ const PackageSlice = createSlice({
     setPackageDuration: (state, action) => {
       state.packageDuration = action.payload;
     },
+    setNoPackageFound: (state, action) => {
+      state.noPackageFound = action.payload;
+    },
   },
 });
 export const {
@@ -62,6 +66,7 @@ export const {
   setPackagesStart,
   setPackagesEnd,
   setAllPackagesDuration,
+  setNoPackageFound,
 } = PackageSlice.actions;
 
 export default PackageSlice.reducer;

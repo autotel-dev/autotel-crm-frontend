@@ -24,14 +24,16 @@ import {
   setCRMModulesEnd,
   setFilterCRMModules,
 } from "../../ReaduxToolkit/Reducer/CRMModuleSlice";
-import { setNoDataFound } from "../../ReaduxToolkit/Reducer/NoDataFoundSlice";
+
 import {
   setFilterServers,
+  setNoDataFound,
   setServers,
 } from "../../ReaduxToolkit/Reducer/ServerDetailsSlice";
 import {
   setCompanies,
   setFilterCompanies,
+  setNoCompanyFound,
 } from "../../ReaduxToolkit/Reducer/CompanySlice";
 
 const deleteAlert = (
@@ -115,7 +117,7 @@ const deleteAlert = (
                   console.log("api call --- >", data);
 
                   if (data !== undefined) {
-                    dispatch(setNoDataFound(data.message));
+                    dispatch(setNoCompanyFound(data.message));
                     if (data.success) {
                       console.log("hhg");
                       dispatch(setCompanies(data.data));

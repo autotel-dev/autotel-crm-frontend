@@ -68,7 +68,7 @@ const CRMModules = ({ callbackActive }: BusinessFormCommonProps) => {
                       <Col md={6}>
                         <div className="d-flex" key={index}>
                           <div
-                            className={`text-end flex-shrink-0 icon-state switch-outline
+                            className={`text-end flex-shrink-0 icon-state
                             }`}
                           >
                             <Label className="switch mb-0">
@@ -120,7 +120,11 @@ const CRMModules = ({ callbackActive }: BusinessFormCommonProps) => {
                                   );
                                 }}
                               />
-                              <span className={`switch-state bg-primary`} />
+                              <span
+                                className={`switch-state ${
+                                  allowedModules.includes(item._id) ? "bg-primary" : "bg-secondary"
+                                }`}
+                              />
                             </Label>
                           </div>
                         </div>

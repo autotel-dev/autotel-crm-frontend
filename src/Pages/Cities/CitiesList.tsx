@@ -22,17 +22,17 @@ import {
   setId,
   setProvinces,
   setValue,
+  setNoCityFound,
 } from "../../ReaduxToolkit/Reducer/CitiesSlice";
 import deleteAlert from "../Alerts/DeleteAlert";
 import "./tableStyle.css";
 import Loader from "../Loader/Loader";
-import { setNoDataFound } from "../../ReaduxToolkit/Reducer/NoDataFoundSlice";
 
 const CitiesList = () => {
-  const { cities, loading, error, id, value } = useSelector(
+  const { cities, loading, error, id, value, noCityFound } = useSelector(
     (state: any) => state.cities
   );
-  const { noDataFound } = useSelector((state: any) => state.noDataFound);
+
   const [load, setLoad] = useState(false);
   const dispatch = useDispatch();
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
@@ -47,7 +47,7 @@ const CitiesList = () => {
 
       dispatch(setCitiesEnd());
       if (data !== undefined) {
-        dispatch(setNoDataFound(data.message));
+        dispatch(setNoCityFound(data.message));
         if (data.success) {
           console.log("hhg");
           dispatch(setCities(data.data));
@@ -127,8 +127,6 @@ const CitiesList = () => {
                 setIsUpdateModalOpen(true);
                 console.log("isUpdateModalOpen: ", isUpdateModalOpen);
                 dispatch(setId(row._id));
-                // dispatch(setValue(""));
-                // dispatch(setValue(row.name));
                 setCityName(row.name);
                 setIsActive(row.isActive);
               }}
@@ -162,18 +160,8 @@ const CitiesList = () => {
                   /> */}
 
                   {loading ? (
-                    // <div
-                    //   style={{
-                    //     textAlign: "center",
-                    //     fontSize: "25px",
-                    //     fontWeight: "bold",
-                    //   }}
-                    // >
-                    //   Loading....
-                    // </div>
                     <Loader />
-                  ) : // <Loader />
-                  cities?.length > 0 && loading === false ? (
+                  ) : cities?.length > 0 && loading === false ? (
                     <div>
                       <table>
                         <thead>
@@ -197,7 +185,7 @@ const CitiesList = () => {
                         fontWeight: "bold",
                       }}
                     >
-                      {noDataFound !== "" ? "No Cities found" : "Faild to Fetch"}
+                      {noCityFound !== "" ? noCityFound : "Faild to Fetch"}
                     </div>
                     // <Loader />
                   )}

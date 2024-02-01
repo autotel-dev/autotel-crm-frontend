@@ -8,6 +8,7 @@ const initialState = {
   error: null,
   id: null,
   value: "",
+  noModuleFound: "",
 };
 
 const CRMModulesSlice = createSlice({
@@ -36,6 +37,9 @@ const CRMModulesSlice = createSlice({
     setValue: (state, action) => {
       state.value = action.payload;
     },
+    setNoModuleFound: (state, action) => {
+      state.noModuleFound = action.payload;
+    },
   },
 });
 export const {
@@ -45,6 +49,7 @@ export const {
   setCRMModulesEnd,
   setId,
   setValue,
+  setNoModuleFound,
 } = CRMModulesSlice.actions;
 
 export default CRMModulesSlice.reducer;

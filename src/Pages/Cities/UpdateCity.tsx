@@ -24,6 +24,8 @@ import {
   // setValue,
 } from "../../ReaduxToolkit/Reducer/CitiesSlice";
 import { setNoDataFound } from "../../ReaduxToolkit/Reducer/NoDataFoundSlice";
+import SelectCountryBox from "./components/SelectCountryBox";
+import SelectProvinceBox from "./components/SelectProvinceBox";
 
 interface PropsTypes {
   isVisible: boolean; // Change 'boolean' to the actual type of isVisible
@@ -180,6 +182,22 @@ const UpdateCity: React.FC<PropsTypes> = ({
               </span>
 
               {/*  */}
+              <div
+                style={{
+                  marginBottom: "20px",
+                  display: "flex",
+                  justifyContent: "space-between",
+                }}
+              >
+                <div>
+                  <span>Select Country</span>
+                  <SelectCountryBox placeholder={"Select Country"} />
+                </div>
+                <div>
+                  <span>Select Province</span>
+                  <SelectProvinceBox placeholder={"Select Province"} />
+                </div>
+              </div>
 
               <div className="d-flex">
                 <div

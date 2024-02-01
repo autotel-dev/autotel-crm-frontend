@@ -7,7 +7,9 @@ interface propTypes {
 }
 
 const SelectCountryBox: React.FC<propTypes> = ({ placeholder }) => {
-  const { countries } = useSelector((state: any) => state.provinces);
+  const { countries, countryName } = useSelector(
+    (state: any) => state.provinces
+  );
   console.log(countries);
   const [countryList, setCountryList] = useState([]);
   const dispatch = useDispatch();
@@ -21,7 +23,8 @@ const SelectCountryBox: React.FC<propTypes> = ({ placeholder }) => {
   }, []);
   return (
     <Select
-      // showSearch
+      defaultValue={countryName !== null ? countryName : ""}
+      showSearch
       style={{ width: 200, height: 36 }}
       placeholder={placeholder}
       optionFilterProp="children"

@@ -39,6 +39,7 @@ const SuccessfullyFormSubmitted = ({
     createCompany,
     cities,
     packages,
+    timezones,
     serverCredentials,
     servers,
     allowedModules,
@@ -109,6 +110,7 @@ const SuccessfullyFormSubmitted = ({
     formData.append("ntn", createCompany.ntn);
     formData.append("password", createCompany.password);
     formData.append("phoneNo", createCompany.phoneNo);
+    formData.append("timezone", createCompany.timezone);
     formData.append(
       "serverCredentials",
       JSON.stringify(createCompany.serverCredentials)
@@ -387,6 +389,26 @@ const SuccessfullyFormSubmitted = ({
               );
             }
           })}
+          {timezones.map((item: any, index: any) => {
+            if (item == createCompany.timezone) {
+              return (
+                <Col xl={4} xs={12}>
+                  <Label>
+                    Timezone
+                    <span className="txt-danger">*</span>
+                  </Label>
+                  <Input
+                    id="timezone"
+                    type="text"
+                    placeholder="Enter Time zone"
+                    defaultValue={item}
+                    disabled
+                    name="timezone"
+                  />
+                </Col>
+              );
+            }
+          })}
         </Row>
       </Form>
       {/*  */}
@@ -421,7 +443,7 @@ const SuccessfullyFormSubmitted = ({
               name="password"
             />
           </Col>
-          <Col sm={6}>
+          {/* <Col sm={6}>
             <Label>
               Image Title
               <span className="txt-danger">*</span>
@@ -446,7 +468,7 @@ const SuccessfullyFormSubmitted = ({
               disabled
               name="companyTitle"
             />
-          </Col>
+          </Col> */}
           <div style={{ display: "flex", justifyContent: "space-evenly" }}>
             {imageBackground !== null && (
               <div>
@@ -692,6 +714,7 @@ const SuccessfullyFormSubmitted = ({
         >
           <Button color="primary">Print</Button>
           <Button
+            disabled={loading ? true : false}
             color="primary"
             onClick={(e) => {
               handleSubmit(e);

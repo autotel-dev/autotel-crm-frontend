@@ -20,7 +20,7 @@ const RecentLogsFullTable = () => {
   ];
 
   return (
-    <Container fluid>
+    <div style={{ marginTop: "170px" }}>
       <Row className="project-card">
         <Card className="invoice-card">
           <CardHeader className="pb-0">
@@ -74,7 +74,7 @@ const RecentLogsFullTable = () => {
           </CardBody>
         </Card>
       </Row>
-    </Container>
+    </div>
   );
 };
 

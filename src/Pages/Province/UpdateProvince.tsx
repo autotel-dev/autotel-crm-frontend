@@ -23,6 +23,7 @@ import {
   setFilterProvinces,
 } from "../../ReaduxToolkit/Reducer/ProvinceSlice";
 import { setNoDataFound } from "../../ReaduxToolkit/Reducer/NoDataFoundSlice";
+import SelectCountryBox from "./components/SelectCountryBox";
 
 interface PropsTypes {
   isVisible: boolean; // Change 'boolean' to the actual type of isVisible
@@ -45,6 +46,9 @@ const UpdateProvince: React.FC<PropsTypes> = ({
 }) => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
+  const { countryName, countryId } = useSelector(
+    (state: any) => state.provinces
+  );
 
   const {
     register,
@@ -80,6 +84,7 @@ const UpdateProvince: React.FC<PropsTypes> = ({
       const province = {
         name: data.name,
         isActive: isActive,
+        countryId: countryId,
       };
       console.log(province);
       try {
@@ -179,6 +184,16 @@ const UpdateProvince: React.FC<PropsTypes> = ({
               <span style={{ color: "red" }}>
                 {errors.name && "Province name is required"}
               </span>
+
+              <div
+                style={{
+                  marginBottom: "20px",
+                  display: "flex",
+                  justifyContent: "space-between",
+                }}
+              >
+                <SelectCountryBox placeholder={"Select Country"} />
+              </div>
               <div className="d-flex">
                 <div
                   className={`text-end flex-shrink-0 icon-state
@@ -204,22 +219,6 @@ const UpdateProvince: React.FC<PropsTypes> = ({
               </div>
             </FormGroup>
           </Row>
-          {/* <div style={{ marginLeft: "10px" }}>
-            <Row>
-              <FormGroup check switch inline className="col-md-12 create-group">
-                <Input
-                  type="checkbox"
-                  role="switch"
-                  defaultChecked={isActive}
-                  value={isActive ? "on" : "off"}
-                  onChange={(e) => {
-                    setIsActive(!isActive);
-                    console.log(e.target.value);
-                  }}
-                />
-              </FormGroup>
-            </Row>
-          </div> */}
           <Button color="primary" className="me-1">
             {loading ? "Loading ..." : `Update`}
           </Button>

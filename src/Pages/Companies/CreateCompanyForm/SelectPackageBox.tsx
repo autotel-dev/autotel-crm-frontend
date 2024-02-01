@@ -25,8 +25,8 @@ const SelectPackageBox: React.FC<propTypes> = ({ placeholder }) => {
   }, []);
   return (
     <Select
-      // showSearch
-      style={{ width: 480, height: 36 }}
+      showSearch
+      style={{ width: "100%", height: 36 }}
       placeholder={placeholder}
       optionFilterProp="children"
       filterOption={(input: any, option: any) =>

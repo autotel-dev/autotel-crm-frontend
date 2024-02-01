@@ -7,6 +7,7 @@ const initialState = {
   crmModules: [],
   cities: [],
   packages: [],
+  timezones: [],
   serversAddItemsList: [],
   filterCompanies: [],
   serverCredentials: [],
@@ -14,7 +15,7 @@ const initialState = {
   server: {},
   loading: false,
   error: null,
-  noDataFound: "",
+  noCompanyFound: "",
   cnicFront: null,
   cnicBack: null,
   ntnFile: null,
@@ -49,6 +50,11 @@ const CompanySlice = createSlice({
     },
     setServers: (state, action) => {
       state.servers = action.payload;
+      state.error = null;
+      state.loading = false;
+    },
+    setTimeZones: (state, action) => {
+      state.timezones = action.payload;
       state.error = null;
       state.loading = false;
     },
@@ -88,8 +94,8 @@ const CompanySlice = createSlice({
       state.error = null;
       state.loading = false;
     },
-    setNoDataFound: (state, action) => {
-      state.noDataFound = action.payload;
+    setNoCompanyFound: (state, action) => {
+      state.noCompanyFound = action.payload;
     },
     setCNICFront: (state, action) => {
       state.cnicFront = action.payload;
@@ -122,6 +128,7 @@ export const {
   setFilterCompanies,
   setCompaniesEnd,
   setServers,
+  setTimeZones,
   setCRMModules,
   setCities,
   setPackages,
@@ -129,7 +136,7 @@ export const {
   setServer,
   setServerCredentials,
   setAllowedModules,
-  setNoDataFound,
+  setNoCompanyFound,
   setCNICFront,
   setCNICBack,
   setNTNFile,

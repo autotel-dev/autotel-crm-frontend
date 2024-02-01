@@ -13,6 +13,7 @@ const initialState = {
   loading: false,
   error: null,
   id: null,
+  noDataFound: "",
 };
 
 const ServerDetailsSlice = createSlice({
@@ -60,6 +61,9 @@ const ServerDetailsSlice = createSlice({
     setId: (state, action) => {
       state.id = action.payload;
     },
+    setNoDataFound: (state, action) => {
+      state.noDataFound = action.payload;
+    },
   },
 });
 export const {
@@ -75,6 +79,7 @@ export const {
   setGoogleAccountCreadentials,
   setFirebaseAccountCredentials,
   setApiKeys,
+  setNoDataFound,
 } = ServerDetailsSlice.actions;
 
 export default ServerDetailsSlice.reducer;

@@ -110,13 +110,14 @@ const ServersList = () => {
             </button>
             <button
               style={{
-                width: 60,
+                width: 130,
                 fontSize: 14,
                 padding: 3,
                 color: "white",
                 backgroundColor: "green",
                 borderRadius: "5px",
                 border: "none",
+                margin:"10px"
               }}
               onClick={() => {
                 dispatch(setId(row._id));

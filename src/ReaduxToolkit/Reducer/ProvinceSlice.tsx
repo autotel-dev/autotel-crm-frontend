@@ -9,7 +9,8 @@ const initialState = {
   error: null,
   id: null,
   value: "",
-  noDataFound: "",
+  noProvinceFound: "",
+  countryName: "",
 };
 
 const ProvinceSlice = createSlice({
@@ -47,8 +48,11 @@ const ProvinceSlice = createSlice({
     setValue: (state, action) => {
       state.value = action.payload;
     },
-    setNoDataFound: (state, action) => {
-      state.noDataFound = action.payload;
+    setNoProvinceFound: (state, action) => {
+      state.noProvinceFound = action.payload;
+    },
+    setCountryName: (state, action) => {
+      state.countryName = action.payload;
     },
   },
 });
@@ -59,9 +63,10 @@ export const {
   setProvincesEnd,
   setCountries,
   setCountryId,
-  setNoDataFound,
+  setNoProvinceFound,
   setId,
   setValue,
+  setCountryName,
 } = ProvinceSlice.actions;
 
 export default ProvinceSlice.reducer;

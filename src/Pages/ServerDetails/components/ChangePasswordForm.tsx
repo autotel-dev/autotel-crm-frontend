@@ -73,7 +73,7 @@ const ChangePasswordForm = ({ toggle }: propsType) => {
           headers: header,
         }
       );
-        
+
       const result = response.data;
       console.log("Response data of change password:", response.data);
       dispatch(setId(null));
@@ -107,39 +107,39 @@ const ChangePasswordForm = ({ toggle }: propsType) => {
     }
   };
   return (
-    <Form>
-      <Row className="g-3">
-        <Col md={12}>
-          <Label htmlFor="inputPassword4">Change Password</Label>
-          <Input
-            id="password"
-            type="text"
-            placeholder="Enter Your Password"
-            onChange={(e) => handleChange(e)}
-            value={password}
-          />
-        </Col>
-        <Col md={12}>
-          {randomPasswordsCount.map((item, index) => {
-            return (
-              <span
-                onClick={(e) => handleClick(e)}
-                style={{
-                  padding: "5px",
-                  backgroundColor: "red",
-                  margin: "5px",
-                  color: "white",
-                  borderRadius: "5px",
-                  cursor: "pointer",
-                }}
-              >
-                {generateRandomPassword(24)}
-              </span>
-            );
-          })}
-        </Col>
+    <Row className="g-3">
+      <Col md={12}>
+        <Label htmlFor="inputPassword4">Change Password</Label>
+        <Input
+          id="password"
+          type="text"
+          placeholder="Enter Your Password"
+          onChange={(e) => handleChange(e)}
+          value={password}
+        />
+      </Col>
+      <Col md={12}>
+        {randomPasswordsCount.map((item, index) => {
+          return (
+            <span
+              onClick={(e) => handleClick(e)}
+              style={{
+                padding: "5px",
+                backgroundColor: "red",
+                margin: "5px",
+                color: "white",
+                borderRadius: "5px",
+                cursor: "pointer",
+              }}
+            >
+              {generateRandomPassword(24)}
+            </span>
+          );
+        })}
+      </Col>
 
-        <Col md={12}>
+      <Row style={{ marginTop: "20px" }}>
+        <Col md={6}>
           <Button
             style={{ display: "block", width: "100%", textAlign: "center" }}
             color="primary"
@@ -151,8 +151,20 @@ const ChangePasswordForm = ({ toggle }: propsType) => {
             {loading ? "Loading..." : "Change"}
           </Button>
         </Col>
+        <Col md={6}>
+          <Button
+            style={{ display: "block", width: "100%", textAlign: "center" }}
+            color="secondary"
+            type="submit"
+            onClick={(e) => {
+              toggle();
+            }}
+          >
+            Cancel
+          </Button>
+        </Col>
       </Row>
-    </Form>
+    </Row>
   );
 };
 

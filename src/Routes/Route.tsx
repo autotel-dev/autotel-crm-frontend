@@ -680,7 +680,7 @@ const routes = [
     Component: <ServerManagement />,
   },
   {
-    path: `${process.env.PUBLIC_URL}/AllLogs`,
+    path: `${process.env.PUBLIC_URL}/setup/server_management/AllLogs`,
     Component: <RecentLogsFullTable />,
   },
 

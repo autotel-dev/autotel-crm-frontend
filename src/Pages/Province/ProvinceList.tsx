@@ -14,6 +14,7 @@ import {
   setProvincesEnd,
   setProvincesStart,
   setFilterProvinces,
+  setCountryName,
 } from "../../ReaduxToolkit/Reducer/ProvinceSlice";
 import { setNoDataFound } from "../../ReaduxToolkit/Reducer/NoDataFoundSlice";
 import Loader from "../Loader/Loader";
@@ -59,7 +60,7 @@ const ProvinceList = () => {
       <tr key={row._id}>
         <td>{row._id}</td>
         <td>{row.name}</td>
-        <td>{row.country?.name}</td>
+        <td>{row.country.name}</td>
         <td>{row.isActive ? "Active" : "inActive"}</td>
         <td>
           <div>
@@ -100,9 +101,8 @@ const ProvinceList = () => {
                 setIsUpdateModalOpen(true);
                 console.log("isUpdateModalOpen: ", isUpdateModalOpen);
                 dispatch(setId(row._id));
-                // dispatch(setValue(""));
-                // dispatch(setValue(row.name));
                 setProvinceName(row.name);
+                dispatch(setCountryName(row.country.name));
                 setIsActive(row.isActive);
               }}
             >
@@ -158,7 +158,9 @@ const ProvinceList = () => {
                         fontWeight: "bold",
                       }}
                     >
-                      {noDataFound !== "" ? "No Provinces found" : "Faild to Fetch"}
+                      {noDataFound !== ""
+                        ? "No Provinces found"
+                        : "Faild to Fetch"}
                     </div>
                   )}
                 </div>

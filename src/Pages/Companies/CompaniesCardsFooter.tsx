@@ -29,15 +29,15 @@ const CompaniesCardsFooter = ({ item }: CardType) => {
         style={{ marginTop: "10px", marginBottom: "10px" }}
       >
         <LI>
-          <H3 className="mb-0">{item.operator}</H3>
+          <H3 className="mb-0">0</H3>
           <span className="f-light">Operators</span>
         </LI>
         <LI>
-          <H3 className="mb-0">{item.complains}</H3>
+          <H3 className="mb-0">0</H3>
           <span className="f-light">Complains</span>
         </LI>
         <LI>
-          <H3 className="mb-0">{item.expiry}</H3>
+          <H3 className="mb-0">200</H3>
           <span className="f-light">Expiry</span>
         </LI>
       </UL>

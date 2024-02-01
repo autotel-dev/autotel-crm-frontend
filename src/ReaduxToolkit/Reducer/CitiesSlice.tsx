@@ -12,7 +12,7 @@ const initialState = {
   provinceId: null,
   countryId: null,
   value: "",
-  noDataFound: "",
+  noCityFound: "",
 };
 
 const CitiesSlice = createSlice({
@@ -58,8 +58,8 @@ const CitiesSlice = createSlice({
     setValue: (state, action) => {
       state.value = action.payload;
     },
-    setNoDataFound: (state, action) => {
-      state.noDataFound = action.payload;
+    setNoCityFound: (state, action) => {
+      state.noCityFound = action.payload;
     },
   },
 });
@@ -74,6 +74,7 @@ export const {
   setFilterCities,
   setId,
   setValue,
+  setNoCityFound,
 } = CitiesSlice.actions;
 
 export default CitiesSlice.reducer;

@@ -16,6 +16,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setCreateCompany } from "../../../ReaduxToolkit/Reducer/CompanySlice";
 import SelectCitiesBox from "./SelectCitiesBox";
 import SelectPackageBox from "./SelectPackageBox";
+import SelectTimeZoneBox from "./SelectTimeZoneBox";
 
 const CompanyInfoForm = ({ callbackActive }: BusinessFormCommonProps) => {
   const dispatch = useDispatch();
@@ -83,7 +84,7 @@ const CompanyInfoForm = ({ callbackActive }: BusinessFormCommonProps) => {
       noValidate
     >
       <Row className="g-3">
-        <Col xl={4} sm={6}>
+        <Col xl={4} xs={12}>
           <Label>
             Company Name
             <span className="txt-danger">*</span>
@@ -96,7 +97,7 @@ const CompanyInfoForm = ({ callbackActive }: BusinessFormCommonProps) => {
             onChange={getUserData}
           />
         </Col>
-        <Col xl={4} sm={6}>
+        <Col xl={4} xs={12}>
           <Label>
             Phone No
             <span className="txt-danger">*</span>
@@ -109,21 +110,8 @@ const CompanyInfoForm = ({ callbackActive }: BusinessFormCommonProps) => {
             onChange={getUserData}
           />
         </Col>
-        {/* <Col xl={4} xs={12}>
-          <Label>
-            City
-            <span className="txt-danger">*</span>
-          </Label>
-          <Input
-            id="city"
-            type="text"
-            placeholder="city"
-            value={city}
-            name="city"
-            onChange={getUserData}
-          /> */}
-        {/* </Col> */}
-        <Col xl={4} sm={6}>
+
+        <Col xl={4} xs={12}>
           <Label>
             Address
             <span className="txt-danger">*</span>
@@ -136,7 +124,7 @@ const CompanyInfoForm = ({ callbackActive }: BusinessFormCommonProps) => {
             onChange={getUserData}
           />
         </Col>
-        <Col xl={4} sm={6}>
+        <Col xl={4} xs={12}>
           <Label>
             Contact Person Name
             <span className="txt-danger">*</span>
@@ -220,7 +208,7 @@ const CompanyInfoForm = ({ callbackActive }: BusinessFormCommonProps) => {
             onChange={getUserData}
           />
         </Col>
-        <Col md={6} xs={12}>
+        <Col xl={4} xs={12}>
           <div>
             <Label>
               Select City
@@ -229,12 +217,23 @@ const CompanyInfoForm = ({ callbackActive }: BusinessFormCommonProps) => {
           </div>
           <SelectCitiesBox placeholder="Select City" />
         </Col>
-        <Col md={6} xs={12}>
-          <Label>
-            Select Package
-            <span className="txt-danger">*</span>
-          </Label>
+        <Col xl={4} xs={12}>
+          <div>
+            <Label>
+              Select Package
+              <span className="txt-danger">*</span>
+            </Label>
+          </div>
           <SelectPackageBox placeholder="Select Package" />
+        </Col>
+        <Col xl={4} xs={12}>
+          <div>
+            <Label>
+              Select Time Zone
+              <span className="txt-danger">*</span>
+            </Label>
+          </div>
+          <SelectTimeZoneBox placeholder="Select Time Zone" />
         </Col>
 
         <Col xs={12} className="text-end">

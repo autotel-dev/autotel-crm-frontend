@@ -26,8 +26,10 @@ const RecentLogs = () => {
       <CardHeader className="pb-0">
         <div style={{ display: "flex", justifyContent: "space-between" }}>
           <H3>Recent logs</H3>
-          <Link to={`${process.env.PUBLIC_URL}/AllLogs`}>
-            <h3 style={{ color: "blue", cursor: "pointer" }}>See All</h3>
+          <Link
+            to={`${process.env.PUBLIC_URL}/setup/server_management/AllLogs`}
+          >
+            <h3 style={{ color: "#35bfbf", cursor: "pointer" }}>See All</h3>
           </Link>
         </div>
       </CardHeader>

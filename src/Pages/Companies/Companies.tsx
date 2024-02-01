@@ -13,6 +13,7 @@ import { useEffect, useState } from "react";
 import { getAll } from "../../Api";
 import {
   setServers,
+  setTimeZones,
   setCRMModules,
   setCities,
   setPackages,
@@ -44,6 +45,17 @@ const Companies = () => {
           console.log("hhg");
           dispatch(setCompanies(data.data));
           dispatch(setFilterCompanies(data.data));
+        }
+      }
+    });
+  }, []);
+  useEffect(() => {
+    getAll({ url: "timezone/get-all-timezones" }).then((data: any) => {
+      console.log("api call --- >", data);
+      if (data !== undefined) {
+        if (data.success) {
+          console.log("hhg");
+          dispatch(setTimeZones(data.data));
         }
       }
     });
@@ -138,7 +150,7 @@ const Companies = () => {
                         <Link to="#">{item.fullName}</Link>
                       </H5>
                       <span className="f-light">{item.emailAddress}</span>
-                      <SocialMediaIcons listClassName="card-social" />
+                      <SocialMediaIcons item={item} />
                       <CompaniesCardsFooter item={item} />
                     </div>
                   </CardBody>

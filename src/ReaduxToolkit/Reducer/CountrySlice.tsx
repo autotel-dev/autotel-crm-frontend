@@ -8,7 +8,7 @@ const initialState = {
   error: null,
   id: null,
   value: "",
-  noDataFound:""
+  noCountryFound: "",
 };
 
 const CountrySlice = createSlice({
@@ -37,8 +37,8 @@ const CountrySlice = createSlice({
     setValue: (state, action) => {
       state.value = action.payload;
     },
-    setNoDataFound: (state, action) => {
-      state.noDataFound = action.payload;
+    setNoCountryFound: (state, action) => {
+      state.noCountryFound = action.payload;
     },
   },
 });
@@ -47,9 +47,9 @@ export const {
   setFilterCountries,
   setCountriesStart,
   setCountriesEnd,
-  setNoDataFound,
   setId,
   setValue,
+  setNoCountryFound,
 } = CountrySlice.actions;
 
 export default CountrySlice.reducer;
