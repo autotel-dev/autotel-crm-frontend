@@ -1037,7 +1037,7 @@ export const CompanySidebarMenu: SidebarMenuTypes[] = [
     subMenu: [
       {
         svgIcon: "bonus-kit",
-        title: "Momitoring",
+        title: "Monitoring",
         link: `${process.env.PUBLIC_URL}/company/modules/monitoring`,
       },
       {

@@ -18,7 +18,7 @@ const MonitoringSidebar = () => {
     <div style={{ display: "flex" }}>
       <Sidebar
         style={{ height: "100vh" }}
-        backgroundColor="#33BFBF"
+        backgroundColor="#1f2f3e"
         breakPoint="sm"
         transitionDuration={800}
         collapsed={true}
@@ -33,7 +33,7 @@ const MonitoringSidebar = () => {
                   color: disabled ? "white" : "white",
                   fontWeight: "bold",
                   height: "80px",
-                  backgroundColor: active ? "#33BFBF" : "#33BFBF",
+                  // backgroundColor: active ? "#33BFBF" : "#33BFBF",
                 };
             },
           }}
@@ -50,16 +50,15 @@ const MonitoringSidebar = () => {
             // onClick={() => {
             //   collapseSidebar();
             // }}
-            style={{ textAlign: "center" }}
+            style={{ textAlign: "center", backgroundColor: "#1f2f3e" }}
           >
-            <div style={{ display: "flex", justifyContent: "center" }}>
-              <h4>Devices</h4>
-            </div>
+            Devices
           </MenuItem>
 
           <MenuItem
             style={{
               textAlign: "center",
+              backgroundColor: "green",
             }}
           >
             <div>
@@ -70,6 +69,7 @@ const MonitoringSidebar = () => {
           <MenuItem
             style={{
               textAlign: "center",
+              backgroundColor: "red",
             }}
           >
             <div>
@@ -80,6 +80,7 @@ const MonitoringSidebar = () => {
           <MenuItem
             style={{
               textAlign: "center",
+              backgroundColor: "green",
             }}
           >
             <div>
@@ -90,6 +91,7 @@ const MonitoringSidebar = () => {
           <MenuItem
             style={{
               textAlign: "center",
+              backgroundColor: "yellow",
             }}
           >
             <div>
@@ -108,6 +110,7 @@ const MonitoringSidebar = () => {
           transition: "width 0.5s",
         }}
       >
+        {/* <DevicesTreeViewAccordian /> */}
         {collapsedWidth !== "0px" && <DevicesTreeViewAccordian />}
       </div>
     </div>

@@ -1,6 +1,5 @@
 import BasicMapComp from "../../../MISCELLANEOUS/Maps/GoogleMap/BasicMapComp";
-import Map from "./components/GoogleMap/GoogleMap";
-import TrialMap from "./components/GoogleMap/TrialMap";
+import GoogleMap from "./components/GoogleMap/GoogleMap";
 import MonitoringSidebar from "./components/Sidebar/MonitoringSidebar";
 
 const Monitoring = () => {
@@ -15,11 +14,12 @@ const Monitoring = () => {
         display: "flex",
       }}
     >
-      <TrialMap />
+      <GoogleMap />
 
       <div
         style={{
           position: "absolute",
+          
         }}
       >
         <MonitoringSidebar />

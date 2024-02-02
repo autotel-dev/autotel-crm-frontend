@@ -21,7 +21,7 @@ const Footer = () => {
     //   }}
     >
       <footer
-        className={` ${darkFooter} ${fixedFooter}`}
+        className={`footer ${darkFooter} ${fixedFooter}`}
         // style={{
         //   marginLeft: "0px !important",
         //   backgroundColor: "red",
