@@ -102,50 +102,121 @@
 
 // export default DevicesTreeViewAccordian;
 
-
-import { useState } from 'react'
-import { Accordion, AccordionBody, AccordionHeader, AccordionItem } from 'reactstrap';
-import FeatherIcons from '../../../../../../utils/CommonSvgIcon/FeatherIcons';
-import { Elementswebdesign, SimpleAccordionText, SimpleAccordionText1, SimpleAccordionText2, Usewebdesign, Webdesignersdo } from '../../../../../../utils/Constant';
+import { useState } from "react";
+import {
+  Accordion,
+  AccordionBody,
+  AccordionHeader,
+  AccordionItem,
+} from "reactstrap";
+import FeatherIcons from "../../../../../../utils/CommonSvgIcon/FeatherIcons";
+import {
+  Elementswebdesign,
+  SimpleAccordionText,
+  SimpleAccordionText1,
+  SimpleAccordionText2,
+  Usewebdesign,
+  Webdesignersdo,
+} from "../../../../../../utils/Constant";
 
 const DevicesTreeViewAccordian = () => {
-    const [open, setOpen] = useState('0');
+  const devices = [
+    { deviceName: "AWC-772", date: "22-12-2023" },
+    { deviceName: "AWC-772", date: "22-12-2023" },
+    { deviceName: "AWC-772", date: "22-12-2023" },
+    { deviceName: "AWC-772", date: "22-12-2023" },
+    { deviceName: "AWC-772", date: "22-12-2023" },
+  ];
+  const [open, setOpen] = useState("0");
 
-    const toggle = (id: string) => {
-        open === id ? setOpen('') : setOpen(id);
-    };
-    return (
-        //@ts-ignore
-        <Accordion open={open} toggle={toggle}  className='dark-accordion'>
-            <AccordionItem>
-                <AccordionHeader targetId="1" className='bg-light-primary font-primary'>
-                    {Webdesignersdo}
-                    <FeatherIcons iconName={open === '1' ? 'ChevronUp' : 'ChevronDown'} className='svg-color' />
-                </AccordionHeader>
-                <AccordionBody accordionId="1">
-                    {SimpleAccordionText}
-                </AccordionBody>
-            </AccordionItem>
-            <AccordionItem>
-                <AccordionHeader targetId="2" className='bg-light-primary font-primary'>
-                    {Usewebdesign}
-                    <FeatherIcons iconName={open === '2' ? 'ChevronUp' : 'ChevronDown'} className='svg-color' />
-                </AccordionHeader>
-                <AccordionBody accordionId="2">
-                    {SimpleAccordionText1}
-                </AccordionBody>
-            </AccordionItem>
-            <AccordionItem>
-                <AccordionHeader targetId="3" className='bg-light-primary font-primary'>
-                    {Elementswebdesign}
-                    <FeatherIcons iconName={open === '3' ? 'ChevronUp' : 'ChevronDown'} className='svg-color' />
-                </AccordionHeader>
-                <AccordionBody accordionId="3">
-                    {SimpleAccordionText2}
-                </AccordionBody>
-            </AccordionItem>
-        </Accordion>
-    )
-}
+  const toggle = (id: string) => {
+    open === id ? setOpen("") : setOpen(id);
+  };
+  return (
+    //@ts-ignore
+    <Accordion open={open} toggle={toggle} className="dark-accordion">
+      <AccordionItem>
+        <div>
+          <AccordionHeader
+            targetId="1"
+            className="bg-light-primary font-primary"
+          >
+            <input
+              type="checkbox"
+              style={{ marginRight: "10px", height: "20px", width: "20px" }}
+            />
+            Lahore
+            <FeatherIcons
+              iconName={open === "1" ? "ChevronUp" : "ChevronDown"}
+              className="svg-color"
+            />
+          </AccordionHeader>
+        </div>
+        <AccordionBody accordionId="1">
+          {devices.map((item, index) => {
+            return (
+              <div
+                key={index}
+                style={{
+                  padding: "10px 0px",
+                  backgroundColor: "blue",
+                  borderRadius: "5px",
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    width: "35%",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <input
+                    type="checkbox"
+                    style={{ height: "20px", width: "20px" }}
+                  />
+                  <div
+                    style={{
+                      height: "20px",
+                      width: "20px",
+                      borderRadius: "100%",
+                      backgroundColor: "red",
+                    }}
+                  ></div>
+                  <div style={{ display: "flex", flexDirection: "column" }}>
+                    <span style={{ fontWeight: "bold" }}>
+                      {item.deviceName}
+                    </span>
+                    <span>{item.date}</span>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </AccordionBody>
+      </AccordionItem>
+      <AccordionItem>
+        <AccordionHeader targetId="2" className="bg-light-primary font-primary">
+          Islamabad
+          <FeatherIcons
+            iconName={open === "2" ? "ChevronUp" : "ChevronDown"}
+            className="svg-color"
+          />
+        </AccordionHeader>
+        <AccordionBody accordionId="2">{SimpleAccordionText1}</AccordionBody>
+      </AccordionItem>
+      <AccordionItem>
+        <AccordionHeader targetId="3" className="bg-light-primary font-primary">
+          Ungrouped
+          <FeatherIcons
+            iconName={open === "3" ? "ChevronUp" : "ChevronDown"}
+            className="svg-color"
+          />
+        </AccordionHeader>
+        <AccordionBody accordionId="3">{SimpleAccordionText2}</AccordionBody>
+      </AccordionItem>
+    </Accordion>
+  );
+};
 
-export default DevicesTreeViewAccordian
+export default DevicesTreeViewAccordian;

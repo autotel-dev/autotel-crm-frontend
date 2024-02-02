@@ -14,26 +14,6 @@ if (authToken !== null) {
   console.log("tokenValueFromRedux -- >", token);
 }
 
-// const header = () => {
-//   const authToken = localStorage.getItem("token");
-//   const { token } = useSelector((state) => state.user);
-
-//   var bearerToken;
-//   if (authToken !== null) {
-//     bearerToken = `Bearer ${authToken}`;
-//   } else {
-//     bearerToken = `Bearer ${token}`;
-//   }
-
-//   return {
-//     "Content-Type": "application/json",
-//     Authorization: bearerToken,
-//     // Add any other headers as needed (e.g., authorization token)
-//   };
-// };
-
-// export default header;
-
 const header = {
   "Content-Type": "application/json",
   Authorization: `Bearer ${token}`,
@@ -43,4 +23,4 @@ export default header;
 export const multipartHeader = {
   "Content-Type": "multipart/form-data",
   Authorization: `Bearer ${token}`,
-}
+};
