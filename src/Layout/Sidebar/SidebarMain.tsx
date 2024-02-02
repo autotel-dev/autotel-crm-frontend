@@ -5,11 +5,16 @@ import SidebarBack from "./SidebarBack";
 import MenuList from "./MenuList";
 import { Link } from "react-router-dom";
 import SVG from "../../utils/CommonSvgIcon/SVG";
-import { SidebarMenu } from "../../Data/Layout/Sidebar/Menu";
-import { useState } from "react";
+import {
+  SidebarMenu,
+  CompanySidebarMenu,
+} from "../../Data/Layout/Sidebar/Menu";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { SidebarMenuTypes } from "../../Data/Layout/Sidebar/SidebarTypes";
 import { useAppSelector } from "../../ReaduxToolkit/Hooks";
+import { useSelector } from "react-redux";
+import { jwtDecode } from "jwt-decode";
 export interface PropsTypes {
   setOpen: (item: boolean) => void;
   open?: boolean;
@@ -34,63 +39,125 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
       // setIsClose(false);
     }
   };
+
+  const { token } = useSelector((state: any) => state.user);
+  const [decodedToken, setDecodedToken]: any = useState(null);
+  const authToken = localStorage.getItem("token");
+  useEffect(() => {
+    if (authToken !== null) {
+      const decodedToken = jwtDecode(authToken);
+      console.log(decodedToken);
+      setDecodedToken(decodedToken);
+    }
+  }, []);
   return (
     <nav className="sidebar-main">
-      <div id="sidebar-menu">
-        <UL className="sidebar-links simple-list" id="simple-bar">
-          <SimpleBar className="w-100 simplebar-scrollable-y h-100">
-            <SidebarBack />
-            {SidebarMenu.map((data, index) => (
-              <LI className={`sidebar-list`} key={index}>
-                <Link
-                  className={`sidebar-link sidebar-title ${
-                    sideMenu === data.title ? "" : ""
-                  }`}
-                  to={data.link ? data.link : "#"}
-                  onClick={() => handleClick(data)}
-                >
-                  <SVG
-                    className={`${sidebarIconType}-icon`}
-                    iconId={`${sidebarIconType === "fill" ? "fill-" : ""}${
-                      data.svgIcon
-                    }`}
-                  />
-                  <span>{t(data.title)}</span>
-                </Link>
-                {data.link ? (
-                  <div></div>
-                ) : (
-                  !isClose && (
-                    <UL
-                      className="sidebar-submenu custom-scrollbar simple-list"
-                      style={{
-                        display: `${
-                          layout === "material-icon"
-                            ? data.title === sideMenu && !data.link
-                              ? "block"
-                              : "none"
-                            : ""
-                        }`,
-                      }}
-                    >
-                      {!data.link && (
-                        <MenuList
-                          subMenuData={data}
-                          isOpen={isOpen}
-                          setIsOpen={setIsOpen}
-                          level={0}
-                          isClose={isClose}
-                          setIsClose={setIsClose}
+      {decodedToken !== null && (
+        <div id="sidebar-menu">
+          <UL className="sidebar-links simple-list" id="simple-bar">
+            <SimpleBar className="w-100 simplebar-scrollable-y h-100">
+              <SidebarBack />
+              {decodedToken.role == "SUPER_ADMIN"
+                ? SidebarMenu.map((data, index) => (
+                    <LI className={`sidebar-list`} key={index}>
+                      <Link
+                        className={`sidebar-link sidebar-title ${
+                          sideMenu === data.title ? "" : ""
+                        }`}
+                        to={data.link ? data.link : "#"}
+                        onClick={() => handleClick(data)}
+                      >
+                        <SVG
+                          className={`${sidebarIconType}-icon`}
+                          iconId={`${
+                            sidebarIconType === "fill" ? "fill-" : ""
+                          }${data.svgIcon}`}
                         />
+                        <span>{t(data.title)}</span>
+                      </Link>
+                      {data.link ? (
+                        <div></div>
+                      ) : (
+                        !isClose && (
+                          <UL
+                            className="sidebar-submenu custom-scrollbar simple-list"
+                            style={{
+                              display: `${
+                                layout === "material-icon"
+                                  ? data.title === sideMenu && !data.link
+                                    ? "block"
+                                    : "none"
+                                  : ""
+                              }`,
+                            }}
+                          >
+                            {!data.link && (
+                              <MenuList
+                                subMenuData={data}
+                                isOpen={isOpen}
+                                setIsOpen={setIsOpen}
+                                level={0}
+                                isClose={isClose}
+                                setIsClose={setIsClose}
+                              />
+                            )}
+                          </UL>
+                        )
                       )}
-                    </UL>
-                  )
-                )}
-              </LI>
-            ))}
-          </SimpleBar>
-        </UL>
-      </div>
+                    </LI>
+                  ))
+                : CompanySidebarMenu.map((data, index) => (
+                    <LI className={`sidebar-list`} key={index}>
+                      <Link
+                        className={`sidebar-link sidebar-title ${
+                          sideMenu === data.title ? "" : ""
+                        }`}
+                        to={data.link ? data.link : "#"}
+                        onClick={() => handleClick(data)}
+                      >
+                        <SVG
+                          className={`${sidebarIconType}-icon`}
+                          iconId={`${
+                            sidebarIconType === "fill" ? "fill-" : ""
+                          }${data.svgIcon}`}
+                        />
+                        <span>{t(data.title)}</span>
+                      </Link>
+                      {data.link ? (
+                        <div></div>
+                      ) : (
+                        !isClose && (
+                          <UL
+                            className="sidebar-submenu custom-scrollbar simple-list"
+                            style={{
+                              display: `${
+                                layout === "material-icon"
+                                  ? data.title === sideMenu && !data.link
+                                    ? "block"
+                                    : "none"
+                                  : ""
+                              }`,
+                            }}
+                          >
+                            {!data.link && (
+                              <MenuList
+                                subMenuData={data}
+                                isOpen={isOpen}
+                                setIsOpen={setIsOpen}
+                                level={0}
+                                isClose={isClose}
+                                setIsClose={setIsClose}
+                              />
+                            )}
+                          </UL>
+                        )
+                      )}
+                    </LI>
+                  ))}
+            </SimpleBar>
+          </UL>
+        </div>
+      )}
     </nav>
   );
 };

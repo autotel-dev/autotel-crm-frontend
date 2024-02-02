@@ -138,6 +138,13 @@ import UpdateServerForm from "../Pages/ServerDetails/UpdateServerForm.tsx/Update
 import VerifyOTP from "../Pages/VerifyOTP/VerifyOTP";
 import RecentLogsFullTable from "../Pages/ServerManagement/RecentOrders/RecentLogsFullTable";
 
+// Company
+
+import CompanySupport from "../Pages/Company/Support/Support";
+import CompanyTasks from "../Pages/Company/Tasks/Tasks";
+import Monitoring from "../Pages/Company/Modules/Monitoring/Monitoring";
+import ControlRoom from "../Pages/Company/Modules/ControlRoom/ControlRoom";
+
 const routes = [
   // dashboard routes
   {
@@ -717,6 +724,47 @@ const routes = [
   //   }`,
   //   Component: <LoginForm />,
   // },
+
+  // Company Routes
+
+  // Dashboard
+  {
+    path: `${process.env.PUBLIC_URL}/company/dashboard`,
+    Component: <ShoppingPlace />,
+  },
+
+  // Setup
+
+  {
+    path: `${process.env.PUBLIC_URL}/company/emailTemplates`,
+    Component: <ShoppingPlace />,
+  },
+  {
+    path: `${process.env.PUBLIC_URL}/company/whatsappTemplates`,
+    Component: <ShoppingPlace />,
+  },
+
+  // Modules
+
+  {
+    path: `${process.env.PUBLIC_URL}/company/modules/monitoring`,
+    Component: <Monitoring />,
+  },
+  {
+    path: `${process.env.PUBLIC_URL}/company/modules/controlRoom`,
+    Component: <ControlRoom />,
+  },
+
+  // Support
+  {
+    path: `${process.env.PUBLIC_URL}/company/support`,
+    Component: <CompanySupport />,
+  },
+  // Tasks
+  {
+    path: `${process.env.PUBLIC_URL}/company/tasks`,
+    Component: <CompanyTasks />,
+  },
 ];
 
 export default routes;

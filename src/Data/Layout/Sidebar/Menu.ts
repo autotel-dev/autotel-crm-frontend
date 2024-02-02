@@ -2,7 +2,7 @@ import { SidebarMenuTypes } from "./SidebarTypes";
 
 export const SidebarMenu: SidebarMenuTypes[] = [
   {
-    title: "General",
+    title: "Dashboard",
     svgIcon: "home",
     link: `${process.env.PUBLIC_URL}/dashboards/shoppingplace`,
     // subMenu: [
@@ -70,7 +70,7 @@ export const SidebarMenu: SidebarMenuTypes[] = [
     ],
   },
   {
-    title: "CRM Modules",
+    title: "Modules",
     svgIcon: "home",
     subMenu: [
       {
@@ -1007,4 +1007,60 @@ export const SidebarMenu: SidebarMenuTypes[] = [
   //         }
   //     ]
   // }
+];
+
+export const CompanySidebarMenu: SidebarMenuTypes[] = [
+  {
+    title: "Dashboard",
+    svgIcon: "home",
+    link: `${process.env.PUBLIC_URL}/company/dashboard`,
+  },
+  {
+    title: "Setup",
+    svgIcon: "home",
+    subMenu: [
+      {
+        svgIcon: "bonus-kit",
+        title: "Email Templates",
+        link: `${process.env.PUBLIC_URL}/company/emailTemplates`,
+      },
+      {
+        svgIcon: "bonus-kit",
+        title: "WhatsApp templates",
+        link: `${process.env.PUBLIC_URL}/company/whatsappTemplates`,
+      },
+    ],
+  },
+  {
+    title: "Modules",
+    svgIcon: "home",
+    subMenu: [
+      {
+        svgIcon: "bonus-kit",
+        title: "Momitoring",
+        link: `${process.env.PUBLIC_URL}/company/modules/monitoring`,
+      },
+      {
+        svgIcon: "bonus-kit",
+        title: "Control Room",
+        link: `${process.env.PUBLIC_URL}/company/modules/controlRoom`,
+      },
+    ],
+  },
+
+  {
+    title: "Users",
+    svgIcon: "home",
+    link: `${process.env.PUBLIC_URL}/company/users`,
+  },
+  {
+    title: "Support",
+    svgIcon: "home",
+    link: `${process.env.PUBLIC_URL}/company/support`,
+  },
+  {
+    title: "Tasks",
+    svgIcon: "home",
+    link: `${process.env.PUBLIC_URL}/company/tasks`,
+  },
 ];
