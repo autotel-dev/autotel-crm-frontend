@@ -21,6 +21,7 @@ import CompanySlice from "./Reducer/CompanySlice";
 import ServerManagementSlice from "./Reducer/ServerManagementSlice";
 import ServerDetailsSlice from "./Reducer/ServerDetailsSlice";
 import UserSlice from "./Reducer/UserSlice";
+import MonitoringSlice from "./Reducer/MonitoringSlice";
 
 const Store = configureStore({
   reducer: {
@@ -46,6 +47,7 @@ const Store = configureStore({
     serverManagement: ServerManagementSlice,
     serverDetails: ServerDetailsSlice,
     user: UserSlice,
+    monitoring: MonitoringSlice,
   },
 });
 

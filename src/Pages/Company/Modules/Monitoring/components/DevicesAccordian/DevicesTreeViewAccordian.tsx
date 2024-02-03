@@ -118,104 +118,106 @@ import {
   Usewebdesign,
   Webdesignersdo,
 } from "../../../../../../utils/Constant";
+import { useSelector } from "react-redux";
 
 const DevicesTreeViewAccordian = () => {
-  const devices = [
-    { deviceName: "AWC-772", date: "22-12-2023" },
-    { deviceName: "AWC-772", date: "22-12-2023" },
-    { deviceName: "AWC-772", date: "22-12-2023" },
-    { deviceName: "AWC-772", date: "22-12-2023" },
-    { deviceName: "AWC-772", date: "22-12-2023" },
-  ];
+  const { devices } = useSelector((state: any) => state.monitoring);
+  console.log("devices", devices);
+
   const [open, setOpen] = useState("0");
 
   const toggle = (id: string) => {
     open === id ? setOpen("") : setOpen(id);
   };
+  const handleCheckboxClick = (e: any) => {
+    // Prevent the click event from propagating to the accordion
+    e.stopPropagation();
+  };
   return (
     //@ts-ignore
-    <Accordion open={open} toggle={toggle} className="dark-accordion">
-      <AccordionItem>
-        <div>
-          <AccordionHeader
-            targetId="1"
-            className="bg-light-primary font-primary"
-          >
-            <input
-              type="checkbox"
-              style={{ marginRight: "10px", height: "20px", width: "20px" }}
-            />
-            Lahore
-            <FeatherIcons
-              iconName={open === "1" ? "ChevronUp" : "ChevronDown"}
-              className="svg-color"
-            />
-          </AccordionHeader>
-        </div>
-        <AccordionBody accordionId="1">
-          {devices.map((item, index) => {
+    <>
+      {" "}
+      {devices.length > 0 && (
+        <Accordion open={open} toggle={toggle} className="dark-accordion">
+          {devices.map((item: any, index: any) => {
             return (
-              <div
-                key={index}
-                style={{
-                  padding: "10px 0px",
-                  backgroundColor: "blue",
-                  borderRadius: "5px",
-                }}
-              >
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    width: "35%",
-                    justifyContent: "space-between",
-                  }}
-                >
-                  <input
-                    type="checkbox"
-                    style={{ height: "20px", width: "20px" }}
-                  />
-                  <div
-                    style={{
-                      height: "20px",
-                      width: "20px",
-                      borderRadius: "100%",
-                      backgroundColor: "red",
-                    }}
-                  ></div>
-                  <div style={{ display: "flex", flexDirection: "column" }}>
-                    <span style={{ fontWeight: "bold" }}>
-                      {item.deviceName}
-                    </span>
-                    <span>{item.date}</span>
-                  </div>
+              <AccordionItem key={index}>
+                <div>
+                  <AccordionHeader
+                    targetId={`${index}`}
+                    className="bg-light-primary font-primary"
+                    style={{ backgroundColor: "lightgray" }}
+                  >
+                    <input
+                      type="checkbox"
+                      style={{
+                        marginRight: "10px",
+                        height: "20px",
+                        width: "20px",
+                      }}
+                      onClick={handleCheckboxClick}
+                    />
+                    {item.title}
+                    <FeatherIcons
+                      iconName={
+                        open == `${index}` ? "ChevronUp" : "ChevronDown"
+                      }
+                      className="svg-color"
+                    />
+                  </AccordionHeader>
                 </div>
-              </div>
+                <AccordionBody accordionId={`${index}`}>
+                  {item.items.map((bodyItem: any, bodyindex: any) => {
+                    return (
+                      <div
+                        key={bodyindex}
+                        style={{
+                          padding: "10px 5px",
+                          boxShadow: "0px 5px 15px lightgray",
+                          //   border: "1px solid",
+                          borderRadius: "15px",
+                          margin: "10px 0px",
+                        }}
+                      >
+                        <div
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            width: "40%",
+                            justifyContent: "space-between",
+                          }}
+                        >
+                          <input
+                            type="checkbox"
+                            style={{ height: "20px", width: "20px" }}
+                          />
+                          <div
+                            style={{
+                              height: "20px",
+                              width: "20px",
+                              borderRadius: "100%",
+                              backgroundColor: "red",
+                            }}
+                          ></div>
+                          <div
+                            style={{ display: "flex", flexDirection: "column" }}
+                          >
+                            <span style={{ fontWeight: "bold" }}>
+                              {bodyItem.name}
+                            </span>
+                            <span>date</span>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </AccordionBody>
+              </AccordionItem>
             );
           })}
-        </AccordionBody>
-      </AccordionItem>
-      <AccordionItem>
-        <AccordionHeader targetId="2" className="bg-light-primary font-primary">
-          Islamabad
-          <FeatherIcons
-            iconName={open === "2" ? "ChevronUp" : "ChevronDown"}
-            className="svg-color"
-          />
-        </AccordionHeader>
-        <AccordionBody accordionId="2">{SimpleAccordionText1}</AccordionBody>
-      </AccordionItem>
-      <AccordionItem>
-        <AccordionHeader targetId="3" className="bg-light-primary font-primary">
-          Ungrouped
-          <FeatherIcons
-            iconName={open === "3" ? "ChevronUp" : "ChevronDown"}
-            className="svg-color"
-          />
-        </AccordionHeader>
-        <AccordionBody accordionId="3">{SimpleAccordionText2}</AccordionBody>
-      </AccordionItem>
-    </Accordion>
+        </Accordion>
+      )}
+    </>
   );
 };
 
