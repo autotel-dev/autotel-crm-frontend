@@ -1,107 +1,3 @@
-// import { Card, CardBody, Col } from "reactstrap";
-
-// import { BasicTrees } from "./../../../../../../utils/Constant";
-// import { IoMdArrowDropright } from "react-icons/io";
-// import TreeView, { flattenTree } from "react-accessible-treeview";
-// import cx from "classnames";
-// import { simpleTreeviewData } from "./../../../../../../Data/BonusUi/TreeViewData";
-// import { FaCheckSquare, FaMinusSquare, FaSquare } from "react-icons/fa";
-// import CommonHeader from "../../../../../../Common/CommonHeader";
-// interface BasicTreesProp {
-//   variant?: string;
-//   isOpen?: boolean;
-//   className?: string;
-//   onClick?: (e: {}) => void;
-// }
-// export const ArrowIcon = ({ isOpen, className }: BasicTreesProp) => {
-//   const baseClass = "arrow";
-//   const classes = cx(
-//     baseClass,
-//     { [`${baseClass}--closed`]: !isOpen },
-//     { [`${baseClass}--open`]: isOpen },
-//     className
-//   );
-//   return <IoMdArrowDropright className={classes} />;
-// };
-
-// export const CheckBoxIcon = ({ variant, ...rest }: BasicTreesProp) => {
-//   switch (variant) {
-//     case "all":
-//       return <FaCheckSquare color="#4AAD8A" {...rest} />;
-//     case "none":
-//       return (
-//         <FaSquare
-//           color="white"
-//           {...rest}
-//           style={{ border: "1px solid #80808069" }}
-//         />
-//       );
-//     case "some":
-//       return <FaMinusSquare {...rest} color="#33BFBF" />;
-//     default:
-//       return null;
-//   }
-// };
-// const DevicesTreeViewAccordian = () => {
-//   const treeData = flattenTree(simpleTreeviewData);
-//   return (
-//     <Col>
-//       <Card>
-//         <CardBody>
-//           <div className="tree-container">
-//             <div className="checkbox">
-//               <TreeView
-//                 data={treeData}
-//                 aria-label="Checkbox tree"
-//                 multiSelect
-//                 propagateSelect
-//                 propagateSelectUpwards
-//                 togglableSelect
-//                 expandedIds={[1, 2, 6, 10]}
-//                 defaultSelectedIds={[1, 2, 3]}
-//                 nodeRenderer={({
-//                   element,
-//                   isBranch,
-//                   isExpanded,
-//                   isSelected,
-//                   isHalfSelected,
-//                   getNodeProps,
-//                   level,
-//                   handleSelect,
-//                   handleExpand,
-//                 }) => {
-//                   return (
-//                     <div
-//                       {...getNodeProps({ onClick: handleExpand })}
-//                       style={{ marginLeft: 40 * (level - 1), marginTop: 5 }}
-//                       className="d-flex align-items-center"
-//                     >
-//                       {isBranch && <ArrowIcon isOpen={isExpanded} />}
-//                       <CheckBoxIcon
-//                         className="checkbox-icon "
-//                         onClick={(e: any) => {
-//                           handleSelect(e);
-//                           e.stopPropagation();
-//                         }}
-//                         variant={
-//                           isHalfSelected ? "some" : isSelected ? "all" : "none"
-//                         }
-//                       />
-//                       <span className="name">{element.name}</span>
-//                     </div>
-//                   );
-//                 }}
-//               />
-//             </div>
-//           </div>
-//         </CardBody>
-//       </Card>
-//     </Col>
-//   );
-// };
-
-// export default DevicesTreeViewAccordian;
-
 import { useState } from "react";
 import {
   Accordion,
@@ -118,16 +14,19 @@ import {
   Usewebdesign,
   Webdesignersdo,
 } from "../../../../../../utils/Constant";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import "./inputStyle.css";
 
 const DevicesTreeViewAccordian = () => {
   const { devices } = useSelector((state: any) => state.monitoring);
   console.log("devices", devices);
+  const [itemsLength, setItemsLength] = useState(6);
 
-  const [open, setOpen] = useState("0");
+  const [open, setOpen] = useState("");
 
   const toggle = (id: string) => {
     open === id ? setOpen("") : setOpen(id);
+    setItemsLength(6);
   };
   const handleCheckboxClick = (e: any) => {
     // Prevent the click event from propagating to the accordion
@@ -142,22 +41,23 @@ const DevicesTreeViewAccordian = () => {
           {devices.map((item: any, index: any) => {
             return (
               <AccordionItem key={index}>
-                <div>
+                <div style={{ backgroundColor: "gray", fontWeight: "bold" }}>
                   <AccordionHeader
                     targetId={`${index}`}
-                    className="bg-light-primary font-primary"
-                    style={{ backgroundColor: "lightgray" }}
+                    className="bg-light-primary"
                   >
                     <input
                       type="checkbox"
                       style={{
                         marginRight: "10px",
-                        height: "20px",
-                        width: "20px",
+                        height: "22px",
+                        width: "22px",
                       }}
                       onClick={handleCheckboxClick}
                     />
-                    {item.title}
+                    <span style={{ fontWeight: "bold" }}>
+                      {item.title} &nbsp; ({item.items.length})
+                    </span>
                     <FeatherIcons
                       iconName={
                         open == `${index}` ? "ChevronUp" : "ChevronDown"
@@ -168,49 +68,108 @@ const DevicesTreeViewAccordian = () => {
                 </div>
                 <AccordionBody accordionId={`${index}`}>
                   {item.items.map((bodyItem: any, bodyindex: any) => {
-                    return (
-                      <div
-                        key={bodyindex}
-                        style={{
-                          padding: "10px 5px",
-                          boxShadow: "0px 5px 15px lightgray",
-                          //   border: "1px solid",
-                          borderRadius: "15px",
-                          margin: "10px 0px",
-                        }}
-                      >
+                    if (bodyindex <= itemsLength) {
+                      return (
                         <div
+                          key={bodyindex}
                           style={{
-                            display: "flex",
-                            alignItems: "center",
-                            width: "40%",
-                            justifyContent: "space-between",
+                            padding: "10px 12px",
+                            boxShadow: "0px 5px 18px lightgray",
+                            borderRadius: "15px",
+                            margin: "10px -10px",
                           }}
                         >
-                          <input
-                            type="checkbox"
-                            style={{ height: "20px", width: "20px" }}
-                          />
                           <div
                             style={{
-                              height: "20px",
-                              width: "20px",
-                              borderRadius: "100%",
-                              backgroundColor: "red",
+                              display: "flex",
+                              alignItems: "center",
+                              // width: "40%",
+                              // justifyContent: "space-between",
                             }}
-                          ></div>
-                          <div
-                            style={{ display: "flex", flexDirection: "column" }}
                           >
-                            <span style={{ fontWeight: "bold" }}>
-                              {bodyItem.name}
-                            </span>
-                            <span>date</span>
+                            <label
+                              style={{
+                                display: "inline-block",
+                                position: "relative",
+                                cursor: "pointer",
+                              }}
+                            >
+                              <input
+                                type="checkbox"
+                                name="key"
+                                value="value"
+                                style={{ display: "none" }} // Hide the default checkbox
+                              />
+                              <span></span>
+                            </label>
+                            <style>
+                              {`
+        label > input[type="checkbox"] + span::before {
+          content: "";
+          display: inline-block;
+          vertical-align: bottom;
+          width: 20px;
+          height: 20px; 
+          border-radius: 10%;
+          border-style: solid;
+          border-width: 0.15rem;
+          border-color: red;
+          margin-right: 15px;
+        }
+        
+        label > input[type="checkbox"]:checked + span::before {
+          content: "✓"; /* you can change check logo here */
+          font-weight: bold; /* make content bold */
+          transform: scale(1.1); /* this is for check size */
+          color: red; /* check colour */
+          text-align: center;
+          background: white; /* check background colour */
+          border-color: red; /* check border colour */
+          margin-right: 15px;
+          
+        }
+        
+        label > input[type="checkbox"]:checked + span {
+          color: red;
+        }
+      `}
+                            </style>
+                            <div
+                              style={{
+                                display: "flex",
+                                flexDirection: "column",
+                              }}
+                            >
+                              <span style={{ fontWeight: "bold" }}>
+                                {bodyItem.name}
+                              </span>
+                              <span>date</span>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    );
+                      );
+                    }
                   })}
+                  {item.items.length >= 6 && (
+                    <div
+                      style={{
+                        display: "flex",
+                        color: "blue",
+                        fontSize: "16px",
+                        justifyContent: "end",
+                        cursor: "pointer",
+                      }}
+                      onClick={() => {
+                        if (itemsLength <= 7) {
+                          setItemsLength(itemsLength + 5);
+                        } else {
+                          setItemsLength(itemsLength - 5);
+                        }
+                      }}
+                    >
+                      {itemsLength <= 7 ? "Show More" : "Show Less"}
+                    </div>
+                  )}
                 </AccordionBody>
               </AccordionItem>
             );

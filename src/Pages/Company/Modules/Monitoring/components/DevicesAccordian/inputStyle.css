@@ -1,0 +1,32 @@
+/* 
+  
+  label > input[type="checkbox"] {
+    display: none;
+  }
+  
+  label > input[type="checkbox"] + *::before {
+    content: "";
+    display: inline-block;
+    vertical-align: bottom;
+    width: 20px;
+    height: 20px;
+    border-radius: 10%;
+    border-style: solid;
+    border-width: 0.1rem;
+    border-color: red;
+    margin-right: 15px;
+  }
+  
+  label > input[type="checkbox"]:checked + *::before {
+    content: "✓";
+    transform: scale(1.1); 
+    color: red; 
+    text-align: center;
+    background: white;
+    border-color: red; 
+    margin-right: 15px;
+  }
+  label > input[type="checkbox"]:checked + * {
+    color: red;
+  } */
+

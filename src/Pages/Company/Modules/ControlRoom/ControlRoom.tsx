@@ -41,22 +41,44 @@ const ControlRoom = () => {
         </Col>
         <Col xl="6">
           <div style={{ backgroundColor: "white" }}>
-            <Nav tabs className="simple-wrapper">
+            <Nav
+              tabs
+              className="simple-wrapper"
+              style={{
+                backgroundColor: "#63d5be",
+                borderBottomLeftRadius:"10px",
+                borderBottomRightRadius:"10px"
+              }}
+            >
               <NavItem
-                style={{ width: "50%", height: "50px", textAlign: "center" }}
+                style={{
+                  width: "50%",
+                  height: "50px",
+                  textAlign: "center",
+                  fontSize: "22px",
+                  cursor: "pointer",
+                }}
               >
                 <NavLink
-                  className={`txt-primary ${basicTab === "1" ? "active" : ""}`}
+                  className={` ${basicTab === "1" ? "active" : ""}`}
+                  style={{ color: `${basicTab === "1" ? "#63d5be" : "white"}` }}
                   onClick={() => setBasicTab("1")}
                 >
                   Assigned Events
                 </NavLink>
               </NavItem>
               <NavItem
-                style={{ width: "50%", height: "50px", textAlign: "center" }}
+                style={{
+                  width: "50%",
+                  height: "50px",
+                  textAlign: "center",
+                  fontSize: "22px",
+                  cursor: "pointer",
+                }}
               >
                 <NavLink
-                  className={`txt-primary ${basicTab === "2" ? "active" : ""}`}
+                  className={` ${basicTab === "2" ? "active" : ""}`}
+                  style={{ color: `${basicTab === "2" ? "#63d5be" : "white"}` }}
                   onClick={() => setBasicTab("2")}
                 >
                   Completed Events

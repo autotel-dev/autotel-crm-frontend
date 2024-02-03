@@ -57,15 +57,51 @@ const CompletedAlerts = () => {
       message: "message",
       address: "address",
     },
+    {
+      id: "122",
+      device: "device",
+      date: "dateTime",
+      alertt: "alert",
+      type: "type",
+      message: "message",
+      address: "address",
+    },
+    {
+      id: "123",
+      device: "device",
+      date: "dateTime",
+      alertt: "alert",
+      type: "type",
+      message: "message",
+      address: "address",
+    },
+    {
+      id: "124",
+      device: "device",
+      date: "dateTime",
+      alertt: "alert",
+      type: "type",
+      message: "message",
+      address: "address",
+    },
+    {
+      id: "125",
+      device: "device",
+      date: "dateTime",
+      alertt: "alert",
+      type: "type",
+      message: "message",
+      address: "address",
+    },
   ];
 
   return (
     <Card className="invoice-card">
-      <CardHeader className="pb-0">
+      {/* <CardHeader className="pb-0">
         <div>
           <H3>Completed Alerts</H3>
         </div>
-      </CardHeader>
+      </CardHeader> */}
       <CardBody className="transaction-card">
         <div className="table-responsive theme-scrollbar recent-wrapper">
           <Table className="display order-wrapper" id="recent-order">
@@ -78,7 +114,7 @@ const CompletedAlerts = () => {
             </thead>
             <tbody>
               {completedAlerts.map((data: any, index: any) => {
-                if (index < 6) {
+                if (index < 8) {
                   return (
                     <tr key={index}>
                       <td>{data.id}</td>

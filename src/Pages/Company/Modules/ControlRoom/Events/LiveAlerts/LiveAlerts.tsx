@@ -50,12 +50,48 @@ const LiveAlerts = () => {
       message: "message",
       address: "address",
     },
+    {
+      id: "122",
+      device: "device",
+      date: "dateTime",
+      alertt: "alert",
+      type: "type",
+      message: "message",
+      address: "address",
+    },
+    {
+      id: "123",
+      device: "device",
+      date: "dateTime",
+      alertt: "alert",
+      type: "type",
+      message: "message",
+      address: "address",
+    },
+    {
+      id: "124",
+      device: "device",
+      date: "dateTime",
+      alertt: "alert",
+      type: "type",
+      message: "message",
+      address: "address",
+    },
+    {
+      id: "125",
+      device: "device",
+      date: "dateTime",
+      alertt: "alert",
+      type: "type",
+      message: "message",
+      address: "address",
+    },
   ];
 
   return (
     <Card className="invoice-card">
-      <CardHeader className="pb-0">
-        <div>
+      <CardHeader className="pb-0" style={{ backgroundColor: "#63d5be" }}>
+        <div style={{ paddingBottom: "10px" }}>
           <H3>Live Alerts</H3>
         </div>
       </CardHeader>
@@ -71,7 +107,7 @@ const LiveAlerts = () => {
             </thead>
             <tbody>
               {liveAlerts.map((data: any, index: any) => {
-                if (index < 6) {
+                if (index < 8) {
                   return (
                     <tr key={index}>
                       <td>{data.id}</td>

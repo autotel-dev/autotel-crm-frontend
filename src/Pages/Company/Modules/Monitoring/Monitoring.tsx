@@ -1,10 +1,9 @@
 import { useDispatch, useSelector } from "react-redux";
-import BasicMapComp from "../../../MISCELLANEOUS/Maps/GoogleMap/BasicMapComp";
 import GoogleMap from "./components/GoogleMap/GoogleMap";
 import MonitoringSidebar from "./components/Sidebar/MonitoringSidebar";
 import { useEffect, useState } from "react";
 import { getAll } from "../../../../Api";
-import { setDevices } from "../../../../ReaduxToolkit/Reducer/MonitoringSlice";
+import { setDevices, setServerDevices } from "../../../../ReaduxToolkit/Reducer/MonitoringSlice";
 import Loader from "../../../Loader/Loader";
 
 const Monitoring = () => {
@@ -21,9 +20,15 @@ const Monitoring = () => {
 
   const [groupdevices, setgroupdevices]: any = useState([]);
   useEffect(() => {
+    document.body.style.overflow = "hidden";
+
+    // Re-enable scrolling when the component unmounts
+
     getAll({ url: "company/devices" }).then((data: any) => {
       console.log("api call --- >", data);
       console.log("length --- >", data.data.length);
+
+      dispatch(setServerDevices(data.data))
 
       if (data !== undefined) {
         if (data.success) {
@@ -56,6 +61,9 @@ const Monitoring = () => {
     });
     console.log("groups", groups);
     console.log("groupDevices", groupdevices);
+    return () => {
+      document.body.style.overflow = "unset";
+    };
   }, []);
 
   return (
@@ -67,6 +75,7 @@ const Monitoring = () => {
             marginTop: "130px",
             height: "100vh",
             display: "flex",
+            overflow: "unset",
           }}
         >
           <GoogleMap />
@@ -82,13 +91,16 @@ const Monitoring = () => {
       ) : (
         <div
           style={{
+            display: "flex",
+            justifyContent: "center",
             height: "100vh",
-            width: "100%",
             backgroundColor: "white",
             alignItems: "center",
           }}
         >
-          <Loader />
+          <div style={{ textAlign: "center" }}>
+            <Loader />
+          </div>
         </div>
       )}
     </>

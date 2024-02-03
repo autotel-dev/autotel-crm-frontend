@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   devices: [],
+  serverDevices:[],
   noDevicesFound: "",
   loading: false,
   error: null,
@@ -20,6 +21,12 @@ const MonitoringSlice = createSlice({
       state.loading = false;
     },
 
+    setServerDevices:(state, action)=>{
+      state.serverDevices = action.payload
+      state.error = null;
+      state.loading = false;
+    },
+
     setDevicesEnd: (state) => {
       state.loading = false;
     },
@@ -29,7 +36,7 @@ const MonitoringSlice = createSlice({
     },
   },
 });
-export const { setDevices, setDevicesStart, setDevicesEnd, setNoDevicesFound } =
+export const { setDevices, setDevicesStart, setDevicesEnd, setNoDevicesFound, setServerDevices } =
   MonitoringSlice.actions;
 
 export default MonitoringSlice.reducer;
