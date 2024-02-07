@@ -67,10 +67,10 @@ const Layout = () => {
           >
             <Outlet />
           </div>
-          {/* <Footer /> */}
+          <Footer />
         </div>
       </div>
-      <ThemeCustomizer />
+      {/* <ThemeCustomizer /> */}
     </>
   );
 };

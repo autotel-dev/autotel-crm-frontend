@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Accordion,
   AccordionBody,
@@ -6,44 +6,126 @@ import {
   AccordionItem,
 } from "reactstrap";
 import FeatherIcons from "../../../../../../utils/CommonSvgIcon/FeatherIcons";
-import {
-  Elementswebdesign,
-  SimpleAccordionText,
-  SimpleAccordionText1,
-  SimpleAccordionText2,
-  Usewebdesign,
-  Webdesignersdo,
-} from "../../../../../../utils/Constant";
+import { Form, Input } from "reactstrap";
 import { useDispatch, useSelector } from "react-redux";
-import "./inputStyle.css";
+import SVG from "../../../../../../utils/CommonSvgIcon/SVG";
+import {
+  setDevices,
+  setExpandedDevice,
+  setSelecetdDevices,
+} from "../../../../../../ReaduxToolkit/Reducer/MonitoringSlice";
 
 const DevicesTreeViewAccordian = () => {
-  const { devices } = useSelector((state: any) => state.monitoring);
-  console.log("devices", devices);
   const [itemsLength, setItemsLength] = useState(6);
-
+  const { devices } = useSelector((state: any) => state.monitoring);
+  const [searchValue, setSearchValue] = useState("");
   const [open, setOpen] = useState("");
+  const [matchedGroups, setMatchedGroups] = useState(devices);
+  const [Devices, setDevices]: any = useState([]);
+  const dispatch = useDispatch();
+
+  console.log("devices", devices);
+
+  useEffect(() => {
+    if (searchValue.length >= 1) {
+      setOpen("all");
+    } else {
+      setOpen("");
+    }
+  }, [searchValue]);
 
   const toggle = (id: string) => {
-    open === id ? setOpen("") : setOpen(id);
+    open == id ? setOpen("") : setOpen(id);
     setItemsLength(6);
   };
-  const handleCheckboxClick = (e: any) => {
+  const handleCheckboxClick = (e: any, group: any) => {
+    // Prevent the click event from propagating to the accordion
+
+    e.stopPropagation();
+
+    const groupItems = group.items;
+
+    // Check if any item of this group is already selected
+    const isAnyItemSelected = groupItems.some((item: any) =>
+      Devices.find((selectedItem: any) => selectedItem.title === item.title)
+    );
+
+    // If no item of this group is selected, add all items to selectedDevices
+    if (!isAnyItemSelected) {
+      const newSelectedDevices = [...Devices, ...groupItems];
+      setDevices(newSelectedDevices);
+      dispatch(setSelecetdDevices(newSelectedDevices));
+    } else {
+      // Otherwise, remove all items of this group from selectedDevices
+      const updatedDevices = Devices.filter((selectedItem: any) =>
+        groupItems.every((item: any) => selectedItem.title !== item.title)
+      );
+      setDevices(updatedDevices);
+      dispatch(setSelecetdDevices(updatedDevices));
+    }
+    console.log("selectedDevices-->", Devices);
+  };
+
+  const handleSearch = (e: any) => {
+    const searchKey = e.target.value.toLowerCase();
+    setSearchValue(searchKey);
+
+    const matchedGroups = devices.map((group: any, index: any) => {
+      const matchedItems = group.items.filter((item: any) =>
+        item.name.toLowerCase().includes(searchKey)
+      );
+      return { title: group.title, items: matchedItems };
+    });
+    const matcheditems = matchedGroups.filter(
+      (item: any, index: any) => item.items.length > 0
+    );
+    console.log("matcheditems", matcheditems);
+    setMatchedGroups(matcheditems);
+  };
+
+  const handleSelecetdDevices = (e: any, device: any) => {
     // Prevent the click event from propagating to the accordion
     e.stopPropagation();
+    const index = Devices.indexOf(device);
+    if (index === -1) {
+      setDevices([...Devices, device]);
+      dispatch(setSelecetdDevices(Devices));
+    } else {
+      const updatedDevices = [...Devices];
+      updatedDevices.splice(index, 1);
+      setDevices(updatedDevices);
+      dispatch(setSelecetdDevices(updatedDevices));
+    }
+
+    console.log("selectedDevices-->", Devices);
   };
   return (
     //@ts-ignore
     <>
-      {" "}
-      {devices.length > 0 && (
+      <input
+        className=""
+        type="text"
+        placeholder="Type to Search .."
+        value={searchValue}
+        onChange={(e: any) => handleSearch(e)}
+        style={{
+          width: "480px",
+          padding: "10px 12px",
+          boxShadow: "0px 5px 18px lightgray",
+          borderRadius: "15px",
+          margin: "10px",
+          marginBottom: "20px",
+        }}
+      />
+
+      {matchedGroups.length > 0 && (
         <Accordion open={open} toggle={toggle} className="dark-accordion">
-          {devices.map((item: any, index: any) => {
+          {matchedGroups.map((item: any, index: any) => {
             return (
               <AccordionItem key={index}>
                 <div style={{ backgroundColor: "gray", fontWeight: "bold" }}>
                   <AccordionHeader
-                    targetId={`${index}`}
+                    targetId={`${searchValue.length >= 1 ? "all" : index}`}
                     className="bg-light-primary"
                   >
                     <input
@@ -53,7 +135,7 @@ const DevicesTreeViewAccordian = () => {
                         height: "22px",
                         width: "22px",
                       }}
-                      onClick={handleCheckboxClick}
+                      onClick={(e) => handleCheckboxClick(e, item)}
                     />
                     <span style={{ fontWeight: "bold" }}>
                       {item.title} &nbsp; ({item.items.length})
@@ -66,7 +148,9 @@ const DevicesTreeViewAccordian = () => {
                     />
                   </AccordionHeader>
                 </div>
-                <AccordionBody accordionId={`${index}`}>
+                <AccordionBody
+                  accordionId={`${searchValue.length >= 1 ? "all" : index}`}
+                >
                   {item.items.map((bodyItem: any, bodyindex: any) => {
                     if (bodyindex <= itemsLength) {
                       return (
@@ -78,13 +162,19 @@ const DevicesTreeViewAccordian = () => {
                             borderRadius: "15px",
                             margin: "10px -10px",
                           }}
+                          onClick={() => {
+                            dispatch(
+                              setExpandedDevice({
+                                lat: bodyItem.lat,
+                                lng: bodyItem.lng,
+                              })
+                            );
+                          }}
                         >
                           <div
                             style={{
                               display: "flex",
                               alignItems: "center",
-                              // width: "40%",
-                              // justifyContent: "space-between",
                             }}
                           >
                             <label
@@ -98,36 +188,39 @@ const DevicesTreeViewAccordian = () => {
                                 type="checkbox"
                                 name="key"
                                 value="value"
+                                onChange={(e) =>
+                                  handleSelecetdDevices(e, bodyItem)
+                                }
                                 style={{ display: "none" }} // Hide the default checkbox
                               />
                               <span></span>
                             </label>
                             <style>
                               {`
-        label > input[type="checkbox"] + span::before {
-          content: "";
-          display: inline-block;
-          vertical-align: bottom;
-          width: 20px;
-          height: 20px; 
-          border-radius: 10%;
-          border-style: solid;
-          border-width: 0.15rem;
-          border-color: red;
-          margin-right: 15px;
-        }
-        
-        label > input[type="checkbox"]:checked + span::before {
-          content: "✓"; /* you can change check logo here */
-          font-weight: bold; /* make content bold */
-          transform: scale(1.1); /* this is for check size */
-          color: red; /* check colour */
-          text-align: center;
-          background: white; /* check background colour */
-          border-color: red; /* check border colour */
-          margin-right: 15px;
-          
-        }
+       label > input[type="checkbox"] + span::before {
+        content: "";
+        display: inline-block;
+        vertical-align: bottom;
+        width: 20px;
+        height: 20px; 
+        border-radius: 10%;
+        border-style: solid;
+        border-width: 0.15rem;
+        border-color: red;      
+        margin-right: 15px;
+        box-shadow: 0 0 5px red; /* Apply red box shadow */
+      }
+  
+      label > input[type="checkbox"]:checked + span::before {
+        content: "✓"; /* you can change check logo here */
+        font-weight: bold; /* make content bold */
+        transform: scale(1.1); /* this is for check size */
+        color: red; /* check colour */
+        text-align: center;
+        background: white; /* check background colour */
+        border-color: red; /* check border colour */
+        margin-right: 15px;
+      }
         
         label > input[type="checkbox"]:checked + span {
           color: red;
@@ -160,14 +253,17 @@ const DevicesTreeViewAccordian = () => {
                         cursor: "pointer",
                       }}
                       onClick={() => {
-                        if (itemsLength <= 7) {
+                        if (
+                          item.items.length >= 6 &&
+                          itemsLength < item.items.length
+                        ) {
                           setItemsLength(itemsLength + 5);
-                        } else {
-                          setItemsLength(itemsLength - 5);
                         }
                       }}
                     >
-                      {itemsLength <= 7 ? "Show More" : "Show Less"}
+                      {item.items.length >= 6 &&
+                        itemsLength < item.items.length &&
+                        "Show More"}
                     </div>
                   )}
                 </AccordionBody>

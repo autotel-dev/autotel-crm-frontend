@@ -1,63 +1,89 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { Map, Marker, GoogleApiWrapper, Circle } from "google-maps-react";
 import { useSelector } from "react-redux";
-const markers = [
-  {
-    id: 1,
-    name: "Ocean Mall",
-    position: { lat: 24.8239, lng: 67.0356 },
-  },
-  {
-    id: 2,
-    name: "Atrium Mall",
-    position: { lat: 24.8561, lng: 67.0303 },
-  },
-  {
-    id: 3,
-    name: "MindFlare Technologies",
-    position: { lat: 24.8511, lng: 67.0168 },
-  },
-];
+import "./googleMap.css";
+
 const GoogleMap = (props) => {
-  const { devices, serverDevices } = useSelector((state) => state.monitoring);
+  const { serverDevices, selectedDevices, expandedDevice } = useSelector(
+    (state) => state.monitoring
+  );
+  const mapRef = useRef(null);
+  const directionsService = new window.google.maps.DirectionsService();
+  const directionsRenderer = new window.google.maps.DirectionsRenderer();
+
   if (!props.google) {
     return <div>Error: Google Maps API failed to load.</div>;
   }
-  var points = [
-    { lat: 24.8561, lng: 67.0303 },
-    { lat: 24.8239, lng: 67.0356 },
-    { lat: 24.8511, lng: 67.0168 },
-  ];
 
-  var bounds = new props.google.maps.LatLngBounds();
-  for (var i = 0; i < points.length; i++) {
-    bounds.extend(points[i]);
-  }
+  const zoomToMarker = (latLng) => {
+    if (mapRef.current) {
+      mapRef.current.map.panTo(latLng);
+    }
+  };
+
+  const calculateAndDisplayRoute = (start, end) => {
+    directionsService.route(
+      {
+        origin: start,
+        destination: end,
+        travelMode: window.google.maps.TravelMode.DRIVING,
+      },
+      (response, status) => {
+        if (status === "OK") {
+          directionsRenderer.setMap(mapRef.current.map);
+          directionsRenderer.setDirections(response);
+        } else {
+          console.error("Directions request failed due to " + status);
+        }
+      }
+    );
+  };
+
+  useEffect(() => {
+    zoomToMarker(expandedDevice);
+    if (selectedDevices.length > 0) {
+      const startLatLng = {
+        lat: selectedDevices.tail[0].lat,
+        lng: selectedDevices.tail[0].lng,
+      };
+      const endLatLng = {
+        lat: selectedDevices.tail[selectedDevices.tail.length - 1].lat,
+        lng: selectedDevices.tail[selectedDevices.tail.length - 1].lng,
+      };
+      calculateAndDisplayRoute(startLatLng, endLatLng);
+    }
+  }, [expandedDevice, selectedDevices]);
 
   return (
     <Map
       google={props.google}
       zoom={12}
       initialCenter={{ lat: 24.8607, lng: 67.0011 }}
-      bounds={bounds}
-      disableDefaultUI={false} // Enable default UI controls
-      streetViewControl={true} // Enable street view control
-      mapTypeControl={true} // Enable map type control
-      fullscreenControl={true} // Enable fullscreen control
-      zoomControl={true} // Enable zoom control
+      disableDefaultUI={true} // Enable default UI controls
+      ref={mapRef}
     >
+      {selectedDevices.length > 0 &&
+        selectedDevices.map((marker) => (
+          <Marker
+            key={marker.id}
+            name={marker.title}
+            position={{ lat: marker.lat, lng: marker.lng }}
+            icon={{
+              url: `${marker.server.url}/${marker.icon.path}`, // Specify the URL of your custom marker image
+              scaledSize: new window.google.maps.Size(22, 40), // Adjust the size of the marker image as needed
+            }}
+          />
+        ))}
 
-{serverDevices.map((marker) => (
-        <Marker
-          key={marker.id}
-          name={marker.title}
-          position={{lat: marker.lat, lng:marker.lng}}
-          icon={{
-            url: `https://track.autotel.pk/images/device_icons/6458fc3c197fd8.82606871_offline.png`, // Specify the URL of your custom marker image
-            scaledSize: new window.google.maps.Size(25, 40), // Adjust the size of the marker image as needed
-          }}
-        />
-      ))}
+      {/* Custom Zoom Control */}
+      <div className="custom-zoom-control">
+        <button onClick={() => props.zoomIn()} className="zoom-button">
+          +
+        </button>
+        <button onClick={() => props.zoomOut()} className="zoom-button">
+          -
+        </button>
+      </div>
 
       {/* {devices.map((item, index) => (
          <div key={index}>
@@ -87,39 +113,8 @@ const GoogleMap = (props) => {
   );
 };
 
+// ---------------------------------------------------------------
+
 export default GoogleApiWrapper({
   apiKey: "AIzaSyDI3fB-ItM1LpMOyMg_P8UxTUuxHCyQS34",
 })(GoogleMap);
-
-// const Map = () => {
-//     const { isLoaded } = useLoadScript({
-//         id: "google-map-script",
-//         googleMapsApiKey:
-//           "AIzaSyDI3fB-ItM1LpMOyMg_P8UxTUuxHCyQS34",
-//     });
-
-// //   const [activeMarker, setActiveMarker] = useState(null);
-
-// //   const handleActiveMarker = (marker) => {
-// //     if (marker === activeMarker) {
-// //       return;
-// //     }
-// //     setActiveMarker(marker);
-// //   };
-//   return (
-//     <div style={{ width: "100%", height: "100vh" }}>
-//       {isLoaded ? (
-//         <GoogleMap
-//           center={{ lat: 37.7749, lng: -122.4194 }}
-//           zoom={10}
-//           mapContainerStyle={{ width: "100%", height: "100vh" }}
-//         >
-//           {/* Markers Here */}
-//           {/* <MarkerF position={{ lat: 37.7749, lng: -122.4194 }}></MarkerF> */}
-//         </GoogleMap>
-//       ) : "loading aa sahb"}
-//     </div>
-//   );
-// };
-
-// export default Map;

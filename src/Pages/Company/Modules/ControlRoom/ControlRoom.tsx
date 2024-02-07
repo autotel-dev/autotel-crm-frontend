@@ -46,8 +46,8 @@ const ControlRoom = () => {
               className="simple-wrapper"
               style={{
                 backgroundColor: "#63d5be",
-                borderBottomLeftRadius:"10px",
-                borderBottomRightRadius:"10px"
+                borderTopLeftRadius: "10px",
+                borderTopRightRadius: "10px",
               }}
             >
               <NavItem
