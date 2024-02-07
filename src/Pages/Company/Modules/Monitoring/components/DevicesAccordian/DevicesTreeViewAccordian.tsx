@@ -17,7 +17,9 @@ import {
 
 const DevicesTreeViewAccordian = () => {
   const [itemsLength, setItemsLength] = useState(6);
-  const { devices } = useSelector((state: any) => state.monitoring);
+  const { devices, selectedDevices } = useSelector(
+    (state: any) => state.monitoring
+  );
   const [searchValue, setSearchValue] = useState("");
   const [open, setOpen] = useState("");
   const [matchedGroups, setMatchedGroups] = useState(devices);
@@ -88,13 +90,14 @@ const DevicesTreeViewAccordian = () => {
     e.stopPropagation();
     const index = Devices.indexOf(device);
     if (index === -1) {
-      setDevices([...Devices, device]);
-      dispatch(setSelecetdDevices(Devices));
+      const updatedDevices = [...Devices, device];
+      dispatch(setSelecetdDevices(updatedDevices));
+      setDevices(updatedDevices);
     } else {
       const updatedDevices = [...Devices];
       updatedDevices.splice(index, 1);
-      setDevices(updatedDevices);
       dispatch(setSelecetdDevices(updatedDevices));
+      setDevices(updatedDevices);
     }
 
     console.log("selectedDevices-->", Devices);
@@ -161,8 +164,9 @@ const DevicesTreeViewAccordian = () => {
                             boxShadow: "0px 5px 18px lightgray",
                             borderRadius: "15px",
                             margin: "10px -10px",
+                            cursor: "pointer",
                           }}
-                          onClick={() => {
+                          onClick={(e) => {
                             dispatch(
                               setExpandedDevice({
                                 lat: bodyItem.lat,
@@ -183,17 +187,23 @@ const DevicesTreeViewAccordian = () => {
                                 position: "relative",
                                 cursor: "pointer",
                               }}
+                              onClick={(e) => e.stopPropagation()}
                             >
                               <input
                                 type="checkbox"
                                 name="key"
                                 value="value"
-                                onChange={(e) =>
-                                  handleSelecetdDevices(e, bodyItem)
-                                }
+                                checked={selectedDevices.some(
+                                  (selectedItem: any) =>
+                                    selectedItem === bodyItem
+                                )}
+                                onChange={(e) => {
+                                  e.stopPropagation();
+                                  handleSelecetdDevices(e, bodyItem);
+                                }}
                                 style={{ display: "none" }} // Hide the default checkbox
                               />
-                              <span></span>
+                              <span onClick={(e) => e.stopPropagation()}></span>
                             </label>
                             <style>
                               {`
