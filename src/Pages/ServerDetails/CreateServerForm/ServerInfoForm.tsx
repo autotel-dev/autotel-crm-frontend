@@ -83,12 +83,12 @@ const ServerInfoForm = ({ callbackActive }: BusinessFormCommonProps) => {
       <Row className="g-3">
         <Col xl={4} sm={6}>
           <Label>
-            Company Name
+            Full Name
             <span className="txt-danger">*</span>
           </Label>
           <Input
             type="text"
-            placeholder="Enter Company Name"
+            placeholder="Enter Full Name"
             value={companyName}
             name="companyName"
             onChange={getUserData}

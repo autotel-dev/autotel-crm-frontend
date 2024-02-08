@@ -1,8 +1,11 @@
 import { Card, CardBody, CardHeader, Col, Table } from "reactstrap";
 import { H3, H4 } from "../../../../../../AbstractElements";
+import { useState } from "react";
+import AssignedAlertModal from "./AssignedAlertModal";
 
 const AssignedAlerts = () => {
   const tableHeader = ["ID", "Device", "Alert", "Type", "Message", "address"];
+  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
 
   const assignedAlerts = [
     {
@@ -109,7 +112,13 @@ const AssignedAlerts = () => {
               {assignedAlerts.map((data: any, index: any) => {
                 if (index < 8) {
                   return (
-                    <tr key={index}>
+                    <tr
+                      key={index}
+                      onClick={() => {
+                        setIsUpdateModalOpen(true);
+                        console.log("isUpdateModalOpen: ", isUpdateModalOpen);
+                      }}
+                    >
                       <td>{data.id}</td>
                       <td>
                         <div className="d-flex">
@@ -130,6 +139,10 @@ const AssignedAlerts = () => {
               })}
             </tbody>
           </Table>
+          <AssignedAlertModal
+            isVisible={isUpdateModalOpen}
+            setIsVisible={setIsUpdateModalOpen}
+          />
         </div>
       </CardBody>
     </Card>

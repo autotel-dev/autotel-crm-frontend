@@ -207,35 +207,55 @@ const DevicesTreeViewAccordian = () => {
                             </label>
                             <style>
                               {`
-       label > input[type="checkbox"] + span::before {
-        content: "";
-        display: inline-block;
-        vertical-align: bottom;
-        width: 20px;
-        height: 20px; 
-        border-radius: 10%;
-        border-style: solid;
-        border-width: 0.15rem;
-        border-color: red;      
-        margin-right: 15px;
-        box-shadow: 0 0 5px red; /* Apply red box shadow */
-      }
-  
-      label > input[type="checkbox"]:checked + span::before {
-        content: "✓"; /* you can change check logo here */
-        font-weight: bold; /* make content bold */
-        transform: scale(1.1); /* this is for check size */
-        color: red; /* check colour */
-        text-align: center;
-        background: white; /* check background colour */
-        border-color: red; /* check border colour */
-        margin-right: 15px;
-      }
-        
-        label > input[type="checkbox"]:checked + span {
-          color: red;
-        }
-      `}
+  label > input[type="checkbox"] + span::before {
+    content: "";
+    display: inline-block;
+    vertical-align: bottom;
+    width: 20px;
+    height: 20px; 
+    border-radius: 10%;
+    border-style: solid;
+    border-width: 0.15rem;
+    border-color: ${
+      bodyItem.engine_status !== null && bodyItem.engine_status === true
+        ? "green"
+        : "red"
+    };
+    margin-right: 15px;
+    box-shadow: ${
+      bodyItem.engine_status !== null && bodyItem.engine_status === true
+        ? "0 0 5px green"
+        : "0 0 5px red"
+    };
+  }
+
+  label > input[type="checkbox"]:checked + span::before {
+    content: "✓";
+    font-weight: bold;
+    transform: scale(1.1);
+    color: ${
+      bodyItem.engine_status !== null && bodyItem.engine_status === true
+        ? "green"
+        : "red"
+    };
+    text-align: center;
+    background: white;
+    border-color: ${
+      bodyItem.engine_status !== null && bodyItem.engine_status === true
+        ? "green"
+        : "red"
+    };
+    margin-right: 15px;
+  }
+    
+  label > input[type="checkbox"]:checked + span {
+    color: ${
+      bodyItem.engine_status !== null && bodyItem.engine_status === true
+        ? "green"
+        : "red"
+    };
+  }
+`}
                             </style>
                             <div
                               style={{
