@@ -45,6 +45,7 @@ const GoogleMap = (props) => {
           url: `${marker.server.url}/${marker.icon.path}`,
           scaledSize: new window.google.maps.Size(22, 40),
           rotation: rotation,
+          
         };
         return (
           <Marker
@@ -55,6 +56,7 @@ const GoogleMap = (props) => {
               lng: parseFloat(marker.lng),
             }}
             icon={icon}
+            
           />
         );
       })}

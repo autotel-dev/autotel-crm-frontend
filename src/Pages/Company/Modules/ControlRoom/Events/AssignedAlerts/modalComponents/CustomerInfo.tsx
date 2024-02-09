@@ -19,18 +19,29 @@ const CustomerInfo = () => {
         <Row style={{ paddingTop: "20px" }}>
           <FormGroup className="col-md-12 create-group">
             <Label>Name</Label>
-            <input className="form-control" type="text" defaultValue={"Name"} disabled />
+            <input
+              className="form-control"
+              type="text"
+              defaultValue={"Name"}
+              disabled
+            />
           </FormGroup>
           <FormGroup className="col-md-12 create-group">
             <Label>City</Label>
-            <input className="form-control" type="text" defaultValue={"City"} disabled />
+            <input
+              className="form-control"
+              type="text"
+              defaultValue={"City"}
+              disabled
+            />
           </FormGroup>
           <FormGroup className="col-md-12 create-group">
             <Label>Phone Number</Label>
             <input
               className="form-control"
               type="text"
-              defaultValue={"Phone Number"} disabled
+              defaultValue={"Phone Number"}
+              disabled
             />
           </FormGroup>
         </Row>
