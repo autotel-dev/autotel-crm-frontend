@@ -17,46 +17,43 @@ import { H3 } from "../../../../../../AbstractElements";
 import AssignedAlerts from "./AssignedAlerts";
 import CompletedAlerts from "../CompletedAlerts/CompletedAlerts";
 import Location from "./modalComponents/Location";
+import PreviousAlerts from "./modalComponents/PreviousAlerts";
+import ResponseForm from "./modalComponents/Response";
+import CustomerInfo from "./modalComponents/CustomerInfo";
 
 interface PropsTypes {
   isVisible: boolean; // Change 'boolean' to the actual type of isVisible
   setIsVisible: any;
+  tab: string;
 }
 
 const AssignedAlertModal: React.FC<PropsTypes> = ({
   isVisible,
   setIsVisible = () => {},
+  tab,
 }) => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
-  const [basicTab, setBasicTab] = useState("1");
+  const [basicTab, setBasicTab] = useState(tab);
+
   const modalTabs = [
     {
       id: "1",
-      element: (
-        <div
-          style={{
-            height: "100%",
-            width: "%",
-            display: "flex",
-            overflow: "unset",
-          }}
-        >
-          <Location />,
-        </div>
-      ),
+      element: <Location />,
     },
     {
       id: "2",
-      element: <CompletedAlerts />,
+      element: <CustomerInfo />,
     },
     {
       id: "3",
-      element: <CompletedAlerts />,
+      element: <PreviousAlerts />,
     },
     {
       id: "4",
-      element: <CompletedAlerts />,
+      element: (
+        <ResponseForm isVisible={isVisible} setIsVisible={setIsVisible} />
+      ),
     },
   ];
   return (
@@ -93,74 +90,34 @@ const AssignedAlertModal: React.FC<PropsTypes> = ({
               borderTopRightRadius: "10px",
             }}
           >
-            <NavItem
-              style={{
-                width: "25%",
-                height: "50px",
-                textAlign: "center",
-                fontSize: "22px",
-                cursor: "pointer",
-              }}
-            >
-              <NavLink
-                className={` ${basicTab === "1" ? "active" : ""}`}
-                style={{ color: `${basicTab === "1" ? "#63d5be" : "white"}` }}
-                onClick={() => setBasicTab("1")}
+            {modalTabs.map((item, index) => (
+              <NavItem
+                key={index}
+                style={{
+                  width: "25%",
+                  height: "50px",
+                  textAlign: "center",
+                  fontSize: "22px",
+                  cursor: "pointer",
+                }}
               >
-                Location
-              </NavLink>
-            </NavItem>
-            <NavItem
-              style={{
-                width: "25%",
-                height: "50px",
-                textAlign: "center",
-                fontSize: "22px",
-                cursor: "pointer",
-              }}
-            >
-              <NavLink
-                className={` ${basicTab === "2" ? "active" : ""}`}
-                style={{ color: `${basicTab === "2" ? "#63d5be" : "white"}` }}
-                onClick={() => setBasicTab("2")}
-              >
-                Customer Info
-              </NavLink>
-            </NavItem>
-            <NavItem
-              style={{
-                width: "25%",
-                height: "50px",
-                textAlign: "center",
-                fontSize: "22px",
-                cursor: "pointer",
-              }}
-            >
-              <NavLink
-                className={` ${basicTab === "3" ? "active" : ""}`}
-                style={{ color: `${basicTab === "3" ? "#63d5be" : "white"}` }}
-                onClick={() => setBasicTab("3")}
-              >
-                Previous Alerts
-              </NavLink>
-            </NavItem>
-            <NavItem
-              style={{
-                width: "25%",
-                height: "50px",
-                textAlign: "center",
-                fontSize: "22px",
-                cursor: "pointer",
-              }}
-            >
-              <NavLink
-                className={` ${basicTab === "4" ? "active" : ""}`}
-                style={{ color: `${basicTab === "4" ? "#63d5be" : "white"}` }}
-                onClick={() => setBasicTab("4")}
-              >
-                Response
-              </NavLink>
-            </NavItem>
+                <NavLink
+                  className={` ${basicTab === item.id ? "active" : ""}`}
+                  style={{
+                    color: `${basicTab === item.id ? "#63d5be" : "white"}`,
+                  }}
+                  onClick={() => setBasicTab(item.id)}
+                >
+                  {item.id === "1"
+                    ? "Location"
+                    : item.id === "2"
+                    ? "Customer Info"
+                    : item.id === "3"
+                    ? "Previous Alerts"
+                    : "Response"}
+                </NavLink>
+              </NavItem>
+            ))}
           </Nav>
           <TabContent activeTab={basicTab} style={{ height: "70vh" }}>
             {modalTabs &&

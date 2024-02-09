@@ -109,7 +109,7 @@ const LiveAlerts = () => {
               {liveAlerts.map((data: any, index: any) => {
                 if (index < 8) {
                   return (
-                    <tr key={index}>
+                    <tr key={index} style={{ cursor: "pointer" }}>
                       <td>{data.id}</td>
                       <td>
                         <div className="d-flex">

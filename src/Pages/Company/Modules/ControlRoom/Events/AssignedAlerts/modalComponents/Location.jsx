@@ -6,20 +6,21 @@ const Location = (props) => {
   }
 
   return (
-   <div style={{ height: "100%", width: "90%" }}>
-     <Map
-      google={props.google}
-      zoom={12}
-      initialCenter={{ lat: 24.8607, lng: 67.0011 }}
-      disableDefaultUI={false} // Enable default UI controls
-    >
-      <Marker
-        key={3222}
-        name={"markerName"}
-        position={{ lat: 24.8607, lng: 67.0011 }}
-      />
-    </Map>
-   </div>
+    <div className="map-container">
+      <Map
+        google={props.google}
+        zoom={12}
+        initialCenter={{ lat: 24.8607, lng: 67.0011 }}
+        disableDefaultUI={false} // Enable default UI controls
+        style={{ height: "88%", width: "97%" }}
+      >
+        <Marker
+          key={3222}
+          name={"markerName"}
+          position={{ lat: 24.8607, lng: 67.0011 }}
+        />
+      </Map>
+    </div>
   );
 };
 

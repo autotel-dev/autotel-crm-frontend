@@ -13,6 +13,7 @@ import LiveAlerts from "./Events/LiveAlerts/LiveAlerts";
 import AssignedAlerts from "./Events/AssignedAlerts/AssignedAlerts";
 import { useState } from "react";
 import CompletedAlerts from "./Events/CompletedAlerts/CompletedAlerts";
+import Location from "./Events/AssignedAlerts/modalComponents/Location";
 
 const ControlRoom = () => {
   const events = [

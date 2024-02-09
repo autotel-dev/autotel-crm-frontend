@@ -6,6 +6,7 @@ import AssignedAlertModal from "./AssignedAlertModal";
 const AssignedAlerts = () => {
   const tableHeader = ["ID", "Device", "Alert", "Type", "Message", "address"];
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
+  const [basicTab, setBasicTab] = useState("1");
 
   const assignedAlerts = [
     {
@@ -113,8 +114,10 @@ const AssignedAlerts = () => {
                 if (index < 8) {
                   return (
                     <tr
+                      style={{ cursor: "pointer" }}
                       key={index}
                       onClick={() => {
+                        setBasicTab("1");
                         setIsUpdateModalOpen(true);
                         console.log("isUpdateModalOpen: ", isUpdateModalOpen);
                       }}
@@ -142,6 +145,7 @@ const AssignedAlerts = () => {
           <AssignedAlertModal
             isVisible={isUpdateModalOpen}
             setIsVisible={setIsUpdateModalOpen}
+            tab={basicTab}
           />
         </div>
       </CardBody>
