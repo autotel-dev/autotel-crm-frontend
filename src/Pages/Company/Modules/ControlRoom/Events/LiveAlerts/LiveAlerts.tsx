@@ -1,92 +1,30 @@
 import { Card, CardBody, CardHeader, Col, Table } from "reactstrap";
 import { H3, H4 } from "../../../../../../AbstractElements";
+import { useEffect, useRef, useState } from "react";
+import { getAll } from "../../../../../../Api";
 
-const LiveAlerts = () => {
-  const tableHeader = ["ID", "Device", "Alert", "Type", "Message", "address"];
+const LiveAlerts = (liveAlertsData: any) => {
+  console.log("liveAlertsData", liveAlertsData.liveAlertsData[0]);
 
-  const liveAlerts = [
-    {
-      id: "121",
-      device: "device",
-      date: "dateTime",
-      alertt: "alert",
-      type: "type",
-      message: "message",
-      address: "address",
-    },
-    {
-      id: "122",
-      device: "device",
-      date: "dateTime",
-      alertt: "alert",
-      type: "type",
-      message: "message",
-      address: "address",
-    },
-    {
-      id: "123",
-      device: "device",
-      date: "dateTime",
-      alertt: "alert",
-      type: "type",
-      message: "message",
-      address: "address",
-    },
-    {
-      id: "124",
-      device: "device",
-      date: "dateTime",
-      alertt: "alert",
-      type: "type",
-      message: "message",
-      address: "address",
-    },
-    {
-      id: "125",
-      device: "device",
-      date: "dateTime",
-      alertt: "alert",
-      type: "type",
-      message: "message",
-      address: "address",
-    },
-    {
-      id: "122",
-      device: "device",
-      date: "dateTime",
-      alertt: "alert",
-      type: "type",
-      message: "message",
-      address: "address",
-    },
-    {
-      id: "123",
-      device: "device",
-      date: "dateTime",
-      alertt: "alert",
-      type: "type",
-      message: "message",
-      address: "address",
-    },
-    {
-      id: "124",
-      device: "device",
-      date: "dateTime",
-      alertt: "alert",
-      type: "type",
-      message: "message",
-      address: "address",
-    },
-    {
-      id: "125",
-      device: "device",
-      date: "dateTime",
-      alertt: "alert",
-      type: "type",
-      message: "message",
-      address: "address",
-    },
-  ];
+  const [data, setData]: any = useState([]);
+  const tableHeader = ["ID", "Device", "Alert", "Type", "Message", "Address"];
+  const containerRef = useRef(null);
+  useEffect(() => {
+    setData(liveAlertsData.liveAlertsData.slice(0, 12)); // Initially display the first 6 elements
+  }, [liveAlertsData.liveAlertsData]);
+
+  const handleScroll = () => {
+    if (!containerRef.current) return; // Ensure containerRef.current exists
+    const { scrollTop, clientHeight, scrollHeight } = containerRef.current;
+    if (scrollHeight - scrollTop === clientHeight) {
+      // If scrolled to the bottom
+      const nextBatch = liveAlertsData.liveAlertsData.slice(
+        data.length,
+        data.length + 6
+      ); // Fetch the next 6 elements
+      setData((prevData: any) => [...prevData, ...nextBatch]); // Append to the existing data
+    }
+  };
 
   return (
     <Card className="invoice-card">
@@ -96,7 +34,12 @@ const LiveAlerts = () => {
         </div>
       </CardHeader>
       <CardBody className="transaction-card">
-        <div className="table-responsive theme-scrollbar recent-wrapper">
+        <div
+          ref={containerRef}
+          className="table-responsive theme-scrollbar recent-wrapper"
+          style={{ maxHeight: "66vh", overflowY: "auto" }}
+          onScroll={handleScroll}
+        >
           <Table className="display order-wrapper" id="recent-order">
             <thead>
               <tr>
@@ -106,28 +49,25 @@ const LiveAlerts = () => {
               </tr>
             </thead>
             <tbody>
-              {liveAlerts.map((data: any, index: any) => {
-                if (index < 8) {
-                  return (
-                    <tr key={index} style={{ cursor: "pointer" }}>
-                      <td>{data.id}</td>
-                      <td>
-                        <div className="d-flex">
-                          <div className="flex-grow-1 ms-2">
-                            <H4>{data.device}</H4>
-                            <span>{data.date}</span>
-                          </div>
-                        </div>
-                      </td>
-
-                      <td className={`txt-primary`}>{data.alertt}</td>
-                      <td>{data.type}</td>
-                      <td>{data.message}</td>
-                      <td>{data.address}</td>
-                    </tr>
-                  );
-                }
-              })}
+              {data.map((data: any, index: any) => (
+                <tr key={index} style={{ cursor: "pointer" }}>
+                  <td>{data.id}</td>
+                  <td>
+                    <div className="d-flex">
+                      <div className="flex-grow-1 ms-2">
+                        <H4>{data.device_name}</H4>
+                        <span style={{ fontSize: "11px" }}>
+                          {data.created_at}
+                        </span>
+                      </div>
+                    </div>
+                  </td>
+                  <td className={`txt-primary`}>{data.name}</td>
+                  <td>{data.type}</td>
+                  <td>{data.message}</td>
+                  <td>{data.address}</td>
+                </tr>
+              ))}
             </tbody>
           </Table>
         </div>
