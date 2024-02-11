@@ -6,7 +6,7 @@ import {
   AccordionItem,
 } from "reactstrap";
 import FeatherIcons from "../../../../../../utils/CommonSvgIcon/FeatherIcons";
-import { Form, Input } from "reactstrap";
+import { Form, FormGroup, Input, Label } from "reactstrap";
 import { useDispatch, useSelector } from "react-redux";
 import SVG from "../../../../../../utils/CommonSvgIcon/SVG";
 import {
@@ -14,6 +14,7 @@ import {
   setExpandedDevice,
   setSelecetdDevices,
 } from "../../../../../../ReaduxToolkit/Reducer/MonitoringSlice";
+import "./inputStyle.css";
 
 const DevicesTreeViewAccordian = () => {
   const [itemsLength, setItemsLength] = useState(6);
@@ -112,7 +113,7 @@ const DevicesTreeViewAccordian = () => {
         value={searchValue}
         onChange={(e: any) => handleSearch(e)}
         style={{
-          width: "480px",
+          width: "95%",
           padding: "10px 12px",
           boxShadow: "0px 5px 18px lightgray",
           borderRadius: "15px",
@@ -203,60 +204,17 @@ const DevicesTreeViewAccordian = () => {
                                 }}
                                 style={{ display: "none" }} // Hide the default checkbox
                               />
-                              <span onClick={(e) => e.stopPropagation()}></span>
+                              <span
+                                onClick={(e) => e.stopPropagation()}
+                                className={`${
+                                  bodyItem.engine_status !== null &&
+                                  bodyItem.engine_status === true
+                                    ? "move"
+                                    : "stop"
+                                }`}
+                              ></span>
                             </label>
-                            <style>
-                              {`
-  label > input[type="checkbox"] + span::before {
-    content: "";
-    display: inline-block;
-    vertical-align: bottom;
-    width: 20px;
-    height: 20px; 
-    border-radius: 10%;
-    border-style: solid;
-    border-width: 0.15rem;
-    border-color: ${
-      bodyItem.engine_status !== null && bodyItem.engine_status === true
-        ? "green"
-        : "red"
-    };
-    margin-right: 15px;
-    box-shadow: ${
-      bodyItem.engine_status !== null && bodyItem.engine_status === true
-        ? "0 0 5px green"
-        : "0 0 5px red"
-    };
-  }
 
-  label > input[type="checkbox"]:checked + span::before {
-    content: "✓";
-    font-weight: bold;
-    transform: scale(1.1);
-    color: ${
-      bodyItem.engine_status !== null && bodyItem.engine_status === true
-        ? "green"
-        : "red"
-    };
-    text-align: center;
-    background: white;
-    border-color: ${
-      bodyItem.engine_status !== null && bodyItem.engine_status === true
-        ? "green"
-        : "red"
-    };
-    margin-right: 15px;
-  }
-    
-  label > input[type="checkbox"]:checked + span {
-    color: ${
-      bodyItem.engine_status !== null && bodyItem.engine_status === true
-        ? "green"
-        : "red"
-    };
-  }
-`}
-                            </style>
                             <div
                               style={{
                                 display: "flex",

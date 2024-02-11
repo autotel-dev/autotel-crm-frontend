@@ -1,16 +1,15 @@
 import { CionLogin } from "../../../utils/Constant";
 import { H3, P } from "../../../AbstractElements";
 import ChangePasswordForm from "./ChangePasswordForm";
+import OTPForm from "./OTPForm";
 type propsType = {
   toggle: () => void;
 };
 
 const ChangePasswordModal = ({ toggle }: propsType) => {
   return (
-    <div className="modal-toggle-wrapper">
-      <H3>Change Password</H3>
-      <P>Please type your change password</P>
-      <ChangePasswordForm toggle={toggle} />
+    <div className="modal-toggle-wrapper" style={{ padding: "20px 10px" }}>
+      <OTPForm toggle={toggle} />
     </div>
   );
 };

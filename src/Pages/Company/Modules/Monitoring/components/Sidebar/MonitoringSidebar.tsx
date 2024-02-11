@@ -179,7 +179,7 @@ const MonitoringSidebar = () => {
           width: `${collapsedWidth}`,
           backgroundColor: "white",
           transition: "width 0.5s",
-          height: "85vh",
+          height: "87vh",
           overflow: "auto",
         }}
       >

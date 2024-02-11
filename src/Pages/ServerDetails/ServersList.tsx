@@ -3,7 +3,7 @@ import CommonHeader from "../../Common/CommonHeader";
 import { citiesListHeading } from "../../utils/Constant";
 import DataTable from "react-data-table-component";
 import { useEffect, useState } from "react";
-import { getAll } from "../../Api";
+import { create, getAll } from "../../Api";
 import { useDispatch, useSelector } from "react-redux";
 import "./tableStyle.css";
 import deleteAlert from "../Alerts/DeleteAlert";
@@ -21,6 +21,9 @@ import Loader from "../Loader/Loader";
 import { useNavigate } from "react-router-dom";
 import CommonModal from "../../CommonElements/Ui-kits/CommonModal";
 import ChangePasswordModal from "./components/ChangePasswordModal";
+import header from "../../Api/header";
+import axios from "axios";
+import Swal from "sweetalert2";
 
 const ServersList = () => {
   const { servers, loading, error, id } = useSelector(
@@ -117,11 +120,31 @@ const ServersList = () => {
                 backgroundColor: "green",
                 borderRadius: "5px",
                 border: "none",
-                margin:"10px"
+                margin: "10px",
               }}
-              onClick={() => {
+              onClick={async () => {
                 dispatch(setId(row._id));
                 toggle();
+                try {
+                  const response = await fetch(
+                    `http://124.29.238.127:8080/api/v1/server-management/send-otp`,
+                    {
+                      method: "POST",
+                      headers: header,
+                    }
+                  );
+                  const result = await response.json();
+                  console.log("api --- >", result);
+
+                  return result;
+                } catch (error: any) {
+                  Swal.fire({
+                    text: `${error.response.data.message}`,
+                    icon: "info",
+                    timer: 2000,
+                    showCancelButton: false,
+                  });
+                }
               }}
             >
               Change Password

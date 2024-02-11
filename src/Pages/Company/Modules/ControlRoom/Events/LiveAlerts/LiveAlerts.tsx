@@ -56,7 +56,7 @@ const LiveAlerts = (liveAlertsData: any) => {
                     <div className="d-flex">
                       <div className="flex-grow-1 ms-2">
                         <H4>{data.device_name}</H4>
-                        <span style={{ fontSize: "11px" }}>
+                        <span style={{ fontSize: "10px" }}>
                           {data.created_at}
                         </span>
                       </div>
@@ -65,7 +65,7 @@ const LiveAlerts = (liveAlertsData: any) => {
                   <td className={`txt-primary`}>{data.name}</td>
                   <td>{data.type}</td>
                   <td>{data.message}</td>
-                  <td>{data.address}</td>
+                  <td>{data.address == null ? "N/A" : data.address}</td>
                 </tr>
               ))}
             </tbody>

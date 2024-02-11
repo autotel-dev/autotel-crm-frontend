@@ -91,6 +91,7 @@ const Monitoring = () => {
           <div
             style={{
               position: "absolute",
+              // marginTop:"15px"
             }}
           >
             <MonitoringSidebar />
@@ -101,7 +102,7 @@ const Monitoring = () => {
           style={{
             display: "flex",
             justifyContent: "center",
-            height: "100vh",
+            height: "85vh",
             backgroundColor: "white",
             alignItems: "center",
           }}

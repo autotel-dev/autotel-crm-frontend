@@ -18,9 +18,12 @@ import Loader from "../../../Loader/Loader";
 
 const ControlRoom = () => {
   const [liveAlertsData, setLiveAlertsData] = useState([]);
+  const [loading, setLoading] = useState(false);
   useEffect(() => {
+    setLoading(true);
     getAll({ url: "company/alert-events" }).then((data: any) => {
       console.log("api call --- >", data);
+      setLoading(false);
       if (data !== undefined) {
         if (data.success) {
           console.log("length --- >", data.data.allAlertEvents.length);
@@ -49,7 +52,7 @@ const ControlRoom = () => {
           title="Module / Control Room"
         />
       </Row>
-      {liveAlertsData.length > 0 ? (
+      {!loading ? (
         <Row>
           <Col xl="6">
             <LiveAlerts liveAlertsData={liveAlertsData} />
