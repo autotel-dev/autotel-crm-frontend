@@ -137,6 +137,7 @@ const GoogleMap = (props) => {
     (state) => state.monitoring
   );
   const [rotation, setRotation] = useState(-270);
+  const [zoom, setZoom] = useState(12); // State to manage zoom level
   const mapRef = useRef(null);
   const zoomToMarker = (latLng) => {
     if (mapRef.current) {
@@ -147,6 +148,7 @@ const GoogleMap = (props) => {
       map.setCenter(latLng);
     }
   };
+
   const calculateBearing = (pointA, pointB) => {
     const lat1 = parseFloat(pointA.lat);
     const lon1 = parseFloat(pointA.lng);
@@ -164,6 +166,18 @@ const GoogleMap = (props) => {
     return brng;
   };
 
+  const zoomIn = () => {
+    if (mapRef.current) {
+      setZoom(zoom + 1); // Increase zoom level by 1
+    }
+  };
+
+  // Function to handle zoom out
+  const zoomOut = () => {
+    if (mapRef.current) {
+      setZoom(zoom - 1); // Decrease zoom level by 1
+    }
+  };
   useEffect(() => {
     console.log("UseEffect Called");
     console.log("ExpandedDevice", expandedDevice);
@@ -180,7 +194,7 @@ const GoogleMap = (props) => {
   return (
     <Map
       google={props.google}
-      zoom={12}
+      zoom={zoom}
       initialCenter={{ lat: 24.8607, lng: 67.0011 }}
       disableDefaultUI={true} // Enable default UI controls
       ref={mapRef}
@@ -214,10 +228,10 @@ const GoogleMap = (props) => {
 
       {/* Custom Zoom Control */}
       <div className="custom-zoom-control">
-        <button onClick={() => props.zoomIn()} className="zoom-button">
+        <button onClick={zoomIn} className="zoom-button">
           +
         </button>
-        <button onClick={() => props.zoomOut()} className="zoom-button">
+        <button onClick={zoomOut} className="zoom-button">
           -
         </button>
       </div>

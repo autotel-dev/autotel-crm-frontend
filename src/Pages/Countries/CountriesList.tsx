@@ -19,7 +19,7 @@ import UpdateCountry from "./UpdateCountry";
 import Loader from "../Loader/Loader";
 
 const CountriesList = () => {
-  const { countries, loading, error, id, value } = useSelector(
+  const { countries, loading, id } = useSelector(
     (state: any) => state.countries
   );
   const { noDataFound } = useSelector((state: any) => state.noDataFound);
@@ -27,7 +27,6 @@ const CountriesList = () => {
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [countryName, setCountryName] = useState("");
   const [isActive, setIsActive] = useState(false);
-
   useEffect(() => {
     dispatch(setCountriesStart());
     getAll({ url: "country/get-all-countries" }).then((data: any) => {
@@ -37,15 +36,14 @@ const CountriesList = () => {
         dispatch(setNoDataFound(data.message));
         if (data.success) {
           console.log("hhg");
+          setFilterCountries(data.data);
           dispatch(setCountries(data.data));
           dispatch(setFilterCountries(data.data));
         }
       }
     });
-    // .catch((error: any) => {
-    //   console.log(error);
-    // });
   }, []);
+
   const renderTableRows = () => {
     return countries?.map((row: any) => (
       <tr key={row.id}>
@@ -106,71 +104,56 @@ const CountriesList = () => {
   return (
     <>
       <Container fluid>
-        <Row>
-          <Col sm="12">
-            <Card>
-              <CommonHeader title="All Countries" />
-              <CardBody>
-                <div className="table-responsive product-table">
-                  {/* {loading ? (
-                    <Loader />
-                  ) : ( */}
-                  {loading ? (
-                    // <div
-                    //   style={{
-                    //     textAlign: "center",
-                    //     fontSize: "25px",
-                    //     fontWeight: "bold",
-                    //   }}
-                    // >
-                    //   Loading....
-                    // </div>
+        <Col sm="12">
+          <Card>
+            <CommonHeader title="All Countries" />
+            <CardBody>
+              <div className="table-responsive product-table">
+                {loading ? (
+                  <Loader />
+                ) : countries?.length > 0 && loading === false ? (
+                  <div>
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>ID</th>
+                          <th>Name</th>
+                          <th>Status</th>
+                          <th>Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>{renderTableRows()}</tbody>
+                    </table>
+                  </div>
+                ) : (
+                  <div
+                    style={{
+                      textAlign: "center",
+                      fontSize: "25px",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    {noDataFound !== ""
+                      ? "No Countries Found"
+                      : "Faild to Fetch"}
+                  </div>
+                )}
 
-                    <Loader />
-                  ) : countries?.length > 0 && loading === false ? (
-                    <div>
-                      <table>
-                        <thead>
-                          <tr>
-                            <th>ID</th>
-                            <th>Name</th>
-                            <th>Status</th>
-                            <th>Actions</th>
-                          </tr>
-                        </thead>
-                        <tbody>{renderTableRows()}</tbody>
-                      </table>
-                    </div>
-                  ) : (
-                    <div
-                      style={{
-                        textAlign: "center",
-                        fontSize: "25px",
-                        fontWeight: "bold",
-                      }}
-                    >
-                      {noDataFound !== ""
-                        ? "No Countries Found"
-                        : "Faild to Fetch"}
-                    </div>
-                  )}
+                {/* )} */}
+              </div>
+              <UpdateCountry
+                isVisible={isUpdateModalOpen}
+                setIsVisible={setIsUpdateModalOpen}
+                id={id}
+                value={countryName}
+                isActive={isActive}
+                setIsActive={setIsActive}
 
-                  {/* )} */}
-                </div>
-                <UpdateCountry
-                  isVisible={isUpdateModalOpen}
-                  setIsVisible={setIsUpdateModalOpen}
-                  id={id}
-                  value={countryName}
-                  isActive={isActive}
-                  setIsActive={setIsActive}
-
-                  // setValue={setCityName}
-                />
-              </CardBody>
-            </Card>
-          </Col>
-        </Row>
+                // setValue={setCityName}
+              />
+            </CardBody>
+          </Card>
+        </Col>
       </Container>
     </>
   );

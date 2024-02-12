@@ -14,74 +14,72 @@ const ProvinceListNav = () => {
   );
   var tempList: any = [];
   return (
-    <Card>
-      <Row>
-        <Col md={6}>
-          <Nav tabs className="border-tab">
-            <NavItem style={{ cursor: "pointer" }}>
-              <NavLink
-                className={activeTab === "1" ? "active" : ""}
-                onClick={() => {
-                  console.log(filterProvinces);
+    <Row>
+      <Col md={6}>
+        <Nav tabs className="border-tab">
+          <NavItem style={{ cursor: "pointer" }}>
+            <NavLink
+              className={activeTab === "1" ? "active" : ""}
+              onClick={() => {
+                console.log(filterProvinces);
 
-                  dispatch(setActiveTab("1"));
-                  filterProvinces.map((item: any, index: any) => {
+                dispatch(setActiveTab("1"));
+                filterProvinces.map((item: any, index: any) => {
+                  tempList.push(item);
+                });
+                dispatch(setProvinces(tempList));
+                tempList = [];
+              }}
+            >
+              <Target />
+              {all}
+            </NavLink>
+          </NavItem>
+          <NavItem style={{ cursor: "pointer" }}>
+            <NavLink
+              className={activeTab === "2" ? "active" : ""}
+              onClick={() => {
+                console.log(filterProvinces);
+
+                dispatch(setActiveTab("2"));
+                filterProvinces.map((item: any, index: any) => {
+                  if (!item.isActive) {
                     tempList.push(item);
-                  });
-                  dispatch(setProvinces(tempList));
-                  tempList = [];
-                }}
-              >
-                <Target />
-                {all}
-              </NavLink>
-            </NavItem>
-            <NavItem style={{ cursor: "pointer" }}>
-              <NavLink
-                className={activeTab === "2" ? "active" : ""}
-                onClick={() => {
-                  console.log(filterProvinces);
+                    console.log("isActive -- >", 1);
+                  }
+                });
+                dispatch(setProvinces(tempList));
+                tempList = [];
+              }}
+            >
+              <Info />
+              {inactive}
+            </NavLink>
+          </NavItem>
+          <NavItem style={{ cursor: "pointer" }}>
+            <NavLink
+              className={activeTab === "3" ? "active" : ""}
+              onClick={() => {
+                console.log(filterProvinces);
 
-                  dispatch(setActiveTab("2"));
-                  filterProvinces.map((item: any, index: any) => {
-                    if (!item.isActive) {
-                      tempList.push(item);
-                      console.log("isActive -- >", 1);
-                    }
-                  });
-                  dispatch(setProvinces(tempList));
-                  tempList = [];
-                }}
-              >
-                <Info />
-                {inactive}
-              </NavLink>
-            </NavItem>
-            <NavItem style={{ cursor: "pointer" }}>
-              <NavLink
-                className={activeTab === "3" ? "active" : ""}
-                onClick={() => {
-                  console.log(filterProvinces);
-
-                  dispatch(setActiveTab("3"));
-                  filterProvinces.map((item: any, index: any) => {
-                    if (item.isActive) {
-                      tempList.push(item);
-                      console.log("isNotActive -- >", 1);
-                    }
-                  });
-                  dispatch(setProvinces(tempList));
-                  tempList = [];
-                }}
-              >
-                <CheckCircle /> {active}
-              </NavLink>
-            </NavItem>
-          </Nav>
-        </Col>
-        <CreateNewProvince />
-      </Row>
-    </Card>
+                dispatch(setActiveTab("3"));
+                filterProvinces.map((item: any, index: any) => {
+                  if (item.isActive) {
+                    tempList.push(item);
+                    console.log("isNotActive -- >", 1);
+                  }
+                });
+                dispatch(setProvinces(tempList));
+                tempList = [];
+              }}
+            >
+              <CheckCircle /> {active}
+            </NavLink>
+          </NavItem>
+        </Nav>
+      </Col>
+      <CreateNewProvince />
+    </Row>
   );
 };
 

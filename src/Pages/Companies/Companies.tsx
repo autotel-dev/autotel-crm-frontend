@@ -28,7 +28,25 @@ import CompanyProfile from "../../assets/companyProfile.png";
 
 const Companies = () => {
   const dispatch = useDispatch();
-  const { companies } = useSelector((state: any) => state.companies);
+  const [searchValue, setSearchValue] = useState("");
+  const { companies, filterCompanies } = useSelector(
+    (state: any) => state.companies
+  );
+  // const [filteredCountries, setFilteredCountries]: any = useState([]);
+
+  const filterCompaniess = (e: any) => {
+    const searchKey = e.target.value;
+    setSearchValue(searchKey);
+    const filtered = filterCompanies.filter((company: any, index: any) => {
+      return company.fullName.toLowerCase().includes(searchKey.toLowerCase());
+      // ^ Add 'return' statement here
+    });
+
+    dispatch(setCompanies(filtered));
+
+    console.log(filtered);
+  };
+
   // const [modal, setModal] = useState(false);
   // const toggle = () => {
   //   setModal(!modal);
@@ -113,7 +131,28 @@ const Companies = () => {
       <Breadcrumbs title="" mainTitle="Companies" parent="Companies" />
       <Container fluid>
         <Col md={12} className="project-list">
-          <CompaniesListNav />
+          <Card>
+            <CompaniesListNav />
+            <Col md={12}>
+              <input
+                type="text"
+                placeholder="Type to Search.."
+                value={searchValue}
+                onChange={(e) => {
+                  filterCompaniess(e);
+                }}
+                style={{
+                  backgroundColor: "#f1f1f1",
+                  borderRadius: "5px",
+                  padding: "15px",
+                  margin: "15px",
+                  width: "calc(100% - 30px)", // Adjusting width to accommodate padding and margin
+                  border: "none",
+                  outline: "none", // Removing default border outline
+                }}
+              />
+            </Col>
+          </Card>
         </Col>
         {companies.length > 0 ? (
           <Row className="user-cards-items user-card-wrapper">

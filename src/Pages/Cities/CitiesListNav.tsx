@@ -15,74 +15,72 @@ const CitiesListNav = () => {
   var tempList: any = [];
 
   return (
-    <Card>
-      <Row>
-        <Col md={6}>
-          <Nav tabs className="border-tab">
-            <NavItem style={{ cursor: "pointer" }}>
-              <NavLink
-                className={activeTab === "1" ? "active" : ""}
-                onClick={() => {
-                  console.log(filterCities);
+    <Row>
+      <Col md={6}>
+        <Nav tabs className="border-tab">
+          <NavItem style={{ cursor: "pointer" }}>
+            <NavLink
+              className={activeTab === "1" ? "active" : ""}
+              onClick={() => {
+                console.log(filterCities);
 
-                  dispatch(setActiveTab("1"));
-                  filterCities.map((item: any, index: any) => {
+                dispatch(setActiveTab("1"));
+                filterCities.map((item: any, index: any) => {
+                  tempList.push(item);
+                });
+                dispatch(setCities(tempList));
+                tempList = [];
+              }}
+            >
+              <Target />
+              {all}
+            </NavLink>
+          </NavItem>
+          <NavItem style={{ cursor: "pointer" }}>
+            <NavLink
+              className={activeTab === "3" ? "active" : ""}
+              onClick={() => {
+                console.log(filterCities);
+
+                dispatch(setActiveTab("3"));
+                filterCities.map((item: any, index: any) => {
+                  if (!item.isActive) {
                     tempList.push(item);
-                  });
-                  dispatch(setCities(tempList));
-                  tempList = [];
-                }}
-              >
-                <Target />
-                {all}
-              </NavLink>
-            </NavItem>
-            <NavItem style={{ cursor: "pointer" }}>
-              <NavLink
-                className={activeTab === "3" ? "active" : ""}
-                onClick={() => {
-                  console.log(filterCities);
+                    console.log("isNotActive -- >", 1);
+                  }
+                });
+                dispatch(setCities(tempList));
+                tempList = [];
+              }}
+            >
+              <Info /> {inactive}
+            </NavLink>
+          </NavItem>
+          <NavItem style={{ cursor: "pointer" }}>
+            <NavLink
+              className={activeTab === "2" ? "active" : ""}
+              onClick={() => {
+                console.log(filterCities);
 
-                  dispatch(setActiveTab("3"));
-                  filterCities.map((item: any, index: any) => {
-                    if (!item.isActive) {
-                      tempList.push(item);
-                      console.log("isNotActive -- >", 1);
-                    }
-                  });
-                  dispatch(setCities(tempList));
-                  tempList = [];
-                }}
-              >
-                <Info /> {inactive}
-              </NavLink>
-            </NavItem>
-            <NavItem style={{ cursor: "pointer" }}>
-              <NavLink
-                className={activeTab === "2" ? "active" : ""}
-                onClick={() => {
-                  console.log(filterCities);
-
-                  dispatch(setActiveTab("2"));
-                  filterCities.map((item: any, index: any) => {
-                    if (item.isActive) {
-                      tempList.push(item);
-                      console.log("isActive -- >", 1);
-                    }
-                  });
-                  dispatch(setCities(tempList));
-                  tempList = [];
-                }}
-              >
-                <CheckCircle />
-                {active}
-              </NavLink>
-            </NavItem>
-          </Nav>
-        </Col>
-        <CreateNewCity />
-      </Row>
-    </Card>
+                dispatch(setActiveTab("2"));
+                filterCities.map((item: any, index: any) => {
+                  if (item.isActive) {
+                    tempList.push(item);
+                    console.log("isActive -- >", 1);
+                  }
+                });
+                dispatch(setCities(tempList));
+                tempList = [];
+              }}
+            >
+              <CheckCircle />
+              {active}
+            </NavLink>
+          </NavItem>
+        </Nav>
+      </Col>
+      <CreateNewCity />
+    </Row>
   );
 };
 

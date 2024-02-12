@@ -14,74 +14,72 @@ const PackageListNav = () => {
   );
   var tempList: any = [];
   return (
-    <Card>
-      <Row>
-        <Col md={6}>
-          <Nav tabs className="border-tab">
-            <NavItem style={{ cursor: "pointer" }}>
-              <NavLink
-                className={activeTab === "1" ? "active" : ""}
-                onClick={() => {
-                  console.log(filterPackages);
+    <Row>
+      <Col md={6}>
+        <Nav tabs className="border-tab">
+          <NavItem style={{ cursor: "pointer" }}>
+            <NavLink
+              className={activeTab === "1" ? "active" : ""}
+              onClick={() => {
+                console.log(filterPackages);
 
-                  dispatch(setActiveTab("1"));
-                  filterPackages.map((item: any, index: any) => {
+                dispatch(setActiveTab("1"));
+                filterPackages.map((item: any, index: any) => {
+                  tempList.push(item);
+                });
+                dispatch(setPackages(tempList));
+                tempList = [];
+              }}
+            >
+              <Target />
+              {all}
+            </NavLink>
+          </NavItem>
+          <NavItem style={{ cursor: "pointer" }}>
+            <NavLink
+              className={activeTab === "2" ? "active" : ""}
+              onClick={() => {
+                console.log(filterPackages);
+
+                dispatch(setActiveTab("1"));
+                filterPackages.map((item: any, index: any) => {
+                  if (!item.isActive) {
                     tempList.push(item);
-                  });
-                  dispatch(setPackages(tempList));
-                  tempList = [];
-                }}
-              >
-                <Target />
-                {all}
-              </NavLink>
-            </NavItem>
-            <NavItem style={{ cursor: "pointer" }}>
-              <NavLink
-                className={activeTab === "2" ? "active" : ""}
-                onClick={() => {
-                  console.log(filterPackages);
+                    console.log("isActive -- >", 1);
+                  }
+                });
+                dispatch(setPackages(tempList));
+                tempList = [];
+              }}
+            >
+              <Info />
+              {inactive}
+            </NavLink>
+          </NavItem>
+          <NavItem style={{ cursor: "pointer" }}>
+            <NavLink
+              className={activeTab === "3" ? "active" : ""}
+              onClick={() => {
+                console.log(filterPackages);
 
-                  dispatch(setActiveTab("1"));
-                  filterPackages.map((item: any, index: any) => {
-                    if (!item.isActive) {
-                      tempList.push(item);
-                      console.log("isActive -- >", 1);
-                    }
-                  });
-                  dispatch(setPackages(tempList));
-                  tempList = [];
-                }}
-              >
-                <Info />
-                {inactive}
-              </NavLink>
-            </NavItem>
-            <NavItem style={{ cursor: "pointer" }}>
-              <NavLink
-                className={activeTab === "3" ? "active" : ""}
-                onClick={() => {
-                  console.log(filterPackages);
-
-                  dispatch(setActiveTab("1"));
-                  filterPackages.map((item: any, index: any) => {
-                    if (item.isActive) {
-                      tempList.push(item);
-                      console.log("isActive -- >", 1);
-                    }
-                  });
-                  dispatch(setPackages(tempList));
-                  tempList = [];
-                }}
-              >
-                <CheckCircle /> {active}
-              </NavLink>
-            </NavItem>
-          </Nav>
-        </Col>
-        <CreateNewPackage />
-      </Row>
-    </Card>
+                dispatch(setActiveTab("1"));
+                filterPackages.map((item: any, index: any) => {
+                  if (item.isActive) {
+                    tempList.push(item);
+                    console.log("isActive -- >", 1);
+                  }
+                });
+                dispatch(setPackages(tempList));
+                tempList = [];
+              }}
+            >
+              <CheckCircle /> {active}
+            </NavLink>
+          </NavItem>
+        </Nav>
+      </Col>
+      <CreateNewPackage />
+    </Row>
   );
 };
 

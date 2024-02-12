@@ -142,6 +142,7 @@ import RecentLogsFullTable from "../Pages/ServerManagement/RecentOrders/RecentLo
 
 import CompanySupport from "../Pages/Company/Support/Support";
 import CompanyTasks from "../Pages/Company/Tasks/Tasks";
+import CompanyUsers from "../Pages/Company/Users/Users";
 import Monitoring from "../Pages/Company/Modules/Monitoring/Monitoring";
 import ControlRoom from "../Pages/Company/Modules/ControlRoom/ControlRoom";
 
@@ -753,6 +754,11 @@ const routes = [
   {
     path: `${process.env.PUBLIC_URL}/company/modules/controlRoom`,
     Component: <ControlRoom />,
+  },
+  // Users
+  {
+    path: `${process.env.PUBLIC_URL}/company/users`,
+    Component: <CompanyUsers />,
   },
 
   // Support
