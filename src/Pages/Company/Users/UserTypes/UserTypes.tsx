@@ -1,10 +1,10 @@
 export interface UserType {
-  name: string;
-  emailAddress: string;
-  password: string;
-  isActive: boolean;
-  phoneNo: string;
-  company: string;
+  name?: string;
+  emailAddress?: string;
+  password?: string;
+  isActive?: boolean;
+  phoneNo?: string;
+  company?: string;
 }
 export interface CountriesDataTableType {
   id: string;

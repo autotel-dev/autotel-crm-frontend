@@ -1,6 +1,6 @@
 export interface CitiesType {
   name?: string;
-  isActive?: string;
+  isActive?: any;
   title?: string;
   price?: number;
   duration?: string;

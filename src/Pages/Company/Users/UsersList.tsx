@@ -1,54 +1,131 @@
-import { Card, CardBody, Col, Container, Row } from "reactstrap";
+import { Card, CardBody, Col, Container, Input, Label, Row } from "reactstrap";
 import CommonHeader from "../../../Common/CommonHeader";
 import DataTable from "react-data-table-component";
 import { useEffect, useState } from "react";
-import { getAll } from "../../../Api";
+import { getAll, update } from "../../../Api";
 import { useDispatch, useSelector } from "react-redux";
 import "./tableStyle.css";
 import deleteAlert from "../../Alerts/DeleteAlert";
-// import {
-//   setCountries,
-//   setCountriesEnd,
-//   setCountriesStart,
-//   setFilterCountries,
-//   setId,
-// } from "../../ReaduxToolkit/Reducer/CountrySlice";
+import {
+  setFilterOperators,
+  setOperators,
+  setOperatorsEnd,
+  setOperatorsStart,
+} from "../../../ReaduxToolkit/Reducer/OperatorSlice";
 import { setNoDataFound } from "../../../ReaduxToolkit/Reducer/NoDataFoundSlice";
-import UpdateCountry from "./UpdateCountry";
 import Loader from "../../Loader/Loader";
+import UpdateUser from "./UpdateUser";
+import { jwtDecode } from "jwt-decode";
 
 const UsersList = () => {
-  const { countries, loading, id } = useSelector(
-    (state: any) => state.countries
-  );
+  const { operators, loading } = useSelector((state: any) => state.operators);
   const { noDataFound } = useSelector((state: any) => state.noDataFound);
   const dispatch = useDispatch();
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
-  const [countryName, setCountryName] = useState("");
+  const [id, setId] = useState("");
+  const [name, setName] = useState("");
   const [isActive, setIsActive] = useState(false);
-  // useEffect(() => {
-  //   dispatch(setCountriesStart());
-  //   getAll({ url: "country/get-all-countries" }).then((data: any) => {
-  //     console.log("api call --- >", data);
-  //     dispatch(setCountriesEnd());
-  //     if (data !== undefined) {
-  //       dispatch(setNoDataFound(data.message));
-  //       if (data.success) {
-  //         console.log("hhg");
-  //         setFilterCountries(data.data);
-  //         dispatch(setCountries(data.data));
-  //         dispatch(setFilterCountries(data.data));
-  //       }
-  //     }
-  //   });
-  // }, []);
+  const [emailAdress, setEmailAddress] = useState("");
+  const [phoneNo, setPhoneNo] = useState(false);
+  // -----------------------------------
+  const [decodedToken, setDecodedToken]: any = useState(null);
+  const authToken = localStorage.getItem("token");
+  useEffect(() => {
+    if (authToken !== null) {
+      const decodedToken = jwtDecode(authToken);
+      console.log(decodedToken);
+      setDecodedToken(decodedToken);
+    }
+  }, []);
+
+  useEffect(() => {
+    dispatch(setOperatorsStart());
+    getAll({ url: "operator/get-all-operators" }).then((data: any) => {
+      console.log("api call --- >", data);
+      dispatch(setOperatorsEnd());
+      if (data !== undefined) {
+        dispatch(setNoDataFound(data.message));
+        if (data.success) {
+          console.log("hhg");
+          dispatch(setOperators(data.data));
+          dispatch(setFilterOperators(data.data));
+        }
+      }
+    });
+  }, []);
 
   const renderTableRows = () => {
-    return countries?.map((row: any) => (
+    return operators?.map((row: any) => (
+      // setIsActive(row.isActive);
       <tr key={row.id}>
         <td>{row._id}</td>
-        <td>{row.name}</td>
-        <td>{row.isActive ? "Active" : "inActive"}</td>
+        <td>{row.fullName}</td>
+        <td>{row.role}</td>
+        <td>{row.emailAddress}</td>
+        <td>
+          <div className="d-flex" style={{ justifyContent: "center" }}>
+            <div
+              className={`text-end flex-shrink-0 icon-state 
+                            }`}
+            >
+              <Label className="switch mb-0">
+                <Input
+                  type="checkbox"
+                  defaultChecked={row.isActive}
+                  value={row.isActive ? "on" : "off"}
+                  onChange={async (e: any) => {
+                    setIsActive(!row.isActive);
+                    console.log(e.target.value);
+                    //  --------------------------
+
+                    const operator = {
+                      name: row.fullName,
+                      emailAddress: row.emailAddress,
+                      password: "123456789",
+                      phoneNo: row.phoneNo,
+                      isActive: isActive,
+                      company: decodedToken.userId,
+                    };
+                    console.log(operator);
+                    try {
+                      await update(operator, {
+                        url: `operator/update-operator/${row._id}`,
+                      }).then((data: any) => {
+                        if (data.success) {
+                          console.log(data);
+
+                          dispatch(setOperatorsStart());
+                          getAll({ url: "operator/get-all-operators" }).then(
+                            (data: any) => {
+                              console.log("api call --- >", data);
+                              dispatch(setOperatorsEnd());
+                              if (data !== undefined) {
+                                if (data.success) {
+                                  console.log("hhg");
+                                  dispatch(setOperators(data.data));
+                                  dispatch(setFilterOperators(data.data));
+                                }
+                              }
+                            }
+                          );
+                        }
+                      });
+                      // Handle successful post creation (e.g., show a success message, redirect, etc.)
+                    } catch (error) {
+                      // Handle error (e.g., show an error message)
+                      console.error("Error creating post:", error);
+                    }
+                  }}
+                />
+                <span
+                  className={`switch-state ${
+                    row.isActive ? "bg-primary" : "bg-secondary"
+                  }`}
+                />
+              </Label>
+            </div>
+          </div>
+        </td>
         <td>
           <div>
             <button
@@ -85,11 +162,13 @@ const UsersList = () => {
                 border: "none",
               }}
               onClick={() => {
-                // setIsUpdateModalOpen(true);
-                // console.log("isUpdateModalOpen: ", isUpdateModalOpen);
-                // dispatch(setId(row._id));
-                // setCountryName(row.name);
-                // setIsActive(row.isActive);
+                setIsUpdateModalOpen(true);
+                console.log("isUpdateModalOpen: ", isUpdateModalOpen);
+                setId(row._id);
+                setName(row.fullName);
+                setEmailAddress(row.emailAddress);
+                setPhoneNo(row.phoneNo);
+                setIsActive(row.isActive);
               }}
             >
               Edit
@@ -110,14 +189,16 @@ const UsersList = () => {
               <div className="table-responsive product-table">
                 {loading ? (
                   <Loader />
-                ) : countries?.length > 0 && loading === false ? (
+                ) : operators?.length > 0 && loading === false ? (
                   <div>
                     <table>
                       <thead>
                         <tr>
                           <th>ID</th>
                           <th>Name</th>
-                          <th>Status</th>
+                          <th>Role</th>
+                          <th>Email Address</th>
+                          <th>Account Status</th>
                           <th>Actions</th>
                         </tr>
                       </thead>
@@ -140,15 +221,15 @@ const UsersList = () => {
 
                 {/* )} */}
               </div>
-              <UpdateCountry
+              <UpdateUser
                 isVisible={isUpdateModalOpen}
                 setIsVisible={setIsUpdateModalOpen}
                 id={id}
-                value={countryName}
+                name={name}
+                emailAddress={emailAdress}
+                phoneNo={phoneNo}
                 isActive={isActive}
                 setIsActive={setIsActive}
-
-                // setValue={setCityName}
               />
             </CardBody>
           </Card>

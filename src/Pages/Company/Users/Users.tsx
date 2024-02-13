@@ -6,9 +6,26 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import UsersListNav from "./UsersListNav";
 import UsersList from "./UsersList";
+import { setOperators } from "../../../ReaduxToolkit/Reducer/OperatorSlice";
 
 const Countries = () => {
   const dispatch = useDispatch();
+  const [searchValue, setSearchValue] = useState("");
+  const { filterOperators } = useSelector((state: any) => state.operators);
+  // const [filteredCountries, setFilteredCountries]: any = useState([]);
+
+  const filterOperatorss = (e: any) => {
+    const searchKey = e.target.value;
+    setSearchValue(searchKey);
+    const filtered = filterOperators.filter((operator: any, index: any) => {
+      return operator.fullName.toLowerCase().includes(searchKey.toLowerCase());
+      // ^ Add 'return' statement here
+    });
+
+    dispatch(setOperators(filtered));
+
+    console.log(filtered);
+  };
 
   return (
     <>
@@ -22,9 +39,9 @@ const Countries = () => {
                 <input
                   type="text"
                   placeholder="Type to Search.."
-                  // value={searchValue}
+                  value={searchValue}
                   onChange={(e) => {
-                    // filterCountriess(e);
+                    filterOperatorss(e);
                   }}
                   style={{
                     backgroundColor: "#f1f1f1",
