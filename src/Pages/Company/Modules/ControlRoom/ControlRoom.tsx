@@ -15,19 +15,21 @@ import CompletedAlerts from "./Events/CompletedAlerts/CompletedAlerts";
 import { useEffect, useState } from "react";
 import { getAll } from "../../../../Api";
 import Loader from "../../../Loader/Loader";
+import { useDispatch } from "react-redux";
+import { setLiveAlerts } from "../../../../ReaduxToolkit/Reducer/AlertsSlice";
 
 const ControlRoom = () => {
-  const [liveAlertsData, setLiveAlertsData] = useState([]);
+  const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   useEffect(() => {
     setLoading(true);
-    getAll({ url: "company/alert-events" }).then((data: any) => {
+    getAll({ url: "company/alert-events?pageNo=1" }).then((data: any) => {
       console.log("api call --- >", data);
       setLoading(false);
       if (data !== undefined) {
         if (data.success) {
           console.log("length --- >", data.data.allAlertEvents.length);
-          setLiveAlertsData(data.data.allAlertEvents);
+          dispatch(setLiveAlerts(data.data.allAlertEvents));
         }
       }
     });
@@ -55,7 +57,7 @@ const ControlRoom = () => {
       {!loading ? (
         <Row>
           <Col xl="6">
-            <LiveAlerts liveAlertsData={liveAlertsData} />
+            <LiveAlerts />
           </Col>
           <Col xl="6">
             <div style={{ backgroundColor: "white" }}>

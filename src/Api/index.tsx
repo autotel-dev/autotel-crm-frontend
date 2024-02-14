@@ -116,7 +116,7 @@ export const otpVerification = async (
 };
 
 export const create = async (
-  postData: CitiesType,
+  postData: any,
   url: URLTypes
 ): Promise<void> => {
   try {

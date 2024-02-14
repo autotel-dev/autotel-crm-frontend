@@ -62,7 +62,7 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
                     <LI className={`sidebar-list`} key={index}>
                       <Link
                         className={`sidebar-link sidebar-title ${
-                          sideMenu === data.title ? "" : ""
+                          sideMenu === data.title ? "active" : ""
                         }`}
                         to={data.link ? data.link : "#"}
                         onClick={() => handleClick(data)}
@@ -81,13 +81,21 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
                         !isClose && (
                           <UL
                             className="sidebar-submenu custom-scrollbar simple-list"
+                            // style={{
+                            //   display: `${
+                            //     layout === "material-icon"
+                            //       ? data.title === sideMenu && !data.link
+                            //         ? "none"
+                            //         : "none"
+                            //       : ""
+                            //   }`,
+                            // }}
+
                             style={{
                               display: `${
-                                layout === "material-icon"
-                                  ? data.title === sideMenu && !data.link
-                                    ? "block"
-                                    : "none"
-                                  : ""
+                                data.title === sideMenu && !data.link
+                                  ? "none"
+                                  : "none"
                               }`,
                             }}
                           >
@@ -110,7 +118,7 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
                     <LI className={`sidebar-list`} key={index}>
                       <Link
                         className={`sidebar-link sidebar-title ${
-                          sideMenu === data.title ? "" : ""
+                          sideMenu === data.title ? "active" : ""
                         }`}
                         to={data.link ? data.link : "#"}
                         onClick={() => handleClick(data)}
@@ -131,11 +139,9 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
                             className="sidebar-submenu custom-scrollbar simple-list"
                             style={{
                               display: `${
-                                layout === "material-icon"
-                                  ? data.title === sideMenu && !data.link
-                                    ? "block"
-                                    : "none"
-                                  : ""
+                                data.title === sideMenu && !data.link
+                                  ? "block"
+                                  : "block"
                               }`,
                             }}
                           >

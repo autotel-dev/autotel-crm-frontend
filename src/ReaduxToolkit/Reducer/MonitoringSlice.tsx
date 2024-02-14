@@ -4,6 +4,7 @@ const initialState = {
   devices: [],
   serverDevices: [],
   selectedDevices: [],
+  devicesStatuses: [],
   noDevicesFound: "",
   loading: false,
   error: null,
@@ -33,6 +34,11 @@ const MonitoringSlice = createSlice({
       state.error = null;
       state.loading = false;
     },
+    setDevicesStatuses: (state, action) => {
+      state.devicesStatuses = action.payload;
+      state.error = null;
+      state.loading = false;
+    },
     setExpandedDevice: (state, action) => {
       state.expandedDevice = action.payload;
     },
@@ -53,6 +59,7 @@ export const {
   setNoDevicesFound,
   setServerDevices,
   setSelecetdDevices,
+  setDevicesStatuses,
   setExpandedDevice,
 } = MonitoringSlice.actions;
 

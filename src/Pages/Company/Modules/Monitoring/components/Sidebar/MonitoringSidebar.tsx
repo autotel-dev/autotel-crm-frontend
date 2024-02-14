@@ -1,19 +1,12 @@
 import { useState } from "react";
-import {
-  Sidebar,
-  Menu,
-  MenuItem,
-  SubMenu,
-  // useProSidebar,
-} from "react-pro-sidebar";
-import { Link } from "react-router-dom";
-import { Row } from "reactstrap";
 import DevicesTreeViewAccordian from "../DevicesAccordian/DevicesTreeViewAccordian";
 import { FaCarAlt } from "react-icons/fa";
 import { ImArrowRight, ImArrowLeft } from "react-icons/im";
+import { useSelector } from "react-redux";
 
 const MonitoringSidebar = () => {
   const [collapsedWidth, setCollapsedWidth] = useState("0px");
+  const { devicesStatuses,serverDevices } = useSelector((state: any) => state.monitoring);
   // const { collapseSidebar } = useProSidebar();
   return (
     <div style={{ display: "flex" }}>
@@ -67,7 +60,15 @@ const MonitoringSidebar = () => {
             cursor: "pointer",
           }}
         >
-          Move &nbsp;=&nbsp; 10
+          {devicesStatuses.find((item: any) => item.online === "online") &&
+            "Move"}
+          &nbsp;=&nbsp;
+          {devicesStatuses.find(
+            (item: any, index: any) => item.online === "online"
+          ) &&
+            devicesStatuses.find(
+              (item: any, index: any) => item.online === "online"
+            ).items.length}
         </div>
         <div
           style={{
@@ -84,7 +85,15 @@ const MonitoringSidebar = () => {
             cursor: "pointer",
           }}
         >
-          Idle &nbsp;=&nbsp; 10
+          {devicesStatuses.find((item: any) => item.online === "engine") &&
+            "Idle"}
+          &nbsp;=&nbsp;
+          {devicesStatuses.find(
+            (item: any, index: any) => item.online === "engine"
+          ) &&
+            devicesStatuses.find(
+              (item: any, index: any) => item.online === "engine"
+            ).items.length}
         </div>
         <div
           style={{
@@ -101,7 +110,14 @@ const MonitoringSidebar = () => {
             cursor: "pointer",
           }}
         >
-          Stop &nbsp;=&nbsp; 10
+          {devicesStatuses.find((item: any) => item.online === "ack") && "Stop"}
+          &nbsp;=&nbsp;
+          {devicesStatuses.find(
+            (item: any, index: any) => item.online === "ack"
+          ) &&
+            devicesStatuses.find(
+              (item: any, index: any) => item.online === "ack"
+            ).items.length}
         </div>
         <div
           style={{
@@ -118,7 +134,15 @@ const MonitoringSidebar = () => {
             cursor: "pointer",
           }}
         >
-          Inactive &nbsp;=&nbsp; 10
+          {devicesStatuses.find((item: any) => item.online === "offline") &&
+            "Offline"}
+          &nbsp;=&nbsp;
+          {devicesStatuses.find(
+            (item: any, index: any) => item.online === "offline"
+          ) &&
+            devicesStatuses.find(
+              (item: any, index: any) => item.online === "offline"
+            ).items.length}
         </div>
         <div
           style={{
@@ -161,15 +185,15 @@ const MonitoringSidebar = () => {
             textAlign: "center",
             display: "flex",
             height: "35px",
-            margin: "30px",
-            width: "90px",
+            margin: "40px",
+            width: "110px",
             fontWeight: "bold",
             alignItems: "center",
             justifyContent: "center", // Adjust content alignment
             cursor: "pointer",
           }}
         >
-          Total &nbsp;=&nbsp; 200
+          Total &nbsp;=&nbsp; {serverDevices.length}
         </div>
       </div>
 

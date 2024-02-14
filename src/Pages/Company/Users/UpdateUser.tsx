@@ -165,7 +165,7 @@ const UpdateUser: React.FC<PropsTypes> = ({
       }}
     >
       <div className="modal-header">
-        <H3 className="modal-title">Update Country</H3>
+        <H3 className="modal-title">Update User</H3>
         <Button
           color="transprant"
           className="btn-close"
@@ -182,7 +182,7 @@ const UpdateUser: React.FC<PropsTypes> = ({
         >
           <Row>
             <FormGroup className="col-md-12 create-group">
-              <Label>Operator Name</Label>
+              <Label>User Name</Label>
               <input
                 className="form-control"
                 type="text"

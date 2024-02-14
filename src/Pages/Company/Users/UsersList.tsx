@@ -214,7 +214,7 @@ const UsersList = () => {
                     }}
                   >
                     {noDataFound !== ""
-                      ? "No Countries Found"
+                      ? "No Users Found"
                       : "Faild to Fetch"}
                   </div>
                 )}

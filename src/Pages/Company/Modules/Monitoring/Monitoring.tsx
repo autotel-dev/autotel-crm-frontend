@@ -6,12 +6,12 @@ import { getAll } from "../../../../Api";
 import {
   setDevices,
   setServerDevices,
+  setDevicesStatuses,
 } from "../../../../ReaduxToolkit/Reducer/MonitoringSlice";
 import Loader from "../../../Loader/Loader";
 
 const Monitoring = () => {
   const apiKey = "AIzaSyDI3fB-ItM1LpMOyMg_P8UxTUuxHCyQS34"; // Replace with your actual API key
-  const [newList, setNewList] = useState([{ title: "New List", data: [] }]);
 
   const dispatch = useDispatch();
   const { devices } = useSelector((state: any) => state.monitoring);
@@ -21,11 +21,16 @@ const Monitoring = () => {
   const groupDevicesObj: any = {};
   const initialGroupDevices: any = [];
 
+  const statuses: any = [];
+  const statusDevicesObj: any = {};
+  var initialGroupDevicesStatuses: any = [];
+
   const [groupdevices, setgroupdevices]: any = useState([]);
+  const [groupdevicesStatuses, setgroupdevicesStatuses]: any = useState([]);
   useEffect(() => {
     document.body.style.overflow = "hidden";
 
-    // Re-enable scrolling when the component unmounts
+    // Re-enable scrolling when the component unmounts  
 
     getData();
 
@@ -65,10 +70,39 @@ const Monitoring = () => {
 
           // Update state with initialGroupDevices
           setgroupdevices(initialGroupDevices);
-
           console.log("groups", groups);
           console.log("groupDevices", groupdevices);
           dispatch(setDevices(initialGroupDevices));
+
+          // ---------------------- For device status-----------------------------------
+
+          for (let i = 0; i < data.data.length; i++) {
+            const element = data.data[i].online;
+            if (!statuses.includes(element)) {
+              statuses.push(element);
+              // setMyArray((prevArray) => [...prevArray, element]);
+            }
+          }
+          statuses.forEach((online: any) => {
+            statusDevicesObj[online] = data.data.filter(
+              (obj: any) => obj.online === online
+            );
+          });
+
+          // Convert groupDevicesObj to initialGroupDevices array format
+          Object.keys(statusDevicesObj).forEach((online: any) => {
+            initialGroupDevicesStatuses.push({
+              online,
+              items: statusDevicesObj[online],
+            });
+          });
+
+          // Update state with initialGroupDevicesStatuses
+          setgroupdevicesStatuses(initialGroupDevicesStatuses);
+          console.log("statuses", statuses);
+          console.log("groupDevicesStatuses", initialGroupDevicesStatuses);
+          dispatch(setDevicesStatuses(initialGroupDevicesStatuses));
+         
         }
       }
     });

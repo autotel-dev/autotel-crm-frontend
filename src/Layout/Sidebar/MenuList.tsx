@@ -20,7 +20,7 @@ const MenuList = ({ subMenuData, setIsOpen, isOpen, level,isClose,setIsClose }: 
       // setIsClose(true);
   };
   return (
-    <>
+    <div className="hoverd-menu">
       {subMenuData?.subMenu &&
         subMenuData?.subMenu?.map((item, index) => (
           <LI className={level === 0 ? "main-submenu" : ""} key={index} >
@@ -38,7 +38,7 @@ const MenuList = ({ subMenuData, setIsOpen, isOpen, level,isClose,setIsClose }: 
           
           </LI>
         ))}
-    </>
+    </div>
   );
 };
 

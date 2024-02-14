@@ -12,7 +12,7 @@ const initialState = {
 };
 
 const OpearatorSlice = createSlice({
-  name: "CitiesSlice",
+  name: "OpearatorSlice",
   initialState,
   reducers: {
     setOperatorsStart: (state) => {

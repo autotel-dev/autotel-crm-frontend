@@ -206,12 +206,13 @@ const DevicesTreeViewAccordian = () => {
                               />
                               <span
                                 onClick={(e) => e.stopPropagation()}
-                                className={`${
-                                  bodyItem.engine_status !== null &&
-                                  bodyItem.engine_status === true
-                                    ? "move"
-                                    : "stop"
-                                }`}
+                                className={
+                                  bodyItem.icon_color === "green"
+                                    ? "green"
+                                    : bodyItem.icon_color === "blue"
+                                    ? "black"
+                                    : bodyItem.online
+                                }
                               ></span>
                             </label>
 
