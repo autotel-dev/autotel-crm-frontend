@@ -94,8 +94,8 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
                             style={{
                               display: `${
                                 data.title === sideMenu && !data.link
-                                  ? "none"
-                                  : "none"
+                                  ? "block"
+                                  : "block"
                               }`,
                             }}
                           >

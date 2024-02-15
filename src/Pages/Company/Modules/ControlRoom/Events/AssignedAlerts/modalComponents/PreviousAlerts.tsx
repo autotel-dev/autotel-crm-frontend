@@ -1,109 +1,93 @@
 import { Card, CardBody, CardHeader, Col, Table } from "reactstrap";
-import { useState } from "react";
+
+import { useEffect, useRef, useState } from "react";
+import { useSelector } from "react-redux";
 import { H4 } from "../../../../../../../AbstractElements";
 
 const PreviousAlerts = () => {
-  const tableHeader = ["ID", "Device", "Alert", "Type", "Message", "address"];
+  const { modalData } = useSelector((state: any) => state.alerts);
+  console.log("completedAlertsData", modalData.previousAlerts);
 
-  const previousAlerts = [
-    {
-      id: "121",
-      device: "device",
-      date: "dateTime",
-      alertt: "alert",
-      type: "type",
-      message: "message",
-      address: "address",
-    },
-    {
-      id: "122",
-      device: "device",
-      date: "dateTime",
-      alertt: "alert",
-      type: "type",
-      message: "message",
-      address: "address",
-    },
-    {
-      id: "123",
-      device: "device",
-      date: "dateTime",
-      alertt: "alert",
-      type: "type",
-      message: "message",
-      address: "address",
-    },
-    {
-      id: "124",
-      device: "device",
-      date: "dateTime",
-      alertt: "alert",
-      type: "type",
-      message: "message",
-      address: "address",
-    },
-    {
-      id: "125",
-      device: "device",
-      date: "dateTime",
-      alertt: "alert",
-      type: "type",
-      message: "message",
-      address: "address",
-    },
-    {
-      id: "122",
-      device: "device",
-      date: "dateTime",
-      alertt: "alert",
-      type: "type",
-      message: "message",
-      address: "address",
-    },
+  const [dataList, setDataList]: any = useState([]);
+  const [loading, setLoading] = useState(false); // State to manage loading
+  const tableHeader = [
+    "ID",
+    "Device",
+    "Alert",
+    "Type",
+    "Message",
+    "Address",
+    "Response",
   ];
+  const containerRef = useRef(null);
+  const [pageNo, setPageNo] = useState(1);
+  useEffect(() => {
+    if (modalData.previousAlerts != null)
+      setDataList(modalData.previousAlerts.slice(0, 12)); // Initially display the first 6 elements
+  }, [modalData.previousAlerts]);
+
+  const handleScroll = () => {
+    if (!containerRef.current) return; // Ensure containerRef.current exists
+    const { scrollTop, clientHeight, scrollHeight } = containerRef.current;
+    if (scrollHeight - scrollTop === clientHeight) {
+      // If scrolled to the bottom
+      const nextBatch = modalData.previousAlerts.slice(
+        dataList.length,
+        dataList.length + 6
+      ); // Fetch the next 6 elements
+      setDataList((prevData: any) => [...prevData, ...nextBatch]); // Append to the existing data
+    }
+  };
 
   return (
     <Card className="invoice-card">
-      {/* <CardHeader className="pb-0">
-          <div>
-            <H3>Assigned Alerts</H3>
-          </div>
-        </CardHeader> */}
       <CardBody className="transaction-card">
-        <div className="table-responsive theme-scrollbar recent-wrapper">
-          <Table className="display order-wrapper" id="recent-order">
-            <thead>
-              <tr>
-                {tableHeader.map((data, index) => (
-                  <th key={index}>{data}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {previousAlerts.map((data: any, index: any) => {
-                if (index < 8) {
-                  return (
-                    <tr key={index}>
-                      <td>{data.id}</td>
-                      <td>
-                        <div className="d-flex">
-                          <div className="flex-grow-1 ms-2">
-                            <H4>{data.device}</H4>
-                            <span>{data.date}</span>
-                          </div>
+        <div
+          ref={containerRef}
+          className="table-responsive theme-scrollbar recent-wrapper"
+          style={{ maxHeight: "66vh", overflowY: "auto" }}
+          onScroll={handleScroll}
+        >
+          <div className="table-responsive theme-scrollbar recent-wrapper">
+            <Table className="display order-wrapper" id="recent-order">
+              <thead>
+                <tr>
+                  {tableHeader.map((data, index) => (
+                    <th key={index}>{data}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {dataList.map((data: any, index: any) => (
+                  <tr style={{ cursor: "pointer" }} key={index}>
+                    <td>{data.eventId}</td>
+                    <td>
+                      <div className="d-flex">
+                        <div className="flex-grow-1 ms-2">
+                          <H4>{data.deviceName}</H4>
+                          <span style={{ fontSize: "10px" }}>
+                            {data.createdAt.toString().slice(0, 10) +
+                              " " +
+                              data.createdAt.toString().slice(11, 19)}
+                          </span>
                         </div>
-                      </td>
+                      </div>
+                    </td>
 
-                      <td className={`txt-primary`}>{data.alertt}</td>
-                      <td>{data.type}</td>
-                      <td>{data.message}</td>
-                      <td>{data.address}</td>
-                    </tr>
-                  );
-                }
-              })}
-            </tbody>
-          </Table>
+                    <td className={`txt-primary`}>{data.message}</td>
+                    <td>{data.type}</td>
+                    <td>{data.message}</td>
+                    <td>
+                      {data.address == null && data.address == undefined
+                        ? "N/A"
+                        : data.address}
+                    </td>
+                    <td>{data.completionResponse}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+          </div>
         </div>
       </CardBody>
     </Card>

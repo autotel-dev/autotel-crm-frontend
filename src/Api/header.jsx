@@ -1,5 +1,6 @@
 import { useSelector } from "react-redux";
 import Store from "../ReaduxToolkit/Store";
+import { jwtDecode } from "jwt-decode";
 
 const authToken = localStorage.getItem("token");
 const state = Store.getState();
@@ -23,4 +24,16 @@ export default header;
 export const multipartHeader = {
   "Content-Type": "multipart/form-data",
   Authorization: `Bearer ${token}`,
+};
+
+export const serverCredentials = (serverID) => {
+  const decodedToken = jwtDecode(authToken);
+  console.log(decodedToken);
+
+  for (let i = 0; i < decodedToken.serverCredentials.length; i++) {
+    const element = decodedToken.serverCredentials[i];
+    if (element.serverId == serverID) {
+      return { element };
+    }
+  }
 };

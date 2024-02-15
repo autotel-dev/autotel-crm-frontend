@@ -30,7 +30,7 @@ const Monitoring = () => {
   useEffect(() => {
     document.body.style.overflow = "hidden";
 
-    // Re-enable scrolling when the component unmounts  
+    // Re-enable scrolling when the component unmounts
 
     getData();
 
@@ -97,12 +97,54 @@ const Monitoring = () => {
             });
           });
 
+          const expiredDevices = [];
+          const notConnectedDevices = [];
+          const currentDate = new Date(); // Get the current date and time
+
+          for (let i = 0; i < data.data.length; i++) {
+            const element = data.data[i];
+            if (
+              element.expiration_date != null &&
+              element.expiration_date !== ""
+            ) {
+              const expirationDate = new Date(element.expiration_date); // Convert expiration date string to Date object
+              if (expirationDate < currentDate) {
+                // Compare expiration date with current date
+                expiredDevices.push(element);
+              }
+            }
+            if (i === data.data.length - 1) {
+              console.log("expiredDevices", expiredDevices);
+              initialGroupDevicesStatuses.push({
+                online: "Expired",
+                items: expiredDevices,
+              });
+            }
+          }
+
+          for (let i = 0; i < data.data.length; i++) {
+            const element = data.data[i];
+            if (
+              element.time == null ||
+              element.time === "" ||
+              element.time === undefined
+            ) {
+              notConnectedDevices.push(element);
+            }
+            if (i === data.data.length - 1) {
+              console.log("notConnectedDevices", notConnectedDevices);
+              initialGroupDevicesStatuses.push({
+                online: "Not Connected",
+                items: notConnectedDevices,
+              });
+            }
+          }
+
           // Update state with initialGroupDevicesStatuses
           setgroupdevicesStatuses(initialGroupDevicesStatuses);
           console.log("statuses", statuses);
           console.log("groupDevicesStatuses", initialGroupDevicesStatuses);
           dispatch(setDevicesStatuses(initialGroupDevicesStatuses));
-         
         }
       }
     });

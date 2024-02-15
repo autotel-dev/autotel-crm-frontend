@@ -47,6 +47,8 @@ const UpdateUser: React.FC<PropsTypes> = ({
 
   // setValue
 }) => {
+  console.log("id",id);
+  
   const [decodedToken, setDecodedToken]: any = useState(null);
   const authToken = localStorage.getItem("token");
   useEffect(() => {

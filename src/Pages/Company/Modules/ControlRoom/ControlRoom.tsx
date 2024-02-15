@@ -16,7 +16,11 @@ import { useEffect, useState } from "react";
 import { getAll } from "../../../../Api";
 import Loader from "../../../Loader/Loader";
 import { useDispatch } from "react-redux";
-import { setLiveAlerts } from "../../../../ReaduxToolkit/Reducer/AlertsSlice";
+import {
+  setLiveAlerts,
+  setAssignedAlerts,
+  setCompletedAlerts,
+} from "../../../../ReaduxToolkit/Reducer/AlertsSlice";
 
 const ControlRoom = () => {
   const dispatch = useDispatch();
@@ -33,7 +37,28 @@ const ControlRoom = () => {
         }
       }
     });
+    getAll({ url: "company/get-all-assigned-events" }).then((data: any) => {
+      console.log("assigned --- >", data);
+      // setLoading(false);
+      if (data !== undefined) {
+        if (data.success) {
+          console.log("length --- >", data.data.length);
+          dispatch(setAssignedAlerts(data.data));
+        }
+      }
+    });
+    getAll({ url: "company/get-all-completed-events" }).then((data: any) => {
+      console.log("completed --- >", data);
+      // setLoading(false);
+      if (data !== undefined) {
+        if (data.success) {
+          console.log("length --- >", data.data.length);
+          dispatch(setCompletedAlerts(data.data));
+        }
+      }
+    });
   }, []);
+
   const events = [
     {
       id: "1",

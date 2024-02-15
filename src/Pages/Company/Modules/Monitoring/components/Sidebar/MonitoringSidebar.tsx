@@ -6,7 +6,9 @@ import { useSelector } from "react-redux";
 
 const MonitoringSidebar = () => {
   const [collapsedWidth, setCollapsedWidth] = useState("0px");
-  const { devicesStatuses,serverDevices } = useSelector((state: any) => state.monitoring);
+  const { devicesStatuses, serverDevices } = useSelector(
+    (state: any) => state.monitoring
+  );
   // const { collapseSidebar } = useProSidebar();
   return (
     <div style={{ display: "flex" }}>
@@ -159,7 +161,15 @@ const MonitoringSidebar = () => {
             cursor: "pointer",
           }}
         >
-          Expired &nbsp;=&nbsp; 10
+          {devicesStatuses.find((item: any) => item.online === "Expired") &&
+            "Expired"}
+          &nbsp;=&nbsp;
+          {devicesStatuses.find(
+            (item: any, index: any) => item.online === "Expired"
+          ) &&
+            devicesStatuses.find(
+              (item: any, index: any) => item.online === "Expired"
+            ).items.length}
         </div>
         <div
           style={{
@@ -176,7 +186,16 @@ const MonitoringSidebar = () => {
             cursor: "pointer",
           }}
         >
-          Not Connected &nbsp;=&nbsp; 10
+          {devicesStatuses.find(
+            (item: any) => item.online === "Not Connected"
+          ) && "Not Connecetd"}
+          &nbsp;=&nbsp;
+          {devicesStatuses.find(
+            (item: any, index: any) => item.online === "Not Connected"
+          ) &&
+            devicesStatuses.find(
+              (item: any, index: any) => item.online === "Not Connected"
+            ).items.length}
         </div>
         <div
           style={{

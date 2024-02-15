@@ -200,18 +200,17 @@ const GoogleMap = (props) => {
       ref={mapRef}
     >
       {selectedDevices.map((marker) => {
-        const tail = marker.tail;
-        if (tail.length < 2) return null; // Skip if there are less than 2 points
+        // const tail = marker.tail;
+        // if (tail.length < 2) return null; // Skip if there are less than 2 points
 
-        const start = tail[tail.length - 2]; // Second-to-last point
-        const end = tail[tail.length - 1]; // Last point
-        const bearing = calculateBearing(start, end) || 0;
-        console.log("Marker Bearing:", bearing); // Log the bearing
+        // const start = tail[tail.length - 2]; // Second-to-last point
+        // const end = tail[tail.length - 1]; // Last point
+        // const bearing = calculateBearing(start, end) || 0;
+        // console.log("Marker Bearing:", bearing); // Log the bearing
 
         const icon = {
           url: `${marker.server.url}/${marker.icon.path}`,
           scaledSize: new window.google.maps.Size(22, 40),
-          rotation: bearing,
         };
         return (
           <Marker
@@ -222,6 +221,10 @@ const GoogleMap = (props) => {
               lng: parseFloat(marker.lng),
             }}
             icon={icon}
+            // rotation={170}
+            style={{
+              transform:"rotate(45deg)"
+            }}
           />
         );
       })}

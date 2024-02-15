@@ -1,152 +1,126 @@
 import { Card, CardBody, CardHeader, Col, Table } from "reactstrap";
 import { H3, H4 } from "../../../../../../AbstractElements";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import AssignedAlertModal from "./AssignedAlertModal";
+import { useDispatch, useSelector } from "react-redux";
+import { create } from "../../../../../../Api";
+import { serverCredentials } from "../../../../../../Api/header";
+import { setModalData } from "../../../../../../ReaduxToolkit/Reducer/AlertsSlice";
 
 const AssignedAlerts = () => {
-  const tableHeader = ["ID", "Device", "Alert", "Type", "Message", "address"];
+  const dispatch = useDispatch();
+  const { assignedAlerts } = useSelector((state: any) => state.alerts);
+  console.log("assignedAlertsData", assignedAlerts);
+
+  const [dataList, setDataList]: any = useState([]);
+  const [loading, setLoading] = useState(false); // State to manage loading
+  const tableHeader = ["ID", "Device", "Alert", "Type", "Message", "Address"];
+  const containerRef = useRef(null);
+  const [pageNo, setPageNo] = useState(1);
+  useEffect(() => {
+    setDataList(assignedAlerts.slice(0, 12)); // Initially display the first 6 elements
+  }, [assignedAlerts]);
+
+  const handleScroll = () => {
+    if (!containerRef.current) return; // Ensure containerRef.current exists
+    const { scrollTop, clientHeight, scrollHeight } = containerRef.current;
+    if (scrollHeight - scrollTop === clientHeight) {
+      // If scrolled to the bottom
+      const nextBatch = assignedAlerts.slice(
+        dataList.length,
+        dataList.length + 6
+      ); // Fetch the next 6 elements
+      setDataList((prevData: any) => [...prevData, ...nextBatch]); // Append to the existing data
+    }
+  };
+
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [basicTab, setBasicTab] = useState("1");
 
-  const assignedAlerts = [
-    {
-      id: "121",
-      device: "device",
-      date: "dateTime",
-      alertt: "alert",
-      type: "type",
-      message: "message",
-      address: "address",
-    },
-    {
-      id: "122",
-      device: "device",
-      date: "dateTime",
-      alertt: "alert",
-      type: "type",
-      message: "message",
-      address: "address",
-    },
-    {
-      id: "123",
-      device: "device",
-      date: "dateTime",
-      alertt: "alert",
-      type: "type",
-      message: "message",
-      address: "address",
-    },
-    {
-      id: "124",
-      device: "device",
-      date: "dateTime",
-      alertt: "alert",
-      type: "type",
-      message: "message",
-      address: "address",
-    },
-    {
-      id: "125",
-      device: "device",
-      date: "dateTime",
-      alertt: "alert",
-      type: "type",
-      message: "message",
-      address: "address",
-    },
-    {
-      id: "122",
-      device: "device",
-      date: "dateTime",
-      alertt: "alert",
-      type: "type",
-      message: "message",
-      address: "address",
-    },
-    {
-      id: "123",
-      device: "device",
-      date: "dateTime",
-      alertt: "alert",
-      type: "type",
-      message: "message",
-      address: "address",
-    },
-    {
-      id: "124",
-      device: "device",
-      date: "dateTime",
-      alertt: "alert",
-      type: "type",
-      message: "message",
-      address: "address",
-    },
-    {
-      id: "125",
-      device: "device",
-      date: "dateTime",
-      alertt: "alert",
-      type: "type",
-      message: "message",
-      address: "address",
-    },
-  ];
-
   return (
     <Card className="invoice-card">
-      {/* <CardHeader className="pb-0">
-          <div>
-            <H3>Assigned Alerts</H3>
-          </div>
-        </CardHeader> */}
       <CardBody className="transaction-card">
-        <div className="table-responsive theme-scrollbar recent-wrapper">
-          <Table className="display order-wrapper" id="recent-order">
-            <thead>
-              <tr>
-                {tableHeader.map((data, index) => (
-                  <th key={index}>{data}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {assignedAlerts.map((data: any, index: any) => {
-                if (index < 8) {
-                  return (
-                    <tr
-                      style={{ cursor: "pointer" }}
-                      key={index}
-                      onClick={() => {
-                        setBasicTab("1");
-                        setIsUpdateModalOpen(true);
-                        console.log("isUpdateModalOpen: ", isUpdateModalOpen);
-                      }}
-                    >
-                      <td>{data.id}</td>
-                      <td>
-                        <div className="d-flex">
-                          <div className="flex-grow-1 ms-2">
-                            <H4>{data.device}</H4>
-                            <span>{data.date}</span>
-                          </div>
+        <div
+          ref={containerRef}
+          className="table-responsive theme-scrollbar recent-wrapper"
+          style={{ maxHeight: "66vh", overflowY: "auto" }}
+          onScroll={handleScroll}
+        >
+          <div className="table-responsive theme-scrollbar recent-wrapper">
+            <Table className="display order-wrapper" id="recent-order">
+              <thead>
+                <tr>
+                  {tableHeader.map((data, index) => (
+                    <th key={index}>{data}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {dataList.map((data: any, index: any) => (
+                  <tr
+                    style={{ cursor: "pointer" }}
+                    key={index}
+                    onClick={async () => {
+                      const serverInfo = serverCredentials(data.server);
+                      console.log("serverInfo", serverInfo);
+                      setBasicTab("1");
+                      setIsUpdateModalOpen(true);
+                      console.log("isUpdateModalOpen: ", isUpdateModalOpen);
+                      const sendData = {
+                        eventId: data._id,
+                        serverId: serverInfo?.element.serverId,
+                        serverHashKey: serverInfo?.element.serverHashKey,
+                        deviceId: data.deviceId,
+                      };
+                      console.log(sendData);
+                      try {
+                        await create(sendData, {
+                          url: "alert-events/get-alert-event-by-id",
+                        }).then((data: any) => {
+                          if (data.success) {
+                            console.log(data);
+                            dispatch(setModalData(data.data));
+                          }
+                        });
+                        // Handle successful post creation (e.g., show a success message, redirect, etc.)
+                      } catch (error: any) {
+                        // Handle error (e.g., show an error message)
+                        console.error("Error creating post:", error);
+                      }
+                    }}
+                  >
+                    <td>{data.eventId}</td>
+                    <td>
+                      <div className="d-flex">
+                        <div className="flex-grow-1 ms-2">
+                          <H4>{data.deviceName}</H4>
+                          <span style={{ fontSize: "10px" }}>
+                            {data.createdAt.toString().slice(0, 10) +
+                              " " +
+                              data.createdAt.toString().slice(11, 19)}
+                          </span>
                         </div>
-                      </td>
+                      </div>
+                    </td>
 
-                      <td className={`txt-primary`}>{data.alertt}</td>
-                      <td>{data.type}</td>
-                      <td>{data.message}</td>
-                      <td>{data.address}</td>
-                    </tr>
-                  );
-                }
-              })}
-            </tbody>
-          </Table>
-          <AssignedAlertModal
-            isVisible={isUpdateModalOpen}
-            setIsVisible={setIsUpdateModalOpen}
-            tab={basicTab}
-          />
+                    <td className={`txt-primary`}>{data.message}</td>
+                    <td>{data.type}</td>
+                    <td>{data.message}</td>
+                    <td>
+                      {data.address == null && data.address == undefined
+                        ? "N/A"
+                        : data.address}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+            <AssignedAlertModal
+              isVisible={isUpdateModalOpen}
+              setIsVisible={setIsUpdateModalOpen}
+              tab={basicTab}
+            />
+          </div>
         </div>
       </CardBody>
     </Card>
