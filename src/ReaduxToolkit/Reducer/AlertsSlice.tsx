@@ -4,7 +4,7 @@ const initialState = {
   liveAlerts: [],
   assignedAlerts: [],
   completedAlerts: [],
-  modalData: {},
+  modalData: null,
   loading: false,
   error: null,
   noCountryFound: "",

@@ -82,7 +82,11 @@ const PreviousAlerts = () => {
                         ? "N/A"
                         : data.address}
                     </td>
-                    <td>{data.completionResponse}</td>
+                    <td>
+                      {data.completionResponse == ""
+                        ? "N/A"
+                        : data.completionResponse}
+                    </td>
                   </tr>
                 ))}
               </tbody>

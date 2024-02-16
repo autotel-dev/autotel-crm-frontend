@@ -118,3 +118,33 @@ label > input[type="checkbox"]:checked + .black::before {
 label > input[type="checkbox"]:checked + .black {
   color: black;
 }
+
+/* ---------------------- Expired --------------- */
+label > input[type="checkbox"] + .expired::before {
+  content: "";
+  display: inline-block;
+  vertical-align: bottom;
+  width: 20px;
+  height: 20px;
+  border-radius: 10%;
+  border-style: solid;
+  border-width: 0.15rem;
+  border-color: gray;
+  margin-right: 15px;
+  box-shadow: 0 0 5px gray;
+}
+
+label > input[type="checkbox"]:checked + .expired::before {
+  content: "✓";
+  font-weight: bold;
+  transform: scale(1.1);
+  color: gray;
+  text-align: center;
+  background: white;
+  border-color: gray;
+  margin-right: 15px;
+}
+
+label > input[type="checkbox"]:checked + .expired {
+  color: gray;
+}

@@ -1,6 +1,8 @@
 import { Map, Marker, GoogleApiWrapper, Circle } from "google-maps-react";
+import { useSelector } from "react-redux";
 
 const Location = (props) => {
+  const { modalData } = useSelector((state) => state.alerts);
   if (!props.google) {
     return <div>Error: Google Maps API failed to load.</div>;
   }
@@ -9,15 +11,21 @@ const Location = (props) => {
     <div className="map-container">
       <Map
         google={props.google}
-        zoom={12}
-        initialCenter={{ lat: 24.8607, lng: 67.0011 }}
+        zoom={14}
+        initialCenter={{
+          lat: modalData.alertEvent.latitude,
+          lng: modalData.alertEvent.longitude,
+        }}
         disableDefaultUI={false} // Enable default UI controls
         style={{ height: "88%", width: "97%" }}
       >
         <Marker
-          key={3222}
+          key={modalData.alertEvent._id}
           name={"markerName"}
-          position={{ lat: 24.8607, lng: 67.0011 }}
+          position={{
+            lat: modalData.alertEvent.latitude,
+            lng: modalData.alertEvent.longitude,
+          }}
         />
       </Map>
     </div>

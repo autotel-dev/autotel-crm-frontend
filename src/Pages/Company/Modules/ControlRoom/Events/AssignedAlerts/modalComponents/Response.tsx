@@ -9,6 +9,7 @@ import { create, getAll } from "../../../../../../../Api";
 import {
   setAssignedAlerts,
   setCompletedAlerts,
+  setModalData,
 } from "../../../../../../../ReaduxToolkit/Reducer/AlertsSlice";
 
 interface ResponseType {
@@ -18,11 +19,13 @@ interface ResponseType {
 interface PropsTypes {
   isVisible: boolean; // Change 'boolean' to the actual type of isVisible
   setIsVisible: any;
+  setBasicTab: any;
 }
 
 const ResponseForm: React.FC<PropsTypes> = ({
   isVisible,
   setIsVisible = () => {},
+  setBasicTab = () => {},
 }) => {
   const { modalData } = useSelector((state: any) => state.alerts);
   const dispatch = useDispatch();
@@ -65,7 +68,8 @@ const ResponseForm: React.FC<PropsTypes> = ({
             reset({
               response: "",
             });
-
+            dispatch(setModalData(null));
+            setBasicTab("1");
             getAll({
               url: "company/get-all-assigned-events",
             }).then((data: any) => {
@@ -114,9 +118,8 @@ const ResponseForm: React.FC<PropsTypes> = ({
         <Row style={{ paddingTop: "20px" }}>
           <FormGroup className="col-md-12 create-group">
             <Label>Response</Label>
-            <input
+            <textarea
               className="form-control"
-              type="text"
               {...register("response", { required: true })}
             />
             <span style={{ color: "red" }}>
@@ -126,7 +129,7 @@ const ResponseForm: React.FC<PropsTypes> = ({
         </Row>
         <div style={{ display: "flex", justifyContent: "end" }}>
           <Button color="primary" className="me-1">
-            {loading ? "Loading ..." : `Completed`}
+            {loading ? "Loading ..." : `Complete`}
           </Button>
           &nbsp;&nbsp;
           <Button
@@ -134,6 +137,8 @@ const ResponseForm: React.FC<PropsTypes> = ({
             color="secondary"
             onClick={() => {
               setIsVisible(!isVisible);
+              dispatch(setModalData(null));
+              setBasicTab("1");
             }}
           >
             Cancel

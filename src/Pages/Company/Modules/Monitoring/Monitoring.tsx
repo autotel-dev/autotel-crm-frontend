@@ -24,24 +24,23 @@ const Monitoring = () => {
   const statuses: any = [];
   const statusDevicesObj: any = {};
   var initialGroupDevicesStatuses: any = [];
+  const [loading, setLoading] = useState(false);
 
   const [groupdevices, setgroupdevices]: any = useState([]);
   const [groupdevicesStatuses, setgroupdevicesStatuses]: any = useState([]);
   useEffect(() => {
     document.body.style.overflow = "hidden";
-
     // Re-enable scrolling when the component unmounts
 
     getData();
 
-    console.log("groups", groups);
-    console.log("groupDevices", groupdevices);
     return () => {
       document.body.style.overflow = "unset";
     };
   }, []);
 
   const getData = () => {
+    setLoading(true);
     getAll({ url: "company/devices" }).then((data: any) => {
       console.log("api call --- >", data);
       console.log("length --- >", data.data.length);
@@ -73,6 +72,7 @@ const Monitoring = () => {
           console.log("groups", groups);
           console.log("groupDevices", groupdevices);
           dispatch(setDevices(initialGroupDevices));
+          setLoading(false);
 
           // ---------------------- For device status-----------------------------------
 
@@ -152,27 +152,29 @@ const Monitoring = () => {
 
   return (
     <>
-      {devices.length > 0 ? (
-        <div
-          style={{
-            margin: "-35px",
-            marginTop: "130px",
-            height: "100vh",
-            display: "flex",
-            overflow: "unset",
-          }}
-        >
-          <GoogleMap />
-
+      {!loading ? (
+        devices.length > 0 && (
           <div
             style={{
-              position: "absolute",
-              // marginTop:"15px"
+              margin: "-35px",
+              marginTop: "130px",
+              height: "100vh",
+              display: "flex",
+              overflow: "unset",
             }}
           >
-            <MonitoringSidebar />
+            <GoogleMap />
+
+            <div
+              style={{
+                position: "absolute",
+                // marginTop:"15px"
+              }}
+            >
+              <MonitoringSidebar />
+            </div>
           </div>
-        </div>
+        )
       ) : (
         <div
           style={{

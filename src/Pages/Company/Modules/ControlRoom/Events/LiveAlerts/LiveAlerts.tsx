@@ -18,6 +18,7 @@ const LiveAlerts = () => {
 
   const [dataList, setDataList]: any = useState([]);
   const [loading, setLoading] = useState(false); // State to manage loading
+  const [assignLoading, setAssignLoading] = useState(true);
   const tableHeader = ["ID", "Device", "Alert", "Type", "Message", "Address"];
   const containerRef = useRef(null);
   const [pageNo, setPageNo] = useState(1);
@@ -92,6 +93,14 @@ const LiveAlerts = () => {
                   key={index}
                   style={{ cursor: "pointer" }}
                   onClick={async () => {
+                    if (assignLoading) {
+                      Swal.fire({
+                        text: "Loading....",
+                        icon: "info",
+                        showConfirmButton: false,
+                        allowOutsideClick: false, // Prevent closing by clicking outside the modal
+                      });
+                    }
                     const serverInfo = serverCredentials(data.server._id);
                     console.log("serverInfo", serverInfo);
 
@@ -114,14 +123,15 @@ const LiveAlerts = () => {
                       await create(assignEvent, {
                         url: "company/assign-alert-event-to-me",
                       }).then((dataa: any) => {
-                        var updatedAlerts = [...liveAlerts]; // Create a shallow copy of the liveAlerts array
-                        updatedAlerts.splice(index, 1); // Remove the item at the specified index
-
-                        setDataList(updatedAlerts.slice(0, dataList.length));
-                        console.log("updatedAlerts", updatedAlerts);
-                        console.log("dataList", dataList);
-                        dispatch(setLiveAlerts(updatedAlerts)); // Dispatch the action with the updated array
+                        setAssignLoading(false);
                         if (dataa.success) {
+                          var updatedAlerts = [...liveAlerts]; // Create a shallow copy of the liveAlerts array
+                          updatedAlerts.splice(index, 1); // Remove the item at the specified index
+
+                          setDataList(updatedAlerts.slice(0, dataList.length));
+                          console.log("updatedAlerts", updatedAlerts);
+                          console.log("dataList", dataList);
+                          dispatch(setLiveAlerts(updatedAlerts)); // Dispatch the action with the updated array
                           console.log(dataa);
                           Swal.fire({
                             text: "Assigned Successfully",
@@ -136,6 +146,7 @@ const LiveAlerts = () => {
                             // setLoading(false);
                             if (data !== undefined) {
                               if (data.success) {
+                                setAssignLoading(true);
                                 console.log("length --- >", data.data.length);
                                 dispatch(setAssignedAlerts(data.data));
                               }
