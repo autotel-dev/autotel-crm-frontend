@@ -7,8 +7,10 @@ import {
   setDevices,
   setServerDevices,
   setDevicesStatuses,
+  setExpandedDevice,
 } from "../../../../ReaduxToolkit/Reducer/MonitoringSlice";
 import Loader from "../../../Loader/Loader";
+import Swal from "sweetalert2";
 
 const Monitoring = () => {
   const apiKey = "AIzaSyDI3fB-ItM1LpMOyMg_P8UxTUuxHCyQS34"; // Replace with your actual API key
@@ -31,7 +33,7 @@ const Monitoring = () => {
   useEffect(() => {
     document.body.style.overflow = "hidden";
     // Re-enable scrolling when the component unmounts
-
+    dispatch(setExpandedDevice(null));
     getData();
 
     return () => {
@@ -42,29 +44,42 @@ const Monitoring = () => {
   const getData = () => {
     setLoading(true);
     getAll({ url: "company/devices" }).then((data: any) => {
-      console.log("api call --- >", data);
-      console.log("length --- >", data.data.length);
-
-      dispatch(setServerDevices(data.data));
-
+      console.log("data", data);
+      if (data == undefined) {
+        setLoading(false);
+        Swal.fire({
+          text: "Failed to Fetch",
+          icon: "error",
+          timer: 2000,
+          showConfirmButton: false,
+        });
+      }
       if (data !== undefined) {
         if (data.success) {
+          console.log("api call --- >", data);
+          console.log("length --- >", data.data.length);
+
+          dispatch(setServerDevices(data.data));
           for (let i = 0; i < data.data.length; i++) {
             const element = data.data[i].title;
             if (!groups.includes(element)) {
               groups.push(element);
-              // setMyArray((prevArray) => [...prevArray, element]);
             }
           }
+
           groups.forEach((title: any) => {
-            groupDevicesObj[title] = data.data.filter(
-              (obj: any) => obj.title === title
-            );
+            groupDevicesObj[title] = data.data
+              .filter((obj: any) => obj.title === title)
+              .map((item: any) => ({ ...item, checked: false }));
           });
 
           // Convert groupDevicesObj to initialGroupDevices array format
           Object.keys(groupDevicesObj).forEach((title: any) => {
-            initialGroupDevices.push({ title, items: groupDevicesObj[title] });
+            initialGroupDevices.push({
+              title,
+              checked: false,
+              items: groupDevicesObj[title],
+            });
           });
 
           // Update state with initialGroupDevices

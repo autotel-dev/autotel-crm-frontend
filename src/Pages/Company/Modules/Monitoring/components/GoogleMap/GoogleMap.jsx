@@ -133,9 +133,8 @@ import { useSelector } from "react-redux";
 import "./googleMap.css";
 
 const GoogleMap = (props) => {
-  const { serverDevices, selectedDevices, expandedDevice } = useSelector(
-    (state) => state.monitoring
-  );
+  const { serverDevices, selectedDevices, expandedDevice, devices } =
+    useSelector((state) => state.monitoring);
   const [rotation, setRotation] = useState(-270);
   const [zoom, setZoom] = useState(12); // State to manage zoom level
   const mapRef = useRef(null);
@@ -199,15 +198,7 @@ const GoogleMap = (props) => {
       disableDefaultUI={true} // Enable default UI controls
       ref={mapRef}
     >
-      {selectedDevices.map((marker) => {
-        // const tail = marker.tail;
-        // if (tail.length < 2) return null; // Skip if there are less than 2 points
-
-        // const start = tail[tail.length - 2]; // Second-to-last point
-        // const end = tail[tail.length - 1]; // Last point
-        // const bearing = calculateBearing(start, end) || 0;
-        // console.log("Marker Bearing:", bearing); // Log the bearing
-
+      {/* {selectedDevices.map((marker) => {
         const icon = {
           url: `${marker.server.url}/${marker.icon.path}`,
           scaledSize: new window.google.maps.Size(22, 40),
@@ -223,11 +214,39 @@ const GoogleMap = (props) => {
             icon={icon}
             // rotation={170}
             style={{
-              transform:"rotate(45deg)"
+              transform: "rotate(45deg)",
             }}
           />
         );
-      })}
+      })} */}
+
+      {devices.map((marker) =>
+        marker.items
+          .filter((item) => item.checked) // Filter items where checked is true
+          .map((item) => {
+            console.log("item", item);
+            const icon = {
+              url: `${item.server.url}/${item.icon.path}`,
+              scaledSize: new window.google.maps.Size(22, 40),
+            };
+
+            return (
+              <Marker
+                key={item.id} // Use item id as key
+                name={item.title}
+                position={{
+                  lat: parseFloat(item.lat),
+                  lng: parseFloat(item.lng),
+                }}
+                icon={icon}
+                // rotation={170}
+                style={{
+                  transform: "rotate(45deg)",
+                }}
+              />
+            );
+          })
+      )}
 
       {/* Custom Zoom Control */}
       <div className="custom-zoom-control">

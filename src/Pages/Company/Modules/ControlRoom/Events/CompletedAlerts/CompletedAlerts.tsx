@@ -43,7 +43,16 @@ const AssignedAlerts = () => {
         <div
           ref={containerRef}
           className="table-responsive theme-scrollbar recent-wrapper"
-          style={{ maxHeight: "66vh", overflowY: "auto" }}
+          style={{
+            overflowY: "scroll",
+            maxHeight: "calc(66vh - 20px)", // Subtract scrollbar width from max height
+            WebkitOverflowScrolling: "touch", // Enable momentum scrolling on iOS
+            scrollbarWidth: "thin", // Specify scrollbar width
+            WebkitBorderRadius: "5px", // For WebKit browsers (Chrome, Safari)
+            MozBorderRadius: "5px", // For Mozilla Firefox
+            borderRadius: "5px", // For other browsers
+            scrollbarColor: "lightgray transparent", // Specify scrollbar color
+          }}
           onScroll={handleScroll}
         >
           <div className="table-responsive theme-scrollbar recent-wrapper">
@@ -56,33 +65,41 @@ const AssignedAlerts = () => {
                 </tr>
               </thead>
               <tbody>
-                {dataList.map((data: any, index: any) => (
-                  <tr style={{ cursor: "pointer" }} key={index}>
-                    <td>{data.eventId}</td>
-                    <td>
-                      <div className="d-flex">
-                        <div className="flex-grow-1 ms-2">
-                          <H4>{data.deviceName}</H4>
-                          <span style={{ fontSize: "10px" }}>
-                            {data.createdAt.toString().slice(0, 10) +
-                              " " +
-                              data.createdAt.toString().slice(11, 19)}
-                          </span>
-                        </div>
-                      </div>
+                {dataList.length == 0 ? (
+                  <tr>
+                    <td colSpan={7} style={{ fontSize: "25px" }}>
+                      No Data Found
                     </td>
-
-                    <td className={`txt-primary`}>{data.message}</td>
-                    <td>{data.type}</td>
-                    <td>{data.message}</td>
-                    <td>
-                      {data.address == null && data.address == undefined
-                        ? "N/A"
-                        : data.address}
-                    </td>
-                    <td>{data.completionResponse}</td>
                   </tr>
-                ))}
+                ) : (
+                  dataList.map((data: any, index: any) => (
+                    <tr style={{ cursor: "pointer" }} key={index}>
+                      <td>{data.eventId}</td>
+                      <td>
+                        <div className="d-flex">
+                          <div className="flex-grow-1 ms-2">
+                            <H4>{data.deviceName}</H4>
+                            <span style={{ fontSize: "10px" }}>
+                              {data.createdAt.toString().slice(0, 10) +
+                                " " +
+                                data.createdAt.toString().slice(11, 19)}
+                            </span>
+                          </div>
+                        </div>
+                      </td>
+
+                      <td className={`txt-primary`}>{data.message}</td>
+                      <td>{data.type}</td>
+                      <td>{data.message}</td>
+                      <td>
+                        {data.address == null && data.address == undefined
+                          ? "N/A"
+                          : data.address}
+                      </td>
+                      <td>{data.completionResponse}</td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </Table>
           </div>

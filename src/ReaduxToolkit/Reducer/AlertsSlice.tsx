@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   liveAlerts: [],
+  liveAlertsData: {},
   assignedAlerts: [],
   completedAlerts: [],
   modalData: null,
@@ -16,6 +17,11 @@ const AlertsSlice = createSlice({
   reducers: {
     setAlertsStart: (state) => {
       state.loading = true;
+    },
+    setLiveAlertsData: (state, action) => {
+      state.liveAlertsData = action.payload;
+      state.error = null;
+      state.loading = false;
     },
     setLiveAlerts: (state, action) => {
       state.liveAlerts = action.payload;
@@ -49,6 +55,7 @@ const AlertsSlice = createSlice({
 });
 export const {
   setLiveAlerts,
+  setLiveAlertsData,
   setAlertsStart,
   setAssignedAlerts,
   setCompletedAlerts,

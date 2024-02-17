@@ -15,7 +15,6 @@ import {
   setSelecetdDevices,
 } from "../../../../../../ReaduxToolkit/Reducer/MonitoringSlice";
 import "./inputStyle.css";
-import html2canvas from "html2canvas";
 import greenKey from "../../../../../../assets/key-green.png";
 import redKey from "../../../../../../assets/key-red.png";
 import greenSatellite from "../../../../../../assets/satellite-green.png";
@@ -31,7 +30,7 @@ const DevicesTreeViewAccordian = () => {
   const [searchValue, setSearchValue] = useState("");
   const [open, setOpen] = useState("");
   const [matchedGroups, setMatchedGroups] = useState(devices);
-  const [Devices, setDevices]: any = useState([]);
+  const [Devicess, setDevicess]: any = useState([]);
   const dispatch = useDispatch();
 
   console.log("devices", devices);
@@ -46,6 +45,9 @@ const DevicesTreeViewAccordian = () => {
 
   useEffect(() => {
     setMatchedGroups(devices);
+    // setDevices([...selectedDevices]);
+    // dispatch(setSelecetdDevices([]));
+    console.log("Devices=========", devices);
   }, [devices]);
 
   const toggle = (id: string) => {
@@ -57,63 +59,156 @@ const DevicesTreeViewAccordian = () => {
 
     e.stopPropagation();
 
-    const groupItems = group.items;
+    const updatedDevices = devices.map((device: any) => {
+      if (device.title === group.title) {
+        const updatedItems = device.items.map((item: any) => ({
+          ...item,
+          checked: !group.checked, // Set checked to the opposite of group.checked
+        }));
+        return { ...device, checked: !group.checked, items: updatedItems };
+      }
+      return device;
+    });
 
-    // Check if any item of this group is already selected
-    const isAnyItemSelected = groupItems.some((item: any) =>
-      Devices.find((selectedItem: any) => selectedItem.title === item.title)
-    );
+    // Dispatch an action to update the Devices state in Redux
+    // setMatchedGroups(updatedDevices);
+    dispatch(setDevices(updatedDevices));
 
-    // If no item of this group is selected, add all items to selectedDevices
-    if (!isAnyItemSelected) {
-      const newSelectedDevices = [...Devices, ...groupItems];
-      setDevices(newSelectedDevices);
-      dispatch(setSelecetdDevices(newSelectedDevices));
-    } else {
-      // Otherwise, remove all items of this group from selectedDevices
-      const updatedDevices = Devices.filter((selectedItem: any) =>
-        groupItems.every((item: any) => selectedItem.title !== item.title)
-      );
-      setDevices(updatedDevices);
-      dispatch(setSelecetdDevices(updatedDevices));
-    }
-    console.log("selectedDevices-->", Devices);
+    // const groupItems = group.items;
+
+    // // Check if any item of this group is already selected
+    // const isAnyItemSelected = groupItems.some((item: any) =>
+    //   Devices.find((selectedItem: any) => selectedItem.title === item.title)
+    // );
+
+    // // If no item of this group is selected, add all items to selectedDevices
+    // if (!isAnyItemSelected) {
+    //   const newSelectedDevices = [...Devices, ...groupItems];
+    //   setDevices(newSelectedDevices);
+    //   dispatch(setSelecetdDevices(newSelectedDevices));
+    // } else {
+    //   // Otherwise, remove all items of this group from selectedDevices
+    //   const updatedDevices = Devices.filter((selectedItem: any) =>
+    //     groupItems.every((item: any) => selectedItem.title !== item.title)
+    //   );
+    //   setDevices(updatedDevices);
+    //   dispatch(setSelecetdDevices(updatedDevices));
+    // }
+    console.log("selectedDevices-->", devices);
   };
 
   const handleSearch = (e: any) => {
     const searchKey = e.target.value.toLowerCase();
     setSearchValue(searchKey);
 
-    const matchedGroups = devices.map((group: any, index: any) => {
+    const matchedGroupss = devices.map((group: any, index: any) => {
       const matchedItems = group.items.filter((item: any) =>
         item.name.toLowerCase().includes(searchKey)
       );
-      return { title: group.title, items: matchedItems };
+      return {
+        title: group.title,
+        checked: group.checked,
+        items: matchedItems,
+      };
     });
-    const matcheditems = matchedGroups.filter(
+    const matcheditems = matchedGroupss.filter(
       (item: any, index: any) => item.items.length > 0
     );
     console.log("matcheditems", matcheditems);
     setMatchedGroups(matcheditems);
   };
 
-  const handleSelecetdDevices = (e: any, device: any) => {
+  const handleSelecetdDevices = (
+    e: any,
+    group: any,
+    selectedDevice: any,
+    index: any
+  ) => {
     // Prevent the click event from propagating to the accordion
     e.stopPropagation();
-    const index = Devices.indexOf(device);
-    if (index === -1) {
-      const updatedDevices = [...Devices, device];
-      dispatch(setSelecetdDevices(updatedDevices));
-      setDevices(updatedDevices);
-    } else {
-      const updatedDevices = [...Devices];
-      updatedDevices.splice(index, 1);
-      dispatch(setSelecetdDevices(updatedDevices));
-      setDevices(updatedDevices);
+
+    // Find the device corresponding to the group title
+    var deviceToUpdate;
+
+    deviceToUpdate = devices.find(
+      (device: any) => device.title === group.title
+    );
+    if (deviceToUpdate && deviceToUpdate.items[index]) {
+      // Create a new device object with the updated items array
+      const updatedDevice = {
+        ...deviceToUpdate,
+        checked: devices.every((item: any) => item.checked == true),
+        items: [
+          ...deviceToUpdate.items.slice(0, index), // Copy items before the index
+          {
+            ...deviceToUpdate.items[index], // Copy the item at the index
+            checked: !selectedDevice.checked, // Toggle the checked property
+          },
+          ...deviceToUpdate.items.slice(index + 1), // Copy items after the index
+        ],
+      };
+
+      // Create a new array of devices with the updated device object at the same index
+      const updatedDevices = devices.map((device: any) =>
+        device.title === group.title ? updatedDevice : device
+      );
+
+      // Dispatch an action to update the Devices state in Redux
+      // setMatchedGroups(updatedDevices);
+      dispatch(setDevices(updatedDevices));
     }
 
-    console.log("selectedDevices-->", Devices);
+    // If the device is found
   };
+
+  // const handleSelecetdDevices = (
+  //   e: any,
+  //   group: any,
+  //   selectedDevice: any,
+  //   index: Number
+  // ) => {
+  //   // Prevent the click event from propagating to the accordion
+  //   e.stopPropagation();
+
+  //   const updatedDevices = devices.map((device: any) => {
+  //     if (device.title === group.title) {
+  //       const updatedItems = device.items.map((item: any) => {
+  //         console.log("item._id", item);
+  //         console.log("selectedDevice._id", selectedDevice);
+  //         if (item.id === selectedDevice.id) {
+  //           console.log("item._id - matchewd", item);
+  //           console.log("selectedDevice._id  -matchewd", selectedDevice);
+  //           return {
+  //             ...item,
+  //             checked: !selectedDevice.checked, // Set checked to the opposite of group.checked
+  //           };
+  //         }
+  //         return item; // Return the item if it doesn't match the condition
+  //       });
+  //       return { ...device, items: updatedItems };
+  //     }
+  //     return device;
+  //   });
+
+  //   // Dispatch an action to update the Devices state in Redux
+  //   dispatch(setDevices(updatedDevices));
+
+  //   // const index = Devicess.indexOf(device);
+  //   // if (index === -1) {
+  //   //   const updatedDevices = [...Devicess, device];
+  //   //   setDevices(updatedDevices);
+  //   //   dispatch(setSelecetdDevices(updatedDevices));
+  //   //   console.log("Devices", Devicess);
+  //   // } else {
+  //   //   const updatedDevices = [...Devicess];
+  //   //   updatedDevices.splice(index, 1);
+  //   //   setDevices(updatedDevices);
+  //   //   dispatch(setSelecetdDevices(updatedDevices));
+  //   //   console.log("Devices", Devicess);
+  //   // }
+
+  //   console.log("selectedDevices-->", Devicess);
+  // };
 
   const formattedDate = (timeStamp: string) => {
     var ts = parseInt(timeStamp) * 1000;
@@ -145,11 +240,13 @@ const DevicesTreeViewAccordian = () => {
         onChange={(e: any) => handleSearch(e)}
         style={{
           width: "95%",
-          padding: "10px 12px",
+          padding: "15px 15px",
           boxShadow: "0px 5px 18px lightgray",
           borderRadius: "15px",
           margin: "10px",
           marginBottom: "20px",
+          border: "0px",
+          outline: "none",
         }}
       />
 
@@ -171,6 +268,7 @@ const DevicesTreeViewAccordian = () => {
                         height: "22px",
                         width: "22px",
                       }}
+                      checked={item.checked}
                       onClick={(e) => handleCheckboxClick(e, item)}
                     />
                     <span style={{ fontWeight: "bold" }}>
@@ -232,13 +330,15 @@ const DevicesTreeViewAccordian = () => {
                                   type="checkbox"
                                   name="key"
                                   value="value"
-                                  checked={selectedDevices.some(
-                                    (selectedItem: any) =>
-                                      selectedItem === bodyItem
-                                  )}
+                                  checked={bodyItem.checked}
                                   onChange={(e) => {
                                     e.stopPropagation();
-                                    handleSelecetdDevices(e, bodyItem);
+                                    handleSelecetdDevices(
+                                      e,
+                                      item,
+                                      bodyItem,
+                                      bodyindex
+                                    );
                                   }}
                                   style={{ display: "none" }} // Hide the default checkbox
                                 />
@@ -279,7 +379,7 @@ const DevicesTreeViewAccordian = () => {
 
                             <div
                               style={{
-                                marginBottom: "-20px",
+                                marginBottom: "-10px",
                                 marginRight: "20px",
                                 display: "flex",
                               }}
@@ -336,7 +436,9 @@ const DevicesTreeViewAccordian = () => {
                                 <polygon
                                   // points="50,50 55,30 50,20 45,30"
                                   points="50,42 55,22 50,12 45,22"
-                                  fill="black" // Needle color
+                                  fill={
+                                    bodyItem.engine_status ? "green" : "red"
+                                  } // Needle color
                                 />
                                 {/* Speed text */}
                                 <text
@@ -344,7 +446,7 @@ const DevicesTreeViewAccordian = () => {
                                   y="53"
                                   textAnchor="middle"
                                   dominantBaseline="middle"
-                                  fontSize="18"
+                                  fontSize="20"
                                 >
                                   {bodyItem.speed} kph
                                 </text>

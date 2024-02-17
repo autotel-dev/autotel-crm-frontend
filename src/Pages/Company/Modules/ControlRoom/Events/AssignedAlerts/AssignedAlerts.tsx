@@ -43,7 +43,16 @@ const AssignedAlerts = () => {
         <div
           ref={containerRef}
           className="table-responsive theme-scrollbar recent-wrapper"
-          style={{ maxHeight: "66vh", overflowY: "auto" }}
+          style={{
+            overflowY: "scroll",
+            maxHeight: "calc(66vh - 20px)", // Subtract scrollbar width from max height
+            WebkitOverflowScrolling: "touch", // Enable momentum scrolling on iOS
+            scrollbarWidth: "thin", // Specify scrollbar width
+            WebkitBorderRadius: "5px", // For WebKit browsers (Chrome, Safari)
+            MozBorderRadius: "5px", // For Mozilla Firefox
+            borderRadius: "5px", // For other browsers
+            scrollbarColor: "lightgray transparent", // Specify scrollbar color
+          }}
           onScroll={handleScroll}
         >
           <div className="table-responsive theme-scrollbar recent-wrapper">
@@ -56,63 +65,69 @@ const AssignedAlerts = () => {
                 </tr>
               </thead>
               <tbody>
-                {dataList.map((data: any, index: any) => (
-                  <tr
-                    style={{ cursor: "pointer" }}
-                    key={index}
-                    onClick={async () => {
-                      const serverInfo = serverCredentials(data.server);
-                      console.log("serverInfo", serverInfo);
-                      setBasicTab("1");
-                      setIsUpdateModalOpen(true);
-                      console.log("isUpdateModalOpen: ", isUpdateModalOpen);
-                      const sendData = {
-                        eventId: data._id,
-                        serverId: serverInfo?.element.serverId,
-                        serverHashKey: serverInfo?.element.serverHashKey,
-                        deviceId: data.deviceId,
-                      };
-                      console.log(sendData);
-                      try {
-                        await create(sendData, {
-                          url: "alert-events/get-alert-event-by-id",
-                        }).then((data: any) => {
-                          if (data.success) {
-                            console.log(data);
-                            dispatch(setModalData(data.data));
-                          }
-                        });
-                        // Handle successful post creation (e.g., show a success message, redirect, etc.)
-                      } catch (error: any) {
-                        // Handle error (e.g., show an error message)
-                        console.error("Error creating post:", error);
-                      }
-                    }}
-                  >
-                    <td>{data.eventId}</td>
-                    <td>
-                      <div className="d-flex">
-                        <div className="flex-grow-1 ms-2">
-                          <H4>{data.deviceName}</H4>
-                          <span style={{ fontSize: "10px" }}>
-                            {data.createdAt.toString().slice(0, 10) +
-                              " " +
-                              data.createdAt.toString().slice(11, 19)}
-                          </span>
-                        </div>
-                      </div>
-                    </td>
-
-                    <td className={`txt-primary`}>{data.message}</td>
-                    <td>{data.type}</td>
-                    <td>{data.message}</td>
-                    <td>
-                      {data.address == null && data.address == undefined
-                        ? "N/A"
-                        : data.address}
-                    </td>
+                {dataList.length == 0 ? (
+                  <tr>
+                    <td colSpan={6} style={{fontSize:"25px"}}>No Data Found</td>
                   </tr>
-                ))}
+                ) : (
+                  dataList.map((data: any, index: any) => (
+                    <tr
+                      style={{ cursor: "pointer" }}
+                      key={index}
+                      onClick={async () => {
+                        const serverInfo = serverCredentials(data.server);
+                        console.log("serverInfo", serverInfo);
+                        setBasicTab("1");
+                        setIsUpdateModalOpen(true);
+                        console.log("isUpdateModalOpen: ", isUpdateModalOpen);
+                        const sendData = {
+                          eventId: data._id,
+                          serverId: serverInfo?.element.serverId,
+                          serverHashKey: serverInfo?.element.serverHashKey,
+                          deviceId: data.deviceId,
+                        };
+                        console.log(sendData);
+                        try {
+                          await create(sendData, {
+                            url: "alert-events/get-alert-event-by-id",
+                          }).then((data: any) => {
+                            if (data.success) {
+                              console.log(data);
+                              dispatch(setModalData(data.data));
+                            }
+                          });
+                          // Handle successful post creation (e.g., show a success message, redirect, etc.)
+                        } catch (error: any) {
+                          // Handle error (e.g., show an error message)
+                          console.error("Error creating post:", error);
+                        }
+                      }}
+                    >
+                      <td>{data.eventId}</td>
+                      <td>
+                        <div className="d-flex">
+                          <div className="flex-grow-1 ms-2">
+                            <H4>{data.deviceName}</H4>
+                            <span style={{ fontSize: "10px" }}>
+                              {data.createdAt.toString().slice(0, 10) +
+                                " " +
+                                data.createdAt.toString().slice(11, 19)}
+                            </span>
+                          </div>
+                        </div>
+                      </td>
+
+                      <td className={`txt-primary`}>{data.message}</td>
+                      <td>{data.type}</td>
+                      <td>{data.message}</td>
+                      <td>
+                        {data.address == null && data.address == undefined
+                          ? "N/A"
+                          : data.address}
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </Table>
             <AssignedAlertModal

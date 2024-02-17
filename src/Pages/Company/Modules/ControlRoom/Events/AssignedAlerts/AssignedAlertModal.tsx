@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { SubmitHandler, useForm } from "react-hook-form";
 import {
   Button,
   Nav,
@@ -13,9 +12,6 @@ import {
 
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { H3 } from "../../../../../../AbstractElements";
-import AssignedAlerts from "./AssignedAlerts";
-import CompletedAlerts from "../CompletedAlerts/CompletedAlerts";
 import Location from "./modalComponents/Location";
 import PreviousAlerts from "./modalComponents/PreviousAlerts";
 import ResponseForm from "./modalComponents/Response";
@@ -63,6 +59,7 @@ const AssignedAlertModal: React.FC<PropsTypes> = ({
       ),
     },
   ];
+
   return (
     <Modal
       centered

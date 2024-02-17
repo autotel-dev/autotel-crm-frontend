@@ -1,8 +1,17 @@
 import { Map, Marker, GoogleApiWrapper, Circle } from "google-maps-react";
+import { useEffect } from "react";
 import { useSelector } from "react-redux";
 
 const Location = (props) => {
   const { modalData } = useSelector((state) => state.alerts);
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+    // Re-enable scrolling when the component unmounts
+
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, []);
   if (!props.google) {
     return <div>Error: Google Maps API failed to load.</div>;
   }
@@ -17,7 +26,7 @@ const Location = (props) => {
           lng: modalData.alertEvent.longitude,
         }}
         disableDefaultUI={false} // Enable default UI controls
-        style={{ height: "88%", width: "97%" }}
+        style={{ height: "88%", width: "97%", overflow: "unset" }}
       >
         <Marker
           key={modalData.alertEvent._id}

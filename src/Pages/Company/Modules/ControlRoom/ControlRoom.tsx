@@ -15,16 +15,21 @@ import CompletedAlerts from "./Events/CompletedAlerts/CompletedAlerts";
 import { useEffect, useState } from "react";
 import { getAll } from "../../../../Api";
 import Loader from "../../../Loader/Loader";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   setLiveAlerts,
   setAssignedAlerts,
   setCompletedAlerts,
+  setLiveAlertsData,
 } from "../../../../ReaduxToolkit/Reducer/AlertsSlice";
 
 const ControlRoom = () => {
+  const { assignedAlerts, completedAlerts } = useSelector(
+    (state: any) => state.alerts
+  );
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
+  
   useEffect(() => {
     setLoading(true);
     getAll({ url: "company/alert-events?pageNo=1" }).then((data: any) => {
@@ -34,6 +39,7 @@ const ControlRoom = () => {
         if (data.success) {
           console.log("length --- >", data.data.allAlertEvents.length);
           dispatch(setLiveAlerts(data.data.allAlertEvents));
+          dispatch(setLiveAlertsData(data.data));
         }
       }
     });
@@ -111,7 +117,7 @@ const ControlRoom = () => {
                     }}
                     onClick={() => setBasicTab("1")}
                   >
-                    Assigned Events
+                    Assigned Events ({assignedAlerts.length})
                   </NavLink>
                 </NavItem>
                 <NavItem
@@ -130,7 +136,7 @@ const ControlRoom = () => {
                     }}
                     onClick={() => setBasicTab("2")}
                   >
-                    Completed Events
+                    Completed Events ({completedAlerts.length})
                   </NavLink>
                 </NavItem>
               </Nav>

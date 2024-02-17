@@ -120,6 +120,11 @@ const ResponseForm: React.FC<PropsTypes> = ({
             <Label>Response</Label>
             <textarea
               className="form-control"
+              rows={3} // Minimum number of visible lines
+              style={{
+                maxHeight: "500px", // Maximum height for 5 lines of text
+                resize: "vertical", // Allow vertical resizing within the specified range
+              }}
               {...register("response", { required: true })}
             />
             <span style={{ color: "red" }}>
