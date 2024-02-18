@@ -67,12 +67,18 @@ const AssignedAlerts = () => {
               <tbody>
                 {dataList.length == 0 ? (
                   <tr>
-                    <td colSpan={6} style={{fontSize:"25px"}}>No Data Found</td>
+                    <td colSpan={6} style={{ fontSize: "25px" }}>
+                      No Assigned Alerts Found
+                    </td>
                   </tr>
                 ) : (
                   dataList.map((data: any, index: any) => (
                     <tr
-                      style={{ cursor: "pointer" }}
+                      style={{
+                        cursor: "pointer",
+                        opacity: 1,
+                        transition: "opacity 1s ease-in-out",
+                      }}
                       key={index}
                       onClick={async () => {
                         const serverInfo = serverCredentials(data.server);
@@ -91,14 +97,15 @@ const AssignedAlerts = () => {
                           await create(sendData, {
                             url: "alert-events/get-alert-event-by-id",
                           }).then((data: any) => {
+                            console.log(data);
                             if (data.success) {
-                              console.log(data);
                               dispatch(setModalData(data.data));
                             }
                           });
                           // Handle successful post creation (e.g., show a success message, redirect, etc.)
                         } catch (error: any) {
                           // Handle error (e.g., show an error message)
+                          dispatch(setModalData(undefined));
                           console.error("Error creating post:", error);
                         }
                       }}
@@ -128,6 +135,18 @@ const AssignedAlerts = () => {
                     </tr>
                   ))
                 )}
+                {/* <style>
+                  {`
+                  tr {
+                    opacity: 0;
+                    transition: opacity 1s ease-in-out;
+                  }
+                  
+                  tr.row-entered {
+                    opacity: 1;
+                  }
+                  `}
+                </style> */}
               </tbody>
             </Table>
             <AssignedAlertModal

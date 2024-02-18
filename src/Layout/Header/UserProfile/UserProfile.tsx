@@ -6,6 +6,7 @@ import ProfileBox from "./ProfileBox";
 import { useSelector } from "react-redux";
 import { decode } from "jwt-js-decode";
 import { jwtDecode } from "jwt-decode";
+import { decryptData } from "../../../Api/encryption";
 
 const UserProfile = () => {
   const { token } = useSelector((state: any) => state.user);
@@ -30,8 +31,6 @@ const UserProfile = () => {
     // Join the words back together
     return pascalCaseWords.join(" ");
   }
-
-
 
   return (
     <>

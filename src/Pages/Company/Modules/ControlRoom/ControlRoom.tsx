@@ -29,12 +29,16 @@ const ControlRoom = () => {
   );
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
-  
+
   useEffect(() => {
     setLoading(true);
     getAll({ url: "company/alert-events?pageNo=1" }).then((data: any) => {
       console.log("api call --- >", data);
       setLoading(false);
+      if (data == undefined) {
+        dispatch(setLiveAlerts([]));
+        dispatch(setLiveAlertsData(null));
+      }
       if (data !== undefined) {
         if (data.success) {
           console.log("length --- >", data.data.allAlertEvents.length);
@@ -46,6 +50,9 @@ const ControlRoom = () => {
     getAll({ url: "company/get-all-assigned-events" }).then((data: any) => {
       console.log("assigned --- >", data);
       // setLoading(false);
+      if (data == undefined) {
+        dispatch(setAssignedAlerts([]));
+      }
       if (data !== undefined) {
         if (data.success) {
           console.log("length --- >", data.data.length);
@@ -56,6 +63,9 @@ const ControlRoom = () => {
     getAll({ url: "company/get-all-completed-events" }).then((data: any) => {
       console.log("completed --- >", data);
       // setLoading(false);
+      if (data == undefined) {
+        dispatch(setCompletedAlerts([]));
+      }
       if (data !== undefined) {
         if (data.success) {
           console.log("length --- >", data.data.length);

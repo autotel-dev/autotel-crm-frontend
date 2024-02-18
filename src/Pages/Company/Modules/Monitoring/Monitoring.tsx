@@ -99,9 +99,9 @@ const Monitoring = () => {
             }
           }
           statuses.forEach((online: any) => {
-            statusDevicesObj[online] = data.data.filter(
-              (obj: any) => obj.online === online
-            );
+            statusDevicesObj[online] = data.data
+              .filter((obj: any) => obj.online === online)
+              .map((item: any) => ({ ...item, checked: false }));
           });
 
           // Convert groupDevicesObj to initialGroupDevices array format
@@ -125,7 +125,7 @@ const Monitoring = () => {
               const expirationDate = new Date(element.expiration_date); // Convert expiration date string to Date object
               if (expirationDate < currentDate) {
                 // Compare expiration date with current date
-                expiredDevices.push(element);
+                expiredDevices.push({ ...element, checked: false });
               }
             }
             if (i === data.data.length - 1) {
@@ -144,7 +144,7 @@ const Monitoring = () => {
               element.time === "" ||
               element.time === undefined
             ) {
-              notConnectedDevices.push(element);
+              notConnectedDevices.push({ ...element, checked: false });
             }
             if (i === data.data.length - 1) {
               console.log("notConnectedDevices", notConnectedDevices);

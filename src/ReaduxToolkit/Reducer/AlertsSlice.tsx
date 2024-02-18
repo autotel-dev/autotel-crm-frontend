@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   liveAlerts: [],
-  liveAlertsData: {},
+  liveAlertsData: null,
   assignedAlerts: [],
   completedAlerts: [],
   modalData: null,

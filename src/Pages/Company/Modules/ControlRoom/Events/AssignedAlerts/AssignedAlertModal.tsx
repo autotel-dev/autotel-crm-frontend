@@ -105,6 +105,26 @@ const AssignedAlertModal: React.FC<PropsTypes> = ({
                 <Loader />
               </div>
             </div>
+          ) : modalData === undefined ? (
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                height: "70vh",
+                backgroundColor: "white",
+                alignItems: "center",
+              }}
+            >
+              <div
+                style={{
+                  textAlign: "center",
+                  fontSize: "25px",
+                  fontWeight: "bold",
+                }}
+              >
+                No Data Found
+              </div>
+            </div>
           ) : (
             <div style={{ backgroundColor: "white" }}>
               <Nav

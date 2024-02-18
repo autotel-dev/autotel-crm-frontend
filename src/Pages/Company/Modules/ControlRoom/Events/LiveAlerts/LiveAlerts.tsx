@@ -68,12 +68,19 @@ const LiveAlerts = () => {
       });
     }
   };
+  const [showTable, setShowTable] = useState(false);
+  useEffect(() => {
+    setShowTable(true); // Set showTable to true to trigger the fade animation
+  }, [liveAlerts]);
 
   return (
     <Card className="invoice-card">
       <CardHeader className="pb-0" style={{ backgroundColor: "#63d5be" }}>
         <div style={{ paddingBottom: "10px" }}>
-          <H3>Live Alerts ({liveAlertsData.lastPage * 30})</H3>
+          <H3>
+            Live Alerts (
+            {liveAlertsData == null ? 0 : liveAlertsData.lastPage * 30})
+          </H3>
         </div>
       </CardHeader>
       <CardBody className="transaction-card">
@@ -105,7 +112,11 @@ const LiveAlerts = () => {
                 dataList.map((data: any, index: any) => (
                   <tr
                     key={index}
-                    style={{ cursor: "pointer" }}
+                    className={showTable ? "row-entered" : ""} // Add class if showTable is true
+                    style={{
+                      opacity: showTable ? 1 : 0, // Set opacity based on showTable state
+                      transition: "opacity 2s ease-in-out", // Apply transition effect
+                    }}
                     onClick={async () => {
                       if (assignLoading) {
                         Swal.fire({
@@ -197,7 +208,7 @@ const LiveAlerts = () => {
               ) : (
                 <tr>
                   <td colSpan={6} style={{ fontSize: "25px" }}>
-                    No Data Found
+                    No Live Alerts Found
                   </td>
                 </tr>
               )}
