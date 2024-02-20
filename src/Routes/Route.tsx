@@ -145,6 +145,7 @@ import CompanyTasks from "../Pages/Company/Tasks/Tasks";
 import CompanyUsers from "../Pages/Company/Users/Users";
 import Monitoring from "../Pages/Company/Modules/Monitoring/Monitoring";
 import ControlRoom from "../Pages/Company/Modules/ControlRoom/ControlRoom";
+import TicketDetails from "../Pages/Support/TicketDetails";
 
 const routes = [
   // dashboard routes
@@ -696,6 +697,10 @@ const routes = [
   {
     path: `${process.env.PUBLIC_URL}/support`,
     Component: <Support />,
+  },
+  {
+    path: `${process.env.PUBLIC_URL}/support/ticketDetails`,
+    Component: <TicketDetails />,
   },
   // Tasks
   {

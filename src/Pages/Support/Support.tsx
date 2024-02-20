@@ -14,7 +14,7 @@ const Support = () => {
           <Col sm={12}>
             <Card>
               <CommonHeader
-                title={support}
+                title=""
                 subTitle={[{ text: "List of supports opened by customers" }]}
               />
               <CardBody>
