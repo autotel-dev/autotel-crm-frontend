@@ -213,7 +213,7 @@ export const createCom = async (
 };
 
 export const update = async (
-  postData: CitiesType,
+  postData: any,
   url: URLTypes
 ): Promise<void> => {
   try {

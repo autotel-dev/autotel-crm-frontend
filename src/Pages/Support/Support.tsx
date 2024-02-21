@@ -4,8 +4,82 @@ import { support } from "../../utils/Constant";
 import CommonHeader from "../../Common/CommonHeader";
 import SupportList from "./SupportList";
 import SupportTable from "./SupportTable";
+import { useEffect, useState } from "react";
+import { getAll } from "../../Api";
+import {
+  setBugReports,
+  setPriorityStatuses,
+  setSupportStatistics,
+} from "../../ReaduxToolkit/Reducer/SupportSlice";
+import { useDispatch, useSelector } from "react-redux";
+import Loader from "../Loader/Loader";
 
 const Support = () => {
+  const { supportStatistics } = useSelector((state: any) => state.support);
+  const dispatch = useDispatch();
+  const [statisticsloading, setStatisticsLoading] = useState(false);
+  const [reportsLoading, setReportsLoading] = useState(false);
+  useEffect(() => {
+    setStatisticsLoading(true);
+    setReportsLoading(true);
+
+    getAll({ url: "support/bug-report/get-all-bug-reports" }).then(
+      (data: any) => {
+        console.log("api call --- >", data);
+        if (data !== undefined) {
+          if (data.success) {
+            console.log("hhg");
+            dispatch(setBugReports(data.data.allBugReports));
+            setReportsLoading(false);
+          }
+        }
+      }
+    );
+
+    getAll({ url: "support/bug-report/get-statistics" }).then((data: any) => {
+      console.log("api call --- >", data);
+      if (data !== undefined) {
+        if (data.success) {
+          console.log("hhg");
+          setStatisticsLoading(false);
+          // const statisticsArray = Object.entries(
+          //   data.data.bugReportsStatistics
+          // );
+
+          // const mappedArray = statisticsArray.map(([key, value]) => {
+          //   return { key, value };
+          // });
+
+          const mappedArray = Object.entries(
+            data.data.bugReportsStatistics
+          ).map(([key, value]) => {
+            // Remove "total" from the key and replace "Count" with "Tickets"
+            const formattedKey = key
+              .replace("total", "")
+              .replace("Count", " Tickets");
+            return { key: [formattedKey], value: value };
+          });
+          console.log(mappedArray);
+          dispatch(setSupportStatistics(mappedArray));
+        }
+      }
+    });
+
+    getAll({ url: "support/bug-report/get-priorty-status-types" }).then(
+      (data: any) => {
+        console.log("api call --- >", data);
+        if (data !== undefined) {
+          if (data.success) {
+            setReportsLoading(false);
+            console.log("hhg");
+            dispatch(
+              setPriorityStatuses(data.data.bugReportPriortyStatusTypes)
+            );
+          }
+        }
+      }
+    );
+  }, []);
   return (
     <>
       <Breadcrumbs mainTitle={support} parent={support} title={support} />
@@ -17,10 +91,28 @@ const Support = () => {
                 title=""
                 subTitle={[{ text: "List of supports opened by customers" }]}
               />
-              <CardBody>
-                <SupportList />
-                <SupportTable />
-              </CardBody>
+              {!statisticsloading &&
+              !reportsLoading &&
+              supportStatistics !== null ? (
+                <CardBody>
+                  <SupportList />
+                  <SupportTable />
+                </CardBody>
+              ) : (
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    height: "80vh",
+                    backgroundColor: "white",
+                    alignItems: "center",
+                  }}
+                >
+                  <div style={{ textAlign: "center" }}>
+                    <Loader />
+                  </div>
+                </div>
+              )}
             </Card>
           </Col>
         </Row>

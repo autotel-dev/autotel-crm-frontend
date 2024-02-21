@@ -3,15 +3,17 @@ import { H3 } from "../../AbstractElements";
 import CountUp from "react-countup";
 import ProfitAndLoss from "./ProfitAndLoss";
 import { ticketData } from "./data/SupportData";
+import { useSelector } from "react-redux";
 
 const TicketList = () => {
+  const { supportStatistics } = useSelector((state: any) => state.support);
   return (
     <Row
       style={{
         marginBottom: "20px",
       }}
     >
-      {ticketData.map((item, index) => (
+      {supportStatistics.map((item: any, index: any) => (
         <Col sm={12} xs={12} md={6} lg={3} xl={3} key={index}>
           <div
             style={{
@@ -23,11 +25,11 @@ const TicketList = () => {
             <Card className="ecommerce-widget">
               <CardBody className="support-ticket-font">
                 <Row>
-                  <Col xs={6}>
+                  <Col xs={9}>
                     {/* <span>{item.title}</span> */}
                     <H3 className="total-num counter">
                       <CountUp
-                        end={item.num}
+                        end={item.value}
                         style={{
                           color: "black",
                           fontSize: "22px",
@@ -38,25 +40,24 @@ const TicketList = () => {
                     {/* <span>{item.title}</span> */}
                     <span
                       style={{
-                        color: "gray",  
+                        color: "gray",
                         fontSize: "18px",
                         fontWeight: "bold",
                       }}
                     >
-                      Total Tickets
+                      {item.key}
                     </span>
                   </Col>
                   {/* <ProfitAndLoss /> */}
-                  <Col xs={6}>
-                    <div>
-                     
-                    </div>
+                  <Col xs={3}>
+                    <div></div>
                   </Col>
                 </Row>
                 <Progress
                   className="sm-progress-bar mt-4"
                   color={item.class}
                   value={70}
+                  
                 />
                 <div
                   style={{

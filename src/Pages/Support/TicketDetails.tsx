@@ -1,11 +1,45 @@
-import { Card, CardBody, Col, Container, Row } from "reactstrap";
+import {
+  Card,
+  CardBody,
+  Col,
+  Container,
+  Modal,
+  ModalBody,
+  Row,
+} from "reactstrap";
 import Breadcrumbs from "../../CommonElements/Breadcrumbs/Breadcrumbs";
 import { support } from "../../utils/Constant";
 import CommonHeader from "../../Common/CommonHeader";
 import ticketImage from "../../assets/ticketImage.png";
 import { IoSend } from "react-icons/io5";
+import { useRef, useState } from "react";
 
 const TicketDetails = () => {
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null); // Ref for the textarea element
+
+  const handleGoToReply = () => {
+    if (!textareaRef.current) return; // Ensure textareaRef.current exists
+    // Scroll to the textarea
+    (textareaRef.current as HTMLTextAreaElement).scrollIntoView({
+      behavior: "smooth",
+    });
+    // Focus on the textarea
+    (textareaRef.current as HTMLTextAreaElement).focus();
+  };
+  const [addModal, setAddModal] = useState(false);
+  const addToggle = () => {
+    setAddModal(!addModal);
+  };
+
+  const [isHovered, setIsHovered] = useState(false);
+
+  const handleMouseEnter = () => {
+    setIsHovered(true);
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+  };
   return (
     <>
       <Breadcrumbs
@@ -15,7 +49,7 @@ const TicketDetails = () => {
       />
       <Container fluid>
         <Row>
-          <Col sm={12}>
+          <Col sm={12} md={12} lg={9} xl={9}>
             <Card>
               <div
                 style={{
@@ -114,8 +148,12 @@ const TicketDetails = () => {
                   <div style={{ display: "flex" }}>
                     <div
                       style={{
+                        position: "relative",
                         marginRight: "20px",
                       }}
+                      onMouseEnter={handleMouseEnter}
+                      onMouseLeave={handleMouseLeave}
+                      onClick={addToggle}
                     >
                       <img
                         src={ticketImage}
@@ -124,7 +162,34 @@ const TicketDetails = () => {
                         width={350}
                         style={{ borderRadius: "10px" }}
                       />
-                      <div
+                      {isHovered && (
+                        <div
+                          style={{
+                            position: "absolute",
+                            top: 0,
+                            left: 0,
+                            width: "100%",
+                            height: "100%",
+                            background: "rgba(0, 0, 0, 0.7)", // Light black color with opacity
+                            borderRadius: "10px",
+                            display: "flex",
+                            flexDirection: "column",
+                            justifyContent: "center",
+                            alignItems: "center",
+                          }}
+                        >
+                          <span
+                            style={{
+                              fontSize: "20px",
+                              color: "white",
+                              fontWeight: "bold",
+                            }}
+                          >
+                            View Image
+                          </span>
+                        </div>
+                      )}
+                      {/* <div
                         style={{
                           display: "flex",
                           justifyContent: "space-between",
@@ -136,60 +201,27 @@ const TicketDetails = () => {
                         <span style={{ fontSize: "18px", color: "gray" }}>
                           124kb
                         </span>
-                      </div>
+                      </div> */}
                     </div>
-                    <div
-                      style={{
-                        marginRight: "20px",
-                      }}
+
+                    <Modal
+                      isOpen={addModal}
+                      toggle={addToggle}
+                      size="md"
+                      centered
                     >
-                      <img
-                        src={ticketImage}
-                        alt=""
-                        height={220}
-                        width={350}
-                        style={{ borderRadius: "10px" }}
-                      />
-                      <div
-                        style={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                        }}
-                      >
-                        <span style={{ fontSize: "18px", color: "gray" }}>
-                          Image name.png
-                        </span>
-                        <span style={{ fontSize: "18px", color: "gray" }}>
-                          124kb
-                        </span>
-                      </div>
-                    </div>
-                    <div
-                      style={{
-                        marginRight: "20px",
-                      }}
-                    >
-                      <img
-                        src={ticketImage}
-                        alt=""
-                        height={220}
-                        width={350}
-                        style={{ borderRadius: "10px" }}
-                      />
-                      <div
-                        style={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                        }}
-                      >
-                        <span style={{ fontSize: "18px", color: "gray" }}>
-                          Image name.png
-                        </span>
-                        <span style={{ fontSize: "18px", color: "gray" }}>
-                          124kb
-                        </span>
-                      </div>
-                    </div>
+                      <ModalBody>
+                        <div>
+                          <div className="modal-header"></div>
+                          <img
+                            src={ticketImage}
+                            alt=""
+                            height={350}
+                            width="100%"
+                          />
+                        </div>
+                      </ModalBody>
+                    </Modal>
                   </div>
 
                   <div
@@ -286,13 +318,21 @@ const TicketDetails = () => {
                         margin: "50px 0px",
                       }}
                     >
-                      <div>
+                      <div
+                        style={{
+                          border: "1px solid lightgray",
+                        }}
+                      >
                         <textarea
+                          ref={textareaRef}
                           className="form-control"
+                          placeholder="Reply Here..."
                           rows={3} // Minimum number of visible lines
                           style={{
                             maxHeight: "100px", // Maximum height for 5 lines of text
                             resize: "vertical", // Allow vertical resizing within the specified range
+                            borderRadius: "0px",
+                            fontSize: "18px",
                           }}
                         />
                         <div
@@ -334,6 +374,222 @@ const TicketDetails = () => {
                 </div>
               </CardBody>
             </Card>
+          </Col>
+
+          <Col
+            sm={12}
+            md={12}
+            lg={3}
+            xl={3}
+            style={{
+              borderTopLeftRadius: "15px",
+              borderTopRightRadius: "15px",
+            }}
+          >
+            <div>
+              <div
+                style={{
+                  backgroundColor: "blue",
+                  color: "white",
+                  fontWeight: "bold",
+                  padding: "20px",
+                  fontSize: "25px",
+                }}
+              >
+                Tickets Info
+              </div>
+              <div
+                style={{
+                  backgroundColor: "white",
+                  color: "gray",
+                  padding: "15px",
+                }}
+              >
+                <div
+                  style={{
+                    borderBottom: "1px solid #e1e1e1",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    padding: "25px 0px",
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: "20px",
+                      color: "gray",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    Ticket Id
+                  </div>
+                  <div
+                    style={{
+                      fontSize: "20px",
+                      color: "black",
+                    }}
+                  >
+                    #GH123
+                  </div>
+                </div>
+                <div
+                  style={{
+                    borderBottom: "1px solid #e1e1e1",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    padding: "25px 0px",
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: "20px",
+                      color: "gray",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    Time
+                  </div>
+                  <div
+                    style={{
+                      fontSize: "20px",
+                      color: "black",
+                    }}
+                  >
+                    #GH123
+                  </div>
+                </div>
+                <div
+                  style={{
+                    borderBottom: "1px solid #e1e1e1",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    padding: "25px 0px",
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: "20px",
+                      color: "gray",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    Date
+                  </div>
+                  <div
+                    style={{
+                      fontSize: "20px",
+                      color: "black",
+                    }}
+                  >
+                    #GH123
+                  </div>
+                </div>
+                <div
+                  style={{
+                    borderBottom: "1px solid #e1e1e1",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    padding: "25px 0px",
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: "20px",
+                      color: "gray",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    Subject
+                  </div>
+                  <div
+                    style={{
+                      fontSize: "20px",
+                      color: "black",
+                    }}
+                  >
+                    #GH123
+                  </div>
+                </div>
+                <div
+                  style={{
+                    borderBottom: "1px solid #e1e1e1",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    padding: "25px 0px",
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: "20px",
+                      color: "gray",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    Priority
+                  </div>
+                  <div
+                    style={{
+                      fontSize: "20px",
+                      color: "black",
+                    }}
+                  >
+                    #GH123
+                  </div>
+                </div>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    padding: "25px 0px",
+                    marginBottom: "10px",
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: "20px",
+                      color: "gray",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    Response
+                  </div>
+                  <div
+                    style={{
+                      fontSize: "20px",
+                      color: "black",
+                    }}
+                  >
+                    #GH123
+                  </div>
+                </div>
+
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <button
+                    className="btn btn-primary"
+                    style={{
+                      color: "white",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      padding: "5px 20px",
+                      margin: "0px 15px",
+                      height: "50px",
+                      width: "auto",
+                      fontSize: "18px",
+                      fontWeight: "bold",
+                    }}
+                    onClick={handleGoToReply}
+                  >
+                    Go to Reply
+                  </button>
+                </div>
+              </div>
+            </div>
           </Col>
         </Row>
       </Container>

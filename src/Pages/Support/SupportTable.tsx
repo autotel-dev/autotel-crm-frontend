@@ -1,21 +1,41 @@
-import { useCallback, useState } from "react";
-import {
-  supportColumns,
-  supportData,
-  SupportDataType,
-} from "./data/SupportData";
+import { useCallback, useEffect, useState } from "react";
+import { supportColumns, SupportDataType } from "./data/SupportData";
 import { Button, Col } from "reactstrap";
 import DataTable from "react-data-table-component";
 import { Delete, DeleteData } from "../../utils/Constant";
 import { H4 } from "../../AbstractElements";
 import { PlusCircle } from "react-feather";
 import { useNavigate } from "react-router-dom";
+import CreateNewTicket from "./CreateNewTicket";
+import { useSelector } from "react-redux";
 
 const TicketTable = () => {
+  // Function to transform supportData into allBugReports format
+  const { bugReports } = useSelector((state: any) => state.support);
+  const supportData = () => {
+    return bugReports.map((item: any) => ({
+      id: item._id,
+      username: item.user.fullName,
+      email: item.user.emailAddress,
+      ticket_name: item.name,
+      description: item.description,
+      isActive: item.isActive ? "true" : "false",
+      status: item.status,
+      priorty: item.priorty == null ? "N/A" : item.priorty,
+      date: "2024-02-19",
+    }));
+  };
+
+  console.log("allBugReports", supportData());
+  useEffect(() => {
+    setData(supportData());
+  }, [bugReports]);
+
   const navigate = useNavigate();
+  // const history = useHistory();
   const [selectedRows, setSelectedRows] = useState([]);
   const [toggleDelete, setToggleDelete] = useState(false);
-  const [data, setData] = useState(supportData);
+  const [data, setData] = useState(supportData());
 
   const handleRowSelected = useCallback((state: any) => {
     setSelectedRows(state.selectedRows);
@@ -25,13 +45,13 @@ const TicketTable = () => {
     if (
       window.confirm(
         `Are you sure you want to delete:\r ${selectedRows.map(
-          (r: SupportDataType) => r.name
+          (r: SupportDataType) => r.id
         )}?`
       )
     ) {
       setToggleDelete(!toggleDelete);
       setData(
-        data.filter((item) =>
+        data.filter((item: any) =>
           selectedRows.filter((elem: SupportDataType) => elem.id === item.id)
             .length > 0
             ? false
@@ -40,6 +60,16 @@ const TicketTable = () => {
       );
       setSelectedRows([]);
     }
+  };
+
+  const handleRowClicked = (row: any) => {
+    // Here 'row' contains the data of the clicked row
+    console.log("Clicked row data:", row);
+    
+    // Navigate to the ticketDetails page with the row data
+    // history.push(`${process.env.PUBLIC_URL}/support/ticketDetails`, {
+    //   rowData: row,
+    // });
   };
   return (
     <div className="table-responsive support-table">
@@ -61,25 +91,7 @@ const TicketTable = () => {
             outline: "none", // Removing default border outline
           }}
         />
-        <button
-          className="btn btn-primary"
-          style={{
-            color: "white",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            padding: "5px 10px",
-            margin: "0px 15px",
-            height: "50px",
-            width:"15%"
-          }}
-          // onClick={addToggle}
-        >
-          <div style={{ marginRight: "2%" }}>
-            <PlusCircle />
-          </div>
-          <span style={{ fontSize: "100%" }}>Create New Ticket</span>
-        </button>
+        <CreateNewTicket />
       </Col>
       {selectedRows.length !== 0 && (
         <div
@@ -98,9 +110,7 @@ const TicketTable = () => {
         pagination
         selectableRows
         onSelectedRowsChange={handleRowSelected}
-        onRowClicked={() => {
-          navigate(`${process.env.PUBLIC_URL}/support/ticketDetails`);
-        }}
+        onRowClicked={handleRowClicked} // Pass the event handler for row clicks
         clearSelectedRows={toggleDelete}
         style={{
           cursor: "pointer",
