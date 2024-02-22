@@ -115,10 +115,7 @@ export const otpVerification = async (
   }
 };
 
-export const create = async (
-  postData: any,
-  url: URLTypes
-): Promise<void> => {
+export const create = async (postData: any, url: URLTypes): Promise<void> => {
   try {
     const response = await axios.post(`${API_BASE_URL}/${url.url}`, postData, {
       headers: header,
@@ -212,12 +209,29 @@ export const createCom = async (
   }
 };
 
-export const update = async (
-  postData: any,
-  url: URLTypes
-): Promise<void> => {
+export const update = async (postData: any, url: URLTypes): Promise<void> => {
   try {
     const response = await axios.put(`${API_BASE_URL}/${url.url}`, postData, {
+      headers: header,
+    });
+
+    const result = response.data;
+    console.log("Response data:", response.data);
+
+    return result;
+  } catch (error: any) {
+    Swal.fire({
+      text: `${error.response.data.message}`,
+      icon: "info",
+      timer: 2000,
+      showCancelButton: false,
+    });
+  }
+};
+
+export const patch = async (postData: any, url: URLTypes): Promise<void> => {
+  try {
+    const response = await axios.patch(`${API_BASE_URL}/${url.url}`, postData, {
       headers: header,
     });
 
@@ -279,6 +293,30 @@ export const getAll = async (url: URLTypes): Promise<void> => {
     }
 
     console.log("api --- >", result);
+
+    return result;
+
+    // Handle success (optional)
+  } catch (error: any) {
+    console.error("Error get-all:", error);
+  }
+};
+
+export const getImage = async (url: URLTypes) => {
+  try {
+
+    // const response = await axios.get(`${url.url}`, {
+    //   headers: multipartHeader
+    // })
+    const response = await fetch(`${url.url}`, {
+      method: "GET",
+      headers: {
+        Authorization: header.Authorization,
+      },
+    });
+    const blob = await  response.blob();
+        const objectURL = URL.createObjectURL(blob);
+    const result = objectURL;
 
     return result;
 

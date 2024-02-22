@@ -218,7 +218,7 @@ const CreateNewTicket = () => {
         </div>
         <span style={{ fontSize: "100%" }}>Create New Ticket</span>
       </button>
-      <Modal isOpen={addModal} toggle={addToggle} size="md" centered>
+      <Modal isOpen={addModal} toggle={addToggle} size="lg" centered>
         <div className="modal-header">
           <H3 className="modal-title">Create New Ticket</H3>
           <Button

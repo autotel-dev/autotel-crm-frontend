@@ -65,12 +65,14 @@ export const supportColumns = [
     selector: (row: SupportDataType) => row["id"],
     sortable: true,
     center: false,
+    width: '200px', // Set the width for this column
   },
   {
     name: "Username",
     selector: (row: SupportDataType) => row["username"],
     sortable: true,
     center: false,
+    width: '150px', // Set the width for this column
   },
   {
     name: "Email",
@@ -83,36 +85,42 @@ export const supportColumns = [
     selector: (row: SupportDataType) => row["ticket_name"],
     sortable: true,
     center: true,
+    width: '200px', // Set the width for this column
   },
   {
     name: "Description",
     selector: (row: SupportDataType) => row["description"],
     sortable: true,
     center: true,
+    width: '200px', // Set the width for this column
   },
   {
     name: "IsActive",
     selector: (row: SupportDataType) => row["isActive"],
     sortable: true,
     center: true,
+    width: '100px', // Set the width for this column
   },
   {
     name: "Status",
     selector: (row: SupportDataType) => row["status"],
     sortable: true,
     center: true,
+    width: '100px', // Set the width for this column
   },
   {
     name: "Priority",
     selector: (row: SupportDataType) => row["priorty"],
     sortable: true,
     center: true,
+    width: '100px', // Set the width for this column
   },
   {
     name: "Date",
     selector: (row: SupportDataType) => row["date"],
     sortable: true,
     center: true,
+    width: '100px', // Set the width for this column
   },
 ];
 

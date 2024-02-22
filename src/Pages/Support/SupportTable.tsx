@@ -7,9 +7,11 @@ import { H4 } from "../../AbstractElements";
 import { PlusCircle } from "react-feather";
 import { useNavigate } from "react-router-dom";
 import CreateNewTicket from "./CreateNewTicket";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { setTableRow } from "../../ReaduxToolkit/Reducer/SupportSlice";
 
 const TicketTable = () => {
+  const dispatch = useDispatch();
   // Function to transform supportData into allBugReports format
   const { bugReports } = useSelector((state: any) => state.support);
   const supportData = () => {
@@ -22,7 +24,7 @@ const TicketTable = () => {
       isActive: item.isActive ? "true" : "false",
       status: item.status,
       priorty: item.priorty == null ? "N/A" : item.priorty,
-      date: "2024-02-19",
+      date: item.updatedAt.toString().slice(0, 10),
     }));
   };
 
@@ -65,11 +67,10 @@ const TicketTable = () => {
   const handleRowClicked = (row: any) => {
     // Here 'row' contains the data of the clicked row
     console.log("Clicked row data:", row);
-    
+
     // Navigate to the ticketDetails page with the row data
-    // history.push(`${process.env.PUBLIC_URL}/support/ticketDetails`, {
-    //   rowData: row,
-    // });
+    dispatch(setTableRow(row));
+    navigate(`${process.env.PUBLIC_URL}/support/ticketDetails`);
   };
   return (
     <div className="table-responsive support-table">
@@ -104,6 +105,7 @@ const TicketTable = () => {
         </div>
       )}
       <DataTable
+      
         columns={supportColumns}
         data={data}
         striped={true}
