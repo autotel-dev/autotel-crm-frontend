@@ -59,7 +59,7 @@ const TicketList = () => {
                       className="sm-progress-bar mt-4"
                       color={
                         item.key == "Pending Tickets"
-                          ? "info"
+                          ? "danger"
                           : item.key == "New Tickets"
                           ? "seconadry"
                           : item.key == "Resolved Tickets"

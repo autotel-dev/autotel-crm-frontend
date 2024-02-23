@@ -17,11 +17,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { getAll, getImage, patch } from "../../Api";
 import Loader from "../Loader/Loader";
 import { setTicketDetails } from "../../ReaduxToolkit/Reducer/SupportSlice";
+import { Select } from "antd";
+import { formatUnderscoredString, getUserRole } from "../../Api/globals";
 
 const TicketDetails = () => {
   const [itemsLength, setItemsLength] = useState(2);
   const [imageUrl, setImageUrl] = useState("");
   const [ticketImages, setTicketImages] = useState<any[]>([]);
+  const [full, setFull] = useState(false);
 
   const { tableRow, ticketDetails } = useSelector(
     (state: any) => state.support
@@ -37,6 +40,8 @@ const TicketDetails = () => {
     // Scroll to the textarea
     (textareaRef.current as HTMLTextAreaElement).scrollIntoView({
       behavior: "smooth",
+      block: "center", // Scroll to the center of the viewport
+      inline: "nearest", // Scroll to the nearest edge of the viewport
     });
     // Focus on the textarea
     (textareaRef.current as HTMLTextAreaElement).focus();
@@ -71,21 +76,39 @@ const TicketDetails = () => {
       patch(
         { updatedStatus: "IN_PROGRESS" },
         {
-          url: `support/bug-report/update-status/${tableRow.id}`,
+          url: `support/bug-report/update-status/${tableRow.ticket_id}`,
         }
       ).then((data: any) => {
         console.log("api call --- >", data);
         if (data !== undefined) {
           if (data.success) {
             getAll({
-              url: `support/bug-report/get-bug-report/${tableRow.id}`,
+              url: `support/bug-report/get-bug-report/${tableRow.ticket_id}`,
             }).then((data: any) => {
               console.log("api call --- >", data);
               if (data !== undefined) {
                 if (data.success) {
                   dispatch(setTicketDetails(data.data.bugReport));
-                  setLoading(false);
-                  console.log("hhg");
+                  setTicketImages([]);
+                  if (data.data.bugReport.images.length == 0) {
+                    setLoading(false);
+                  }
+                  data.data.bugReport.images.map((image: any, index: any) => {
+                    console.log("image", image.url);
+
+                    getImage({
+                      url: `http://124.29.238.127:8080/${image.url}`,
+                    }).then(async (data: any) => {
+                      console.log("image api --- >", data);
+                      setTicketImages((prevImages) => [...prevImages, data]);
+
+                      console.log("Ticket Images", ticketImages);
+                      console.log("objectURL: ", data);
+                    });
+                    if (index == data.data.bugReport.images.length - 1) {
+                      setLoading(false);
+                    }
+                  });
                 }
               }
             });
@@ -95,15 +118,19 @@ const TicketDetails = () => {
     } else {
       console.log("Else");
       getAll({
-        url: `support/bug-report/get-bug-report/${tableRow.id}`,
+        url: `support/bug-report/get-bug-report/${tableRow.ticket_id}`,
       }).then((data: any) => {
         console.log("api call --- >", data);
         if (data !== undefined) {
           if (data.success) {
             dispatch(setTicketDetails(data.data.bugReport));
+            setTicketImages([]);
+            if (data.data.bugReport.images.length == 0) {
+              setLoading(false);
+            }
             data.data.bugReport.images.map((image: any, index: any) => {
               console.log("image", image.url);
-              setTicketImages([]);
+
               getImage({
                 url: `http://124.29.238.127:8080/${image.url}`,
               }).then(async (data: any) => {
@@ -124,9 +151,14 @@ const TicketDetails = () => {
   }, []);
 
   const convertDateString = (dateString: string): string => {
-    const date = new Date(dateString);
+    // console.log(dateString);
+
+    var date = new Date(dateString);
+    // console.log("date", date.toUTCString());
+    date = new Date(date.toUTCString());
+
     const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-    const day = days[date.getDay()];
+    const day = days[date.getUTCDay()];
     let hours = date.getHours();
     const minutes = date.getMinutes();
     const amOrPm = hours >= 12 ? "AM" : "PM";
@@ -138,7 +170,7 @@ const TicketDetails = () => {
       hours = 12;
     }
 
-    return `${day} ${hours}:${
+    return `${day}, ${hours}:${
       minutes < 10 ? "0" + minutes : minutes
     } ${amOrPm}`;
   };
@@ -148,7 +180,7 @@ const TicketDetails = () => {
       patch(
         { message: replyText },
         {
-          url: `support/bug-report/${tableRow.id}/send-message`,
+          url: `support/bug-report/${ticketDetails._id}/send-message`,
         }
       ).then((data: any) => {
         console.log("api call --- >", data);
@@ -156,7 +188,7 @@ const TicketDetails = () => {
         if (data !== undefined) {
           if (data.success) {
             getAll({
-              url: `support/bug-report/get-bug-report/${tableRow.id}`,
+              url: `support/bug-report/get-bug-report/${ticketDetails._id}`,
             }).then((data: any) => {
               console.log("api call --- >", data);
               if (data !== undefined) {
@@ -173,41 +205,113 @@ const TicketDetails = () => {
   };
   const calculateTimeAgo = (date: string) => {
     const currentTime = new Date();
-    const previousTime = new Date(date);
+    let previousTime = new Date(date);
+
+    // Adding 12 hours to the previousTime
+    previousTime.setHours(previousTime.getHours() + 12);
+
     const timeDifference = Math.floor(
       (currentTime.getTime() - previousTime.getTime()) / 1000
-    );
+    ); // Difference in seconds
+    // console.log("current ", currentTime);
+    // console.log("previous ", previousTime.toUTCString());
+
     const minutes = Math.floor(timeDifference / 60);
     const hours = Math.floor(timeDifference / 3600);
     const days = Math.floor(timeDifference / (3600 * 24));
-    var time;
+    // console.log("timeDifference", timeDifference);
+    // console.log("minutes", minutes);
+    // console.log("hours", hours);
+    // console.log("days", days);
+    let time;
 
     if (minutes < 1) {
       time = "Just now";
     } else if (minutes === 1) {
       time = "1 min ago";
-    } else if (minutes > 1 && minutes < 60) {
+    } else if (minutes < 60) {
       time = `${minutes} mins ago`;
-    } else if (hours > 0) {
+    } else if (hours < 24) {
       time = `${hours === 1 ? "1 hour" : `${hours} hours`} ago`;
-    } else if (days > 0) {
+    } else {
       time = `${days === 1 ? "1 day" : `${days} days`} ago`;
     }
     return time;
   };
+  const [isEdit, setEdit] = useState(false);
+  const [changeStatus, setChangeStatus] = useState(tableRow.status);
+  const [changePriortyStatus, setChangePriortyStatus] = useState(
+    tableRow.priorty
+  );
+  const handleEdit = () => {
+    setEdit(!isEdit);
+    if (isEdit) {
+      console.log("function call");
+      patch(
+        { updatedStatus: changeStatus },
+        {
+          url: `support/bug-report/update-status/${ticketDetails._id}`,
+        }
+      ).then((data: any) => {
+        console.log("api call --- >", data);
+        if (data !== undefined) {
+          if (data.success) {
+            patch(
+              { updatedPriortyStatus: changePriortyStatus },
+              {
+                url: `support/bug-report/update-priorty-status/${ticketDetails._id}`,
+              }
+            ).then((data: any) => {
+              console.log("api call --- >", data);
+              if (data !== undefined) {
+                if (data.success) {
+                  getAll({
+                    url: `support/bug-report/get-bug-report/${ticketDetails._id}`,
+                  }).then((data: any) => {
+                    console.log("api call --- >", data);
+                    if (data !== undefined) {
+                      if (data.success) {
+                        dispatch(setTicketDetails(data.data.bugReport));
+                        setEdit(false);
+                      }
+                    }
+                  });
+                }
+              }
+            });
+          }
+        }
+      });
+    }
+  };
 
-  // useEffect(() => {
-  //   if (ticketDetails !== null) {
-  //     const intervalId = setInterval(
-  //       calculateTimeAgo(
-  //         ticketDetails.messages[ticketDetails.messages.length - 1].updatedAt
-  //       ),
-  //       60000
-  //     ); // Update every minute
+  const { priorityStatuses, statuses } = useSelector(
+    (state: any) => state.support
+  );
+  console.log(priorityStatuses);
+  const [priorityStatusesList, setPriorityStatusesList] = useState([]);
+  const [statusesList, setStatusesList] = useState([]);
 
-  //     return () => clearInterval(intervalId);
-  //   }
-  // }, [ticketDetails]);
+  const tempPriorityStatusesList: any = [];
+  const tempStatusesList: any = [];
+  useEffect(() => {
+    priorityStatuses.map((item: any, index: any) => {
+      tempPriorityStatusesList.push({
+        value: `${item.value}`,
+        label: `${item.title}`,
+      });
+    });
+    setPriorityStatusesList(tempPriorityStatusesList);
+
+    statuses.map((item: any, index: any) => {
+      tempStatusesList.push({
+        value: `${item.value}`,
+        label: `${item.title}`,
+      });
+    });
+    setStatusesList(tempStatusesList);
+  }, []);
+
   return (
     <>
       <Breadcrumbs
@@ -222,15 +326,17 @@ const TicketDetails = () => {
               padding: "0px 20px",
             }}
           >
-            <CommonHeader
-              title="Ticket Details"
-              subTitle={[{ text: "Details of a Single Ticket..." }]}
-            />
+            {!loading && (
+              <CommonHeader
+                title={`${ticketDetails.name.slice(0, 250)}
+                ${ticketDetails.name.length > 250 && "..."}`}
+              />
+            )}
           </div>
           {!loading ? (
             <CardBody>
               <Row>
-                <Col sm={12} md={12} lg={9} xl={9}>
+                <Col sm={12} md={12} lg={12} xl={12} xxl={9}>
                   <div
                     style={{
                       padding: "20px",
@@ -243,11 +349,12 @@ const TicketDetails = () => {
                         fontSize: "24px",
                       }}
                     >
-                      {ticketDetails.user.fullName}
+                      {ticketDetails.user.fullName} -&nbsp;
+                      {formatUnderscoredString(ticketDetails.user.role)}
                     </div>
                     <div
                       style={{
-                        color: "blue",
+                        color: "#35bfbf",
                         fontWeight: "normal",
                         fontSize: "20px",
                         marginBottom: "10px",
@@ -263,13 +370,30 @@ const TicketDetails = () => {
                             margin: "25px 0px",
                           }}
                         >
-                          {ticketDetails.description}
+                          {full
+                            ? ticketDetails.description
+                            : ticketDetails.description.slice(0, 500)}{" "}
+                          {ticketDetails.description.length > 500 && "...."}
+                          {ticketDetails.description.length > 500 && (
+                            <div
+                              style={{
+                                color: "#35bfbf",
+                                cursor: "pointer",
+                              }}
+                              // className="btn-primary"
+                              onClick={() => {
+                                setFull(!full);
+                              }}
+                            >
+                              {full ? "Show Less" : "Show More"}
+                            </div>
+                          )}
                         </div>
                       </Col>
                       <Col
                         md={3}
                         style={{
-                          color: "blue",
+                          color: "#35bfbf",
                           margin: "25px 0px",
                           fontSize: "20px",
                         }}
@@ -292,12 +416,13 @@ const TicketDetails = () => {
                         {ticketImages.length} Attachements
                       </div>
                     </div>
-                    <div style={{ display: "flex" ,flexWrap:"wrap"}}>
+                    <div style={{ display: "flex", flexWrap: "wrap" }}>
                       {ticketImages.map((image, imageIndex) => (
                         <div
                           style={{
                             position: "relative",
                             marginRight: "20px",
+                            marginBottom: "20px",
                           }}
                           onMouseEnter={() => handleMouseEnter(imageIndex)}
                           onMouseLeave={() => handleMouseLeave(imageIndex)}
@@ -309,9 +434,12 @@ const TicketDetails = () => {
                           <img
                             src={image}
                             alt=""
-                            height={220}
-                            width={350}
-                            style={{ borderRadius: "10px" }}
+                            height={200}
+                            width={300}
+                            style={{
+                              borderRadius: "10px",
+                              border: "0.5px solid lightgray",
+                            }}
                           />
                           {isHovered && index == imageIndex && (
                             <div
@@ -358,7 +486,7 @@ const TicketDetails = () => {
                       <Modal
                         isOpen={addModal}
                         toggle={addToggle}
-                        size="md"
+                        size="lg"
                         centered
                       >
                         <ModalBody>
@@ -367,7 +495,7 @@ const TicketDetails = () => {
                             <img
                               src={imageUrl}
                               alt=""
-                              height={350}
+                              height={500}
                               width="100%"
                             />
                           </div>
@@ -402,7 +530,7 @@ const TicketDetails = () => {
                           <Col
                             md={3}
                             style={{
-                              color: "blue",
+                              color: "#35bfbf",
                               margin: "25px 0px",
                               fontSize: "20px",
                             }}
@@ -448,7 +576,7 @@ const TicketDetails = () => {
                         >
                           <a
                             href="#"
-                            style={{ color: "blue", fontSize: "20px" }}
+                            style={{ color: "#167a93", fontSize: "20px" }}
                           >
                             {
                               ticketDetails.messages[
@@ -610,19 +738,33 @@ const TicketDetails = () => {
                             ref={textareaRef}
                             onChange={handleChange}
                             value={replyText}
-                            className="form-control"
+                            className="form-control replyText"
                             placeholder="Reply Here..."
                             rows={3} // Minimum number of visible lines
                             style={{
                               maxHeight: "100px", // Maximum height for 5 lines of text
                               resize: "vertical", // Allow vertical resizing within the specified range
                               borderRadius: "0px",
-                              fontSize: "18px",
+                              fontSize: "20px",
+                              overflowY: "auto",
+                              WebkitOverflowScrolling: "touch", // Enable momentum scrolling on iOS
+                              scrollbarWidth: "thin", // Specify scrollbar width
+                              WebkitBorderRadius: "5px !important", // For WebKit browsers (Chrome, Safari)
+                              MozBorderRadius: "5px !important", // For Mozilla Firefox
+                              scrollbarColor: "lightgray transparent", // Specify scrollbar color
+                              outline: "0px",
+                              border: "0px",
                             }}
                           />
+                          <style>
+                            {`
+    .replyText::placeholder {
+      font-size: 18px;
+  }`}
+                          </style>
                           <div
                             style={{
-                              backgroundColor: "#ededed",
+                              backgroundColor: "whitesmoke",
                               padding: "20px",
                               display: "flex",
                               justifyContent: "space-between",
@@ -661,8 +803,9 @@ const TicketDetails = () => {
                 <Col
                   sm={12}
                   md={12}
-                  lg={3}
-                  xl={3}
+                  lg={12}
+                  xl={12}
+                  xxl={3}
                   style={{
                     borderTopLeftRadius: "15px",
                     borderTopRightRadius: "15px",
@@ -711,7 +854,7 @@ const TicketDetails = () => {
                             color: "black",
                           }}
                         >
-                          #GH123
+                          {ticketDetails.ticketId}
                         </div>
                       </div>
                       <div
@@ -789,7 +932,8 @@ const TicketDetails = () => {
                             color: "black",
                           }}
                         >
-                          {ticketDetails.name}
+                          {ticketDetails.name.slice(0, 16)}
+                          {ticketDetails.name.length > 16 && "...."}
                         </div>
                       </div>
                       <div
@@ -809,15 +953,107 @@ const TicketDetails = () => {
                         >
                           Priority
                         </div>
+                        {isEdit ? (
+                          <Select
+                            defaultValue={ticketDetails.priorty}
+                            showSearch
+                            style={{ width: 200, height: 36 }}
+                            placeholder="Select Priority"
+                            optionFilterProp="children"
+                            filterOption={(input: any, option: any) =>
+                              (option?.label ?? "").includes(input)
+                            }
+                            filterSort={(optionA: any, optionB: any) =>
+                              (optionA?.label ?? "")
+                                .toLowerCase()
+                                .localeCompare(
+                                  (optionB?.label ?? "").toLowerCase()
+                                )
+                            }
+                            onChange={(e) => {
+                              console.log(e);
+                              setChangePriortyStatus(e);
+                            }}
+                            options={priorityStatusesList}
+                          />
+                        ) : (
+                          <div
+                            style={{
+                              fontSize: "20px",
+                              color:
+                                ticketDetails.priorty === "LOW"
+                                  ? "green"
+                                  : ticketDetails.priorty === "HIGH"
+                                  ? "red"
+                                  : "orange",
+                              fontWeight: "bold",
+                            }}
+                          >
+                            {formatUnderscoredString(ticketDetails.priorty)}
+                          </div>
+                        )}
+                      </div>
+
+                      <div
+                        style={{
+                          borderBottom: "1px solid #e1e1e1",
+                          display: "flex",
+                          justifyContent: "space-between",
+                          padding: "25px 0px",
+                        }}
+                      >
                         <div
                           style={{
                             fontSize: "20px",
-                            color: "red",
+                            color: "gray",
+                            fontWeight: "bold",
                           }}
                         >
-                          {ticketDetails.priorty}
+                          Status
                         </div>
+                        {isEdit ? (
+                          <Select
+                            defaultValue={ticketDetails.status}
+                            showSearch
+                            style={{ width: 200, height: 36 }}
+                            placeholder="Select Status"
+                            optionFilterProp="children"
+                            filterOption={(input: any, option: any) =>
+                              (option?.label ?? "").includes(input)
+                            }
+                            filterSort={(optionA: any, optionB: any) =>
+                              (optionA?.label ?? "")
+                                .toLowerCase()
+                                .localeCompare(
+                                  (optionB?.label ?? "").toLowerCase()
+                                )
+                            }
+                            onChange={(e) => {
+                              console.log(e);
+                              setChangeStatus(e);
+                            }}
+                            options={statusesList}
+                          />
+                        ) : (
+                          <div
+                            style={{
+                              fontSize: "20px",
+                              color:
+                                ticketDetails.status === "NEW"
+                                  ? "blue"
+                                  : ticketDetails.status === "IN_PROGRESS"
+                                  ? "orange"
+                                  : ticketDetails.status === "PENDING"
+                                  ? "red"
+                                  : "green",
+                              fontWeight: "bold",
+                            }}
+                          >
+                            {formatUnderscoredString(ticketDetails.status)}
+                          </div>
+                        )}
                       </div>
+
                       <div
                         style={{
                           display: "flex",
@@ -839,14 +1075,16 @@ const TicketDetails = () => {
                           style={{
                             fontSize: "20px",
                             color: "green",
+                            fontWeight: "bold",
                           }}
                         >
-                          {ticketDetails.messages.length >= 1 &&
-                            calculateTimeAgo(
-                              ticketDetails.messages[
-                                ticketDetails.messages.length - 1
-                              ].updatedAt
-                            )}
+                          {ticketDetails.messages.length >= 1
+                            ? calculateTimeAgo(
+                                ticketDetails.messages[
+                                  ticketDetails.messages.length - 1
+                                ].updatedAt
+                              )
+                            : "N/A"}
                         </div>
                       </div>
 
@@ -854,7 +1092,7 @@ const TicketDetails = () => {
                         style={{
                           display: "flex",
                           alignItems: "center",
-                          justifyContent: "center",
+                          justifyContent: "space-between",
                         }}
                       >
                         <button
@@ -864,10 +1102,10 @@ const TicketDetails = () => {
                             display: "flex",
                             alignItems: "center",
                             justifyContent: "center",
-                            padding: "5px 20px",
-                            margin: "0px 15px",
+                            padding: "5px 0px",
+                            margin: "0px 0px",
                             height: "50px",
-                            width: "auto",
+                            width: "130px",
                             fontSize: "18px",
                             fontWeight: "bold",
                           }}
@@ -875,6 +1113,26 @@ const TicketDetails = () => {
                         >
                           Go to Reply
                         </button>
+                        {getUserRole() == "SUPER_ADMIN" && (
+                          <button
+                            className="btn btn-primary"
+                            style={{
+                              color: "white",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              padding: "5px 0px",
+                              margin: "0px 0px",
+                              height: "50px",
+                              width: "130px",
+                              fontSize: "18px",
+                              fontWeight: "bold",
+                            }}
+                            onClick={handleEdit}
+                          >
+                            {isEdit ? "Save" : "Edit"}
+                          </button>
+                        )}
                       </div>
                     </div>
                   </div>

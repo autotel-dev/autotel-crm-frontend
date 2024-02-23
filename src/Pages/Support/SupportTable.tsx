@@ -15,17 +15,36 @@ const TicketTable = () => {
   // Function to transform supportData into allBugReports format
   const { bugReports } = useSelector((state: any) => state.support);
   const supportData = () => {
-    return bugReports.map((item: any) => ({
-      id: item._id,
-      username: item.user.fullName,
-      email: item.user.emailAddress,
-      ticket_name: item.name,
-      description: item.description,
-      isActive: item.isActive ? "true" : "false",
-      status: item.status,
-      priorty: item.priorty == null ? "N/A" : item.priorty,
-      date: item.updatedAt.toString().slice(0, 10),
-    }));
+    return bugReports
+      .filter(
+        (item: any) =>
+          item.ticketId.toLowerCase().split("-")[1].includes(searchValue) ||
+          item.name.toLowerCase().includes(searchValue) ||
+          item.user.emailAddress.toLowerCase().includes(searchValue)
+      )
+      .map((item: any) => ({
+        ticket_id: item._id,
+        id: item.ticketId,
+        username: item.user.fullName,
+        email: item.user.emailAddress,
+        ticket_name: item.name,
+        description: item.description,
+        isActive: item.isActive ? "true" : "false",
+        status: item.status,
+        priorty: item.priorty == null ? "N/A" : item.priorty,
+        date: item.updatedAt.toString().slice(0, 10),
+      }));
+  };
+
+  const [searchValue, setSearchValue] = useState("");
+
+  useEffect(() => {
+    setData(supportData());
+  }, [searchValue]);
+
+  const handleSearch = (e: any) => {
+    const searchKey = e.target.value.toLowerCase();
+    setSearchValue(searchKey);
   };
 
   console.log("allBugReports", supportData());
@@ -78,10 +97,10 @@ const TicketTable = () => {
         <input
           type="text"
           placeholder="Type to Search.."
-          // value={searchValue}
-          // onChange={(e) => {
-          //   filterProvincess(e);
-          // }}
+          value={searchValue}
+          onChange={(e) => {
+            handleSearch(e);
+          }}
           style={{
             backgroundColor: "#f1f1f1",
             borderRadius: "5px",
@@ -105,7 +124,6 @@ const TicketTable = () => {
         </div>
       )}
       <DataTable
-      
         columns={supportColumns}
         data={data}
         striped={true}
@@ -125,8 +143,21 @@ const TicketTable = () => {
               cursor: "pointer",
             },
           },
+          head: {
+            style: {
+              fontWeight: "bold",
+              fontSize: "13px",
+            },
+          },
         }}
       />
+      <style>
+        {`
+       .custom-data-table thead th {
+        text-align: center !important;
+      }
+      `}
+      </style>
     </div>
   );
 };

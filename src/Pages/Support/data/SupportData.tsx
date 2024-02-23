@@ -3,6 +3,7 @@ import { dynamicImage } from "../../../Service";
 import { Image } from "../../../AbstractElements";
 import { useSelector } from "react-redux";
 import Store from "../../../ReaduxToolkit/Store";
+import { formatUnderscoredString } from "../../../Api/globals";
 
 const state = Store.getState();
 
@@ -65,62 +66,115 @@ export const supportColumns = [
     selector: (row: SupportDataType) => row["id"],
     sortable: true,
     center: false,
-    width: '200px', // Set the width for this column
+    width: "120px", // Set the width for this column
   },
   {
     name: "Username",
     selector: (row: SupportDataType) => row["username"],
     sortable: true,
     center: false,
-    width: '150px', // Set the width for this column
+    width: "150px", // Set the width for this column
   },
   {
     name: "Email",
     selector: (row: SupportDataType) => row["email"],
     sortable: true,
     center: true,
+    width: "200px",
   },
   {
     name: "Ticket Name",
     selector: (row: SupportDataType) => row["ticket_name"],
     sortable: true,
     center: true,
-    width: '200px', // Set the width for this column
+    width: "200px", // Set the width for this column
   },
   {
     name: "Description",
     selector: (row: SupportDataType) => row["description"],
     sortable: true,
     center: true,
-    width: '200px', // Set the width for this column
+    width: "250px", // Set the width for this column
   },
   {
     name: "IsActive",
     selector: (row: SupportDataType) => row["isActive"],
     sortable: true,
     center: true,
-    width: '100px', // Set the width for this column
+    width: "120px", // Set the width for this column
   },
   {
     name: "Status",
     selector: (row: SupportDataType) => row["status"],
     sortable: true,
     center: true,
-    width: '100px', // Set the width for this column
+    width: "150px", // Set the width for this column
+    cell: (row: SupportDataType) => (
+      <div
+        style={{
+          width: "120px",
+          textAlign: "center",
+          padding: "5px",
+          borderRadius: "5px",
+          backgroundColor:
+            row.status === "NEW"
+              ? "rgba(0, 0, 255, 0.1)"
+              : row.status === "IN_PROGRESS"
+              ? "rgba(255, 165, 0, 0.1)"
+              : row.status === "PENDING"
+              ? "rgba(255, 0, 0, 0.1)"
+              : "rgba(0, 255, 0, 0.1)",
+          color:
+            row.status === "NEW"
+              ? "blue"
+              : row.status === "IN_PROGRESS"
+              ? "orange"
+              : row.status === "PENDING"
+              ? "red"
+              : "green",
+        }}
+      >
+        {formatUnderscoredString(row.status)}
+      </div>
+    ),
   },
   {
     name: "Priority",
     selector: (row: SupportDataType) => row["priorty"],
     sortable: true,
     center: true,
-    width: '100px', // Set the width for this column
+    width: "100px", // Set the width for this column
+    cell: (row: SupportDataType) => (
+      <div
+        style={{
+          width: "90px",
+          textAlign: "center",
+          padding: "5px",
+          borderRadius: "5px",
+          backgroundColor:
+            row.priorty === "LOW"
+              ? "rgba(0, 255, 0, 0.1)"
+              : row.priorty === "HIGH"
+              ? "rgba(255, 0, 0, 0.1)"
+              : "rgba(255, 200, 0, 0.1)",
+          color:
+            row.priorty === "LOW"
+              ? "green"
+              : row.priorty === "HIGH"
+              ? "red"
+              : "orange",
+        }}
+      >
+        {formatUnderscoredString(row.priorty)}
+      </div>
+    ),
   },
   {
     name: "Date",
     selector: (row: SupportDataType) => row["date"],
     sortable: true,
     center: true,
-    width: '100px', // Set the width for this column
+    width: "150px", // Set the width for this column
   },
 ];
 

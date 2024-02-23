@@ -9,6 +9,7 @@ import { getAll } from "../../Api";
 import {
   setBugReports,
   setPriorityStatuses,
+  setStatuses,
   setSupportStatistics,
 } from "../../ReaduxToolkit/Reducer/SupportSlice";
 import { useDispatch, useSelector } from "react-redux";
@@ -27,6 +28,9 @@ const Support = () => {
       (data: any) => {
         console.log("api call --- >", data);
         if (data !== undefined) {
+          if (!data.success) {
+            dispatch(setBugReports([]));
+          }
           if (data.success) {
             console.log("hhg");
             dispatch(setBugReports(data.data.allBugReports));
@@ -74,6 +78,20 @@ const Support = () => {
             console.log("hhg");
             dispatch(
               setPriorityStatuses(data.data.bugReportPriortyStatusTypes)
+            );
+          }
+        }
+      }
+    );
+    getAll({ url: "support/bug-report/get-status-types" }).then(
+      (data: any) => {
+        console.log("api call --- >", data);
+        if (data !== undefined) {
+          if (data.success) {
+            setReportsLoading(false);
+            console.log("hhg");
+            dispatch(
+              setStatuses(data.data.bugReportStatusTypes)
             );
           }
         }

@@ -4,6 +4,7 @@ const initialState = {
   bugReports: [],
   priorityStatuses: [],
   priorityStatus: null,
+  statuses: null,
   supportStatistics: null,
   tableRow: null,
   ticketDetails: null,
@@ -43,6 +44,9 @@ const SupportSlice = createSlice({
     },
     setPriorityStatuses: (state, action) => {
       state.priorityStatuses = action.payload;
+    },
+    setStatuses: (state, action) => {
+      state.statuses = action.payload;
       state.error = null;
       state.loading = false;
     },
@@ -60,6 +64,7 @@ export const {
   setTableRow,
   setTicketDetails,
   setPriorityStatuses,
+  setStatuses,
   setNoReportsFound,
 } = SupportSlice.actions;
 
