@@ -699,7 +699,7 @@ const routes = [
     Component: <Support />,
   },
   {
-    path: `${process.env.PUBLIC_URL}/support/ticketDetails`,
+    path: `${process.env.PUBLIC_URL}/support/ticketDetails/:ticketId`,
     Component: <TicketDetails />,
   },
   // Tasks

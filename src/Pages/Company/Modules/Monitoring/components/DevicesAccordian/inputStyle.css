@@ -30,7 +30,7 @@ label > input[type="checkbox"]:checked + .ack {
 }
 
 /* ---------------------- online --------------- */
-label > input[type="checkbox"] + .green::before {
+label > input[type="checkbox"] + .onlineDevice::before {
   content: "";
   display: inline-block;
   vertical-align: bottom;
@@ -44,7 +44,7 @@ label > input[type="checkbox"] + .green::before {
   box-shadow: 0 0 5px green;
 }
 
-label > input[type="checkbox"]:checked + .green::before {
+label > input[type="checkbox"]:checked + .onlineDevice::before {
   content: "✓";
   font-weight: bold;
   transform: scale(1.1);
@@ -55,7 +55,7 @@ label > input[type="checkbox"]:checked + .green::before {
   margin-right: 15px;
 }
 
-label > input[type="checkbox"]:checked + .green {
+label > input[type="checkbox"]:checked + .onlineDevice {
   color: green;
 }
 

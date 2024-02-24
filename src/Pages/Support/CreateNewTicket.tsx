@@ -69,32 +69,32 @@ const CreateNewTicket = () => {
       formData.append("description", data.description);
       formData.append("priorty", priorityStatus);
 
-      selectedfiles.map((file, index)=>{
-        console.log("image file test loop map: ", file)
+      selectedfiles.map((file, index) => {
+        console.log("image file test loop map: ", file);
         formData.append("images", file);
-      })
+      });
 
-    //   if (selectedfiles.length > 0) {
-    //     console.log("in new loop")
-    //     for (let i = 0; i < selectedfiles.length; i++) {
-    //         console.log("selectedfiles[i]: ", selectedfiles[i])
-    //       formData.append("images", selectedfiles[i]);
-    //     }
-    //   }
+      //   if (selectedfiles.length > 0) {
+      //     console.log("in new loop")
+      //     for (let i = 0; i < selectedfiles.length; i++) {
+      //         console.log("selectedfiles[i]: ", selectedfiles[i])
+      //       formData.append("images", selectedfiles[i]);
+      //     }
+      //   }
 
-      try { 
+      try {
         setLoading(true);
         for (const [key, value] of formData.entries()) {
-            console.log(`Key 1: ${key}, Value 1: ${value}`);
-          }
+          console.log(`Key 1: ${key}, Value 1: ${value}`);
+        }
         await createCom(formData, {
           url: "support/bug-report/report-new-bug",
         }).then((data: any) => {
           setLoading(false);
           setAddModal(false);
-        //   for (const [key, value] of formData.entries()) {
-        //     console.log(`Key: ${key}, Value: ${value}`);
-        //   }
+          //   for (const [key, value] of formData.entries()) {
+          //     console.log(`Key: ${key}, Value: ${value}`);
+          //   }
           if (data.success) {
             console.log(data);
             setSelectedFiles([]);
@@ -207,7 +207,6 @@ const CreateNewTicket = () => {
           alignItems: "center",
           justifyContent: "center",
           padding: "5px 10px",
-          margin: "0px 15px",
           height: "50px",
           width: "100%",
         }}
@@ -216,7 +215,7 @@ const CreateNewTicket = () => {
         <div style={{ marginRight: "2%" }}>
           <PlusCircle />
         </div>
-        <span style={{ fontSize: "100%" }}>Create New Ticket</span>
+        <span style={{ fontSize: "120%" }}>Create New Ticket</span>
       </button>
       <Modal isOpen={addModal} toggle={addToggle} size="lg" centered>
         <div className="modal-header">

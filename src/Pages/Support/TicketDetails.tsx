@@ -19,8 +19,10 @@ import Loader from "../Loader/Loader";
 import { setTicketDetails } from "../../ReaduxToolkit/Reducer/SupportSlice";
 import { Select } from "antd";
 import { formatUnderscoredString, getUserRole } from "../../Api/globals";
+import { useParams } from "react-router-dom";
 
 const TicketDetails = () => {
+  const { ticketId } = useParams();
   const [itemsLength, setItemsLength] = useState(2);
   const [imageUrl, setImageUrl] = useState("");
   const [ticketImages, setTicketImages] = useState<any[]>([]);
@@ -29,7 +31,7 @@ const TicketDetails = () => {
   const { tableRow, ticketDetails } = useSelector(
     (state: any) => state.support
   );
-  console.log("tableRow", tableRow);
+  // console.log("tableRow", tableRow);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null); // Ref for the textarea element
   const [loading, setLoading] = useState(true);
   const [replyText, setReplyText] = useState("");
@@ -76,14 +78,14 @@ const TicketDetails = () => {
       patch(
         { updatedStatus: "IN_PROGRESS" },
         {
-          url: `support/bug-report/update-status/${tableRow.ticket_id}`,
+          url: `support/bug-report/update-status/${ticketId}`,
         }
       ).then((data: any) => {
         console.log("api call --- >", data);
         if (data !== undefined) {
           if (data.success) {
             getAll({
-              url: `support/bug-report/get-bug-report/${tableRow.ticket_id}`,
+              url: `support/bug-report/get-bug-report/${ticketId}`,
             }).then((data: any) => {
               console.log("api call --- >", data);
               if (data !== undefined) {
@@ -118,7 +120,7 @@ const TicketDetails = () => {
     } else {
       console.log("Else");
       getAll({
-        url: `support/bug-report/get-bug-report/${tableRow.ticket_id}`,
+        url: `support/bug-report/get-bug-report/${ticketId}`,
       }).then((data: any) => {
         console.log("api call --- >", data);
         if (data !== undefined) {
@@ -180,7 +182,7 @@ const TicketDetails = () => {
       patch(
         { message: replyText },
         {
-          url: `support/bug-report/${ticketDetails._id}/send-message`,
+          url: `support/bug-report/${ticketId}/send-message`,
         }
       ).then((data: any) => {
         console.log("api call --- >", data);
@@ -188,7 +190,7 @@ const TicketDetails = () => {
         if (data !== undefined) {
           if (data.success) {
             getAll({
-              url: `support/bug-report/get-bug-report/${ticketDetails._id}`,
+              url: `support/bug-report/get-bug-report/${ticketId}`,
             }).then((data: any) => {
               console.log("api call --- >", data);
               if (data !== undefined) {
@@ -250,7 +252,7 @@ const TicketDetails = () => {
       patch(
         { updatedStatus: changeStatus },
         {
-          url: `support/bug-report/update-status/${ticketDetails._id}`,
+          url: `support/bug-report/update-status/${ticketId}`,
         }
       ).then((data: any) => {
         console.log("api call --- >", data);
@@ -259,14 +261,14 @@ const TicketDetails = () => {
             patch(
               { updatedPriortyStatus: changePriortyStatus },
               {
-                url: `support/bug-report/update-priorty-status/${ticketDetails._id}`,
+                url: `support/bug-report/update-priorty-status/${ticketId}`,
               }
             ).then((data: any) => {
               console.log("api call --- >", data);
               if (data !== undefined) {
                 if (data.success) {
                   getAll({
-                    url: `support/bug-report/get-bug-report/${ticketDetails._id}`,
+                    url: `support/bug-report/get-bug-report/${ticketId}`,
                   }).then((data: any) => {
                     console.log("api call --- >", data);
                     if (data !== undefined) {
@@ -329,7 +331,7 @@ const TicketDetails = () => {
             {!loading && (
               <CommonHeader
                 title={`${ticketDetails.name.slice(0, 250)}
-                ${ticketDetails.name.length > 250 && "..."}`}
+                ${ticketDetails.name.length > 250 ? "...":""}`}
               />
             )}
           </div>

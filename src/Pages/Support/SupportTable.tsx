@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { supportColumns, SupportDataType } from "./data/SupportData";
-import { Button, Col } from "reactstrap";
+import { Button, Col, Row } from "reactstrap";
 import DataTable from "react-data-table-component";
 import { Delete, DeleteData } from "../../utils/Constant";
 import { H4 } from "../../AbstractElements";
@@ -89,30 +89,34 @@ const TicketTable = () => {
 
     // Navigate to the ticketDetails page with the row data
     dispatch(setTableRow(row));
-    navigate(`${process.env.PUBLIC_URL}/support/ticketDetails`);
+    navigate(`${process.env.PUBLIC_URL}/support/ticketDetails/${row.ticket_id}`);
   };
   return (
     <div className="table-responsive support-table">
-      <Col md={12} style={{ display: "flex", alignItems: "center" }}>
-        <input
-          type="text"
-          placeholder="Type to Search.."
-          value={searchValue}
-          onChange={(e) => {
-            handleSearch(e);
-          }}
-          style={{
-            backgroundColor: "#f1f1f1",
-            borderRadius: "5px",
-            padding: "15px",
-            margin: "20px 5px",
-            width: "86%", // Adjusting width to accommodate padding and margin
-            border: "none",
-            outline: "none", // Removing default border outline
-          }}
-        />
-        <CreateNewTicket />
-      </Col>
+      <Row style={{ display: "flex", alignItems: "center" }}>
+        <Col md={12} lg={10} xl={10}>
+          <input
+            type="text"
+            placeholder="Type to Search.."
+            value={searchValue}
+            onChange={(e) => {
+              handleSearch(e);
+            }}
+            style={{
+              backgroundColor: "#f1f1f1",
+              borderRadius: "5px",
+              padding: "15px",
+              margin: "20px 0px",
+              width: "100%", // Adjusting width to accommodate padding and margin
+              border: "none",
+              outline: "none", // Removing default border outline
+            }}
+          />
+        </Col>
+        <Col md={12} lg={2} xl={2}>
+          <CreateNewTicket />
+        </Col>
+      </Row>
       {selectedRows.length !== 0 && (
         <div
           className={`d-flex align-items-center justify-content-between bg-light-info p-2`}

@@ -258,288 +258,304 @@ const DevicesTreeViewAccordian = () => {
           outline: "none",
         }}
       />
-
       {devices.length > 0 && (
         <Accordion open={open} toggle={toggle} className="dark-accordion">
-          {matchedGroups.map((item: any, index: any) => {
-            const gradientId = `gradient-${index}`; // Generate a unique gradient ID for each item
-            return (
-              <AccordionItem key={index}>
-                <div style={{ backgroundColor: "gray", fontWeight: "bold" }}>
-                  <AccordionHeader
-                    targetId={`${searchValue.length >= 1 ? "all" : index}`}
-                    className="bg-light-primary"
-                  >
-                    <input
-                      type="checkbox"
-                      style={{
-                        marginRight: "10px",
-                        height: "22px",
-                        width: "22px",
-                      }}
-                      checked={item.checked}
-                      onClick={(e) => handleCheckboxClick(e, item)}
-                    />
-                    <span style={{ fontWeight: "bold" }}>
-                      {item.title} &nbsp; ({item.items.length})
-                    </span>
-                    <FeatherIcons
-                      iconName={
-                        open == `${index}` ? "ChevronUp" : "ChevronDown"
-                      }
-                      className="svg-color"
-                    />
-                  </AccordionHeader>
-                </div>
-                <AccordionBody
-                  accordionId={`${searchValue.length >= 1 ? "all" : index}`}
-                >
-                  {item.items
-                    .filter((bodyItem: any) =>
-                      bodyItem.name.toLowerCase().includes(searchValue)
-                    )
-                    .map((bodyItem: any, bodyindex: any) => {
-                      if (bodyindex <= itemsLength) {
-                        return (
-                          <div
-                            key={bodyItem.id}
-                            style={{
-                              padding: "10px 12px",
-                              boxShadow: "0px 5px 18px lightgray",
-                              borderRadius: "15px",
-                              margin: "10px -10px",
-                              cursor: "pointer",
-                            }}
-                            onClick={(e) => {
-                              dispatch(
-                                setExpandedDevice({
-                                  lat: bodyItem.lat,
-                                  lng: bodyItem.lng,
-                                })
-                              );
-                            }}
-                          >
+          {matchedGroups
+            .filter((item: any) =>
+              item.items.some((bodyItem: any) =>
+                bodyItem.name.toLowerCase().includes(searchValue)
+              )
+            )
+            .map((item: any, index: any) => {
+              const gradientId = `gradient-${index}`; // Generate a unique gradient ID for each item
+              return (
+                <AccordionItem key={index}>
+                  {item.items.length > 0 && (
+                    <div
+                      style={{ backgroundColor: "gray", fontWeight: "bold" }}
+                    >
+                      <AccordionHeader
+                        targetId={`${searchValue.length >= 1 ? "all" : index}`}
+                        className="bg-light-primary"
+                      >
+                        <input
+                          type="checkbox"
+                          style={{
+                            marginRight: "10px",
+                            height: "22px",
+                            width: "22px",
+                          }}
+                          checked={item.checked}
+                          onClick={(e) => handleCheckboxClick(e, item)}
+                        />
+                        <span style={{ fontWeight: "bold" }}>
+                          {item.title} &nbsp; (
+                          {
+                            item.items.filter((bodyItem: any) =>
+                              bodyItem.name.toLowerCase().includes(searchValue)
+                            ).length
+                          }
+                          )
+                        </span>
+                        <FeatherIcons
+                          iconName={
+                            open == `${index}` ? "ChevronUp" : "ChevronDown"
+                          }
+                          className="svg-color"
+                        />
+                      </AccordionHeader>
+                    </div>
+                  )}
+                  {item.items.length > 0 && (
+                    <AccordionBody
+                      accordionId={`${searchValue.length >= 1 ? "all" : index}`}
+                    >
+                      {item.items
+                        .filter((bodyItem: any) =>
+                          bodyItem.name.toLowerCase().includes(searchValue)
+                        )
+                        .slice(0, itemsLength)
+                        .map((bodyItem: any, bodyindex: any) => {
+                          return (
                             <div
+                              key={bodyItem.id}
                               style={{
-                                display: "flex",
-                                justifyContent: "space-between",
+                                padding: "10px 12px",
+                                boxShadow: "0px 5px 18px lightgray",
+                                borderRadius: "15px",
+                                margin: "10px -10px",
+                                cursor: "pointer",
+                              }}
+                              onClick={(e) => {
+                                dispatch(
+                                  setExpandedDevice({
+                                    lat: bodyItem.lat,
+                                    lng: bodyItem.lng,
+                                  })
+                                );
                               }}
                             >
                               <div
                                 style={{
                                   display: "flex",
-                                  alignItems: "center",
+                                  justifyContent: "space-between",
                                 }}
                               >
-                                <label
-                                  style={{
-                                    display: "inline-block",
-                                    position: "relative",
-                                    cursor: "pointer",
-                                  }}
-                                  onClick={(e) => e.stopPropagation()}
-                                >
-                                  <input
-                                    type="checkbox"
-                                    name="key"
-                                    value="value"
-                                    checked={bodyItem.checked}
-                                    // checked={Devicess.some((item: any) => {
-                                    //   return item.id === bodyItem.id;
-                                    // })}
-                                    onChange={(e) => {
-                                      e.stopPropagation();
-                                      handleSelecetdDevices(
-                                        e,
-                                        item,
-                                        bodyItem,
-                                        bodyindex
-                                      );
-                                    }}
-                                    style={{ display: "none" }} // Hide the default checkbox
-                                  />
-                                  <span
-                                    onClick={(e) => e.stopPropagation()}
-                                    className={
-                                      bodyItem.icon_color === "green"
-                                        ? "green"
-                                        : bodyItem.time === "Expired"
-                                        ? "expired"
-                                        : bodyItem.icon_color === "blue" &&
-                                          bodyItem.time !== "Expired"
-                                        ? "black"
-                                        : bodyItem.online
-                                    }
-                                  ></span>
-                                </label>
-
                                 <div
                                   style={{
                                     display: "flex",
-                                    flexDirection: "column",
+                                    alignItems: "center",
                                   }}
                                 >
-                                  <span
-                                    style={{
-                                      fontWeight: "bold",
-                                      fontSize: "16px",
-                                    }}
-                                  >
-                                    {bodyItem.name}
-                                  </span>
-                                  <span style={{ fontSize: "12px" }}>
-                                    {formattedDate(bodyItem.timestamp)}
-                                  </span>
-                                </div>
-                              </div>
-
-                              <div
-                                style={{
-                                  marginBottom: "-10px",
-                                  marginRight: "20px",
-                                  display: "flex",
-                                }}
-                              >
-                                <svg
-                                  ref={svgRef}
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  viewBox="0 0 100 100" // Adjusted viewBox to minimize bottom height
-                                  width="58" // You may need to adjust the width accordingly
-                                  height="58" // Adjusted height
-                                >
-                                  {/* Add your speedometer graphics or customize as needed */}
-                                  {/* Half-circle shape */}
-                                  <path
-                                    d="M 10 50
-      A 40 40 0 0 1 90 50"
-                                    fill="none"
-                                    stroke="url(#gradient)" // Use a gradient for multicolor stroke
-                                    strokeWidth="10" // Increase stroke width for a thicker stroke
-                                  />
-                                  {/* Define gradient */}
-                                  <defs>
-                                    <linearGradient
-                                      id={`gradient${index}`} // Use unique gradient ID for each item
-                                      x1="0%"
-                                      y1="0%"
-                                      x2="100%"
-                                      y2="0%"
-                                    >
-                                      <stop offset="0%" stopColor="red" />
-                                      <stop offset="33%" stopColor="yellow" />
-                                      <stop offset="66%" stopColor="green" />
-                                    </linearGradient>
-                                  </defs>
-                                  {/* Speed points */}
-                                  {Array.from(Array(20).keys()).map(
-                                    (_, index) => {
-                                      const angle =
-                                        Math.PI / 1 - (index * Math.PI) / 15;
-                                      const x = 50 + Math.cos(angle) * 40;
-                                      const y = 50 - Math.sin(angle) * 40;
-                                      return (
-                                        <circle
-                                          key={index}
-                                          cx={x}
-                                          cy={y}
-                                          r="2"
-                                          fill="black"
-                                        />
-                                      );
-                                    }
-                                  )}
-                                  {/* Needle */}
-                                  <polygon
-                                    // points="50,50 55,30 50,20 45,30"
-                                    points="50,42 55,22 50,12 45,22"
-                                    fill={
-                                      bodyItem.engine_status ? "green" : "red"
-                                    } // Needle color
-                                  />
-                                  {/* Speed text */}
-                                  <text
-                                    x="50"
-                                    y="53"
-                                    textAnchor="middle"
-                                    dominantBaseline="middle"
-                                    fontSize="20"
-                                  >
-                                    {bodyItem.speed} kph
-                                  </text>
-                                </svg>
-                                <div>
-                                  <div
+                                  <label
                                     style={{
                                       display: "inline-block",
-                                      height: "40px",
-                                      width: "25px",
-                                      verticalAlign: "middle",
-                                      marginTop: "6px",
-                                      marginLeft: "15px",
+                                      position: "relative",
+                                      cursor: "pointer",
                                     }}
+                                    onClick={(e) => e.stopPropagation()}
                                   >
-                                    <img
-                                      src={
-                                        bodyItem.engine_status
-                                          ? greenKey
-                                          : redKey
+                                    <input
+                                      type="checkbox"
+                                      name="key"
+                                      value="value"
+                                      checked={bodyItem.checked}
+                                      // checked={Devicess.some((item: any) => {
+                                      //   return item.id === bodyItem.id;
+                                      // })}
+                                      onChange={(e) => {
+                                        e.stopPropagation();
+                                        handleSelecetdDevices(
+                                          e,
+                                          item,
+                                          bodyItem,
+                                          bodyindex
+                                        );
+                                      }}
+                                      style={{ display: "none" }} // Hide the default checkbox
+                                    />
+                                    <span
+                                      onClick={(e) => e.stopPropagation()}
+                                      className={
+                                        bodyItem.icon_color === "green"
+                                          ? "onlineDevice"
+                                          : bodyItem.time === "Expired"
+                                          ? "expired"
+                                          : bodyItem.icon_color === "blue" &&
+                                            bodyItem.time !== "Expired"
+                                          ? "black"
+                                          : bodyItem.online
                                       }
-                                      alt=""
-                                      height={30}
-                                      width={25}
-                                    />
-                                  </div>
+                                    ></span>
+                                  </label>
+
                                   <div
                                     style={{
-                                      display: "inline-block",
-                                      height: "40px",
-                                      width: "25px",
-                                      verticalAlign: "middle",
-                                      marginTop: "6px",
-                                      marginLeft: "15px",
+                                      display: "flex",
+                                      flexDirection: "column",
                                     }}
                                   >
-                                    <img
-                                      src={greenSatellite}
-                                      alt=""
-                                      height={30}
-                                      width={25}
+                                    <span
+                                      style={{
+                                        fontWeight: "bold",
+                                        fontSize: "16px",
+                                      }}
+                                    >
+                                      {bodyItem.name}
+                                    </span>
+                                    <span style={{ fontSize: "12px" }}>
+                                      {formattedDate(bodyItem.timestamp)}
+                                    </span>
+                                  </div>
+                                </div>
+
+                                <div
+                                  style={{
+                                    marginBottom: "-10px",
+                                    marginRight: "20px",
+                                    display: "flex",
+                                  }}
+                                >
+                                  <svg
+                                    ref={svgRef}
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    viewBox="0 0 100 100" // Adjusted viewBox to minimize bottom height
+                                    width="58" // You may need to adjust the width accordingly
+                                    height="58" // Adjusted height
+                                  >
+                                    <path
+                                      d="M 10 50
+A 40 40 0 0 1 90 50"
+                                      fill="none"
+                                      stroke="url(#gradient)" // Use a gradient for multicolor stroke
+                                      strokeWidth="10" // Increase stroke width for a thicker stroke
                                     />
+
+                                    <defs>
+                                      <linearGradient
+                                        id={`gradient${index}`} // Use unique gradient ID for each item
+                                        x1="0%"
+                                        y1="0%"
+                                        x2="100%"
+                                        y2="0%"
+                                      >
+                                        <stop offset="0%" stopColor="red" />
+                                        <stop offset="33%" stopColor="yellow" />
+                                        <stop offset="66%" stopColor="green" />
+                                      </linearGradient>
+                                    </defs>
+
+                                    {Array.from(Array(20).keys()).map(
+                                      (_, index) => {
+                                        const angle =
+                                          Math.PI / 1 - (index * Math.PI) / 15;
+                                        const x = 50 + Math.cos(angle) * 40;
+                                        const y = 50 - Math.sin(angle) * 40;
+                                        return (
+                                          <circle
+                                            key={index}
+                                            cx={x}
+                                            cy={y}
+                                            r="2"
+                                            fill="black"
+                                          />
+                                        );
+                                      }
+                                    )}
+                                    {/* Needle */}
+                                    <polygon
+                                      // points="50,50 55,30 50,20 45,30"
+                                      points="50,42 55,22 50,12 45,22"
+                                      fill={
+                                        bodyItem.engine_status ? "green" : "red"
+                                      } // Needle color
+                                    />
+                                    {/* Speed text */}
+                                    <text
+                                      x="50"
+                                      y="53"
+                                      textAnchor="middle"
+                                      dominantBaseline="middle"
+                                      fontSize="20"
+                                    >
+                                      {bodyItem.speed} kph
+                                    </text>
+                                  </svg>
+                                  <div>
+                                    <div
+                                      style={{
+                                        display: "inline-block",
+                                        height: "40px",
+                                        width: "25px",
+                                        verticalAlign: "middle",
+                                        marginTop: "6px",
+                                        marginLeft: "15px",
+                                      }}
+                                    >
+                                      <img
+                                        src={
+                                          bodyItem.engine_status
+                                            ? greenKey
+                                            : redKey
+                                        }
+                                        alt=""
+                                        height={30}
+                                        width={25}
+                                      />
+                                    </div>
+                                    <div
+                                      style={{
+                                        display: "inline-block",
+                                        height: "40px",
+                                        width: "25px",
+                                        verticalAlign: "middle",
+                                        marginTop: "6px",
+                                        marginLeft: "15px",
+                                      }}
+                                    >
+                                      <img
+                                        src={greenSatellite}
+                                        alt=""
+                                        height={30}
+                                        width={25}
+                                      />
+                                    </div>
                                   </div>
                                 </div>
                               </div>
                             </div>
-                          </div>
-                        );
-                      }
-                    })}
-                  {item.items.length >= 6 && (
-                    <div
-                      style={{
-                        display: "flex",
-                        color: "blue",
-                        fontSize: "16px",
-                        justifyContent: "end",
-                        cursor: "pointer",
-                      }}
-                      onClick={() => {
-                        if (
-                          item.items.length >= 6 &&
-                          itemsLength < item.items.length
-                        ) {
-                          setItemsLength(itemsLength + 5);
-                        }
-                      }}
-                    >
-                      {item.items.length >= 6 &&
-                        itemsLength < item.items.length &&
-                        "Show More"}
-                    </div>
+                          );
+                        })}
+                      {item.items.filter((bodyItem: any) =>
+                        bodyItem.name.toLowerCase().includes(searchValue)
+                      ).length >= 6 && (
+                        <div
+                          style={{
+                            display: "flex",
+                            color: "blue",
+                            fontSize: "16px",
+                            justifyContent: "end",
+                            cursor: "pointer",
+                          }}
+                          onClick={() => {
+                            if (
+                              item.items.length >= 6 &&
+                              itemsLength < item.items.length
+                            ) {
+                              setItemsLength(itemsLength + 5);
+                            }
+                          }}
+                        >
+                          {item.items.length >= 6 &&
+                            itemsLength < item.items.length &&
+                            "Show More"}
+                        </div>
+                      )}
+                    </AccordionBody>
                   )}
-                </AccordionBody>
-              </AccordionItem>
-            );
-          })}
+                </AccordionItem>
+              );
+            })}
         </Accordion>
       )}
     </>

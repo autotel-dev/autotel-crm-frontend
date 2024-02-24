@@ -72,6 +72,21 @@ const MonitoringSidebar = () => {
             cursor: "pointer",
           }}
           onClick={() => {
+
+            // const filteredDevices = devices.flatMap(item => {
+            //   // Iterate over each item in the items array
+            //   return item.items.filter(bodyItem => bodyItem.icon_color === "green");
+            // });
+            
+            // console.log(filteredDevices);
+            
+            // -----------------------------------
+
+            // const filteredDevices = devices.map(item => 
+            //   item.items.filter(bodyItem => bodyItem.icon_color === "green")
+            // ).flat();
+            
+            // console.log(filteredDevices);
             const array =
               devicesStatuses.find(
                 (item: any, index: any) => item.online === "online"

@@ -48,9 +48,11 @@ const SecuritySettings = () => {
         <CardBody>
           <Row>
             <Col
-              lg={4}
-              md={4}
-              // xs={12}
+              xl={6}
+              lg={6}
+              md={6}
+              sm={6}
+              xs={12}
               style={{ display: "flex", justifyContent: "space-between" }}
             >
               <H3>OTP Enabled</H3>
