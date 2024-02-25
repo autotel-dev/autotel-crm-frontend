@@ -20,7 +20,11 @@ import redKey from "../../../../../../assets/key-red.png";
 import greenSatellite from "../../../../../../assets/satellite-green.png";
 import redSatellite from "../../../../../../assets/satellite-green.png";
 
-const DevicesTreeViewAccordian = () => {
+interface PropTypes {
+  statusDevices: String;
+}
+
+const DevicesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
   const svgRef = useRef(null);
 
   const [itemsLength, setItemsLength] = useState(6);
@@ -263,6 +267,19 @@ const DevicesTreeViewAccordian = () => {
           {matchedGroups
             .filter((item: any) =>
               item.items.some((bodyItem: any) =>
+                statusDevices == "Expired"
+                  ? bodyItem.time == statusDevices
+                  : statusDevices == "Not Connecetd"
+                  ? bodyItem.time == null ||
+                    bodyItem.time === "" ||
+                    bodyItem.time === undefined
+                  : statusDevices == ""
+                  ? bodyItem.online == bodyItem.online
+                  : bodyItem.online == statusDevices
+              )
+            )
+            .filter((item: any) =>
+              item.items.some((bodyItem: any) =>
                 bodyItem.name.toLowerCase().includes(searchValue)
               )
             )
@@ -291,9 +308,23 @@ const DevicesTreeViewAccordian = () => {
                         <span style={{ fontWeight: "bold" }}>
                           {item.title} &nbsp; (
                           {
-                            item.items.filter((bodyItem: any) =>
-                              bodyItem.name.toLowerCase().includes(searchValue)
-                            ).length
+                            item.items
+                              .filter((bodyItem: any) =>
+                                statusDevices == "Expired"
+                                  ? bodyItem.time == statusDevices
+                                  : statusDevices == "Not Connecetd"
+                                  ? bodyItem.time == null ||
+                                    bodyItem.time === "" ||
+                                    bodyItem.time === undefined
+                                  : statusDevices == ""
+                                  ? bodyItem.online == bodyItem.online
+                                  : bodyItem.online == statusDevices
+                              )
+                              .filter((bodyItem: any) =>
+                                bodyItem.name
+                                  .toLowerCase()
+                                  .includes(searchValue)
+                              ).length
                           }
                           )
                         </span>
@@ -311,6 +342,17 @@ const DevicesTreeViewAccordian = () => {
                       accordionId={`${searchValue.length >= 1 ? "all" : index}`}
                     >
                       {item.items
+                        .filter((bodyItem: any) =>
+                          statusDevices == "Expired"
+                            ? bodyItem.time == statusDevices
+                            : statusDevices == "Not Connecetd"
+                            ? bodyItem.time == null ||
+                              bodyItem.time === "" ||
+                              bodyItem.time === undefined
+                            : statusDevices == ""
+                            ? bodyItem.online == bodyItem.online
+                            : bodyItem.online == statusDevices
+                        )
                         .filter((bodyItem: any) =>
                           bodyItem.name.toLowerCase().includes(searchValue)
                         )
@@ -464,11 +506,13 @@ A 40 40 0 0 1 90 50"
                                     )}
                                     {/* Needle */}
                                     <polygon
-                                      // points="50,50 55,30 50,20 45,30"
-                                      points="50,42 55,22 50,12 45,22"
+                                     points="50,42 55,22 50,12 45,22"
+                                    //  points="50,42 55,42 55,12 50,12 45"
                                       fill={
                                         bodyItem.engine_status ? "green" : "red"
                                       } // Needle color
+                                      // transform={`translate(0, 0) rotate(${bodyItem.speed}
+                                      // , 50, 50)`}
                                     />
                                     {/* Speed text */}
                                     <text
@@ -526,9 +570,21 @@ A 40 40 0 0 1 90 50"
                             </div>
                           );
                         })}
-                      {item.items.filter((bodyItem: any) =>
-                        bodyItem.name.toLowerCase().includes(searchValue)
-                      ).length >= 6 && (
+                      {item.items
+                        .filter((bodyItem: any) =>
+                          statusDevices == "Expired"
+                            ? bodyItem.time == statusDevices
+                            : statusDevices == "Not Connecetd"
+                            ? bodyItem.time == null ||
+                              bodyItem.time === "" ||
+                              bodyItem.time === undefined
+                            : statusDevices == ""
+                            ? bodyItem.online == bodyItem.online
+                            : bodyItem.online == statusDevices
+                        )
+                        .filter((bodyItem: any) =>
+                          bodyItem.name.toLowerCase().includes(searchValue)
+                        ).length >= 6 && (
                         <div
                           style={{
                             display: "flex",

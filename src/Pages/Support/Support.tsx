@@ -30,6 +30,7 @@ const Support = () => {
         if (data !== undefined) {
           if (!data.success) {
             dispatch(setBugReports([]));
+            setReportsLoading(true);
           }
           if (data.success) {
             console.log("hhg");
@@ -43,6 +44,9 @@ const Support = () => {
     getAll({ url: "support/bug-report/get-statistics" }).then((data: any) => {
       console.log("api call --- >", data);
       if (data !== undefined) {
+        if (!data.success) {
+          setStatisticsLoading(false);
+        }
         if (data.success) {
           console.log("hhg");
           setStatisticsLoading(false);
@@ -74,7 +78,6 @@ const Support = () => {
         console.log("api call --- >", data);
         if (data !== undefined) {
           if (data.success) {
-            setReportsLoading(false);
             console.log("hhg");
             dispatch(
               setPriorityStatuses(data.data.bugReportPriortyStatusTypes)
@@ -83,20 +86,15 @@ const Support = () => {
         }
       }
     );
-    getAll({ url: "support/bug-report/get-status-types" }).then(
-      (data: any) => {
-        console.log("api call --- >", data);
-        if (data !== undefined) {
-          if (data.success) {
-            setReportsLoading(false);
-            console.log("hhg");
-            dispatch(
-              setStatuses(data.data.bugReportStatusTypes)
-            );
-          }
+    getAll({ url: "support/bug-report/get-status-types" }).then((data: any) => {
+      console.log("api call --- >", data);
+      if (data !== undefined) {
+        if (data.success) {
+          console.log("hhg");
+          dispatch(setStatuses(data.data.bugReportStatusTypes));
         }
       }
-    );
+    });
   }, []);
   return (
     <>
@@ -109,11 +107,31 @@ const Support = () => {
                 title=""
                 subTitle={[{ text: "List of supports opened by customers" }]}
               />
-              {!statisticsloading &&
-              !reportsLoading &&
-              supportStatistics !== null ? (
+              {!statisticsloading && !reportsLoading ? (
                 <CardBody>
-                  <SupportList />
+                  {supportStatistics === null ? (
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "center",
+                        height: "15vh",
+                        backgroundColor: "white",
+                        alignItems: "center",
+                      }}
+                    >
+                      <div
+                        style={{
+                          textAlign: "center",
+                          fontSize: "25px",
+                          fontWeight: "bold",
+                        }}
+                      >
+                        No Statistics Foound
+                      </div>
+                    </div>
+                  ) : (
+                    <SupportList />
+                  )}
                   <SupportTable />
                 </CardBody>
               ) : (

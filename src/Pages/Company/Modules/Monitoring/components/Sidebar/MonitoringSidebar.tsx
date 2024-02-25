@@ -14,6 +14,7 @@ const MonitoringSidebar = () => {
   const initialGroupDevices: any = [];
 
   const [groupdevices, setgroupdevices]: any = useState([]);
+  const [statusDevices, setStatusDevices] = useState<String>("");
 
   //------------------------------------------------------
   const { devicesStatuses, serverDevices } = useSelector(
@@ -72,53 +73,53 @@ const MonitoringSidebar = () => {
             cursor: "pointer",
           }}
           onClick={() => {
-
             // const filteredDevices = devices.flatMap(item => {
             //   // Iterate over each item in the items array
             //   return item.items.filter(bodyItem => bodyItem.icon_color === "green");
             // });
-            
+
             // console.log(filteredDevices);
-            
+
             // -----------------------------------
 
-            // const filteredDevices = devices.map(item => 
+            // const filteredDevices = devices.map(item =>
             //   item.items.filter(bodyItem => bodyItem.icon_color === "green")
             // ).flat();
-            
+
             // console.log(filteredDevices);
-            const array =
-              devicesStatuses.find(
-                (item: any, index: any) => item.online === "online"
-              ) &&
-              devicesStatuses.find(
-                (item: any, index: any) => item.online === "online"
-              ).items;
-            for (let i = 0; i < array.length; i++) {
-              const element = array[i].title;
-              if (!groups.includes(element)) {
-                groups.push(element);
-              }
-            }
-            groups.forEach((title: any) => {
-              groupDevicesObj[title] = array.filter(
-                (obj: any) => obj.title === title
-              );
-            });
+            setStatusDevices("online");
+            // const array =
+            //   devicesStatuses.find(
+            //     (item: any, index: any) => item.online === "online"
+            //   ) &&
+            //   devicesStatuses.find(
+            //     (item: any, index: any) => item.online === "online"
+            //   ).items;
+            // for (let i = 0; i < array.length; i++) {
+            //   const element = array[i].title;
+            //   if (!groups.includes(element)) {
+            //     groups.push(element);
+            //   }
+            // }
+            // groups.forEach((title: any) => {
+            //   groupDevicesObj[title] = array.filter(
+            //     (obj: any) => obj.title === title
+            //   );
+            // });
 
-            // Convert groupDevicesObj to initialGroupDevices array format
-            Object.keys(groupDevicesObj).forEach((title: any) => {
-              initialGroupDevices.push({
-                title,
-                items: groupDevicesObj[title],
-              });
-            });
+            // // Convert groupDevicesObj to initialGroupDevices array format
+            // Object.keys(groupDevicesObj).forEach((title: any) => {
+            //   initialGroupDevices.push({
+            //     title,
+            //     items: groupDevicesObj[title],
+            //   });
+            // });
 
-            // Update state with initialGroupDevices
-            setgroupdevices(initialGroupDevices);
-            console.log("groups", groups);
-            console.log("groupDevices", groupdevices);
-            dispatch(setDevices(initialGroupDevices));
+            // // Update state with initialGroupDevices
+            // setgroupdevices(initialGroupDevices);
+            // console.log("groups", groups);
+            // console.log("groupDevices", groupdevices);
+            // dispatch(setDevices(initialGroupDevices));
           }}
         >
           {devicesStatuses.find((item: any) => item.online === "online") &&
@@ -146,38 +147,39 @@ const MonitoringSidebar = () => {
             cursor: "pointer",
           }}
           onClick={() => {
-            const array =
-              devicesStatuses.find(
-                (item: any, index: any) => item.online === "engine"
-              ) &&
-              devicesStatuses.find(
-                (item: any, index: any) => item.online === "engine"
-              ).items;
-            for (let i = 0; i < array.length; i++) {
-              const element = array[i].title;
-              if (!groups.includes(element)) {
-                groups.push(element);
-              }
-            }
-            groups.forEach((title: any) => {
-              groupDevicesObj[title] = array.filter(
-                (obj: any) => obj.title === title
-              );
-            });
+            setStatusDevices("engine");
+            // const array =
+            //   devicesStatuses.find(
+            //     (item: any, index: any) => item.online === "engine"
+            //   ) &&
+            //   devicesStatuses.find(
+            //     (item: any, index: any) => item.online === "engine"
+            //   ).items;
+            // for (let i = 0; i < array.length; i++) {
+            //   const element = array[i].title;
+            //   if (!groups.includes(element)) {
+            //     groups.push(element);
+            //   }
+            // }
+            // groups.forEach((title: any) => {
+            //   groupDevicesObj[title] = array.filter(
+            //     (obj: any) => obj.title === title
+            //   );
+            // });
 
-            // Convert groupDevicesObj to initialGroupDevices array format
-            Object.keys(groupDevicesObj).forEach((title: any) => {
-              initialGroupDevices.push({
-                title,
-                items: groupDevicesObj[title],
-              });
-            });
+            // // Convert groupDevicesObj to initialGroupDevices array format
+            // Object.keys(groupDevicesObj).forEach((title: any) => {
+            //   initialGroupDevices.push({
+            //     title,
+            //     items: groupDevicesObj[title],
+            //   });
+            // });
 
-            // Update state with initialGroupDevices
-            setgroupdevices(initialGroupDevices);
-            console.log("groups", groups);
-            console.log("groupDevices", groupdevices);
-            dispatch(setDevices(initialGroupDevices));
+            // // Update state with initialGroupDevices
+            // setgroupdevices(initialGroupDevices);
+            // console.log("groups", groups);
+            // console.log("groupDevices", groupdevices);
+            // dispatch(setDevices(initialGroupDevices));
           }}
         >
           {devicesStatuses.find((item: any) => item.online === "engine") &&
@@ -205,38 +207,39 @@ const MonitoringSidebar = () => {
             cursor: "pointer",
           }}
           onClick={() => {
-            const array =
-              devicesStatuses.find(
-                (item: any, index: any) => item.online === "ack"
-              ) &&
-              devicesStatuses.find(
-                (item: any, index: any) => item.online === "ack"
-              ).items;
-            for (let i = 0; i < array.length; i++) {
-              const element = array[i].title;
-              if (!groups.includes(element)) {
-                groups.push(element);
-              }
-            }
-            groups.forEach((title: any) => {
-              groupDevicesObj[title] = array.filter(
-                (obj: any) => obj.title === title
-              );
-            });
+            setStatusDevices("ack");
+            // const array =
+            //   devicesStatuses.find(
+            //     (item: any, index: any) => item.online === "ack"
+            //   ) &&
+            //   devicesStatuses.find(
+            //     (item: any, index: any) => item.online === "ack"
+            //   ).items;
+            // for (let i = 0; i < array.length; i++) {
+            //   const element = array[i].title;
+            //   if (!groups.includes(element)) {
+            //     groups.push(element);
+            //   }
+            // }
+            // groups.forEach((title: any) => {
+            //   groupDevicesObj[title] = array.filter(
+            //     (obj: any) => obj.title === title
+            //   );
+            // });
 
-            // Convert groupDevicesObj to initialGroupDevices array format
-            Object.keys(groupDevicesObj).forEach((title: any) => {
-              initialGroupDevices.push({
-                title,
-                items: groupDevicesObj[title],
-              });
-            });
+            // // Convert groupDevicesObj to initialGroupDevices array format
+            // Object.keys(groupDevicesObj).forEach((title: any) => {
+            //   initialGroupDevices.push({
+            //     title,
+            //     items: groupDevicesObj[title],
+            //   });
+            // });
 
-            // Update state with initialGroupDevices
-            setgroupdevices(initialGroupDevices);
-            console.log("groups", groups);
-            console.log("groupDevices", groupdevices);
-            dispatch(setDevices(initialGroupDevices));
+            // // Update state with initialGroupDevices
+            // setgroupdevices(initialGroupDevices);
+            // console.log("groups", groups);
+            // console.log("groupDevices", groupdevices);
+            // dispatch(setDevices(initialGroupDevices));
           }}
         >
           {devicesStatuses.find((item: any) => item.online === "ack") && "Stop"}
@@ -263,38 +266,39 @@ const MonitoringSidebar = () => {
             cursor: "pointer",
           }}
           onClick={() => {
-            const array =
-              devicesStatuses.find(
-                (item: any, index: any) => item.online === "offline"
-              ) &&
-              devicesStatuses.find(
-                (item: any, index: any) => item.online === "offline"
-              ).items;
-            for (let i = 0; i < array.length; i++) {
-              const element = array[i].title;
-              if (!groups.includes(element)) {
-                groups.push(element);
-              }
-            }
-            groups.forEach((title: any) => {
-              groupDevicesObj[title] = array.filter(
-                (obj: any) => obj.title === title
-              );
-            });
+            setStatusDevices("offline");
+            // const array =
+            //   devicesStatuses.find(
+            //     (item: any, index: any) => item.online === "offline"
+            //   ) &&
+            //   devicesStatuses.find(
+            //     (item: any, index: any) => item.online === "offline"
+            //   ).items;
+            // for (let i = 0; i < array.length; i++) {
+            //   const element = array[i].title;
+            //   if (!groups.includes(element)) {
+            //     groups.push(element);
+            //   }
+            // }
+            // groups.forEach((title: any) => {
+            //   groupDevicesObj[title] = array.filter(
+            //     (obj: any) => obj.title === title
+            //   );
+            // });
 
-            // Convert groupDevicesObj to initialGroupDevices array format
-            Object.keys(groupDevicesObj).forEach((title: any) => {
-              initialGroupDevices.push({
-                title,
-                items: groupDevicesObj[title],
-              });
-            });
+            // // Convert groupDevicesObj to initialGroupDevices array format
+            // Object.keys(groupDevicesObj).forEach((title: any) => {
+            //   initialGroupDevices.push({
+            //     title,
+            //     items: groupDevicesObj[title],
+            //   });
+            // });
 
-            // Update state with initialGroupDevices
-            setgroupdevices(initialGroupDevices);
-            console.log("groups", groups);
-            console.log("groupDevices", groupdevices);
-            dispatch(setDevices(initialGroupDevices));
+            // // Update state with initialGroupDevices
+            // setgroupdevices(initialGroupDevices);
+            // console.log("groups", groups);
+            // console.log("groupDevices", groupdevices);
+            // dispatch(setDevices(initialGroupDevices));
           }}
         >
           {devicesStatuses.find((item: any) => item.online === "offline") &&
@@ -322,38 +326,39 @@ const MonitoringSidebar = () => {
             cursor: "pointer",
           }}
           onClick={() => {
-            const array =
-              devicesStatuses.find(
-                (item: any, index: any) => item.online === "Expired"
-              ) &&
-              devicesStatuses.find(
-                (item: any, index: any) => item.online === "Expired"
-              ).items;
-            for (let i = 0; i < array.length; i++) {
-              const element = array[i].title;
-              if (!groups.includes(element)) {
-                groups.push(element);
-              }
-            }
-            groups.forEach((title: any) => {
-              groupDevicesObj[title] = array.filter(
-                (obj: any) => obj.title === title
-              );
-            });
+            setStatusDevices("Expired");
+            // const array =
+            //   devicesStatuses.find(
+            //     (item: any, index: any) => item.online === "Expired"
+            //   ) &&
+            //   devicesStatuses.find(
+            //     (item: any, index: any) => item.online === "Expired"
+            //   ).items;
+            // for (let i = 0; i < array.length; i++) {
+            //   const element = array[i].title;
+            //   if (!groups.includes(element)) {
+            //     groups.push(element);
+            //   }
+            // }
+            // groups.forEach((title: any) => {
+            //   groupDevicesObj[title] = array.filter(
+            //     (obj: any) => obj.title === title
+            //   );
+            // });
 
-            // Convert groupDevicesObj to initialGroupDevices array format
-            Object.keys(groupDevicesObj).forEach((title: any) => {
-              initialGroupDevices.push({
-                title,
-                items: groupDevicesObj[title],
-              });
-            });
+            // // Convert groupDevicesObj to initialGroupDevices array format
+            // Object.keys(groupDevicesObj).forEach((title: any) => {
+            //   initialGroupDevices.push({
+            //     title,
+            //     items: groupDevicesObj[title],
+            //   });
+            // });
 
-            // Update state with initialGroupDevices
-            setgroupdevices(initialGroupDevices);
-            console.log("groups", groups);
-            console.log("groupDevices", groupdevices);
-            dispatch(setDevices(initialGroupDevices));
+            // // Update state with initialGroupDevices
+            // setgroupdevices(initialGroupDevices);
+            // console.log("groups", groups);
+            // console.log("groupDevices", groupdevices);
+            // dispatch(setDevices(initialGroupDevices));
           }}
         >
           {devicesStatuses.find((item: any) => item.online === "Expired") &&
@@ -381,40 +386,41 @@ const MonitoringSidebar = () => {
             cursor: "pointer",
           }}
           onClick={() => {
-            const array =
-              devicesStatuses.find(
-                (item: any, index: any) => item.online === "Not Connected"
-              ) &&
-              devicesStatuses.find(
-                (item: any, index: any) => item.online === "Not Connected"
-              ).items;
-            if (array.length > 0) {
-              for (let i = 0; i < array.length; i++) {
-                const element = array[i].title;
-                if (!groups.includes(element)) {
-                  groups.push(element);
-                }
-              }
-              groups.forEach((title: any) => {
-                groupDevicesObj[title] = array.filter(
-                  (obj: any) => obj.title === title
-                );
-              });
+            setStatusDevices("Not Connected");
+            // const array =
+            //   devicesStatuses.find(
+            //     (item: any, index: any) => item.online === "Not Connected"
+            //   ) &&
+            //   devicesStatuses.find(
+            //     (item: any, index: any) => item.online === "Not Connected"
+            //   ).items;
+            // if (array.length > 0) {
+            //   for (let i = 0; i < array.length; i++) {
+            //     const element = array[i].title;
+            //     if (!groups.includes(element)) {
+            //       groups.push(element);
+            //     }
+            //   }
+            //   groups.forEach((title: any) => {
+            //     groupDevicesObj[title] = array.filter(
+            //       (obj: any) => obj.title === title
+            //     );
+            //   });
 
-              // Convert groupDevicesObj to initialGroupDevices array format
-              Object.keys(groupDevicesObj).forEach((title: any) => {
-                initialGroupDevices.push({
-                  title,
-                  items: groupDevicesObj[title],
-                });
-              });
+            //   // Convert groupDevicesObj to initialGroupDevices array format
+            //   Object.keys(groupDevicesObj).forEach((title: any) => {
+            //     initialGroupDevices.push({
+            //       title,
+            //       items: groupDevicesObj[title],
+            //     });
+            //   });
 
-              // Update state with initialGroupDevices
-              setgroupdevices(initialGroupDevices);
-              console.log("groups", groups);
-              console.log("groupDevices", groupdevices);
-              dispatch(setDevices(initialGroupDevices));
-            }
+            //   // Update state with initialGroupDevices
+            //   setgroupdevices(initialGroupDevices);
+            //   console.log("groups", groups);
+            //   console.log("groupDevices", groupdevices);
+            //   dispatch(setDevices(initialGroupDevices));
+            // }
           }}
         >
           {devicesStatuses.find(
@@ -443,32 +449,33 @@ const MonitoringSidebar = () => {
             cursor: "pointer",
           }}
           onClick={() => {
-            const array = serverDevices;
-            for (let i = 0; i < array.length; i++) {
-              const element = array[i].title;
-              if (!groups.includes(element)) {
-                groups.push(element);
-              }
-            }
-            groups.forEach((title: any) => {
-              groupDevicesObj[title] = array.filter(
-                (obj: any) => obj.title === title
-              );
-            });
+            setStatusDevices("");
+            // const array = serverDevices;
+            // for (let i = 0; i < array.length; i++) {
+            //   const element = array[i].title;
+            //   if (!groups.includes(element)) {
+            //     groups.push(element);
+            //   }
+            // }
+            // groups.forEach((title: any) => {
+            //   groupDevicesObj[title] = array.filter(
+            //     (obj: any) => obj.title === title
+            //   );
+            // });
 
-            // Convert groupDevicesObj to initialGroupDevices array format
-            Object.keys(groupDevicesObj).forEach((title: any) => {
-              initialGroupDevices.push({
-                title,
-                items: groupDevicesObj[title],
-              });
-            });
+            // // Convert groupDevicesObj to initialGroupDevices array format
+            // Object.keys(groupDevicesObj).forEach((title: any) => {
+            //   initialGroupDevices.push({
+            //     title,
+            //     items: groupDevicesObj[title],
+            //   });
+            // });
 
-            // Update state with initialGroupDevices
-            setgroupdevices(initialGroupDevices);
-            console.log("groups", groups);
-            console.log("groupDevices", groupdevices);
-            dispatch(setDevices(initialGroupDevices));
+            // // Update state with initialGroupDevices
+            // setgroupdevices(initialGroupDevices);
+            // console.log("groups", groups);
+            // console.log("groupDevices", groupdevices);
+            // dispatch(setDevices(initialGroupDevices));
           }}
         >
           Total &nbsp;=&nbsp; {serverDevices.length}
@@ -486,7 +493,9 @@ const MonitoringSidebar = () => {
         }}
       >
         {/* <DevicesTreeViewAccordian /> */}
-        {collapsedWidth !== "0px" && <DevicesTreeViewAccordian />}
+        {collapsedWidth !== "0px" && (
+          <DevicesTreeViewAccordian statusDevices={statusDevices} />
+        )}
       </div>
     </div>
   );

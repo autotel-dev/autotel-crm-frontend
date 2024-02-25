@@ -42,6 +42,10 @@ const UserEdit = () => {
       if (data !== undefined) {
         if (data.success) {
           setUserDataLoading(false);
+          if (getUserRole() === "SUPER_ADMIN") {
+            setServerPermissionsLoading(false);
+          }
+
           dispatch(setUserData(data.data.user));
         }
       }
