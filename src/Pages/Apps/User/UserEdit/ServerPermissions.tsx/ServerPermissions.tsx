@@ -25,7 +25,18 @@ const ServerPermissions = () => {
           headClass="card-title mb-0 pb-0"
         />
         <CardBody>
-          <Row>
+          <Row
+            style={{
+              overflowY: "auto",
+              maxHeight: "50vh", // Subtract scrollbar width from max height
+              WebkitOverflowScrolling: "touch", // Enable momentum scrolling on iOS
+              scrollbarWidth: "thin", // Specify scrollbar width
+              WebkitBorderRadius: "5px !important", // For WebKit browsers (Chrome, Safari)
+              MozBorderRadius: "5px !important", // For Mozilla Firefox
+              borderRadius: "5px !important", // For other browsers
+              scrollbarColor: "lightgray transparent", // Specify scrollbar color
+            }}
+          >
             {/* {Object.keys(server.userPermissions).map(
               (key, index) => (
                 <div key={index}>
@@ -49,16 +60,16 @@ const ServerPermissions = () => {
                     <Row>
                       <Col
                         key={index}
-                        xl={9}
-                        lg={9}
-                        md={9}
-                        sm={9}
+                        xl={8}
+                        lg={8}
+                        md={8}
+                        sm={8}
                         xs={12}
                         // xs={12}
                         style={{
                           display: "flex",
                           justifyContent: "space-between",
-                          alignItems:"center"
+                          alignItems: "center",
                         }}
                       >
                         <span style={{ fontSize: "17px", margin: "15px 0px" }}>

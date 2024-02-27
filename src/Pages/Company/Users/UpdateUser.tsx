@@ -47,8 +47,8 @@ const UpdateUser: React.FC<PropsTypes> = ({
 
   // setValue
 }) => {
-  console.log("id",id);
-  
+  console.log("id", id);
+
   const [decodedToken, setDecodedToken]: any = useState(null);
   const authToken = localStorage.getItem("token");
   useEffect(() => {
@@ -92,7 +92,6 @@ const UpdateUser: React.FC<PropsTypes> = ({
       const operator = {
         name: data.name,
         emailAddress: data.emailAddress,
-        password: data.password,
         phoneNo: data.phoneNo,
         isActive: isActive,
         company: decodedToken.userId,
@@ -205,17 +204,7 @@ const UpdateUser: React.FC<PropsTypes> = ({
                 {errors.emailAddress && "Email Address is required"}
               </span>
             </FormGroup>
-            <FormGroup className="col-md-12 create-group">
-              <Label>Password</Label>
-              <input
-                className="form-control"
-                type="text"
-                {...register("password", { required: true })}
-              />
-              <span style={{ color: "red" }}>
-                {errors.emailAddress && "Password is required"}
-              </span>
-            </FormGroup>
+
             <FormGroup className="col-md-12 create-group">
               <Label>Phone Number</Label>
               <input

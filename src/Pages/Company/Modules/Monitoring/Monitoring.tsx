@@ -46,6 +46,7 @@ const Monitoring = () => {
     getAll({ url: "company/devices" }).then((data: any) => {
       console.log("data", data);
       if (data == undefined) {
+        setUndefinedData(true);
         setLoading(false);
         Swal.fire({
           text: "Failed to Fetch",
@@ -56,6 +57,7 @@ const Monitoring = () => {
       }
       if (data !== undefined) {
         if (data.success) {
+          setUndefinedData(false);
           console.log("api call --- >", data);
           console.log("length --- >", data.data.length);
 
@@ -164,10 +166,30 @@ const Monitoring = () => {
       }
     });
   };
-
+  const [undefinedData, setUndefinedData] = useState<any>(false);
   return (
     <>
-      {!loading ? (
+      {undefinedData ? (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            height: "80vh",
+            backgroundColor: "white",
+            alignItems: "center",
+          }}
+        >
+          <div
+            style={{
+              textAlign: "center",
+              fontSize: "25px",
+              fontWeight: "bold",
+            }}
+          >
+            No Data Found
+          </div>
+        </div>
+      ) : !loading ? (
         devices.length > 0 && (
           <div
             style={{

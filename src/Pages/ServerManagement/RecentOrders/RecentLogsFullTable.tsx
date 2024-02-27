@@ -63,7 +63,11 @@ const RecentLogsFullTable = () => {
                             .toString()}
                         </td>
                         <td className={`txt-primary`}>{data.activity}</td>
-                        <td>{data.user.fullName}</td>
+                        <td>
+                          {data.user?.fullName == null
+                            ? "N/A"
+                            : data.user?.fullName}
+                        </td>
                         <td>{data.role}</td>
                       </tr>
                     );

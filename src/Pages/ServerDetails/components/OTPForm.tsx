@@ -6,7 +6,7 @@ import OTPInput from "react-otp-input";
 import { H1, H4 } from "../../../AbstractElements";
 import axios from "axios";
 import Swal from "sweetalert2";
-import header from "../../../Api/header";
+import {header} from "../../../Api/header";
 import ChangePasswordForm from "./ChangePasswordForm";
 // import OTPInput, { ResendOTP } from "otp-input-react";
 
@@ -67,7 +67,7 @@ const OTPForm = ({ toggle }: propsType) => {
           `http://124.29.238.127:8080/api/v1/server-management/verify-otp`,
           otpData,
           {
-            headers: header,
+            headers: header(),
           }
         );
         setLoading(false);
@@ -96,7 +96,7 @@ const OTPForm = ({ toggle }: propsType) => {
         `http://124.29.238.127:8080/api/v1/server-management/send-otp`,
         {
           method: "POST",
-          headers: header,
+          headers: header(),
         }
       );
       const result = await response.json();

@@ -766,10 +766,16 @@ const routes = [
     Component: <CompanyUsers />,
   },
 
-  // Support
-  {
+  // // Support
+  // {
+  //   path: `${process.env.PUBLIC_URL}/company/support`,
+  //   Component: <CompanySupport />,
+  // },
+
+   // Support
+   {
     path: `${process.env.PUBLIC_URL}/company/support`,
-    Component: <CompanySupport />,
+    Component: <Support />,
   },
   // Tasks
   {

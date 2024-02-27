@@ -54,7 +54,7 @@ const ServerManagement = () => {
 
         <ServerHealthStatistics />
         <RecentLogs />
-        <NewProduct />
+        {/* <NewProduct /> */}
       </Row>
     </Container>
   );

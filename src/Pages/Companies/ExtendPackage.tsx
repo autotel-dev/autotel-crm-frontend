@@ -24,7 +24,7 @@ import {
   setFilterCompanies,
 } from "../../ReaduxToolkit/Reducer/CompanySlice";
 import Swal from "sweetalert2";
-import header from "../../Api/header";
+import {header} from "../../Api/header";
 import axios from "axios";
 
 interface PropsTypes {
@@ -96,7 +96,7 @@ const ExtendPackage: React.FC<PropsTypes> = ({
         `http://124.29.238.127:8080/api/v1/super-admin/extend-company-package/${companyId}`,
         extendedDays,
         {
-          headers: header,
+          headers: header(),
         }
       );
 

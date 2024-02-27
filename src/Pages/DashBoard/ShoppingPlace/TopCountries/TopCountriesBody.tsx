@@ -2,7 +2,7 @@ import { H5, H6, Image, LI, UL } from "../../../../AbstractElements";
 import { dynamicImage } from "../../../../Service";
 import { topCountriesData } from "../../../../Data/Dashboard/ShoppingPlace/TopCountries";
 import { Col } from "reactstrap";
-import { GoogleMap, useJsApiLoader } from "@react-google-maps/api";
+import { GoogleMap, useJsApiLoader, Marker } from "@react-google-maps/api";
 const containerStyle = {
   height: "200px",
 };
@@ -27,7 +27,9 @@ const TopCountriesBody = () => {
           >
             <Image src={dynamicImage(`dashboard/${data.img}.jpg`)} alt="" />
             <div className="Countries">
-              <span className={`rounded-pill badge-${data.countrybadge}`}></span>
+              <span
+                className={`rounded-pill badge-${data.countrybadge}`}
+              ></span>
               <H5>{data.country}</H5>
               <H6 className="mt-1 mb-0">{data.percentage}</H6>
             </div>
@@ -54,3 +56,8 @@ const TopCountriesBody = () => {
 };
 
 export default TopCountriesBody;
+
+// AIzaSyBkNaAGLEVq0YLQMi-PYEMabFeREadYe1Q
+//  {/* Marker with rotation of 60 degrees */}
+{/* <Marker position={center} />
+</GoogleMap> */}

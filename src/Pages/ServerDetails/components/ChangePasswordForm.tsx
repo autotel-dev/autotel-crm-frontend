@@ -1,7 +1,7 @@
 import { Button, Col, Form, Input, Label, Row } from "reactstrap";
 import { Checkmeout, Email, Password, Signin } from "../../../utils/Constant";
 import { useState } from "react";
-import header from "../../../Api/header";
+import {header} from "../../../Api/header";
 import Swal from "sweetalert2";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
@@ -70,7 +70,7 @@ const ChangePasswordForm = ({ toggle }: propsType) => {
           updatedPassword: password,
         },
         {
-          headers: header,
+          headers: header(),
         }
       );
 

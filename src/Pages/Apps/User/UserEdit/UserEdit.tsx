@@ -7,7 +7,7 @@ import AddProjectsAndUpload from "./AddProjectsAndUpload/AddProjectsAndUpload";
 import SecuritySettings from "./SecuritySettings/SecuritySettings";
 import ServerPermissions from "./ServerPermissions.tsx/ServerPermissions";
 import { useEffect, useState } from "react";
-import { getAll } from "../../../../Api";
+import { getAll, getImage } from "../../../../Api";
 import { useDispatch } from "react-redux";
 import {
   setServerPermissions,
@@ -15,12 +15,17 @@ import {
 } from "../../../../ReaduxToolkit/Reducer/UserSlice";
 import Loader from "../../../Loader/Loader";
 import { getUserRole } from "../../../../Api/globals";
+import Attachements from "./Attachements/Attachements";
+import Swal from "sweetalert2";
 
 const UserEdit = () => {
   const dispatch = useDispatch();
   const [userDataLoading, setUserDataLoading] = useState(true);
   const [serverPermissionsLoading, setServerPermissionsLoading] =
     useState(true);
+
+  const [ticketImages, setTicketImages] = useState<any[]>([]);
+  const [undefinedData, setUndefinedData] = useState<any>(false);
   useEffect(() => {
     setUserDataLoading(true);
     setServerPermissionsLoading(true);
@@ -28,7 +33,13 @@ const UserEdit = () => {
     if (getUserRole() === "COMPANY") {
       getAll({ url: "company/permissions" }).then((data: any) => {
         console.log("api call --- >", data);
+        if (data == undefined) {
+          setServerPermissionsLoading(false);
+        }
         if (data !== undefined) {
+          if (!data.success) {
+            setServerPermissionsLoading(false);
+          }
           if (data.success) {
             setServerPermissionsLoading(false);
             dispatch(setServerPermissions(data.data));
@@ -37,16 +48,72 @@ const UserEdit = () => {
       });
     }
 
-    getAll({ url: "user/get-user" }).then((data: any) => {
-      console.log("api call --- >", data);
-      if (data !== undefined) {
-        if (data.success) {
-          setUserDataLoading(false);
+    getAll({ url: "user/get-user" }).then((parentData: any) => {
+      console.log("api call --- >", parentData);
+      if (parentData == undefined) {
+        setUserDataLoading(false);
+        setUndefinedData(true);
+        Swal.fire({
+          text: "Failed to Fetch",
+          icon: "error",
+          timer: 2000,
+          showConfirmButton: false,
+        });
+      }
+      if (parentData !== undefined) {
+        if (parentData.success) {
+          setUndefinedData(false);
+          dispatch(setUserData(parentData.data.user));
           if (getUserRole() === "SUPER_ADMIN") {
             setServerPermissionsLoading(false);
-          }
+            setUserDataLoading(false);
+          } else {
+            // cnicFront
+            getImage({
+              url: `http://124.29.238.127:8080/${parentData.data.user.cnicFront.url}`,
+            }).then(async (data: any) => {
+              console.log("image api --- >", data);
+              ticketImages.push(data);
+              console.log("Ticket Images", ticketImages);
+              // cnicBack
+              getImage({
+                url: `http://124.29.238.127:8080/${parentData.data.user.cnicBack.url}`,
+              }).then(async (data: any) => {
+                console.log("image api --- >", data);
+                ticketImages.push(data);
+                console.log("Ticket Images", ticketImages);
+                // ptaCertificate
+                getImage({
+                  url: `http://124.29.238.127:8080/${parentData.data.user.ptaCertificate.url}`,
+                }).then(async (data: any) => {
+                  console.log("image api --- >", data);
+                  ticketImages.push(data);
+                  console.log("Ticket Images", ticketImages);
+                  // ntnCertificate
+                  getImage({
+                    url: `http://124.29.238.127:8080/${parentData.data.user.ntnCertificate.url}`,
+                  }).then(async (data: any) => {
+                    console.log("image api --- >", data);
+                    ticketImages.push(data);
+                    console.log("Ticket Images", ticketImages);
 
-          dispatch(setUserData(data.data.user));
+                    // otherAttachment
+                    getImage({
+                      url: `http://124.29.238.127:8080/${parentData.data.user.otherAttachment.url}`,
+                    }).then(async (data: any) => {
+                      console.log("image api --- >", data);
+                      ticketImages.push(data);
+                      setTicketImages(ticketImages);
+                      console.log("Ticket Images", ticketImages);
+                      if (ticketImages.length == 5) {
+                        setUserDataLoading(false);
+                      }
+                    });
+                  });
+                });
+              });
+            });
+          }
         }
       }
     });
@@ -57,13 +124,36 @@ const UserEdit = () => {
       <Breadcrumbs title={UserEdits} mainTitle={UserEdits} parent={Users} />
       <Container fluid>
         <div className="edit-profile">
-          {!userDataLoading && !serverPermissionsLoading ? (
+          {undefinedData ? (
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                height: "80vh",
+                backgroundColor: "white",
+                alignItems: "center",
+              }}
+            >
+              <div
+                style={{
+                  textAlign: "center",
+                  fontSize: "25px",
+                  fontWeight: "bold",
+                }}
+              >
+                No Data Found
+              </div>
+            </div>
+          ) : !userDataLoading && !serverPermissionsLoading ? (
             <Row>
               <EditMyProfile />
               <EditProfileForm />
               {/* <AddProjectsAndUpload /> */}
-
+              {getUserRole() === "COMPANY" && (
+                <Attachements attachements={ticketImages} />
+              )}
               {getUserRole() === "COMPANY" && <ServerPermissions />}
+
               <SecuritySettings />
             </Row>
           ) : (

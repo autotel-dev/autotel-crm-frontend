@@ -25,6 +25,7 @@ const UsersList = () => {
   const [id, setId] = useState("");
   const [name, setName] = useState("");
   const [isActive, setIsActive] = useState(false);
+  // const [rowIndex, setRowIndex] = useState(0);
   const [emailAdress, setEmailAddress] = useState("");
   const [phoneNo, setPhoneNo] = useState(false);
   // -----------------------------------
@@ -55,7 +56,7 @@ const UsersList = () => {
   }, []);
 
   const renderTableRows = () => {
-    return operators?.map((row: any) => (
+    return operators?.map((row: any, index: any) => (
       // setIsActive(row.isActive);
       <tr key={row.id}>
         <td>{row._id}</td>
@@ -72,21 +73,21 @@ const UsersList = () => {
                 <Input
                   type="checkbox"
                   defaultChecked={row.isActive}
-                  value={row.isActive ? "on" : "off"}
+                  value={isActive ? "on" : "off"}
                   onChange={async (e: any) => {
-                    setIsActive(!row.isActive);
-                    console.log(e.target.value);
                     //  --------------------------
 
                     const operator = {
                       name: row.fullName,
                       emailAddress: row.emailAddress,
-                      password: "123456789",
                       phoneNo: row.phoneNo,
-                      isActive: isActive,
+                      isActive: !row.isActive,
                       company: decodedToken.userId,
                     };
                     console.log(operator);
+                    setIsActive(!row.isActive);
+                    // setRowIndex(index);
+                    console.log(e.target.value);
                     try {
                       await update(operator, {
                         url: `operator/update-operator/${row._id}`,
@@ -213,9 +214,7 @@ const UsersList = () => {
                       fontWeight: "bold",
                     }}
                   >
-                    {noDataFound !== ""
-                      ? "No Users Found"
-                      : "Faild to Fetch"}
+                    {noDataFound !== "" ? "No Users Found" : "Faild to Fetch"}
                   </div>
                 )}
 

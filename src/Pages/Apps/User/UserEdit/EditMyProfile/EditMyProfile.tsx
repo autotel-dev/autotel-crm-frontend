@@ -102,7 +102,7 @@ const EditMyProfile = () => {
             </FormGroup>
             <div className="form-footer">
               <Button color="primary" className="d-block">
-                {Save}
+                Edit
               </Button>
             </div>
           </Form>

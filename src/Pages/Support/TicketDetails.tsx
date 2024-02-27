@@ -24,6 +24,7 @@ import { useParams } from "react-router-dom";
 const TicketDetails = () => {
   const { ticketId } = useParams();
   const [itemsLength, setItemsLength] = useState(2);
+  const [showMore, setShowMore] = useState(false);
   const [imageUrl, setImageUrl] = useState("");
   const [ticketImages, setTicketImages] = useState<any[]>([]);
   const [full, setFull] = useState(false);
@@ -196,6 +197,10 @@ const TicketDetails = () => {
               if (data !== undefined) {
                 if (data.success) {
                   dispatch(setTicketDetails(data.data.bugReport));
+                  if (data.data.bugReport.messages.length > 2) {
+                    setItemsLength(data.data.bugReport.messages.length);
+                  }
+
                   console.log("hhg");
                 }
               }
@@ -331,7 +336,7 @@ const TicketDetails = () => {
             {!loading && (
               <CommonHeader
                 title={`${ticketDetails.name.slice(0, 250)}
-                ${ticketDetails.name.length > 250 ? "...":""}`}
+                ${ticketDetails.name.length > 250 ? "..." : ""}`}
               />
             )}
           </div>
@@ -614,7 +619,7 @@ const TicketDetails = () => {
                       }}
                     >
                       {ticketDetails.messages.map((reply: any, index: any) => {
-                        if (index < itemsLength) {
+                        if (showMore) {
                           return (
                             <div
                               style={{
@@ -699,6 +704,93 @@ const TicketDetails = () => {
                               </Row>
                             </div>
                           );
+                        } else {
+                          if (index < 2) {
+                            return (
+                              <div
+                                style={{
+                                  backgroundColor: "whitesmoke",
+                                  padding: "15px",
+                                  borderRadius: "10px",
+                                  marginBottom: `${
+                                    index == 2 &&
+                                    index == ticketDetails.messages.length - 1
+                                      ? "50px"
+                                      : "20px"
+                                  }`,
+                                  marginTop: "10px",
+                                }}
+                              >
+                                <Row>
+                                  <Col md={12}>
+                                    <div
+                                      style={{
+                                        fontSize: "18px",
+                                        margin: "10px 0px",
+                                      }}
+                                    >
+                                      <div
+                                        style={{
+                                          display: "flex",
+                                        }}
+                                      >
+                                        <div
+                                          style={{
+                                            backgroundColor: "black",
+                                            color: "white",
+                                            minWidth: "40px",
+                                            height: "40px",
+                                            borderRadius: "50px",
+                                            textAlign: "center",
+                                            display: "flex",
+                                            alignItems: "center",
+                                            justifyContent: "center",
+                                          }}
+                                        >
+                                          SB
+                                        </div>
+                                        <div
+                                          style={{
+                                            margin: "0px 10px",
+                                          }}
+                                        >
+                                          <div
+                                            style={{
+                                              color: "black",
+                                              fontWeight: "bold",
+                                              fontSize: "18px",
+                                              marginTop: "-3px",
+                                            }}
+                                          >
+                                            {reply.user.fullName}
+                                          </div>
+                                          <div
+                                            style={{
+                                              color: "gray",
+                                              fontWeight: "normal",
+                                              fontSize: "12px",
+                                              marginTop: "-5px",
+                                            }}
+                                          >
+                                            {reply.user.emailAddress}
+                                          </div>
+                                          <div
+                                            style={{
+                                              color: "black",
+                                              fontSize: "16px",
+                                              marginTop: "5px",
+                                            }}
+                                          >
+                                            {reply.messageText}
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </Col>
+                                </Row>
+                              </div>
+                            );
+                          }
                         }
                       })}
                     </div>
@@ -713,14 +805,17 @@ const TicketDetails = () => {
                           cursor: "pointer",
                         }}
                         onClick={() => {
-                          if (itemsLength == 2) {
-                            setItemsLength(ticketDetails.messages.length);
-                          } else {
-                            setItemsLength(2);
-                          }
+                          setShowMore(!showMore);
+                          // if (itemsLength == 2) {
+                          //   setItemsLength(ticketDetails.messages.length);
+                          //   setShowMore(true);
+                          // } else {
+                          //   setItemsLength(2);
+                          //   setShowMore(false);
+                          // }
                         }}
                       >
-                        {itemsLength == 2 ? "Show More.." : "Show Less.."}
+                        {showMore ? "Show Less.." : "Show More.."}
                       </div>
                     )}
                     <div>

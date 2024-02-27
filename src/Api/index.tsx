@@ -4,7 +4,7 @@ import Swal from "sweetalert2";
 import errorAlert from "../Pages/Alerts/ErrorAlert";
 import successAlert from "../Pages/Alerts/SuccessAlert";
 import { CitiesType } from "../Pages/Cities/CityTypes/CityTypes";
-import header, { multipartHeader } from "./header";
+import { header, multipartHeader } from "./header";
 import { setNoDataFound } from "../ReaduxToolkit/Reducer/NoDataFoundSlice";
 import axios from "axios";
 const api = `${process.env.PUBLIC_URL}/api`;
@@ -118,7 +118,7 @@ export const otpVerification = async (
 export const create = async (postData: any, url: URLTypes): Promise<void> => {
   try {
     const response = await axios.post(`${API_BASE_URL}/${url.url}`, postData, {
-      headers: header,
+      headers: header(),
     });
 
     const result = response.data;
@@ -143,7 +143,7 @@ export const otpEnabled = async (
       `${API_BASE_URL}/${url.url}`,
       { isSecurityEnabled: isSecurityEnabled },
       {
-        headers: header,
+        headers: header(),
       }
     );
 
@@ -167,7 +167,7 @@ export const resendOTP = async (userId: any, url: URLTypes): Promise<void> => {
       `${API_BASE_URL}/${url.url}`,
       { userId: userId },
       {
-        headers: header,
+        headers: header(),
       }
     );
 
@@ -191,7 +191,7 @@ export const createCom = async (
 ): Promise<void> => {
   try {
     const response = await axios.post(`${API_BASE_URL}/${url.url}`, formData, {
-      headers: multipartHeader,
+      headers: multipartHeader(),
     });
     console.log("api call -- >");
 
@@ -212,7 +212,7 @@ export const createCom = async (
 export const update = async (postData: any, url: URLTypes): Promise<void> => {
   try {
     const response = await axios.put(`${API_BASE_URL}/${url.url}`, postData, {
-      headers: header,
+      headers: header(),
     });
 
     const result = response.data;
@@ -232,7 +232,7 @@ export const update = async (postData: any, url: URLTypes): Promise<void> => {
 export const patch = async (postData: any, url: URLTypes): Promise<void> => {
   try {
     const response = await axios.patch(`${API_BASE_URL}/${url.url}`, postData, {
-      headers: header,
+      headers: header(),
     });
 
     const result = response.data;
@@ -253,7 +253,7 @@ export const deleteSingle = async (url: URLTypes): Promise<void> => {
   try {
     const response = await fetch(`${API_BASE_URL}/${url.url}`, {
       method: "DELETE",
-      headers: header,
+      headers: header(),
     });
     const result = await response.json();
     console.log("api --- >", result);
@@ -275,12 +275,12 @@ export const deleteSingle = async (url: URLTypes): Promise<void> => {
 
 export const getAll = async (url: URLTypes): Promise<void> => {
   console.log(`${API_BASE_URL}/${url.url}`);
-  console.log(header);
+  console.log(header());
 
   try {
     const response = await fetch(`${API_BASE_URL}/${url.url}`, {
       method: "GET",
-      headers: header,
+      headers: header(),
     });
     const result = await response.json();
     if (result.success !== true && result.statusCode !== 404) {
@@ -304,18 +304,17 @@ export const getAll = async (url: URLTypes): Promise<void> => {
 
 export const getImage = async (url: URLTypes) => {
   try {
-
     // const response = await axios.get(`${url.url}`, {
     //   headers: multipartHeader
     // })
     const response = await fetch(`${url.url}`, {
       method: "GET",
       headers: {
-        Authorization: header.Authorization,
+        Authorization: header().Authorization,
       },
     });
-    const blob = await  response.blob();
-        const objectURL = URL.createObjectURL(blob);
+    const blob = await response.blob();
+    const objectURL = URL.createObjectURL(blob);
     const result = objectURL;
 
     return result;
@@ -329,7 +328,7 @@ export const getAllActive = async (url: URLTypes): Promise<void> => {
   try {
     const response = await fetch(`${API_BASE_URL}/${url.url}`, {
       method: "GET",
-      headers: header,
+      headers: header(),
     });
     const result = await response.json();
     if (result.success !== true && result.statusCode !== 404) {
@@ -363,7 +362,7 @@ export const getAllActive = async (url: URLTypes): Promise<void> => {
 //   try {
 //     const response = await fetch(`${API_BASE_URL}/${url.url}`, {
 //       method: "POST",
-//       headers: header,
+//       headers: header(),
 //       body: JSON.stringify(postData),
 //     });
 //     const result = await response.json();
@@ -390,7 +389,7 @@ export const getAllActive = async (url: URLTypes): Promise<void> => {
 //   try {
 //     const response = await fetch(`${API_BASE_URL}/${url.url}`, {
 //       method: "PUT",
-//       headers: header,
+//       headers: header(),
 //       body: JSON.stringify(postData),
 //     });
 //     const result = await response.json();

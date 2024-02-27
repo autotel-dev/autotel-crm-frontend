@@ -21,7 +21,7 @@ import Loader from "../Loader/Loader";
 import { useNavigate } from "react-router-dom";
 import CommonModal from "../../CommonElements/Ui-kits/CommonModal";
 import ChangePasswordModal from "./components/ChangePasswordModal";
-import header from "../../Api/header";
+import {header} from "../../Api/header";
 import axios from "axios";
 import Swal from "sweetalert2";
 
@@ -130,7 +130,7 @@ const ServersList = () => {
                     `http://124.29.238.127:8080/api/v1/server-management/send-otp`,
                     {
                       method: "POST",
-                      headers: header,
+                      headers: header(),
                     }
                   );
                   const result = await response.json();

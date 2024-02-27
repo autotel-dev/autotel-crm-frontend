@@ -14,6 +14,7 @@ import {
 } from "../../ReaduxToolkit/Reducer/SupportSlice";
 import { useDispatch, useSelector } from "react-redux";
 import Loader from "../Loader/Loader";
+import { getUserRole } from "../../Api/globals";
 
 const Support = () => {
   const { supportStatistics } = useSelector((state: any) => state.support);
@@ -24,54 +25,58 @@ const Support = () => {
     setStatisticsLoading(true);
     setReportsLoading(true);
 
+    if (getUserRole() === "SUPER_ADMIN") {
+      getAll({ url: "support/bug-report/get-statistics" }).then((data: any) => {
+        console.log("api call --- >", data);
+        if (data !== undefined) {
+          if (!data.success) {
+            setStatisticsLoading(false);
+          }
+          if (data.success) {
+            console.log("hhg");
+            setStatisticsLoading(false);
+            // const statisticsArray = Object.entries(
+            //   data.data.bugReportsStatistics
+            // );
+
+            // const mappedArray = statisticsArray.map(([key, value]) => {
+            //   return { key, value };
+            // });
+
+            const mappedArray = Object.entries(
+              data.data.bugReportsStatistics
+            ).map(([key, value]) => {
+              // Remove "total" from the key and replace "Count" with "Tickets"
+              const formattedKey = key
+                .replace("total", "")
+                .replace("Count", " Tickets");
+              return { key: [formattedKey], value: value };
+            });
+            console.log(mappedArray);
+            dispatch(setSupportStatistics(mappedArray));
+          }
+        }
+      });
+    }
+
     getAll({ url: "support/bug-report/get-all-bug-reports" }).then(
       (data: any) => {
         console.log("api call --- >", data);
         if (data !== undefined) {
           if (!data.success) {
             dispatch(setBugReports([]));
-            setReportsLoading(true);
+            setReportsLoading(false);
+            setStatisticsLoading(false);
           }
           if (data.success) {
             console.log("hhg");
             dispatch(setBugReports(data.data.allBugReports));
             setReportsLoading(false);
+            setStatisticsLoading(false);
           }
         }
       }
     );
-
-    getAll({ url: "support/bug-report/get-statistics" }).then((data: any) => {
-      console.log("api call --- >", data);
-      if (data !== undefined) {
-        if (!data.success) {
-          setStatisticsLoading(false);
-        }
-        if (data.success) {
-          console.log("hhg");
-          setStatisticsLoading(false);
-          // const statisticsArray = Object.entries(
-          //   data.data.bugReportsStatistics
-          // );
-
-          // const mappedArray = statisticsArray.map(([key, value]) => {
-          //   return { key, value };
-          // });
-
-          const mappedArray = Object.entries(
-            data.data.bugReportsStatistics
-          ).map(([key, value]) => {
-            // Remove "total" from the key and replace "Count" with "Tickets"
-            const formattedKey = key
-              .replace("total", "")
-              .replace("Count", " Tickets");
-            return { key: [formattedKey], value: value };
-          });
-          console.log(mappedArray);
-          dispatch(setSupportStatistics(mappedArray));
-        }
-      }
-    });
 
     getAll({ url: "support/bug-report/get-priorty-status-types" }).then(
       (data: any) => {
@@ -109,7 +114,8 @@ const Support = () => {
               />
               {!statisticsloading && !reportsLoading ? (
                 <CardBody>
-                  {supportStatistics === null ? (
+                  {supportStatistics === null &&
+                  getUserRole() === "SUPER_ADMIN" ? (
                     <div
                       style={{
                         display: "flex",
@@ -130,7 +136,7 @@ const Support = () => {
                       </div>
                     </div>
                   ) : (
-                    <SupportList />
+                    getUserRole() === "SUPER_ADMIN" && <SupportList />
                   )}
                   <SupportTable />
                 </CardBody>

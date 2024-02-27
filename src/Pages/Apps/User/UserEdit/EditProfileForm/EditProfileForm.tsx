@@ -78,7 +78,7 @@ const EditProfileForm = () => {
           </Row>
         </CardBody>
         <CardFooter className="text-end">
-            <Button color="primary" type="submit">{UpdateProfile}</Button>
+            <Button color="primary" type="submit">Save</Button>
         </CardFooter>
       </Form>
     </Col>

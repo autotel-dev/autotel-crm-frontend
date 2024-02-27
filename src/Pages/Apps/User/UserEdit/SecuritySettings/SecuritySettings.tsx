@@ -11,11 +11,16 @@ import {
 import CommonHeader from "../../../../../Common/CommonHeader";
 import { H1, H3, H4, H5 } from "../../../../../AbstractElements";
 import { useState } from "react";
-import { otpEnabled } from "../../../../../Api";
+import { getAll, otpEnabled } from "../../../../../Api";
+import { useDispatch, useSelector } from "react-redux";
+import Swal from "sweetalert2";
+import { setUserData } from "../../../../../ReaduxToolkit/Reducer/UserSlice";
 
 const SecuritySettings = () => {
-  const [isEnabled, setIsEnabled] = useState(true);
+  const { userData } = useSelector((state: any) => state.user);
+  const [isEnabled, setIsEnabled] = useState(userData.isOtpEnabled);
   const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
 
   const otpEnabledChange = async () => {
     setLoading(true);
@@ -26,7 +31,25 @@ const SecuritySettings = () => {
         setLoading(false);
         if (data.success) {
           console.log(data);
-          setLoading(false);
+          getAll({ url: "user/get-user" }).then((parentData: any) => {
+            console.log("api call --- >", parentData);
+            if (parentData == undefined) {
+              setLoading(false);
+              Swal.fire({
+                text: "Failed to Fetch",
+                icon: "error",
+                timer: 2000,
+                showConfirmButton: false,
+              });
+            }
+
+            if (parentData !== undefined) {
+              if (parentData.success) {
+                dispatch(setUserData(parentData.data.user));
+                setLoading(false);
+              }
+            }
+          });
         } else {
           setLoading(false);
         }
@@ -53,9 +76,13 @@ const SecuritySettings = () => {
               md={6}
               sm={6}
               xs={12}
-              style={{ display: "flex", justifyContent: "space-between" }}
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
             >
-              <H3>OTP Enabled</H3>
+              <H4>OTP Enabled</H4>
               <div className="d-flex">
                 <div
                   className={`text-end flex-shrink-0 icon-state 
@@ -64,11 +91,13 @@ const SecuritySettings = () => {
                   <Label className="switch mb-0">
                     <Input
                       type="checkbox"
+                      disabled={loading}
                       defaultChecked={isEnabled ? true : false}
                       value={isEnabled ? "on" : "off"}
                       onChange={(e) => {
                         setIsEnabled(!isEnabled);
                         console.log(e.target.value);
+                        // otpEnabledChange();
                       }}
                     />
                     <span
@@ -87,13 +116,15 @@ const SecuritySettings = () => {
               <Button
                 color="primary"
                 className="d-block"
-                onClick={otpEnabledChange}
+                onClick={() => {
+                  otpEnabledChange();
+                }}
               >
-                {loading ? "Loading..." : "Update"}
+                {loading ? "Loading..." : "Save"}
               </Button>
             </div>
           </Row>
-        </CardBody>
+        </CardBody>x``
       </Card>
     </Col>
   );

@@ -149,18 +149,37 @@ const DevicesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
         allItemsChecked = false;
       }
       // Create a new device object with the updated items array
+      // const updatedDevice = {
+      //   ...deviceToUpdate,
+      //   checked: allItemsChecked,
+      //   items: [
+      //     ...deviceToUpdate.items.slice(0, index),
+      //     {
+      //       ...deviceToUpdate.items[index],
+      //       checked: !selectedDevice.checked,
+      //     },
+      //     ...deviceToUpdate.items.slice(index + 1),
+      //   ],
+      // };
+      // const updatedDevices = devices.map((device: any) =>
+      //   device.title === group.title ? updatedDevice : device
+      // );
+
       const updatedDevice = {
         ...deviceToUpdate,
         checked: allItemsChecked,
-        items: [
-          ...deviceToUpdate.items.slice(0, index), // Copy items before the index
-          {
-            ...deviceToUpdate.items[index], // Copy the item at the index
-            checked: !selectedDevice.checked, // Toggle the checked property
-          },
-          ...deviceToUpdate.items.slice(index + 1), // Copy items after the index
-        ],
+        items: deviceToUpdate.items.map((item: any) => {
+          if (selectedDevice.id === item.id) {
+            // Update the checked property if the IDs match
+            return {
+              ...item,
+              checked: !selectedDevice.checked,
+            };
+          }
+          return item; // Return the item as it is if IDs don't match
+        }),
       };
+
       const updatedDevices = devices.map((device: any) =>
         device.title === group.title ? updatedDevice : device
       );
@@ -506,8 +525,8 @@ A 40 40 0 0 1 90 50"
                                     )}
                                     {/* Needle */}
                                     <polygon
-                                     points="50,42 55,22 50,12 45,22"
-                                    //  points="50,42 55,42 55,12 50,12 45"
+                                      points="50,42 55,22 50,12 45,22"
+                                      //  points="50,42 55,42 55,12 50,12 45"
                                       fill={
                                         bodyItem.engine_status ? "green" : "red"
                                       } // Needle color

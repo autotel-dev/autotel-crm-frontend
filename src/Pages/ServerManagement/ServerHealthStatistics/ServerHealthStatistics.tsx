@@ -31,8 +31,8 @@ const ServerHealthStatistics = () => {
                   <h3 style={{ marginTop: "10px", marginBottom: "15px" }}>
                     {serverHealthStatistics.databaseSize}
                   </h3>
-                  <P className="d-flex">
-                    <span style={{ fontSize: "12px" }}>Updated At :</span>
+                  <P>
+                    <span style={{ fontSize: "12px" }}>Updated At : </span>
                     <span
                       style={{ fontSize: "12px" }}
                       className={`font-secondary me-2`}
@@ -67,11 +67,11 @@ const ServerHealthStatistics = () => {
                   <h3 style={{ marginTop: "10px", marginBottom: "15px" }}>
                     {serverHealthStatistics.upTime}
                   </h3>
-                  <P className="d-flex">
+                  <P>
                     {/* <span className={`bg-light-primary me-2`}>
                       <SVG iconId={data.icon} />
                     </span> */}
-                    <span style={{ fontSize: "12px" }}>Updated At :</span>
+                    <span style={{ fontSize: "12px" }}>Updated At : </span>
                     <span
                       style={{ fontSize: "12px" }}
                       className={`font-secondary me-2`}
@@ -102,8 +102,8 @@ const ServerHealthStatistics = () => {
                   <h3 style={{ marginTop: "10px", marginBottom: "15px" }}>
                     {serverHealthStatistics.mediaSize}
                   </h3>
-                  <P className="d-flex">
-                    <span style={{ fontSize: "12px" }}>Updated At :</span>
+                  <P>
+                    <span style={{ fontSize: "12px" }}>Updated At : </span>
                     <span
                       style={{ fontSize: "12px" }}
                       className={`font-secondary me-2`}
