@@ -17,6 +17,7 @@ import Loader from "../../../Loader/Loader";
 import { getUserRole } from "../../../../Api/globals";
 import Attachements from "./Attachements/Attachements";
 import Swal from "sweetalert2";
+import AllowedModules from "./AllowedModules/AllowedModules";
 
 const UserEdit = () => {
   const dispatch = useDispatch();
@@ -26,6 +27,7 @@ const UserEdit = () => {
 
   const [ticketImages, setTicketImages] = useState<any[]>([]);
   const [undefinedData, setUndefinedData] = useState<any>(false);
+  const [isEdit, setIsEdit] = useState(false);
   useEffect(() => {
     setUserDataLoading(true);
     setServerPermissionsLoading(true);
@@ -60,6 +62,7 @@ const UserEdit = () => {
           showConfirmButton: false,
         });
       }
+
       if (parentData !== undefined) {
         if (parentData.success) {
           setUndefinedData(false);
@@ -146,9 +149,10 @@ const UserEdit = () => {
             </div>
           ) : !userDataLoading && !serverPermissionsLoading ? (
             <Row>
-              <EditMyProfile />
-              <EditProfileForm />
+              <EditMyProfile isEdit={isEdit} setIsEdit={setIsEdit} />
+              <EditProfileForm isEdit={isEdit} setIsEdit={setIsEdit} />
               {/* <AddProjectsAndUpload /> */}
+              {getUserRole() === "COMPANY" && <AllowedModules />}
               {getUserRole() === "COMPANY" && (
                 <Attachements attachements={ticketImages} />
               )}

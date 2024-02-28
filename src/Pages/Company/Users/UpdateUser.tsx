@@ -90,7 +90,7 @@ const UpdateUser: React.FC<PropsTypes> = ({
     setLoading(true);
     if (data.name !== "") {
       const operator = {
-        name: data.name,
+        fullName: data.name,
         emailAddress: data.emailAddress,
         phoneNo: data.phoneNo,
         isActive: isActive,

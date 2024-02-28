@@ -21,19 +21,29 @@ import {
   Website,
 } from "../../../../../utils/Constant";
 import { useSelector } from "react-redux";
-import { formatUnderscoredString } from "../../../../../Api/globals";
+import {
+  formatUnderscoredString,
+  getUserRole,
+} from "../../../../../Api/globals";
 import { useState } from "react";
 
-const EditMyProfile = () => {
+interface PropTypes {
+  isEdit: boolean;
+  setIsEdit: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+const EditMyProfile: React.FC<PropTypes> = ({ isEdit, setIsEdit }) => {
   const { userData } = useSelector((state: any) => state.user);
   const [accountStatus, setAcountStatus] = useState(userData.accountStatus);
+
+  
   return (
     <Col xl={4}>
       <Card>
         <CommonHeader title={MyProfile} headClass="card-title mb-0 pb-0" />
         <CardBody>
           <Form onSubmit={(event) => event.preventDefault()}>
-            <Row className="mb-2">
+            <Row className="mb-3">
               <div className="col-auto">
                 <Image
                   width={70}
@@ -51,18 +61,39 @@ const EditMyProfile = () => {
 
             <FormGroup>
               <Label>Email Address</Label>
-              <Input placeholder="Email" defaultValue={userData.emailAddress} />
+              <H3 className="mb-1">{userData.emailAddress}</H3>
             </FormGroup>
             <FormGroup>
               <Label>Phone Number</Label>
-              <Input
-                type="text"
-                placeholder="Phone Number"
-                defaultValue={userData.phoneNo}
-              />
+              <H3 className="mb-1">{userData.phoneNo}</H3>
             </FormGroup>
+            {getUserRole() == "COMPANY" && userData.address !== null && (
+              <FormGroup>
+                <Label>Address</Label>
+                <H3 className="mb-1">{userData.address}</H3>
+              </FormGroup>
+            )}
+            {getUserRole() == "COMPANY" && userData.gstNo !== null && (
+              <FormGroup>
+                <Label>Gst No</Label>
+                <H3 className="mb-1">{userData.gstNo}</H3>
+              </FormGroup>
+            )}
+            {getUserRole() == "COMPANY" && userData.ntn !== null && (
+              <FormGroup>
+                <Label>NTN</Label>
+                <H3 className="mb-1">{userData.ntn}</H3>
+              </FormGroup>
+            )}
+
             <FormGroup>
-              <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  marginTop: "30px",
+                }}
+              >
                 <H3>Account Status</H3>
                 <div className="d-flex">
                   <div
@@ -75,18 +106,19 @@ const EditMyProfile = () => {
                         defaultChecked={
                           accountStatus == "ACTIVE" ? true : false
                         }
-                        value={
-                          accountStatus == "ACTIVE" ? "on" : "off"
-                        }
-                        onChange={(e) => {
-                          if (accountStatus == "ACTIVE") {
-                            setAcountStatus("NOT ACTIVE");
-                          } else {
-                            setAcountStatus("ACTIVE");
-                          }
+                        disabled
+                        // value={
+                        //   accountStatus == "ACTIVE" ? "on" : "off"
+                        // }
+                        // onChange={(e) => {
+                        //   if (accountStatus == "ACTIVE") {
+                        //     setAcountStatus("NOT ACTIVE");
+                        //   } else {
+                        //     setAcountStatus("ACTIVE");
+                        //   }
 
-                          console.log(e.target.value);
-                        }}
+                        //   console.log(e.target.value);
+                        // }}
                       />
                       <span
                         className={`switch-state ${
@@ -101,7 +133,12 @@ const EditMyProfile = () => {
               </div>
             </FormGroup>
             <div className="form-footer">
-              <Button color="primary" className="d-block">
+              <Button
+                color="primary"
+                className="d-block"
+                disabled={isEdit}
+                onClick={() => setIsEdit(!isEdit)}
+              >
                 Edit
               </Button>
             </div>

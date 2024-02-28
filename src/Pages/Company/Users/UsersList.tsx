@@ -73,12 +73,12 @@ const UsersList = () => {
                 <Input
                   type="checkbox"
                   defaultChecked={row.isActive}
-                  value={isActive ? "on" : "off"}
+                  value={row.isActive ? "on" : "off"}
                   onChange={async (e: any) => {
                     //  --------------------------
 
                     const operator = {
-                      name: row.fullName,
+                      fullName: row.fullName,
                       emailAddress: row.emailAddress,
                       phoneNo: row.phoneNo,
                       isActive: !row.isActive,

@@ -59,24 +59,27 @@ const Support = () => {
       });
     }
 
-    getAll({ url: "support/bug-report/get-all-bug-reports" }).then(
-      (data: any) => {
-        console.log("api call --- >", data);
-        if (data !== undefined) {
-          if (!data.success) {
-            dispatch(setBugReports([]));
-            setReportsLoading(false);
-            setStatisticsLoading(false);
-          }
-          if (data.success) {
-            console.log("hhg");
-            dispatch(setBugReports(data.data.allBugReports));
-            setReportsLoading(false);
-            setStatisticsLoading(false);
-          }
+    getAll({
+      url:
+        getUserRole() === "COMPANY"
+          ? "company/get-all-bug-reports"
+          : "support/bug-report/get-all-bug-reports",
+    }).then((data: any) => {
+      console.log("api call --- >", data);
+      if (data !== undefined) {
+        if (!data.success) {
+          dispatch(setBugReports([]));
+          setReportsLoading(false);
+          setStatisticsLoading(false);
+        }
+        if (data.success) {
+          console.log("hhg");
+          dispatch(setBugReports(data.data.allBugReports));
+          setReportsLoading(false);
+          setStatisticsLoading(false);
         }
       }
-    );
+    });
 
     getAll({ url: "support/bug-report/get-priorty-status-types" }).then(
       (data: any) => {
@@ -91,6 +94,7 @@ const Support = () => {
         }
       }
     );
+
     getAll({ url: "support/bug-report/get-status-types" }).then((data: any) => {
       console.log("api call --- >", data);
       if (data !== undefined) {

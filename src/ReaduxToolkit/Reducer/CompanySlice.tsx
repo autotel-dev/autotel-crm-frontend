@@ -5,6 +5,7 @@ const initialState = {
   companies: [],
   servers: [],
   crmModules: [],
+  permissions: [],
   cities: [],
   packages: [],
   timezones: [],
@@ -61,6 +62,11 @@ const CompanySlice = createSlice({
 
     setCRMModules: (state, action) => {
       state.crmModules = action.payload;
+      state.error = null;
+      state.loading = false;
+    },
+    setPermissions: (state, action) => {
+      state.permissions = action.payload;
       state.error = null;
       state.loading = false;
     },
@@ -130,6 +136,7 @@ export const {
   setServers,
   setTimeZones,
   setCRMModules,
+  setPermissions,
   setCities,
   setPackages,
   setServersAddItemsList,

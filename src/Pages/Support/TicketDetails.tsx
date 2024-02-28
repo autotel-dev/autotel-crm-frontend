@@ -74,7 +74,7 @@ const TicketDetails = () => {
 
   useEffect(() => {
     setLoading(true);
-    if (tableRow.status == "NEW") {
+    if (tableRow.status == "NEW" && getUserRole() == "SUPER_ADMIN") {
       console.log("IF");
       patch(
         { updatedStatus: "IN_PROGRESS" },

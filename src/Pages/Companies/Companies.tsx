@@ -21,6 +21,7 @@ import {
   setCompaniesEnd,
   setCompanies,
   setFilterCompanies,
+  setPermissions,
 } from "../../ReaduxToolkit/Reducer/CompanySlice";
 import { useDispatch, useSelector } from "react-redux";
 import { setNoDataFound } from "../../ReaduxToolkit/Reducer/NoDataFoundSlice";
@@ -74,6 +75,17 @@ const Companies = () => {
         if (data.success) {
           console.log("hhg");
           dispatch(setTimeZones(data.data));
+        }
+      }
+    });
+  }, []);
+  useEffect(() => {
+    getAll({ url: "permissions/get-all-permissions" }).then((data: any) => {
+      console.log("api call --- >", data);
+      if (data !== undefined) {
+        if (data.success) {
+          console.log("hhg");
+          dispatch(setPermissions(data.data));
         }
       }
     });

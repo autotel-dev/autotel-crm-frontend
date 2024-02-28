@@ -131,6 +131,7 @@
   },
   "devDependencies": {
     "@types/antd": "^1.0.0",
+    "@types/file-saver": "^2.0.7",
     "@types/react": "^18.2.47",
     "@types/react-copy-to-clipboard": "^5.0.4",
     "@types/react-dom": "^18.2.18",

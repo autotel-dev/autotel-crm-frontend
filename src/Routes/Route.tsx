@@ -146,6 +146,7 @@ import CompanyUsers from "../Pages/Company/Users/Users";
 import Monitoring from "../Pages/Company/Modules/Monitoring/Monitoring";
 import ControlRoom from "../Pages/Company/Modules/ControlRoom/ControlRoom";
 import TicketDetails from "../Pages/Support/TicketDetails";
+import Roles from "../Pages/Company/Roles/Roles";
 
 const routes = [
   // dashboard routes
@@ -742,6 +743,10 @@ const routes = [
   // Setup
 
   {
+    path: `${process.env.PUBLIC_URL}/company/roles`,
+    Component: <Roles />,
+  },
+  {
     path: `${process.env.PUBLIC_URL}/company/emailTemplates`,
     Component: <ShoppingPlace />,
   },
@@ -772,8 +777,8 @@ const routes = [
   //   Component: <CompanySupport />,
   // },
 
-   // Support
-   {
+  // Support
+  {
     path: `${process.env.PUBLIC_URL}/company/support`,
     Component: <Support />,
   },

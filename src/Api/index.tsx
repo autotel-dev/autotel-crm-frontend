@@ -229,6 +229,30 @@ export const update = async (postData: any, url: URLTypes): Promise<void> => {
   }
 };
 
+export const updateWithMultipart = async (
+  postData: any,
+  url: URLTypes
+): Promise<void> => {
+  try {
+    const response = await axios.put(`${API_BASE_URL}/${url.url}`, postData, {
+      headers: header(),
+    });
+
+    const result = response.data;
+    console.log("Response data:", response.data);
+
+    return result;
+  } catch (error: any) {
+    Swal.fire({
+      text: `${error.response.data.message}`,
+      icon: "info",
+      timer: 2000,
+      showCancelButton: false,
+    });
+    return error;
+  }
+};
+
 export const patch = async (postData: any, url: URLTypes): Promise<void> => {
   try {
     const response = await axios.patch(`${API_BASE_URL}/${url.url}`, postData, {

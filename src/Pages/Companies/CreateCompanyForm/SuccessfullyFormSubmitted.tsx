@@ -8,12 +8,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 
 import { setNoDataFound } from "../../../ReaduxToolkit/Reducer/NoDataFoundSlice";
-import { create, createCom, getAll } from "../../../Api";
+import { createCom, getAll } from "../../../Api";
 import { useNavigate } from "react-router-dom";
 import CommonHeader from "../../../Common/CommonHeader";
-import axios from "axios";
-import { Document, Page, pdfjs } from "react-pdf";
-import "react-pdf/dist/esm/Page/AnnotationLayer.css";
+
 import {
   setAllowedModules,
   setCompanies,
@@ -29,6 +27,7 @@ import {
   setPTACertificate,
   setOther,
 } from "../../../ReaduxToolkit/Reducer/CompanySlice";
+import PDFViewer from "./PDFViewer";
 // import pdfFile from "../../../assets/";
 // pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
@@ -52,6 +51,9 @@ const SuccessfullyFormSubmitted = ({
     imageBackground,
     companyLogo,
   } = useSelector((state: any) => state.companies);
+  console.log("createCompany",createCompany);
+  
+  
   // const [formData, setFormData] = useState({});
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
@@ -62,7 +64,10 @@ const SuccessfullyFormSubmitted = ({
     console.log("CNICBack:", cnicBack);
   });
 
-  function checkFileTypeByExtension(fileName: any) {
+  function checkFileTypeByExtension(fileName: any, file: any) {
+    console.log("filename", fileName);
+    console.log("file", file);
+
     const imageExtensions = ["jpg", "jpeg", "png", "gif"];
     const pdfExtension = "pdf";
 
@@ -119,6 +124,7 @@ const SuccessfullyFormSubmitted = ({
       "allowedModules",
       JSON.stringify(createCompany.allowedModules)
     );
+    formData.append("permissions", JSON.stringify(createCompany.permissions));
 
     if (cnicFront !== null) {
       formData.append("cnicFront", cnicFront);
@@ -625,84 +631,174 @@ const SuccessfullyFormSubmitted = ({
 
       <Form style={{ marginBottom: "65px", marginTop: "20px" }}>
         <Row className="g-3">
-          <div style={{ display: "flex", justifyContent: "space-between" }}>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              flexWrap: "wrap",
+            }}
+          >
             {cnicFront !== null &&
-            checkFileTypeByExtension(cnicFront.name) == "image" ? (
+            checkFileTypeByExtension(cnicFront.name, cnicFront) == "image" ? (
               <div>
-                <Label>
+                <Label style={{ fontSize: "18px", fontWeight: "bold" }}>
                   CNIC Front
                   <span className="txt-danger">*</span>
                 </Label>
                 <img
                   src={URL.createObjectURL(cnicFront)}
                   alt=""
-                  style={{ width: "230px", height: "160px" }}
+                  style={{
+                    width: "300px",
+                    height: "220px",
+                    border: "1px solid lightgray",
+                  }}
                 />
               </div>
             ) : (
-              cnicFront !== null && (
+              cnicFront !== null &&
+              checkFileTypeByExtension(cnicFront.name, cnicFront) == "pdf" && (
                 <div>
-                  <Document
+                  <Label style={{ fontSize: "18px", fontWeight: "bold" }}>
+                    CNIC Front
+                    <span className="txt-danger">*</span>
+                  </Label>
+                  <PDFViewer
                     file={cnicFront}
-                    onLoadSuccess={onDocumentLoadSuccess}
-                  >
-                    <Page pageNumber={pageNumber} />
-                  </Document>
+                    name={cnicFront.name.toString().slice(0, 20)}
+                  />
                 </div>
               )
             )}
             {cnicBack !== null &&
-              checkFileTypeByExtension(cnicBack.name) == "image" && (
+            checkFileTypeByExtension(cnicBack.name, cnicBack) == "image" ? (
+              <div>
+                <Label style={{ fontSize: "18px", fontWeight: "bold" }}>
+                  CNIC Back
+                  <span className="txt-danger">*</span>
+                </Label>
+                <img
+                  src={URL.createObjectURL(cnicBack)}
+                  alt=""
+                  style={{
+                    width: "300px",
+                    height: "220px",
+                    border: "1px solid lightgray",
+                  }}
+                />
+              </div>
+            ) : (
+              cnicBack !== null &&
+              checkFileTypeByExtension(cnicBack.name, cnicBack) == "pdf" && (
                 <div>
-                  <Label>
+                  <Label style={{ fontSize: "18px", fontWeight: "bold" }}>
                     CNIC Back
                     <span className="txt-danger">*</span>
                   </Label>
-                  <img
-                    src={URL.createObjectURL(cnicBack)}
-                    alt=""
-                    style={{ width: "230px", height: "160px" }}
+                  <PDFViewer
+                    file={cnicBack}
+                    name={cnicBack.name.toString().slice(0, 20)}
                   />
                 </div>
-              )}
-            {ntnFile !== null && (
+              )
+            )}
+            {ntnFile !== null &&
+            checkFileTypeByExtension(ntnFile.name, ntnFile) == "image" ? (
               <div>
-                <Label>
+                <Label style={{ fontSize: "18px", fontWeight: "bold" }}>
                   NTN File
                   <span className="txt-danger">*</span>
                 </Label>
                 <img
                   src={URL.createObjectURL(ntnFile)}
                   alt=""
-                  style={{ width: "230px", height: "160px" }}
+                  style={{
+                    width: "300px",
+                    height: "220px",
+                    border: "1px solid lightgray",
+                  }}
                 />
               </div>
+            ) : (
+              ntnFile !== null &&
+              checkFileTypeByExtension(ntnFile.name, ntnFile) == "pdf" && (
+                <div>
+                  <Label style={{ fontSize: "18px", fontWeight: "bold" }}>
+                    NTN File
+                    <span className="txt-danger">*</span>
+                  </Label>
+                  <PDFViewer
+                    file={ntnFile}
+                    name={ntnFile.name.toString().slice(0, 20)}
+                  />
+                </div>
+              )
             )}
-            {ptaCertificate !== null && (
+            {ptaCertificate !== null &&
+            checkFileTypeByExtension(ptaCertificate.name, ptaCertificate) ==
+              "image" ? (
               <div>
-                <Label>
+                <Label style={{ fontSize: "18px", fontWeight: "bold" }}>
                   PTA Certificate
                   <span className="txt-danger">*</span>
                 </Label>
                 <img
                   src={URL.createObjectURL(ptaCertificate)}
                   alt=""
-                  style={{ width: "230px", height: "160px" }}
+                  style={{
+                    width: "300px",
+                    height: "220px",
+                    border: "1px solid lightgray",
+                  }}
                 />
               </div>
+            ) : (
+              ptaCertificate !== null &&
+              checkFileTypeByExtension(ptaCertificate.name, ptaCertificate) ==
+                "pdf" && (
+                <div>
+                  <Label style={{ fontSize: "18px", fontWeight: "bold" }}>
+                    PTA Certificate
+                    <span className="txt-danger">*</span>
+                  </Label>
+                  <PDFViewer
+                    file={ptaCertificate}
+                    name={ptaCertificate.name.toString().slice(0, 20)}
+                  />
+                </div>
+              )
             )}
-            {other !== null && (
+            {other !== null &&
+            checkFileTypeByExtension(other.name, other) == "image" ? (
               <div>
-                <Label>
+                <Label style={{ fontSize: "18px", fontWeight: "bold" }}>
                   Other
                   <span className="txt-danger">*</span>
                 </Label>
                 <img
                   src={URL.createObjectURL(other)}
                   alt=""
-                  style={{ width: "230px", height: "160px" }}
+                  style={{
+                    width: "300px",
+                    height: "220px",
+                    border: "1px solid lightgray",
+                  }}
                 />
               </div>
+            ) : (
+              other !== null &&
+              checkFileTypeByExtension(other.name, other) == "pdf" && (
+                <div>
+                  <Label style={{ fontSize: "18px", fontWeight: "bold" }}>
+                    Other
+                    <span className="txt-danger">*</span>
+                  </Label>
+                  <PDFViewer
+                    file={other}
+                    name={other.name.toString().slice(0, 20)}
+                  />
+                </div>
+              )
             )}
           </div>
         </Row>

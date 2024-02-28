@@ -1021,6 +1021,11 @@ export const CompanySidebarMenu: SidebarMenuTypes[] = [
     subMenu: [
       {
         svgIcon: "bonus-kit",
+        title: "Roles",
+        link: `${process.env.PUBLIC_URL}/company/roles`,
+      },
+      {
+        svgIcon: "bonus-kit",
         title: "Email Templates",
         link: `${process.env.PUBLIC_URL}/company/emailTemplates`,
       },

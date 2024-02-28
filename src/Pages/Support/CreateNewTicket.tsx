@@ -20,6 +20,7 @@ import {
   setSupportStatistics,
 } from "../../ReaduxToolkit/Reducer/SupportSlice";
 import { setNoDataFound } from "../../ReaduxToolkit/Reducer/NoDataFoundSlice";
+import { getUserRole } from "../../Api/globals";
 
 interface TicketType {
   name: string;
@@ -107,40 +108,45 @@ const CreateNewTicket = () => {
               description: "",
             });
             dispatch(setReportsStart());
-            getAll({ url: "support/bug-report/get-all-bug-reports" }).then(
-              (data: any) => {
-                console.log("api call --- >", data);
-                dispatch(setReportsEnd());
-                if (data !== undefined) {
-                  dispatch(setNoDataFound(data.message));
-                  if (data.success) {
-                    console.log("hhg");
-                    dispatch(setBugReports(data.data.allBugReports));
-                  }
+            getAll({
+              url:
+                getUserRole() === "COMPANY"
+                  ? "company/get-all-bug-reports"
+                  : "support/bug-report/get-all-bug-reports",
+            }).then((data: any) => {
+              console.log("api call --- >", data);
+              dispatch(setReportsEnd());
+              if (data !== undefined) {
+                dispatch(setNoDataFound(data.message));
+                if (data.success) {
+                  console.log("hhg");
+                  dispatch(setBugReports(data.data.allBugReports));
                 }
               }
-            );
+            });
 
-            getAll({ url: "support/bug-report/get-statistics" }).then(
-              (data: any) => {
-                console.log("api call --- >", data);
-                if (data !== undefined) {
-                  if (data.success) {
-                    const mappedArray = Object.entries(
-                      data.data.bugReportsStatistics
-                    ).map(([key, value]) => {
-                      // Remove "total" from the key and replace "Count" with "Tickets"
-                      const formattedKey = key
-                        .replace("total", "")
-                        .replace("Count", " Tickets");
-                      return { key: [formattedKey], value: value };
-                    });
-                    console.log(mappedArray);
-                    dispatch(setSupportStatistics(mappedArray));
+            if (getUserRole() == "SUPER_ADMIN") {
+              getAll({ url: "support/bug-report/get-statistics" }).then(
+                (data: any) => {
+                  console.log("api call --- >", data);
+                  if (data !== undefined) {
+                    if (data.success) {
+                      const mappedArray = Object.entries(
+                        data.data.bugReportsStatistics
+                      ).map(([key, value]) => {
+                        // Remove "total" from the key and replace "Count" with "Tickets"
+                        const formattedKey = key
+                          .replace("total", "")
+                          .replace("Count", " Tickets");
+                        return { key: [formattedKey], value: value };
+                      });
+                      console.log(mappedArray);
+                      dispatch(setSupportStatistics(mappedArray));
+                    }
                   }
                 }
-              }
-            );
+              );
+            }
           }
         });
       } catch (error: any) {

@@ -124,7 +124,7 @@ const SecuritySettings = () => {
               </Button>
             </div>
           </Row>
-        </CardBody>x``
+        </CardBody>
       </Card>
     </Col>
   );
