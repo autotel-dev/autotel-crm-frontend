@@ -6,6 +6,8 @@ import Breadcrumbs from "../../../CommonElements/Breadcrumbs/Breadcrumbs";
 import { setup } from "../../../utils/Constant";
 import RolesList from "./RolesList";
 import RolesListNav from "./RolesListNav";
+import { getAll } from "../../../Api";
+import { setUserPermissions } from "../../../ReaduxToolkit/Reducer/RolesSlice";
 // import { setCountries } from "../../ReaduxToolkit/Reducer/CountrySlice";
 
 const Roles = () => {
@@ -31,6 +33,17 @@ const Roles = () => {
 
   // Update original countries whenever Redux countries change
 
+  getAll({ url: "user/get-user" }).then((parentData: any) => {
+    console.log("api call --- >", parentData);
+    if (parentData == undefined) {
+    }
+
+    if (parentData !== undefined) {
+      if (parentData.success) {
+        dispatch(setUserPermissions(parentData.data.user.permissions));
+      }
+    }
+  });
   return (
     <>
       <Breadcrumbs mainTitle="Roles List" parent={setup} title="Roles List" />

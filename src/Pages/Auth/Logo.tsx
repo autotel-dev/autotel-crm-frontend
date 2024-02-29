@@ -1,14 +1,18 @@
-import React from 'react'
-import { Link } from 'react-router-dom';
-import { Image } from '../../AbstractElements';
-import { dynamicImage } from '../../Service';
+import React from "react";
+import { Link } from "react-router-dom";
+import { Image } from "../../AbstractElements";
+import { dynamicImage } from "../../Service";
+import Logoo from "../../assets/Logo.png";
 interface PropsType {
-    alignLogo?: string;
-  }
+  alignLogo?: string;
+}
 const Logo = ({ alignLogo }: PropsType) => {
   return (
-    <Link className={`logo ${alignLogo ? alignLogo :""} `} to={`${process.env.PUBLIC_URL}/dashboards/shoppingplace`}>
-      <Image
+    <Link
+      className={`logo ${alignLogo ? alignLogo : ""} `}
+      to={`${process.env.PUBLIC_URL}/dashboards/shoppingplace`}
+    >
+      {/* <Image
         className="img-fluid for-light"
         src={dynamicImage("logo/logo-1.png")}
         alt="looginpage"
@@ -16,10 +20,13 @@ const Logo = ({ alignLogo }: PropsType) => {
       <Image
         className="img-fluid for-dark"
         src={dynamicImage("logo/logo-3.png")}
-        alt="looginpage"
-      />
-    </Link>
-  )
-}
+        alt="looginpage" */}
 
-export default Logo
+      {/* /> */}
+
+      <img src={Logoo} alt="" width={80} height={50} />
+    </Link>
+  );
+};
+
+export default Logo;

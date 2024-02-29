@@ -14,11 +14,11 @@ const RightHeader = () => {
       <UL className="nav-menus flex-row simple-list">
         <SearchInput />
         <Notifications />
-        <Bookmark />
-        <Message />
-        <Cart />
+        {/* <Bookmark /> */}
+        {/* <Message /> */}
+        {/* <Cart /> */}
         <DarkMode />
-        <Language />
+        {/* <Language /> */}
         <UserProfile />
       </UL>
     </div>

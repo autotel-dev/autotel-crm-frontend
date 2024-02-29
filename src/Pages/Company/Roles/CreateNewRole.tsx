@@ -11,6 +11,12 @@ import { Type } from "./CountryTypes/CountryTypes";
 import { Cancel } from "../../../utils/Constant";
 import { H3 } from "../../../AbstractElements";
 import { create, getAll } from "../../../Api";
+import {
+  setFilterRoles,
+  setRoles,
+  setRolesEnd,
+  setRolesStart,
+} from "../../../ReaduxToolkit/Reducer/RolesSlice";
 // import {
 //   setCountriesStart,
 //   setCountriesEnd,
@@ -38,94 +44,81 @@ const CreateNewRole = () => {
     }
   };
 
-  const permissionsArray = [
-    {
-      title: "Profile",
-      value: "PROFILE",
-      read: true,
-      create: false,
-      edit: false,
-      delete: false,
-    },
-    {
-      title: "Legal Documents",
-      value: "LEGAL_DOCUMENTS",
-      read: true,
-      create: false,
-      edit: false,
-      delete: false,
-    },
-    {
-      title: "Support",
-      value: "SUPPORT",
-      read: true,
-      create: false,
-      edit: false,
-      delete: false,
-    },
-    {
-      title: "Dashboard",
-      value: "DASHBOARD",
-      read: true,
-      create: false,
-      edit: false,
-      delete: false,
-    },
-    {
-      title: "User",
-      value: "USER",
-      read: true,
-      create: false,
-      edit: false,
-      delete: false,
-    },
-  ];
-  // const addRole: SubmitHandler<Type> = async (data: any) => {
-  //   setLoading(true);
-  //   if (data.name !== "") {
-  //     const city = {
-  //       name: data.name,
-  //     };
-  //     console.log(city);
-  //     try {
-  //       await create(city, { url: "country/create-country" }).then(
-  //         (data: any) => {
-  //           setLoading(false);
-  //           setAddModal(false);
-  //           if (data.success) {
-  //             console.log(data);
-  //             setLoading(false);
-  //             setAddModal(false);
-  //             reset({
-  //               name: "",
-  //             });
-  //             dispatch(setCountriesStart());
-  //             getAll({ url: "country/get-all-countries" }).then((data: any) => {
-  //               console.log("api call --- >", data);
-  //               dispatch(setCountriesEnd());
-  //               if (data !== undefined) {
-  //                 if (data.success) {
-  //                   console.log("hhg");
-  //                   dispatch(setCountries(data.data));
-  //                   dispatch(setFilterCountries(data.data));
-  //                 }
-  //               }
-  //             });
-  //           }
-  //         }
-  //       );
-  //       // Handle successful post creation (e.g., show a success message, redirect, etc.)
-  //     } catch (error: any) {
-  //       // Handle error (e.g., show an error message)
-  //       console.error("Error creating post:", error);
-  //       setLoading(false);
-  //       setAddModal(false);
-  //       reset({
-  //         name: "",
-  //       });
-  //     }
-  //   }
-  // };
+  const { userPermissions } = useSelector((state: any) => state.roles);
+  const [givenPermissions, setGivenPermissions] = useState(
+    userPermissions.map((permission: any) => ({
+      ...permission,
+      checked: false,
+    }))
+  );
+
+  const handleCheckboxChange = (index: any, key: any) => {
+    setGivenPermissions((prevPermissions: any) => {
+      const updatedPermissions = [...prevPermissions];
+      updatedPermissions[index][key] = !updatedPermissions[index][key];
+      return updatedPermissions;
+    });
+  };
+
+  const addRole: SubmitHandler<Type> = async (data: any) => {
+    setLoading(true);
+    if (data.name !== "") {
+      const role = {
+        name: data.name,
+        permissions: givenPermissions
+          .filter((permission: any) => permission.checked)
+          .map(
+            ({ checked, ...rest }: { checked: any; [key: string]: any }) => rest
+          ),
+      };
+      console.log(role);
+      try {
+        await create(role, { url: "sub-role/create-sub-role" }).then(
+          (data: any) => {
+            setLoading(false);
+            setAddModal(false);
+            if (data.success) {
+              console.log(data);
+              setLoading(false);
+              setAddModal(false);
+              reset({
+                name: "",
+              });
+              setGivenPermissions(
+                userPermissions.map((permission: any) => ({
+                  ...permission,
+                  checked: false,
+                }))
+              );
+              dispatch(setRolesStart());
+              getAll({ url: "sub-role/get-all-sub-roles" }).then(
+                (data: any) => {
+                  console.log("api call --- >", data);
+                  dispatch(setRolesEnd());
+                  if (data !== undefined) {
+                    if (data.success) {
+                      console.log("hhg");
+                      dispatch(setRoles(data.data));
+                      dispatch(setFilterRoles(data.data));
+                    }
+                  }
+                }
+              );
+            }
+          }
+        );
+        // Handle successful post creation (e.g., show a success message, redirect, etc.)
+      } catch (error: any) {
+        // Handle error (e.g., show an error message)
+        console.error("Error creating post:", error);
+        setLoading(false);
+        setAddModal(false);
+        reset({
+          name: "",
+        });
+      }
+    }
+  };
 
   return (
     <Col md={6}>
@@ -150,7 +143,7 @@ const CreateNewRole = () => {
           <ModalBody>
             <form
               className="form-bookmark needs-validation"
-              // onSubmit={handleSubmit(addCountry)}
+              onSubmit={handleSubmit(addRole)}
             >
               <Row>
                 <FormGroup className="col-md-12 create-group">
@@ -164,7 +157,7 @@ const CreateNewRole = () => {
                     {errors.name && "Country name is required"}
                   </span>
                 </FormGroup>
-
+                <H3 className="modal-title"> Permissions</H3>
                 <FormGroup
                   className="col-md-12 create-group"
                   style={{
@@ -178,15 +171,15 @@ const CreateNewRole = () => {
                     scrollbarColor: "lightgray transparent", // Specify scrollbar color
                   }}
                 >
-                  {permissionsArray.map((permission: any, index: any) => {
+                  {givenPermissions.map((permission: any, index: any) => {
                     return (
                       <div key={index}>
                         <Row>
                           <Col
                             key={index}
-                            xl={10}
-                            lg={10}
-                            md={10}
+                            xl={12}
+                            lg={12}
+                            md={12}
                             sm={12}
                             xs={12}
                             // xs={12}
@@ -203,110 +196,153 @@ const CreateNewRole = () => {
                                 fontWeight: "bold",
                               }}
                             >
+                              <label
+                                style={{
+                                  display: "inline-block",
+                                  position: "relative",
+                                  cursor: "pointer",
+                                  marginRight: "25px",
+                                  fontSize: "18px",
+                                }}
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                <input
+                                  type="checkbox"
+                                  name="key"
+                                  value="value"
+                                  checked={permission.checked}
+                                  onChange={() => {
+                                    handleCheckboxChange(index, "checked");
+                                  }}
+                                  style={{ display: "none" }} // Hide the default checkbox
+                                />
+                                <span
+                                  onClick={(e) => e.stopPropagation()}
+                                  className="green"
+                                ></span>
+                              </label>
                               {permission.title}
                             </span>
-                            <div>
-                              <label
-                                style={{
-                                  display: "inline-block",
-                                  position: "relative",
-                                  cursor: "pointer",
-                                  marginRight: "25px",
-                                  fontSize: "18px",
-                                }}
-                                onClick={(e) => e.stopPropagation()}
-                              >
-                                <input
-                                  type="checkbox"
-                                  name="key"
-                                  value="value"
-                                  checked={permission.read}
-                                  onChange={() => {}}
-                                  style={{ display: "none" }} // Hide the default checkbox
-                                />
-                                <span
+                            {permission.checked && (
+                              <div>
+                                <label
+                                  style={{
+                                    display: "inline-block",
+                                    position: "relative",
+                                    cursor: "pointer",
+                                    marginRight: "25px",
+                                    fontSize: "18px",
+                                  }}
                                   onClick={(e) => e.stopPropagation()}
-                                  className={permission.read ? "green" : "red"}
-                                ></span>
-                                Read
-                              </label>
-                              <label
-                                style={{
-                                  display: "inline-block",
-                                  position: "relative",
-                                  cursor: "pointer",
-                                  marginRight: "25px",
-                                  fontSize: "18px",
-                                }}
-                                onClick={(e) => e.stopPropagation()}
-                              >
-                                <input
-                                  type="checkbox"
-                                  name="key"
-                                  value="value"
-                                  checked={permission.create}
-                                  onChange={() => {}}
-                                  style={{ display: "none" }} // Hide the default checkbox
-                                />
-                                <span
+                                >
+                                  <input
+                                    type="checkbox"
+                                    name="key"
+                                    value="value"
+                                    disabled={!permission.read}
+                                    checked={permission.read}
+                                    onChange={() => {
+                                      if (permission.read) {
+                                        handleCheckboxChange(index, "read");
+                                      }
+                                    }}
+                                    style={{ display: "none" }} // Hide the default checkbox
+                                  />
+                                  <span
+                                    onClick={(e) => e.stopPropagation()}
+                                    className="green"
+                                  ></span>
+                                  Read
+                                </label>
+                                <label
+                                  style={{
+                                    display: "inline-block",
+                                    position: "relative",
+                                    cursor: "pointer",
+                                    marginRight: "25px",
+                                    fontSize: "18px",
+                                  }}
                                   onClick={(e) => e.stopPropagation()}
-                                  className={
-                                    permission.create ? "green" : "red"
-                                  }
-                                ></span>
-                                Create
-                              </label>
-                              <label
-                                style={{
-                                  display: "inline-block",
-                                  position: "relative",
-                                  cursor: "pointer",
-                                  marginRight: "25px",
-                                  fontSize: "18px",
-                                }}
-                                onClick={(e) => e.stopPropagation()}
-                              >
-                                <input
-                                  type="checkbox"
-                                  name="key"
-                                  value="value"
-                                  checked={permission.edit}
-                                  onChange={() => {}}
-                                  style={{ display: "none" }} // Hide the default checkbox
-                                />
-                                <span
+                                >
+                                  <input
+                                    type="checkbox"
+                                    name="key"
+                                    value="value"
+                                    disabled={!permission.create}
+                                    checked={permission.create}
+                                    onChange={() => {
+                                      if (permission.create) {
+                                        handleCheckboxChange(index, "create");
+                                      }
+                                    }}
+                                    style={{ display: "none" }} // Hide the default checkbox
+                                  />
+                                  <span
+                                    onClick={(e) => e.stopPropagation()}
+                                    className="green"
+                                  ></span>
+                                  Create
+                                </label>
+                                <label
+                                  style={{
+                                    display: "inline-block",
+                                    position: "relative",
+                                    cursor: "pointer",
+                                    marginRight: "25px",
+                                    fontSize: "18px",
+                                  }}
                                   onClick={(e) => e.stopPropagation()}
-                                  className={permission.edit ? "green" : "red"}
-                                ></span>
-                                Edit
-                              </label>
-                              <label
-                                style={{
-                                  display: "inline-block",
-                                  position: "relative",
-                                  cursor: "pointer",
-                                  marginRight: "25px",
-                                  fontSize: "18px",
-                                }}
-                                onClick={(e) => e.stopPropagation()}
-                              >
-                                <input
-                                  type="checkbox"
-                                  name="key"
-                                  value="value"
-                                  checked={permission.delete}
-                                  onChange={() => {}}
-                                  style={{ display: "none" }} // Hide the default checkbox
-                                />
-                                <span
+                                >
+                                  <input
+                                    type="checkbox"
+                                    name="key"
+                                    value="value"
+                                    disabled={!permission.edit}
+                                    checked={permission.edit}
+                                    onChange={() => {
+                                      if (permission.edit) {
+                                        handleCheckboxChange(index, "edit");
+                                      }
+                                    }}
+                                    style={{ display: "none" }} // Hide the default checkbox
+                                  />
+                                  <span
+                                    onClick={(e) => e.stopPropagation()}
+                                    className="green"
+                                  ></span>
+                                  Edit
+                                </label>
+                                <label
+                                  style={{
+                                    display: "inline-block",
+                                    position: "relative",
+                                    cursor: "pointer",
+                                    marginRight: "25px",
+                                    fontSize: "18px",
+                                  }}
                                   onClick={(e) => e.stopPropagation()}
-                                  className={
-                                    permission.delete ? "green" : "red"
-                                  }
-                                ></span>
-                                Delete
-                              </label>
-                            </div>
+                                >
+                                  <input
+                                    type="checkbox"
+                                    name="key"
+                                    value="value"
+                                    disabled={!permission.delete}
+                                    checked={permission.delete}
+                                    onChange={() => {
+                                      if (permission.delete) {
+                                        handleCheckboxChange(index, "delete");
+                                      }
+                                    }}
+                                    style={{ display: "none" }} // Hide the default checkbox
+                                  />
+                                  <span
+                                    onClick={(e) => e.stopPropagation()}
+                                    className="green"
+                                  ></span>
+                                  Delete
+                                </label>
+                              </div>
+                            )}
                           </Col>
                         </Row>
                       </div>

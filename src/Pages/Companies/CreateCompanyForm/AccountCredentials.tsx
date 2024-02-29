@@ -1,7 +1,16 @@
 import { ChangeEvent, useState } from "react";
 import { BusinessFormCommonProps } from "../../../Types/Forms/FormLayout/FormWizardTypes";
 import ShowError from "./ShowError";
-import { Button, Col, Form, FormGroup, Input, Label, Row } from "reactstrap";
+import {
+  Button,
+  Col,
+  Form,
+  FormGroup,
+  Input,
+  InputGroup,
+  Label,
+  Row,
+} from "reactstrap";
 import {
   AadhaarNumber,
   ChooseBanks,
@@ -16,6 +25,8 @@ import { setServersAddItemsList } from "../../../ReaduxToolkit/Reducer/CompanySl
 import { useDispatch, useSelector } from "react-redux";
 import { setCreateCompany } from "../../../ReaduxToolkit/Reducer/CompanySlice";
 import FileAttachementComponent from "./FileAttachementComponent";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 
 const AccountCredentials = ({ callbackActive }: BusinessFormCommonProps) => {
   const { createCompany, imageBackground, companyLogo } = useSelector(
@@ -28,6 +39,13 @@ const AccountCredentials = ({ callbackActive }: BusinessFormCommonProps) => {
     // imageTitle: "",
     // companyTitle: "",
   });
+
+  const [showPassword, setShowPassword] = useState(false);
+
+  const togglePasswordVisibility = (e: any) => {
+    e.preventDefault();
+    setShowPassword(!showPassword);
+  };
   const [formData, setFormData] = useState({});
   const { emailAddress, password } = accountCredentialsForm;
   const getUserData = (event: ChangeEvent<HTMLInputElement>) => {
@@ -83,13 +101,43 @@ const AccountCredentials = ({ callbackActive }: BusinessFormCommonProps) => {
             Password
             <span className="txt-danger">*</span>
           </Label>
-          <Input
+          {/* <Input
             type="password"
             placeholder="Enter Password"
             value={password}
             name="password"
             onChange={getUserData}
-          />
+          /> */}
+
+          <InputGroup>
+            <Input
+              type={showPassword ? "text" : "password"}
+              placeholder="Enter Password"
+              value={password}
+              name="password"
+              onChange={getUserData}
+            />
+            <Button
+              color="white"
+              // className="bg-transparent"
+              onClick={togglePasswordVisibility}
+              style={{
+                backgroundColor: "transparent",
+                width: "80px",
+                border: "1px solid #dee2e6",
+              }}
+            >
+              <FontAwesomeIcon
+                // color="secondary"
+                style={{
+                  color: "green",
+                  fontSize: "20px",
+                  marginRight: "20px",
+                }}
+                icon={showPassword ? faEye : faEyeSlash}
+              />
+            </Button>
+          </InputGroup>
         </Col>
 
         {/* <Col xl={6} sm={6}>

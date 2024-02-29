@@ -19,7 +19,7 @@ import Attachements from "./Attachements/Attachements";
 import Swal from "sweetalert2";
 import AllowedModules from "./AllowedModules/AllowedModules";
 
-const UserEdit = () => {
+const Account = () => {
   const dispatch = useDispatch();
   const [userDataLoading, setUserDataLoading] = useState(true);
   const [serverPermissionsLoading, setServerPermissionsLoading] =
@@ -76,28 +76,47 @@ const UserEdit = () => {
               url: `http://124.29.238.127:8080/${parentData.data.user.cnicFront.url}`,
             }).then(async (data: any) => {
               console.log("image api --- >", data);
-              ticketImages.push(data);
+              ticketImages.push({
+                key: "cnicFront",
+                url: parentData.data.user.cnicFront.url,
+                blob: data,
+              });
               console.log("Ticket Images", ticketImages);
               // cnicBack
               getImage({
                 url: `http://124.29.238.127:8080/${parentData.data.user.cnicBack.url}`,
               }).then(async (data: any) => {
                 console.log("image api --- >", data);
-                ticketImages.push(data);
+                ticketImages.push({
+                  key: "cnicBack",
+                  url: parentData.data.user.cnicBack.url,
+                  blob: data,
+                });
+
                 console.log("Ticket Images", ticketImages);
                 // ptaCertificate
                 getImage({
                   url: `http://124.29.238.127:8080/${parentData.data.user.ptaCertificate.url}`,
                 }).then(async (data: any) => {
                   console.log("image api --- >", data);
-                  ticketImages.push(data);
+                  ticketImages.push({
+                    key: "ptaCertificate",
+                    url: parentData.data.user.ptaCertificate.url,
+                    blob: data,
+                  });
+
                   console.log("Ticket Images", ticketImages);
                   // ntnCertificate
                   getImage({
                     url: `http://124.29.238.127:8080/${parentData.data.user.ntnCertificate.url}`,
                   }).then(async (data: any) => {
                     console.log("image api --- >", data);
-                    ticketImages.push(data);
+                    ticketImages.push({
+                      key: "ntnCertificate",
+                      url: parentData.data.user.ntnCertificate.url,
+                      blob: data,
+                    });
+
                     console.log("Ticket Images", ticketImages);
 
                     // otherAttachment
@@ -105,7 +124,12 @@ const UserEdit = () => {
                       url: `http://124.29.238.127:8080/${parentData.data.user.otherAttachment.url}`,
                     }).then(async (data: any) => {
                       console.log("image api --- >", data);
-                      ticketImages.push(data);
+                      ticketImages.push({
+                        key: "otherAttachment",
+                        url: parentData.data.user.otherAttachment.url,
+                        blob: data,
+                      });
+
                       setTicketImages(ticketImages);
                       console.log("Ticket Images", ticketImages);
                       if (ticketImages.length == 5) {
@@ -181,4 +205,4 @@ const UserEdit = () => {
   );
 };
 
-export default UserEdit;
+export default Account;

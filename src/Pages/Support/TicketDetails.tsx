@@ -516,6 +516,7 @@ const TicketDetails = () => {
                           padding: "15px",
                           borderRadius: "10px",
                           margin: "50px 0px",
+                          marginLeft: "30px",
                         }}
                       >
                         <Row>
@@ -661,7 +662,9 @@ const TicketDetails = () => {
                                           justifyContent: "center",
                                         }}
                                       >
-                                        SB
+                                        {reply.user.fullName
+                                          .slice(0, 1)
+                                          .toUpperCase()}
                                       </div>
                                       <div
                                         style={{
@@ -747,7 +750,9 @@ const TicketDetails = () => {
                                             justifyContent: "center",
                                           }}
                                         >
-                                          SB
+                                          {reply.user.fullName
+                                            .slice(0, 1)
+                                            .toUpperCase()}
                                         </div>
                                         <div
                                           style={{

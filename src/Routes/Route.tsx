@@ -75,8 +75,7 @@ import Todo from "../Pages/Apps/Todo/Todo";
 import SocialApp from "../Pages/Apps/SocialApp/SocialApp";
 import Calender from "../Pages/Apps/Calender/Calender";
 import Tasks from "../Pages/Apps/Tasks/Tasks";
-import UserProfile from "../Pages/Apps/User/UserProfile/UserProfile";
-import UserEdit from "../Pages/Apps/User/UserEdit/UserEdit";
+import UserProfile from "../Pages/Apps/User/UserProfile/Settings";
 import UserCard from "../Pages/Apps/User/UserCard/UserCard";
 import EmailApp from "../Pages/Apps/Email/EmailApp/EmailApp";
 import EmailCompose from "../Pages/Apps/Email/EmailCompose/EmailCompose";
@@ -140,13 +139,14 @@ import RecentLogsFullTable from "../Pages/ServerManagement/RecentOrders/RecentLo
 
 // Company
 
-import CompanySupport from "../Pages/Company/Support/Support";
 import CompanyTasks from "../Pages/Company/Tasks/Tasks";
 import CompanyUsers from "../Pages/Company/Users/Users";
 import Monitoring from "../Pages/Company/Modules/Monitoring/Monitoring";
 import ControlRoom from "../Pages/Company/Modules/ControlRoom/ControlRoom";
 import TicketDetails from "../Pages/Support/TicketDetails";
 import Roles from "../Pages/Company/Roles/Roles";
+import Account from "../Pages/Apps/User/UserEdit/Account";
+import Settings from "../Pages/Apps/User/UserProfile/Settings";
 
 const routes = [
   // dashboard routes
@@ -444,12 +444,12 @@ const routes = [
 
   //  User
   {
-    path: `${process.env.PUBLIC_URL}/users/usersprofile`,
-    Component: <UserProfile />,
+    path: `${process.env.PUBLIC_URL}/users/settings`,
+    Component: <Settings />,
   },
   {
-    path: `${process.env.PUBLIC_URL}/users/usersedit`,
-    Component: <UserEdit />,
+    path: `${process.env.PUBLIC_URL}/users/account`,
+    Component: <Account />,
   },
   {
     path: `${process.env.PUBLIC_URL}/users/userscards`,

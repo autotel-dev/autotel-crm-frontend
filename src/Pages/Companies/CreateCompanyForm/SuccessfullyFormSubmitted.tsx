@@ -42,6 +42,7 @@ const SuccessfullyFormSubmitted = ({
     serverCredentials,
     servers,
     allowedModules,
+    permissions,
     crmModules,
     cnicFront,
     cnicBack,
@@ -51,9 +52,8 @@ const SuccessfullyFormSubmitted = ({
     imageBackground,
     companyLogo,
   } = useSelector((state: any) => state.companies);
-  console.log("createCompany",createCompany);
-  
-  
+  console.log("createCompany", createCompany);
+
   // const [formData, setFormData] = useState({});
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
@@ -124,7 +124,12 @@ const SuccessfullyFormSubmitted = ({
       "allowedModules",
       JSON.stringify(createCompany.allowedModules)
     );
-    formData.append("permissions", JSON.stringify(createCompany.permissions));
+    const providePermissions = createCompany.permissions
+      .filter((permission: any) => permission.checked)
+      .map(
+        ({ checked, ...rest }: { checked: any; [key: string]: any }) => rest
+      );
+    formData.append("permissions", JSON.stringify(providePermissions));
 
     if (cnicFront !== null) {
       formData.append("cnicFront", cnicFront);
@@ -625,6 +630,179 @@ const SuccessfullyFormSubmitted = ({
             </div>
           );
         })}
+      </Form>
+
+      <H2>Allowed Permissions</H2>
+      <Form style={{ marginBottom: "65px", marginTop: "20px" }}>
+        <div
+          style={{
+            overflowY: "auto",
+            overflowX: "hidden",
+            maxHeight: "30vh", // Subtract scrollbar width from max height
+            WebkitOverflowScrolling: "touch", // Enable momentum scrolling on iOS
+            scrollbarWidth: "thin", // Specify scrollbar width
+            WebkitBorderRadius: "5px !important", // For WebKit browsers (Chrome, Safari)
+            MozBorderRadius: "5px !important", // For Mozilla Firefox
+            borderRadius: "5px !important", // For other browsers
+            scrollbarColor: "lightgray transparent", // Specify scrollbar color
+          }}
+        >
+          {createCompany.permissions?.map((permission: any, index: any) => {
+            return (
+              <div key={index}>
+                <Row>
+                  <Col
+                    key={index}
+                    xl={10}
+                    lg={10}
+                    md={10}
+                    sm={12}
+                    xs={12}
+                    // xs={12}
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                    }}
+                  >
+                    <span
+                      style={{
+                        fontSize: "17px",
+                        margin: "10px 0px",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      <label
+                        style={{
+                          display: "inline-block",
+                          position: "relative",
+                          cursor: "pointer",
+                          marginRight: "25px",
+                          fontSize: "18px",
+                        }}
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <input
+                          type="checkbox"
+                          name="key"
+                          value="value"
+                          checked={permission.checked}
+                          onChange={() => {}}
+                          style={{ display: "none" }} // Hide the default checkbox
+                        />
+                        <span
+                          onClick={(e) => e.stopPropagation()}
+                          className="green"
+                        ></span>
+                      </label>
+                      {permission.title}
+                    </span>
+                    {permission.checked && (
+                      <div>
+                        <label
+                          style={{
+                            display: "inline-block",
+                            position: "relative",
+                            cursor: "pointer",
+                            marginRight: "25px",
+                            fontSize: "18px",
+                          }}
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <input
+                            type="checkbox"
+                            name="key"
+                            value="value"
+                            checked={permission.read}
+                            onChange={() => {}}
+                            style={{ display: "none" }} // Hide the default checkbox
+                          />
+                          <span
+                            onClick={(e) => e.stopPropagation()}
+                            className="green"
+                          ></span>
+                          Read
+                        </label>
+                        <label
+                          style={{
+                            display: "inline-block",
+                            position: "relative",
+                            cursor: "pointer",
+                            marginRight: "25px",
+                            fontSize: "18px",
+                          }}
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <input
+                            type="checkbox"
+                            name="key"
+                            value="value"
+                            checked={permission.create}
+                            onChange={() => {}}
+                            style={{ display: "none" }} // Hide the default checkbox
+                          />
+                          <span
+                            onClick={(e) => e.stopPropagation()}
+                            className="green"
+                          ></span>
+                          Create
+                        </label>
+                        <label
+                          style={{
+                            display: "inline-block",
+                            position: "relative",
+                            cursor: "pointer",
+                            marginRight: "25px",
+                            fontSize: "18px",
+                          }}
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <input
+                            type="checkbox"
+                            name="key"
+                            value="value"
+                            checked={permission.edit}
+                            onChange={() => {}}
+                            style={{ display: "none" }} // Hide the default checkbox
+                          />
+                          <span
+                            onClick={(e) => e.stopPropagation()}
+                            className="green"
+                          ></span>
+                          Edit
+                        </label>
+                        <label
+                          style={{
+                            display: "inline-block",
+                            position: "relative",
+                            cursor: "pointer",
+                            marginRight: "25px",
+                            fontSize: "18px",
+                          }}
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <input
+                            type="checkbox"
+                            name="key"
+                            value="value"
+                            checked={permission.delete}
+                            onChange={() => {}}
+                            style={{ display: "none" }} // Hide the default checkbox
+                          />
+                          <span
+                            onClick={(e) => e.stopPropagation()}
+                            className="green"
+                          ></span>
+                          Delete
+                        </label>
+                      </div>
+                    )}
+                  </Col>
+                </Row>
+              </div>
+            );
+          })}
+        </div>
       </Form>
 
       <H2>Legal Attachements</H2>

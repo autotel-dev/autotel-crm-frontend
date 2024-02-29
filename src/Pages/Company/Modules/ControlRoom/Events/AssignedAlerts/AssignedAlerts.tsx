@@ -62,6 +62,7 @@ const AssignedAlerts = () => {
 
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [basicTab, setBasicTab] = useState("1");
+  const [fisrtTime,setFirstTime] = useState(true);
 
   return (
     <Card className="invoice-card">

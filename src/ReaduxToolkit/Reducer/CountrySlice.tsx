@@ -1,5 +1,4 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getAll } from "../../Api";
 
 const initialState = {
   countries: [],

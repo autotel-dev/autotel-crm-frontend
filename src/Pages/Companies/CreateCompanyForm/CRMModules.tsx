@@ -1,4 +1,4 @@
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { BusinessFormCommonProps } from "../../../Types/Forms/FormLayout/FormWizardTypes";
 import ShowError from "./ShowError";
 import { Button, Col, Form, FormGroup, Input, Label, Row } from "reactstrap";
@@ -16,6 +16,7 @@ import AddServersComponent from "./AddServersComponent";
 import {
   setAllowedModules,
   setCreateCompany,
+  setPermissions,
 } from "../../../ReaduxToolkit/Reducer/CompanySlice";
 import "./permissionsStyle.css";
 
@@ -24,14 +25,52 @@ const CRMModules = ({ callbackActive }: BusinessFormCommonProps) => {
     useSelector((state: any) => state.companies);
   const dispatch = useDispatch();
 
+  const [givenPermissions, setGivenPermissions] = useState(
+    permissions.map((permission: any) => ({
+      ...permission,
+      checked: false,
+    }))
+  );
+
   const [switches, setSwitches] = useState("off");
+  useEffect(() => {
+    const arrayChecked = permissions.every(
+      (permission: any) => permission.checked
+    );
+    if (arrayChecked) {
+      setGivenPermissions(permissions);
+    }
+  }, [permissions]);
+  // const handleCheckboxChange = (index: any,) => {
+  //   setGivenPermissions((prevPermissions: any) => {
+  //     const updatedPermissions = [...prevPermissions];
+  //     updatedPermissions[index] = {
+  //       ...updatedPermissions[index],
+  //       checked: !updatedPermissions[index].checked,
+  //     };
+  //     return updatedPermissions;
+  //   });
+  // };
+
+  const handleCheckboxChange = (index: any, key: any) => {
+    setGivenPermissions((prevPermissions: any) => {
+      const updatedPermissions = [...prevPermissions];
+      updatedPermissions[index][key] = !updatedPermissions[index][key];
+      return updatedPermissions;
+    });
+  };
 
   const handleNextButton = () => {
+    // Filter out only the permissions that are checked
+    // const checkedPermissions = givenPermissions.filter(
+    //   (permission: any) => permission.checked
+    // );
+
     dispatch(
       setCreateCompany({
         ...createCompany,
         allowedModules: allowedModules,
-        permissions: permissions,
+        permissions: givenPermissions,
       })
     );
 
@@ -156,7 +195,7 @@ const CRMModules = ({ callbackActive }: BusinessFormCommonProps) => {
                   style={{
                     overflowY: "auto",
                     overflowX: "hidden",
-                    maxHeight: "250vh", // Subtract scrollbar width from max height
+                    maxHeight: "30vh", // Subtract scrollbar width from max height
                     WebkitOverflowScrolling: "touch", // Enable momentum scrolling on iOS
                     scrollbarWidth: "thin", // Specify scrollbar width
                     WebkitBorderRadius: "5px !important", // For WebKit browsers (Chrome, Safari)
@@ -165,7 +204,7 @@ const CRMModules = ({ callbackActive }: BusinessFormCommonProps) => {
                     scrollbarColor: "lightgray transparent", // Specify scrollbar color
                   }}
                 >
-                  {permissions?.map((permission: any, index: any) => {
+                  {givenPermissions.map((permission: any, index: any) => {
                     return (
                       <div key={index}>
                         <Row>
@@ -190,106 +229,141 @@ const CRMModules = ({ callbackActive }: BusinessFormCommonProps) => {
                                 fontWeight: "bold",
                               }}
                             >
+                              <label
+                                style={{
+                                  display: "inline-block",
+                                  position: "relative",
+                                  cursor: "pointer",
+                                  marginRight: "25px",
+                                  fontSize: "18px",
+                                }}
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                <input
+                                  type="checkbox"
+                                  name="key"
+                                  value="value"
+                                  checked={permission.checked}
+                                  onChange={() => {
+                                    handleCheckboxChange(index, "checked");
+                                  }}
+                                  style={{ display: "none" }} // Hide the default checkbox
+                                />
+                                <span
+                                  onClick={(e) => e.stopPropagation()}
+                                  className="green"
+                                ></span>
+                              </label>
                               {permission.title}
                             </span>
-                            <div>
-                              <label
-                                style={{
-                                  display: "inline-block",
-                                  position: "relative",
-                                  cursor: "pointer",
-                                  marginRight: "25px",
-                                  fontSize: "18px",
-                                }}
-                                onClick={(e) => e.stopPropagation()}
-                              >
-                                <input
-                                  type="checkbox"
-                                  name="key"
-                                  value="value"
-                                  checked={permission.read ? true : false}
-                                  onChange={() => {}}
-                                  style={{ display: "none" }} // Hide the default checkbox
-                                />
-                                <span
+                            {permission.checked && (
+                              <div>
+                                <label
+                                  style={{
+                                    display: "inline-block",
+                                    position: "relative",
+                                    cursor: "pointer",
+                                    marginRight: "25px",
+                                    fontSize: "18px",
+                                  }}
                                   onClick={(e) => e.stopPropagation()}
-                                  className="green"
-                                ></span>
-                                Read
-                              </label>
-                              <label
-                                style={{
-                                  display: "inline-block",
-                                  position: "relative",
-                                  cursor: "pointer",
-                                  marginRight: "25px",
-                                  fontSize: "18px",
-                                }}
-                                onClick={(e) => e.stopPropagation()}
-                              >
-                                <input
-                                  type="checkbox"
-                                  name="key"
-                                  value="value"
-                                  checked={permission.create ? true : false}
-                                  onChange={() => {}}
-                                  style={{ display: "none" }} // Hide the default checkbox
-                                />
-                                <span
+                                >
+                                  <input
+                                    type="checkbox"
+                                    name="key"
+                                    value="value"
+                                    checked={permission.read}
+                                    onChange={() => {
+                                      handleCheckboxChange(index, "read");
+                                    }}
+                                    style={{ display: "none" }} // Hide the default checkbox
+                                  />
+                                  <span
+                                    onClick={(e) => e.stopPropagation()}
+                                    className="green"
+                                  ></span>
+                                  Read
+                                </label>
+                                <label
+                                  style={{
+                                    display: "inline-block",
+                                    position: "relative",
+                                    cursor: "pointer",
+                                    marginRight: "25px",
+                                    fontSize: "18px",
+                                  }}
                                   onClick={(e) => e.stopPropagation()}
-                                  className="green"
-                                ></span>
-                                Create
-                              </label>
-                              <label
-                                style={{
-                                  display: "inline-block",
-                                  position: "relative",
-                                  cursor: "pointer",
-                                  marginRight: "25px",
-                                  fontSize: "18px",
-                                }}
-                                onClick={(e) => e.stopPropagation()}
-                              >
-                                <input
-                                  type="checkbox"
-                                  name="key"
-                                  value="value"
-                                  checked={permission.edit ? true : false}
-                                  onChange={() => {}}
-                                  style={{ display: "none" }} // Hide the default checkbox
-                                />
-                                <span
+                                >
+                                  <input
+                                    type="checkbox"
+                                    name="key"
+                                    value="value"
+                                    checked={permission.create}
+                                    onChange={() => {
+                                      handleCheckboxChange(index, "create");
+                                    }}
+                                    style={{ display: "none" }} // Hide the default checkbox
+                                  />
+                                  <span
+                                    onClick={(e) => e.stopPropagation()}
+                                    className="green"
+                                  ></span>
+                                  Create
+                                </label>
+                                <label
+                                  style={{
+                                    display: "inline-block",
+                                    position: "relative",
+                                    cursor: "pointer",
+                                    marginRight: "25px",
+                                    fontSize: "18px",
+                                  }}
                                   onClick={(e) => e.stopPropagation()}
-                                  className="green"
-                                ></span>
-                                Edit
-                              </label>
-                              <label
-                                style={{
-                                  display: "inline-block",
-                                  position: "relative",
-                                  cursor: "pointer",
-                                  marginRight: "25px",
-                                  fontSize: "18px",
-                                }}
-                                onClick={(e) => e.stopPropagation()}
-                              >
-                                <input
-                                  type="checkbox"
-                                  name="key"
-                                  value="value"
-                                  checked={permission.delete ? true : false}
-                                  onChange={() => {}}
-                                  style={{ display: "none" }} // Hide the default checkbox
-                                />
-                                <span
+                                >
+                                  <input
+                                    type="checkbox"
+                                    name="key"
+                                    value="value"
+                                    checked={permission.edit}
+                                    onChange={() => {
+                                      handleCheckboxChange(index, "edit");
+                                    }}
+                                    style={{ display: "none" }} // Hide the default checkbox
+                                  />
+                                  <span
+                                    onClick={(e) => e.stopPropagation()}
+                                    className="green"
+                                  ></span>
+                                  Edit
+                                </label>
+                                <label
+                                  style={{
+                                    display: "inline-block",
+                                    position: "relative",
+                                    cursor: "pointer",
+                                    marginRight: "25px",
+                                    fontSize: "18px",
+                                  }}
                                   onClick={(e) => e.stopPropagation()}
-                                  className="green"
-                                ></span>
-                                Delete
-                              </label>
-                            </div>
+                                >
+                                  <input
+                                    type="checkbox"
+                                    name="key"
+                                    value="value"
+                                    checked={permission.delete}
+                                    onChange={() => {
+                                      handleCheckboxChange(index, "delete");
+                                    }}
+                                    style={{ display: "none" }} // Hide the default checkbox
+                                  />
+                                  <span
+                                    onClick={(e) => e.stopPropagation()}
+                                    className="green"
+                                  ></span>
+                                  Delete
+                                </label>
+                              </div>
+                            )}
                           </Col>
                         </Row>
                       </div>

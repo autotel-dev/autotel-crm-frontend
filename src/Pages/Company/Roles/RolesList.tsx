@@ -6,6 +6,15 @@ import { useDispatch, useSelector } from "react-redux";
 import "./tableStyle.css";
 import CommonHeader from "../../../Common/CommonHeader";
 import Loader from "../../Loader/Loader";
+import { setNoDataFound } from "../../../ReaduxToolkit/Reducer/NoDataFoundSlice";
+import { getAll, patch, update } from "../../../Api";
+import {
+  setFilterRoles,
+  setRoles,
+  setRolesEnd,
+  setRolesStart,
+} from "../../../ReaduxToolkit/Reducer/RolesSlice";
+import { setOperatorsEnd } from "../../../ReaduxToolkit/Reducer/OperatorSlice";
 
 // import {
 //   setCountries,
@@ -14,41 +23,37 @@ import Loader from "../../Loader/Loader";
 //   setFilterCountries,
 //   setId,
 // } from "../../ReaduxToolkit/Reducer/CountrySlice";
-// import { setNoDataFound } from "../../ReaduxToolkit/Reducer/NoDataFoundSlice";
 
 const RolesList = () => {
   // const { countries, loading, id } = useSelector(
   //   (state: any) => state.countries
   // );
-  // const { noDataFound } = useSelector((state: any) => state.noDataFound);
+  const { noDataFound } = useSelector((state: any) => state.noDataFound);
+  const { roles } = useSelector((state: any) => state.roles);
   const dispatch = useDispatch();
 
-  // useEffect(() => {
-  //   dispatch(setCountriesStart());
-  //   getAll({ url: "country/get-all-countries" }).then((data: any) => {
-  //     console.log("api call --- >", data);
-  //     dispatch(setCountriesEnd());
-  //     if (data !== undefined) {
-  //       dispatch(setNoDataFound(data.message));
-  //       if (data.success) {
-  //         console.log("hhg");
-  //         setFilterCountries(data.data);
-  //         dispatch(setCountries(data.data));
-  //         dispatch(setFilterCountries(data.data));
-  //       }
-  //     }
-  //   });
-  // }, []);
-  const roles = [
-    { id: 1, name: "Role 1", isActive: true },
-    { id: 1, name: "Role 1", isActive: true },
-    { id: 1, name: "Role 1", isActive: true },
-  ];
+  useEffect(() => {
+    dispatch(setRolesStart());
+    getAll({ url: "sub-role/get-all-sub-roles" }).then((data: any) => {
+      console.log("api call --- >", data);
+      dispatch(setRolesEnd());
+      if (data !== undefined) {
+        dispatch(setNoDataFound(data.message));
+        if (data.success) {
+          console.log("hhg");
+
+          dispatch(setRoles(data.data));
+          dispatch(setFilterRoles(data.data));
+        }
+      }
+    });
+  }, []);
+
   const [loading, setLoading] = useState(false);
   const renderTableRows = () => {
     return roles?.map((row: any) => (
-      <tr key={row.id}>
-        <td>{row.id}</td>
+      <tr key={row._id}>
+        <td>{row._id}</td>
         <td>{row.name}</td>
         <td>
           <div className="d-flex" style={{ justifyContent: "center" }}>
@@ -60,47 +65,43 @@ const RolesList = () => {
                 <Input
                   type="checkbox"
                   defaultChecked={row.isActive}
-                  value={row.isActive ? "on" : "off"}
+                  value={row.isActive}
                   onChange={async (e: any) => {
                     //  --------------------------
-                    // const operator = {
-                    //   fullName: row.fullName,
-                    //   emailAddress: row.emailAddress,
-                    //   phoneNo: row.phoneNo,
-                    //   isActive: !row.isActive,
-                    //   company: decodedToken.userId,
-                    // };
-                    // console.log(operator);
-                    // setIsActive(!row.isActive);
-                    // // setRowIndex(index);
-                    // console.log(e.target.value);
-                    // try {
-                    //   await update(operator, {
-                    //     url: `operator/update-operator/${row._id}`,
-                    //   }).then((data: any) => {
-                    //     if (data.success) {
-                    //       console.log(data);
-                    //       dispatch(setOperatorsStart());
-                    //       getAll({ url: "operator/get-all-operators" }).then(
-                    //         (data: any) => {
-                    //           console.log("api call --- >", data);
-                    //           dispatch(setOperatorsEnd());
-                    //           if (data !== undefined) {
-                    //             if (data.success) {
-                    //               console.log("hhg");
-                    //               dispatch(setOperators(data.data));
-                    //               dispatch(setFilterOperators(data.data));
-                    //             }
-                    //           }
-                    //         }
-                    //       );
-                    //     }
-                    //   });
-                    //   // Handle successful post creation (e.g., show a success message, redirect, etc.)
-                    // } catch (error) {
-                    //   // Handle error (e.g., show an error message)
-                    //   console.error("Error creating post:", error);
-                    // }
+                    const changeStatus = {
+                      isActive: !row.isActive,
+                    };
+                    console.log(changeStatus);
+
+                    // setRowIndex(index);
+                    console.log(e.target.value);
+                    try {
+                      await patch(changeStatus, {
+                        url: `sub-role/change-activation-status/${row._id}`,
+                      }).then((data: any) => {
+                        if (data.success) {
+                          console.log(data);
+                          dispatch(setRolesStart());
+                          getAll({ url: "sub-role/get-all-sub-roles" }).then(
+                            (data: any) => {
+                              console.log("api call --- >", data);
+                              dispatch(setRolesEnd());
+                              if (data !== undefined) {
+                                if (data.success) {
+                                  console.log("hhg");
+                                  dispatch(setRoles(data.data));
+                                  dispatch(setFilterRoles(data.data));
+                                }
+                              }
+                            }
+                          );
+                        }
+                      });
+                      // Handle successful post creation (e.g., show a success message, redirect, etc.)
+                    } catch (error) {
+                      // Handle error (e.g., show an error message)
+                      console.error("Error creating post:", error);
+                    }
                   }}
                 />
                 <span
@@ -195,9 +196,7 @@ const RolesList = () => {
                       fontWeight: "bold",
                     }}
                   >
-                    {/* {noDataFound !== ""
-                      ? "No Countries Found"
-                      : "Faild to Fetch"} */}
+                    No Roles Found
                   </div>
                 )}
 

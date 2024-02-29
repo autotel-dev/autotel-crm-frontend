@@ -7,6 +7,7 @@ import { useSelector } from "react-redux";
 import { decode } from "jwt-js-decode";
 import { jwtDecode } from "jwt-decode";
 import { decryptData } from "../../../Api/encryption";
+import Logo from "../../../assets/Logo.png";
 
 const UserProfile = () => {
   const { token } = useSelector((state: any) => state.user);
@@ -35,15 +36,28 @@ const UserProfile = () => {
   return (
     <>
       {decodedToken !== null && (
-        <LI className="profile-nav onhover-dropdown pe-0 py-0">
+        <div className="profile-nav onhover-dropdown pe-0 py-0">
           <div className="d-flex align-items-center profile-media">
-            <Image
+            <div className="logo-wrapper">
+              <img
+                src={Logo}
+                alt=""
+                width={55}
+                height={40}
+                className="b-r-25"
+                style={{ margin: "0px 15px" }}
+              />
+            </div>
+
+            {/* <Image
               className="b-r-25"
-              src={dynamicImage("dashboard/profile.png")}
+              src={Logo}
               alt=""
-            />
+            /> */}
             <div className="flex-grow-1 user">
-              <span>{decodedToken.fullName}</span>
+              <span style={{ fontWeight: "bold" }}>
+                {decodedToken.fullName}
+              </span>
               <P className="mb-0 font-nunito">
                 {toPascalCase(decodedToken.role)} &nbsp;
                 <i className="middle fa fa-angle-down"></i>
@@ -51,7 +65,7 @@ const UserProfile = () => {
             </div>
           </div>
           <ProfileBox />
-        </LI>
+        </div>
       )}
     </>
   );

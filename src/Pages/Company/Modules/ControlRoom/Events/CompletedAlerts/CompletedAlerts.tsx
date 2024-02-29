@@ -68,7 +68,7 @@ const AssignedAlerts = () => {
                 {dataList.length == 0 ? (
                   <tr>
                     <td colSpan={7} style={{ fontSize: "25px" }}>
-                      No Data Found
+                      No Completed Alerts Found
                     </td>
                   </tr>
                 ) : (

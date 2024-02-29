@@ -19,10 +19,6 @@ const PDFViewer: React.FC<PDFViewerProps> = ({ file, name }) => {
   //     setNumPages(numPages);
   //   };
 
-  //   const handleDownload = () => {
-  //     saveAs(file, name);
-  //   };
-
   const [image, setImage] = useState<string | null>(null);
 
   const onDocumentLoadSuccess = async ({ numPages }: { numPages: number }) => {
@@ -56,20 +52,10 @@ const PDFViewer: React.FC<PDFViewerProps> = ({ file, name }) => {
     }
   };
 
-  //   const handleDownload = () => {
-  //     const link = document.createElement("a");
-  //     link.href = file;
-  //     link.download = name;
-  //     document.body.appendChild(link);
-  //     link.click();
-  //     document.body.removeChild(link);
-  //   };
   const handleClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     event.preventDefault();
     const fileUrl = URL.createObjectURL(file);
     window.open(fileUrl, "_blank");
-    // Add logic here to handle the click event, such as opening the file
-    // For example, you can use window.open(file, '_blank') to open the file in a new tab
   };
 
   return (

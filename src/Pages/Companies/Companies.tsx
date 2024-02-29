@@ -85,6 +85,7 @@ const Companies = () => {
       if (data !== undefined) {
         if (data.success) {
           console.log("hhg");
+
           dispatch(setPermissions(data.data));
         }
       }
