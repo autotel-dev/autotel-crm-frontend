@@ -50,7 +50,7 @@ const CommonForm = ({ alignLogo }: CommonFormPropsType) => {
           if (data.statusCode == 401) {
             if (data.data.isOtpEnabled) {
               navigate(`${process.env.PUBLIC_URL}/verifyOTP`);
-              localStorage.setItem("userId", data.data.userId);
+              // localStorage.setItem("userId", data.data.userId);
             }
           } else if (data.statusCode == 200) {
             const token = data.data.authToken;

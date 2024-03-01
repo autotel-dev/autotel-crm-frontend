@@ -4,7 +4,7 @@ import DataTable from "react-data-table-component";
 import { useEffect, useState } from "react";
 import { getAll, update } from "../../../Api";
 import { useDispatch, useSelector } from "react-redux";
-import "./tableStyle.css";
+import "./usersStyle.css";
 import deleteAlert from "../../Alerts/DeleteAlert";
 import {
   setFilterOperators,
@@ -16,6 +16,7 @@ import { setNoDataFound } from "../../../ReaduxToolkit/Reducer/NoDataFoundSlice"
 import Loader from "../../Loader/Loader";
 import UpdateUser from "./UpdateUser";
 import { jwtDecode } from "jwt-decode";
+import { formatUnderscoredString } from "../../../Api/globals";
 
 const UsersList = () => {
   const { operators, loading } = useSelector((state: any) => state.operators);
@@ -61,7 +62,7 @@ const UsersList = () => {
       <tr key={row.id}>
         <td>{row._id}</td>
         <td>{row.fullName}</td>
-        <td>{row.role}</td>
+        <td>{formatUnderscoredString(row.role)}</td>
         <td>{row.emailAddress}</td>
         <td>
           <div className="d-flex" style={{ justifyContent: "center" }}>

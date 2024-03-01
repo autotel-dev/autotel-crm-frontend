@@ -159,7 +159,7 @@ const UpdateUser: React.FC<PropsTypes> = ({
         //   setIsVisible(!isVisible);
         // }
       }
-      size="md"
+      size="lg"
       onClosed={() => {
         // setValue("")
         setIsVisible(false);

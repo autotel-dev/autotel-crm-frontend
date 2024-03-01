@@ -12,6 +12,7 @@ import CommonHeader from "../../../../../Common/CommonHeader";
 import { H4, H5 } from "../../../../../AbstractElements";
 import { useSelector } from "react-redux";
 import "./permissionStyles.css";
+import { formatUnderscoredString } from "../../../../../Api/globals";
 
 const ServerPermissions = () => {
   const { serverPermissions } = useSelector((state: any) => state.user);
@@ -73,7 +74,7 @@ const ServerPermissions = () => {
                         }}
                       >
                         <span style={{ fontSize: "17px", margin: "15px 0px" }}>
-                          {key}
+                          {formatUnderscoredString(key)}
                         </span>
                         <div>
                           <label

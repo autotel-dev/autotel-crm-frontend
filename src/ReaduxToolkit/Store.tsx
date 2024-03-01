@@ -26,6 +26,7 @@ import OperatorSlice from "./Reducer/OperatorSlice";
 import AlertsSlice from "./Reducer/AlertsSlice";
 import SupportSlice from "./Reducer/SupportSlice";
 import RolesSlice from "./Reducer/RolesSlice";
+import PersonalizationSlice from "./Reducer/PersonalizationSlice";
 
 const Store = configureStore({
   reducer: {
@@ -56,6 +57,7 @@ const Store = configureStore({
     alerts: AlertsSlice,
     support: SupportSlice,
     roles: RolesSlice,
+    personalization: PersonalizationSlice,
   },
 });
 

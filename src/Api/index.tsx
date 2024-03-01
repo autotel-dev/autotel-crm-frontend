@@ -235,7 +235,31 @@ export const updateWithMultipart = async (
 ): Promise<void> => {
   try {
     const response = await axios.put(`${API_BASE_URL}/${url.url}`, postData, {
-      headers: header(),
+      headers: multipartHeader(),
+    });
+
+    const result = response.data;
+    console.log("Response data:", response.data);
+
+    return result;
+  } catch (error: any) {
+    Swal.fire({
+      text: `${error.response.data.message}`,
+      icon: "info",
+      timer: 2000,
+      showCancelButton: false,
+    });
+    return error;
+  }
+};
+
+export const createWithMultipart = async (
+  postData: any,
+  url: URLTypes
+): Promise<void> => {
+  try {
+    const response = await axios.post(`${API_BASE_URL}/${url.url}`, postData, {
+      headers: multipartHeader(),
     });
 
     const result = response.data;

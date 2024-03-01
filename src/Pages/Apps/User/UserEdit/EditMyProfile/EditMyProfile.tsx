@@ -36,7 +36,6 @@ const EditMyProfile: React.FC<PropTypes> = ({ isEdit, setIsEdit }) => {
   const { userData } = useSelector((state: any) => state.user);
   const [accountStatus, setAcountStatus] = useState(userData.accountStatus);
 
-  
   return (
     <Col xl={4}>
       <Card>
@@ -60,29 +59,29 @@ const EditMyProfile: React.FC<PropTypes> = ({ isEdit, setIsEdit }) => {
             </Row>
 
             <FormGroup>
-              <Label>Email Address</Label>
-              <H3 className="mb-1">{userData.emailAddress}</H3>
+              <H3 className="mb-1">Email Address</H3>
+              <Label>{userData.emailAddress}</Label>
             </FormGroup>
             <FormGroup>
-              <Label>Phone Number</Label>
-              <H3 className="mb-1">{userData.phoneNo}</H3>
+              <H3 className="mb-1">Phone Number</H3>
+              <Label>{userData.phoneNo}</Label>
             </FormGroup>
             {getUserRole() == "COMPANY" && userData.address !== null && (
               <FormGroup>
-                <Label>Address</Label>
                 <H3 className="mb-1">{userData.address}</H3>
+                <Label>Address</Label>
               </FormGroup>
             )}
             {getUserRole() == "COMPANY" && userData.gstNo !== null && (
               <FormGroup>
-                <Label>Gst No</Label>
-                <H3 className="mb-1">{userData.gstNo}</H3>
+                <H3 className="mb-1">Gst No</H3>
+                <Label>{userData.gstNo}</Label>
               </FormGroup>
             )}
             {getUserRole() == "COMPANY" && userData.ntn !== null && (
               <FormGroup>
-                <Label>NTN</Label>
-                <H3 className="mb-1">{userData.ntn}</H3>
+                <H3 className="mb-1">NTN</H3>
+                <Label>{userData.ntn}</Label>
               </FormGroup>
             )}
 

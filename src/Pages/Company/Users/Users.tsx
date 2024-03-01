@@ -7,6 +7,8 @@ import { useDispatch, useSelector } from "react-redux";
 import UsersListNav from "./UsersListNav";
 import UsersList from "./UsersList";
 import { setOperators } from "../../../ReaduxToolkit/Reducer/OperatorSlice";
+import { getAll } from "../../../Api";
+import { setRoles } from "../../../ReaduxToolkit/Reducer/RolesSlice";
 
 const Countries = () => {
   const dispatch = useDispatch();
@@ -26,6 +28,18 @@ const Countries = () => {
 
     console.log(filtered);
   };
+
+  useEffect(() => {
+    getAll({ url: "sub-role/get-all-active-sub-roles" }).then((data: any) => {
+      console.log("api call --- >", data);
+      if (data !== undefined) {
+        if (data.success) {
+          console.log("hhg");
+          dispatch(setRoles(data.data));
+        }
+      }
+    });
+  }, []);
 
   return (
     <>

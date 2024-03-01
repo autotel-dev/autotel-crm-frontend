@@ -21,3 +21,12 @@ export function getUserRole() {
     return decodedToken.role;
   }
 }
+
+export function getUserId() {
+  const authToken = localStorage.getItem("token");
+  if (authToken !== null) {
+    const decodedToken = jwtDecode(authToken);
+    console.log(decodedToken);
+    return decodedToken.userId;
+  }
+}

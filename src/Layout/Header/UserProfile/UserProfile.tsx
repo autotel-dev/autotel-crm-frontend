@@ -38,23 +38,16 @@ const UserProfile = () => {
       {decodedToken !== null && (
         <div className="profile-nav onhover-dropdown pe-0 py-0">
           <div className="d-flex align-items-center profile-media">
-            <div className="logo-wrapper">
-              <img
-                src={Logo}
-                alt=""
-                width={55}
-                height={40}
-                className="b-r-25"
-                style={{ margin: "0px 15px" }}
-              />
-            </div>
-
-            {/* <Image
-              className="b-r-25"
-              src={Logo}
-              alt=""
-            /> */}
-            <div className="flex-grow-1 user">
+            {/* <div
+              className="logo-wrapper"
+              style={{ height: "50px !important", width: "50px !important", padding: "0px 15px" }}
+            >
+              <Image className="b-r-25" src={Logo} alt="" />
+              
+            </div> */}
+            
+            <div className="flex-grow-1 user" style={{ margin: "0px 15px" }}>
+              
               <span style={{ fontWeight: "bold" }}>
                 {decodedToken.fullName}
               </span>

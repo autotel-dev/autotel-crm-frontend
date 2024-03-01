@@ -37,6 +37,24 @@ const CreateNewRole = () => {
   const [addModal, setAddModal] = useState(false);
   const addToggle = () => {
     if (!loading) {
+      // setGivenPermissions(
+      //   userPermissions.map((permission: any) => ({
+      //     ...permission,
+      //     checked: false,
+      //   }))
+      // );
+
+      setGivenPermissions(
+        userPermissions.map((permission: any) => ({
+          ...permission,
+          checked: false,
+          // Disable keys based on their values
+          read: permission.read ? permission.read : "disabled",
+          create: permission.create ? permission.create : "disabled",
+          edit: permission.edit ? permission.edit : "disabled",
+          delete: permission.delete ? permission.delete : "disabled",
+        }))
+      );
       setAddModal(!addModal);
       reset({
         name: "",
@@ -45,14 +63,13 @@ const CreateNewRole = () => {
   };
 
   const { userPermissions } = useSelector((state: any) => state.roles);
-  const [givenPermissions, setGivenPermissions] = useState(
-    userPermissions.map((permission: any) => ({
-      ...permission,
-      checked: false,
-    }))
-  );
+  const [givenPermissions, setGivenPermissions] = useState<any[]>([]);
 
   const handleCheckboxChange = (index: any, key: any) => {
+    console.log("index", index);
+    console.log("key", key);
+    console.log("givenPermission", givenPermissions);
+
     setGivenPermissions((prevPermissions: any) => {
       const updatedPermissions = [...prevPermissions];
       updatedPermissions[index][key] = !updatedPermissions[index][key];
@@ -63,14 +80,31 @@ const CreateNewRole = () => {
   const addRole: SubmitHandler<Type> = async (data: any) => {
     setLoading(true);
     if (data.name !== "") {
+      // const role = {
+      //   name: data.name,
+      //   permissions: givenPermissions
+      //     .filter((permission: any) => permission.checked)
+      //     .map(
+      //       ({ checked, ...rest }: { checked: any; [key: string]: any }) => rest
+      //     ),
+      // };
       const role = {
         name: data.name,
         permissions: givenPermissions
-          .filter((permission: any) => permission.checked)
-          .map(
-            ({ checked, ...rest }: { checked: any; [key: string]: any }) => rest
-          ),
+          .filter((permission) => permission.checked)
+          .map(({ checked, ...rest }) => {
+            // If any of the permission keys are disabled, set them to false
+            const updatedRest = {
+              ...rest,
+              read: rest.read === "disabled" ? false : rest.read,
+              create: rest.create === "disabled" ? false : rest.create,
+              edit: rest.edit === "disabled" ? false : rest.edit,
+              delete: rest.delete === "disabled" ? false : rest.delete,
+            };
+            return updatedRest;
+          }),
       };
+
       console.log(role);
       try {
         await create(role, { url: "sub-role/create-sub-role" }).then(
@@ -88,6 +122,11 @@ const CreateNewRole = () => {
                 userPermissions.map((permission: any) => ({
                   ...permission,
                   checked: false,
+                  // Disable keys based on their values
+                  read: permission.read ? permission.read : "disabled",
+                  create: permission.create ? permission.create : "disabled",
+                  edit: permission.edit ? permission.edit : "disabled",
+                  delete: permission.delete ? permission.delete : "disabled",
                 }))
               );
               dispatch(setRolesStart());
@@ -239,10 +278,10 @@ const CreateNewRole = () => {
                                     type="checkbox"
                                     name="key"
                                     value="value"
-                                    disabled={!permission.read}
+                                    disabled={permission.read == "disabled"}
                                     checked={permission.read}
                                     onChange={() => {
-                                      if (permission.read) {
+                                      if (permission.read !== "disabled") {
                                         handleCheckboxChange(index, "read");
                                       }
                                     }}
@@ -250,7 +289,11 @@ const CreateNewRole = () => {
                                   />
                                   <span
                                     onClick={(e) => e.stopPropagation()}
-                                    className="green"
+                                    className={
+                                      permission.read == "disabled"
+                                        ? "red"
+                                        : "green"
+                                    }
                                   ></span>
                                   Read
                                 </label>
@@ -268,10 +311,10 @@ const CreateNewRole = () => {
                                     type="checkbox"
                                     name="key"
                                     value="value"
-                                    disabled={!permission.create}
+                                    disabled={permission.create == "disabled"}
                                     checked={permission.create}
                                     onChange={() => {
-                                      if (permission.create) {
+                                      if (permission.create !== "disabled") {
                                         handleCheckboxChange(index, "create");
                                       }
                                     }}
@@ -279,7 +322,11 @@ const CreateNewRole = () => {
                                   />
                                   <span
                                     onClick={(e) => e.stopPropagation()}
-                                    className="green"
+                                    className={
+                                      permission.create == "disabled"
+                                        ? "red"
+                                        : "green"
+                                    }
                                   ></span>
                                   Create
                                 </label>
@@ -297,10 +344,10 @@ const CreateNewRole = () => {
                                     type="checkbox"
                                     name="key"
                                     value="value"
-                                    disabled={!permission.edit}
+                                    disabled={permission.edit == "disabled"}
                                     checked={permission.edit}
                                     onChange={() => {
-                                      if (permission.edit) {
+                                      if (permission.edit !== "disabled") {
                                         handleCheckboxChange(index, "edit");
                                       }
                                     }}
@@ -308,7 +355,11 @@ const CreateNewRole = () => {
                                   />
                                   <span
                                     onClick={(e) => e.stopPropagation()}
-                                    className="green"
+                                    className={
+                                      permission.edit == "disabled"
+                                        ? "red"
+                                        : "green"
+                                    }
                                   ></span>
                                   Edit
                                 </label>
@@ -326,10 +377,10 @@ const CreateNewRole = () => {
                                     type="checkbox"
                                     name="key"
                                     value="value"
-                                    disabled={!permission.delete}
+                                    disabled={permission.delete == "disabled"}
                                     checked={permission.delete}
                                     onChange={() => {
-                                      if (permission.delete) {
+                                      if (permission.delete !== "disabled") {
                                         handleCheckboxChange(index, "delete");
                                       }
                                     }}
@@ -337,7 +388,11 @@ const CreateNewRole = () => {
                                   />
                                   <span
                                     onClick={(e) => e.stopPropagation()}
-                                    className="green"
+                                    className={
+                                      permission.delete == "disabled"
+                                        ? "red"
+                                        : "green"
+                                    }
                                   ></span>
                                   Delete
                                 </label>

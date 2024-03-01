@@ -27,7 +27,7 @@ import {
 import { H3 } from "../../../../../AbstractElements";
 import { useDispatch, useSelector } from "react-redux";
 import { getUserRole } from "../../../../../Api/globals";
-import { getAll, updateWithMultipart } from "../../../../../Api";
+import { getAll, update } from "../../../../../Api";
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import { setUserData } from "../../../../../ReaduxToolkit/Reducer/UserSlice";
@@ -60,7 +60,7 @@ const EditProfileForm: React.FC<PropTypes> = ({ isEdit, setIsEdit }) => {
       formData.append("address", address);
     }
 
-    updateWithMultipart(formData, {
+    update(formData, {
       url:
         getUserRole() == "COMPANY"
           ? "company/update-company"

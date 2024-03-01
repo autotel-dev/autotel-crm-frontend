@@ -18,7 +18,11 @@ import { getAll, getImage, patch } from "../../Api";
 import Loader from "../Loader/Loader";
 import { setTicketDetails } from "../../ReaduxToolkit/Reducer/SupportSlice";
 import { Select } from "antd";
-import { formatUnderscoredString, getUserRole } from "../../Api/globals";
+import {
+  formatUnderscoredString,
+  getUserId,
+  getUserRole,
+} from "../../Api/globals";
 import { useParams } from "react-router-dom";
 
 const TicketDetails = () => {
@@ -77,7 +81,7 @@ const TicketDetails = () => {
     if (tableRow.status == "NEW" && getUserRole() == "SUPER_ADMIN") {
       console.log("IF");
       patch(
-        { updatedStatus: "IN_PROGRESS" },
+        { updatedStatus: "IN_PROGRESS", resolvingDate: null },
         {
           url: `support/bug-report/update-status/${ticketId}`,
         }
@@ -255,7 +259,7 @@ const TicketDetails = () => {
     if (isEdit) {
       console.log("function call");
       patch(
-        { updatedStatus: changeStatus },
+        { updatedStatus: changeStatus, resolvingDate: null },
         {
           url: `support/bug-report/update-status/${ticketId}`,
         }
@@ -292,6 +296,32 @@ const TicketDetails = () => {
     }
   };
 
+  const handleResolved = () => {
+    console.log("function call");
+    patch(
+      { updatedStatus: "RESOLVED", resolvingDate: new Date() },
+      {
+        url: `support/bug-report/update-status/${ticketId}`,
+      }
+    ).then((data: any) => {
+      console.log("api call --- >", data);
+      if (data !== undefined) {
+        if (data.success) {
+          getAll({
+            url: `support/bug-report/get-bug-report/${ticketId}`,
+          }).then((data: any) => {
+            console.log("api call --- >", data);
+            if (data !== undefined) {
+              if (data.success) {
+                dispatch(setTicketDetails(data.data.bugReport));
+              }
+            }
+          });
+        }
+      }
+    });
+  };
+
   const { priorityStatuses, statuses } = useSelector(
     (state: any) => state.support
   );
@@ -310,11 +340,13 @@ const TicketDetails = () => {
     });
     setPriorityStatusesList(tempPriorityStatusesList);
 
-    statuses.map((item: any, index: any) => {
-      tempStatusesList.push({
-        value: `${item.value}`,
-        label: `${item.title}`,
-      });
+    statuses.forEach((item: any) => {
+      if (item.value !== "RESOLVED") {
+        tempStatusesList.push({
+          value: `${item.value}`,
+          label: `${item.title}`,
+        });
+      }
     });
     setStatusesList(tempStatusesList);
   }, []);
@@ -624,8 +656,19 @@ const TicketDetails = () => {
                           return (
                             <div
                               style={{
-                                backgroundColor: "whitesmoke",
+                                backgroundColor:
+                                  getUserId() == reply.user._id
+                                    ? "#def4fb"
+                                    : "whitesmoke",
                                 padding: "15px",
+                                marginLeft:
+                                  getUserId() == reply.user._id
+                                    ? "75px"
+                                    : "0px",
+                                marginRight:
+                                  getUserId() == reply.user._id
+                                    ? "0px"
+                                    : "75px",
                                 borderRadius: "10px",
                                 marginBottom: `${
                                   index == 2 &&
@@ -712,7 +755,18 @@ const TicketDetails = () => {
                             return (
                               <div
                                 style={{
-                                  backgroundColor: "whitesmoke",
+                                  backgroundColor:
+                                    getUserId() == reply.user._id
+                                      ? "#def4fb"
+                                      : "whitesmoke",
+                                  marginLeft:
+                                    getUserId() == reply.user._id
+                                      ? "75px"
+                                      : "0px",
+                                  marginRight:
+                                    getUserId() == reply.user._id
+                                      ? "0px"
+                                      : "75px",
                                   padding: "15px",
                                   borderRadius: "10px",
                                   marginBottom: `${
@@ -831,73 +885,105 @@ const TicketDetails = () => {
                           margin: "50px 0px",
                         }}
                       >
-                        <div
-                          style={{
-                            border: "1px solid lightgray",
-                          }}
-                        >
-                          <textarea
-                            ref={textareaRef}
-                            onChange={handleChange}
-                            value={replyText}
-                            className="form-control replyText"
-                            placeholder="Reply Here..."
-                            rows={3} // Minimum number of visible lines
+                        {formatUnderscoredString(ticketDetails.status) !==
+                          "Resolved" && (
+                          <div
                             style={{
-                              maxHeight: "100px", // Maximum height for 5 lines of text
-                              resize: "vertical", // Allow vertical resizing within the specified range
-                              borderRadius: "0px",
-                              fontSize: "20px",
-                              overflowY: "auto",
-                              WebkitOverflowScrolling: "touch", // Enable momentum scrolling on iOS
-                              scrollbarWidth: "thin", // Specify scrollbar width
-                              WebkitBorderRadius: "5px !important", // For WebKit browsers (Chrome, Safari)
-                              MozBorderRadius: "5px !important", // For Mozilla Firefox
-                              scrollbarColor: "lightgray transparent", // Specify scrollbar color
-                              outline: "0px",
-                              border: "0px",
+                              border: "1px solid lightgray",
                             }}
-                          />
-                          <style>
-                            {`
+                          >
+                            <textarea
+                              ref={textareaRef}
+                              onChange={handleChange}
+                              value={replyText}
+                              className="form-control replyText"
+                              placeholder="Reply Here..."
+                              rows={3} // Minimum number of visible lines
+                              style={{
+                                maxHeight: "100px", // Maximum height for 5 lines of text
+                                resize: "vertical", // Allow vertical resizing within the specified range
+                                borderRadius: "0px",
+                                fontSize: "20px",
+                                overflowY: "auto",
+                                WebkitOverflowScrolling: "touch", // Enable momentum scrolling on iOS
+                                scrollbarWidth: "thin", // Specify scrollbar width
+                                WebkitBorderRadius: "5px !important", // For WebKit browsers (Chrome, Safari)
+                                MozBorderRadius: "5px !important", // For Mozilla Firefox
+                                scrollbarColor: "lightgray transparent", // Specify scrollbar color
+                                outline: "0px",
+                                border: "0px",
+                              }}
+                            />
+                            <style>
+                              {`
     .replyText::placeholder {
       font-size: 18px;
   }`}
-                          </style>
-                          <div
-                            style={{
-                              backgroundColor: "whitesmoke",
-                              padding: "20px",
-                              display: "flex",
-                              justifyContent: "space-between",
-                            }}
-                          >
-                            <div></div>
-                            <div>
-                              <button
-                                className="btn btn-primary"
-                                style={{
-                                  color: "white",
-                                  display: "flex",
-                                  alignItems: "center",
-                                  justifyContent: "center",
-                                  padding: "5px 20px",
-                                  margin: "0px 15px",
-                                  height: "50px",
-                                  width: "auto",
-                                  fontSize: "18px",
-                                  fontWeight: "bold",
-                                }}
-                                onClick={sendMessage}
-                              >
-                                <div style={{ marginRight: "10px" }}>
-                                  <IoSend color="white" />
-                                </div>
-                                Send
-                              </button>
+                            </style>
+                            <div
+                              style={{
+                                backgroundColor: "whitesmoke",
+                                padding: "20px",
+                                display: "flex",
+                                justifyContent: "space-between",
+                              }}
+                            >
+                              <div></div>
+                              <div style={{ display: "flex" }}>
+                                {getUserRole() == "SUPER_ADMIN" && (
+                                  <button
+                                    className="btn btn-primary"
+                                    disabled={
+                                      formatUnderscoredString(
+                                        ticketDetails.status
+                                      ) == "Resolved"
+                                    }
+                                    style={{
+                                      color: "white",
+                                      display: "flex",
+                                      alignItems: "center",
+                                      justifyContent: "center",
+                                      padding: "5px 20px",
+                                      margin: "0px 15px",
+                                      height: "50px",
+                                      width: "auto",
+                                      fontSize: "18px",
+                                      fontWeight: "bold",
+                                    }}
+                                    onClick={handleResolved}
+                                  >
+                                    {formatUnderscoredString(
+                                      ticketDetails.status
+                                    ) == "Resolved"
+                                      ? "Completed"
+                                      : "Complete"}
+                                  </button>
+                                )}
+                                <button
+                                  className="btn btn-primary"
+                                  style={{
+                                    color: "white",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    padding: "5px 20px",
+                                    margin: "0px 15px",
+                                    height: "50px",
+                                    width: "auto",
+                                    fontSize: "18px",
+                                    fontWeight: "bold",
+                                  }}
+                                  onClick={sendMessage}
+                                >
+                                  <div style={{ marginRight: "10px" }}>
+                                    <IoSend color="white" />
+                                  </div>
+                                  Send
+                                </button>
+                              </div>
                             </div>
                           </div>
-                        </div>
+                        )}
                       </Col>
                     </div>
                   </div>
@@ -1155,7 +1241,36 @@ const TicketDetails = () => {
                           </div>
                         )}
                       </div>
-
+                      <div
+                        style={{
+                          borderBottom: "1px solid #e1e1e1",
+                          display: "flex",
+                          justifyContent: "space-between",
+                          padding: "25px 0px",
+                        }}
+                      >
+                        <div
+                          style={{
+                            fontSize: "20px",
+                            color: "gray",
+                            fontWeight: "bold",
+                          }}
+                        >
+                          Resolving Date
+                        </div>
+                        <div
+                          style={{
+                            fontSize: "20px",
+                            color: "black",
+                          }}
+                        >
+                          {ticketDetails.resolvingDate !== null
+                            ? ticketDetails.resolvingDate
+                                .toString()
+                                .slice(0, 10)
+                            : "N/A"}
+                        </div>
+                      </div>
                       <div
                         style={{
                           display: "flex",
@@ -1215,26 +1330,27 @@ const TicketDetails = () => {
                         >
                           Go to Reply
                         </button>
-                        {getUserRole() == "SUPER_ADMIN" && (
-                          <button
-                            className="btn btn-primary"
-                            style={{
-                              color: "white",
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                              padding: "5px 0px",
-                              margin: "0px 0px",
-                              height: "50px",
-                              width: "130px",
-                              fontSize: "18px",
-                              fontWeight: "bold",
-                            }}
-                            onClick={handleEdit}
-                          >
-                            {isEdit ? "Save" : "Edit"}
-                          </button>
-                        )}
+                        {getUserRole() == "SUPER_ADMIN" &&
+                          ticketDetails.status !== "RESOLVED" && (
+                            <button
+                              className="btn btn-primary"
+                              style={{
+                                color: "white",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                padding: "5px 0px",
+                                margin: "0px 0px",
+                                height: "50px",
+                                width: "130px",
+                                fontSize: "18px",
+                                fontWeight: "bold",
+                              }}
+                              onClick={handleEdit}
+                            >
+                              {isEdit ? "Save" : "Edit"}
+                            </button>
+                          )}
                       </div>
                     </div>
                   </div>

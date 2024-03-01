@@ -15,6 +15,7 @@ import {
   setOperatorsStart,
 } from "../../../ReaduxToolkit/Reducer/OperatorSlice";
 import { jwtDecode } from "jwt-decode";
+import { Select } from "antd";
 
 const CreateNewUser = () => {
   const [decodedToken, setDecodedToken]: any = useState(null);
@@ -46,12 +47,13 @@ const CreateNewUser = () => {
         phoneNo: "",
         company: "",
       });
+      setRole("");
     }
   };
 
   const addOperator: SubmitHandler<UserType> = async (data: any) => {
     setLoading(true);
-    if (data.name !== "") {
+    if (data.name !== "" && role !== "") {
       const operator = {
         name: data.name,
         emailAddress: data.emailAddress,
@@ -59,6 +61,7 @@ const CreateNewUser = () => {
         phoneNo: data.phoneNo,
         isActive: true,
         company: decodedToken.userId,
+        subRole: role,
       };
       console.log(operator);
       try {
@@ -76,6 +79,7 @@ const CreateNewUser = () => {
                 password: "",
                 phoneNo: "",
               });
+              setRole("");
               dispatch(setOperatorsStart());
               getAll({ url: "operator/get-all-operators" }).then(
                 (data: any) => {
@@ -105,9 +109,26 @@ const CreateNewUser = () => {
           password: "",
           phoneNo: "",
         });
+        setRole("");
       }
     }
   };
+
+  const { roles } = useSelector((state: any) => state.roles);
+  const [rolesList, setRolesList] = useState([]);
+  const [role, setRole] = useState("");
+  console.log("Roles", roles);
+
+  const tempRolesList: any = [];
+  useEffect(() => {
+    roles.map((item: any, index: any) => {
+      tempRolesList.push({
+        value: `${item._id}`,
+        label: `${item.name}`,
+      });
+    });
+    setRolesList(tempRolesList);
+  }, []);
 
   return (
     <Col md={6}>
@@ -120,7 +141,7 @@ const CreateNewUser = () => {
           <PlusCircle />
           Create New User
         </button>
-        <Modal isOpen={addModal} toggle={addToggle} size="md" centered>
+        <Modal isOpen={addModal} toggle={addToggle} size="lg" centered>
           <div className="modal-header">
             <H3 className="modal-title">Create User</H3>
             <Button
@@ -178,6 +199,196 @@ const CreateNewUser = () => {
                   <span style={{ color: "red" }}>
                     {errors.phoneNo && "Phone Number is required"}
                   </span>
+                </FormGroup>
+
+                <FormGroup className="col-md-12 create-group">
+                  <div>
+                    <Label>Select User Role </Label>
+                  </div>
+                  <Select
+                    showSearch
+                    style={{ width: 250, height: 36 }}
+                    placeholder="Select Role"
+                    optionFilterProp="children"
+                    filterOption={(input: any, option: any) =>
+                      (option?.label ?? "").includes(input)
+                    }
+                    filterSort={(optionA: any, optionB: any) =>
+                      (optionA?.label ?? "")
+                        .toLowerCase()
+                        .localeCompare((optionB?.label ?? "").toLowerCase())
+                    }
+                    onChange={(e: any) => {
+                      console.log(e);
+                      setRole(e);
+                    }}
+                    options={rolesList}
+                  />
+                </FormGroup>
+
+                <Label>Given Permissions</Label>
+                <FormGroup
+                  className="col-md-12 create-group"
+                  style={{
+                    overflowY: "auto",
+                    maxHeight: "25vh", // Subtract scrollbar width from max height
+                    WebkitOverflowScrolling: "touch", // Enable momentum scrolling on iOS
+                    scrollbarWidth: "thin", // Specify scrollbar width
+                    WebkitBorderRadius: "5px !important", // For WebKit browsers (Chrome, Safari)
+                    MozBorderRadius: "5px !important", // For Mozilla Firefox
+                    borderRadius: "5px !important", // For other browsers
+                    scrollbarColor: "lightgray transparent", // Specify scrollbar color
+                  }}
+                >
+                  {roles
+                    .filter((item: any) => item._id === role)
+                    .map((filteredRole: any) =>
+                      filteredRole.permissions.map(
+                        (permission: any, index: any) => {
+                          return (
+                            <div key={index}>
+                              <Row>
+                                <Col
+                                  key={index}
+                                  xl={12}
+                                  lg={12}
+                                  md={12}
+                                  sm={12}
+                                  xs={12}
+                                  style={{
+                                    display: "flex",
+                                    justifyContent: "space-between",
+                                    alignItems: "center",
+                                  }}
+                                >
+                                  <span
+                                    style={{
+                                      fontSize: "17px",
+                                      margin: "15px 0px",
+                                      fontWeight: "bold",
+                                    }}
+                                  >
+                                    {permission.title}
+                                  </span>
+
+                                  <div>
+                                    <label
+                                      style={{
+                                        display: "inline-block",
+                                        position: "relative",
+                                        cursor: "pointer",
+                                        marginRight: "25px",
+                                        fontSize: "18px",
+                                      }}
+                                      onClick={(e) => e.stopPropagation()}
+                                    >
+                                      <input
+                                        type="checkbox"
+                                        name="key"
+                                        value="value"
+                                        disabled={true}
+                                        checked={permission.read}
+                                        onChange={() => {}}
+                                        style={{ display: "none" }} // Hide the default checkbox
+                                      />
+                                      <span
+                                        onClick={(e) => e.stopPropagation()}
+                                        className={
+                                          permission.read ? "green" : "red"
+                                        }
+                                      ></span>
+                                      Read
+                                    </label>
+                                    <label
+                                      style={{
+                                        display: "inline-block",
+                                        position: "relative",
+                                        cursor: "pointer",
+                                        marginRight: "25px",
+                                        fontSize: "18px",
+                                      }}
+                                      onClick={(e) => e.stopPropagation()}
+                                    >
+                                      <input
+                                        type="checkbox"
+                                        name="key"
+                                        value="value"
+                                        disabled={true}
+                                        checked={permission.create}
+                                        onChange={() => {}}
+                                        style={{ display: "none" }} // Hide the default checkbox
+                                      />
+                                      <span
+                                        onClick={(e) => e.stopPropagation()}
+                                        className={
+                                          permission.create ? "green" : "red"
+                                        }
+                                      ></span>
+                                      Create
+                                    </label>
+                                    <label
+                                      style={{
+                                        display: "inline-block",
+                                        position: "relative",
+                                        cursor: "pointer",
+                                        marginRight: "25px",
+                                        fontSize: "18px",
+                                      }}
+                                      onClick={(e) => e.stopPropagation()}
+                                    >
+                                      <input
+                                        type="checkbox"
+                                        name="key"
+                                        value="value"
+                                        disabled={true}
+                                        checked={permission.edit}
+                                        onChange={() => {}}
+                                        style={{ display: "none" }} // Hide the default checkbox
+                                      />
+                                      <span
+                                        onClick={(e) => e.stopPropagation()}
+                                        className={
+                                          permission.edit ? "green" : "red"
+                                        }
+                                      ></span>
+                                      Edit
+                                    </label>
+                                    <label
+                                      style={{
+                                        display: "inline-block",
+                                        position: "relative",
+                                        cursor: "pointer",
+                                        marginRight: "25px",
+                                        fontSize: "18px",
+                                      }}
+                                      onClick={(e) => e.stopPropagation()}
+                                    >
+                                      <input
+                                        type="checkbox"
+                                        name="key"
+                                        value="value"
+                                        disabled={true}
+                                        checked={permission.delete}
+                                        onChange={() => {}}
+                                        style={{ display: "none" }} // Hide the default checkbox
+                                      />
+                                      <span
+                                        onClick={(e) => e.stopPropagation()}
+                                        className={
+                                          permission.delete ? "green" : "red"
+                                        }
+                                      ></span>
+                                      Delete
+                                    </label>
+                                    {/* Similarly, add labels for other permissions */}
+                                  </div>
+                                </Col>
+                              </Row>
+                            </div>
+                          );
+                        }
+                      )
+                    )}
                 </FormGroup>
               </Row>
               <Button color="primary" className="me-1">

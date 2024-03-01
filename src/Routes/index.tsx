@@ -1,12 +1,27 @@
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import {
+  BrowserRouter,
+  Navigate,
+  Route,
+  Routes,
+  useParams,
+} from "react-router-dom";
 import PrivateRoute from "./PrivateRoute";
 import LayoutRoutes from "./LayoutRoutes";
 import { authRoutes } from "./AuthRoutes";
 import Login from "../Pages/Authentication/Login";
 import LoginForm from "../Pages/Auth/Auth";
 import VerifyOTP from "../Pages/VerifyOTP/VerifyOTP";
+import { useEffect } from "react";
 
 const Routers = () => {
+  const { userId } = useParams();
+  useEffect(() => {
+    console.log("userId", userId);
+    // console.log("useParams", userId);
+  }, []);
+  // if (id !== "" && id !== undefined) {
+  //   localStorageId = localStorage.setItem("userId", id);
+  // }
   const token = localStorage.getItem("token");
   console.log(token);
 
@@ -37,11 +52,11 @@ const Routers = () => {
           <Route path={path} element={Component} key={i} />
         ))}
         <Route
-          path={`${process.env.PUBLIC_URL}${
-            window.location.pathname === "/superAdminLogin"
-              ? "superAdminLogin"
-              : "login"
-          }`}
+          path={`${process.env.PUBLIC_URL}login/:userId`}
+          element={<LoginForm />}
+        />
+        <Route
+          path={`${process.env.PUBLIC_URL}login`}
           element={<LoginForm />}
         />
         <Route
