@@ -94,14 +94,14 @@ export const supportColumns = [
     selector: (row: SupportDataType) => row["description"],
     sortable: true,
     center: true,
-    width: "250px", // Set the width for this column
+    width: "230px", // Set the width for this column
   },
   {
     name: "IsActive",
     selector: (row: SupportDataType) => row["isActive"],
     sortable: true,
     center: true,
-    width: "120px", // Set the width for this column
+    width: "100px", // Set the width for this column
   },
   {
     name: "Status",
@@ -174,7 +174,7 @@ export const supportColumns = [
     selector: (row: SupportDataType) => row["date"],
     sortable: true,
     center: true,
-    width: "150px", // Set the width for this column
+    width: "200px", // Set the width for this column
   },
 ];
 

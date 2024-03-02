@@ -3,10 +3,14 @@ import { Link } from "react-router-dom";
 import { Image } from "../../AbstractElements";
 import { dynamicImage } from "../../Service";
 import Logoo from "../../assets/Logo.png";
+import { useSelector } from "react-redux";
 interface PropsType {
   alignLogo?: string;
 }
 const Logo = ({ alignLogo }: PropsType) => {
+  const { userPersonalizationData } = useSelector(
+    (state: any) => state.personalization
+  );
   return (
     <Link
       className={`logo ${alignLogo ? alignLogo : ""} `}
@@ -24,7 +28,16 @@ const Logo = ({ alignLogo }: PropsType) => {
 
       {/* /> */}
 
-      <img src={Logoo} alt="" width={80} height={50} />
+      <img
+        src={
+          userPersonalizationData !== null
+            ? `http://124.29.238.127:8080/${userPersonalizationData.logoImage.url}`
+            : Logoo
+        }
+        alt=""
+        width={80}
+        height={50}
+      />
     </Link>
   );
 };

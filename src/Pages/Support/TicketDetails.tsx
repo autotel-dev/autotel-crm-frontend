@@ -24,6 +24,7 @@ import {
   getUserRole,
 } from "../../Api/globals";
 import { useParams } from "react-router-dom";
+import Swal from "sweetalert2";
 
 const TicketDetails = () => {
   const { ticketId } = useParams();
@@ -307,6 +308,13 @@ const TicketDetails = () => {
       console.log("api call --- >", data);
       if (data !== undefined) {
         if (data.success) {
+          setTimeout(() => {
+            Swal.fire({
+              text: `${data.message}`,
+              icon: "success",
+              timer: 2000,
+            });
+          }, 2000);
           getAll({
             url: `support/bug-report/get-bug-report/${ticketId}`,
           }).then((data: any) => {
@@ -360,18 +368,23 @@ const TicketDetails = () => {
       />
       <Container fluid>
         <Card>
-          <div
-            style={{
-              padding: "0px 20px",
-            }}
-          >
-            {!loading && (
-              <CommonHeader
-                title={`${ticketDetails.name.slice(0, 250)}
-                ${ticketDetails.name.length > 250 ? "..." : ""}`}
-              />
-            )}
-          </div>
+          <Row>
+            <Col sm={9} md={9} lg={9} xl={9} xxl={7}>
+              <div
+                style={{
+                  padding: "0px 20px",
+                }}
+              >
+                {!loading && (
+                  <CommonHeader
+                    title={`${ticketDetails.name.slice(0, 75)}
+                ${ticketDetails.name.length > 75 ? "..." : ""}`}
+                  />
+                )}
+              </div>
+            </Col>
+          </Row>
+
           {!loading ? (
             <CardBody>
               <Row>
@@ -418,6 +431,7 @@ const TicketDetails = () => {
                               style={{
                                 color: "#35bfbf",
                                 cursor: "pointer",
+                                fontWeight: "bold",
                               }}
                               // className="btn-primary"
                               onClick={() => {
@@ -548,7 +562,7 @@ const TicketDetails = () => {
                           padding: "15px",
                           borderRadius: "10px",
                           margin: "50px 0px",
-                          marginLeft: "30px",
+                          marginLeft: "10%",
                         }}
                       >
                         <Row>
@@ -662,13 +676,9 @@ const TicketDetails = () => {
                                     : "whitesmoke",
                                 padding: "15px",
                                 marginLeft:
-                                  getUserId() == reply.user._id
-                                    ? "75px"
-                                    : "0px",
+                                  getUserId() == reply.user._id ? "40%" : "0px",
                                 marginRight:
-                                  getUserId() == reply.user._id
-                                    ? "0px"
-                                    : "75px",
+                                  getUserId() == reply.user._id ? "0px" : "40%",
                                 borderRadius: "10px",
                                 marginBottom: `${
                                   index == 2 &&
@@ -761,12 +771,12 @@ const TicketDetails = () => {
                                       : "whitesmoke",
                                   marginLeft:
                                     getUserId() == reply.user._id
-                                      ? "75px"
+                                      ? "40%"
                                       : "0px",
                                   marginRight:
                                     getUserId() == reply.user._id
                                       ? "0px"
-                                      : "75px",
+                                      : "40%",
                                   padding: "15px",
                                   borderRadius: "10px",
                                   marginBottom: `${
@@ -858,10 +868,11 @@ const TicketDetails = () => {
                       <div
                         style={{
                           display: "flex",
-                          color: "gray",
+                          color: "#35bfbf",
                           fontSize: "18px",
                           justifyContent: "end",
                           cursor: "pointer",
+                          fontWeight: "bold",
                         }}
                         onClick={() => {
                           setShowMore(!showMore);
@@ -950,7 +961,35 @@ const TicketDetails = () => {
                                       fontSize: "18px",
                                       fontWeight: "bold",
                                     }}
-                                    onClick={handleResolved}
+                                    onClick={() => {
+                                      Swal.fire({
+                                        title: "Complete Alert",
+                                        text: "Are you sure , you want to complete this ticket",
+                                        icon: "warning",
+                                        showCancelButton: true,
+                                      }).then(async (result) => {
+                                        if (result.isConfirmed) {
+                                          try {
+                                            Swal.fire({
+                                              text: "Loading...",
+                                              icon: "info",
+                                              // timer: 2000,
+                                              showCancelButton: false,
+                                              showConfirmButton: false,
+                                            });
+                                            handleResolved();
+                                            // Handle successful post creation (e.g., show a success message, redirect, etc.)
+                                          } catch (error) {
+                                            // Handle error (e.g., show an error message)
+                                            console.error(
+                                              "Error creating post:",
+                                              error
+                                            );
+                                            // loading false
+                                          }
+                                        }
+                                      });
+                                    }}
                                   >
                                     {formatUnderscoredString(
                                       ticketDetails.status
@@ -1241,36 +1280,36 @@ const TicketDetails = () => {
                           </div>
                         )}
                       </div>
-                      <div
-                        style={{
-                          borderBottom: "1px solid #e1e1e1",
-                          display: "flex",
-                          justifyContent: "space-between",
-                          padding: "25px 0px",
-                        }}
-                      >
+                      {ticketDetails.resolvingDate !== null && (
                         <div
                           style={{
-                            fontSize: "20px",
-                            color: "gray",
-                            fontWeight: "bold",
+                            borderBottom: "1px solid #e1e1e1",
+                            display: "flex",
+                            justifyContent: "space-between",
+                            padding: "25px 0px",
                           }}
                         >
-                          Resolving Date
+                          <div
+                            style={{
+                              fontSize: "20px",
+                              color: "gray",
+                              fontWeight: "bold",
+                            }}
+                          >
+                            Resolving Date
+                          </div>
+                          <div
+                            style={{
+                              fontSize: "20px",
+                              color: "black",
+                            }}
+                          >
+                            {ticketDetails.resolvingDate
+                              .toString()
+                              .slice(0, 10)}
+                          </div>
                         </div>
-                        <div
-                          style={{
-                            fontSize: "20px",
-                            color: "black",
-                          }}
-                        >
-                          {ticketDetails.resolvingDate !== null
-                            ? ticketDetails.resolvingDate
-                                .toString()
-                                .slice(0, 10)
-                            : "N/A"}
-                        </div>
-                      </div>
+                      )}
                       <div
                         style={{
                           display: "flex",
@@ -1312,26 +1351,30 @@ const TicketDetails = () => {
                           justifyContent: "space-between",
                         }}
                       >
-                        <button
-                          className="btn btn-primary"
-                          style={{
-                            color: "white",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            padding: "5px 0px",
-                            margin: "0px 0px",
-                            height: "50px",
-                            width: "130px",
-                            fontSize: "18px",
-                            fontWeight: "bold",
-                          }}
-                          onClick={handleGoToReply}
-                        >
-                          Go to Reply
-                        </button>
+                        {formatUnderscoredString(ticketDetails.status) !==
+                          "Resolved" && (
+                          <button
+                            className="btn btn-primary"
+                            style={{
+                              color: "white",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              padding: "5px 0px",
+                              margin: "0px 0px",
+                              height: "50px",
+                              width: "130px",
+                              fontSize: "18px",
+                              fontWeight: "bold",
+                            }}
+                            onClick={handleGoToReply}
+                          >
+                            Go to Reply
+                          </button>
+                        )}
                         {getUserRole() == "SUPER_ADMIN" &&
-                          ticketDetails.status !== "RESOLVED" && (
+                          formatUnderscoredString(ticketDetails.status) !==
+                            "Resolved" && (
                             <button
                               className="btn btn-primary"
                               style={{

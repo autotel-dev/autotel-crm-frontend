@@ -63,7 +63,7 @@ const Personalization = () => {
   );
   const [secondaryClor, setsecondaryClor] = useState<string>(
     userPersonalizationData !== null
-      ? userPersonalizationData.secondaryClor
+      ? userPersonalizationData.secondaryColor
       : ""
   );
   const [customColor1, setcustomColor1] = useState<string>(
@@ -83,11 +83,15 @@ const Personalization = () => {
   const [logoImage, setlogoImage] = useState(
     userPersonalizationData !== null ? userPersonalizationData.logoImage : null
   );
+
   const [backgroundImage, setbackgroundImage] = useState(
     userPersonalizationData !== null
       ? userPersonalizationData.backgroundImage
       : null
   );
+
+  const [editedLogoImage, setEditedlogoImage] = useState(null);
+  const [editedbackgroundImage, setEditedbackgroundImage] = useState(null);
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
 
@@ -100,19 +104,36 @@ const Personalization = () => {
   const handleLogoAdd = ({ file, meta, remove }: type, status: any) => {
     if (status === "done") {
       console.log("File uploaded successfully:", file);
-      setlogoImage(file);
+      if (isEdit) {
+        setEditedlogoImage(file);
+      } else {
+        setlogoImage(file);
+      }
     } else if (status === "removed") {
       console.log("File removed:", file);
-      setlogoImage(null);
+      if (isEdit) {
+        setEditedlogoImage(null);
+      } else {
+        setlogoImage(null);
+      }
     }
   };
   const handleBackgroundAdd = ({ file, meta, remove }: type, status: any) => {
     if (status === "done") {
       console.log("File uploaded successfully:", file);
-      setbackgroundImage(file);
+
+      if (isEdit) {
+        setEditedbackgroundImage(file);
+      } else {
+        setbackgroundImage(file);
+      }
     } else if (status === "removed") {
       console.log("File removed:", file);
-      setbackgroundImage(null);
+      if (isEdit) {
+        setEditedbackgroundImage(null);
+      } else {
+        setbackgroundImage(null);
+      }
     }
   };
   const subTitle = [
@@ -122,12 +143,10 @@ const Personalization = () => {
     },
   ];
 
-  const [isEditImages, setIsEditImages] = useState(
-    userPersonalizationData !== null ? true : false
-  );
-  useEffect(() => {
-    setIsEditImages(userPersonalizationData !== null ? true : false);
-  }, [userPersonalizationData]);
+  const [isEdit, setIsEdit] = useState(false);
+  // useEffect(() => {
+  //   setIsEdit(userPersonalizationData !== null ? true : false);
+  // }, [userPersonalizationData]);
 
   const createPersonalization = (e: any) => {
     e.preventDefault();
@@ -142,60 +161,124 @@ const Personalization = () => {
     formData.append("backgroundColor", backgroundColor);
     formData.append("textColor", textColor);
     formData.append("type", "DEFAULT");
-    if (logoImage !== null) {
-      formData.append("logoImage", logoImage);
-    }
-    if (backgroundImage !== null) {
-      formData.append("backgroundImage", backgroundImage);
-    }
 
-    createWithMultipart(formData, {
-      url: `personalization/create-personalization`,
-    })
-      .then((data: any) => {
-        console.log("api call --- >", data);
-        if (data !== undefined) {
-          if (!data.success) {
-            console.log("then but false");
-            setLoading(false);
-          }
-          if (data.success) {
-            getAll({
-              url:
-                getUserRole() == "COMPANY"
-                  ? `company/get-personalization/${getUserId()}`
-                  : "super-admin/get-personalization",
-            }).then((parentData: any) => {
-              console.log("api call --- >", parentData);
-              if (parentData == undefined) {
-                Swal.fire({
-                  text: "Failed to Fetch",
-                  icon: "error",
-                  timer: 2000,
-                  showConfirmButton: false,
-                });
-                setLoading(false);
-                dispatch(setUserPersonalizationData(null));
-              }
-
-              if (parentData !== undefined) {
-                if (parentData.success) {
-                  dispatch(setUserPersonalizationData(parentData.data));
+    if (isEdit) {
+      if (editedLogoImage !== null) {
+        formData.append("logoImage", editedLogoImage);
+      }
+      if (editedbackgroundImage !== null) {
+        formData.append("backgroundImage", editedbackgroundImage);
+      }
+    } else {
+      if (logoImage !== null) {
+        formData.append("logoImage", logoImage);
+      }
+      if (backgroundImage !== null) {
+        formData.append("backgroundImage", backgroundImage);
+      }
+    }
+    if (isEdit && userPersonalizationData !== null) {
+      updateWithMultipart(formData, {
+        url: `personalization/update-personalization/${userPersonalizationData._id}`,
+      })
+        .then((data: any) => {
+          console.log("api call --- >", data);
+          if (data !== undefined) {
+            if (!data.success) {
+              console.log("then but false");
+              setLoading(false);
+            }
+            if (data.success) {
+              setEditedlogoImage(null);
+              setEditedbackgroundImage(null);
+              getAll({
+                url:
+                  getUserRole() == "COMPANY"
+                    ? `company/get-personalization/${getUserId()}`
+                    : "super-admin/get-personalization",
+              }).then((parentData: any) => {
+                console.log("api call --- >", parentData);
+                if (parentData == undefined) {
+                  Swal.fire({
+                    text: "Failed to Fetch",
+                    icon: "error",
+                    timer: 2000,
+                    showConfirmButton: false,
+                  });
                   setLoading(false);
+                  setIsEdit(false);
+                  dispatch(setUserPersonalizationData(null));
                 }
-                if (!parentData.success) {
+
+                if (parentData !== undefined) {
+                  if (parentData.success) {
+                    setIsEdit(false);
+                    dispatch(setUserPersonalizationData(parentData.data));
+                    setLoading(false);
+                  }
+                  if (!parentData.success) {
+                    setIsEdit(false);
+                    setLoading(false);
+                    dispatch(setUserPersonalizationData(null));
+                  }
+                }
+              });
+            }
+          }
+        })
+        .catch((err: any) => {
+          console.log("catch data", err);
+          setLoading(false);
+        });
+    } else {
+      createWithMultipart(formData, {
+        url: `personalization/create-personalization`,
+      })
+        .then((data: any) => {
+          console.log("api call --- >", data);
+          if (data !== undefined) {
+            if (!data.success) {
+              console.log("then but false");
+              setLoading(false);
+            }
+            if (data.success) {
+              getAll({
+                url:
+                  getUserRole() == "COMPANY"
+                    ? `company/get-personalization/${getUserId()}`
+                    : "super-admin/get-personalization",
+              }).then((parentData: any) => {
+                console.log("api call --- >", parentData);
+                if (parentData == undefined) {
+                  Swal.fire({
+                    text: "Failed to Fetch",
+                    icon: "error",
+                    timer: 2000,
+                    showConfirmButton: false,
+                  });
                   setLoading(false);
                   dispatch(setUserPersonalizationData(null));
                 }
-              }
-            });
+
+                if (parentData !== undefined) {
+                  if (parentData.success) {
+                    dispatch(setUserPersonalizationData(parentData.data));
+                    setLoading(false);
+                  }
+                  if (!parentData.success) {
+                    setLoading(false);
+                    dispatch(setUserPersonalizationData(null));
+                  }
+                }
+              });
+            }
           }
-        }
-      })
-      .catch((err: any) => {
-        console.log("catch data", err);
-        setLoading(false);
-      });
+        })
+        .catch((err: any) => {
+          console.log("catch data", err);
+          setLoading(false);
+        });
+    }
   };
 
   return (
@@ -216,6 +299,9 @@ const Personalization = () => {
                     placeholder="Enter Header Text here"
                     defaultValue={headerText}
                     value={headerText}
+                    disabled={
+                      userPersonalizationData !== null && !isEdit ? true : false
+                    }
                     onChange={(e) => setheaderText(e.target.value)}
                   />
                 </FormGroup>
@@ -228,6 +314,9 @@ const Personalization = () => {
                     placeholder="Enter Sub Text here"
                     defaultValue={subHeaderText}
                     value={subHeaderText}
+                    disabled={
+                      userPersonalizationData !== null && !isEdit ? true : false
+                    }
                     onChange={(e) => setsubHeaderText(e.target.value)}
                   />
                 </FormGroup>
@@ -240,6 +329,9 @@ const Personalization = () => {
                     placeholder="Enter Primary Color here"
                     defaultValue={primaryColor}
                     value={primaryColor}
+                    disabled={
+                      userPersonalizationData !== null && !isEdit ? true : false
+                    }
                     onChange={(e) => setprimaryColor(e.target.value)}
                     style={{ height: "60px" }}
                   />
@@ -253,6 +345,9 @@ const Personalization = () => {
                     placeholder="Enter Secondary Color here"
                     defaultValue={secondaryClor}
                     value={secondaryClor}
+                    disabled={
+                      userPersonalizationData !== null && !isEdit ? true : false
+                    }
                     onChange={(e) => setsecondaryClor(e.target.value)}
                     style={{ height: "60px" }}
                   />
@@ -266,6 +361,9 @@ const Personalization = () => {
                     placeholder="Enter Custom Color 1"
                     defaultValue={customColor1}
                     value={customColor1}
+                    disabled={
+                      userPersonalizationData !== null && !isEdit ? true : false
+                    }
                     onChange={(e) => setcustomColor1(e.target.value)}
                     style={{ height: "60px" }}
                   />
@@ -279,6 +377,9 @@ const Personalization = () => {
                     placeholder="Enter Custom Color 2"
                     defaultValue={customColor2}
                     value={customColor2}
+                    disabled={
+                      userPersonalizationData !== null && !isEdit ? true : false
+                    }
                     onChange={(e) => setcustomColor2(e.target.value)}
                     style={{ height: "60px" }}
                   />
@@ -292,6 +393,9 @@ const Personalization = () => {
                     placeholder="Enter Background COlor"
                     defaultValue={backgroundColor}
                     value={backgroundColor}
+                    disabled={
+                      userPersonalizationData !== null && !isEdit ? true : false
+                    }
                     onChange={(e) => setbackgroundColor(e.target.value)}
                     style={{ height: "60px" }}
                   />
@@ -305,13 +409,16 @@ const Personalization = () => {
                     placeholder="Enter Text Color"
                     defaultValue={textColor}
                     value={textColor}
+                    disabled={
+                      userPersonalizationData !== null && !isEdit ? true : false
+                    }
                     onChange={(e) => settextColor(e.target.value)}
                     style={{ height: "60px" }}
                   />
                 </FormGroup>
               </Col>
 
-              {!isEditImages ? (
+              {isEdit && userPersonalizationData !== null ? (
                 <Row>
                   <Col md={6}>
                     <Card>
@@ -484,27 +591,43 @@ const Personalization = () => {
               <CardFooter
                 style={{
                   display: "flex",
-                  justifyContent:
-                    userPersonalizationData == null ? "end" : "space-between",
+                  // justifyContent:
+                  //   userPersonalizationData == null ? "end" : "space-between",
+                  justifyContent: "end",
                 }}
               >
-                {userPersonalizationData !== null && (
+                {isEdit && (
                   <Button
                     color="primary"
                     type="submit"
                     onClick={(e) => {
                       e.preventDefault();
-                      setIsEditImages(!isEditImages);
+                      setIsEdit(!isEdit);
+                    }}
+                    style={{
+                      marginRight: "10px",
                     }}
                   >
-                    {isEditImages ? "Change Images" : "Discard"}
+                    Cancel
                   </Button>
                 )}
-                <Button color="primary" type="submit" disabled={loading}>
+                <Button
+                  color="primary"
+                  type="submit"
+                  disabled={loading}
+                  onClick={(e) => {
+                    if (isEdit == false) {
+                      e.preventDefault();
+                      setIsEdit(true);
+                    }
+                  }}
+                >
                   {loading
                     ? "Loading..."
                     : userPersonalizationData == null
                     ? "Create"
+                    : isEdit
+                    ? "Save"
                     : "Edit"}
                 </Button>
               </CardFooter>

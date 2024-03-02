@@ -20,6 +20,183 @@ export interface PropsTypes {
   open?: boolean;
 }
 const SidebarMain = ({ setOpen, open }: PropsTypes) => {
+  const { crmActiveModules } = useSelector((state: any) => state.crmModules);
+  console.log("crmActiveModules", crmActiveModules);
+
+  const SidebarMenuComponent: SidebarMenuTypes[] = [
+    {
+      title: "Dashboard",
+      svgIcon: "home",
+      link: `${process.env.PUBLIC_URL}/dashboards/shoppingplace`,
+    },
+    {
+      title: "Setup",
+      svgIcon: "home",
+      subMenu: [
+        {
+          svgIcon: "bonus-kit",
+          title: "Country",
+          link: `${process.env.PUBLIC_URL}/setup/countries`,
+        },
+        {
+          svgIcon: "bonus-kit",
+          title: "Province",
+          link: `${process.env.PUBLIC_URL}/setup/province`,
+        },
+        {
+          svgIcon: "bonus-kit",
+          title: "City",
+          link: `${process.env.PUBLIC_URL}/setup/cities`,
+        },
+        {
+          svgIcon: "bonus-kit",
+          title: "Package",
+          link: `${process.env.PUBLIC_URL}/setup/package`,
+        },
+        {
+          svgIcon: "bonus-kit",
+          title: "CRM Modules",
+          link: `${process.env.PUBLIC_URL}/setup/crm_module`,
+        },
+        {
+          svgIcon: "bonus-kit",
+          title: "Email Templates",
+          link: `${process.env.PUBLIC_URL}/dashboards/crmdashboard`,
+        },
+        {
+          svgIcon: "bonus-kit",
+          title: "WhatsApp templates",
+          link: `${process.env.PUBLIC_URL}/dashboards/crmdashboard`,
+        },
+        {
+          svgIcon: "bonus-kit",
+          title: "Server Details",
+          link: `${process.env.PUBLIC_URL}/setup/server_details`,
+        },
+        {
+          svgIcon: "bonus-kit",
+          title: "Server Management",
+          link: `${process.env.PUBLIC_URL}/setup/server_management`,
+        },
+      ],
+    },
+    // {
+    //   title: "Modules",
+    //   svgIcon: "home",
+    //   subMenu: [
+    //     {
+    //       svgIcon: "bonus-kit",
+    //       title: "Module 1",
+    //       link: `${process.env.PUBLIC_URL}/dashboards/shoppingplace`,
+    //     },
+    //     {
+    //       svgIcon: "bonus-kit",
+    //       title: "Module 2",
+    //       link: `${process.env.PUBLIC_URL}/dashboards/shoppingplace`,
+    //     },
+    //   ],
+    // },
+    {
+      title: "Modules",
+      svgIcon: "home",
+      subMenu: crmActiveModules.map((item: any, index: any) => {
+        return {
+          svgIcon: "bonus-kit",
+          title: `${item.name}`,
+          link: `${process.env.PUBLIC_URL}/dashboards/${item.route}`,
+        };
+      }),
+    },
+
+    {
+      title: "Companies",
+      svgIcon: "home",
+      link: `${process.env.PUBLIC_URL}/companies`,
+    },
+    {
+      title: "Support",
+      svgIcon: "home",
+      link: `${process.env.PUBLIC_URL}/support`,
+    },
+    {
+      title: "Tasks",
+      svgIcon: "home",
+      link: `${process.env.PUBLIC_URL}/tasks`,
+    },
+  ];
+
+  const CompanySidebarMenuComponent: SidebarMenuTypes[] = [
+    {
+      title: "Dashboard",
+      svgIcon: "home",
+      link: `${process.env.PUBLIC_URL}/company/dashboard`,
+    },
+    {
+      title: "Setup",
+      svgIcon: "home",
+      subMenu: [
+        {
+          svgIcon: "bonus-kit",
+          title: "Roles",
+          link: `${process.env.PUBLIC_URL}/company/roles`,
+        },
+        {
+          svgIcon: "bonus-kit",
+          title: "Email Templates",
+          link: `${process.env.PUBLIC_URL}/company/emailTemplates`,
+        },
+        {
+          svgIcon: "bonus-kit",
+          title: "WhatsApp templates",
+          link: `${process.env.PUBLIC_URL}/company/whatsappTemplates`,
+        },
+      ],
+    },
+    // {
+    //   title: "Modules",
+    //   svgIcon: "home",
+    //   subMenu: [
+    //     {
+    //       svgIcon: "bonus-kit",
+    //       title: "Monitoring",
+    //       link: `${process.env.PUBLIC_URL}/company/modules/monitoring`,
+    //     },
+    //     {
+    //       svgIcon: "bonus-kit",
+    //       title: "Control Room",
+    //       link: `${process.env.PUBLIC_URL}/company/modules/controlRoom`,
+    //     },
+    //   ],
+    // },
+
+    {
+      title: "Modules",
+      svgIcon: "home",
+      subMenu: crmActiveModules.map((item: any, index: any) => {
+        return {
+          svgIcon: "bonus-kit",
+          title: `${item.name}`,
+          link: `${process.env.PUBLIC_URL}/company/modules${item.route}`,
+        };
+      }),
+    },
+
+    {
+      title: "Users",
+      svgIcon: "home",
+      link: `${process.env.PUBLIC_URL}/company/users`,
+    },
+    {
+      title: "Support",
+      svgIcon: "home",
+      link: `${process.env.PUBLIC_URL}/company/support`,
+    },
+    {
+      title: "Tasks",
+      svgIcon: "home",
+      link: `${process.env.PUBLIC_URL}/company/tasks`,
+    },
+  ];
   const { sidebarIconType } = useAppSelector((state) => state.themeCustomizer);
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState<string[]>([]);
@@ -58,7 +235,7 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
             <SimpleBar className="w-100 simplebar-scrollable-y h-100">
               <SidebarBack />
               {decodedToken.role == "SUPER_ADMIN"
-                ? SidebarMenu.map((data, index) => (
+                ? SidebarMenuComponent.map((data, index) => (
                     <LI className={`sidebar-list`} key={index}>
                       <Link
                         className={`sidebar-link sidebar-title ${
@@ -114,7 +291,7 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
                       )}
                     </LI>
                   ))
-                : CompanySidebarMenu.map((data, index) => (
+                : CompanySidebarMenuComponent.map((data, index) => (
                     <LI className={`sidebar-list`} key={index}>
                       <Link
                         className={`sidebar-link sidebar-title ${

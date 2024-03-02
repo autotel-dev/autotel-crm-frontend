@@ -32,7 +32,15 @@ const TicketTable = () => {
         isActive: item.isActive ? "true" : "false",
         status: item.status,
         priorty: item.priorty == null ? "N/A" : item.priorty,
-        date: item.updatedAt.toString().slice(0, 10),
+        date: `${item.updatedAt.toString().slice(0, 10)},  ${new Date(
+          item.updatedAt
+        )
+          .toLocaleString("en-US", {
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+          })
+          .toString()}`,
       }));
   };
 
@@ -89,7 +97,9 @@ const TicketTable = () => {
 
     // Navigate to the ticketDetails page with the row data
     dispatch(setTableRow(row));
-    navigate(`${process.env.PUBLIC_URL}/support/ticketDetails/${row.ticket_id}`);
+    navigate(
+      `${process.env.PUBLIC_URL}/support/ticketDetails/${row.ticket_id}`
+    );
   };
   return (
     <div className="table-responsive support-table">

@@ -2,8 +2,6 @@ import { useEffect } from "react";
 import { Navigate, Outlet, useParams } from "react-router-dom";
 
 const PrivateRoute = () => {
-  
-
   // const login = JSON.parse(localStorage.getItem("login")!)
   //   ? JSON.parse(localStorage.getItem("login")!)
   //   : false;
@@ -23,7 +21,6 @@ const PrivateRoute = () => {
   const { userId } = useParams();
 
   useEffect(() => {
-
     console.log("userId", userId);
   }, []);
 
@@ -31,12 +28,12 @@ const PrivateRoute = () => {
     <Outlet />
   ) : (
     <Navigate
-      to={
-        localStorage.getItem("userId") == null ||
-        localStorage.getItem("userId") == undefined
-          ? `${process.env.PUBLIC_URL}login/${userId}`
-          : `${process.env.PUBLIC_URL}login`
-      }
+      to={`${process.env.PUBLIC_URL}${
+        localStorage.getItem("userId") !== null ||
+        localStorage.getItem("userId") !== undefined
+          ? `/login/${localStorage.getItem("userId")}`
+          : "/login"
+      }`}
     />
   );
 };

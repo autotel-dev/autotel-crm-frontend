@@ -1,16 +1,14 @@
 import { Table } from "reactstrap";
-import { Button } from "reactstrap";
-import { recentOrdersBody } from "../../../Data/Dashboard/ShoppingPlace/RecentOrders";
-import { H4, Image } from "../../../AbstractElements";
-import { dynamicImage } from "../../../Service";
 import { Link } from "react-router-dom";
+import { H4 } from "../../../AbstractElements";
 import { Href } from "../../../utils/Constant";
 import { useSelector } from "react-redux";
+import { formatUnderscoredString } from "../../../Api/globals";
 
 const RecentLogsTable = () => {
   const { recentLogs } = useSelector((state: any) => state.serverManagement);
   const recentLogsHeader = [
-    "Log ID",
+    "ID",
     "IP Address",
     "Date & Time",
     "Activity",
@@ -19,12 +17,14 @@ const RecentLogsTable = () => {
   ];
 
   return (
-    <div className="table-responsive theme-scrollbar recent-wrapper">
+    <div className="">
       <Table className="display order-wrapper" id="recent-order">
         <thead>
           <tr>
             {recentLogsHeader.map((data, index) => (
-              <th key={index}>{data}</th>
+              <th key={index} style={{ width: "15%", fontWeight: "bold" }}>
+                {data}
+              </th>
             ))}
           </tr>
         </thead>
@@ -33,8 +33,8 @@ const RecentLogsTable = () => {
             if (index < 6) {
               return (
                 <tr key={index}>
-                  <td>{data._id}</td>
-                  <td>
+                  <td style={{ width: "15%" }}>{data.systemLogID}</td>
+                  <td style={{ width: "15%" }}>
                     <div className="d-flex">
                       <div className="flex-grow-1 ms-2">
                         <Link to={Href}>
@@ -43,7 +43,7 @@ const RecentLogsTable = () => {
                       </div>
                     </div>
                   </td>
-                  <td>
+                  <td style={{ width: "15%" }}>
                     {new Date(data.createdAt)
                       .toLocaleString("en-US", {
                         month: "short",
@@ -55,11 +55,15 @@ const RecentLogsTable = () => {
                       })
                       .toString()}
                   </td>
-                  <td className={`txt-primary`}>{data.activity}</td>
-                  <td>
+                  <td style={{ width: "15%" }} className={`txt-primary`}>
+                    {formatUnderscoredString(data.activity)}
+                  </td>
+                  <td style={{ width: "15%" }}>
                     {data.user?.fullName == null ? "N/A" : data.user?.fullName}
                   </td>
-                  <td>{data.role}</td>
+                  <td style={{ width: "15%" }}>
+                    {formatUnderscoredString(data.role)}
+                  </td>
                 </tr>
               );
             }

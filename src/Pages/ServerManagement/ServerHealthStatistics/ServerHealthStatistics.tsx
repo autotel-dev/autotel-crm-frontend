@@ -37,7 +37,14 @@ const ServerHealthStatistics = () => {
                       style={{ fontSize: "12px" }}
                       className={`font-secondary me-2`}
                     >
-                      {getTime}
+                      {getTime},&nbsp;
+                      {new Date()
+                        .toLocaleString("en-US", {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                          second: "2-digit",
+                        })
+                        .toString()}
                     </span>
                   </P>
                 </Col>
@@ -76,7 +83,14 @@ const ServerHealthStatistics = () => {
                       style={{ fontSize: "12px" }}
                       className={`font-secondary me-2`}
                     >
-                      {getTime}
+                      {getTime},&nbsp;
+                      {new Date()
+                        .toLocaleString("en-US", {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                          second: "2-digit",
+                        })
+                        .toString()}
                     </span>
                   </P>
                 </Col>
@@ -108,7 +122,14 @@ const ServerHealthStatistics = () => {
                       style={{ fontSize: "12px" }}
                       className={`font-secondary me-2`}
                     >
-                      {getTime}
+                      {getTime},&nbsp;
+                      {new Date()
+                        .toLocaleString("en-US", {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                          second: "2-digit",
+                        })
+                        .toString()}
                     </span>
                   </P>
                 </Col>

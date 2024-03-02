@@ -8,26 +8,36 @@ const ProfileBox = () => {
   const navigate = useNavigate();
   const handleClick = (name: string) => {
     if (name === "Log Out") {
-      if (getUserRole() == "COMPANY") {
-        console.log("Company");
-
-        setTimeout(() => {
-          localStorage.removeItem("token");
-          localStorage.setItem("userId", getUserId());
-        }, 1500);
-        setTimeout(() => {
-          navigate(`${process.env.PUBLIC_URL}/login/${getUserId()}`);
-        }, 2000);
+      if (getUserRole() == "SUPER_ADMIN") {
+        localStorage.removeItem("token");
+        localStorage.removeItem("userId");
+        navigate(`${process.env.PUBLIC_URL}/login`);
       } else {
-        console.log("SuperAdmin");
-        setTimeout(() => {
-          localStorage.removeItem("token");
-          localStorage.setItem("userId", "");
-        }, 1500);
-        setTimeout(() => {
-          navigate(`${process.env.PUBLIC_URL}/login/:id`);
-        }, 1500);
+        localStorage.removeItem("token");
+        navigate(
+          `${process.env.PUBLIC_URL}/login/${localStorage.getItem("userId")}`
+        );
       }
+      // if (getUserRole() == "COMPANY") {
+      //   console.log("Company");
+
+      //   setTimeout(() => {
+      //     localStorage.removeItem("token");
+      //     localStorage.setItem("userId", getUserId());
+      //   }, 1500);
+      //   setTimeout(() => {
+      //     navigate(`${process.env.PUBLIC_URL}/login/${getUserId()}`);
+      //   }, 2000);
+      // } else {
+      //   console.log("SuperAdmin");
+      //   setTimeout(() => {
+      //     localStorage.removeItem("token");
+      //     localStorage.setItem("userId", "");
+      //   }, 1500);
+      //   setTimeout(() => {
+      //     navigate(`${process.env.PUBLIC_URL}/login/:id`);
+      //   }, 1500);
+      // }
     }
   };
   return (

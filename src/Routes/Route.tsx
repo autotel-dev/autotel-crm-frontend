@@ -762,7 +762,7 @@ const routes = [
     Component: <Monitoring />,
   },
   {
-    path: `${process.env.PUBLIC_URL}/company/modules/controlRoom`,
+    path: `${process.env.PUBLIC_URL}/company/modules/control-room`,
     Component: <ControlRoom />,
   },
   // Users

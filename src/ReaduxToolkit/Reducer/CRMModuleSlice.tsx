@@ -3,6 +3,7 @@ import { getAll } from "../../Api";
 
 const initialState = {
   crmModules: [],
+  crmActiveModules: [],
   filterCrmModules: [],
   loading: false,
   error: null,
@@ -20,6 +21,11 @@ const CRMModulesSlice = createSlice({
     },
     setCRMModules: (state, action) => {
       state.crmModules = action.payload;
+      state.error = null;
+      state.loading = false;
+    },
+    setActiveCRMModules: (state, action) => {
+      state.crmActiveModules = action.payload;
       state.error = null;
       state.loading = false;
     },
@@ -44,6 +50,7 @@ const CRMModulesSlice = createSlice({
 });
 export const {
   setCRMModules,
+  setActiveCRMModules,
   setFilterCRMModules,
   setCRMModulesStart,
   setCRMModulesEnd,

@@ -5,9 +5,14 @@ import { Button, Form, FormGroup, Input, Label } from "reactstrap";
 import { EmailAddress, Password } from "../../utils/Constant";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
-import { login } from "../../Api";
+import { getAll, login } from "../../Api";
 import successAlert from "../Alerts/SuccessAlert";
 import errorAlert from "../Alerts/ErrorAlert";
+import { useDispatch } from "react-redux";
+import { setActiveCRMModules } from "../../ReaduxToolkit/Reducer/CRMModuleSlice";
+import { getUserRole } from "../../Api/globals";
+import Swal from "sweetalert2";
+import { setUserPersonalizationData } from "../../ReaduxToolkit/Reducer/PersonalizationSlice";
 
 interface loginTypes {
   emailAddress: string; // Change 'boolean' to the actual type of isVisible
@@ -22,10 +27,8 @@ const CommonForm = ({ alignLogo }: CommonFormPropsType) => {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({});
   const navigate = useNavigate();
-  const header =
-    window.location.pathname === "/superAdminLogin"
-      ? "Sign In to Login Account"
-      : "Sign in To Login Account";
+  const dispatch = useDispatch();
+  const header = "Sign In ";
 
   const {
     register,
@@ -47,20 +50,84 @@ const CommonForm = ({ alignLogo }: CommonFormPropsType) => {
         await login(loginData).then((data: any) => {
           console.log("response: ", data);
           setLoading(false);
+
           if (data.statusCode == 401) {
-            if (data.data.isOtpEnabled) {
-              navigate(`${process.env.PUBLIC_URL}/verifyOTP`);
-              // localStorage.setItem("userId", data.data.userId);
+            if (data.data) {
+              if (data.data.isOtpEnabled) {
+                console.log("response: ", data.data);
+
+                localStorage.setItem("userId", data.data.userId);
+                navigate(`${process.env.PUBLIC_URL}/verifyOTP`);
+                // localStorage.setItem("userId", data.data.userId);
+              }
+            } else {
+              Swal.fire({
+                text: `${data.message}`,
+                icon: "info",
+                timer: 2000,
+                showCancelButton: false,
+              });
             }
           } else if (data.statusCode == 200) {
             const token = data.data.authToken;
             console.log("response: ", data.data);
             console.log("token: ", token);
+            localStorage.setItem("userId", data.data.userId);
             localStorage.setItem("token", token);
-            localStorage.removeItem("userId");
+            getAll({
+              url:
+                getUserRole() == "COMPANY"
+                  ? "company/get-allowed-modules"
+                  : "crm-module/get-all-active-modules",
+            }).then((data: any) => {
+              console.log("active Modules --- >", data);
 
-            navigate(`${process.env.PUBLIC_URL}/dashboards/shoppingplace`);
-            // successAlert();
+              if (data !== undefined) {
+                if (data.success) {
+                  console.log("hhg");
+                  const userId = localStorage.getItem("userId");
+                  console.log(userId);
+                  dispatch(setActiveCRMModules(data.data));
+                  navigate(
+                    `${process.env.PUBLIC_URL}/dashboards/shoppingplace`
+                  );
+
+                  // getPerdonal Data
+                  getAll({
+                    url:
+                      userId == null && userId == undefined
+                        ? "super-admin/get-personalization"
+                        : `company/get-personalization/${userId}`,
+
+                    // url: "super-admin/get-personalization",
+                  }).then((parentData: any) => {
+                    console.log("api call --- >", parentData);
+                    if (parentData == undefined) {
+                      Swal.fire({
+                        text: `${parentData.message}`,
+                        icon: "error",
+                        timer: 2000,
+                        showConfirmButton: false,
+                      });
+                      setLoading(false);
+                      dispatch(setUserPersonalizationData(null));
+                    }
+
+                    if (parentData !== undefined) {
+                      if (parentData.success) {
+                        dispatch(setUserPersonalizationData(parentData.data));
+                        setLoading(false);
+                      }
+                      if (!parentData.success) {
+                        setLoading(false);
+                        dispatch(setUserPersonalizationData(null));
+                      }
+                    }
+                  });
+                  // successAlert();
+                }
+              }
+            });
           }
 
           reset({
