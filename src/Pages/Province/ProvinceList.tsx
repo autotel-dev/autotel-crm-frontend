@@ -1,4 +1,4 @@
-import { Card, CardBody, Col, Container, Row } from "reactstrap";
+import { Card, CardBody, Col, Container, Input, Label, Row } from "reactstrap";
 import CommonHeader from "../../Common/CommonHeader";
 import { citiesListHeading, provinceListHeading } from "../../utils/Constant";
 import { useEffect, useState } from "react";
@@ -15,14 +15,15 @@ import {
   setProvincesStart,
   setFilterProvinces,
   setCountryName,
+  setInActiveActiveProvinces,
 } from "../../ReaduxToolkit/Reducer/ProvinceSlice";
 import { setNoDataFound } from "../../ReaduxToolkit/Reducer/NoDataFoundSlice";
 import Loader from "../Loader/Loader";
+import Swal from "sweetalert2";
 
 const ProvinceList = () => {
-  const { provinces, loading, error, id, value } = useSelector(
-    (state: any) => state.provinces
-  );
+  const { provinces, loading, error, id, value, activeInActiveProvinces } =
+    useSelector((state: any) => state.provinces);
   const { noDataFound } = useSelector((state: any) => state.noDataFound);
   const dispatch = useDispatch();
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
@@ -33,6 +34,19 @@ const ProvinceList = () => {
     dispatch(setProvincesStart());
     getAll({ url: "province/get-all-provinces" }).then((data: any) => {
       console.log("api call --- >", data);
+      if (data == undefined) {
+        Swal.fire({
+          text: "Failed to fetch due to connection refused",
+          icon: "error",
+          timer: 2000,
+          showConfirmButton: false,
+        });
+        dispatch(setInActiveActiveProvinces("All"));
+        dispatch(setProvincesEnd());
+        dispatch(setProvinces([]));
+        dispatch(setFilterProvinces([]));
+        return;
+      }
       dispatch(setProvincesEnd());
       if (data !== undefined) {
         dispatch(setNoDataFound(data.message));
@@ -61,7 +75,71 @@ const ProvinceList = () => {
         <td>{row._id}</td>
         <td>{row.name}</td>
         <td>{row.country.name}</td>
-        <td>{row.isActive ? "Active" : "inActive"}</td>
+        <td>
+          <div className="d-flex" style={{ justifyContent: "center" }}>
+            <div
+              className={`text-end flex-shrink-0 icon-state 
+                            }`}
+            >
+              <Label className="switch mb-0">
+                <Input
+                  type="checkbox"
+                  defaultChecked={row.isActive}
+                  value={row.isActive}
+                  checked={row.isActive}
+                  // onChange={async (e: any) => {
+                  //   //  --------------------------
+
+                  //   const operator = {
+                  //     fullName: row.fullName,
+                  //     emailAddress: row.emailAddress,
+                  //     phoneNo: row.phoneNo,
+                  //     isActive: !row.isActive,
+                  //     company: decodedToken.userId,
+                  //   };
+                  //   console.log(operator);
+                  //   setIsActive(!row.isActive);
+                  //   // setRowIndex(index);
+                  //   console.log(e.target.value);
+                  //   try {
+                  //     await update(operator, {
+                  //       url: `operator/update-operator/${row._id}`,
+                  //     }).then((data: any) => {
+                  //       if (data.success) {
+                  //         console.log(data);
+
+                  //         dispatch(setOperatorsStart());
+                  //         getAll({
+                  //           url: "operator/get-all-operators",
+                  //         }).then((data: any) => {
+                  //           console.log("api call --- >", data);
+                  //           dispatch(setOperatorsEnd());
+                  //           if (data !== undefined) {
+                  //             if (data.success) {
+                  //               console.log("hhg");
+                  //               dispatch(setOperators(data.data));
+                  //               dispatch(setFilterOperators(data.data));
+                  //             }
+                  //           }
+                  //         });
+                  //       }
+                  //     });
+                  //     // Handle successful post creation (e.g., show a success message, redirect, etc.)
+                  //   } catch (error) {
+                  //     // Handle error (e.g., show an error message)
+                  //     console.error("Error creating post:", error);
+                  //   }
+                  // }}
+                />
+                <span
+                  className={`switch-state ${
+                    row.isActive ? "bg-primary" : "bg-secondary"
+                  }`}
+                />
+              </Label>
+            </div>
+          </div>
+        </td>
         <td>
           <div>
             <button
@@ -158,9 +236,9 @@ const ProvinceList = () => {
                         fontWeight: "bold",
                       }}
                     >
-                      {noDataFound !== ""
-                        ? "No Provinces found"
-                        : "Faild to Fetch"}
+                      {activeInActiveProvinces !== "All"
+                        ? activeInActiveProvinces
+                        : "No Provinces Found"}
                     </div>
                   )}
                 </div>

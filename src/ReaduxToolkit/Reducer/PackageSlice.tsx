@@ -4,6 +4,7 @@ const initialState = {
   packages: [],
   filterPackages: [],
   allPackagesDuration: [],
+  activeInActivePackages: "All",
   loading: false,
   error: null,
   id: null,
@@ -28,6 +29,9 @@ const PackageSlice = createSlice({
       state.packages = action.payload;
       state.error = null;
       state.loading = false;
+    },
+    setInActiveActivePackages: (state, action) => {
+      state.activeInActivePackages = action.payload;
     },
     setAllPackagesDuration: (state, action) => {
       state.allPackagesDuration = action.payload;
@@ -60,6 +64,7 @@ export const {
   setPackage,
   setPackages,
   setFilterPackages,
+  setInActiveActivePackages,
   setId,
   setPackageDays,
   setPackageDuration,

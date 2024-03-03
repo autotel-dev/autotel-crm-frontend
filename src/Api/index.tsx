@@ -132,6 +132,7 @@ export const create = async (postData: any, url: URLTypes): Promise<void> => {
       timer: 2000,
       showCancelButton: false,
     });
+    // return error;
   }
 };
 export const otpEnabled = async (
@@ -346,7 +347,8 @@ export const getAll = async (url: URLTypes): Promise<void> => {
 
     // Handle success (optional)
   } catch (error: any) {
-    console.error("Error get-all:", error);
+    console.error("Error get-all:", error.message);
+    // return error;
   }
 };
 

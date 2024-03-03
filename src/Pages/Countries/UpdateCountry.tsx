@@ -21,8 +21,10 @@ import {
   setCountries,
   setId,
   setFilterCountries,
+  setInActiveActiveCountries,
 } from "../../ReaduxToolkit/Reducer/CountrySlice";
 import { setNoDataFound } from "../../ReaduxToolkit/Reducer/NoDataFoundSlice";
+import Swal from "sweetalert2";
 
 interface PropsTypes {
   isVisible: boolean; // Change 'boolean' to the actual type of isVisible
@@ -99,6 +101,19 @@ const UpdateCountry: React.FC<PropsTypes> = ({
               dispatch(setCountriesStart());
               getAll({ url: "country/get-all-countries" }).then((data: any) => {
                 console.log("api call --- >", data);
+                if (data == undefined) {
+                  Swal.fire({
+                    text: "Failed to fetch due to connection refused",
+                    icon: "error",
+                    timer: 2000,
+                    showConfirmButton: false,
+                  });
+                  dispatch(setInActiveActiveCountries("All"));
+                  dispatch(setCountries([]));
+                  dispatch(setFilterCountries([]));
+                  dispatch(setCountriesEnd());
+                  return;
+                }
                 dispatch(setCountriesEnd());
                 if (data !== undefined) {
                   dispatch(setNoDataFound(data.message));
@@ -116,6 +131,12 @@ const UpdateCountry: React.FC<PropsTypes> = ({
       } catch (error) {
         // Handle error (e.g., show an error message)
         console.error("Error creating post:", error);
+        Swal.fire({
+          text: "Failed to update due to connection refused",
+          icon: "error",
+          timer: 2000,
+          showConfirmButton: false,
+        });
         setLoading(false);
         setIsVisible(!isVisible);
       }

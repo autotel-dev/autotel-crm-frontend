@@ -147,6 +147,7 @@ import TicketDetails from "../Pages/Support/TicketDetails";
 import Roles from "../Pages/Company/Roles/Roles";
 import Account from "../Pages/Apps/User/UserEdit/Account";
 import Settings from "../Pages/Apps/User/UserProfile/Settings";
+import Reports from "../Pages/Company/Reports/Reports";
 
 const routes = [
   // dashboard routes
@@ -786,6 +787,11 @@ const routes = [
   {
     path: `${process.env.PUBLIC_URL}/company/tasks`,
     Component: <CompanyTasks />,
+  },
+
+  {
+    path: `${process.env.PUBLIC_URL}/company/reports`,
+    Component: <Reports />,
   },
 ];
 

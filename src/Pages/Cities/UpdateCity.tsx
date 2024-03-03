@@ -21,11 +21,13 @@ import {
   setCitiesStart,
   setFilterCities,
   setId,
+  setInActiveActiveCities,
   // setValue,
 } from "../../ReaduxToolkit/Reducer/CitiesSlice";
 import { setNoDataFound } from "../../ReaduxToolkit/Reducer/NoDataFoundSlice";
 import SelectCountryBox from "./components/SelectCountryBox";
 import SelectProvinceBox from "./components/SelectProvinceBox";
+import Swal from "sweetalert2";
 
 interface PropsTypes {
   isVisible: boolean; // Change 'boolean' to the actual type of isVisible
@@ -102,6 +104,19 @@ const UpdateCity: React.FC<PropsTypes> = ({
               dispatch(setCitiesStart());
               getAll({ url: "city/get-all-cities" }).then((data: any) => {
                 console.log("api call --- >", data);
+                if (data == undefined) {
+                  Swal.fire({
+                    text: "Failed to fetch due to connection refused",
+                    icon: "error",
+                    timer: 2000,
+                    showConfirmButton: false,
+                  });
+                  dispatch(setInActiveActiveCities("All"));
+                  dispatch(setCities([]));
+                  dispatch(setFilterCities([]));
+                  dispatch(setCitiesEnd());
+                  return;
+                }
                 dispatch(setCitiesEnd());
                 if (data !== undefined) {
                   dispatch(setNoDataFound(data.message));
@@ -119,6 +134,12 @@ const UpdateCity: React.FC<PropsTypes> = ({
       } catch (error) {
         // Handle error (e.g., show an error message)
         console.error("Error creating post:", error);
+        Swal.fire({
+          text: "Failed to update due to connection refused",
+          icon: "error",
+          timer: 2000,
+          showConfirmButton: false,
+        });
         setLoading(false);
         setIsVisible(!isVisible);
       }

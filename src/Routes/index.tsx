@@ -51,14 +51,19 @@ const Routers = () => {
         {authRoutes.map(({ path, Component }, i) => (
           <Route path={path} element={Component} key={i} />
         ))}
-        <Route
+        {/* <Route
           path={`${process.env.PUBLIC_URL}login/:userId`}
           element={<LoginForm />}
-        />
+        /> */}
+        <Route path="/login/:companyId" element={<PrivateRoute />} />
         <Route
-          path={`${process.env.PUBLIC_URL}login`}
+          path={`${process.env.PUBLIC_URL}/login`}
           element={<LoginForm />}
         />
+        {/* <Route
+          path={`${process.env.PUBLIC_URL}login`}
+          element={<Navigate to={"/login"} />}
+        /> */}
         <Route
           path={`${process.env.PUBLIC_URL}/verifyOTP`}
           element={<VerifyOTP />}

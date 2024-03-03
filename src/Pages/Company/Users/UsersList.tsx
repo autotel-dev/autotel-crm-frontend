@@ -8,6 +8,7 @@ import "./usersStyle.css";
 import deleteAlert from "../../Alerts/DeleteAlert";
 import {
   setFilterOperators,
+  setInActiveActiveUsers,
   setOperators,
   setOperatorsEnd,
   setOperatorsStart,
@@ -17,9 +18,12 @@ import Loader from "../../Loader/Loader";
 import UpdateUser from "./UpdateUser";
 import { jwtDecode } from "jwt-decode";
 import { formatUnderscoredString } from "../../../Api/globals";
+import Swal from "sweetalert2";
 
 const UsersList = () => {
-  const { operators, loading } = useSelector((state: any) => state.operators);
+  const { operators, loading, activeInActiveOperators } = useSelector(
+    (state: any) => state.operators
+  );
   const { noDataFound } = useSelector((state: any) => state.noDataFound);
   const dispatch = useDispatch();
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
@@ -44,6 +48,19 @@ const UsersList = () => {
     dispatch(setOperatorsStart());
     getAll({ url: "operator/get-all-operators" }).then((data: any) => {
       console.log("api call --- >", data);
+      if (data == undefined) {
+        Swal.fire({
+          text: "Failed to fetch due to connection refused",
+          icon: "error",
+          timer: 2000,
+          showConfirmButton: false,
+        });
+        dispatch(setInActiveActiveUsers("All"));
+        dispatch(setOperators([]));
+        dispatch(setFilterOperators([]));
+        dispatch(setOperatorsEnd());
+        return;
+      }
       dispatch(setOperatorsEnd());
       if (data !== undefined) {
         dispatch(setNoDataFound(data.message));
@@ -60,11 +77,11 @@ const UsersList = () => {
     return operators?.map((row: any, index: any) => (
       // setIsActive(row.isActive);
       <tr key={row.id}>
-        <td>{row._id}</td>
-        <td>{row.fullName}</td>
-        <td>{formatUnderscoredString(row.role)}</td>
-        <td>{row.emailAddress}</td>
-        <td>
+        <td style={{ width: "10%" }}>{row._id}</td>
+        <td style={{ width: "15%" }}>{row.fullName}</td>
+        <td style={{ width: "10%" }}>{formatUnderscoredString(row.role)}</td>
+        <td style={{ width: "15%" }}>{row.emailAddress}</td>
+        <td style={{ width: "10%" }}>
           <div className="d-flex" style={{ justifyContent: "center" }}>
             <div
               className={`text-end flex-shrink-0 icon-state 
@@ -74,7 +91,8 @@ const UsersList = () => {
                 <Input
                   type="checkbox"
                   defaultChecked={row.isActive}
-                  value={row.isActive ? "on" : "off"}
+                  value={row.isActive}
+                  checked={row.isActive}
                   onChange={async (e: any) => {
                     //  --------------------------
 
@@ -97,19 +115,19 @@ const UsersList = () => {
                           console.log(data);
 
                           dispatch(setOperatorsStart());
-                          getAll({ url: "operator/get-all-operators" }).then(
-                            (data: any) => {
-                              console.log("api call --- >", data);
-                              dispatch(setOperatorsEnd());
-                              if (data !== undefined) {
-                                if (data.success) {
-                                  console.log("hhg");
-                                  dispatch(setOperators(data.data));
-                                  dispatch(setFilterOperators(data.data));
-                                }
+                          getAll({
+                            url: "operator/get-all-operators",
+                          }).then((data: any) => {
+                            console.log("api call --- >", data);
+                            dispatch(setOperatorsEnd());
+                            if (data !== undefined) {
+                              if (data.success) {
+                                console.log("hhg");
+                                dispatch(setOperators(data.data));
+                                dispatch(setFilterOperators(data.data));
                               }
                             }
-                          );
+                          });
                         }
                       });
                       // Handle successful post creation (e.g., show a success message, redirect, etc.)
@@ -196,11 +214,11 @@ const UsersList = () => {
                     <table>
                       <thead>
                         <tr>
-                          <th>ID</th>
-                          <th>Name</th>
-                          <th>Role</th>
-                          <th>Email Address</th>
-                          <th>Account Status</th>
+                          <th style={{ width: "10%" }}>ID</th>
+                          <th style={{ width: "15%" }}>Name</th>
+                          <th style={{ width: "10%" }}>Role</th>
+                          <th style={{ width: "15%" }}>Email Address</th>
+                          <th style={{ width: "10%" }}>Account Status</th>
                           <th>Actions</th>
                         </tr>
                       </thead>
@@ -215,7 +233,9 @@ const UsersList = () => {
                       fontWeight: "bold",
                     }}
                   >
-                    {noDataFound !== "" ? "No Users Found" : "Faild to Fetch"}
+                    {activeInActiveOperators !== "All"
+                      ? activeInActiveOperators
+                      : "No Operators Found"}
                   </div>
                 )}
 

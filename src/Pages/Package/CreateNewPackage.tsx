@@ -9,6 +9,7 @@ import { PackageType } from "./PackageType/PackageType";
 import { create, getAll } from "../../Api";
 import {
   setFilterPackages,
+  setInActiveActivePackages,
   setPackageDays,
   setPackageDuration,
   setPackages,
@@ -75,6 +76,19 @@ const CreateNewPackage = () => {
               });
               getAll({ url: "package/get-all-packages" }).then((data: any) => {
                 console.log("api call --- >", data);
+                if (data == undefined) {
+                  Swal.fire({
+                    text: "Failed to fetch due to connection refused",
+                    icon: "error",
+                    timer: 2000,
+                    showConfirmButton: false,
+                  });
+                  dispatch(setInActiveActivePackages("All"));
+                  dispatch(setPackages([]));
+                  dispatch(setFilterPackages([]));
+                  dispatch(setPackagesEnd());
+                  return;
+                }
                 dispatch(setPackagesEnd());
                 if (data !== undefined) {
                   if (data.success) {
@@ -91,6 +105,12 @@ const CreateNewPackage = () => {
       } catch (error: any) {
         // Handle error (e.g., show an error message)
         console.error("Error creating post:", error);
+        Swal.fire({
+          text: "Failed to create due to connection refused",
+          icon: "error",
+          timer: 2000,
+          showConfirmButton: false,
+        });
         setLoading(false);
         console.log(packag);
         setAddModal(false);

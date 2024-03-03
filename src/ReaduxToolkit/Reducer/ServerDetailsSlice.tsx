@@ -9,6 +9,7 @@ const initialState = {
   apiKeys: "",
   servers: [],
   filterServers: [],
+  activeInActiveServers: "All",
   server: {},
   loading: false,
   error: null,
@@ -55,6 +56,9 @@ const ServerDetailsSlice = createSlice({
       state.error = null;
       state.loading = false;
     },
+    setInActiveActiveServers: (state, action) => {
+      state.activeInActiveServers = action.payload;
+    },
     setServer: (state, action) => {
       state.server = action.payload;
     },
@@ -78,6 +82,7 @@ export const {
   setServerCredentials,
   setGoogleAccountCreadentials,
   setFirebaseAccountCredentials,
+  setInActiveActiveServers,
   setApiKeys,
   setNoDataFound,
 } = ServerDetailsSlice.actions;

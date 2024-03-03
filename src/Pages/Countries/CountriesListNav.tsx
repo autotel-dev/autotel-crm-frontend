@@ -4,7 +4,10 @@ import { all, active, inactive } from "../../utils/Constant";
 import { useAppDispatch, useAppSelector } from "../../ReaduxToolkit/Hooks";
 import { setActiveTab } from "../../ReaduxToolkit/Reducer/ProjectSlice";
 import CreateNewCity from "./CreateNewCountry";
-import { setCountries } from "../../ReaduxToolkit/Reducer/CountrySlice";
+import {
+  setCountries,
+  setInActiveActiveCountries,
+} from "../../ReaduxToolkit/Reducer/CountrySlice";
 import { useSelector } from "react-redux";
 const CountriesListNav = () => {
   const { activeTab } = useAppSelector((state) => state.project);
@@ -27,6 +30,7 @@ const CountriesListNav = () => {
                 filterCountries.map((item: any, index: any) => {
                   tempList.push(item);
                 });
+                dispatch(setInActiveActiveCountries("All"));
                 dispatch(setCountries(tempList));
                 tempList = [];
               }}
@@ -48,6 +52,7 @@ const CountriesListNav = () => {
                     console.log("isNotActive -- >", 1);
                   }
                 });
+                dispatch(setInActiveActiveCountries("No Inactive Countries Found"));
                 dispatch(setCountries(tempList));
                 tempList = [];
               }}
@@ -68,6 +73,9 @@ const CountriesListNav = () => {
                     console.log("isActive -- >", 1);
                   }
                 });
+                dispatch(
+                  setInActiveActiveCountries("No Active Countries Found")
+                );
                 dispatch(setCountries(tempList));
                 tempList = [];
               }}

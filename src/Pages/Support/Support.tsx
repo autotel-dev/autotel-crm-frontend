@@ -15,6 +15,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import Loader from "../Loader/Loader";
 import { getUserRole } from "../../Api/globals";
+import Swal from "sweetalert2";
 
 const Support = () => {
   const { supportStatistics } = useSelector((state: any) => state.support);
@@ -28,6 +29,17 @@ const Support = () => {
     if (getUserRole() === "SUPER_ADMIN") {
       getAll({ url: "support/bug-report/get-statistics" }).then((data: any) => {
         console.log("api call --- >", data);
+        if (data == undefined) {
+          Swal.fire({
+            text: "Failed to fetch due to connection refused",
+            icon: "error",
+            timer: 2000,
+            showConfirmButton: false,
+          });
+          setReportsLoading(false);
+          setStatisticsLoading(false);
+          return;
+        }
         if (data !== undefined) {
           if (!data.success) {
             setStatisticsLoading(false);
@@ -66,6 +78,20 @@ const Support = () => {
           : "support/bug-report/get-all-bug-reports",
     }).then((data: any) => {
       console.log("api call --- >", data);
+      if (getUserRole() == "COMPANY") {
+        if (data == undefined) {
+          Swal.fire({
+            text: "Failed to fetch due to connection refused",
+            icon: "error",
+            timer: 2000,
+            showConfirmButton: false,
+          });
+          setReportsLoading(false);
+          setStatisticsLoading(false);
+          return;
+        }
+      }
+
       if (data !== undefined) {
         if (!data.success) {
           dispatch(setBugReports([]));
@@ -136,7 +162,7 @@ const Support = () => {
                           fontWeight: "bold",
                         }}
                       >
-                        No Statistics Foound
+                        No Statistics Found
                       </div>
                     </div>
                   ) : (

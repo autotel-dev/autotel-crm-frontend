@@ -5,7 +5,7 @@ import { useAppDispatch, useAppSelector } from "../../ReaduxToolkit/Hooks";
 import { setActiveTab } from "../../ReaduxToolkit/Reducer/ProjectSlice";
 import CreateNewProvince from "./CreateNewProvince";
 import { useSelector } from "react-redux";
-import { setProvinces } from "../../ReaduxToolkit/Reducer/ProvinceSlice";
+import { setInActiveActiveProvinces, setProvinces } from "../../ReaduxToolkit/Reducer/ProvinceSlice";
 const ProvinceListNav = () => {
   const { activeTab } = useAppSelector((state) => state.project);
   const dispatch = useAppDispatch();
@@ -27,6 +27,7 @@ const ProvinceListNav = () => {
                 filterProvinces.map((item: any, index: any) => {
                   tempList.push(item);
                 });
+                dispatch(setInActiveActiveProvinces("All"));
                 dispatch(setProvinces(tempList));
                 tempList = [];
               }}
@@ -48,6 +49,7 @@ const ProvinceListNav = () => {
                     console.log("isActive -- >", 1);
                   }
                 });
+                dispatch(setInActiveActiveProvinces("No Inactive Provinces Found"));
                 dispatch(setProvinces(tempList));
                 tempList = [];
               }}
@@ -69,6 +71,7 @@ const ProvinceListNav = () => {
                     console.log("isNotActive -- >", 1);
                   }
                 });
+                dispatch(setInActiveActiveProvinces("No Active Provinces Found"));
                 dispatch(setProvinces(tempList));
                 tempList = [];
               }}

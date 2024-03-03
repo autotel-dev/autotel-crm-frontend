@@ -50,6 +50,16 @@ const CommonForm = ({ alignLogo }: CommonFormPropsType) => {
         await login(loginData).then((data: any) => {
           console.log("response: ", data);
           setLoading(false);
+          if (data == undefined) {
+            Swal.fire({
+              text: "Connection Refused or not connected",
+              icon: "error",
+              timer: 2000,
+              showConfirmButton: false,
+            });
+            setLoading(false);
+            return;
+          }
 
           if (data.statusCode == 401) {
             if (data.data) {

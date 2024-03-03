@@ -18,10 +18,12 @@ import { UserType } from "./UserTypes/UserTypes";
 import { jwtDecode } from "jwt-decode";
 import {
   setFilterOperators,
+  setInActiveActiveUsers,
   setOperators,
   setOperatorsEnd,
   setOperatorsStart,
 } from "../../../ReaduxToolkit/Reducer/OperatorSlice";
+import Swal from "sweetalert2";
 // import { setNoDataFound } from "../../ReaduxToolkit/Reducer/NoDataFoundSlice";
 
 interface PropsTypes {
@@ -113,6 +115,19 @@ const UpdateUser: React.FC<PropsTypes> = ({
               getAll({ url: "operator/get-all-operators" }).then(
                 (data: any) => {
                   console.log("api call --- >", data);
+                  if (data == undefined) {
+                    Swal.fire({
+                      text: "Failed to fetch due to connection refused",
+                      icon: "error",
+                      timer: 2000,
+                      showConfirmButton: false,
+                    });
+                    dispatch(setInActiveActiveUsers("All"));
+                    dispatch(setOperators([]));
+                    dispatch(setFilterOperators([]));
+                    dispatch(setOperatorsEnd());
+                    return;
+                  }
                   dispatch(setOperatorsEnd());
                   if (data !== undefined) {
                     if (data.success) {
@@ -130,6 +145,12 @@ const UpdateUser: React.FC<PropsTypes> = ({
       } catch (error) {
         // Handle error (e.g., show an error message)
         console.error("Error creating post:", error);
+        Swal.fire({
+          text: "Failed to update due to connection refused",
+          icon: "error",
+          timer: 2000,
+          showConfirmButton: false,
+        });
         setLoading(false);
         setIsVisible(!isVisible);
       }

@@ -1,4 +1,4 @@
-import { Card, CardBody, Col, Container, Row } from "reactstrap";
+import { Card, CardBody, Col, Container, Input, Row } from "reactstrap";
 import CommonHeader from "../../Common/CommonHeader";
 import { citiesListHeading } from "../../utils/Constant";
 import DataTable from "react-data-table-component";
@@ -23,15 +23,24 @@ import {
   setProvinces,
   setValue,
   setNoCityFound,
+  setInActiveActiveCities,
 } from "../../ReaduxToolkit/Reducer/CitiesSlice";
 import deleteAlert from "../Alerts/DeleteAlert";
 import "./tableStyle.css";
 import Loader from "../Loader/Loader";
+import Swal from "sweetalert2";
 
 const CitiesList = () => {
-  const { cities, loading, error, id, value, noCityFound } = useSelector(
-    (state: any) => state.cities
-  );
+  const {
+    cities,
+    loading,
+    error,
+    id,
+    value,
+    noCityFound,
+    activeInActiveCities,
+  } = useSelector((state: any) => state.cities);
+  const { noDataFound } = useSelector((state: any) => state.noDataFound);
 
   const [load, setLoad] = useState(false);
   const dispatch = useDispatch();
@@ -44,6 +53,19 @@ const CitiesList = () => {
     // setLoad(true);
     getAll({ url: "city/get-all-cities" }).then((data: any) => {
       console.log("api call --- >", data);
+      if (data == undefined) {
+        Swal.fire({
+          text: "Failed to fetch due to connection refused",
+          icon: "error",
+          timer: 2000,
+          showConfirmButton: false,
+        });
+        dispatch(setInActiveActiveCities("All"));
+        dispatch(setCities([]));
+        dispatch(setFilterCities([]));
+        dispatch(setCitiesEnd());
+        return;
+      }
 
       dispatch(setCitiesEnd());
       if (data !== undefined) {
@@ -83,11 +105,75 @@ const CitiesList = () => {
   const renderTableRows = () => {
     return cities.map((row: any) => (
       <tr key={row.id}>
-        <td>{row._id}</td>
-        <td>{row.name}</td>
-        <td>{row.province?.name}</td>
-        <td>{row.country?.name}</td>
-        <td>{row.isActive ? "Active" : "inActive"}</td>
+        <td style={{ width: "10%" }}>{row._id}</td>
+        <td style={{ width: "15%" }}>{row.name}</td>
+        <td style={{ width: "15%" }}>{row.province?.name}</td>
+        <td style={{ width: "15%" }}>{row.country?.name}</td>
+        <td style={{ width: "15%" }}>
+          <div className="d-flex" style={{ justifyContent: "center" }}>
+            <div
+              className={`text-end flex-shrink-0 icon-state 
+                            }`}
+            >
+              <Label className="switch mb-0">
+                <Input
+                  type="checkbox"
+                  defaultChecked={row.isActive}
+                  value={row.isActive}
+                  checked={row.isActive}
+                  // onChange={async (e: any) => {
+                  //   //  --------------------------
+
+                  //   const operator = {
+                  //     fullName: row.fullName,
+                  //     emailAddress: row.emailAddress,
+                  //     phoneNo: row.phoneNo,
+                  //     isActive: !row.isActive,
+                  //     company: decodedToken.userId,
+                  //   };
+                  //   console.log(operator);
+                  //   setIsActive(!row.isActive);
+                  //   // setRowIndex(index);
+                  //   console.log(e.target.value);
+                  //   try {
+                  //     await update(operator, {
+                  //       url: `operator/update-operator/${row._id}`,
+                  //     }).then((data: any) => {
+                  //       if (data.success) {
+                  //         console.log(data);
+
+                  //         dispatch(setOperatorsStart());
+                  //         getAll({
+                  //           url: "operator/get-all-operators",
+                  //         }).then((data: any) => {
+                  //           console.log("api call --- >", data);
+                  //           dispatch(setOperatorsEnd());
+                  //           if (data !== undefined) {
+                  //             if (data.success) {
+                  //               console.log("hhg");
+                  //               dispatch(setOperators(data.data));
+                  //               dispatch(setFilterOperators(data.data));
+                  //             }
+                  //           }
+                  //         });
+                  //       }
+                  //     });
+                  //     // Handle successful post creation (e.g., show a success message, redirect, etc.)
+                  //   } catch (error) {
+                  //     // Handle error (e.g., show an error message)
+                  //     console.error("Error creating post:", error);
+                  //   }
+                  // }}
+                />
+                <span
+                  className={`switch-state ${
+                    row.isActive ? "bg-primary" : "bg-secondary"
+                  }`}
+                />
+              </Label>
+            </div>
+          </div>
+        </td>
         <td>
           <div>
             <button
@@ -166,11 +252,11 @@ const CitiesList = () => {
                       <table>
                         <thead>
                           <tr>
-                            <th>ID</th>
-                            <th>Name</th>
-                            <th>Province</th>
-                            <th>Country</th>
-                            <th>Status</th>
+                            <th style={{ width: "10%" }}>ID</th>
+                            <th style={{ width: "15%" }}>Name</th>
+                            <th style={{ width: "15%" }}>Province</th>
+                            <th style={{ width: "15%" }}>Country</th>
+                            <th style={{ width: "15%" }}>Status</th>
                             <th>Actions</th>
                           </tr>
                         </thead>
@@ -185,7 +271,11 @@ const CitiesList = () => {
                         fontWeight: "bold",
                       }}
                     >
-                      {noCityFound !== "" ? noCityFound : "Faild to Fetch"}
+                      {/* {noCityFound !== "" ? noCityFound : "Faild to Fetch"} */}
+
+                      {activeInActiveCities !== "All"
+                        ? activeInActiveCities
+                        : "No Cities Found"}
                     </div>
                     // <Loader />
                   )}

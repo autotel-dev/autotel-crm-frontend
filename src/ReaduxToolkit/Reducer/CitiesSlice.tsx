@@ -6,6 +6,7 @@ const initialState = {
   provinces: [],
   countries: [],
   filterCities: [],
+  activeInActiveCities: "All",
   loading: false,
   error: null,
   id: null,
@@ -31,6 +32,9 @@ const CitiesSlice = createSlice({
       state.filterCities = action.payload;
       state.error = null;
       state.loading = false;
+    },
+    setInActiveActiveCities: (state, action) => {
+      state.activeInActiveCities = action.payload;
     },
     setProvinces: (state, action) => {
       state.provinces = action.payload;
@@ -66,6 +70,7 @@ const CitiesSlice = createSlice({
 export const {
   setCities,
   setCountries,
+  setInActiveActiveCities,
   setProvinces,
   setCitiesStart,
   setCitiesEnd,

@@ -25,9 +25,11 @@ import {
   setServers,
   setServersEnd,
   setFilterServers,
+  setInActiveActiveServers,
 } from "../../../ReaduxToolkit/Reducer/ServerDetailsSlice";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
+import Swal from "sweetalert2";
 
 interface PropsTypes {
   location: any;
@@ -122,7 +124,19 @@ const UpdateServerForm = () => {
           getAll({ url: "server-management/get-all-servers" }).then(
             (data: any) => {
               console.log("api call --- >", data);
-
+              if (data == undefined) {
+                Swal.fire({
+                  text: "Failed to fetch due to connection refused",
+                  icon: "error",
+                  timer: 2000,
+                  showConfirmButton: false,
+                });
+                dispatch(setInActiveActiveServers("All"));
+                dispatch(setServers([]));
+                dispatch(setFilterServers([]));
+                dispatch(setServersEnd());
+                return;
+              }
               // ----------------------
               dispatch(setServersEnd());
               if (data !== undefined) {
@@ -142,6 +156,12 @@ const UpdateServerForm = () => {
     } catch (error: any) {
       // Handle error (e.g., show an error message)
       console.error("Error creating post:", error);
+      Swal.fire({
+        text: "Failed to update due to connection refused",
+        icon: "error",
+        timer: 2000,
+        showConfirmButton: false,
+      });
       setLoading(false);
     }
   };

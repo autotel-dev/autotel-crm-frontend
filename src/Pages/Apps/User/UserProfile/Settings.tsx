@@ -28,7 +28,8 @@ const Settings = () => {
   // const [ticketImages, setTicketImages] = useState<any[]>([]);
   // const [undefinedData, setUndefinedData] = useState<any>(false);
   const [loading, setLoading] = useState<any>(true);
-  const [personalizationImages, setPersonalizationImages] = useState<any[]>([]);
+  // const [personalizationImages, setPersonalizationImages] = useState<any[]>([]);
+  const [undefinedData, setUndefinedData] = useState<any>(false);
 
   useEffect(() => {
     getAll({
@@ -39,8 +40,9 @@ const Settings = () => {
     }).then((parentData: any) => {
       console.log("api call --- >", parentData);
       if (parentData == undefined) {
+        setUndefinedData(true);
         Swal.fire({
-          text: "Failed to Fetch",
+          text: "Failed to Fetch due to connection refused",
           icon: "error",
           timer: 2000,
           showConfirmButton: false,
@@ -52,11 +54,12 @@ const Settings = () => {
       if (parentData !== undefined) {
         if (parentData.success) {
           dispatch(setUserPersonalizationData(parentData.data));
-
+          setUndefinedData(false);
           setLoading(false);
         }
         if (!parentData.success) {
           setLoading(false);
+          setUndefinedData(false);
           dispatch(setUserPersonalizationData(null));
         }
       }
@@ -92,15 +95,37 @@ const Settings = () => {
             // ) :
 
             !loading ? (
-              <Row>
-                {/* <Profile />
+              !undefinedData ? (
+                <Row>
+                  {/* <Profile />
             <WilliamProfile />
             <Profile2 />
             <ProfileDetails />
             <DetailImg /> */}
 
-                <Personalization />
-              </Row>
+                  <Personalization />
+                </Row>
+              ) : (
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    height: "80vh",
+                    backgroundColor: "white",
+                    alignItems: "center",
+                  }}
+                >
+                  <div
+                    style={{
+                      textAlign: "center",
+                      fontSize: "25px",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    No Data Found
+                  </div>
+                </div>
+              )
             ) : (
               <div
                 style={{

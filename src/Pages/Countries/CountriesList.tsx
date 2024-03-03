@@ -1,4 +1,4 @@
-import { Card, CardBody, Col, Container, Row } from "reactstrap";
+import { Card, CardBody, Col, Container, Input, Label, Row } from "reactstrap";
 import CommonHeader from "../../Common/CommonHeader";
 import { citiesListHeading } from "../../utils/Constant";
 import DataTable from "react-data-table-component";
@@ -13,13 +13,15 @@ import {
   setCountriesStart,
   setFilterCountries,
   setId,
+  setInActiveActiveCountries,
 } from "../../ReaduxToolkit/Reducer/CountrySlice";
 import { setNoDataFound } from "../../ReaduxToolkit/Reducer/NoDataFoundSlice";
 import UpdateCountry from "./UpdateCountry";
 import Loader from "../Loader/Loader";
+import Swal from "sweetalert2";
 
 const CountriesList = () => {
-  const { countries, loading, id } = useSelector(
+  const { countries, loading, id, activeInActiveCountries } = useSelector(
     (state: any) => state.countries
   );
   const { noDataFound } = useSelector((state: any) => state.noDataFound);
@@ -31,6 +33,19 @@ const CountriesList = () => {
     dispatch(setCountriesStart());
     getAll({ url: "country/get-all-countries" }).then((data: any) => {
       console.log("api call --- >", data);
+      if (data == undefined) {
+        Swal.fire({
+          text: "Failed to fetch due to connection refused",
+          icon: "error",
+          timer: 2000,
+          showConfirmButton: false,
+        });
+        dispatch(setInActiveActiveCountries("All"));
+        dispatch(setCountries([]));
+        dispatch(setFilterCountries([]));
+        dispatch(setCountriesEnd());
+        return;
+      }
       dispatch(setCountriesEnd());
       if (data !== undefined) {
         dispatch(setNoDataFound(data.message));
@@ -49,7 +64,71 @@ const CountriesList = () => {
       <tr key={row.id}>
         <td>{row._id}</td>
         <td>{row.name}</td>
-        <td>{row.isActive ? "Active" : "inActive"}</td>
+        <td>
+          <div className="d-flex" style={{ justifyContent: "center" }}>
+            <div
+              className={`text-end flex-shrink-0 icon-state 
+                            }`}
+            >
+              <Label className="switch mb-0">
+                <Input
+                  type="checkbox"
+                  defaultChecked={row.isActive}
+                  value={row.isActive}
+                  checked={row.isActive}
+                  // onChange={async (e: any) => {
+                  //   //  --------------------------
+
+                  //   const operator = {
+                  //     fullName: row.fullName,
+                  //     emailAddress: row.emailAddress,
+                  //     phoneNo: row.phoneNo,
+                  //     isActive: !row.isActive,
+                  //     company: decodedToken.userId,
+                  //   };
+                  //   console.log(operator);
+                  //   setIsActive(!row.isActive);
+                  //   // setRowIndex(index);
+                  //   console.log(e.target.value);
+                  //   try {
+                  //     await update(operator, {
+                  //       url: `operator/update-operator/${row._id}`,
+                  //     }).then((data: any) => {
+                  //       if (data.success) {
+                  //         console.log(data);
+
+                  //         dispatch(setOperatorsStart());
+                  //         getAll({
+                  //           url: "operator/get-all-operators",
+                  //         }).then((data: any) => {
+                  //           console.log("api call --- >", data);
+                  //           dispatch(setOperatorsEnd());
+                  //           if (data !== undefined) {
+                  //             if (data.success) {
+                  //               console.log("hhg");
+                  //               dispatch(setOperators(data.data));
+                  //               dispatch(setFilterOperators(data.data));
+                  //             }
+                  //           }
+                  //         });
+                  //       }
+                  //     });
+                  //     // Handle successful post creation (e.g., show a success message, redirect, etc.)
+                  //   } catch (error) {
+                  //     // Handle error (e.g., show an error message)
+                  //     console.error("Error creating post:", error);
+                  //   }
+                  // }}
+                />
+                <span
+                  className={`switch-state ${
+                    row.isActive ? "bg-primary" : "bg-secondary"
+                  }`}
+                />
+              </Label>
+            </div>
+          </div>
+        </td>
         <td>
           <div>
             <button
@@ -133,9 +212,9 @@ const CountriesList = () => {
                       fontWeight: "bold",
                     }}
                   >
-                    {noDataFound !== ""
-                      ? "No Countries Found"
-                      : "Faild to Fetch"}
+                    {activeInActiveCountries !== "All"
+                      ? activeInActiveCountries
+                      : "No Counties Found"}
                   </div>
                 )}
 

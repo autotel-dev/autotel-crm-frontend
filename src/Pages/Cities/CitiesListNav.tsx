@@ -7,7 +7,10 @@ import CreateNewCity from "./CreateNewCity";
 import { useEffect, useState } from "react";
 import { getAll } from "../../Api";
 import { useSelector } from "react-redux";
-import { setCities } from "../../ReaduxToolkit/Reducer/CitiesSlice";
+import {
+  setCities,
+  setInActiveActiveCities,
+} from "../../ReaduxToolkit/Reducer/CitiesSlice";
 const CitiesListNav = () => {
   const { activeTab } = useAppSelector((state) => state.project);
   const dispatch = useAppDispatch();
@@ -28,6 +31,7 @@ const CitiesListNav = () => {
                 filterCities.map((item: any, index: any) => {
                   tempList.push(item);
                 });
+                dispatch(setInActiveActiveCities("All"));
                 dispatch(setCities(tempList));
                 tempList = [];
               }}
@@ -49,6 +53,7 @@ const CitiesListNav = () => {
                     console.log("isNotActive -- >", 1);
                   }
                 });
+                dispatch(setInActiveActiveCities("No Inactive Cities Found"));
                 dispatch(setCities(tempList));
                 tempList = [];
               }}
@@ -69,6 +74,7 @@ const CitiesListNav = () => {
                     console.log("isActive -- >", 1);
                   }
                 });
+                dispatch(setInActiveActiveCities("No Active Cities Found"));
                 dispatch(setCities(tempList));
                 tempList = [];
               }}

@@ -196,6 +196,11 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
       svgIcon: "home",
       link: `${process.env.PUBLIC_URL}/company/tasks`,
     },
+    {
+      title: "Reports",
+      svgIcon: "home",
+      link: `${process.env.PUBLIC_URL}/company/reports`,
+    },
   ];
   const { sidebarIconType } = useAppSelector((state) => state.themeCustomizer);
   const { t } = useTranslation();

@@ -13,7 +13,9 @@ import {
   setCRMModulesEnd,
   setCRMModulesStart,
   setFilterCRMModules,
+  setInActiveActiveModules,
 } from "../../ReaduxToolkit/Reducer/CRMModuleSlice";
+import Swal from "sweetalert2";
 
 const CreateNewCRMModule = () => {
   const dispatch = useDispatch();
@@ -61,6 +63,19 @@ const CreateNewCRMModule = () => {
               getAll({ url: "crm-module/get-all-modules" }).then(
                 (data: any) => {
                   console.log("api call --- >", data);
+                  if (data == undefined) {
+                    Swal.fire({
+                      text: "Failed to fetch due to connection refused",
+                      icon: "error",
+                      timer: 2000,
+                      showConfirmButton: false,
+                    });
+                    dispatch(setInActiveActiveModules("All"));
+                    dispatch(setCRMModulesEnd());
+                    dispatch(setCRMModules([]));
+                    dispatch(setFilterCRMModules([]));
+                    return;
+                  }
                   dispatch(setCRMModulesEnd());
                   if (data !== undefined) {
                     if (data.success) {
@@ -78,6 +93,12 @@ const CreateNewCRMModule = () => {
       } catch (error: any) {
         // Handle error (e.g., show an error message)
         console.error("Error creating post:", error);
+        Swal.fire({
+          text: "Failed to create due to connection refused",
+          icon: "error",
+          timer: 2000,
+          showConfirmButton: false,
+        });
         setLoading(false);
         setAddModal(false);
         reset({

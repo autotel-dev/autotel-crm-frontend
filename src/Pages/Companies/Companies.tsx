@@ -26,6 +26,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { setNoDataFound } from "../../ReaduxToolkit/Reducer/NoDataFoundSlice";
 import CompanyProfile from "../../assets/companyProfile.png";
+import Swal from "sweetalert2";
 
 const Companies = () => {
   const dispatch = useDispatch();
@@ -57,6 +58,18 @@ const Companies = () => {
     dispatch(setCompaniesStart());
     getAll({ url: "super-admin/get-all-companies" }).then((data: any) => {
       console.log("api call --- >", data);
+      if (data == undefined) {
+        Swal.fire({
+          text: "Failed to fetch due to connection refused",
+          icon: "error",
+          timer: 2000,
+          showConfirmButton: false,
+        });
+        dispatch(setCompaniesEnd());
+        dispatch(setCompanies([]));
+        dispatch(setFilterCompanies([]));
+        return;
+      }
       dispatch(setCompaniesEnd());
       if (data !== undefined) {
         dispatch(setNoDataFound(data.message));

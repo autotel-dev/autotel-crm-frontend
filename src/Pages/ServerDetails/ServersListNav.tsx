@@ -4,7 +4,7 @@ import { all, active, inactive } from "../../utils/Constant";
 import { useAppDispatch, useAppSelector } from "../../ReaduxToolkit/Hooks";
 import { setActiveTab } from "../../ReaduxToolkit/Reducer/ProjectSlice";
 import CreateNewServer from "./CreateNewServer";
-import { setServers } from "../../ReaduxToolkit/Reducer/ServerDetailsSlice";
+import { setInActiveActiveServers, setServers } from "../../ReaduxToolkit/Reducer/ServerDetailsSlice";
 import { useSelector } from "react-redux";
 const ServersListNav = () => {
   const { activeTab } = useAppSelector((state) => state.project);
@@ -27,6 +27,7 @@ const ServersListNav = () => {
                 filterServers?.map((item: any, index: any) => {
                   tempList.push(item);
                 });
+                dispatch(setInActiveActiveServers("All"));
                 dispatch(setServers(tempList));
                 tempList = [];
               }}
@@ -48,6 +49,8 @@ const ServersListNav = () => {
                     console.log("isNotActive -- >", 1);
                   }
                 });
+                
+                dispatch(setInActiveActiveServers("No Active Modules Found"));
                 dispatch(setServers(tempList));
                 tempList = [];
               }}
@@ -68,6 +71,7 @@ const ServersListNav = () => {
                     console.log("isNotActive -- >", 1);
                   }
                 });
+                dispatch(setInActiveActiveServers("No Active Modules Found"));
                 dispatch(setServers(tempList));
                 tempList = [];
               }}

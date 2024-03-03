@@ -23,12 +23,14 @@ import {
   setGoogleAccountCreadentials,
   setFirebaseAccountCredentials,
   setApiKeys,
+  setInActiveActiveServers,
 } from "../../../ReaduxToolkit/Reducer/ServerDetailsSlice";
 import { setNoDataFound } from "../../../ReaduxToolkit/Reducer/NoDataFoundSlice";
 import { create, getAll } from "../../../Api";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
+import Swal from "sweetalert2";
 
 const SuccessfullyFormSubmitted = ({
   callbackActive,
@@ -78,6 +80,19 @@ const SuccessfullyFormSubmitted = ({
           getAll({ url: "server-management/get-all-servers" }).then(
             (data: any) => {
               console.log("api call --- >", data);
+              if (data == undefined) {
+                Swal.fire({
+                  text: "Failed to fetch due to connection refused",
+                  icon: "error",
+                  timer: 2000,
+                  showConfirmButton: false,
+                });
+                dispatch(setInActiveActiveServers("All"));
+                dispatch(setServers([]));
+                dispatch(setFilterServers([]));
+                dispatch(setServersEnd());
+                return;
+              }
               dispatch(setServerInfo({}));
               dispatch(setServerCredentials({}));
               dispatch(setGoogleAccountCreadentials({}));
@@ -103,6 +118,12 @@ const SuccessfullyFormSubmitted = ({
     } catch (error: any) {
       // Handle error (e.g., show an error message)
       console.error("Error creating post:", error);
+      Swal.fire({
+        text: "Failed to create due to connection refused",
+        icon: "error",
+        timer: 2000,
+        showConfirmButton: false,
+      });
       setLoading(false);
     }
   };

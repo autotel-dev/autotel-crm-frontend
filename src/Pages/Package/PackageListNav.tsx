@@ -5,7 +5,10 @@ import { useAppDispatch, useAppSelector } from "../../ReaduxToolkit/Hooks";
 import { setActiveTab } from "../../ReaduxToolkit/Reducer/ProjectSlice";
 import CreateNewPackage from "./CreateNewPackage";
 import { useSelector } from "react-redux";
-import { setPackages } from "../../ReaduxToolkit/Reducer/PackageSlice";
+import {
+  setInActiveActivePackages,
+  setPackages,
+} from "../../ReaduxToolkit/Reducer/PackageSlice";
 const PackageListNav = () => {
   const { activeTab } = useAppSelector((state) => state.project);
   const dispatch = useAppDispatch();
@@ -27,6 +30,7 @@ const PackageListNav = () => {
                 filterPackages.map((item: any, index: any) => {
                   tempList.push(item);
                 });
+                dispatch(setInActiveActivePackages("All"));
                 dispatch(setPackages(tempList));
                 tempList = [];
               }}
@@ -48,6 +52,9 @@ const PackageListNav = () => {
                     console.log("isActive -- >", 1);
                   }
                 });
+                dispatch(
+                  setInActiveActivePackages("No Inactive Modules Found")
+                );
                 dispatch(setPackages(tempList));
                 tempList = [];
               }}
@@ -69,6 +76,7 @@ const PackageListNav = () => {
                     console.log("isActive -- >", 1);
                   }
                 });
+                dispatch(setInActiveActivePackages("No Active Modules Found"));
                 dispatch(setPackages(tempList));
                 tempList = [];
               }}

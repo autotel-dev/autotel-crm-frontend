@@ -5,6 +5,7 @@ const initialState = {
   crmModules: [],
   crmActiveModules: [],
   filterCrmModules: [],
+  activeInActiveModules: "All",
   loading: false,
   error: null,
   id: null,
@@ -26,13 +27,15 @@ const CRMModulesSlice = createSlice({
     },
     setActiveCRMModules: (state, action) => {
       state.crmActiveModules = action.payload;
-      state.error = null;
-      state.loading = false;
     },
+
     setFilterCRMModules: (state, action) => {
       state.filterCrmModules = action.payload;
       state.error = null;
       state.loading = false;
+    },
+    setInActiveActiveModules: (state, action) => {
+      state.activeInActiveModules = action.payload;
     },
     setCRMModulesEnd: (state) => {
       state.loading = false;
@@ -52,6 +55,7 @@ export const {
   setCRMModules,
   setActiveCRMModules,
   setFilterCRMModules,
+  setInActiveActiveModules,
   setCRMModulesStart,
   setCRMModulesEnd,
   setId,

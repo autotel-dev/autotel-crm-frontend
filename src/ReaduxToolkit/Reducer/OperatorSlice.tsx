@@ -4,6 +4,7 @@ import { getAll } from "../../Api";
 const initialState = {
   operators: [],
   filterOperators: [],
+  activeInActiveOperators: "All",
   loading: false,
   error: null,
   id: null,
@@ -28,6 +29,9 @@ const OpearatorSlice = createSlice({
       state.error = null;
       state.loading = false;
     },
+    setInActiveActiveUsers: (state, action) => {
+      state.activeInActiveOperators = action.payload;
+    },
     setOperatorsEnd: (state) => {
       state.loading = false;
     },
@@ -45,6 +49,7 @@ const OpearatorSlice = createSlice({
 export const {
   setOperators,
   setFilterOperators,
+  setInActiveActiveUsers,
   setOperatorsStart,
   setOperatorsEnd,
   setId,

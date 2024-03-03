@@ -3,6 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   countries: [],
   filterCountries: [],
+  activeInActiveCountries: "All",
   loading: false,
   error: null,
   id: null,
@@ -11,7 +12,7 @@ const initialState = {
 };
 
 const CountrySlice = createSlice({
-  name: "CitiesSlice",
+  name: "CountriesSlice",
   initialState,
   reducers: {
     setCountriesStart: (state) => {
@@ -27,8 +28,12 @@ const CountrySlice = createSlice({
       state.error = null;
       state.loading = false;
     },
+
     setCountriesEnd: (state) => {
       state.loading = false;
+    },
+    setInActiveActiveCountries: (state, action) => {
+      state.activeInActiveCountries = action.payload;
     },
     setId: (state, action) => {
       state.id = action.payload;
@@ -46,6 +51,7 @@ export const {
   setFilterCountries,
   setCountriesStart,
   setCountriesEnd,
+  setInActiveActiveCountries,
   setId,
   setValue,
   setNoCountryFound,

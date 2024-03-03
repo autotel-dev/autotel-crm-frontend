@@ -21,9 +21,11 @@ import {
   setProvincesEnd,
   setProvincesStart,
   setFilterProvinces,
+  setInActiveActiveProvinces,
 } from "../../ReaduxToolkit/Reducer/ProvinceSlice";
 import { setNoDataFound } from "../../ReaduxToolkit/Reducer/NoDataFoundSlice";
 import SelectCountryBox from "./components/SelectCountryBox";
+import Swal from "sweetalert2";
 
 interface PropsTypes {
   isVisible: boolean; // Change 'boolean' to the actual type of isVisible
@@ -105,6 +107,19 @@ const UpdateProvince: React.FC<PropsTypes> = ({
               getAll({ url: "province/get-all-provinces" }).then(
                 (data: any) => {
                   console.log("api call --- >", data);
+                  if (data == undefined) {
+                    Swal.fire({
+                      text: "Failed to fetch due to connection refused",
+                      icon: "error",
+                      timer: 2000,
+                      showConfirmButton: false,
+                    });
+                    dispatch(setInActiveActiveProvinces("All"));
+                    dispatch(setProvincesEnd());
+                    dispatch(setProvinces([]));
+                    dispatch(setFilterProvinces([]));
+                    return;
+                  }
                   dispatch(setProvincesEnd());
                   if (data !== undefined) {
                     dispatch(setNoDataFound(data.message));
@@ -123,6 +138,12 @@ const UpdateProvince: React.FC<PropsTypes> = ({
       } catch (error) {
         // Handle error (e.g., show an error message)
         console.error("Error creating post:", error);
+        Swal.fire({
+          text: "Failed to update due to connection refused",
+          icon: "error",
+          timer: 2000,
+          showConfirmButton: false,
+        });
         setLoading(false);
         setIsVisible(!isVisible);
       }

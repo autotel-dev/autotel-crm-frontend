@@ -56,7 +56,7 @@ const Account = () => {
         setUserDataLoading(false);
         setUndefinedData(true);
         Swal.fire({
-          text: "Failed to Fetch",
+          text: "Failed to Fetch due to connection refused",
           icon: "error",
           timer: 2000,
           showConfirmButton: false,

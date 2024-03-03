@@ -28,6 +28,7 @@ import {
   setOther,
 } from "../../../ReaduxToolkit/Reducer/CompanySlice";
 import PDFViewer from "./PDFViewer";
+import Swal from "sweetalert2";
 // import pdfFile from "../../../assets/";
 // pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
@@ -171,6 +172,18 @@ const SuccessfullyFormSubmitted = ({
           dispatch(setCompaniesStart());
           getAll({ url: "super-admin/get-all-companies" }).then((data: any) => {
             console.log("api call --- >", data);
+            if (data == undefined) {
+              Swal.fire({
+                text: "Failed to fetch due to connection refused",
+                icon: "error",
+                timer: 2000,
+                showConfirmButton: false,
+              });
+              dispatch(setCompaniesEnd());
+              dispatch(setCompanies([]));
+              dispatch(setFilterCompanies([]));
+              return;
+            }
             dispatch(setCreateCompany({}));
             dispatch(setServerCredentials([]));
 
@@ -198,6 +211,14 @@ const SuccessfullyFormSubmitted = ({
       });
     } catch (error: any) {
       console.error("Error creating post:", error);
+
+      Swal.fire({
+        text: "Failed to create due to connection refused",
+        icon: "error",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+
       setLoading(false);
     }
 

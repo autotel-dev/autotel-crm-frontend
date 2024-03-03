@@ -20,6 +20,7 @@ import { CitiesType } from "../Cities/CityTypes/CityTypes";
 import {
   setFilterPackages,
   setId,
+  setInActiveActivePackages,
   setPackageDays,
   setPackageDuration,
   setPackages,
@@ -29,6 +30,7 @@ import {
 import { setNoDataFound } from "../../ReaduxToolkit/Reducer/NoDataFoundSlice";
 import SelectPackageBox from "./components/SelectPackageBox";
 import { setProvincesEnd } from "../../ReaduxToolkit/Reducer/ProvinceSlice";
+import Swal from "sweetalert2";
 
 interface PropsTypes {
   isVisible: boolean; // Change 'boolean' to the actual type of isVisible
@@ -118,6 +120,19 @@ const UpdatePackage: React.FC<PropsTypes> = ({
               dispatch(setPackagesStart());
               getAll({ url: "package/get-all-packages" }).then((data: any) => {
                 console.log("api call --- >", data);
+                if (data == undefined) {
+                  Swal.fire({
+                    text: "Failed to fetch due to connection refused",
+                    icon: "error",
+                    timer: 2000,
+                    showConfirmButton: false,
+                  });
+                  dispatch(setInActiveActivePackages("All"));
+                  dispatch(setPackages([]));
+                  dispatch(setFilterPackages([]));
+                  dispatch(setPackagesEnd());
+                  return;
+                }
                 dispatch(setPackagesEnd());
                 if (data !== undefined) {
                   dispatch(setNoDataFound(data.message));
@@ -136,6 +151,12 @@ const UpdatePackage: React.FC<PropsTypes> = ({
       } catch (error) {
         // Handle error (e.g., show an error message)
         console.error("Error creating post:", error);
+        Swal.fire({
+          text: "Failed to update due to connection refused",
+          icon: "error",
+          timer: 2000,
+          showConfirmButton: false,
+        });
         setLoading(false);
         setIsVisible(!isVisible);
       }

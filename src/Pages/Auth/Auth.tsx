@@ -11,6 +11,7 @@ import Swal from "sweetalert2";
 import { useParams } from "react-router-dom";
 import { setUserPersonalizationData } from "../../ReaduxToolkit/Reducer/PersonalizationSlice";
 import Loader from "../Loader/Loader";
+import { log } from "console";
 const LoginForm = () => {
   const [loading, setLoading] = useState<any>(true);
   const { userPersonalizationData } = useSelector(
@@ -33,30 +34,35 @@ const LoginForm = () => {
           : `company/get-personalization/${userId}`,
 
       // url: "super-admin/get-personalization",
-    }).then((parentData: any) => {
-      console.log("api call --- >", parentData);
-      if (parentData == undefined) {
-        Swal.fire({
-          text: "Failed to Fetch",
-          icon: "error",
-          timer: 2000,
-          showConfirmButton: false,
-        });
-        setLoading(false);
-        dispatch(setUserPersonalizationData(null));
-      }
-
-      if (parentData !== undefined) {
-        if (parentData.success) {
-          dispatch(setUserPersonalizationData(parentData.data));
-          setLoading(false);
-        }
-        if (!parentData.success) {
+    })
+      .then((parentData: any) => {
+        console.log("api call --- >", parentData);
+        console.log("undenid");
+        if (parentData == undefined) {
+          Swal.fire({
+            text: "Failed to Fetch the personalization",
+            icon: "error",
+            timer: 2000,
+            showConfirmButton: false,
+          });
           setLoading(false);
           dispatch(setUserPersonalizationData(null));
         }
-      }
-    });
+
+        if (parentData !== undefined) {
+          if (parentData.success) {
+            dispatch(setUserPersonalizationData(parentData.data));
+            setLoading(false);
+          }
+          if (!parentData.success) {
+            setLoading(false);
+            dispatch(setUserPersonalizationData(null));
+          }
+        }
+      })
+      .catch((error) => {
+        console.log("error== >", error);
+      });
   }, []);
   return (
     <Container fluid>

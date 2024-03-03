@@ -59,18 +59,18 @@ const Personalization = () => {
       : ""
   );
   const [primaryColor, setprimaryColor] = useState<string>(
-    userPersonalizationData !== null ? userPersonalizationData.primaryColor : ""
+    userPersonalizationData !== null ? userPersonalizationData.primaryColor : "#000000"
   );
   const [secondaryClor, setsecondaryClor] = useState<string>(
     userPersonalizationData !== null
       ? userPersonalizationData.secondaryColor
-      : ""
+      : "#000000"
   );
   const [customColor1, setcustomColor1] = useState<string>(
-    userPersonalizationData !== null ? userPersonalizationData.customColor1 : ""
+    userPersonalizationData !== null ? userPersonalizationData.customColor1 : "#000000"
   );
   const [customColor2, setcustomColor2] = useState<string>(
-    userPersonalizationData !== null ? userPersonalizationData.customColor2 : ""
+    userPersonalizationData !== null ? userPersonalizationData.customColor2 : "#000000"
   );
   const [backgroundColor, setbackgroundColor] = useState<string>(
     userPersonalizationData !== null
@@ -78,7 +78,7 @@ const Personalization = () => {
       : ""
   );
   const [textColor, settextColor] = useState<string>(
-    userPersonalizationData !== null ? userPersonalizationData.textColor : ""
+    userPersonalizationData !== null ? userPersonalizationData.textColor : "#000000"
   );
   const [logoImage, setlogoImage] = useState(
     userPersonalizationData !== null ? userPersonalizationData.logoImage : null
@@ -418,7 +418,46 @@ const Personalization = () => {
                 </FormGroup>
               </Col>
 
-              {isEdit && userPersonalizationData !== null ? (
+              {userPersonalizationData == null ? (
+                <Row>
+                  <Col md={6}>
+                    <Card>
+                      <CommonHeader
+                        title="Logo Image"
+                        subTitle={subTitle}
+                        headClass="pb-0"
+                      />
+                      <CardBody>
+                        <Dropzone
+                          onChangeStatus={handleLogoAdd}
+                          // accept="image/*"
+                          accept="image/*"
+                          maxFiles={1}
+                          inputContent="Drop files here or click to upload."
+                        />
+                      </CardBody>
+                    </Card>
+                  </Col>
+                  <Col md={6}>
+                    <Card>
+                      <CommonHeader
+                        title="Background Image"
+                        subTitle={subTitle}
+                        headClass="pb-0"
+                      />
+                      <CardBody>
+                        <Dropzone
+                          onChangeStatus={handleBackgroundAdd}
+                          // accept="image/*"
+                          accept="image/*,application/pdf"
+                          maxFiles={1}
+                          inputContent="Drop files here or click to upload."
+                        />
+                      </CardBody>
+                    </Card>
+                  </Col>
+                </Row>
+              ) : isEdit && userPersonalizationData !== null ? (
                 <Row>
                   <Col md={6}>
                     <Card>
@@ -616,7 +655,7 @@ const Personalization = () => {
                   type="submit"
                   disabled={loading}
                   onClick={(e) => {
-                    if (isEdit == false) {
+                    if (isEdit == false && userPersonalizationData !== null) {
                       e.preventDefault();
                       setIsEdit(true);
                     }
