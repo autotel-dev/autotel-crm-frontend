@@ -1,4 +1,17 @@
-import { Card, CardBody, Col, Container, Input, Label, Row } from "reactstrap";
+import {
+  Card,
+  CardBody,
+  Col,
+  Container,
+  Input,
+  Label,
+  Row,
+  // Dropdown,
+  DropdownToggle,
+  DropdownMenu,
+  DropdownItem,
+  // Button,
+} from "reactstrap";
 
 import { useEffect, useState } from "react";
 // import { getAll } from "../../Api";
@@ -7,90 +20,207 @@ import "./reportsStyle.css";
 import CommonHeader from "../../../Common/CommonHeader";
 import Loader from "../../Loader/Loader";
 import xlsx from "json-as-xlsx";
+import ViewModal from "./ViewModal/ViewModal";
+import { Menu, Dropdown, Button, message, Space, Tooltip } from "antd";
+import { DownOutlined, UserOutlined } from "@ant-design/icons";
 
 const ReportsList = () => {
-  //   const { reports } = useSelector((state: any) => state.roles);
+  const { reports } = useSelector((state: any) => state.reports);
+  console.log("Reports in list", reports);
+
   const dispatch = useDispatch();
-  const reports = [
+  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
+
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [selectedType, setSelectedType] = useState("Select Type");
+  const openDropdown = () => setDropdownOpen(true);
+
+  const toggleDropdown = () => setDropdownOpen((prevState) => !prevState);
+
+  // const handleDropdownSelect = (type: any) => {
+  //   setSelectedType(type);
+  //   setDropdownOpen(false); // Close dropdown after selection
+  // };
+
+  const tableHeader = [
+    "ID",
+    "Device",
+    "Alert",
+    "Type",
+    "Message",
+    "Address",
+    "Response",
+  ];
+
+  const dataList = [
     {
-      _id: "1",
-      name: "Bilal",
-      age: "23",
+      ID: "ABC",
+      Device: "ABC",
+      Alert: "ABC",
+      Type: "ABC",
+      Message: "ABC",
+      Address: "ABC",
+      Response: "ABC",
     },
     {
-      _id: "2",
-      name: "Talha",
-      age: "23",
+      ID: "ABC",
+      Device: "ABC",
+      Alert: "ABC",
+      Type: "ABC",
+      Message: "ABC",
+      Address: "ABC",
+      Response: "ABC",
     },
     {
-      _id: "3",
-      name: "Osama",
-      age: "23",
+      ID: "ABC",
+      Device: "ABC",
+      Alert: "ABC",
+      Type: "ABC",
+      Message: "ABC",
+      Address: "ABC",
+      Response: "ABC",
     },
     {
-      _id: "4",
-      name: "Salman",
-      age: "23",
+      ID: "ABC",
+      Device: "ABC",
+      Alert: "ABC",
+      Type: "ABC",
+      Message: "ABC",
+      Address: "ABC",
+      Response: "ABC",
     },
     {
-      _id: "5",
-      name: "Ali",
-      age: "23",
+      ID: "ABC",
+      Device: "ABC",
+      Alert: "ABC",
+      Type: "ABC",
+      Message: "ABC",
+      Address: "ABC",
+      Response: "ABC",
     },
   ];
 
-  let data = [
-    {
-      sheet: "Children",
-      columns: [
-        { label: "User", value: "user" }, // Top level data
-        { label: "Age", value: "age", format: '# "years"' }, // Column format
-        { label: "Phone", value: "more.phone", format: "(###) ###-####" }, // Deep props and column format
-      ],
-      content: [
-        { user: "Manuel", age: 16, more: { phone: 9999999900 } },
-        { user: "Ana", age: 17, more: { phone: 8765432135 } },
-      ],
-    },
-  ];
+  // columns: [
+  //   { label: "User", value: "user" }, // Top level data
+  //   { label: "Age", value: "age", format: '# "years"' }, // Column format
+  //   { label: "Phone", value: "more.phone", format: "(###) ###-####" }, // Deep props and column format
+  // ],
+  // content: [
+  //   { user: "Manuel", age: 16, more: { phone: 9999999900 } },
+  //   { user: "Ana", age: 17, more: { phone: 8765432135 } },
+  // ],
+  function handleButtonClick(e: any, settings: any, excelData: any) {
+    message.info("Click on left button.");
+    console.log("click left button", e);
+    xlsx(excelData, settings);
+    // Perform your onClick logic here
+    console.log(`Button clicked with type: ${selectedType}`);
+  }
+
+  function handleMenuClick(e: any, type: any) {
+    message.info("Click on menu item.");
+    setSelectedType(type);
+    console.log("click", e);
+  }
+  const menu = (
+    <Menu
+      onClick={(e: any) => {
+        handleMenuClick(e, "Excel");
+      }}
+    >
+      <Menu.Item key="1" icon={<UserOutlined />}>
+        Excel
+      </Menu.Item>
+      <Menu.Item key="2" icon={<UserOutlined />}>
+        PDF
+      </Menu.Item>
+    </Menu>
+  );
 
   const [loading, setLoading] = useState(false);
-  const renderTableRows = () => {
-    return reports?.map((row: any) => (
-      <tr key={row._id}>
-        <td>{row._id}</td>
-        <td>{row.name}</td>
-        <td>{row.age}</td>
 
+  const renderTableRows = () => {
+    return reports.map((row: any, index: any) => (
+      <tr key={index}>
+        <td style={{ width: "20%" }}>{index + 1}</td>
+        <td style={{ width: "20%" }}>{row.title}</td>
+        <td style={{ width: "15%" }}>{row.startDate}</td>
+        <td style={{ width: "15%" }}>{row.endDate}</td>
         <td>
-          <div>
+          <div style={{ display: "flex", justifyContent: "center" }}>
+            <Space wrap style={{ marginTop: 0 }}>
+              <Dropdown.Button
+                onClick={(e: any) => {
+                  let settings = {
+                    fileName: row.title, // Name of the resulting spreadsheet
+                    extraLength: 3, // A bigger number means that columns will be wider
+                    writeMode: "writeFile", // The available parameters are 'WriteFile' and 'write'. This setting is optional. Useful in such cases https://docs.sheetjs.com/docs/solutions/output#example-remote-file
+                    writeOptions: {}, // Style options from https://docs.sheetjs.com/docs/api/write-options
+                    RTL: false, // Display the columns from right-to-left (the default value is false)
+                  };
+                  let data = [
+                    {
+                      sheet: "Sheet 1",
+
+                      columns: [
+                        { label: "Id", value: "_id" },
+                        { label: "Event Id", value: "eventId" },
+                        { label: "Device Id", value: "deviceId" },
+                        { label: "Device Name", value: "deviceName" },
+                        { label: "Latitude", value: "latitude" },
+                        { label: "Longitude", value: "longitude" },
+                        { label: "Speed", value: "speed" },
+                        { label: "Type", value: "type" },
+                        { label: "Message", value: "message" },
+                        { label: "User Role", value: "userRole" },
+                        {
+                          label: "completionResponse",
+                          value: "completionResponse",
+                        },
+                        {
+                          label: "alertEventCloseDate",
+                          value: "alertEventCloseDate",
+                        },
+                        { label: "createdAt", value: "createdAt" },
+                      ],
+                      content: row.data.reportData,
+                    },
+                  ];
+                  handleButtonClick(e, settings, data);
+                }}
+                placement="bottomLeft"
+                overlay={menu}
+              >
+                {selectedType}
+              </Dropdown.Button>
+            </Space>
+
             <button
               style={{
                 width: "100px",
                 fontSize: 14,
-                padding: "10px",
+                padding: "5px",
                 color: "white",
                 backgroundColor: "red",
                 borderRadius: "5px",
                 marginRight: "5px",
                 border: "none",
+                marginLeft: "10px",
               }}
               onClick={() => {
-                let settings = {
-                  fileName: "My User Reports", // Name of the resulting spreadsheet
-                  extraLength: 3, // A bigger number means that columns will be wider
-                  writeMode: "writeFile", // The available parameters are 'WriteFile' and 'write'. This setting is optional. Useful in such cases https://docs.sheetjs.com/docs/solutions/output#example-remote-file
-                  writeOptions: {}, // Style options from https://docs.sheetjs.com/docs/api/write-options
-                  RTL: false, // Display the columns from right-to-left (the default value is false)
-                };
-
-                xlsx(data, settings);
+                setIsUpdateModalOpen(true);
               }}
             >
-              Download
+              View
             </button>
           </div>
         </td>
+        <ViewModal
+          isVisible={isUpdateModalOpen}
+          setIsVisible={setIsUpdateModalOpen}
+          dataList={row.data.reportData}
+          tableHeader={row.data.reportTableHeaders}
+        />
       </tr>
     ));
   };
@@ -110,9 +240,11 @@ const ReportsList = () => {
                     <table>
                       <thead>
                         <tr>
-                          <th>ID</th>
-                          <th>Name</th>
-                          <th>Age</th>
+                          <td style={{ width: "20%" }}>Report No</td>
+                          <td style={{ width: "20%" }}>Title</td>
+                          <td style={{ width: "15%" }}>Start Date</td>
+                          <td style={{ width: "15%" }}>End Date</td>
+
                           <th>Actions</th>
                         </tr>
                       </thead>

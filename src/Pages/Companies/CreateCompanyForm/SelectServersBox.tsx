@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Select } from "antd";
+import { Select, Tag } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { setCountryId } from "../../../ReaduxToolkit/Reducer/ProvinceSlice";
 import {
@@ -33,6 +33,17 @@ const SelectServerBox: React.FC<propTypes> = ({ placeholder }) => {
     });
     setServerList(tempList);
   }, []);
+
+  const handleDeselect = (value: any, option: any) => {
+    // Dispatch an action to remove the deselected item from the Redux state
+    console.log("value", value);
+    console.log("option", option);
+
+    const updatedList = serversAddItemsList.filter(
+      (item: any) => item.value !== value
+    );
+    dispatch(setServerCredentials(updatedList));
+  };
 
   const handleSelectAll = (value: any) => {
     if (value && value.length > 0) {
@@ -79,6 +90,7 @@ const SelectServerBox: React.FC<propTypes> = ({ placeholder }) => {
         console.log("reduxServerAdItemsList -- >", serversAddItemsList);
       }}
       options={serverList}
+      onDeselect={handleDeselect}
     />
   );
 };

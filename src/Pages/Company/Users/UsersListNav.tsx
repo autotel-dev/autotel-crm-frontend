@@ -53,7 +53,7 @@ const UsersListNav = () => {
                     console.log("Users", tempList);
                   }
                 });
-                dispatch(setInActiveActiveUsers("inActive"));
+                dispatch(setInActiveActiveUsers("No inactive users found"));
                 dispatch(setOperators(tempList));
                 tempList = [];
               }}
@@ -74,7 +74,7 @@ const UsersListNav = () => {
                     console.log("isActive -- >", 1);
                   }
                 });
-                dispatch(setInActiveActiveUsers("active"));
+                dispatch(setInActiveActiveUsers("No active users found"));
                 dispatch(setOperators(tempList));
                 tempList = [];
               }}

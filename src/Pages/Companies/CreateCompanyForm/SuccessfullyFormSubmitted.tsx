@@ -3,7 +3,16 @@ import { dynamicImage } from "../../../Service";
 import { SuccessfullyCompleted } from "../../../utils/Constant";
 import { BusinessFormCommonProps } from "../../../Types/Forms/FormLayout/FormWizardTypes";
 import ShowError from "./ShowError";
-import { Button, Col, Form, FormGroup, Input, Label, Row } from "reactstrap";
+import {
+  Button,
+  Col,
+  Form,
+  FormGroup,
+  Input,
+  InputGroup,
+  Label,
+  Row,
+} from "reactstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 
@@ -11,6 +20,8 @@ import { setNoDataFound } from "../../../ReaduxToolkit/Reducer/NoDataFoundSlice"
 import { createCom, getAll } from "../../../Api";
 import { useNavigate } from "react-router-dom";
 import CommonHeader from "../../../Common/CommonHeader";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 
 import {
   setAllowedModules,
@@ -59,6 +70,11 @@ const SuccessfullyFormSubmitted = ({
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
+  const togglePasswordVisibility = (e: any) => {
+    e.preventDefault();
+    setShowPassword(!showPassword);
+  };
 
   useEffect(() => {
     console.log("CNICFront:", cnicFront);
@@ -467,13 +483,43 @@ const SuccessfullyFormSubmitted = ({
               Password
               <span className="txt-danger">*</span>
             </Label>
-            <Input
-              type="password"
+            {/* <Input
+              type={showPassword ? "text" : "password"}
               placeholder="Enter Password"
               defaultValue={createCompany.password}
               disabled
               name="password"
-            />
+            /> */}
+
+            <InputGroup>
+              <Input
+                type={showPassword ? "text" : "password"}
+                placeholder="Enter Password"
+                defaultValue={createCompany.password}
+                disabled
+                name="password"
+              />
+              <Button
+                color="white"
+                // className="bg-transparent"
+                onClick={togglePasswordVisibility}
+                style={{
+                  backgroundColor: "transparent",
+                  width: "80px",
+                  border: "1px solid #dee2e6",
+                }}
+              >
+                <FontAwesomeIcon
+                  // color="secondary"
+                  style={{
+                    color: "green",
+                    fontSize: "20px",
+                    marginRight: "20px",
+                  }}
+                  icon={showPassword ? faEye : faEyeSlash}
+                />
+              </Button>
+            </InputGroup>
           </Col>
           {/* <Col sm={6}>
             <Label>

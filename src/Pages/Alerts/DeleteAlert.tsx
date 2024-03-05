@@ -35,6 +35,10 @@ import {
   setFilterCompanies,
   setNoCompanyFound,
 } from "../../ReaduxToolkit/Reducer/CompanySlice";
+import {
+  setFilterOperators,
+  setOperators,
+} from "../../ReaduxToolkit/Reducer/OperatorSlice";
 
 const deleteAlert = (
   alertData: alertTypes,
@@ -65,6 +69,8 @@ const deleteAlert = (
         uri = `server-management/delete-server`;
       } else if (type === "companyType") {
         uri = `super-admin/delete-company`;
+      } else if (type === "usersType") {
+        uri = `operator/delete-operator`;
       }
 
       try {
@@ -91,7 +97,27 @@ const deleteAlert = (
             //   text: "Poof! Your city has been deleted!",
             //   icon: "success",
             // });
+            if (type == "usersType") {
+              getAll({ url: "operator/get-all-operators" }).then(
+                (data: any) => {
+                  console.log("api call --- >", data);
 
+                  if (data !== undefined) {
+                    dispatch(setNoDataFound(data.message));
+                    if (data.success) {
+                      console.log("hhg");
+                      dispatch(setOperators(data.data));
+                      dispatch(setFilterOperators(data.data));
+                    } else {
+                      dispatch(setOperators([]));
+                      dispatch(setFilterOperators([]));
+                    }
+                  } else {
+                    console.log("ier67i");
+                  }
+                }
+              );
+            }
             if (type == "serverType") {
               getAll({ url: "server-management/get-all-servers" }).then(
                 (data: any) => {

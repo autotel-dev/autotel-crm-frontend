@@ -281,7 +281,7 @@ const DevicesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
           outline: "none",
         }}
       />
-      {devices.length > 0 && (
+      {matchedGroups.length > 0 && (
         <Accordion open={open} toggle={toggle} className="dark-accordion">
           {matchedGroups
             .filter((item: any) =>
@@ -548,10 +548,10 @@ A 40 40 0 0 1 90 50"
                                     <div
                                       style={{
                                         display: "inline-block",
-                                        height: "40px",
-                                        width: "25px",
+                                        height: "32px",
+                                        width: "22px",
                                         verticalAlign: "middle",
-                                        marginTop: "6px",
+                                        marginTop: "9px",
                                         marginLeft: "15px",
                                       }}
                                     >
@@ -562,15 +562,15 @@ A 40 40 0 0 1 90 50"
                                             : redKey
                                         }
                                         alt=""
-                                        height={30}
-                                        width={25}
+                                        height={26}
+                                        width={23}
                                       />
                                     </div>
                                     <div
                                       style={{
                                         display: "inline-block",
-                                        height: "40px",
-                                        width: "25px",
+                                        height: "32px",
+                                        width: "22px",
                                         verticalAlign: "middle",
                                         marginTop: "6px",
                                         marginLeft: "15px",
@@ -579,8 +579,8 @@ A 40 40 0 0 1 90 50"
                                       <img
                                         src={greenSatellite}
                                         alt=""
-                                        height={30}
-                                        width={25}
+                                        height={26}
+                                        width={23}
                                       />
                                     </div>
                                   </div>

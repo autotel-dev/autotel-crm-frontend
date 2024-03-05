@@ -56,6 +56,15 @@ const Monitoring = () => {
         });
       }
       if (data !== undefined) {
+        if (!data.success) {
+          setLoading(false);
+          Swal.fire({
+            text: "Failed to Fetch the devices",
+            icon: "error",
+            timer: 2000,
+            showConfirmButton: false,
+          });
+        }
         if (data.success) {
           setUndefinedData(false);
           console.log("api call --- >", data);

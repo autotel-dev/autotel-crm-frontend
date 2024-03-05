@@ -30,6 +30,7 @@ const MonitoringSidebar = () => {
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
+          overflow: "scrollY",
           width: "35px",
         }}
       >
@@ -66,7 +67,7 @@ const MonitoringSidebar = () => {
             display: "flex",
             height: "35px",
             margin: "25px",
-            width: "85px",
+            width: "250%",
             fontWeight: "bold",
             alignItems: "center",
             justifyContent: "center", // Adjust content alignment
@@ -140,7 +141,8 @@ const MonitoringSidebar = () => {
             display: "flex",
             height: "35px",
             margin: "30px",
-            width: "85px",
+            // width: "85px",
+            width: "250%",
             fontWeight: "bold",
             alignItems: "center",
             justifyContent: "center", // Adjust content alignment
@@ -200,7 +202,8 @@ const MonitoringSidebar = () => {
             display: "flex",
             height: "35px",
             margin: "25px",
-            width: "85px",
+            // width: "85px",
+            width: "250%",
             fontWeight: "bold",
             alignItems: "center",
             justifyContent: "center", // Adjust content alignment
@@ -258,8 +261,9 @@ const MonitoringSidebar = () => {
             textAlign: "center",
             display: "flex",
             height: "35px",
-            margin: "35px",
-            width: "95px",
+            margin: "30px",
+            // width: "95px",
+            width: "250%",
             fontWeight: "bold",
             alignItems: "center",
             justifyContent: "center", // Adjust content alignment
@@ -318,8 +322,9 @@ const MonitoringSidebar = () => {
             textAlign: "center",
             display: "flex",
             height: "35px",
-            margin: "32px",
-            width: "100px",
+            margin: "30px",
+            // width: "100px",
+            width: "270%",
             fontWeight: "bold",
             alignItems: "center",
             justifyContent: "center", // Adjust content alignment
@@ -378,8 +383,9 @@ const MonitoringSidebar = () => {
             textAlign: "center",
             display: "flex",
             height: "35px",
-            margin: "62px",
-            width: "150px",
+            margin: "45px",
+            // width: "150px",
+            width: "350%",
             fontWeight: "bold",
             alignItems: "center",
             justifyContent: "center", // Adjust content alignment
@@ -441,8 +447,9 @@ const MonitoringSidebar = () => {
             textAlign: "center",
             display: "flex",
             height: "35px",
-            margin: "40px",
-            width: "110px",
+            margin: "35px",
+            // width: "110px",
+            width: "300%",
             fontWeight: "bold",
             alignItems: "center",
             justifyContent: "center", // Adjust content alignment

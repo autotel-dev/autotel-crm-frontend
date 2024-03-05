@@ -99,94 +99,104 @@ const Attachements = ({ attachements }: propTypes) => {
             <div style={{ display: "flex", flexWrap: "wrap" }}>
               {attachements.map((data, imageIndex) =>
                 checkFileTypeByExtension(data.url) == "pdf" ? (
-                  <div
-                    style={{
-                      width: "300px",
-                      marginRight: "20px",
-                      marginBottom: "20px",
-                      cursor: "pointer",
-                    }}
-                    onClick={(e) => handleClick(e, data.blob)} // Add onClick event handler
-                  >
-                    {image && <img src={image} alt="First Page" />}
-                    <div
-                      style={{
-                        height: "160px",
-                        overflow: "hidden", // Changed from "scroll" to "hidden"
-                        border: "1px solid lightgray",
-                      }}
-                    >
-                      <Document
-                        file={data.blob}
-                        onLoadSuccess={() => onDocumentLoadSuccess(image)}
-                      >
-                        <Page pageNumber={1} width={300} />
-                      </Document>
+                  <div>
+                    <div style={{ fontSize: "20px", fontWeight: "bold" }}>
+                      {data.key}
                     </div>
                     <div
                       style={{
-                        padding: "8px 15px",
-                        fontSize: "16px",
-                        borderBottomLeftRadius: "5px",
-                        borderBottomRightRadius: "5px",
-                        overflow: "clip",
+                        width: "300px",
+                        marginRight: "20px",
+                        marginBottom: "20px",
+                        cursor: "pointer",
                       }}
-                      className="btn-primary"
+                      onClick={(e) => handleClick(e, data.blob)} // Add onClick event handler
                     >
-                      {data.key.toString().slice(0, 10)}
+                      {image && <img src={image} alt="First Page" />}
+                      <div
+                        style={{
+                          height: "160px",
+                          overflow: "hidden", // Changed from "scroll" to "hidden"
+                          border: "1px solid lightgray",
+                        }}
+                      >
+                        <Document
+                          file={data.blob}
+                          onLoadSuccess={() => onDocumentLoadSuccess(image)}
+                        >
+                          <Page pageNumber={1} width={300} />
+                        </Document>
+                      </div>
+                      <div
+                        style={{
+                          padding: "8px 15px",
+                          fontSize: "16px",
+                          borderBottomLeftRadius: "5px",
+                          borderBottomRightRadius: "5px",
+                          overflow: "clip",
+                        }}
+                        className="btn-primary"
+                      >
+                        {data.key.toString().slice(0, 10)}
+                      </div>
                     </div>
                   </div>
                 ) : (
-                  <div
-                    style={{
-                      position: "relative",
-                      marginRight: "20px",
-                      marginBottom: "20px",
-                    }}
-                    onMouseEnter={() => handleMouseEnter(imageIndex)}
-                    onMouseLeave={() => handleMouseLeave(imageIndex)}
-                    onClick={() => {
-                      setImageUrl(data.blob);
-                      addToggle();
-                    }}
-                  >
-                    <img
-                      src={data.blob}
-                      alt=""
-                      height={200}
-                      width={300}
+                  <div>
+                    <div style={{ fontSize: "20px", fontWeight: "bold" }}>
+                      {data.key}
+                    </div>
+                    <div
                       style={{
-                        borderRadius: "10px",
-                        border: "0.5px solid lightgray",
+                        position: "relative",
+                        marginRight: "20px",
+                        marginBottom: "20px",
                       }}
-                    />
-                    {isHovered && index == imageIndex && (
-                      <div
+                      onMouseEnter={() => handleMouseEnter(imageIndex)}
+                      onMouseLeave={() => handleMouseLeave(imageIndex)}
+                      onClick={() => {
+                        setImageUrl(data.blob);
+                        addToggle();
+                      }}
+                    >
+                      <img
+                        src={data.blob}
+                        alt=""
+                        height={200}
+                        width={300}
                         style={{
-                          position: "absolute",
-                          top: 0,
-                          left: 0,
-                          width: "100%",
-                          height: "100%",
-                          background: "rgba(0, 0, 0, 0.7)", // Light black color with opacity
                           borderRadius: "10px",
-                          display: "flex",
-                          flexDirection: "column",
-                          justifyContent: "center",
-                          alignItems: "center",
+                          border: "0.5px solid lightgray",
                         }}
-                      >
-                        <span
+                      />
+                      {isHovered && index == imageIndex && (
+                        <div
                           style={{
-                            fontSize: "20px",
-                            color: "white",
-                            fontWeight: "bold",
+                            position: "absolute",
+                            top: 0,
+                            left: 0,
+                            width: "100%",
+                            height: "100%",
+                            background: "rgba(0, 0, 0, 0.7)", // Light black color with opacity
+                            borderRadius: "10px",
+                            display: "flex",
+                            flexDirection: "column",
+                            justifyContent: "center",
+                            alignItems: "center",
                           }}
                         >
-                          View Image
-                        </span>
-                      </div>
-                    )}
+                          <span
+                            style={{
+                              fontSize: "20px",
+                              color: "white",
+                              fontWeight: "bold",
+                            }}
+                          >
+                            View Image
+                          </span>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 )
               )}

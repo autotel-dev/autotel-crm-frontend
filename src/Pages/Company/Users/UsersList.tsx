@@ -165,7 +165,7 @@ const UsersList = () => {
                   title: "Are you sure?",
                   text: "Once deleted, you will not be able to recover this ",
                 };
-                const type = "countryType";
+                const type = "usersType";
                 deleteAlert(alertData, row._id, type, dispatch);
               }}
             >

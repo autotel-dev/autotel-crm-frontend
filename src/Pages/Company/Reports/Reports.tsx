@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import Breadcrumbs from "../../../CommonElements/Breadcrumbs/Breadcrumbs";
 import { setup } from "../../../utils/Constant";
 import ReportsList from "./ReportsList";
+import ReportsListNav from "./ReportsListNav";
 
 const Reports = () => {
   const dispatch = useDispatch();
@@ -40,6 +41,7 @@ const Reports = () => {
         <Row className="project-card">
           <Col md={12} className="project-list">
             <Card>
+              <ReportsListNav />
               <Col md={12}>
                 <input
                   type="text"

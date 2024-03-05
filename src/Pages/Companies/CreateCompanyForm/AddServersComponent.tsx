@@ -98,7 +98,7 @@ const AddServersComponent: React.FC<propTypes> = ({ server }) => {
               <span className="txt-danger">*</span>
             </Label>
             <Input
-              type="password"
+              type="text"
               placeholder="Enter Password"
               value={password}
               name="password"

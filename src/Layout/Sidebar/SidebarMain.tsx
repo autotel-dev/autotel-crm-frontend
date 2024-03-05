@@ -86,12 +86,12 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
     //   subMenu: [
     //     {
     //       svgIcon: "bonus-kit",
-    //       title: "Module 1",
+    //       title: "Monitoring",
     //       link: `${process.env.PUBLIC_URL}/dashboards/shoppingplace`,
     //     },
     //     {
     //       svgIcon: "bonus-kit",
-    //       title: "Module 2",
+    //       title: "Control Room",
     //       link: `${process.env.PUBLIC_URL}/dashboards/shoppingplace`,
     //     },
     //   ],
@@ -103,7 +103,7 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
         return {
           svgIcon: "bonus-kit",
           title: `${item.name}`,
-          link: `${process.env.PUBLIC_URL}/dashboards/${item.route}`,
+          link: `${process.env.PUBLIC_URL}/dashboards/shoppingplace`,
         };
       }),
     },

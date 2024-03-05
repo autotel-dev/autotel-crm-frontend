@@ -5,7 +5,7 @@ import { Button, Form, FormGroup, Input, Label } from "reactstrap";
 import { EmailAddress, Password } from "../../utils/Constant";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
-import { login, otpVerification, resendOTP } from "../../Api";
+import { getAll, login, otpVerification, resendOTP } from "../../Api";
 import successAlert from "../Alerts/SuccessAlert";
 import errorAlert from "../Alerts/ErrorAlert";
 import OTPInput from "react-otp-input";
@@ -14,6 +14,9 @@ import Swal from "sweetalert2";
 import { setToken } from "../../ReaduxToolkit/Reducer/UserSlice";
 import { useDispatch } from "react-redux";
 import { jwtDecode } from "jwt-decode";
+import { getUserRole } from "../../Api/globals";
+import { setUserPersonalizationData } from "../../ReaduxToolkit/Reducer/PersonalizationSlice";
+import { setActiveCRMModules } from "../../ReaduxToolkit/Reducer/CRMModuleSlice";
 // import OTPInput, { ResendOTP } from "otp-input-react";
 
 export interface CommonFormPropsType {
@@ -77,23 +80,86 @@ const OTPForm = ({ alignLogo }: CommonFormPropsType) => {
         await otpVerification(otpData).then((data: any) => {
           console.log("response: ", data.data);
           setLoading(false);
+
           if (data.statusCode == 200) {
             const token = data.data.authToken;
             console.log("response: ", data.data);
             console.log("token: ", token);
-            const decodedToken = jwtDecode(token);
-            console.log(decodedToken);
-            dispatch(setToken(decodedToken));
-            const tokenParts = token.split(".");
-            const payload = JSON.parse(atob(tokenParts[1]));
-            setDecodedToken(payload);
-            console.log("payload", payload);
-
+            localStorage.setItem("userId", data.data.userId);
             localStorage.setItem("token", token);
+            getAll({
+              url:
+                getUserRole() == "COMPANY"
+                  ? "company/get-allowed-modules"
+                  : "crm-module/get-all-active-modules",
+            }).then((data: any) => {
+              console.log("active Modules --- >", data);
 
-            // successAlert();
-            navigate(`${process.env.PUBLIC_URL}/dashboards/shoppingplace`);
-          } else {
+              if (data !== undefined) {
+                if (data.success) {
+                  console.log("hhg");
+                  const userId = localStorage.getItem("userId");
+                  console.log(userId);
+                  dispatch(setActiveCRMModules(data.data));
+                  navigate(
+                    `${process.env.PUBLIC_URL}/dashboards/shoppingplace`
+                  );
+
+                  // getPerdonal Data
+                  getAll({
+                    url:
+                      userId == null && userId == undefined
+                        ? "super-admin/get-personalization"
+                        : `company/get-personalization/${userId}`,
+
+                    // url: "super-admin/get-personalization",
+                  }).then((parentData: any) => {
+                    console.log("api call --- >", parentData);
+                    if (parentData == undefined) {
+                      Swal.fire({
+                        text: `${parentData.message}`,
+                        icon: "error",
+                        timer: 2000,
+                        showConfirmButton: false,
+                      });
+                      setLoading(false);
+                      dispatch(setUserPersonalizationData(null));
+                    }
+
+                    if (parentData !== undefined) {
+                      if (parentData.success) {
+                        dispatch(setUserPersonalizationData(parentData.data));
+                        setLoading(false);
+                      }
+                      if (!parentData.success) {
+                        setLoading(false);
+                        dispatch(setUserPersonalizationData(null));
+                      }
+                    }
+                  });
+                  // successAlert();
+                }
+              }
+            });
+          }
+          // if (data.statusCode == 200) {
+          //   const token = data.data.authToken;
+          //   console.log("response: ", data.data);
+          //   console.log("token: ", token);
+          //   const decodedToken = jwtDecode(token);
+          //   console.log(decodedToken);
+          //   dispatch(setToken(decodedToken));
+          //   const tokenParts = token.split(".");
+          //   const payload = JSON.parse(atob(tokenParts[1]));
+          //   setDecodedToken(payload);
+          //   console.log("payload", payload);
+
+          //   localStorage.setItem("token", token);
+
+          //   // successAlert();
+          //   navigate(`${process.env.PUBLIC_URL}/dashboards/shoppingplace`);
+          // }
+          else {
             Swal.fire({
               text: `${data.message}`,
               icon: "info",

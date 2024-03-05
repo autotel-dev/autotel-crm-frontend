@@ -7,7 +7,7 @@ const index = () => {
   return (
     <Row className="header-wrapper m-0">
       <HeaderLogo />
-      <SearchBar />
+      {/* <SearchBar /> */}
       <RightHeader />
     </Row>
   )

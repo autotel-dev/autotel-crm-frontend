@@ -27,6 +27,7 @@ import AlertsSlice from "./Reducer/AlertsSlice";
 import SupportSlice from "./Reducer/SupportSlice";
 import RolesSlice from "./Reducer/RolesSlice";
 import PersonalizationSlice from "./Reducer/PersonalizationSlice";
+import ReportsSlice from "./Reducer/ReportsSlice";
 
 const Store = configureStore({
   reducer: {
@@ -58,6 +59,7 @@ const Store = configureStore({
     support: SupportSlice,
     roles: RolesSlice,
     personalization: PersonalizationSlice,
+    reports: ReportsSlice,
   },
 });
 

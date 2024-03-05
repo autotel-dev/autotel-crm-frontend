@@ -17,7 +17,7 @@ const RightHeader = () => {
         {/* <Bookmark /> */}
         {/* <Message /> */}
         {/* <Cart /> */}
-        <DarkMode />
+        {/* <DarkMode /> */}
         {/* <Language /> */}
         <UserProfile />
       </UL>
