@@ -1,49 +1,151 @@
-import { Button, Card, CardBody, Col, Form, FormGroup, Input, Label, Row } from 'reactstrap'
-import CommonHeader from '../../../../../Common/CommonHeader'
-import { H3, H6, Image, P } from '../../../../../AbstractElements'
-import { dynamicImage } from '../../../../../Service'
-import { AboutMe, Emailaddress, MyProfile, Password, Save, Website } from '../../../../../utils/Constant'
+import {
+  Button,
+  Card,
+  CardBody,
+  Col,
+  Form,
+  FormGroup,
+  Input,
+  Label,
+  Row,
+} from "reactstrap";
+import CommonHeader from "../../../../../Common/CommonHeader";
+import { H3, H6, Image, P } from "../../../../../AbstractElements";
+import { dynamicImage } from "../../../../../Service";
+import {
+  AboutMe,
+  Emailaddress,
+  MyProfile,
+  Password,
+  Save,
+  Website,
+} from "../../../../../utils/Constant";
+import { useSelector } from "react-redux";
+import {
+  formatUnderscoredString,
+  getUserRole,
+} from "../../../../../Api/globals";
+import { useState } from "react";
 
-const EditMyProfile = () => {
+interface PropTypes {
+  isEdit: boolean;
+  setIsEdit: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+const EditMyProfile: React.FC<PropTypes> = ({ isEdit, setIsEdit }) => {
+  const { userData } = useSelector((state: any) => state.user);
+  const [accountStatus, setAcountStatus] = useState(userData.accountStatus);
+
   return (
     <Col xl={4}>
       <Card>
         <CommonHeader title={MyProfile} headClass="card-title mb-0 pb-0" />
         <CardBody>
           <Form onSubmit={(event) => event.preventDefault()}>
-            <Row className="mb-2">
+            <Row className="mb-3">
               <div className="col-auto">
-                <Image width={70} height={70} className="img-70 rounded-circle" alt="edit-user" src={dynamicImage("user/7.jpg")} />
+                <Image
+                  width={70}
+                  height={70}
+                  className="img-70 rounded-circle"
+                  alt="edit-user"
+                  src={dynamicImage("user/7.jpg")}
+                />
               </div>
               <Col>
-                <H3 className="mb-1">{'MARK JECNO'}</H3>
-                <P className="mb-4">{'DESIGNER'}</P>
+                <H3 className="mb-1">{userData.fullName}</H3>
+                <P className="mb-4">{formatUnderscoredString(userData.role)}</P>
               </Col>
             </Row>
+
             <FormGroup>
-              <H6 className="form-label">{AboutMe}</H6>
-              <textarea rows={5} className="form-control" defaultValue={"On the other hand, we denounce with righteous indignation"} />
+              <H3 className="mb-1">Email Address</H3>
+              <Label>{userData.emailAddress}</Label>
             </FormGroup>
             <FormGroup>
-              <Label>{Emailaddress}</Label>
-              <Input placeholder="your-email@domain.com" />
+              <H3 className="mb-1">Phone Number</H3>
+              <Label>{userData.phoneNo}</Label>
             </FormGroup>
+            {getUserRole() == "COMPANY" && userData.address !== null && (
+              <FormGroup>
+                <H3 className="mb-1">{userData.address}</H3>
+                <Label>Address</Label>
+              </FormGroup>
+            )}
+            {getUserRole() == "COMPANY" && userData.gstNo !== null && (
+              <FormGroup>
+                <H3 className="mb-1">Gst No</H3>
+                <Label>{userData.gstNo}</Label>
+              </FormGroup>
+            )}
+            {getUserRole() == "COMPANY" && userData.ntn !== null && (
+              <FormGroup>
+                <H3 className="mb-1">NTN</H3>
+                <Label>{userData.ntn}</Label>
+              </FormGroup>
+            )}
+
             <FormGroup>
-              <Label>{Password}</Label>
-              <Input type="password" defaultValue="password" />
-            </FormGroup>
-            <FormGroup>
-              <Label>{Website}</Label>
-              <Input placeholder="http://Uplor.com" />
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  marginTop: "30px",
+                }}
+              >
+                <H3>Account Status</H3>
+                <div className="d-flex">
+                  <div
+                    className={`text-end flex-shrink-0 icon-state 
+                            }`}
+                  >
+                    <Label className="switch mb-0">
+                      <Input
+                        type="checkbox"
+                        defaultChecked={
+                          accountStatus == "ACTIVE" ? true : false
+                        }
+                        disabled
+                        // value={
+                        //   accountStatus == "ACTIVE" ? "on" : "off"
+                        // }
+                        // onChange={(e) => {
+                        //   if (accountStatus == "ACTIVE") {
+                        //     setAcountStatus("NOT ACTIVE");
+                        //   } else {
+                        //     setAcountStatus("ACTIVE");
+                        //   }
+
+                        //   console.log(e.target.value);
+                        // }}
+                      />
+                      <span
+                        className={`switch-state ${
+                          accountStatus == "ACTIVE"
+                            ? "bg-primary"
+                            : "bg-secondary"
+                        }`}
+                      />
+                    </Label>
+                  </div>
+                </div>
+              </div>
             </FormGroup>
             <div className="form-footer">
-              <Button color="primary" className="d-block">{Save}</Button>
+              <Button
+                color="primary"
+                className="d-block"
+                disabled={isEdit}
+                onClick={() => setIsEdit(!isEdit)}
+              >
+                Edit
+              </Button>
             </div>
           </Form>
         </CardBody>
       </Card>
     </Col>
-  )
-}
+  );
+};
 
-export default EditMyProfile
+export default EditMyProfile;

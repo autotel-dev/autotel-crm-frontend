@@ -20,14 +20,17 @@ import { CitiesType } from "../Cities/CityTypes/CityTypes";
 import {
   setFilterPackages,
   setId,
+  setInActiveActivePackages,
   setPackageDays,
   setPackageDuration,
   setPackages,
   setPackagesEnd,
   setPackagesStart,
 } from "../../ReaduxToolkit/Reducer/PackageSlice";
+import { setNoDataFound } from "../../ReaduxToolkit/Reducer/NoDataFoundSlice";
 import SelectPackageBox from "./components/SelectPackageBox";
 import { setProvincesEnd } from "../../ReaduxToolkit/Reducer/ProvinceSlice";
+import Swal from "sweetalert2";
 
 interface PropsTypes {
   isVisible: boolean; // Change 'boolean' to the actual type of isVisible
@@ -105,8 +108,8 @@ const UpdatePackage: React.FC<PropsTypes> = ({
       try {
         await update(packag, { url: `package/update-package/${id}` }).then(
           (data: any) => {
-            setLoading(false);
-            setIsVisible(!isVisible);
+            // setLoading(false);
+            // setIsVisible(!isVisible);
             if (data.success) {
               console.log(data);
               setLoading(false);
@@ -117,8 +120,22 @@ const UpdatePackage: React.FC<PropsTypes> = ({
               dispatch(setPackagesStart());
               getAll({ url: "package/get-all-packages" }).then((data: any) => {
                 console.log("api call --- >", data);
+                if (data == undefined) {
+                  Swal.fire({
+                    text: "Failed to fetch due to connection refused",
+                    icon: "error",
+                    timer: 2000,
+                    showConfirmButton: false,
+                  });
+                  dispatch(setInActiveActivePackages("All"));
+                  dispatch(setPackages([]));
+                  dispatch(setFilterPackages([]));
+                  dispatch(setPackagesEnd());
+                  return;
+                }
                 dispatch(setPackagesEnd());
                 if (data !== undefined) {
+                  dispatch(setNoDataFound(data.message));
                   if (data.success) {
                     console.log("hhg");
                     setLoading(true);
@@ -134,6 +151,12 @@ const UpdatePackage: React.FC<PropsTypes> = ({
       } catch (error) {
         // Handle error (e.g., show an error message)
         console.error("Error creating post:", error);
+        Swal.fire({
+          text: "Failed to update due to connection refused",
+          icon: "error",
+          timer: 2000,
+          showConfirmButton: false,
+        });
         setLoading(false);
         setIsVisible(!isVisible);
       }
@@ -209,33 +232,45 @@ const UpdatePackage: React.FC<PropsTypes> = ({
               <span style={{ color: "red" }}>
                 {errors.price && "Package price is required"}
               </span>
+
+              {/*  */}
+
+              {/*  */}
+              <div
+                style={{
+                  marginBottom: "20px",
+                  display: "flex",
+                  justifyContent: "space-between",
+                }}
+              >
+                <SelectPackageBox placeholder={"Select Duration"} />
+              </div>
+
+              <div className="d-flex">
+                <div
+                  className={`text-end flex-shrink-0 icon-state 
+                            }`}
+                >
+                  <Label className="switch mb-0">
+                    <Input
+                      type="checkbox"
+                      defaultChecked={isActive}
+                      value={isActive ? "on" : "off"}
+                      onChange={(e) => {
+                        setIsActive(!isActive);
+                        console.log(e.target.value);
+                      }}
+                    />
+                    <span
+                      className={`switch-state ${
+                        isActive ? "bg-primary" : "bg-secondary"
+                      }`}
+                    />
+                  </Label>
+                </div>
+              </div>
             </FormGroup>
           </Row>
-          <div
-            style={{
-              marginBottom: "20px",
-              display: "flex",
-              justifyContent: "space-between",
-            }}
-          >
-            <SelectPackageBox placeholder={"Select Duration"} />
-          </div>
-          <div style={{ marginLeft: "10px" }}>
-            <Row>
-              <FormGroup check switch inline className="col-md-12 create-group">
-                <Input
-                  type="checkbox"
-                  role="switch"
-                  defaultChecked={isActive}
-                  value={isActive ? "on" : "off"}
-                  onChange={(e) => {
-                    setIsActive(!isActive);
-                    console.log(e.target.value);
-                  }}
-                />
-              </FormGroup>
-            </Row>
-          </div>
           <Button color="primary" className="me-1">
             {loading ? "Loading ..." : `Update`}
           </Button>

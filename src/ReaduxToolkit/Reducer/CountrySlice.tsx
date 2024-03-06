@@ -1,18 +1,18 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getAll } from "../../Api";
 
 const initialState = {
   countries: [],
   filterCountries: [],
+  activeInActiveCountries: "All",
   loading: false,
   error: null,
   id: null,
   value: "",
-  noDataFound:""
+  noCountryFound: "",
 };
 
 const CountrySlice = createSlice({
-  name: "CitiesSlice",
+  name: "CountriesSlice",
   initialState,
   reducers: {
     setCountriesStart: (state) => {
@@ -28,8 +28,12 @@ const CountrySlice = createSlice({
       state.error = null;
       state.loading = false;
     },
+
     setCountriesEnd: (state) => {
       state.loading = false;
+    },
+    setInActiveActiveCountries: (state, action) => {
+      state.activeInActiveCountries = action.payload;
     },
     setId: (state, action) => {
       state.id = action.payload;
@@ -37,8 +41,8 @@ const CountrySlice = createSlice({
     setValue: (state, action) => {
       state.value = action.payload;
     },
-    setNoDataFound: (state, action) => {
-      state.noDataFound = action.payload;
+    setNoCountryFound: (state, action) => {
+      state.noCountryFound = action.payload;
     },
   },
 });
@@ -47,9 +51,10 @@ export const {
   setFilterCountries,
   setCountriesStart,
   setCountriesEnd,
-  setNoDataFound,
+  setInActiveActiveCountries,
   setId,
   setValue,
+  setNoCountryFound,
 } = CountrySlice.actions;
 
 export default CountrySlice.reducer;

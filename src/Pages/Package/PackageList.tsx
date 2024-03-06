@@ -1,4 +1,4 @@
-import { Card, CardBody, Col, Container, Row } from "reactstrap";
+import { Card, CardBody, Col, Container, Input, Label, Row } from "reactstrap";
 import CommonHeader from "../../Common/CommonHeader";
 import { citiesListHeading, provinceListHeading } from "../../utils/Constant";
 import { useEffect, useState } from "react";
@@ -17,13 +17,17 @@ import {
   setPackageDays,
   setPackageDuration,
   setPackage,
+  setInActiveActivePackages,
 } from "../../ReaduxToolkit/Reducer/PackageSlice";
+import { setNoDataFound } from "../../ReaduxToolkit/Reducer/NoDataFoundSlice";
 import Loader from "../Loader/Loader";
+import Swal from "sweetalert2";
 
 const PackageList = () => {
-  const { packages, loading, error, id } = useSelector(
+  const { packages, loading, error, id, activeInActivePackages } = useSelector(
     (state: any) => state.packages
   );
+  const { noDataFound } = useSelector((state: any) => state.noDataFound);
   const dispatch = useDispatch();
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [loadingState, setLoadingState] = useState(false);
@@ -36,8 +40,22 @@ const PackageList = () => {
     dispatch(setPackagesStart());
     getAll({ url: "package/get-all-packages" }).then((data: any) => {
       console.log("api call --- >", data);
+      if (data == undefined) {
+        Swal.fire({
+          text: "Failed to fetch due to connection refused",
+          icon: "error",
+          timer: 2000,
+          showConfirmButton: false,
+        });
+        dispatch(setInActiveActivePackages("All"));
+        dispatch(setPackages([]));
+        dispatch(setFilterPackages([]));
+        dispatch(setPackagesEnd());
+        return;
+      }
       dispatch(setPackagesEnd());
       if (data !== undefined) {
+        dispatch(setNoDataFound(data.message));
         if (data.success) {
           console.log("hhg");
           dispatch(setPackages(data.data));
@@ -62,12 +80,76 @@ const PackageList = () => {
   const renderTableRows = () => {
     return packages?.map((row: any) => (
       <tr key={row._id}>
-        <td>{row._id}</td>
-        <td>{row.title}</td>
-        <td>{row.price}</td>
-        <td>{row.days}</td>
-        <td>{row.duration}</td>
-        <td>{row.isActive ? "Active" : "inActive"}</td>
+        <td style={{ width: "10%" }}>{row._id}</td>
+        <td style={{ width: "15%" }}>{row.title}</td>
+        <td style={{ width: "15%" }}>{row.price}</td>
+        <td style={{ width: "10%" }}>{row.days}</td>
+        <td style={{ width: "10%" }}>{row.duration}</td>
+        <td>
+          <div className="d-flex" style={{ justifyContent: "center" }}>
+            <div
+              className={`text-end flex-shrink-0 icon-state 
+                            }`}
+            >
+              <Label className="switch mb-0">
+                <Input
+                  type="checkbox"
+                  defaultChecked={row.isActive}
+                  value={row.isActive}
+                  checked={row.isActive}
+                  // onChange={async (e: any) => {
+                  //   //  --------------------------
+
+                  //   const operator = {
+                  //     fullName: row.fullName,
+                  //     emailAddress: row.emailAddress,
+                  //     phoneNo: row.phoneNo,
+                  //     isActive: !row.isActive,
+                  //     company: decodedToken.userId,
+                  //   };
+                  //   console.log(operator);
+                  //   setIsActive(!row.isActive);
+                  //   // setRowIndex(index);
+                  //   console.log(e.target.value);
+                  //   try {
+                  //     await update(operator, {
+                  //       url: `operator/update-operator/${row._id}`,
+                  //     }).then((data: any) => {
+                  //       if (data.success) {
+                  //         console.log(data);
+
+                  //         dispatch(setOperatorsStart());
+                  //         getAll({
+                  //           url: "operator/get-all-operators",
+                  //         }).then((data: any) => {
+                  //           console.log("api call --- >", data);
+                  //           dispatch(setOperatorsEnd());
+                  //           if (data !== undefined) {
+                  //             if (data.success) {
+                  //               console.log("hhg");
+                  //               dispatch(setOperators(data.data));
+                  //               dispatch(setFilterOperators(data.data));
+                  //             }
+                  //           }
+                  //         });
+                  //       }
+                  //     });
+                  //     // Handle successful post creation (e.g., show a success message, redirect, etc.)
+                  //   } catch (error) {
+                  //     // Handle error (e.g., show an error message)
+                  //     console.error("Error creating post:", error);
+                  //   }
+                  // }}
+                />
+                <span
+                  className={`switch-state ${
+                    row.isActive ? "bg-primary" : "bg-secondary"
+                  }`}
+                />
+              </Label>
+            </div>
+          </div>
+        </td>
         <td>
           <div>
             <button
@@ -148,13 +230,13 @@ const PackageList = () => {
                       <table>
                         <thead>
                           <tr>
-                            <th>ID</th>
-                            <th>Title</th>
-                            <th>Price</th>
-                            <th>Days</th>
-                            <th>Duration</th>
-                            <th>Status</th>
-                            <th>Actions</th>
+                            <th style={{ width: "10%" }}>ID</th>
+                            <th style={{ width: "15%" }}>Title</th>
+                            <th style={{ width: "15%" }}>Price</th>
+                            <th style={{ width: "10%" }}>Days</th>
+                            <th style={{ width: "10%" }}>Duration</th>
+                            <th style={{ width: "10%" }}>Status</th>
+                            <th style={{ width: "10%" }}>Actions</th>
                           </tr>
                         </thead>
                         <tbody>{renderTableRows()}</tbody>
@@ -168,7 +250,9 @@ const PackageList = () => {
                         fontWeight: "bold",
                       }}
                     >
-                      No Packages Found
+                      {activeInActivePackages !== "All"
+                        ? activeInActivePackages
+                        : "No Packages Found"}
                     </div>
                   )}
                 </div>

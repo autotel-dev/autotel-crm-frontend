@@ -4,10 +4,12 @@ const initialState = {
   packages: [],
   filterPackages: [],
   allPackagesDuration: [],
+  activeInActivePackages: "All",
   loading: false,
   error: null,
   id: null,
   value: "",
+  noPackageFound: "",
   packageDays: null,
   packageDuration: null,
   package: {},
@@ -27,6 +29,9 @@ const PackageSlice = createSlice({
       state.packages = action.payload;
       state.error = null;
       state.loading = false;
+    },
+    setInActiveActivePackages: (state, action) => {
+      state.activeInActivePackages = action.payload;
     },
     setAllPackagesDuration: (state, action) => {
       state.allPackagesDuration = action.payload;
@@ -50,18 +55,23 @@ const PackageSlice = createSlice({
     setPackageDuration: (state, action) => {
       state.packageDuration = action.payload;
     },
+    setNoPackageFound: (state, action) => {
+      state.noPackageFound = action.payload;
+    },
   },
 });
 export const {
   setPackage,
   setPackages,
   setFilterPackages,
+  setInActiveActivePackages,
   setId,
   setPackageDays,
   setPackageDuration,
   setPackagesStart,
   setPackagesEnd,
   setAllPackagesDuration,
+  setNoPackageFound,
 } = PackageSlice.actions;
 
 export default PackageSlice.reducer;

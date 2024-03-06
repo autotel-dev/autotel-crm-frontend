@@ -5,53 +5,347 @@ import SidebarBack from "./SidebarBack";
 import MenuList from "./MenuList";
 import { Link } from "react-router-dom";
 import SVG from "../../utils/CommonSvgIcon/SVG";
-import { SidebarMenu } from "../../Data/Layout/Sidebar/Menu";
-import { useState } from "react";
+import {
+  SidebarMenu,
+  CompanySidebarMenu,
+} from "../../Data/Layout/Sidebar/Menu";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { SidebarMenuTypes } from "../../Data/Layout/Sidebar/SidebarTypes";
 import { useAppSelector } from "../../ReaduxToolkit/Hooks";
+import { useSelector } from "react-redux";
+import { jwtDecode } from "jwt-decode";
 export interface PropsTypes {
-  setOpen: (item:boolean) => void
-  open ?: boolean
+  setOpen: (item: boolean) => void;
+  open?: boolean;
 }
-const SidebarMain = ({setOpen,open}:PropsTypes) => {
+const SidebarMain = ({ setOpen, open }: PropsTypes) => {
+  const { crmActiveModules } = useSelector((state: any) => state.crmModules);
+  console.log("crmActiveModules", crmActiveModules);
+
+  const SidebarMenuComponent: SidebarMenuTypes[] = [
+    {
+      title: "Dashboard",
+      svgIcon: "home",
+      link: `${process.env.PUBLIC_URL}/dashboards/shoppingplace`,
+    },
+    {
+      title: "Setup",
+      svgIcon: "home",
+      subMenu: [
+        {
+          svgIcon: "bonus-kit",
+          title: "Country",
+          link: `${process.env.PUBLIC_URL}/setup/countries`,
+        },
+        {
+          svgIcon: "bonus-kit",
+          title: "Province",
+          link: `${process.env.PUBLIC_URL}/setup/province`,
+        },
+        {
+          svgIcon: "bonus-kit",
+          title: "City",
+          link: `${process.env.PUBLIC_URL}/setup/cities`,
+        },
+        {
+          svgIcon: "bonus-kit",
+          title: "Package",
+          link: `${process.env.PUBLIC_URL}/setup/package`,
+        },
+        {
+          svgIcon: "bonus-kit",
+          title: "CRM Modules",
+          link: `${process.env.PUBLIC_URL}/setup/crm_module`,
+        },
+        {
+          svgIcon: "bonus-kit",
+          title: "Email Templates",
+          link: `${process.env.PUBLIC_URL}/dashboards/crmdashboard`,
+        },
+        {
+          svgIcon: "bonus-kit",
+          title: "WhatsApp templates",
+          link: `${process.env.PUBLIC_URL}/dashboards/crmdashboard`,
+        },
+        {
+          svgIcon: "bonus-kit",
+          title: "Server Details",
+          link: `${process.env.PUBLIC_URL}/setup/server_details`,
+        },
+        {
+          svgIcon: "bonus-kit",
+          title: "Server Management",
+          link: `${process.env.PUBLIC_URL}/setup/server_management`,
+        },
+      ],
+    },
+    // {
+    //   title: "Modules",
+    //   svgIcon: "home",
+    //   subMenu: [
+    //     {
+    //       svgIcon: "bonus-kit",
+    //       title: "Monitoring",
+    //       link: `${process.env.PUBLIC_URL}/dashboards/shoppingplace`,
+    //     },
+    //     {
+    //       svgIcon: "bonus-kit",
+    //       title: "Control Room",
+    //       link: `${process.env.PUBLIC_URL}/dashboards/shoppingplace`,
+    //     },
+    //   ],
+    // },
+    {
+      title: "Modules",
+      svgIcon: "home",
+      subMenu: crmActiveModules.map((item: any, index: any) => {
+        return {
+          svgIcon: "bonus-kit",
+          title: `${item.name}`,
+          link: `${process.env.PUBLIC_URL}/dashboards/shoppingplace`,
+        };
+      }),
+    },
+
+    {
+      title: "Companies",
+      svgIcon: "home",
+      link: `${process.env.PUBLIC_URL}/companies`,
+    },
+    {
+      title: "Support",
+      svgIcon: "home",
+      link: `${process.env.PUBLIC_URL}/support`,
+    },
+    {
+      title: "Tasks",
+      svgIcon: "home",
+      link: `${process.env.PUBLIC_URL}/tasks`,
+    },
+  ];
+
+  const CompanySidebarMenuComponent: SidebarMenuTypes[] = [
+    {
+      title: "Dashboard",
+      svgIcon: "home",
+      link: `${process.env.PUBLIC_URL}/company/dashboard`,
+    },
+    {
+      title: "Setup",
+      svgIcon: "home",
+      subMenu: [
+        {
+          svgIcon: "bonus-kit",
+          title: "Roles",
+          link: `${process.env.PUBLIC_URL}/company/roles`,
+        },
+        {
+          svgIcon: "bonus-kit",
+          title: "Email Templates",
+          link: `${process.env.PUBLIC_URL}/company/emailTemplates`,
+        },
+        {
+          svgIcon: "bonus-kit",
+          title: "WhatsApp templates",
+          link: `${process.env.PUBLIC_URL}/company/whatsappTemplates`,
+        },
+      ],
+    },
+    // {
+    //   title: "Modules",
+    //   svgIcon: "home",
+    //   subMenu: [
+    //     {
+    //       svgIcon: "bonus-kit",
+    //       title: "Monitoring",
+    //       link: `${process.env.PUBLIC_URL}/company/modules/monitoring`,
+    //     },
+    //     {
+    //       svgIcon: "bonus-kit",
+    //       title: "Control Room",
+    //       link: `${process.env.PUBLIC_URL}/company/modules/controlRoom`,
+    //     },
+    //   ],
+    // },
+
+    {
+      title: "Modules",
+      svgIcon: "home",
+      subMenu: crmActiveModules.map((item: any, index: any) => {
+        return {
+          svgIcon: "bonus-kit",
+          title: `${item.name}`,
+          link: `${process.env.PUBLIC_URL}/company/modules${item.route}`,
+        };
+      }),
+    },
+
+    {
+      title: "Users",
+      svgIcon: "home",
+      link: `${process.env.PUBLIC_URL}/company/users`,
+    },
+    {
+      title: "Support",
+      svgIcon: "home",
+      link: `${process.env.PUBLIC_URL}/company/support`,
+    },
+    {
+      title: "Tasks",
+      svgIcon: "home",
+      link: `${process.env.PUBLIC_URL}/company/tasks`,
+    },
+    {
+      title: "Reports",
+      svgIcon: "home",
+      link: `${process.env.PUBLIC_URL}/company/reports`,
+    },
+  ];
   const { sidebarIconType } = useAppSelector((state) => state.themeCustomizer);
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState<string[]>([]);
-  const [sideMenu,setSideMenu] = useState("")
+  const [sideMenu, setSideMenu] = useState("");
+  const [isActive, setIsActive] = useState("");
+  const [isClose, setIsClose] = useState(false);
   const { layout } = useAppSelector((state) => state.themeCustomizer);
-  const handleClick= (item:SidebarMenuTypes) => {
-    if(layout === "material-icon"){
-      let menu:string =sideMenu
-      menu = sideMenu !== item.title ? item.title : ""  
+  const handleClick = (item: SidebarMenuTypes) => {
+    if (layout === "material-icon") {
+      let menu: string = sideMenu;
+      menu = sideMenu !== item.title ? item.title : "";
+      let clas: string = isActive;
+      // clas = sideMenu !== item.title ? "active" : "";
+      // setIsActive("active");
       setSideMenu(menu);
-      setOpen(menu !== "" ? true : false)
+      setOpen(menu !== "" ? true : false);
+      // setIsClose(false);
     }
-  }
+  };
+
+  const { token } = useSelector((state: any) => state.user);
+  const [decodedToken, setDecodedToken]: any = useState(null);
+  const authToken = localStorage.getItem("token");
+  useEffect(() => {
+    if (authToken !== null) {
+      const decodedToken = jwtDecode(authToken);
+      console.log(decodedToken);
+      setDecodedToken(decodedToken);
+    }
+  }, []);
   return (
     <nav className="sidebar-main">
-      <div id="sidebar-menu">
-        <UL className="sidebar-links simple-list" id="simple-bar"> 
-          <SimpleBar className="w-100 simplebar-scrollable-y h-100">
-          <SidebarBack />
-          {SidebarMenu.map((data,index) => (
-            <LI className={`sidebar-list`} key={index} >
-              <Link className={`sidebar-link sidebar-title ${sideMenu === data.title ? "active" : "" }`} to={data.link ? data.link : "#" } onClick={()=>handleClick(data)}>
-                <SVG className={`${sidebarIconType}-icon`} iconId={`${sidebarIconType === "fill" ? "fill-" : ""}${data.svgIcon}`} />
-                <span>{t(data.title)}</span>
-              </Link>
-              {
-                data.link ? <div></div> :  <UL className= "sidebar-submenu custom-scrollbar simple-list"
-                style={{display : `${layout === "material-icon" ? data.title === sideMenu  ? "block" : "none" : ""}`}}>
-               
-                <MenuList subMenuData={data} isOpen={isOpen} setIsOpen={setIsOpen} level={0} />
-              </UL>
-              }
-            </LI>
-          ))}
-          </SimpleBar>
-        </UL>
-      </div>
+      {decodedToken !== null && (
+        <div id="sidebar-menu">
+          <UL className="sidebar-links simple-list" id="simple-bar">
+            <SimpleBar className="w-100 simplebar-scrollable-y h-100">
+              <SidebarBack />
+              {decodedToken.role == "SUPER_ADMIN"
+                ? SidebarMenuComponent.map((data, index) => (
+                    <LI className={`sidebar-list`} key={index}>
+                      <Link
+                        className={`sidebar-link sidebar-title ${
+                          sideMenu === data.title ? "active" : ""
+                        }`}
+                        to={data.link ? data.link : "#"}
+                        onClick={() => handleClick(data)}
+                      >
+                        <SVG
+                          className={`${sidebarIconType}-icon`}
+                          iconId={`${
+                            sidebarIconType === "fill" ? "fill-" : ""
+                          }${data.svgIcon}`}
+                        />
+                        <span>{t(data.title)}</span>
+                      </Link>
+                      {data.link ? (
+                        <div></div>
+                      ) : (
+                        !isClose && (
+                          <UL
+                            className="sidebar-submenu custom-scrollbar simple-list"
+                            // style={{
+                            //   display: `${
+                            //     layout === "material-icon"
+                            //       ? data.title === sideMenu && !data.link
+                            //         ? "none"
+                            //         : "none"
+                            //       : ""
+                            //   }`,
+                            // }}
+
+                            style={{
+                              display: `${
+                                data.title === sideMenu && !data.link
+                                  ? "block"
+                                  : "block"
+                              }`,
+                            }}
+                          >
+                            {!data.link && (
+                              <MenuList
+                                subMenuData={data}
+                                isOpen={isOpen}
+                                setIsOpen={setIsOpen}
+                                level={0}
+                                isClose={isClose}
+                                setIsClose={setIsClose}
+                              />
+                            )}
+                          </UL>
+                        )
+                      )}
+                    </LI>
+                  ))
+                : CompanySidebarMenuComponent.map((data, index) => (
+                    <LI className={`sidebar-list`} key={index}>
+                      <Link
+                        className={`sidebar-link sidebar-title ${
+                          sideMenu === data.title ? "active" : ""
+                        }`}
+                        to={data.link ? data.link : "#"}
+                        onClick={() => handleClick(data)}
+                      >
+                        <SVG
+                          className={`${sidebarIconType}-icon`}
+                          iconId={`${
+                            sidebarIconType === "fill" ? "fill-" : ""
+                          }${data.svgIcon}`}
+                        />
+                        <span>{t(data.title)}</span>
+                      </Link>
+                      {data.link ? (
+                        <div></div>
+                      ) : (
+                        !isClose && (
+                          <UL
+                            className="sidebar-submenu custom-scrollbar simple-list"
+                            style={{
+                              display: `${
+                                data.title === sideMenu && !data.link
+                                  ? "block"
+                                  : "block"
+                              }`,
+                            }}
+                          >
+                            {!data.link && (
+                              <MenuList
+                                subMenuData={data}
+                                isOpen={isOpen}
+                                setIsOpen={setIsOpen}
+                                level={0}
+                                isClose={isClose}
+                                setIsClose={setIsClose}
+                              />
+                            )}
+                          </UL>
+                        )
+                      )}
+                    </LI>
+                  ))}
+            </SimpleBar>
+          </UL>
+        </div>
+      )}
     </nav>
   );
 };

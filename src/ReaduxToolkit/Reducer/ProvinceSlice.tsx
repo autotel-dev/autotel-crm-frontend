@@ -4,12 +4,14 @@ const initialState = {
   provinces: [],
   countries: [],
   filterProvinces: [],
+  activeInActiveProvinces: "All",
   countryId: null,
   loading: false,
   error: null,
   id: null,
   value: "",
-  noDataFound: "",
+  noProvinceFound: "",
+  countryName: "",
 };
 
 const ProvinceSlice = createSlice({
@@ -29,6 +31,9 @@ const ProvinceSlice = createSlice({
       state.error = null;
       state.loading = false;
     },
+    setInActiveActiveProvinces: (state, action) => {
+      state.activeInActiveProvinces = action.payload;
+    },
     setProvincesEnd: (state) => {
       state.loading = false;
     },
@@ -47,8 +52,11 @@ const ProvinceSlice = createSlice({
     setValue: (state, action) => {
       state.value = action.payload;
     },
-    setNoDataFound: (state, action) => {
-      state.noDataFound = action.payload;
+    setNoProvinceFound: (state, action) => {
+      state.noProvinceFound = action.payload;
+    },
+    setCountryName: (state, action) => {
+      state.countryName = action.payload;
     },
   },
 });
@@ -56,12 +64,14 @@ export const {
   setProvincesStart,
   setProvinces,
   setFilterProvinces,
+  setInActiveActiveProvinces,
   setProvincesEnd,
   setCountries,
   setCountryId,
-  setNoDataFound,
+  setNoProvinceFound,
   setId,
   setValue,
+  setCountryName,
 } = ProvinceSlice.actions;
 
 export default ProvinceSlice.reducer;

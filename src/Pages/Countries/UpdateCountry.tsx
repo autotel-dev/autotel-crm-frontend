@@ -21,7 +21,10 @@ import {
   setCountries,
   setId,
   setFilterCountries,
+  setInActiveActiveCountries,
 } from "../../ReaduxToolkit/Reducer/CountrySlice";
+import { setNoDataFound } from "../../ReaduxToolkit/Reducer/NoDataFoundSlice";
+import Swal from "sweetalert2";
 
 interface PropsTypes {
   isVisible: boolean; // Change 'boolean' to the actual type of isVisible
@@ -98,8 +101,22 @@ const UpdateCountry: React.FC<PropsTypes> = ({
               dispatch(setCountriesStart());
               getAll({ url: "country/get-all-countries" }).then((data: any) => {
                 console.log("api call --- >", data);
+                if (data == undefined) {
+                  Swal.fire({
+                    text: "Failed to fetch due to connection refused",
+                    icon: "error",
+                    timer: 2000,
+                    showConfirmButton: false,
+                  });
+                  dispatch(setInActiveActiveCountries("All"));
+                  dispatch(setCountries([]));
+                  dispatch(setFilterCountries([]));
+                  dispatch(setCountriesEnd());
+                  return;
+                }
                 dispatch(setCountriesEnd());
                 if (data !== undefined) {
+                  dispatch(setNoDataFound(data.message));
                   if (data.success) {
                     console.log("hhg");
                     dispatch(setCountries(data.data));
@@ -114,6 +131,12 @@ const UpdateCountry: React.FC<PropsTypes> = ({
       } catch (error) {
         // Handle error (e.g., show an error message)
         console.error("Error creating post:", error);
+        Swal.fire({
+          text: "Failed to update due to connection refused",
+          icon: "error",
+          timer: 2000,
+          showConfirmButton: false,
+        });
         setLoading(false);
         setIsVisible(!isVisible);
       }
@@ -162,7 +185,7 @@ const UpdateCountry: React.FC<PropsTypes> = ({
           onSubmit={handleSubmit(updateCountry)}
         >
           <Row>
-            <FormGroup className="col-md-12 create-group">
+            <FormGroup className="col-md-12 ">
               <Label>Country Name</Label>
               <input
                 className="form-control"
@@ -174,11 +197,34 @@ const UpdateCountry: React.FC<PropsTypes> = ({
               <span style={{ color: "red" }}>
                 {errors.name && "Country name is required"}
               </span>
+              <div className="d-flex">
+                <div
+                  className={`text-end flex-shrink-0 icon-state 
+                            }`}
+                >
+                  <Label className="switch mb-0">
+                    <Input
+                      type="checkbox"
+                      defaultChecked={isActive}
+                      value={isActive ? "on" : "off"}
+                      onChange={(e) => {
+                        setIsActive(!isActive);
+                        console.log(e.target.value);
+                      }}
+                    />
+                    <span
+                      className={`switch-state ${
+                        isActive ? "bg-primary" : "bg-secondary"
+                      }`}
+                    />
+                  </Label>
+                </div>
+              </div>
             </FormGroup>
           </Row>
           <div style={{ marginLeft: "10px" }}>
             <Row>
-              <FormGroup check switch inline className="col-md-12 create-group">
+              {/* <FormGroup check switch inline className="col-md-12 create-group">
                 <Input
                   type="checkbox"
                   role="switch"
@@ -189,7 +235,7 @@ const UpdateCountry: React.FC<PropsTypes> = ({
                     console.log(e.target.value);
                   }}
                 />
-              </FormGroup>
+              </FormGroup> */}
             </Row>
           </div>
           <Button color="primary" className="me-1">

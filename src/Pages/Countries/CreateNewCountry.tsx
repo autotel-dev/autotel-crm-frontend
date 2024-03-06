@@ -14,7 +14,9 @@ import {
   setCountriesEnd,
   setCountries,
   setFilterCountries,
+  setInActiveActiveCountries,
 } from "../../ReaduxToolkit/Reducer/CountrySlice";
+import Swal from "sweetalert2";
 
 const CreateNewCountry = () => {
   const dispatch = useDispatch();
@@ -36,7 +38,7 @@ const CreateNewCountry = () => {
     }
   };
 
-  const addCountry: SubmitHandler<Type> = async (data) => {
+  const addCountry: SubmitHandler<Type> = async (data: any) => {
     setLoading(true);
     if (data.name !== "") {
       const city = {
@@ -58,6 +60,19 @@ const CreateNewCountry = () => {
               dispatch(setCountriesStart());
               getAll({ url: "country/get-all-countries" }).then((data: any) => {
                 console.log("api call --- >", data);
+                if (data == undefined) {
+                  Swal.fire({
+                    text: "Failed to fetch due to connection refused",
+                    icon: "error",
+                    timer: 2000,
+                    showConfirmButton: false,
+                  });
+                  dispatch(setInActiveActiveCountries("All"));
+                  dispatch(setCountries([]));
+                  dispatch(setFilterCountries([]));
+                  dispatch(setCountriesEnd());
+                  return;
+                }
                 dispatch(setCountriesEnd());
                 if (data !== undefined) {
                   if (data.success) {
@@ -74,6 +89,12 @@ const CreateNewCountry = () => {
       } catch (error: any) {
         // Handle error (e.g., show an error message)
         console.error("Error creating post:", error);
+        Swal.fire({
+          text: "Failed to create due to connection refused",
+          icon: "error",
+          timer: 2000,
+          showConfirmButton: false,
+        });
         setLoading(false);
         setAddModal(false);
         reset({

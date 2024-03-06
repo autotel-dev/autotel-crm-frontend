@@ -1,27 +1,38 @@
-import { TabContent, TabPane } from 'reactstrap'
-import { BusinessFormCommonProps } from '../../../Types/Forms/FormLayout/FormWizardTypes'
-import PersonalInfoForm from './PersonalInfoForm'
-import BankInfoForm from './BankInfoForm'
-import InquiresForm from './InquiresForm'
-import SuccessfullyFormSubmitted from './SuccessfullyFormSubmitted'
+import { TabContent, TabPane } from "reactstrap";
+import { BusinessFormCommonProps } from "../../../Types/Forms/FormLayout/FormWizardTypes";
+import AccountCredentials from "./AccountCredentials";
+import ServerCredentials from "./ServerCredentials";
+import CompanyInfoForm from "./CompanyInfoForm";
+import CRMModules from "./CRMModules";
+import Attachements from "./Attachements";
+import SuccessfullyFormSubmitted from "./SuccessfullyFormSubmitted";
 
-const CustomFormTabContent = ({activeTab,callbackActive}: BusinessFormCommonProps) => {
+const CustomFormTabContent = ({
+  activeTab,
+  callbackActive,
+}: BusinessFormCommonProps) => {
   return (
     <TabContent className="dark-field" activeTab={activeTab}>
       <TabPane tabId={1}>
-        <PersonalInfoForm callbackActive={callbackActive} />
+        <CompanyInfoForm callbackActive={callbackActive} />
       </TabPane>
       <TabPane tabId={2}>
-        <BankInfoForm callbackActive={callbackActive}  />
+        <AccountCredentials callbackActive={callbackActive} />
       </TabPane>
       <TabPane tabId={3}>
-        <InquiresForm callbackActive={callbackActive} />
+        <ServerCredentials callbackActive={callbackActive} />
       </TabPane>
       <TabPane tabId={4}>
-        <SuccessfullyFormSubmitted />
+        <CRMModules callbackActive={callbackActive} />
+      </TabPane>
+      <TabPane tabId={5}>
+        <Attachements callbackActive={callbackActive} />
+      </TabPane>
+      <TabPane tabId={6}>
+        <SuccessfullyFormSubmitted callbackActive={callbackActive} />
       </TabPane>
     </TabContent>
-  )
-}
+  );
+};
 
-export default CustomFormTabContent
+export default CustomFormTabContent;

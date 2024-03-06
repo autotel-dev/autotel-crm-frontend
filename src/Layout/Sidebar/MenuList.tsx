@@ -7,7 +7,7 @@ import { Href } from "../../utils/Constant";
 import { useAppSelector } from "../../ReaduxToolkit/Hooks";
 import { MenuListInterface } from "./SideBarTypes";
 
-const MenuList = ({ subMenuData, setIsOpen, isOpen, level }: MenuListInterface) => {
+const MenuList = ({ subMenuData, setIsOpen, isOpen, level,isClose,setIsClose }: MenuListInterface) => {
   const [close,setClose] = useState(false)
   const { sidebarIconType } = useAppSelector((state) => state.themeCustomizer);
   const { t } = useTranslation();
@@ -17,9 +17,10 @@ const MenuList = ({ subMenuData, setIsOpen, isOpen, level }: MenuListInterface) 
       temp[level] = item !== temp[level] ? item : "";
       setIsOpen([...temp]);
       setClose(temp[level].includes(item) ? true : false)
+      // setIsClose(true);
   };
   return (
-    <>
+    <div className="hoverd-menu">
       {subMenuData?.subMenu &&
         subMenuData?.subMenu?.map((item, index) => (
           <LI className={level === 0 ? "main-submenu" : ""} key={index} >
@@ -37,7 +38,7 @@ const MenuList = ({ subMenuData, setIsOpen, isOpen, level }: MenuListInterface) 
           
           </LI>
         ))}
-    </>
+    </div>
   );
 };
 

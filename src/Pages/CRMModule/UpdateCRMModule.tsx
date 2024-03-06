@@ -21,8 +21,11 @@ import {
   setCRMModulesEnd,
   setId,
   setValue,
+  setInActiveActiveModules,
 } from "../../ReaduxToolkit/Reducer/CRMModuleSlice";
+import { setNoDataFound } from "../../ReaduxToolkit/Reducer/NoDataFoundSlice";
 import { Type } from "../Countries/CountryTypes/CountryTypes";
+import Swal from "sweetalert2";
 
 interface PropsTypes {
   isVisible: boolean; // Change 'boolean' to the actual type of isVisible
@@ -104,8 +107,22 @@ const UpdateCRMModule: React.FC<PropsTypes> = ({
               getAll({ url: "crm-module/get-all-modules" }).then(
                 (data: any) => {
                   console.log("api call --- >", data);
+                  if (data == undefined) {
+                    Swal.fire({
+                      text: "Failed to fetch due to connection refused",
+                      icon: "error",
+                      timer: 2000,
+                      showConfirmButton: false,
+                    });
+                    dispatch(setInActiveActiveModules("All"));
+                    dispatch(setCRMModulesEnd());
+                    dispatch(setCRMModules([]));
+                    dispatch(setFilterCRMModules([]));
+                    return;
+                  }
                   dispatch(setCRMModulesEnd());
                   if (data !== undefined) {
+                    dispatch(setNoDataFound(data.message));
                     if (data.success) {
                       console.log("hhg");
                       dispatch(setCRMModules(data.data));
@@ -121,6 +138,12 @@ const UpdateCRMModule: React.FC<PropsTypes> = ({
       } catch (error) {
         // Handle error (e.g., show an error message)
         console.error("Error creating post:", error);
+        Swal.fire({
+          text: "Failed to update due to connection refused",
+          icon: "error",
+          timer: 2000,
+          showConfirmButton: false,
+        });
         setLoading(false);
         setIsVisible(!isVisible);
       }
@@ -197,9 +220,35 @@ const UpdateCRMModule: React.FC<PropsTypes> = ({
               <span style={{ color: "red" }}>
                 {errors.name && "Icon class is required"}
               </span>
+
+              {/*  */}
+
+              <div className="d-flex">
+                <div
+                  className={`text-end flex-shrink-0 icon-state
+                            }`}
+                >
+                  <Label className="switch mb-0">
+                    <Input
+                      type="checkbox"
+                      defaultChecked={isActive}
+                      value={isActive ? "on" : "off"}
+                      onChange={(e) => {
+                        setIsActive(!isActive);
+                        console.log(e.target.value);
+                      }}
+                    />
+                    <span
+                      className={`switch-state ${
+                        isActive ? "bg-primary" : "bg-secondary"
+                      }`}
+                    />
+                  </Label>
+                </div>
+              </div>
             </FormGroup>
           </Row>
-          <div style={{ marginLeft: "10px" }}>
+          {/* <div style={{ marginLeft: "10px" }}>
             <Row>
               <FormGroup check switch inline className="col-md-12 create-group">
                 <Input
@@ -214,7 +263,7 @@ const UpdateCRMModule: React.FC<PropsTypes> = ({
                 />
               </FormGroup>
             </Row>
-          </div>
+          </div> */}
           <Button color="primary" className="me-1">
             {loading ? "Loading ..." : `Update`}
           </Button>

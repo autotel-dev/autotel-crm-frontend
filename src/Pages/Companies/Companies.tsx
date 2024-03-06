@@ -1,7 +1,7 @@
 import { Card, CardBody, Col, Container, Row } from "reactstrap";
 import Breadcrumbs from "../../CommonElements/Breadcrumbs/Breadcrumbs";
 import { Href, UserCards, Users } from "../../utils/Constant";
-import { H5, Image } from "../../AbstractElements";
+import { H1, H5, Image } from "../../AbstractElements";
 import { dynamicImage } from "../../Service";
 import SVG from "../../utils/CommonSvgIcon/SVG";
 import { Link } from "react-router-dom";
@@ -9,53 +9,229 @@ import CompaniesCardsFooter from "./CompaniesCardsFooter";
 import SocialMediaIcons from "./SocialMediaIcons";
 import { compainesCardData } from "./Data/CompaniesCardData";
 import CompaniesListNav from "./CompaniesListNav";
+import { useEffect, useState } from "react";
+import { getAll } from "../../Api";
+import {
+  setServers,
+  setTimeZones,
+  setCRMModules,
+  setCities,
+  setPackages,
+  setCompaniesStart,
+  setCompaniesEnd,
+  setCompanies,
+  setFilterCompanies,
+  setPermissions,
+} from "../../ReaduxToolkit/Reducer/CompanySlice";
+import { useDispatch, useSelector } from "react-redux";
+import { setNoDataFound } from "../../ReaduxToolkit/Reducer/NoDataFoundSlice";
+import CompanyProfile from "../../assets/companyProfile.png";
+import Swal from "sweetalert2";
 
 const Companies = () => {
+  const dispatch = useDispatch();
+  const [searchValue, setSearchValue] = useState("");
+  const { companies, filterCompanies } = useSelector(
+    (state: any) => state.companies
+  );
+  // const [filteredCountries, setFilteredCountries]: any = useState([]);
+
+  const filterCompaniess = (e: any) => {
+    const searchKey = e.target.value;
+    setSearchValue(searchKey);
+    const filtered = filterCompanies.filter((company: any, index: any) => {
+      return company.fullName.toLowerCase().includes(searchKey.toLowerCase());
+      // ^ Add 'return' statement here
+    });
+
+    dispatch(setCompanies(filtered));
+
+    console.log(filtered);
+  };
+
+  // const [modal, setModal] = useState(false);
+  // const toggle = () => {
+  //   setModal(!modal);
+  // };
+
+  useEffect(() => {
+    dispatch(setCompaniesStart());
+    getAll({ url: "super-admin/get-all-companies" }).then((data: any) => {
+      console.log("api call --- >", data);
+      if (data == undefined) {
+        Swal.fire({
+          text: "Failed to fetch due to connection refused",
+          icon: "error",
+          timer: 2000,
+          showConfirmButton: false,
+        });
+        dispatch(setCompaniesEnd());
+        dispatch(setCompanies([]));
+        dispatch(setFilterCompanies([]));
+        return;
+      }
+      dispatch(setCompaniesEnd());
+      if (data !== undefined) {
+        dispatch(setNoDataFound(data.message));
+        if (data.success) {
+          console.log("hhg");
+          dispatch(setCompanies(data.data));
+          dispatch(setFilterCompanies(data.data));
+        }
+      }
+    });
+  }, []);
+  useEffect(() => {
+    getAll({ url: "timezone/get-all-timezones" }).then((data: any) => {
+      console.log("api call --- >", data);
+      if (data !== undefined) {
+        if (data.success) {
+          console.log("hhg");
+          dispatch(setTimeZones(data.data));
+        }
+      }
+    });
+  }, []);
+  useEffect(() => {
+    getAll({ url: "permissions/get-all-permissions" }).then((data: any) => {
+      console.log("api call --- >", data);
+      if (data !== undefined) {
+        if (data.success) {
+          console.log("hhg");
+
+          dispatch(setPermissions(data.data));
+        }
+      }
+    });
+  }, []);
+
+  useEffect(() => {
+    getAll({ url: "server-management/get-all-active-servers" }).then(
+      (data: any) => {
+        console.log("api call --- >", data);
+        if (data !== undefined) {
+          if (data.success) {
+            console.log("hhg");
+            dispatch(setServers(data.data.activeServers));
+          }
+        }
+      }
+    );
+  }, []);
+  useEffect(() => {
+    getAll({ url: "crm-module/get-all-active-modules" }).then((data: any) => {
+      console.log("api call --- >", data);
+      if (data !== undefined) {
+        if (data.success) {
+          console.log("hhg");
+          dispatch(setCRMModules(data.data));
+        }
+      }
+    });
+  }, []);
+
+  useEffect(() => {
+    getAll({ url: "city/get-all-active-cities" }).then((data: any) => {
+      console.log("api call --- >", data);
+      if (data !== undefined) {
+        if (data.success) {
+          console.log("hhg");
+          dispatch(setCities(data.data));
+        }
+      }
+    });
+  }, []);
+  useEffect(() => {
+    getAll({ url: "package/get-all-active-packages" }).then((data: any) => {
+      console.log("api call --- >", data);
+      if (data !== undefined) {
+        if (data.success) {
+          console.log("hhg");
+          dispatch(setPackages(data.data));
+        }
+      }
+    });
+  }, []);
   return (
     <>
       <Breadcrumbs title="" mainTitle="Companies" parent="Companies" />
       <Container fluid>
         <Col md={12} className="project-list">
-          <CompaniesListNav />
-        </Col>
-        <Row className="user-cards-items user-card-wrapper">
-          {compainesCardData.map((item) => (
-            <Col
-              xl={3}
-              sm={6}
-              xxl={3}
-              className="col-ed-4 box-col-4"
-              key={item.id}
-            >
-              <Card className="social-profile">
-                <CardBody>
-                  <div className="social-img-wrap">
-                    <div className="social-img">
-                      <Image
-                        width={68}
-                        height={68}
-                        src={dynamicImage(item.avatar)}
-                        className="img-fluid"
-                        alt="user"
-                      />
-                    </div>
-                    <div className="edit-icon">
-                      <SVG iconId="profile-check" />
-                    </div>
-                  </div>
-                  <div className="social-details">
-                    <H5 className="mb-1">
-                      <Link to="#">{item.name}</Link>
-                    </H5>
-                    <span className="f-light">{item.email}</span>
-                    <SocialMediaIcons listClassName="card-social" />
-                    <CompaniesCardsFooter item={item} />
-                  </div>
-                </CardBody>
-              </Card>
+          <Card>
+            <CompaniesListNav />
+            <Col md={12}>
+              <input
+                type="text"
+                placeholder="Type to Search.."
+                value={searchValue}
+                onChange={(e) => {
+                  filterCompaniess(e);
+                }}
+                style={{
+                  backgroundColor: "#f1f1f1",
+                  borderRadius: "5px",
+                  padding: "15px",
+                  margin: "15px",
+                  width: "calc(100% - 30px)", // Adjusting width to accommodate padding and margin
+                  border: "none",
+                  outline: "none", // Removing default border outline
+                }}
+              />
             </Col>
-          ))}
-        </Row>
+          </Card>
+        </Col>
+        {companies.length > 0 ? (
+          <Row className="user-cards-items user-card-wrapper">
+            {companies.map((item: any, index: any) => (
+              <Col
+                xl={3}
+                sm={6}
+                xxl={3}
+                className="col-ed-4 box-col-4"
+                key={item.id}
+              >
+                <Card
+                  className="social-profile"
+                  style={{ backgroundColor: "rgba(53, 191, 191,0.2)" }}
+                >
+                  <CardBody>
+                    <div className="social-img-wrap">
+                      <div className="social-img">
+                        <img src="" alt="" />
+                        <Image
+                          width={68}
+                          height={68}
+                          src={CompanyProfile}
+                          className="img-fluid"
+                          alt="user"
+                        />
+                      </div>
+                      {/* <div className="edit-icon">
+                    <SVG iconId="profile-check" />
+                  </div> */}
+                    </div>
+                    <div className="social-details">
+                      <H5 className="mb-1">
+                        <Link to="#">{item.fullName}</Link>
+                      </H5>
+                      <span className="f-light">{item.emailAddress}</span>
+                      <SocialMediaIcons item={item} />
+                      <CompaniesCardsFooter item={item} />
+                    </div>
+                  </CardBody>
+                </Card>
+              </Col>
+            ))}
+          </Row>
+        ) : (
+          <Row>
+            <Card style={{ textAlign: "center" }}>
+              <CardBody>
+                <H1>No Companies Found</H1>
+              </CardBody>
+            </Card>
+          </Row>
+        )}
       </Container>
     </>
   );

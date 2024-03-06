@@ -1,7 +1,27 @@
+import { useDispatch } from "react-redux";
 import { H3, LI, UL } from "../../AbstractElements";
+import deleteAlert from "../Alerts/DeleteAlert";
 import { CardType } from "./DataType/CompaniesDataType";
+import ChangePasswordModal from "./components/ChangePasswordModal";
+import { useState } from "react";
+import CommonModal from "../../CommonElements/Ui-kits/CommonModal";
+import ExtendPackage from "./ExtendPackage";
 
 const CompaniesCardsFooter = ({ item }: CardType) => {
+  const dispatch = useDispatch();
+  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
+  const [packageId, setPackageId] = useState("");
+  const [id, setId] = useState("");
+  const [modal, setModal] = useState(false);
+  const toggle = () => {
+    setModal(!modal);
+  };
+  const ModalData = {
+    isOpen: modal,
+    class: "modal-dialog-centered",
+    toggler: toggle,
+    bodyClass: "social-profile text-start",
+  };
   return (
     <>
       <UL
@@ -9,15 +29,15 @@ const CompaniesCardsFooter = ({ item }: CardType) => {
         style={{ marginTop: "10px", marginBottom: "10px" }}
       >
         <LI>
-          <H3 className="mb-0">{item.operator}</H3>
+          <H3 className="mb-0">0</H3>
           <span className="f-light">Operators</span>
         </LI>
         <LI>
-          <H3 className="mb-0">{item.complains}</H3>
+          <H3 className="mb-0">0</H3>
           <span className="f-light">Complains</span>
         </LI>
         <LI>
-          <H3 className="mb-0">{item.expiry}</H3>
+          <H3 className="mb-0">200</H3>
           <span className="f-light">Expiry</span>
         </LI>
       </UL>
@@ -32,11 +52,52 @@ const CompaniesCardsFooter = ({ item }: CardType) => {
             borderRadius: "5px",
             border: "none",
             outline: "none",
+            margin: "5px",
+          }}
+          onClick={() => {
+            setIsUpdateModalOpen(true);
+            console.log("isUpdateModalOpen: ", isUpdateModalOpen);
+            setId(item._id);
+            setPackageId(item.package);
           }}
         >
           Extend
         </button>
+        <button
+          style={{
+            width: "100%",
+            padding: "10px",
+            color: "white",
+            fontSize: "14px",
+            background: "red",
+            borderRadius: "5px",
+            border: "none",
+            outline: "none",
+            margin: "5px",
+          }}
+          onClick={() => {
+            // toggle();
+            // var alertData = {
+            //   title: "Are you sure?",
+            //   text: "Once deleted, you will not be able to recover this ",
+            // };
+            // const type = "companyType";
+            // deleteAlert(alertData, item._id, type, dispatch);
+            // -------------------------
+          }}
+        >
+          Change
+        </button>
       </div>
+      <ExtendPackage
+        isVisible={isUpdateModalOpen}
+        setIsVisible={setIsUpdateModalOpen}
+        companyId={id}
+        packageId={packageId}
+      />
+      {/* <CommonModal modalData={ModalData}>
+        <ChangePasswordModal toggle={toggle} />
+      </CommonModal> */}
     </>
   );
 };

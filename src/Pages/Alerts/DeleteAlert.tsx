@@ -25,6 +25,21 @@ import {
   setFilterCRMModules,
 } from "../../ReaduxToolkit/Reducer/CRMModuleSlice";
 
+import {
+  setFilterServers,
+  setNoDataFound,
+  setServers,
+} from "../../ReaduxToolkit/Reducer/ServerDetailsSlice";
+import {
+  setCompanies,
+  setFilterCompanies,
+  setNoCompanyFound,
+} from "../../ReaduxToolkit/Reducer/CompanySlice";
+import {
+  setFilterOperators,
+  setOperators,
+} from "../../ReaduxToolkit/Reducer/OperatorSlice";
+
 const deleteAlert = (
   alertData: alertTypes,
   id: any,
@@ -50,6 +65,12 @@ const deleteAlert = (
         uri = `country/delete-country`;
       } else if (type === "crmModuleType") {
         uri = `crm-module/delete-module`;
+      } else if (type === "serverType") {
+        uri = `server-management/delete-server`;
+      } else if (type === "companyType") {
+        uri = `super-admin/delete-company`;
+      } else if (type === "usersType") {
+        uri = `operator/delete-operator`;
       }
 
       try {
@@ -76,10 +97,69 @@ const deleteAlert = (
             //   text: "Poof! Your city has been deleted!",
             //   icon: "success",
             // });
+            if (type == "usersType") {
+              getAll({ url: "operator/get-all-operators" }).then(
+                (data: any) => {
+                  console.log("api call --- >", data);
+
+                  if (data !== undefined) {
+                    dispatch(setNoDataFound(data.message));
+                    if (data.success) {
+                      console.log("hhg");
+                      dispatch(setOperators(data.data));
+                      dispatch(setFilterOperators(data.data));
+                    } else {
+                      dispatch(setOperators([]));
+                      dispatch(setFilterOperators([]));
+                    }
+                  } else {
+                    console.log("ier67i");
+                  }
+                }
+              );
+            }
+            if (type == "serverType") {
+              getAll({ url: "server-management/get-all-servers" }).then(
+                (data: any) => {
+                  console.log("api call --- >", data);
+                  if (data !== undefined) {
+                    dispatch(setNoDataFound(data.message));
+                    if (data.success) {
+                      console.log("hhg");
+                      dispatch(setServers(data.data.allServers));
+                      dispatch(setFilterServers(data.data.allServers));
+                    } else {
+                      dispatch(setServers([]));
+                    }
+                  } else {
+                    console.log("ier67i");
+                  }
+                }
+              );
+            }
+            if (type == "companyType") {
+              getAll({ url: "super-admin/get-all-companies" }).then(
+                (data: any) => {
+                  console.log("api call --- >", data);
+
+                  if (data !== undefined) {
+                    dispatch(setNoCompanyFound(data.message));
+                    if (data.success) {
+                      console.log("hhg");
+                      dispatch(setCompanies(data.data));
+                      dispatch(setFilterCompanies(data.data));
+                    } else {
+                      dispatch(setCompanies([]));
+                    }
+                  }
+                }
+              );
+            }
             if (type == "cityType") {
               getAll({ url: "city/get-all-cities" }).then((data: any) => {
                 console.log("api call --- >", data);
                 if (data !== undefined) {
+                  dispatch(setNoDataFound(data.message));
                   if (data.success) {
                     console.log("hhg");
                     dispatch(setCities(data.data));
@@ -96,6 +176,7 @@ const deleteAlert = (
                 (data: any) => {
                   console.log("api call --- >", data);
                   if (data !== undefined) {
+                    dispatch(setNoDataFound(data.message));
                     if (data.success) {
                       console.log("hhg");
                       dispatch(setProvinces(data.data));
@@ -106,6 +187,7 @@ const deleteAlert = (
                           console.log("api call --- >", data);
                           if (data !== undefined) {
                             if (data.success) {
+                              dispatch(setNoDataFound(data.message));
                               console.log("hhg");
                               dispatch(setCities(data.data));
                               dispatch(setFilterCities(data.data));
@@ -123,6 +205,7 @@ const deleteAlert = (
                         (data: any) => {
                           console.log("api call --- >", data);
                           if (data !== undefined) {
+                            dispatch(setNoDataFound(data.message));
                             if (data.success) {
                               console.log("hhg");
                               dispatch(setCities(data.data));
@@ -144,6 +227,7 @@ const deleteAlert = (
                 console.log("api call --- >", data);
                 dispatch(setPackagesEnd());
                 if (data !== undefined) {
+                  dispatch(setNoDataFound(data.message));
                   if (data.success) {
                     console.log("hhg");
                     dispatch(setPackages(data.data));
@@ -159,6 +243,7 @@ const deleteAlert = (
                   console.log("api call --- >", data);
                   dispatch(setCRMModulesEnd());
                   if (data !== undefined) {
+                    dispatch(setNoDataFound(data.message));
                     if (data.success) {
                       console.log("hhg");
                       dispatch(setCRMModules(data.data));
@@ -173,6 +258,7 @@ const deleteAlert = (
               getAll({ url: "country/get-all-countries" }).then((data: any) => {
                 console.log("api call --- >", data);
                 if (data !== undefined) {
+                  dispatch(setNoDataFound(data.message));
                   if (data.success) {
                     console.log("hhg");
                     dispatch(setCountries(data.data));
@@ -194,6 +280,7 @@ const deleteAlert = (
                     getAll({ url: "city/get-all-cities" }).then((data: any) => {
                       console.log("api call --- >", data);
                       if (data !== undefined) {
+                        dispatch(setNoDataFound(data.message));
                         if (data.success) {
                           console.log("hhg");
                           dispatch(setCities(data.data));
@@ -211,6 +298,7 @@ const deleteAlert = (
                       (data: any) => {
                         console.log("api call --- >", data);
                         if (data !== undefined) {
+                          dispatch(setNoDataFound(data.message));
                           if (data.success) {
                             console.log("hhg");
                             dispatch(setProvinces(data.data));
@@ -224,6 +312,7 @@ const deleteAlert = (
                     getAll({ url: "city/get-all-cities" }).then((data: any) => {
                       console.log("api call --- >", data);
                       if (data !== undefined) {
+                        dispatch(setNoDataFound(data.message));
                         if (data.success) {
                           console.log("hhg");
                           dispatch(setCities(data.data));

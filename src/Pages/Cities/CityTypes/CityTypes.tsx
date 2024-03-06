@@ -1,10 +1,16 @@
 export interface CitiesType {
   name?: string;
-  isActive?: string;
+  isActive?: any;
   title?: string;
   price?: number;
   duration?: string;
+  daysToAdd?: any;
 }
+
+export interface FormData {
+  formData?: FormData;
+}
+
 export interface CitiesDataTableType {
   id: string;
   name: string;

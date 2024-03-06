@@ -21,7 +21,11 @@ import {
   setProvincesEnd,
   setProvincesStart,
   setFilterProvinces,
+  setInActiveActiveProvinces,
 } from "../../ReaduxToolkit/Reducer/ProvinceSlice";
+import { setNoDataFound } from "../../ReaduxToolkit/Reducer/NoDataFoundSlice";
+import SelectCountryBox from "./components/SelectCountryBox";
+import Swal from "sweetalert2";
 
 interface PropsTypes {
   isVisible: boolean; // Change 'boolean' to the actual type of isVisible
@@ -44,6 +48,9 @@ const UpdateProvince: React.FC<PropsTypes> = ({
 }) => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
+  const { countryName, countryId } = useSelector(
+    (state: any) => state.provinces
+  );
 
   const {
     register,
@@ -79,6 +86,7 @@ const UpdateProvince: React.FC<PropsTypes> = ({
       const province = {
         name: data.name,
         isActive: isActive,
+        countryId: countryId,
       };
       console.log(province);
       try {
@@ -99,8 +107,22 @@ const UpdateProvince: React.FC<PropsTypes> = ({
               getAll({ url: "province/get-all-provinces" }).then(
                 (data: any) => {
                   console.log("api call --- >", data);
+                  if (data == undefined) {
+                    Swal.fire({
+                      text: "Failed to fetch due to connection refused",
+                      icon: "error",
+                      timer: 2000,
+                      showConfirmButton: false,
+                    });
+                    dispatch(setInActiveActiveProvinces("All"));
+                    dispatch(setProvincesEnd());
+                    dispatch(setProvinces([]));
+                    dispatch(setFilterProvinces([]));
+                    return;
+                  }
                   dispatch(setProvincesEnd());
                   if (data !== undefined) {
+                    dispatch(setNoDataFound(data.message));
                     if (data.success) {
                       console.log("hhg");
                       dispatch(setProvinces(data.data));
@@ -116,6 +138,12 @@ const UpdateProvince: React.FC<PropsTypes> = ({
       } catch (error) {
         // Handle error (e.g., show an error message)
         console.error("Error creating post:", error);
+        Swal.fire({
+          text: "Failed to update due to connection refused",
+          icon: "error",
+          timer: 2000,
+          showConfirmButton: false,
+        });
         setLoading(false);
         setIsVisible(!isVisible);
       }
@@ -177,39 +205,41 @@ const UpdateProvince: React.FC<PropsTypes> = ({
               <span style={{ color: "red" }}>
                 {errors.name && "Province name is required"}
               </span>
-            </FormGroup>
-          </Row>
-          {/* <div>
-            <Row>
-              <FormGroup check switch inline className="col-md-12 create-group">
-                <div className={`flex-shrink-0 icons-state"}`}>
+
+              <div
+                style={{
+                  marginBottom: "20px",
+                  display: "flex",
+                  justifyContent: "space-between",
+                }}
+              >
+                <SelectCountryBox placeholder={"Select Country"} />
+              </div>
+              <div className="d-flex">
+                <div
+                  className={`text-end flex-shrink-0 icon-state
+                            }`}
+                >
                   <Label className="switch mb-0">
                     <Input
                       type="checkbox"
-                      defaultChecked={isActive ? false : true}
+                      defaultChecked={isActive}
+                      value={isActive ? "on" : "off"}
+                      onChange={(e) => {
+                        setIsActive(!isActive);
+                        console.log(e.target.value);
+                      }}
                     />
-                    <span className={`switch-state bg-primary`} />
+                    <span
+                      className={`switch-state ${
+                        isActive ? "bg-primary" : "bg-secondary"
+                      }`}
+                    />
                   </Label>
                 </div>
-              </FormGroup>
-            </Row>
-          </div> */}
-          <div style={{ marginLeft: "10px" }}>
-            <Row>
-              <FormGroup check switch inline className="col-md-12 create-group">
-                <Input
-                  type="checkbox"
-                  role="switch"
-                  defaultChecked={isActive}
-                  value={isActive ? "on" : "off"}
-                  onChange={(e) => {
-                    setIsActive(!isActive);
-                    console.log(e.target.value);
-                  }}
-                />
-              </FormGroup>
-            </Row>
-          </div>
+              </div>
+            </FormGroup>
+          </Row>
           <Button color="primary" className="me-1">
             {loading ? "Loading ..." : `Update`}
           </Button>

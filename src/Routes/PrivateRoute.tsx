@@ -1,27 +1,40 @@
-import { Navigate, Outlet } from "react-router-dom";
+import { useEffect } from "react";
+import { Navigate, Outlet, useParams } from "react-router-dom";
 
 const PrivateRoute = () => {
-  const login = JSON.parse(localStorage.getItem("login")!) ? JSON.parse(localStorage.getItem("login")!) : false;
   const token = localStorage.getItem("token");
   console.log(token);
 
-  const condition = window.location.pathname === "/superAdminLogin"
-  ? "/superAdminLogin"
-  : "/login";
+  const { companyId } = useParams();
 
-  console.log("condtion: ", condition);
-  console.log("condtion: ", window.location.pathname);
+  useEffect(() => {
+    // Save companyId to localStorage
+    console.log("userId except IF", companyId);
+    if (companyId) {
+      console.log("userId in IF", companyId);
+      localStorage.setItem("userId", companyId);
+    }
+  }, [companyId]);
 
-  console.log("env: ", process.env.PUBLIC_URL);
+  // Check if companyId is saved in localStorage
+  const storedCompanyId = localStorage.getItem("userId");
 
   return token !== null ? (
     <Outlet />
+  ) : // <Navigate
+  //   to={`${process.env.PUBLIC_URL}${
+  //     localStorage.getItem("userId") !== null ||
+  //     localStorage.getItem("userId") !== undefined
+  //       ? `/login/${localStorage.getItem("userId")}`
+  //       : "/login"
+  //   }`}
+  // />
+  storedCompanyId ? (
+    // <Outlet />
+    <Navigate to="/login" />
+
   ) : (
-    <Navigate to={`${process.env.PUBLIC_URL}${
-      window.location.pathname === "/superAdminLogin"
-        ? "superAdminLogin"
-        : "login"
-    }`} />
+    <Navigate to="/login" />
   );
 };
 

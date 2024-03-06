@@ -6,13 +6,14 @@ const initialState = {
   provinces: [],
   countries: [],
   filterCities: [],
+  activeInActiveCities: "All",
   loading: false,
   error: null,
   id: null,
   provinceId: null,
   countryId: null,
   value: "",
-  noDataFound: "",
+  noCityFound: "",
 };
 
 const CitiesSlice = createSlice({
@@ -31,6 +32,9 @@ const CitiesSlice = createSlice({
       state.filterCities = action.payload;
       state.error = null;
       state.loading = false;
+    },
+    setInActiveActiveCities: (state, action) => {
+      state.activeInActiveCities = action.payload;
     },
     setProvinces: (state, action) => {
       state.provinces = action.payload;
@@ -58,14 +62,15 @@ const CitiesSlice = createSlice({
     setValue: (state, action) => {
       state.value = action.payload;
     },
-    setNoDataFound: (state, action) => {
-      state.noDataFound = action.payload;
+    setNoCityFound: (state, action) => {
+      state.noCityFound = action.payload;
     },
   },
 });
 export const {
   setCities,
   setCountries,
+  setInActiveActiveCities,
   setProvinces,
   setCitiesStart,
   setCitiesEnd,
@@ -74,6 +79,7 @@ export const {
   setFilterCities,
   setId,
   setValue,
+  setNoCityFound,
 } = CitiesSlice.actions;
 
 export default CitiesSlice.reducer;

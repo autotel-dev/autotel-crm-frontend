@@ -75,8 +75,7 @@ import Todo from "../Pages/Apps/Todo/Todo";
 import SocialApp from "../Pages/Apps/SocialApp/SocialApp";
 import Calender from "../Pages/Apps/Calender/Calender";
 import Tasks from "../Pages/Apps/Tasks/Tasks";
-import UserProfile from "../Pages/Apps/User/UserProfile/UserProfile";
-import UserEdit from "../Pages/Apps/User/UserEdit/UserEdit";
+import UserProfile from "../Pages/Apps/User/UserProfile/Settings";
 import UserCard from "../Pages/Apps/User/UserCard/UserCard";
 import EmailApp from "../Pages/Apps/Email/EmailApp/EmailApp";
 import EmailCompose from "../Pages/Apps/Email/EmailCompose/EmailCompose";
@@ -132,6 +131,23 @@ import Companies from "../Pages/Companies/Companies";
 import Countries from "../Pages/Countries/Countries";
 import CreateCompanyForm from "../Pages/Companies/CreateCompanyForm/CreateCompanyForm";
 import ServerManagement from "../Pages/ServerManagement/ServerManagement";
+import Servers from "../Pages/ServerDetails/Servers";
+import CreateServerForm from "../Pages/ServerDetails/CreateServerForm/CreateServerForm";
+import UpdateServerForm from "../Pages/ServerDetails/UpdateServerForm.tsx/UpdateServerForm";
+import VerifyOTP from "../Pages/VerifyOTP/VerifyOTP";
+import RecentLogsFullTable from "../Pages/ServerManagement/RecentOrders/RecentLogsFullTable";
+
+// Company
+
+import CompanyTasks from "../Pages/Company/Tasks/Tasks";
+import CompanyUsers from "../Pages/Company/Users/Users";
+import Monitoring from "../Pages/Company/Modules/Monitoring/Monitoring";
+import ControlRoom from "../Pages/Company/Modules/ControlRoom/ControlRoom";
+import TicketDetails from "../Pages/Support/TicketDetails";
+import Roles from "../Pages/Company/Roles/Roles";
+import Account from "../Pages/Apps/User/UserEdit/Account";
+import Settings from "../Pages/Apps/User/UserProfile/Settings";
+import Reports from "../Pages/Company/Reports/Reports";
 
 const routes = [
   // dashboard routes
@@ -429,12 +445,12 @@ const routes = [
 
   //  User
   {
-    path: `${process.env.PUBLIC_URL}/users/usersprofile`,
-    Component: <UserProfile />,
+    path: `${process.env.PUBLIC_URL}/users/settings`,
+    Component: <Settings />,
   },
   {
-    path: `${process.env.PUBLIC_URL}/users/usersedit`,
-    Component: <UserEdit />,
+    path: `${process.env.PUBLIC_URL}/users/account`,
+    Component: <Account />,
   },
   {
     path: `${process.env.PUBLIC_URL}/users/userscards`,
@@ -626,6 +642,16 @@ const routes = [
     path: `${process.env.PUBLIC_URL}/apps/searchresult`,
     Component: <SearchResult />,
   },
+
+  // --------------------------------------------------
+
+  // Verify OTP
+
+  // {
+  //   path: `${process.env.PUBLIC_URL}/verifyOTP`,
+  //   Component: <VerifyOTP />,
+  // },
+
   // Setup
 
   {
@@ -649,14 +675,34 @@ const routes = [
     Component: <CRMModule />,
   },
   {
+    path: `${process.env.PUBLIC_URL}/setup/server_details`,
+    Component: <Servers />,
+  },
+  {
+    path: `${process.env.PUBLIC_URL}/setup/server_details/createNewServer`,
+    Component: <CreateServerForm />,
+  },
+  {
+    path: `${process.env.PUBLIC_URL}/setup/server_details/updareServer`,
+    Component: <UpdateServerForm />,
+  },
+  {
     path: `${process.env.PUBLIC_URL}/setup/server_management`,
     Component: <ServerManagement />,
+  },
+  {
+    path: `${process.env.PUBLIC_URL}/setup/server_management/AllLogs`,
+    Component: <RecentLogsFullTable />,
   },
 
   // Support
   {
     path: `${process.env.PUBLIC_URL}/support`,
     Component: <Support />,
+  },
+  {
+    path: `${process.env.PUBLIC_URL}/support/ticketDetails/:ticketId`,
+    Component: <TicketDetails />,
   },
   // Tasks
   {
@@ -673,6 +719,10 @@ const routes = [
     path: `${process.env.PUBLIC_URL}/companies/createComapny`,
     Component: <CreateCompanyForm />,
   },
+  {
+    path: `${process.env.PUBLIC_URL}/verifyOTP`,
+    Component: <VerifyOTP />,
+  },
 
   // {
   //   path: `${process.env.PUBLIC_URL}/${
@@ -682,6 +732,67 @@ const routes = [
   //   }`,
   //   Component: <LoginForm />,
   // },
+
+  // Company Routes
+
+  // Dashboard
+  {
+    path: `${process.env.PUBLIC_URL}/company/dashboard`,
+    Component: <ShoppingPlace />,
+  },
+
+  // Setup
+
+  {
+    path: `${process.env.PUBLIC_URL}/company/roles`,
+    Component: <Roles />,
+  },
+  {
+    path: `${process.env.PUBLIC_URL}/company/emailTemplates`,
+    Component: <ShoppingPlace />,
+  },
+  {
+    path: `${process.env.PUBLIC_URL}/company/whatsappTemplates`,
+    Component: <ShoppingPlace />,
+  },
+
+  // Modules
+
+  {
+    path: `${process.env.PUBLIC_URL}/company/modules/monitoring`,
+    Component: <Monitoring />,
+  },
+  {
+    path: `${process.env.PUBLIC_URL}/company/modules/control-room`,
+    Component: <ControlRoom />,
+  },
+  // Users
+  {
+    path: `${process.env.PUBLIC_URL}/company/users`,
+    Component: <CompanyUsers />,
+  },
+
+  // // Support
+  // {
+  //   path: `${process.env.PUBLIC_URL}/company/support`,
+  //   Component: <CompanySupport />,
+  // },
+
+  // Support
+  {
+    path: `${process.env.PUBLIC_URL}/company/support`,
+    Component: <Support />,
+  },
+  // Tasks
+  {
+    path: `${process.env.PUBLIC_URL}/company/tasks`,
+    Component: <CompanyTasks />,
+  },
+
+  {
+    path: `${process.env.PUBLIC_URL}/company/reports`,
+    Component: <Reports />,
+  },
 ];
 
 export default routes;

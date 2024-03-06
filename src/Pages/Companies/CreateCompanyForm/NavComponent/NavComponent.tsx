@@ -2,6 +2,7 @@ import { Nav, NavItem, NavLink } from "reactstrap";
 import { BusinessFormCommonProps } from "../../../../Types/Forms/FormLayout/FormWizardTypes";
 import { customHorizontalWizardNavData } from "../../../../Data/Forms/FormsLayout/FormWizardData";
 import { H3 } from "../../../../AbstractElements";
+import { NavData } from "./NavData";
 
 const NavComponent = ({
   callbackActive,
@@ -14,7 +15,7 @@ const NavComponent = ({
   };
   return (
     <Nav className="nav-pills horizontal-options shipping-options">
-      {customHorizontalWizardNavData.map((data, index) => (
+      {NavData.map((data, index) => (
         <NavItem key={index}>
           <NavLink
             className={`b-r-0 ${activeTab === index + 1 ? "active" : ""}`}

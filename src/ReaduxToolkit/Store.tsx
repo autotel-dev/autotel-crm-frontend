@@ -17,6 +17,17 @@ import PackageSlice from "./Reducer/PackageSlice";
 import CountrySlice from "./Reducer/CountrySlice";
 import CRMModuleSlice from "./Reducer/CRMModuleSlice";
 import NoDataFoundSlice from "./Reducer/NoDataFoundSlice";
+import CompanySlice from "./Reducer/CompanySlice";
+import ServerManagementSlice from "./Reducer/ServerManagementSlice";
+import ServerDetailsSlice from "./Reducer/ServerDetailsSlice";
+import UserSlice from "./Reducer/UserSlice";
+import MonitoringSlice from "./Reducer/MonitoringSlice";
+import OperatorSlice from "./Reducer/OperatorSlice";
+import AlertsSlice from "./Reducer/AlertsSlice";
+import SupportSlice from "./Reducer/SupportSlice";
+import RolesSlice from "./Reducer/RolesSlice";
+import PersonalizationSlice from "./Reducer/PersonalizationSlice";
+import ReportsSlice from "./Reducer/ReportsSlice";
 
 const Store = configureStore({
   reducer: {
@@ -37,7 +48,18 @@ const Store = configureStore({
     packages: PackageSlice,
     countries: CountrySlice,
     crmModules: CRMModuleSlice,
-    noDataFoundSlice: NoDataFoundSlice,
+    noDataFound: NoDataFoundSlice,
+    companies: CompanySlice,
+    serverManagement: ServerManagementSlice,
+    serverDetails: ServerDetailsSlice,
+    user: UserSlice,
+    monitoring: MonitoringSlice,
+    operators: OperatorSlice,
+    alerts: AlertsSlice,
+    support: SupportSlice,
+    roles: RolesSlice,
+    personalization: PersonalizationSlice,
+    reports: ReportsSlice,
   },
 });
 
