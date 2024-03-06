@@ -29,7 +29,8 @@ const PreviousAlerts = () => {
   const handleScroll = () => {
     if (!containerRef.current) return; // Ensure containerRef.current exists
     const { scrollTop, clientHeight, scrollHeight } = containerRef.current;
-    if (scrollHeight - scrollTop === clientHeight) {
+    const bottomOffset = scrollHeight - (scrollTop + clientHeight);
+    if (bottomOffset < 50) {
       // If scrolled to the bottom
       const nextBatch = modalData.previousAlerts.slice(
         dataList.length,

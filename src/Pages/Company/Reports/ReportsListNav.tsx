@@ -19,7 +19,7 @@ const ReportsListNav = () => {
   return (
     <Row>
       <Col md={6}>
-        <Nav tabs className="border-tab">
+        {/* <Nav tabs className="border-tab">
           <NavItem style={{ cursor: "pointer" }}>
             <NavLink
               className={activeTab === "1" ? "active" : ""}
@@ -80,7 +80,7 @@ const ReportsListNav = () => {
               {active}
             </NavLink>
           </NavItem>
-        </Nav>
+        </Nav> */}
       </Col>
       <CreateNewReport />
     </Row>

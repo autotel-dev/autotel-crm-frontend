@@ -360,7 +360,7 @@ const CreateNewReport = () => {
                     />
                   </Col>
                 </FormGroup>
-
+                <div></div>
                 <FormGroup
                   className="col-md-6 create-group"
                   style={{
@@ -378,7 +378,7 @@ const CreateNewReport = () => {
                     />
                   </Col>
                 </FormGroup>
-
+                <div></div>
                 <FormGroup
                   className="col-md-6 create-group"
                   style={{

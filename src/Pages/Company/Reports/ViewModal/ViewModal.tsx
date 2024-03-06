@@ -75,11 +75,18 @@ const ViewModal: React.FC<PropsTypes> = ({
             <Table className="display order-wrapper" id="recent-order">
               <thead>
                 <tr>
-                  {tableHeader.map((data: any, index: any) => (
-                    <th key={index} style={{ width: "7%" }}>
-                      {data}
-                    </th>
-                  ))}
+                  <th style={{ width: "7%" }}>Event ID</th>
+                  <th style={{ width: "7%" }}>Device ID</th>
+                  <th style={{ width: "7%" }}>Device Name</th>
+                  <th style={{ width: "7%" }}>Latitude</th>
+                  <th style={{ width: "7%" }}>Longitude</th>
+                  <th style={{ width: "7%" }}>Speed</th>
+                  <th style={{ width: "7%" }}>Type</th>
+                  <th style={{ width: "7%" }}>Message</th>
+                  <th style={{ width: "7%" }}>User Role</th>
+                  <th style={{ width: "7%" }}>Completion Response</th>
+                  <th style={{ width: "7%" }}>Alert Event Close Date</th>
+                  <th style={{ width: "7%" }}>Created At</th>
                 </tr>
               </thead>
               <tbody>

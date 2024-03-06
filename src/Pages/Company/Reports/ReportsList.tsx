@@ -109,33 +109,62 @@ const ReportsList = () => {
   //   { user: "Manuel", age: 16, more: { phone: 9999999900 } },
   //   { user: "Ana", age: 17, more: { phone: 8765432135 } },
   // ],
-  function handleButtonClick(e: any, settings: any, excelData: any) {
-    message.info("Click on left button.");
+  function handleButtonClick(
+    e: any,
+    settings: any,
+    excelData: any,
+    index: any
+  ) {
+    // message.info("Click on left button.");
     console.log("click left button", e);
-    xlsx(excelData, settings);
+    if (selectedTypes[index] == "Excel") {
+      xlsx(excelData, settings);
+    }
+
     // Perform your onClick logic here
-    console.log(`Button clicked with type: ${selectedType}`);
+    console.log(`Button clicked with type: ${selectedTypes}`);
   }
 
-  function handleMenuClick(e: any, type: any) {
-    message.info("Click on menu item.");
-    setSelectedType(type);
+  // function handleMenuClick(e: any, type: any) {
+  //   message.info("Click on menu item.");
+  //   setSelectedType(type);
+  //   console.log("click", e);
+  // }
+
+  const [selectedTypes, setSelectedTypes]: any = useState({});
+
+  function handleMenuClick(e: any, type: any, index: any) {
+    // message.info("Click on menu item.");
+    setSelectedTypes((prevSelectedTypes: any) => ({
+      ...prevSelectedTypes,
+      [index]: type,
+    }));
     console.log("click", e);
   }
-  const menu = (
-    <Menu
-      onClick={(e: any) => {
-        handleMenuClick(e, "Excel");
-      }}
-    >
-      <Menu.Item key="1" icon={<UserOutlined />}>
-        Excel
-      </Menu.Item>
-      <Menu.Item key="2" icon={<UserOutlined />}>
-        PDF
-      </Menu.Item>
-    </Menu>
-  );
+  // const menu = (
+  //   <Menu>
+  //     <Menu.Item
+  //       key="1"
+  //       icon={<UserOutlined />}
+  //       onClick={(e: any) => {
+  //         handleMenuClick(e, "Excel", index);
+  //         console.log(e);
+  //       }}
+  //     >
+  //       Excel
+  //     </Menu.Item>
+  //     <Menu.Item
+  //       key="2"
+  //       icon={<UserOutlined />}
+  //       onClick={(e: any) => {
+  //         handleMenuClick(e, "PDF", index);
+  //         console.log(e);
+  //       }}
+  //     >
+  //       PDF
+  //     </Menu.Item>
+  //   </Menu>
+  // );
 
   const [loading, setLoading] = useState(false);
 
@@ -148,8 +177,10 @@ const ReportsList = () => {
         <td style={{ width: "15%" }}>{row.endDate}</td>
         <td>
           <div style={{ display: "flex", justifyContent: "center" }}>
-            <Space wrap style={{ marginTop: 0 }}>
+            <div style={{ backgroundColor: "green", borderRadius: "5px" }}>
               <Dropdown.Button
+                type="primary"
+                // className="ant-btn-primary"
                 onClick={(e: any) => {
                   let settings = {
                     fileName: row.title, // Name of the resulting spreadsheet
@@ -186,14 +217,37 @@ const ReportsList = () => {
                       content: row.data.reportData,
                     },
                   ];
-                  handleButtonClick(e, settings, data);
+                  handleButtonClick(e, settings, data, index);
                 }}
                 placement="bottomLeft"
-                overlay={menu}
+                overlay={
+                  <Menu>
+                    <Menu.Item
+                      key="1"
+                      icon={<UserOutlined />}
+                      onClick={(e: any) => {
+                        handleMenuClick(e, "Excel", index);
+                        console.log(e);
+                      }}
+                    >
+                      Excel
+                    </Menu.Item>
+                    <Menu.Item
+                      key="2"
+                      icon={<UserOutlined />}
+                      onClick={(e: any) => {
+                        handleMenuClick(e, "PDF", index);
+                        console.log(e);
+                      }}
+                    >
+                      PDF
+                    </Menu.Item>
+                  </Menu>
+                }
               >
-                {selectedType}
+                {selectedTypes[index] || selectedType}
               </Dropdown.Button>
-            </Space>
+            </div>
 
             <button
               style={{
@@ -230,7 +284,7 @@ const ReportsList = () => {
       <Container fluid>
         <Col sm="12">
           <Card>
-            <CommonHeader title="All Roles" />
+            <CommonHeader title="All Reports" />
             <CardBody>
               <div className="table-responsive product-table">
                 {loading ? (

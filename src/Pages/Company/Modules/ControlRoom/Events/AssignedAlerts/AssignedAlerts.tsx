@@ -50,7 +50,8 @@ const AssignedAlerts = () => {
   const handleScroll = () => {
     if (!containerRef.current) return; // Ensure containerRef.current exists
     const { scrollTop, clientHeight, scrollHeight } = containerRef.current;
-    if (scrollHeight - scrollTop === clientHeight) {
+    const bottomOffset = scrollHeight - (scrollTop + clientHeight);
+    if (bottomOffset < 50) {
       // If scrolled to the bottom
       const nextBatch = assignedAlerts.slice(
         dataList.length,
@@ -62,7 +63,7 @@ const AssignedAlerts = () => {
 
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [basicTab, setBasicTab] = useState("1");
-  const [fisrtTime,setFirstTime] = useState(true);
+  const [fisrtTime, setFirstTime] = useState(true);
 
   return (
     <Card className="invoice-card">
