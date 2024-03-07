@@ -28,10 +28,14 @@ const ControlRoom = () => {
     (state: any) => state.alerts
   );
   const dispatch = useDispatch();
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     setLoading(true);
+    dispatch(setAssignedAlerts([]));
+    dispatch(setLiveAlerts([]));
+    dispatch(setLiveAlertsData(null));
+    dispatch(setCompletedAlerts([]));
     getAll({ url: "company/alert-events?pageNo=1" }).then((data: any) => {
       console.log("api call --- >", data);
       setLoading(false);

@@ -23,6 +23,7 @@ import xlsx from "json-as-xlsx";
 import ViewModal from "./ViewModal/ViewModal";
 import { Menu, Dropdown, Button, message, Space, Tooltip } from "antd";
 import { DownOutlined, UserOutlined } from "@ant-design/icons";
+import { setReports } from "../../../ReaduxToolkit/Reducer/ReportsSlice";
 
 const ReportsList = () => {
   const { reports } = useSelector((state: any) => state.reports);
@@ -37,78 +38,6 @@ const ReportsList = () => {
 
   const toggleDropdown = () => setDropdownOpen((prevState) => !prevState);
 
-  // const handleDropdownSelect = (type: any) => {
-  //   setSelectedType(type);
-  //   setDropdownOpen(false); // Close dropdown after selection
-  // };
-
-  const tableHeader = [
-    "ID",
-    "Device",
-    "Alert",
-    "Type",
-    "Message",
-    "Address",
-    "Response",
-  ];
-
-  const dataList = [
-    {
-      ID: "ABC",
-      Device: "ABC",
-      Alert: "ABC",
-      Type: "ABC",
-      Message: "ABC",
-      Address: "ABC",
-      Response: "ABC",
-    },
-    {
-      ID: "ABC",
-      Device: "ABC",
-      Alert: "ABC",
-      Type: "ABC",
-      Message: "ABC",
-      Address: "ABC",
-      Response: "ABC",
-    },
-    {
-      ID: "ABC",
-      Device: "ABC",
-      Alert: "ABC",
-      Type: "ABC",
-      Message: "ABC",
-      Address: "ABC",
-      Response: "ABC",
-    },
-    {
-      ID: "ABC",
-      Device: "ABC",
-      Alert: "ABC",
-      Type: "ABC",
-      Message: "ABC",
-      Address: "ABC",
-      Response: "ABC",
-    },
-    {
-      ID: "ABC",
-      Device: "ABC",
-      Alert: "ABC",
-      Type: "ABC",
-      Message: "ABC",
-      Address: "ABC",
-      Response: "ABC",
-    },
-  ];
-
-  // columns: [
-  //   { label: "User", value: "user" }, // Top level data
-  //   { label: "Age", value: "age", format: '# "years"' }, // Column format
-  //   { label: "Phone", value: "more.phone", format: "(###) ###-####" }, // Deep props and column format
-  // ],
-  // content: [
-  //   { user: "Manuel", age: 16, more: { phone: 9999999900 } },
-  //   { user: "Ana", age: 17, more: { phone: 8765432135 } },
-  // ],
   function handleButtonClick(
     e: any,
     settings: any,
@@ -125,12 +54,6 @@ const ReportsList = () => {
     console.log(`Button clicked with type: ${selectedTypes}`);
   }
 
-  // function handleMenuClick(e: any, type: any) {
-  //   message.info("Click on menu item.");
-  //   setSelectedType(type);
-  //   console.log("click", e);
-  // }
-
   const [selectedTypes, setSelectedTypes]: any = useState({});
 
   function handleMenuClick(e: any, type: any, index: any) {
@@ -141,32 +64,10 @@ const ReportsList = () => {
     }));
     console.log("click", e);
   }
-  // const menu = (
-  //   <Menu>
-  //     <Menu.Item
-  //       key="1"
-  //       icon={<UserOutlined />}
-  //       onClick={(e: any) => {
-  //         handleMenuClick(e, "Excel", index);
-  //         console.log(e);
-  //       }}
-  //     >
-  //       Excel
-  //     </Menu.Item>
-  //     <Menu.Item
-  //       key="2"
-  //       icon={<UserOutlined />}
-  //       onClick={(e: any) => {
-  //         handleMenuClick(e, "PDF", index);
-  //         console.log(e);
-  //       }}
-  //     >
-  //       PDF
-  //     </Menu.Item>
-  //   </Menu>
-  // );
 
   const [loading, setLoading] = useState(false);
+  const [dataList, setDataList] = useState([]);
+  const [tableHeader, setTableHeader] = useState([]);
 
   const renderTableRows = () => {
     return reports.map((row: any, index: any) => (
@@ -263,21 +164,22 @@ const ReportsList = () => {
               }}
               onClick={() => {
                 setIsUpdateModalOpen(true);
+                setDataList(row.data.reportData);
+                setTableHeader(row.data.reportTableHeaders);
               }}
             >
               View
             </button>
           </div>
         </td>
-        <ViewModal
-          isVisible={isUpdateModalOpen}
-          setIsVisible={setIsUpdateModalOpen}
-          dataList={row.data.reportData}
-          tableHeader={row.data.reportTableHeaders}
-        />
       </tr>
     ));
   };
+
+  useEffect(() => {
+    dispatch(setReports([]));
+    setIsUpdateModalOpen(false);
+  }, []);
 
   return (
     <>
@@ -319,6 +221,13 @@ const ReportsList = () => {
 
                 {/* )} */}
               </div>
+
+              <ViewModal
+                isVisible={isUpdateModalOpen}
+                setIsVisible={setIsUpdateModalOpen}
+                dataList={dataList}
+                tableHeader={tableHeader}
+              />
             </CardBody>
           </Card>
         </Col>

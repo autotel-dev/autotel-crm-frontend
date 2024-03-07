@@ -15,6 +15,7 @@ import {
   setRolesStart,
 } from "../../../ReaduxToolkit/Reducer/RolesSlice";
 import { setOperatorsEnd } from "../../../ReaduxToolkit/Reducer/OperatorSlice";
+import Swal from "sweetalert2";
 
 // import {
 //   setCountries,
@@ -33,15 +34,29 @@ const RolesList = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
+    dispatch(setRoles([]));
+    dispatch(setFilterRoles([]));
     dispatch(setRolesStart());
     getAll({ url: "sub-role/get-all-sub-roles" }).then((data: any) => {
       console.log("api call --- >", data);
+      if (data == undefined) {
+        Swal.fire({
+          text: "Failed to fetch due to connection refused",
+          icon: "error",
+          timer: 2000,
+          showConfirmButton: false,
+        });
+        // dispatch(setInActiveActiveUsers("All"));
+        dispatch(setRoles([]));
+        dispatch(setFilterRoles([]));
+        dispatch(setRolesEnd());
+        return;
+      }
       dispatch(setRolesEnd());
       if (data !== undefined) {
         dispatch(setNoDataFound(data.message));
         if (data.success) {
           console.log("hhg");
-
           dispatch(setRoles(data.data));
           dispatch(setFilterRoles(data.data));
         }

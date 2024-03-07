@@ -19,6 +19,8 @@ import { Select } from "antd";
 import Swal from "sweetalert2";
 import { ReportsType } from "./ReportsType/ReportsTypes";
 import { setReports } from "../../../ReaduxToolkit/Reducer/ReportsSlice";
+import Loader from "../../Loader/Loader";
+import CustomDropdown from "./CustomDropdown";
 
 const CreateNewReport = () => {
   const { reports } = useSelector((state: any) => state.reports);
@@ -55,40 +57,84 @@ const CreateNewReport = () => {
         endDate: new Date().toISOString().slice(0, 10),
       });
       setRole("");
+      setLoading(false);
     }
   };
+  const [selectedItems, setSelectedItems]: any = useState([]);
+  const { Option, OptGroup } = Select;
+  const [selectedOption, setSelectedOption] = useState("");
 
-  //   const addReport: SubmitHandler<ReportsType> = async (data: any) => {
-  //     setLoading(true);
-  //     if (
-  //       data.title !== "" &&
-  //       startDate !== null &&
-  //       endDate !== null &&
-  //       type !== ""
-  //     ) {
-  //       const report = {
-  //         id: 1,
-  //         title: data.title,
-  //         startDate: startDate,
-  //         endDate: endDate,
-  //       };
-  //       console.log(report);
-  //       tempReports.push(report);
-  //       console.log("Reports", reports);
+  const groups: any = [];
+  const groupDevicesObj: any = {};
+  const initialGroupDevices: any = [];
+  const [dropDownDevices, setDropDownDevices] = useState([]);
+  const [undefinedData, setUndefinedData] = useState(false);
+  const getData = () => {
+    setLoading(true);
+    getAll({ url: "company/devices" }).then((data: any) => {
+      console.log("data", data);
+      if (data == undefined) {
+        setUndefinedData(true);
+        setLoading(false);
+        Swal.fire({
+          text: "Failed to Fetch",
+          icon: "error",
+          timer: 2000,
+          showConfirmButton: false,
+        });
+      }
+      if (data !== undefined) {
+        if (!data.success) {
+          setLoading(false);
+          Swal.fire({
+            text: "Failed to Fetch the devices",
+            icon: "error",
+            timer: 2000,
+            showConfirmButton: false,
+          });
+        }
+        if (data.success) {
+          setUndefinedData(false);
+          console.log("api call --- >", data);
+          console.log("length --- >", data.data.length);
 
-  //       dispatch(setReports(tempReports));
-  //       setLoading(false);
-  //       addToggle();
-  //     } else {
-  //       Swal.fire({
-  //         text: "Required Fields are empty",
-  //         icon: "info",
-  //         timer: 2000,
-  //         showConfirmButton: false,
-  //       });
-  //       setLoading(false);
-  //     }
-  //   };
+          setDropDownDevices(data.data);
+          for (let i = 0; i < data.data.length; i++) {
+            const element = data.data[i].title;
+            if (!groups.includes(element)) {
+              groups.push(element);
+            }
+          }
+
+          groups.forEach((title: any) => {
+            groupDevicesObj[title] = data.data
+              .filter((obj: any) => obj.title === title)
+              .map((item: any) => ({ ...item, checked: false }));
+          });
+
+          // Convert groupDevicesObj to initialGroupDevices array format
+          Object.keys(groupDevicesObj).forEach((title: any) => {
+            initialGroupDevices.push({
+              title,
+              checked: false,
+              items: groupDevicesObj[title],
+            });
+          });
+
+          // Update state with initialGroupDevices
+          setDropDownDevices(initialGroupDevices);
+          console.log("dropDownGroups", groups);
+          console.log("dropDownGroupsDevices", dropDownDevices);
+          setLoading(false);
+
+          // ---------------------- For device status-----------------------------------
+        }
+      }
+    });
+  };
+  useEffect(() => {
+    getData();
+  }, []);
 
   const addReport: SubmitHandler<ReportsType> = async (data: any) => {
     setLoading(true);
@@ -107,10 +153,38 @@ const CreateNewReport = () => {
       console.log(report);
 
       try {
+        const today = new Date(); // Get current date and time
+        console.log("today", today);
+        console.log("endDate", endDate);
+        const endDateTime = new Date(endDate);
+        console.log("endDateTime", endDateTime);
+
+        // If endDate is today's date, set time to current time
+
+        console.log("today time: ", today.getTime());
+        console.log("endDateTime time: ", endDateTime.getTime());
+
+        console.log("before setting time: ", endDateTime);
+
+        endDateTime.setTime(today.getTime());
+
+        console.log("after setting time: ", endDateTime);
+
+        // endDateTime.setHours(
+        //   today.getHours(),
+        //   today.getMinutes(),
+        //   today.getSeconds()
+        // );
+
+        console.log("called");
+        console.log("endDateTime", endDateTime);
+        console.log("today", today);
+
         await create(
           {
-            fromDate: startDate,
-            toDate: endDate,
+            fromDate: new Date(startDate).toISOString(),
+            toDate: endDateTime.toISOString(), // Convert to ISO format
+            deviceIds: [4204],
           },
           {
             url: "reports/get-all-alert-events-report",
@@ -200,8 +274,8 @@ const CreateNewReport = () => {
   }, []);
 
   const [reportType, setReportType] = useState<string>("");
-  const [startDate, setStartDate] = useState<string>("");
-  const [endDate, setEndDate] = useState<string>("");
+  const [startDate, setStartDate] = useState<string>(new Date().toISOString());
+  const [endDate, setEndDate] = useState<string>(new Date().toISOString());
 
   const handleReportTypeChange = (selectedOption: any) => {
     console.log("SelectedOption", selectedOption);
@@ -263,6 +337,13 @@ const CreateNewReport = () => {
   useEffect(() => {
     handleDateSelection("Yesterday"); // Default selection
   }, []);
+  const data = [
+    { title: "LHR", items: [] }, // Fill in your data here
+    { title: "Ungrouped", items: [] },
+    { title: "NLC", items: [] },
+    { title: "ISB", items: [] },
+    { title: "Testing Lynkworld", items: [] },
+  ];
 
   return (
     <Col md={6}>
@@ -284,62 +365,47 @@ const CreateNewReport = () => {
               onClick={addToggle}
             ></Button>
           </div>
-          <ModalBody>
-            <form
-              className="form-bookmark needs-validation"
-              onSubmit={handleSubmit(addReport)}
-            >
-              <Row>
-                <FormGroup className="col-md-6 create-group">
-                  <Label>Title</Label>
-                  <input
-                    className="form-control"
-                    type="text"
-                    {...register("title", { required: true })}
-                  />
-                  <span style={{ color: "red" }}>
-                    {errors.title && "Report title is required"}
-                  </span>
-                </FormGroup>
-                <FormGroup className="col-md-6 create-group">
-                  <div>
-                    <Label>Report Type</Label>
-                  </div>
-                  <Select
-                    showSearch
-                    style={{ width: "100%", height: 36 }}
-                    placeholder="Select Type"
-                    optionFilterProp="children"
-                    filterOption={(input: any, option: any) =>
-                      (option?.label ?? "").includes(input)
-                    }
-                    filterSort={(optionA: any, optionB: any) =>
-                      (optionA?.label ?? "")
-                        .toLowerCase()
-                        .localeCompare((optionB?.label ?? "").toLowerCase())
-                    }
-                    onChange={(e: any) => {
-                      console.log(e);
-                      setType(e);
-                    }}
-                    options={reportsTypeList}
-                  />
-                </FormGroup>
 
-                <FormGroup
-                  className="col-md-6 create-group"
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                  }}
-                >
-                  <div>Period:</div>
-                  <Col md={8}>
+          <ModalBody>
+            {loading ? (
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  height: "30vh",
+                  backgroundColor: "white",
+                  alignItems: "center",
+                }}
+              >
+                <div style={{ textAlign: "center" }}>
+                  <Loader />
+                </div>
+              </div>
+            ) : (
+              <form
+                className="form-bookmark needs-validation"
+                onSubmit={handleSubmit(addReport)}
+              >
+                <Row>
+                  <FormGroup className="col-md-6 create-group">
+                    <Label>Title</Label>
+                    <input
+                      className="form-control"
+                      type="text"
+                      {...register("title", { required: true })}
+                    />
+                    <span style={{ color: "red" }}>
+                      {errors.title && "Report title is required"}
+                    </span>
+                  </FormGroup>
+                  <FormGroup className="col-md-6 create-group">
+                    <div>
+                      <Label>Report Type</Label>
+                    </div>
                     <Select
                       showSearch
                       style={{ width: "100%", height: 36 }}
-                      placeholder="Select Period"
+                      placeholder="Select Type"
                       optionFilterProp="children"
                       filterOption={(input: any, option: any) =>
                         (option?.label ?? "").includes(input)
@@ -349,66 +415,179 @@ const CreateNewReport = () => {
                           .toLowerCase()
                           .localeCompare((optionB?.label ?? "").toLowerCase())
                       }
-                      //   onChange={(e: any) => {
-                      //     //   console.log(e);
-                      //     //   setRole(e);
-                      //   }}
-                      //   options={reportPeriodList}
+                      onChange={(e: any) => {
+                        console.log(e);
+                        setType(e);
+                      }}
+                      options={reportsTypeList}
+                    />
+                  </FormGroup>
 
-                      options={reportPeriodList}
-                      onChange={handleReportTypeChange}
+                  <FormGroup
+                    className="col-md-6 create-group"
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                    }}
+                  >
+                    <div>Period:</div>
+                    <Col md={8}>
+                      <Select
+                        showSearch
+                        style={{ width: "100%", height: 36 }}
+                        placeholder="Select Period"
+                        optionFilterProp="children"
+                        filterOption={(input: any, option: any) =>
+                          (option?.label ?? "").includes(input)
+                        }
+                        filterSort={(optionA: any, optionB: any) =>
+                          (optionA?.label ?? "")
+                            .toLowerCase()
+                            .localeCompare((optionB?.label ?? "").toLowerCase())
+                        }
+                        //   onChange={(e: any) => {
+                        //     //   console.log(e);
+                        //     //   setRole(e);
+                        //   }}
+                        //   options={reportPeriodList}
+
+                        options={reportPeriodList}
+                        onChange={handleReportTypeChange}
+                      />
+                    </Col>
+                  </FormGroup>
+
+                  <FormGroup
+                    className="col-md-6 create-group"
+                    style={{ marginTop: "-25px" }}
+                  >
+                    <div>
+                      <Label>Devices</Label>
+                    </div>
+                    <CustomDropdown
+                      data={dropDownDevices}
+                      selectedItems={selectedItems}
+                      setSelectedItems={setSelectedItems}
                     />
-                  </Col>
-                </FormGroup>
-                <div></div>
-                <FormGroup
-                  className="col-md-6 create-group"
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                  }}
+                    {/* <Select
+                      // showSearch
+                      // style={{ width: "100%", height: 36 }}
+                      // placeholder="Select Type"
+                      // optionFilterProp="children"
+                      // filterOption={(input: any, option: any) =>
+                      //   (option?.label ?? "").includes(input)
+                      // }
+                      // filterSort={(optionA: any, optionB: any) =>
+                      //   (optionA?.label ?? "")
+                      //     .toLowerCase()
+                      //     .localeCompare((optionB?.label ?? "").toLowerCase())
+                      // }
+                      // onChange={(e: any) => {
+                      //   console.log(e);
+                      //   setType(e);
+                      // }}
+                      // options={reportsTypeList}
+                      defaultValue="Select an option"
+                      style={{ width: "100%", height: 36 }}
+                      onChange={(e: any) => {
+                        // setSelectedOption(value);
+                        console.log("e", e);
+                      }}
+                    >
+                      <OptGroup>
+                        <Option>
+                          <input
+                            type="text"
+                            value="abc"
+                            // onChange={(e) => setSearchValue(e.target.value)}
+                            placeholder="Search..."
+                          />
+                        </Option>
+                      </OptGroup>
+
+                      {dropDownDevices.map((group: any) => (
+                        <OptGroup
+                          label={
+                            <strong
+                              style={{
+                                background: "lightgray",
+                                display: "block",
+                                padding: "4px 8px",
+                                color: "white",
+                              }}
+                            >
+                              {group.title}
+                            </strong>
+                          }
+                          key={group.title}
+                        >
+                          {group.items.map((item: any, index: any) => (
+                            <Option value={item._id} key={item._id}>
+                              {item.name}
+                            </Option>
+                          ))}
+                        </OptGroup>
+                      ))}
+                    </Select> */}
+                  </FormGroup>
+                  <FormGroup
+                    className="col-md-6 create-group"
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                    }}
+                  >
+                    <div>Date From:</div>
+                    <Col md={8}>
+                      <input
+                        className="form-control"
+                        type="date"
+                        value={startDate}
+                        onChange={(e) => {
+                          setStartDate(e.target.value);
+                          console.log("e", e.target.value);
+                        }}
+                      />
+                    </Col>
+                  </FormGroup>
+                  <div></div>
+                  <FormGroup
+                    className="col-md-6 create-group"
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                    }}
+                  >
+                    <div>Date To:</div>
+                    <Col md={8}>
+                      <input
+                        className="form-control"
+                        type="date"
+                        value={endDate}
+                        onChange={(e) => {
+                          setEndDate(e.target.value);
+                          console.log("e", e.target.value);
+                        }}
+                      />
+                    </Col>
+                  </FormGroup>
+                </Row>
+                <Button color="primary" className="me-1">
+                  {loading ? "Loading ..." : `Generate`}
+                </Button>
+                &nbsp;&nbsp;
+                <Button
+                  disabled={loading ? true : false}
+                  color="secondary"
+                  onClick={addToggle}
                 >
-                  <div>Date From:</div>
-                  <Col md={8}>
-                    <input
-                      className="form-control"
-                      type="date"
-                      value={startDate}
-                    />
-                  </Col>
-                </FormGroup>
-                <div></div>
-                <FormGroup
-                  className="col-md-6 create-group"
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                  }}
-                >
-                  <div>Date To:</div>
-                  <Col md={8}>
-                    <input
-                      className="form-control"
-                      type="date"
-                      value={endDate}
-                    />
-                  </Col>
-                </FormGroup>
-              </Row>
-              <Button color="primary" className="me-1">
-                {loading ? "Loading ..." : `Generate`}
-              </Button>
-              &nbsp;&nbsp;
-              <Button
-                disabled={loading ? true : false}
-                color="secondary"
-                onClick={addToggle}
-              >
-                Cancel
-              </Button>
-            </form>
+                  Cancel
+                </Button>
+              </form>
+            )}
           </ModalBody>
         </Modal>
       </div>

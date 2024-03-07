@@ -27,6 +27,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setNoDataFound } from "../../ReaduxToolkit/Reducer/NoDataFoundSlice";
 import CompanyProfile from "../../assets/companyProfile.png";
 import Swal from "sweetalert2";
+import Loader from "../Loader/Loader";
 
 const Companies = () => {
   const dispatch = useDispatch();
@@ -34,6 +35,7 @@ const Companies = () => {
   const { companies, filterCompanies } = useSelector(
     (state: any) => state.companies
   );
+  const [loading, setLoading] = useState(true);
   // const [filteredCountries, setFilteredCountries]: any = useState([]);
 
   const filterCompaniess = (e: any) => {
@@ -49,11 +51,6 @@ const Companies = () => {
     console.log(filtered);
   };
 
-  // const [modal, setModal] = useState(false);
-  // const toggle = () => {
-  //   setModal(!modal);
-  // };
-
   useEffect(() => {
     dispatch(setCompaniesStart());
     getAll({ url: "super-admin/get-all-companies" }).then((data: any) => {
@@ -65,9 +62,11 @@ const Companies = () => {
           timer: 2000,
           showConfirmButton: false,
         });
+
         dispatch(setCompaniesEnd());
         dispatch(setCompanies([]));
         dispatch(setFilterCompanies([]));
+        setLoading(false);
         return;
       }
       dispatch(setCompaniesEnd());
@@ -77,6 +76,7 @@ const Companies = () => {
           console.log("hhg");
           dispatch(setCompanies(data.data));
           dispatch(setFilterCompanies(data.data));
+          setLoading(false);
         }
       }
     });
@@ -98,7 +98,6 @@ const Companies = () => {
       if (data !== undefined) {
         if (data.success) {
           console.log("hhg");
-
           dispatch(setPermissions(data.data));
         }
       }
@@ -180,7 +179,21 @@ const Companies = () => {
             </Col>
           </Card>
         </Col>
-        {companies.length > 0 ? (
+        {loading ? (
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              height: "80vh",
+              backgroundColor: "white",
+              alignItems: "center",
+            }}
+          >
+            <div style={{ textAlign: "center" }}>
+              <Loader />
+            </div>
+          </div>
+        ) : companies.length > 0 ? (
           <Row className="user-cards-items user-card-wrapper">
             {companies.map((item: any, index: any) => (
               <Col

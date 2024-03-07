@@ -80,6 +80,9 @@ const ResponseForm: React.FC<PropsTypes> = ({
                   console.log("length --- >", data.data.length);
                   dispatch(setAssignedAlerts(data.data));
                 }
+                if (data.statusCode == 404) {
+                  dispatch(setAssignedAlerts([]));
+                }
               }
             });
             getAll({
@@ -92,6 +95,10 @@ const ResponseForm: React.FC<PropsTypes> = ({
                   console.log("length --- >", data.data.length);
                   dispatch(setCompletedAlerts(data.data));
                 }
+                // if (!data.success) {
+                //   console.log("length --- >", data.data.length);
+                //   dispatch(setAssignedAlerts([]));
+                // }
               }
             });
           }

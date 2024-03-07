@@ -8,6 +8,7 @@ import { getAll } from "./Api";
 import { setUserPersonalizationData } from "./ReaduxToolkit/Reducer/PersonalizationSlice";
 import { setActiveCRMModules } from "./ReaduxToolkit/Reducer/CRMModuleSlice";
 import { getUserRole } from "./Api/globals";
+import { setPermissions } from "./ReaduxToolkit/Reducer/CompanySlice";
 const App = () => {
   const dispatch = useDispatch();
   useEffect(() => {
@@ -67,8 +68,19 @@ const App = () => {
           }
         }
       });
+
+      // getAll({ url: "permissions/get-all-permissions" }).then((data: any) => {
+      //   console.log("api call --- >", data);
+      //   if (data !== undefined) {
+      //     if (data.success) {
+      //       console.log("hhg");
+      //       dispatch(setPermissions(data.data));
+      //     }
+      //   }
+      // });
     }
   }, []);
+
   return (
     <>
       <Provider store={Store}>

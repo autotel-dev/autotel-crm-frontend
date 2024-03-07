@@ -22,27 +22,32 @@ const AssignedAlerts = () => {
   const [rowindex, setRowIndex] = useState(null);
   const [liveAlertAssigned, setLiveAlertAssigned] = useState(false);
 
+  // useEffect(() => {
+  //   if (rowindex !== null) {
+  //     setClickedRow(rowindex);
+  //     setTimeout(() => {
+  //       // After 1 second, reset the clickedRow state to null to dismiss the row completely
+  //       setDataList([
+  //         ...assignedAlerts.slice(0, rowindex),
+  //         ...assignedAlerts.slice(rowindex + 1),
+  //       ]);
+  //       setRowIndex(null);
+  //       setClickedRow(null);
+  //     }, 1000);
+  //   } else {
+  //     setLiveAlertAssigned(true);
+  //     setDataList([...assignedAlerts.slice(0, dataList.length)]);
+  //     setTimeout(() => {
+  //       setLiveAlertAssigned(false);
+  //     }, 1000);
+  //   }
+  // }, [assignedAlerts]);
+
   useEffect(() => {
-    if (rowindex !== null) {
-      setClickedRow(rowindex);
-      setTimeout(() => {
-        // After 1 second, reset the clickedRow state to null to dismiss the row completely
-        setDataList([
-          ...assignedAlerts.slice(0, rowindex),
-          ...assignedAlerts.slice(rowindex + 1),
-        ]);
-        setRowIndex(null);
-        setClickedRow(null);
-      }, 1000);
-    } else {
-      setLiveAlertAssigned(true);
-      setDataList([...assignedAlerts.slice(0, dataList.length)]);
-      setTimeout(() => {
-        setLiveAlertAssigned(false);
-      }, 1000);
+    if (assignedAlerts.length < 12) {
+      setDataList(assignedAlerts.slice(0, 12)); // Initially display the first 6 elements
     }
   }, [assignedAlerts]);
-
   useEffect(() => {
     setDataList(assignedAlerts.slice(0, 12)); // Initially display the first 6 elements
   }, []);
@@ -93,98 +98,76 @@ const AssignedAlerts = () => {
                 </tr>
               </thead>
               <tbody>
-                <AnimatePresence>
-                  {dataList.length == 0 ? (
-                    <tr>
-                      <td colSpan={6} style={{ fontSize: "25px" }}>
-                        No Assigned Alerts Found
+                {dataList.length == 0 ? (
+                  <tr>
+                    <td colSpan={6} style={{ fontSize: "25px" }}>
+                      No Assigned Alerts Found
+                    </td>
+                  </tr>
+                ) : (
+                  dataList.map((data: any, index: any) => (
+                    <tr
+                      style={{
+                        cursor: "pointer",
+                      }}
+                      key={index}
+                      onClick={async () => {
+                        // setRowIndex(index);
+
+                        const serverInfo = serverCredentials(data.server);
+                        console.log("serverInfo", serverInfo);
+                        setBasicTab("1");
+                        setIsUpdateModalOpen(true);
+                        console.log("isUpdateModalOpen: ", isUpdateModalOpen);
+                        const sendData = {
+                          eventId: data._id,
+                          serverId: serverInfo?.element.serverId,
+                          serverHashKey: serverInfo?.element.serverHashKey,
+                          deviceId: data.deviceId,
+                        };
+                        console.log(sendData);
+                        try {
+                          await create(sendData, {
+                            url: "alert-events/get-alert-event-by-id",
+                          }).then((data: any) => {
+                            console.log(data);
+                            if (data.success) {
+                              dispatch(setModalData(data.data));
+                            }
+                          });
+                          // Handle successful post creation (e.g., show a success message, redirect, etc.)
+                        } catch (error: any) {
+                          // Handle error (e.g., show an error message)
+                          dispatch(setModalData(undefined));
+                          console.error("Error creating post:", error);
+                        }
+                      }}
+                    >
+                      <td>{data.eventId}</td>
+                      <td>
+                        <div className="d-flex">
+                          <div className="flex-grow-1 ms-2">
+                            <H4>{data.deviceName}</H4>
+                            <span style={{ fontSize: "10px" }}>
+                              {data.createdAt.toString().slice(0, 10) +
+                                " " +
+                                data.createdAt.toString().slice(11, 19)}
+                            </span>
+                          </div>
+                        </div>
+                      </td>
+
+                      <td className={`txt-primary`}>{data.message}</td>
+                      <td>{data.type}</td>
+                      <td>{data.message}</td>
+                      <td>
+                        {data.address == null && data.address == undefined
+                          ? "N/A"
+                          : data.address}
                       </td>
                     </tr>
-                  ) : (
-                    dataList.map((data: any, index: any) => (
-                      <motion.tr
-                        style={{
-                          cursor: "pointer",
-                        }}
-                        initial={{ opacity: 1 }}
-                        animate={{
-                          opacity: clickedRow === index ? 0 : 1,
-                          y:
-                            clickedRow === index
-                              ? -100
-                              : liveAlertAssigned
-                              ? 80
-                              : 0,
-                        }}
-                        exit={{ opacity: 0, height: 0 }}
-                        transition={{ duration: 1 }}
-                        key={index}
-                        onClick={async () => {
-                          setRowIndex(index);
-
-                          const serverInfo = serverCredentials(data.server);
-                          console.log("serverInfo", serverInfo);
-                          setBasicTab("1");
-                          setIsUpdateModalOpen(true);
-                          console.log("isUpdateModalOpen: ", isUpdateModalOpen);
-                          const sendData = {
-                            eventId: data._id,
-                            serverId: serverInfo?.element.serverId,
-                            serverHashKey: serverInfo?.element.serverHashKey,
-                            deviceId: data.deviceId,
-                          };
-                          console.log(sendData);
-                          try {
-                            await create(sendData, {
-                              url: "alert-events/get-alert-event-by-id",
-                            }).then((data: any) => {
-                              console.log(data);
-                              if (data.success) {
-                                dispatch(setModalData(data.data));
-                              }
-                            });
-                            // Handle successful post creation (e.g., show a success message, redirect, etc.)
-                          } catch (error: any) {
-                            // Handle error (e.g., show an error message)
-                            dispatch(setModalData(undefined));
-                            console.error("Error creating post:", error);
-                          }
-                          // setTimeout(() => {
-                          //   setDataList((prevData: any) =>
-                          //     prevData.filter(
-                          //       (item: any, i: any) => i !== index
-                          //     )
-                          //   );
-                          //   setClickedRow(null);
-                          // }, 1000);
-                        }}
-                      >
-                        <td>{data.eventId}</td>
-                        <td>
-                          <div className="d-flex">
-                            <div className="flex-grow-1 ms-2">
-                              <H4>{data.deviceName}</H4>
-                              <span style={{ fontSize: "10px" }}>
-                                {data.createdAt.toString().slice(0, 10) +
-                                  " " +
-                                  data.createdAt.toString().slice(11, 19)}
-                              </span>
-                            </div>
-                          </div>
-                        </td>
-
-                        <td className={`txt-primary`}>{data.message}</td>
-                        <td>{data.type}</td>
-                        <td>{data.message}</td>
-                        <td>
-                          {data.address == null && data.address == undefined
-                            ? "N/A"
-                            : data.address}
-                        </td>
-                      </motion.tr>
-                    ))
-                  )}
-                </AnimatePresence>
+                  ))
+                )}
               </tbody>
             </Table>
             <AssignedAlertModal

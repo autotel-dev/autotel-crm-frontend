@@ -45,6 +45,8 @@ const UsersList = () => {
   }, []);
 
   useEffect(() => {
+    dispatch(setOperators([]));
+    dispatch(setFilterOperators([]));
     dispatch(setOperatorsStart());
     getAll({ url: "operator/get-all-operators" }).then((data: any) => {
       console.log("api call --- >", data);
