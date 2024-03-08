@@ -10,9 +10,11 @@ import successAlert from "../Alerts/SuccessAlert";
 import errorAlert from "../Alerts/ErrorAlert";
 import { useDispatch } from "react-redux";
 import { setActiveCRMModules } from "../../ReaduxToolkit/Reducer/CRMModuleSlice";
-import { getUserRole } from "../../Api/globals";
+import { getOperatorCompanyUserId, getUserRole } from "../../Api/globals";
 import Swal from "sweetalert2";
 import { setUserPersonalizationData } from "../../ReaduxToolkit/Reducer/PersonalizationSlice";
+import { setPermissions } from "../../ReaduxToolkit/Reducer/CompanySlice";
+import { setUserPermissions } from "../../ReaduxToolkit/Reducer/PermissionSlice";
 
 interface loginTypes {
   emailAddress: string; // Change 'boolean' to the actual type of isVisible
@@ -47,7 +49,7 @@ const CommonForm = ({ alignLogo }: CommonFormPropsType) => {
       setLoading(true);
       console.log(loginData);
       try {
-        await login(loginData).then((data: any) => {
+        await login(loginData).then(async (data: any) => {
           console.log("response: ", data);
           setLoading(false);
           if (data == undefined) {
@@ -82,17 +84,64 @@ const CommonForm = ({ alignLogo }: CommonFormPropsType) => {
             const token = data.data.authToken;
             console.log("response: ", data.data);
             console.log("token: ", token);
-            localStorage.setItem("userId", data.data.userId);
             localStorage.setItem("token", token);
+            if (getUserRole() == "OPERATOR") {
+              localStorage.setItem("userId", getOperatorCompanyUserId());
+            } else {
+              localStorage.setItem("userId", data.data.userId);
+            }
+           
             getAll({
               url:
-                getUserRole() == "COMPANY"
-                  ? "company/get-allowed-modules"
+                getUserRole() == "COMPANY" || getUserRole() == "OPERATOR"
+                  ? "user/get-allowed-modules"
                   : "crm-module/get-all-active-modules",
             }).then((data: any) => {
               console.log("active Modules --- >", data);
 
               if (data !== undefined) {
+                if (!data.success) {
+                  console.log("hhg");
+                  const userId = localStorage.getItem("userId");
+                  console.log(userId);
+                  dispatch(setActiveCRMModules([]));
+
+                  getAll({
+                    url:
+                      userId == null && userId == undefined
+                        ? "super-admin/get-personalization"
+                        : `company/get-personalization/${userId}`,
+
+                    // url: "super-admin/get-personalization",
+                  }).then((parentData: any) => {
+                    console.log("api call --- >", parentData);
+                    if (parentData == undefined) {
+                      Swal.fire({
+                        text: `${parentData.message}`,
+                        icon: "error",
+                        timer: 2000,
+                        showConfirmButton: false,
+                      });
+                      setLoading(false);
+                      dispatch(setUserPersonalizationData(null));
+                    }
+
+                    if (parentData !== undefined) {
+                      if (parentData.success) {
+                        dispatch(setUserPersonalizationData(parentData.data));
+                        setLoading(false);
+                      }
+                      if (!parentData.success) {
+                        setLoading(false);
+                        dispatch(setUserPersonalizationData(null));
+                      }
+                    }
+                  });
+                  navigate(
+                    `${process.env.PUBLIC_URL}/dashboards/shoppingplace`
+                  );
+                }
+
                 if (data.success) {
                   console.log("hhg");
                   const userId = localStorage.getItem("userId");
@@ -138,6 +187,22 @@ const CommonForm = ({ alignLogo }: CommonFormPropsType) => {
                 }
               }
             });
+
+            if (getUserRole() == "COMPANY" || getUserRole() == "OPERATOR") {
+              getAll({ url: "user/get-permissions" }).then(
+                (data: any) => {
+                  console.log("api call --- >", data);
+                  if (data !== undefined) {
+                    if (data.success) {
+                      console.log("hhg");
+                      dispatch(
+                        setUserPermissions(data.data.allowedPermissions)
+                      );
+                    }
+                  }
+                }
+              );
+            }
           }
 
           reset({

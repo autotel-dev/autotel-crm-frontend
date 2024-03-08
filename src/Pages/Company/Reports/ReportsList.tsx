@@ -24,6 +24,8 @@ import ViewModal from "./ViewModal/ViewModal";
 import { Menu, Dropdown, Button, message, Space, Tooltip } from "antd";
 import { DownOutlined, UserOutlined } from "@ant-design/icons";
 import { setReports } from "../../../ReaduxToolkit/Reducer/ReportsSlice";
+import { jsPDF } from "jspdf";
+import "jspdf-autotable";
 
 const ReportsList = () => {
   const { reports } = useSelector((state: any) => state.reports);
@@ -49,6 +51,9 @@ const ReportsList = () => {
     if (selectedTypes[index] == "Excel") {
       xlsx(excelData, settings);
     }
+    // else if (selectedTypes[index] == "PDF") {
+    //   downloadPDF();
+    // }
 
     // Perform your onClick logic here
     console.log(`Button clicked with type: ${selectedTypes}`);
@@ -69,13 +74,131 @@ const ReportsList = () => {
   const [dataList, setDataList] = useState([]);
   const [tableHeader, setTableHeader] = useState([]);
 
+  const pdfData = {
+    reportTableHeaders: [
+      "Event Id",
+      "Device Id",
+      "Device Name",
+      "Latitude",
+      "Longitude",
+      "Speed",
+      "Type",
+      "Message",
+      "User Role",
+      "Completion Response",
+      "Alert Event Close Date",
+      "Created At",
+    ],
+    reportData: [
+      {
+        "Event Id": "abc",
+        "Device Id": "abc",
+        "Device Name": "abc",
+        Latitude: "abc",
+        Longitude: "abc",
+        Speed: "abc",
+        Type: "abc",
+        Message: "abc",
+        "User Role": "abc",
+        "Completion Response": "abc",
+        "Alert Event Close Date": "abc",
+        "Created At": "abc",
+      },
+      {
+        "Event Id": "abc",
+        "Device Id": "abc",
+        "Device Name": "abc",
+        Latitude: "abc",
+        Longitude: "abc",
+        Speed: "abc",
+        Type: "abc",
+        Message: "abc",
+        "User Role": "abc",
+        "Completion Response": "abc",
+        "Alert Event Close Date": "abc",
+        "Created At": "abc",
+      },
+      {
+        "Event Id": "abc",
+        "Device Id": "abc",
+        "Device Name": "abc",
+        Latitude: "abc",
+        Longitude: "abc",
+        Speed: "abc",
+        Type: "abc",
+        Message: "abc",
+        "User Role": "abc",
+        "Completion Response": "abc",
+        "Alert Event Close Date": "abc",
+        "Created At": "abc",
+      },
+    ],
+  };
+
+  const downloadPDF = () => {
+    const doc = new jsPDF();
+
+    // Construct HTML for the table
+    const tableHTML = `
+      <table>
+        <thead>
+          <tr>
+            ${pdfData.reportTableHeaders
+              .map((header) => `<th>${header}</th>`)
+              .join("")}
+          </tr>
+        </thead>
+        <tbody>
+          ${pdfData.reportData
+            .map(
+              (row) => `
+            <tr>
+              ${Object.values(row)
+                .map((cell) => `<td>${cell}</td>`)
+                .join("")}
+            </tr>
+          `
+            )
+            .join("")}
+        </tbody>
+      </table>
+    `;
+
+    // Convert HTML to PDF
+    doc.html(tableHTML, {
+      callback: (pdf) => {
+        pdf.save("report.pdf");
+      },
+    });
+  };
+  // const downloadPDF = () => {
+  //   const doc = new jsPDF();
+
+  //   // Construct table data
+  //   const tableData = pdfData.reportData.map((data: any) =>
+  //     pdfData.reportTableHeaders.map(
+  //       (header: any) => data[header.toLowerCase()]
+  //     )
+  //   );
+  //   console.log(tableData);
+
+  //   // // Add headers
+  //   // doc.({
+  //   //   head: [pdfData.reportTableHeaders],
+  //   //   body: tableData,
+  //   // });
+
+  //   // Save PDF
+  //   doc.save("report.pdf");
+  // };
+
   const renderTableRows = () => {
     return reports.map((row: any, index: any) => (
       <tr key={index}>
         <td style={{ width: "20%" }}>{index + 1}</td>
         <td style={{ width: "20%" }}>{row.title}</td>
-        <td style={{ width: "15%" }}>{row.startDate}</td>
-        <td style={{ width: "15%" }}>{row.endDate}</td>
+        <td style={{ width: "15%" }}>{row.startDate.slice(0, 10)}</td>
+        <td style={{ width: "15%" }}>{row.endDate.slice(0, 10)}</td>
         <td>
           <div style={{ display: "flex", justifyContent: "center" }}>
             <div style={{ backgroundColor: "green", borderRadius: "5px" }}>

@@ -13,7 +13,11 @@ import Loader from "../../../Loader/Loader";
 import Attachements from "./Personalization/Personalization";
 import Swal from "sweetalert2";
 import Personalization from "./Personalization/Personalization";
-import { getUserId, getUserRole } from "../../../../Api/globals";
+import {
+  getOperatorCompanyUserId,
+  getUserId,
+  getUserRole,
+} from "../../../../Api/globals";
 import { setUserPersonalizationData } from "../../../../ReaduxToolkit/Reducer/PersonalizationSlice";
 
 const Settings = () => {
@@ -36,6 +40,8 @@ const Settings = () => {
       url:
         getUserRole() == "COMPANY"
           ? `company/get-personalization/${getUserId()}`
+          : getUserRole() == "OPERATOR"
+          ? `company/get-personalization/${getOperatorCompanyUserId()}`
           : "super-admin/get-personalization",
     }).then((parentData: any) => {
       console.log("api call --- >", parentData);

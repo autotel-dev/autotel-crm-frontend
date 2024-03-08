@@ -21,6 +21,26 @@ export interface PropsTypes {
 }
 const SidebarMain = ({ setOpen, open }: PropsTypes) => {
   const { crmActiveModules } = useSelector((state: any) => state.crmModules);
+  const { userPermissions } = useSelector(
+    (state: any) => state.userPermissions
+  );
+  console.log("userPermissions:", userPermissions);
+  const user = userPermissions.permissions.find(
+    (item: any) => item.title === "User"
+  );
+
+  console.log("user", user);
+  const support = userPermissions.permissions.find(
+    (item: any) => item.title === "Support"
+  );
+
+  console.log("support", support);
+  const abc = userPermissions.permissions.find(
+    (item: any) => item.title === "ABC"
+  );
+
+  console.log("abc", abc);
+
   console.log("crmActiveModules", crmActiveModules);
 
   const SidebarMenuComponent: SidebarMenuTypes[] = [
@@ -202,6 +222,56 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
       link: `${process.env.PUBLIC_URL}/company/reports`,
     },
   ];
+
+  const OperatorSidebarMenuComponent: SidebarMenuTypes[] = [
+    {
+      title: "Dashboard",
+      svgIcon: "home",
+      link: `${process.env.PUBLIC_URL}/company/dashboard`,
+    },
+
+    {
+      title: "Modules",
+      svgIcon: "home",
+      subMenu: crmActiveModules.map((item: any, index: any) => {
+        return {
+          svgIcon: "bonus-kit",
+          title: `${item.name}`,
+          link: `${process.env.PUBLIC_URL}/company/modules${item.route}`,
+        };
+      }),
+    },
+
+    // {
+    //   title: "Users",
+    //   svgIcon: "home",
+    //   link: `${process.env.PUBLIC_URL}/company/users`,
+    // },
+    {
+      title: "Support",
+      svgIcon: "home",
+      link: `${process.env.PUBLIC_URL}/company/support`,
+    },
+  ];
+
+  const filteredCompanyMenu = CompanySidebarMenuComponent.filter((item) => {
+    if (item.title === user.title) {
+      return user.read;
+    } else if (item.title === support.title) {
+      return support.read;
+    } else {
+      return true;
+    }
+  });
+  const filteredOperatorMenu = OperatorSidebarMenuComponent.filter((item) => {
+    if (item.title === user.title) {
+      return user.read;
+    } else if (item.title === support.title) {
+      return support.read;
+    } else {
+      return true;
+    }
+  });
   const { sidebarIconType } = useAppSelector((state) => state.themeCustomizer);
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState<string[]>([]);
@@ -232,6 +302,7 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
       setDecodedToken(decodedToken);
     }
   }, []);
+
   return (
     <nav className="sidebar-main">
       {decodedToken !== null && (
@@ -296,7 +367,54 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
                       )}
                     </LI>
                   ))
-                : CompanySidebarMenuComponent.map((data, index) => (
+                : decodedToken.role == "OPERATOR"
+                ? filteredOperatorMenu.map((data, index) => (
+                    <LI className={`sidebar-list`} key={index}>
+                      <Link
+                        className={`sidebar-link sidebar-title ${
+                          sideMenu === data.title ? "active" : ""
+                        }`}
+                        to={data.link ? data.link : "#"}
+                        onClick={() => handleClick(data)}
+                      >
+                        <SVG
+                          className={`${sidebarIconType}-icon`}
+                          iconId={`${
+                            sidebarIconType === "fill" ? "fill-" : ""
+                          }${data.svgIcon}`}
+                        />
+                        <span>{t(data.title)}</span>
+                      </Link>
+                      {data.link ? (
+                        <div></div>
+                      ) : (
+                        !isClose && (
+                          <UL
+                            className="sidebar-submenu custom-scrollbar simple-list"
+                            style={{
+                              display: `${
+                                data.title === sideMenu && !data.link
+                                  ? "block"
+                                  : "block"
+                              }`,
+                            }}
+                          >
+                            {!data.link && (
+                              <MenuList
+                                subMenuData={data}
+                                isOpen={isOpen}
+                                setIsOpen={setIsOpen}
+                                level={0}
+                                isClose={isClose}
+                                setIsClose={setIsClose}
+                              />
+                            )}
+                          </UL>
+                        )
+                      )}
+                    </LI>
+                  ))
+                : filteredCompanyMenu.map((data, index) => (
                     <LI className={`sidebar-list`} key={index}>
                       <Link
                         className={`sidebar-link sidebar-title ${

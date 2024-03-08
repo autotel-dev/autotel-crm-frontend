@@ -8,12 +8,16 @@ import UsersListNav from "./UsersListNav";
 import UsersList from "./UsersList";
 import { setOperators } from "../../../ReaduxToolkit/Reducer/OperatorSlice";
 import { getAll } from "../../../Api";
-import { setRoles } from "../../../ReaduxToolkit/Reducer/RolesSlice";
+import {
+  setFilterRoles,
+  setRoles,
+} from "../../../ReaduxToolkit/Reducer/RolesSlice";
 
 const Countries = () => {
   const dispatch = useDispatch();
   const [searchValue, setSearchValue] = useState("");
   const { filterOperators } = useSelector((state: any) => state.operators);
+  
   // const [filteredCountries, setFilteredCountries]: any = useState([]);
 
   const filterOperatorss = (e: any) => {
@@ -36,6 +40,7 @@ const Countries = () => {
         if (data.success) {
           console.log("hhg");
           dispatch(setRoles(data.data));
+          dispatch(setFilterRoles(data.data));
         }
       }
     });

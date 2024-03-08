@@ -20,6 +20,7 @@ import { Select } from "antd";
 import Swal from "sweetalert2";
 
 const CreateNewUser = () => {
+  const { crmActiveModules } = useSelector((state: any) => state.crmModules);
   const [decodedToken, setDecodedToken]: any = useState(null);
   const authToken = localStorage.getItem("token");
   useEffect(() => {
@@ -32,6 +33,7 @@ const CreateNewUser = () => {
   const dispatch = useDispatch();
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [allowedModules, setAllowedModules]: any = useState([]);
   const {
     register,
     handleSubmit,
@@ -50,6 +52,7 @@ const CreateNewUser = () => {
         company: "",
       });
       setRole("");
+      setAllowedModules([]);
     }
   };
 
@@ -64,6 +67,7 @@ const CreateNewUser = () => {
         isActive: true,
         company: decodedToken.userId,
         subRole: role,
+        allowedModules: allowedModules,
       };
       console.log(operator);
       try {
@@ -154,6 +158,20 @@ const CreateNewUser = () => {
     });
     setRolesList(tempRolesList);
   }, []);
+
+  const handleModuleClick = (moduleId: any) => {
+    const index = allowedModules.findIndex(
+      (module: any) => module === moduleId
+    );
+    if (index === -1) {
+      setAllowedModules([...allowedModules, moduleId]);
+    } else {
+      const updatedItems = allowedModules.filter(
+        (module: any) => module !== moduleId
+      );
+      setAllowedModules(updatedItems);
+    }
+  };
 
   return (
     <Col md={6}>
@@ -251,7 +269,7 @@ const CreateNewUser = () => {
                   />
                 </FormGroup>
 
-                <Label>Given Permissions</Label>
+                {role !== "" && <Label>Given Permissions</Label>}
                 <FormGroup
                   className="col-md-12 create-group"
                   style={{
@@ -414,6 +432,81 @@ const CreateNewUser = () => {
                         }
                       )
                     )}
+                </FormGroup>
+                <Label>Allowed Modules</Label>
+                <FormGroup
+                  className="col-md-12 create-group"
+                  style={{
+                    overflowY: "auto",
+                    maxHeight: "25vh", // Subtract scrollbar width from max height
+                    WebkitOverflowScrolling: "touch", // Enable momentum scrolling on iOS
+                    scrollbarWidth: "thin", // Specify scrollbar width
+                    WebkitBorderRadius: "5px !important", // For WebKit browsers (Chrome, Safari)
+                    MozBorderRadius: "5px !important", // For Mozilla Firefox
+                    borderRadius: "5px !important", // For other browsers
+                    scrollbarColor: "lightgray transparent", // Specify scrollbar color
+                  }}
+                >
+                  <Row>
+                    {crmActiveModules.map((module: any, index: any) => {
+                      return (
+                        <div key={index}>
+                          <Row>
+                            <Col
+                              key={index}
+                              xl={7}
+                              lg={7}
+                              md={9}
+                              sm={12}
+                              xs={12}
+                              // xs={12}
+                              style={{
+                                display: "flex",
+                                justifyContent: "space-between",
+                                alignItems: "center",
+                              }}
+                            >
+                              <span
+                                style={{ fontSize: "17px", margin: "15px 0px" }}
+                              >
+                                {module.name}
+                              </span>
+                              <div>
+                                <label
+                                  style={{
+                                    display: "inline-block",
+                                    position: "relative",
+                                    cursor: "pointer",
+                                    marginRight: "25px",
+                                    fontSize: "18px",
+                                  }}
+                                  onClick={(e) => e.stopPropagation()}
+                                >
+                                  <input
+                                    type="checkbox"
+                                    name="key"
+                                    value="value"
+                                    checked={allowedModules.some(
+                                      (selectedModule: any) =>
+                                        selectedModule === module._id
+                                    )}
+                                    onChange={() => {
+                                      handleModuleClick(module._id);
+                                    }}
+                                    style={{ display: "none" }} // Hide the default checkbox
+                                  />
+                                  <span
+                                    onClick={(e) => e.stopPropagation()}
+                                    className="green"
+                                  ></span>
+                                </label>
+                              </div>
+                            </Col>
+                          </Row>
+                        </div>
+                      );
+                    })}
+                  </Row>
                 </FormGroup>
               </Row>
               <Button color="primary" className="me-1">

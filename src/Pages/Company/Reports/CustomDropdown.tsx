@@ -1,77 +1,103 @@
 import React, { useEffect, useState } from "react";
 import "./CustomDropdown.css"; // Import your CSS file for styling
+import { Data } from "@react-google-maps/api";
 
 interface PropsTypes {
   data: any;
-  selectedItems: any;
-  setSelectedItems: any;
+  selectedItems: any[];
+  setSelectedItems: React.Dispatch<React.SetStateAction<any[]>>;
 }
 
 const CustomDropdown: React.FC<PropsTypes> = ({
   data,
   selectedItems,
-  setSelectedItems = () => {},
-
-  // setValue
+  setSelectedItems,
 }) => {
   const [searchValue, setSearchValue] = useState("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-
-  const handleItemClick = (deviceId: any, name: any) => {
-    const index = selectedItems.findIndex(
-      (selectedItem: any) => selectedItem.name === name
-    );
-    if (index === -1) {
-      setSelectedItems([...selectedItems, { deviceId: deviceId, name: name }]);
-    } else {
-      const updatedItems = [...selectedItems];
-      updatedItems.splice(index, 1);
-      setSelectedItems(updatedItems);
-    }
-  };
+  console.log("data", data);
 
   const handleTitleClick = (group: any) => {
-    const allItems = group.items.map((item: any) => ({
-      deviceId: item.deviceId,
-      name: item.name,
-    }));
-    const selected = selectedItems.some(
-      (selectedItem: any) => selectedItem === group.title
+    const isGroupSelected = selectedItems.some(
+      (item) => item.title === group.title
     );
-
-    if (!selected) {
-      setSelectedItems([...selectedItems, ...allItems]);
+    if (!isGroupSelected) {
+      const newSelectedItems = [
+        ...selectedItems,
+        ...group.items.map((item: any) => ({
+          deviceId: item.id,
+          name: item.name,
+          title: item.title,
+        })),
+      ];
+      setSelectedItems(newSelectedItems);
     } else {
       const updatedItems = selectedItems.filter(
-        (item: any) => !allItems.some((i: any) => i.name === item.name)
+        (item) => item.title !== group.title
       );
       setSelectedItems(updatedItems);
     }
   };
+
+  const handleItemClick = (deviceId: any, name: any, group: any) => {
+    const index = selectedItems.findIndex(
+      (selectedItem) => selectedItem.name === name
+    );
+    if (index === -1) {
+      setSelectedItems([
+        ...selectedItems,
+        { deviceId: deviceId, name, title: group.title },
+      ]);
+    } else {
+      const updatedItems = selectedItems.filter(
+        (selectedItem) => selectedItem.name !== name
+      );
+      setSelectedItems(updatedItems);
+    }
+  };
+  const handleDeselectAll = () => {
+    setSelectedItems([]);
+  };
+  const handleSelectAll = () => {
+    const allItems = data.flatMap((group: any) =>
+      group.items
+        .filter(
+          (item: any) =>
+            !selectedItems.some(
+              (selectedItem) => selectedItem.name === item.name
+            )
+        )
+        .map((item: any) => ({
+          deviceId: item.id,
+          name: item.name,
+          title: item.title,
+        }))
+    );
+    setSelectedItems([...selectedItems, ...allItems]);
+  };
+
   useEffect(() => {
     console.log("selectedItems", selectedItems);
   }, [selectedItems]);
+
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
     setSearchValue("");
   };
 
-  const filteredData = data.filter((group: any) => {
-    return (
-      group.title.toLowerCase().includes(searchValue.toLowerCase()) ||
-      group.items.some((item: any) =>
-        item.name.toLowerCase().includes(searchValue.toLowerCase())
-      )
+  const filteredData = data.map((group: any) => {
+    const filteredItems = group.items.filter((item: any) =>
+      item.name.toLowerCase().includes(searchValue.toLowerCase())
     );
-  });
+    return { ...group, items: filteredItems };
+  }).filter((group: any) => group.items.length > 0);
 
   return (
     <div className="custom-dropdown">
       <div className="dropdown-toggle" onClick={toggleDropdown}>
         <div className="selected-items">
-          {selectedItems.map((item: any) => `${item.name}`)}
+          {selectedItems.map((item: any) => `${item.name}, `)}
         </div>
-        {/* <div className={`arrow-icon ${isDropdownOpen ? "open" : ""}`}></div> */}
       </div>
       {isDropdownOpen && (
         <div className="dropdown-options">
@@ -82,13 +108,33 @@ const CustomDropdown: React.FC<PropsTypes> = ({
             placeholder="Search..."
             className="search-input"
           />
+          <div>
+            <button
+              onClick={(e: any) => {
+                e.preventDefault(); // Add this line
+                handleSelectAll();
+              }}
+            >
+              Select All
+            </button>
+            <button
+              onClick={(e: any) => {
+                e.preventDefault(); // Add this line
+                handleDeselectAll();
+              }}
+            >
+              Deselect All
+            </button>
+          </div>
           {filteredData.map((group: any) => (
             <div key={group.title} style={{ padding: "10px" }}>
               <div className="group-header">
                 <input
                   type="checkbox"
-                  checked={selectedItems.some(
-                    (selectedItem: any) => selectedItem === group.title
+                  checked={group.items.every((item: any) =>
+                    selectedItems.some(
+                      (selectedItem) => selectedItem.name === item.name
+                    )
                   )}
                   onChange={() => handleTitleClick(group)}
                 />
@@ -99,20 +145,20 @@ const CustomDropdown: React.FC<PropsTypes> = ({
                   key={item.id}
                   className={`item ${
                     selectedItems.some(
-                      (selectedItem: any) => selectedItem === item.name
+                      (selectedItem) => selectedItem.name === item.name
                     )
                       ? "selected"
                       : ""
                   }`}
-                  onClick={() => handleItemClick(item.deviceId, item.name)}
+                  onClick={() => handleItemClick(item.id, item.name, group)}
                   style={{ padding: "10px" }}
                 >
                   <input
                     type="checkbox"
                     checked={selectedItems.some(
-                      (selectedItem: any) => selectedItem.name === item.name
+                      (selectedItem) => selectedItem.name === item.name
                     )}
-                    onChange={() => handleItemClick(item.deviceId, item.name)}
+                    onChange={() => handleItemClick(item.id, item.name, group)}
                   />
                   <span>{`${item.name}`}</span>
                 </div>

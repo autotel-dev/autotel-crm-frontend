@@ -67,10 +67,10 @@ const Account = () => {
         if (parentData.success) {
           setUndefinedData(false);
           dispatch(setUserData(parentData.data.user));
-          if (getUserRole() === "SUPER_ADMIN") {
+          if (getUserRole() === "SUPER_ADMIN" || getUserRole() === "OPERATOR") {
             setServerPermissionsLoading(false);
             setUserDataLoading(false);
-          } else {
+          } else if (getUserRole() === "COMPANY") {
             // cnicFront
             getImage({
               url: `http://124.29.238.127:8080/${parentData.data.user.cnicFront.url}`,

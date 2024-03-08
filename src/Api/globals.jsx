@@ -30,3 +30,12 @@ export function getUserId() {
     return decodedToken.userId;
   }
 }
+
+export function getOperatorCompanyUserId() {
+  const authToken = localStorage.getItem("token");
+  if (authToken !== null) {
+    const decodedToken = jwtDecode(authToken);
+    console.log(decodedToken);
+    return decodedToken.company;
+  }
+}

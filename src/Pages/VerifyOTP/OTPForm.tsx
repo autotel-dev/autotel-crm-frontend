@@ -17,6 +17,8 @@ import { jwtDecode } from "jwt-decode";
 import { getUserRole } from "../../Api/globals";
 import { setUserPersonalizationData } from "../../ReaduxToolkit/Reducer/PersonalizationSlice";
 import { setActiveCRMModules } from "../../ReaduxToolkit/Reducer/CRMModuleSlice";
+import { setPermissions } from "../../ReaduxToolkit/Reducer/CompanySlice";
+import { setUserPermissions } from "../../ReaduxToolkit/Reducer/PermissionSlice";
 // import OTPInput, { ResendOTP } from "otp-input-react";
 
 export interface CommonFormPropsType {
@@ -87,10 +89,11 @@ const OTPForm = ({ alignLogo }: CommonFormPropsType) => {
             console.log("token: ", token);
             localStorage.setItem("userId", data.data.userId);
             localStorage.setItem("token", token);
+           
             getAll({
               url:
-                getUserRole() == "COMPANY"
-                  ? "company/get-allowed-modules"
+                getUserRole() == "COMPANY" || getUserRole() == "OPERATOR"
+                  ? "user/get-allowed-modules"
                   : "crm-module/get-all-active-modules",
             }).then((data: any) => {
               console.log("active Modules --- >", data);
@@ -141,6 +144,21 @@ const OTPForm = ({ alignLogo }: CommonFormPropsType) => {
                 }
               }
             });
+            if (getUserRole() == "COMPANY" || getUserRole() == "OPERATOR") {
+              getAll({ url: "user/get-permissions" }).then(
+                (data: any) => {
+                  console.log("api call --- >", data);
+                  if (data !== undefined) {
+                    if (data.success) {
+                      console.log("hhg");
+                      dispatch(
+                        setUserPermissions(data.data.allowedPermissions)
+                      );
+                    }
+                  }
+                }
+              );
+            }
           }
           // if (data.statusCode == 200) {
           //   const token = data.data.authToken;

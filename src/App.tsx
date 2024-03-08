@@ -9,6 +9,7 @@ import { setUserPersonalizationData } from "./ReaduxToolkit/Reducer/Personalizat
 import { setActiveCRMModules } from "./ReaduxToolkit/Reducer/CRMModuleSlice";
 import { getUserRole } from "./Api/globals";
 import { setPermissions } from "./ReaduxToolkit/Reducer/CompanySlice";
+import { setUserPermissions } from "./ReaduxToolkit/Reducer/PermissionSlice";
 const App = () => {
   const dispatch = useDispatch();
   useEffect(() => {
@@ -53,8 +54,8 @@ const App = () => {
 
       getAll({
         url:
-          getUserRole() == "COMPANY"
-            ? "company/get-allowed-modules"
+          getUserRole() == "COMPANY" || getUserRole() == "OPERATOR"
+            ? "user/get-allowed-modules"
             : "crm-module/get-all-active-modules",
       }).then((data: any) => {
         console.log("active Modules --- >", data);
@@ -68,16 +69,30 @@ const App = () => {
           }
         }
       });
-
-      // getAll({ url: "permissions/get-all-permissions" }).then((data: any) => {
-      //   console.log("api call --- >", data);
-      //   if (data !== undefined) {
-      //     if (data.success) {
-      //       console.log("hhg");
-      //       dispatch(setPermissions(data.data));
-      //     }
-      //   }
-      // });
+      if (getUserRole() == "COMPANY" || getUserRole() == "OPERATOR") {
+        getAll({ url: "user/get-permissions" }).then((data: any) => {
+          console.log("api call --- >", data);
+          if (data !== undefined) {
+            if (data.success) {
+              console.log("hhg");
+              dispatch(
+                setUserPermissions(data.data.allowedPermissions)
+              );
+            }
+          }
+        });
+      }
+      if (getUserRole() == "SUPER_ADMIN") {
+        getAll({ url: "permissions/get-all-permissions" }).then((data: any) => {
+          console.log("api call --- >", data);
+          if (data !== undefined) {
+            if (data.success) {
+              console.log("hhg");
+              dispatch(setPermissions(data.data));
+            }
+          }
+        });
+      }
     }
   }, []);
 
