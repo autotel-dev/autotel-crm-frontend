@@ -8,7 +8,7 @@ import SecuritySettings from "./SecuritySettings/SecuritySettings";
 import ServerPermissions from "./ServerPermissions.tsx/ServerPermissions";
 import { useEffect, useState } from "react";
 import { getAll, getImage } from "../../../../Api";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   setServerPermissions,
   setUserData,
@@ -20,6 +20,13 @@ import Swal from "sweetalert2";
 import AllowedModules from "./AllowedModules/AllowedModules";
 
 const Account = () => {
+  const { userPermissions } = useSelector(
+    (state: any) => state.userPermissions
+  );
+  var legalAttachements = userPermissions.find(
+    (item: any) => item.title === "Legal Documents"
+  );
+  console.log("legalAttachements", legalAttachements);
   const dispatch = useDispatch();
   const [userDataLoading, setUserDataLoading] = useState(true);
   const [serverPermissionsLoading, setServerPermissionsLoading] =
@@ -177,7 +184,7 @@ const Account = () => {
               <EditProfileForm isEdit={isEdit} setIsEdit={setIsEdit} />
               {/* <AddProjectsAndUpload /> */}
               {getUserRole() === "COMPANY" && <AllowedModules />}
-              {getUserRole() === "COMPANY" && (
+              {getUserRole() === "COMPANY" && legalAttachements?.read && (
                 <Attachements attachements={ticketImages} />
               )}
               {getUserRole() === "COMPANY" && <ServerPermissions />}

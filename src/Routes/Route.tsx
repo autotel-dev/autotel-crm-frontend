@@ -765,6 +765,8 @@ const routes = [
   {
     path: `${process.env.PUBLIC_URL}/company/modules/control-room`,
     Component: <ControlRoom />,
+      permission: true,
+    
   },
   // Users
   {
@@ -795,4 +797,10 @@ const routes = [
   },
 ];
 
+// const routesWithPrivate = routes.map(route => ({
+//   ...route,
+//   permission: false,
+// }));
+
 export default routes;
+

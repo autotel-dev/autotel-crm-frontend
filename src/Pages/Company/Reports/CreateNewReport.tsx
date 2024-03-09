@@ -23,7 +23,7 @@ import Loader from "../../Loader/Loader";
 import CustomDropdown from "./CustomDropdown";
 
 const CreateNewReport = ({ dropDownDevices }: any) => {
-  const { reports } = useSelector((state: any) => state.reports);
+  const { reports, reportsType } = useSelector((state: any) => state.reports);
   var tempReports: any = [...reports];
   const [decodedToken, setDecodedToken]: any = useState(null);
   const authToken = localStorage.getItem("token");
@@ -69,14 +69,14 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
   const [reportsTypeList, setReportsType] = useState([]);
   const [role, setRole] = useState("");
 
-  const typeList: any = [{ _id: 1, name: "Alert Events" }];
+  // const typeList: any = [reportsType];
   const [type, setType] = useState("");
   const tempReportsTypeList: any = [];
   useEffect(() => {
-    typeList.map((item: any, index: any) => {
+    reportsType.map((item: any, index: any) => {
       tempReportsTypeList.push({
-        value: `${item.name}`,
-        label: `${item.name}`,
+        value: `${item.endPoint}`,
+        label: `${item.title}`,
       });
     });
     setReportsType(tempReportsTypeList);
@@ -147,10 +147,25 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
         console.log("called");
         console.log("endDateTime", endDateTime);
         console.log("today", today);
-        const deviceIds: number[] = await selectedItems.map(
-          (device: any) => device.deviceId
-        );
-        console.log(deviceIds);
+        var deviceIds: number[];
+        if (selectedItems.length == 0) {
+          const allItems = await dropDownDevices.flatMap((group: any) =>
+            group.items.map((item: any) => ({
+              deviceId: item.id,
+              name: item.name,
+              title: item.title,
+            }))
+          );
+          console.log("allItems", allItems);
+
+          await setSelectedItems([...allItems]);
+          deviceIds = await selectedItems.map((device: any) => device.deviceId);
+          console.log(deviceIds);
+        } else {
+          deviceIds = await selectedItems.map((device: any) => device.deviceId);
+          console.log(deviceIds);
+        }
+        
 
         await create(
           {
@@ -161,9 +176,11 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
             deviceIds: deviceIds,
           },
           {
-            url: "reports/get-all-alert-events-report",
+            url: `reports${type}`,
           }
         ).then((data: any) => {
+          console.log("data", data);
+
           setLoading(false);
           if (data.success) {
             console.log(data);
@@ -190,6 +207,12 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
       } catch (error: any) {
         // Handle error (e.g., show an error message)
         console.error("Error creating post:", error);
+        setSelectedItems([]);
+        const yesterday = new Date();
+        yesterday.setDate(yesterday.getDate() - 1); // Subtract one day
+        setStartDate(yesterday.toISOString());
+        // setStartDate(new Date().toISOString());
+        setEndDate(new Date().toISOString());
         if (data == undefined) {
           Swal.fire({
             text: "Failed to create due to connection refused",

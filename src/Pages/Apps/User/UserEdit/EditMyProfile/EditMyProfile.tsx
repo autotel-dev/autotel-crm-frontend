@@ -33,6 +33,11 @@ interface PropTypes {
 }
 
 const EditMyProfile: React.FC<PropTypes> = ({ isEdit, setIsEdit }) => {
+  const { userPermissions } = useSelector(
+    (state: any) => state.userPermissions
+  );
+  var profile = userPermissions.find((item: any) => item.title === "Profile");
+  console.log("profile", profile);
   const { userData } = useSelector((state: any) => state.user);
   const [accountStatus, setAcountStatus] = useState(userData.accountStatus);
 
@@ -131,16 +136,18 @@ const EditMyProfile: React.FC<PropTypes> = ({ isEdit, setIsEdit }) => {
                 </div>
               </div>
             </FormGroup>
-            <div className="form-footer">
-              <Button
-                color="primary"
-                className="d-block"
-                disabled={isEdit}
-                onClick={() => setIsEdit(!isEdit)}
-              >
-                Edit
-              </Button>
-            </div>
+            {profile?.edit && (
+              <div className="form-footer">
+                <Button
+                  color="primary"
+                  className="d-block"
+                  disabled={isEdit}
+                  onClick={() => setIsEdit(!isEdit)}
+                >
+                  Edit
+                </Button>
+              </div>
+            )}
           </Form>
         </CardBody>
       </Card>

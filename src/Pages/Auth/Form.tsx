@@ -85,12 +85,13 @@ const CommonForm = ({ alignLogo }: CommonFormPropsType) => {
             console.log("response: ", data.data);
             console.log("token: ", token);
             localStorage.setItem("token", token);
+
             if (getUserRole() == "OPERATOR") {
               localStorage.setItem("userId", getOperatorCompanyUserId());
             } else {
               localStorage.setItem("userId", data.data.userId);
             }
-           
+
             getAll({
               url:
                 getUserRole() == "COMPANY" || getUserRole() == "OPERATOR"
@@ -98,60 +99,19 @@ const CommonForm = ({ alignLogo }: CommonFormPropsType) => {
                   : "crm-module/get-all-active-modules",
             }).then((data: any) => {
               console.log("active Modules --- >", data);
+              const userId = localStorage.getItem("userId");
 
               if (data !== undefined) {
                 if (!data.success) {
                   console.log("hhg");
-                  const userId = localStorage.getItem("userId");
                   console.log(userId);
                   dispatch(setActiveCRMModules([]));
-
-                  getAll({
-                    url:
-                      userId == null && userId == undefined
-                        ? "super-admin/get-personalization"
-                        : `company/get-personalization/${userId}`,
-
-                    // url: "super-admin/get-personalization",
-                  }).then((parentData: any) => {
-                    console.log("api call --- >", parentData);
-                    if (parentData == undefined) {
-                      Swal.fire({
-                        text: `${parentData.message}`,
-                        icon: "error",
-                        timer: 2000,
-                        showConfirmButton: false,
-                      });
-                      setLoading(false);
-                      dispatch(setUserPersonalizationData(null));
-                    }
-
-                    if (parentData !== undefined) {
-                      if (parentData.success) {
-                        dispatch(setUserPersonalizationData(parentData.data));
-                        setLoading(false);
-                      }
-                      if (!parentData.success) {
-                        setLoading(false);
-                        dispatch(setUserPersonalizationData(null));
-                      }
-                    }
-                  });
-                  navigate(
-                    `${process.env.PUBLIC_URL}/dashboards/shoppingplace`
-                  );
                 }
-
                 if (data.success) {
                   console.log("hhg");
-                  const userId = localStorage.getItem("userId");
                   console.log(userId);
                   dispatch(setActiveCRMModules(data.data));
-                  navigate(
-                    `${process.env.PUBLIC_URL}/dashboards/shoppingplace`
-                  );
 
-                  // getPerdonal Data
                   getAll({
                     url:
                       userId == null && userId == undefined
@@ -173,35 +133,35 @@ const CommonForm = ({ alignLogo }: CommonFormPropsType) => {
                     }
 
                     if (parentData !== undefined) {
-                      if (parentData.success) {
-                        dispatch(setUserPersonalizationData(parentData.data));
-                        setLoading(false);
-                      }
                       if (!parentData.success) {
                         setLoading(false);
                         dispatch(setUserPersonalizationData(null));
                       }
+                      if (parentData.success) {
+                        dispatch(setUserPersonalizationData(parentData.data));
+                      }
                     }
                   });
-                  // successAlert();
                 }
               }
             });
 
             if (getUserRole() == "COMPANY" || getUserRole() == "OPERATOR") {
-              getAll({ url: "user/get-permissions" }).then(
-                (data: any) => {
-                  console.log("api call --- >", data);
-                  if (data !== undefined) {
-                    if (data.success) {
-                      console.log("hhg");
-                      dispatch(
-                        setUserPermissions(data.data.allowedPermissions)
-                      );
-                    }
+              getAll({ url: "user/get-permissions" }).then((data: any) => {
+                console.log("api call --- >", data);
+                if (data !== undefined) {
+                  if (data.success) {
+                    console.log("hhg");
+                    dispatch(setUserPermissions(data.data.allowedPermissions));
+                    setLoading(false);
+                    navigate(
+                      `${process.env.PUBLIC_URL}/dashboards/shoppingplace`
+                    );
                   }
                 }
-              );
+              });
+            } else {
+              navigate(`${process.env.PUBLIC_URL}/dashboards/shoppingplace`);
             }
           }
 

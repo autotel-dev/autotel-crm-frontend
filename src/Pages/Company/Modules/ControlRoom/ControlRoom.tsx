@@ -22,6 +22,7 @@ import {
   setCompletedAlerts,
   setLiveAlertsData,
 } from "../../../../ReaduxToolkit/Reducer/AlertsSlice";
+import Swal from "sweetalert2";
 
 const ControlRoom = () => {
   const { assignedAlerts, completedAlerts } = useSelector(
@@ -49,6 +50,14 @@ const ControlRoom = () => {
           dispatch(setLiveAlerts(data.data.allAlertEvents));
           dispatch(setLiveAlertsData(data.data));
         }
+        if (!data.success) {
+          Swal.fire({
+            text: data.message,
+            icon: "error",
+            timer: 2000,
+            showConfirmButton: false,
+          });
+        }
       }
     });
     getAll({ url: "company/get-all-assigned-events" }).then((data: any) => {
@@ -62,6 +71,14 @@ const ControlRoom = () => {
           console.log("length --- >", data.data.length);
           dispatch(setAssignedAlerts(data.data));
         }
+        // if (!data.success) {
+        //   Swal.fire({
+        //     text: data.message,
+        //     icon: "error",
+        //     timer: 2000,
+        //     showConfirmButton: false,
+        //   });
+        // }
       }
     });
     getAll({ url: "company/get-all-completed-events" }).then((data: any) => {
@@ -75,6 +92,14 @@ const ControlRoom = () => {
           console.log("length --- >", data.data.length);
           dispatch(setCompletedAlerts(data.data));
         }
+        // if (!data.success) {
+        //   Swal.fire({
+        //     text: data.message,
+        //     icon: "error",
+        //     timer: 2000,
+        //     showConfirmButton: false,
+        //   });
+        // }
       }
     });
   }, []);

@@ -9,6 +9,7 @@ import ReportsListNav from "./ReportsListNav";
 import { getAll } from "../../../Api";
 import Swal from "sweetalert2";
 import Loader from "../../Loader/Loader";
+import { setReportstype } from "../../../ReaduxToolkit/Reducer/ReportsSlice";
 
 const Reports = () => {
   const dispatch = useDispatch();
@@ -19,6 +20,7 @@ const Reports = () => {
   const [dropDownDevices, setDropDownDevices] = useState([]);
   const [undefinedData, setUndefinedData] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [reportTypes, setReportTypes] = useState([]);
   const getData = () => {
     setLoading(true);
     getAll({ url: "company/devices" }).then((data: any) => {
@@ -85,6 +87,33 @@ const Reports = () => {
   };
   useEffect(() => {
     getData();
+    getAll({ url: "reports/get-all-report-types" }).then((data: any) => {
+      console.log("data", data);
+      if (data == undefined) {
+        Swal.fire({
+          text: "Failed to Fetch due to connection refused",
+          icon: "error",
+          timer: 2000,
+          showConfirmButton: false,
+        });
+        return;
+      }
+      if (data !== undefined) {
+        if (!data.success) {
+          Swal.fire({
+            text: "Failed to Fetch the report Types",
+            icon: "error",
+            timer: 2000,
+            showConfirmButton: false,
+          });
+        }
+        if (data.success) {
+          console.log("api call --- >", data);
+          console.log("length --- >", data.data.allReportTypes);
+          dispatch(setReportstype(data.data.allReportTypes));
+        }
+      }
+    });
   }, []);
 
   return (

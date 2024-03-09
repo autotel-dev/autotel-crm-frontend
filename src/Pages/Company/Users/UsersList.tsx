@@ -17,13 +17,21 @@ import { setNoDataFound } from "../../../ReaduxToolkit/Reducer/NoDataFoundSlice"
 import Loader from "../../Loader/Loader";
 import UpdateUser from "./UpdateUser";
 import { jwtDecode } from "jwt-decode";
-import { formatUnderscoredString } from "../../../Api/globals";
+import { formatUnderscoredString, getUserRole } from "../../../Api/globals";
 import Swal from "sweetalert2";
 
 const UsersList = () => {
   const { operators, loading, activeInActiveOperators } = useSelector(
     (state: any) => state.operators
   );
+  const { userPermissions } = useSelector(
+    (state: any) => state.userPermissions
+  );
+  var user = userPermissions.find((item: any) => item.title === "User");
+  console.log("user", user);
+
+  console.log("userPermissions:", userPermissions);
+  console.log("getUserRole()", getUserRole());
   const { noDataFound } = useSelector((state: any) => state.noDataFound);
   const dispatch = useDispatch();
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
@@ -92,6 +100,7 @@ const UsersList = () => {
               <Label className="switch mb-0">
                 <Input
                   type="checkbox"
+                  disabled={!user?.edit}
                   defaultChecked={row.isActive}
                   value={row.isActive}
                   checked={row.isActive}
@@ -148,55 +157,61 @@ const UsersList = () => {
             </div>
           </div>
         </td>
-        <td>
-          <div>
-            <button
-              style={{
-                width: 60,
-                fontSize: 14,
-                padding: 3,
-                color: "white",
-                backgroundColor: "red",
-                borderRadius: "5px",
-                marginRight: "5px",
-                border: "none",
-              }}
-              onClick={() => {
-                console.log("345678");
-                var alertData = {
-                  title: "Are you sure?",
-                  text: "Once deleted, you will not be able to recover this ",
-                };
-                const type = "usersType";
-                deleteAlert(alertData, row._id, type, dispatch);
-              }}
-            >
-              Delete
-            </button>
-            <button
-              style={{
-                width: 60,
-                fontSize: 14,
-                padding: 3,
-                color: "white",
-                backgroundColor: "green",
-                borderRadius: "5px",
-                border: "none",
-              }}
-              onClick={() => {
-                setIsUpdateModalOpen(true);
-                console.log("isUpdateModalOpen: ", isUpdateModalOpen);
-                setId(row._id);
-                setName(row.fullName);
-                setEmailAddress(row.emailAddress);
-                setPhoneNo(row.phoneNo);
-                setIsActive(row.isActive);
-              }}
-            >
-              Edit
-            </button>
-          </div>
-        </td>
+        {(user?.edit || user?.delete) && (
+          <td>
+            <div>
+              {user?.delete && (
+                <button
+                  style={{
+                    width: 60,
+                    fontSize: 14,
+                    padding: 3,
+                    color: "white",
+                    backgroundColor: "red",
+                    borderRadius: "5px",
+                    marginRight: "5px",
+                    border: "none",
+                  }}
+                  onClick={() => {
+                    console.log("345678");
+                    var alertData = {
+                      title: "Are you sure?",
+                      text: "Once deleted, you will not be able to recover this ",
+                    };
+                    const type = "usersType";
+                    deleteAlert(alertData, row._id, type, dispatch);
+                  }}
+                >
+                  Delete
+                </button>
+              )}
+              {user?.edit && (
+                <button
+                  style={{
+                    width: 60,
+                    fontSize: 14,
+                    padding: 3,
+                    color: "white",
+                    backgroundColor: "green",
+                    borderRadius: "5px",
+                    border: "none",
+                  }}
+                  onClick={() => {
+                    setIsUpdateModalOpen(true);
+                    console.log("isUpdateModalOpen: ", isUpdateModalOpen);
+                    setId(row._id);
+                    setName(row.fullName);
+                    setEmailAddress(row.emailAddress);
+                    setPhoneNo(row.phoneNo);
+                    setIsActive(row.isActive);
+                  }}
+                >
+                  Edit
+                </button>
+              )}
+            </div>
+          </td>
+        )}
       </tr>
     ));
   };
@@ -221,7 +236,7 @@ const UsersList = () => {
                           <th style={{ width: "10%" }}>Role</th>
                           <th style={{ width: "15%" }}>Email Address</th>
                           <th style={{ width: "10%" }}>Account Status</th>
-                          <th>Actions</th>
+                          {(user?.edit || user?.delete) && <th>Actions</th>}
                         </tr>
                       </thead>
                       <tbody>{renderTableRows()}</tbody>

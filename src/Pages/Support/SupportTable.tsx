@@ -14,6 +14,11 @@ const TicketTable = () => {
   const dispatch = useDispatch();
   // Function to transform supportData into allBugReports format
   const { bugReports } = useSelector((state: any) => state.support);
+  const { userPermissions } = useSelector(
+    (state: any) => state.userPermissions
+  );
+  var support = userPermissions.find((item: any) => item.title === "Support");
+  console.log("support", support);
   const supportData = () => {
     return bugReports
       .filter(
@@ -124,7 +129,7 @@ const TicketTable = () => {
           />
         </Col>
         <Col md={12} lg={2} xl={2}>
-          <CreateNewTicket />
+          {support?.create && <CreateNewTicket />}
         </Col>
       </Row>
       {selectedRows.length !== 0 && (

@@ -12,9 +12,9 @@ const Logo = ({ alignLogo }: PropsType) => {
     (state: any) => state.personalization
   );
   return (
-    <Link
+    <div
       className={`logo ${alignLogo ? alignLogo : ""} `}
-      to={`${process.env.PUBLIC_URL}/dashboards/shoppingplace`}
+      // to={`${process.env.PUBLIC_URL}/dashboards/shoppingplace`}
     >
       {/* <Image
         className="img-fluid for-light"
@@ -38,7 +38,7 @@ const Logo = ({ alignLogo }: PropsType) => {
         width={65}
         height={50}
       />
-    </Link>
+    </div>
   );
 };
 

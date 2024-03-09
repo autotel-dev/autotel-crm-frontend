@@ -14,7 +14,7 @@ import Swal from "sweetalert2";
 import { setToken } from "../../ReaduxToolkit/Reducer/UserSlice";
 import { useDispatch } from "react-redux";
 import { jwtDecode } from "jwt-decode";
-import { getUserRole } from "../../Api/globals";
+import { getOperatorCompanyUserId, getUserRole } from "../../Api/globals";
 import { setUserPersonalizationData } from "../../ReaduxToolkit/Reducer/PersonalizationSlice";
 import { setActiveCRMModules } from "../../ReaduxToolkit/Reducer/CRMModuleSlice";
 import { setPermissions } from "../../ReaduxToolkit/Reducer/CompanySlice";
@@ -87,9 +87,14 @@ const OTPForm = ({ alignLogo }: CommonFormPropsType) => {
             const token = data.data.authToken;
             console.log("response: ", data.data);
             console.log("token: ", token);
-            localStorage.setItem("userId", data.data.userId);
             localStorage.setItem("token", token);
-           
+
+            if (getUserRole() == "OPERATOR") {
+              localStorage.setItem("userId", getOperatorCompanyUserId());
+            } else {
+              localStorage.setItem("userId", data.data.userId);
+            }
+
             getAll({
               url:
                 getUserRole() == "COMPANY" || getUserRole() == "OPERATOR"
@@ -97,18 +102,19 @@ const OTPForm = ({ alignLogo }: CommonFormPropsType) => {
                   : "crm-module/get-all-active-modules",
             }).then((data: any) => {
               console.log("active Modules --- >", data);
+              const userId = localStorage.getItem("userId");
 
               if (data !== undefined) {
+                if (!data.success) {
+                  console.log("hhg");
+                  console.log(userId);
+                  dispatch(setActiveCRMModules([]));
+                }
                 if (data.success) {
                   console.log("hhg");
-                  const userId = localStorage.getItem("userId");
                   console.log(userId);
                   dispatch(setActiveCRMModules(data.data));
-                  navigate(
-                    `${process.env.PUBLIC_URL}/dashboards/shoppingplace`
-                  );
 
-                  // getPerdonal Data
                   getAll({
                     url:
                       userId == null && userId == undefined
@@ -130,35 +136,42 @@ const OTPForm = ({ alignLogo }: CommonFormPropsType) => {
                     }
 
                     if (parentData !== undefined) {
-                      if (parentData.success) {
-                        dispatch(setUserPersonalizationData(parentData.data));
-                        setLoading(false);
-                      }
                       if (!parentData.success) {
                         setLoading(false);
                         dispatch(setUserPersonalizationData(null));
                       }
+                      if (parentData.success) {
+                        dispatch(setUserPersonalizationData(parentData.data));
+                        if (
+                          getUserRole() == "COMPANY" ||
+                          getUserRole() == "OPERATOR"
+                        ) {
+                          getAll({ url: "user/get-permissions" }).then(
+                            (data: any) => {
+                              console.log("api call --- >", data);
+                              if (data !== undefined) {
+                                if (data.success) {
+                                  console.log("hhg");
+                                  dispatch(
+                                    setUserPermissions(
+                                      data.data.allowedPermissions
+                                    )
+                                  );
+                                  setLoading(false);
+                                  navigate(
+                                    `${process.env.PUBLIC_URL}/dashboards/shoppingplace`
+                                  );
+                                }
+                              }
+                            }
+                          );
+                        }
+                      }
                     }
                   });
-                  // successAlert();
                 }
               }
             });
-            if (getUserRole() == "COMPANY" || getUserRole() == "OPERATOR") {
-              getAll({ url: "user/get-permissions" }).then(
-                (data: any) => {
-                  console.log("api call --- >", data);
-                  if (data !== undefined) {
-                    if (data.success) {
-                      console.log("hhg");
-                      dispatch(
-                        setUserPermissions(data.data.allowedPermissions)
-                      );
-                    }
-                  }
-                }
-              );
-            }
           }
           // if (data.statusCode == 200) {
           //   const token = data.data.authToken;

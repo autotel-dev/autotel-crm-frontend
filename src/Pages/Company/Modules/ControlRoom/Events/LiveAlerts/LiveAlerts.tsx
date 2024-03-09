@@ -10,6 +10,7 @@ import {
 import Swal from "sweetalert2";
 import Loader from "../../../../../Loader/Loader";
 import { serverCredentials } from "../../../../../../Api/header";
+import { getUserRole } from "../../../../../../Api/globals";
 
 const LiveAlerts = () => {
   const dispatch = useDispatch();
@@ -139,8 +140,8 @@ const LiveAlerts = () => {
                         speed: data.speed,
                         type: data.type,
                         message: data.message,
-                        serverId: serverInfo?.element.serverId,
-                        serverHashKey: serverInfo?.element.serverHashKey,
+                        serverId: serverInfo?.serverId,
+                        serverHashKey: serverInfo?.serverHashKey,
                       };
                       console.log(assignEvent);
                       try {

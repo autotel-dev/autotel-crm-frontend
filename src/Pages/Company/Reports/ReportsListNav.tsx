@@ -9,6 +9,7 @@ import {
   setOperators,
 } from "../../../ReaduxToolkit/Reducer/OperatorSlice";
 import CreateNewReport from "./CreateNewReport";
+
 const ReportsListNav = ({ dropDownDevices }: any) => {
   const { activeTab } = useAppSelector((state) => state.project);
   //   const dispatch = useAppDispatch();

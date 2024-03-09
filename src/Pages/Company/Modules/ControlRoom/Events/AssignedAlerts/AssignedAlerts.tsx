@@ -121,8 +121,8 @@ const AssignedAlerts = () => {
                         console.log("isUpdateModalOpen: ", isUpdateModalOpen);
                         const sendData = {
                           eventId: data._id,
-                          serverId: serverInfo?.element.serverId,
-                          serverHashKey: serverInfo?.element.serverHashKey,
+                          serverId: serverInfo?.serverId,
+                          serverHashKey: serverInfo?.serverHashKey,
                           deviceId: data.deviceId,
                         };
                         console.log(sendData);

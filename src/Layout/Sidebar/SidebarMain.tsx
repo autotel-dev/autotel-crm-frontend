@@ -15,6 +15,7 @@ import { SidebarMenuTypes } from "../../Data/Layout/Sidebar/SidebarTypes";
 import { useAppSelector } from "../../ReaduxToolkit/Hooks";
 import { useSelector } from "react-redux";
 import { jwtDecode } from "jwt-decode";
+import { getUserRole } from "../../Api/globals";
 export interface PropsTypes {
   setOpen: (item: boolean) => void;
   open?: boolean;
@@ -24,22 +25,13 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
   const { userPermissions } = useSelector(
     (state: any) => state.userPermissions
   );
-  console.log("userPermissions:", userPermissions);
-  const user = userPermissions.permissions.find(
-    (item: any) => item.title === "User"
-  );
-
+  var user = userPermissions.find((item: any) => item.title === "User");
   console.log("user", user);
-  const support = userPermissions.permissions.find(
-    (item: any) => item.title === "Support"
-  );
-
+  var support = userPermissions.find((item: any) => item.title === "Support");
   console.log("support", support);
-  const abc = userPermissions.permissions.find(
-    (item: any) => item.title === "ABC"
-  );
 
-  console.log("abc", abc);
+  console.log("userPermissions:", userPermissions);
+  console.log("getUserRole()", getUserRole());
 
   console.log("crmActiveModules", crmActiveModules);
 
@@ -202,7 +194,7 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
     },
 
     {
-      title: "Users",
+      title: "User",
       svgIcon: "home",
       link: `${process.env.PUBLIC_URL}/company/users`,
     },
@@ -254,19 +246,19 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
     },
   ];
 
-  const filteredCompanyMenu = CompanySidebarMenuComponent.filter((item) => {
-    if (item.title === user.title) {
+  var filteredCompanyMenu = CompanySidebarMenuComponent.filter((item) => {
+    if (user !== undefined && item.title === user.title) {
       return user.read;
-    } else if (item.title === support.title) {
+    } else if (support !== undefined && item.title === support.title) {
       return support.read;
     } else {
       return true;
     }
   });
-  const filteredOperatorMenu = OperatorSidebarMenuComponent.filter((item) => {
-    if (item.title === user.title) {
+  var filteredOperatorMenu = OperatorSidebarMenuComponent.filter((item) => {
+    if (user !== undefined && item.title === user.title) {
       return user.read;
-    } else if (item.title === support.title) {
+    } else if (support !== undefined && item.title === support.title) {
       return support.read;
     } else {
       return true;
@@ -368,7 +360,8 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
                     </LI>
                   ))
                 : decodedToken.role == "OPERATOR"
-                ? filteredOperatorMenu.map((data, index) => (
+                ? filteredOperatorMenu !== undefined &&
+                  filteredOperatorMenu?.map((data: any, index: any) => (
                     <LI className={`sidebar-list`} key={index}>
                       <Link
                         className={`sidebar-link sidebar-title ${
@@ -414,7 +407,8 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
                       )}
                     </LI>
                   ))
-                : filteredCompanyMenu.map((data, index) => (
+                : filteredCompanyMenu !== undefined &&
+                  filteredCompanyMenu.map((data: any, index: any) => (
                     <LI className={`sidebar-list`} key={index}>
                       <Link
                         className={`sidebar-link sidebar-title ${

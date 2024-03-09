@@ -54,8 +54,10 @@ export const serverCredentials = (serverID) => {
 
   for (let i = 0; i < decodedToken.serverCredentials.length; i++) {
     const element = decodedToken.serverCredentials[i];
+    console.log("element", element);
     if (element.serverId == serverID) {
-      return { element };
+      console.log(element);
+      return element;
     }
   }
 };

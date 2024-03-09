@@ -16,6 +16,12 @@ const UsersListNav = () => {
   const { operators, filterOperators } = useSelector(
     (state: any) => state.operators
   );
+  const { userPermissions } = useSelector(
+    (state: any) => state.userPermissions
+  );
+  var user = userPermissions.find((item: any) => item.title === "User");
+  console.log("user", user);
+
   return (
     <Row>
       <Col md={6}>
@@ -85,7 +91,7 @@ const UsersListNav = () => {
           </NavItem>
         </Nav>
       </Col>
-      <CreateNewUser />
+      {user?.create && <CreateNewUser />}
     </Row>
   );
 };

@@ -1,4 +1,4 @@
-import { Provider, useDispatch } from "react-redux";
+import { Provider, useDispatch, useSelector } from "react-redux";
 import Routers from "./Routes";
 import Store from "./ReaduxToolkit/Store";
 import { ToastContainer } from "react-toastify";
@@ -11,6 +11,9 @@ import { getUserRole } from "./Api/globals";
 import { setPermissions } from "./ReaduxToolkit/Reducer/CompanySlice";
 import { setUserPermissions } from "./ReaduxToolkit/Reducer/PermissionSlice";
 const App = () => {
+  const { userPermissions } = useSelector(
+    (state: any) => state.userPermissions
+  );
   const dispatch = useDispatch();
   useEffect(() => {
     const userId = localStorage.getItem("userId");
@@ -69,15 +72,14 @@ const App = () => {
           }
         }
       });
+
       if (getUserRole() == "COMPANY" || getUserRole() == "OPERATOR") {
         getAll({ url: "user/get-permissions" }).then((data: any) => {
           console.log("api call --- >", data);
           if (data !== undefined) {
             if (data.success) {
               console.log("hhg");
-              dispatch(
-                setUserPermissions(data.data.allowedPermissions)
-              );
+              dispatch(setUserPermissions(data.data.allowedPermissions));
             }
           }
         });
