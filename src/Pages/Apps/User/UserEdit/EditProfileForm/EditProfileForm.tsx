@@ -32,17 +32,25 @@ import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import { setUserData } from "../../../../../ReaduxToolkit/Reducer/UserSlice";
 
-interface PropTypes {
-  isEdit: boolean;
-  setIsEdit: React.Dispatch<React.SetStateAction<boolean>>;
-}
+// interface PropTypes {
+//   isEdit: boolean;
+//   setIsEdit: React.Dispatch<React.SetStateAction<boolean>>;
+// }
 
-const EditProfileForm: React.FC<PropTypes> = ({ isEdit, setIsEdit }) => {
+// const EditProfileForm: React.FC<PropTypes> = ({ isEdit, setIsEdit }) => {
+
+const EditProfileForm = () => {
+  const { userPermissions } = useSelector(
+    (state: any) => state.userPermissions
+  );
+  var profile = userPermissions.find((item: any) => item.title === "Profile");
+  console.log("profile", profile);
   const { userData } = useSelector((state: any) => state.user);
   const [name, setName] = useState<string>(userData.fullName);
   const [phoneNo, setPhoneNo] = useState<string>(userData.phoneNo);
   const [address, setAddress] = useState<string>("");
   const [loading, setLoading] = useState(false);
+  const [isEdit, setIsEdit] = useState(false);
   const dispatch = useDispatch();
   useEffect(() => {
     if (getUserRole() == "COMPANY") {
@@ -52,64 +60,66 @@ const EditProfileForm: React.FC<PropTypes> = ({ isEdit, setIsEdit }) => {
 
   const editUserProfile = (e: any) => {
     e.preventDefault();
-    setLoading(true);
-    const formData = new FormData();
-    formData.append("fullName", name);
-    formData.append("phoneNo", phoneNo);
-    if (getUserRole() == "COMPANY") {
-      formData.append("address", address);
-    }
+    if (isEdit) {
+      setLoading(true);
+      const formData = new FormData();
+      formData.append("fullName", name);
+      formData.append("phoneNo", phoneNo);
+      if (getUserRole() == "COMPANY") {
+        formData.append("address", address);
+      }
 
-    update(formData, {
-      url:
-        getUserRole() == "COMPANY"
-          ? "company/update-company"
-          : `super-admin/update-super-admin`,
-    })
-      .then((data: any) => {
-        console.log("api call --- >", data);
-        if (data !== undefined) {
-          if (!data.success) {
-            console.log("then but false");
-
-            setLoading(false);
-            setIsEdit(!isEdit);
-          }
-          if (data.success) {
-            getAll({ url: "user/get-user" }).then((parentData: any) => {
-              console.log("api call --- >", parentData);
-              if (parentData == undefined) {
-                Swal.fire({
-                  text: "Failed to Fetch",
-                  icon: "error",
-                  timer: 2000,
-                  showConfirmButton: false,
-                });
-                setLoading(false);
-                setIsEdit(!isEdit);
-              }
-
-              if (parentData !== undefined) {
-                if (parentData.success) {
-                  dispatch(setUserData(parentData.data.user));
-                  setLoading(false);
-                  setIsEdit(!isEdit);
-                }
-                if (!parentData.success) {
-                  setLoading(false);
-                  setIsEdit(!isEdit);
-                }
-              }
-            });
-          }
-        }
+      update(formData, {
+        url:
+          getUserRole() == "COMPANY"
+            ? "company/update-company"
+            : `super-admin/update-super-admin`,
       })
-      .catch((err: any) => {
-        console.log("catch data", err);
+        .then((data: any) => {
+          console.log("api call --- >", data);
+          if (data !== undefined) {
+            if (!data.success) {
+              console.log("then but false");
 
-        setLoading(false);
-        setIsEdit(!isEdit);
-      });
+              setLoading(false);
+              setIsEdit(!isEdit);
+            }
+            if (data.success) {
+              getAll({ url: "user/get-user" }).then((parentData: any) => {
+                console.log("api call --- >", parentData);
+                if (parentData == undefined) {
+                  Swal.fire({
+                    text: "Failed to Fetch",
+                    icon: "error",
+                    timer: 2000,
+                    showConfirmButton: false,
+                  });
+                  setLoading(false);
+                  setIsEdit(!isEdit);
+                }
+
+                if (parentData !== undefined) {
+                  if (parentData.success) {
+                    dispatch(setUserData(parentData.data.user));
+                    setLoading(false);
+                    setIsEdit(!isEdit);
+                  }
+                  if (!parentData.success) {
+                    setLoading(false);
+                    setIsEdit(!isEdit);
+                  }
+                }
+              });
+            }
+          }
+        })
+        .catch((err: any) => {
+          console.log("catch data", err);
+
+          setLoading(false);
+          setIsEdit(!isEdit);
+        });
+    }
   };
   return (
     <Col xl={8}>
@@ -226,13 +236,36 @@ const EditProfileForm: React.FC<PropTypes> = ({ isEdit, setIsEdit }) => {
             </Col> */}
           </Row>
         </CardBody>
-        <CardFooter className="text-end">
-          {isEdit && (
-            <Button color="primary" type="submit" disabled={loading}>
-              {loading ? "Loading..." : "Save"}
+        {profile?.edit && (
+          <CardFooter className="text-end">
+            {isEdit && (
+              <Button
+                style={{ marginRight: "15px" }}
+                color="primary"
+                type="submit"
+                disabled={loading}
+                onClick={(e) => {
+                  e.preventDefault();
+                  setIsEdit(!isEdit);
+                }}
+              >
+                Cancel
+              </Button>
+            )}
+
+            <Button
+              color="primary"
+              type="submit"
+              disabled={loading}
+              onClick={(e) => {
+                e.preventDefault();
+                setIsEdit(!isEdit);
+              }}
+            >
+              {loading ? "Loading..." : isEdit ? "Save" : "Edit"}
             </Button>
-          )}
-        </CardFooter>
+          </CardFooter>
+        )}
       </Form>
     </Col>
   );

@@ -38,9 +38,11 @@ const UsersList = () => {
   const [id, setId] = useState("");
   const [name, setName] = useState("");
   const [isActive, setIsActive] = useState(false);
-  // const [rowIndex, setRowIndex] = useState(0);
   const [emailAdress, setEmailAddress] = useState("");
   const [phoneNo, setPhoneNo] = useState(false);
+  const [allowedModules, setAllowedModules] = useState(false);
+  const [subRole, setSubRole] = useState(false);
+
   // -----------------------------------
   const [decodedToken, setDecodedToken]: any = useState(null);
   const authToken = localStorage.getItem("token");
@@ -204,6 +206,8 @@ const UsersList = () => {
                     setEmailAddress(row.emailAddress);
                     setPhoneNo(row.phoneNo);
                     setIsActive(row.isActive);
+                    setAllowedModules(row.allowedModules);
+                    setSubRole(row.subRole);
                   }}
                 >
                   Edit
@@ -267,6 +271,9 @@ const UsersList = () => {
                 phoneNo={phoneNo}
                 isActive={isActive}
                 setIsActive={setIsActive}
+                allowedModules={allowedModules}
+                setAllowedModules={setAllowedModules}
+                subRole={subRole}
               />
             </CardBody>
           </Card>

@@ -7,18 +7,12 @@ const LayoutRoutes = () => {
   return (
     <>
       {/* <Routes>
-        {routes.map(({ path, Component }, i) => (
-          <Route element={<Layout />} key={i}>
-          
-            <Route path={path} element={Component} />
-          </Route>
-        ))}
-      </Routes> */}
-
-      <Routes>
-        {routes.map(({ path, Component, permission }, i) =>
-          permission ? (
-            <Route element={<ProtectedRoute />} key={i}>
+        {routes.map(({ path, Component, isProtected, allowedUserRoles, title, permissionValue }, i) =>
+          isProtected ? (
+            <Route
+              element={<ProtectedRoute allowedUserRoles={allowedUserRoles} permissionValue={permissionValue} />}
+              key={i}
+            >
               <Route element={<Layout />} key={i}>
                 <Route path={path} element={Component} />
               </Route>
@@ -29,6 +23,14 @@ const LayoutRoutes = () => {
             </Route>
           )
         )}
+      </Routes> */}
+
+      <Routes>
+        {routes.map(({ path, Component }, i) => (
+          <Route element={<Layout />} key={i}>
+            <Route path={path} element={Component} />
+          </Route>
+        ))}
       </Routes>
     </>
   );

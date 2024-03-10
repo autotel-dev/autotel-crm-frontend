@@ -268,7 +268,10 @@ const CreateNewRole = () => {
                                   style={{
                                     display: "inline-block",
                                     position: "relative",
-                                    cursor: "pointer",
+                                    cursor:
+                                      permission.read == "disabled"
+                                        ? "not-allowed"
+                                        : "pointer",
                                     marginRight: "25px",
                                     fontSize: "18px",
                                   }}
@@ -301,7 +304,10 @@ const CreateNewRole = () => {
                                   style={{
                                     display: "inline-block",
                                     position: "relative",
-                                    cursor: "pointer",
+                                    cursor:
+                                      permission.create == "disabled"
+                                        ? "not-allowed"
+                                        : "pointer",
                                     marginRight: "25px",
                                     fontSize: "18px",
                                   }}
@@ -334,7 +340,10 @@ const CreateNewRole = () => {
                                   style={{
                                     display: "inline-block",
                                     position: "relative",
-                                    cursor: "pointer",
+                                    cursor:
+                                      permission.edit == "disabled"
+                                        ? "not-allowed"
+                                        : "pointer",
                                     marginRight: "25px",
                                     fontSize: "18px",
                                   }}
@@ -367,7 +376,10 @@ const CreateNewRole = () => {
                                   style={{
                                     display: "inline-block",
                                     position: "relative",
-                                    cursor: "pointer",
+                                    cursor:
+                                      permission.delete == "disabled"
+                                        ? "not-allowed"
+                                        : "pointer",
                                     marginRight: "25px",
                                     fontSize: "18px",
                                   }}

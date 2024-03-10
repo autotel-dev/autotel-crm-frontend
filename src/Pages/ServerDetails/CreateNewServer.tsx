@@ -12,7 +12,7 @@ const CreateNewServer = () => {
           style={{ color: "white" }}
           onClick={() => {
             navigate(
-              `${process.env.PUBLIC_URL}/setup/server_details/createNewServer`
+              `${process.env.PUBLIC_URL}/super-admin/setup/server_details/createNewServer`
             );
           }}
         >

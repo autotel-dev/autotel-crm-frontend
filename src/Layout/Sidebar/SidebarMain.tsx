@@ -48,27 +48,27 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
         {
           svgIcon: "bonus-kit",
           title: "Country",
-          link: `${process.env.PUBLIC_URL}/setup/countries`,
+          link: `${process.env.PUBLIC_URL}/super-admin/setup/countries`,
         },
         {
           svgIcon: "bonus-kit",
           title: "Province",
-          link: `${process.env.PUBLIC_URL}/setup/province`,
+          link: `${process.env.PUBLIC_URL}/super-admin/setup/province`,
         },
         {
           svgIcon: "bonus-kit",
           title: "City",
-          link: `${process.env.PUBLIC_URL}/setup/cities`,
+          link: `${process.env.PUBLIC_URL}/super-admin/setup/cities`,
         },
         {
           svgIcon: "bonus-kit",
           title: "Package",
-          link: `${process.env.PUBLIC_URL}/setup/package`,
+          link: `${process.env.PUBLIC_URL}/super-admin/setup/package`,
         },
         {
           svgIcon: "bonus-kit",
           title: "CRM Modules",
-          link: `${process.env.PUBLIC_URL}/setup/crm_module`,
+          link: `${process.env.PUBLIC_URL}/super-admin/setup/crm_module`,
         },
         {
           svgIcon: "bonus-kit",
@@ -83,12 +83,12 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
         {
           svgIcon: "bonus-kit",
           title: "Server Details",
-          link: `${process.env.PUBLIC_URL}/setup/server_details`,
+          link: `${process.env.PUBLIC_URL}/super-admin/setup/server_details`,
         },
         {
           svgIcon: "bonus-kit",
           title: "Server Management",
-          link: `${process.env.PUBLIC_URL}/setup/server_management`,
+          link: `${process.env.PUBLIC_URL}/super-admin/setup/server_management`,
         },
       ],
     },
@@ -123,7 +123,7 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
     {
       title: "Companies",
       svgIcon: "home",
-      link: `${process.env.PUBLIC_URL}/companies`,
+      link: `${process.env.PUBLIC_URL}/super-admin/companies`,
     },
     {
       title: "Support",
@@ -150,17 +150,17 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
         {
           svgIcon: "bonus-kit",
           title: "Roles",
-          link: `${process.env.PUBLIC_URL}/company/roles`,
+          link: `${process.env.PUBLIC_URL}/company/setup/roles`,
         },
         {
           svgIcon: "bonus-kit",
           title: "Email Templates",
-          link: `${process.env.PUBLIC_URL}/company/emailTemplates`,
+          link: `${process.env.PUBLIC_URL}/company/setup/emailTemplates`,
         },
         {
           svgIcon: "bonus-kit",
           title: "WhatsApp templates",
-          link: `${process.env.PUBLIC_URL}/company/whatsappTemplates`,
+          link: `${process.env.PUBLIC_URL}/company/setup/whatsappTemplates`,
         },
       ],
     },
@@ -229,7 +229,7 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
         return {
           svgIcon: "bonus-kit",
           title: `${item.name}`,
-          link: `${process.env.PUBLIC_URL}/company/modules${item.route}`,
+          link: `${process.env.PUBLIC_URL}/operator/modules${item.route}`,
         };
       }),
     },
@@ -242,7 +242,7 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
     {
       title: "Support",
       svgIcon: "home",
-      link: `${process.env.PUBLIC_URL}/company/support`,
+      link: `${process.env.PUBLIC_URL}/operator/support`,
     },
   ];
 

@@ -11,7 +11,9 @@ const CreateNewCompany = () => {
           className="btn btn-primary"
           style={{ color: "white" }}
           onClick={() => {
-            navigate(`${process.env.PUBLIC_URL}/companies/createComapny`);
+            navigate(
+              `${process.env.PUBLIC_URL}/super-admin/companies/createComapny`
+            );
           }}
         >
           <PlusCircle />

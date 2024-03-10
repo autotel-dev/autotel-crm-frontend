@@ -183,7 +183,7 @@ const ServersList = () => {
               onClick={() => {
                 dispatch(setServer(row));
                 navigate(
-                  `${process.env.PUBLIC_URL}/setup/server_details/updareServer`
+                  `${process.env.PUBLIC_URL}/super-admin/setup/server_details/updareServer`
                 );
               }}
             >

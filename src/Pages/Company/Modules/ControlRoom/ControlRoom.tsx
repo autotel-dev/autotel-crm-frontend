@@ -71,14 +71,6 @@ const ControlRoom = () => {
           console.log("length --- >", data.data.length);
           dispatch(setAssignedAlerts(data.data));
         }
-        // if (!data.success) {
-        //   Swal.fire({
-        //     text: data.message,
-        //     icon: "error",
-        //     timer: 2000,
-        //     showConfirmButton: false,
-        //   });
-        // }
       }
     });
     getAll({ url: "company/get-all-completed-events" }).then((data: any) => {
@@ -92,17 +84,11 @@ const ControlRoom = () => {
           console.log("length --- >", data.data.length);
           dispatch(setCompletedAlerts(data.data));
         }
-        // if (!data.success) {
-        //   Swal.fire({
-        //     text: data.message,
-        //     icon: "error",
-        //     timer: 2000,
-        //     showConfirmButton: false,
-        //   });
-        // }
       }
     });
   }, []);
+
+  
 
   const events = [
     {

@@ -27,17 +27,13 @@ import {
 } from "../../../../../Api/globals";
 import { useState } from "react";
 
-interface PropTypes {
-  isEdit: boolean;
-  setIsEdit: React.Dispatch<React.SetStateAction<boolean>>;
-}
+// interface PropTypes {
+//   isEdit: boolean;
+//   setIsEdit: React.Dispatch<React.SetStateAction<boolean>>;
+// }
 
-const EditMyProfile: React.FC<PropTypes> = ({ isEdit, setIsEdit }) => {
-  const { userPermissions } = useSelector(
-    (state: any) => state.userPermissions
-  );
-  var profile = userPermissions.find((item: any) => item.title === "Profile");
-  console.log("profile", profile);
+// const EditMyProfile: React.FC<PropTypes> = ({ isEdit, setIsEdit }) => {
+const EditMyProfile = () => {
   const { userData } = useSelector((state: any) => state.user);
   const [accountStatus, setAcountStatus] = useState(userData.accountStatus);
 
@@ -104,27 +100,20 @@ const EditMyProfile: React.FC<PropTypes> = ({ isEdit, setIsEdit }) => {
                     className={`text-end flex-shrink-0 icon-state 
                             }`}
                   >
-                    <Label className="switch mb-0">
+                    <Label
+                      className="switch mb-0"
+                      style={{ cursor: "not-allowed" }}
+                    >
                       <Input
                         type="checkbox"
                         defaultChecked={
                           accountStatus == "ACTIVE" ? true : false
                         }
                         disabled
-                        // value={
-                        //   accountStatus == "ACTIVE" ? "on" : "off"
-                        // }
-                        // onChange={(e) => {
-                        //   if (accountStatus == "ACTIVE") {
-                        //     setAcountStatus("NOT ACTIVE");
-                        //   } else {
-                        //     setAcountStatus("ACTIVE");
-                        //   }
-
-                        //   console.log(e.target.value);
-                        // }}
+                        style={{ cursor: "not-allowed" }}
                       />
                       <span
+                        style={{ cursor: "not-allowed" }}
                         className={`switch-state ${
                           accountStatus == "ACTIVE"
                             ? "bg-primary"
@@ -136,7 +125,7 @@ const EditMyProfile: React.FC<PropTypes> = ({ isEdit, setIsEdit }) => {
                 </div>
               </div>
             </FormGroup>
-            {profile?.edit && (
+            {/* {profile?.edit && (
               <div className="form-footer">
                 <Button
                   color="primary"
@@ -147,7 +136,7 @@ const EditMyProfile: React.FC<PropTypes> = ({ isEdit, setIsEdit }) => {
                   Edit
                 </Button>
               </div>
-            )}
+            )} */}
           </Form>
         </CardBody>
       </Card>

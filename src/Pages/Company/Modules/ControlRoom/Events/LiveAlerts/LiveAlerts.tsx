@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   setAssignedAlerts,
   setLiveAlerts,
+  setLiveAlertsData,
 } from "../../../../../../ReaduxToolkit/Reducer/AlertsSlice";
 import Swal from "sweetalert2";
 import Loader from "../../../../../Loader/Loader";
@@ -70,10 +71,53 @@ const LiveAlerts = () => {
       });
     }
   };
-  const [showTable, setShowTable] = useState(false);
+  // const [showTable, setShowTable] = useState(false);
+  // useEffect(() => {
+  //   setShowTable(true); // Set showTable to true to trigger the fade animation
+  // }, [liveAlerts]);
+
   useEffect(() => {
-    setShowTable(true); // Set showTable to true to trigger the fade animation
-  }, [liveAlerts]);
+    let intervalId: any; // Declare variable to store interval ID
+
+    // Function to fetch data and dispatch actions
+    const fetchDataAndDispatch = () => {
+      getAll({ url: "company/alert-events?pageNo=1" }).then((data: any) => {
+        console.log("api call --- >", data);
+
+        if (data === undefined) {
+          dispatch(setLiveAlerts([]));
+          dispatch(setLiveAlertsData(null));
+        } else {
+          if (data.success) {
+            console.log("length --- >", data.data.allAlertEvents.length);
+            dispatch(setLiveAlerts(data.data.allAlertEvents));
+            dispatch(setLiveAlertsData(data.data));
+            setDataList(liveAlerts.slice(0, 12));
+          } else {
+            Swal.fire({
+              text: data.message,
+              icon: "error",
+              timer: 2000,
+              showConfirmButton: false,
+            });
+          }
+        }
+      });
+    };
+
+    console.log("Setting up interval...");
+    intervalId = setInterval(() => {
+      console.log("Interval Called");
+      console.log("LiveAlerts in interval");
+      fetchDataAndDispatch(); // Call function to fetch data and dispatch actions
+    }, 10000);
+
+    // Cleanup function to clear interval when component unmounts or when loading becomes true
+    return () => {
+      console.log("Clearing interval...");
+      clearInterval(intervalId);
+    };
+  }, [liveAlerts]); // Empty dependency array to run the effect only once after mounting
 
   return (
     <Card className="invoice-card">
@@ -114,11 +158,6 @@ const LiveAlerts = () => {
                 dataList.map((data: any, index: any) => (
                   <tr
                     key={index}
-                    className={showTable ? "row-entered" : ""} // Add class if showTable is true
-                    style={{
-                      opacity: showTable ? 1 : 0, // Set opacity based on showTable state
-                      transition: "opacity 2s ease-in-out", // Apply transition effect
-                    }}
                     onClick={async () => {
                       if (assignLoading) {
                         Swal.fire({
@@ -165,7 +204,7 @@ const LiveAlerts = () => {
                             Swal.fire({
                               text: "Assigned Successfully",
                               icon: "success",
-                              timer: 2000,
+                              timer: 1000,
                               showConfirmButton: false,
                             });
                             getAll({

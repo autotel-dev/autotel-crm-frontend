@@ -180,16 +180,19 @@ const Account = () => {
             </div>
           ) : !userDataLoading && !serverPermissionsLoading ? (
             <Row>
-              <EditMyProfile isEdit={isEdit} setIsEdit={setIsEdit} />
-              <EditProfileForm isEdit={isEdit} setIsEdit={setIsEdit} />
-              {/* <AddProjectsAndUpload /> */}
+              <EditMyProfile />
+              <EditProfileForm />
+
               {getUserRole() === "COMPANY" && <AllowedModules />}
               {getUserRole() === "COMPANY" && legalAttachements?.read && (
                 <Attachements attachements={ticketImages} />
               )}
               {getUserRole() === "COMPANY" && <ServerPermissions />}
-
               <SecuritySettings />
+
+              {/* <AddProjectsAndUpload /> */}
+              {/* <EditMyProfile isEdit={isEdit} setIsEdit={setIsEdit} />
+              <EditProfileForm isEdit={isEdit} setIsEdit={setIsEdit} /> */}
             </Row>
           ) : (
             <div

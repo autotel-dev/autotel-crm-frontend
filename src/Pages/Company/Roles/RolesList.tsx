@@ -10,6 +10,7 @@ import { setNoDataFound } from "../../../ReaduxToolkit/Reducer/NoDataFoundSlice"
 import { getAll, patch, update } from "../../../Api";
 import {
   setFilterRoles,
+  setInActiveActiveRoles,
   setRoles,
   setRolesEnd,
   setRolesStart,
@@ -17,20 +18,10 @@ import {
 import { setOperatorsEnd } from "../../../ReaduxToolkit/Reducer/OperatorSlice";
 import Swal from "sweetalert2";
 
-// import {
-//   setCountries,
-//   setCountriesEnd,
-//   setCountriesStart,
-//   setFilterCountries,
-//   setId,
-// } from "../../ReaduxToolkit/Reducer/CountrySlice";
-
 const RolesList = () => {
-  // const { countries, loading, id } = useSelector(
-  //   (state: any) => state.countries
-  // );
-  const { noDataFound } = useSelector((state: any) => state.noDataFound);
-  const { roles } = useSelector((state: any) => state.roles);
+  const { roles, activeInActiveRoles } = useSelector(
+    (state: any) => state.roles
+  );
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -47,6 +38,7 @@ const RolesList = () => {
           showConfirmButton: false,
         });
         // dispatch(setInActiveActiveUsers("All"));
+        dispatch(setInActiveActiveRoles("All"));
         dispatch(setRoles([]));
         dispatch(setFilterRoles([]));
         dispatch(setRolesEnd());
@@ -211,7 +203,9 @@ const RolesList = () => {
                       fontWeight: "bold",
                     }}
                   >
-                    No Roles Found
+                    {activeInActiveRoles !== "All"
+                      ? activeInActiveRoles
+                      : "No Operators Found"}
                   </div>
                 )}
 

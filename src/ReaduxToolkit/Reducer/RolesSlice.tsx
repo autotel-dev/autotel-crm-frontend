@@ -4,6 +4,7 @@ const initialState = {
   roles: [],
   filterRoles: [],
   userPermissions: [],
+  activeInActiveRoles: "All",
   loading: false,
   error: null,
   id: null,
@@ -28,6 +29,9 @@ const RolesSlice = createSlice({
       state.error = null;
       state.loading = false;
     },
+    setInActiveActiveRoles: (state, action) => {
+      state.activeInActiveRoles = action.payload;
+    },
     setUserPermissions: (state, action) => {
       state.userPermissions = action.payload;
       state.error = null;
@@ -50,6 +54,7 @@ const RolesSlice = createSlice({
 export const {
   setRoles,
   setFilterRoles,
+  setInActiveActiveRoles,
   setRolesStart,
   setRolesEnd,
   setUserPermissions,

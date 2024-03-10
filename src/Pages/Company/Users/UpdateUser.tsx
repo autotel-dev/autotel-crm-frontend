@@ -8,6 +8,7 @@ import {
   Modal,
   ModalBody,
   Row,
+  Col,
 } from "reactstrap";
 import { Cancel } from "../../../utils/Constant";
 import { H3 } from "../../../AbstractElements";
@@ -24,6 +25,7 @@ import {
   setOperatorsStart,
 } from "../../../ReaduxToolkit/Reducer/OperatorSlice";
 import Swal from "sweetalert2";
+import { Select } from "antd";
 // import { setNoDataFound } from "../../ReaduxToolkit/Reducer/NoDataFoundSlice";
 
 interface PropsTypes {
@@ -35,6 +37,9 @@ interface PropsTypes {
   phoneNo: any;
   isActive: any;
   setIsActive: any;
+  allowedModules: any;
+  setAllowedModules: React.Dispatch<React.SetStateAction<any>>;
+  subRole: any;
 }
 
 const UpdateUser: React.FC<PropsTypes> = ({
@@ -46,6 +51,9 @@ const UpdateUser: React.FC<PropsTypes> = ({
   phoneNo,
   isActive,
   setIsActive,
+  allowedModules,
+  setAllowedModules,
+  subRole,
 
   // setValue
 }) => {
@@ -170,6 +178,38 @@ const UpdateUser: React.FC<PropsTypes> = ({
     setValue("isActive", isActive);
   }, [isActive, setValue]);
 
+  const { roles } = useSelector((state: any) => state.roles);
+  const { crmActiveModules } = useSelector((state: any) => state.crmModules);
+  const [rolesList, setRolesList] = useState([]);
+  const [role, setRole] = useState("");
+  console.log("Roles", roles);
+
+  const tempRolesList: any = [];
+  useEffect(() => {
+    roles.map((item: any, index: any) => {
+      tempRolesList.push({
+        value: `${item._id}`,
+        label: `${item.name}`,
+      });
+    });
+    setRolesList(tempRolesList);
+  }, []);
+
+  const handleModuleClick = (moduleId: any) => {
+    const index = allowedModules.findIndex(
+      (module: any) => module === moduleId
+    );
+    if (index === -1) {
+      // const updateModules = [...allowedModules, moduleId];
+      setAllowedModules([...allowedModules, moduleId]);
+    } else {
+      const updatedItems = allowedModules.filter(
+        (module: any) => module !== moduleId
+      );
+      setAllowedModules(updatedItems);
+    }
+  };
+
   return (
     <Modal
       centered
@@ -259,6 +299,270 @@ const UpdateUser: React.FC<PropsTypes> = ({
                   </Label>
                 </div>
               </div>
+            </FormGroup>
+            <FormGroup className="col-md-12 create-group">
+              <div>
+                <Label>Select User Role </Label>
+              </div>
+              <Select
+                defaultValue={
+                  roles.find((role: any) => role._id === subRole).name
+                }
+                showSearch
+                style={{ width: 250, height: 36 }}
+                placeholder="Select Role"
+                optionFilterProp="children"
+                filterOption={(input: any, option: any) =>
+                  (option?.label ?? "").includes(input)
+                }
+                filterSort={(optionA: any, optionB: any) =>
+                  (optionA?.label ?? "")
+                    .toLowerCase()
+                    .localeCompare((optionB?.label ?? "").toLowerCase())
+                }
+                onChange={(e: any) => {
+                  console.log(e);
+                  setRole(e);
+                }}
+                options={rolesList}
+              />
+            </FormGroup>
+
+            {role !== "" && <Label>Given Permissions</Label>}
+            <FormGroup
+              className="col-md-12 create-group"
+              style={{
+                overflowY: "auto",
+                maxHeight: "25vh", // Subtract scrollbar width from max height
+                WebkitOverflowScrolling: "touch", // Enable momentum scrolling on iOS
+                scrollbarWidth: "thin", // Specify scrollbar width
+                WebkitBorderRadius: "5px !important", // For WebKit browsers (Chrome, Safari)
+                MozBorderRadius: "5px !important", // For Mozilla Firefox
+                borderRadius: "5px !important", // For other browsers
+                scrollbarColor: "lightgray transparent", // Specify scrollbar color
+              }}
+            >
+              {roles
+                .filter((item: any) => item._id === role)
+                .map((filteredRole: any) =>
+                  filteredRole.permissions.map(
+                    (permission: any, index: any) => {
+                      return (
+                        <div key={index}>
+                          <Row>
+                            <Col
+                              key={index}
+                              xl={12}
+                              lg={12}
+                              md={12}
+                              sm={12}
+                              xs={12}
+                              style={{
+                                display: "flex",
+                                justifyContent: "space-between",
+                                alignItems: "center",
+                              }}
+                            >
+                              <span
+                                style={{
+                                  fontSize: "17px",
+                                  margin: "15px 0px",
+                                  fontWeight: "bold",
+                                }}
+                              >
+                                {permission.title}
+                              </span>
+
+                              <div>
+                                <label
+                                  style={{
+                                    display: "inline-block",
+                                    position: "relative",
+                                    cursor: "not-allowed",
+                                    marginRight: "25px",
+                                    fontSize: "18px",
+                                  }}
+                                  onClick={(e) => e.stopPropagation()}
+                                >
+                                  <input
+                                    type="checkbox"
+                                    name="key"
+                                    value="value"
+                                    disabled={true}
+                                    checked={permission.read}
+                                    onChange={() => {}}
+                                    style={{ display: "none" }} // Hide the default checkbox
+                                  />
+                                  <span
+                                    onClick={(e) => e.stopPropagation()}
+                                    className={
+                                      permission.read ? "green" : "red"
+                                    }
+                                  ></span>
+                                  Read
+                                </label>
+                                <label
+                                  style={{
+                                    display: "inline-block",
+                                    position: "relative",
+                                    cursor: "not-allowed",
+                                    marginRight: "25px",
+                                    fontSize: "18px",
+                                  }}
+                                  onClick={(e) => e.stopPropagation()}
+                                >
+                                  <input
+                                    type="checkbox"
+                                    name="key"
+                                    value="value"
+                                    disabled={true}
+                                    checked={permission.create}
+                                    onChange={() => {}}
+                                    style={{ display: "none" }} // Hide the default checkbox
+                                  />
+                                  <span
+                                    onClick={(e) => e.stopPropagation()}
+                                    className={
+                                      permission.create ? "green" : "red"
+                                    }
+                                  ></span>
+                                  Create
+                                </label>
+                                <label
+                                  style={{
+                                    display: "inline-block",
+                                    position: "relative",
+                                    cursor: "not-allowed",
+                                    marginRight: "25px",
+                                    fontSize: "18px",
+                                  }}
+                                  onClick={(e) => e.stopPropagation()}
+                                >
+                                  <input
+                                    type="checkbox"
+                                    name="key"
+                                    value="value"
+                                    disabled={true}
+                                    checked={permission.edit}
+                                    onChange={() => {}}
+                                    style={{ display: "none" }} // Hide the default checkbox
+                                  />
+                                  <span
+                                    onClick={(e) => e.stopPropagation()}
+                                    className={
+                                      permission.edit ? "green" : "red"
+                                    }
+                                  ></span>
+                                  Edit
+                                </label>
+                                <label
+                                  style={{
+                                    display: "inline-block",
+                                    position: "relative",
+                                    cursor: "not-allowed",
+                                    marginRight: "25px",
+                                    fontSize: "18px",
+                                  }}
+                                  onClick={(e) => e.stopPropagation()}
+                                >
+                                  <input
+                                    type="checkbox"
+                                    name="key"
+                                    value="value"
+                                    disabled={true}
+                                    checked={permission.delete}
+                                    onChange={() => {}}
+                                    style={{ display: "none" }} // Hide the default checkbox
+                                  />
+                                  <span
+                                    onClick={(e) => e.stopPropagation()}
+                                    className={
+                                      permission.delete ? "green" : "red"
+                                    }
+                                  ></span>
+                                  Delete
+                                </label>
+                                {/* Similarly, add labels for other permissions */}
+                              </div>
+                            </Col>
+                          </Row>
+                        </div>
+                      );
+                    }
+                  )
+                )}
+            </FormGroup>
+            <Label>Allowed Modules</Label>
+            <FormGroup
+              className="col-md-12 create-group"
+              style={{
+                overflowY: "auto",
+                maxHeight: "25vh", // Subtract scrollbar width from max height
+                WebkitOverflowScrolling: "touch", // Enable momentum scrolling on iOS
+                scrollbarWidth: "thin", // Specify scrollbar width
+                WebkitBorderRadius: "5px !important", // For WebKit browsers (Chrome, Safari)
+                MozBorderRadius: "5px !important", // For Mozilla Firefox
+                borderRadius: "5px !important", // For other browsers
+                scrollbarColor: "lightgray transparent", // Specify scrollbar color
+              }}
+            >
+              <Row>
+                {crmActiveModules.map((module: any, index: any) => {
+                  return (
+                    <div key={index}>
+                      <Row>
+                        <Col
+                          key={index}
+                          xl={7}
+                          lg={7}
+                          md={9}
+                          sm={12}
+                          xs={12}
+                          // xs={12}
+                          style={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                          }}
+                        >
+                          <span
+                            style={{ fontSize: "17px", margin: "15px 0px" }}
+                          >
+                            {module.name}
+                          </span>
+                          <div>
+                            <label
+                              style={{
+                                display: "inline-block",
+                                position: "relative",
+                                cursor: "pointer",
+                                marginRight: "25px",
+                                fontSize: "18px",
+                              }}
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              <input
+                                type="checkbox"
+                                name="key"
+                                value="value"
+                                checked={allowedModules.includes(module._id)}
+                                onChange={() => {
+                                  handleModuleClick(module._id);
+                                }}
+                                style={{ display: "none" }} // Hide the default checkbox
+                              />
+                              <span
+                                onClick={(e) => e.stopPropagation()}
+                                className="green"
+                              ></span>
+                            </label>
+                          </div>
+                        </Col>
+                      </Row>
+                    </div>
+                  );
+                })}
+              </Row>
             </FormGroup>
           </Row>
           <Button color="primary" className="me-1">

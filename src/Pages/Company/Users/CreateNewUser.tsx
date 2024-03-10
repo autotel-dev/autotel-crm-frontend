@@ -1,8 +1,15 @@
 import { PlusCircle } from "react-feather";
-import { Col } from "reactstrap";
 import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { Button, FormGroup, Label, Modal, ModalBody, Row } from "reactstrap";
+import {
+  Button,
+  FormGroup,
+  Label,
+  Modal,
+  ModalBody,
+  Row,
+  Col,
+} from "reactstrap";
 import { CheckCircle } from "react-feather";
 import { useDispatch, useSelector } from "react-redux";
 import { H3 } from "../../../AbstractElements";
@@ -319,7 +326,7 @@ const CreateNewUser = () => {
                                       style={{
                                         display: "inline-block",
                                         position: "relative",
-                                        cursor: "pointer",
+                                        cursor: "not-allowed",
                                         marginRight: "25px",
                                         fontSize: "18px",
                                       }}
@@ -346,7 +353,7 @@ const CreateNewUser = () => {
                                       style={{
                                         display: "inline-block",
                                         position: "relative",
-                                        cursor: "pointer",
+                                        cursor: "not-allowed",
                                         marginRight: "25px",
                                         fontSize: "18px",
                                       }}
@@ -373,7 +380,7 @@ const CreateNewUser = () => {
                                       style={{
                                         display: "inline-block",
                                         position: "relative",
-                                        cursor: "pointer",
+                                        cursor: "not-allowed",
                                         marginRight: "25px",
                                         fontSize: "18px",
                                       }}
@@ -400,7 +407,7 @@ const CreateNewUser = () => {
                                       style={{
                                         display: "inline-block",
                                         position: "relative",
-                                        cursor: "pointer",
+                                        cursor: "not-allowed",
                                         marginRight: "25px",
                                         fontSize: "18px",
                                       }}
