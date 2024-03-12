@@ -59,7 +59,9 @@ const Personalization = () => {
       : ""
   );
   const [primaryColor, setprimaryColor] = useState<string>(
-    userPersonalizationData !== null ? userPersonalizationData.primaryColor : "#000000"
+    userPersonalizationData !== null
+      ? userPersonalizationData.primaryColor
+      : "#000000"
   );
   const [secondaryClor, setsecondaryClor] = useState<string>(
     userPersonalizationData !== null
@@ -67,10 +69,14 @@ const Personalization = () => {
       : "#000000"
   );
   const [customColor1, setcustomColor1] = useState<string>(
-    userPersonalizationData !== null ? userPersonalizationData.customColor1 : "#000000"
+    userPersonalizationData !== null
+      ? userPersonalizationData.customColor1
+      : "#000000"
   );
   const [customColor2, setcustomColor2] = useState<string>(
-    userPersonalizationData !== null ? userPersonalizationData.customColor2 : "#000000"
+    userPersonalizationData !== null
+      ? userPersonalizationData.customColor2
+      : "#000000"
   );
   const [backgroundColor, setbackgroundColor] = useState<string>(
     userPersonalizationData !== null
@@ -78,7 +84,9 @@ const Personalization = () => {
       : ""
   );
   const [textColor, settextColor] = useState<string>(
-    userPersonalizationData !== null ? userPersonalizationData.textColor : "#000000"
+    userPersonalizationData !== null
+      ? userPersonalizationData.textColor
+      : "#000000"
   );
   const [logoImage, setlogoImage] = useState(
     userPersonalizationData !== null ? userPersonalizationData.logoImage : null
@@ -184,9 +192,22 @@ const Personalization = () => {
         .then((data: any) => {
           console.log("api call --- >", data);
           if (data !== undefined) {
-            if (!data.success) {
-              console.log("then but false");
+            if (
+              !data.success &&
+              data.message == "ERROR_INTERNET_DISCONNECTED"
+            ) {
               setLoading(false);
+              setIsEdit(!isEdit);
+            }
+            if (!data.success) {
+              Swal.fire({
+                text: `${data.message}`,
+                icon: "error",
+                timer: 2000,
+                showConfirmButton: false,
+              });
+              setLoading(false);
+              setIsEdit(!isEdit);
             }
             if (data.success) {
               setEditedlogoImage(null);

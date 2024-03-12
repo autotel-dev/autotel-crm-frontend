@@ -19,6 +19,7 @@ import { setUserPersonalizationData } from "../../ReaduxToolkit/Reducer/Personal
 import { setActiveCRMModules } from "../../ReaduxToolkit/Reducer/CRMModuleSlice";
 import { setPermissions } from "../../ReaduxToolkit/Reducer/CompanySlice";
 import { setUserPermissions } from "../../ReaduxToolkit/Reducer/PermissionSlice";
+import { ROLES } from "../../constants/roles";
 // import OTPInput, { ResendOTP } from "otp-input-react";
 
 export interface CommonFormPropsType {
@@ -88,13 +89,16 @@ const OTPForm = ({ alignLogo }: CommonFormPropsType) => {
             console.log("response: ", data.data);
             console.log("token: ", token);
             localStorage.setItem("token", token);
+            if (getUserRole() == ROLES.SUPER_ADMIN) {
+              dispatch(setUserPermissions([]));
+            }
 
             if (getUserRole() == "OPERATOR") {
               localStorage.setItem("userId", getOperatorCompanyUserId());
             } else {
               localStorage.setItem("userId", data.data.userId);
             }
-
+            const userId = localStorage.getItem("userId");
             getAll({
               url:
                 getUserRole() == "COMPANY" || getUserRole() == "OPERATOR"
@@ -102,7 +106,6 @@ const OTPForm = ({ alignLogo }: CommonFormPropsType) => {
                   : "crm-module/get-all-active-modules",
             }).then((data: any) => {
               console.log("active Modules --- >", data);
-              const userId = localStorage.getItem("userId");
 
               if (data !== undefined) {
                 if (!data.success) {
@@ -114,64 +117,70 @@ const OTPForm = ({ alignLogo }: CommonFormPropsType) => {
                   console.log("hhg");
                   console.log(userId);
                   dispatch(setActiveCRMModules(data.data));
-
-                  getAll({
-                    url:
-                      userId == null && userId == undefined
-                        ? "super-admin/get-personalization"
-                        : `company/get-personalization/${userId}`,
-
-                    // url: "super-admin/get-personalization",
-                  }).then((parentData: any) => {
-                    console.log("api call --- >", parentData);
-                    if (parentData == undefined) {
-                      Swal.fire({
-                        text: `${parentData.message}`,
-                        icon: "error",
-                        timer: 2000,
-                        showConfirmButton: false,
-                      });
-                      setLoading(false);
-                      dispatch(setUserPersonalizationData(null));
-                    }
-
-                    if (parentData !== undefined) {
-                      if (!parentData.success) {
-                        setLoading(false);
-                        dispatch(setUserPersonalizationData(null));
-                      }
-                      if (parentData.success) {
-                        dispatch(setUserPersonalizationData(parentData.data));
-                        if (
-                          getUserRole() == "COMPANY" ||
-                          getUserRole() == "OPERATOR"
-                        ) {
-                          getAll({ url: "user/get-permissions" }).then(
-                            (data: any) => {
-                              console.log("api call --- >", data);
-                              if (data !== undefined) {
-                                if (data.success) {
-                                  console.log("hhg");
-                                  dispatch(
-                                    setUserPermissions(
-                                      data.data.allowedPermissions
-                                    )
-                                  );
-                                  setLoading(false);
-                                  navigate(
-                                    `${process.env.PUBLIC_URL}/dashboards/shoppingplace`
-                                  );
-                                }
-                              }
-                            }
-                          );
-                        }
-                      }
-                    }
-                  });
                 }
               }
             });
+            getAll({
+              url:
+                userId == null && userId == undefined
+                  ? "super-admin/get-personalization"
+                  : `company/get-personalization/${userId}`,
+
+              // url: "super-admin/get-personalization",
+            }).then((parentData: any) => {
+              console.log("api call --- >", parentData);
+              if (parentData == undefined) {
+                Swal.fire({
+                  text: `${parentData.message}`,
+                  icon: "error",
+                  timer: 2000,
+                  showConfirmButton: false,
+                });
+                setLoading(false);
+                dispatch(setUserPersonalizationData(null));
+              }
+
+              if (parentData !== undefined) {
+                if (!parentData.success) {
+                  setLoading(false);
+                  dispatch(setUserPersonalizationData(null));
+                }
+                if (parentData.success) {
+                  dispatch(setUserPersonalizationData(parentData.data));
+                }
+              }
+            });
+
+            if (getUserRole() == "COMPANY" || getUserRole() == "OPERATOR") {
+              getAll({ url: "user/get-permissions" })
+                .then((data: any) => {
+                  console.log("api call --- >", data);
+                  if (data !== undefined) {
+                    if (data.success) {
+                      console.log("hhg");
+                      dispatch(
+                        setUserPermissions(data.data.allowedPermissions)
+                      );
+                      setLoading(false);
+                      navigate(
+                        `${process.env.PUBLIC_URL}/dashboards/shoppingplace`
+                      );
+                    }
+                    if (!data.success) {
+                      navigate(
+                        `${process.env.PUBLIC_URL}/dashboards/shoppingplace`
+                      );
+                    }
+                  }
+                })
+                .catch((error: any) => {
+                  navigate(
+                    `${process.env.PUBLIC_URL}/dashboards/shoppingplace`
+                  );
+                });
+            } else {
+              navigate(`${process.env.PUBLIC_URL}/dashboards/shoppingplace`);
+            }
           }
           // if (data.statusCode == 200) {
           //   const token = data.data.authToken;

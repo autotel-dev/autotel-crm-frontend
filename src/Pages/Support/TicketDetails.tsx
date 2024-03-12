@@ -267,6 +267,18 @@ const TicketDetails = () => {
       ).then((data: any) => {
         console.log("api call --- >", data);
         if (data !== undefined) {
+          if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
+            setEdit(false);
+          }
+          if (!data.success) {
+            Swal.fire({
+              text: `${data.message}`,
+              icon: "error",
+              timer: 2000,
+              showConfirmButton: false,
+            });
+            setEdit(false);
+          }
           if (data.success) {
             patch(
               { updatedPriortyStatus: changePriortyStatus },
@@ -307,6 +319,16 @@ const TicketDetails = () => {
     ).then((data: any) => {
       console.log("api call --- >", data);
       if (data !== undefined) {
+        if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
+        }
+        if (!data.success) {
+          Swal.fire({
+            text: `${data.message}`,
+            icon: "error",
+            timer: 2000,
+            showConfirmButton: false,
+          });
+        }
         if (data.success) {
           setTimeout(() => {
             Swal.fire({

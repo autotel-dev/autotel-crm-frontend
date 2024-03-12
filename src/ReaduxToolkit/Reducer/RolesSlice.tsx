@@ -10,6 +10,7 @@ const initialState = {
   id: null,
   value: "",
   noCountryFound: "",
+  isConnected: true,
 };
 
 const RolesSlice = createSlice({
@@ -49,6 +50,9 @@ const RolesSlice = createSlice({
     setNoRolesFound: (state, action) => {
       state.noCountryFound = action.payload;
     },
+    setIsConnected: (state, action) => {
+      state.isConnected = action.payload;
+    },
   },
 });
 export const {
@@ -61,6 +65,7 @@ export const {
   setId,
   setValue,
   setNoRolesFound,
+  setIsConnected
 } = RolesSlice.actions;
 
 export default RolesSlice.reducer;

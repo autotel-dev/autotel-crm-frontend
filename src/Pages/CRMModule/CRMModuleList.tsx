@@ -23,6 +23,7 @@ import { setNoDataFound } from "../../ReaduxToolkit/Reducer/NoDataFoundSlice";
 import UpdateCRMModule from "./UpdateCRMModule";
 import Loader from "../Loader/Loader";
 import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom";
 
 const CRMModuleList = () => {
   const { crmModules, loading, error, id, value, activeInActiveModules } =
@@ -33,33 +34,46 @@ const CRMModuleList = () => {
   const [moduleName, setModuleName] = useState("");
   const [iconClass, setIconClass] = useState("");
   const [isActive, setIsActive] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     dispatch(setCRMModulesStart());
     getAll({ url: "crm-module/get-all-modules" }).then((data: any) => {
       console.log("api call --- >", data);
-      if (data == undefined) {
-        Swal.fire({
-          text: "Failed to fetch due to connection refused",
-          icon: "error",
-          timer: 2000,
-          showConfirmButton: false,
-        });
-        dispatch(setInActiveActiveModules("All"));
-        dispatch(setCRMModulesEnd());
-        dispatch(setCRMModules([]));
-        dispatch(setFilterCRMModules([]));
-        return;
-      }
-      dispatch(setCRMModulesEnd());
+      // if (data == undefined) {
+      //   Swal.fire({
+      //     text: "Failed to fetch due to connection refused",
+      //     icon: "error",
+      //     timer: 2000,
+      //     showConfirmButton: false,
+      //   });
+      //   dispatch(setInActiveActiveModules("All"));
+      //   dispatch(setCRMModulesEnd());
+      //   dispatch(setCRMModules([]));
+      //   dispatch(setFilterCRMModules([]));
+      //   return;
+      // }
+
       if (data !== undefined) {
         dispatch(setNoDataFound(data.message));
+        if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
+          navigate(`${process.env.PUBLIC_URL}/not-conneceted`);
+        }
+        if (!data.success) {
+          Swal.fire({
+            text: `${data.message}`,
+            icon: "error",
+            timer: 2000,
+            showConfirmButton: false,
+          });
+        }
         if (data.success) {
           console.log("hhg");
           dispatch(setCRMModules(data.data));
           dispatch(setFilterCRMModules(data.data));
         }
       }
+      dispatch(setCRMModulesEnd());
     });
     // .catch((error: any) => {
     //   console.log(error);

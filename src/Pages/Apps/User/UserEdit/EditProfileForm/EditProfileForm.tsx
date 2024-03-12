@@ -31,6 +31,7 @@ import { getAll, update } from "../../../../../Api";
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import { setUserData } from "../../../../../ReaduxToolkit/Reducer/UserSlice";
+import { ROLES } from "../../../../../constants/roles";
 
 // interface PropTypes {
 //   isEdit: boolean;
@@ -78,9 +79,20 @@ const EditProfileForm = () => {
         .then((data: any) => {
           console.log("api call --- >", data);
           if (data !== undefined) {
+            if (
+              !data.success &&
+              data.message == "ERROR_INTERNET_DISCONNECTED"
+            ) {
+              setLoading(false);
+              setIsEdit(!isEdit);
+            }
             if (!data.success) {
-              console.log("then but false");
-
+              Swal.fire({
+                text: `${data.message}`,
+                icon: "error",
+                timer: 2000,
+                showConfirmButton: false,
+              });
               setLoading(false);
               setIsEdit(!isEdit);
             }
@@ -236,7 +248,7 @@ const EditProfileForm = () => {
             </Col> */}
           </Row>
         </CardBody>
-        {profile?.edit && (
+        {getUserRole() == ROLES.SUPER_ADMIN ? (
           <CardFooter className="text-end">
             {isEdit && (
               <Button
@@ -265,7 +277,39 @@ const EditProfileForm = () => {
               {loading ? "Loading..." : isEdit ? "Save" : "Edit"}
             </Button>
           </CardFooter>
-        )}
+        ) : (getUserRole() == ROLES.COMPANY ||
+            getUserRole() == ROLES.OPERATOR) &&
+          profile != undefined &&
+          profile?.edit ? (
+          <CardFooter className="text-end">
+            {isEdit && (
+              <Button
+                style={{ marginRight: "15px" }}
+                color="primary"
+                type="submit"
+                disabled={loading}
+                onClick={(e) => {
+                  e.preventDefault();
+                  setIsEdit(!isEdit);
+                }}
+              >
+                Cancel
+              </Button>
+            )}
+
+            <Button
+              color="primary"
+              type="submit"
+              disabled={loading}
+              onClick={(e) => {
+                e.preventDefault();
+                setIsEdit(!isEdit);
+              }}
+            >
+              {loading ? "Loading..." : isEdit ? "Save" : "Edit"}
+            </Button>
+          </CardFooter>
+        ) : null}
       </Form>
     </Col>
   );

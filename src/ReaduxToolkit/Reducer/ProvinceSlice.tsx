@@ -12,6 +12,7 @@ const initialState = {
   value: "",
   noProvinceFound: "",
   countryName: "",
+  isConnected: true,
 };
 
 const ProvinceSlice = createSlice({
@@ -58,6 +59,9 @@ const ProvinceSlice = createSlice({
     setCountryName: (state, action) => {
       state.countryName = action.payload;
     },
+    setIsConnected: (state, action) => {
+      state.isConnected = action.payload;
+    },
   },
 });
 export const {
@@ -72,6 +76,7 @@ export const {
   setId,
   setValue,
   setCountryName,
+  setIsConnected
 } = ProvinceSlice.actions;
 
 export default ProvinceSlice.reducer;

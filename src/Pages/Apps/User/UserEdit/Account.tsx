@@ -184,9 +184,11 @@ const Account = () => {
               <EditProfileForm />
 
               {getUserRole() === "COMPANY" && <AllowedModules />}
-              {getUserRole() === "COMPANY" && legalAttachements?.read && (
-                <Attachements attachements={ticketImages} />
-              )}
+              {getUserRole() === "COMPANY" &&
+                legalAttachements !== undefined &&
+                legalAttachements?.read && (
+                  <Attachements attachements={ticketImages} />
+                )}
               {getUserRole() === "COMPANY" && <ServerPermissions />}
               <SecuritySettings />
 

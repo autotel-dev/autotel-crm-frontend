@@ -323,7 +323,7 @@ const SendCommand: React.FC<PropsTypes> = ({
             </Button>
             &nbsp;&nbsp;
             <Button color="primary" className="me-1">
-              {loading ? "Loading ..." : `Save`}
+              {loading ? "Loading ..." : `Send`}
             </Button>
           </div>
         </form>

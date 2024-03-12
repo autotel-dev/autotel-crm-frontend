@@ -110,7 +110,20 @@ const UpdateUser: React.FC<PropsTypes> = ({
       try {
         await update(operator, { url: `operator/update-operator/${id}` }).then(
           (data: any) => {
-            if (data.success == false) {
+            if (
+              !data.success &&
+              data.message == "ERROR_INTERNET_DISCONNECTED"
+            ) {
+              setLoading(false);
+              setIsVisible(!isVisible);
+            }
+            if (!data.success) {
+              Swal.fire({
+                text: `${data.message}`,
+                icon: "error",
+                timer: 2000,
+                showConfirmButton: false,
+              });
               setLoading(false);
               setIsVisible(!isVisible);
             }
@@ -153,12 +166,6 @@ const UpdateUser: React.FC<PropsTypes> = ({
       } catch (error) {
         // Handle error (e.g., show an error message)
         console.error("Error creating post:", error);
-        Swal.fire({
-          text: "Failed to update due to connection refused",
-          icon: "error",
-          timer: 2000,
-          showConfirmButton: false,
-        });
         setLoading(false);
         setIsVisible(!isVisible);
       }

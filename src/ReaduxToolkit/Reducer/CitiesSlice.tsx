@@ -14,6 +14,7 @@ const initialState = {
   countryId: null,
   value: "",
   noCityFound: "",
+  isConnected: true,
 };
 
 const CitiesSlice = createSlice({
@@ -65,6 +66,9 @@ const CitiesSlice = createSlice({
     setNoCityFound: (state, action) => {
       state.noCityFound = action.payload;
     },
+    setIsConnected: (state, action) => {
+      state.isConnected = action.payload;
+    },
   },
 });
 export const {
@@ -80,6 +84,7 @@ export const {
   setId,
   setValue,
   setNoCityFound,
+  setIsConnected,
 } = CitiesSlice.actions;
 
 export default CitiesSlice.reducer;

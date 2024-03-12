@@ -9,6 +9,7 @@ const initialState = {
   loading: false,
   error: null,
   noCountryFound: "",
+  isConnected: true,
 };
 
 const AlertsSlice = createSlice({
@@ -51,6 +52,9 @@ const AlertsSlice = createSlice({
     setNoAlertsFound: (state, action) => {
       state.noCountryFound = action.payload;
     },
+    setIsConnected: (state, action) => {
+      state.isConnected = action.payload;
+    },
   },
 });
 export const {
@@ -62,6 +66,7 @@ export const {
   setModalData,
   setAlertsEnd,
   setNoAlertsFound,
+  setIsConnected
 } = AlertsSlice.actions;
 
 export default AlertsSlice.reducer;

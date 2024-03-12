@@ -180,7 +180,34 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
         ).then((data: any) => {
           console.log("data", data);
 
-          setLoading(false);
+          if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
+            setLoading(false);
+            setSelectedItems([]);
+            const yesterday = new Date();
+            yesterday.setDate(yesterday.getDate() - 1); // Subtract one day
+            setStartDate(yesterday.toISOString());
+            // setStartDate(new Date().toISOString());
+            setEndDate(new Date().toISOString());
+            addToggle();
+            setType("Select Type");
+          }
+          if (!data.success) {
+            Swal.fire({
+              text: `${data.message}`,
+              icon: "error",
+              timer: 2000,
+              showConfirmButton: false,
+            });
+            setLoading(false);
+            setSelectedItems([]);
+            const yesterday = new Date();
+            yesterday.setDate(yesterday.getDate() - 1); // Subtract one day
+            setStartDate(yesterday.toISOString());
+            // setStartDate(new Date().toISOString());
+            setEndDate(new Date().toISOString());
+            addToggle();
+            setType("Select Type");
+          }
           if (data.success) {
             console.log(data);
             tempReports.push({

@@ -16,6 +16,7 @@ import {
   setServer,
   setId,
   setInActiveActiveServers,
+  setIsConnected,
 } from "../../ReaduxToolkit/Reducer/ServerDetailsSlice";
 import { setNoDataFound } from "../../ReaduxToolkit/Reducer/NoDataFoundSlice";
 import Loader from "../Loader/Loader";
@@ -48,28 +49,40 @@ const ServersList = () => {
     dispatch(setServersStart());
     getAll({ url: "server-management/get-all-servers" }).then((data: any) => {
       console.log("api call --- >", data);
-      if (data == undefined) {
-        Swal.fire({
-          text: "Failed to fetch due to connection refused",
-          icon: "error",
-          timer: 2000,
-          showConfirmButton: false,
-        });
-        dispatch(setInActiveActiveServers("All"));
-        dispatch(setServers([]));
-        dispatch(setFilterServers([]));
-        dispatch(setServersEnd());
-        return;
-      }
-      dispatch(setServersEnd());
+      // if (data == undefined) {
+      //   Swal.fire({
+      //     text: "Failed to fetch due to connection refused",
+      //     icon: "error",
+      //     timer: 2000,
+      //     showConfirmButton: false,
+      //   });
+      //   dispatch(setInActiveActiveServers("All"));
+      //   dispatch(setServers([]));
+      //   dispatch(setFilterServers([]));
+      //   dispatch(setServersEnd());
+      //   return;
+      // }
+
       if (data !== undefined) {
         dispatch(setNoDataFound(data.message));
+        if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
+          dispatch(setIsConnected(true));
+        }
+        if (!data.success) {
+          Swal.fire({
+            text: `${data.message}`,
+            icon: "error",
+            timer: 2000,
+            showConfirmButton: false,
+          });
+        }
         if (data.success) {
           console.log("hhg");
           dispatch(setServers(data.data.allServers));
           dispatch(setFilterServers(data.data.allServers));
         }
       }
+      dispatch(setServersEnd());
     });
   }, []);
   const renderTableRows = () => {

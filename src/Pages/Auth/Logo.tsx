@@ -35,8 +35,8 @@ const Logo = ({ alignLogo }: PropsType) => {
             : Logoo
         }
         alt=""
-        width={65}
-        height={50}
+        width={60}
+        height={45}
       />
     </div>
   );

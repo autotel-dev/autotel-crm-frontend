@@ -17,12 +17,14 @@ import {
 } from "../../../ReaduxToolkit/Reducer/RolesSlice";
 import { setOperatorsEnd } from "../../../ReaduxToolkit/Reducer/OperatorSlice";
 import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom";
 
 const RolesList = () => {
   const { roles, activeInActiveRoles } = useSelector(
     (state: any) => state.roles
   );
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   useEffect(() => {
     dispatch(setRoles([]));
@@ -30,29 +32,41 @@ const RolesList = () => {
     dispatch(setRolesStart());
     getAll({ url: "sub-role/get-all-sub-roles" }).then((data: any) => {
       console.log("api call --- >", data);
-      if (data == undefined) {
-        Swal.fire({
-          text: "Failed to fetch due to connection refused",
-          icon: "error",
-          timer: 2000,
-          showConfirmButton: false,
-        });
-        // dispatch(setInActiveActiveUsers("All"));
-        dispatch(setInActiveActiveRoles("All"));
-        dispatch(setRoles([]));
-        dispatch(setFilterRoles([]));
-        dispatch(setRolesEnd());
-        return;
-      }
-      dispatch(setRolesEnd());
+      // if (data == undefined) {
+      //   Swal.fire({
+      //     text: "Failed to fetch due to connection refused",
+      //     icon: "error",
+      //     timer: 2000,
+      //     showConfirmButton: false,
+      //   });
+      //   // dispatch(setInActiveActiveUsers("All"));
+      //   dispatch(setInActiveActiveRoles("All"));
+      //   dispatch(setRoles([]));
+      //   dispatch(setFilterRoles([]));
+      //   dispatch(setRolesEnd());
+      //   return;
+      // }
+
       if (data !== undefined) {
         dispatch(setNoDataFound(data.message));
+        if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
+          navigate(`${process.env.PUBLIC_URL}/not-conneceted`);
+        }
+        if (!data.success) {
+          Swal.fire({
+            text: `${data.message}`,
+            icon: "error",
+            timer: 2000,
+            showConfirmButton: false,
+          });
+        }
         if (data.success) {
           console.log("hhg");
           dispatch(setRoles(data.data));
           dispatch(setFilterRoles(data.data));
         }
       }
+      dispatch(setRolesEnd());
     });
   }, []);
 

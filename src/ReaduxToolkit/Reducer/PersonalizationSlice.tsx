@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   userPersonalizationData: null,
+  isConnected: true,
 };
 
 const PersonalizationSlice = createSlice({
@@ -11,8 +12,11 @@ const PersonalizationSlice = createSlice({
     setUserPersonalizationData: (state, action) => {
       state.userPersonalizationData = action.payload;
     },
+    setIsConnected: (state, action) => {
+      state.isConnected = action.payload;
+    },
   },
 });
-export const { setUserPersonalizationData } = PersonalizationSlice.actions;
+export const { setUserPersonalizationData,setIsConnected } = PersonalizationSlice.actions;
 
 export default PersonalizationSlice.reducer;

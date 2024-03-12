@@ -10,6 +10,7 @@ const initialState = {
   id: null,
   value: "",
   noCountryFound: "",
+  isConnected: true,
 };
 
 const OpearatorSlice = createSlice({
@@ -44,6 +45,9 @@ const OpearatorSlice = createSlice({
     setNoCountryFound: (state, action) => {
       state.noCountryFound = action.payload;
     },
+    setIsConnected: (state, action) => {
+      state.isConnected = action.payload;
+    },
   },
 });
 export const {
@@ -55,6 +59,7 @@ export const {
   setId,
   setValue,
   setNoCountryFound,
+  setIsConnected
 } = OpearatorSlice.actions;
 
 export default OpearatorSlice.reducer;

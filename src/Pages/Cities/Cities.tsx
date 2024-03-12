@@ -11,6 +11,7 @@ const Cities = () => {
   const dispatch = useDispatch();
   const [searchValue, setSearchValue] = useState("");
   const { filterCities } = useSelector((state: any) => state.cities);
+
   // const [filteredCountries, setFilteredCountries]: any = useState([]);
 
   const filterCitiess = (e: any) => {

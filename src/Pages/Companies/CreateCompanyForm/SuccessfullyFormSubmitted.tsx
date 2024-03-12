@@ -180,7 +180,18 @@ const SuccessfullyFormSubmitted = ({
       await createCom(formData, {
         url: "super-admin/create-company",
       }).then((data: any) => {
-        setLoading(false);
+        if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
+          setLoading(false);
+        }
+        if (!data.success) {
+          Swal.fire({
+            text: `${data.message}`,
+            icon: "error",
+            timer: 2000,
+            showConfirmButton: false,
+          });
+          setLoading(false);
+        }
 
         if (data.success) {
           console.log(data);
@@ -227,13 +238,6 @@ const SuccessfullyFormSubmitted = ({
       });
     } catch (error: any) {
       console.error("Error creating post:", error);
-
-      Swal.fire({
-        text: "Failed to create due to connection refused",
-        icon: "error",
-        timer: 2000,
-        showConfirmButton: false,
-      });
 
       setLoading(false);
     }

@@ -151,6 +151,7 @@ import Reports from "../Pages/Company/Reports/Reports";
 import NotAccessible from "../Pages/NotAccessible/NotAccessible";
 import { ROLES } from "../constants/roles";
 import { PERMISSION_VALUES } from "../constants/permissions";
+import NoInternetConnection from "../Pages/NoInternetConnection/NoInternetConnection";
 
 const routes = [
   // dashboard routes
@@ -754,12 +755,12 @@ const routes = [
     title: "Support",
   },
   {
-    path: `${process.env.PUBLIC_URL}/support/ticketDetails/:ticketId`,
+    path: `${process.env.PUBLIC_URL}/super-admin/support/ticketDetails/:ticketId`,
     Component: <TicketDetails />,
   },
   // Tasks
   {
-    path: `${process.env.PUBLIC_URL}/tasks`,
+    path: `${process.env.PUBLIC_URL}/super-admin/tasks`,
     Component: <Tasks />,
     allowedUserRoles: "SUPER_ADMIN",
     title: "Tasks",
@@ -836,7 +837,6 @@ const routes = [
     isProtected: true,
     allowedUserRoles: [ROLES.OPERATOR],
     permissionValue: "Control Room",
-    
   },
   // Users
   {
@@ -898,6 +898,10 @@ const routes = [
   {
     path: `${process.env.PUBLIC_URL}/not-accessible`,
     Component: <NotAccessible />,
+  },
+  {
+    path: `${process.env.PUBLIC_URL}/not-conneceted`,
+    Component: <NoInternetConnection />,
   },
 ];
 

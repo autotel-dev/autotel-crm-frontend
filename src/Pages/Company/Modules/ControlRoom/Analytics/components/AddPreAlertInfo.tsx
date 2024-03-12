@@ -366,7 +366,7 @@ const AddPreAlertInfo: React.FC<PropsTypes> = ({
             </Button>
             &nbsp;&nbsp;
             <Button color="primary" className="me-1">
-              {loading ? "Loading ..." : `Send`}
+              {loading ? "Loading ..." : `Save`}
             </Button>
           </div>
         </form>

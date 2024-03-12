@@ -16,10 +16,12 @@ import {
   setFilterProvinces,
   setCountryName,
   setInActiveActiveProvinces,
+  setIsConnected,
 } from "../../ReaduxToolkit/Reducer/ProvinceSlice";
 import { setNoDataFound } from "../../ReaduxToolkit/Reducer/NoDataFoundSlice";
 import Loader from "../Loader/Loader";
 import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom";
 
 const ProvinceList = () => {
   const { provinces, loading, error, id, value, activeInActiveProvinces } =
@@ -29,33 +31,46 @@ const ProvinceList = () => {
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [provinceName, setProvinceName] = useState("");
   const [isActive, setIsActive] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     dispatch(setProvincesStart());
     getAll({ url: "province/get-all-provinces" }).then((data: any) => {
       console.log("api call --- >", data);
-      if (data == undefined) {
-        Swal.fire({
-          text: "Failed to fetch due to connection refused",
-          icon: "error",
-          timer: 2000,
-          showConfirmButton: false,
-        });
-        dispatch(setInActiveActiveProvinces("All"));
-        dispatch(setProvincesEnd());
-        dispatch(setProvinces([]));
-        dispatch(setFilterProvinces([]));
-        return;
-      }
-      dispatch(setProvincesEnd());
+      // if (data == undefined) {
+      //   Swal.fire({
+      //     text: "Failed to fetch due to connection refused",
+      //     icon: "error",
+      //     timer: 2000,
+      //     showConfirmButton: false,
+      //   });
+      //   dispatch(setInActiveActiveProvinces("All"));
+      //   dispatch(setProvincesEnd());
+      //   dispatch(setProvinces([]));
+      //   dispatch(setFilterProvinces([]));
+      //   return;
+      // }
+
       if (data !== undefined) {
         dispatch(setNoDataFound(data.message));
+        if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
+          dispatch(setIsConnected(true));
+        }
+        if (!data.success) {
+          Swal.fire({
+            text: `${data.message}`,
+            icon: "error",
+            timer: 2000,
+            showConfirmButton: false,
+          });
+        }
         if (data.success) {
           console.log("hhg");
           dispatch(setProvinces(data.data));
           dispatch(setFilterProvinces(data.data));
         }
       }
+      dispatch(setProvincesEnd());
     });
   }, []);
   useEffect(() => {

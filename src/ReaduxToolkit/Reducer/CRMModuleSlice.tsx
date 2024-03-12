@@ -11,6 +11,7 @@ const initialState = {
   id: null,
   value: "",
   noModuleFound: "",
+  isConnected: true,
 };
 
 const CRMModulesSlice = createSlice({
@@ -49,6 +50,9 @@ const CRMModulesSlice = createSlice({
     setNoModuleFound: (state, action) => {
       state.noModuleFound = action.payload;
     },
+    setIsConnected: (state, action) => {
+      state.isConnected = action.payload;
+    },
   },
 });
 export const {
@@ -61,6 +65,7 @@ export const {
   setId,
   setValue,
   setNoModuleFound,
+  setIsConnected
 } = CRMModulesSlice.actions;
 
 export default CRMModulesSlice.reducer;

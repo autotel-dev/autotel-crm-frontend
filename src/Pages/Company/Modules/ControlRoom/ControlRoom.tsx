@@ -28,6 +28,7 @@ import {
   setDevices,
   setDevicesStatuses,
 } from "../../../../ReaduxToolkit/Reducer/MonitoringSlice";
+import { useNavigate } from "react-router-dom";
 
 const ControlRoom = () => {
   const { assignedAlerts, completedAlerts } = useSelector(
@@ -37,6 +38,7 @@ const ControlRoom = () => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(true);
   const [devicesLoading, setDevicesLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     setLoading(true);
@@ -57,9 +59,12 @@ const ControlRoom = () => {
           dispatch(setLiveAlerts(data.data.allAlertEvents));
           dispatch(setLiveAlertsData(data.data));
         }
+        if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
+          navigate(`${process.env.PUBLIC_URL}/not-conneceted`);
+        }
         if (!data.success) {
           Swal.fire({
-            text: data.message,
+            text: `${data.message}`,
             icon: "error",
             timer: 2000,
             showConfirmButton: false,

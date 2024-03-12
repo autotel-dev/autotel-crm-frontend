@@ -71,59 +71,66 @@ const SuccessfullyFormSubmitted = ({
       await create(createServer, {
         url: "server-management/create-server",
       }).then((data: any) => {
-        setLoading(false);
+        if (data !== undefined) {
+          if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
+            setLoading(false);
+          }
+          if (!data.success) {
+            Swal.fire({
+              text: `${data.message}`,
+              icon: "error",
+              timer: 2000,
+              showConfirmButton: false,
+            });
+            setLoading(false);
+          }
 
-        if (data.success) {
-          console.log(data);
-          setLoading(false);
-          dispatch(setServersStart());
-          getAll({ url: "server-management/get-all-servers" }).then(
-            (data: any) => {
-              console.log("api call --- >", data);
-              if (data == undefined) {
-                Swal.fire({
-                  text: "Failed to fetch due to connection refused",
-                  icon: "error",
-                  timer: 2000,
-                  showConfirmButton: false,
-                });
-                dispatch(setInActiveActiveServers("All"));
-                dispatch(setServers([]));
-                dispatch(setFilterServers([]));
+          if (data.success) {
+            console.log(data);
+            setLoading(false);
+            dispatch(setServersStart());
+            getAll({ url: "server-management/get-all-servers" }).then(
+              (data: any) => {
+                console.log("api call --- >", data);
+                if (data == undefined) {
+                  Swal.fire({
+                    text: "Failed to fetch due to connection refused",
+                    icon: "error",
+                    timer: 2000,
+                    showConfirmButton: false,
+                  });
+                  dispatch(setInActiveActiveServers("All"));
+                  dispatch(setServers([]));
+                  dispatch(setFilterServers([]));
+                  dispatch(setServersEnd());
+                  return;
+                }
+                dispatch(setServerInfo({}));
+                dispatch(setServerCredentials({}));
+                dispatch(setGoogleAccountCreadentials({}));
+                dispatch(setFirebaseAccountCredentials({}));
+                dispatch(setApiKeys(""));
+                dispatch(setCreateServer({}));
+                // ----------------------
                 dispatch(setServersEnd());
-                return;
-              }
-              dispatch(setServerInfo({}));
-              dispatch(setServerCredentials({}));
-              dispatch(setGoogleAccountCreadentials({}));
-              dispatch(setFirebaseAccountCredentials({}));
-              dispatch(setApiKeys(""));
-              dispatch(setCreateServer({}));
-              // ----------------------
-              dispatch(setServersEnd());
-              if (data !== undefined) {
-                dispatch(setNoDataFound(data.message));
-                if (data.success) {
-                  console.log("hhg");
-                  dispatch(setServers(data.data.allServers));
-                  dispatch(setFilterServers(data.data.allServers));
-                  navigate(`${process.env.PUBLIC_URL}/setup/server_details`);
+                if (data !== undefined) {
+                  dispatch(setNoDataFound(data.message));
+                  if (data.success) {
+                    console.log("hhg");
+                    dispatch(setServers(data.data.allServers));
+                    dispatch(setFilterServers(data.data.allServers));
+                    navigate(`${process.env.PUBLIC_URL}/setup/server_details`);
+                  }
                 }
               }
-            }
-          );
+            );
+          }
         }
       });
       // Handle successful post creation (e.g., show a success message, redirect, etc.)
     } catch (error: any) {
       // Handle error (e.g., show an error message)
       console.error("Error creating post:", error);
-      Swal.fire({
-        text: "Failed to create due to connection refused",
-        icon: "error",
-        timer: 2000,
-        showConfirmButton: false,
-      });
       setLoading(false);
     }
   };

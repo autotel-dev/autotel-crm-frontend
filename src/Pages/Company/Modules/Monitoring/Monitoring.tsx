@@ -11,6 +11,7 @@ import {
 } from "../../../../ReaduxToolkit/Reducer/MonitoringSlice";
 import Loader from "../../../Loader/Loader";
 import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom";
 
 const Monitoring = () => {
   const apiKey = "AIzaSyDI3fB-ItM1LpMOyMg_P8UxTUuxHCyQS34"; // Replace with your actual API key
@@ -115,7 +116,7 @@ const Monitoring = () => {
                   );
 
                   // Check if any item in the group is checked and update the group's checked key
-                  const anyChecked = updatedItems.some(
+                  const anyChecked = updatedItems.every(
                     (item: any) => item.checked
                   );
                   const updatedGroup = {
@@ -248,31 +249,35 @@ const Monitoring = () => {
   }, []);
 
   // ------------------------------------------------
-
+  const navigate = useNavigate();
   const getData = () => {
     setLoading(true);
     getAll({ url: "company/devices" }).then((data: any) => {
       console.log("data", data);
-      if (data == undefined) {
-        setUndefinedData(true);
-        setLoading(false);
-        Swal.fire({
-          text: "Failed to Fetch",
-          icon: "error",
-          timer: 2000,
-          showConfirmButton: false,
-        });
-      }
+      // if (data == undefined) {
+      //   setUndefinedData(true);
+      //   setLoading(false);
+      //   Swal.fire({
+      //     text: "Failed to Fetch",
+      //     icon: "error",
+      //     timer: 2000,
+      //     showConfirmButton: false,
+      //   });
+      // }
       if (data !== undefined) {
+        if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
+          navigate(`${process.env.PUBLIC_URL}/not-conneceted`);
+        }
         if (!data.success) {
           setLoading(false);
           Swal.fire({
-            text: "Failed to Fetch the devices",
+            text: `${data.message}`,
             icon: "error",
             timer: 2000,
             showConfirmButton: false,
           });
         }
+
         if (data.success) {
           setUndefinedData(false);
           console.log("api call --- >", data);

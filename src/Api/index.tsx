@@ -116,6 +116,21 @@ export const otpVerification = async (
 };
 
 export const create = async (postData: any, url: URLTypes): Promise<void> => {
+  if (!navigator.onLine) {
+    Swal.fire({
+      text: "Internet connection is not available",
+      icon: "error",
+      timer: 2000,
+      showCancelButton: false,
+    });
+    // throw new Error("Internet connection is not available");
+    const error: any = {
+      success: false,
+      message: "ERROR_INTERNET_DISCONNECTED",
+      statusCode: 401,
+    };
+    return error;
+  }
   try {
     const response = await axios.post(`${API_BASE_URL}/${url.url}`, postData, {
       headers: header(),
@@ -126,19 +141,29 @@ export const create = async (postData: any, url: URLTypes): Promise<void> => {
 
     return result;
   } catch (error: any) {
-    Swal.fire({
-      text: `${error.response.data.message}`,
-      icon: "info",
-      timer: 2000,
-      showCancelButton: false,
-    });
-    // return error;
+    console.error("Error creating:", error.message);
   }
 };
 export const otpEnabled = async (
   isSecurityEnabled: boolean,
   url: URLTypes
 ): Promise<void> => {
+  if (!navigator.onLine) {
+    Swal.fire({
+      text: "Internet connection is not available",
+      icon: "error",
+      timer: 2000,
+      showCancelButton: false,
+    });
+    // throw new Error("Internet connection is not available");
+    const error: any = {
+      success: false,
+      message: "ERROR_INTERNET_DISCONNECTED",
+      statusCode: 401,
+    };
+    return error;
+  }
+  // -----------------------
   try {
     const response = await axios.patch(
       `${API_BASE_URL}/${url.url}`,
@@ -153,16 +178,28 @@ export const otpEnabled = async (
 
     return result;
   } catch (error: any) {
-    Swal.fire({
-      text: `${error.response.data.message}`,
-      icon: "info",
-      timer: 2000,
-      showCancelButton: false,
-    });
+    console.error("Error OTPEnabled:", error.message);
+    // return error;
   }
 };
 
 export const resendOTP = async (userId: any, url: URLTypes): Promise<void> => {
+  if (!navigator.onLine) {
+    Swal.fire({
+      text: "Internet connection is not available",
+      icon: "error",
+      timer: 2000,
+      showCancelButton: false,
+    });
+    // throw new Error("Internet connection is not available");
+    const error: any = {
+      success: false,
+      message: "ERROR_INTERNET_DISCONNECTED",
+      statusCode: 401,
+    };
+    return error;
+  }
+  // -----------------------
   try {
     const response = await axios.post(
       `${API_BASE_URL}/${url.url}`,
@@ -177,12 +214,7 @@ export const resendOTP = async (userId: any, url: URLTypes): Promise<void> => {
 
     return result;
   } catch (error: any) {
-    Swal.fire({
-      text: `${error.response.data.message}`,
-      icon: "info",
-      timer: 2000,
-      showCancelButton: false,
-    });
+    console.error("Error resendOTP:", error.message);
   }
 };
 
@@ -190,6 +222,22 @@ export const createCom = async (
   formData: FormData,
   url: URLTypes
 ): Promise<void> => {
+  if (!navigator.onLine) {
+    Swal.fire({
+      text: "Internet connection is not available",
+      icon: "error",
+      timer: 2000,
+      showCancelButton: false,
+    });
+    // throw new Error("Internet connection is not available");
+    const error: any = {
+      success: false,
+      message: "ERROR_INTERNET_DISCONNECTED",
+      statusCode: 401,
+    };
+    return error;
+  }
+  // -----------------------
   try {
     const response = await axios.post(`${API_BASE_URL}/${url.url}`, formData, {
       headers: multipartHeader(),
@@ -201,16 +249,27 @@ export const createCom = async (
 
     return result;
   } catch (error: any) {
-    Swal.fire({
-      text: `${error.response.data.message}`,
-      icon: "info",
-      timer: 2000,
-      showCancelButton: false,
-    });
+    console.error("Error creatingCompany:", error.message);
   }
 };
 
 export const update = async (postData: any, url: URLTypes): Promise<void> => {
+  if (!navigator.onLine) {
+    Swal.fire({
+      text: "Internet connection is not available",
+      icon: "error",
+      timer: 2000,
+      showCancelButton: false,
+    });
+    // throw new Error("Internet connection is not available");
+    const error: any = {
+      success: false,
+      message: "ERROR_INTERNET_DISCONNECTED",
+      statusCode: 401,
+    };
+    return error;
+  }
+  // -----------------------
   try {
     const response = await axios.put(`${API_BASE_URL}/${url.url}`, postData, {
       headers: header(),
@@ -221,12 +280,7 @@ export const update = async (postData: any, url: URLTypes): Promise<void> => {
 
     return result;
   } catch (error: any) {
-    Swal.fire({
-      text: `${error.response.data.message}`,
-      icon: "info",
-      timer: 2000,
-      showCancelButton: false,
-    });
+    console.error("Error updating:", error.message);
   }
 };
 
@@ -234,6 +288,22 @@ export const updateWithMultipart = async (
   postData: any,
   url: URLTypes
 ): Promise<void> => {
+  if (!navigator.onLine) {
+    Swal.fire({
+      text: "Internet connection is not available",
+      icon: "error",
+      timer: 2000,
+      showCancelButton: false,
+    });
+    // throw new Error("Internet connection is not available");
+    const error: any = {
+      success: false,
+      message: "ERROR_INTERNET_DISCONNECTED",
+      statusCode: 401,
+    };
+    return error;
+  }
+  // -----------------------
   try {
     const response = await axios.put(`${API_BASE_URL}/${url.url}`, postData, {
       headers: multipartHeader(),
@@ -244,13 +314,7 @@ export const updateWithMultipart = async (
 
     return result;
   } catch (error: any) {
-    Swal.fire({
-      text: `${error.response.data.message}`,
-      icon: "info",
-      timer: 2000,
-      showCancelButton: false,
-    });
-    return error;
+    console.error("Error updatingMultipart:", error.message);
   }
 };
 
@@ -258,6 +322,22 @@ export const createWithMultipart = async (
   postData: any,
   url: URLTypes
 ): Promise<void> => {
+  if (!navigator.onLine) {
+    Swal.fire({
+      text: "Internet connection is not available",
+      icon: "error",
+      timer: 2000,
+      showCancelButton: false,
+    });
+    // throw new Error("Internet connection is not available");
+    const error: any = {
+      success: false,
+      message: "ERROR_INTERNET_DISCONNECTED",
+      statusCode: 401,
+    };
+    return error;
+  }
+  // -----------------------
   try {
     const response = await axios.post(`${API_BASE_URL}/${url.url}`, postData, {
       headers: multipartHeader(),
@@ -265,20 +345,29 @@ export const createWithMultipart = async (
 
     const result = response.data;
     console.log("Response data:", response.data);
-
     return result;
   } catch (error: any) {
-    Swal.fire({
-      text: `${error.response.data.message}`,
-      icon: "info",
-      timer: 2000,
-      showCancelButton: false,
-    });
-    return error;
+    console.error("Error creatingMultipart:", error.message);
   }
 };
 
 export const patch = async (postData: any, url: URLTypes): Promise<void> => {
+  if (!navigator.onLine) {
+    Swal.fire({
+      text: "Internet connection is not available",
+      icon: "error",
+      timer: 2000,
+      showCancelButton: false,
+    });
+    // throw new Error("Internet connection is not available");
+    const error: any = {
+      success: false,
+      message: "ERROR_INTERNET_DISCONNECTED",
+      statusCode: 401,
+    };
+    return error;
+  }
+  // -----------------------
   try {
     const response = await axios.patch(`${API_BASE_URL}/${url.url}`, postData, {
       headers: header(),
@@ -286,69 +375,73 @@ export const patch = async (postData: any, url: URLTypes): Promise<void> => {
 
     const result = response.data;
     console.log("Response data:", response.data);
-
     return result;
   } catch (error: any) {
-    Swal.fire({
-      text: `${error.response.data.message}`,
-      icon: "info",
-      timer: 2000,
-      showCancelButton: false,
-    });
+    console.error("Error when Patching:", error.message);
   }
 };
 
 export const deleteSingle = async (url: URLTypes): Promise<void> => {
-  try {
-    const response = await fetch(`${API_BASE_URL}/${url.url}`, {
-      method: "DELETE",
-      headers: header(),
+  if (!navigator.onLine) {
+    Swal.fire({
+      text: "Internet connection is not available",
+      icon: "error",
+      timer: 2000,
+      showCancelButton: false,
     });
-    const result = await response.json();
-    console.log("api --- >", result);
-    if (result.success !== true && result.statusCode !== 200) {
-      Swal.fire({
-        text: `${result.message}`,
-        icon: "info",
-        timer: 2000,
-        showCancelButton: false,
-      });
-    }
-    return result;
-
-    // Handle success (optional)
-  } catch (error: any) {
-    console.error("Error get-all:", error);
+    // throw new Error("Internet connection is not available");
+    const error: any = {
+      success: false,
+      message: "ERROR_INTERNET_DISCONNECTED",
+      statusCode: 401,
+    };
+    return error;
   }
-};
-
-export const getAll = async (url: URLTypes): Promise<void> => {
+  // -----------------------
   console.log(`${API_BASE_URL}/${url.url}`);
   console.log(header());
 
   try {
-    const response = await fetch(`${API_BASE_URL}/${url.url}`, {
-      method: "GET",
+    const response = await axios.delete(`${API_BASE_URL}/${url.url}`, {
       headers: header(),
     });
-    const result = await response.json();
-    if (result.success !== true && result.statusCode !== 404) {
-      Swal.fire({
-        text: `${result.message}`,
-        icon: "info",
-        timer: 2000,
-        showCancelButton: false,
-      });
-    }
-
-    console.log("api --- >", result);
-
+    const result = response.data;
+    console.log("Response data:", response.data);
     return result;
+  } catch (error: any) {
+    console.error("Error deleting:", error.message);
+  }
+};
 
-    // Handle success (optional)
+export const getAll = async (url: URLTypes): Promise<void> => {
+  if (!navigator.onLine) {
+    // Swal.fire({
+    //   text: "Internet connection is not available",
+    //   icon: "error",
+    //   timer: 2000,
+    //   showCancelButton: false,
+    // });
+    // throw new Error("Internet connection is not available");
+    const error: any = {
+      success: false,
+      message: "ERROR_INTERNET_DISCONNECTED",
+      statusCode: 401,
+    };
+    return error;
+  }
+  // -----------------------
+  console.log(`${API_BASE_URL}/${url.url}`);
+  console.log(header());
+
+  try {
+    const response = await axios.get(`${API_BASE_URL}/${url.url}`, {
+      headers: header(),
+    });
+    const result = response.data;
+    console.log("Response data:", response.data);
+    return result;
   } catch (error: any) {
     console.error("Error get-all:", error.message);
-    // return error;
   }
 };
 
@@ -374,89 +467,94 @@ export const getImage = async (url: URLTypes) => {
     console.error("Error get-all:", error);
   }
 };
-export const getAllActive = async (url: URLTypes): Promise<void> => {
-  try {
-    const response = await fetch(`${API_BASE_URL}/${url.url}`, {
-      method: "GET",
-      headers: header(),
-    });
-    const result = await response.json();
-    if (result.success !== true && result.statusCode !== 404) {
-      Swal.fire({
-        text: `${result.message}`,
-        icon: "info",
-        timer: 2000,
-        showCancelButton: false,
-      });
-    }
-    console.log("api --- >", result);
 
-    return result;
+// import axios from "axios";
+// import { BASE_URL } from "./constant";
 
-    // Handle success (optional)
-  } catch (error: any) {
-    console.error("Error get-all:", error);
-    Swal.fire({
-      text: `${error.message}`,
-      icon: "info",
-      timer: 2000,
-      showCancelButton: false,
-    });
-  }
-};
-
-// export const create = async (
-//   postData: CitiesType,
-//   url: URLTypes
-// ): Promise<void> => {
-//   try {
-//     const response = await fetch(`${API_BASE_URL}/${url.url}`, {
-//       method: "POST",
-//       headers: header(),
-//       body: JSON.stringify(postData),
-//     });
-//     const result = await response.json();
-//     if (result.success !== true && result.statusCode !== 404) {
-//       Swal.fire({
-//         text: `${result.message}`,
-//         icon: "info",
-//         timer: 2000,
-//         showCancelButton: false,
-//       });
-//     }
-//     console.log("api --- >", result);
-//     return result;
-//     // Handle success (optional)
-//   } catch (error: any) {
-//     console.error("Error get-all:", error);
-//   }
+// const token = localStorage.getItem("token");
+// // GLOBAL POST REQUEST WITH AUTHRIZATION
+// const POST = async (path, token, data) => {
+//   // SETTING UP HEADER
+//   const HEADER = {
+//     headers: token
+//       ? {
+//           "Content-Type": "application/json",
+//           Authorization: `Bearer ${token}`,
+//         }
+//       : {
+//           "Content-Type": "application/json",
+//         },
+//   };
+//   // GETTING RESPONSE
+//   let res = await axios.post(BASE_URL + path, data, HEADER);
+//   return res.data;
 // };
 
-// export const update = async (
-//   postData: CitiesType,
-//   url: URLTypes
-// ): Promise<void> => {
-//   try {
-//     const response = await fetch(`${API_BASE_URL}/${url.url}`, {
-//       method: "PUT",
-//       headers: header(),
-//       body: JSON.stringify(postData),
-//     });
-//     const result = await response.json();
-//     if (result.success !== true && result.statusCode !== 404) {
-//       Swal.fire({
-//         text: `${result.message}`,
-//         icon: "info",
-//         timer: 2000,
-//         showCancelButton: false,
-//       });
-//     }
-//     console.log("api --- >", result);
-
-//     return result;
-
-//     // Handle success (optional)
-//   } catch (error: any) {
-//     console.error("Error get-all:", error);
-//   }
+// // GLOBAL GET REQUEST WITH AUTHRIZATION
+// const GET = async (path, token, params) => {
+//   // SETTING UP HEADER & PARAMS
+//   const HEADER = {
+//     headers: token
+//       ? {
+//           "Content-Type": "application/json",
+//           Authorization: `Bearer ${token}`,
+//           params: params,
+//         }
+//       : {
+//           "Content-Type": "application/json",
+//           params: params,
+//         },
+//   };
+//   // GETTING RESPONSE
+//   let res = await axios.get(BASE_URL + path + params, HEADER);
+//   return res.data;
 // };
+
+// // GLOBAL PUT REQUEST WITH AUTHRIZATION
+// const PUT = async (path, token, params, data) => {
+//   // SETTING UP HEADER & PARAMS
+//   const HEADER = {
+//     headers: token
+//       ? {
+//           "Content-Type": "application/json",
+//           Authorization: `Bearer ${token}`,
+//         }
+//       : {
+//           "Content-Type": "application/json",
+//         },
+//   };
+//   // GETTING RESPONSE
+//   let res = await axios.put(BASE_URL + path + "/" + params, data, HEADER);
+//   return res.data;
+// };
+
+// // GLOBAL DELETE REQUEST WITH AUTHRIZATION
+// const DELETE = async (path, token, params) => {
+//   // SETTING UP HEADER & PARAMS
+//   const HEADER = {
+//     headers: token
+//       ? {
+//           "Content-Type": "application/json",
+//           Authorization: `Bearer ${token}`,
+//           params: params,
+//         }
+//       : {
+//           "Content-Type": "application/json",
+//           params: params,
+//         },
+//   };
+//   // GETTING RESPONSE
+//   let res = await axios.delete(BASE_URL + path, HEADER);
+//   return res.data;
+// };
+
+// export { POST, GET, PUT, DELETE };
+
+// const LIVE_URL = "https://koko-ranch.herokuapp.com";
+// const LOCAL_URL = "http://localhost:4000";
+
+// // const BASE_URL = LIVE_URL;
+// const BASE_URL = LOCAL_URL;
+// const TOKEN = localStorage.getItem("token");
+
+// export { LIVE_URL, LOCAL_URL, TOKEN, BASE_URL };

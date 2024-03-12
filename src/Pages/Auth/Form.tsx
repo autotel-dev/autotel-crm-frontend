@@ -15,6 +15,7 @@ import Swal from "sweetalert2";
 import { setUserPersonalizationData } from "../../ReaduxToolkit/Reducer/PersonalizationSlice";
 import { setPermissions } from "../../ReaduxToolkit/Reducer/CompanySlice";
 import { setUserPermissions } from "../../ReaduxToolkit/Reducer/PermissionSlice";
+import { ROLES } from "../../constants/roles";
 
 interface loginTypes {
   emailAddress: string; // Change 'boolean' to the actual type of isVisible
@@ -85,13 +86,16 @@ const CommonForm = ({ alignLogo }: CommonFormPropsType) => {
             console.log("response: ", data.data);
             console.log("token: ", token);
             localStorage.setItem("token", token);
+            if (getUserRole() == ROLES.SUPER_ADMIN) {
+              dispatch(setUserPermissions([]));
+            }
 
             if (getUserRole() == "OPERATOR") {
               localStorage.setItem("userId", getOperatorCompanyUserId());
             } else {
               localStorage.setItem("userId", data.data.userId);
             }
-
+            const userId = localStorage.getItem("userId");
             getAll({
               url:
                 getUserRole() == "COMPANY" || getUserRole() == "OPERATOR"
@@ -99,7 +103,6 @@ const CommonForm = ({ alignLogo }: CommonFormPropsType) => {
                   : "crm-module/get-all-active-modules",
             }).then((data: any) => {
               console.log("active Modules --- >", data);
-              const userId = localStorage.getItem("userId");
 
               if (data !== undefined) {
                 if (!data.success) {
@@ -111,55 +114,67 @@ const CommonForm = ({ alignLogo }: CommonFormPropsType) => {
                   console.log("hhg");
                   console.log(userId);
                   dispatch(setActiveCRMModules(data.data));
+                }
+              }
+            });
+            getAll({
+              url:
+                userId == null && userId == undefined
+                  ? "super-admin/get-personalization"
+                  : `company/get-personalization/${userId}`,
 
-                  getAll({
-                    url:
-                      userId == null && userId == undefined
-                        ? "super-admin/get-personalization"
-                        : `company/get-personalization/${userId}`,
+              // url: "super-admin/get-personalization",
+            }).then((parentData: any) => {
+              console.log("api call --- >", parentData);
+              if (parentData == undefined) {
+                Swal.fire({
+                  text: `${parentData.message}`,
+                  icon: "error",
+                  timer: 2000,
+                  showConfirmButton: false,
+                });
+                setLoading(false);
+                dispatch(setUserPersonalizationData(null));
+              }
 
-                    // url: "super-admin/get-personalization",
-                  }).then((parentData: any) => {
-                    console.log("api call --- >", parentData);
-                    if (parentData == undefined) {
-                      Swal.fire({
-                        text: `${parentData.message}`,
-                        icon: "error",
-                        timer: 2000,
-                        showConfirmButton: false,
-                      });
-                      setLoading(false);
-                      dispatch(setUserPersonalizationData(null));
-                    }
-
-                    if (parentData !== undefined) {
-                      if (!parentData.success) {
-                        setLoading(false);
-                        dispatch(setUserPersonalizationData(null));
-                      }
-                      if (parentData.success) {
-                        dispatch(setUserPersonalizationData(parentData.data));
-                      }
-                    }
-                  });
+              if (parentData !== undefined) {
+                if (!parentData.success) {
+                  setLoading(false);
+                  dispatch(setUserPersonalizationData(null));
+                }
+                if (parentData.success) {
+                  dispatch(setUserPersonalizationData(parentData.data));
                 }
               }
             });
 
             if (getUserRole() == "COMPANY" || getUserRole() == "OPERATOR") {
-              getAll({ url: "user/get-permissions" }).then((data: any) => {
-                console.log("api call --- >", data);
-                if (data !== undefined) {
-                  if (data.success) {
-                    console.log("hhg");
-                    dispatch(setUserPermissions(data.data.allowedPermissions));
-                    setLoading(false);
-                    navigate(
-                      `${process.env.PUBLIC_URL}/dashboards/shoppingplace`
-                    );
+              getAll({ url: "user/get-permissions" })
+                .then((data: any) => {
+                  console.log("api call --- >", data);
+                  if (data !== undefined) {
+                    if (data.success) {
+                      console.log("hhg");
+                      dispatch(
+                        setUserPermissions(data.data.allowedPermissions)
+                      );
+                      setLoading(false);
+                      navigate(
+                        `${process.env.PUBLIC_URL}/dashboards/shoppingplace`
+                      );
+                    }
+                    if (!data.success) {
+                      navigate(
+                        `${process.env.PUBLIC_URL}/dashboards/shoppingplace`
+                      );
+                    }
                   }
-                }
-              });
+                })
+                .catch((error: any) => {
+                  navigate(
+                    `${process.env.PUBLIC_URL}/dashboards/shoppingplace`
+                  );
+                });
             } else {
               navigate(`${process.env.PUBLIC_URL}/dashboards/shoppingplace`);
             }
@@ -235,7 +250,7 @@ const CommonForm = ({ alignLogo }: CommonFormPropsType) => {
               >
                 {ForgotPassword}
               </Link> */}
-              <div className="text-end mt-3">
+              <div className="text-end mt-2">
                 <Button
                   disabled={loading}
                   color="primary"

@@ -19,6 +19,7 @@ import UpdateUser from "./UpdateUser";
 import { jwtDecode } from "jwt-decode";
 import { formatUnderscoredString, getUserRole } from "../../../Api/globals";
 import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom";
 
 const UsersList = () => {
   const { operators, loading, activeInActiveOperators } = useSelector(
@@ -42,6 +43,7 @@ const UsersList = () => {
   const [phoneNo, setPhoneNo] = useState(false);
   const [allowedModules, setAllowedModules] = useState(false);
   const [subRole, setSubRole] = useState(false);
+  const navigate = useNavigate();
 
   // -----------------------------------
   const [decodedToken, setDecodedToken]: any = useState(null);
@@ -60,28 +62,40 @@ const UsersList = () => {
     dispatch(setOperatorsStart());
     getAll({ url: "operator/get-all-operators" }).then((data: any) => {
       console.log("api call --- >", data);
-      if (data == undefined) {
-        Swal.fire({
-          text: "Failed to fetch due to connection refused",
-          icon: "error",
-          timer: 2000,
-          showConfirmButton: false,
-        });
-        dispatch(setInActiveActiveUsers("All"));
-        dispatch(setOperators([]));
-        dispatch(setFilterOperators([]));
-        dispatch(setOperatorsEnd());
-        return;
-      }
-      dispatch(setOperatorsEnd());
+      // if (data == undefined) {
+      //   Swal.fire({
+      //     text: "Failed to fetch due to connection refused",
+      //     icon: "error",
+      //     timer: 2000,
+      //     showConfirmButton: false,
+      //   });
+      //   dispatch(setInActiveActiveUsers("All"));
+      //   dispatch(setOperators([]));
+      //   dispatch(setFilterOperators([]));
+      //   dispatch(setOperatorsEnd());
+      //   return;
+      // }
+     
       if (data !== undefined) {
         dispatch(setNoDataFound(data.message));
+        if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
+          navigate(`${process.env.PUBLIC_URL}/not-conneceted`);
+        }
+        if (!data.success) {
+          Swal.fire({
+            text: `${data.message}`,
+            icon: "error",
+            timer: 2000,
+            showConfirmButton: false,
+          });
+        }
         if (data.success) {
           console.log("hhg");
           dispatch(setOperators(data.data));
           dispatch(setFilterOperators(data.data));
         }
       }
+      dispatch(setOperatorsEnd());
     });
   }, []);
 

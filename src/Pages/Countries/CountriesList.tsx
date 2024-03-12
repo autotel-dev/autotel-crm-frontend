@@ -19,6 +19,7 @@ import { setNoDataFound } from "../../ReaduxToolkit/Reducer/NoDataFoundSlice";
 import UpdateCountry from "./UpdateCountry";
 import Loader from "../Loader/Loader";
 import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom";
 
 const CountriesList = () => {
   const { countries, loading, id, activeInActiveCountries } = useSelector(
@@ -29,26 +30,40 @@ const CountriesList = () => {
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [countryName, setCountryName] = useState("");
   const [isActive, setIsActive] = useState(false);
+  const navigate = useNavigate();
   useEffect(() => {
     dispatch(setCountriesStart());
     getAll({ url: "country/get-all-countries" }).then((data: any) => {
       console.log("api call --- >", data);
-      if (data == undefined) {
-        Swal.fire({
-          text: "Failed to fetch due to connection refused",
-          icon: "error",
-          timer: 2000,
-          showConfirmButton: false,
-        });
-        dispatch(setInActiveActiveCountries("All"));
-        dispatch(setCountries([]));
-        dispatch(setFilterCountries([]));
-        dispatch(setCountriesEnd());
-        return;
-      }
-      dispatch(setCountriesEnd());
+      // if (data == undefined) {
+      //   Swal.fire({
+      //     text: "Failed to fetch due to connection refused",
+      //     icon: "error",
+      //     timer: 2000,
+      //     showConfirmButton: false,
+      //   });
+      //   dispatch(setInActiveActiveCountries("All"));
+      //   dispatch(setCountries([]));
+      //   dispatch(setFilterCountries([]));
+      //   dispatch(setCountriesEnd());
+      //   return;
+      // }
+
       if (data !== undefined) {
+        console.log("Data",data);
+        
         dispatch(setNoDataFound(data.message));
+        if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
+          navigate(`${process.env.PUBLIC_URL}/not-conneceted`);
+        }
+        if (!data.success) {
+          Swal.fire({
+            text: `${data.message}`,
+            icon: "error",
+            timer: 2000,
+            showConfirmButton: false,
+          });
+        }
         if (data.success) {
           console.log("hhg");
           setFilterCountries(data.data);
@@ -56,6 +71,7 @@ const CountriesList = () => {
           dispatch(setFilterCountries(data.data));
         }
       }
+      dispatch(setCountriesEnd());
     });
   }, []);
 

@@ -1,16 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import {
-  Button,
-  Nav,
-  NavItem,
-  NavLink,
-  TabContent,
-  TabPane,
-  Modal,
-  ModalBody,
-  Table,
-  Row,
-} from "reactstrap";
+import { Button, Modal, ModalBody, Table, Row } from "reactstrap";
 
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";

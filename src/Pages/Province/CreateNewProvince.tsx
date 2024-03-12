@@ -56,44 +56,70 @@ const CreateNewProvince = () => {
       try {
         await create(province, { url: "province/create-province" }).then(
           (data: any) => {
-            setLoading(false);
-            setAddModal(false);
-            if (data.success) {
-              console.log(data);
-              dispatch(setCountryId(null));
-              setLoading(false);
-              setAddModal(false);
-              reset({
-                name: "",
-              });
-              dispatch(setCountryId(null));
-              dispatch(setProvincesStart());
-              getAll({ url: "province/get-all-provinces" }).then(
-                (data: any) => {
-                  console.log("api call --- >", data);
-                  if (data == undefined) {
-                    Swal.fire({
-                      text: "Failed to fetch due to connection refused",
-                      icon: "error",
-                      timer: 2000,
-                      showConfirmButton: false,
-                    });
-                    dispatch(setInActiveActiveProvinces("All"));
+            if (data !== undefined) {
+              if (
+                !data.success &&
+                data.message == "ERROR_INTERNET_DISCONNECTED"
+              ) {
+                setLoading(false);
+                setAddModal(false);
+                reset({
+                  name: "",
+                });
+                dispatch(setCountryId(null));
+              }
+              if (!data.success) {
+                Swal.fire({
+                  text: `${data.message}`,
+                  icon: "error",
+                  timer: 2000,
+                  showConfirmButton: false,
+                });
+                setLoading(false);
+                setAddModal(false);
+                reset({
+                  name: "",
+                });
+                dispatch(setCountryId(null));
+              }
+
+              if (data.success) {
+                console.log(data);
+                dispatch(setCountryId(null));
+                setLoading(false);
+                setAddModal(false);
+                reset({
+                  name: "",
+                });
+                dispatch(setCountryId(null));
+                dispatch(setProvincesStart());
+                getAll({ url: "province/get-all-provinces" }).then(
+                  (data: any) => {
+                    console.log("api call --- >", data);
+                    if (data == undefined) {
+                      Swal.fire({
+                        text: "Failed to fetch due to connection refused",
+                        icon: "error",
+                        timer: 2000,
+                        showConfirmButton: false,
+                      });
+                      dispatch(setInActiveActiveProvinces("All"));
+                      dispatch(setProvincesEnd());
+                      dispatch(setProvinces([]));
+                      dispatch(setFilterProvinces([]));
+                      return;
+                    }
                     dispatch(setProvincesEnd());
-                    dispatch(setProvinces([]));
-                    dispatch(setFilterProvinces([]));
-                    return;
-                  }
-                  dispatch(setProvincesEnd());
-                  if (data !== undefined) {
-                    if (data.success) {
-                      console.log("hhg");
-                      dispatch(setProvinces(data.data));
-                      dispatch(setFilterProvinces(data.data));
+                    if (data !== undefined) {
+                      if (data.success) {
+                        console.log("hhg");
+                        dispatch(setProvinces(data.data));
+                        dispatch(setFilterProvinces(data.data));
+                      }
                     }
                   }
-                }
-              );
+                );
+              }
             }
           }
         );
@@ -101,12 +127,6 @@ const CreateNewProvince = () => {
       } catch (error: any) {
         // Handle error (e.g., show an error message)
         console.error("Error creating post:", error);
-        Swal.fire({
-          text: "Failed to create due to connection refused",
-          icon: "error",
-          timer: 2000,
-          showConfirmButton: false,
-        });
         setLoading(false);
         setAddModal(false);
         reset({

@@ -18,10 +18,12 @@ import {
   setPackageDuration,
   setPackage,
   setInActiveActivePackages,
+  setIsConnected,
 } from "../../ReaduxToolkit/Reducer/PackageSlice";
 import { setNoDataFound } from "../../ReaduxToolkit/Reducer/NoDataFoundSlice";
 import Loader from "../Loader/Loader";
 import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom";
 
 const PackageList = () => {
   const { packages, loading, error, id, activeInActivePackages } = useSelector(
@@ -35,27 +37,39 @@ const PackageList = () => {
   const [packagePrice, setPackagePrice] = useState("");
   // const [packageDuration, setPackageDuration] = useState("");
   const [isActive, setIsActive] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     dispatch(setPackagesStart());
     getAll({ url: "package/get-all-packages" }).then((data: any) => {
       console.log("api call --- >", data);
-      if (data == undefined) {
-        Swal.fire({
-          text: "Failed to fetch due to connection refused",
-          icon: "error",
-          timer: 2000,
-          showConfirmButton: false,
-        });
-        dispatch(setInActiveActivePackages("All"));
-        dispatch(setPackages([]));
-        dispatch(setFilterPackages([]));
-        dispatch(setPackagesEnd());
-        return;
-      }
-      dispatch(setPackagesEnd());
+      // if (data == undefined) {
+      //   Swal.fire({
+      //     text: "Failed to fetch due to connection refused",
+      //     icon: "error",
+      //     timer: 2000,
+      //     showConfirmButton: false,
+      //   });
+      //   dispatch(setInActiveActivePackages("All"));
+      //   dispatch(setPackages([]));
+      //   dispatch(setFilterPackages([]));
+      //   dispatch(setPackagesEnd());
+      //   return;
+      // }
+
       if (data !== undefined) {
         dispatch(setNoDataFound(data.message));
+        if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
+          dispatch(setIsConnected(true));
+        }
+        if (!data.success) {
+          Swal.fire({
+            text: `${data.message}`,
+            icon: "error",
+            timer: 2000,
+            showConfirmButton: false,
+          });
+        }
         if (data.success) {
           console.log("hhg");
           dispatch(setPackages(data.data));
@@ -64,6 +78,7 @@ const PackageList = () => {
           dispatch(setPackages([]));
         }
       }
+      dispatch(setPackagesEnd());
     });
   }, []);
   useEffect(() => {

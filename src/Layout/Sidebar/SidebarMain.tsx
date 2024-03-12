@@ -128,12 +128,12 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
     {
       title: "Support",
       svgIcon: "home",
-      link: `${process.env.PUBLIC_URL}/support`,
+      link: `${process.env.PUBLIC_URL}/super-admin/support`,
     },
     {
       title: "Tasks",
       svgIcon: "home",
-      link: `${process.env.PUBLIC_URL}/tasks`,
+      link: `${process.env.PUBLIC_URL}/super-admin/tasks`,
     },
   ];
 

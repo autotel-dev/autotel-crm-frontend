@@ -9,6 +9,8 @@ import { useNavigate } from "react-router-dom";
 import CreateNewTicket from "./CreateNewTicket";
 import { useDispatch, useSelector } from "react-redux";
 import { setTableRow } from "../../ReaduxToolkit/Reducer/SupportSlice";
+import { getUserRole } from "../../Api/globals";
+import { ROLES } from "../../constants/roles";
 
 const TicketTable = () => {
   const dispatch = useDispatch();
@@ -103,7 +105,7 @@ const TicketTable = () => {
     // Navigate to the ticketDetails page with the row data
     dispatch(setTableRow(row));
     navigate(
-      `${process.env.PUBLIC_URL}/support/ticketDetails/${row.ticket_id}`
+      `${process.env.PUBLIC_URL}/super-admin/support/ticketDetails/${row.ticket_id}`
     );
   };
   return (
@@ -128,9 +130,18 @@ const TicketTable = () => {
             }}
           />
         </Col>
-        <Col md={12} lg={2} xl={2}>
-          {support?.create && <CreateNewTicket />}
-        </Col>
+        {getUserRole() == ROLES.SUPER_ADMIN ? (
+          <Col md={12} lg={2} xl={2}>
+            <CreateNewTicket />
+          </Col>
+        ) : (getUserRole() == ROLES.COMPANY ||
+            getUserRole() == ROLES.OPERATOR) &&
+          support != undefined &&
+          support?.create ? (
+          <Col md={12} lg={2} xl={2}>
+            <CreateNewTicket />
+          </Col>
+        ) : null}
       </Row>
       {selectedRows.length !== 0 && (
         <div

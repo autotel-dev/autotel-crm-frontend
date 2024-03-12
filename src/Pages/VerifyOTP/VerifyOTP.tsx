@@ -72,8 +72,8 @@ const VerifyOTP = () => {
                 : BcakgroundImage
             }
             alt=""
-            width={450}
-            height={400}
+            width={360}
+            height={320}
           />
         </Col>
         <Col xl={7} className="p-0">

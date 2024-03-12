@@ -17,6 +17,7 @@ import {
   setRolesEnd,
   setRolesStart,
 } from "../../../ReaduxToolkit/Reducer/RolesSlice";
+import Swal from "sweetalert2";
 // import {
 //   setCountriesStart,
 //   setCountriesEnd,
@@ -80,14 +81,6 @@ const CreateNewRole = () => {
   const addRole: SubmitHandler<Type> = async (data: any) => {
     setLoading(true);
     if (data.name !== "") {
-      // const role = {
-      //   name: data.name,
-      //   permissions: givenPermissions
-      //     .filter((permission: any) => permission.checked)
-      //     .map(
-      //       ({ checked, ...rest }: { checked: any; [key: string]: any }) => rest
-      //     ),
-      // };
       const role = {
         name: data.name,
         permissions: givenPermissions
@@ -109,8 +102,29 @@ const CreateNewRole = () => {
       try {
         await create(role, { url: "sub-role/create-sub-role" }).then(
           (data: any) => {
-            setLoading(false);
-            setAddModal(false);
+            if (
+              !data.success &&
+              data.message == "ERROR_INTERNET_DISCONNECTED"
+            ) {
+              setLoading(false);
+              setAddModal(false);
+              reset({
+                name: "",
+              });
+            }
+            if (!data.success) {
+              Swal.fire({
+                text: `${data.message}`,
+                icon: "error",
+                timer: 2000,
+                showConfirmButton: false,
+              });
+              setLoading(false);
+              setAddModal(false);
+              reset({
+                name: "",
+              });
+            }
             if (data.success) {
               console.log(data);
               setLoading(false);
@@ -149,7 +163,7 @@ const CreateNewRole = () => {
         // Handle successful post creation (e.g., show a success message, redirect, etc.)
       } catch (error: any) {
         // Handle error (e.g., show an error message)
-        console.error("Error creating post:", error);
+        console.error("Error creati post:", error);
         setLoading(false);
         setAddModal(false);
         reset({

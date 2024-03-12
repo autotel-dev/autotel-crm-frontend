@@ -24,6 +24,7 @@ const initialState = {
   other: null,
   imageBackground: null,
   companyLogo: null,
+  isConnected: true,
 };
 
 const CompanySlice = createSlice({
@@ -125,6 +126,9 @@ const CompanySlice = createSlice({
     setComapnyLogo: (state, action) => {
       state.companyLogo = action.payload;
     },
+    setIsConnected: (state, action) => {
+      state.isConnected = action.payload;
+    },
   },
 });
 export const {
@@ -151,6 +155,7 @@ export const {
   setOther,
   setImageBackground,
   setComapnyLogo,
+  setIsConnected
 } = CompanySlice.actions;
 
 export default CompanySlice.reducer;

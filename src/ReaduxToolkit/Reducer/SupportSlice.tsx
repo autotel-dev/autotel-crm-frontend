@@ -12,6 +12,7 @@ const initialState = {
   error: null,
   value: "",
   noReportFound: "",
+  isConnected: true,
 };
 
 const SupportSlice = createSlice({
@@ -53,6 +54,9 @@ const SupportSlice = createSlice({
     setNoReportsFound: (state, action) => {
       state.noReportFound = action.payload;
     },
+    setIsConnected: (state, action) => {
+      state.isConnected = action.payload;
+    },
   },
 });
 export const {
@@ -66,6 +70,7 @@ export const {
   setPriorityStatuses,
   setStatuses,
   setNoReportsFound,
+  setIsConnected
 } = SupportSlice.actions;
 
 export default SupportSlice.reducer;

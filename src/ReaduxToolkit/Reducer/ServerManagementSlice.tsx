@@ -7,6 +7,7 @@ const initialState = {
   loading: false,
   error: null,
   getTime: "",
+  isConnected: true,
 };
 
 const ServerManagementSlice = createSlice({
@@ -33,6 +34,9 @@ const ServerManagementSlice = createSlice({
       state.error = null;
       state.loading = false;
     },
+    setIsConnected: (state, action) => {
+      state.isConnected = action.payload;
+    },
   },
 });
 export const {
@@ -41,6 +45,7 @@ export const {
   setServerManagementEnd,
   setTime,
   setRecentLogs,
+  setIsConnected
 } = ServerManagementSlice.actions;
 
 export default ServerManagementSlice.reducer;

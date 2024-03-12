@@ -91,11 +91,34 @@ const CreateNewTicket = () => {
         await createCom(formData, {
           url: "support/bug-report/report-new-bug",
         }).then((data: any) => {
-          setLoading(false);
-          setAddModal(false);
-          //   for (const [key, value] of formData.entries()) {
-          //     console.log(`Key: ${key}, Value: ${value}`);
-          //   }
+          if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
+            setSelectedFiles([]);
+            setSelectedImages([]);
+            setLoading(false);
+            setAddModal(false);
+            reset({
+              name: "",
+              description: "",
+            });
+            dispatch(setPriorityStatus(null));
+          }
+          if (!data.success) {
+            Swal.fire({
+              text: `${data.message}`,
+              icon: "error",
+              timer: 2000,
+              showConfirmButton: false,
+            });
+            setSelectedFiles([]);
+            setSelectedImages([]);
+            setLoading(false);
+            setAddModal(false);
+            reset({
+              name: "",
+              description: "",
+            });
+            dispatch(setPriorityStatus(null));
+          }
           if (data.success) {
             console.log(data);
             setSelectedFiles([]);
