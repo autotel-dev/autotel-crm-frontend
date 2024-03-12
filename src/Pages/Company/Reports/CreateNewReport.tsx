@@ -165,7 +165,6 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
           deviceIds = await selectedItems.map((device: any) => device.deviceId);
           console.log(deviceIds);
         }
-        
 
         await create(
           {
@@ -327,7 +326,7 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
             ></Button>
           </div>
 
-          <ModalBody>
+          <ModalBody style={{ height: "50vh" }}>
             <form
               className="form-bookmark needs-validation"
               onSubmit={handleSubmit(addReport)}
@@ -521,17 +520,25 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
                   </Col>
                 </FormGroup>
               </Row>
-              <Button color="primary" className="me-1">
-                {loading ? "Loading ..." : `Generate`}
-              </Button>
-              &nbsp;&nbsp;
-              <Button
-                disabled={loading ? true : false}
-                color="secondary"
-                onClick={addToggle}
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "start",
+                  alignItems: "end",
+                }}
               >
-                Cancel
-              </Button>
+                <Button color="primary" className="me-1">
+                  {loading ? "Loading ..." : `Generate`}
+                </Button>
+                &nbsp;&nbsp;
+                <Button
+                  disabled={loading ? true : false}
+                  color="secondary"
+                  onClick={addToggle}
+                >
+                  Cancel
+                </Button>
+              </div>
             </form>
           </ModalBody>
         </Modal>

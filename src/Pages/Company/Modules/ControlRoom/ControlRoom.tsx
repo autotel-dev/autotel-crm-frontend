@@ -23,13 +23,20 @@ import {
   setLiveAlertsData,
 } from "../../../../ReaduxToolkit/Reducer/AlertsSlice";
 import Swal from "sweetalert2";
+import ControlRoomAnalytics from "./Analytics/ControlRoomAnalytics";
+import {
+  setDevices,
+  setDevicesStatuses,
+} from "../../../../ReaduxToolkit/Reducer/MonitoringSlice";
 
 const ControlRoom = () => {
   const { assignedAlerts, completedAlerts } = useSelector(
     (state: any) => state.alerts
   );
+  const { devices } = useSelector((state: any) => state.monitoring);
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(true);
+  const [devicesLoading, setDevicesLoading] = useState(true);
 
   useEffect(() => {
     setLoading(true);
@@ -39,7 +46,7 @@ const ControlRoom = () => {
     dispatch(setCompletedAlerts([]));
     getAll({ url: "company/alert-events?pageNo=1" }).then((data: any) => {
       console.log("api call --- >", data);
-      setLoading(false);
+
       if (data == undefined) {
         dispatch(setLiveAlerts([]));
         dispatch(setLiveAlertsData(null));
@@ -58,6 +65,10 @@ const ControlRoom = () => {
             showConfirmButton: false,
           });
         }
+      }
+      setLoading(false);
+      if (devices.length !== 0) {
+        setDevicesLoading(false);
       }
     });
     getAll({ url: "company/get-all-assigned-events" }).then((data: any) => {
@@ -88,7 +99,149 @@ const ControlRoom = () => {
     });
   }, []);
 
-  
+  const groups: any = [];
+  const groupDevicesObj: any = {};
+  const initialGroupDevices: any = [];
+
+  const statuses: any = [];
+  const statusDevicesObj: any = {};
+  var initialGroupDevicesStatuses: any = [];
+
+  const [groupdevices, setgroupdevices]: any = useState([]);
+  const [groupdevicesStatuses, setgroupdevicesStatuses]: any = useState([]);
+
+  useEffect(() => {
+    if (devices.length == 0) {
+      getAll({ url: "company/devices" }).then((data: any) => {
+        console.log("data", data);
+        if (data == undefined) {
+          setDevicesLoading(false);
+          Swal.fire({
+            text: "Failed to Fetch",
+            icon: "error",
+            timer: 2000,
+            showConfirmButton: false,
+          });
+        }
+        if (data !== undefined) {
+          if (!data.success) {
+            setDevicesLoading(false);
+            Swal.fire({
+              text: "Failed to Fetch the devices",
+              icon: "error",
+              timer: 2000,
+              showConfirmButton: false,
+            });
+          }
+          if (data.success) {
+            console.log("api call --- >", data);
+            console.log("length --- >", data.data.length);
+
+            for (let i = 0; i < data.data.length; i++) {
+              const element = data.data[i].title;
+              if (!groups.includes(element)) {
+                groups.push(element);
+              }
+            }
+
+            groups.forEach((title: any) => {
+              groupDevicesObj[title] = data.data
+                .filter((obj: any) => obj.title === title)
+                .map((item: any) => ({ ...item, checked: false }));
+            });
+
+            // Convert groupDevicesObj to initialGroupDevices array format
+            Object.keys(groupDevicesObj).forEach((title: any) => {
+              initialGroupDevices.push({
+                title,
+                checked: false,
+                items: groupDevicesObj[title],
+              });
+            });
+
+            // Update state with initialGroupDevices
+            setgroupdevices(initialGroupDevices);
+            console.log("groups", groups);
+            console.log("groupDevices", groupdevices);
+            dispatch(setDevices(initialGroupDevices));
+            setDevicesLoading(false);
+
+            // ---------------------- For device status-----------------------------------
+
+            for (let i = 0; i < data.data.length; i++) {
+              const element = data.data[i].online;
+              if (!statuses.includes(element)) {
+                statuses.push(element);
+                // setMyArray((prevArray) => [...prevArray, element]);
+              }
+            }
+            statuses.forEach((online: any) => {
+              statusDevicesObj[online] = data.data
+                .filter((obj: any) => obj.online === online)
+                .map((item: any) => ({ ...item, checked: false }));
+            });
+
+            // Convert groupDevicesObj to initialGroupDevices array format
+            Object.keys(statusDevicesObj).forEach((online: any) => {
+              initialGroupDevicesStatuses.push({
+                online,
+                items: statusDevicesObj[online],
+              });
+            });
+
+            const expiredDevices = [];
+            const notConnectedDevices = [];
+            const currentDate = new Date(); // Get the current date and time
+
+            for (let i = 0; i < data.data.length; i++) {
+              const element = data.data[i];
+              if (
+                element.expiration_date != null &&
+                element.expiration_date !== ""
+              ) {
+                const expirationDate = new Date(element.expiration_date); // Convert expiration date string to Date object
+                if (expirationDate < currentDate) {
+                  // Compare expiration date with current date
+                  expiredDevices.push({ ...element, checked: false });
+                }
+              }
+              if (i === data.data.length - 1) {
+                console.log("expiredDevices", expiredDevices);
+                initialGroupDevicesStatuses.push({
+                  online: "Expired",
+                  items: expiredDevices,
+                });
+              }
+            }
+
+            for (let i = 0; i < data.data.length; i++) {
+              const element = data.data[i];
+              if (
+                element.time == null ||
+                element.time === "" ||
+                element.time === undefined
+              ) {
+                notConnectedDevices.push({ ...element, checked: false });
+              }
+              if (i === data.data.length - 1) {
+                console.log("notConnectedDevices", notConnectedDevices);
+                initialGroupDevicesStatuses.push({
+                  online: "Not Connected",
+                  items: notConnectedDevices,
+                });
+              }
+            }
+
+            // Update state with initialGroupDevicesStatuses
+            setgroupdevicesStatuses(initialGroupDevicesStatuses);
+            console.log("statuses", statuses);
+            console.log("groupDevicesStatuses", initialGroupDevicesStatuses);
+            dispatch(setDevicesStatuses(initialGroupDevicesStatuses));
+          }
+        }
+      });
+    }
+  }, []);
 
   const events = [
     {
@@ -100,6 +253,7 @@ const ControlRoom = () => {
       element: <CompletedAlerts />,
     },
   ];
+
   const [basicTab, setBasicTab] = useState("1");
   return (
     <Container fluid className="dashboard_default">
@@ -110,8 +264,12 @@ const ControlRoom = () => {
           title="Module / Control Room"
         />
       </Row>
-      {!loading ? (
+
+      {!loading && !devicesLoading ? (
         <Row>
+          <Row>
+            <ControlRoomAnalytics />
+          </Row>
           <Col xl="6">
             <LiveAlerts />
           </Col>

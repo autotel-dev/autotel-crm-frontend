@@ -11,7 +11,7 @@
   justify-content: space-between;
   border: 1px solid #ccc;
   border-radius: 5px;
-  padding: 16px;
+  padding: 17px 14px;
   cursor: pointer;
 }
 
@@ -32,7 +32,84 @@
   transform: rotate(180deg);
 }
 
+.selected-items {
+  overflow: hidden;
+}
+
+.dropdown-options {
+  width: 100%;
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  z-index: 1000;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  max-height: 250px;
+  overflow-y: auto;
+}
+
 .search-input {
+  width: 95%;
+  padding: 7px;
+  margin: 6px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.group-header {
+  display: flex;
+  align-items: center;
+  padding: 8px;
+  border-radius: 5px;
+  font-size: 16px;
+  font-weight: bold;
+  background-color: lightgray;
+}
+
+.group-header input[type="checkbox"] {
+  margin-right: 5px;
+}
+
+.item {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 5px;
+  margin-left: 10px;
+}
+.item input[type="checkbox"] {
+  margin-right: 5px;
+}
+
+.selected {
+  background-color: #f0f0f0;
+}
+
+.dropdown-options button {
+  width: 50%;
+  background-color: #ccc;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 7px;
+  cursor: pointer;
+  margin: 5px;
+  outline: none;
+}
+
+.dropdown-options button:hover {
+  background-color: #999;
+}
+
+.dropdown-options button:first-child {
+  margin-right: 5px;
+}
+
+/* ------------------- */
+
+/* .search-input {
   width: 100%;
   padding: 4px 8px;
   border: 1px solid #ccc;
@@ -81,11 +158,7 @@
 
 .item.selected {
   background-color: #e6f7ff;
-}
-
-
-
-
+} */
 
 /* .dropdown-options {
   position: absolute;
@@ -97,53 +170,4 @@
   border-radius: 5px;
   padding: 10px;
   z-index: 1;
-}
-
-.search-input {
-  width: 100%;
-  padding: 8px;
-  margin-bottom: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-}
-
-.group-header {
-  display: flex;
-  align-items: center;
-  margin-bottom: 5px;
-}
-
-.group-header input[type="checkbox"] {
-  margin-right: 5px;
-}
-
-.item {
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  margin-bottom: 5px;
-}
-
-.selected {
-  background-color: #f0f0f0;
-}
-
-.dropdown-options button {
-  width: 50%;
-  background-color: #ccc;
-  color: #fff;
-  border: none;
-  border-radius: 5px;
-  padding: 8px;
-  cursor: pointer;
-  margin-bottom: 5px;
-  outline: none;
-}
-
-.dropdown-options button:hover {
-  background-color: #999;
-}
-
-.dropdown-options button:first-child {
-  margin-right: 5px;
 } */

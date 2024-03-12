@@ -276,38 +276,15 @@ const UpdateUser: React.FC<PropsTypes> = ({
               <span style={{ color: "red" }}>
                 {errors.phoneNo && "Phone Number is required"}
               </span>
-              <div className="d-flex">
-                <div
-                  className={`text-end flex-shrink-0 icon-state 
-                            }`}
-                >
-                  <Label className="switch mb-0">
-                    <Input
-                      type="checkbox"
-                      defaultChecked={isActive}
-                      value={isActive ? "on" : "off"}
-                      onChange={(e) => {
-                        setIsActive(!isActive);
-                        console.log(e.target.value);
-                      }}
-                    />
-                    <span
-                      className={`switch-state ${
-                        isActive ? "bg-primary" : "bg-secondary"
-                      }`}
-                    />
-                  </Label>
-                </div>
-              </div>
             </FormGroup>
             <FormGroup className="col-md-12 create-group">
               <div>
                 <Label>Select User Role </Label>
               </div>
               <Select
-                defaultValue={
-                  roles.find((role: any) => role._id === subRole).name
-                }
+                // defaultValue={
+                //   roles.find((role: any) => role._id === subRole).name
+                // }
                 showSearch
                 style={{ width: 250, height: 36 }}
                 placeholder="Select Role"
@@ -545,7 +522,7 @@ const UpdateUser: React.FC<PropsTypes> = ({
                                 type="checkbox"
                                 name="key"
                                 value="value"
-                                checked={allowedModules.includes(module._id)}
+                                // checked={allowedModules.includes(module._id)}
                                 onChange={() => {
                                   handleModuleClick(module._id);
                                 }}
@@ -563,6 +540,29 @@ const UpdateUser: React.FC<PropsTypes> = ({
                   );
                 })}
               </Row>
+              <div className="d-flex">
+                <div
+                  className={`text-end flex-shrink-0 icon-state 
+                            }`}
+                >
+                  <Label className="switch mb-0">
+                    <Input
+                      type="checkbox"
+                      defaultChecked={isActive}
+                      value={isActive ? "on" : "off"}
+                      onChange={(e) => {
+                        setIsActive(!isActive);
+                        console.log(e.target.value);
+                      }}
+                    />
+                    <span
+                      className={`switch-state ${
+                        isActive ? "bg-primary" : "bg-secondary"
+                      }`}
+                    />
+                  </Label>
+                </div>
+              </div>
             </FormGroup>
           </Row>
           <Button color="primary" className="me-1">

@@ -1,0 +1,185 @@
+import { Button, Card, CardBody, Modal, ModalBody, Table } from "reactstrap";
+
+import { useEffect, useRef, useState } from "react";
+import { useSelector } from "react-redux";
+import { H3, H4 } from "../../../../../../AbstractElements";
+
+interface PropsTypes {
+  isVisible: boolean; // Change 'boolean' to the actual type of isVisible
+  setIsVisible: any;
+}
+
+const TotalKillingDevices: React.FC<PropsTypes> = ({
+  isVisible,
+  setIsVisible = () => {},
+}) => {
+  //   const { modalData } = useSelector((state: any) => state.alerts);
+  //   console.log("completedAlertsData", modalData.previousAlerts);
+
+  const [dataList, setDataList]: any = useState([
+    {
+      eventId: "ID",
+      deviceName: "Device",
+      alert: "Alert",
+      type: "Type",
+      message: "Message",
+      address: "Address",
+      completionResponse: "Response",
+      createdAt: "22-20-2024",
+    },
+    {
+      eventId: "ID",
+      deviceName: "Device",
+      alert: "Alert",
+      type: "Type",
+      message: "Message",
+      address: "Address",
+      completionResponse: "Response",
+      createdAt: "22-20-2024",
+    },
+    {
+      eventId: "ID",
+      deviceName: "Device",
+      alert: "Alert",
+      type: "Type",
+      message: "Message",
+      address: "Address",
+      completionResponse: "Response",
+      createdAt: "22-20-2024",
+    },
+  ]);
+  const [loading, setLoading] = useState(false); // State to manage loading
+  const tableHeader = [
+    "ID",
+    "Device",
+    "Alert",
+    "Type",
+    "Message",
+    "Address",
+    "Response",
+  ];
+  const containerRef = useRef(null);
+  const [pageNo, setPageNo] = useState(1);
+  //   useEffect(() => {
+  //     if (modalData.previousAlerts != null)
+  //       setDataList(modalData.previousAlerts.slice(0, 12)); // Initially display the first 6 elements
+  //   }, [modalData.previousAlerts]);
+
+  const handleScroll = () => {
+    // if (!containerRef.current) return; // Ensure containerRef.current exists
+    // const { scrollTop, clientHeight, scrollHeight } = containerRef.current;
+    // const bottomOffset = scrollHeight - (scrollTop + clientHeight);
+    // if (bottomOffset < 50) {
+    //   // If scrolled to the bottom
+    //   const nextBatch = modalData.previousAlerts.slice(
+    //     dataList.length,
+    //     dataList.length + 6
+    //   ); // Fetch the next 6 elements
+    //   setDataList((prevData: any) => [...prevData, ...nextBatch]); // Append to the existing data
+    // }
+  };
+
+  return (
+    <Modal
+      centered
+      isOpen={isVisible}
+      toggle={() => {
+        setIsVisible(!isVisible);
+      }}
+      size="xl"
+      onClosed={() => {
+        // setValue("")
+        setIsVisible(false);
+      }}
+    >
+      <div className="modal-header">
+        <H3 className="modal-title">Total Kiling Devices</H3>
+        <Button
+          color="transprant"
+          className="btn-close"
+          onClick={() => {
+            // setValue("")
+            setIsVisible(!isVisible);
+          }}
+        ></Button>
+      </div>
+      <ModalBody>
+        <Card className="invoice-card">
+          <CardBody className="transaction-card">
+            <div
+              ref={containerRef}
+              className="table-responsive theme-scrollbar recent-wrapper"
+              style={{
+                overflowY: "scroll",
+                maxHeight: "calc(66vh - 20px)", // Subtract scrollbar width from max height
+                WebkitOverflowScrolling: "touch", // Enable momentum scrolling on iOS
+                scrollbarWidth: "thin", // Specify scrollbar width
+                WebkitBorderRadius: "5px", // For WebKit browsers (Chrome, Safari)
+                MozBorderRadius: "5px", // For Mozilla Firefox
+                borderRadius: "5px", // For other browsers
+                scrollbarColor: "lightgray transparent", // Specify scrollbar color
+              }}
+              onScroll={handleScroll}
+            >
+              <div className="table-responsive theme-scrollbar recent-wrapper">
+                <Table className="display order-wrapper" id="recent-order">
+                  <thead>
+                    <tr>
+                      {tableHeader.map((data, index) => (
+                        <th key={index}>{data}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {dataList.length == 0 ? (
+                      <tr>
+                        <td colSpan={7} style={{ fontSize: "25px" }}>
+                          No Kiling Devices
+                        </td>
+                      </tr>
+                    ) : (
+                      dataList.map((data: any, index: any) => (
+                        <tr style={{ cursor: "pointer" }} key={index}>
+                          <td>{data.eventId}</td>
+                          <td>
+                            <div className="d-flex">
+                              <div className="flex-grow-1 ms-2">
+                                <H4>{data.deviceName}</H4>
+                                <span style={{ fontSize: "10px" }}>
+                                  {data.createdAt.toString().slice(0, 10)}
+                                  {/* {data.createdAt.toString().slice(0, 10) +
+                                    " " +
+                                    data.createdAt.toString().slice(11, 19)} */}
+                                </span>
+                              </div>
+                            </div>
+                          </td>
+
+                          <td className={`txt-primary`}>{data.message}</td>
+                          <td>{data.type}</td>
+                          <td>{data.message}</td>
+                          <td>
+                            {data.address == null && data.address == undefined
+                              ? "N/A"
+                              : data.address}
+                          </td>
+                          <td>
+                            {data.completionResponse == ""
+                              ? "N/A"
+                              : data.completionResponse}
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </Table>
+              </div>
+            </div>
+          </CardBody>
+        </Card>
+      </ModalBody>
+    </Modal>
+  );
+};
+
+export default TotalKillingDevices;

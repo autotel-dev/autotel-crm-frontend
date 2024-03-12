@@ -85,17 +85,20 @@ const CustomDropdown: React.FC<PropsTypes> = ({
     setSearchValue("");
   };
 
-  const filteredData = data.map((group: any) => {
-    const filteredItems = group.items.filter((item: any) =>
-      item.name.toLowerCase().includes(searchValue.toLowerCase())
-    );
-    return { ...group, items: filteredItems };
-  }).filter((group: any) => group.items.length > 0);
+  const filteredData = data
+    .map((group: any) => {
+      const filteredItems = group.items.filter((item: any) =>
+        item.name.toLowerCase().includes(searchValue.toLowerCase())
+      );
+      return { ...group, items: filteredItems };
+    })
+    .filter((group: any) => group.items.length > 0);
 
   return (
     <div className="custom-dropdown">
       <div className="dropdown-toggle" onClick={toggleDropdown}>
         <div className="selected-items">
+          {selectedItems.length == 0 && "No device selected"}
           {selectedItems.map((item: any) => `${item.name}, `)}
         </div>
       </div>
@@ -108,7 +111,7 @@ const CustomDropdown: React.FC<PropsTypes> = ({
             placeholder="Search..."
             className="search-input"
           />
-          <div>
+          <div style={{ display: "flex" }}>
             <button
               onClick={(e: any) => {
                 e.preventDefault(); // Add this line
@@ -127,7 +130,7 @@ const CustomDropdown: React.FC<PropsTypes> = ({
             </button>
           </div>
           {filteredData.map((group: any) => (
-            <div key={group.title} style={{ padding: "10px" }}>
+            <div key={group.title} style={{ padding: "10px 10px 0px 10px" }}>
               <div className="group-header">
                 <input
                   type="checkbox"
