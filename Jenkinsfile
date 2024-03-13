@@ -20,7 +20,7 @@ pipeline {
         stage('Build') {
             steps {
                 // Build the React project
-                sh 'npm run build'
+                sh 'npm run build --force'
             }
         }
         
@@ -36,7 +36,7 @@ pipeline {
                 // Deploy your application to your server
                 // You can use SSH, FTP, or any deployment method here
                 // For simplicity, let's assume copying files to the server
-                sh 'scp -r build /var/www/html'
+                sh 'scp -r build /usr/share/nginx/html'
             }
         }
     }
