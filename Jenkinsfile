@@ -5,13 +5,14 @@ pipeline {
         stage('Checkout') {
             steps {
                 // Checkout the source code from GitHub
-                git 'https://github.com/mindflaretech/Autotel-CRM-Updated.git', credentialsId: '02'
+                script {
+                    git url: 'https://github.com/mindflaretech/Autotel-CRM-Updated.git', credentialsId: '02'
+                }
             }
         }
         
         stage('Install Dependencies') {
             steps {
-                
                 // Install project dependencies
                 sh 'npm install'
             }
