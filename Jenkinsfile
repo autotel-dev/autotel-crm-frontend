@@ -6,7 +6,7 @@ pipeline {
             steps {
                 // Checkout the source code from the main branch on GitHub
                 script {
-                    git url: 'https://github.com/mindflaretech/Autotel-CRM-Updated.git', credentialsId: '01', branch: 'main'
+                    git url: 'https://github.com/mindflaretech/Autotel-CRM-Updated.git', credentialsId: '01', branch: 'frontend/bilal'
                 }
             }
         }
