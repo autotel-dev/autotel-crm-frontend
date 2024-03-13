@@ -14,7 +14,7 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 // Install project dependencies
-                sh 'npm install'
+                sh 'npm install --force'
             }
         }
         
@@ -28,7 +28,7 @@ pipeline {
         stage('Test') {
             steps {
                 // Run tests if you have any
-                sh 'npm test'
+                sh 'npm test --force'
             }
         }
         
