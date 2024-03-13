@@ -5,7 +5,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 // Checkout the source code from GitHub
-                git 'https://github.com/mindflaretech/Autotel-CRM-Updated.git'
+                git 'https://github.com/mindflaretech/Autotel-CRM-Updated.git', credentialsId: '02'
             }
         }
         
