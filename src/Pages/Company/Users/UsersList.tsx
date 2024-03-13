@@ -9,6 +9,7 @@ import deleteAlert from "../../Alerts/DeleteAlert";
 import {
   setFilterOperators,
   setInActiveActiveUsers,
+  setIsConnected,
   setOperators,
   setOperatorsEnd,
   setOperatorsStart,
@@ -75,11 +76,11 @@ const UsersList = () => {
       //   dispatch(setOperatorsEnd());
       //   return;
       // }
-     
+
       if (data !== undefined) {
         dispatch(setNoDataFound(data.message));
         if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
-          navigate(`${process.env.PUBLIC_URL}/not-conneceted`);
+          dispatch(setIsConnected(true));
         }
         if (!data.success) {
           Swal.fire({

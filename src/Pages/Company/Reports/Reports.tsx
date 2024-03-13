@@ -9,7 +9,11 @@ import ReportsListNav from "./ReportsListNav";
 import { getAll } from "../../../Api";
 import Swal from "sweetalert2";
 import Loader from "../../Loader/Loader";
-import { setReportstype } from "../../../ReaduxToolkit/Reducer/ReportsSlice";
+import {
+  setIsConnected,
+  setReportstype,
+} from "../../../ReaduxToolkit/Reducer/ReportsSlice";
+import NoInternetConnection from "../../NoInternetConnection/NoInternetConnection";
 
 const Reports = () => {
   const dispatch = useDispatch();
@@ -21,6 +25,11 @@ const Reports = () => {
   const [undefinedData, setUndefinedData] = useState(false);
   const [loading, setLoading] = useState(true);
   const [reportTypes, setReportTypes] = useState([]);
+  const { isConnected } = useSelector((state: any) => state.reports);
+
+  useEffect(() => {
+    dispatch(setIsConnected(false));
+  }, []);
   const getData = () => {
     setLoading(true);
     getAll({ url: "company/devices" }).then((data: any) => {
@@ -89,19 +98,22 @@ const Reports = () => {
     getData();
     getAll({ url: "reports/get-all-report-types" }).then((data: any) => {
       console.log("data", data);
-      if (data == undefined) {
-        Swal.fire({
-          text: "Failed to Fetch due to connection refused",
-          icon: "error",
-          timer: 2000,
-          showConfirmButton: false,
-        });
-        return;
-      }
+      // if (data == undefined) {
+      //   Swal.fire({
+      //     text: "Failed to Fetch due to connection refused",
+      //     icon: "error",
+      //     timer: 2000,
+      //     showConfirmButton: false,
+      //   });
+      //   return;
+      // }
       if (data !== undefined) {
+        if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
+          dispatch(setIsConnected(true));
+        }
         if (!data.success) {
           Swal.fire({
-            text: "Failed to Fetch the report Types",
+            text: `${data.message}`,
             icon: "error",
             timer: 2000,
             showConfirmButton: false,
@@ -118,57 +130,63 @@ const Reports = () => {
 
   return (
     <>
-      <Breadcrumbs
-        mainTitle="Reports List"
-        parent="Reports"
-        title="Reports List"
-      />
-      {loading ? (
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            height: "80vh",
-            backgroundColor: "white",
-            alignItems: "center",
-          }}
-        >
-          <div style={{ textAlign: "center" }}>
-            <Loader />
-          </div>
-        </div>
+      {isConnected ? (
+        <NoInternetConnection />
       ) : (
-        <Container fluid>
-          <Row className="project-card">
-            <Col md={12} className="project-list">
-              <Card>
-                <ReportsListNav dropDownDevices={dropDownDevices} />
-                <Col md={12}>
-                  <input
-                    type="text"
-                    placeholder="Type to Search.."
-                    value={searchValue}
-                    onChange={(e) => {
-                      // filterCountriess(e);
-                    }}
-                    style={{
-                      backgroundColor: "#f1f1f1",
-                      borderRadius: "5px",
-                      padding: "15px",
-                      margin: "15px",
-                      width: "calc(100% - 30px)", // Adjusting width to accommodate padding and margin
-                      border: "none",
-                      outline: "none", // Removing default border outline
-                    }}
-                  />
+        <div>
+          <Breadcrumbs
+            mainTitle="Reports List"
+            parent="Reports"
+            title="Reports List"
+          />
+          {loading ? (
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                height: "80vh",
+                backgroundColor: "white",
+                alignItems: "center",
+              }}
+            >
+              <div style={{ textAlign: "center" }}>
+                <Loader />
+              </div>
+            </div>
+          ) : (
+            <Container fluid>
+              <Row className="project-card">
+                <Col md={12} className="project-list">
+                  <Card>
+                    <ReportsListNav dropDownDevices={dropDownDevices} />
+                    <Col md={12}>
+                      <input
+                        type="text"
+                        placeholder="Type to Search.."
+                        value={searchValue}
+                        onChange={(e) => {
+                          // filterCountriess(e);
+                        }}
+                        style={{
+                          backgroundColor: "#f1f1f1",
+                          borderRadius: "5px",
+                          padding: "15px",
+                          margin: "15px",
+                          width: "calc(100% - 30px)", // Adjusting width to accommodate padding and margin
+                          border: "none",
+                          outline: "none", // Removing default border outline
+                        }}
+                      />
+                    </Col>
+                  </Card>
                 </Col>
-              </Card>
-            </Col>
-            <Col sm={12}>
-              <ReportsList />
-            </Col>
-          </Row>
-        </Container>
+                <Col sm={12}>
+                  <ReportsList />
+                </Col>
+              </Row>
+            </Container>
+          )}
+        </div>
       )}
     </>
   );

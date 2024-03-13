@@ -14,6 +14,7 @@ import {
   setFilterCountries,
   setId,
   setInActiveActiveCountries,
+  setIsConnected,
 } from "../../ReaduxToolkit/Reducer/CountrySlice";
 import { setNoDataFound } from "../../ReaduxToolkit/Reducer/NoDataFoundSlice";
 import UpdateCountry from "./UpdateCountry";
@@ -50,11 +51,11 @@ const CountriesList = () => {
       // }
 
       if (data !== undefined) {
-        console.log("Data",data);
-        
+        console.log("Data", data);
+
         dispatch(setNoDataFound(data.message));
         if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
-          navigate(`${process.env.PUBLIC_URL}/not-conneceted`);
+          dispatch(setIsConnected(true));
         }
         if (!data.success) {
           Swal.fire({

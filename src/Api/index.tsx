@@ -29,16 +29,26 @@ interface otpVerification {
 }
 
 export const login = async (postData: loginTypes): Promise<void> => {
+  if (!navigator.onLine) {
+    Swal.fire({
+      text: "Internet connection is not available",
+      icon: "error",
+      timer: 2000,
+      showCancelButton: false,
+    });
+    // throw new Error("Internet connection is not available");
+    const error: any = {
+      success: false,
+      message: "ERROR_INTERNET_DISCONNECTED",
+      statusCode: 400,
+    };
+    return error;
+  }
   try {
-    // window.location.pathname === "/superAdminLogin"
-    // ? `${API_BASE_URL}/auth/super-admin/login`
-    // : `${API_BASE_URL}/auth/company/login`,
-
     const response = await fetch(`${API_BASE_URL}/auth/user/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        // Add any other headers as needed (e.g., authorization token)
       },
       body: JSON.stringify(postData),
     });
@@ -63,7 +73,6 @@ export const login = async (postData: loginTypes): Promise<void> => {
       successAlert();
     }
     return result;
-    // Handle success (optional)
   } catch (error: any) {
     console.error("Error creating login:", error);
 
@@ -75,6 +84,21 @@ export const otpVerification = async (
   verifyData: otpVerification
 ): Promise<void> => {
   try {
+    if (!navigator.onLine) {
+      Swal.fire({
+        text: "Internet connection is not available",
+        icon: "error",
+        timer: 2000,
+        showCancelButton: false,
+      });
+      // throw new Error("Internet connection is not available");
+      const error: any = {
+        success: false,
+        message: "ERROR_INTERNET_DISCONNECTED",
+        statusCode: 400,
+      };
+      return error;
+    }
     const response = await fetch(
       `${API_BASE_URL}/auth/user/security/verify-security-code`,
       {

@@ -6,6 +6,8 @@ const initialState = {
   assignedAlerts: [],
   completedAlerts: [],
   modalData: null,
+  sendCommandsType: [],
+  killedDevices: [],
   loading: false,
   error: null,
   noCountryFound: "",
@@ -44,6 +46,12 @@ const AlertsSlice = createSlice({
       state.error = null;
       state.loading = false;
     },
+    setSendCommandsType: (state, action) => {
+      state.sendCommandsType = action.payload;
+    },
+    setKilledDevices: (state, action) => {
+      state.killedDevices = action.payload;
+    },
 
     setAlertsEnd: (state) => {
       state.loading = false;
@@ -64,9 +72,11 @@ export const {
   setAssignedAlerts,
   setCompletedAlerts,
   setModalData,
+  setSendCommandsType,
+  setKilledDevices,
   setAlertsEnd,
   setNoAlertsFound,
-  setIsConnected
+  setIsConnected,
 } = AlertsSlice.actions;
 
 export default AlertsSlice.reducer;

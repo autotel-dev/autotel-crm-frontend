@@ -11,6 +11,7 @@ import { getAll, patch, update } from "../../../Api";
 import {
   setFilterRoles,
   setInActiveActiveRoles,
+  setIsConnected,
   setRoles,
   setRolesEnd,
   setRolesStart,
@@ -50,7 +51,7 @@ const RolesList = () => {
       if (data !== undefined) {
         dispatch(setNoDataFound(data.message));
         if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
-          navigate(`${process.env.PUBLIC_URL}/not-conneceted`);
+          dispatch(setIsConnected(true));
         }
         if (!data.success) {
           Swal.fire({

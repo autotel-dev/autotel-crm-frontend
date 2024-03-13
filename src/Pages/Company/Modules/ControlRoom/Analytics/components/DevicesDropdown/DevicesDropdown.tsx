@@ -16,60 +16,43 @@ const DevicesDropdown: React.FC<PropsTypes> = ({
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   console.log("data", data);
 
-  const handleTitleClick = (group: any) => {
-    const isGroupSelected = selectedItems.some(
-      (item) => item.title === group.title
-    );
-    if (!isGroupSelected) {
-      const newSelectedItems = [
-        ...selectedItems,
-        ...group.items.map((item: any) => ({
-          deviceId: item.id,
-          name: item.name,
-          title: item.title,
-        })),
-      ];
-      setSelectedItems(newSelectedItems);
-    } else {
-      const updatedItems = selectedItems.filter(
-        (item) => item.title !== group.title
-      );
-      setSelectedItems(updatedItems);
-    }
-  };
+  // const handleTitleClick = (group: any) => {
+  //   const isGroupSelected = selectedItems.some(
+  //     (item) => item.title === group.title
+  //   );
+  //   if (!isGroupSelected) {
+  //     const newSelectedItems = [
+  //       ...selectedItems,
+  //       ...group.items.map((item: any) => ({
+  //         deviceId: item.id,
+  //         name: item.name,
+  //         title: item.title,
+  //       })),
+  //     ];
+  //     setSelectedItems(newSelectedItems);
+  //   } else {
+  //     const updatedItems = selectedItems.filter(
+  //       (item) => item.title !== group.title
+  //     );
+  //     setSelectedItems(updatedItems);
+  //   }
+  // };
 
-  const handleItemClick = (deviceId: any, name: any, group: any) => {
+  const handleItemClick = (device: any, id: any) => {
+    console.log("selectedItems--", selectedItems);
+    console.log("devicee--", device);
+
     const index = selectedItems.findIndex(
-      (selectedItem) => selectedItem.name === name
+      (selectedItem) => selectedItem.id === id
     );
     if (index === -1) {
-      setSelectedItems([{ deviceId: deviceId, name, title: group.title }]);
+      setSelectedItems([device]);
     } else {
       const updatedItems = selectedItems.filter(
-        (selectedItem) => selectedItem.name !== name
+        (selectedItem) => selectedItem.id !== id
       );
       setSelectedItems(updatedItems);
     }
-  };
-  const handleDeselectAll = () => {
-    setSelectedItems([]);
-  };
-  const handleSelectAll = () => {
-    const allItems = data.flatMap((group: any) =>
-      group.items
-        .filter(
-          (item: any) =>
-            !selectedItems.some(
-              (selectedItem) => selectedItem.name === item.name
-            )
-        )
-        .map((item: any) => ({
-          deviceId: item.id,
-          name: item.name,
-          title: item.title,
-        }))
-    );
-    setSelectedItems([...selectedItems, ...allItems]);
   };
 
   useEffect(() => {
@@ -135,7 +118,7 @@ const DevicesDropdown: React.FC<PropsTypes> = ({
                       (selectedItem) => selectedItem.name === item.name
                     )
                   )}
-                //   onChange={() => handleTitleClick(group)}
+                  //   onChange={() => handleTitleClick(group)}
                 />
                 <div className="group-title">{group.title}</div>
               </div>
@@ -149,7 +132,7 @@ const DevicesDropdown: React.FC<PropsTypes> = ({
                       ? "selected"
                       : ""
                   }`}
-                  onClick={() => handleItemClick(item.id, item.name, group)}
+                  onClick={() => handleItemClick(item, item.id)}
                   style={{ padding: "10px" }}
                 >
                   <input
@@ -157,7 +140,7 @@ const DevicesDropdown: React.FC<PropsTypes> = ({
                     checked={selectedItems.some(
                       (selectedItem) => selectedItem.name === item.name
                     )}
-                    onChange={() => handleItemClick(item.id, item.name, group)}
+                    onChange={() => handleItemClick(item, item.id)}
                   />
                   <span>{`${item.name}`}</span>
                 </div>

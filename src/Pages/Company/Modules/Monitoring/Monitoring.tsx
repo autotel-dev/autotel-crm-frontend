@@ -8,16 +8,20 @@ import {
   setServerDevices,
   setDevicesStatuses,
   setExpandedDevice,
+  setIsConnected,
 } from "../../../../ReaduxToolkit/Reducer/MonitoringSlice";
 import Loader from "../../../Loader/Loader";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
+import NoInternetConnection from "../../../NoInternetConnection/NoInternetConnection";
 
 const Monitoring = () => {
   const apiKey = "AIzaSyDI3fB-ItM1LpMOyMg_P8UxTUuxHCyQS34"; // Replace with your actual API key
 
   const dispatch = useDispatch();
-  const { devices } = useSelector((state: any) => state.monitoring);
+  const { devices, isConnected } = useSelector(
+    (state: any) => state.monitoring
+  );
   console.log("devices", devices);
 
   const groups: any = [];
@@ -33,27 +37,34 @@ const Monitoring = () => {
   const [groupdevicesStatuses, setgroupdevicesStatuses]: any = useState([]);
 
   useEffect(() => {
+    dispatch(setIsConnected(false));
+  }, []);
+
+  useEffect(() => {
     let intervalId: any; // Declare variable to store interval ID
 
     // Function to fetch data and dispatch actions
     const fetchDataAndDispatch = () => {
       getAll({ url: "company/devices" }).then((data: any) => {
         console.log("data", data);
-        if (data == undefined) {
-          setUndefinedData(true);
-          setLoading(false);
-          Swal.fire({
-            text: "Failed to Fetch",
-            icon: "error",
-            timer: 2000,
-            showConfirmButton: false,
-          });
-        }
+        // if (data == undefined) {
+        //   setUndefinedData(true);
+        //   setLoading(false);
+        //   Swal.fire({
+        //     text: "Failed to Fetch",
+        //     icon: "error",
+        //     timer: 2000,
+        //     showConfirmButton: false,
+        //   });
+        // }
         if (data !== undefined) {
+          if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
+            dispatch(setIsConnected(true));
+          }
           if (!data.success) {
             setLoading(false);
             Swal.fire({
-              text: "Failed to Fetch the devices",
+              text: `${data.message}`,
               icon: "error",
               timer: 2000,
               showConfirmButton: false,
@@ -266,7 +277,7 @@ const Monitoring = () => {
       // }
       if (data !== undefined) {
         if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
-          navigate(`${process.env.PUBLIC_URL}/not-conneceted`);
+          dispatch(setIsConnected(true));
         }
         if (!data.success) {
           setLoading(false);
@@ -391,26 +402,27 @@ const Monitoring = () => {
   const [undefinedData, setUndefinedData] = useState<any>(false);
   return (
     <>
-      {undefinedData ? (
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            height: "80vh",
-            backgroundColor: "white",
-            alignItems: "center",
-          }}
-        >
-          <div
-            style={{
-              textAlign: "center",
-              fontSize: "25px",
-              fontWeight: "bold",
-            }}
-          >
-            No Data Found
-          </div>
-        </div>
+      {isConnected ? (
+        // <div
+        //   style={{
+        //     display: "flex",
+        //     justifyContent: "center",
+        //     height: "80vh",
+        //     backgroundColor: "white",
+        //     alignItems: "center",
+        //   }}
+        // >
+        //   <div
+        //     style={{
+        //       textAlign: "center",
+        //       fontSize: "25px",
+        //       fontWeight: "bold",
+        //     }}
+        //   >
+        //     No Data Found
+        //   </div>
+        // </div>
+        <NoInternetConnection />
       ) : !loading ? (
         devices.length > 0 && (
           <div

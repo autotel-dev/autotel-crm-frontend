@@ -83,6 +83,14 @@ const OTPForm = ({ alignLogo }: CommonFormPropsType) => {
         await otpVerification(otpData).then((data: any) => {
           console.log("response: ", data.data);
           setLoading(false);
+          if (!data.success) {
+            Swal.fire({
+              text: `${data.message}`,
+              icon: "error",
+              timer: 2000,
+              showConfirmButton: false,
+            });
+          }
 
           if (data.statusCode == 200) {
             const token = data.data.authToken;

@@ -153,7 +153,7 @@ const UpdatePackage: React.FC<PropsTypes> = ({
                   dispatch(setNoDataFound(data.message));
                   if (data.success) {
                     console.log("hhg");
-                    setLoading(true);
+                    setLoading(false);
                     dispatch(setPackages(data.data));
                     dispatch(setFilterPackages(data.data));
                   }
@@ -281,7 +281,7 @@ const UpdatePackage: React.FC<PropsTypes> = ({
               </div>
             </FormGroup>
           </Row>
-          <Button color="primary" className="me-1">
+          <Button color="primary" className="me-1" disabled={loading}>
             {loading ? "Loading ..." : `Update`}
           </Button>
           &nbsp;&nbsp;

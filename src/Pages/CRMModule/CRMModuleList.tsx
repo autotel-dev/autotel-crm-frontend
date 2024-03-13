@@ -18,6 +18,7 @@ import {
   setId,
   setValue,
   setInActiveActiveModules,
+  setIsConnected,
 } from "../../ReaduxToolkit/Reducer/CRMModuleSlice";
 import { setNoDataFound } from "../../ReaduxToolkit/Reducer/NoDataFoundSlice";
 import UpdateCRMModule from "./UpdateCRMModule";
@@ -57,7 +58,7 @@ const CRMModuleList = () => {
       if (data !== undefined) {
         dispatch(setNoDataFound(data.message));
         if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
-          navigate(`${process.env.PUBLIC_URL}/not-conneceted`);
+          dispatch(setIsConnected(true));
         }
         if (!data.success) {
           Swal.fire({

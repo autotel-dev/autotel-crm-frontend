@@ -5,6 +5,7 @@ const initialState = {
   reportsType: [],
   loading: false,
   error: null,
+  isConnected: true,
 };
 
 const ReportsSlice = createSlice({
@@ -26,9 +27,17 @@ const ReportsSlice = createSlice({
     setReportsEnd: (state) => {
       state.loading = false;
     },
+    setIsConnected: (state, action) => {
+      state.isConnected = action.payload;
+    },
   },
 });
-export const { setReports, setReportsStart, setReportstype, setReportsEnd } =
-  ReportsSlice.actions;
+export const {
+  setReports,
+  setReportsStart,
+  setReportstype,
+  setReportsEnd,
+  setIsConnected,
+} = ReportsSlice.actions;
 
 export default ReportsSlice.reducer;

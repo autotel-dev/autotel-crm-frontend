@@ -18,6 +18,8 @@ import SendCommand from "./components/SendCommand";
 import AddPreAlertinfo from "./components/AddPreAlertInfo";
 import { useSelector } from "react-redux";
 
+import { ImArrowUp, ImArrowDown } from "react-icons/im";
+
 const ControlRoomAnalytics = () => {
   const controlRoomAnalytics = [
     {
@@ -84,241 +86,376 @@ const ControlRoomAnalytics = () => {
     isUpdateModalOpenForPreAlertinfo,
     setIsUpdateModalOpenForPreAlertinfo,
   ] = useState(false);
+
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [containerHeight, setContainerHeight] = useState("21vh");
+  const toggleDropdown = () => {
+    setIsDropdownOpen(!isDropdownOpen);
+  };
+
+  const toggleContainerHeight = () => {
+    if (containerHeight === "21vh") {
+      setContainerHeight("10vh");
+    } else {
+      setContainerHeight("21vh");
+    }
+  };
   return (
     <>
-      <Col xl="3" lg="6" md="6" sm="12" className="box-col-4">
-        <Card className="total-earning">
-          <CardBody>
-            <Row style={{ height: "16vh" }}>
-              <Col sm="7" className="box-col-7">
-                <div className="d-flex">
-                  <div className="flex-grow-1" style={{ margin: "5px 0px" }}>
-                    <H3>{controlRoomAnalytics[0].title}</H3>
-                  </div>
-                </div>
-                <H3>10</H3>
-                <div>
-                  <button
-                    className="btn-primary"
-                    style={{
-                      borderRadius: "5px",
-                      padding: "5px 15px",
-                      color: "white",
-                      outline: "none",
-                      border: "none",
-                      marginTop: "30px",
-                    }}
-                    onClick={() => {
-                      setIsUpdateModalOpenForkillingDevices(true);
-                    }}
-                  >
-                    View
-                  </button>
-                </div>
-              </Col>
-              <Col sm="5" className={`box-col-5 `}>
-                <div>
-                  <ReactApexChart
-                    id={controlRoomAnalytics[0].chartId}
-                    options={controlRoomAnalytics[0].charts}
-                    series={controlRoomAnalytics[0].charts.series}
-                    type={controlRoomAnalytics[0].charts.chart?.type}
-                    height={controlRoomAnalytics[0].charts.chart?.height}
-                  />
-                </div>
-              </Col>
-            </Row>
-          </CardBody>
-        </Card>
-      </Col>
-      <TotalKillingDevices
-        isVisible={isUpdateModalOpenForkillingDevices}
-        setIsVisible={setIsUpdateModalOpenForkillingDevices}
-      />
-      {/*  */}
-      <Col xl="3" lg="6" md="6" sm="12" className="box-col-4">
-        <Card className="total-earning">
-          <CardBody>
-            <Row style={{ height: "16vh" }}>
-              <Col sm="12" className="box-col-7">
-                <div className="d-flex">
-                  <div className="flex-grow-1" style={{ margin: "5px 0px" }}>
-                    <H3>Connected Servers</H3>
-                  </div>
-                </div>
-                <div style={{ display: "flex", justifyContent: "start" }}>
-                  <div style={{ fontSize: "16px", fontWeight: "bold" }}>
-                    Auto Tel:
-                  </div>
-                  <div
-                    style={{
-                      marginLeft: "20px",
-                      display: "flex",
-                      alignItems: "center",
-                    }}
-                  >
-                    <div
-                      style={{
-                        height: "10px",
-                        width: "10px",
-                        borderRadius: "50px",
-                        backgroundColor: "red",
-                        marginRight: "5px",
-                      }}
-                    ></div>
-                    <div>Not Connected</div>
-                  </div>
-                </div>
-                <div style={{ display: "flex", justifyContent: "start" }}>
-                  <div style={{ fontSize: "16px", fontWeight: "bold" }}>
-                    Auto Tel:{" "}
-                  </div>
-                  <div
-                    style={{
-                      marginLeft: "20px",
-                      display: "flex",
-                      alignItems: "center",
-                    }}
-                  >
-                    <div
-                      style={{
-                        height: "10px",
-                        width: "10px",
-                        borderRadius: "50px",
-                        backgroundColor: "green",
-                        marginRight: "5px",
-                      }}
-                    ></div>
-                    <div>Connected</div>
-                  </div>
-                </div>
-                <div style={{ display: "flex", justifyContent: "start" }}>
-                  <div style={{ fontSize: "16px", fontWeight: "bold" }}>
-                    Auto Tel:{" "}
-                  </div>
-                  <div
-                    style={{
-                      marginLeft: "20px",
-                      display: "flex",
-                      alignItems: "center",
-                    }}
-                  >
-                    <div
-                      style={{
-                        height: "10px",
-                        width: "10px",
-                        borderRadius: "50px",
-                        backgroundColor: "green",
-                        marginRight: "5px",
-                      }}
-                    ></div>
-                    <div>Connected</div>
-                  </div>
-                </div>
-              </Col>
-            </Row>
-          </CardBody>
-        </Card>
-      </Col>
+      {/* {containerHeight == "21vh" && (
+        
+      )} */}
+      <Col
+        xl="11"
+        lg="11"
+        md="11"
+        sm="11"
+        style={{
+          height: containerHeight === "21vh" ? "100%" : "0",
+          overflow: "hidden",
+          transition: "height 0.5s",
+        }}
+      >
+        <Row>
+          <Col xl="3" lg="6" md="6" sm="12" className="box-col-3">
+            <Card className="total-earning">
+              <CardBody>
+                <Row style={{ height: "16vh" }}>
+                  <Col sm="7" className="box-col-7">
+                    <div className="d-flex">
+                      <div
+                        className="flex-grow-1"
+                        style={{ margin: "5px 0px" }}
+                      >
+                        <H3>{controlRoomAnalytics[0].title}</H3>
+                      </div>
+                    </div>
+                    <H3>10</H3>
+                    <div>
+                      <button
+                        className="btn-primary"
+                        style={{
+                          borderRadius: "5px",
+                          padding: "5px 15px",
+                          color: "white",
+                          outline: "none",
+                          border: "none",
+                          marginTop: "30px",
+                        }}
+                        onClick={() => {
+                          setIsUpdateModalOpenForkillingDevices(true);
+                        }}
+                      >
+                        View
+                      </button>
+                    </div>
+                  </Col>
+                  <Col sm="5" className={`box-col-5 `}>
+                    <div>
+                      <ReactApexChart
+                        id={controlRoomAnalytics[0].chartId}
+                        options={controlRoomAnalytics[0].charts}
+                        series={controlRoomAnalytics[0].charts.series}
+                        type={controlRoomAnalytics[0].charts.chart?.type}
+                        height={controlRoomAnalytics[0].charts.chart?.height}
+                      />
+                    </div>
+                  </Col>
+                </Row>
+              </CardBody>
+            </Card>
+          </Col>
+          <TotalKillingDevices
+            isVisible={isUpdateModalOpenForkillingDevices}
+            setIsVisible={setIsUpdateModalOpenForkillingDevices}
+          />
+          {/*  */}
+          <Col xl="3" lg="6" md="6" sm="12" className="box-col-3">
+            <Card className="total-earning">
+              <CardBody>
+                <Row style={{ height: "16vh" }}>
+                  <Col sm="12" className="box-col-7">
+                    <div className="d-flex">
+                      <div
+                        className="flex-grow-1"
+                        style={{ margin: "5px 0px" }}
+                      >
+                        <H3>Connected Servers</H3>
+                      </div>
+                    </div>
+                    <div style={{ display: "flex", justifyContent: "start" }}>
+                      <div style={{ fontSize: "16px", fontWeight: "bold" }}>
+                        Auto Tel:
+                      </div>
+                      <div
+                        style={{
+                          marginLeft: "20px",
+                          display: "flex",
+                          alignItems: "center",
+                        }}
+                      >
+                        <div
+                          style={{
+                            height: "10px",
+                            width: "10px",
+                            borderRadius: "50px",
+                            backgroundColor: "red",
+                            marginRight: "5px",
+                          }}
+                        ></div>
+                        <div>Not Connected</div>
+                      </div>
+                    </div>
+                    <div style={{ display: "flex", justifyContent: "start" }}>
+                      <div style={{ fontSize: "16px", fontWeight: "bold" }}>
+                        Auto Tel:{" "}
+                      </div>
+                      <div
+                        style={{
+                          marginLeft: "20px",
+                          display: "flex",
+                          alignItems: "center",
+                        }}
+                      >
+                        <div
+                          style={{
+                            height: "10px",
+                            width: "10px",
+                            borderRadius: "50px",
+                            backgroundColor: "green",
+                            marginRight: "5px",
+                          }}
+                        ></div>
+                        <div>Connected</div>
+                      </div>
+                    </div>
+                    <div style={{ display: "flex", justifyContent: "start" }}>
+                      <div style={{ fontSize: "16px", fontWeight: "bold" }}>
+                        Auto Tel:{" "}
+                      </div>
+                      <div
+                        style={{
+                          marginLeft: "20px",
+                          display: "flex",
+                          alignItems: "center",
+                        }}
+                      >
+                        <div
+                          style={{
+                            height: "10px",
+                            width: "10px",
+                            borderRadius: "50px",
+                            backgroundColor: "green",
+                            marginRight: "5px",
+                          }}
+                        ></div>
+                        <div>Connected</div>
+                      </div>
+                    </div>
+                  </Col>
+                </Row>
+              </CardBody>
+            </Card>
+          </Col>
 
-      {/*  */}
-      <Col xl="3" lg="6" md="6" sm="12" className="box-col-4">
-        <Card className="total-earning">
-          <CardBody>
-            <Row style={{ height: "16vh" }}>
-              <Col sm="7" className="box-col-7">
-                <div className="d-flex">
-                  <div className="flex-grow-1" style={{ margin: "5px 0px" }}>
-                    <H3>Send Command</H3>
-                  </div>
-                </div>
-                <div style={{ fontSize: "16px", fontWeight: "bold" }}>6</div>
-                <div>
-                  <button
-                    className="btn-primary"
-                    style={{
-                      borderRadius: "5px",
-                      padding: "5px 15px",
-                      color: "white",
-                      outline: "none",
-                      border: "none",
-                      marginTop: "30px",
-                    }}
-                    onClick={() => {
-                      setIsUpdateModalOpenForSendCommand(true);
-                    }}
-                  >
-                    Send
-                  </button>
-                </div>
-              </Col>
-              <Col sm="5" className={`box-col-5 `}>
-                <ReactApexChart
-                  id={controlRoomAnalytics[1].chartId}
-                  options={controlRoomAnalytics[1].charts}
-                  series={controlRoomAnalytics[1].charts.series}
-                  type={controlRoomAnalytics[1].charts.chart?.type}
-                  height={controlRoomAnalytics[1].charts.chart?.height}
-                />
-              </Col>
-            </Row>
-          </CardBody>
-        </Card>
+          {/*  */}
+          <Col xl="3" lg="6" md="6" sm="12" className="box-col-3">
+            <Card className="total-earning">
+              <CardBody>
+                <Row style={{ height: "16vh" }}>
+                  <Col sm="7" className="box-col-7">
+                    <div className="d-flex">
+                      <div
+                        className="flex-grow-1"
+                        style={{ margin: "5px 0px" }}
+                      >
+                        <H3>Send Command</H3>
+                      </div>
+                    </div>
+                    <div style={{ fontSize: "16px", fontWeight: "bold" }}>
+                      6
+                    </div>
+                    <div>
+                      <button
+                        className="btn-primary"
+                        style={{
+                          borderRadius: "5px",
+                          padding: "5px 15px",
+                          color: "white",
+                          outline: "none",
+                          border: "none",
+                          marginTop: "10px",
+                        }}
+                        onClick={() => {
+                          setIsUpdateModalOpenForSendCommand(true);
+                        }}
+                      >
+                        Send
+                      </button>
+                    </div>
+                  </Col>
+                  <Col sm="5" className={`box-col-5 `}>
+                    <ReactApexChart
+                      id={controlRoomAnalytics[1].chartId}
+                      options={controlRoomAnalytics[1].charts}
+                      series={controlRoomAnalytics[1].charts.series}
+                      type={controlRoomAnalytics[1].charts.chart?.type}
+                      height={controlRoomAnalytics[1].charts.chart?.height}
+                    />
+                  </Col>
+                </Row>
+              </CardBody>
+            </Card>
+          </Col>
+          <SendCommand
+            addModal={isUpdateModalOpenForSendCommand}
+            setAddModal={setIsUpdateModalOpenForSendCommand}
+            dropDownDevices={devices}
+          />
+          {/*  */}
+          <Col xl="3" lg="6" md="6" sm="12" className="box-col-3">
+            <Card className="total-earning">
+              <CardBody>
+                <Row style={{ height: "16vh" }}>
+                  <Col sm="7" className="box-col-7">
+                    <div className="d-flex">
+                      <div
+                        className="flex-grow-1"
+                        style={{ margin: "5px 0px" }}
+                      >
+                        <H3>Pre Alert info</H3>
+                      </div>
+                    </div>
+                    <div style={{ fontSize: "16px", fontWeight: "bold" }}>
+                      8
+                    </div>
+                    <div>
+                      <button
+                        className="btn-primary"
+                        style={{
+                          borderRadius: "5px",
+                          padding: "5px 15px",
+                          color: "white",
+                          outline: "none",
+                          border: "none",
+                          marginTop: "30px",
+                        }}
+                        onClick={() => {
+                          setIsUpdateModalOpenForPreAlertinfo(true);
+                        }}
+                      >
+                        Add
+                      </button>
+                    </div>
+                  </Col>
+                  <Col sm="5" className={`box-col-5 `}>
+                    <ReactApexChart
+                      id={controlRoomAnalytics[1].chartId}
+                      options={controlRoomAnalytics[1].charts}
+                      series={controlRoomAnalytics[1].charts.series}
+                      type={controlRoomAnalytics[1].charts.chart?.type}
+                      height={controlRoomAnalytics[1].charts.chart?.height}
+                    />
+                  </Col>
+                </Row>
+              </CardBody>
+            </Card>
+          </Col>
+
+          <AddPreAlertinfo
+            addModal={isUpdateModalOpenForPreAlertinfo}
+            setAddModal={setIsUpdateModalOpenForPreAlertinfo}
+            dropDownDevices={devices}
+          />
+        </Row>
       </Col>
-      <SendCommand
-        addModal={isUpdateModalOpenForSendCommand}
-        setAddModal={setIsUpdateModalOpenForSendCommand}
-        dropDownDevices={devices}
-      />
-      {/*  */}
-      <Col xl="3" lg="6" md="6" sm="12" className="box-col-4">
-        <Card className="total-earning">
-          <CardBody>
-            <Row style={{ height: "16vh" }}>
-              <Col sm="7" className="box-col-7">
-                <div className="d-flex">
-                  <div className="flex-grow-1" style={{ margin: "5px 0px" }}>
-                    <H3>Pre Alert info</H3>
-                  </div>
-                </div>
-                <div style={{ fontSize: "16px", fontWeight: "bold" }}>8</div>
-                <div>
-                  <button
-                    className="btn-primary"
-                    style={{
-                      borderRadius: "5px",
-                      padding: "5px 15px",
-                      color: "white",
-                      outline: "none",
-                      border: "none",
-                      marginTop: "30px",
-                    }}
-                    onClick={() => {
-                      setIsUpdateModalOpenForPreAlertinfo(true);
-                    }}
-                  >
-                    Add
-                  </button>
-                </div>
-              </Col>
-              <Col sm="5" className={`box-col-5 `}>
-                <ReactApexChart
-                  id={controlRoomAnalytics[1].chartId}
-                  options={controlRoomAnalytics[1].charts}
-                  series={controlRoomAnalytics[1].charts.series}
-                  type={controlRoomAnalytics[1].charts.chart?.type}
-                  height={controlRoomAnalytics[1].charts.chart?.height}
-                />
-              </Col>
-            </Row>
-          </CardBody>
-        </Card>
+      <Col
+        xl="1"
+        lg="1"
+        md="1"
+        sm="1"
+        style={{
+          height: containerHeight === "10vh" ? "10vh" : "21vh",
+          overflow: "hidden",
+          transition: "height 0.5s",
+          marginBottom: containerHeight == "10vh" ? "20px" : "0px",
+        }}
+        // xl={containerHeight == "10vh" ? "12" : "1"}
+        // lg={containerHeight == "10vh" ? "12" : "1"}
+        // md={containerHeight == "10vh" ? "12" : "1"}
+        // sm={containerHeight == "10vh" ? "12" : "1"}
+        // style={{
+        //   height: containerHeight,
+        //   display: "flex",
+        //   justifyContent: "end",
+        //   marginBottom: containerHeight == "10vh" ? "20px" : "0px",
+        //   transition: "height 0.5s ease-in-out",
+        // }}
+      >
+        <div
+          style={{
+            backgroundColor: "green",
+            padding: "20px",
+            height: "100%",
+            width: "50px",
+            borderRadius: "5px",
+            position: "relative",
+          }}
+        >
+          {/* Hamburger Icon */}
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              cursor: "pointer",
+              marginTop: "-15px",
+            }}
+            onClick={toggleDropdown}
+          >
+            <div style={{ fontSize: "24px" }}>&#9776;</div>
+          </div>
+          {/* Dropdown Menu */}
+          {isDropdownOpen && (
+            <div
+              style={{
+                position: "absolute",
+                top: "0%",
+                left: "100%",
+                backgroundColor: "lightgray",
+                padding: "10px",
+                borderRadius: "5px",
+                zIndex: "1",
+                // fontSize: "8px",
+              }}
+            >
+              <div>Today</div>
+              <div>7_Days</div>
+              <div>1_Month</div>
+            </div>
+          )}
+
+          <div
+            style={{
+              position: "absolute",
+              bottom: 0,
+              left: "50%",
+              transform: "translateX(-50%)",
+            }}
+          >
+            {containerHeight === "21vh" ? (
+              <ImArrowUp
+                onClick={toggleContainerHeight}
+                style={{ color: "white", fontSize: "24px", cursor: "pointer" }}
+              />
+            ) : (
+              <ImArrowDown
+                onClick={toggleContainerHeight}
+                style={{ color: "white", fontSize: "24px", cursor: "pointer" }}
+              />
+            )}
+          </div>
+        </div>
       </Col>
-      <AddPreAlertinfo
-        addModal={isUpdateModalOpenForPreAlertinfo}
-        setAddModal={setIsUpdateModalOpenForPreAlertinfo}
-        dropDownDevices={devices}
-      />
     </>
   );
 };

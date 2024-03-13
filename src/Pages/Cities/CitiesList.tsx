@@ -24,6 +24,7 @@ import {
   setValue,
   setNoCityFound,
   setInActiveActiveCities,
+  setIsConnected,
 } from "../../ReaduxToolkit/Reducer/CitiesSlice";
 import deleteAlert from "../Alerts/DeleteAlert";
 import "./tableStyle.css";
@@ -74,8 +75,7 @@ const CitiesList = () => {
       if (data !== undefined) {
         dispatch(setNoCityFound(data.message));
         if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
-          // navigate(`${process.env.PUBLIC_URL}/not-conneceted`);
-          SetIsConneceted(false);
+          dispatch(setIsConnected(true));
         }
         if (!data.success) {
           Swal.fire({

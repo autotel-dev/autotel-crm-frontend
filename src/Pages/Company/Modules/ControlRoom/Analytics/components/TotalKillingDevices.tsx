@@ -13,70 +13,72 @@ const TotalKillingDevices: React.FC<PropsTypes> = ({
   isVisible,
   setIsVisible = () => {},
 }) => {
-  //   const { modalData } = useSelector((state: any) => state.alerts);
-  //   console.log("completedAlertsData", modalData.previousAlerts);
+  const { killedDevices } = useSelector((state: any) => state.alerts);
 
-  const [dataList, setDataList]: any = useState([
-    {
-      eventId: "ID",
-      deviceName: "Device",
-      alert: "Alert",
-      type: "Type",
-      message: "Message",
-      address: "Address",
-      completionResponse: "Response",
-      createdAt: "22-20-2024",
-    },
-    {
-      eventId: "ID",
-      deviceName: "Device",
-      alert: "Alert",
-      type: "Type",
-      message: "Message",
-      address: "Address",
-      completionResponse: "Response",
-      createdAt: "22-20-2024",
-    },
-    {
-      eventId: "ID",
-      deviceName: "Device",
-      alert: "Alert",
-      type: "Type",
-      message: "Message",
-      address: "Address",
-      completionResponse: "Response",
-      createdAt: "22-20-2024",
-    },
-  ]);
+  const [dataList, setDataList]: any = useState([...killedDevices]);
   const [loading, setLoading] = useState(false); // State to manage loading
   const tableHeader = [
-    "ID",
-    "Device",
-    "Alert",
-    "Type",
-    "Message",
-    "Address",
-    "Response",
+    "Device ID",
+    "Device Name",
+    "Status",
+    "Last Packet",
+    "Latitude",
+    "Longitude",
+    "Server",
+    "Killed Time",
+    "Count Down",
   ];
   const containerRef = useRef(null);
-  const [pageNo, setPageNo] = useState(1);
-  //   useEffect(() => {
-  //     if (modalData.previousAlerts != null)
-  //       setDataList(modalData.previousAlerts.slice(0, 12)); // Initially display the first 6 elements
-  //   }, [modalData.previousAlerts]);
+  useEffect(() => {
+    if (killedDevices.length !== 0) {
+      setDataList(
+        killedDevices.slice(0, 12).map((device: any) => ({
+          ...device,
+          remainingTime: calculateRemainingTime(device.lastPacketTimeStamp),
+        }))
+      );
+    }
+  }, [killedDevices]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setDataList((prevDataList: any) =>
+        prevDataList.map((device: any) => ({
+          ...device,
+          remainingTime: calculateRemainingTime(device.lastPacketTimeStamp),
+        }))
+      );
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const calculateRemainingTime = (timestamp: number): string => {
+    const currentTime = Math.floor(Date.now() / 1000);
+    const remainingSeconds = currentTime - timestamp;
+    if (remainingSeconds <= 0) return "00:00:00";
+
+    const hours = Math.floor(remainingSeconds / 3600);
+    const minutes = Math.floor((remainingSeconds % 3600) / 60);
+    const seconds = remainingSeconds % 60;
+    return `${hours.toString().padStart(2, "0")}:${minutes
+      .toString()
+      .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+  };
 
   const handleScroll = () => {
-    // if (!containerRef.current) return; // Ensure containerRef.current exists
-    // const { scrollTop, clientHeight, scrollHeight } = containerRef.current;
-    // const bottomOffset = scrollHeight - (scrollTop + clientHeight);
-    // if (bottomOffset < 50) {
-    //   // If scrolled to the bottom
-    //   const nextBatch = modalData.previousAlerts.slice(
-    //     dataList.length,
-    //     dataList.length + 6
-    //   ); // Fetch the next 6 elements
-    //   setDataList((prevData: any) => [...prevData, ...nextBatch]); // Append to the existing data
-    // }
+    if (!containerRef.current) return;
+    const { scrollTop, clientHeight, scrollHeight } = containerRef.current;
+    const bottomOffset = scrollHeight - (scrollTop + clientHeight);
+    if (bottomOffset < 50) {
+      const nextBatch = killedDevices
+        .slice(dataList.length, dataList.length + 6)
+        .map((device: any) => ({
+          ...device,
+          remainingTime: calculateRemainingTime(device.lastPacketTimeStamp),
+        }));
+      setDataList((prevData: any) => [...prevData, ...nextBatch]);
+    }
   };
 
   return (
@@ -140,34 +142,27 @@ const TotalKillingDevices: React.FC<PropsTypes> = ({
                     ) : (
                       dataList.map((data: any, index: any) => (
                         <tr style={{ cursor: "pointer" }} key={index}>
-                          <td>{data.eventId}</td>
+                          <td>{data.deviceId}</td>
+                          <td>{data.deviceName}</td>
+
+                          <td className={`txt-primary`}>{data.onlineStatus}</td>
+                          <td>{data.lastPacketTimeStamp}</td>
+                          <td>{data.latitude}</td>
+                          <td>{data.longitude}</td>
+                          <td>{data.server}</td>
                           <td>
                             <div className="d-flex">
                               <div className="flex-grow-1 ms-2">
-                                <H4>{data.deviceName}</H4>
+                                <H4>
+                                  {data.updatedAt.toString().slice(0, 10)}
+                                </H4>
                                 <span style={{ fontSize: "10px" }}>
-                                  {data.createdAt.toString().slice(0, 10)}
-                                  {/* {data.createdAt.toString().slice(0, 10) +
-                                    " " +
-                                    data.createdAt.toString().slice(11, 19)} */}
+                                  {data.updatedAt.toString().slice(11, 19)}
                                 </span>
                               </div>
                             </div>
                           </td>
-
-                          <td className={`txt-primary`}>{data.message}</td>
-                          <td>{data.type}</td>
-                          <td>{data.message}</td>
-                          <td>
-                            {data.address == null && data.address == undefined
-                              ? "N/A"
-                              : data.address}
-                          </td>
-                          <td>
-                            {data.completionResponse == ""
-                              ? "N/A"
-                              : data.completionResponse}
-                          </td>
+                          <td>{data.remainingTime}</td>
                         </tr>
                       ))
                     )}

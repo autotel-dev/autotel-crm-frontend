@@ -21,6 +21,9 @@ import {
   setAssignedAlerts,
   setCompletedAlerts,
   setLiveAlertsData,
+  setIsConnected,
+  setSendCommandsType,
+  setKilledDevices,
 } from "../../../../ReaduxToolkit/Reducer/AlertsSlice";
 import Swal from "sweetalert2";
 import ControlRoomAnalytics from "./Analytics/ControlRoomAnalytics";
@@ -29,9 +32,10 @@ import {
   setDevicesStatuses,
 } from "../../../../ReaduxToolkit/Reducer/MonitoringSlice";
 import { useNavigate } from "react-router-dom";
+import NoInternetConnection from "../../../NoInternetConnection/NoInternetConnection";
 
 const ControlRoom = () => {
-  const { assignedAlerts, completedAlerts } = useSelector(
+  const { assignedAlerts, completedAlerts, isConnected } = useSelector(
     (state: any) => state.alerts
   );
   const { devices } = useSelector((state: any) => state.monitoring);
@@ -39,6 +43,10 @@ const ControlRoom = () => {
   const [loading, setLoading] = useState(true);
   const [devicesLoading, setDevicesLoading] = useState(true);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    dispatch(setIsConnected(false));
+  }, []);
 
   useEffect(() => {
     setLoading(true);
@@ -54,13 +62,8 @@ const ControlRoom = () => {
         dispatch(setLiveAlertsData(null));
       }
       if (data !== undefined) {
-        if (data.success) {
-          console.log("length --- >", data.data.allAlertEvents.length);
-          dispatch(setLiveAlerts(data.data.allAlertEvents));
-          dispatch(setLiveAlertsData(data.data));
-        }
         if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
-          navigate(`${process.env.PUBLIC_URL}/not-conneceted`);
+          dispatch(setIsConnected(true));
         }
         if (!data.success) {
           Swal.fire({
@@ -69,6 +72,11 @@ const ControlRoom = () => {
             timer: 2000,
             showConfirmButton: false,
           });
+        }
+        if (data.success) {
+          console.log("length --- >", data.data.allAlertEvents.length);
+          dispatch(setLiveAlerts(data.data.allAlertEvents));
+          dispatch(setLiveAlertsData(data.data));
         }
       }
       setLoading(false);
@@ -83,6 +91,19 @@ const ControlRoom = () => {
         dispatch(setAssignedAlerts([]));
       }
       if (data !== undefined) {
+        if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
+          dispatch(setIsConnected(true));
+          setLoading(false);
+        }
+        if (!data.success) {
+          Swal.fire({
+            text: `${data.message}`,
+            icon: "error",
+            timer: 2000,
+            showConfirmButton: false,
+          });
+          setLoading(false);
+        }
         if (data.success) {
           console.log("length --- >", data.data.length);
           dispatch(setAssignedAlerts(data.data));
@@ -96,9 +117,32 @@ const ControlRoom = () => {
         dispatch(setCompletedAlerts([]));
       }
       if (data !== undefined) {
+        if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
+          dispatch(setIsConnected(true));
+        }
+        if (!data.success) {
+          Swal.fire({
+            text: `${data.message}`,
+            icon: "error",
+            timer: 2000,
+            showConfirmButton: false,
+          });
+        }
         if (data.success) {
           console.log("length --- >", data.data.length);
           dispatch(setCompletedAlerts(data.data));
+        }
+      }
+    });
+  }, []);
+  useEffect(() => {
+    getAll({ url: "control-room/get-all-killed-devices" }).then((data: any) => {
+      console.log("api call --- >", data);
+
+      if (data !== undefined) {
+        if (data.success) {
+          console.log("length --- >", data.data);
+          dispatch(setKilledDevices(data.data));
         }
       }
     });
@@ -119,25 +163,29 @@ const ControlRoom = () => {
     if (devices.length == 0) {
       getAll({ url: "company/devices" }).then((data: any) => {
         console.log("data", data);
-        if (data == undefined) {
-          setDevicesLoading(false);
-          Swal.fire({
-            text: "Failed to Fetch",
-            icon: "error",
-            timer: 2000,
-            showConfirmButton: false,
-          });
-        }
+        // if (data == undefined) {
+        //   setDevicesLoading(false);
+        //   Swal.fire({
+        //     text: "Failed to Fetch",
+        //     icon: "error",
+        //     timer: 2000,
+        //     showConfirmButton: false,
+        //   });
+        // }
         if (data !== undefined) {
+          if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
+            dispatch(setIsConnected(true));
+          }
           if (!data.success) {
-            setDevicesLoading(false);
             Swal.fire({
-              text: "Failed to Fetch the devices",
+              text: `${data.message}`,
               icon: "error",
               timer: 2000,
               showConfirmButton: false,
             });
+            setDevicesLoading(false);
           }
+
           if (data.success) {
             console.log("api call --- >", data);
             console.log("length --- >", data.data.length);
@@ -261,100 +309,110 @@ const ControlRoom = () => {
 
   const [basicTab, setBasicTab] = useState("1");
   return (
-    <Container fluid className="dashboard_default">
-      <Row className="widget-grid">
-        <Breadcrumbs
-          mainTitle="Control Room"
-          parent="Company"
-          title="Module / Control Room"
-        />
-      </Row>
-
-      {!loading && !devicesLoading ? (
-        <Row>
-          <Row>
-            <ControlRoomAnalytics />
-          </Row>
-          <Col xl="6">
-            <LiveAlerts />
-          </Col>
-          <Col xl="6">
-            <div style={{ backgroundColor: "white" }}>
-              <Nav
-                tabs
-                className="simple-wrapper"
-                style={{
-                  backgroundColor: "#63d5be",
-                  borderTopLeftRadius: "10px",
-                  borderTopRightRadius: "10px",
-                }}
-              >
-                <NavItem
-                  style={{
-                    width: "50%",
-                    height: "50px",
-                    textAlign: "center",
-                    fontSize: "22px",
-                    cursor: "pointer",
-                  }}
-                >
-                  <NavLink
-                    className={` ${basicTab === "1" ? "active" : ""}`}
-                    style={{
-                      color: `${basicTab === "1" ? "#63d5be" : "white"}`,
-                    }}
-                    onClick={() => setBasicTab("1")}
-                  >
-                    Assigned Events ({assignedAlerts.length})
-                  </NavLink>
-                </NavItem>
-                <NavItem
-                  style={{
-                    width: "50%",
-                    height: "50px",
-                    textAlign: "center",
-                    fontSize: "22px",
-                    cursor: "pointer",
-                  }}
-                >
-                  <NavLink
-                    className={` ${basicTab === "2" ? "active" : ""}`}
-                    style={{
-                      color: `${basicTab === "2" ? "#63d5be" : "white"}`,
-                    }}
-                    onClick={() => setBasicTab("2")}
-                  >
-                    Completed Events ({completedAlerts.length})
-                  </NavLink>
-                </NavItem>
-              </Nav>
-              <TabContent activeTab={basicTab}>
-                {events &&
-                  events.map((item, index) => (
-                    <TabPane className="fade show" tabId={item.id} key={index}>
-                      {item.element}
-                    </TabPane>
-                  ))}
-              </TabContent>
-            </div>
-          </Col>
-        </Row>
+    <>
+      {isConnected ? (
+        <NoInternetConnection />
       ) : (
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            height: "100vh",
-            backgroundColor: "white",
-            alignItems: "center",
-          }}
-        >
-          <div style={{ textAlign: "center" }}>
-            <Loader />
-          </div>
-        </div>
+        <Container fluid className="dashboard_default">
+          <Row className="widget-grid">
+            <Breadcrumbs
+              mainTitle="Control Room"
+              parent="Company"
+              title="Module / Control Room"
+            />
+          </Row>
+
+          {!loading && !devicesLoading ? (
+            <Row>
+              <Row>
+                <ControlRoomAnalytics />
+              </Row>
+              <Col xl="6">
+                <LiveAlerts />
+              </Col>
+              <Col xl="6">
+                <div style={{ backgroundColor: "white" }}>
+                  <Nav
+                    tabs
+                    className="simple-wrapper"
+                    style={{
+                      backgroundColor: "#63d5be",
+                      borderTopLeftRadius: "10px",
+                      borderTopRightRadius: "10px",
+                    }}
+                  >
+                    <NavItem
+                      style={{
+                        width: "50%",
+                        height: "50px",
+                        textAlign: "center",
+                        fontSize: "22px",
+                        cursor: "pointer",
+                      }}
+                    >
+                      <NavLink
+                        className={` ${basicTab === "1" ? "active" : ""}`}
+                        style={{
+                          color: `${basicTab === "1" ? "#63d5be" : "white"}`,
+                        }}
+                        onClick={() => setBasicTab("1")}
+                      >
+                        Assigned Events ({assignedAlerts.length})
+                      </NavLink>
+                    </NavItem>
+                    <NavItem
+                      style={{
+                        width: "50%",
+                        height: "50px",
+                        textAlign: "center",
+                        fontSize: "22px",
+                        cursor: "pointer",
+                      }}
+                    >
+                      <NavLink
+                        className={` ${basicTab === "2" ? "active" : ""}`}
+                        style={{
+                          color: `${basicTab === "2" ? "#63d5be" : "white"}`,
+                        }}
+                        onClick={() => setBasicTab("2")}
+                      >
+                        Completed Events ({completedAlerts.length})
+                      </NavLink>
+                    </NavItem>
+                  </Nav>
+                  <TabContent activeTab={basicTab}>
+                    {events &&
+                      events.map((item, index) => (
+                        <TabPane
+                          className="fade show"
+                          tabId={item.id}
+                          key={index}
+                        >
+                          {item.element}
+                        </TabPane>
+                      ))}
+                  </TabContent>
+                </div>
+              </Col>
+            </Row>
+          ) : (
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                height: "100vh",
+                backgroundColor: "white",
+                alignItems: "center",
+              }}
+            >
+              <div style={{ textAlign: "center" }}>
+                <Loader />
+              </div>
+            </div>
+          )}
+        </Container>
       )}
-    </Container>
+    </>
   );
 };
 
