@@ -58,8 +58,8 @@ const ControlRoomAnalytics = () => {
       percentage: "- 36.28%",
       time: SinceLastMonth,
       chartId: "expensesChart",
-      charts: totalEarningChart,
-      type: "bar",
+      charts: visitorChart,
+      type: "area",
     },
     {
       badgeColor: "dark",
@@ -152,9 +152,25 @@ const ControlRoomAnalytics = () => {
                   </Col>
                   <Col sm="5" className={`box-col-5 `}>
                     <div>
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "end",
+                          marginBottom: "-10px",
+                          color: "green",
+                        }}
+                      >
+                        Today
+                      </div>
                       <ReactApexChart
                         id={controlRoomAnalytics[0].chartId}
-                        options={controlRoomAnalytics[0].charts}
+                        options={{
+                          ...controlRoomAnalytics[0].charts,
+                          xaxis: {
+                            ...controlRoomAnalytics[0].charts.xaxis,
+                          },
+                        }}
+                        // options={controlRoomAnalytics[0].charts}
                         series={controlRoomAnalytics[0].charts.series}
                         type={controlRoomAnalytics[0].charts.chart?.type}
                         height={controlRoomAnalytics[0].charts.chart?.height}
@@ -180,7 +196,24 @@ const ControlRoomAnalytics = () => {
                         className="flex-grow-1"
                         style={{ margin: "5px 0px" }}
                       >
-                        <H3>Connected Servers</H3>
+                        <div
+                          style={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                          }}
+                        >
+                          <H3>Connected Servers</H3>
+                          <div
+                            style={{
+                              display: "flex",
+                              justifyContent: "end",
+                              marginBottom: "-10px",
+                              color: "green",
+                            }}
+                          >
+                            Today
+                          </div>
+                        </div>
                       </div>
                     </div>
                     <div style={{ display: "flex", justifyContent: "start" }}>
@@ -295,6 +328,16 @@ const ControlRoomAnalytics = () => {
                     </div>
                   </Col>
                   <Col sm="5" className={`box-col-5 `}>
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "end",
+                        marginBottom: "-10px",
+                        color: "green",
+                      }}
+                    >
+                      Today
+                    </div>
                     <ReactApexChart
                       id={controlRoomAnalytics[1].chartId}
                       options={controlRoomAnalytics[1].charts}
@@ -311,6 +354,7 @@ const ControlRoomAnalytics = () => {
             addModal={isUpdateModalOpenForSendCommand}
             setAddModal={setIsUpdateModalOpenForSendCommand}
             dropDownDevices={devices}
+            prevItem=""
           />
           {/*  */}
           <Col xl="3" lg="6" md="6" sm="12" className="box-col-3">
@@ -329,7 +373,7 @@ const ControlRoomAnalytics = () => {
                     <div style={{ fontSize: "16px", fontWeight: "bold" }}>
                       8
                     </div>
-                    <div>
+                    <div style={{ display: "flex" }}>
                       <button
                         className="btn-primary"
                         style={{
@@ -346,9 +390,36 @@ const ControlRoomAnalytics = () => {
                       >
                         Add
                       </button>
+                      <button
+                        className="btn-primary"
+                        style={{
+                          borderRadius: "5px",
+                          padding: "5px 15px",
+                          color: "white",
+                          outline: "none",
+                          border: "none",
+                          marginTop: "30px",
+                          marginLeft: "10px",
+                        }}
+                        onClick={() => {
+                          setIsUpdateModalOpenForkillingDevices(true);
+                        }}
+                      >
+                        View
+                      </button>
                     </div>
                   </Col>
                   <Col sm="5" className={`box-col-5 `}>
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "end",
+                        marginBottom: "-10px",
+                        color: "green",
+                      }}
+                    >
+                      Today
+                    </div>
                     <ReactApexChart
                       id={controlRoomAnalytics[1].chartId}
                       options={controlRoomAnalytics[1].charts}
@@ -367,6 +438,10 @@ const ControlRoomAnalytics = () => {
             setAddModal={setIsUpdateModalOpenForPreAlertinfo}
             dropDownDevices={devices}
           />
+          <TotalKillingDevices
+            isVisible={isUpdateModalOpenForkillingDevices}
+            setIsVisible={setIsUpdateModalOpenForkillingDevices}
+          />
         </Row>
       </Col>
       <Col
@@ -379,6 +454,7 @@ const ControlRoomAnalytics = () => {
           overflow: "hidden",
           transition: "height 0.5s",
           marginBottom: containerHeight == "10vh" ? "20px" : "0px",
+          // zIndex: "9999",
         }}
         // xl={containerHeight == "10vh" ? "12" : "1"}
         // lg={containerHeight == "10vh" ? "12" : "1"}
@@ -397,7 +473,7 @@ const ControlRoomAnalytics = () => {
             backgroundColor: "green",
             padding: "20px",
             height: "100%",
-            width: "50px",
+            width: "45px",
             borderRadius: "5px",
             position: "relative",
           }}
@@ -412,7 +488,7 @@ const ControlRoomAnalytics = () => {
             }}
             onClick={toggleDropdown}
           >
-            <div style={{ fontSize: "24px" }}>&#9776;</div>
+            <div style={{ fontSize: "24px", color: "white" }}>&#9776;</div>
           </div>
           {/* Dropdown Menu */}
           {isDropdownOpen && (
@@ -420,17 +496,17 @@ const ControlRoomAnalytics = () => {
               style={{
                 position: "absolute",
                 top: "0%",
-                left: "100%",
+                left: "70%",
                 backgroundColor: "lightgray",
                 padding: "10px",
                 borderRadius: "5px",
-                zIndex: "1",
-                // fontSize: "8px",
+                width: "75px",
+                zIndex: "9999",
               }}
             >
               <div>Today</div>
-              <div>7_Days</div>
-              <div>1_Month</div>
+              <div>7 Days</div>
+              <div>1 Month</div>
             </div>
           )}
 

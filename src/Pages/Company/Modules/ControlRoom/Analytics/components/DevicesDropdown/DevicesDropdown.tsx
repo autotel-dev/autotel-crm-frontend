@@ -53,6 +53,7 @@ const DevicesDropdown: React.FC<PropsTypes> = ({
       );
       setSelectedItems(updatedItems);
     }
+    toggleDropdown();
   };
 
   useEffect(() => {

@@ -18,29 +18,24 @@ import {
 } from "../../../../../../ReaduxToolkit/Reducer/AlertsSlice";
 import { create, getAll } from "../../../../../../Api";
 import { serverCredentials } from "../../../../../../Api/header";
+import Loader from "../../../../../Loader/Loader";
 
 interface PropsTypes {
   addModal: boolean; // Change 'boolean' to the actual type of isVisible
   setAddModal: any;
   dropDownDevices: any;
+  prevItem: any;
 }
 
 const SendCommand: React.FC<PropsTypes> = ({
   addModal,
   setAddModal = () => {},
   dropDownDevices,
+  prevItem,
 }) => {
-  const { sendCommandsType } = useSelector((state: any) => state.alerts);
+  // console.log("Previtem", prevItem);
 
-  const [decodedToken, setDecodedToken]: any = useState(null);
-  const authToken = localStorage.getItem("token");
-  useEffect(() => {
-    if (authToken !== null) {
-      const decodedToken = jwtDecode(authToken);
-      console.log(decodedToken);
-      setDecodedToken(decodedToken);
-    }
-  }, []);
+  const { sendCommandsType } = useSelector((state: any) => state.alerts);
 
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
@@ -77,7 +72,7 @@ const SendCommand: React.FC<PropsTypes> = ({
       });
     });
     setCommandsType(tempCommandsTypeList);
-  }, []);
+  }, [sendCommandsType]);
 
   useEffect(() => {
     const serverInfo = serverCredentials(selectedItems[0]?.server?._id);
@@ -101,6 +96,11 @@ const SendCommand: React.FC<PropsTypes> = ({
       });
     }
   }, [selectedItems]);
+  useEffect(() => {
+    if (prevItem !== "") {
+      setSelectedItems([prevItem]);
+    }
+  }, [prevItem]);
 
   const sendCommandHandler: SubmitHandler<SendCommandType> = async (
     data: any
@@ -150,6 +150,12 @@ const SendCommand: React.FC<PropsTypes> = ({
                 showConfirmButton: false,
               });
             } else {
+              Swal.fire({
+                text: `${data.data.message}`,
+                icon: "success",
+                timer: 1000,
+                showConfirmButton: false,
+              });
               getAll({ url: "control-room/get-all-killed-devices" }).then(
                 (data: any) => {
                   console.log("api call --- >", data);
@@ -206,11 +212,21 @@ const SendCommand: React.FC<PropsTypes> = ({
               <div>
                 <Label>Devices</Label>
               </div>
-              <DevicesDropdown
-                data={dropDownDevices}
-                selectedItems={selectedItems}
-                setSelectedItems={setSelectedItems}
-              />
+              {selectedItems.length > 0 && prevItem !== "" && (
+                <input
+                  className="form-control"
+                  type="text"
+                  value={selectedItems[0].name}
+                  defaultValue={selectedItems[0].name}
+                />
+              )}
+              {prevItem == "" && (
+                <DevicesDropdown
+                  data={dropDownDevices}
+                  selectedItems={selectedItems}
+                  setSelectedItems={setSelectedItems}
+                />
+              )}
             </FormGroup>
             {selectedItems.length !== 0 && (
               <FormGroup className="col-md-12 create-group">
@@ -259,10 +275,14 @@ const SendCommand: React.FC<PropsTypes> = ({
           </Row>
           <div
             style={{
+              position: "absolute",
+              bottom: "0",
+              right: "0",
+              width: "100%",
+              backgroundColor: "white",
               display: "flex",
-              justifyContent: "end",
-              alignItems: "end",
-              height: "100%",
+              justifyContent: "flex-end",
+              padding: "20px",
             }}
           >
             <Button
