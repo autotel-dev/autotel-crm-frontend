@@ -39,7 +39,7 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
     {
       title: "Dashboard",
       svgIcon: "home",
-      link: `${process.env.PUBLIC_URL}/dashboards/shoppingplace`,
+      link: `${process.env.PUBLIC_URL}/dashboard`,
     },
     {
       title: "Setup",
@@ -115,7 +115,7 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
         return {
           svgIcon: "bonus-kit",
           title: `${item.name}`,
-          link: `${process.env.PUBLIC_URL}/dashboards/shoppingplace`,
+          link: `${process.env.PUBLIC_URL}/dashboard`,
         };
       }),
     },
@@ -141,7 +141,7 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
     {
       title: "Dashboard",
       svgIcon: "home",
-      link: `${process.env.PUBLIC_URL}/company/dashboard`,
+      link: `${process.env.PUBLIC_URL}/dashboard`,
     },
     {
       title: "Setup",
@@ -219,7 +219,7 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
     {
       title: "Dashboard",
       svgIcon: "home",
-      link: `${process.env.PUBLIC_URL}/company/dashboard`,
+      link: `${process.env.PUBLIC_URL}/dashboard`,
     },
 
     {

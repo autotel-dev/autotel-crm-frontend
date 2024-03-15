@@ -37,7 +37,7 @@ const Routers = () => {
               path={`${process.env.PUBLIC_URL}` || "/"}
               element={
                 <Navigate
-                  to={`${process.env.PUBLIC_URL}/dashboards/shoppingplace`}
+                  to={`${process.env.PUBLIC_URL}/dashboard`}
                 />
               }
             />

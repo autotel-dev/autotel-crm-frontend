@@ -97,7 +97,7 @@ const Support = () => {
           : "support/bug-report/get-all-bug-reports",
     }).then((data: any) => {
       console.log("api call --- >", data);
-      if (getUserRole() == "COMPANY") {
+      // if (getUserRole() == "COMPANY") {
         // if (data == undefined) {
         //   Swal.fire({
         //     text: "Failed to fetch due to connection refused",
@@ -109,7 +109,7 @@ const Support = () => {
         //   setStatisticsLoading(false);
         //   return;
         // }
-      }
+      // }
 
       if (data !== undefined) {
         if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {

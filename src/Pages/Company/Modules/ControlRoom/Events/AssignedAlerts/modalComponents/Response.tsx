@@ -11,6 +11,7 @@ import {
   setCompletedAlerts,
   setModalData,
 } from "../../../../../../../ReaduxToolkit/Reducer/AlertsSlice";
+import Swal from "sweetalert2";
 
 interface ResponseType {
   response?: string;
@@ -59,8 +60,20 @@ const ResponseForm: React.FC<PropsTypes> = ({
         await create(completedResponse, {
           url: "alert-events/complete-an-alert-event",
         }).then((data: any) => {
-          setLoading(false);
-          setIsVisible(!isVisible);
+          if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
+            setLoading(false);
+            setIsVisible(!isVisible);
+          }
+          if (!data.success) {
+            Swal.fire({
+              text: `${data.message}`,
+              icon: "error",
+              timer: 2000,
+              showConfirmButton: false,
+            });
+            setLoading(false);
+            setIsVisible(!isVisible);
+          }
           if (data.success) {
             console.log(data);
             setLoading(false);

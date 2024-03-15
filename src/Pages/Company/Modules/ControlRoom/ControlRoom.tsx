@@ -56,6 +56,8 @@ const ControlRoom = () => {
     dispatch(setCompletedAlerts([]));
     getAll({ url: "company/alert-events?pageNo=1" }).then((data: any) => {
       console.log("api call --- >", data);
+      console.log("data,data");
+      
 
       if (data == undefined) {
         dispatch(setLiveAlerts([]));
@@ -309,7 +311,7 @@ const ControlRoom = () => {
 
   const [basicTab, setBasicTab] = useState("1");
   return (
-    <>
+    <> 
       {isConnected ? (
         <NoInternetConnection />
       ) : (

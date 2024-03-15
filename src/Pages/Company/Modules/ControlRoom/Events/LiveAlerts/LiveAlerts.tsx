@@ -94,12 +94,12 @@ const LiveAlerts = () => {
             dispatch(setLiveAlertsData(data.data));
             setDataList(liveAlerts.slice(0, 12));
           } else {
-            Swal.fire({
-              text: data.message,
-              icon: "error",
-              timer: 2000,
-              showConfirmButton: false,
-            });
+            // Swal.fire({
+            //   text: data.message,
+            //   icon: "error",
+            //   timer: 2000,
+            //   showConfirmButton: false,
+            // });
           }
         }
       });
@@ -189,8 +189,24 @@ const LiveAlerts = () => {
                         await create(assignEvent, {
                           url: "company/assign-alert-event-to-me",
                         }).then((dataa: any) => {
-                          setAssignLoading(false);
+                          if (
+                            !dataa.success &&
+                            dataa.message == "ERROR_INTERNET_DISCONNECTED"
+                          ) {
+                            setAssignLoading(false);
+                          }
+                          if (!dataa.success) {
+                            Swal.fire({
+                              text: `${data.message}`,
+                              icon: "error",
+                              timer: 2000,
+                              showConfirmButton: false,
+                            });
+                            setAssignLoading(false);
+                          }
+
                           if (dataa.success) {
+                            setAssignLoading(false);
                             var updatedAlerts = [...liveAlerts]; // Create a shallow copy of the liveAlerts array
                             updatedAlerts.splice(index, 1); // Remove the item at the specified index
 

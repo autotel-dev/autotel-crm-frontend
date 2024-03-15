@@ -184,7 +184,7 @@ const CreateNewUser = () => {
       });
     });
     setRolesList(tempRolesList);
-  }, []);
+  }, [roles]);
 
   const handleModuleClick = (moduleId: any) => {
     const index = allowedModules.findIndex(

@@ -7,6 +7,7 @@ import { create } from "../../../../../../Api";
 import { serverCredentials } from "../../../../../../Api/header";
 import { setModalData } from "../../../../../../ReaduxToolkit/Reducer/AlertsSlice";
 import { AnimatePresence, motion } from "framer-motion";
+import Swal from "sweetalert2";
 
 const AssignedAlerts = () => {
   const dispatch = useDispatch();
@@ -131,6 +132,20 @@ const AssignedAlerts = () => {
                             url: "alert-events/get-alert-event-by-id",
                           }).then((data: any) => {
                             console.log(data);
+                            if (
+                              !data.success &&
+                              data.message == "ERROR_INTERNET_DISCONNECTED"
+                            ) {
+                            }
+                            if (!data.success) {
+                              Swal.fire({
+                                text: `${data.message}`,
+                                icon: "error",
+                                timer: 2000,
+                                showConfirmButton: false,
+                              });
+                              setIsUpdateModalOpen(false);
+                            }
                             if (data.success) {
                               dispatch(setModalData(data.data));
                             }

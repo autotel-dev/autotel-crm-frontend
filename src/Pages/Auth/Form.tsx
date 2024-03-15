@@ -101,8 +101,10 @@ const CommonForm = ({ alignLogo }: CommonFormPropsType) => {
 
             if (getUserRole() == "OPERATOR") {
               localStorage.setItem("userId", getOperatorCompanyUserId());
-            } else {
+            } else if (getUserRole() == "COMPANY") {
               localStorage.setItem("userId", data.data.userId);
+            } else if (getUserRole() == "SUPER_ADMIN") {
+              localStorage.removeItem("userId");
             }
             const userId = localStorage.getItem("userId");
             getAll({
@@ -168,24 +170,18 @@ const CommonForm = ({ alignLogo }: CommonFormPropsType) => {
                         setUserPermissions(data.data.allowedPermissions)
                       );
                       setLoading(false);
-                      navigate(
-                        `${process.env.PUBLIC_URL}/dashboards/shoppingplace`
-                      );
+                      navigate(`${process.env.PUBLIC_URL}/dashboard`);
                     }
                     if (!data.success) {
-                      navigate(
-                        `${process.env.PUBLIC_URL}/dashboards/shoppingplace`
-                      );
+                      navigate(`${process.env.PUBLIC_URL}/dashboard`);
                     }
                   }
                 })
                 .catch((error: any) => {
-                  navigate(
-                    `${process.env.PUBLIC_URL}/dashboards/shoppingplace`
-                  );
+                  navigate(`${process.env.PUBLIC_URL}/dashboard`);
                 });
             } else {
-              navigate(`${process.env.PUBLIC_URL}/dashboards/shoppingplace`);
+              navigate(`${process.env.PUBLIC_URL}/dashboard`);
             }
           }
 

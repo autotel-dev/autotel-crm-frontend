@@ -684,75 +684,95 @@ const routes = [
 
   // superAdmin
 
+  // Dashboard
+  {
+    path: `${process.env.PUBLIC_URL}/dashboard`,
+    Component: <ShoppingPlace />,
+    isProtected: true,
+    allowedUserRoles: [ROLES.SUPER_ADMIN, ROLES.COMPANY, ROLES.OPERATOR],
+    permissionValue: PERMISSION_VALUES.DASHBOARD,
+  },
+
   // Setup
 
   {
     path: `${process.env.PUBLIC_URL}/super-admin/setup/countries`,
     Component: <Countries />,
     allowedUserRoles: [ROLES.SUPER_ADMIN],
+    isProtected: true,
     permissionValue: "Countries",
   },
   {
     path: `${process.env.PUBLIC_URL}/super-admin/setup/cities`,
     Component: <Cities />,
-    allowedUserRoles: "SUPER_ADMIN",
-    title: "Cities",
+    allowedUserRoles: [ROLES.SUPER_ADMIN],
+    isProtected: true,
+    permissionValue: "Cities",
   },
   {
     path: `${process.env.PUBLIC_URL}/super-admin/setup/province`,
     Component: <Province />,
-    allowedUserRoles: "SUPER_ADMIN",
-    title: "Province",
+    allowedUserRoles: [ROLES.SUPER_ADMIN],
+    isProtected: true,
+    permissionValue: "Provinces",
   },
   {
     path: `${process.env.PUBLIC_URL}/super-admin/setup/package`,
     Component: <Package />,
-    allowedUserRoles: "SUPER_ADMIN",
-    title: "Package",
+    allowedUserRoles: [ROLES.SUPER_ADMIN],
+    isProtected: true,
+    permissionValue: "Packages",
   },
   {
     path: `${process.env.PUBLIC_URL}/super-admin/setup/crm_module`,
     Component: <CRMModule />,
-    allowedUserRoles: "SUPER_ADMIN",
-    title: "CRM module",
+    allowedUserRoles: [ROLES.SUPER_ADMIN],
+    isProtected: true,
+    permissionValue: "CRMModules",
   },
   {
     path: `${process.env.PUBLIC_URL}/super-admin/setup/server_details`,
     Component: <Servers />,
-    allowedUserRoles: "SUPER_ADMIN",
-    title: "Server Details",
+    allowedUserRoles: [ROLES.SUPER_ADMIN],
+    isProtected: true,
+    permissionValue: "ServerDetails",
   },
   {
     path: `${process.env.PUBLIC_URL}/super-admin/setup/server_details/createNewServer`,
     Component: <CreateServerForm />,
-    allowedUserRoles: "SUPER_ADMIN",
-    title: "Create new Server",
+    allowedUserRoles: [ROLES.SUPER_ADMIN],
+    isProtected: true,
+    permissionValue: "CreateNewServer",
   },
   {
     path: `${process.env.PUBLIC_URL}/super-admin/setup/server_details/updareServer`,
     Component: <UpdateServerForm />,
-    allowedUserRoles: "SUPER_ADMIN",
-    title: "update Server",
+    allowedUserRoles: [ROLES.SUPER_ADMIN],
+    isProtected: true,
+    permissionValue: "UpdateServer",
   },
   {
     path: `${process.env.PUBLIC_URL}/super-admin/setup/server_management`,
     Component: <ServerManagement />,
-    allowedUserRoles: "SUPER_ADMIN",
-    title: "Server Management",
+    allowedUserRoles: [ROLES.SUPER_ADMIN],
+    isProtected: true,
+    permissionValue: "ServerManagement",
   },
   {
     path: `${process.env.PUBLIC_URL}/super-admin/setup/server_management/AllLogs`,
     Component: <RecentLogsFullTable />,
-    allowedUserRoles: "SUPER_ADMIN",
-    title: "All Logs",
+    allowedUserRoles: [ROLES.SUPER_ADMIN],
+    isProtected: true,
+    permissionValue: "AllLogs",
   },
 
   // Support
   {
     path: `${process.env.PUBLIC_URL}/super-admin/support`,
     Component: <Support />,
-    allowedUserRoles: "SUPER_ADMIN",
-    title: "Support",
+    allowedUserRoles: [ROLES.SUPER_ADMIN],
+    isProtected: true,
+    permissionValue: "Support",
   },
   {
     path: `${process.env.PUBLIC_URL}/super-admin/support/ticketDetails/:ticketId`,
@@ -762,43 +782,40 @@ const routes = [
   {
     path: `${process.env.PUBLIC_URL}/super-admin/tasks`,
     Component: <Tasks />,
-    allowedUserRoles: "SUPER_ADMIN",
-    title: "Tasks",
+    allowedUserRoles: [ROLES.SUPER_ADMIN],
+    isProtected: true,
+    permissionValue: "Tasks",
   },
   // Companies
   {
     path: `${process.env.PUBLIC_URL}/super-admin/companies`,
     Component: <Companies />,
-    allowedUserRoles: "SUPER_ADMIN",
-    title: "Companies",
+    allowedUserRoles: [ROLES.SUPER_ADMIN],
+    isProtected: true,
+    permissionValue: "Companies",
   },
 
   {
     path: `${process.env.PUBLIC_URL}/super-admin/companies/createComapny`,
     Component: <CreateCompanyForm />,
-    allowedUserRoles: "SUPER_ADMIN",
-    title: "Create Server Form",
+    allowedUserRoles: [ROLES.SUPER_ADMIN],
+    isProtected: true,
+    permissionValue: "CreateCompany",
   },
   {
     path: `${process.env.PUBLIC_URL}/verifyOTP`,
     Component: <VerifyOTP />,
   },
 
-  // {
-  //   path: `${process.env.PUBLIC_URL}/${
-  //     window.location.pathname === "/superAdminLogin"
-  //       ? "/superAdminLogin"
-  //       : "/Login"
-  //   }`,
-  //   Component: <LoginForm />,
-  // },
-
   // Company Routes
 
   // Dashboard
   {
-    path: `${process.env.PUBLIC_URL}/company/dashboard`,
+    path: `${process.env.PUBLIC_URL}/dashboard`,
     Component: <ShoppingPlace />,
+    isProtected: true,
+    allowedUserRoles: [ROLES.SUPER_ADMIN, ROLES.COMPANY, ROLES.OPERATOR],
+    permissionValue: PERMISSION_VALUES.DASHBOARD,
   },
 
   // Setup
@@ -806,20 +823,23 @@ const routes = [
   {
     path: `${process.env.PUBLIC_URL}/company/setup/roles`,
     Component: <Roles />,
-    allowedUserRoles: "COMPANY",
-    title: "Roles",
+    allowedUserRoles: [ROLES.COMPANY],
+    isProtected: true,
+    permissionValue: "Roles",
   },
   {
     path: `${process.env.PUBLIC_URL}/company/setup/emailTemplates`,
     Component: <ShoppingPlace />,
-    allowedUserRoles: "COMPANY",
-    title: "Email Templates",
+    allowedUserRoles: [ROLES.COMPANY],
+    isProtected: true,
+    permissionValue: "EmailTemplates",
   },
   {
     path: `${process.env.PUBLIC_URL}/company/setup/whatsappTemplates`,
     Component: <ShoppingPlace />,
-    allowedUserRoles: "COMPANY",
-    title: "WhstApp Templates",
+    allowedUserRoles: [ROLES.COMPANY],
+    isProtected: true,
+    permissionValue: "WhatsAppTemplates",
   },
 
   // Modules
@@ -828,14 +848,14 @@ const routes = [
     path: `${process.env.PUBLIC_URL}/company/modules/monitoring`,
     Component: <Monitoring />,
     isProtected: true,
-    allowedUserRoles: [ROLES.COMPANY, ROLES.OPERATOR],
+    allowedUserRoles: [ROLES.COMPANY],
     permissionValue: "Monitoring",
   },
   {
     path: `${process.env.PUBLIC_URL}/company/modules/control-room`,
     Component: <ControlRoom />,
     isProtected: true,
-    allowedUserRoles: [ROLES.OPERATOR],
+    allowedUserRoles: [ROLES.COMPANY],
     permissionValue: "Control Room",
   },
   // Users
@@ -843,55 +863,65 @@ const routes = [
     path: `${process.env.PUBLIC_URL}/company/users`,
     Component: <CompanyUsers />,
     isProtected: true,
-    allowedUserRoles: "COMPANY",
-    title: "User",
+    allowedUserRoles: [ROLES.COMPANY],
+    permissionValue: PERMISSION_VALUES.USER,
   },
 
   // Support
   {
     path: `${process.env.PUBLIC_URL}/company/support`,
     Component: <Support />,
-    allowedUserRoles: "COMPANY",
-    title: "Support",
     isProtected: true,
+    allowedUserRoles: [ROLES.COMPANY, ROLES.OPERATOR],
+    permissionValue: PERMISSION_VALUES.SUPPORT,
   },
   // Tasks
   {
     path: `${process.env.PUBLIC_URL}/company/tasks`,
     Component: <CompanyTasks />,
-    allowedUserRoles: "COMPANY",
-    title: "Task",
+    isProtected: true,
+    allowedUserRoles: [ROLES.COMPANY],
+    permissionValue: "Tasks",
   },
 
   {
     path: `${process.env.PUBLIC_URL}/company/reports`,
     Component: <Reports />,
-    allowedUserRoles: "COMPANY",
-    title: "Report",
     isProtected: true,
+    allowedUserRoles: [ROLES.COMPANY],
+    permissionValue: "Reports",
   },
 
-  // Operator
+  // Operator Routes
+
+  // Dashboard
+  {
+    path: `${process.env.PUBLIC_URL}/dashboard`,
+    Component: <ShoppingPlace />,
+    isProtected: true,
+    allowedUserRoles: [ROLES.SUPER_ADMIN, ROLES.COMPANY, ROLES.OPERATOR],
+    permissionValue: PERMISSION_VALUES.DASHBOARD,
+  },
   {
     path: `${process.env.PUBLIC_URL}/operator/modules/monitoring`,
     Component: <Monitoring />,
     isProtected: true,
-    allowedUserRoles: "OPERATOR",
-    title: "Monitoring",
+    allowedUserRoles: [ROLES.OPERATOR],
+    permissionValue: "Monitoring",
   },
   {
     path: `${process.env.PUBLIC_URL}/operator/modules/control-room`,
     Component: <ControlRoom />,
     isProtected: true,
-    allowedUserRoles: "OPERATOR",
-    title: "Control Room",
+    allowedUserRoles: [ROLES.OPERATOR],
+    permissionValue: "Control Room",
   },
   {
     path: `${process.env.PUBLIC_URL}/operator/support`,
     Component: <Support />,
-    allowedUserRoles: "OPERATOR",
-    title: "Support",
     isProtected: true,
+    allowedUserRoles: [ROLES.OPERATOR],
+    permissionValue: PERMISSION_VALUES.SUPPORT,
   },
   // Not Accessible
 
