@@ -76,13 +76,13 @@ const CompaniesCardsFooter = ({ item }: CardType) => {
             margin: "5px",
           }}
           onClick={() => {
-            toggle();
-            var alertData = {
-              title: "Are you sure?",
-              text: "Once deleted, you will not be able to recover this ",
-            };
-            const type = "companyType";
-            deleteAlert(alertData, item._id, type, dispatch);
+            // toggle();
+            // var alertData = {
+            //   title: "Are you sure?",
+            //   text: "Once deleted, you will not be able to recover this ",
+            // };
+            // const type = "companyType";
+            // deleteAlert(alertData, item._id, type, dispatch);
             // -------------------------
           }}
         >
