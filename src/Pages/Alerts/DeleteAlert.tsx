@@ -112,7 +112,8 @@ const deleteAlert = (
                       console.log("hhg");
                       dispatch(setOperators(data.data));
                       dispatch(setFilterOperators(data.data));
-                    } else {
+                    }
+                    if (!data.success) {
                       dispatch(setOperators([]));
                       dispatch(setFilterOperators([]));
                     }
@@ -128,6 +129,7 @@ const deleteAlert = (
                   console.log("api call --- >", data);
                   if (data == undefined) {
                     dispatch(setServers([]));
+                    dispatch(setFilterServers([]));
                   }
                   if (data !== undefined) {
                     dispatch(setNoDataFound(data.message));
@@ -135,8 +137,10 @@ const deleteAlert = (
                       console.log("hhg");
                       dispatch(setServers(data.data.allServers));
                       dispatch(setFilterServers(data.data.allServers));
-                    } else {
+                    }
+                    if (!data.success) {
                       dispatch(setServers([]));
+                      dispatch(setFilterServers([]));
                     }
                   } else {
                     console.log("ier67i");
@@ -159,8 +163,10 @@ const deleteAlert = (
                       console.log("hhg");
                       dispatch(setCompanies(data.data));
                       dispatch(setFilterCompanies(data.data));
-                    } else {
+                    }
+                    if (!data.success) {
                       dispatch(setCompanies([]));
+                      dispatch(setFilterCompanies([]));
                     }
                   }
                 }
@@ -179,8 +185,10 @@ const deleteAlert = (
                     console.log("hhg");
                     dispatch(setCities(data.data));
                     dispatch(setFilterCities(data.data));
-                  } else {
+                  }
+                  if (!data.success) {
                     dispatch(setCities([]));
+                    dispatch(setFilterCities([]));
                   }
                 } else {
                   console.log("ier67i");
@@ -218,8 +226,10 @@ const deleteAlert = (
                           }
                         }
                       );
-                    } else {
+                    }
+                    if (!data.success) {
                       dispatch(setProvinces([]));
+                      dispatch(setFilterProvinces([]));
                       getAll({ url: "city/get-all-cities" }).then(
                         (data: any) => {
                           console.log("api call --- >", data);
@@ -229,11 +239,11 @@ const deleteAlert = (
                               console.log("hhg");
                               dispatch(setCities(data.data));
                               dispatch(setFilterCities(data.data));
-                            } else {
-                              dispatch(setCities([]));
                             }
-                          } else {
-                            console.log("ier67i");
+                            if (!data.success) {
+                              dispatch(setCities([]));
+                              dispatch(setFilterCities([]));
+                            }
                           }
                         }
                       );
@@ -255,8 +265,10 @@ const deleteAlert = (
                     console.log("hhg");
                     dispatch(setPackages(data.data));
                     dispatch(setFilterPackages(data.data));
-                  } else {
+                  }
+                  if (!data.success) {
                     dispatch(setPackages([]));
+                    dispatch(setFilterPackages([]));
                   }
                 }
               });
@@ -275,8 +287,10 @@ const deleteAlert = (
                       console.log("hhg");
                       dispatch(setCRMModules(data.data));
                       dispatch(setFilterCRMModules(data.data));
-                    } else {
+                    }
+                    if (!data.success) {
                       dispatch(setCRMModules([]));
+                      dispatch(setFilterCRMModules([]));
                     }
                   }
                 }
@@ -303,8 +317,10 @@ const deleteAlert = (
                             console.log("hhg");
                             dispatch(setProvinces(data.data));
                             dispatch(setFilterProvinces(data.data));
-                          } else {
+                          }
+                          if (!data.success) {
                             dispatch(setProvinces([]));
+                            dispatch(setFilterProvinces([]));
                           }
                         }
                       }
@@ -317,8 +333,10 @@ const deleteAlert = (
                           console.log("hhg");
                           dispatch(setCities(data.data));
                           dispatch(setFilterCities(data.data));
-                        } else {
+                        }
+                        if (!data.success) {
                           dispatch(setCities([]));
+                          dispatch(setFilterCities([]));
                         }
                       } else {
                         console.log("ier67i");
@@ -335,8 +353,10 @@ const deleteAlert = (
                             console.log("hhg");
                             dispatch(setProvinces(data.data));
                             dispatch(setFilterProvinces(data.data));
-                          } else {
+                          }
+                          if (!data.success) {
                             dispatch(setProvinces([]));
+                            dispatch(setFilterProvinces([]));
                           }
                         }
                       }
@@ -349,8 +369,10 @@ const deleteAlert = (
                           console.log("hhg");
                           dispatch(setCities(data.data));
                           dispatch(setFilterCities(data.data));
-                        } else {
+                        }
+                        if (!data.success) {
                           dispatch(setCities([]));
+                          dispatch(setFilterCities([]));
                         }
                       } else {
                         console.log("ier67i");
