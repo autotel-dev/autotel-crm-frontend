@@ -58,19 +58,19 @@ const CitiesList = () => {
     // setLoad(true);
     getAll({ url: "city/get-all-cities" }).then((data: any) => {
       console.log("api call --- >", data);
-      // if (data == undefined) {
-      //   Swal.fire({
-      //     text: "Failed to fetch due to connection refused",
-      //     icon: "error",
-      //     timer: 2000,
-      //     showConfirmButton: false,
-      //   });
-      //   dispatch(setInActiveActiveCities("All"));
-      //   dispatch(setCities([]));
-      //   dispatch(setFilterCities([]));
-      //   dispatch(setCitiesEnd());
-      //   return;
-      // }
+      if (data == undefined) {
+        Swal.fire({
+          text: "No cities Found",
+          icon: "error",
+          timer: 2000,
+          showConfirmButton: false,
+        });
+        dispatch(setInActiveActiveCities("All"));
+        dispatch(setCities([]));
+        dispatch(setFilterCities([]));
+        dispatch(setCitiesEnd());
+        return;
+      }
 
       if (data !== undefined) {
         dispatch(setNoCityFound(data.message));

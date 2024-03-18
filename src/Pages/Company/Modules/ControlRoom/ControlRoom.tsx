@@ -57,7 +57,6 @@ const ControlRoom = () => {
     getAll({ url: "company/alert-events?pageNo=1" }).then((data: any) => {
       console.log("api call --- >", data);
       console.log("data,data");
-      
 
       if (data == undefined) {
         dispatch(setLiveAlerts([]));
@@ -67,7 +66,7 @@ const ControlRoom = () => {
         if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
           dispatch(setIsConnected(true));
         }
-        if (!data.success) {
+        if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
           Swal.fire({
             text: `${data.message}`,
             icon: "error",
@@ -97,7 +96,7 @@ const ControlRoom = () => {
           dispatch(setIsConnected(true));
           setLoading(false);
         }
-        if (!data.success) {
+        if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
           Swal.fire({
             text: `${data.message}`,
             icon: "error",
@@ -122,7 +121,7 @@ const ControlRoom = () => {
         if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
           dispatch(setIsConnected(true));
         }
-        if (!data.success) {
+        if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
           Swal.fire({
             text: `${data.message}`,
             icon: "error",
@@ -311,7 +310,7 @@ const ControlRoom = () => {
 
   const [basicTab, setBasicTab] = useState("1");
   return (
-    <> 
+    <>
       {isConnected ? (
         <NoInternetConnection />
       ) : (

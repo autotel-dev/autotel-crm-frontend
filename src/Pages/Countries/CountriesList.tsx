@@ -36,19 +36,19 @@ const CountriesList = () => {
     dispatch(setCountriesStart());
     getAll({ url: "country/get-all-countries" }).then((data: any) => {
       console.log("api call --- >", data);
-      // if (data == undefined) {
-      //   Swal.fire({
-      //     text: "Failed to fetch due to connection refused",
-      //     icon: "error",
-      //     timer: 2000,
-      //     showConfirmButton: false,
-      //   });
-      //   dispatch(setInActiveActiveCountries("All"));
-      //   dispatch(setCountries([]));
-      //   dispatch(setFilterCountries([]));
-      //   dispatch(setCountriesEnd());
-      //   return;
-      // }
+      if (data == undefined) {
+        Swal.fire({
+          text: "No countries Found",
+          icon: "error",
+          timer: 2000,
+          showConfirmButton: false,
+        });
+        dispatch(setInActiveActiveCountries("All"));
+        dispatch(setCountries([]));
+        dispatch(setFilterCountries([]));
+        dispatch(setCountriesEnd());
+        return;
+      }
 
       if (data !== undefined) {
         console.log("Data", data);

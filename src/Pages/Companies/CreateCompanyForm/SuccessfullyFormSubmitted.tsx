@@ -230,7 +230,7 @@ const SuccessfullyFormSubmitted = ({
                 console.log("hhg");
                 dispatch(setCompanies(data.data));
                 dispatch(setFilterCompanies(data.data));
-                navigate(`${process.env.PUBLIC_URL}/companies`);
+                navigate(`${process.env.PUBLIC_URL}/super-admin/companies`);
               }
             }
           });

@@ -69,7 +69,6 @@ const Companies = () => {
           showConfirmButton: false,
         });
 
-       
         dispatch(setCompanies([]));
         dispatch(setFilterCompanies([]));
         setLoading(false);
@@ -110,6 +109,10 @@ const Companies = () => {
           console.log("hhg");
           dispatch(setTimeZones(data.data));
         }
+        if (!data.success) {
+          console.log("hhg");
+          dispatch(setTimeZones([]));
+        }
       }
     });
   }, []);
@@ -120,6 +123,10 @@ const Companies = () => {
         if (data.success) {
           console.log("hhg");
           dispatch(setPermissions(data.data));
+        }
+        if (!data.success) {
+          console.log("hhg");
+          dispatch(setPermissions([]));
         }
       }
     });
@@ -134,6 +141,10 @@ const Companies = () => {
             console.log("hhg");
             dispatch(setServers(data.data.activeServers));
           }
+          if (!data.success) {
+            console.log("hhg");
+            dispatch(setServers([]));
+          }
         }
       }
     );
@@ -145,6 +156,10 @@ const Companies = () => {
         if (data.success) {
           console.log("hhg");
           dispatch(setCRMModules(data.data));
+        }
+        if (!data.success) {
+          console.log("hhg");
+          dispatch(setCRMModules([]));
         }
       }
     });
@@ -158,6 +173,10 @@ const Companies = () => {
           console.log("hhg");
           dispatch(setCities(data.data));
         }
+        if (!data.success) {
+          console.log("hhg");
+          dispatch(setCities([]));
+        }
       }
     });
   }, []);
@@ -168,6 +187,10 @@ const Companies = () => {
         if (data.success) {
           console.log("hhg");
           dispatch(setPackages(data.data));
+        }
+        if (!data.success) {
+          console.log("hhg");
+          dispatch(setPackages([]));
         }
       }
     });

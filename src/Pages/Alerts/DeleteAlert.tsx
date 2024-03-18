@@ -101,6 +101,10 @@ const deleteAlert = (
               getAll({ url: "operator/get-all-operators" }).then(
                 (data: any) => {
                   console.log("api call --- >", data);
+                  if (data == undefined) {
+                    dispatch(setOperators([]));
+                    dispatch(setFilterOperators([]));
+                  }
 
                   if (data !== undefined) {
                     dispatch(setNoDataFound(data.message));
@@ -122,6 +126,9 @@ const deleteAlert = (
               getAll({ url: "server-management/get-all-servers" }).then(
                 (data: any) => {
                   console.log("api call --- >", data);
+                  if (data == undefined) {
+                    dispatch(setServers([]));
+                  }
                   if (data !== undefined) {
                     dispatch(setNoDataFound(data.message));
                     if (data.success) {
@@ -140,7 +147,11 @@ const deleteAlert = (
             if (type == "companyType") {
               getAll({ url: "super-admin/get-all-companies" }).then(
                 (data: any) => {
-                  console.log("api call --- >", data);
+                  console.log("api call for companies --- >", data);
+                  if (data == undefined) {
+                    dispatch(setCompanies([]));
+                    dispatch(setFilterCompanies([]));
+                  }
 
                   if (data !== undefined) {
                     dispatch(setNoCompanyFound(data.message));
@@ -158,6 +169,10 @@ const deleteAlert = (
             if (type == "cityType") {
               getAll({ url: "city/get-all-cities" }).then((data: any) => {
                 console.log("api call --- >", data);
+                if (data == undefined) {
+                  dispatch(setCities([]));
+                  dispatch(setFilterCities([]));
+                }
                 if (data !== undefined) {
                   dispatch(setNoDataFound(data.message));
                   if (data.success) {
@@ -175,6 +190,10 @@ const deleteAlert = (
               getAll({ url: "province/get-all-provinces" }).then(
                 (data: any) => {
                   console.log("api call --- >", data);
+                  if (data == undefined) {
+                    dispatch(setProvinces([]));
+                    dispatch(setFilterProvinces([]));
+                  }
                   if (data !== undefined) {
                     dispatch(setNoDataFound(data.message));
                     if (data.success) {
@@ -226,6 +245,10 @@ const deleteAlert = (
               getAll({ url: "package/get-all-packages" }).then((data: any) => {
                 console.log("api call --- >", data);
                 dispatch(setPackagesEnd());
+                if (data == undefined) {
+                  dispatch(setPackages([]));
+                  dispatch(setFilterPackages([]));
+                }
                 if (data !== undefined) {
                   dispatch(setNoDataFound(data.message));
                   if (data.success) {
@@ -242,6 +265,10 @@ const deleteAlert = (
                 (data: any) => {
                   console.log("api call --- >", data);
                   dispatch(setCRMModulesEnd());
+                  if (data == undefined) {
+                    dispatch(setCRMModules([]));
+                    dispatch(setFilterCRMModules([]));
+                  }
                   if (data !== undefined) {
                     dispatch(setNoDataFound(data.message));
                     if (data.success) {
@@ -257,8 +284,13 @@ const deleteAlert = (
             } else if (type == "countryType") {
               getAll({ url: "country/get-all-countries" }).then((data: any) => {
                 console.log("api call --- >", data);
+                if (data == undefined) {
+                  dispatch(setCountries([]));
+                  dispatch(setFilterCountries([]));
+                }
                 if (data !== undefined) {
                   dispatch(setNoDataFound(data.message));
+
                   if (data.success) {
                     console.log("hhg");
                     dispatch(setCountries(data.data));

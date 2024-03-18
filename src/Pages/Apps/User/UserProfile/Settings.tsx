@@ -52,17 +52,17 @@ const Settings = () => {
           : "super-admin/get-personalization",
     }).then((parentData: any) => {
       console.log("api call --- >", parentData);
-      // if (parentData == undefined) {
-      //   setUndefinedData(true);
-      //   Swal.fire({
-      //     text: "Failed to Fetch due to connection refused",
-      //     icon: "error",
-      //     timer: 2000,
-      //     showConfirmButton: false,
-      //   });
-      //   setLoading(false);
-      //   dispatch(setUserPersonalizationData(null));
-      // }
+      if (parentData == undefined) {
+        // setUndefinedData(true);
+        Swal.fire({
+          text: "No personalization found",
+          icon: "error",
+          timer: 2000,
+          showConfirmButton: false,
+        });
+        setLoading(false);
+        dispatch(setUserPersonalizationData(null));
+      }
 
       if (parentData !== undefined) {
         if (

@@ -220,9 +220,9 @@ const RolesList = () => {
                   >
                     {activeInActiveRoles !== "All"
                       ? activeInActiveRoles
-                      : "No Operators Found"}
+                      : "No Roles Found"}
                   </div>
-                )}
+                )}  
 
                 {/* )} */}
               </div>

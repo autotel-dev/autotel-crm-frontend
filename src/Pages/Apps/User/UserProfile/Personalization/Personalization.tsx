@@ -82,7 +82,7 @@ const Personalization = () => {
   const [backgroundColor, setbackgroundColor] = useState<string>(
     userPersonalizationData !== null
       ? userPersonalizationData.backgroundColor
-      : ""
+      : "#000000"
   );
   const [textColor, settextColor] = useState<string>(
     userPersonalizationData !== null
@@ -192,6 +192,16 @@ const Personalization = () => {
       })
         .then((data: any) => {
           console.log("api call --- >", data);
+          if (data == undefined) {
+            Swal.fire({
+              text: `${data.message}`,
+              icon: "error",
+              timer: 2000,
+              showConfirmButton: false,
+            });
+            setLoading(false);
+            // setIsEdit(!isEdit);
+          }
           if (data !== undefined) {
             if (
               !data.success &&
@@ -258,10 +268,26 @@ const Personalization = () => {
       })
         .then((data: any) => {
           console.log("api call --- >", data);
+          if (data == undefined) {
+            Swal.fire({
+              text: `${data.message}`,
+              icon: "error",
+              timer: 2000,
+              showConfirmButton: false,
+            });
+            setLoading(false);
+            // setIsEdit(!isEdit);
+          }
           if (data !== undefined) {
             if (!data.success) {
-              console.log("then but false");
+              Swal.fire({
+                text: `${data.message}`,
+                icon: "error",
+                timer: 2000,
+                showConfirmButton: false,
+              });
               setLoading(false);
+              // setIsEdit(!isEdit);
             }
             if (data.success) {
               getAll({

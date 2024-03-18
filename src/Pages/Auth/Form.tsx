@@ -138,12 +138,12 @@ const CommonForm = ({ alignLogo }: CommonFormPropsType) => {
             }).then((parentData: any) => {
               console.log("api call --- >", parentData);
               if (parentData == undefined) {
-                Swal.fire({
-                  text: `${parentData.message}`,
-                  icon: "error",
-                  timer: 2000,
-                  showConfirmButton: false,
-                });
+                // Swal.fire({
+                //   text: `${parentData.message}`,
+                //   icon: "error",
+                //   timer: 2000,
+                //   showConfirmButton: false,
+                // });
                 setLoading(false);
                 dispatch(setUserPersonalizationData(null));
               }

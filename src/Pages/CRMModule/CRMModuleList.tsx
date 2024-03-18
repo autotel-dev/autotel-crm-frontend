@@ -41,19 +41,19 @@ const CRMModuleList = () => {
     dispatch(setCRMModulesStart());
     getAll({ url: "crm-module/get-all-modules" }).then((data: any) => {
       console.log("api call --- >", data);
-      // if (data == undefined) {
-      //   Swal.fire({
-      //     text: "Failed to fetch due to connection refused",
-      //     icon: "error",
-      //     timer: 2000,
-      //     showConfirmButton: false,
-      //   });
-      //   dispatch(setInActiveActiveModules("All"));
-      //   dispatch(setCRMModulesEnd());
-      //   dispatch(setCRMModules([]));
-      //   dispatch(setFilterCRMModules([]));
-      //   return;
-      // }
+      if (data == undefined) {
+        Swal.fire({
+          text: "No CRM Modules Found",
+          icon: "error",
+          timer: 2000,
+          showConfirmButton: false,
+        });
+        dispatch(setInActiveActiveModules("All"));
+        dispatch(setCRMModulesEnd());
+        dispatch(setCRMModules([]));
+        dispatch(setFilterCRMModules([]));
+        return;
+      }
 
       if (data !== undefined) {
         dispatch(setNoDataFound(data.message));

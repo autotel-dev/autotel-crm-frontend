@@ -38,17 +38,17 @@ const Support = () => {
     if (getUserRole() === "SUPER_ADMIN") {
       getAll({ url: "support/bug-report/get-statistics" }).then((data: any) => {
         console.log("api call --- >", data);
-        if (data == undefined) {
-          Swal.fire({
-            text: "Failed to fetch",
-            icon: "error",
-            timer: 2000,
-            showConfirmButton: false,
-          });
-          setReportsLoading(false);
-          setStatisticsLoading(false);
-          return;
-        }
+        // if (data == undefined) {
+        //   Swal.fire({
+        //     text: "F",
+        //     icon: "error",
+        //     timer: 2000,
+        //     showConfirmButton: false,
+        //   });
+        //   setReportsLoading(false);
+        //   setStatisticsLoading(false);
+        //   return;
+        // }
         if (data !== undefined) {
           if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
             dispatch(setIsConnected(true));
@@ -98,19 +98,19 @@ const Support = () => {
           : "support/bug-report/get-all-bug-reports",
     }).then((data: any) => {
       console.log("api call --- >", data);
-      // if (getUserRole() == "COMPANY") {
-      // if (data == undefined) {
-      //   Swal.fire({
-      //     text: "Failed to fetch due to connection refused",
-      //     icon: "error",
-      //     timer: 2000,
-      //     showConfirmButton: false,
-      //   });
-      //   setReportsLoading(false);
-      //   setStatisticsLoading(false);
-      //   return;
-      // }
-      // }
+
+      if (data == undefined) {
+        Swal.fire({
+          text: "Support Data not Found",
+          icon: "error",
+          timer: 2000,
+          showConfirmButton: false,
+        });
+        dispatch(setBugReports([]));
+        setReportsLoading(false);
+        setStatisticsLoading(false);
+        return;
+      }
 
       if (data !== undefined) {
         if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {

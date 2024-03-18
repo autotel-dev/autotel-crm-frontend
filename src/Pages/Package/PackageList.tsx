@@ -43,19 +43,19 @@ const PackageList = () => {
     dispatch(setPackagesStart());
     getAll({ url: "package/get-all-packages" }).then((data: any) => {
       console.log("api call --- >", data);
-      // if (data == undefined) {
-      //   Swal.fire({
-      //     text: "Failed to fetch due to connection refused",
-      //     icon: "error",
-      //     timer: 2000,
-      //     showConfirmButton: false,
-      //   });
-      //   dispatch(setInActiveActivePackages("All"));
-      //   dispatch(setPackages([]));
-      //   dispatch(setFilterPackages([]));
-      //   dispatch(setPackagesEnd());
-      //   return;
-      // }
+      if (data == undefined) {
+        Swal.fire({
+          text: "No packages Found",
+          icon: "error",
+          timer: 2000,
+          showConfirmButton: false,
+        });
+        dispatch(setInActiveActivePackages("All"));
+        dispatch(setPackages([]));
+        dispatch(setFilterPackages([]));
+        dispatch(setPackagesEnd());
+        return;
+      }
 
       if (data !== undefined) {
         dispatch(setNoDataFound(data.message));

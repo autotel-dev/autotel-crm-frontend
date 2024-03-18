@@ -39,6 +39,10 @@ const CreateCompanyForm = () => {
           console.log("hhg");
           dispatch(setTimeZones(data.data));
         }
+        if (!data.success) {
+          console.log("hhg");
+          dispatch(setTimeZones([]));
+        }
       }
     });
   }, []);
@@ -49,6 +53,10 @@ const CreateCompanyForm = () => {
         if (data.success) {
           console.log("hhg");
           dispatch(setPermissions(data.data));
+        }
+        if (!data.success) {
+          console.log("hhg");
+          dispatch(setPermissions([]));
         }
       }
     });
@@ -63,6 +71,10 @@ const CreateCompanyForm = () => {
             console.log("hhg");
             dispatch(setServers(data.data.activeServers));
           }
+          if (!data.success) {
+            console.log("hhg");
+            dispatch(setServers([]));
+          }
         }
       }
     );
@@ -74,6 +86,10 @@ const CreateCompanyForm = () => {
         if (data.success) {
           console.log("hhg");
           dispatch(setCRMModules(data.data));
+        }
+        if (!data.success) {
+          console.log("hhg");
+          dispatch(setCRMModules([]));
         }
       }
     });
@@ -87,6 +103,10 @@ const CreateCompanyForm = () => {
           console.log("hhg");
           dispatch(setCities(data.data));
         }
+        if (!data.success) {
+          console.log("hhg");
+          dispatch(setCities([]));
+        }
       }
     });
   }, []);
@@ -97,6 +117,10 @@ const CreateCompanyForm = () => {
         if (data.success) {
           console.log("hhg");
           dispatch(setPackages(data.data));
+        }
+        if (!data.success) {
+          console.log("hhg");
+          dispatch(setPackages([]));
         }
       }
     });

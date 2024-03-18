@@ -278,6 +278,7 @@ export const createCom = async (
     return result;
   } catch (error: any) {
     console.error("Error creatingCompany:", error.message);
+    return error.response.data;
   }
 };
 
@@ -309,6 +310,7 @@ export const update = async (postData: any, url: URLTypes): Promise<void> => {
     return result;
   } catch (error: any) {
     console.error("Error updating:", error.message);
+    return error.response.data;
   }
 };
 
@@ -343,6 +345,7 @@ export const updateWithMultipart = async (
     return result;
   } catch (error: any) {
     console.error("Error updatingMultipart:", error.message);
+    return error.response.data;
   }
 };
 
@@ -375,7 +378,8 @@ export const createWithMultipart = async (
     console.log("Response data:", response.data);
     return result;
   } catch (error: any) {
-    console.error("Error creatingMultipart:", error.message);
+    console.error("Error creatingMultipart:", error.response.data);
+    return error.response.data;
   }
 };
 
@@ -406,6 +410,7 @@ export const patch = async (postData: any, url: URLTypes): Promise<void> => {
     return result;
   } catch (error: any) {
     console.error("Error when Patching:", error.message);
+    return error.response.data;
   }
 };
 
@@ -438,6 +443,7 @@ export const deleteSingle = async (url: URLTypes): Promise<void> => {
     return result;
   } catch (error: any) {
     console.error("Error deleting:", error.message);
+    return error.response.data;
   }
 };
 
@@ -470,6 +476,7 @@ export const getAll = async (url: URLTypes): Promise<void> => {
     return result;
   } catch (error: any) {
     console.error("Error get-all:", error.message);
+    return error.response.data;
   }
 };
 

@@ -63,7 +63,7 @@ const CreateNewRole = () => {
     }
   };
 
-  const { userPermissions } = useSelector((state: any) => state.roles);
+  const { userPermissions } = useSelector((state: any) => state.userPermissions);
   const [givenPermissions, setGivenPermissions] = useState<any[]>([]);
 
   const handleCheckboxChange = (index: any, key: any) => {
