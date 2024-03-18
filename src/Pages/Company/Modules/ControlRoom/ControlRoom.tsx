@@ -24,6 +24,8 @@ import {
   setIsConnected,
   setSendCommandsType,
   setKilledDevices,
+  setDashboardStatistics,
+  setSelfSendCommands,
 } from "../../../../ReaduxToolkit/Reducer/AlertsSlice";
 import Swal from "sweetalert2";
 import ControlRoomAnalytics from "./Analytics/ControlRoomAnalytics";
@@ -35,9 +37,8 @@ import { useNavigate } from "react-router-dom";
 import NoInternetConnection from "../../../NoInternetConnection/NoInternetConnection";
 
 const ControlRoom = () => {
-  const { assignedAlerts, completedAlerts, isConnected } = useSelector(
-    (state: any) => state.alerts
-  );
+  const { assignedAlerts, completedAlerts, isConnected, liveAlerts } =
+    useSelector((state: any) => state.alerts);
   const { devices } = useSelector((state: any) => state.monitoring);
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(true);
@@ -137,17 +138,54 @@ const ControlRoom = () => {
     });
   }, []);
   useEffect(() => {
-    getAll({ url: "control-room/get-all-killed-devices" }).then((data: any) => {
+    getAll({ url: "control-room/get-all-killed-devices?type=self" }).then(
+      (data: any) => {
+        console.log("api call --- >", data);
+
+        if (data !== undefined) {
+          if (data.success) {
+            console.log("length --- >", data.data);
+            dispatch(setKilledDevices(data.data));
+          }
+          if (!data.success) {
+            // console.log("length --- >", data.data);
+            dispatch(setKilledDevices([]));
+          }
+        }
+      }
+    );
+  }, []);
+  useEffect(() => {
+    getAll({ url: "control-room/dashboard/statistics" }).then((data: any) => {
       console.log("api call --- >", data);
 
       if (data !== undefined) {
         if (data.success) {
-          console.log("length --- >", data.data);
-          dispatch(setKilledDevices(data.data));
+          // console.log("length --- >", data.data);
+          dispatch(setDashboardStatistics(data.data.controlRoomStatistics));
         }
       }
     });
   }, []);
+  useEffect(() => {
+    getAll({ url: "control-room/get-all-commanded-devices" }).then(
+      (data: any) => {
+        console.log("api call --- >", data);
+
+        if (data !== undefined) {
+          if (data.success) {
+            // console.log("length --- >", data.data);
+            dispatch(setSelfSendCommands(data.data));
+          }
+          if (!data.success) {
+            // console.log("length --- >", data.data);
+            dispatch(setSelfSendCommands([]));
+          }
+        }
+      }
+    );
+  }, []);
+ 
 
   const groups: any = [];
   const groupDevicesObj: any = {};

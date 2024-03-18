@@ -13,7 +13,9 @@ import { SendCommandType } from "./Type/SendCommandType";
 import { H3 } from "../../../../../../AbstractElements";
 import DevicesDropdown from "./DevicesDropdown/DevicesDropdown";
 import {
+  setDashboardStatistics,
   setKilledDevices,
+  setSelfSendCommands,
   setSendCommandsType,
 } from "../../../../../../ReaduxToolkit/Reducer/AlertsSlice";
 import { create, getAll } from "../../../../../../Api";
@@ -58,10 +60,12 @@ const SendCommand: React.FC<PropsTypes> = ({
     }
   };
   const [selectedItems, setSelectedItems]: any = useState([]);
+  const [commandedVehicleDeviceId, setcommandedVehicleDeviceId] = useState("");
 
   const [commandsType, setCommandsType] = useState([]);
 
   const [type, setType] = useState("");
+  const [singleCommandData, setSingleCommandData] = useState({});
 
   const tempCommandsTypeList: any = [];
   useEffect(() => {
@@ -69,6 +73,9 @@ const SendCommand: React.FC<PropsTypes> = ({
       tempCommandsTypeList.push({
         value: `${item.type}`,
         label: `${item.title}`,
+        type: `${item.type}`,
+        title: `${item.title}`,
+        attributes: `${JSON.stringify(item.attributes)}`,
       });
     });
     setCommandsType(tempCommandsTypeList);
@@ -102,6 +109,8 @@ const SendCommand: React.FC<PropsTypes> = ({
     }
   }, [prevItem]);
 
+  const [commandID, setCommandID] = useState("");
+
   const sendCommandHandler: SubmitHandler<SendCommandType> = async (
     data: any
   ) => {
@@ -113,6 +122,10 @@ const SendCommand: React.FC<PropsTypes> = ({
         serverId: serverInfo?.serverId,
         serverHashKey: serverInfo?.serverHashKey,
         commandType: type,
+        commandData: {
+          ...singleCommandData,
+          messageData: type == "custom" ? data.message : null,
+        },
         deviceData: selectedItems[0],
       };
       console.log(commandData);
@@ -120,7 +133,7 @@ const SendCommand: React.FC<PropsTypes> = ({
       try {
         await create(commandData, {
           url: `control-room/send-command-to-device`,
-        }).then((data: any) => {
+        }).then(async (data: any) => {
           console.log("data", data);
 
           setLoading(false);
@@ -149,27 +162,113 @@ const SendCommand: React.FC<PropsTypes> = ({
                 timer: 2000,
                 showConfirmButton: false,
               });
+              addToggle();
             } else {
+              setcommandedVehicleDeviceId(data.data.commandedDeviceId);
+              console.log(
+                "data.data.commandedDeviceId",
+                data.data.commandedDeviceId
+              );
+              console.log("data.data", data.data);
+
+              let intervalId: any; // Declare variable to store interval ID
+              console.log("Setting up interval...");
+              intervalId = setTimeout(async () => {
+                console.log("Interval Called");
+                console.log("LiveAlerts in interval");
+                const serverInfo = serverCredentials(
+                  selectedItems[0]?.server?._id
+                );
+                const verifyData = {
+                  deviceId: selectedItems[0].id,
+                  serverId: serverInfo?.serverId,
+                  serverHashKey: serverInfo?.serverHashKey,
+                  commandedVehicleDeviceId: commandedVehicleDeviceId,
+                };
+                console.log(verifyData);
+                await create(verifyData, {
+                  url: `control-room/verify-vehicle-block-status`,
+                }).then((data: any) => {
+                  console.log("data", data);
+                  setLoading(false);
+                  if (
+                    !data.success &&
+                    data.message == "ERROR_INTERNET_DISCONNECTED"
+                  ) {
+                    setLoading(false);
+                    addToggle();
+                  }
+                  if (!data.success) {
+                    Swal.fire({
+                      text: `${data.message}`,
+                      icon: "error",
+                      timer: 2000,
+                      showConfirmButton: false,
+                    });
+                    setLoading(false);
+                    addToggle();
+                  }
+                  if (data.success) {
+                    console.log(data);
+                    setLoading(false);
+                    addToggle();
+                  }
+                });
+              }, 30000);
+
               Swal.fire({
-                text: `${data.data.message}`,
+                text: `${data.message}`,
                 icon: "success",
                 timer: 1000,
                 showConfirmButton: false,
               });
-              getAll({ url: "control-room/get-all-killed-devices" }).then(
+              getAll({ url: "control-room/get-all-commanded-devices" }).then(
                 (data: any) => {
                   console.log("api call --- >", data);
 
                   if (data !== undefined) {
                     if (data.success) {
-                      console.log("length --- >", data.data);
-                      dispatch(setKilledDevices(data.data));
+                      // console.log("length --- >", data.data);
+                      dispatch(setSelfSendCommands(data.data));
                     }
                   }
                 }
               );
+              getAll({ url: "control-room/dashboard/statistics" }).then(
+                (data: any) => {
+                  console.log("api call --- >", data);
+
+                  if (data !== undefined) {
+                    if (data.success) {
+                      // console.log("length --- >", data.data);
+                      dispatch(
+                        setDashboardStatistics(data.data.controlRoomStatistics)
+                      );
+                    }
+                  }
+                }
+              );
+              getAll({
+                url: "control-room/get-all-killed-devices?type=self",
+              }).then((data: any) => {
+                console.log("api call --- >", data);
+
+                if (data !== undefined) {
+                  if (data.success) {
+                    console.log("length --- >", data.data);
+                    dispatch(setKilledDevices(data.data));
+                  }
+                }
+              });
+
+              addToggle();
+
+              // Cleanup function to clear interval when component unmounts or when loading becomes true
+              return () => {
+                console.log("Clearing interval...");
+                clearInterval(intervalId);
+              };
             }
-            addToggle();
           }
         });
         // Handle successful post creation (e.g., show a success message, redirect, etc.)
@@ -247,9 +346,15 @@ const SendCommand: React.FC<PropsTypes> = ({
                       .toLowerCase()
                       .localeCompare((optionB?.label ?? "").toLowerCase())
                   }
-                  onChange={(e: any) => {
+                  onChange={(e: any, option: any) => {
                     console.log(e);
+                    console.log(option);
                     setType(e);
+                    setSingleCommandData({
+                      type: `${option.type}`,
+                      title: `${option.title}`,
+                      attributes: `${option.attributes}`,
+                    });
                   }}
                   options={commandsType}
                 />

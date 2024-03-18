@@ -8,6 +8,8 @@ const initialState = {
   modalData: null,
   sendCommandsType: [],
   killedDevices: [],
+  selfSendCommands: [],
+  dashboardStatistics: null,
   loading: false,
   error: null,
   noCountryFound: "",
@@ -52,6 +54,12 @@ const AlertsSlice = createSlice({
     setKilledDevices: (state, action) => {
       state.killedDevices = action.payload;
     },
+    setSelfSendCommands: (state, action) => {
+      state.selfSendCommands = action.payload;
+    },
+    setDashboardStatistics: (state, action) => {
+      state.dashboardStatistics = action.payload;
+    },
 
     setAlertsEnd: (state) => {
       state.loading = false;
@@ -74,6 +82,8 @@ export const {
   setModalData,
   setSendCommandsType,
   setKilledDevices,
+  setSelfSendCommands,
+  setDashboardStatistics,
   setAlertsEnd,
   setNoAlertsFound,
   setIsConnected,

@@ -19,6 +19,7 @@ import AddPreAlertinfo from "./components/AddPreAlertInfo";
 import { useSelector } from "react-redux";
 
 import { ImArrowUp, ImArrowDown } from "react-icons/im";
+import SelfSendCommands from "./components/SelfSendCommands";
 
 const ControlRoomAnalytics = () => {
   const controlRoomAnalytics = [
@@ -76,6 +77,7 @@ const ControlRoomAnalytics = () => {
     },
   ];
   const { devices } = useSelector((state: any) => state.monitoring);
+  const { dashboardStatistics } = useSelector((state: any) => state.alerts);
   const [
     isUpdateModalOpenForkillingDevices,
     setIsUpdateModalOpenForkillingDevices,
@@ -85,6 +87,10 @@ const ControlRoomAnalytics = () => {
   const [
     isUpdateModalOpenForPreAlertinfo,
     setIsUpdateModalOpenForPreAlertinfo,
+  ] = useState(false);
+  const [
+    isUpdateModalOpenForGetSendCommands,
+    setIsUpdateModalOpenForGetSendCommands,
   ] = useState(false);
 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -130,7 +136,7 @@ const ControlRoomAnalytics = () => {
                         <H3>{controlRoomAnalytics[0].title}</H3>
                       </div>
                     </div>
-                    <H3>10</H3>
+                    <H3>{dashboardStatistics.totalKilledDevicesCount}</H3>
                     <div>
                       <button
                         className="btn-primary"
@@ -306,25 +312,44 @@ const ControlRoomAnalytics = () => {
                       </div>
                     </div>
                     <div style={{ fontSize: "16px", fontWeight: "bold" }}>
-                      6
+                      <H3>{dashboardStatistics.totalCommandedDevicesCount}</H3>
                     </div>
                     <div>
-                      <button
-                        className="btn-primary"
-                        style={{
-                          borderRadius: "5px",
-                          padding: "5px 15px",
-                          color: "white",
-                          outline: "none",
-                          border: "none",
-                          marginTop: "10px",
-                        }}
-                        onClick={() => {
-                          setIsUpdateModalOpenForSendCommand(true);
-                        }}
-                      >
-                        Send
-                      </button>
+                      <div style={{ display: "flex", marginTop: "-15px" }}>
+                        <button
+                          className="btn-primary"
+                          style={{
+                            borderRadius: "5px",
+                            padding: "5px 15px",
+                            color: "white",
+                            outline: "none",
+                            border: "none",
+                            marginTop: "30px",
+                          }}
+                          onClick={() => {
+                            setIsUpdateModalOpenForSendCommand(true);
+                          }}
+                        >
+                          Send
+                        </button>
+                        <button
+                          className="btn-primary"
+                          style={{
+                            borderRadius: "5px",
+                            padding: "5px 15px",
+                            color: "white",
+                            outline: "none",
+                            border: "none",
+                            marginTop: "30px",
+                            marginLeft: "10px",
+                          }}
+                          onClick={() => {
+                            setIsUpdateModalOpenForGetSendCommands(true);
+                          }}
+                        >
+                          View
+                        </button>
+                      </div>
                     </div>
                   </Col>
                   <Col sm="5" className={`box-col-5 `}>
@@ -355,6 +380,10 @@ const ControlRoomAnalytics = () => {
             setAddModal={setIsUpdateModalOpenForSendCommand}
             dropDownDevices={devices}
             prevItem=""
+          />
+          <SelfSendCommands
+            isVisible={isUpdateModalOpenForGetSendCommands}
+            setIsVisible={setIsUpdateModalOpenForGetSendCommands}
           />
           {/*  */}
           <Col xl="3" lg="6" md="6" sm="12" className="box-col-3">
