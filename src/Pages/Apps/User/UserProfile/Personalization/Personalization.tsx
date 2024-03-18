@@ -20,6 +20,7 @@ import { Document, Page, pdfjs } from "react-pdf";
 import Dropzone from "react-dropzone-uploader";
 import Swal from "sweetalert2";
 import {
+  IMAGE_BASE_URL,
   createWithMultipart,
   getAll,
   updateWithMultipart,
@@ -530,13 +531,13 @@ const Personalization = () => {
                       onMouseLeave={() => handleMouseLeave()}
                       onClick={() => {
                         setImageUrl(
-                          `http://124.29.238.127:8080/${userPersonalizationData.logoImage.url}`
+                          `${IMAGE_BASE_URL}/${userPersonalizationData.logoImage.url}`
                         );
                         addToggle();
                       }}
                     >
                       <img
-                        src={`http://124.29.238.127:8080/${userPersonalizationData.logoImage.url}`}
+                        src={`${IMAGE_BASE_URL}/${userPersonalizationData.logoImage.url}`}
                         alt=""
                         height={230}
                         width={360}
@@ -583,13 +584,13 @@ const Personalization = () => {
                       onMouseLeave={() => handleMouseLeave()}
                       onClick={() => {
                         setImageUrl(
-                          `http://124.29.238.127:8080/${userPersonalizationData.backgroundImage.url}`
+                          `${IMAGE_BASE_URL}/${userPersonalizationData.backgroundImage.url}`
                         );
                         addToggle();
                       }}
                     >
                       <img
-                        src={`http://124.29.238.127:8080/${userPersonalizationData.backgroundImage.url}`}
+                        src={`${IMAGE_BASE_URL}/${userPersonalizationData.backgroundImage.url}`}
                         alt=""
                         height={230}
                         width={360}

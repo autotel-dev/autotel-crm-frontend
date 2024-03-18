@@ -8,6 +8,7 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import {header} from "../../../Api/header";
 import ChangePasswordForm from "./ChangePasswordForm";
+import { API_BASE_URL } from "../../../Api";
 // import OTPInput, { ResendOTP } from "otp-input-react";
 
 type propsType = {
@@ -64,7 +65,7 @@ const OTPForm = ({ toggle }: propsType) => {
 
       try {
         const response = await axios.post(
-          `http://124.29.238.127:8080/api/v1/server-management/verify-otp`,
+          `${API_BASE_URL}/server-management/verify-otp`,
           otpData,
           {
             headers: header(),
@@ -93,7 +94,7 @@ const OTPForm = ({ toggle }: propsType) => {
   const resendOTPCode = async () => {
     try {
       const response = await fetch(
-        `http://124.29.238.127:8080/api/v1/server-management/send-otp`,
+        `${API_BASE_URL}/server-management/send-otp`,
         {
           method: "POST",
           headers: header(),

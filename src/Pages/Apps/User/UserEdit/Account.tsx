@@ -7,7 +7,7 @@ import AddProjectsAndUpload from "./AddProjectsAndUpload/AddProjectsAndUpload";
 import SecuritySettings from "./SecuritySettings/SecuritySettings";
 import ServerPermissions from "./ServerPermissions.tsx/ServerPermissions";
 import { useEffect, useState } from "react";
-import { getAll, getImage } from "../../../../Api";
+import { IMAGE_BASE_URL, getAll, getImage } from "../../../../Api";
 import { useDispatch, useSelector } from "react-redux";
 import {
   setServerPermissions,
@@ -18,6 +18,7 @@ import { getUserRole } from "../../../../Api/globals";
 import Attachements from "./Attachements/Attachements";
 import Swal from "sweetalert2";
 import AllowedModules from "./AllowedModules/AllowedModules";
+import NoInternetConnection from "../../../NoInternetConnection/NoInternetConnection";
 
 const Account = () => {
   const { userPermissions } = useSelector(
@@ -34,7 +35,11 @@ const Account = () => {
 
   const [ticketImages, setTicketImages] = useState<any[]>([]);
   const [undefinedData, setUndefinedData] = useState<any>(false);
-  const [isEdit, setIsEdit] = useState(false);
+  const [isConnected, setIsConnected] = useState(false);
+
+  useEffect(() => {
+    setIsConnected(false);
+  }, []);
   useEffect(() => {
     setUserDataLoading(true);
     setServerPermissionsLoading(true);
@@ -59,18 +64,34 @@ const Account = () => {
 
     getAll({ url: "user/get-user" }).then((parentData: any) => {
       console.log("api call --- >", parentData);
-      if (parentData == undefined) {
-        setUserDataLoading(false);
-        setUndefinedData(true);
-        Swal.fire({
-          text: "Failed to Fetch due to connection refused",
-          icon: "error",
-          timer: 2000,
-          showConfirmButton: false,
-        });
-      }
+      // if (parentData == undefined) {
+      //   setUserDataLoading(false);
+      //   setUndefinedData(true);
+      //   Swal.fire({
+      //     text: "Failed to Fetch due to connection refused",
+      //     icon: "error",
+      //     timer: 2000,
+      //     showConfirmButton: false,
+      //   });
+      // }
 
       if (parentData !== undefined) {
+        if (
+          !parentData.success &&
+          parentData.message == "ERROR_INTERNET_DISCONNECTED"
+        ) {
+          setIsConnected(true);
+        }
+        if (!parentData.success) {
+          Swal.fire({
+            text: `${parentData.message}`,
+            icon: "error",
+            timer: 2000,
+            showConfirmButton: false,
+          });
+          setServerPermissionsLoading(false);
+          setUserDataLoading(false);
+        }
         if (parentData.success) {
           setUndefinedData(false);
           dispatch(setUserData(parentData.data.user));
@@ -80,7 +101,7 @@ const Account = () => {
           } else if (getUserRole() === "COMPANY") {
             // cnicFront
             getImage({
-              url: `http://124.29.238.127:8080/${parentData.data.user.cnicFront.url}`,
+              url: `${IMAGE_BASE_URL}/${parentData.data.user.cnicFront.url}`,
             }).then(async (data: any) => {
               console.log("image api --- >", data);
               ticketImages.push({
@@ -91,7 +112,7 @@ const Account = () => {
               console.log("Ticket Images", ticketImages);
               // cnicBack
               getImage({
-                url: `http://124.29.238.127:8080/${parentData.data.user.cnicBack.url}`,
+                url: `${IMAGE_BASE_URL}/${parentData.data.user.cnicBack.url}`,
               }).then(async (data: any) => {
                 console.log("image api --- >", data);
                 ticketImages.push({
@@ -103,7 +124,7 @@ const Account = () => {
                 console.log("Ticket Images", ticketImages);
                 // ptaCertificate
                 getImage({
-                  url: `http://124.29.238.127:8080/${parentData.data.user.ptaCertificate.url}`,
+                  url: `${IMAGE_BASE_URL}/${parentData.data.user.ptaCertificate.url}`,
                 }).then(async (data: any) => {
                   console.log("image api --- >", data);
                   ticketImages.push({
@@ -115,7 +136,7 @@ const Account = () => {
                   console.log("Ticket Images", ticketImages);
                   // ntnCertificate
                   getImage({
-                    url: `http://124.29.238.127:8080/${parentData.data.user.ntnCertificate.url}`,
+                    url: `${IMAGE_BASE_URL}/${parentData.data.user.ntnCertificate.url}`,
                   }).then(async (data: any) => {
                     console.log("image api --- >", data);
                     ticketImages.push({
@@ -128,7 +149,7 @@ const Account = () => {
 
                     // otherAttachment
                     getImage({
-                      url: `http://124.29.238.127:8080/${parentData.data.user.otherAttachment.url}`,
+                      url: `${IMAGE_BASE_URL}/${parentData.data.user.otherAttachment.url}`,
                     }).then(async (data: any) => {
                       console.log("image api --- >", data);
                       ticketImages.push({
@@ -155,64 +176,70 @@ const Account = () => {
 
   return (
     <>
-      <Breadcrumbs title={UserEdits} mainTitle={UserEdits} parent={Users} />
-      <Container fluid>
-        <div className="edit-profile">
-          {undefinedData ? (
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                height: "80vh",
-                backgroundColor: "white",
-                alignItems: "center",
-              }}
-            >
-              <div
-                style={{
-                  textAlign: "center",
-                  fontSize: "25px",
-                  fontWeight: "bold",
-                }}
-              >
-                No Data Found
-              </div>
-            </div>
-          ) : !userDataLoading && !serverPermissionsLoading ? (
-            <Row>
-              <EditMyProfile />
-              <EditProfileForm />
+      {isConnected ? (
+        <NoInternetConnection />
+      ) : (
+        <div>
+          <Breadcrumbs title={UserEdits} mainTitle={UserEdits} parent={Users} />
+          <Container fluid>
+            <div className="edit-profile">
+              {undefinedData ? (
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    height: "80vh",
+                    backgroundColor: "white",
+                    alignItems: "center",
+                  }}
+                >
+                  <div
+                    style={{
+                      textAlign: "center",
+                      fontSize: "25px",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    No Data Found
+                  </div>
+                </div>
+              ) : !userDataLoading && !serverPermissionsLoading ? (
+                <Row>
+                  <EditMyProfile />
+                  <EditProfileForm />
 
-              {getUserRole() === "COMPANY" && <AllowedModules />}
-              {getUserRole() === "COMPANY" &&
-                legalAttachements !== undefined &&
-                legalAttachements?.read && (
-                  <Attachements attachements={ticketImages} />
-                )}
-              {getUserRole() === "COMPANY" && <ServerPermissions />}
-              <SecuritySettings />
+                  {getUserRole() === "COMPANY" && <AllowedModules />}
+                  {getUserRole() === "COMPANY" &&
+                    legalAttachements !== undefined &&
+                    legalAttachements?.read && (
+                      <Attachements attachements={ticketImages} />
+                    )}
+                  {getUserRole() === "COMPANY" && <ServerPermissions />}
+                  <SecuritySettings />
 
-              {/* <AddProjectsAndUpload /> */}
-              {/* <EditMyProfile isEdit={isEdit} setIsEdit={setIsEdit} />
-              <EditProfileForm isEdit={isEdit} setIsEdit={setIsEdit} /> */}
-            </Row>
-          ) : (
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                height: "80vh",
-                backgroundColor: "white",
-                alignItems: "center",
-              }}
-            >
-              <div style={{ textAlign: "center" }}>
-                <Loader />
-              </div>
+                  {/* <AddProjectsAndUpload /> */}
+                  {/* <EditMyProfile isEdit={isEdit} setIsEdit={setIsEdit} />
+                <EditProfileForm isEdit={isEdit} setIsEdit={setIsEdit} /> */}
+                </Row>
+              ) : (
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    height: "80vh",
+                    backgroundColor: "white",
+                    alignItems: "center",
+                  }}
+                >
+                  <div style={{ textAlign: "center" }}>
+                    <Loader />
+                  </div>
+                </div>
+              )}
             </div>
-          )}
+          </Container>
         </div>
-      </Container>
+      )}
     </>
   );
 };

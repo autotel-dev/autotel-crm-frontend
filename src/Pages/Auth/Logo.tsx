@@ -4,6 +4,7 @@ import { Image } from "../../AbstractElements";
 import { dynamicImage } from "../../Service";
 import Logoo from "../../assets/Logo.png";
 import { useSelector } from "react-redux";
+import { IMAGE_BASE_URL } from "../../Api";
 interface PropsType {
   alignLogo?: string;
 }
@@ -31,7 +32,7 @@ const Logo = ({ alignLogo }: PropsType) => {
       <img
         src={
           userPersonalizationData !== null
-            ? `http://124.29.238.127:8080/${userPersonalizationData.logoImage.url}`
+            ? `${IMAGE_BASE_URL}/${userPersonalizationData.logoImage.url}`
             : Logoo
         }
         alt=""

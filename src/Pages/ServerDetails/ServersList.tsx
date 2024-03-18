@@ -3,7 +3,7 @@ import CommonHeader from "../../Common/CommonHeader";
 import { citiesListHeading } from "../../utils/Constant";
 import DataTable from "react-data-table-component";
 import { useEffect, useState } from "react";
-import { create, getAll } from "../../Api";
+import { API_BASE_URL, create, getAll } from "../../Api";
 import { useDispatch, useSelector } from "react-redux";
 import "./tableStyle.css";
 import deleteAlert from "../Alerts/DeleteAlert";
@@ -218,7 +218,7 @@ const ServersList = () => {
                 toggle();
                 try {
                   const response = await fetch(
-                    `http://124.29.238.127:8080/api/v1/server-management/send-otp`,
+                    `${API_BASE_URL}/server-management/send-otp`,
                     {
                       method: "POST",
                       headers: header(),

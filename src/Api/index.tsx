@@ -13,7 +13,11 @@ export const ChatApi = `${api}/chats.json`;
 
 // // api.ts
 
-const API_BASE_URL = "http://124.29.238.127:8080/api/v1";
+export const API_BASE_URL = "http://124.29.238.127:8080/api/v1";
+export const IMAGE_BASE_URL = "http://124.29.238.127:8080";
+// export const API_BASE_URL = process.env.API_BASE_URL;
+// export const IMAGE_BASE_URL = process.env.;
+
 interface URLTypes {
   url: String;
 }

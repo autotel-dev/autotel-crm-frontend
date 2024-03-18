@@ -25,8 +25,8 @@ const Support = () => {
     (state: any) => state.support
   );
   const dispatch = useDispatch();
-  const [statisticsloading, setStatisticsLoading] = useState(false);
-  const [reportsLoading, setReportsLoading] = useState(false);
+  const [statisticsloading, setStatisticsLoading] = useState(true);
+  const [reportsLoading, setReportsLoading] = useState(true);
   const navigate = useNavigate();
   useEffect(() => {
     dispatch(setIsConnected(false));
@@ -38,17 +38,17 @@ const Support = () => {
     if (getUserRole() === "SUPER_ADMIN") {
       getAll({ url: "support/bug-report/get-statistics" }).then((data: any) => {
         console.log("api call --- >", data);
-        // if (data == undefined) {
-        //   Swal.fire({
-        //     text: "Failed to fetch due to connection refused",
-        //     icon: "error",
-        //     timer: 2000,
-        //     showConfirmButton: false,
-        //   });
-        //   setReportsLoading(false);
-        //   setStatisticsLoading(false);
-        //   return;
-        // }
+        if (data == undefined) {
+          Swal.fire({
+            text: "Failed to fetch",
+            icon: "error",
+            timer: 2000,
+            showConfirmButton: false,
+          });
+          setReportsLoading(false);
+          setStatisticsLoading(false);
+          return;
+        }
         if (data !== undefined) {
           if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
             dispatch(setIsConnected(true));
@@ -65,7 +65,7 @@ const Support = () => {
 
           if (data.success) {
             console.log("hhg");
-            setStatisticsLoading(false);
+
             // const statisticsArray = Object.entries(
             //   data.data.bugReportsStatistics
             // );
@@ -85,6 +85,7 @@ const Support = () => {
             });
             console.log(mappedArray);
             dispatch(setSupportStatistics(mappedArray));
+            setStatisticsLoading(false);
           }
         }
       });
@@ -98,17 +99,17 @@ const Support = () => {
     }).then((data: any) => {
       console.log("api call --- >", data);
       // if (getUserRole() == "COMPANY") {
-        // if (data == undefined) {
-        //   Swal.fire({
-        //     text: "Failed to fetch due to connection refused",
-        //     icon: "error",
-        //     timer: 2000,
-        //     showConfirmButton: false,
-        //   });
-        //   setReportsLoading(false);
-        //   setStatisticsLoading(false);
-        //   return;
-        // }
+      // if (data == undefined) {
+      //   Swal.fire({
+      //     text: "Failed to fetch due to connection refused",
+      //     icon: "error",
+      //     timer: 2000,
+      //     showConfirmButton: false,
+      //   });
+      //   setReportsLoading(false);
+      //   setStatisticsLoading(false);
+      //   return;
+      // }
       // }
 
       if (data !== undefined) {

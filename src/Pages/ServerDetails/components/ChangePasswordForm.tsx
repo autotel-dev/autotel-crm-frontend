@@ -13,7 +13,7 @@ import {
   setServersStart,
 } from "../../../ReaduxToolkit/Reducer/ServerDetailsSlice";
 import { setNoDataFound } from "../../../ReaduxToolkit/Reducer/NoDataFoundSlice";
-import { getAll } from "../../../Api";
+import { API_BASE_URL, getAll } from "../../../Api";
 import { useNavigate } from "react-router-dom";
 type propsType = {
   toggle: () => void;
@@ -65,7 +65,7 @@ const ChangePasswordForm = ({ toggle }: propsType) => {
     setLoading(true);
     try {
       const response = await axios.patch(
-        `http://124.29.238.127:8080/api/v1/server-management/change-server-password/${id}`,
+        `${API_BASE_URL}/server-management/change-server-password/${id}`,
         {
           updatedPassword: password,
         },

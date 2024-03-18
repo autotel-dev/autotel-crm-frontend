@@ -61,21 +61,22 @@ const Companies = () => {
     dispatch(setCompaniesStart());
     getAll({ url: "super-admin/get-all-companies" }).then((data: any) => {
       console.log("api call --- >", data);
-      // if (data == undefined) {
-      //   Swal.fire({
-      //     text: "Failed to fetch due to connection refused",
-      //     icon: "error",
-      //     timer: 2000,
-      //     showConfirmButton: false,
-      //   });
+      if (data == undefined) {
+        Swal.fire({
+          text: "Companies not Found",
+          icon: "error",
+          timer: 2000,
+          showConfirmButton: false,
+        });
 
-      //   dispatch(setCompaniesEnd());
-      //   dispatch(setCompanies([]));
-      //   dispatch(setFilterCompanies([]));
-      //   setLoading(false);
-      //   return;
-      // }
-      dispatch(setCompaniesEnd());
+       
+        dispatch(setCompanies([]));
+        dispatch(setFilterCompanies([]));
+        setLoading(false);
+        dispatch(setCompaniesEnd());
+        return;
+      }
+
       if (data !== undefined) {
         dispatch(setNoDataFound(data.message));
         if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
@@ -98,6 +99,7 @@ const Companies = () => {
           setLoading(false);
         }
       }
+      dispatch(setCompaniesEnd());
     });
   }, []);
   useEffect(() => {

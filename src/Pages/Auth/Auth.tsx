@@ -5,7 +5,7 @@ import { dynamicImage } from "../../Service";
 import BcakgroundImage from "../../assets/Background Image.png";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getAll } from "../../Api";
+import { IMAGE_BASE_URL, getAll } from "../../Api";
 import { getUserRole } from "../../Api/globals";
 import Swal from "sweetalert2";
 import { useParams } from "react-router-dom";
@@ -139,7 +139,7 @@ const LoginForm = () => {
             <img
               src={
                 userPersonalizationData !== null
-                  ? `http://124.29.238.127:8080/${userPersonalizationData.backgroundImage.url}`
+                  ? `${IMAGE_BASE_URL}/${userPersonalizationData.backgroundImage.url}`
                   : BcakgroundImage
               }
               alt=""

@@ -30,17 +30,17 @@ const TicketTable = () => {
           item.user.emailAddress.toLowerCase().includes(searchValue)
       )
       .map((item: any) => ({
-        ticket_id: item._id,
-        id: item.ticketId,
-        username: item.user.fullName,
-        email: item.user.emailAddress,
-        ticket_name: item.name,
-        description: item.description,
-        isActive: item.isActive ? "true" : "false",
-        status: item.status,
-        priorty: item.priorty == null ? "N/A" : item.priorty,
-        date: `${item.updatedAt.toString().slice(0, 10)},  ${new Date(
-          item.updatedAt
+        ticket_id: item?._id,
+        id: item?.ticketId,
+        username: item?.user?.fullName,
+        email: item?.user?.emailAddress,
+        ticket_name: item?.name,
+        description: item?.description,
+        isActive: item?.isActive ? "true" : "false",
+        status: item?.status,
+        priorty: item?.priorty == null ? "N/A" : item?.priorty,
+        date: `${item?.updatedAt.toString().slice(0, 10)},  ${new Date(
+          item?.updatedAt
         )
           .toLocaleString("en-US", {
             hour: "2-digit",

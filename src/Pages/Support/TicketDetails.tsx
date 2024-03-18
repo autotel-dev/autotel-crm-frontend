@@ -14,7 +14,7 @@ import ticketImage from "../../assets/ticketImage.png";
 import { IoSend } from "react-icons/io5";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getAll, getImage, patch } from "../../Api";
+import { IMAGE_BASE_URL, getAll, getImage, patch } from "../../Api";
 import Loader from "../Loader/Loader";
 import { setTicketDetails } from "../../ReaduxToolkit/Reducer/SupportSlice";
 import { Select } from "antd";
@@ -105,7 +105,7 @@ const TicketDetails = () => {
                     console.log("image", image.url);
 
                     getImage({
-                      url: `http://124.29.238.127:8080/${image.url}`,
+                      url: `${IMAGE_BASE_URL}/${image.url}`,
                     }).then(async (data: any) => {
                       console.log("image api --- >", data);
                       setTicketImages((prevImages) => [...prevImages, data]);
@@ -140,7 +140,7 @@ const TicketDetails = () => {
               console.log("image", image.url);
 
               getImage({
-                url: `http://124.29.238.127:8080/${image.url}`,
+                url: `${IMAGE_BASE_URL}/${image.url}`,
               }).then(async (data: any) => {
                 console.log("image api --- >", data);
                 setTicketImages((prevImages) => [...prevImages, data]);

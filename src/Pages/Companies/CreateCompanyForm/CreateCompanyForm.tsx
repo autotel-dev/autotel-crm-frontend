@@ -12,14 +12,48 @@ import CustomHorizontalWizard from "./CustomHorizontalWizard";
 import { useEffect } from "react";
 import { getAll } from "../../../Api";
 import { useDispatch } from "react-redux";
+
 import {
   setServers,
+  setTimeZones,
   setCRMModules,
+  setCities,
+  setPackages,
+  setCompaniesStart,
+  setCompaniesEnd,
+  setCompanies,
+  setFilterCompanies,
+  setPermissions,
+  setIsConnected,
 } from "../../../ReaduxToolkit/Reducer/CompanySlice";
 // import BusinessVerticalWizard from "./BusinessVerticalWizard/BusinessVerticalWizard";
 
 const CreateCompanyForm = () => {
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    getAll({ url: "timezone/get-all-timezones" }).then((data: any) => {
+      console.log("api call --- >", data);
+      if (data !== undefined) {
+        if (data.success) {
+          console.log("hhg");
+          dispatch(setTimeZones(data.data));
+        }
+      }
+    });
+  }, []);
+  useEffect(() => {
+    getAll({ url: "permissions/get-all-permissions" }).then((data: any) => {
+      console.log("api call --- >", data);
+      if (data !== undefined) {
+        if (data.success) {
+          console.log("hhg");
+          dispatch(setPermissions(data.data));
+        }
+      }
+    });
+  }, []);
+
   useEffect(() => {
     getAll({ url: "server-management/get-all-active-servers" }).then(
       (data: any) => {
@@ -40,6 +74,29 @@ const CreateCompanyForm = () => {
         if (data.success) {
           console.log("hhg");
           dispatch(setCRMModules(data.data));
+        }
+      }
+    });
+  }, []);
+
+  useEffect(() => {
+    getAll({ url: "city/get-all-active-cities" }).then((data: any) => {
+      console.log("api call --- >", data);
+      if (data !== undefined) {
+        if (data.success) {
+          console.log("hhg");
+          dispatch(setCities(data.data));
+        }
+      }
+    });
+  }, []);
+  useEffect(() => {
+    getAll({ url: "package/get-all-active-packages" }).then((data: any) => {
+      console.log("api call --- >", data);
+      if (data !== undefined) {
+        if (data.success) {
+          console.log("hhg");
+          dispatch(setPackages(data.data));
         }
       }
     });

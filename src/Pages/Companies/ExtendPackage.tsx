@@ -13,7 +13,7 @@ import { Cancel } from "../../utils/Constant";
 import { H3 } from "../../AbstractElements";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getAll, update } from "../../Api";
+import { API_BASE_URL, getAll, update } from "../../Api";
 
 import { setNoDataFound } from "../../ReaduxToolkit/Reducer/NoDataFoundSlice";
 import { ProvinceType } from "../Province/ProvinceTypes/ProvinceTypes";
@@ -93,7 +93,7 @@ const ExtendPackage: React.FC<PropsTypes> = ({
 
     try {
       const response = await axios.patch(
-        `http://124.29.238.127:8080/api/v1/super-admin/extend-company-package/${companyId}`,
+        `${API_BASE_URL}/super-admin/extend-company-package/${companyId}`,
         extendedDays,
         {
           headers: header(),
