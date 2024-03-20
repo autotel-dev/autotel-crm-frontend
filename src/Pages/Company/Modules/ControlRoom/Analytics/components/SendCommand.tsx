@@ -35,7 +35,7 @@ const SendCommand: React.FC<PropsTypes> = ({
   dropDownDevices,
   prevItem,
 }) => {
-  // console.log("Previtem", prevItem);
+  // // console.log("Previtem", prevItem);
 
   const { sendCommandsType } = useSelector((state: any) => state.alerts);
 
@@ -92,11 +92,11 @@ const SendCommand: React.FC<PropsTypes> = ({
         },
         { url: "control-room/get-device-commands" }
       ).then((data: any) => {
-        console.log("api call --- >", data);
+        // console.log("api call --- >", data);
 
         if (data !== undefined) {
           if (data.success) {
-            console.log("length --- >", data.data);
+            // console.log("length --- >", data.data);
             dispatch(setSendCommandsType(data.data.deviceCommands));
           }
         }
@@ -128,13 +128,13 @@ const SendCommand: React.FC<PropsTypes> = ({
         },
         deviceData: selectedItems[0],
       };
-      console.log(commandData);
+      // console.log(commandData);
 
       try {
         await create(commandData, {
           url: `control-room/send-command-to-device`,
         }).then(async (data: any) => {
-          console.log("data", data);
+          console.log("data send command", data);
 
           setLoading(false);
           if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
@@ -152,7 +152,7 @@ const SendCommand: React.FC<PropsTypes> = ({
             addToggle();
           }
           if (data.success) {
-            console.log(data);
+            // console.log(data);
             setLoading(false);
 
             if (data.data.reasons) {
@@ -165,17 +165,17 @@ const SendCommand: React.FC<PropsTypes> = ({
               addToggle();
             } else {
               setcommandedVehicleDeviceId(data.data.commandedDeviceId);
-              console.log(
-                "data.data.commandedDeviceId",
-                data.data.commandedDeviceId
-              );
-              console.log("data.data", data.data);
+              // console.log(
+              //   "data.data.commandedDeviceId",
+              //   data.data.commandedDeviceId
+              // );
+              // console.log("data.data", data.data);
 
               let intervalId: any; // Declare variable to store interval ID
-              console.log("Setting up interval...");
+              // console.log("Setting up interval...");
               intervalId = setTimeout(async () => {
-                console.log("Interval Called");
-                console.log("LiveAlerts in interval");
+                // console.log("Interval Called");
+                // console.log("LiveAlerts in interval");
                 const serverInfo = serverCredentials(
                   selectedItems[0]?.server?._id
                 );
@@ -185,11 +185,12 @@ const SendCommand: React.FC<PropsTypes> = ({
                   serverHashKey: serverInfo?.serverHashKey,
                   commandedVehicleDeviceId: commandedVehicleDeviceId,
                 };
-                console.log(verifyData);
+                // addToggle();
+                // console.log(verifyData);
                 await create(verifyData, {
                   url: `control-room/verify-vehicle-block-status`,
                 }).then((data: any) => {
-                  console.log("data", data);
+                  // console.log("data", data);
                   setLoading(false);
                   if (
                     !data.success &&
@@ -209,7 +210,7 @@ const SendCommand: React.FC<PropsTypes> = ({
                     addToggle();
                   }
                   if (data.success) {
-                    console.log(data);
+                    // console.log(data);
                     setLoading(false);
                     addToggle();
                   }
@@ -224,11 +225,11 @@ const SendCommand: React.FC<PropsTypes> = ({
               });
               getAll({ url: "control-room/get-all-commanded-devices" }).then(
                 (data: any) => {
-                  console.log("api call --- >", data);
+                  // console.log("api call --- >", data);
 
                   if (data !== undefined) {
                     if (data.success) {
-                      // console.log("length --- >", data.data);
+                      // // console.log("length --- >", data.data);
                       dispatch(setSelfSendCommands(data.data));
                     }
                   }
@@ -236,11 +237,11 @@ const SendCommand: React.FC<PropsTypes> = ({
               );
               getAll({ url: "control-room/dashboard/statistics" }).then(
                 (data: any) => {
-                  console.log("api call --- >", data);
+                  // console.log("api call --- >", data);
 
                   if (data !== undefined) {
                     if (data.success) {
-                      // console.log("length --- >", data.data);
+                      // // console.log("length --- >", data.data);
                       dispatch(
                         setDashboardStatistics(data.data.controlRoomStatistics)
                       );
@@ -251,21 +252,21 @@ const SendCommand: React.FC<PropsTypes> = ({
               getAll({
                 url: "control-room/get-all-killed-devices?type=self",
               }).then((data: any) => {
-                console.log("api call --- >", data);
+                // console.log("api call --- >", data);
 
                 if (data !== undefined) {
                   if (data.success) {
-                    console.log("length --- >", data.data);
+                    // console.log("length --- >", data.data);
                     dispatch(setKilledDevices(data.data));
                   }
                 }
               });
-
               addToggle();
+              
 
               // Cleanup function to clear interval when component unmounts or when loading becomes true
               return () => {
-                console.log("Clearing interval...");
+                // console.log("Clearing interval...");
                 clearInterval(intervalId);
               };
             }
@@ -274,7 +275,7 @@ const SendCommand: React.FC<PropsTypes> = ({
         // Handle successful post creation (e.g., show a success message, redirect, etc.)
       } catch (error: any) {
         // Handle error (e.g., show an error message)
-        console.error("Error creating post:", error);
+        // console.error("Error creating post:", error);
 
         setLoading(false);
         addToggle();
@@ -347,8 +348,8 @@ const SendCommand: React.FC<PropsTypes> = ({
                       .localeCompare((optionB?.label ?? "").toLowerCase())
                   }
                   onChange={(e: any, option: any) => {
-                    console.log(e);
-                    console.log(option);
+                    // console.log(e);
+                    // console.log(option);
                     setType(e);
                     setSingleCommandData({
                       type: `${option.type}`,

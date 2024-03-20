@@ -22,7 +22,7 @@ const SelectPackageBox: React.FC<propTypes> = ({ placeholder }) => {
       tempList.push({ value: `${item._id}`, label: `${item.title}` });
     });
     setPackageList(tempList);
-  }, []);
+  }, [packages]);
   return (
     <Select
       showSearch

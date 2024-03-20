@@ -796,7 +796,7 @@ const routes = [
   },
 
   {
-    path: `${process.env.PUBLIC_URL}/super-admin/companies/createComapny`,
+    path: `${process.env.PUBLIC_URL}/super-admin/companies/createComapany`,
     Component: <CreateCompanyForm />,
     allowedUserRoles: [ROLES.SUPER_ADMIN],
     isProtected: true,

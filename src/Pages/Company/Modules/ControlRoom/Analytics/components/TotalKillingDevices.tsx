@@ -43,6 +43,7 @@ const TotalKillingDevices: React.FC<PropsTypes> = ({
     "Last Packet",
     "Latitude",
     "Longitude",
+    "Address",
     "Server",
     "Killed Time",
     "Count Down",
@@ -82,7 +83,7 @@ const TotalKillingDevices: React.FC<PropsTypes> = ({
       });
 
       setDataList(updatedDataList);
-      console.log("dataList", dataList);
+      // console.log("dataList", dataList);
     }
   }, [killedDevices, devices]);
 
@@ -139,7 +140,7 @@ const TotalKillingDevices: React.FC<PropsTypes> = ({
           const matchedDevice = devices.find((item: any) =>
             item.items.some((subItem: any) => subItem.id === device.deviceId)
           );
-          const deviceData = matchedDevice
+          const deviceData = matchedDevice 
             ? matchedDevice.items.find(
                 (item: any) => item.id === device.deviceId
               )
@@ -154,7 +155,7 @@ const TotalKillingDevices: React.FC<PropsTypes> = ({
         });
 
       setDataList((prevData: any) => [...prevData, ...nextBatch]);
-      console.log("dataList", dataList);
+      // console.log("dataList", dataList);
 
       // const nextBatch = killedDevices
       //   .slice(dataList.length, dataList.length + 6)
@@ -257,17 +258,17 @@ const TotalKillingDevices: React.FC<PropsTypes> = ({
                     getAll({
                       url: "control-room/get-all-killed-devices?type=self",
                     }).then((data: any) => {
-                      console.log("api call --- >", data);
+                      // console.log("api call --- >", data);
 
                       if (data !== undefined) {
                         if (data.success) {
                           setLoading(false);
-                          console.log("length --- >", data.data);
+                          // console.log("length --- >", data.data);
                           dispatch(setKilledDevices(data.data));
                         }
                         if (!data.success) {
                           setLoading(false);
-                          // console.log("length --- >", data.data);
+                          // // console.log("length --- >", data.data);
                           dispatch(setKilledDevices([]));
                         }
                       }
@@ -297,17 +298,17 @@ const TotalKillingDevices: React.FC<PropsTypes> = ({
                     getAll({
                       url: "control-room/get-all-killed-devices?type=self",
                     }).then((data: any) => {
-                      console.log("api call --- >", data);
+                      // console.log("api call --- >", data);
 
                       if (data !== undefined) {
                         if (data.success) {
                           setLoading(false);
-                          console.log("length --- >", data.data);
+                          // console.log("length --- >", data.data);
                           dispatch(setKilledDevices(data.data));
                         }
                         if (!data.success) {
                           setLoading(false);
-                          // console.log("length --- >", data.data);
+                          // // console.log("length --- >", data.data);
                           dispatch(setKilledDevices([]));
                         }
                       }
@@ -354,24 +355,34 @@ const TotalKillingDevices: React.FC<PropsTypes> = ({
                       <thead>
                         <tr>
                           {tableHeader.map((data, index) => (
-                            <th key={index}>{data}</th>
+                            <th
+                              key={index}
+                              style={{
+                                width:
+                                  data == "Last Packet" || data == "Killed Time"
+                                    ? "10%"
+                                    : "8%",
+                              }}
+                            >
+                              {data}
+                            </th>
                           ))}
                         </tr>
                       </thead>
                       <tbody>
                         {dataList.length == 0 ? (
                           <tr>
-                            <td colSpan={7} style={{ fontSize: "25px" }}>
+                            <td colSpan={10} style={{ fontSize: "25px" }}>
                               No Kiling Devices
                             </td>
                           </tr>
                         ) : (
                           dataList.map((data: any, index: any) => (
                             <tr style={{ cursor: "pointer" }} key={index}>
-                              <td>{data.deviceId}</td>
-                              <td>{data.deviceName}</td>
+                              <td style={{ width: "8%" }}>{data.deviceId}</td>
+                              <td style={{ width: "8%" }}>{data.deviceName}</td>
 
-                              <td>
+                              <td style={{ width: "8%" }}>
                                 <div
                                   style={{
                                     padding: "5px",
@@ -403,11 +414,46 @@ const TotalKillingDevices: React.FC<PropsTypes> = ({
                                     : "Offline"}
                                 </div>
                               </td>
-                              <td>{data.lastPacketTimeStamp}</td>
-                              <td>{data.latitude}</td>
-                              <td>{data.longitude}</td>
-                              <td>{data.server.companyName}</td>
-                              <td>
+                              <td style={{ width: "10%" }}>
+                                <div className="d-flex">
+                                  <div className="flex-grow-1 ms-2">
+                                    <H4>
+                                      {format(
+                                        new Date(
+                                          new Date(
+                                            data.lastPacketTimeStamp * 1000
+                                          ).toISOString()
+                                        ).toLocaleString(),
+                                        "date"
+                                      )}
+                                    </H4>
+                                    <span style={{ fontSize: "10px" }}>
+                                      {/* {data.updatedAt.toString().slice(11, 19)} */}
+                                      {format(
+                                        new Date(
+                                          new Date(
+                                            data.lastPacketTimeStamp * 1000
+                                          ).toISOString()
+                                        ).toLocaleString(),
+                                        "time"
+                                      )}
+                                    </span>
+                                  </div>
+                                </div>
+                              </td>
+                              <td style={{ width: "8%" }}>{data.latitude}</td>
+                              <td style={{ width: "8%" }}>{data.longitude}</td>
+                              <td style={{ width: "8%" }}>
+                                {data.address == undefined ||
+                                data.address == "" ||
+                                data.address == null
+                                  ? "N/A"
+                                  : data.address}
+                              </td>
+                              <td style={{ width: "10%" }}>
+                                {data.server.companyName}
+                              </td>
+                              <td style={{ width: "8%" }}>
                                 <div className="d-flex">
                                   <div className="flex-grow-1 ms-2">
                                     <H4>
@@ -430,8 +476,10 @@ const TotalKillingDevices: React.FC<PropsTypes> = ({
                                   </div>
                                 </div>
                               </td>
-                              <td>{data.remainingTime}</td>
-                              <td>
+                              <td style={{ width: "8%" }}>
+                                {data.remainingTime}
+                              </td>
+                              <td style={{ width: "8%" }}>
                                 <div>
                                   <button
                                     className="btn-primary"

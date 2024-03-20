@@ -21,7 +21,7 @@ const SelectCitiesBox: React.FC<propTypes> = ({ placeholder }) => {
       tempList.push({ value: `${item._id}`, label: `${item.name}` });
     });
     setCityList(tempList);
-  }, []);
+  }, [cities]);
   return (
     <Select
       showSearch

@@ -111,7 +111,11 @@ const TicketTable = () => {
   return (
     <div className="table-responsive support-table">
       <Row style={{ display: "flex", alignItems: "center" }}>
-        <Col md={12} lg={10} xl={10}>
+        <Col
+          md={12}
+          lg={support != undefined && support?.create ? 10 : 12}
+          xl={support != undefined && support?.create ? 10 : 12}
+        >
           <input
             type="text"
             placeholder="Type to Search.."
@@ -131,7 +135,11 @@ const TicketTable = () => {
           />
         </Col>
         {getUserRole() == ROLES.SUPER_ADMIN ? (
-          <Col md={12} lg={2} xl={2}>
+          <Col
+            md={12}
+            lg={support != undefined && support?.create ? 2 : 0}
+            xl={support != undefined && support?.create ? 2 : 0}
+          >
             <CreateNewTicket />
           </Col>
         ) : (getUserRole() == ROLES.COMPANY ||

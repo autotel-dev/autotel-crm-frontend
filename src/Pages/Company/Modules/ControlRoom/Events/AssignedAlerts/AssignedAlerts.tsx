@@ -12,37 +12,19 @@ import Swal from "sweetalert2";
 const AssignedAlerts = () => {
   const dispatch = useDispatch();
   const { assignedAlerts } = useSelector((state: any) => state.alerts);
-  console.log("assignedAlertsData", assignedAlerts);
+  const { userPermissions } = useSelector(
+    (state: any) => state.userPermissions
+  );
+  var allAlertsPreview = userPermissions.find(
+    (item: any) => item.title === "All Alerts Preview"
+  );
+  console.log("All Alerts Preview", allAlertsPreview);
+  // console.log("assignedAlertsData", assignedAlerts);
 
   const [dataList, setDataList]: any = useState([]);
   const [loading, setLoading] = useState(false); // State to manage loading
   const tableHeader = ["ID", "Device", "Alert", "Type", "Message", "Address"];
   const containerRef = useRef(null);
-  const [pageNo, setPageNo] = useState(1);
-  const [clickedRow, setClickedRow] = useState(null);
-  const [rowindex, setRowIndex] = useState(null);
-  const [liveAlertAssigned, setLiveAlertAssigned] = useState(false);
-
-  // useEffect(() => {
-  //   if (rowindex !== null) {
-  //     setClickedRow(rowindex);
-  //     setTimeout(() => {
-  //       // After 1 second, reset the clickedRow state to null to dismiss the row completely
-  //       setDataList([
-  //         ...assignedAlerts.slice(0, rowindex),
-  //         ...assignedAlerts.slice(rowindex + 1),
-  //       ]);
-  //       setRowIndex(null);
-  //       setClickedRow(null);
-  //     }, 1000);
-  //   } else {
-  //     setLiveAlertAssigned(true);
-  //     setDataList([...assignedAlerts.slice(0, dataList.length)]);
-  //     setTimeout(() => {
-  //       setLiveAlertAssigned(false);
-  //     }, 1000);
-  //   }
-  // }, [assignedAlerts]);
 
   useEffect(() => {
     if (assignedAlerts.length < 12) {
@@ -113,25 +95,28 @@ const AssignedAlerts = () => {
                       }}
                       key={index}
                       onClick={async () => {
-                        // setRowIndex(index);
-
+                        // if (
+                        //   allAlertsPreview != undefined &&
+                        //   allAlertsPreview?.edit
+                        // ) {
+                        // }
                         const serverInfo = serverCredentials(data.server);
-                        console.log("serverInfo", serverInfo);
+                        // console.log("serverInfo", serverInfo);
                         setBasicTab("1");
                         setIsUpdateModalOpen(true);
-                        console.log("isUpdateModalOpen: ", isUpdateModalOpen);
+                        // console.log("isUpdateModalOpen: ", isUpdateModalOpen);
                         const sendData = {
                           eventId: data._id,
                           serverId: serverInfo?.serverId,
                           serverHashKey: serverInfo?.serverHashKey,
                           deviceId: data.deviceId,
                         };
-                        console.log(sendData);
+                        // console.log(sendData);
                         try {
                           await create(sendData, {
                             url: "alert-events/get-alert-event-by-id",
                           }).then((data: any) => {
-                            console.log(data);
+                            // console.log(data);
                             if (
                               !data.success &&
                               data.message == "ERROR_INTERNET_DISCONNECTED"
@@ -154,8 +139,9 @@ const AssignedAlerts = () => {
                         } catch (error: any) {
                           // Handle error (e.g., show an error message)
                           dispatch(setModalData(undefined));
-                          console.error("Error creating post:", error);
+                          // console.error("Error creating post:", error);
                         }
+
                       }}
                     >
                       <td>{data.eventId}</td>

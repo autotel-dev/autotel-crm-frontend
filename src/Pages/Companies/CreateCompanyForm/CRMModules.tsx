@@ -26,10 +26,14 @@ const CRMModules = ({ callbackActive }: BusinessFormCommonProps) => {
   const dispatch = useDispatch();
 
   const [givenPermissions, setGivenPermissions] = useState(
-    permissions.map((permission: any) => ({
-      ...permission,
-      checked: false,
-    }))
+    createCompany.permissions !== undefined
+      ? createCompany.permissions.map((permission: any) => ({
+          ...permission,
+        }))
+      : permissions.map((permission: any) => ({
+          ...permission,
+          checked: false,
+        }))
   );
 
   const [switches, setSwitches] = useState("off");
@@ -41,6 +45,7 @@ const CRMModules = ({ callbackActive }: BusinessFormCommonProps) => {
       setGivenPermissions(permissions);
     }
   }, [permissions]);
+
   // const handleCheckboxChange = (index: any,) => {
   //   setGivenPermissions((prevPermissions: any) => {
   //     const updatedPermissions = [...prevPermissions];
@@ -52,10 +57,24 @@ const CRMModules = ({ callbackActive }: BusinessFormCommonProps) => {
   //   });
   // };
 
+  // const handleCheckboxChange = (index: any, key: any) => {
+  //   setGivenPermissions((prevPermissions: any) => {
+  //     const updatedPermissions = [...prevPermissions];
+  //     updatedPermissions[index][key] = !updatedPermissions[index][key];
+  //     return updatedPermissions;
+  //   });
+  // };
+
   const handleCheckboxChange = (index: any, key: any) => {
     setGivenPermissions((prevPermissions: any) => {
+      // Create a shallow copy of the array
       const updatedPermissions = [...prevPermissions];
-      updatedPermissions[index][key] = !updatedPermissions[index][key];
+      // Create a shallow copy of the object at the specified index
+      const updatedPermission = { ...updatedPermissions[index] };
+      // Update the specified key in the copied object
+      updatedPermission[key] = !updatedPermission[key];
+      // Replace the object at the specified index with the updated object
+      updatedPermissions[index] = updatedPermission;
       return updatedPermissions;
     });
   };

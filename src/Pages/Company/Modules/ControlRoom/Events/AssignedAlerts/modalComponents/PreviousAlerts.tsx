@@ -6,7 +6,7 @@ import { H4 } from "../../../../../../../AbstractElements";
 
 const PreviousAlerts = () => {
   const { modalData } = useSelector((state: any) => state.alerts);
-  console.log("completedAlertsData", modalData.previousAlerts);
+   // console.log("completedAlertsData", modalData.previousAlerts);
 
   const [dataList, setDataList]: any = useState([]);
   const [loading, setLoading] = useState(false); // State to manage loading

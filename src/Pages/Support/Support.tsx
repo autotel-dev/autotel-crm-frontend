@@ -32,6 +32,8 @@ const Support = () => {
     dispatch(setIsConnected(false));
   }, []);
   useEffect(() => {
+    dispatch(setBugReports([]));
+    dispatch(setSupportStatistics(null));
     setStatisticsLoading(true);
     setReportsLoading(true);
 

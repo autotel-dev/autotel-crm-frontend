@@ -298,8 +298,11 @@ const DevicesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
               )
             )
             .filter((item: any) =>
-              item.items.some((bodyItem: any) =>
-                bodyItem.name.toLowerCase().includes(searchValue)
+              item.items.some(
+                (bodyItem: any) =>
+                  bodyItem.name.toLowerCase().includes(searchValue) ||
+                  bodyItem.imei.includes(searchValue) ||
+                  bodyItem.id == searchValue
               )
             )
             .map((item: any, index: any) => {
@@ -339,10 +342,13 @@ const DevicesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
                                   ? bodyItem.online == bodyItem.online
                                   : bodyItem.online == statusDevices
                               )
-                              .filter((bodyItem: any) =>
-                                bodyItem.name
-                                  .toLowerCase()
-                                  .includes(searchValue)
+                              .filter(
+                                (bodyItem: any) =>
+                                  bodyItem.name
+                                    .toLowerCase()
+                                    .includes(searchValue) ||
+                                  bodyItem.imei.includes(searchValue) ||
+                                  bodyItem.id == searchValue
                               ).length
                           }
                           )
@@ -372,8 +378,11 @@ const DevicesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
                             ? bodyItem.online == bodyItem.online
                             : bodyItem.online == statusDevices
                         )
-                        .filter((bodyItem: any) =>
-                          bodyItem.name.toLowerCase().includes(searchValue)
+                        .filter(
+                          (bodyItem: any) =>
+                            bodyItem.name.toLowerCase().includes(searchValue) ||
+                            bodyItem.imei.includes(searchValue) ||
+                            bodyItem.id == searchValue
                         )
                         .slice(0, itemsLength)
                         .map((bodyItem: any, bodyindex: any) => {
@@ -601,8 +610,11 @@ A 40 40 0 0 1 90 50"
                             ? bodyItem.online == bodyItem.online
                             : bodyItem.online == statusDevices
                         )
-                        .filter((bodyItem: any) =>
-                          bodyItem.name.toLowerCase().includes(searchValue)
+                        .filter(
+                          (bodyItem: any) =>
+                            bodyItem.name.toLowerCase().includes(searchValue) ||
+                            bodyItem.imei.includes(searchValue) ||
+                            bodyItem.id == searchValue
                         ).length >= 6 && (
                         <div
                           style={{

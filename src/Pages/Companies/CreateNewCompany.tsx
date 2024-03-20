@@ -1,8 +1,13 @@
 import { PlusCircle } from "react-feather";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Col } from "reactstrap";
 
+import { useEffect } from "react";
+import { getAll } from "../../Api";
+
 const CreateNewCompany = () => {
+  
   const navigate = useNavigate();
   return (
     <Col md={6}>
@@ -12,7 +17,7 @@ const CreateNewCompany = () => {
           style={{ color: "white" }}
           onClick={() => {
             navigate(
-              `${process.env.PUBLIC_URL}/super-admin/companies/createComapny`
+              `${process.env.PUBLIC_URL}/super-admin/companies/createComapany`
             );
           }}
         >

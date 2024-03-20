@@ -44,6 +44,13 @@ const ControlRoom = () => {
   const [loading, setLoading] = useState(true);
   const [devicesLoading, setDevicesLoading] = useState(true);
   const navigate = useNavigate();
+  const { userPermissions } = useSelector(
+    (state: any) => state.userPermissions
+  );
+  var allAlertsPreview = userPermissions.find(
+    (item: any) => item.title === "All Alerts Preview"
+  );
+  console.log("All Alerts Preview", allAlertsPreview);
 
   useEffect(() => {
     dispatch(setIsConnected(false));
@@ -56,8 +63,8 @@ const ControlRoom = () => {
     dispatch(setLiveAlertsData(null));
     dispatch(setCompletedAlerts([]));
     getAll({ url: "company/alert-events?pageNo=1" }).then((data: any) => {
-      console.log("api call --- >", data);
-      console.log("data,data");
+      // console.log("api call --- >", data);
+      // console.log("data,data");
 
       if (data == undefined) {
         dispatch(setLiveAlerts([]));
@@ -76,7 +83,7 @@ const ControlRoom = () => {
           });
         }
         if (data.success) {
-          console.log("length --- >", data.data.allAlertEvents.length);
+          // console.log("length --- >", data.data.allAlertEvents.length);
           dispatch(setLiveAlerts(data.data.allAlertEvents));
           dispatch(setLiveAlertsData(data.data));
         }
@@ -87,7 +94,7 @@ const ControlRoom = () => {
       }
     });
     getAll({ url: "company/get-all-assigned-events" }).then((data: any) => {
-      console.log("assigned --- >", data);
+      // console.log("assigned --- >", data);
       // setLoading(false);
       if (data == undefined) {
         dispatch(setAssignedAlerts([]));
@@ -107,13 +114,13 @@ const ControlRoom = () => {
           setLoading(false);
         }
         if (data.success) {
-          console.log("length --- >", data.data.length);
+          // console.log("length --- >", data.data.length);
           dispatch(setAssignedAlerts(data.data));
         }
       }
     });
     getAll({ url: "company/get-all-completed-events" }).then((data: any) => {
-      console.log("completed --- >", data);
+      // console.log("completed --- >", data);
       // setLoading(false);
       if (data == undefined) {
         dispatch(setCompletedAlerts([]));
@@ -131,7 +138,7 @@ const ControlRoom = () => {
           });
         }
         if (data.success) {
-          console.log("length --- >", data.data.length);
+          // console.log("length --- >", data.data.length);
           dispatch(setCompletedAlerts(data.data));
         }
       }
@@ -140,15 +147,15 @@ const ControlRoom = () => {
   useEffect(() => {
     getAll({ url: "control-room/get-all-killed-devices?type=self" }).then(
       (data: any) => {
-        console.log("api call --- >", data);
+        // console.log("api call --- >", data);
 
         if (data !== undefined) {
           if (data.success) {
-            console.log("length --- >", data.data);
+            // console.log("length --- >", data.data);
             dispatch(setKilledDevices(data.data));
           }
           if (!data.success) {
-            // console.log("length --- >", data.data);
+            // // console.log("length --- >", data.data);
             dispatch(setKilledDevices([]));
           }
         }
@@ -157,11 +164,11 @@ const ControlRoom = () => {
   }, []);
   useEffect(() => {
     getAll({ url: "control-room/dashboard/statistics" }).then((data: any) => {
-      console.log("api call --- >", data);
+      // console.log("api call --- >", data);
 
       if (data !== undefined) {
         if (data.success) {
-          // console.log("length --- >", data.data);
+          // // console.log("length --- >", data.data);
           dispatch(setDashboardStatistics(data.data.controlRoomStatistics));
         }
       }
@@ -170,22 +177,49 @@ const ControlRoom = () => {
   useEffect(() => {
     getAll({ url: "control-room/get-all-commanded-devices" }).then(
       (data: any) => {
-        console.log("api call --- >", data);
+        // console.log("api call --- >", data);
 
         if (data !== undefined) {
           if (data.success) {
-            // console.log("length --- >", data.data);
+            // // console.log("length --- >", data.data);
             dispatch(setSelfSendCommands(data.data));
           }
           if (!data.success) {
-            // console.log("length --- >", data.data);
+            // // console.log("length --- >", data.data);
             dispatch(setSelfSendCommands([]));
           }
         }
       }
     );
   }, []);
- 
+
+  useEffect(() => {
+    let intervalId: any; // Declare variable to store interval ID
+
+    // Function to fetch data and dispatch actions
+    const VerifyAndUpdateAllBlockStatus = () => {
+      getAll({ url: "control-room/verify-and-update-all-block-status" }).then(
+        (data: any) => {
+          // console.log("api call --- >", data);
+
+          if (data !== undefined) {
+            if (data.success) {
+            }
+          }
+        }
+      );
+    };
+
+    // console.log("Setting up interval verify-and-update-all-block-status...");
+    intervalId = setInterval(() => {
+      VerifyAndUpdateAllBlockStatus();
+    }, 300000);
+
+    return () => {
+      // console.log("Clearing interval verify-and-update-all-block-status...");
+      clearInterval(intervalId);
+    };
+  }, []);
 
   const groups: any = [];
   const groupDevicesObj: any = {};
@@ -201,7 +235,7 @@ const ControlRoom = () => {
   useEffect(() => {
     if (devices.length == 0) {
       getAll({ url: "company/devices" }).then((data: any) => {
-        console.log("data", data);
+        // console.log("data", data);
         // if (data == undefined) {
         //   setDevicesLoading(false);
         //   Swal.fire({
@@ -226,8 +260,8 @@ const ControlRoom = () => {
           }
 
           if (data.success) {
-            console.log("api call --- >", data);
-            console.log("length --- >", data.data.length);
+            // console.log("api call --- >", data);
+            // console.log("length --- >", data.data.length);
 
             for (let i = 0; i < data.data.length; i++) {
               const element = data.data[i].title;
@@ -253,8 +287,8 @@ const ControlRoom = () => {
 
             // Update state with initialGroupDevices
             setgroupdevices(initialGroupDevices);
-            console.log("groups", groups);
-            console.log("groupDevices", groupdevices);
+            // console.log("groups", groups);
+            // console.log("groupDevices", groupdevices);
             dispatch(setDevices(initialGroupDevices));
             setDevicesLoading(false);
 
@@ -298,7 +332,7 @@ const ControlRoom = () => {
                 }
               }
               if (i === data.data.length - 1) {
-                console.log("expiredDevices", expiredDevices);
+                // console.log("expiredDevices", expiredDevices);
                 initialGroupDevicesStatuses.push({
                   online: "Expired",
                   items: expiredDevices,
@@ -316,7 +350,7 @@ const ControlRoom = () => {
                 notConnectedDevices.push({ ...element, checked: false });
               }
               if (i === data.data.length - 1) {
-                console.log("notConnectedDevices", notConnectedDevices);
+                // console.log("notConnectedDevices", notConnectedDevices);
                 initialGroupDevicesStatuses.push({
                   online: "Not Connected",
                   items: notConnectedDevices,
@@ -326,8 +360,8 @@ const ControlRoom = () => {
 
             // Update state with initialGroupDevicesStatuses
             setgroupdevicesStatuses(initialGroupDevicesStatuses);
-            console.log("statuses", statuses);
-            console.log("groupDevicesStatuses", initialGroupDevicesStatuses);
+            // console.log("statuses", statuses);
+            // console.log("groupDevicesStatuses", initialGroupDevicesStatuses);
             dispatch(setDevicesStatuses(initialGroupDevicesStatuses));
           }
         }
@@ -366,73 +400,82 @@ const ControlRoom = () => {
               <Row>
                 <ControlRoomAnalytics />
               </Row>
-              <Col xl="6">
-                <LiveAlerts />
-              </Col>
-              <Col xl="6">
-                <div style={{ backgroundColor: "white" }}>
-                  <Nav
-                    tabs
-                    className="simple-wrapper"
-                    style={{
-                      backgroundColor: "#63d5be",
-                      borderTopLeftRadius: "10px",
-                      borderTopRightRadius: "10px",
-                    }}
-                  >
-                    <NavItem
-                      style={{
-                        width: "50%",
-                        height: "50px",
-                        textAlign: "center",
-                        fontSize: "22px",
-                        cursor: "pointer",
-                      }}
-                    >
-                      <NavLink
-                        className={` ${basicTab === "1" ? "active" : ""}`}
+              <Row>
+                  <Col xl="6">
+                    <LiveAlerts />
+                  </Col>
+                  <Col xl="6">
+                    <div style={{ backgroundColor: "white" }}>
+                      <Nav
+                        tabs
+                        className="simple-wrapper"
                         style={{
-                          color: `${basicTab === "1" ? "#63d5be" : "white"}`,
+                          backgroundColor: "#63d5be",
+                          borderTopLeftRadius: "10px",
+                          borderTopRightRadius: "10px",
                         }}
-                        onClick={() => setBasicTab("1")}
                       >
-                        Assigned Events ({assignedAlerts.length})
-                      </NavLink>
-                    </NavItem>
-                    <NavItem
-                      style={{
-                        width: "50%",
-                        height: "50px",
-                        textAlign: "center",
-                        fontSize: "22px",
-                        cursor: "pointer",
-                      }}
-                    >
-                      <NavLink
-                        className={` ${basicTab === "2" ? "active" : ""}`}
-                        style={{
-                          color: `${basicTab === "2" ? "#63d5be" : "white"}`,
-                        }}
-                        onClick={() => setBasicTab("2")}
-                      >
-                        Completed Events ({completedAlerts.length})
-                      </NavLink>
-                    </NavItem>
-                  </Nav>
-                  <TabContent activeTab={basicTab}>
-                    {events &&
-                      events.map((item, index) => (
-                        <TabPane
-                          className="fade show"
-                          tabId={item.id}
-                          key={index}
+                        <NavItem
+                          style={{
+                            width: "50%",
+                            height: "50px",
+                            textAlign: "center",
+                            fontSize: "22px",
+                            cursor: "pointer",
+                          }}
                         >
-                          {item.element}
-                        </TabPane>
-                      ))}
-                  </TabContent>
-                </div>
-              </Col>
+                          <NavLink
+                            className={` ${basicTab === "1" ? "active" : ""}`}
+                            style={{
+                              color: `${
+                                basicTab === "1" ? "#63d5be" : "white"
+                              }`,
+                            }}
+                            onClick={() => setBasicTab("1")}
+                          >
+                            Assigned Events ({assignedAlerts.length})
+                          </NavLink>
+                        </NavItem>
+                        <NavItem
+                          style={{
+                            width: "50%",
+                            height: "50px",
+                            textAlign: "center",
+                            fontSize: "22px",
+                            cursor: "pointer",
+                          }}
+                        >
+                          <NavLink
+                            className={` ${basicTab === "2" ? "active" : ""}`}
+                            style={{
+                              color: `${
+                                basicTab === "2" ? "#63d5be" : "white"
+                              }`,
+                            }}
+                            onClick={() => setBasicTab("2")}
+                          >
+                            Completed Events ({completedAlerts.length})
+                          </NavLink>
+                        </NavItem>
+                      </Nav>
+                      <TabContent activeTab={basicTab}>
+                        {events &&
+                          events.map((item, index) => (
+                            <TabPane
+                              className="fade show"
+                              tabId={item.id}
+                              key={index}
+                            >
+                              {item.element}
+                            </TabPane>
+                          ))}
+                      </TabContent>
+                    </div>
+                  </Col>
+                </Row>
+              {/* {allAlertsPreview !== undefined && allAlertsPreview?.read && (
+                
+              )} */}
             </Row>
           ) : (
             <div

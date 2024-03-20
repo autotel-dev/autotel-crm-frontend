@@ -21,7 +21,7 @@ const SelectTimeZoneBox: React.FC<propTypes> = ({ placeholder }) => {
       tempList.push({ value: `${item}`, label: `${item}` });
     });
     setTimeZoneList(tempList);
-  }, []);
+  }, [timezones]);
   return (
     <Select
       showSearch

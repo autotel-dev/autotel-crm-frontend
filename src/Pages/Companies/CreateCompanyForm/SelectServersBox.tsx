@@ -32,7 +32,7 @@ const SelectServerBox: React.FC<propTypes> = ({ placeholder }) => {
       });
     });
     setServerList(tempList);
-  }, []);
+  }, [servers]);
 
   const handleDeselect = (value: any, option: any) => {
     // Dispatch an action to remove the deselected item from the Redux state

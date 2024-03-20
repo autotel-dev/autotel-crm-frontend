@@ -9,9 +9,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { jwtDecode } from "jwt-decode";
 import { Select } from "antd";
 import Swal from "sweetalert2";
-import { SendCommandType } from "./Type/SendCommandType";
+import { AddPreInfoAlertType, SendCommandType } from "./Type/SendCommandType";
 import { H3 } from "../../../../../../AbstractElements";
 import DevicesDropdown from "./DevicesDropdown/DevicesDropdown";
+import { create, getAll } from "../../../../../../Api";
+import { setDashboardStatistics } from "../../../../../../ReaduxToolkit/Reducer/AlertsSlice";
 
 interface PropsTypes {
   addModal: boolean; // Change 'boolean' to the actual type of isVisible
@@ -46,7 +48,7 @@ const AddPreAlertInfo: React.FC<PropsTypes> = ({
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<SendCommandType>();
+  } = useForm<AddPreInfoAlertType>();
 
   const addToggle = () => {
     if (!loading) {
@@ -56,170 +58,129 @@ const AddPreAlertInfo: React.FC<PropsTypes> = ({
         startDate: new Date().toISOString().slice(0, 10),
         endDate: new Date().toISOString().slice(0, 10),
       });
-      setRole("");
+      setSelectedItems([]);
       setLoading(false);
     }
   };
   const [selectedItems, setSelectedItems]: any = useState([]);
-  const { Option, OptGroup } = Select;
-  const [selectedOption, setSelectedOption] = useState("");
 
-  const [undefinedData, setUndefinedData] = useState(false);
-
-  const [reportsTypeList, setReportsType] = useState([]);
-  const [role, setRole] = useState("");
-
-  // const typeList: any = [reportsType];
-  const [type, setType] = useState("");
-  const tempReportsTypeList: any = [];
-  useEffect(() => {
-    reportsType.map((item: any, index: any) => {
-      tempReportsTypeList.push({
-        value: `${item.endPoint}`,
-        label: `${item.title}`,
-      });
-    });
-    setReportsType(tempReportsTypeList);
-  }, []);
-
-  const [reportType, setReportType] = useState<string>("");
   const [startDate, setStartDate] = useState<string>(new Date().toISOString());
   const tomorrow = new Date();
   tomorrow.setDate(tomorrow.getDate() + 1);
   const [endDate, setEndDate] = useState<string>(tomorrow.toISOString());
   //   ---------------
-  const [startTime, setStartTime] = useState<string>(
-    new Date().getTime().toString()
-  );
+  const currentTime = new Date();
+  const currentHour = currentTime.getHours().toString().padStart(2, "0");
+  const currentMinute = currentTime.getMinutes().toString().padStart(2, "0");
+  const currentSecond = currentTime.getSeconds().toString().padStart(2, "0");
+  const initialStartTime = `${currentHour}:${currentMinute}:${currentSecond}`;
+  const initialEndTime = `${currentHour}:${currentMinute}:${currentSecond}`;
 
-  const [endTime, setEndTime] = useState<string>(new Date().getTime().toString());
+  const [startTime, setStartTime] = useState<string>(initialStartTime);
+  const [endTime, setEndTime] = useState<string>(initialEndTime);
 
-  //   const addReport: SubmitHandler<SendCommandType> = async (data: any) => {
-  //     setLoading(true);
-  //     if (
-  //       data.title !== "" &&
-  //       startDate !== null &&
-  //       endDate !== null &&
-  //       type !== ""
-  //     ) {
-  //       const report = {
-  //         id: 1,
-  //         title: data.title,
-  //         startDate: startDate,
-  //         endDate: endDate,
-  //       };
-  //       console.log(report);
+  const addPreInfoAlertHandler: SubmitHandler<AddPreInfoAlertType> = async (
+    data: any
+  ) => {
+    setLoading(true);
+    if (selectedItems.length !== 0 && data.message !== "") {
+      const currentDateTime = new Date();
+      const selectedEndDate = new Date(endDate.slice(0, 10) + "T" + endTime);
 
-  //       try {
-  //         const today = new Date(); // Get current date and time
-  //         console.log("today", today);
-  //         console.log("endDate", endDate);
-  //         const endDateTime = new Date(endDate);
-  //         console.log("endDateTime", endDateTime);
+      let adjustedEndDate = selectedEndDate;
 
-  //         // If endDate is today's date, set time to current time
+      if (
+        selectedEndDate.toDateString() === currentDateTime.toDateString() &&
+        selectedEndDate > currentDateTime
+      ) {
+        console.log(
+          "selectedEndDate.toDateString()",
+          selectedEndDate.toDateString()
+        );
+        console.log(
+          "currentDateTime.toDateString()",
+          currentDateTime.toDateString()
+        );
+        console.log("selectedEndDate", selectedEndDate);
+        console.log("currentDateTime", currentDateTime);
 
-  //         console.log("today time: ", today.getTime());
-  //         console.log("endDateTime time: ", endDateTime.getTime());
+        adjustedEndDate.setDate(selectedEndDate.getDate() - 1);
+      }
+      console.log(
+        "adjustedEndTime",
+        `${adjustedEndDate.getHours()}:
+          ${adjustedEndDate.getMinutes()}:
+         ${adjustedEndDate.getSeconds()}`
+      );
+      console.log("adjustedEndDate", `${adjustedEndDate}`);
 
-  //         console.log("before setting time: ", endDateTime);
+      const addPreInfoData = {
+        preInfoMessage: data.message,
+        fromDate: new Date(startDate.slice(0, 10) + "T" + startTime),
+        toDate: adjustedEndDate,
+        deviceData: selectedItems[0],
+      };
 
-  //         endDateTime.setTime(today.getTime());
+      try {
+        await create(addPreInfoData, {
+          url: `control-room/add-pre-info`,
+        }).then(async (data: any) => {
+          // console.log("data", data);
 
-  //         console.log("after setting time: ", endDateTime);
+          setLoading(false);
+          if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
+            setLoading(false);
+            addToggle();
+          }
+          if (!data.success) {
+            Swal.fire({
+              text: `${data.message}`,
+              icon: "error",
+              timer: 2000,
+              showConfirmButton: false,
+            });
+            setLoading(false);
+            addToggle();
+          }
+          if (data.success) {
+            // console.log(data);
+            setLoading(false);
 
-  //         console.log("called");
-  //         console.log("endDateTime", endDateTime);
-  //         console.log("today", today);
-  //         var deviceIds: number[];
-  //         if (selectedItems.length == 0) {
-  //           const allItems = await dropDownDevices.flatMap((group: any) =>
-  //             group.items.map((item: any) => ({
-  //               deviceId: item.id,
-  //               name: item.name,
-  //               title: item.title,
-  //             }))
-  //           );
-  //           console.log("allItems", allItems);
+            getAll({ url: "control-room/dashboard/statistics" }).then(
+              (data: any) => {
+                // console.log("api call --- >", data);
 
-  //           await setSelectedItems([...allItems]);
-  //           deviceIds = await selectedItems.map((device: any) => device.deviceId);
-  //           console.log(deviceIds);
-  //         } else {
-  //           deviceIds = await selectedItems.map((device: any) => device.deviceId);
-  //           console.log(deviceIds);
-  //         }
+                if (data !== undefined) {
+                  if (data.success) {
+                    // // console.log("length --- >", data.data);
+                    dispatch(
+                      setDashboardStatistics(data.data.controlRoomStatistics)
+                    );
+                  }
+                }
+              }
+            );
+            addToggle();
+          }
+        });
+        // Handle successful post creation (e.g., show a success message, redirect, etc.)
+      } catch (error: any) {
+        // Handle error (e.g., show an error message)
+        // console.error("Error creating post:", error);
 
-  //         await create(
-  //           {
-  //             // fromDate: new Date(startDate).toISOString(),
-  //             toDate: endDateTime.toISOString(), // Convert to ISO format
-  //             fromDate: startDate,
-  //             // toDate: endDate, // Convert to ISO format
-  //             deviceIds: deviceIds,
-  //           },
-  //           {
-  //             url: `reports${type}`,
-  //           }
-  //         ).then((data: any) => {
-  //           console.log("data", data);
-
-  //           setLoading(false);
-  //           if (data.success) {
-  //             console.log(data);
-  //             tempReports.push({
-  //               title: report.title,
-  //               startDate: startDate,
-  //               endDate: endDate,
-  //               data: data.data,
-  //             });
-  //             console.log("Reports", reports);
-  //             dispatch(setReports(tempReports));
-  //             setSelectedItems([]);
-  //             const yesterday = new Date();
-  //             yesterday.setDate(yesterday.getDate() - 1); // Subtract one day
-  //             setStartDate(yesterday.toISOString());
-  //             // setStartDate(new Date().toISOString());
-  //             setEndDate(new Date().toISOString());
-  //             setLoading(false);
-  //             addToggle();
-  //             setType("Select Type");
-  //           }
-  //         });
-  //         // Handle successful post creation (e.g., show a success message, redirect, etc.)
-  //       } catch (error: any) {
-  //         // Handle error (e.g., show an error message)
-  //         console.error("Error creating post:", error);
-  //         setSelectedItems([]);
-  //         const yesterday = new Date();
-  //         yesterday.setDate(yesterday.getDate() - 1); // Subtract one day
-  //         setStartDate(yesterday.toISOString());
-  //         // setStartDate(new Date().toISOString());
-  //         setEndDate(new Date().toISOString());
-  //         if (data == undefined) {
-  //           Swal.fire({
-  //             text: "Failed to create due to connection refused",
-  //             icon: "error",
-  //             timer: 2000,
-  //             showConfirmButton: false,
-  //           });
-
-  //           return;
-  //         }
-  //         setLoading(false);
-  //         addToggle();
-  //         setType("Select Type");
-  //       }
-  //     } else {
-  //       Swal.fire({
-  //         text: "Required Fields are empty",
-  //         icon: "info",
-  //         timer: 2000,
-  //         showConfirmButton: false,
-  //       });
-  //       setLoading(false);
-  //     }
-  //   };
+        setLoading(false);
+        addToggle();
+      }
+    } else {
+      Swal.fire({
+        text: "Required Fields are empty",
+        icon: "info",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+      setLoading(false);
+    }
+  };
 
   return (
     <Modal isOpen={addModal} toggle={addToggle} size="lg" centered>
@@ -235,7 +196,7 @@ const AddPreAlertInfo: React.FC<PropsTypes> = ({
       <ModalBody style={{ height: "50vh" }}>
         <form
           className="form-bookmark needs-validation"
-          //   onSubmit={handleSubmit(addReport)}
+          onSubmit={handleSubmit(addPreInfoAlertHandler)}
         >
           <Row>
             <FormGroup className="col-md-12 create-group">
@@ -284,10 +245,7 @@ const AddPreAlertInfo: React.FC<PropsTypes> = ({
                   className="form-control"
                   type="time"
                   value={startTime}
-                //   onChange={(e) => {
-                //     setStartDate(new Date(e.target.value).toISOString());
-                //     console.log("e", e.target.value);
-                //   }}
+                  onChange={(e) => setStartTime(e.target.value)}
                 />
               </Col>
             </FormGroup>
@@ -326,10 +284,7 @@ const AddPreAlertInfo: React.FC<PropsTypes> = ({
                   className="form-control"
                   type="time"
                   value={endTime}
-                //   onChange={(e) => {
-                //     setStartDate(new Date(e.target.value).toISOString());
-                //     console.log("e", e.target.value);
-                //   }}
+                  onChange={(e) => setEndTime(e.target.value)}
                 />
               </Col>
             </FormGroup>

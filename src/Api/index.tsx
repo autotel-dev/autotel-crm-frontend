@@ -170,6 +170,7 @@ export const create = async (postData: any, url: URLTypes): Promise<void> => {
     return result;
   } catch (error: any) {
     console.error("Error creating:", error.message);
+    return error.response.data;
   }
 };
 export const otpEnabled = async (
@@ -207,7 +208,7 @@ export const otpEnabled = async (
     return result;
   } catch (error: any) {
     console.error("Error OTPEnabled:", error.message);
-    // return error;
+    return error.response.data;
   }
 };
 
@@ -243,6 +244,7 @@ export const resendOTP = async (userId: any, url: URLTypes): Promise<void> => {
     return result;
   } catch (error: any) {
     console.error("Error resendOTP:", error.message);
+    return error.response.data;
   }
 };
 

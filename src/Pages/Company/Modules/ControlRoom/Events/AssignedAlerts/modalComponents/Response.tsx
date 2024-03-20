@@ -55,7 +55,7 @@ const ResponseForm: React.FC<PropsTypes> = ({
         completionResponse: data.response,
         alertEventCloseDate: new Date().toISOString(),
       };
-      console.log(completedResponse);
+       // console.log(completedResponse);
       try {
         await create(completedResponse, {
           url: "alert-events/complete-an-alert-event",
@@ -75,7 +75,7 @@ const ResponseForm: React.FC<PropsTypes> = ({
             setIsVisible(!isVisible);
           }
           if (data.success) {
-            console.log(data);
+             // console.log(data);
             setLoading(false);
             setIsVisible(!isVisible);
             reset({
@@ -86,11 +86,11 @@ const ResponseForm: React.FC<PropsTypes> = ({
             getAll({
               url: "company/get-all-assigned-events",
             }).then((data: any) => {
-              console.log("assigned --- >", data);
+               // console.log("assigned --- >", data);
               // setLoading(false);
               if (data !== undefined) {
                 if (data.success) {
-                  console.log("length --- >", data.data.length);
+                   // console.log("length --- >", data.data.length);
                   dispatch(setAssignedAlerts(data.data));
                 }
                 if (data.statusCode == 404) {
@@ -101,15 +101,15 @@ const ResponseForm: React.FC<PropsTypes> = ({
             getAll({
               url: "company/get-all-completed-events",
             }).then((data: any) => {
-              console.log("assigned --- >", data);
+               // console.log("assigned --- >", data);
               // setLoading(false);
               if (data !== undefined) {
                 if (data.success) {
-                  console.log("length --- >", data.data.length);
+                   // console.log("length --- >", data.data.length);
                   dispatch(setCompletedAlerts(data.data));
                 }
                 // if (!data.success) {
-                //   console.log("length --- >", data.data.length);
+                //    // console.log("length --- >", data.data.length);
                 //   dispatch(setAssignedAlerts([]));
                 // }
               }
@@ -119,7 +119,7 @@ const ResponseForm: React.FC<PropsTypes> = ({
         // Handle successful post creation (e.g., show a success message, redirect, etc.)
       } catch (error: any) {
         // Handle error (e.g., show an error message)
-        console.error("Error creating post:", error);
+         // console.error("Error creating post:", error);
         setLoading(false);
         setIsVisible(!isVisible);
         reset({

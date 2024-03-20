@@ -18,7 +18,13 @@ const LiveAlerts = () => {
   const { liveAlerts, liveAlertsData } = useSelector(
     (state: any) => state.alerts
   );
-  console.log("liveAlertsData", liveAlerts);
+  const { userPermissions } = useSelector(
+    (state: any) => state.userPermissions
+  );
+  var allAlertsPreview = userPermissions.find(
+    (item: any) => item.title === "All Alerts Preview"
+  );
+  console.log("All Alerts Preview", allAlertsPreview);
 
   const [dataList, setDataList]: any = useState([]);
   const [loading, setLoading] = useState(false); // State to manage loading
@@ -44,23 +50,23 @@ const LiveAlerts = () => {
         liveAlerts[liveAlerts.length - 1].id &&
       !loading
     ) {
-      console.log("data[data.length - 1].id", dataList[dataList.length - 1].id);
-      console.log(
-        "liveAlerts[liveAlerts.length - 1].id",
-        liveAlerts[liveAlerts.length - 1].id
-      );
+      // console.log("data[data.length - 1].id", dataList[dataList.length - 1].id);
+      // console.log(
+      //   "liveAlerts[liveAlerts.length - 1].id",
+      //   liveAlerts[liveAlerts.length - 1].id
+      // );
       setLoading(true); // Set loading to true before making API call
       const url = `company/alert-events?pageNo=${pageNo + 1}`;
       getAll({ url: url }).then((data: any) => {
         // Set loading to false when API call completes
-        console.log("api call --- >", data);
+        // console.log("api call --- >", data);
 
         if (data !== undefined) {
           if (data.success) {
             setPageNo(pageNo + 1);
-            console.log("length --- >", data.data.allAlertEvents.length);
+            // console.log("length --- >", data.data.allAlertEvents.length);
             const temp = [...liveAlerts, ...data.data.allAlertEvents];
-            console.log("temp", temp);
+            // console.log("temp", temp);
             setLoading(false);
             dispatch(setLiveAlerts(temp));
           }
@@ -71,53 +77,49 @@ const LiveAlerts = () => {
       });
     }
   };
-  // const [showTable, setShowTable] = useState(false);
+
   // useEffect(() => {
-  //   setShowTable(true); // Set showTable to true to trigger the fade animation
-  // }, [liveAlerts]);
+  //   let intervalId: any; // Declare variable to store interval ID
 
-  useEffect(() => {
-    let intervalId: any; // Declare variable to store interval ID
+  //   // Function to fetch data and dispatch actions
+  //   const fetchDataAndDispatch = () => {
+  //     getAll({ url: "company/alert-events?pageNo=1" }).then((data: any) => {
+  //       // console.log("api call --- >", data);
 
-    // Function to fetch data and dispatch actions
-    const fetchDataAndDispatch = () => {
-      getAll({ url: "company/alert-events?pageNo=1" }).then((data: any) => {
-        console.log("api call --- >", data);
+  //       if (data === undefined) {
+  //         dispatch(setLiveAlerts([]));
+  //         dispatch(setLiveAlertsData(null));
+  //       } else {
+  //         if (data.success) {
+  //           // console.log("length --- >", data.data.allAlertEvents.length);
+  //           dispatch(setLiveAlerts(data.data.allAlertEvents));
+  //           dispatch(setLiveAlertsData(data.data));
+  //           setDataList(liveAlerts.slice(0, 12));
+  //         } else {
+  //           // Swal.fire({
+  //           //   text: data.message,
+  //           //   icon: "error",
+  //           //   timer: 2000,
+  //           //   showConfirmButton: false,
+  //           // });
+  //         }
+  //       }
+  //     });
+  //   };
 
-        if (data === undefined) {
-          dispatch(setLiveAlerts([]));
-          dispatch(setLiveAlertsData(null));
-        } else {
-          if (data.success) {
-            console.log("length --- >", data.data.allAlertEvents.length);
-            dispatch(setLiveAlerts(data.data.allAlertEvents));
-            dispatch(setLiveAlertsData(data.data));
-            setDataList(liveAlerts.slice(0, 12));
-          } else {
-            // Swal.fire({
-            //   text: data.message,
-            //   icon: "error",
-            //   timer: 2000,
-            //   showConfirmButton: false,
-            // });
-          }
-        }
-      });
-    };
+  //   // console.log("Setting up interval...");
+  //   intervalId = setInterval(() => {
+  //     // console.log("Interval Called");
+  //     // console.log("LiveAlerts in interval");
+  //     fetchDataAndDispatch(); // Call function to fetch data and dispatch actions
+  //   }, 15000);
 
-    console.log("Setting up interval...");
-    intervalId = setInterval(() => {
-      console.log("Interval Called");
-      console.log("LiveAlerts in interval");
-      fetchDataAndDispatch(); // Call function to fetch data and dispatch actions
-    }, 10000);
-
-    // Cleanup function to clear interval when component unmounts or when loading becomes true
-    return () => {
-      console.log("Clearing interval...");
-      clearInterval(intervalId);
-    };
-  }, [liveAlerts]); // Empty dependency array to run the effect only once after mounting
+  //   // Cleanup function to clear interval when component unmounts or when loading becomes true
+  //   return () => {
+  //     // console.log("Clearing interval...");
+  //     clearInterval(intervalId);
+  //   };
+  // }, [liveAlerts]); // Empty dependency array to run the effect only once after mounting
 
   return (
     <Card className="invoice-card">
@@ -158,90 +160,102 @@ const LiveAlerts = () => {
                 dataList.map((data: any, index: any) => (
                   <tr
                     key={index}
+                    style={{
+                      cursor: "pointer",
+                    }}
                     onClick={async () => {
-                      if (assignLoading) {
-                        Swal.fire({
-                          text: "Loading....",
-                          icon: "info",
-                          showConfirmButton: false,
-                          allowOutsideClick: false, // Prevent closing by clicking outside the modal
-                        });
-                      }
-                      const serverInfo = serverCredentials(data.server._id);
-                      console.log("serverInfo", serverInfo);
+                      if (data.preInfo === null) {
+                        if (assignLoading) {
+                          Swal.fire({
+                            text: "Loading....",
+                            icon: "info",
+                            showConfirmButton: false,
+                            allowOutsideClick: false, // Prevent closing by clicking outside the modal
+                          });
+                        }
+                        const serverInfo = serverCredentials(data.server._id);
+                        // console.log("serverInfo", serverInfo);
 
-                      const assignEvent = {
-                        eventId: data.id,
-                        deviceId: data.device_id,
-                        deviceName: data.device_name,
-                        latitude: data.latitude,
-                        longitude: data.longitude,
-                        speed: data.speed,
-                        type: data.type,
-                        message: data.message,
-                        serverId: serverInfo?.serverId,
-                        serverHashKey: serverInfo?.serverHashKey,
-                      };
-                      console.log(assignEvent);
-                      try {
-                        console.log("liveAlerts[index]: ", liveAlerts[index]);
+                        const assignEvent = {
+                          eventId: data.id,
+                          deviceId: data.device_id,
+                          deviceName: data.device_name,
+                          latitude: data.latitude,
+                          longitude: data.longitude,
+                          speed: data.speed,
+                          type: data.type,
+                          message: data.message,
+                          serverId: serverInfo?.serverId,
+                          serverHashKey: serverInfo?.serverHashKey,
+                        };
+                        // console.log(assignEvent);
+                        try {
+                          // console.log("liveAlerts[index]: ", liveAlerts[index]);
 
-                        await create(assignEvent, {
-                          url: "company/assign-alert-event-to-me",
-                        }).then((dataa: any) => {
-                          if (
-                            !dataa.success &&
-                            dataa.message == "ERROR_INTERNET_DISCONNECTED"
-                          ) {
-                            setAssignLoading(false);
-                          }
-                          if (!dataa.success) {
-                            Swal.fire({
-                              text: `${data.message}`,
-                              icon: "error",
-                              timer: 2000,
-                              showConfirmButton: false,
-                            });
-                            setAssignLoading(false);
-                          }
+                          await create(assignEvent, {
+                            url: "company/assign-alert-event-to-me",
+                          }).then((dataa: any) => {
+                            if (
+                              !dataa.success &&
+                              dataa.message == "ERROR_INTERNET_DISCONNECTED"
+                            ) {
+                              setAssignLoading(false);
+                            }
+                            if (!dataa.success) {
+                              Swal.fire({
+                                text: `${data.message}`,
+                                icon: "error",
+                                timer: 2000,
+                                showConfirmButton: false,
+                              });
+                              setAssignLoading(false);
+                            }
 
-                          if (dataa.success) {
-                            setAssignLoading(false);
-                            var updatedAlerts = [...liveAlerts]; // Create a shallow copy of the liveAlerts array
-                            updatedAlerts.splice(index, 1); // Remove the item at the specified index
+                            if (dataa.success) {
+                              setAssignLoading(false);
+                              var updatedAlerts = [...liveAlerts]; // Create a shallow copy of the liveAlerts array
+                              updatedAlerts.splice(index, 1); // Remove the item at the specified index
 
-                            setDataList(
-                              updatedAlerts.slice(0, dataList.length)
-                            );
-                            console.log("updatedAlerts", updatedAlerts);
-                            console.log("dataList", dataList);
-                            dispatch(setLiveAlerts(updatedAlerts)); // Dispatch the action with the updated array
-                            console.log(dataa);
-                            Swal.fire({
-                              text: "Assigned Successfully",
-                              icon: "success",
-                              timer: 1000,
-                              showConfirmButton: false,
-                            });
-                            getAll({
-                              url: "company/get-all-assigned-events",
-                            }).then((data: any) => {
-                              console.log("assigned --- >", data);
-                              // setLoading(false);
-                              if (data !== undefined) {
-                                if (data.success) {
-                                  setAssignLoading(true);
-                                  console.log("length --- >", data.data.length);
-                                  dispatch(setAssignedAlerts(data.data));
+                              setDataList(
+                                updatedAlerts.slice(0, dataList.length)
+                              );
+                              // console.log("updatedAlerts", updatedAlerts);
+                              // console.log("dataList", dataList);
+                              dispatch(setLiveAlerts(updatedAlerts)); // Dispatch the action with the updated array
+                              // console.log(dataa);
+                              Swal.fire({
+                                text: "Assigned Successfully",
+                                icon: "success",
+                                timer: 1000,
+                                showConfirmButton: false,
+                              });
+                              getAll({
+                                url: "company/get-all-assigned-events",
+                              }).then((data: any) => {
+                                // console.log("assigned --- >", data);
+                                // setLoading(false);
+                                if (data !== undefined) {
+                                  if (data.success) {
+                                    setAssignLoading(true);
+                                    // console.log("length --- >", data.data.length);
+                                    dispatch(setAssignedAlerts(data.data));
+                                  }
                                 }
-                              }
-                            });
-                          }
+                              });
+                            }
+                          });
+                          // Handle successful post creation (e.g., show a success message, redirect, etc.)
+                        } catch (error: any) {
+                          // Handle error (e.g., show an error message)
+                          // console.error("Error creating post:", error);
+                        }
+                      } else {
+                        Swal.fire({
+                          text: "Pre Info is already added",
+                          icon: "info",
+                          timer: 1000,
+                          showConfirmButton: false,
                         });
-                        // Handle successful post creation (e.g., show a success message, redirect, etc.)
-                      } catch (error: any) {
-                        // Handle error (e.g., show an error message)
-                        console.error("Error creating post:", error);
                       }
                     }}
                   >

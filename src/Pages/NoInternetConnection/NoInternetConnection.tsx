@@ -12,7 +12,7 @@ const NoInternetConnection = () => {
         height: "85vh",
       }}
     >
-      <div>Internet Connection is Disconnecetd</div>
+      <div>Internet Connection is Disconnected</div>
     </div>
   );
 };

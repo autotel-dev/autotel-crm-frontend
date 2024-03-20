@@ -57,7 +57,7 @@ const DevicesDropdown: React.FC<PropsTypes> = ({
   };
 
   useEffect(() => {
-    console.log("selectedItems", selectedItems);
+    // console.log("selectedItems", selectedItems);
   }, [selectedItems]);
 
   const toggleDropdown = () => {
@@ -67,8 +67,11 @@ const DevicesDropdown: React.FC<PropsTypes> = ({
 
   const filteredData = data
     .map((group: any) => {
-      const filteredItems = group.items.filter((item: any) =>
-        item.name.toLowerCase().includes(searchValue.toLowerCase())
+      const filteredItems = group.items.filter(
+        (item: any) =>
+          item.name.toLowerCase().includes(searchValue.toLowerCase()) ||
+          item.imei.includes(searchValue) ||
+          item.id == searchValue
       );
       return { ...group, items: filteredItems };
     })

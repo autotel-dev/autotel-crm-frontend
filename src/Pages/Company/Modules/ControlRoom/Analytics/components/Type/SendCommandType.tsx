@@ -4,3 +4,9 @@ export interface SendCommandType {
   startDate: string;
   endDate: string;
 }
+export interface AddPreInfoAlertType {
+  id: any;
+  message: string;
+  startDate: string;
+  endDate: string;
+}

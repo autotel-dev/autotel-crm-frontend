@@ -8,6 +8,7 @@ import { PERMISSION_VALUES } from "../constants/permissions";
 import Roles from "../Pages/Company/Roles/Roles";
 import { ROLES } from "../constants/roles";
 import Swal from "sweetalert2";
+import NoInternetConnection from "../Pages/NoInternetConnection/NoInternetConnection";
 
 interface PropTypes {
   allowedUserRoles: any;
@@ -31,6 +32,7 @@ const ProtectedRoute: React.FC<PropTypes> = ({
   console.log("userPermissions:", userPermissions);
 
   const [hasPermission, setHasPermission] = useState(false);
+  const [isConnected, setIsConnected] = useState(false);
 
   const [loading, setLoading] = useState(true);
 
@@ -68,12 +70,12 @@ const ProtectedRoute: React.FC<PropTypes> = ({
               console.log("active Modules --- >", data);
 
               if (data !== undefined) {
-                // if (
-                //   !data.success &&
-                //   data.message == "ERROR_INTERNET_DISCONNECTED"
-                // ) {
-                //   dispatch(setIsConnected(true));
-                // }
+                if (
+                  !data.success &&
+                  data.message == "ERROR_INTERNET_DISCONNECTED"
+                ) {
+                  setIsConnected(true);
+                }
                 if (!data.success) {
                   Swal.fire({
                     text: `${data.message}`,
@@ -82,7 +84,7 @@ const ProtectedRoute: React.FC<PropTypes> = ({
                     showConfirmButton: false,
                   });
                   setLoading(false);
-                  setHasPermission(true);
+                  setHasPermission(false);
                   return;
                 }
                 if (data.success) {
@@ -95,11 +97,13 @@ const ProtectedRoute: React.FC<PropTypes> = ({
 
                     if (extractedChars === lastEndpoint.toLowerCase()) {
                       setLoading(false);
+                      setIsConnected(false);
                       setHasPermission(true);
                       return;
                     }
                   }
                   setLoading(false);
+                  setIsConnected(false);
                   setHasPermission(false);
                   return;
                 }
@@ -108,19 +112,20 @@ const ProtectedRoute: React.FC<PropTypes> = ({
           }
         } else {
           if (
-            permissionValue == PERMISSION_VALUES.DASHBOARD ||
+            // permissionValue == PERMISSION_VALUES.DASHBOARD ||
             permissionValue == PERMISSION_VALUES.USER ||
             permissionValue == PERMISSION_VALUES.SUPPORT ||
             permissionValue == PERMISSION_VALUES.PROFILE
           ) {
-            if (
-              userRole == ROLES.SUPER_ADMIN &&
-              permissionValue == PERMISSION_VALUES.DASHBOARD
-            ) {
-              setLoading(false);
-              setHasPermission(true);
-              return;
-            }
+            // if (
+            //   userRole == ROLES.SUPER_ADMIN &&
+            //   permissionValue == PERMISSION_VALUES.DASHBOARD
+            // ) {
+            //   setLoading(false);
+            //   setIsConnected(false);
+            //   setHasPermission(true);
+            //   return;
+            // }
             console.log("permissions check");
             getAll({
               url: "user/get-permissions",
@@ -128,6 +133,12 @@ const ProtectedRoute: React.FC<PropTypes> = ({
               console.log("user permissions --- >", data);
 
               if (data !== undefined) {
+                if (
+                  !data.success &&
+                  data.message == "ERROR_INTERNET_DISCONNECTED"
+                ) {
+                  setIsConnected(true);
+                }
                 if (!data.success) {
                   Swal.fire({
                     text: `${data.message}`,
@@ -135,8 +146,9 @@ const ProtectedRoute: React.FC<PropTypes> = ({
                     timer: 2000,
                     showConfirmButton: false,
                   });
+
                   setLoading(false);
-                  setHasPermission(true);
+                  setHasPermission(false);
                   return;
                 }
                 if (data.success) {
@@ -147,11 +159,13 @@ const ProtectedRoute: React.FC<PropTypes> = ({
 
                     if (itemData.value === permissionValue && itemData.read) {
                       setLoading(false);
+                      setIsConnected(false);
                       setHasPermission(true);
                       return;
                     }
                   }
                   setLoading(false);
+                  setIsConnected(false);
                   setHasPermission(false);
                   return;
                 }
@@ -161,22 +175,26 @@ const ProtectedRoute: React.FC<PropTypes> = ({
           if (permissionValue == "Settings") {
             if (userRole == ROLES.OPERATOR) {
               setLoading(false);
+              setIsConnected(false);
               setHasPermission(false);
               return;
             } else {
               setLoading(false);
+              setIsConnected(false);
               setHasPermission(true);
               return;
             }
           } else {
             console.log("No modules and permissions matched ");
             setLoading(false);
+            setIsConnected(false);
             setHasPermission(true);
             return;
           }
         }
       } else {
         setHasPermission(false);
+        setIsConnected(false);
         setLoading(false);
         return;
       }
@@ -257,6 +275,8 @@ const ProtectedRoute: React.FC<PropTypes> = ({
         <Loader />
       </div>
     </div>
+  ) : isConnected ? (
+    <NoInternetConnection />
   ) : hasPermission ? (
     <Outlet />
   ) : (
