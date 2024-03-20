@@ -1039,7 +1039,7 @@ const SuccessfullyFormSubmitted = ({
           xs={12}
           className="text-end d-flex justify-content-end gap-2 align-center"
         >
-          <Button color="primary">Print</Button>
+          {/* <Button color="primary">Print</Button> */}
           <Button
             disabled={loading ? true : false}
             color="primary"

@@ -11,7 +11,7 @@ import errorAlert from "../Alerts/ErrorAlert";
 import OTPInput from "react-otp-input";
 import "./otpstyles.css";
 import Swal from "sweetalert2";
-import { setToken } from "../../ReaduxToolkit/Reducer/UserSlice";
+import { setToken, setUserData } from "../../ReaduxToolkit/Reducer/UserSlice";
 import { useDispatch } from "react-redux";
 import { jwtDecode } from "jwt-decode";
 import { getOperatorCompanyUserId, getUserRole } from "../../Api/globals";
@@ -93,6 +93,7 @@ const OTPForm = ({ alignLogo }: CommonFormPropsType) => {
           }
 
           if (data.statusCode == 200) {
+            dispatch(setUserData(null));
             const token = data.data.authToken;
             console.log("response: ", data.data);
             console.log("token: ", token);

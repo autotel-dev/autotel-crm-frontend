@@ -16,6 +16,7 @@ import { setUserPersonalizationData } from "../../ReaduxToolkit/Reducer/Personal
 import { setPermissions } from "../../ReaduxToolkit/Reducer/CompanySlice";
 import { setUserPermissions } from "../../ReaduxToolkit/Reducer/PermissionSlice";
 import { ROLES } from "../../constants/roles";
+import { setUserData } from "../../ReaduxToolkit/Reducer/UserSlice";
 
 interface loginTypes {
   emailAddress: string; // Change 'boolean' to the actual type of isVisible
@@ -91,6 +92,7 @@ const CommonForm = ({ alignLogo }: CommonFormPropsType) => {
               });
             }
           } else if (data.statusCode == 200) {
+            dispatch(setUserData(null));
             const token = data.data.authToken;
             console.log("response: ", data.data);
             console.log("token: ", token);

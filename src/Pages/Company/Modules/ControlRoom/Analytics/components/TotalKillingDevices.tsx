@@ -45,7 +45,8 @@ const TotalKillingDevices: React.FC<PropsTypes> = ({
     "Longitude",
     "Address",
     "Server",
-    "Killed Time",
+    "Sent Command Time",
+    "Is Killed",
     "Count Down",
     "Action",
   ];
@@ -119,7 +120,7 @@ const TotalKillingDevices: React.FC<PropsTypes> = ({
     if (remainingSeconds <= 0) return "00:00:00";
 
     // Calculate the remaining hours, minutes, and seconds
-    const hours = Math.floor(remainingSeconds / 3600) - 12;
+    const hours = Math.floor(remainingSeconds / 3600);
     const minutes = Math.floor((remainingSeconds % 3600) / 60);
     const seconds = remainingSeconds % 60;
 
@@ -140,7 +141,7 @@ const TotalKillingDevices: React.FC<PropsTypes> = ({
           const matchedDevice = devices.find((item: any) =>
             item.items.some((subItem: any) => subItem.id === device.deviceId)
           );
-          const deviceData = matchedDevice 
+          const deviceData = matchedDevice
             ? matchedDevice.items.find(
                 (item: any) => item.id === device.deviceId
               )
@@ -182,7 +183,7 @@ const TotalKillingDevices: React.FC<PropsTypes> = ({
     const seconds = new_date.getSeconds();
 
     // Convert AM to PM and PM to AM
-    const amPm = hours >= 12 ? "AM" : "PM";
+    const amPm = hours >= 12 ? "PM" : "AM";
     hours = hours % 12 || 12; // Convert 0 hours to 12
 
     // Combine the date components and time into the desired format
@@ -398,7 +399,7 @@ const TotalKillingDevices: React.FC<PropsTypes> = ({
                                       data.onlineStatus === "ack"
                                         ? "red"
                                         : data.onlineStatus === "engine"
-                                        ? "yellow"
+                                        ? "orange"
                                         : data.onlineStatus === "online"
                                         ? "green"
                                         : "black",
@@ -410,7 +411,7 @@ const TotalKillingDevices: React.FC<PropsTypes> = ({
                                     : data.onlineStatus === "engine"
                                     ? "Idle"
                                     : data.onlineStatus === "online"
-                                    ? "Online"
+                                    ? "Moving"
                                     : "Offline"}
                                 </div>
                               </td>
@@ -474,6 +475,20 @@ const TotalKillingDevices: React.FC<PropsTypes> = ({
                                       )}
                                     </span>
                                   </div>
+                                </div>
+                              </td>
+                              <td style={{ width: "8%" }}>
+                                <div
+                                  style={{
+                                    padding: "5px",
+                                    backgroundColor: data.isKilled
+                                      ? "rgba(255, 0, 0, 0.1)"
+                                      : "rgba(0, 255, 0, 0.1)",
+                                    color: data.isKilled ? "red" : "green",
+                                    borderRadius: "5px",
+                                  }}
+                                >
+                                  {data.isKilled ? "Killed" : "Released"}
                                 </div>
                               </td>
                               <td style={{ width: "8%" }}>

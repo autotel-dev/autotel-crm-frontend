@@ -256,7 +256,7 @@ const ReportsList = () => {
                     >
                       Excel
                     </Menu.Item>
-                    <Menu.Item
+                    {/* <Menu.Item
                       key="2"
                       icon={<UserOutlined />}
                       onClick={(e: any) => {
@@ -265,7 +265,7 @@ const ReportsList = () => {
                       }}
                     >
                       PDF
-                    </Menu.Item>
+                    </Menu.Item> */}
                   </Menu>
                 }
               >

@@ -164,7 +164,6 @@ const SendCommand: React.FC<PropsTypes> = ({
               });
               addToggle();
             } else {
-              setcommandedVehicleDeviceId(data.data.commandedDeviceId);
               // console.log(
               //   "data.data.commandedDeviceId",
               //   data.data.commandedDeviceId
@@ -174,6 +173,7 @@ const SendCommand: React.FC<PropsTypes> = ({
               let intervalId: any; // Declare variable to store interval ID
               // console.log("Setting up interval...");
               intervalId = setTimeout(async () => {
+                setcommandedVehicleDeviceId(data.data.commandedDeviceId);
                 // console.log("Interval Called");
                 // console.log("LiveAlerts in interval");
                 const serverInfo = serverCredentials(
@@ -183,7 +183,7 @@ const SendCommand: React.FC<PropsTypes> = ({
                   deviceId: selectedItems[0].id,
                   serverId: serverInfo?.serverId,
                   serverHashKey: serverInfo?.serverHashKey,
-                  commandedVehicleDeviceId: commandedVehicleDeviceId,
+                  commandedVehicleDeviceId: data.data.commandedDeviceId,
                 };
                 // addToggle();
                 // console.log(verifyData);
@@ -262,7 +262,6 @@ const SendCommand: React.FC<PropsTypes> = ({
                 }
               });
               addToggle();
-              
 
               // Cleanup function to clear interval when component unmounts or when loading becomes true
               return () => {

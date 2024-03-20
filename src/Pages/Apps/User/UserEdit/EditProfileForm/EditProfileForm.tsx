@@ -302,8 +302,10 @@ const EditProfileForm = () => {
               type="submit"
               disabled={loading}
               onClick={(e) => {
-                e.preventDefault();
-                setIsEdit(!isEdit);
+                if (isEdit == false) {
+                  e.preventDefault();
+                  setIsEdit(!isEdit);
+                }
               }}
             >
               {loading ? "Loading..." : isEdit ? "Save" : "Edit"}

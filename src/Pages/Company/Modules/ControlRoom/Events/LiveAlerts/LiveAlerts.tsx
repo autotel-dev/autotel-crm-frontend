@@ -78,48 +78,48 @@ const LiveAlerts = () => {
     }
   };
 
-  // useEffect(() => {
-  //   let intervalId: any; // Declare variable to store interval ID
+  useEffect(() => {
+    let intervalId: any; // Declare variable to store interval ID
 
-  //   // Function to fetch data and dispatch actions
-  //   const fetchDataAndDispatch = () => {
-  //     getAll({ url: "company/alert-events?pageNo=1" }).then((data: any) => {
-  //       // console.log("api call --- >", data);
+    // Function to fetch data and dispatch actions
+    const fetchDataAndDispatch = () => {
+      getAll({ url: "company/alert-events?pageNo=1" }).then((data: any) => {
+        // console.log("api call --- >", data);
 
-  //       if (data === undefined) {
-  //         dispatch(setLiveAlerts([]));
-  //         dispatch(setLiveAlertsData(null));
-  //       } else {
-  //         if (data.success) {
-  //           // console.log("length --- >", data.data.allAlertEvents.length);
-  //           dispatch(setLiveAlerts(data.data.allAlertEvents));
-  //           dispatch(setLiveAlertsData(data.data));
-  //           setDataList(liveAlerts.slice(0, 12));
-  //         } else {
-  //           // Swal.fire({
-  //           //   text: data.message,
-  //           //   icon: "error",
-  //           //   timer: 2000,
-  //           //   showConfirmButton: false,
-  //           // });
-  //         }
-  //       }
-  //     });
-  //   };
+        if (data === undefined) {
+          dispatch(setLiveAlerts([]));
+          dispatch(setLiveAlertsData(null));
+        } else {
+          if (data.success) {
+            // console.log("length --- >", data.data.allAlertEvents.length);
+            dispatch(setLiveAlerts(data.data.allAlertEvents));
+            dispatch(setLiveAlertsData(data.data));
+            setDataList(liveAlerts.slice(0, 12));
+          } else {
+            // Swal.fire({
+            //   text: data.message,
+            //   icon: "error",
+            //   timer: 2000,
+            //   showConfirmButton: false,
+            // });
+          }
+        }
+      });
+    };
 
-  //   // console.log("Setting up interval...");
-  //   intervalId = setInterval(() => {
-  //     // console.log("Interval Called");
-  //     // console.log("LiveAlerts in interval");
-  //     fetchDataAndDispatch(); // Call function to fetch data and dispatch actions
-  //   }, 15000);
+    // console.log("Setting up interval...");
+    intervalId = setInterval(() => {
+      // console.log("Interval Called");
+      // console.log("LiveAlerts in interval");
+      fetchDataAndDispatch(); // Call function to fetch data and dispatch actions
+    }, 15000);
 
-  //   // Cleanup function to clear interval when component unmounts or when loading becomes true
-  //   return () => {
-  //     // console.log("Clearing interval...");
-  //     clearInterval(intervalId);
-  //   };
-  // }, [liveAlerts]); // Empty dependency array to run the effect only once after mounting
+    // Cleanup function to clear interval when component unmounts or when loading becomes true
+    return () => {
+      // console.log("Clearing interval...");
+      clearInterval(intervalId);
+    };
+  }, [liveAlerts]); // Empty dependency array to run the effect only once after mounting
 
   return (
     <Card className="invoice-card">

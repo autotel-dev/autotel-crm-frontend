@@ -10,7 +10,8 @@ import { decryptData } from "../../../Api/encryption";
 import Logo from "../../../assets/Logo.png";
 
 const UserProfile = () => {
-  const { token } = useSelector((state: any) => state.user);
+  const { userData, token } = useSelector((state: any) => state.user);
+  // const [name, setName] = useState<string>(userData.fullName);
   const [decodedToken, setDecodedToken]: any = useState(null);
   const authToken = localStorage.getItem("token");
   useEffect(() => {
@@ -45,11 +46,11 @@ const UserProfile = () => {
               <Image className="b-r-25" src={Logo} alt="" />
               
             </div> */}
-            
+
             <div className="flex-grow-1 user" style={{ margin: "0px 15px" }}>
-              
               <span style={{ fontWeight: "bold" }}>
-                {decodedToken.fullName}
+                {/* {decodedToken.fullName} */}
+                {userData !== null ? userData?.fullName : decodedToken.fullName}
               </span>
               <P className="mb-0 font-nunito">
                 {toPascalCase(decodedToken.role)} &nbsp;

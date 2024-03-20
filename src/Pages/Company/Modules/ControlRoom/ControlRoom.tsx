@@ -35,6 +35,8 @@ import {
 } from "../../../../ReaduxToolkit/Reducer/MonitoringSlice";
 import { useNavigate } from "react-router-dom";
 import NoInternetConnection from "../../../NoInternetConnection/NoInternetConnection";
+import { getUserRole } from "../../../../Api/globals";
+import { ROLES } from "../../../../constants/roles";
 
 const ControlRoom = () => {
   const { assignedAlerts, completedAlerts, isConnected, liveAlerts } =
@@ -163,7 +165,14 @@ const ControlRoom = () => {
     );
   }, []);
   useEffect(() => {
-    getAll({ url: "control-room/dashboard/statistics" }).then((data: any) => {
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    const startDate = yesterday.toISOString();
+    const endDate = new Date().toISOString();
+
+    getAll({
+      url: `control-room/dashboard/statistics?fromDate=${startDate}&toDate=${endDate}`,
+    }).then((data: any) => {
       // console.log("api call --- >", data);
 
       if (data !== undefined) {
@@ -390,7 +399,7 @@ const ControlRoom = () => {
           <Row className="widget-grid">
             <Breadcrumbs
               mainTitle="Control Room"
-              parent="Company"
+              parent={getUserRole() == ROLES.COMPANY ? "Company" : "Operator"}
               title="Module / Control Room"
             />
           </Row>
@@ -401,78 +410,74 @@ const ControlRoom = () => {
                 <ControlRoomAnalytics />
               </Row>
               <Row>
-                  <Col xl="6">
-                    <LiveAlerts />
-                  </Col>
-                  <Col xl="6">
-                    <div style={{ backgroundColor: "white" }}>
-                      <Nav
-                        tabs
-                        className="simple-wrapper"
+                <Col xl="6">
+                  <LiveAlerts />
+                </Col>
+                <Col xl="6">
+                  <div style={{ backgroundColor: "white" }}>
+                    <Nav
+                      tabs
+                      className="simple-wrapper"
+                      style={{
+                        backgroundColor: "#63d5be",
+                        borderTopLeftRadius: "10px",
+                        borderTopRightRadius: "10px",
+                      }}
+                    >
+                      <NavItem
                         style={{
-                          backgroundColor: "#63d5be",
-                          borderTopLeftRadius: "10px",
-                          borderTopRightRadius: "10px",
+                          width: "50%",
+                          height: "50px",
+                          textAlign: "center",
+                          fontSize: "22px",
+                          cursor: "pointer",
                         }}
                       >
-                        <NavItem
+                        <NavLink
+                          className={` ${basicTab === "1" ? "active" : ""}`}
                           style={{
-                            width: "50%",
-                            height: "50px",
-                            textAlign: "center",
-                            fontSize: "22px",
-                            cursor: "pointer",
+                            color: `${basicTab === "1" ? "#63d5be" : "white"}`,
                           }}
+                          onClick={() => setBasicTab("1")}
                         >
-                          <NavLink
-                            className={` ${basicTab === "1" ? "active" : ""}`}
-                            style={{
-                              color: `${
-                                basicTab === "1" ? "#63d5be" : "white"
-                              }`,
-                            }}
-                            onClick={() => setBasicTab("1")}
-                          >
-                            Assigned Events ({assignedAlerts.length})
-                          </NavLink>
-                        </NavItem>
-                        <NavItem
+                          Assigned Events ({assignedAlerts.length})
+                        </NavLink>
+                      </NavItem>
+                      <NavItem
+                        style={{
+                          width: "50%",
+                          height: "50px",
+                          textAlign: "center",
+                          fontSize: "22px",
+                          cursor: "pointer",
+                        }}
+                      >
+                        <NavLink
+                          className={` ${basicTab === "2" ? "active" : ""}`}
                           style={{
-                            width: "50%",
-                            height: "50px",
-                            textAlign: "center",
-                            fontSize: "22px",
-                            cursor: "pointer",
+                            color: `${basicTab === "2" ? "#63d5be" : "white"}`,
                           }}
+                          onClick={() => setBasicTab("2")}
                         >
-                          <NavLink
-                            className={` ${basicTab === "2" ? "active" : ""}`}
-                            style={{
-                              color: `${
-                                basicTab === "2" ? "#63d5be" : "white"
-                              }`,
-                            }}
-                            onClick={() => setBasicTab("2")}
+                          Completed Events ({completedAlerts.length})
+                        </NavLink>
+                      </NavItem>
+                    </Nav>
+                    <TabContent activeTab={basicTab}>
+                      {events &&
+                        events.map((item, index) => (
+                          <TabPane
+                            className="fade show"
+                            tabId={item.id}
+                            key={index}
                           >
-                            Completed Events ({completedAlerts.length})
-                          </NavLink>
-                        </NavItem>
-                      </Nav>
-                      <TabContent activeTab={basicTab}>
-                        {events &&
-                          events.map((item, index) => (
-                            <TabPane
-                              className="fade show"
-                              tabId={item.id}
-                              key={index}
-                            >
-                              {item.element}
-                            </TabPane>
-                          ))}
-                      </TabContent>
-                    </div>
-                  </Col>
-                </Row>
+                            {item.element}
+                          </TabPane>
+                        ))}
+                    </TabContent>
+                  </div>
+                </Col>
+              </Row>
               {/* {allAlertsPreview !== undefined && allAlertsPreview?.read && (
                 
               )} */}

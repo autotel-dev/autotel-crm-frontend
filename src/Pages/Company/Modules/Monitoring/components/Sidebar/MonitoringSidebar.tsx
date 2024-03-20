@@ -58,7 +58,53 @@ const MonitoringSidebar = () => {
             <ImArrowRight style={{ color: "white" }} />
           )}
         </div>
+        <div
+          style={{
+            backgroundColor: "#3d3de9",
+            transform: "rotate(-90deg)",
+            textAlign: "center",
+            display: "flex",
+            height: "35px",
+            margin: "22px",
+            width: "75px",
+            fontWeight: "bold",
+            fontSize: "10px",
+            alignItems: "center",
+            justifyContent: "center", // Adjust content alignment
+            cursor: "pointer",
+          }}
+          onClick={() => {
+            setStatusDevices("");
+            // const array = serverDevices;
+            // for (let i = 0; i < array.length; i++) {
+            //   const element = array[i].title;
+            //   if (!groups.includes(element)) {
+            //     groups.push(element);
+            //   }
+            // }
+            // groups.forEach((title: any) => {
+            //   groupDevicesObj[title] = array.filter(
+            //     (obj: any) => obj.title === title
+            //   );
+            // });
 
+            // // Convert groupDevicesObj to initialGroupDevices array format
+            // Object.keys(groupDevicesObj).forEach((title: any) => {
+            //   initialGroupDevices.push({
+            //     title,
+            //     items: groupDevicesObj[title],
+            //   });
+            // });
+
+            // // Update state with initialGroupDevices
+            // setgroupdevices(initialGroupDevices);
+            // console.log("groups", groups);
+            // console.log("groupDevices", groupdevices);
+            // dispatch(setDevices(initialGroupDevices));
+          }}
+        >
+          Total &nbsp;=&nbsp; {serverDevices.length}
+        </div>
         <div
           style={{
             backgroundColor: "#3cff3c",
@@ -441,53 +487,6 @@ const MonitoringSidebar = () => {
               (item: any, index: any) => item.online === "Not Connected"
             ).items.length}
         </div>
-        <div
-          style={{
-            backgroundColor: "#3d3de9",
-            transform: "rotate(-90deg)",
-            textAlign: "center",
-            display: "flex",
-            height: "35px",
-            margin: "22px",
-            width: "75px",
-            fontWeight: "bold",
-            fontSize: "10px",
-            alignItems: "center",
-            justifyContent: "center", // Adjust content alignment
-            cursor: "pointer",
-          }}
-          onClick={() => {
-            setStatusDevices("");
-            // const array = serverDevices;
-            // for (let i = 0; i < array.length; i++) {
-            //   const element = array[i].title;
-            //   if (!groups.includes(element)) {
-            //     groups.push(element);
-            //   }
-            // }
-            // groups.forEach((title: any) => {
-            //   groupDevicesObj[title] = array.filter(
-            //     (obj: any) => obj.title === title
-            //   );
-            // });
-
-            // // Convert groupDevicesObj to initialGroupDevices array format
-            // Object.keys(groupDevicesObj).forEach((title: any) => {
-            //   initialGroupDevices.push({
-            //     title,
-            //     items: groupDevicesObj[title],
-            //   });
-            // });
-
-            // // Update state with initialGroupDevices
-            // setgroupdevices(initialGroupDevices);
-            // console.log("groups", groups);
-            // console.log("groupDevices", groupdevices);
-            // dispatch(setDevices(initialGroupDevices));
-          }}
-        >
-          Total &nbsp;=&nbsp; {serverDevices.length}
-        </div>
       </div>
 
       {/* Devices Sidebar */}
@@ -496,8 +495,9 @@ const MonitoringSidebar = () => {
           width: `${collapsedWidth}`,
           backgroundColor: "white",
           transition: "width 0.5s",
-          height: "87vh",
+          height: "85vh",
           overflow: "auto",
+          paddingBottom: "30%",
         }}
       >
         {/* <DevicesTreeViewAccordian /> */}

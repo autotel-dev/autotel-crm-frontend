@@ -4,6 +4,9 @@ import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { H3, H4 } from "../../../../../../AbstractElements";
 import SendCommand from "./SendCommand";
+import { create } from "../../../../../../Api";
+import Swal from "sweetalert2";
+import { serverCredentials } from "../../../../../../Api/header";
 
 interface PropsTypes {
   isVisible: boolean; // Change 'boolean' to the actual type of isVisible
@@ -30,9 +33,9 @@ const SelfSendCommands: React.FC<PropsTypes> = ({
     "Longitude",
     "Address",
     "Server",
-    "Killed Time",
+    "Sent Command Time",
     "Command",
-    "Count Down",
+    "Emobilizer Status",
   ];
   const containerRef = useRef(null);
   // useEffect(() => {
@@ -90,6 +93,7 @@ const SelfSendCommands: React.FC<PropsTypes> = ({
 
     return () => clearInterval(interval);
   }, []);
+  console.log("dataList--", dataList);
 
   const calculateRemainingTime = (timestamp: string): string => {
     // Convert the timestamp to a Date object
@@ -108,7 +112,7 @@ const SelfSendCommands: React.FC<PropsTypes> = ({
     if (remainingSeconds <= 0) return "00:00:00";
 
     // Calculate the remaining hours, minutes, and seconds
-    const hours = Math.floor(remainingSeconds / 3600) - 12;
+    const hours = Math.floor(remainingSeconds / 3600);
     const minutes = Math.floor((remainingSeconds % 3600) / 60);
     const seconds = remainingSeconds % 60;
 
@@ -144,7 +148,6 @@ const SelfSendCommands: React.FC<PropsTypes> = ({
         });
 
       setDataList((prevData: any) => [...prevData, ...nextBatch]);
-      // console.log("dataList", dataList);
 
       // const nextBatch = killedDevices
       //   .slice(dataList.length, dataList.length + 6)
@@ -171,7 +174,7 @@ const SelfSendCommands: React.FC<PropsTypes> = ({
     const seconds = new_date.getSeconds();
 
     // Convert AM to PM and PM to AM
-    const amPm = hours >= 12 ? "AM" : "PM";
+    const amPm = hours >= 12 ? "PM" : "AM";
     hours = hours % 12 || 12; // Convert 0 hours to 12
 
     // Combine the date components and time into the desired format
@@ -279,7 +282,7 @@ const SelfSendCommands: React.FC<PropsTypes> = ({
                                   data.onlineStatus === "ack"
                                     ? "red"
                                     : data.onlineStatus === "engine"
-                                    ? "yellow"
+                                    ? "orange"
                                     : data.onlineStatus === "online"
                                     ? "green"
                                     : "black",
@@ -291,7 +294,7 @@ const SelfSendCommands: React.FC<PropsTypes> = ({
                                 : data.onlineStatus === "engine"
                                 ? "Idle"
                                 : data.onlineStatus === "online"
-                                ? "Online"
+                                ? "Moving"
                                 : "Offline"}
                             </div>
                           </td>
@@ -323,8 +326,8 @@ const SelfSendCommands: React.FC<PropsTypes> = ({
                             </div>
                           </td>
 
-                          <td style={{ width: "8%" }}>{data.latitude}</td>
-                          <td style={{ width: "8%" }}>{data.longitude}</td>
+                          <td style={{ width: "7%" }}>{data.latitude}</td>
+                          <td style={{ width: "7%" }}>{data.longitude}</td>
                           <td style={{ width: "8%" }}>
                             {data.address == undefined ||
                             data.address == "" ||
@@ -360,7 +363,98 @@ const SelfSendCommands: React.FC<PropsTypes> = ({
                               ? data.commandData.messageData
                               : data.commandData.title}
                           </td>
-                          <td style={{ width: "8%" }}>{data.remainingTime}</td>
+                          {/* <td style={{ width: "8%" }}>{data.remainingTime}</td> */}
+                          <td style={{ width: "11%" }}>
+                            {data.eMobilizerStatus !== null &&
+                            data.eMobilizerStatus !== undefined ? (
+                              <div
+                                style={{
+                                  padding: "5px",
+                                  backgroundColor: data.eMobilizerStatus
+                                    ? "rgba(255, 0, 0, 0.1)"
+                                    : "rgba(0, 255, 0, 0.1)",
+                                  color: data.eMobilizerStatus
+                                    ? "red"
+                                    : "green",
+                                  borderRadius: "5px",
+                                }}
+                              >
+                                {data.eMobilizerStatus ? "Killed" : "Released"}
+                              </div>
+                            ) : (
+                              <div>
+                                <button
+                                  className="btn-primary"
+                                  style={{
+                                    borderRadius: "5px",
+                                    padding: "5px 5px",
+                                    color: "white",
+                                    outline: "none",
+                                    border: "none",
+                                    marginTop: "00px",
+                                  }}
+                                  onClick={async () => {
+                                    const serverInfo = serverCredentials(
+                                      data?.server?._id
+                                    );
+                                    const verifyData = {
+                                      deviceId: data.deviceId,
+                                      serverId: serverInfo?.serverId,
+                                      serverHashKey: serverInfo?.serverHashKey,
+                                      commandedVehicleDeviceId: data._id,
+                                    };
+                                    // addToggle();
+                                    // console.log(verifyData);
+                                    await create(verifyData, {
+                                      url: `control-room/verify-vehicle-block-status`,
+                                    }).then((data: any) => {
+                                      // console.log("data", data);
+                                      setLoading(false);
+                                      if (
+                                        !data.success &&
+                                        data.message ==
+                                          "ERROR_INTERNET_DISCONNECTED"
+                                      ) {
+                                      }
+                                      if (!data.success) {
+                                        Swal.fire({
+                                          text: `${data.message}`,
+                                          icon: "error",
+                                          timer: 2000,
+                                          showConfirmButton: false,
+                                        });
+                                      }
+                                      if (data.success) {
+                                        const updatedDataList = dataList.map(
+                                          (item: any) => {
+                                            if (
+                                              item.deviceId ===
+                                              data.data.deviceId
+                                            ) {
+                                              // Update fields with new values
+                                              return {
+                                                ...item,
+                                                eMobilizerStatus:
+                                                  data.data.isKilled,
+                                                lastPacketTimeStamp:
+                                                  data.data.lastPacketTimeStamp,
+                                                onlineStatus:
+                                                  data.data.onlineStatus,
+                                              };
+                                            }
+                                            return item; // Return unchanged item if deviceId doesn't match
+                                          }
+                                        );
+                                        setDataList(updatedDataList);
+                                      }
+                                    });
+                                  }}
+                                >
+                                  Check Status
+                                </button>
+                              </div>
+                            )}
+                          </td>
                           {/* <td>
                             <div>
                               <button

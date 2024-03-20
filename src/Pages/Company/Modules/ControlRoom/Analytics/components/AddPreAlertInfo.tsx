@@ -86,42 +86,47 @@ const AddPreAlertInfo: React.FC<PropsTypes> = ({
     if (selectedItems.length !== 0 && data.message !== "") {
       const currentDateTime = new Date();
       const selectedEndDate = new Date(endDate.slice(0, 10) + "T" + endTime);
-
-      let adjustedEndDate = selectedEndDate;
-
-      if (
-        selectedEndDate.toDateString() === currentDateTime.toDateString() &&
-        selectedEndDate > currentDateTime
-      ) {
-        console.log(
-          "selectedEndDate.toDateString()",
-          selectedEndDate.toDateString()
-        );
-        console.log(
-          "currentDateTime.toDateString()",
-          currentDateTime.toDateString()
-        );
-        console.log("selectedEndDate", selectedEndDate);
-        console.log("currentDateTime", currentDateTime);
-
-        adjustedEndDate.setDate(selectedEndDate.getDate() - 1);
-      }
-      console.log(
-        "adjustedEndTime",
-        `${adjustedEndDate.getHours()}:
-          ${adjustedEndDate.getMinutes()}:
-         ${adjustedEndDate.getSeconds()}`
+      const selectedstartDate = new Date(
+        startDate.slice(0, 10) + "T" + startTime
       );
-      console.log("adjustedEndDate", `${adjustedEndDate.toUTCString()}`);
+
+      // let adjustedEndDate = selectedEndDate;
+
+      // if (
+      //   selectedEndDate.toDateString() === currentDateTime.toDateString() &&
+      //   selectedEndDate > currentDateTime
+      // ) {
+      //   console.log(
+      //     "selectedEndDate.toDateString()",
+      //     selectedEndDate.toDateString()
+      //   );
+      //   console.log(
+      //     "currentDateTime.toDateString()",
+      //     currentDateTime.toDateString()
+      //   );
+      //   console.log("selectedEndDate", selectedEndDate);
+      //   console.log("currentDateTime", currentDateTime);
+
+      //   adjustedEndDate.setDate(selectedEndDate.getDate() - 1);
+      // }
+      // console.log(
+      //   "adjustedEndTime",
+      //   `${adjustedEndDate.getHours()}:
+      //     ${adjustedEndDate.getMinutes()}:
+      //    ${adjustedEndDate.getSeconds()}`
+      // );
+      // console.log("adjustedEndDate", `${adjustedEndDate}`);
+      console.log("selectedstartDate -- ", `${selectedstartDate}`);
+      console.log("selectedEndDate -- ", `${selectedEndDate}`);
 
       const addPreInfoData = {
         preInfoMessage: data.message,
-        fromDate: new Date(
-          startDate.slice(0, 10) + "T" + startTime
-        ).toUTCString(),
-        toDate: adjustedEndDate.toUTCString(),
+        fromDate: selectedstartDate,
+        toDate: selectedEndDate,
         deviceData: selectedItems[0],
       };
+      console.log("addPreInfoData -- ", addPreInfoData);
+    
 
       try {
         await create(addPreInfoData, {
