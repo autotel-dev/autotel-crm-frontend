@@ -112,12 +112,14 @@ const AddPreAlertInfo: React.FC<PropsTypes> = ({
           ${adjustedEndDate.getMinutes()}:
          ${adjustedEndDate.getSeconds()}`
       );
-      console.log("adjustedEndDate", `${adjustedEndDate}`);
+      console.log("adjustedEndDate", `${adjustedEndDate.toUTCString()}`);
 
       const addPreInfoData = {
         preInfoMessage: data.message,
-        fromDate: new Date(startDate.slice(0, 10) + "T" + startTime),
-        toDate: adjustedEndDate,
+        fromDate: new Date(
+          startDate.slice(0, 10) + "T" + startTime
+        ).toUTCString(),
+        toDate: adjustedEndDate.toUTCString(),
         deviceData: selectedItems[0],
       };
 
@@ -245,7 +247,10 @@ const AddPreAlertInfo: React.FC<PropsTypes> = ({
                   className="form-control"
                   type="time"
                   value={startTime}
-                  onChange={(e) => setStartTime(e.target.value)}
+                  onChange={(e) => {
+                    console.log(e.target.value);
+                    setStartTime(e.target.value);
+                  }}
                 />
               </Col>
             </FormGroup>
@@ -284,7 +289,10 @@ const AddPreAlertInfo: React.FC<PropsTypes> = ({
                   className="form-control"
                   type="time"
                   value={endTime}
-                  onChange={(e) => setEndTime(e.target.value)}
+                  onChange={(e) => {
+                    console.log(e.target.value);
+                    setEndTime(e.target.value);
+                  }}
                 />
               </Col>
             </FormGroup>
