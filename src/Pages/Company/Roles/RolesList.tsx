@@ -10,42 +10,64 @@ import { setNoDataFound } from "../../../ReaduxToolkit/Reducer/NoDataFoundSlice"
 import { getAll, patch, update } from "../../../Api";
 import {
   setFilterRoles,
+  setInActiveActiveRoles,
+  setIsConnected,
   setRoles,
   setRolesEnd,
   setRolesStart,
 } from "../../../ReaduxToolkit/Reducer/RolesSlice";
 import { setOperatorsEnd } from "../../../ReaduxToolkit/Reducer/OperatorSlice";
-
-// import {
-//   setCountries,
-//   setCountriesEnd,
-//   setCountriesStart,
-//   setFilterCountries,
-//   setId,
-// } from "../../ReaduxToolkit/Reducer/CountrySlice";
+import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom";
 
 const RolesList = () => {
-  // const { countries, loading, id } = useSelector(
-  //   (state: any) => state.countries
-  // );
-  const { noDataFound } = useSelector((state: any) => state.noDataFound);
-  const { roles } = useSelector((state: any) => state.roles);
+  const { roles, activeInActiveRoles } = useSelector(
+    (state: any) => state.roles
+  );
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   useEffect(() => {
+    dispatch(setRoles([]));
+    dispatch(setFilterRoles([]));
     dispatch(setRolesStart());
     getAll({ url: "sub-role/get-all-sub-roles" }).then((data: any) => {
-      console.log("api call --- >", data);
-      dispatch(setRolesEnd());
+      // console.log("api call --- >", data);
+      // if (data == undefined) {
+      //   Swal.fire({
+      //     text: "Failed to fetch due to connection refused",
+      //     icon: "error",
+      //     timer: 2000,
+      //     showConfirmButton: false,
+      //   });
+      //   // dispatch(setInActiveActiveUsers("All"));
+      //   dispatch(setInActiveActiveRoles("All"));
+      //   dispatch(setRoles([]));
+      //   dispatch(setFilterRoles([]));
+      //   dispatch(setRolesEnd());
+      //   return;
+      // }
+
       if (data !== undefined) {
         dispatch(setNoDataFound(data.message));
+        if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
+          dispatch(setIsConnected(true));
+        }
+        if (!data.success) {
+          Swal.fire({
+            text: `${data.message}`,
+            icon: "error",
+            timer: 2000,
+            showConfirmButton: false,
+          });
+        }
         if (data.success) {
-          console.log("hhg");
-
+          // console.log("hhg");
           dispatch(setRoles(data.data));
           dispatch(setFilterRoles(data.data));
         }
       }
+      dispatch(setRolesEnd());
     });
   }, []);
 
@@ -71,24 +93,24 @@ const RolesList = () => {
                     const changeStatus = {
                       isActive: !row.isActive,
                     };
-                    console.log(changeStatus);
+                    // console.log(changeStatus);
 
                     // setRowIndex(index);
-                    console.log(e.target.value);
+                    // console.log(e.target.value);
                     try {
                       await patch(changeStatus, {
                         url: `sub-role/change-activation-status/${row._id}`,
                       }).then((data: any) => {
                         if (data.success) {
-                          console.log(data);
+                          // console.log(data);
                           dispatch(setRolesStart());
                           getAll({ url: "sub-role/get-all-sub-roles" }).then(
                             (data: any) => {
-                              console.log("api call --- >", data);
+                              // console.log("api call --- >", data);
                               dispatch(setRolesEnd());
                               if (data !== undefined) {
                                 if (data.success) {
-                                  console.log("hhg");
+                                  // console.log("hhg");
                                   dispatch(setRoles(data.data));
                                   dispatch(setFilterRoles(data.data));
                                 }
@@ -100,7 +122,7 @@ const RolesList = () => {
                       // Handle successful post creation (e.g., show a success message, redirect, etc.)
                     } catch (error) {
                       // Handle error (e.g., show an error message)
-                      console.error("Error creating post:", error);
+                      // console.error("Error creating post:", error);
                     }
                   }}
                 />
@@ -127,7 +149,7 @@ const RolesList = () => {
                 border: "none",
               }}
               onClick={() => {
-                console.log("345678");
+                // console.log("345678");
                 var alertData = {
                   title: "Are you sure?",
                   text: "Once deleted, you will not be able to recover this ",
@@ -150,7 +172,7 @@ const RolesList = () => {
               }}
               onClick={() => {
                 setIsUpdateModalOpen(true);
-                console.log("isUpdateModalOpen: ", isUpdateModalOpen);
+                // console.log("isUpdateModalOpen: ", isUpdateModalOpen);
                 dispatch(setId(row._id));
                 setCountryName(row.name);
                 setIsActive(row.isActive);
@@ -196,9 +218,11 @@ const RolesList = () => {
                       fontWeight: "bold",
                     }}
                   >
-                    No Roles Found
+                    {activeInActiveRoles !== "All"
+                      ? activeInActiveRoles
+                      : "No Roles Found"}
                   </div>
-                )}
+                )}  
 
                 {/* )} */}
               </div>

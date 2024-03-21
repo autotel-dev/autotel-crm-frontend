@@ -4,6 +4,7 @@ import { Image } from "../../AbstractElements";
 import { dynamicImage } from "../../Service";
 import Logoo from "../../assets/Logo.png";
 import { useSelector } from "react-redux";
+import { IMAGE_BASE_URL } from "../../Api";
 interface PropsType {
   alignLogo?: string;
 }
@@ -12,9 +13,9 @@ const Logo = ({ alignLogo }: PropsType) => {
     (state: any) => state.personalization
   );
   return (
-    <Link
+    <div
       className={`logo ${alignLogo ? alignLogo : ""} `}
-      to={`${process.env.PUBLIC_URL}/dashboards/shoppingplace`}
+      // to={`${process.env.PUBLIC_URL}/dashboards/shoppingplace`}
     >
       {/* <Image
         className="img-fluid for-light"
@@ -31,14 +32,14 @@ const Logo = ({ alignLogo }: PropsType) => {
       <img
         src={
           userPersonalizationData !== null
-            ? `http://124.29.238.127:8080/${userPersonalizationData.logoImage.url}`
+            ? `${IMAGE_BASE_URL}/${userPersonalizationData.logoImage.url}`
             : Logoo
         }
         alt=""
-        width={65}
-        height={50}
+        width={60}
+        height={45}
       />
-    </Link>
+    </div>
   );
 };
 

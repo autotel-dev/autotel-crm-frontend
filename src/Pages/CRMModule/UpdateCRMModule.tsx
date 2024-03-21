@@ -74,12 +74,12 @@ const UpdateCRMModule: React.FC<PropsTypes> = ({
       });
     }
   };
-  console.log(id);
-  console.log(value);
-  console.log(icon);
-  console.log("isActive -- >", isActive);
+  // // console.log(id);
+  // // console.log(value);
+  // // console.log(icon);
+  // // console.log("isActive -- >", isActive);
   // dispatch(setValue(value));
-  console.log("is: ", isVisible);
+  // // console.log("is: ", isVisible);
 
   const updateCRMModule: SubmitHandler<Type> = async (data) => {
     setLoading(true);
@@ -89,16 +89,29 @@ const UpdateCRMModule: React.FC<PropsTypes> = ({
         icon: data.icon,
         isActive: isActive,
       };
-      console.log(module);
+      // // console.log(module);
       try {
         await update(module, { url: `crm-module/update-module/${id}` }).then(
           (data: any) => {
-            if (data.success == false) {
+            if (
+              !data.success &&
+              data.message == "ERROR_INTERNET_DISCONNECTED"
+            ) {
+              setLoading(false);
+              setIsVisible(!isVisible);
+            }
+            if (!data.success) {
+              Swal.fire({
+                text: `${data.message}`,
+                icon: "error",
+                timer: 2000,
+                showConfirmButton: false,
+              });
               setLoading(false);
               setIsVisible(!isVisible);
             }
             if (data.success) {
-              console.log(data);
+              // // console.log(data);
               setLoading(false);
               setIsVisible(!isVisible);
 
@@ -106,7 +119,7 @@ const UpdateCRMModule: React.FC<PropsTypes> = ({
               dispatch(setCRMModulesStart());
               getAll({ url: "crm-module/get-all-modules" }).then(
                 (data: any) => {
-                  console.log("api call --- >", data);
+                  // // console.log("api call --- >", data);
                   if (data == undefined) {
                     Swal.fire({
                       text: "Failed to fetch due to connection refused",
@@ -124,7 +137,7 @@ const UpdateCRMModule: React.FC<PropsTypes> = ({
                   if (data !== undefined) {
                     dispatch(setNoDataFound(data.message));
                     if (data.success) {
-                      console.log("hhg");
+                      // // console.log("hhg");
                       dispatch(setCRMModules(data.data));
                       dispatch(setFilterCRMModules(data.data));
                     }
@@ -137,13 +150,8 @@ const UpdateCRMModule: React.FC<PropsTypes> = ({
         // Handle successful post creation (e.g., show a success message, redirect, etc.)
       } catch (error) {
         // Handle error (e.g., show an error message)
-        console.error("Error creating post:", error);
-        Swal.fire({
-          text: "Failed to update due to connection refused",
-          icon: "error",
-          timer: 2000,
-          showConfirmButton: false,
-        });
+        // // console.error("Error creating post:", error);
+
         setLoading(false);
         setIsVisible(!isVisible);
       }
@@ -174,7 +182,7 @@ const UpdateCRMModule: React.FC<PropsTypes> = ({
       onClosed={() => {
         // setValue("")
         setIsVisible(false);
-        console.log(value);
+        // // console.log(value);
       }}
     >
       <div className="modal-header">
@@ -185,7 +193,7 @@ const UpdateCRMModule: React.FC<PropsTypes> = ({
           onClick={() => {
             // setValue("")
             setIsVisible(!isVisible);
-            console.log(value);
+            // // console.log(value);
           }}
         ></Button>
       </div>
@@ -235,7 +243,7 @@ const UpdateCRMModule: React.FC<PropsTypes> = ({
                       value={isActive ? "on" : "off"}
                       onChange={(e) => {
                         setIsActive(!isActive);
-                        console.log(e.target.value);
+                        // // console.log(e.target.value);
                       }}
                     />
                     <span
@@ -258,7 +266,7 @@ const UpdateCRMModule: React.FC<PropsTypes> = ({
                   value={isActive ? "on" : "off"}
                   onChange={(e) => {
                     setIsActive(!isActive);
-                    console.log(e.target.value);
+                    // // console.log(e.target.value);
                   }}
                 />
               </FormGroup>
@@ -274,7 +282,7 @@ const UpdateCRMModule: React.FC<PropsTypes> = ({
             onClick={() => {
               // setValue("")
               setIsVisible(!isVisible);
-              console.log(value);
+              // // console.log(value);
             }}
           >
             {Cancel}

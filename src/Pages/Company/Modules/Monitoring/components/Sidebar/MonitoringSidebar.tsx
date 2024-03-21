@@ -58,7 +58,53 @@ const MonitoringSidebar = () => {
             <ImArrowRight style={{ color: "white" }} />
           )}
         </div>
+        <div
+          style={{
+            backgroundColor: "#3d3de9",
+            transform: "rotate(-90deg)",
+            textAlign: "center",
+            display: "flex",
+            height: "35px",
+            margin: "22px",
+            width: "75px",
+            fontWeight: "bold",
+            fontSize: "10px",
+            alignItems: "center",
+            justifyContent: "center", // Adjust content alignment
+            cursor: "pointer",
+          }}
+          onClick={() => {
+            setStatusDevices("");
+            // const array = serverDevices;
+            // for (let i = 0; i < array.length; i++) {
+            //   const element = array[i].title;
+            //   if (!groups.includes(element)) {
+            //     groups.push(element);
+            //   }
+            // }
+            // groups.forEach((title: any) => {
+            //   groupDevicesObj[title] = array.filter(
+            //     (obj: any) => obj.title === title
+            //   );
+            // });
 
+            // // Convert groupDevicesObj to initialGroupDevices array format
+            // Object.keys(groupDevicesObj).forEach((title: any) => {
+            //   initialGroupDevices.push({
+            //     title,
+            //     items: groupDevicesObj[title],
+            //   });
+            // });
+
+            // // Update state with initialGroupDevices
+            // setgroupdevices(initialGroupDevices);
+            // // console.log("groups", groups);
+            // // console.log("groupDevices", groupdevices);
+            // dispatch(setDevices(initialGroupDevices));
+          }}
+        >
+          Total &nbsp;=&nbsp; {serverDevices.length}
+        </div>
         <div
           style={{
             backgroundColor: "#3cff3c",
@@ -66,9 +112,10 @@ const MonitoringSidebar = () => {
             textAlign: "center",
             display: "flex",
             height: "35px",
-            margin: "25px",
-            width: "250%",
+            margin: "18px",
+            width: "75px",
             fontWeight: "bold",
+            fontSize: "11px",
             alignItems: "center",
             justifyContent: "center", // Adjust content alignment
             cursor: "pointer",
@@ -79,7 +126,7 @@ const MonitoringSidebar = () => {
             //   return item.items.filter(bodyItem => bodyItem.icon_color === "green");
             // });
 
-            // console.log(filteredDevices);
+            // // console.log(filteredDevices);
 
             // -----------------------------------
 
@@ -87,7 +134,7 @@ const MonitoringSidebar = () => {
             //   item.items.filter(bodyItem => bodyItem.icon_color === "green")
             // ).flat();
 
-            // console.log(filteredDevices);
+            // // console.log(filteredDevices);
             setStatusDevices("online");
             // const array =
             //   devicesStatuses.find(
@@ -118,8 +165,8 @@ const MonitoringSidebar = () => {
 
             // // Update state with initialGroupDevices
             // setgroupdevices(initialGroupDevices);
-            // console.log("groups", groups);
-            // console.log("groupDevices", groupdevices);
+            // // console.log("groups", groups);
+            // // console.log("groupDevices", groupdevices);
             // dispatch(setDevices(initialGroupDevices));
           }}
         >
@@ -140,10 +187,10 @@ const MonitoringSidebar = () => {
             textAlign: "center",
             display: "flex",
             height: "35px",
-            margin: "30px",
-            // width: "85px",
-            width: "250%",
+            margin: "22px",
+            width: "70px",
             fontWeight: "bold",
+            fontSize: "11px",
             alignItems: "center",
             justifyContent: "center", // Adjust content alignment
             cursor: "pointer",
@@ -179,8 +226,8 @@ const MonitoringSidebar = () => {
 
             // // Update state with initialGroupDevices
             // setgroupdevices(initialGroupDevices);
-            // console.log("groups", groups);
-            // console.log("groupDevices", groupdevices);
+            // // console.log("groups", groups);
+            // // console.log("groupDevices", groupdevices);
             // dispatch(setDevices(initialGroupDevices));
           }}
         >
@@ -201,10 +248,10 @@ const MonitoringSidebar = () => {
             textAlign: "center",
             display: "flex",
             height: "35px",
-            margin: "25px",
-            // width: "85px",
-            width: "250%",
+            margin: "15px",
+            width: "70px",
             fontWeight: "bold",
+            fontSize: "11px",
             alignItems: "center",
             justifyContent: "center", // Adjust content alignment
             cursor: "pointer",
@@ -240,8 +287,8 @@ const MonitoringSidebar = () => {
 
             // // Update state with initialGroupDevices
             // setgroupdevices(initialGroupDevices);
-            // console.log("groups", groups);
-            // console.log("groupDevices", groupdevices);
+            // // console.log("groups", groups);
+            // // console.log("groupDevices", groupdevices);
             // dispatch(setDevices(initialGroupDevices));
           }}
         >
@@ -261,10 +308,10 @@ const MonitoringSidebar = () => {
             textAlign: "center",
             display: "flex",
             height: "35px",
-            margin: "30px",
-            // width: "95px",
-            width: "250%",
+            margin: "22px",
+            width: "75px",
             fontWeight: "bold",
+            fontSize: "11px",
             alignItems: "center",
             justifyContent: "center", // Adjust content alignment
             cursor: "pointer",
@@ -300,8 +347,8 @@ const MonitoringSidebar = () => {
 
             // // Update state with initialGroupDevices
             // setgroupdevices(initialGroupDevices);
-            // console.log("groups", groups);
-            // console.log("groupDevices", groupdevices);
+            // // console.log("groups", groups);
+            // // console.log("groupDevices", groupdevices);
             // dispatch(setDevices(initialGroupDevices));
           }}
         >
@@ -322,10 +369,10 @@ const MonitoringSidebar = () => {
             textAlign: "center",
             display: "flex",
             height: "35px",
-            margin: "30px",
-            // width: "100px",
-            width: "270%",
+            margin: "18px",
+            width: "70px",
             fontWeight: "bold",
+            fontSize: "11px",
             alignItems: "center",
             justifyContent: "center", // Adjust content alignment
             cursor: "pointer",
@@ -361,8 +408,8 @@ const MonitoringSidebar = () => {
 
             // // Update state with initialGroupDevices
             // setgroupdevices(initialGroupDevices);
-            // console.log("groups", groups);
-            // console.log("groupDevices", groupdevices);
+            // // console.log("groups", groups);
+            // // console.log("groupDevices", groupdevices);
             // dispatch(setDevices(initialGroupDevices));
           }}
         >
@@ -383,10 +430,10 @@ const MonitoringSidebar = () => {
             textAlign: "center",
             display: "flex",
             height: "35px",
-            margin: "45px",
-            // width: "150px",
-            width: "350%",
+            margin: "26px",
+            width: "85px",
             fontWeight: "bold",
+            fontSize: "9px",
             alignItems: "center",
             justifyContent: "center", // Adjust content alignment
             cursor: "pointer",
@@ -423,8 +470,8 @@ const MonitoringSidebar = () => {
 
             //   // Update state with initialGroupDevices
             //   setgroupdevices(initialGroupDevices);
-            //   console.log("groups", groups);
-            //   console.log("groupDevices", groupdevices);
+            //   // console.log("groups", groups);
+            //   // console.log("groupDevices", groupdevices);
             //   dispatch(setDevices(initialGroupDevices));
             // }
           }}
@@ -440,53 +487,6 @@ const MonitoringSidebar = () => {
               (item: any, index: any) => item.online === "Not Connected"
             ).items.length}
         </div>
-        <div
-          style={{
-            backgroundColor: "#3d3de9",
-            transform: "rotate(-90deg)",
-            textAlign: "center",
-            display: "flex",
-            height: "35px",
-            margin: "35px",
-            // width: "110px",
-            width: "300%",
-            fontWeight: "bold",
-            alignItems: "center",
-            justifyContent: "center", // Adjust content alignment
-            cursor: "pointer",
-          }}
-          onClick={() => {
-            setStatusDevices("");
-            // const array = serverDevices;
-            // for (let i = 0; i < array.length; i++) {
-            //   const element = array[i].title;
-            //   if (!groups.includes(element)) {
-            //     groups.push(element);
-            //   }
-            // }
-            // groups.forEach((title: any) => {
-            //   groupDevicesObj[title] = array.filter(
-            //     (obj: any) => obj.title === title
-            //   );
-            // });
-
-            // // Convert groupDevicesObj to initialGroupDevices array format
-            // Object.keys(groupDevicesObj).forEach((title: any) => {
-            //   initialGroupDevices.push({
-            //     title,
-            //     items: groupDevicesObj[title],
-            //   });
-            // });
-
-            // // Update state with initialGroupDevices
-            // setgroupdevices(initialGroupDevices);
-            // console.log("groups", groups);
-            // console.log("groupDevices", groupdevices);
-            // dispatch(setDevices(initialGroupDevices));
-          }}
-        >
-          Total &nbsp;=&nbsp; {serverDevices.length}
-        </div>
       </div>
 
       {/* Devices Sidebar */}
@@ -495,8 +495,9 @@ const MonitoringSidebar = () => {
           width: `${collapsedWidth}`,
           backgroundColor: "white",
           transition: "width 0.5s",
-          height: "87vh",
+          height: "85vh",
           overflow: "auto",
+          paddingBottom: "30%",
         }}
       >
         {/* <DevicesTreeViewAccordian /> */}

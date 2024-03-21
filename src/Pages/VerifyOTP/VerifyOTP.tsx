@@ -4,6 +4,7 @@ import { dynamicImage } from "../../Service";
 import OTPForm from "./OTPForm";
 import { useSelector } from "react-redux";
 import BcakgroundImage from "../../assets/Background Image.png";
+import { IMAGE_BASE_URL } from "../../Api";
 
 const VerifyOTP = () => {
   const { userPersonalizationData } = useSelector(
@@ -68,12 +69,12 @@ const VerifyOTP = () => {
           <img
             src={
               userPersonalizationData !== null
-                ? `http://124.29.238.127:8080/${userPersonalizationData.backgroundImage.url}`
+                ? `${IMAGE_BASE_URL}/${userPersonalizationData.backgroundImage.url}`
                 : BcakgroundImage
             }
             alt=""
-            width={450}
-            height={400}
+            width={360}
+            height={320}
           />
         </Col>
         <Col xl={7} className="p-0">

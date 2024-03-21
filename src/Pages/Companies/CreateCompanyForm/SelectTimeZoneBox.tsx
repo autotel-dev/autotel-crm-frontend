@@ -10,7 +10,7 @@ const SelectTimeZoneBox: React.FC<propTypes> = ({ placeholder }) => {
   const { cities, createCompany, timezones } = useSelector(
     (state: any) => state.companies
   );
-  console.log(cities);
+  // console.log(cities);
   const [cityId, setCityId] = useState("");
   const [timeZoneList, setTimeZoneList] = useState([]);
   const dispatch = useDispatch();
@@ -21,7 +21,7 @@ const SelectTimeZoneBox: React.FC<propTypes> = ({ placeholder }) => {
       tempList.push({ value: `${item}`, label: `${item}` });
     });
     setTimeZoneList(tempList);
-  }, []);
+  }, [timezones]);
   return (
     <Select
       showSearch
@@ -37,7 +37,7 @@ const SelectTimeZoneBox: React.FC<propTypes> = ({ placeholder }) => {
           .localeCompare((optionB?.label ?? "").toLowerCase())
       }
       onChange={(e) => {
-        console.log(e);
+        // console.log(e);
         dispatch(
           setCreateCompany({
             ...createCompany,

@@ -22,7 +22,7 @@ const CustomerInfo = () => {
             <input
               className="form-control"
               type="text"
-              defaultValue={modalData.customerInfo.customerName}
+              defaultValue={modalData?.customerInfo?.customerName}
               disabled
             />
           </FormGroup>
@@ -31,7 +31,7 @@ const CustomerInfo = () => {
             <input
               className="form-control"
               type="text"
-              defaultValue={modalData.customerInfo.mobile1}
+              defaultValue={modalData?.customerInfo?.mobile1}
               disabled
             />
           </FormGroup>
@@ -40,7 +40,7 @@ const CustomerInfo = () => {
             <input
               className="form-control"
               type="text"
-              defaultValue={modalData.customerInfo.mobile2}
+              defaultValue={modalData?.customerInfo?.mobile2}
               disabled
             />
           </FormGroup>
@@ -49,7 +49,7 @@ const CustomerInfo = () => {
             <input
               className="form-control"
               type="text"
-              defaultValue={modalData.customerInfo.secondaryMobileNo}
+              defaultValue={modalData?.customerInfo?.secondaryMobileNo}
               disabled
             />
           </FormGroup>
@@ -58,7 +58,7 @@ const CustomerInfo = () => {
             <input
               className="form-control"
               type="text"
-              defaultValue={modalData.customerInfo.emergencyMobileNo_1}
+              defaultValue={modalData?.customerInfo?.emergencyMobileNo_1}
               disabled
             />
           </FormGroup>
@@ -67,7 +67,7 @@ const CustomerInfo = () => {
             <input
               className="form-control"
               type="text"
-              defaultValue={modalData.customerInfo.emergencyMobileNo_2}
+              defaultValue={modalData?.customerInfo?.emergencyMobileNo_2}
               disabled
             />
           </FormGroup>
@@ -76,7 +76,7 @@ const CustomerInfo = () => {
             <input
               className="form-control"
               type="text"
-              defaultValue={modalData.customerInfo.nicNo}
+              defaultValue={modalData?.customerInfo?.nicNo}
               disabled
             />
           </FormGroup>
@@ -85,7 +85,7 @@ const CustomerInfo = () => {
             <input
               className="form-control"
               type="text"
-              defaultValue={modalData.customerInfo.address}
+              defaultValue={modalData?.customerInfo?.address}
               disabled
             />
           </FormGroup>
@@ -94,7 +94,7 @@ const CustomerInfo = () => {
             <input
               className="form-control"
               type="text"
-              defaultValue={modalData.customerInfo.motherName}
+              defaultValue={modalData?.customerInfo?.motherName}
               disabled
             />
           </FormGroup>
@@ -103,7 +103,7 @@ const CustomerInfo = () => {
             <input
               className="form-control"
               type="text"
-              defaultValue={modalData.customerInfo.dateOfBirth}
+              defaultValue={modalData?.customerInfo?.dateOfBirth}
               disabled
             />
           </FormGroup>
@@ -112,7 +112,7 @@ const CustomerInfo = () => {
             <input
               className="form-control"
               type="text"
-              defaultValue={modalData.customerInfo.normalPassword}
+              defaultValue={modalData?.customerInfo?.normalPassword}
               disabled
             />
           </FormGroup>
@@ -121,7 +121,7 @@ const CustomerInfo = () => {
             <input
               className="form-control"
               type="text"
-              defaultValue={modalData.customerInfo.emergencyPassword}
+              defaultValue={modalData?.customerInfo?.emergencyPassword}
               disabled
             />
           </FormGroup>
@@ -130,7 +130,7 @@ const CustomerInfo = () => {
             <input
               className="form-control"
               type="text"
-              defaultValue={modalData.customerInfo.instructions}
+              defaultValue={modalData?.customerInfo?.instructions}
               disabled
             />
           </FormGroup>
@@ -139,7 +139,7 @@ const CustomerInfo = () => {
             <input
               className="form-control"
               type="text"
-              defaultValue={modalData.customerInfo.simNumber}
+              defaultValue={modalData?.customerInfo?.simNumber}
               disabled
             />
           </FormGroup>

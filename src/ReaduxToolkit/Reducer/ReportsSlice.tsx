@@ -2,8 +2,10 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   reports: [],
+  reportsType: [],
   loading: false,
   error: null,
+  isConnected: true,
 };
 
 const ReportsSlice = createSlice({
@@ -18,13 +20,24 @@ const ReportsSlice = createSlice({
       state.error = null;
       state.loading = false;
     },
+    setReportstype: (state, action) => {
+      state.reportsType = action.payload;
+    },
 
     setReportsEnd: (state) => {
       state.loading = false;
     },
+    setIsConnected: (state, action) => {
+      state.isConnected = action.payload;
+    },
   },
 });
-export const { setReports, setReportsStart, setReportsEnd } =
-ReportsSlice.actions;
+export const {
+  setReports,
+  setReportsStart,
+  setReportstype,
+  setReportsEnd,
+  setIsConnected,
+} = ReportsSlice.actions;
 
 export default ReportsSlice.reducer;

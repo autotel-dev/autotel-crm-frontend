@@ -58,61 +58,83 @@ const CreateNewPackage = () => {
         days: packageDays,
       };
 
-      console.log(packag);
+      // console.log(packag);
       try {
         await create(packag, { url: "package/create-package" }).then(
           (data: any) => {
-            setLoading(false);
-            setAddModal(false);
-            if (data.success) {
-              console.log(data);
-              setLoading(false);
-              dispatch(setPackageDuration(null));
-              dispatch(setPackageDays(null));
-              setAddModal(false);
-              reset({
-                title: "",
-                price: Number(""),
-              });
-              getAll({ url: "package/get-all-packages" }).then((data: any) => {
-                console.log("api call --- >", data);
-                if (data == undefined) {
-                  Swal.fire({
-                    text: "Failed to fetch due to connection refused",
-                    icon: "error",
-                    timer: 2000,
-                    showConfirmButton: false,
-                  });
-                  dispatch(setInActiveActivePackages("All"));
-                  dispatch(setPackages([]));
-                  dispatch(setFilterPackages([]));
-                  dispatch(setPackagesEnd());
-                  return;
-                }
-                dispatch(setPackagesEnd());
-                if (data !== undefined) {
-                  if (data.success) {
-                    console.log("hhg");
-                    dispatch(setPackages(data.data));
-                    dispatch(setFilterPackages(data.data));
+            if (data !== undefined) {
+              if (
+                !data.success &&
+                data.message == "ERROR_INTERNET_DISCONNECTED"
+              ) {
+                setLoading(false);
+                setAddModal(false);
+                reset({
+                  title: "",
+                  price: Number(""),
+                });
+              }
+              if (!data.success) {
+                Swal.fire({
+                  text: `${data.message}`,
+                  icon: "error",
+                  timer: 2000,
+                  showConfirmButton: false,
+                });
+                setLoading(false);
+                setAddModal(false);
+                reset({
+                  title: "",
+                  price: Number(""),
+                });
+              }
+
+              if (data.success) {
+                // console.log(data);
+                setLoading(false);
+                dispatch(setPackageDuration(null));
+                dispatch(setPackageDays(null));
+                setAddModal(false);
+                reset({
+                  title: "",
+                  price: Number(""),
+                });
+                getAll({ url: "package/get-all-packages" }).then(
+                  (data: any) => {
+                    // console.log("api call --- >", data);
+                    if (data == undefined) {
+                      Swal.fire({
+                        text: "Failed to fetch due to connection refused",
+                        icon: "error",
+                        timer: 2000,
+                        showConfirmButton: false,
+                      });
+                      dispatch(setInActiveActivePackages("All"));
+                      dispatch(setPackages([]));
+                      dispatch(setFilterPackages([]));
+                      dispatch(setPackagesEnd());
+                      return;
+                    }
+                    dispatch(setPackagesEnd());
+                    if (data !== undefined) {
+                      if (data.success) {
+                        // console.log("hhg");
+                        dispatch(setPackages(data.data));
+                        dispatch(setFilterPackages(data.data));
+                      }
+                    }
                   }
-                }
-              });
+                );
+              }
             }
           }
         );
         // Handle successful post creation (e.g., show a success message, redirect, etc.)
       } catch (error: any) {
         // Handle error (e.g., show an error message)
-        console.error("Error creating post:", error);
-        Swal.fire({
-          text: "Failed to create due to connection refused",
-          icon: "error",
-          timer: 2000,
-          showConfirmButton: false,
-        });
+        // console.error("Error creating post:", error);
         setLoading(false);
-        console.log(packag);
+        // console.log(packag);
         setAddModal(false);
         reset({
           title: "",

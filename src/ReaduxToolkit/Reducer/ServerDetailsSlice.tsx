@@ -15,6 +15,7 @@ const initialState = {
   error: null,
   id: null,
   noDataFound: "",
+  isConnected: true,
 };
 
 const ServerDetailsSlice = createSlice({
@@ -68,6 +69,9 @@ const ServerDetailsSlice = createSlice({
     setNoDataFound: (state, action) => {
       state.noDataFound = action.payload;
     },
+    setIsConnected: (state, action) => {
+      state.isConnected = action.payload;
+    },
   },
 });
 export const {
@@ -85,6 +89,7 @@ export const {
   setInActiveActiveServers,
   setApiKeys,
   setNoDataFound,
+  setIsConnected
 } = ServerDetailsSlice.actions;
 
 export default ServerDetailsSlice.reducer;

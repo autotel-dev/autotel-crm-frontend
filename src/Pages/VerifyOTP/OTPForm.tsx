@@ -11,12 +11,15 @@ import errorAlert from "../Alerts/ErrorAlert";
 import OTPInput from "react-otp-input";
 import "./otpstyles.css";
 import Swal from "sweetalert2";
-import { setToken } from "../../ReaduxToolkit/Reducer/UserSlice";
+import { setToken, setUserData } from "../../ReaduxToolkit/Reducer/UserSlice";
 import { useDispatch } from "react-redux";
 import { jwtDecode } from "jwt-decode";
-import { getUserRole } from "../../Api/globals";
+import { getOperatorCompanyUserId, getUserRole } from "../../Api/globals";
 import { setUserPersonalizationData } from "../../ReaduxToolkit/Reducer/PersonalizationSlice";
 import { setActiveCRMModules } from "../../ReaduxToolkit/Reducer/CRMModuleSlice";
+import { setPermissions } from "../../ReaduxToolkit/Reducer/CompanySlice";
+import { setUserPermissions } from "../../ReaduxToolkit/Reducer/PermissionSlice";
+import { ROLES } from "../../constants/roles";
 // import OTPInput, { ResendOTP } from "otp-input-react";
 
 export interface CommonFormPropsType {
@@ -63,7 +66,7 @@ const OTPForm = ({ alignLogo }: CommonFormPropsType) => {
   };
 
   const handleChange = (e: any) => {
-    console.log(e);
+    // console.log(e);
     setOtp(e);
   };
 
@@ -75,84 +78,126 @@ const OTPForm = ({ alignLogo }: CommonFormPropsType) => {
         otpCode: otp,
       };
       setLoading(true);
-      console.log(otpData);
+      // console.log(otpData);
       try {
         await otpVerification(otpData).then((data: any) => {
-          console.log("response: ", data.data);
+          // console.log("response: ", data.data);
           setLoading(false);
+          if (!data.success) {
+            Swal.fire({
+              text: `${data.message}`,
+              icon: "error",
+              timer: 2000,
+              showConfirmButton: false,
+            });
+          }
 
           if (data.statusCode == 200) {
+            dispatch(setUserData(null));
             const token = data.data.authToken;
-            console.log("response: ", data.data);
-            console.log("token: ", token);
-            localStorage.setItem("userId", data.data.userId);
+            // console.log("response: ", data.data);
+            // console.log("token: ", token);
             localStorage.setItem("token", token);
+            if (getUserRole() == ROLES.SUPER_ADMIN) {
+              dispatch(setUserPermissions([]));
+            }
+
+            if (getUserRole() == "OPERATOR") {
+              localStorage.setItem("userId", getOperatorCompanyUserId());
+            } else if (getUserRole() == "COMPANY") {
+              localStorage.setItem("userId", data.data.userId);
+            } else if (getUserRole() == "SUPER_ADMIN") {
+              localStorage.removeItem("userId");
+            }
+            const userId = localStorage.getItem("userId");
             getAll({
               url:
-                getUserRole() == "COMPANY"
-                  ? "company/get-allowed-modules"
+                getUserRole() == "COMPANY" || getUserRole() == "OPERATOR"
+                  ? "user/get-allowed-modules"
                   : "crm-module/get-all-active-modules",
             }).then((data: any) => {
-              console.log("active Modules --- >", data);
+              // console.log("active Modules --- >", data);
 
               if (data !== undefined) {
+                if (!data.success) {
+                  // console.log("hhg");
+                  // console.log(userId);
+                  dispatch(setActiveCRMModules([]));
+                }
                 if (data.success) {
-                  console.log("hhg");
-                  const userId = localStorage.getItem("userId");
-                  console.log(userId);
+                  // console.log("hhg");
+                  // console.log(userId);
                   dispatch(setActiveCRMModules(data.data));
-                  navigate(
-                    `${process.env.PUBLIC_URL}/dashboards/shoppingplace`
-                  );
-
-                  // getPerdonal Data
-                  getAll({
-                    url:
-                      userId == null && userId == undefined
-                        ? "super-admin/get-personalization"
-                        : `company/get-personalization/${userId}`,
-
-                    // url: "super-admin/get-personalization",
-                  }).then((parentData: any) => {
-                    console.log("api call --- >", parentData);
-                    if (parentData == undefined) {
-                      Swal.fire({
-                        text: `${parentData.message}`,
-                        icon: "error",
-                        timer: 2000,
-                        showConfirmButton: false,
-                      });
-                      setLoading(false);
-                      dispatch(setUserPersonalizationData(null));
-                    }
-
-                    if (parentData !== undefined) {
-                      if (parentData.success) {
-                        dispatch(setUserPersonalizationData(parentData.data));
-                        setLoading(false);
-                      }
-                      if (!parentData.success) {
-                        setLoading(false);
-                        dispatch(setUserPersonalizationData(null));
-                      }
-                    }
-                  });
-                  // successAlert();
                 }
               }
             });
+            getAll({
+              url:
+                userId == null && userId == undefined
+                  ? "super-admin/get-personalization"
+                  : `company/get-personalization/${userId}`,
+
+              // url: "super-admin/get-personalization",
+            }).then((parentData: any) => {
+              // console.log("api call --- >", parentData);
+              if (parentData == undefined) {
+                // Swal.fire({
+                //   text: `${parentData.message}`,
+                //   icon: "error",
+                //   timer: 2000,
+                //   showConfirmButton: false,
+                // });
+                setLoading(false);
+                dispatch(setUserPersonalizationData(null));
+              }
+
+              if (parentData !== undefined) {
+                if (!parentData.success) {
+                  setLoading(false);
+                  dispatch(setUserPersonalizationData(null));
+                }
+                if (parentData.success) {
+                  dispatch(setUserPersonalizationData(parentData.data));
+                }
+              }
+            });
+
+            if (getUserRole() == "COMPANY" || getUserRole() == "OPERATOR") {
+              getAll({ url: "user/get-permissions" })
+                .then((data: any) => {
+                  // console.log("api call --- >", data);
+                  if (data !== undefined) {
+                    if (data.success) {
+                      // console.log("hhg");
+                      dispatch(
+                        setUserPermissions(data.data.allowedPermissions)
+                      );
+                      setLoading(false);
+                      navigate(`${process.env.PUBLIC_URL}/dashboard`);
+                    }
+                    if (!data.success) {
+                      navigate(`${process.env.PUBLIC_URL}/dashboard`);
+                    }
+                  }
+                })
+                .catch((error: any) => {
+                  navigate(`${process.env.PUBLIC_URL}/dashboard`);
+                });
+            } else {
+              navigate(`${process.env.PUBLIC_URL}/dashboard`);
+            }
           }
           // if (data.statusCode == 200) {
           //   const token = data.data.authToken;
-          //   console.log("response: ", data.data);
-          //   console.log("token: ", token);
+          //   // console.log("response: ", data.data);
+          //   // console.log("token: ", token);
           //   const decodedToken = jwtDecode(token);
-          //   console.log(decodedToken);
+          //   // console.log(decodedToken);
           //   dispatch(setToken(decodedToken));
           //   const tokenParts = token.split(".");
           //   const payload = JSON.parse(atob(tokenParts[1]));
           //   setDecodedToken(payload);
-          //   console.log("payload", payload);
+          //   // console.log("payload", payload);
 
           //   localStorage.setItem("token", token);
 
@@ -169,7 +214,7 @@ const OTPForm = ({ alignLogo }: CommonFormPropsType) => {
           }
         });
       } catch (error: any) {
-        console.error("Error creating post:", error);
+        // console.error("Error creating post:", error);
         setLoading(false);
       }
     }
@@ -188,14 +233,14 @@ const OTPForm = ({ alignLogo }: CommonFormPropsType) => {
             showCancelButton: false,
           });
           handleResend();
-          console.log(data);
+          // console.log(data);
         } else {
         }
       });
       // Handle successful post creation (e.g., show a success message, redirect, etc.)
     } catch (error: any) {
       // Handle error (e.g., show an error message)
-      console.error("Error creating post:", error);
+      // console.error("Error creating post:", error);
     }
   };
   return (

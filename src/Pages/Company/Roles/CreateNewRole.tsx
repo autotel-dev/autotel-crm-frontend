@@ -17,6 +17,7 @@ import {
   setRolesEnd,
   setRolesStart,
 } from "../../../ReaduxToolkit/Reducer/RolesSlice";
+import Swal from "sweetalert2";
 // import {
 //   setCountriesStart,
 //   setCountriesEnd,
@@ -62,13 +63,13 @@ const CreateNewRole = () => {
     }
   };
 
-  const { userPermissions } = useSelector((state: any) => state.roles);
+  const { userPermissions } = useSelector((state: any) => state.userPermissions);
   const [givenPermissions, setGivenPermissions] = useState<any[]>([]);
 
   const handleCheckboxChange = (index: any, key: any) => {
-    console.log("index", index);
-    console.log("key", key);
-    console.log("givenPermission", givenPermissions);
+    // console.log("index", index);
+    // console.log("key", key);
+    // console.log("givenPermission", givenPermissions);
 
     setGivenPermissions((prevPermissions: any) => {
       const updatedPermissions = [...prevPermissions];
@@ -80,14 +81,6 @@ const CreateNewRole = () => {
   const addRole: SubmitHandler<Type> = async (data: any) => {
     setLoading(true);
     if (data.name !== "") {
-      // const role = {
-      //   name: data.name,
-      //   permissions: givenPermissions
-      //     .filter((permission: any) => permission.checked)
-      //     .map(
-      //       ({ checked, ...rest }: { checked: any; [key: string]: any }) => rest
-      //     ),
-      // };
       const role = {
         name: data.name,
         permissions: givenPermissions
@@ -105,14 +98,35 @@ const CreateNewRole = () => {
           }),
       };
 
-      console.log(role);
+      // console.log(role);
       try {
         await create(role, { url: "sub-role/create-sub-role" }).then(
           (data: any) => {
-            setLoading(false);
-            setAddModal(false);
+            if (
+              !data.success &&
+              data.message == "ERROR_INTERNET_DISCONNECTED"
+            ) {
+              setLoading(false);
+              setAddModal(false);
+              reset({
+                name: "",
+              });
+            }
+            if (!data.success) {
+              Swal.fire({
+                text: `${data.message}`,
+                icon: "error",
+                timer: 2000,
+                showConfirmButton: false,
+              });
+              setLoading(false);
+              setAddModal(false);
+              reset({
+                name: "",
+              });
+            }
             if (data.success) {
-              console.log(data);
+              // console.log(data);
               setLoading(false);
               setAddModal(false);
               reset({
@@ -132,11 +146,11 @@ const CreateNewRole = () => {
               dispatch(setRolesStart());
               getAll({ url: "sub-role/get-all-sub-roles" }).then(
                 (data: any) => {
-                  console.log("api call --- >", data);
+                  // console.log("api call --- >", data);
                   dispatch(setRolesEnd());
                   if (data !== undefined) {
                     if (data.success) {
-                      console.log("hhg");
+                      // console.log("hhg");
                       dispatch(setRoles(data.data));
                       dispatch(setFilterRoles(data.data));
                     }
@@ -149,7 +163,7 @@ const CreateNewRole = () => {
         // Handle successful post creation (e.g., show a success message, redirect, etc.)
       } catch (error: any) {
         // Handle error (e.g., show an error message)
-        console.error("Error creating post:", error);
+        // console.error("Error creati post:", error);
         setLoading(false);
         setAddModal(false);
         reset({
@@ -268,7 +282,10 @@ const CreateNewRole = () => {
                                   style={{
                                     display: "inline-block",
                                     position: "relative",
-                                    cursor: "pointer",
+                                    cursor:
+                                      permission.read == "disabled"
+                                        ? "not-allowed"
+                                        : "pointer",
                                     marginRight: "25px",
                                     fontSize: "18px",
                                   }}
@@ -301,7 +318,10 @@ const CreateNewRole = () => {
                                   style={{
                                     display: "inline-block",
                                     position: "relative",
-                                    cursor: "pointer",
+                                    cursor:
+                                      permission.create == "disabled"
+                                        ? "not-allowed"
+                                        : "pointer",
                                     marginRight: "25px",
                                     fontSize: "18px",
                                   }}
@@ -334,7 +354,10 @@ const CreateNewRole = () => {
                                   style={{
                                     display: "inline-block",
                                     position: "relative",
-                                    cursor: "pointer",
+                                    cursor:
+                                      permission.edit == "disabled"
+                                        ? "not-allowed"
+                                        : "pointer",
                                     marginRight: "25px",
                                     fontSize: "18px",
                                   }}
@@ -367,7 +390,10 @@ const CreateNewRole = () => {
                                   style={{
                                     display: "inline-block",
                                     position: "relative",
-                                    cursor: "pointer",
+                                    cursor:
+                                      permission.delete == "disabled"
+                                        ? "not-allowed"
+                                        : "pointer",
                                     marginRight: "25px",
                                     fontSize: "18px",
                                   }}

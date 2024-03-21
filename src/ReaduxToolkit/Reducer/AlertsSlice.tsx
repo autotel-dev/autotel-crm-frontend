@@ -6,9 +6,15 @@ const initialState = {
   assignedAlerts: [],
   completedAlerts: [],
   modalData: null,
+  sendCommandsType: [],
+  killedDevices: [],
+  selfSendCommands: [],
+  preInfos: [],
+  dashboardStatistics: null,
   loading: false,
   error: null,
   noCountryFound: "",
+  isConnected: true,
 };
 
 const AlertsSlice = createSlice({
@@ -43,6 +49,22 @@ const AlertsSlice = createSlice({
       state.error = null;
       state.loading = false;
     },
+    setSendCommandsType: (state, action) => {
+      state.sendCommandsType = action.payload;
+    },
+    setKilledDevices: (state, action) => {
+      state.killedDevices = action.payload;
+    },
+    setPreInfoAlerts: (state, action) => {
+      state.preInfos = action.payload;
+    },
+
+    setSelfSendCommands: (state, action) => {
+      state.selfSendCommands = action.payload;
+    },
+    setDashboardStatistics: (state, action) => {
+      state.dashboardStatistics = action.payload;
+    },
 
     setAlertsEnd: (state) => {
       state.loading = false;
@@ -50,6 +72,9 @@ const AlertsSlice = createSlice({
 
     setNoAlertsFound: (state, action) => {
       state.noCountryFound = action.payload;
+    },
+    setIsConnected: (state, action) => {
+      state.isConnected = action.payload;
     },
   },
 });
@@ -60,8 +85,14 @@ export const {
   setAssignedAlerts,
   setCompletedAlerts,
   setModalData,
+  setSendCommandsType,
+  setKilledDevices,
+  setSelfSendCommands,
+  setPreInfoAlerts,
+  setDashboardStatistics,
   setAlertsEnd,
   setNoAlertsFound,
+  setIsConnected,
 } = AlertsSlice.actions;
 
 export default AlertsSlice.reducer;

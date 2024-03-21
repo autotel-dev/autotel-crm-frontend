@@ -14,7 +14,7 @@ import ticketImage from "../../assets/ticketImage.png";
 import { IoSend } from "react-icons/io5";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getAll, getImage, patch } from "../../Api";
+import { IMAGE_BASE_URL, getAll, getImage, patch } from "../../Api";
 import Loader from "../Loader/Loader";
 import { setTicketDetails } from "../../ReaduxToolkit/Reducer/SupportSlice";
 import { Select } from "antd";
@@ -37,7 +37,7 @@ const TicketDetails = () => {
   const { tableRow, ticketDetails } = useSelector(
     (state: any) => state.support
   );
-  // console.log("tableRow", tableRow);
+  // // console.log("tableRow", tableRow);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null); // Ref for the textarea element
   const [loading, setLoading] = useState(true);
   const [replyText, setReplyText] = useState("");
@@ -58,7 +58,7 @@ const TicketDetails = () => {
   const handleChange = (e: any) => {
     const textValue = e.target.value;
     setReplyText(textValue);
-    console.log(textValue);
+    // console.log(textValue);
   };
   const [addModal, setAddModal] = useState(false);
   const addToggle = () => {
@@ -80,20 +80,20 @@ const TicketDetails = () => {
   useEffect(() => {
     setLoading(true);
     if (tableRow.status == "NEW" && getUserRole() == "SUPER_ADMIN") {
-      console.log("IF");
+      // console.log("IF");
       patch(
         { updatedStatus: "IN_PROGRESS", resolvingDate: null },
         {
           url: `support/bug-report/update-status/${ticketId}`,
         }
       ).then((data: any) => {
-        console.log("api call --- >", data);
+        // console.log("api call --- >", data);
         if (data !== undefined) {
           if (data.success) {
             getAll({
               url: `support/bug-report/get-bug-report/${ticketId}`,
             }).then((data: any) => {
-              console.log("api call --- >", data);
+              // console.log("api call --- >", data);
               if (data !== undefined) {
                 if (data.success) {
                   dispatch(setTicketDetails(data.data.bugReport));
@@ -102,16 +102,16 @@ const TicketDetails = () => {
                     setLoading(false);
                   }
                   data.data.bugReport.images.map((image: any, index: any) => {
-                    console.log("image", image.url);
+                    // console.log("image", image.url);
 
                     getImage({
-                      url: `http://124.29.238.127:8080/${image.url}`,
+                      url: `${IMAGE_BASE_URL}/${image.url}`,
                     }).then(async (data: any) => {
-                      console.log("image api --- >", data);
+                      // console.log("image api --- >", data);
                       setTicketImages((prevImages) => [...prevImages, data]);
 
-                      console.log("Ticket Images", ticketImages);
-                      console.log("objectURL: ", data);
+                      // console.log("Ticket Images", ticketImages);
+                      // console.log("objectURL: ", data);
                     });
                     if (index == data.data.bugReport.images.length - 1) {
                       setLoading(false);
@@ -124,11 +124,11 @@ const TicketDetails = () => {
         }
       });
     } else {
-      console.log("Else");
+      // console.log("Else");
       getAll({
         url: `support/bug-report/get-bug-report/${ticketId}`,
       }).then((data: any) => {
-        console.log("api call --- >", data);
+        // console.log("api call --- >", data);
         if (data !== undefined) {
           if (data.success) {
             dispatch(setTicketDetails(data.data.bugReport));
@@ -137,16 +137,16 @@ const TicketDetails = () => {
               setLoading(false);
             }
             data.data.bugReport.images.map((image: any, index: any) => {
-              console.log("image", image.url);
+              // console.log("image", image.url);
 
               getImage({
-                url: `http://124.29.238.127:8080/${image.url}`,
+                url: `${IMAGE_BASE_URL}/${image.url}`,
               }).then(async (data: any) => {
-                console.log("image api --- >", data);
+                // console.log("image api --- >", data);
                 setTicketImages((prevImages) => [...prevImages, data]);
 
-                console.log("Ticket Images", ticketImages);
-                console.log("objectURL: ", data);
+                // console.log("Ticket Images", ticketImages);
+                // console.log("objectURL: ", data);
               });
               if (index == data.data.bugReport.images.length - 1) {
                 setLoading(false);
@@ -159,10 +159,10 @@ const TicketDetails = () => {
   }, []);
 
   const convertDateString = (dateString: string): string => {
-    // console.log(dateString);
+    // // console.log(dateString);
 
     var date = new Date(dateString);
-    // console.log("date", date.toUTCString());
+    // // console.log("date", date.toUTCString());
     date = new Date(date.toUTCString());
 
     const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -191,14 +191,14 @@ const TicketDetails = () => {
           url: `support/bug-report/${ticketId}/send-message`,
         }
       ).then((data: any) => {
-        console.log("api call --- >", data);
+        // console.log("api call --- >", data);
         setReplyText("");
         if (data !== undefined) {
           if (data.success) {
             getAll({
               url: `support/bug-report/get-bug-report/${ticketId}`,
             }).then((data: any) => {
-              console.log("api call --- >", data);
+              // console.log("api call --- >", data);
               if (data !== undefined) {
                 if (data.success) {
                   dispatch(setTicketDetails(data.data.bugReport));
@@ -206,7 +206,7 @@ const TicketDetails = () => {
                     setItemsLength(data.data.bugReport.messages.length);
                   }
 
-                  console.log("hhg");
+                  // console.log("hhg");
                 }
               }
             });
@@ -225,16 +225,16 @@ const TicketDetails = () => {
     const timeDifference = Math.floor(
       (currentTime.getTime() - previousTime.getTime()) / 1000
     ); // Difference in seconds
-    // console.log("current ", currentTime);
-    // console.log("previous ", previousTime.toUTCString());
+    // // console.log("current ", currentTime);
+    // // console.log("previous ", previousTime.toUTCString());
 
     const minutes = Math.floor(timeDifference / 60);
     const hours = Math.floor(timeDifference / 3600);
     const days = Math.floor(timeDifference / (3600 * 24));
-    // console.log("timeDifference", timeDifference);
-    // console.log("minutes", minutes);
-    // console.log("hours", hours);
-    // console.log("days", days);
+    // // console.log("timeDifference", timeDifference);
+    // // console.log("minutes", minutes);
+    // // console.log("hours", hours);
+    // // console.log("days", days);
     let time;
 
     if (minutes < 1) {
@@ -258,15 +258,27 @@ const TicketDetails = () => {
   const handleEdit = () => {
     setEdit(!isEdit);
     if (isEdit) {
-      console.log("function call");
+      // console.log("function call");
       patch(
         { updatedStatus: changeStatus, resolvingDate: null },
         {
           url: `support/bug-report/update-status/${ticketId}`,
         }
       ).then((data: any) => {
-        console.log("api call --- >", data);
+        // console.log("api call --- >", data);
         if (data !== undefined) {
+          if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
+            setEdit(false);
+          }
+          if (!data.success) {
+            Swal.fire({
+              text: `${data.message}`,
+              icon: "error",
+              timer: 2000,
+              showConfirmButton: false,
+            });
+            setEdit(false);
+          }
           if (data.success) {
             patch(
               { updatedPriortyStatus: changePriortyStatus },
@@ -274,13 +286,13 @@ const TicketDetails = () => {
                 url: `support/bug-report/update-priorty-status/${ticketId}`,
               }
             ).then((data: any) => {
-              console.log("api call --- >", data);
+              // console.log("api call --- >", data);
               if (data !== undefined) {
                 if (data.success) {
                   getAll({
                     url: `support/bug-report/get-bug-report/${ticketId}`,
                   }).then((data: any) => {
-                    console.log("api call --- >", data);
+                    // console.log("api call --- >", data);
                     if (data !== undefined) {
                       if (data.success) {
                         dispatch(setTicketDetails(data.data.bugReport));
@@ -298,15 +310,25 @@ const TicketDetails = () => {
   };
 
   const handleResolved = () => {
-    console.log("function call");
+    // console.log("function call");
     patch(
       { updatedStatus: "RESOLVED", resolvingDate: new Date() },
       {
         url: `support/bug-report/update-status/${ticketId}`,
       }
     ).then((data: any) => {
-      console.log("api call --- >", data);
+      // console.log("api call --- >", data);
       if (data !== undefined) {
+        if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
+        }
+        if (!data.success) {
+          Swal.fire({
+            text: `${data.message}`,
+            icon: "error",
+            timer: 2000,
+            showConfirmButton: false,
+          });
+        }
         if (data.success) {
           setTimeout(() => {
             Swal.fire({
@@ -318,7 +340,7 @@ const TicketDetails = () => {
           getAll({
             url: `support/bug-report/get-bug-report/${ticketId}`,
           }).then((data: any) => {
-            console.log("api call --- >", data);
+            // console.log("api call --- >", data);
             if (data !== undefined) {
               if (data.success) {
                 dispatch(setTicketDetails(data.data.bugReport));
@@ -333,7 +355,7 @@ const TicketDetails = () => {
   const { priorityStatuses, statuses } = useSelector(
     (state: any) => state.support
   );
-  console.log(priorityStatuses);
+  // console.log(priorityStatuses);
   const [priorityStatusesList, setPriorityStatusesList] = useState([]);
   const [statusesList, setStatusesList] = useState([]);
 
@@ -981,10 +1003,10 @@ const TicketDetails = () => {
                                             // Handle successful post creation (e.g., show a success message, redirect, etc.)
                                           } catch (error) {
                                             // Handle error (e.g., show an error message)
-                                            console.error(
-                                              "Error creating post:",
-                                              error
-                                            );
+                                            // console.error(
+                                            //   "Error creating post:",
+                                            //   error
+                                            // );
                                             // loading false
                                           }
                                         }
@@ -1198,7 +1220,7 @@ const TicketDetails = () => {
                                 )
                             }
                             onChange={(e) => {
-                              console.log(e);
+                              // console.log(e);
                               setChangePriortyStatus(e);
                             }}
                             options={priorityStatusesList}
@@ -1256,7 +1278,7 @@ const TicketDetails = () => {
                                 )
                             }
                             onChange={(e) => {
-                              console.log(e);
+                              // console.log(e);
                               setChangeStatus(e);
                             }}
                             options={statusesList}

@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 
 const AssignedAlerts = () => {
   const { completedAlerts } = useSelector((state: any) => state.alerts);
-  console.log("completedAlertsData", completedAlerts);
+   // // console.log("completedAlertsData", completedAlerts);
 
   const [dataList, setDataList]: any = useState([]);
   const [loading, setLoading] = useState(false); // State to manage loading
@@ -21,8 +21,13 @@ const AssignedAlerts = () => {
   const containerRef = useRef(null);
   const [pageNo, setPageNo] = useState(1);
   useEffect(() => {
-    setDataList(completedAlerts.slice(0, 12)); // Initially display the first 6 elements
+    if (completedAlerts.length < 12) {
+      setDataList(completedAlerts.slice(0, 12)); // Initially display the first 6 elements
+    }
   }, [completedAlerts]);
+  useEffect(() => {
+    setDataList(completedAlerts.slice(0, 12)); // Initially display the first 6 elements
+  }, []);
 
   const handleScroll = () => {
     if (!containerRef.current) return; // Ensure containerRef.current exists

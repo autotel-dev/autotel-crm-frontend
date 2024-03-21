@@ -45,60 +45,80 @@ const CreateNewCRMModule = () => {
         name: data.name,
         icon: data.icon,
       };
-      console.log(crmModule);
+      // console.log(crmModule);
       try {
         await create(crmModule, { url: "crm-module/create-module" }).then(
           (data: any) => {
-            setLoading(false);
-            setAddModal(false);
-            if (data.success) {
-              console.log(data);
-              setLoading(false);
-              setAddModal(false);
-              reset({
-                name: "",
-                icon: "",
-              });
-              dispatch(setCRMModulesStart());
-              getAll({ url: "crm-module/get-all-modules" }).then(
-                (data: any) => {
-                  console.log("api call --- >", data);
-                  if (data == undefined) {
-                    Swal.fire({
-                      text: "Failed to fetch due to connection refused",
-                      icon: "error",
-                      timer: 2000,
-                      showConfirmButton: false,
-                    });
-                    dispatch(setInActiveActiveModules("All"));
+            if (data !== undefined) {
+              if (
+                !data.success &&
+                data.message == "ERROR_INTERNET_DISCONNECTED"
+              ) {
+                setLoading(false);
+                setAddModal(false);
+                reset({
+                  name: "",
+                  icon: "",
+                });
+              }
+              if (!data.success) {
+                Swal.fire({
+                  text: `${data.message}`,
+                  icon: "error",
+                  timer: 2000,
+                  showConfirmButton: false,
+                });
+                setLoading(false);
+                setAddModal(false);
+                reset({
+                  name: "",
+                  icon: "",
+                });
+              }
+              if (data.success) {
+                // console.log(data);
+                setLoading(false);
+                setAddModal(false);
+                reset({
+                  name: "",
+                  icon: "",
+                });
+                dispatch(setCRMModulesStart());
+                getAll({ url: "crm-module/get-all-modules" }).then(
+                  (data: any) => {
+                    // console.log("api call --- >", data);
+                    if (data == undefined) {
+                      Swal.fire({
+                        text: "Failed to fetch due to connection refused",
+                        icon: "error",
+                        timer: 2000,
+                        showConfirmButton: false,
+                      });
+                      dispatch(setInActiveActiveModules("All"));
+                      dispatch(setCRMModulesEnd());
+                      dispatch(setCRMModules([]));
+                      dispatch(setFilterCRMModules([]));
+                      return;
+                    }
                     dispatch(setCRMModulesEnd());
-                    dispatch(setCRMModules([]));
-                    dispatch(setFilterCRMModules([]));
-                    return;
-                  }
-                  dispatch(setCRMModulesEnd());
-                  if (data !== undefined) {
-                    if (data.success) {
-                      console.log("hhg");
-                      dispatch(setCRMModules(data.data));
-                      dispatch(setFilterCRMModules(data.data));
+                    if (data !== undefined) {
+                      if (data.success) {
+                        // console.log("hhg");
+                        dispatch(setCRMModules(data.data));
+                        dispatch(setFilterCRMModules(data.data));
+                      }
                     }
                   }
-                }
-              );
+                );
+              }
             }
           }
         );
         // Handle successful post creation (e.g., show a success message, redirect, etc.)
       } catch (error: any) {
         // Handle error (e.g., show an error message)
-        console.error("Error creating post:", error);
-        Swal.fire({
-          text: "Failed to create due to connection refused",
-          icon: "error",
-          timer: 2000,
-          showConfirmButton: false,
-        });
+        // console.error("Error creating post:", error);
+
         setLoading(false);
         setAddModal(false);
         reset({

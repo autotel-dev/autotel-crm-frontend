@@ -3,8 +3,24 @@ import { LI, UL } from "../../../AbstractElements";
 import { profilesMessage } from "../../../Data/Layout/Header/ProfilesData";
 import FeatherIcons from "../../../utils/CommonSvgIcon/FeatherIcons";
 import { getUserId, getUserRole } from "../../../Api/globals";
+import { useSelector } from "react-redux";
 
 const ProfileBox = () => {
+  const { userPermissions } = useSelector(
+    (state: any) => state.userPermissions
+  );
+  var profile = userPermissions.find((item: any) => item.title === "Profile");
+  var profileMenu = profilesMessage.filter((item) => {
+    if (profile !== undefined && item.name === "Account") {
+      return profile.read;
+    } else if (item.name == "Settings") {
+      return getUserRole() == "OPERATOR" ? false : true;
+    } else {
+      return true;
+    }
+  });
+
+  // console.log("profile", profile);
   const navigate = useNavigate();
   const handleClick = (name: string) => {
     if (name === "Log Out") {
@@ -19,7 +35,7 @@ const ProfileBox = () => {
         );
       }
       // if (getUserRole() == "COMPANY") {
-      //   console.log("Company");
+      //   // console.log("Company");
 
       //   setTimeout(() => {
       //     localStorage.removeItem("token");
@@ -29,7 +45,7 @@ const ProfileBox = () => {
       //     navigate(`${process.env.PUBLIC_URL}/login/${getUserId()}`);
       //   }, 2000);
       // } else {
-      //   console.log("SuperAdmin");
+      //   // console.log("SuperAdmin");
       //   setTimeout(() => {
       //     localStorage.removeItem("token");
       //     localStorage.setItem("userId", "");
@@ -42,7 +58,7 @@ const ProfileBox = () => {
   };
   return (
     <UL className="profile-dropdown onhover-show-div">
-      {profilesMessage.map((data, index) => (
+      {profileMenu.map((data, index) => (
         <LI key={index}>
           <Link to={data.link} onClick={() => handleClick(data.name)}>
             <FeatherIcons iconName={data.icon} />

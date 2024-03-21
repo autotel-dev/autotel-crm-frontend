@@ -13,7 +13,7 @@ import {
   setServersStart,
 } from "../../../ReaduxToolkit/Reducer/ServerDetailsSlice";
 import { setNoDataFound } from "../../../ReaduxToolkit/Reducer/NoDataFoundSlice";
-import { getAll } from "../../../Api";
+import { API_BASE_URL, getAll } from "../../../Api";
 import { useNavigate } from "react-router-dom";
 type propsType = {
   toggle: () => void;
@@ -65,7 +65,7 @@ const ChangePasswordForm = ({ toggle }: propsType) => {
     setLoading(true);
     try {
       const response = await axios.patch(
-        `http://124.29.238.127:8080/api/v1/server-management/change-server-password/${id}`,
+        `${API_BASE_URL}/server-management/change-server-password/${id}`,
         {
           updatedPassword: password,
         },
@@ -75,18 +75,18 @@ const ChangePasswordForm = ({ toggle }: propsType) => {
       );
 
       const result = response.data;
-      console.log("Response data of change password:", response.data);
+      // console.log("Response data of change password:", response.data);
       dispatch(setId(null));
       dispatch(setServersStart());
       getAll({ url: "server-management/get-all-servers" }).then((data: any) => {
-        console.log("api call --- >", data);
+        // console.log("api call --- >", data);
         setLoading(false);
         // ----------------------
         dispatch(setServersEnd());
         if (data !== undefined) {
           dispatch(setNoDataFound(data.message));
           if (data.success) {
-            console.log("hhg");
+            // console.log("hhg");
             dispatch(setServers(data.data.allServers));
             dispatch(setFilterServers(data.data.allServers));
             toggle();

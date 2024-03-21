@@ -24,11 +24,14 @@ import {
   setValue,
   setNoCityFound,
   setInActiveActiveCities,
+  setIsConnected,
 } from "../../ReaduxToolkit/Reducer/CitiesSlice";
 import deleteAlert from "../Alerts/DeleteAlert";
 import "./tableStyle.css";
 import Loader from "../Loader/Loader";
 import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom";
+import NoInternetConnection from "../NoInternetConnection/NoInternetConnection";
 
 const CitiesList = () => {
   const {
@@ -47,15 +50,17 @@ const CitiesList = () => {
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [cityName, setCityName] = useState("");
   const [isActive, setIsActive] = useState(false);
+  const navigate = useNavigate();
+  const [isConneceted, SetIsConneceted] = useState(true);
 
   useEffect(() => {
     dispatch(setCitiesStart());
     // setLoad(true);
     getAll({ url: "city/get-all-cities" }).then((data: any) => {
-      console.log("api call --- >", data);
+      // console.log("api call --- >", data);
       if (data == undefined) {
         Swal.fire({
-          text: "Failed to fetch due to connection refused",
+          text: "No cities Found",
           icon: "error",
           timer: 2000,
           showConfirmButton: false,
@@ -67,36 +72,44 @@ const CitiesList = () => {
         return;
       }
 
-      dispatch(setCitiesEnd());
       if (data !== undefined) {
         dispatch(setNoCityFound(data.message));
+        if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
+          dispatch(setIsConnected(true));
+        }
+        if (!data.success) {
+          Swal.fire({
+            text: `${data.message}`,
+            icon: "error",
+            timer: 2000,
+            showConfirmButton: false,
+          });
+        }
         if (data.success) {
-          console.log("hhg");
+          // console.log("hhg");
           dispatch(setCities(data.data));
           dispatch(setFilterCities(data.data));
         }
-        // else{
-        //   dispatch
-        // }
       }
+      dispatch(setCitiesEnd());
     });
   }, []);
 
   useEffect(() => {
     getAll({ url: "country/get-all-active-countries" }).then((data: any) => {
-      console.log("api call --- >", data);
+      // console.log("api call --- >", data);
       if (data !== undefined) {
         if (data.success) {
-          console.log("hhg");
+          // console.log("hhg");
           dispatch(setCountries(data.data));
         }
       }
     });
     getAll({ url: "province/get-all-active-provinces" }).then((data: any) => {
-      console.log("api call --- >", data);
+      // console.log("api call --- >", data);
       if (data !== undefined) {
         if (data.success) {
-          console.log("hhg");
+          // console.log("hhg");
           dispatch(setProvinces(data.data));
         }
       }
@@ -131,26 +144,26 @@ const CitiesList = () => {
                   //     isActive: !row.isActive,
                   //     company: decodedToken.userId,
                   //   };
-                  //   console.log(operator);
+                  //   // console.log(operator);
                   //   setIsActive(!row.isActive);
                   //   // setRowIndex(index);
-                  //   console.log(e.target.value);
+                  //   // console.log(e.target.value);
                   //   try {
                   //     await update(operator, {
                   //       url: `operator/update-operator/${row._id}`,
                   //     }).then((data: any) => {
                   //       if (data.success) {
-                  //         console.log(data);
+                  //         // console.log(data);
 
                   //         dispatch(setOperatorsStart());
                   //         getAll({
                   //           url: "operator/get-all-operators",
                   //         }).then((data: any) => {
-                  //           console.log("api call --- >", data);
+                  //           // console.log("api call --- >", data);
                   //           dispatch(setOperatorsEnd());
                   //           if (data !== undefined) {
                   //             if (data.success) {
-                  //               console.log("hhg");
+                  //               // console.log("hhg");
                   //               dispatch(setOperators(data.data));
                   //               dispatch(setFilterOperators(data.data));
                   //             }
@@ -161,7 +174,7 @@ const CitiesList = () => {
                   //     // Handle successful post creation (e.g., show a success message, redirect, etc.)
                   //   } catch (error) {
                   //     // Handle error (e.g., show an error message)
-                  //     console.error("Error creating post:", error);
+                  //     // console.error("Error creating post:", error);
                   //   }
                   // }}
                 />
@@ -188,7 +201,7 @@ const CitiesList = () => {
                 border: "none",
               }}
               onClick={() => {
-                console.log("345678");
+                // console.log("345678");
                 var alertData = {
                   title: "Are you sure?",
                   text: "Once deleted, you will not be able to recover this ",
@@ -211,7 +224,7 @@ const CitiesList = () => {
               }}
               onClick={() => {
                 setIsUpdateModalOpen(true);
-                console.log("isUpdateModalOpen: ", isUpdateModalOpen);
+                // console.log("isUpdateModalOpen: ", isUpdateModalOpen);
                 dispatch(setId(row._id));
                 setCityName(row.name);
                 setIsActive(row.isActive);
@@ -235,15 +248,15 @@ const CitiesList = () => {
               <CardBody>
                 <div className="table-responsive product-table">
                   {/* <DataTable
-                    // data={citiesTableData}
-                    data={cities}
-                    columns={citiesTableColumns}
-                    className="display dataTable no-footer"
-                    dense={true}
-                    noHeader
-                    pagination
-                    paginationServer
-                  /> */}
+                     // data={citiesTableData}
+                     data={cities}
+                     columns={citiesTableColumns}
+                     className="display dataTable no-footer"
+                     dense={true}
+                     noHeader
+                     pagination
+                     paginationServer
+                   /> */}
 
                   {loading ? (
                     <Loader />

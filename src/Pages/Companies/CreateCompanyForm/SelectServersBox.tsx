@@ -14,13 +14,13 @@ const SelectServerBox: React.FC<propTypes> = ({ placeholder }) => {
   const { servers, serversAddItemsList, serverCredentials } = useSelector(
     (state: any) => state.companies
   );
-  console.log(servers);
+  // console.log(servers);
   const [serverList, setServerList] = useState([]);
   const dispatch = useDispatch();
 
   const tempList: any = [];
   useEffect(() => {
-    console.log("Servers in useeffect -- >", servers);
+    // console.log("Servers in useeffect -- >", servers);
 
     servers?.map((item: any, index: any) => {
       tempList.push({
@@ -32,12 +32,12 @@ const SelectServerBox: React.FC<propTypes> = ({ placeholder }) => {
       });
     });
     setServerList(tempList);
-  }, []);
+  }, [servers]);
 
   const handleDeselect = (value: any, option: any) => {
     // Dispatch an action to remove the deselected item from the Redux state
-    console.log("value", value);
-    console.log("option", option);
+    // console.log("value", value);
+    // console.log("option", option);
 
     const updatedList = serversAddItemsList.filter(
       (item: any) => item.value !== value
@@ -49,7 +49,7 @@ const SelectServerBox: React.FC<propTypes> = ({ placeholder }) => {
     if (value && value.length > 0) {
       return [...value];
     }
-    console.log(value);
+    // console.log(value);
 
     return value;
   };
@@ -70,8 +70,8 @@ const SelectServerBox: React.FC<propTypes> = ({ placeholder }) => {
       }
       onChange={(e, option) => {
         dispatch(setServersAddItemsList([]));
-        console.log(e);
-        console.log("options", option);
+        // console.log(e);
+        // console.log("options", option);
 
         dispatch(setServersAddItemsList(option));
 
@@ -80,14 +80,14 @@ const SelectServerBox: React.FC<propTypes> = ({ placeholder }) => {
             // Implement your own logic to check if the JSON objects match
             // In this example, we're checking if both id and name match
             if (id === item.server) {
-              console.log("The element found");
+              // console.log("The element found");
             } else {
-              console.log("No match found.");
+              // console.log("No match found.");
             }
           });
         });
 
-        console.log("reduxServerAdItemsList -- >", serversAddItemsList);
+        // console.log("reduxServerAdItemsList -- >", serversAddItemsList);
       }}
       options={serverList}
       onDeselect={handleDeselect}

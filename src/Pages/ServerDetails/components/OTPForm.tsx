@@ -8,6 +8,7 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import {header} from "../../../Api/header";
 import ChangePasswordForm from "./ChangePasswordForm";
+import { API_BASE_URL } from "../../../Api";
 // import OTPInput, { ResendOTP } from "otp-input-react";
 
 type propsType = {
@@ -50,7 +51,7 @@ const OTPForm = ({ toggle }: propsType) => {
   };
 
   const handleChange = (e: any) => {
-    console.log(e);
+    // console.log(e);
     setOtp(e);
   };
 
@@ -64,7 +65,7 @@ const OTPForm = ({ toggle }: propsType) => {
 
       try {
         const response = await axios.post(
-          `http://124.29.238.127:8080/api/v1/server-management/verify-otp`,
+          `${API_BASE_URL}/server-management/verify-otp`,
           otpData,
           {
             headers: header(),
@@ -72,7 +73,7 @@ const OTPForm = ({ toggle }: propsType) => {
         );
         setLoading(false);
         const result = response.data;
-        console.log("Response data:", response.data);
+        // console.log("Response data:", response.data);
         if (result.success) {
           setShowChangePasswordForm(true);
         }
@@ -86,21 +87,21 @@ const OTPForm = ({ toggle }: propsType) => {
           showCancelButton: false,
         });
       }
-      console.log(otpData);
+      // console.log(otpData);
     }
   };
 
   const resendOTPCode = async () => {
     try {
       const response = await fetch(
-        `http://124.29.238.127:8080/api/v1/server-management/send-otp`,
+        `${API_BASE_URL}/server-management/send-otp`,
         {
           method: "POST",
           headers: header(),
         }
       );
       const result = await response.json();
-      console.log("api --- >", result);
+      // console.log("api --- >", result);
       if (result.success) {
         Swal.fire({
           text: `${result.message}`,
@@ -109,7 +110,7 @@ const OTPForm = ({ toggle }: propsType) => {
           showCancelButton: false,
         });
         handleResend();
-        console.log(result);
+        // console.log(result);
       } else {
       }
     } catch (error: any) {

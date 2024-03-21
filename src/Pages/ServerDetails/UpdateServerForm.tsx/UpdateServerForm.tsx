@@ -38,7 +38,7 @@ const UpdateServerForm = () => {
   const { server } = useSelector((state: any) => state.serverDetails);
   // const [server, setServer] = useState(location.state || {});
   // const { server } = location?.state;
-  console.log("server", server);
+  // console.log("server", server);
 
   const [formData, setFormData]: any = useState({
     companyName: server.companyName,
@@ -91,7 +91,7 @@ const UpdateServerForm = () => {
       [field]: value, // Update the specific field
     }));
 
-    console.log("formData-->", formData);
+    // console.log("formData-->", formData);
   };
   const updateNestedValue = (parentField: any, childField: any, value: any) => {
     setFormData((prevFormData: any) => ({
@@ -101,53 +101,69 @@ const UpdateServerForm = () => {
         [childField]: value,
       },
     }));
-    console.log("formData-->", formData);
+    // console.log("formData-->", formData);
   };
 
   const updateServerSubmitted = async (e: any) => {
     e.preventDefault();
     setLoading(true);
-    console.log("updatedFormData", formData);
+    // console.log("updatedFormData", formData);
 
     try {
       await update(formData, {
         url: `server-management/update-server/${server._id}`,
       }).then((data: any) => {
-        console.log("update Server form updated");
+        // console.log("update Server form updated");
 
         setLoading(false);
 
         if (data.success) {
-          console.log(data);
+          // console.log(data);
           setLoading(false);
           dispatch(setServersStart());
           getAll({ url: "server-management/get-all-servers" }).then(
             (data: any) => {
-              console.log("api call --- >", data);
-              if (data == undefined) {
-                Swal.fire({
-                  text: "Failed to fetch due to connection refused",
-                  icon: "error",
-                  timer: 2000,
-                  showConfirmButton: false,
-                });
-                dispatch(setInActiveActiveServers("All"));
-                dispatch(setServers([]));
-                dispatch(setFilterServers([]));
-                dispatch(setServersEnd());
-                return;
-              }
+              // console.log("api call --- >", data);
+              // if (data == undefined) {
+              //   Swal.fire({
+              //     text: "Failed to fetch due to connection refused",
+              //     icon: "error",
+              //     timer: 2000,
+              //     showConfirmButton: false,
+              //   });
+              //   dispatch(setInActiveActiveServers("All"));
+              //   dispatch(setServers([]));
+              //   dispatch(setFilterServers([]));
+              //   dispatch(setServersEnd());
+              //   return;
+              // }
               // ----------------------
-              dispatch(setServersEnd());
+
               if (data !== undefined) {
                 dispatch(setNoDataFound(data.message));
+                if (
+                  !data.success &&
+                  data.message == "ERROR_INTERNET_DISCONNECTED"
+                ) {
+                  setLoading(false);
+                }
+                if (!data.success) {
+                  Swal.fire({
+                    text: `${data.message}`,
+                    icon: "error",
+                    timer: 2000,
+                    showConfirmButton: false,
+                  });
+                  setLoading(false);
+                }
                 if (data.success) {
-                  console.log("hhg");
+                  // console.log("hhg");
                   dispatch(setServers(data.data.allServers));
                   dispatch(setFilterServers(data.data.allServers));
                   navigate(`${process.env.PUBLIC_URL}/setup/server_details`);
                 }
               }
+              dispatch(setServersEnd());
             }
           );
         }
@@ -155,13 +171,8 @@ const UpdateServerForm = () => {
       // Handle successful post creation (e.g., show a success message, redirect, etc.)
     } catch (error: any) {
       // Handle error (e.g., show an error message)
-      console.error("Error creating post:", error);
-      Swal.fire({
-        text: "Failed to update due to connection refused",
-        icon: "error",
-        timer: 2000,
-        showConfirmButton: false,
-      });
+      // console.error("Error creating post:", error);
+
       setLoading(false);
     }
   };

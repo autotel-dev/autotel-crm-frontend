@@ -21,7 +21,7 @@ const CompaniesListNav = () => {
             <NavLink
               className={activeTab === "1" ? "active" : ""}
               onClick={() => {
-                console.log(filterCompanies);
+                // // console.log(filterCompanies);
 
                 dispatch(setActiveTab("1"));
                 filterCompanies.map((item: any, index: any) => {
@@ -39,13 +39,13 @@ const CompaniesListNav = () => {
             <NavLink
               className={activeTab === "3" ? "active" : ""}
               onClick={() => {
-                console.log(filterCompanies);
+                // // console.log(filterCompanies);
 
                 dispatch(setActiveTab("3"));
                 filterCompanies.map((item: any, index: any) => {
                   if (!item.isActive) {
                     tempList.push(item);
-                    console.log("isNotActive -- >", 1);
+                    // // console.log("isNotActive -- >", 1);
                   }
                 });
                 dispatch(setCompanies(tempList));
@@ -59,13 +59,13 @@ const CompaniesListNav = () => {
             <NavLink
               className={activeTab === "2" ? "active" : ""}
               onClick={() => {
-                console.log(filterCompanies);
+                // // console.log(filterCompanies);
 
                 dispatch(setActiveTab("2"));
                 filterCompanies.map((item: any) => {
                   if (item.isActive) {
                     tempList.push(item);
-                    console.log("isNotActive -- >", 1);
+                    // // console.log("isNotActive -- >", 1);
                   }
                 });
                 dispatch(setCompanies(tempList));

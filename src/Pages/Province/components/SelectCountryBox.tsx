@@ -10,7 +10,7 @@ const SelectCountryBox: React.FC<propTypes> = ({ placeholder }) => {
   const { countries, countryName } = useSelector(
     (state: any) => state.provinces
   );
-  console.log(countries);
+  // console.log(countries);
   const [countryList, setCountryList] = useState([]);
   const dispatch = useDispatch();
 
@@ -37,7 +37,7 @@ const SelectCountryBox: React.FC<propTypes> = ({ placeholder }) => {
           .localeCompare((optionB?.label ?? "").toLowerCase())
       }
       onChange={(e) => {
-        console.log(e);
+        // console.log(e);
         dispatch(setCountryId(e));
       }}
       options={countryList}

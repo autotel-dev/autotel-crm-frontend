@@ -64,7 +64,7 @@ const SuccessfullyFormSubmitted = ({
     imageBackground,
     companyLogo,
   } = useSelector((state: any) => state.companies);
-  console.log("createCompany", createCompany);
+  // console.log("createCompany", createCompany);
 
   // const [formData, setFormData] = useState({});
   const dispatch = useDispatch();
@@ -77,13 +77,13 @@ const SuccessfullyFormSubmitted = ({
   };
 
   useEffect(() => {
-    console.log("CNICFront:", cnicFront);
-    console.log("CNICBack:", cnicBack);
+    // console.log("CNICFront:", cnicFront);
+    // console.log("CNICBack:", cnicBack);
   });
 
   function checkFileTypeByExtension(fileName: any, file: any) {
-    console.log("filename", fileName);
-    console.log("file", file);
+    // console.log("filename", fileName);
+    // console.log("file", file);
 
     const imageExtensions = ["jpg", "jpeg", "png", "gif"];
     const pdfExtension = "pdf";
@@ -114,7 +114,7 @@ const SuccessfullyFormSubmitted = ({
   };
 
   const onDocumentLoadError = (error: any) => {
-    console.error("Error while loading the document:", error);
+    // console.error("Error while loading the document:", error);
   };
 
   const handleSubmit = async (e: any) => {
@@ -169,10 +169,10 @@ const SuccessfullyFormSubmitted = ({
       "packageExpirationDate",
       createCompany.packageExpirationDate
     );
-    console.log("createCompany--- >", createCompany);
+    // console.log("createCompany--- >", createCompany);
 
     for (const [key, value] of formData.entries()) {
-      console.log(`Key: ${key}, Value: ${value}`);
+      // console.log(`Key: ${key}, Value: ${value}`);
     }
 
     try {
@@ -180,14 +180,25 @@ const SuccessfullyFormSubmitted = ({
       await createCom(formData, {
         url: "super-admin/create-company",
       }).then((data: any) => {
-        setLoading(false);
+        if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
+          setLoading(false);
+        }
+        if (!data.success) {
+          Swal.fire({
+            text: `${data.message}`,
+            icon: "error",
+            timer: 2000,
+            showConfirmButton: false,
+          });
+          setLoading(false);
+        }
 
         if (data.success) {
-          console.log(data);
+          // console.log(data);
           setLoading(false);
           dispatch(setCompaniesStart());
           getAll({ url: "super-admin/get-all-companies" }).then((data: any) => {
-            console.log("api call --- >", data);
+            // console.log("api call --- >", data);
             if (data == undefined) {
               Swal.fire({
                 text: "Failed to fetch due to connection refused",
@@ -216,45 +227,20 @@ const SuccessfullyFormSubmitted = ({
             if (data !== undefined) {
               dispatch(setNoDataFound(data.message));
               if (data.success) {
-                console.log("hhg");
+                // console.log("hhg");
                 dispatch(setCompanies(data.data));
                 dispatch(setFilterCompanies(data.data));
-                navigate(`${process.env.PUBLIC_URL}/companies`);
+                navigate(`${process.env.PUBLIC_URL}/super-admin/companies`);
               }
             }
           });
         }
       });
     } catch (error: any) {
-      console.error("Error creating post:", error);
-
-      Swal.fire({
-        text: "Failed to create due to connection refused",
-        icon: "error",
-        timer: 2000,
-        showConfirmButton: false,
-      });
+      // console.error("Error creating post:", error);
 
       setLoading(false);
     }
-
-    // try {
-    //   const response = await axios.post(
-    //     "http://124.29.238.127:8080/api/v1/super-admin/create-company",
-    //     formData,
-    //     {
-    //       headers: {
-    //         "Content-Type": "multipart/form-data",
-    //         Authorization:
-    //           "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NWIwZjkzNTAyZTA0MGE4NzY5ZGZhYzIiLCJyb2xlIjoiU1VQRVJfQURNSU4iLCJpYXQiOjE3MDYxOTI1ODQsImV4cCI6MTcwNjc5NzM4NH0.ObY5QD3vXVnlV392bO6HnhK9o8OeVqkWwVREJSfE6e8",
-    //       },
-    //     }
-    //   );
-    //   console.log(response.data);
-    //   navigate(`${process.env.PUBLIC_URL}/companies`);
-    // } catch (error) {
-    //   console.error("Error uploading file:", error);
-    // }
   };
 
   return (
@@ -1053,7 +1039,7 @@ const SuccessfullyFormSubmitted = ({
           xs={12}
           className="text-end d-flex justify-content-end gap-2 align-center"
         >
-          <Button color="primary">Print</Button>
+          {/* <Button color="primary">Print</Button> */}
           <Button
             disabled={loading ? true : false}
             color="primary"

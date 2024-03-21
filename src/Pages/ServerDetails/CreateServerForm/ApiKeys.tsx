@@ -25,8 +25,8 @@ const ApiKeys = ({ callbackActive }: BusinessFormCommonProps) => {
   const handleNextButton = () => {
     if (googleMapApiKey !== "") {
       dispatch(setApiKeys(googleMapApiKey));
-      console.log("googleMapApiKey -->", googleMapApiKey);
-      console.log("apiKeys --- >", apiKeys);
+      // console.log("googleMapApiKey -->", googleMapApiKey);
+      // console.log("apiKeys --- >", apiKeys);
       dispatch(
         setCreateServer({
           ...createServer,

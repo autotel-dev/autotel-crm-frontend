@@ -1,7 +1,7 @@
 import { PlusCircle } from "react-feather";
 import { Col } from "reactstrap";
 import { createNewCity } from "../../utils/Constant";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Fragment, useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Button, FormGroup, Label, Modal, ModalBody, Row } from "reactstrap";
@@ -47,6 +47,7 @@ const CreateNewCity = () => {
       dispatch(setProvinceId(null));
     }
   };
+  const navigate = useNavigate();
 
   const addCity: SubmitHandler<CitiesType> = async (data) => {
     setLoading(true);
@@ -56,59 +57,81 @@ const CreateNewCity = () => {
         provinceId: provinceId,
         countryId: countryId,
       };
-      console.log(city);
+      // console.log(city);
       try {
         await create(city, { url: "city/create-city" }).then((data: any) => {
-          setLoading(false);
-          setAddModal(false);
-          if (data.success) {
-            console.log(data);
-            dispatch(setProvinceId(null));
-            dispatch(setCountryId(null));
-            setLoading(false);
-            setAddModal(false);
-            reset({
-              name: "",
-            });
-            dispatch(setCountryId(null));
-            dispatch(setProvinceId(null));
-            dispatch(setCitiesStart());
-            getAll({ url: "city/get-all-cities" }).then((data: any) => {
-              console.log("api call --- >", data);
-              if (data == undefined) {
-                Swal.fire({
-                  text: "Failed to fetch due to connection refused",
-                  icon: "error",
-                  timer: 2000,
-                  showConfirmButton: false,
-                });
-                dispatch(setInActiveActiveCities("All"));
-                dispatch(setCities([]));
-                dispatch(setFilterCities([]));
-                dispatch(setCitiesEnd());
-                return;
-              }
-              dispatch(setCitiesEnd());
-              if (data !== undefined) {
-                if (data.success) {
-                  console.log("hhg");
-                  dispatch(setCities(data.data));
-                  dispatch(setFilterCities(data.data));
+          if (data !== undefined) {
+            if (
+              !data.success &&
+              data.message == "ERROR_INTERNET_DISCONNECTED"
+            ) {
+              setLoading(false);
+              setAddModal(false);
+              reset({
+                name: "",
+              });
+              dispatch(setCountryId(null));
+              dispatch(setProvinceId(null));
+            }
+            if (!data.success) {
+              Swal.fire({
+                text: `${data.message}`,
+                icon: "error",
+                timer: 2000,
+                showConfirmButton: false,
+              });
+              setLoading(false);
+              setAddModal(false);
+              reset({
+                name: "",
+              });
+              dispatch(setCountryId(null));
+              dispatch(setProvinceId(null));
+            }
+            if (data.success) {
+              // console.log(data);
+              dispatch(setProvinceId(null));
+              dispatch(setCountryId(null));
+              setLoading(false);
+              setAddModal(false);
+              reset({
+                name: "",
+              });
+              dispatch(setCountryId(null));
+              dispatch(setProvinceId(null));
+              dispatch(setCitiesStart());
+              getAll({ url: "city/get-all-cities" }).then((data: any) => {
+                // console.log("api call --- >", data);
+                if (data == undefined) {
+                  Swal.fire({
+                    text: "Failed to fetch due to connection refused",
+                    icon: "error",
+                    timer: 2000,
+                    showConfirmButton: false,
+                  });
+                  dispatch(setInActiveActiveCities("All"));
+                  dispatch(setCities([]));
+                  dispatch(setFilterCities([]));
+                  dispatch(setCitiesEnd());
+                  return;
                 }
-              }
-            });
+                dispatch(setCitiesEnd());
+                if (data !== undefined) {
+                  if (data.success) {
+                    // console.log("hhg");
+                    dispatch(setCities(data.data));
+                    dispatch(setFilterCities(data.data));
+                  }
+                }
+              });
+            }
           }
         });
         // Handle successful post creation (e.g., show a success message, redirect, etc.)
       } catch (error: any) {
         // Handle error (e.g., show an error message)
-        console.error("Error creating post:", error);
-        Swal.fire({
-          text: "Failed to update due to connection refused",
-          icon: "error",
-          timer: 2000,
-          showConfirmButton: false,
-        });
+        // console.error("Error creating post:", error);
+
         setLoading(false);
         setAddModal(false);
         reset({

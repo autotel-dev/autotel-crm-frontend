@@ -9,6 +9,7 @@ const initialState = {
   loading: false,
   error: null,
   expandedDevice: null,
+  isConnected: true,
 };
 
 const MonitoringSlice = createSlice({
@@ -50,6 +51,9 @@ const MonitoringSlice = createSlice({
     setNoDevicesFound: (state, action) => {
       state.noDevicesFound = action.payload;
     },
+    setIsConnected: (state, action) => {
+      state.isConnected = action.payload;
+    },
   },
 });
 export const {
@@ -61,6 +65,7 @@ export const {
   setSelecetdDevices,
   setDevicesStatuses,
   setExpandedDevice,
+  setIsConnected
 } = MonitoringSlice.actions;
 
 export default MonitoringSlice.reducer;

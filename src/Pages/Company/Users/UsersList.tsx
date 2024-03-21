@@ -9,6 +9,7 @@ import deleteAlert from "../../Alerts/DeleteAlert";
 import {
   setFilterOperators,
   setInActiveActiveUsers,
+  setIsConnected,
   setOperators,
   setOperatorsEnd,
   setOperatorsStart,
@@ -17,59 +18,85 @@ import { setNoDataFound } from "../../../ReaduxToolkit/Reducer/NoDataFoundSlice"
 import Loader from "../../Loader/Loader";
 import UpdateUser from "./UpdateUser";
 import { jwtDecode } from "jwt-decode";
-import { formatUnderscoredString } from "../../../Api/globals";
+import { formatUnderscoredString, getUserRole } from "../../../Api/globals";
 import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom";
 
 const UsersList = () => {
   const { operators, loading, activeInActiveOperators } = useSelector(
     (state: any) => state.operators
   );
+  const { userPermissions } = useSelector(
+    (state: any) => state.userPermissions
+  );
+  var user = userPermissions.find((item: any) => item.title === "User");
+  // console.log("user", user);
+
+  // console.log("userPermissions:", userPermissions);
+  // console.log("getUserRole()", getUserRole());
   const { noDataFound } = useSelector((state: any) => state.noDataFound);
   const dispatch = useDispatch();
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [id, setId] = useState("");
   const [name, setName] = useState("");
   const [isActive, setIsActive] = useState(false);
-  // const [rowIndex, setRowIndex] = useState(0);
   const [emailAdress, setEmailAddress] = useState("");
   const [phoneNo, setPhoneNo] = useState(false);
+  const [allowedModules, setAllowedModules] = useState(false);
+  const [subRole, setSubRole] = useState(false);
+  const navigate = useNavigate();
+
   // -----------------------------------
   const [decodedToken, setDecodedToken]: any = useState(null);
   const authToken = localStorage.getItem("token");
   useEffect(() => {
     if (authToken !== null) {
       const decodedToken = jwtDecode(authToken);
-      console.log(decodedToken);
+      // console.log(decodedToken);
       setDecodedToken(decodedToken);
     }
   }, []);
 
   useEffect(() => {
+    dispatch(setOperators([]));
+    dispatch(setFilterOperators([]));
     dispatch(setOperatorsStart());
     getAll({ url: "operator/get-all-operators" }).then((data: any) => {
-      console.log("api call --- >", data);
-      if (data == undefined) {
-        Swal.fire({
-          text: "Failed to fetch due to connection refused",
-          icon: "error",
-          timer: 2000,
-          showConfirmButton: false,
-        });
-        dispatch(setInActiveActiveUsers("All"));
-        dispatch(setOperators([]));
-        dispatch(setFilterOperators([]));
-        dispatch(setOperatorsEnd());
-        return;
-      }
-      dispatch(setOperatorsEnd());
+      // console.log("api call --- >", data);
+      // if (data == undefined) {
+      //   Swal.fire({
+      //     text: "Failed to fetch due to connection refused",
+      //     icon: "error",
+      //     timer: 2000,
+      //     showConfirmButton: false,
+      //   });
+      //   dispatch(setInActiveActiveUsers("All"));
+      //   dispatch(setOperators([]));
+      //   dispatch(setFilterOperators([]));
+      //   dispatch(setOperatorsEnd());
+      //   return;
+      // }
+
       if (data !== undefined) {
         dispatch(setNoDataFound(data.message));
+        if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
+          dispatch(setIsConnected(true));
+        }
+        if (!data.success) {
+          Swal.fire({
+            text: `${data.message}`,
+            icon: "error",
+            timer: 2000,
+            showConfirmButton: false,
+          });
+        }
         if (data.success) {
-          console.log("hhg");
+          // console.log("hhg");
           dispatch(setOperators(data.data));
           dispatch(setFilterOperators(data.data));
         }
       }
+      dispatch(setOperatorsEnd());
     });
   }, []);
 
@@ -90,6 +117,7 @@ const UsersList = () => {
               <Label className="switch mb-0">
                 <Input
                   type="checkbox"
+                  disabled={!user?.edit}
                   defaultChecked={row.isActive}
                   value={row.isActive}
                   checked={row.isActive}
@@ -103,26 +131,26 @@ const UsersList = () => {
                       isActive: !row.isActive,
                       company: decodedToken.userId,
                     };
-                    console.log(operator);
+                    // console.log(operator);
                     setIsActive(!row.isActive);
                     // setRowIndex(index);
-                    console.log(e.target.value);
+                    // console.log(e.target.value);
                     try {
                       await update(operator, {
                         url: `operator/update-operator/${row._id}`,
                       }).then((data: any) => {
                         if (data.success) {
-                          console.log(data);
+                          // console.log(data);
 
                           dispatch(setOperatorsStart());
                           getAll({
                             url: "operator/get-all-operators",
                           }).then((data: any) => {
-                            console.log("api call --- >", data);
+                            // console.log("api call --- >", data);
                             dispatch(setOperatorsEnd());
                             if (data !== undefined) {
                               if (data.success) {
-                                console.log("hhg");
+                                // console.log("hhg");
                                 dispatch(setOperators(data.data));
                                 dispatch(setFilterOperators(data.data));
                               }
@@ -133,7 +161,7 @@ const UsersList = () => {
                       // Handle successful post creation (e.g., show a success message, redirect, etc.)
                     } catch (error) {
                       // Handle error (e.g., show an error message)
-                      console.error("Error creating post:", error);
+                      // console.error("Error creating post:", error);
                     }
                   }}
                 />
@@ -146,55 +174,63 @@ const UsersList = () => {
             </div>
           </div>
         </td>
-        <td>
-          <div>
-            <button
-              style={{
-                width: 60,
-                fontSize: 14,
-                padding: 3,
-                color: "white",
-                backgroundColor: "red",
-                borderRadius: "5px",
-                marginRight: "5px",
-                border: "none",
-              }}
-              onClick={() => {
-                console.log("345678");
-                var alertData = {
-                  title: "Are you sure?",
-                  text: "Once deleted, you will not be able to recover this ",
-                };
-                const type = "usersType";
-                deleteAlert(alertData, row._id, type, dispatch);
-              }}
-            >
-              Delete
-            </button>
-            <button
-              style={{
-                width: 60,
-                fontSize: 14,
-                padding: 3,
-                color: "white",
-                backgroundColor: "green",
-                borderRadius: "5px",
-                border: "none",
-              }}
-              onClick={() => {
-                setIsUpdateModalOpen(true);
-                console.log("isUpdateModalOpen: ", isUpdateModalOpen);
-                setId(row._id);
-                setName(row.fullName);
-                setEmailAddress(row.emailAddress);
-                setPhoneNo(row.phoneNo);
-                setIsActive(row.isActive);
-              }}
-            >
-              Edit
-            </button>
-          </div>
-        </td>
+        {(user?.edit || user?.delete) && (
+          <td>
+            <div>
+              {user?.delete && (
+                <button
+                  style={{
+                    width: 60,
+                    fontSize: 14,
+                    padding: 3,
+                    color: "white",
+                    backgroundColor: "red",
+                    borderRadius: "5px",
+                    marginRight: "5px",
+                    border: "none",
+                  }}
+                  onClick={() => {
+                    // console.log("345678");
+                    var alertData = {
+                      title: "Are you sure?",
+                      text: "Once deleted, you will not be able to recover this ",
+                    };
+                    const type = "usersType";
+                    deleteAlert(alertData, row._id, type, dispatch);
+                  }}
+                >
+                  Delete
+                </button>
+              )}
+              {user?.edit && (
+                <button
+                  style={{
+                    width: 60,
+                    fontSize: 14,
+                    padding: 3,
+                    color: "white",
+                    backgroundColor: "green",
+                    borderRadius: "5px",
+                    border: "none",
+                  }}
+                  onClick={() => {
+                    setIsUpdateModalOpen(true);
+                    // console.log("isUpdateModalOpen: ", isUpdateModalOpen);
+                    setId(row._id);
+                    setName(row.fullName);
+                    setEmailAddress(row.emailAddress);
+                    setPhoneNo(row.phoneNo);
+                    setIsActive(row.isActive);
+                    setAllowedModules(row.allowedModules);
+                    setSubRole(row.subRole);
+                  }}
+                >
+                  Edit
+                </button>
+              )}
+            </div>
+          </td>
+        )}
       </tr>
     ));
   };
@@ -219,7 +255,7 @@ const UsersList = () => {
                           <th style={{ width: "10%" }}>Role</th>
                           <th style={{ width: "15%" }}>Email Address</th>
                           <th style={{ width: "10%" }}>Account Status</th>
-                          <th>Actions</th>
+                          {(user?.edit || user?.delete) && <th>Actions</th>}
                         </tr>
                       </thead>
                       <tbody>{renderTableRows()}</tbody>
@@ -250,6 +286,9 @@ const UsersList = () => {
                 phoneNo={phoneNo}
                 isActive={isActive}
                 setIsActive={setIsActive}
+                allowedModules={allowedModules}
+                setAllowedModules={setAllowedModules}
+                subRole={subRole}
               />
             </CardBody>
           </Card>

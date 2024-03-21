@@ -13,7 +13,7 @@ import { Cancel } from "../../utils/Constant";
 import { H3 } from "../../AbstractElements";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getAll, update } from "../../Api";
+import { API_BASE_URL, getAll, update } from "../../Api";
 
 import { setNoDataFound } from "../../ReaduxToolkit/Reducer/NoDataFoundSlice";
 import { ProvinceType } from "../Province/ProvinceTypes/ProvinceTypes";
@@ -72,10 +72,10 @@ const ExtendPackage: React.FC<PropsTypes> = ({
       setIsVisible(!isVisible);
     }
   };
-  console.log(companyId);
-  console.log(packageId);
+  // console.log(companyId);
+  // console.log(packageId);
   // dispatch(setValue(value));
-  console.log("is: ", isVisible);
+  // console.log("is: ", isVisible);
 
   const updateExtendedDays: SubmitHandler<ProvinceType> = async (data) => {
     setLoading(true);
@@ -89,11 +89,11 @@ const ExtendPackage: React.FC<PropsTypes> = ({
     //   };
     // }
 
-    console.log("extendedDays -- >", extendedDays);
+    // console.log("extendedDays -- >", extendedDays);
 
     try {
       const response = await axios.patch(
-        `http://124.29.238.127:8080/api/v1/super-admin/extend-company-package/${companyId}`,
+        `${API_BASE_URL}/super-admin/extend-company-package/${companyId}`,
         extendedDays,
         {
           headers: header(),
@@ -101,21 +101,21 @@ const ExtendPackage: React.FC<PropsTypes> = ({
       );
 
       const result = response.data;
-      console.log("Response data of change password:", response.data);
+      // console.log("Response data of change password:", response.data);
       if (result.success) {
-        console.log("extended Days api", result);
+        // console.log("extended Days api", result);
         setLoading(false);
         setIsVisible(!isVisible);
 
         // dispatch(setValue(""));
         dispatch(setCompaniesStart());
         getAll({ url: "super-admin/get-all-companies" }).then((data: any) => {
-          console.log("api call --- >", data);
+          // console.log("api call --- >", data);
           dispatch(setCompaniesEnd());
           if (data !== undefined) {
             dispatch(setNoDataFound(data.message));
             if (data.success) {
-              console.log("hhg");
+              // console.log("hhg");
               dispatch(setCompanies(data.data));
               dispatch(setFilterCompanies(data.data));
             }
@@ -149,7 +149,7 @@ const ExtendPackage: React.FC<PropsTypes> = ({
       onClosed={() => {
         // setValue("")
         setIsVisible(false);
-        // console.log(value);
+        // // console.log(value);
       }}
     >
       <div className="modal-header">
@@ -160,7 +160,7 @@ const ExtendPackage: React.FC<PropsTypes> = ({
           onClick={() => {
             // setValue("")
             setIsVisible(!isVisible);
-            // console.log(value);
+            // // console.log(value);
           }}
         ></Button>
       </div>

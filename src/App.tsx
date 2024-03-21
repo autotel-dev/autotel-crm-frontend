@@ -1,4 +1,4 @@
-import { Provider, useDispatch } from "react-redux";
+import { Provider, useDispatch, useSelector } from "react-redux";
 import Routers from "./Routes";
 import Store from "./ReaduxToolkit/Store";
 import { ToastContainer } from "react-toastify";
@@ -8,12 +8,17 @@ import { getAll } from "./Api";
 import { setUserPersonalizationData } from "./ReaduxToolkit/Reducer/PersonalizationSlice";
 import { setActiveCRMModules } from "./ReaduxToolkit/Reducer/CRMModuleSlice";
 import { getUserRole } from "./Api/globals";
+import { setPermissions } from "./ReaduxToolkit/Reducer/CompanySlice";
+import { setUserPermissions } from "./ReaduxToolkit/Reducer/PermissionSlice";
 const App = () => {
+  const { userPermissions } = useSelector(
+    (state: any) => state.userPermissions
+  );
   const dispatch = useDispatch();
   useEffect(() => {
     const userId = localStorage.getItem("userId");
     const token = localStorage.getItem("token");
-    console.log(userId);
+    // console.log(userId);
     if (token !== null) {
       getAll({
         url:
@@ -24,8 +29,8 @@ const App = () => {
         // url: "super-admin/get-personalization",
       })
         .then((parentData: any) => {
-          console.log("api call --- >", parentData);
-          console.log("undefined");
+          // console.log("api call --- >", parentData);
+          // console.log("undefined");
           if (parentData == undefined) {
             Swal.fire({
               text: "Failed to Fetch the personalization",
@@ -47,28 +52,52 @@ const App = () => {
           }
         })
         .catch((error) => {
-          console.log("error== >", error);
+          // console.log("error== >", error);
         });
 
       getAll({
         url:
-          getUserRole() == "COMPANY"
-            ? "company/get-allowed-modules"
+          getUserRole() == "COMPANY" || getUserRole() == "OPERATOR"
+            ? "user/get-allowed-modules"
             : "crm-module/get-all-active-modules",
       }).then((data: any) => {
-        console.log("active Modules --- >", data);
+        // console.log("active Modules --- >", data);
 
         if (data !== undefined) {
           if (data.success) {
-            console.log("hhg");
+            // console.log("hhg");
 
-            console.log(userId);
+            // console.log(userId);
             dispatch(setActiveCRMModules(data.data));
           }
         }
       });
+
+      if (getUserRole() == "COMPANY" || getUserRole() == "OPERATOR") {
+        getAll({ url: "user/get-permissions" }).then((data: any) => {
+          // console.log("api call --- >", data);
+          if (data !== undefined) {
+            if (data.success) {
+              // console.log("hhg");
+              dispatch(setUserPermissions(data.data.allowedPermissions));
+            }
+          }
+        });
+      }
+      if (getUserRole() == "SUPER_ADMIN") {
+        getAll({ url: "permissions/get-all-permissions" }).then((data: any) => {
+          // console.log("api call --- >", data);
+          if (data !== undefined) {
+            if (data.success) {
+              // console.log("hhg");
+              dispatch(setPermissions(data.data));
+            }
+          }
+        });
+      }
     }
   }, []);
+
   return (
     <>
       <Provider store={Store}>

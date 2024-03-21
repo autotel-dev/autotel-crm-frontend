@@ -25,7 +25,7 @@ const CitiesListNav = () => {
             <NavLink
               className={activeTab === "1" ? "active" : ""}
               onClick={() => {
-                console.log(filterCities);
+                // console.log(filterCities);
 
                 dispatch(setActiveTab("1"));
                 filterCities.map((item: any, index: any) => {
@@ -44,13 +44,13 @@ const CitiesListNav = () => {
             <NavLink
               className={activeTab === "3" ? "active" : ""}
               onClick={() => {
-                console.log(filterCities);
+                // console.log(filterCities);
 
                 dispatch(setActiveTab("3"));
                 filterCities.map((item: any, index: any) => {
                   if (!item.isActive) {
                     tempList.push(item);
-                    console.log("isNotActive -- >", 1);
+                    // console.log("isNotActive -- >", 1);
                   }
                 });
                 dispatch(setInActiveActiveCities("No Inactive Cities Found"));
@@ -65,13 +65,13 @@ const CitiesListNav = () => {
             <NavLink
               className={activeTab === "2" ? "active" : ""}
               onClick={() => {
-                console.log(filterCities);
+                // console.log(filterCities);
 
                 dispatch(setActiveTab("2"));
                 filterCities.map((item: any, index: any) => {
                   if (item.isActive) {
                     tempList.push(item);
-                    console.log("isActive -- >", 1);
+                    // console.log("isActive -- >", 1);
                   }
                 });
                 dispatch(setInActiveActiveCities("No Active Cities Found"));

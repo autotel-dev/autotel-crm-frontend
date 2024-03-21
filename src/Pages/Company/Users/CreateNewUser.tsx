@@ -1,8 +1,15 @@
 import { PlusCircle } from "react-feather";
-import { Col } from "reactstrap";
 import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { Button, FormGroup, Label, Modal, ModalBody, Row } from "reactstrap";
+import {
+  Button,
+  FormGroup,
+  Label,
+  Modal,
+  ModalBody,
+  Row,
+  Col,
+} from "reactstrap";
 import { CheckCircle } from "react-feather";
 import { useDispatch, useSelector } from "react-redux";
 import { H3 } from "../../../AbstractElements";
@@ -20,18 +27,20 @@ import { Select } from "antd";
 import Swal from "sweetalert2";
 
 const CreateNewUser = () => {
+  const { crmActiveModules } = useSelector((state: any) => state.crmModules);
   const [decodedToken, setDecodedToken]: any = useState(null);
   const authToken = localStorage.getItem("token");
   useEffect(() => {
     if (authToken !== null) {
       const decodedToken = jwtDecode(authToken);
-      console.log(decodedToken);
+      // console.log(decodedToken);
       setDecodedToken(decodedToken);
     }
   }, []);
   const dispatch = useDispatch();
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [allowedModules, setAllowedModules]: any = useState([]);
   const {
     register,
     handleSubmit,
@@ -50,6 +59,7 @@ const CreateNewUser = () => {
         company: "",
       });
       setRole("");
+      setAllowedModules([]);
     }
   };
 
@@ -64,15 +74,45 @@ const CreateNewUser = () => {
         isActive: true,
         company: decodedToken.userId,
         subRole: role,
+        allowedModules: allowedModules,
       };
-      console.log(operator);
+      // console.log(operator);
       try {
         await create(operator, { url: "operator/create-operator" }).then(
           (data: any) => {
-            setLoading(false);
-            setAddModal(false);
+            if (
+              !data.success &&
+              data.message == "ERROR_INTERNET_DISCONNECTED"
+            ) {
+              setLoading(false);
+              setAddModal(false);
+              reset({
+                name: "",
+                emailAddress: "",
+                password: "",
+                phoneNo: "",
+              });
+              setRole("");
+            }
+            if (!data.success) {
+              Swal.fire({
+                text: `${data.message}`,
+                icon: "error",
+                timer: 2000,
+                showConfirmButton: false,
+              });
+              setLoading(false);
+              setAddModal(false);
+              reset({
+                name: "",
+                emailAddress: "",
+                password: "",
+                phoneNo: "",
+              });
+              setRole("");
+            }
             if (data.success) {
-              console.log(data);
+              // console.log(data);
               setLoading(false);
               setAddModal(false);
               reset({
@@ -85,7 +125,7 @@ const CreateNewUser = () => {
               dispatch(setOperatorsStart());
               getAll({ url: "operator/get-all-operators" }).then(
                 (data: any) => {
-                  console.log("api call --- >", data);
+                  // console.log("api call --- >", data);
                   if (data == undefined) {
                     Swal.fire({
                       text: "Failed to fetch due to connection refused",
@@ -102,7 +142,7 @@ const CreateNewUser = () => {
                   dispatch(setOperatorsEnd());
                   if (data !== undefined) {
                     if (data.success) {
-                      console.log("hhg");
+                      // console.log("hhg");
                       dispatch(setOperators(data.data));
                       dispatch(setFilterOperators(data.data));
                     }
@@ -115,17 +155,8 @@ const CreateNewUser = () => {
         // Handle successful post creation (e.g., show a success message, redirect, etc.)
       } catch (error: any) {
         // Handle error (e.g., show an error message)
-        console.error("Error creating post:", error);
-        if (data == undefined) {
-          Swal.fire({
-            text: "Failed to create due to connection refused",
-            icon: "error",
-            timer: 2000,
-            showConfirmButton: false,
-          });
+        // console.error("Error creating post:", error);
 
-          return;
-        }
         setLoading(false);
         setAddModal(false);
         reset({
@@ -142,7 +173,7 @@ const CreateNewUser = () => {
   const { roles } = useSelector((state: any) => state.roles);
   const [rolesList, setRolesList] = useState([]);
   const [role, setRole] = useState("");
-  console.log("Roles", roles);
+  // console.log("Roles", roles);
 
   const tempRolesList: any = [];
   useEffect(() => {
@@ -153,7 +184,21 @@ const CreateNewUser = () => {
       });
     });
     setRolesList(tempRolesList);
-  }, []);
+  }, [roles]);
+
+  const handleModuleClick = (moduleId: any) => {
+    const index = allowedModules.findIndex(
+      (module: any) => module === moduleId
+    );
+    if (index === -1) {
+      setAllowedModules([...allowedModules, moduleId]);
+    } else {
+      const updatedItems = allowedModules.filter(
+        (module: any) => module !== moduleId
+      );
+      setAllowedModules(updatedItems);
+    }
+  };
 
   return (
     <Col md={6}>
@@ -244,14 +289,14 @@ const CreateNewUser = () => {
                         .localeCompare((optionB?.label ?? "").toLowerCase())
                     }
                     onChange={(e: any) => {
-                      console.log(e);
+                      // console.log(e);
                       setRole(e);
                     }}
                     options={rolesList}
                   />
                 </FormGroup>
 
-                <Label>Given Permissions</Label>
+                {role !== "" && <Label>Given Permissions</Label>}
                 <FormGroup
                   className="col-md-12 create-group"
                   style={{
@@ -301,7 +346,7 @@ const CreateNewUser = () => {
                                       style={{
                                         display: "inline-block",
                                         position: "relative",
-                                        cursor: "pointer",
+                                        cursor: "not-allowed",
                                         marginRight: "25px",
                                         fontSize: "18px",
                                       }}
@@ -328,7 +373,7 @@ const CreateNewUser = () => {
                                       style={{
                                         display: "inline-block",
                                         position: "relative",
-                                        cursor: "pointer",
+                                        cursor: "not-allowed",
                                         marginRight: "25px",
                                         fontSize: "18px",
                                       }}
@@ -355,7 +400,7 @@ const CreateNewUser = () => {
                                       style={{
                                         display: "inline-block",
                                         position: "relative",
-                                        cursor: "pointer",
+                                        cursor: "not-allowed",
                                         marginRight: "25px",
                                         fontSize: "18px",
                                       }}
@@ -382,7 +427,7 @@ const CreateNewUser = () => {
                                       style={{
                                         display: "inline-block",
                                         position: "relative",
-                                        cursor: "pointer",
+                                        cursor: "not-allowed",
                                         marginRight: "25px",
                                         fontSize: "18px",
                                       }}
@@ -414,6 +459,81 @@ const CreateNewUser = () => {
                         }
                       )
                     )}
+                </FormGroup>
+                <Label>Allowed Modules</Label>
+                <FormGroup
+                  className="col-md-12 create-group"
+                  style={{
+                    overflowY: "auto",
+                    maxHeight: "25vh", // Subtract scrollbar width from max height
+                    WebkitOverflowScrolling: "touch", // Enable momentum scrolling on iOS
+                    scrollbarWidth: "thin", // Specify scrollbar width
+                    WebkitBorderRadius: "5px !important", // For WebKit browsers (Chrome, Safari)
+                    MozBorderRadius: "5px !important", // For Mozilla Firefox
+                    borderRadius: "5px !important", // For other browsers
+                    scrollbarColor: "lightgray transparent", // Specify scrollbar color
+                  }}
+                >
+                  <Row>
+                    {crmActiveModules.map((module: any, index: any) => {
+                      return (
+                        <div key={index}>
+                          <Row>
+                            <Col
+                              key={index}
+                              xl={7}
+                              lg={7}
+                              md={9}
+                              sm={12}
+                              xs={12}
+                              // xs={12}
+                              style={{
+                                display: "flex",
+                                justifyContent: "space-between",
+                                alignItems: "center",
+                              }}
+                            >
+                              <span
+                                style={{ fontSize: "17px", margin: "15px 0px" }}
+                              >
+                                {module.name}
+                              </span>
+                              <div>
+                                <label
+                                  style={{
+                                    display: "inline-block",
+                                    position: "relative",
+                                    cursor: "pointer",
+                                    marginRight: "25px",
+                                    fontSize: "18px",
+                                  }}
+                                  onClick={(e) => e.stopPropagation()}
+                                >
+                                  <input
+                                    type="checkbox"
+                                    name="key"
+                                    value="value"
+                                    checked={allowedModules.some(
+                                      (selectedModule: any) =>
+                                        selectedModule === module._id
+                                    )}
+                                    onChange={() => {
+                                      handleModuleClick(module._id);
+                                    }}
+                                    style={{ display: "none" }} // Hide the default checkbox
+                                  />
+                                  <span
+                                    onClick={(e) => e.stopPropagation()}
+                                    className="green"
+                                  ></span>
+                                </label>
+                              </div>
+                            </Col>
+                          </Row>
+                        </div>
+                      );
+                    })}
+                  </Row>
                 </FormGroup>
               </Row>
               <Button color="primary" className="me-1">

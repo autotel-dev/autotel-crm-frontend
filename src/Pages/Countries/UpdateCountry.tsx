@@ -70,11 +70,11 @@ const UpdateCountry: React.FC<PropsTypes> = ({
       });
     }
   };
-  console.log(id);
-  console.log(value);
-  console.log("isActive -- >", isActive);
+  // console.log(id);
+  // console.log(value);
+  // console.log("isActive -- >", isActive);
   // dispatch(setValue(value));
-  console.log("is: ", isVisible);
+  // console.log("is: ", isVisible);
 
   const updateCountry: SubmitHandler<Type> = async (data) => {
     setLoading(true);
@@ -83,16 +83,29 @@ const UpdateCountry: React.FC<PropsTypes> = ({
         name: data.name,
         isActive: isActive,
       };
-      console.log(country);
+      // console.log(country);
       try {
         await update(country, { url: `country/update-country/${id}` }).then(
           (data: any) => {
-            if (data.success == false) {
+            if (
+              !data.success &&
+              data.message == "ERROR_INTERNET_DISCONNECTED"
+            ) {
+              setLoading(false);
+              setIsVisible(!isVisible);
+            }
+            if (!data.success) {
+              Swal.fire({
+                text: `${data.message}`,
+                icon: "error",
+                timer: 2000,
+                showConfirmButton: false,
+              });
               setLoading(false);
               setIsVisible(!isVisible);
             }
             if (data.success) {
-              console.log(data);
+              // console.log(data);
               setLoading(false);
               setIsVisible(!isVisible);
 
@@ -100,7 +113,7 @@ const UpdateCountry: React.FC<PropsTypes> = ({
               // dispatch(setValue(""));
               dispatch(setCountriesStart());
               getAll({ url: "country/get-all-countries" }).then((data: any) => {
-                console.log("api call --- >", data);
+                // console.log("api call --- >", data);
                 if (data == undefined) {
                   Swal.fire({
                     text: "Failed to fetch due to connection refused",
@@ -118,7 +131,7 @@ const UpdateCountry: React.FC<PropsTypes> = ({
                 if (data !== undefined) {
                   dispatch(setNoDataFound(data.message));
                   if (data.success) {
-                    console.log("hhg");
+                    // console.log("hhg");
                     dispatch(setCountries(data.data));
                     dispatch(setFilterCountries(data.data));
                   }
@@ -130,13 +143,8 @@ const UpdateCountry: React.FC<PropsTypes> = ({
         // Handle successful post creation (e.g., show a success message, redirect, etc.)
       } catch (error) {
         // Handle error (e.g., show an error message)
-        console.error("Error creating post:", error);
-        Swal.fire({
-          text: "Failed to update due to connection refused",
-          icon: "error",
-          timer: 2000,
-          showConfirmButton: false,
-        });
+        // console.error("Error creating post:", error);
+
         setLoading(false);
         setIsVisible(!isVisible);
       }
@@ -164,7 +172,7 @@ const UpdateCountry: React.FC<PropsTypes> = ({
       onClosed={() => {
         // setValue("")
         setIsVisible(false);
-        console.log(value);
+        // console.log(value);
       }}
     >
       <div className="modal-header">
@@ -175,7 +183,7 @@ const UpdateCountry: React.FC<PropsTypes> = ({
           onClick={() => {
             // setValue("")
             setIsVisible(!isVisible);
-            console.log(value);
+            // console.log(value);
           }}
         ></Button>
       </div>
@@ -209,7 +217,7 @@ const UpdateCountry: React.FC<PropsTypes> = ({
                       value={isActive ? "on" : "off"}
                       onChange={(e) => {
                         setIsActive(!isActive);
-                        console.log(e.target.value);
+                        // console.log(e.target.value);
                       }}
                     />
                     <span
@@ -232,7 +240,7 @@ const UpdateCountry: React.FC<PropsTypes> = ({
                   value={isActive ? "on" : "off"}
                   onChange={(e) => {
                     setIsActive(!isActive);
-                    console.log(e.target.value);
+                    // console.log(e.target.value);
                   }}
                 />
               </FormGroup> */}
@@ -248,7 +256,7 @@ const UpdateCountry: React.FC<PropsTypes> = ({
             onClick={() => {
               // setValue("")
               setIsVisible(!isVisible);
-              console.log(value);
+              // console.log(value);
             }}
           >
             {Cancel}

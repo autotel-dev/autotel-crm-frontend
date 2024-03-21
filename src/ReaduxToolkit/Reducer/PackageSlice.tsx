@@ -13,6 +13,7 @@ const initialState = {
   packageDays: null,
   packageDuration: null,
   package: {},
+  isConnected: true,
 };
 
 const PackageSlice = createSlice({
@@ -58,6 +59,9 @@ const PackageSlice = createSlice({
     setNoPackageFound: (state, action) => {
       state.noPackageFound = action.payload;
     },
+    setIsConnected: (state, action) => {
+      state.isConnected = action.payload;
+    },
   },
 });
 export const {
@@ -72,6 +76,7 @@ export const {
   setPackagesEnd,
   setAllPackagesDuration,
   setNoPackageFound,
+  setIsConnected
 } = PackageSlice.actions;
 
 export default PackageSlice.reducer;

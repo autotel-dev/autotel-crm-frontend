@@ -30,9 +30,9 @@ const SecuritySettings = () => {
       }).then((data: any) => {
         setLoading(false);
         if (data.success) {
-          console.log(data);
+          // console.log(data);
           getAll({ url: "user/get-user" }).then((parentData: any) => {
-            console.log("api call --- >", parentData);
+            // console.log("api call --- >", parentData);
             if (parentData == undefined) {
               setLoading(false);
               Swal.fire({
@@ -57,7 +57,7 @@ const SecuritySettings = () => {
       // Handle successful post creation (e.g., show a success message, redirect, etc.)
     } catch (error: any) {
       // Handle error (e.g., show an error message)
-      console.error("Error creating post:", error);
+      // console.error("Error creating post:", error);
       setLoading(false);
     }
   };
@@ -96,7 +96,7 @@ const SecuritySettings = () => {
                       value={isEnabled ? "on" : "off"}
                       onChange={(e) => {
                         setIsEnabled(!isEnabled);
-                        console.log(e.target.value);
+                        // console.log(e.target.value);
                         // otpEnabledChange();
                       }}
                     />

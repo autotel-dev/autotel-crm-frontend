@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { getAll } from "../../Api";
 import {
   setBugReports,
+  setIsConnected,
   setPriorityStatuses,
   setStatuses,
   setSupportStatistics,
@@ -16,37 +17,57 @@ import { useDispatch, useSelector } from "react-redux";
 import Loader from "../Loader/Loader";
 import { getUserRole } from "../../Api/globals";
 import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom";
+import NoInternetConnection from "../NoInternetConnection/NoInternetConnection";
 
 const Support = () => {
-  const { supportStatistics } = useSelector((state: any) => state.support);
+  const { supportStatistics, isConnected } = useSelector(
+    (state: any) => state.support
+  );
   const dispatch = useDispatch();
-  const [statisticsloading, setStatisticsLoading] = useState(false);
-  const [reportsLoading, setReportsLoading] = useState(false);
+  const [statisticsloading, setStatisticsLoading] = useState(true);
+  const [reportsLoading, setReportsLoading] = useState(true);
+  const navigate = useNavigate();
   useEffect(() => {
+    dispatch(setIsConnected(false));
+  }, []);
+  useEffect(() => {
+    dispatch(setBugReports([]));
+    dispatch(setSupportStatistics(null));
     setStatisticsLoading(true);
     setReportsLoading(true);
 
     if (getUserRole() === "SUPER_ADMIN") {
       getAll({ url: "support/bug-report/get-statistics" }).then((data: any) => {
-        console.log("api call --- >", data);
-        if (data == undefined) {
-          Swal.fire({
-            text: "Failed to fetch due to connection refused",
-            icon: "error",
-            timer: 2000,
-            showConfirmButton: false,
-          });
-          setReportsLoading(false);
-          setStatisticsLoading(false);
-          return;
-        }
+        // console.log("api call --- >", data);
+        // if (data == undefined) {
+        //   Swal.fire({
+        //     text: "F",
+        //     icon: "error",
+        //     timer: 2000,
+        //     showConfirmButton: false,
+        //   });
+        //   setReportsLoading(false);
+        //   setStatisticsLoading(false);
+        //   return;
+        // }
         if (data !== undefined) {
+          if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
+            dispatch(setIsConnected(true));
+          }
           if (!data.success) {
+            Swal.fire({
+              text: `${data.message}`,
+              icon: "error",
+              timer: 2000,
+              showConfirmButton: false,
+            });
             setStatisticsLoading(false);
           }
+
           if (data.success) {
-            console.log("hhg");
-            setStatisticsLoading(false);
+            // console.log("hhg");
+
             // const statisticsArray = Object.entries(
             //   data.data.bugReportsStatistics
             // );
@@ -64,8 +85,9 @@ const Support = () => {
                 .replace("Count", " Tickets");
               return { key: [formattedKey], value: value };
             });
-            console.log(mappedArray);
+            // console.log(mappedArray);
             dispatch(setSupportStatistics(mappedArray));
+            setStatisticsLoading(false);
           }
         }
       });
@@ -77,29 +99,39 @@ const Support = () => {
           ? "company/get-all-bug-reports"
           : "support/bug-report/get-all-bug-reports",
     }).then((data: any) => {
-      console.log("api call --- >", data);
-      if (getUserRole() == "COMPANY") {
-        if (data == undefined) {
+      // console.log("api call --- >", data);
+
+      if (data == undefined) {
+        Swal.fire({
+          text: "Support Data not Found",
+          icon: "error",
+          timer: 2000,
+          showConfirmButton: false,
+        });
+        dispatch(setBugReports([]));
+        setReportsLoading(false);
+        setStatisticsLoading(false);
+        return;
+      }
+
+      if (data !== undefined) {
+        if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
+          dispatch(setIsConnected(true));
+        }
+        if (!data.success) {
           Swal.fire({
-            text: "Failed to fetch due to connection refused",
+            text: `${data.message}`,
             icon: "error",
             timer: 2000,
             showConfirmButton: false,
           });
-          setReportsLoading(false);
-          setStatisticsLoading(false);
-          return;
-        }
-      }
-
-      if (data !== undefined) {
-        if (!data.success) {
           dispatch(setBugReports([]));
           setReportsLoading(false);
           setStatisticsLoading(false);
         }
+
         if (data.success) {
-          console.log("hhg");
+          // console.log("hhg");
           dispatch(setBugReports(data.data.allBugReports));
           setReportsLoading(false);
           setStatisticsLoading(false);
@@ -109,10 +141,10 @@ const Support = () => {
 
     getAll({ url: "support/bug-report/get-priorty-status-types" }).then(
       (data: any) => {
-        console.log("api call --- >", data);
+        // console.log("api call --- >", data);
         if (data !== undefined) {
           if (data.success) {
-            console.log("hhg");
+            // console.log("hhg");
             dispatch(
               setPriorityStatuses(data.data.bugReportPriortyStatusTypes)
             );
@@ -122,73 +154,82 @@ const Support = () => {
     );
 
     getAll({ url: "support/bug-report/get-status-types" }).then((data: any) => {
-      console.log("api call --- >", data);
+      // console.log("api call --- >", data);
       if (data !== undefined) {
         if (data.success) {
-          console.log("hhg");
+          // console.log("hhg");
           dispatch(setStatuses(data.data.bugReportStatusTypes));
         }
       }
     });
   }, []);
+
   return (
     <>
-      <Breadcrumbs mainTitle={support} parent={support} title={support} />
-      <Container fluid>
-        <Row>
-          <Col sm={12}>
-            <Card>
-              <CommonHeader
-                title=""
-                subTitle={[{ text: "List of supports opened by customers" }]}
-              />
-              {!statisticsloading && !reportsLoading ? (
-                <CardBody>
-                  {supportStatistics === null &&
-                  getUserRole() === "SUPER_ADMIN" ? (
+      {isConnected ? (
+        <NoInternetConnection />
+      ) : (
+        <div>
+          <Breadcrumbs mainTitle={support} parent={support} title={support} />
+          <Container fluid>
+            <Row>
+              <Col sm={12}>
+                <Card>
+                  <CommonHeader
+                    title=""
+                    subTitle={[
+                      { text: "List of supports opened by customers" },
+                    ]}
+                  />
+                  {!statisticsloading && !reportsLoading ? (
+                    <CardBody>
+                      {supportStatistics === null &&
+                      getUserRole() === "SUPER_ADMIN" ? (
+                        <div
+                          style={{
+                            display: "flex",
+                            justifyContent: "center",
+                            height: "15vh",
+                            backgroundColor: "white",
+                            alignItems: "center",
+                          }}
+                        >
+                          <div
+                            style={{
+                              textAlign: "center",
+                              fontSize: "25px",
+                              fontWeight: "bold",
+                            }}
+                          >
+                            No Statistics Found
+                          </div>
+                        </div>
+                      ) : (
+                        getUserRole() === "SUPER_ADMIN" && <SupportList />
+                      )}
+                      <SupportTable />
+                    </CardBody>
+                  ) : (
                     <div
                       style={{
                         display: "flex",
                         justifyContent: "center",
-                        height: "15vh",
+                        height: "80vh",
                         backgroundColor: "white",
                         alignItems: "center",
                       }}
                     >
-                      <div
-                        style={{
-                          textAlign: "center",
-                          fontSize: "25px",
-                          fontWeight: "bold",
-                        }}
-                      >
-                        No Statistics Found
+                      <div style={{ textAlign: "center" }}>
+                        <Loader />
                       </div>
                     </div>
-                  ) : (
-                    getUserRole() === "SUPER_ADMIN" && <SupportList />
                   )}
-                  <SupportTable />
-                </CardBody>
-              ) : (
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    height: "80vh",
-                    backgroundColor: "white",
-                    alignItems: "center",
-                  }}
-                >
-                  <div style={{ textAlign: "center" }}>
-                    <Loader />
-                  </div>
-                </div>
-              )}
-            </Card>
-          </Col>
-        </Row>
-      </Container>
+                </Card>
+              </Col>
+            </Row>
+          </Container>
+        </div>
+      )}
     </>
   );
 };

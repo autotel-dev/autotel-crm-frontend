@@ -5,14 +5,23 @@ import CitiesListNav from "./CitiesListNav";
 import CitiesList from "./CitiesList";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setCities } from "../../ReaduxToolkit/Reducer/CitiesSlice";
+import {
+  setCities,
+  setIsConnected,
+} from "../../ReaduxToolkit/Reducer/CitiesSlice";
+import NoInternetConnection from "../NoInternetConnection/NoInternetConnection";
 
 const Cities = () => {
   const dispatch = useDispatch();
   const [searchValue, setSearchValue] = useState("");
-  const { filterCities } = useSelector((state: any) => state.cities);
-  // const [filteredCountries, setFilteredCountries]: any = useState([]);
+  const { filterCities, isConnected } = useSelector(
+    (state: any) => state.cities
+  );
 
+  // const [filteredCountries, setFilteredCountries]: any = useState([]);
+  useEffect(() => {
+    dispatch(setIsConnected(false));
+  }, []);
   const filterCitiess = (e: any) => {
     const searchKey = e.target.value;
     setSearchValue(searchKey);
@@ -22,43 +31,52 @@ const Cities = () => {
     });
 
     dispatch(setCities(filtered));
-
-    console.log(filtered);
+    // console.log(filtered);
   };
   return (
     <>
-      <Breadcrumbs mainTitle={citiesList} parent={setup} title={citiesList} />
-      <Container fluid>
-        <Row className="project-card">
-          <Col md={12} className="project-list">
-            <Card>
-              <CitiesListNav />
-              <Col md={12}>
-                <input
-                  type="text"
-                  placeholder="Type to Search.."
-                  value={searchValue}
-                  onChange={(e) => {
-                    filterCitiess(e);
-                  }}
-                  style={{
-                    backgroundColor: "#f1f1f1",
-                    borderRadius: "5px",
-                    padding: "15px",
-                    margin: "15px",
-                    width: "calc(100% - 30px)", // Adjusting width to accommodate padding and margin
-                    border: "none",
-                    outline: "none", // Removing default border outline
-                  }}
-                />
+      {isConnected ? (
+        <NoInternetConnection />
+      ) : (
+        <div>
+          <Breadcrumbs
+            mainTitle={citiesList}
+            parent={setup}
+            title={citiesList}
+          />
+          <Container fluid>
+            <Row className="project-card">
+              <Col md={12} className="project-list">
+                <Card>
+                  <CitiesListNav />
+                  <Col md={12}>
+                    <input
+                      type="text"
+                      placeholder="Type to Search.."
+                      value={searchValue}
+                      onChange={(e) => {
+                        filterCitiess(e);
+                      }}
+                      style={{
+                        backgroundColor: "#f1f1f1",
+                        borderRadius: "5px",
+                        padding: "15px",
+                        margin: "15px",
+                        width: "calc(100% - 30px)", // Adjusting width to accommodate padding and margin
+                        border: "none",
+                        outline: "none", // Removing default border outline
+                      }}
+                    />
+                  </Col>
+                </Card>
               </Col>
-            </Card>
-          </Col>
-          <Col sm={12}>
-            <CitiesList />
-          </Col>
-        </Row>
-      </Container>
+              <Col sm={12}>
+                <CitiesList />
+              </Col>
+            </Row>
+          </Container>
+        </div>
+      )}
     </>
   );
 };

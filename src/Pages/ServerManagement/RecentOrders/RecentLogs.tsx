@@ -12,10 +12,10 @@ const RecentLogs = () => {
   const dispatch = useDispatch();
   useEffect(() => {
     getAll({ url: "system-logs/get-all-system-logs" }).then((data: any) => {
-      console.log("api call --- >", data);
+      // console.log("api call --- >", data);
       if (data !== undefined) {
         if (data.success) {
-          console.log("hhg");
+          // console.log("hhg");
           dispatch(setRecentLogs(data.data));
         }
       }
@@ -27,7 +27,7 @@ const RecentLogs = () => {
         <div style={{ display: "flex", justifyContent: "space-between" }}>
           <H3>Recent logs</H3>
           <Link
-            to={`${process.env.PUBLIC_URL}/setup/server_management/AllLogs`}
+            to={`${process.env.PUBLIC_URL}/super-admin/setup/server_management/AllLogs`}
           >
             <h3 style={{ color: "#35bfbf", cursor: "pointer" }}>See All</h3>
           </Link>

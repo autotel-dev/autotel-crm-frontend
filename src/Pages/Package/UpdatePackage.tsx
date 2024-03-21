@@ -82,12 +82,12 @@ const UpdatePackage: React.FC<PropsTypes> = ({
       });
     }
   };
-  console.log(id);
-  console.log(title);
-  console.log(price);
-  console.log("isActive -- >", isActive);
+  // console.log(id);
+  // console.log(title);
+  // console.log(price);
+  // console.log("isActive -- >", isActive);
   // dispatch(setValue(value));
-  console.log("is: ", isVisible);
+  // console.log("is: ", isVisible);
 
   const updatePackage: SubmitHandler<CitiesType> = async (data) => {
     setLoading(true);
@@ -104,14 +104,29 @@ const UpdatePackage: React.FC<PropsTypes> = ({
         days: Number(packageDays),
         isActive: isActive,
       };
-      console.log(packag);
+      // console.log(packag);
       try {
         await update(packag, { url: `package/update-package/${id}` }).then(
           (data: any) => {
-            // setLoading(false);
-            // setIsVisible(!isVisible);
+            if (
+              !data.success &&
+              data.message == "ERROR_INTERNET_DISCONNECTED"
+            ) {
+              setLoading(false);
+              setIsVisible(!isVisible);
+            }
+            if (!data.success) {
+              Swal.fire({
+                text: `${data.message}`,
+                icon: "error",
+                timer: 2000,
+                showConfirmButton: false,
+              });
+              setLoading(false);
+              setIsVisible(!isVisible);
+            }
             if (data.success) {
-              console.log(data);
+              // console.log(data);
               setLoading(false);
               setIsVisible(!isVisible);
 
@@ -119,7 +134,7 @@ const UpdatePackage: React.FC<PropsTypes> = ({
               dispatch(setPackageDays(null));
               dispatch(setPackagesStart());
               getAll({ url: "package/get-all-packages" }).then((data: any) => {
-                console.log("api call --- >", data);
+                // console.log("api call --- >", data);
                 if (data == undefined) {
                   Swal.fire({
                     text: "Failed to fetch due to connection refused",
@@ -137,8 +152,8 @@ const UpdatePackage: React.FC<PropsTypes> = ({
                 if (data !== undefined) {
                   dispatch(setNoDataFound(data.message));
                   if (data.success) {
-                    console.log("hhg");
-                    setLoading(true);
+                    // console.log("hhg");
+                    setLoading(false);
                     dispatch(setPackages(data.data));
                     dispatch(setFilterPackages(data.data));
                   }
@@ -150,13 +165,8 @@ const UpdatePackage: React.FC<PropsTypes> = ({
         // Handle successful post creation (e.g., show a success message, redirect, etc.)
       } catch (error) {
         // Handle error (e.g., show an error message)
-        console.error("Error creating post:", error);
-        Swal.fire({
-          text: "Failed to update due to connection refused",
-          icon: "error",
-          timer: 2000,
-          showConfirmButton: false,
-        });
+        // console.error("Error creating post:", error);
+
         setLoading(false);
         setIsVisible(!isVisible);
       }
@@ -188,7 +198,7 @@ const UpdatePackage: React.FC<PropsTypes> = ({
       onClosed={() => {
         // setValue("")
         setIsVisible(false);
-        console.log(title);
+        // console.log(title);
       }}
     >
       <div className="modal-header">
@@ -199,7 +209,7 @@ const UpdatePackage: React.FC<PropsTypes> = ({
           onClick={() => {
             // setValue("")
             setIsVisible(!isVisible);
-            console.log(title);
+            // console.log(title);
           }}
         ></Button>
       </div>
@@ -258,7 +268,7 @@ const UpdatePackage: React.FC<PropsTypes> = ({
                       value={isActive ? "on" : "off"}
                       onChange={(e) => {
                         setIsActive(!isActive);
-                        console.log(e.target.value);
+                        // console.log(e.target.value);
                       }}
                     />
                     <span
@@ -271,7 +281,7 @@ const UpdatePackage: React.FC<PropsTypes> = ({
               </div>
             </FormGroup>
           </Row>
-          <Button color="primary" className="me-1">
+          <Button color="primary" className="me-1" disabled={loading}>
             {loading ? "Loading ..." : `Update`}
           </Button>
           &nbsp;&nbsp;
@@ -281,7 +291,7 @@ const UpdatePackage: React.FC<PropsTypes> = ({
             onClick={() => {
               // setValue("")
               setIsVisible(!isVisible);
-              console.log(title);
+              // console.log(title);
             }}
           >
             {Cancel}

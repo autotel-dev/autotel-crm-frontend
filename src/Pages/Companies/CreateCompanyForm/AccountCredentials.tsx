@@ -69,8 +69,8 @@ const AccountCredentials = ({ callbackActive }: BusinessFormCommonProps) => {
           ...accountCredentialsForm,
         })
       );
-      console.log("formData -->", accountCredentialsForm);
-      console.log("createCompany--- >", createCompany);
+      // console.log("formData -->", accountCredentialsForm);
+      // console.log("createCompany--- >", createCompany);
       callbackActive(3);
     } else {
       ShowError();

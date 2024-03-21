@@ -9,11 +9,18 @@ import { useNavigate } from "react-router-dom";
 import CreateNewTicket from "./CreateNewTicket";
 import { useDispatch, useSelector } from "react-redux";
 import { setTableRow } from "../../ReaduxToolkit/Reducer/SupportSlice";
+import { getUserRole } from "../../Api/globals";
+import { ROLES } from "../../constants/roles";
 
 const TicketTable = () => {
   const dispatch = useDispatch();
   // Function to transform supportData into allBugReports format
   const { bugReports } = useSelector((state: any) => state.support);
+  const { userPermissions } = useSelector(
+    (state: any) => state.userPermissions
+  );
+  var support = userPermissions.find((item: any) => item.title === "Support");
+  // console.log("support", support);
   const supportData = () => {
     return bugReports
       .filter(
@@ -23,17 +30,17 @@ const TicketTable = () => {
           item.user.emailAddress.toLowerCase().includes(searchValue)
       )
       .map((item: any) => ({
-        ticket_id: item._id,
-        id: item.ticketId,
-        username: item.user.fullName,
-        email: item.user.emailAddress,
-        ticket_name: item.name,
-        description: item.description,
-        isActive: item.isActive ? "true" : "false",
-        status: item.status,
-        priorty: item.priorty == null ? "N/A" : item.priorty,
-        date: `${item.updatedAt.toString().slice(0, 10)},  ${new Date(
-          item.updatedAt
+        ticket_id: item?._id,
+        id: item?.ticketId,
+        username: item?.user?.fullName,
+        email: item?.user?.emailAddress,
+        ticket_name: item?.name,
+        description: item?.description,
+        isActive: item?.isActive ? "true" : "false",
+        status: item?.status,
+        priorty: item?.priorty == null ? "N/A" : item?.priorty,
+        date: `${item?.updatedAt.toString().slice(0, 10)},  ${new Date(
+          item?.updatedAt
         )
           .toLocaleString("en-US", {
             hour: "2-digit",
@@ -55,7 +62,7 @@ const TicketTable = () => {
     setSearchValue(searchKey);
   };
 
-  console.log("allBugReports", supportData());
+  // console.log("allBugReports", supportData());
   useEffect(() => {
     setData(supportData());
   }, [bugReports]);
@@ -93,18 +100,22 @@ const TicketTable = () => {
 
   const handleRowClicked = (row: any) => {
     // Here 'row' contains the data of the clicked row
-    console.log("Clicked row data:", row);
+    // console.log("Clicked row data:", row);
 
     // Navigate to the ticketDetails page with the row data
     dispatch(setTableRow(row));
     navigate(
-      `${process.env.PUBLIC_URL}/support/ticketDetails/${row.ticket_id}`
+      `${process.env.PUBLIC_URL}/super-admin/support/ticketDetails/${row.ticket_id}`
     );
   };
   return (
     <div className="table-responsive support-table">
       <Row style={{ display: "flex", alignItems: "center" }}>
-        <Col md={12} lg={10} xl={10}>
+        <Col
+          md={12}
+          lg={support != undefined && support?.create ? 10 : 12}
+          xl={support != undefined && support?.create ? 10 : 12}
+        >
           <input
             type="text"
             placeholder="Type to Search.."
@@ -123,9 +134,22 @@ const TicketTable = () => {
             }}
           />
         </Col>
-        <Col md={12} lg={2} xl={2}>
-          <CreateNewTicket />
-        </Col>
+        {getUserRole() == ROLES.SUPER_ADMIN ? (
+          <Col
+            md={12}
+            lg={support != undefined && support?.create ? 2 : 0}
+            xl={support != undefined && support?.create ? 2 : 0}
+          >
+            <CreateNewTicket />
+          </Col>
+        ) : (getUserRole() == ROLES.COMPANY ||
+            getUserRole() == ROLES.OPERATOR) &&
+          support != undefined &&
+          support?.create ? (
+          <Col md={12} lg={2} xl={2}>
+            <CreateNewTicket />
+          </Col>
+        ) : null}
       </Row>
       {selectedRows.length !== 0 && (
         <div

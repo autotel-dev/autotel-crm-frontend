@@ -10,8 +10,8 @@ interface PDFViewerProps {
 }
 
 const PDFViewer: React.FC<PDFViewerProps> = ({ file, name }) => {
-  console.log("file", file);
-  console.log("file", file);
+  // console.log("file", file);
+  // console.log("file", file);
 
   const [numPages, setNumPages] = useState<number>(0);
 
@@ -48,7 +48,7 @@ const PDFViewer: React.FC<PDFViewerProps> = ({ file, name }) => {
       const imgData = canvas.toDataURL();
       setImage(imgData);
     } catch (error) {
-      console.error("Error rendering PDF:", error);
+      // console.error("Error rendering PDF:", error);
     }
   };
 

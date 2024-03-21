@@ -14,7 +14,7 @@ const SelectPackageBox: React.FC<propTypes> = ({ placeholder }) => {
   const { allPackagesDuration, packageDays, packageDuration } = useSelector(
     (state: any) => state.packages
   );
-  console.log(allPackagesDuration);
+  // console.log(allPackagesDuration);
   const [packageList, setPackageList] = useState([]);
   const dispatch = useDispatch();
 
@@ -47,8 +47,8 @@ const SelectPackageBox: React.FC<propTypes> = ({ placeholder }) => {
           .localeCompare((optionB?.label ?? "").toLowerCase())
       }
       onChange={(e, option) => {
-        console.log(e);
-        console.log(option);
+        // console.log(e);
+        // console.log(option);
         dispatch(setPackageDays(option.value));
         dispatch(setPackageDuration(option.title));
       }}

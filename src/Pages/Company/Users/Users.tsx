@@ -6,16 +6,28 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import UsersListNav from "./UsersListNav";
 import UsersList from "./UsersList";
-import { setOperators } from "../../../ReaduxToolkit/Reducer/OperatorSlice";
+import {
+  setIsConnected,
+  setOperators,
+} from "../../../ReaduxToolkit/Reducer/OperatorSlice";
 import { getAll } from "../../../Api";
-import { setRoles } from "../../../ReaduxToolkit/Reducer/RolesSlice";
+import {
+  setFilterRoles,
+  setRoles,
+} from "../../../ReaduxToolkit/Reducer/RolesSlice";
+import NoInternetConnection from "../../NoInternetConnection/NoInternetConnection";
 
 const Countries = () => {
   const dispatch = useDispatch();
   const [searchValue, setSearchValue] = useState("");
-  const { filterOperators } = useSelector((state: any) => state.operators);
-  // const [filteredCountries, setFilteredCountries]: any = useState([]);
+  const { filterOperators, isConnected } = useSelector(
+    (state: any) => state.operators
+  );
 
+  // const [filteredCountries, setFilteredCountries]: any = useState([]);
+  useEffect(() => {
+    dispatch(setIsConnected(false));
+  }, []);
   const filterOperatorss = (e: any) => {
     const searchKey = e.target.value;
     setSearchValue(searchKey);
@@ -26,16 +38,17 @@ const Countries = () => {
 
     dispatch(setOperators(filtered));
 
-    console.log(filtered);
+    // console.log(filtered);
   };
 
   useEffect(() => {
     getAll({ url: "sub-role/get-all-active-sub-roles" }).then((data: any) => {
-      console.log("api call --- >", data);
+      // console.log("api call --- >", data);
       if (data !== undefined) {
         if (data.success) {
-          console.log("hhg");
+          // console.log("hhg");
           dispatch(setRoles(data.data));
+          dispatch(setFilterRoles(data.data));
         }
       }
     });
@@ -43,38 +56,44 @@ const Countries = () => {
 
   return (
     <>
-      <Breadcrumbs mainTitle="Users List" parent={setup} title="Users" />
-      <Container fluid>
-        <Row className="project-card">
-          <Col md={12} className="project-list">
-            <Card>
-              <UsersListNav />
-              <Col md={12}>
-                <input
-                  type="text"
-                  placeholder="Type to Search.."
-                  value={searchValue}
-                  onChange={(e) => {
-                    filterOperatorss(e);
-                  }}
-                  style={{
-                    backgroundColor: "#f1f1f1",
-                    borderRadius: "5px",
-                    padding: "15px",
-                    margin: "15px",
-                    width: "calc(100% - 30px)", // Adjusting width to accommodate padding and margin
-                    border: "none",
-                    outline: "none", // Removing default border outline
-                  }}
-                />
+      {isConnected ? (
+        <NoInternetConnection />
+      ) : (
+        <div>
+          <Breadcrumbs mainTitle="Users List" parent={setup} title="Users" />
+          <Container fluid>
+            <Row className="project-card">
+              <Col md={12} className="project-list">
+                <Card>
+                  <UsersListNav />
+                  <Col md={12}>
+                    <input
+                      type="text"
+                      placeholder="Type to Search.."
+                      value={searchValue}
+                      onChange={(e) => {
+                        filterOperatorss(e);
+                      }}
+                      style={{
+                        backgroundColor: "#f1f1f1",
+                        borderRadius: "5px",
+                        padding: "15px",
+                        margin: "15px",
+                        width: "calc(100% - 30px)", // Adjusting width to accommodate padding and margin
+                        border: "none",
+                        outline: "none", // Removing default border outline
+                      }}
+                    />
+                  </Col>
+                </Card>
               </Col>
-            </Card>
-          </Col>
-          <Col sm={12}>
-            <UsersList />
-          </Col>
-        </Row>
-      </Container>
+              <Col sm={12}>
+                <UsersList />
+              </Col>
+            </Row>
+          </Container>
+        </div>
+      )}
     </>
   );
 };

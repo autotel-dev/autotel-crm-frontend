@@ -28,6 +28,7 @@ import SupportSlice from "./Reducer/SupportSlice";
 import RolesSlice from "./Reducer/RolesSlice";
 import PersonalizationSlice from "./Reducer/PersonalizationSlice";
 import ReportsSlice from "./Reducer/ReportsSlice";
+import PermissionSlice from "./Reducer/PermissionSlice";
 
 const Store = configureStore({
   reducer: {
@@ -60,6 +61,7 @@ const Store = configureStore({
     roles: RolesSlice,
     personalization: PersonalizationSlice,
     reports: ReportsSlice,
+    userPermissions: PermissionSlice,
   },
 });
 

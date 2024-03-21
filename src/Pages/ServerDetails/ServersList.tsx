@@ -3,7 +3,7 @@ import CommonHeader from "../../Common/CommonHeader";
 import { citiesListHeading } from "../../utils/Constant";
 import DataTable from "react-data-table-component";
 import { useEffect, useState } from "react";
-import { create, getAll } from "../../Api";
+import { API_BASE_URL, create, getAll } from "../../Api";
 import { useDispatch, useSelector } from "react-redux";
 import "./tableStyle.css";
 import deleteAlert from "../Alerts/DeleteAlert";
@@ -16,6 +16,7 @@ import {
   setServer,
   setId,
   setInActiveActiveServers,
+  setIsConnected,
 } from "../../ReaduxToolkit/Reducer/ServerDetailsSlice";
 import { setNoDataFound } from "../../ReaduxToolkit/Reducer/NoDataFoundSlice";
 import Loader from "../Loader/Loader";
@@ -47,29 +48,41 @@ const ServersList = () => {
   useEffect(() => {
     dispatch(setServersStart());
     getAll({ url: "server-management/get-all-servers" }).then((data: any) => {
-      console.log("api call --- >", data);
-      if (data == undefined) {
-        Swal.fire({
-          text: "Failed to fetch due to connection refused",
-          icon: "error",
-          timer: 2000,
-          showConfirmButton: false,
-        });
-        dispatch(setInActiveActiveServers("All"));
-        dispatch(setServers([]));
-        dispatch(setFilterServers([]));
-        dispatch(setServersEnd());
-        return;
-      }
-      dispatch(setServersEnd());
+      // console.log("api call --- >", data);
+      // if (data == undefined) {
+      //   Swal.fire({
+      //     text: "Failed to fetch due to connection refused",
+      //     icon: "error",
+      //     timer: 2000,
+      //     showConfirmButton: false,
+      //   });
+      //   dispatch(setInActiveActiveServers("All"));
+      //   dispatch(setServers([]));
+      //   dispatch(setFilterServers([]));
+      //   dispatch(setServersEnd());
+      //   return;
+      // }
+
       if (data !== undefined) {
         dispatch(setNoDataFound(data.message));
+        if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
+          dispatch(setIsConnected(true));
+        }
+        if (!data.success) {
+          Swal.fire({
+            text: `${data.message}`,
+            icon: "error",
+            timer: 2000,
+            showConfirmButton: false,
+          });
+        }
         if (data.success) {
-          console.log("hhg");
+          // console.log("hhg");
           dispatch(setServers(data.data.allServers));
           dispatch(setFilterServers(data.data.allServers));
         }
       }
+      dispatch(setServersEnd());
     });
   }, []);
   const renderTableRows = () => {
@@ -102,26 +115,26 @@ const ServersList = () => {
                   //     isActive: !row.isActive,
                   //     company: decodedToken.userId,
                   //   };
-                  //   console.log(operator);
+                  //   // console.log(operator);
                   //   setIsActive(!row.isActive);
                   //   // setRowIndex(index);
-                  //   console.log(e.target.value);
+                  //   // console.log(e.target.value);
                   //   try {
                   //     await update(operator, {
                   //       url: `operator/update-operator/${row._id}`,
                   //     }).then((data: any) => {
                   //       if (data.success) {
-                  //         console.log(data);
+                  //         // console.log(data);
 
                   //         dispatch(setOperatorsStart());
                   //         getAll({
                   //           url: "operator/get-all-operators",
                   //         }).then((data: any) => {
-                  //           console.log("api call --- >", data);
+                  //           // console.log("api call --- >", data);
                   //           dispatch(setOperatorsEnd());
                   //           if (data !== undefined) {
                   //             if (data.success) {
-                  //               console.log("hhg");
+                  //               // console.log("hhg");
                   //               dispatch(setOperators(data.data));
                   //               dispatch(setFilterOperators(data.data));
                   //             }
@@ -132,7 +145,7 @@ const ServersList = () => {
                   //     // Handle successful post creation (e.g., show a success message, redirect, etc.)
                   //   } catch (error) {
                   //     // Handle error (e.g., show an error message)
-                  //     console.error("Error creating post:", error);
+                  //     // console.error("Error creating post:", error);
                   //   }
                   // }}
                 />
@@ -159,7 +172,7 @@ const ServersList = () => {
                 border: "none",
               }}
               onClick={() => {
-                console.log("345678");
+                // console.log("345678");
                 var alertData = {
                   title: "Are you sure?",
                   text: "Once deleted, you will not be able to recover this ",
@@ -183,7 +196,7 @@ const ServersList = () => {
               onClick={() => {
                 dispatch(setServer(row));
                 navigate(
-                  `${process.env.PUBLIC_URL}/setup/server_details/updareServer`
+                  `${process.env.PUBLIC_URL}/super-admin/setup/server_details/updareServer`
                 );
               }}
             >
@@ -205,14 +218,14 @@ const ServersList = () => {
                 toggle();
                 try {
                   const response = await fetch(
-                    `http://124.29.238.127:8080/api/v1/server-management/send-otp`,
+                    `${API_BASE_URL}/server-management/send-otp`,
                     {
                       method: "POST",
                       headers: header(),
                     }
                   );
                   const result = await response.json();
-                  console.log("api --- >", result);
+                  // console.log("api --- >", result);
 
                   return result;
                 } catch (error: any) {

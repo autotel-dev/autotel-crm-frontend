@@ -15,19 +15,31 @@ import { SidebarMenuTypes } from "../../Data/Layout/Sidebar/SidebarTypes";
 import { useAppSelector } from "../../ReaduxToolkit/Hooks";
 import { useSelector } from "react-redux";
 import { jwtDecode } from "jwt-decode";
+import { getUserRole } from "../../Api/globals";
 export interface PropsTypes {
   setOpen: (item: boolean) => void;
   open?: boolean;
 }
 const SidebarMain = ({ setOpen, open }: PropsTypes) => {
   const { crmActiveModules } = useSelector((state: any) => state.crmModules);
-  console.log("crmActiveModules", crmActiveModules);
+  const { userPermissions } = useSelector(
+    (state: any) => state.userPermissions
+  );
+  var user = userPermissions.find((item: any) => item.title === "User");
+  // // console.log("user", user);
+  var support = userPermissions.find((item: any) => item.title === "Support");
+  // // console.log("support", support);
+
+  // // console.log("userPermissions:", userPermissions);
+  // // console.log("getUserRole()", getUserRole());
+
+  // // console.log("crmActiveModules", crmActiveModules);
 
   const SidebarMenuComponent: SidebarMenuTypes[] = [
     {
       title: "Dashboard",
       svgIcon: "home",
-      link: `${process.env.PUBLIC_URL}/dashboards/shoppingplace`,
+      link: `${process.env.PUBLIC_URL}/dashboard`,
     },
     {
       title: "Setup",
@@ -36,27 +48,27 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
         {
           svgIcon: "bonus-kit",
           title: "Country",
-          link: `${process.env.PUBLIC_URL}/setup/countries`,
+          link: `${process.env.PUBLIC_URL}/super-admin/setup/countries`,
         },
         {
           svgIcon: "bonus-kit",
           title: "Province",
-          link: `${process.env.PUBLIC_URL}/setup/province`,
+          link: `${process.env.PUBLIC_URL}/super-admin/setup/province`,
         },
         {
           svgIcon: "bonus-kit",
           title: "City",
-          link: `${process.env.PUBLIC_URL}/setup/cities`,
+          link: `${process.env.PUBLIC_URL}/super-admin/setup/cities`,
         },
         {
           svgIcon: "bonus-kit",
           title: "Package",
-          link: `${process.env.PUBLIC_URL}/setup/package`,
+          link: `${process.env.PUBLIC_URL}/super-admin/setup/package`,
         },
         {
           svgIcon: "bonus-kit",
           title: "CRM Modules",
-          link: `${process.env.PUBLIC_URL}/setup/crm_module`,
+          link: `${process.env.PUBLIC_URL}/super-admin/setup/crm_module`,
         },
         {
           svgIcon: "bonus-kit",
@@ -71,12 +83,12 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
         {
           svgIcon: "bonus-kit",
           title: "Server Details",
-          link: `${process.env.PUBLIC_URL}/setup/server_details`,
+          link: `${process.env.PUBLIC_URL}/super-admin/setup/server_details`,
         },
         {
           svgIcon: "bonus-kit",
           title: "Server Management",
-          link: `${process.env.PUBLIC_URL}/setup/server_management`,
+          link: `${process.env.PUBLIC_URL}/super-admin/setup/server_management`,
         },
       ],
     },
@@ -103,7 +115,7 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
         return {
           svgIcon: "bonus-kit",
           title: `${item.name}`,
-          link: `${process.env.PUBLIC_URL}/dashboards/shoppingplace`,
+          link: `${process.env.PUBLIC_URL}/dashboard`,
         };
       }),
     },
@@ -111,25 +123,25 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
     {
       title: "Companies",
       svgIcon: "home",
-      link: `${process.env.PUBLIC_URL}/companies`,
+      link: `${process.env.PUBLIC_URL}/super-admin/companies`,
     },
     {
       title: "Support",
       svgIcon: "home",
-      link: `${process.env.PUBLIC_URL}/support`,
+      link: `${process.env.PUBLIC_URL}/super-admin/support`,
     },
-    {
-      title: "Tasks",
-      svgIcon: "home",
-      link: `${process.env.PUBLIC_URL}/tasks`,
-    },
+    // {
+    //   title: "Tasks",
+    //   svgIcon: "home",
+    //   link: `${process.env.PUBLIC_URL}/super-admin/tasks`,
+    // },
   ];
 
   const CompanySidebarMenuComponent: SidebarMenuTypes[] = [
     {
       title: "Dashboard",
       svgIcon: "home",
-      link: `${process.env.PUBLIC_URL}/company/dashboard`,
+      link: `${process.env.PUBLIC_URL}/dashboard`,
     },
     {
       title: "Setup",
@@ -138,17 +150,17 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
         {
           svgIcon: "bonus-kit",
           title: "Roles",
-          link: `${process.env.PUBLIC_URL}/company/roles`,
+          link: `${process.env.PUBLIC_URL}/company/setup/roles`,
         },
         {
           svgIcon: "bonus-kit",
           title: "Email Templates",
-          link: `${process.env.PUBLIC_URL}/company/emailTemplates`,
+          link: `${process.env.PUBLIC_URL}/company/setup/emailTemplates`,
         },
         {
           svgIcon: "bonus-kit",
           title: "WhatsApp templates",
-          link: `${process.env.PUBLIC_URL}/company/whatsappTemplates`,
+          link: `${process.env.PUBLIC_URL}/company/setup/whatsappTemplates`,
         },
       ],
     },
@@ -182,7 +194,7 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
     },
 
     {
-      title: "Users",
+      title: "User",
       svgIcon: "home",
       link: `${process.env.PUBLIC_URL}/company/users`,
     },
@@ -191,17 +203,67 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
       svgIcon: "home",
       link: `${process.env.PUBLIC_URL}/company/support`,
     },
-    {
-      title: "Tasks",
-      svgIcon: "home",
-      link: `${process.env.PUBLIC_URL}/company/tasks`,
-    },
+    // {
+    //   title: "Tasks",
+    //   svgIcon: "home",
+    //   link: `${process.env.PUBLIC_URL}/company/tasks`,
+    // },
     {
       title: "Reports",
       svgIcon: "home",
       link: `${process.env.PUBLIC_URL}/company/reports`,
     },
   ];
+
+  const OperatorSidebarMenuComponent: SidebarMenuTypes[] = [
+    {
+      title: "Dashboard",
+      svgIcon: "home",
+      link: `${process.env.PUBLIC_URL}/dashboard`,
+    },
+
+    {
+      title: "Modules",
+      svgIcon: "home",
+      subMenu: crmActiveModules.map((item: any, index: any) => {
+        return {
+          svgIcon: "bonus-kit",
+          title: `${item.name}`,
+          link: `${process.env.PUBLIC_URL}/operator/modules${item.route}`,
+        };
+      }),
+    },
+
+    // {
+    //   title: "Users",
+    //   svgIcon: "home",
+    //   link: `${process.env.PUBLIC_URL}/company/users`,
+    // },
+    {
+      title: "Support",
+      svgIcon: "home",
+      link: `${process.env.PUBLIC_URL}/operator/support`,
+    },
+  ];
+
+  var filteredCompanyMenu = CompanySidebarMenuComponent.filter((item) => {
+    if (user !== undefined && item.title === user.title) {
+      return user.read;
+    } else if (support !== undefined && item.title === support.title) {
+      return support.read;
+    } else {
+      return true;
+    }
+  });
+  var filteredOperatorMenu = OperatorSidebarMenuComponent.filter((item) => {
+    if (user !== undefined && item.title === user.title) {
+      return user.read;
+    } else if (support !== undefined && item.title === support.title) {
+      return support.read;
+    } else {
+      return true;
+    }
+  });
   const { sidebarIconType } = useAppSelector((state) => state.themeCustomizer);
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState<string[]>([]);
@@ -228,10 +290,11 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
   useEffect(() => {
     if (authToken !== null) {
       const decodedToken = jwtDecode(authToken);
-      console.log(decodedToken);
+      // // console.log(decodedToken);
       setDecodedToken(decodedToken);
     }
   }, []);
+
   return (
     <nav className="sidebar-main">
       {decodedToken !== null && (
@@ -296,7 +359,56 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
                       )}
                     </LI>
                   ))
-                : CompanySidebarMenuComponent.map((data, index) => (
+                : decodedToken.role == "OPERATOR"
+                ? filteredOperatorMenu !== undefined &&
+                  filteredOperatorMenu?.map((data: any, index: any) => (
+                    <LI className={`sidebar-list`} key={index}>
+                      <Link
+                        className={`sidebar-link sidebar-title ${
+                          sideMenu === data.title ? "active" : ""
+                        }`}
+                        to={data.link ? data.link : "#"}
+                        onClick={() => handleClick(data)}
+                      >
+                        <SVG
+                          className={`${sidebarIconType}-icon`}
+                          iconId={`${
+                            sidebarIconType === "fill" ? "fill-" : ""
+                          }${data.svgIcon}`}
+                        />
+                        <span>{t(data.title)}</span>
+                      </Link>
+                      {data.link ? (
+                        <div></div>
+                      ) : (
+                        !isClose && (
+                          <UL
+                            className="sidebar-submenu custom-scrollbar simple-list"
+                            style={{
+                              display: `${
+                                data.title === sideMenu && !data.link
+                                  ? "block"
+                                  : "block"
+                              }`,
+                            }}
+                          >
+                            {!data.link && (
+                              <MenuList
+                                subMenuData={data}
+                                isOpen={isOpen}
+                                setIsOpen={setIsOpen}
+                                level={0}
+                                isClose={isClose}
+                                setIsClose={setIsClose}
+                              />
+                            )}
+                          </UL>
+                        )
+                      )}
+                    </LI>
+                  ))
+                : filteredCompanyMenu !== undefined &&
+                  filteredCompanyMenu.map((data: any, index: any) => (
                     <LI className={`sidebar-list`} key={index}>
                       <Link
                         className={`sidebar-link sidebar-title ${

@@ -13,11 +13,19 @@ import Loader from "../../../Loader/Loader";
 import Attachements from "./Personalization/Personalization";
 import Swal from "sweetalert2";
 import Personalization from "./Personalization/Personalization";
-import { getUserId, getUserRole } from "../../../../Api/globals";
-import { setUserPersonalizationData } from "../../../../ReaduxToolkit/Reducer/PersonalizationSlice";
+import {
+  getOperatorCompanyUserId,
+  getUserId,
+  getUserRole,
+} from "../../../../Api/globals";
+import {
+  setIsConnected,
+  setUserPersonalizationData,
+} from "../../../../ReaduxToolkit/Reducer/PersonalizationSlice";
+import NoInternetConnection from "../../../NoInternetConnection/NoInternetConnection";
 
 const Settings = () => {
-  const { userPersonalizationData } = useSelector(
+  const { userPersonalizationData, isConnected } = useSelector(
     (state: any) => state.personalization
   );
   const dispatch = useDispatch();
@@ -32,17 +40,22 @@ const Settings = () => {
   const [undefinedData, setUndefinedData] = useState<any>(false);
 
   useEffect(() => {
+    dispatch(setIsConnected(false));
+  }, []);
+  useEffect(() => {
     getAll({
       url:
         getUserRole() == "COMPANY"
           ? `company/get-personalization/${getUserId()}`
+          : getUserRole() == "OPERATOR"
+          ? `company/get-personalization/${getOperatorCompanyUserId()}`
           : "super-admin/get-personalization",
     }).then((parentData: any) => {
-      console.log("api call --- >", parentData);
+      // console.log("api call --- >", parentData);
       if (parentData == undefined) {
-        setUndefinedData(true);
+        // setUndefinedData(true);
         Swal.fire({
-          text: "Failed to Fetch due to connection refused",
+          text: "No personalization found",
           icon: "error",
           timer: 2000,
           showConfirmButton: false,
@@ -52,15 +65,27 @@ const Settings = () => {
       }
 
       if (parentData !== undefined) {
+        if (
+          !parentData.success &&
+          parentData.message == "ERROR_INTERNET_DISCONNECTED"
+        ) {
+          dispatch(setIsConnected(true));
+        }
+        if (!parentData.success) {
+          Swal.fire({
+            text: `${parentData.message}`,
+            icon: "error",
+            timer: 2000,
+            showConfirmButton: false,
+          });
+          setLoading(false);
+          setUndefinedData(false);
+          dispatch(setUserPersonalizationData(null));
+        }
         if (parentData.success) {
           dispatch(setUserPersonalizationData(parentData.data));
           setUndefinedData(false);
           setLoading(false);
-        }
-        if (!parentData.success) {
-          setLoading(false);
-          setUndefinedData(false);
-          dispatch(setUserPersonalizationData(null));
         }
       }
     });
@@ -68,43 +93,45 @@ const Settings = () => {
 
   return (
     <>
-      <Breadcrumbs title="Settings" mainTitle="Settings" parent="Users" />
-      <Container fluid>
-        <div className="edit-profile">
-          {
-            // !loading && userPersonalizationData == null ? (
-            //   <div
-            //     style={{
-            //       display: "flex",
-            //       justifyContent: "center",
-            //       height: "80vh",
-            //       backgroundColor: "white",
-            //       alignItems: "center",
-            //     }}
-            //   >
-            //     <div
-            //       style={{
-            //         textAlign: "center",
-            //         fontSize: "25px",
-            //         fontWeight: "bold",
-            //       }}
-            //     >
-            //       No Data Found
-            //     </div>
-            //   </div>
-            // ) :
-
-            !loading ? (
-              !undefinedData ? (
-                <Row>
-                  {/* <Profile />
+      {isConnected ? (
+        <NoInternetConnection />
+      ) : (
+        <div>
+          <Breadcrumbs title="Settings" mainTitle="Settings" parent="Users" />
+          <Container fluid>
+            <div className="edit-profile">
+              {!loading ? (
+                !undefinedData ? (
+                  <Row>
+                    {/* <Profile />
             <WilliamProfile />
             <Profile2 />
             <ProfileDetails />
             <DetailImg /> */}
 
-                  <Personalization />
-                </Row>
+                    <Personalization />
+                  </Row>
+                ) : (
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "center",
+                      height: "80vh",
+                      backgroundColor: "white",
+                      alignItems: "center",
+                    }}
+                  >
+                    <div
+                      style={{
+                        textAlign: "center",
+                        fontSize: "25px",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      No Data Found
+                    </div>
+                  </div>
+                )
               ) : (
                 <div
                   style={{
@@ -115,35 +142,15 @@ const Settings = () => {
                     alignItems: "center",
                   }}
                 >
-                  <div
-                    style={{
-                      textAlign: "center",
-                      fontSize: "25px",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    No Data Found
+                  <div style={{ textAlign: "center" }}>
+                    <Loader />
                   </div>
                 </div>
-              )
-            ) : (
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  height: "80vh",
-                  backgroundColor: "white",
-                  alignItems: "center",
-                }}
-              >
-                <div style={{ textAlign: "center" }}>
-                  <Loader />
-                </div>
-              </div>
-            )
-          }
+              )}
+            </div>
+          </Container>
         </div>
-      </Container>
+      )}
     </>
   );
 };

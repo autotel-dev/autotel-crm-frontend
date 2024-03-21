@@ -13,21 +13,21 @@ interface propTypes {
 const SelectCountryBox: React.FC<propTypes> = ({ placeholder }) => {
   const { countries } = useSelector((state: any) => state.cities);
   const { provinces } = useSelector((state: any) => state.cities);
-  console.log(countries);
+  // console.log(countries);
   const [countryList, setCountryList] = useState([]);
   const dispatch = useDispatch();
   const provinceTempList: any = [];
 
   const tempList: any = [];
   useEffect(() => {
-    // console.log("provinces 22: ", provinces.length);
+    // // console.log("provinces 22: ", provinces.length);
     // if (provinces.length <= 0) {
-    //   console.log("4323");
+    //   // console.log("4323");
     //   getAll({ url: "province/get-all-active-provinces" }).then((data: any) => {
-    //     console.log("api call --- >", data);
+    //     // console.log("api call --- >", data);
     //     if (data !== undefined) {
     //       if (data.success) {
-    //         console.log("hhg");
+    //         // console.log("hhg");
     //         dispatch(setProvinces(data.data));
     //       }
     //     }
@@ -54,21 +54,21 @@ const SelectCountryBox: React.FC<propTypes> = ({ placeholder }) => {
           .localeCompare((optionB?.label ?? "").toLowerCase())
       }
       onChange={(e) => {
-        console.log(e);
+        // console.log(e);
         dispatch(setCountryId(e));
         // provinces.map((item: any, index: any) => {
-        //   console.log("item.country._id: ", item)
+        //   // console.log("item.country._id: ", item)
         //   if (item.country == e) {
-        //     console.log("788")
+        //     // console.log("788")
         //     provinceTempList.push({
         //       value: `${item._id}`,
         //       label: `${item.name}`,
         //     });
         //   }
         // });
-        // console.log("provinceTempList: ", provinceTempList);
+        // // console.log("provinceTempList: ", provinceTempList);
         // dispatch(setProvinces(provinceTempList));
-        // console.log("provinces: ", provinces);
+        // // console.log("provinces: ", provinces);
       }}
       options={countryList}
     />

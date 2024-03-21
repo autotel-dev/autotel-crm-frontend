@@ -13,7 +13,6 @@ const TicketList = () => {
         marginBottom: "20px",
       }}
     >
-      
       {supportStatistics.map((item: any, index: any) => {
         if (index < 4) {
           return (
@@ -93,7 +92,11 @@ const TicketList = () => {
                       >
                         {((item.value / supportStatistics[4].value) * 100)
                           .toFixed(1)
-                          .toString()}
+                          .toString() !== "NaN"
+                          ? ((item.value / supportStatistics[4].value) * 100)
+                              .toFixed(1)
+                              .toString()
+                          : 0}
                         %
                       </span>
                     </div>

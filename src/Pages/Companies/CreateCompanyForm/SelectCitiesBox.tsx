@@ -10,7 +10,7 @@ const SelectCitiesBox: React.FC<propTypes> = ({ placeholder }) => {
   const { cities, createCompany } = useSelector(
     (state: any) => state.companies
   );
-  console.log(cities);
+  // console.log(cities);
   const [cityId, setCityId] = useState("");
   const [cityList, setCityList] = useState([]);
   const dispatch = useDispatch();
@@ -21,7 +21,7 @@ const SelectCitiesBox: React.FC<propTypes> = ({ placeholder }) => {
       tempList.push({ value: `${item._id}`, label: `${item.name}` });
     });
     setCityList(tempList);
-  }, []);
+  }, [cities]);
   return (
     <Select
       showSearch
@@ -37,7 +37,7 @@ const SelectCitiesBox: React.FC<propTypes> = ({ placeholder }) => {
           .localeCompare((optionB?.label ?? "").toLowerCase())
       }
       onChange={(e) => {
-        console.log(e);
+        // console.log(e);
         setCityId(e);
         dispatch(
           setCreateCompany({

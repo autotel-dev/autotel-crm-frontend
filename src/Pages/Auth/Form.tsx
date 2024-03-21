@@ -10,9 +10,13 @@ import successAlert from "../Alerts/SuccessAlert";
 import errorAlert from "../Alerts/ErrorAlert";
 import { useDispatch } from "react-redux";
 import { setActiveCRMModules } from "../../ReaduxToolkit/Reducer/CRMModuleSlice";
-import { getUserRole } from "../../Api/globals";
+import { getOperatorCompanyUserId, getUserRole } from "../../Api/globals";
 import Swal from "sweetalert2";
 import { setUserPersonalizationData } from "../../ReaduxToolkit/Reducer/PersonalizationSlice";
+import { setPermissions } from "../../ReaduxToolkit/Reducer/CompanySlice";
+import { setUserPermissions } from "../../ReaduxToolkit/Reducer/PermissionSlice";
+import { ROLES } from "../../constants/roles";
+import { setUserData } from "../../ReaduxToolkit/Reducer/UserSlice";
 
 interface loginTypes {
   emailAddress: string; // Change 'boolean' to the actual type of isVisible
@@ -45,26 +49,35 @@ const CommonForm = ({ alignLogo }: CommonFormPropsType) => {
         password: data.password,
       };
       setLoading(true);
-      console.log(loginData);
+      // console.log(loginData);
       try {
-        await login(loginData).then((data: any) => {
-          console.log("response: ", data);
+        await login(loginData).then(async (data: any) => {
+          // console.log("response: ", data);
           setLoading(false);
-          if (data == undefined) {
+          // if (data == undefined) {
+          //   Swal.fire({
+          //     text: "Connection Refused or not connected",
+          //     icon: "error",
+          //     timer: 2000,
+          //     showConfirmButton: false,
+          //   });
+          //   setLoading(false);
+          //   return;
+          // }
+
+          if (!data.success && data.statusCode !== 401) {
             Swal.fire({
-              text: "Connection Refused or not connected",
+              text: `${data.message}`,
               icon: "error",
               timer: 2000,
               showConfirmButton: false,
             });
-            setLoading(false);
-            return;
           }
 
           if (data.statusCode == 401) {
             if (data.data) {
               if (data.data.isOtpEnabled) {
-                console.log("response: ", data.data);
+                // console.log("response: ", data.data);
 
                 localStorage.setItem("userId", data.data.userId);
                 navigate(`${process.env.PUBLIC_URL}/verifyOTP`);
@@ -79,65 +92,99 @@ const CommonForm = ({ alignLogo }: CommonFormPropsType) => {
               });
             }
           } else if (data.statusCode == 200) {
+            dispatch(setUserData(null));
             const token = data.data.authToken;
-            console.log("response: ", data.data);
-            console.log("token: ", token);
-            localStorage.setItem("userId", data.data.userId);
+            // console.log("response: ", data.data);
+            // console.log("token: ", token);
             localStorage.setItem("token", token);
+            if (getUserRole() == ROLES.SUPER_ADMIN) {
+              dispatch(setUserPermissions([]));
+            }
+
+            if (getUserRole() == "OPERATOR") {
+              localStorage.setItem("userId", getOperatorCompanyUserId());
+            } else if (getUserRole() == "COMPANY") {
+              localStorage.setItem("userId", data.data.userId);
+            } else if (getUserRole() == "SUPER_ADMIN") {
+              localStorage.removeItem("userId");
+            }
+            const userId = localStorage.getItem("userId");
             getAll({
               url:
-                getUserRole() == "COMPANY"
-                  ? "company/get-allowed-modules"
+                getUserRole() == "COMPANY" || getUserRole() == "OPERATOR"
+                  ? "user/get-allowed-modules"
                   : "crm-module/get-all-active-modules",
             }).then((data: any) => {
-              console.log("active Modules --- >", data);
+              // console.log("active Modules --- >", data);
 
               if (data !== undefined) {
+                if (!data.success) {
+                  // console.log("hhg");
+                  // console.log(userId);
+                  dispatch(setActiveCRMModules([]));
+                }
                 if (data.success) {
-                  console.log("hhg");
-                  const userId = localStorage.getItem("userId");
-                  console.log(userId);
+                  // console.log("hhg");
+                  // console.log(userId);
                   dispatch(setActiveCRMModules(data.data));
-                  navigate(
-                    `${process.env.PUBLIC_URL}/dashboards/shoppingplace`
-                  );
-
-                  // getPerdonal Data
-                  getAll({
-                    url:
-                      userId == null && userId == undefined
-                        ? "super-admin/get-personalization"
-                        : `company/get-personalization/${userId}`,
-
-                    // url: "super-admin/get-personalization",
-                  }).then((parentData: any) => {
-                    console.log("api call --- >", parentData);
-                    if (parentData == undefined) {
-                      Swal.fire({
-                        text: `${parentData.message}`,
-                        icon: "error",
-                        timer: 2000,
-                        showConfirmButton: false,
-                      });
-                      setLoading(false);
-                      dispatch(setUserPersonalizationData(null));
-                    }
-
-                    if (parentData !== undefined) {
-                      if (parentData.success) {
-                        dispatch(setUserPersonalizationData(parentData.data));
-                        setLoading(false);
-                      }
-                      if (!parentData.success) {
-                        setLoading(false);
-                        dispatch(setUserPersonalizationData(null));
-                      }
-                    }
-                  });
-                  // successAlert();
                 }
               }
             });
+            getAll({
+              url:
+                userId == null && userId == undefined
+                  ? "super-admin/get-personalization"
+                  : `company/get-personalization/${userId}`,
+
+              // url: "super-admin/get-personalization",
+            }).then((parentData: any) => {
+              // console.log("api call --- >", parentData);
+              if (parentData == undefined) {
+                // Swal.fire({
+                //   text: `${parentData.message}`,
+                //   icon: "error",
+                //   timer: 2000,
+                //   showConfirmButton: false,
+                // });
+                setLoading(false);
+                dispatch(setUserPersonalizationData(null));
+              }
+
+              if (parentData !== undefined) {
+                if (!parentData.success) {
+                  setLoading(false);
+                  dispatch(setUserPersonalizationData(null));
+                }
+                if (parentData.success) {
+                  dispatch(setUserPersonalizationData(parentData.data));
+                }
+              }
+            });
+
+            if (getUserRole() == "COMPANY" || getUserRole() == "OPERATOR") {
+              getAll({ url: "user/get-permissions" })
+                .then((data: any) => {
+                  // console.log("api call --- >", data);
+                  if (data !== undefined) {
+                    if (data.success) {
+                      // console.log("hhg");
+                      dispatch(
+                        setUserPermissions(data.data.allowedPermissions)
+                      );
+                      setLoading(false);
+                      navigate(`${process.env.PUBLIC_URL}/dashboard`);
+                    }
+                    if (!data.success) {
+                      navigate(`${process.env.PUBLIC_URL}/dashboard`);
+                    }
+                  }
+                })
+                .catch((error: any) => {
+                  navigate(`${process.env.PUBLIC_URL}/dashboard`);
+                });
+            } else {
+              navigate(`${process.env.PUBLIC_URL}/dashboard`);
+            }
           }
 
           reset({
@@ -149,7 +196,7 @@ const CommonForm = ({ alignLogo }: CommonFormPropsType) => {
         // Handle successful post creation (e.g., show a success message, redirect, etc.)
       } catch (error: any) {
         // Handle error (e.g., show an error message)
-        console.error("Error creating post:", error);
+        // console.error("Error creating post:", error);
         setLoading(false);
         // if (error.response.statusCode == 401) {
         //     errorAlert();
@@ -210,7 +257,7 @@ const CommonForm = ({ alignLogo }: CommonFormPropsType) => {
               >
                 {ForgotPassword}
               </Link> */}
-              <div className="text-end mt-3">
+              <div className="text-end mt-2">
                 <Button
                   disabled={loading}
                   color="primary"

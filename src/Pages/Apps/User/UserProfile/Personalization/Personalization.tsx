@@ -20,6 +20,7 @@ import { Document, Page, pdfjs } from "react-pdf";
 import Dropzone from "react-dropzone-uploader";
 import Swal from "sweetalert2";
 import {
+  IMAGE_BASE_URL,
   createWithMultipart,
   getAll,
   updateWithMultipart,
@@ -29,7 +30,7 @@ import { setUserPersonalizationData } from "../../../../../ReaduxToolkit/Reducer
 
 const Personalization = () => {
   const { userData } = useSelector((state: any) => state.user);
-  //   console.log("Attachements", attachements);
+  //   // console.log("Attachements", attachements);
 
   const [addModal, setAddModal] = useState(false);
   const addToggle = () => {
@@ -48,7 +49,7 @@ const Personalization = () => {
   const { userPersonalizationData } = useSelector(
     (state: any) => state.personalization
   );
-  console.log("userPersonalizationData", userPersonalizationData);
+  // console.log("userPersonalizationData", userPersonalizationData);
 
   const [headerText, setheaderText] = useState<string>(
     userPersonalizationData !== null ? userPersonalizationData.headerText : ""
@@ -59,7 +60,9 @@ const Personalization = () => {
       : ""
   );
   const [primaryColor, setprimaryColor] = useState<string>(
-    userPersonalizationData !== null ? userPersonalizationData.primaryColor : "#000000"
+    userPersonalizationData !== null
+      ? userPersonalizationData.primaryColor
+      : "#000000"
   );
   const [secondaryClor, setsecondaryClor] = useState<string>(
     userPersonalizationData !== null
@@ -67,18 +70,24 @@ const Personalization = () => {
       : "#000000"
   );
   const [customColor1, setcustomColor1] = useState<string>(
-    userPersonalizationData !== null ? userPersonalizationData.customColor1 : "#000000"
+    userPersonalizationData !== null
+      ? userPersonalizationData.customColor1
+      : "#000000"
   );
   const [customColor2, setcustomColor2] = useState<string>(
-    userPersonalizationData !== null ? userPersonalizationData.customColor2 : "#000000"
+    userPersonalizationData !== null
+      ? userPersonalizationData.customColor2
+      : "#000000"
   );
   const [backgroundColor, setbackgroundColor] = useState<string>(
     userPersonalizationData !== null
       ? userPersonalizationData.backgroundColor
-      : ""
+      : "#000000"
   );
   const [textColor, settextColor] = useState<string>(
-    userPersonalizationData !== null ? userPersonalizationData.textColor : "#000000"
+    userPersonalizationData !== null
+      ? userPersonalizationData.textColor
+      : "#000000"
   );
   const [logoImage, setlogoImage] = useState(
     userPersonalizationData !== null ? userPersonalizationData.logoImage : null
@@ -103,14 +112,14 @@ const Personalization = () => {
 
   const handleLogoAdd = ({ file, meta, remove }: type, status: any) => {
     if (status === "done") {
-      console.log("File uploaded successfully:", file);
+      // console.log("File uploaded successfully:", file);
       if (isEdit) {
         setEditedlogoImage(file);
       } else {
         setlogoImage(file);
       }
     } else if (status === "removed") {
-      console.log("File removed:", file);
+      // console.log("File removed:", file);
       if (isEdit) {
         setEditedlogoImage(null);
       } else {
@@ -120,7 +129,7 @@ const Personalization = () => {
   };
   const handleBackgroundAdd = ({ file, meta, remove }: type, status: any) => {
     if (status === "done") {
-      console.log("File uploaded successfully:", file);
+      // console.log("File uploaded successfully:", file);
 
       if (isEdit) {
         setEditedbackgroundImage(file);
@@ -128,7 +137,7 @@ const Personalization = () => {
         setbackgroundImage(file);
       }
     } else if (status === "removed") {
-      console.log("File removed:", file);
+      // console.log("File removed:", file);
       if (isEdit) {
         setEditedbackgroundImage(null);
       } else {
@@ -182,11 +191,34 @@ const Personalization = () => {
         url: `personalization/update-personalization/${userPersonalizationData._id}`,
       })
         .then((data: any) => {
-          console.log("api call --- >", data);
+          // console.log("api call --- >", data);
+          if (data == undefined) {
+            Swal.fire({
+              text: `${data.message}`,
+              icon: "error",
+              timer: 2000,
+              showConfirmButton: false,
+            });
+            setLoading(false);
+            // setIsEdit(!isEdit);
+          }
           if (data !== undefined) {
-            if (!data.success) {
-              console.log("then but false");
+            if (
+              !data.success &&
+              data.message == "ERROR_INTERNET_DISCONNECTED"
+            ) {
               setLoading(false);
+              setIsEdit(!isEdit);
+            }
+            if (!data.success) {
+              Swal.fire({
+                text: `${data.message}`,
+                icon: "error",
+                timer: 2000,
+                showConfirmButton: false,
+              });
+              setLoading(false);
+              setIsEdit(!isEdit);
             }
             if (data.success) {
               setEditedlogoImage(null);
@@ -197,7 +229,7 @@ const Personalization = () => {
                     ? `company/get-personalization/${getUserId()}`
                     : "super-admin/get-personalization",
               }).then((parentData: any) => {
-                console.log("api call --- >", parentData);
+                // console.log("api call --- >", parentData);
                 if (parentData == undefined) {
                   Swal.fire({
                     text: "Failed to Fetch",
@@ -227,7 +259,7 @@ const Personalization = () => {
           }
         })
         .catch((err: any) => {
-          console.log("catch data", err);
+          // console.log("catch data", err);
           setLoading(false);
         });
     } else {
@@ -235,11 +267,27 @@ const Personalization = () => {
         url: `personalization/create-personalization`,
       })
         .then((data: any) => {
-          console.log("api call --- >", data);
+          // console.log("api call --- >", data);
+          if (data == undefined) {
+            Swal.fire({
+              text: `${data.message}`,
+              icon: "error",
+              timer: 2000,
+              showConfirmButton: false,
+            });
+            setLoading(false);
+            // setIsEdit(!isEdit);
+          }
           if (data !== undefined) {
             if (!data.success) {
-              console.log("then but false");
+              Swal.fire({
+                text: `${data.message}`,
+                icon: "error",
+                timer: 2000,
+                showConfirmButton: false,
+              });
               setLoading(false);
+              // setIsEdit(!isEdit);
             }
             if (data.success) {
               getAll({
@@ -248,7 +296,7 @@ const Personalization = () => {
                     ? `company/get-personalization/${getUserId()}`
                     : "super-admin/get-personalization",
               }).then((parentData: any) => {
-                console.log("api call --- >", parentData);
+                // console.log("api call --- >", parentData);
                 if (parentData == undefined) {
                   Swal.fire({
                     text: "Failed to Fetch",
@@ -275,7 +323,7 @@ const Personalization = () => {
           }
         })
         .catch((err: any) => {
-          console.log("catch data", err);
+          // console.log("catch data", err);
           setLoading(false);
         });
     }
@@ -509,13 +557,13 @@ const Personalization = () => {
                       onMouseLeave={() => handleMouseLeave()}
                       onClick={() => {
                         setImageUrl(
-                          `http://124.29.238.127:8080/${userPersonalizationData.logoImage.url}`
+                          `${IMAGE_BASE_URL}/${userPersonalizationData.logoImage.url}`
                         );
                         addToggle();
                       }}
                     >
                       <img
-                        src={`http://124.29.238.127:8080/${userPersonalizationData.logoImage.url}`}
+                        src={`${IMAGE_BASE_URL}/${userPersonalizationData.logoImage.url}`}
                         alt=""
                         height={230}
                         width={360}
@@ -562,13 +610,13 @@ const Personalization = () => {
                       onMouseLeave={() => handleMouseLeave()}
                       onClick={() => {
                         setImageUrl(
-                          `http://124.29.238.127:8080/${userPersonalizationData.backgroundImage.url}`
+                          `${IMAGE_BASE_URL}/${userPersonalizationData.backgroundImage.url}`
                         );
                         addToggle();
                       }}
                     >
                       <img
-                        src={`http://124.29.238.127:8080/${userPersonalizationData.backgroundImage.url}`}
+                        src={`${IMAGE_BASE_URL}/${userPersonalizationData.backgroundImage.url}`}
                         alt=""
                         height={230}
                         width={360}

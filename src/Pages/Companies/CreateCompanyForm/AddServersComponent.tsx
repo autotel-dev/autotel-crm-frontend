@@ -51,7 +51,7 @@ const AddServersComponent: React.FC<propTypes> = ({ server }) => {
   };
   const addServer = () => {
     dispatch(setServerCredentials([...serverCredentials, addServersForm]));
-    console.log(serverCredentials);
+    // console.log(serverCredentials);
   };
 
     const handleNextButton = () => {

@@ -24,7 +24,7 @@ const PackageListNav = () => {
             <NavLink
               className={activeTab === "1" ? "active" : ""}
               onClick={() => {
-                console.log(filterPackages);
+                // console.log(filterPackages);
 
                 dispatch(setActiveTab("1"));
                 filterPackages.map((item: any, index: any) => {
@@ -43,13 +43,13 @@ const PackageListNav = () => {
             <NavLink
               className={activeTab === "2" ? "active" : ""}
               onClick={() => {
-                console.log(filterPackages);
+                // console.log(filterPackages);
 
                 dispatch(setActiveTab("1"));
                 filterPackages.map((item: any, index: any) => {
                   if (!item.isActive) {
                     tempList.push(item);
-                    console.log("isActive -- >", 1);
+                    // console.log("isActive -- >", 1);
                   }
                 });
                 dispatch(
@@ -67,13 +67,13 @@ const PackageListNav = () => {
             <NavLink
               className={activeTab === "3" ? "active" : ""}
               onClick={() => {
-                console.log(filterPackages);
+                // console.log(filterPackages);
 
                 dispatch(setActiveTab("1"));
                 filterPackages.map((item: any, index: any) => {
                   if (item.isActive) {
                     tempList.push(item);
-                    console.log("isActive -- >", 1);
+                    // console.log("isActive -- >", 1);
                   }
                 });
                 dispatch(setInActiveActivePackages("No Active Modules Found"));

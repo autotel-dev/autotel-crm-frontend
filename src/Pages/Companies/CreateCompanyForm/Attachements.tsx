@@ -67,7 +67,7 @@ const Attachements = ({ callbackActive }: BusinessFormCommonProps) => {
   // };
 
   // const onImageChange = (event: any) => {
-  //   console.log(event.target.files);
+  //   // console.log(event.target.files);
 
   //   setCnciFront(event.target.files[0]);
   //   // if (event.target.files && event.target.files[0]) {
@@ -77,46 +77,46 @@ const Attachements = ({ callbackActive }: BusinessFormCommonProps) => {
 
   // const handleCNCIFront = ({ file, meta, remove }: type, status: any) => {
   //   if (status === "done") {
-  //     console.log("File uploaded successfully:", file);
+  //     // console.log("File uploaded successfully:", file);
   //     setCnciFront(file);
   //   } else if (status === "removed") {
-  //     console.log("File removed:", file);
+  //     // console.log("File removed:", file);
   //     setCnciFront(null);
   //   }
   // };
   // const handleCNICBack = ({ file, meta, remove }: type, status: any) => {
   //   if (status === "done") {
-  //     console.log("File uploaded successfully:", file);
+  //     // console.log("File uploaded successfully:", file);
   //     setCnciBack(file);
   //   } else if (status === "removed") {
-  //     console.log("File removed:", file);
+  //     // console.log("File removed:", file);
   //     setCnciBack(null);
   //   }
   // };
   // const handlePTA = ({ file, meta, remove }: type, status: any) => {
   //   if (status === "done") {
-  //     console.log("File uploaded successfully:", file);
+  //     // console.log("File uploaded successfully:", file);
   //     setPtaCertificate(file);
   //   } else if (status === "removed") {
-  //     console.log("File removed:", file);
+  //     // console.log("File removed:", file);
   //     setPtaCertificate(null);
   //   }
   // };
   // const handleNTN = ({ file, meta, remove }: type, status: any) => {
   //   if (status === "done") {
-  //     console.log("File uploaded successfully:", file);
+  //     // console.log("File uploaded successfully:", file);
   //     setNtn(file);
   //   } else if (status === "removed") {
-  //     console.log("File removed:", file);
+  //     // console.log("File removed:", file);
   //     setNtn(null);
   //   }
   // };
   // const handleOther = ({ file, meta, remove }: type, status: any) => {
   //   if (status === "done") {
-  //     console.log("File uploaded successfully:", file);
+  //     // console.log("File uploaded successfully:", file);
   //     setOther(file);
   //   } else if (status === "removed") {
-  //     console.log("File removed:", file);
+  //     // console.log("File removed:", file);
   //     setOther(null);
   //   }
   // };

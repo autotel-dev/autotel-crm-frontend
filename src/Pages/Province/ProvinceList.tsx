@@ -16,10 +16,12 @@ import {
   setFilterProvinces,
   setCountryName,
   setInActiveActiveProvinces,
+  setIsConnected,
 } from "../../ReaduxToolkit/Reducer/ProvinceSlice";
 import { setNoDataFound } from "../../ReaduxToolkit/Reducer/NoDataFoundSlice";
 import Loader from "../Loader/Loader";
 import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom";
 
 const ProvinceList = () => {
   const { provinces, loading, error, id, value, activeInActiveProvinces } =
@@ -29,14 +31,15 @@ const ProvinceList = () => {
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [provinceName, setProvinceName] = useState("");
   const [isActive, setIsActive] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     dispatch(setProvincesStart());
     getAll({ url: "province/get-all-provinces" }).then((data: any) => {
-      console.log("api call --- >", data);
+      // console.log("api call --- >", data);
       if (data == undefined) {
         Swal.fire({
-          text: "Failed to fetch due to connection refused",
+          text: "No provinces Found",
           icon: "error",
           timer: 2000,
           showConfirmButton: false,
@@ -47,23 +50,35 @@ const ProvinceList = () => {
         dispatch(setFilterProvinces([]));
         return;
       }
-      dispatch(setProvincesEnd());
+
       if (data !== undefined) {
         dispatch(setNoDataFound(data.message));
+        if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
+          dispatch(setIsConnected(true));
+        }
+        if (!data.success) {
+          Swal.fire({
+            text: `${data.message}`,
+            icon: "error",
+            timer: 2000,
+            showConfirmButton: false,
+          });
+        }
         if (data.success) {
-          console.log("hhg");
+          // console.log("hhg");
           dispatch(setProvinces(data.data));
           dispatch(setFilterProvinces(data.data));
         }
       }
+      dispatch(setProvincesEnd());
     });
   }, []);
   useEffect(() => {
     getAll({ url: "country/get-all-active-countries" }).then((data: any) => {
-      console.log("api call --- >", data);
+      // console.log("api call --- >", data);
       if (data !== undefined) {
         if (data.success) {
-          console.log("hhg");
+          // console.log("hhg");
           dispatch(setCountries(data.data));
         }
       }
@@ -97,26 +112,26 @@ const ProvinceList = () => {
                   //     isActive: !row.isActive,
                   //     company: decodedToken.userId,
                   //   };
-                  //   console.log(operator);
+                  //   // console.log(operator);
                   //   setIsActive(!row.isActive);
                   //   // setRowIndex(index);
-                  //   console.log(e.target.value);
+                  //   // console.log(e.target.value);
                   //   try {
                   //     await update(operator, {
                   //       url: `operator/update-operator/${row._id}`,
                   //     }).then((data: any) => {
                   //       if (data.success) {
-                  //         console.log(data);
+                  //         // console.log(data);
 
                   //         dispatch(setOperatorsStart());
                   //         getAll({
                   //           url: "operator/get-all-operators",
                   //         }).then((data: any) => {
-                  //           console.log("api call --- >", data);
+                  //           // console.log("api call --- >", data);
                   //           dispatch(setOperatorsEnd());
                   //           if (data !== undefined) {
                   //             if (data.success) {
-                  //               console.log("hhg");
+                  //               // console.log("hhg");
                   //               dispatch(setOperators(data.data));
                   //               dispatch(setFilterOperators(data.data));
                   //             }
@@ -127,7 +142,7 @@ const ProvinceList = () => {
                   //     // Handle successful post creation (e.g., show a success message, redirect, etc.)
                   //   } catch (error) {
                   //     // Handle error (e.g., show an error message)
-                  //     console.error("Error creating post:", error);
+                  //     // console.error("Error creating post:", error);
                   //   }
                   // }}
                 />
@@ -154,7 +169,7 @@ const ProvinceList = () => {
                 border: "none",
               }}
               onClick={() => {
-                console.log("345678");
+                // console.log("345678");
                 var alertData = {
                   title: "Are you sure?",
                   text: "Once deleted, you will not be able to recover this ",
@@ -177,7 +192,7 @@ const ProvinceList = () => {
               }}
               onClick={() => {
                 setIsUpdateModalOpen(true);
-                console.log("isUpdateModalOpen: ", isUpdateModalOpen);
+                // console.log("isUpdateModalOpen: ", isUpdateModalOpen);
                 dispatch(setId(row._id));
                 setProvinceName(row.name);
                 dispatch(setCountryName(row.country.name));

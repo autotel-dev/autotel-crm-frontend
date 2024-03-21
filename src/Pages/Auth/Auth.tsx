@@ -5,13 +5,12 @@ import { dynamicImage } from "../../Service";
 import BcakgroundImage from "../../assets/Background Image.png";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getAll } from "../../Api";
+import { IMAGE_BASE_URL, getAll } from "../../Api";
 import { getUserRole } from "../../Api/globals";
 import Swal from "sweetalert2";
 import { useParams } from "react-router-dom";
 import { setUserPersonalizationData } from "../../ReaduxToolkit/Reducer/PersonalizationSlice";
 import Loader from "../Loader/Loader";
-import { log } from "console";
 const LoginForm = () => {
   const [loading, setLoading] = useState<any>(true);
   const { userPersonalizationData } = useSelector(
@@ -25,7 +24,7 @@ const LoginForm = () => {
 
   useEffect(() => {
     const userId = localStorage.getItem("userId");
-    console.log(userId);
+    // console.log(userId);
 
     getAll({
       url:
@@ -36,8 +35,8 @@ const LoginForm = () => {
       // url: "super-admin/get-personalization",
     })
       .then((parentData: any) => {
-        console.log("api call --- >", parentData);
-        console.log("undenid");
+        // console.log("api call --- >", parentData);
+        // console.log("undenid");
         if (parentData == undefined) {
           Swal.fire({
             text: "Failed to Fetch the personalization",
@@ -61,7 +60,7 @@ const LoginForm = () => {
         }
       })
       .catch((error) => {
-        console.log("error== >", error);
+        // console.log("error== >", error);
       });
   }, []);
   return (
@@ -139,12 +138,12 @@ const LoginForm = () => {
             <img
               src={
                 userPersonalizationData !== null
-                  ? `http://124.29.238.127:8080/${userPersonalizationData.backgroundImage.url}`
+                  ? `${IMAGE_BASE_URL}/${userPersonalizationData.backgroundImage.url}`
                   : BcakgroundImage
               }
               alt=""
-              width={450}
-              height={400}
+              width={360}
+              height={320}
             />
           </Col>
           <Col xl={7} className="p-0">

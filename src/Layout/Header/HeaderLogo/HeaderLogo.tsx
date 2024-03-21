@@ -6,6 +6,7 @@ import { useAppDispatch, useAppSelector } from "../../../ReaduxToolkit/Hooks";
 import { setToggleSidebar } from "../../../ReaduxToolkit/Reducer/LayoutSlice";
 import Logo from "../../../assets/Logo.png";
 import { useSelector } from "react-redux";
+import { IMAGE_BASE_URL } from "../../../Api";
 
 const HeaderLogo = () => {
   const dispatch = useAppDispatch();
@@ -20,7 +21,7 @@ const HeaderLogo = () => {
           <img
             src={
               userPersonalizationData !== null
-                ? `http://124.29.238.127:8080/${userPersonalizationData.logoImage.url}`
+                ? `${IMAGE_BASE_URL}/${userPersonalizationData.logoImage.url}`
                 : Logo
             }
             alt=""
