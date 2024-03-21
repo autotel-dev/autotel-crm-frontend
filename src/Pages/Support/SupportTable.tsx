@@ -20,7 +20,7 @@ const TicketTable = () => {
     (state: any) => state.userPermissions
   );
   var support = userPermissions.find((item: any) => item.title === "Support");
-  console.log("support", support);
+  // console.log("support", support);
   const supportData = () => {
     return bugReports
       .filter(
@@ -62,7 +62,7 @@ const TicketTable = () => {
     setSearchValue(searchKey);
   };
 
-  console.log("allBugReports", supportData());
+  // console.log("allBugReports", supportData());
   useEffect(() => {
     setData(supportData());
   }, [bugReports]);
@@ -100,7 +100,7 @@ const TicketTable = () => {
 
   const handleRowClicked = (row: any) => {
     // Here 'row' contains the data of the clicked row
-    console.log("Clicked row data:", row);
+    // console.log("Clicked row data:", row);
 
     // Navigate to the ticketDetails page with the row data
     dispatch(setTableRow(row));

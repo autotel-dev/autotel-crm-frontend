@@ -26,14 +26,14 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
     (state: any) => state.userPermissions
   );
   var user = userPermissions.find((item: any) => item.title === "User");
-  console.log("user", user);
+  // // console.log("user", user);
   var support = userPermissions.find((item: any) => item.title === "Support");
-  console.log("support", support);
+  // // console.log("support", support);
 
-  console.log("userPermissions:", userPermissions);
-  console.log("getUserRole()", getUserRole());
+  // // console.log("userPermissions:", userPermissions);
+  // // console.log("getUserRole()", getUserRole());
 
-  console.log("crmActiveModules", crmActiveModules);
+  // // console.log("crmActiveModules", crmActiveModules);
 
   const SidebarMenuComponent: SidebarMenuTypes[] = [
     {
@@ -130,11 +130,11 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
       svgIcon: "home",
       link: `${process.env.PUBLIC_URL}/super-admin/support`,
     },
-    {
-      title: "Tasks",
-      svgIcon: "home",
-      link: `${process.env.PUBLIC_URL}/super-admin/tasks`,
-    },
+    // {
+    //   title: "Tasks",
+    //   svgIcon: "home",
+    //   link: `${process.env.PUBLIC_URL}/super-admin/tasks`,
+    // },
   ];
 
   const CompanySidebarMenuComponent: SidebarMenuTypes[] = [
@@ -203,11 +203,11 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
       svgIcon: "home",
       link: `${process.env.PUBLIC_URL}/company/support`,
     },
-    {
-      title: "Tasks",
-      svgIcon: "home",
-      link: `${process.env.PUBLIC_URL}/company/tasks`,
-    },
+    // {
+    //   title: "Tasks",
+    //   svgIcon: "home",
+    //   link: `${process.env.PUBLIC_URL}/company/tasks`,
+    // },
     {
       title: "Reports",
       svgIcon: "home",
@@ -290,7 +290,7 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
   useEffect(() => {
     if (authToken !== null) {
       const decodedToken = jwtDecode(authToken);
-      console.log(decodedToken);
+      // // console.log(decodedToken);
       setDecodedToken(decodedToken);
     }
   }, []);

@@ -32,7 +32,7 @@ const Countries = () => {
 
     dispatch(setCountries(filtered));
 
-    console.log(filtered);
+    // console.log(filtered);
   };
 
   // Update original countries whenever Redux countries change

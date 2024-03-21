@@ -52,7 +52,7 @@ const CreateNewProvince = () => {
         name: data.name,
         countryId: countryId,
       };
-      console.log(province);
+      // console.log(province);
       try {
         await create(province, { url: "province/create-province" }).then(
           (data: any) => {
@@ -84,7 +84,7 @@ const CreateNewProvince = () => {
               }
 
               if (data.success) {
-                console.log(data);
+                // console.log(data);
                 dispatch(setCountryId(null));
                 setLoading(false);
                 setAddModal(false);
@@ -95,7 +95,7 @@ const CreateNewProvince = () => {
                 dispatch(setProvincesStart());
                 getAll({ url: "province/get-all-provinces" }).then(
                   (data: any) => {
-                    console.log("api call --- >", data);
+                    // console.log("api call --- >", data);
                     if (data == undefined) {
                       Swal.fire({
                         text: "Failed to fetch due to connection refused",
@@ -112,7 +112,7 @@ const CreateNewProvince = () => {
                     dispatch(setProvincesEnd());
                     if (data !== undefined) {
                       if (data.success) {
-                        console.log("hhg");
+                        // console.log("hhg");
                         dispatch(setProvinces(data.data));
                         dispatch(setFilterProvinces(data.data));
                       }
@@ -126,7 +126,7 @@ const CreateNewProvince = () => {
         // Handle successful post creation (e.g., show a success message, redirect, etc.)
       } catch (error: any) {
         // Handle error (e.g., show an error message)
-        console.error("Error creating post:", error);
+        // console.error("Error creating post:", error);
         setLoading(false);
         setAddModal(false);
         reset({

@@ -38,7 +38,7 @@ const UpdateServerForm = () => {
   const { server } = useSelector((state: any) => state.serverDetails);
   // const [server, setServer] = useState(location.state || {});
   // const { server } = location?.state;
-  console.log("server", server);
+  // console.log("server", server);
 
   const [formData, setFormData]: any = useState({
     companyName: server.companyName,
@@ -91,7 +91,7 @@ const UpdateServerForm = () => {
       [field]: value, // Update the specific field
     }));
 
-    console.log("formData-->", formData);
+    // console.log("formData-->", formData);
   };
   const updateNestedValue = (parentField: any, childField: any, value: any) => {
     setFormData((prevFormData: any) => ({
@@ -101,29 +101,29 @@ const UpdateServerForm = () => {
         [childField]: value,
       },
     }));
-    console.log("formData-->", formData);
+    // console.log("formData-->", formData);
   };
 
   const updateServerSubmitted = async (e: any) => {
     e.preventDefault();
     setLoading(true);
-    console.log("updatedFormData", formData);
+    // console.log("updatedFormData", formData);
 
     try {
       await update(formData, {
         url: `server-management/update-server/${server._id}`,
       }).then((data: any) => {
-        console.log("update Server form updated");
+        // console.log("update Server form updated");
 
         setLoading(false);
 
         if (data.success) {
-          console.log(data);
+          // console.log(data);
           setLoading(false);
           dispatch(setServersStart());
           getAll({ url: "server-management/get-all-servers" }).then(
             (data: any) => {
-              console.log("api call --- >", data);
+              // console.log("api call --- >", data);
               // if (data == undefined) {
               //   Swal.fire({
               //     text: "Failed to fetch due to connection refused",
@@ -157,7 +157,7 @@ const UpdateServerForm = () => {
                   setLoading(false);
                 }
                 if (data.success) {
-                  console.log("hhg");
+                  // console.log("hhg");
                   dispatch(setServers(data.data.allServers));
                   dispatch(setFilterServers(data.data.allServers));
                   navigate(`${process.env.PUBLIC_URL}/setup/server_details`);
@@ -171,7 +171,7 @@ const UpdateServerForm = () => {
       // Handle successful post creation (e.g., show a success message, redirect, etc.)
     } catch (error: any) {
       // Handle error (e.g., show an error message)
-      console.error("Error creating post:", error);
+      // console.error("Error creating post:", error);
 
       setLoading(false);
     }

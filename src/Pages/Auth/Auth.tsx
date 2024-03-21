@@ -11,7 +11,6 @@ import Swal from "sweetalert2";
 import { useParams } from "react-router-dom";
 import { setUserPersonalizationData } from "../../ReaduxToolkit/Reducer/PersonalizationSlice";
 import Loader from "../Loader/Loader";
-import { log } from "console";
 const LoginForm = () => {
   const [loading, setLoading] = useState<any>(true);
   const { userPersonalizationData } = useSelector(
@@ -25,7 +24,7 @@ const LoginForm = () => {
 
   useEffect(() => {
     const userId = localStorage.getItem("userId");
-    console.log(userId);
+    // console.log(userId);
 
     getAll({
       url:
@@ -36,8 +35,8 @@ const LoginForm = () => {
       // url: "super-admin/get-personalization",
     })
       .then((parentData: any) => {
-        console.log("api call --- >", parentData);
-        console.log("undenid");
+        // console.log("api call --- >", parentData);
+        // console.log("undenid");
         if (parentData == undefined) {
           Swal.fire({
             text: "Failed to Fetch the personalization",
@@ -61,7 +60,7 @@ const LoginForm = () => {
         }
       })
       .catch((error) => {
-        console.log("error== >", error);
+        // console.log("error== >", error);
       });
   }, []);
   return (

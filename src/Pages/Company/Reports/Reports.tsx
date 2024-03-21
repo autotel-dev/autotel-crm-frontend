@@ -33,7 +33,7 @@ const Reports = () => {
   const getData = () => {
     setLoading(true);
     getAll({ url: "company/devices" }).then((data: any) => {
-      console.log("data", data);
+      // console.log("data", data);
       if (data == undefined) {
         setUndefinedData(true);
         setLoading(false);
@@ -57,8 +57,8 @@ const Reports = () => {
         }
         if (data.success) {
           setUndefinedData(false);
-          console.log("api call --- >", data);
-          console.log("length --- >", data.data.length);
+          // console.log("api call --- >", data);
+          // console.log("length --- >", data.data.length);
 
           setDropDownDevices(data.data);
           for (let i = 0; i < data.data.length; i++) {
@@ -85,8 +85,8 @@ const Reports = () => {
 
           // Update state with initialGroupDevices
           setDropDownDevices(initialGroupDevices);
-          console.log("dropDownGroups", groups);
-          console.log("dropDownGroupsDevices", dropDownDevices);
+          // console.log("dropDownGroups", groups);
+          // console.log("dropDownGroupsDevices", dropDownDevices);
           setLoading(false);
 
           // ---------------------- For device status-----------------------------------
@@ -97,7 +97,7 @@ const Reports = () => {
   useEffect(() => {
     getData();
     getAll({ url: "reports/get-all-report-types" }).then((data: any) => {
-      console.log("data", data);
+      // console.log("data", data);
       // if (data == undefined) {
       //   Swal.fire({
       //     text: "Failed to Fetch due to connection refused",
@@ -120,8 +120,8 @@ const Reports = () => {
           });
         }
         if (data.success) {
-          console.log("api call --- >", data);
-          console.log("length --- >", data.data.allReportTypes);
+          // console.log("api call --- >", data);
+          // console.log("length --- >", data.data.allReportTypes);
           dispatch(setReportstype(data.data.allReportTypes));
         }
       }

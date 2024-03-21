@@ -29,7 +29,7 @@ import "jspdf-autotable";
 
 const ReportsList = () => {
   const { reports } = useSelector((state: any) => state.reports);
-  console.log("Reports in list", reports);
+  // console.log("Reports in list", reports);
 
   const dispatch = useDispatch();
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
@@ -47,7 +47,7 @@ const ReportsList = () => {
     index: any
   ) {
     // message.info("Click on left button.");
-    console.log("click left button", e);
+    // console.log("click left button", e);
     if (selectedTypes[index] == "Excel") {
       xlsx(excelData, settings);
     }
@@ -56,7 +56,7 @@ const ReportsList = () => {
     // }
 
     // Perform your onClick logic here
-    console.log(`Button clicked with type: ${selectedTypes}`);
+    // console.log(`Button clicked with type: ${selectedTypes}`);
   }
 
   const [selectedTypes, setSelectedTypes]: any = useState({});
@@ -67,7 +67,7 @@ const ReportsList = () => {
       ...prevSelectedTypes,
       [index]: type,
     }));
-    console.log("click", e);
+    // console.log("click", e);
   }
 
   const [loading, setLoading] = useState(false);
@@ -180,7 +180,7 @@ const ReportsList = () => {
   //       (header: any) => data[header.toLowerCase()]
   //     )
   //   );
-  //   console.log(tableData);
+  //   // console.log(tableData);
 
   //   // // Add headers
   //   // doc.({
@@ -251,7 +251,7 @@ const ReportsList = () => {
                       icon={<UserOutlined />}
                       onClick={(e: any) => {
                         handleMenuClick(e, "Excel", index);
-                        console.log(e);
+                        // console.log(e);
                       }}
                     >
                       Excel
@@ -261,7 +261,7 @@ const ReportsList = () => {
                       icon={<UserOutlined />}
                       onClick={(e: any) => {
                         handleMenuClick(e, "PDF", index);
-                        console.log(e);
+                        // console.log(e);
                       }}
                     >
                       PDF

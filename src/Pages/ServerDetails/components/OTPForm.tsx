@@ -51,7 +51,7 @@ const OTPForm = ({ toggle }: propsType) => {
   };
 
   const handleChange = (e: any) => {
-    console.log(e);
+    // console.log(e);
     setOtp(e);
   };
 
@@ -73,7 +73,7 @@ const OTPForm = ({ toggle }: propsType) => {
         );
         setLoading(false);
         const result = response.data;
-        console.log("Response data:", response.data);
+        // console.log("Response data:", response.data);
         if (result.success) {
           setShowChangePasswordForm(true);
         }
@@ -87,7 +87,7 @@ const OTPForm = ({ toggle }: propsType) => {
           showCancelButton: false,
         });
       }
-      console.log(otpData);
+      // console.log(otpData);
     }
   };
 
@@ -101,7 +101,7 @@ const OTPForm = ({ toggle }: propsType) => {
         }
       );
       const result = await response.json();
-      console.log("api --- >", result);
+      // console.log("api --- >", result);
       if (result.success) {
         Swal.fire({
           text: `${result.message}`,
@@ -110,7 +110,7 @@ const OTPForm = ({ toggle }: propsType) => {
           showCancelButton: false,
         });
         handleResend();
-        console.log(result);
+        // console.log(result);
       } else {
       }
     } catch (error: any) {

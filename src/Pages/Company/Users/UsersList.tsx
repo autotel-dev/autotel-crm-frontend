@@ -30,10 +30,10 @@ const UsersList = () => {
     (state: any) => state.userPermissions
   );
   var user = userPermissions.find((item: any) => item.title === "User");
-  console.log("user", user);
+  // console.log("user", user);
 
-  console.log("userPermissions:", userPermissions);
-  console.log("getUserRole()", getUserRole());
+  // console.log("userPermissions:", userPermissions);
+  // console.log("getUserRole()", getUserRole());
   const { noDataFound } = useSelector((state: any) => state.noDataFound);
   const dispatch = useDispatch();
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
@@ -52,7 +52,7 @@ const UsersList = () => {
   useEffect(() => {
     if (authToken !== null) {
       const decodedToken = jwtDecode(authToken);
-      console.log(decodedToken);
+      // console.log(decodedToken);
       setDecodedToken(decodedToken);
     }
   }, []);
@@ -62,7 +62,7 @@ const UsersList = () => {
     dispatch(setFilterOperators([]));
     dispatch(setOperatorsStart());
     getAll({ url: "operator/get-all-operators" }).then((data: any) => {
-      console.log("api call --- >", data);
+      // console.log("api call --- >", data);
       // if (data == undefined) {
       //   Swal.fire({
       //     text: "Failed to fetch due to connection refused",
@@ -91,7 +91,7 @@ const UsersList = () => {
           });
         }
         if (data.success) {
-          console.log("hhg");
+          // console.log("hhg");
           dispatch(setOperators(data.data));
           dispatch(setFilterOperators(data.data));
         }
@@ -131,26 +131,26 @@ const UsersList = () => {
                       isActive: !row.isActive,
                       company: decodedToken.userId,
                     };
-                    console.log(operator);
+                    // console.log(operator);
                     setIsActive(!row.isActive);
                     // setRowIndex(index);
-                    console.log(e.target.value);
+                    // console.log(e.target.value);
                     try {
                       await update(operator, {
                         url: `operator/update-operator/${row._id}`,
                       }).then((data: any) => {
                         if (data.success) {
-                          console.log(data);
+                          // console.log(data);
 
                           dispatch(setOperatorsStart());
                           getAll({
                             url: "operator/get-all-operators",
                           }).then((data: any) => {
-                            console.log("api call --- >", data);
+                            // console.log("api call --- >", data);
                             dispatch(setOperatorsEnd());
                             if (data !== undefined) {
                               if (data.success) {
-                                console.log("hhg");
+                                // console.log("hhg");
                                 dispatch(setOperators(data.data));
                                 dispatch(setFilterOperators(data.data));
                               }
@@ -161,7 +161,7 @@ const UsersList = () => {
                       // Handle successful post creation (e.g., show a success message, redirect, etc.)
                     } catch (error) {
                       // Handle error (e.g., show an error message)
-                      console.error("Error creating post:", error);
+                      // console.error("Error creating post:", error);
                     }
                   }}
                 />
@@ -190,7 +190,7 @@ const UsersList = () => {
                     border: "none",
                   }}
                   onClick={() => {
-                    console.log("345678");
+                    // console.log("345678");
                     var alertData = {
                       title: "Are you sure?",
                       text: "Once deleted, you will not be able to recover this ",
@@ -215,7 +215,7 @@ const UsersList = () => {
                   }}
                   onClick={() => {
                     setIsUpdateModalOpen(true);
-                    console.log("isUpdateModalOpen: ", isUpdateModalOpen);
+                    // console.log("isUpdateModalOpen: ", isUpdateModalOpen);
                     setId(row._id);
                     setName(row.fullName);
                     setEmailAddress(row.emailAddress);

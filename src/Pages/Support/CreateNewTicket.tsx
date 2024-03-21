@@ -71,14 +71,14 @@ const CreateNewTicket = () => {
       formData.append("priorty", priorityStatus);
 
       selectedfiles.map((file, index) => {
-        console.log("image file test loop map: ", file);
+        // console.log("image file test loop map: ", file);
         formData.append("images", file);
       });
 
       //   if (selectedfiles.length > 0) {
-      //     console.log("in new loop")
+      //     // console.log("in new loop")
       //     for (let i = 0; i < selectedfiles.length; i++) {
-      //         console.log("selectedfiles[i]: ", selectedfiles[i])
+      //         // console.log("selectedfiles[i]: ", selectedfiles[i])
       //       formData.append("images", selectedfiles[i]);
       //     }
       //   }
@@ -86,7 +86,7 @@ const CreateNewTicket = () => {
       try {
         setLoading(true);
         for (const [key, value] of formData.entries()) {
-          console.log(`Key 1: ${key}, Value 1: ${value}`);
+          // console.log(`Key 1: ${key}, Value 1: ${value}`);
         }
         await createCom(formData, {
           url: "support/bug-report/report-new-bug",
@@ -120,7 +120,7 @@ const CreateNewTicket = () => {
             dispatch(setPriorityStatus(null));
           }
           if (data.success) {
-            console.log(data);
+            // console.log(data);
             setSelectedFiles([]);
             setSelectedImages([]);
             dispatch(setPriorityStatus(null));
@@ -137,12 +137,12 @@ const CreateNewTicket = () => {
                   ? "company/get-all-bug-reports"
                   : "support/bug-report/get-all-bug-reports",
             }).then((data: any) => {
-              console.log("api call --- >", data);
+              // console.log("api call --- >", data);
               dispatch(setReportsEnd());
               if (data !== undefined) {
                 dispatch(setNoDataFound(data.message));
                 if (data.success) {
-                  console.log("hhg");
+                  // console.log("hhg");
                   dispatch(setBugReports(data.data.allBugReports));
                 }
               }
@@ -151,7 +151,7 @@ const CreateNewTicket = () => {
             if (getUserRole() == "SUPER_ADMIN") {
               getAll({ url: "support/bug-report/get-statistics" }).then(
                 (data: any) => {
-                  console.log("api call --- >", data);
+                  // console.log("api call --- >", data);
                   if (data !== undefined) {
                     if (data.success) {
                       const mappedArray = Object.entries(
@@ -163,7 +163,7 @@ const CreateNewTicket = () => {
                           .replace("Count", " Tickets");
                         return { key: [formattedKey], value: value };
                       });
-                      console.log(mappedArray);
+                      // console.log(mappedArray);
                       dispatch(setSupportStatistics(mappedArray));
                     }
                   }
@@ -174,7 +174,7 @@ const CreateNewTicket = () => {
         });
       } catch (error: any) {
         // Handle error (e.g., show an error message)
-        console.error("Error creating post:", error);
+        // console.error("Error creating post:", error);
         setSelectedFiles([]);
         setSelectedImages([]);
         setLoading(false);
@@ -209,10 +209,10 @@ const CreateNewTicket = () => {
       }));
       const newFiles = Array.from(files).map((file, index) => file);
       setSelectedImages((prevImages) => [...prevImages, ...newImages]);
-      console.log("selecetdImages", selectedImages);
+      // console.log("selecetdImages", selectedImages);
 
       setSelectedFiles((prevFiles: any) => [...prevFiles, ...newFiles]);
-      console.log("selecetdFiles", selectedfiles);
+      // console.log("selecetdFiles", selectedfiles);
     }
   };
 

@@ -33,7 +33,7 @@ const CreateNewUser = () => {
   useEffect(() => {
     if (authToken !== null) {
       const decodedToken = jwtDecode(authToken);
-      console.log(decodedToken);
+      // console.log(decodedToken);
       setDecodedToken(decodedToken);
     }
   }, []);
@@ -76,7 +76,7 @@ const CreateNewUser = () => {
         subRole: role,
         allowedModules: allowedModules,
       };
-      console.log(operator);
+      // console.log(operator);
       try {
         await create(operator, { url: "operator/create-operator" }).then(
           (data: any) => {
@@ -112,7 +112,7 @@ const CreateNewUser = () => {
               setRole("");
             }
             if (data.success) {
-              console.log(data);
+              // console.log(data);
               setLoading(false);
               setAddModal(false);
               reset({
@@ -125,7 +125,7 @@ const CreateNewUser = () => {
               dispatch(setOperatorsStart());
               getAll({ url: "operator/get-all-operators" }).then(
                 (data: any) => {
-                  console.log("api call --- >", data);
+                  // console.log("api call --- >", data);
                   if (data == undefined) {
                     Swal.fire({
                       text: "Failed to fetch due to connection refused",
@@ -142,7 +142,7 @@ const CreateNewUser = () => {
                   dispatch(setOperatorsEnd());
                   if (data !== undefined) {
                     if (data.success) {
-                      console.log("hhg");
+                      // console.log("hhg");
                       dispatch(setOperators(data.data));
                       dispatch(setFilterOperators(data.data));
                     }
@@ -155,7 +155,7 @@ const CreateNewUser = () => {
         // Handle successful post creation (e.g., show a success message, redirect, etc.)
       } catch (error: any) {
         // Handle error (e.g., show an error message)
-        console.error("Error creating post:", error);
+        // console.error("Error creating post:", error);
 
         setLoading(false);
         setAddModal(false);
@@ -173,7 +173,7 @@ const CreateNewUser = () => {
   const { roles } = useSelector((state: any) => state.roles);
   const [rolesList, setRolesList] = useState([]);
   const [role, setRole] = useState("");
-  console.log("Roles", roles);
+  // console.log("Roles", roles);
 
   const tempRolesList: any = [];
   useEffect(() => {
@@ -289,7 +289,7 @@ const CreateNewUser = () => {
                         .localeCompare((optionB?.label ?? "").toLowerCase())
                     }
                     onChange={(e: any) => {
-                      console.log(e);
+                      // console.log(e);
                       setRole(e);
                     }}
                     options={rolesList}

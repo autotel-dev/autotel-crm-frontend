@@ -33,13 +33,13 @@ const Roles = () => {
 
     dispatch(setRoles(filtered));
 
-    console.log(filtered);
+    // console.log(filtered);
   };
   useEffect(() => {
     dispatch(setIsConnected(false));
   }, []);
   // getAll({ url: "user/get-user" }).then((parentData: any) => {
-  //   console.log("api call --- >", parentData);
+  //   // console.log("api call --- >", parentData);
   //   if (parentData == undefined) {
   //   }
 

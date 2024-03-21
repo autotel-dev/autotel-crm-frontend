@@ -145,7 +145,7 @@ const CRMModules = ({ callbackActive }: BusinessFormCommonProps) => {
                                   const itemExist = allowedModules.some(
                                     (i: any) => i === item._id
                                   );
-                                  console.log(itemExist);
+                                  // console.log(itemExist);
 
                                   if (itemExist) {
                                     // If the server exists, remove it from the array
@@ -154,18 +154,18 @@ const CRMModules = ({ callbackActive }: BusinessFormCommonProps) => {
                                       allowedModules.filter(
                                         (i: any) => i !== item._id
                                       );
-                                    console.log("If condition");
-                                    console.log(
-                                      "allowedModules -- >",
-                                      updatedAllowedModules
-                                    );
+                                    // console.log("If condition");
+                                    // console.log(
+                                    //   "allowedModules -- >",
+                                    //   updatedAllowedModules
+                                    // );
 
                                     dispatch(
                                       setAllowedModules(updatedAllowedModules)
                                     );
                                   } else {
                                     // If the server doesn't exist, add it to the array
-                                    console.log("else condition");
+                                    // console.log("else condition");
                                     dispatch(
                                       setAllowedModules([
                                         ...allowedModules,
@@ -173,11 +173,11 @@ const CRMModules = ({ callbackActive }: BusinessFormCommonProps) => {
                                       ])
                                     );
                                   }
-                                  console.log(e.target.value);
-                                  console.log(
-                                    "allowedModules -- >",
-                                    allowedModules
-                                  );
+                                  // console.log(e.target.value);
+                                  // console.log(
+                                  //   "allowedModules -- >",
+                                  //   allowedModules
+                                  // );
                                 }}
                               />
                               <span

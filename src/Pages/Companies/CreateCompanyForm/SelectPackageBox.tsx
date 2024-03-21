@@ -11,7 +11,7 @@ const SelectPackageBox: React.FC<propTypes> = ({ placeholder }) => {
   const { packages, createCompany } = useSelector(
     (state: any) => state.companies
   );
-  console.log(packages);
+  // console.log(packages);
   const [packageId, setPackageId] = useState("");
   const [packageList, setPackageList] = useState([]);
   const dispatch = useDispatch();
@@ -38,7 +38,7 @@ const SelectPackageBox: React.FC<propTypes> = ({ placeholder }) => {
           .localeCompare((optionB?.label ?? "").toLowerCase())
       }
       onChange={(e) => {
-        console.log(e);
+        // console.log(e);
         setPackageId(e);
         dispatch(
           setCreateCompany({

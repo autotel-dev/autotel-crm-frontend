@@ -37,7 +37,7 @@ const DevicesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
   const [Devicess, setDevicess]: any = useState([]);
   const dispatch = useDispatch();
 
-  console.log("devices", devices);
+  // console.log("devices", devices);
 
   useEffect(() => {
     if (searchValue.length >= 1) {
@@ -80,7 +80,7 @@ const DevicesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
     // const isAnyItemSelected = groupItems.every((item: any) =>
     //   Devicess.find((selectedItem: any) => selectedItem.title === item.title)
     // );
-    // console.log(isAnyItemSelected);
+    // // console.log(isAnyItemSelected);
 
     // // If no item of this group is selected, add all items to selectedDevices
     // if (isAnyItemSelected) {
@@ -95,7 +95,7 @@ const DevicesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
     //   setDevices(updatedDevices);
     //   dispatch(setSelecetdDevices(updatedDevices));
     // }
-    // console.log("selectedDevices-->", devices);
+    // // console.log("selectedDevices-->", devices);
   };
 
   const handleSearch = (e: any) => {
@@ -115,7 +115,7 @@ const DevicesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
     // const matcheditems = matchedGroupss.filter(
     //   (item: any, index: any) => item.items.length > 0
     // );
-    // console.log("matcheditems", matcheditems);
+    // // console.log("matcheditems", matcheditems);
     // setMatchedGroups(matcheditems);
   };
 
@@ -200,11 +200,11 @@ const DevicesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
   //   const updatedDevices = devices.map((device: any) => {
   //     if (device.title === group.title) {
   //       const updatedItems = device.items.map((item: any) => {
-  //         console.log("item._id", item);
-  //         console.log("selectedDevice._id", selectedDevice);
+  //         // console.log("item._id", item);
+  //         // console.log("selectedDevice._id", selectedDevice);
   //         if (item.id === selectedDevice.id) {
-  //           console.log("item._id - matchewd", item);
-  //           console.log("selectedDevice._id  -matchewd", selectedDevice);
+  //           // console.log("item._id - matchewd", item);
+  //           // console.log("selectedDevice._id  -matchewd", selectedDevice);
   //           return {
   //             ...item,
   //             checked: !selectedDevice.checked, // Set checked to the opposite of group.checked
@@ -219,27 +219,27 @@ const DevicesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
 
   //   // Dispatch an action to update the Devices state in Redux
   //   dispatch(setDevices(updatedDevices));
-  //   console.log("Devicesss - - >", Devicess);
+  //   // console.log("Devicesss - - >", Devicess);
 
   //   const condition = Devicess.includes(selectedDevice);
   //   const index = Devicess.findIndex(
   //     (device: any) => device.id === selectedDevice.id
   //   );
-  //   console.log(condition);
+  //   // console.log(condition);
   //   if (condition) {
   //     const updatedDevices = [...Devicess];
   //     updatedDevices.splice(index, 1);
   //     setDevices(updatedDevices);
   //     dispatch(setSelecetdDevices(updatedDevices));
-  //     console.log("Devices false", Devicess);
+  //     // console.log("Devices false", Devicess);
   //   } else {
   //     const updatedDevices = [...Devicess, selectedDevice];
   //     setDevices(updatedDevices);
   //     dispatch(setSelecetdDevices(updatedDevices));
-  //     console.log("Devices true", Devicess);
+  //     // console.log("Devices true", Devicess);
   //   }
 
-  //   console.log("selectedDevices-->", Devicess);
+  //   // console.log("selectedDevices-->", Devicess);
   // };
 
   const formattedDate = (timeStamp: string) => {

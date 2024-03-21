@@ -20,7 +20,7 @@ const ProtectedRoute: React.FC<PropTypes> = ({
   permissionValue,
 }) => {
   const { crmActiveModules } = useSelector((state: any) => state.crmModules);
-  console.log("crmActiveModules", crmActiveModules);
+  // console.log("crmActiveModules", crmActiveModules);
 
   const { userPermissions } = useSelector(
     (state: any) => state.userPermissions
@@ -29,7 +29,7 @@ const ProtectedRoute: React.FC<PropTypes> = ({
     (item: any) => item.title === permissionValue
   );
 
-  console.log("userPermissions:", userPermissions);
+  // console.log("userPermissions:", userPermissions);
 
   const [hasPermission, setHasPermission] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
@@ -37,12 +37,12 @@ const ProtectedRoute: React.FC<PropTypes> = ({
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    //   console.log(
+    //   // console.log(
     //     "protected route path here crmActiveModules: ",
     //     crmActiveModules
     //   );
 
-    console.log("protected route path here 2: ", window.location.pathname);
+    // console.log("protected route path here 2: ", window.location.pathname);
     const getLastEndpoint = (pathname: any) => {
       // Split the pathname by '/'
       var pathSegments = pathname.split("/");
@@ -53,21 +53,21 @@ const ProtectedRoute: React.FC<PropTypes> = ({
     const validatePermissions = () => {
       const userRole = getUserRole(); // Assuming getUserRole() returns the user's role
       if (allowedUserRoles.includes(userRole)) {
-        console.log("userRole check");
+        // console.log("userRole check");
 
         const pathname = window.location.pathname;
         const lastEndpoint = getLastEndpoint(pathname);
 
         if (pathname.includes("modules")) {
-          console.log("module keywork check");
-          console.log("In modules condition: pathname:", pathname);
-          console.log("Last Endpoint:", lastEndpoint);
+          // console.log("module keywork check");
+          // console.log("In modules condition: pathname:", pathname);
+          // console.log("Last Endpoint:", lastEndpoint);
           if (userRole == "COMPANY" || userRole == "OPERATOR") {
-            console.log("company or operator check");
+            // console.log("company or operator check");
             getAll({
               url: "user/get-allowed-modules",
             }).then((data: any) => {
-              console.log("active Modules --- >", data);
+              // console.log("active Modules --- >", data);
 
               if (data !== undefined) {
                 if (
@@ -88,12 +88,12 @@ const ProtectedRoute: React.FC<PropTypes> = ({
                   return;
                 }
                 if (data.success) {
-                  console.log("pathname.includes(modules)", data.data);
+                  // console.log("pathname.includes(modules)", data.data);
                   for (const item of data.data) {
                     const extractedChars = item.route
                       .substring(1)
                       .toLowerCase();
-                    console.log("extractedChars", extractedChars);
+                    // console.log("extractedChars", extractedChars);
 
                     if (extractedChars === lastEndpoint.toLowerCase()) {
                       setLoading(false);
@@ -126,11 +126,11 @@ const ProtectedRoute: React.FC<PropTypes> = ({
             //   setHasPermission(true);
             //   return;
             // }
-            console.log("permissions check");
+            // console.log("permissions check");
             getAll({
               url: "user/get-permissions",
             }).then((data: any) => {
-              console.log("user permissions --- >", data);
+              // console.log("user permissions --- >", data);
 
               if (data !== undefined) {
                 if (
@@ -152,10 +152,10 @@ const ProtectedRoute: React.FC<PropTypes> = ({
                   return;
                 }
                 if (data.success) {
-                  console.log("permisionData", data.data);
+                  // console.log("permisionData", data.data);
                   for (const item of data.data.allowedPermissions) {
                     const itemData = item;
-                    console.log("itemData", itemData);
+                    // console.log("itemData", itemData);
 
                     if (itemData.value === permissionValue && itemData.read) {
                       setLoading(false);
@@ -185,7 +185,7 @@ const ProtectedRoute: React.FC<PropTypes> = ({
               return;
             }
           } else {
-            console.log("No modules and permissions matched ");
+            // console.log("No modules and permissions matched ");
             setLoading(false);
             setIsConnected(false);
             setHasPermission(true);
@@ -205,11 +205,11 @@ const ProtectedRoute: React.FC<PropTypes> = ({
 
   // useEffect(() => {
   //   if (role === getUserRole()) {
-  //     console.log("this", role);
+  //     // console.log("this", role);
   //     if (user !== undefined && user.title == title && user.read == false) {
   //       setHasPermission(false);
   //       setLoading(false);
-  //       console.log("this", user);
+  //       // console.log("this", user);
   //       return;
   //     } else if (
   //       support !== undefined &&
@@ -218,7 +218,7 @@ const ProtectedRoute: React.FC<PropTypes> = ({
   //     ) {
   //       setHasPermission(false);
   //       setLoading(false);
-  //       console.log("this", support);
+  //       // console.log("this", support);
   //       return;
   //     } else if (
   //       profile !== undefined &&
@@ -227,22 +227,22 @@ const ProtectedRoute: React.FC<PropTypes> = ({
   //     ) {
   //       setHasPermission(false);
   //       setLoading(false);
-  //       console.log("this", profile);
+  //       // console.log("this", profile);
   //       return;
   //     } else if (monitoring !== undefined && title == "Monitoring") {
   //       setHasPermission(false);
   //       setLoading(false);
-  //       console.log("this", monitoring);
+  //       // console.log("this", monitoring);
   //       return;
   //     } else if (controlRoom !== undefined && title == "Control Room") {
   //       setHasPermission(false);
   //       setLoading(false);
-  //       console.log("this", controlRoom);
+  //       // console.log("this", controlRoom);
   //       return;
   //     }
   //   } else if (role == "OPERATOR,COMPANY,SUPER_ADMIN") {
-  //     console.log("this", role);
-  //     console.log("this", profile);
+  //     // console.log("this", role);
+  //     // console.log("this", profile);
   //     if (
   //       profile !== undefined &&
   //       profile.title == title &&
@@ -250,14 +250,14 @@ const ProtectedRoute: React.FC<PropTypes> = ({
   //     ) {
   //       setHasPermission(false);
   //       setLoading(false);
-  //       console.log("this", profile);
+  //       // console.log("this", profile);
   //       return;
   //     }
   //   } else {
-  //     console.log("this", role);
+  //     // console.log("this", role);
   //     setHasPermission(false);
   //     setLoading(false);
-  //     console.log("else", "else");
+  //     // console.log("else", "else");
   //   }
   // }, []);
 

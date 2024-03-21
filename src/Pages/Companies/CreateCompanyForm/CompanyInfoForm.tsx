@@ -63,8 +63,8 @@ const CompanyInfoForm = ({ callbackActive }: BusinessFormCommonProps) => {
       cnicNumber !== ""
     ) {
       // dispatch(setCreateCompany(companyInfoForm));
-      console.log("personalDetailsForm -->", companyInfoForm);
-      console.log("createCompany--- >", createCompany);
+      // console.log("personalDetailsForm -->", companyInfoForm);
+      // console.log("createCompany--- >", createCompany);
       dispatch(
         setCreateCompany({
           ...createCompany,

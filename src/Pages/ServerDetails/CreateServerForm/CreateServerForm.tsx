@@ -16,10 +16,10 @@ const CreateServerForm = () => {
   useEffect(() => {
     getAll({ url: "server-management/get-all-active-servers" }).then(
       (data: any) => {
-        console.log("api call --- >", data);
+        // console.log("api call --- >", data);
         if (data !== undefined) {
           if (data.success) {
-            console.log("hhg");
+            // console.log("hhg");
             dispatch(setServers(data.data.activeServers));
           }
         }
@@ -28,10 +28,10 @@ const CreateServerForm = () => {
   }, []);
   useEffect(() => {
     getAll({ url: "crm-module/get-all-active-modules" }).then((data: any) => {
-      console.log("api call --- >", data);
+      // console.log("api call --- >", data);
       if (data !== undefined) {
         if (data.success) {
-          console.log("hhg");
+          // console.log("hhg");
           dispatch(setCRMModules(data.data));
         }
       }

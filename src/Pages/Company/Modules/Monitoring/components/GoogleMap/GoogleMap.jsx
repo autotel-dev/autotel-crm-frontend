@@ -43,11 +43,11 @@
 //   };
 
 //   useEffect(() => {
-//     console.log("UseEffect Called");
-//     console.log("ExpandedDevice", expandedDevice);
+//     // console.log("UseEffect Called");
+//     // console.log("ExpandedDevice", expandedDevice);
 //     if (expandedDevice !== null) {
 //       zoomToMarker(expandedDevice);
-//       console.log("ExpandedDevice", expandedDevice);
+//       // console.log("ExpandedDevice", expandedDevice);
 //     }
 //   }, [expandedDevice]);
 
@@ -62,7 +62,7 @@
 //       return calculateBearing(start, end) || 0;
 //     });
 //     setMarkerRotations(rotations);
-//     console.log("markerRotations", markerRotations);
+//     // console.log("markerRotations", markerRotations);
 //   }, [selectedDevices]);
 
 //   if (!isLoaded) {
@@ -178,11 +178,11 @@ const GoogleMap = (props) => {
     }
   };
   useEffect(() => {
-    console.log("UseEffect Called");
-    console.log("ExpandedDevice", expandedDevice);
+    // console.log("UseEffect Called");
+    // console.log("ExpandedDevice", expandedDevice);
     if (expandedDevice !== null) {
       zoomToMarker(expandedDevice);
-      console.log("ExpandedDevice", expandedDevice);
+      // console.log("ExpandedDevice", expandedDevice);
     }
   }, [expandedDevice]);
 
@@ -224,7 +224,7 @@ const GoogleMap = (props) => {
         marker.items
           .filter((item) => item.checked) // Filter items where checked is true
           .map((item) => {
-            console.log("item", item);
+            // console.log("item", item);
             const icon = {
               url: `${item.server.url}/${item.icon.path}`,
               scaledSize: new window.google.maps.Size(22, 40),

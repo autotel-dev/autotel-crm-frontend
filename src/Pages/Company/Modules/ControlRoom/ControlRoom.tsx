@@ -26,6 +26,7 @@ import {
   setKilledDevices,
   setDashboardStatistics,
   setSelfSendCommands,
+  setPreInfoAlerts,
 } from "../../../../ReaduxToolkit/Reducer/AlertsSlice";
 import Swal from "sweetalert2";
 import ControlRoomAnalytics from "./Analytics/ControlRoomAnalytics";
@@ -52,7 +53,7 @@ const ControlRoom = () => {
   var allAlertsPreview = userPermissions.find(
     (item: any) => item.title === "All Alerts Preview"
   );
-  console.log("All Alerts Preview", allAlertsPreview);
+  // console.log("All Alerts Preview", allAlertsPreview);
 
   useEffect(() => {
     dispatch(setIsConnected(false));
@@ -65,8 +66,8 @@ const ControlRoom = () => {
     dispatch(setLiveAlertsData(null));
     dispatch(setCompletedAlerts([]));
     getAll({ url: "company/alert-events?pageNo=1" }).then((data: any) => {
-      // console.log("api call --- >", data);
-      // console.log("data,data");
+      // // console.log("api call --- >", data);
+      // // console.log("data,data");
 
       if (data == undefined) {
         dispatch(setLiveAlerts([]));
@@ -85,9 +86,14 @@ const ControlRoom = () => {
           });
         }
         if (data.success) {
-          // console.log("length --- >", data.data.allAlertEvents.length);
+          // // console.log("length --- >", data.data.allAlertEvents.length);
           dispatch(setLiveAlerts(data.data.allAlertEvents));
           dispatch(setLiveAlertsData(data.data));
+        }
+        if (!data.success) {
+          // // console.log("length --- >", data.data.allAlertEvents.length);
+          dispatch(setLiveAlerts([]));
+          dispatch(setLiveAlertsData([]));
         }
       }
       setLoading(false);
@@ -96,7 +102,7 @@ const ControlRoom = () => {
       }
     });
     getAll({ url: "company/get-all-assigned-events" }).then((data: any) => {
-      // console.log("assigned --- >", data);
+      // // console.log("assigned --- >", data);
       // setLoading(false);
       if (data == undefined) {
         dispatch(setAssignedAlerts([]));
@@ -116,13 +122,17 @@ const ControlRoom = () => {
           setLoading(false);
         }
         if (data.success) {
-          // console.log("length --- >", data.data.length);
+          // // console.log("length --- >", data.data.length);
           dispatch(setAssignedAlerts(data.data));
+        }
+        if (!data.success) {
+          // // console.log("length --- >", data.data.length);
+          dispatch(setAssignedAlerts([]));
         }
       }
     });
     getAll({ url: "company/get-all-completed-events" }).then((data: any) => {
-      // console.log("completed --- >", data);
+      // // console.log("completed --- >", data);
       // setLoading(false);
       if (data == undefined) {
         dispatch(setCompletedAlerts([]));
@@ -140,8 +150,12 @@ const ControlRoom = () => {
           });
         }
         if (data.success) {
-          // console.log("length --- >", data.data.length);
+          // // console.log("length --- >", data.data.length);
           dispatch(setCompletedAlerts(data.data));
+        }
+        if (!data.success) {
+          // // console.log("length --- >", data.data.length);
+          dispatch(setCompletedAlerts([]));
         }
       }
     });
@@ -149,15 +163,15 @@ const ControlRoom = () => {
   useEffect(() => {
     getAll({ url: "control-room/get-all-killed-devices?type=self" }).then(
       (data: any) => {
-        // console.log("api call --- >", data);
+        // // console.log("api call --- >", data);
 
         if (data !== undefined) {
           if (data.success) {
-            // console.log("length --- >", data.data);
+            // // console.log("length --- >", data.data);
             dispatch(setKilledDevices(data.data));
           }
           if (!data.success) {
-            // // console.log("length --- >", data.data);
+            // // // console.log("length --- >", data.data);
             dispatch(setKilledDevices([]));
           }
         }
@@ -173,12 +187,12 @@ const ControlRoom = () => {
     getAll({
       url: `control-room/dashboard/statistics?fromDate=${startDate}&toDate=${endDate}`,
     }).then((data: any) => {
-      // console.log("api call --- >", data);
+      // // console.log("api call --- >", data);
 
       if (data !== undefined) {
         if (data.success) {
-          // // console.log("length --- >", data.data);
-          dispatch(setDashboardStatistics(data.data.controlRoomStatistics));
+          // // // console.log("length --- >", data.data);
+          dispatch(setDashboardStatistics(data.data));
         }
       }
     });
@@ -186,20 +200,36 @@ const ControlRoom = () => {
   useEffect(() => {
     getAll({ url: "control-room/get-all-commanded-devices" }).then(
       (data: any) => {
-        // console.log("api call --- >", data);
+        // // console.log("api call --- >", data);
 
         if (data !== undefined) {
           if (data.success) {
-            // // console.log("length --- >", data.data);
+            // // // console.log("length --- >", data.data);
             dispatch(setSelfSendCommands(data.data));
           }
           if (!data.success) {
-            // // console.log("length --- >", data.data);
+            // // // console.log("length --- >", data.data);
             dispatch(setSelfSendCommands([]));
           }
         }
       }
     );
+  }, []);
+  useEffect(() => {
+    getAll({ url: "control-room/get-all-pre-infos" }).then((data: any) => {
+      // // console.log("api call --- >", data);
+
+      if (data !== undefined) {
+        if (data.success) {
+          // // console.log("length --- >", data.data);
+          dispatch(setPreInfoAlerts(data.data));
+        }
+        if (!data.success) {
+          // // // console.log("length --- >", data.data);
+          dispatch(setPreInfoAlerts([]));
+        }
+      }
+    });
   }, []);
 
   useEffect(() => {
@@ -209,7 +239,7 @@ const ControlRoom = () => {
     const VerifyAndUpdateAllBlockStatus = () => {
       getAll({ url: "control-room/verify-and-update-all-block-status" }).then(
         (data: any) => {
-          // console.log("api call --- >", data);
+          // // console.log("api call --- >", data);
 
           if (data !== undefined) {
             if (data.success) {
@@ -219,13 +249,13 @@ const ControlRoom = () => {
       );
     };
 
-    // console.log("Setting up interval verify-and-update-all-block-status...");
+    // // console.log("Setting up interval verify-and-update-all-block-status...");
     intervalId = setInterval(() => {
       VerifyAndUpdateAllBlockStatus();
     }, 300000);
 
     return () => {
-      // console.log("Clearing interval verify-and-update-all-block-status...");
+      // // console.log("Clearing interval verify-and-update-all-block-status...");
       clearInterval(intervalId);
     };
   }, []);
@@ -244,7 +274,7 @@ const ControlRoom = () => {
   useEffect(() => {
     if (devices.length == 0) {
       getAll({ url: "company/devices" }).then((data: any) => {
-        // console.log("data", data);
+        // // console.log("data", data);
         // if (data == undefined) {
         //   setDevicesLoading(false);
         //   Swal.fire({
@@ -269,8 +299,8 @@ const ControlRoom = () => {
           }
 
           if (data.success) {
-            // console.log("api call --- >", data);
-            // console.log("length --- >", data.data.length);
+            // // console.log("api call --- >", data);
+            // // console.log("length --- >", data.data.length);
 
             for (let i = 0; i < data.data.length; i++) {
               const element = data.data[i].title;
@@ -296,8 +326,8 @@ const ControlRoom = () => {
 
             // Update state with initialGroupDevices
             setgroupdevices(initialGroupDevices);
-            // console.log("groups", groups);
-            // console.log("groupDevices", groupdevices);
+            // // console.log("groups", groups);
+            // // console.log("groupDevices", groupdevices);
             dispatch(setDevices(initialGroupDevices));
             setDevicesLoading(false);
 
@@ -341,7 +371,7 @@ const ControlRoom = () => {
                 }
               }
               if (i === data.data.length - 1) {
-                // console.log("expiredDevices", expiredDevices);
+                // // console.log("expiredDevices", expiredDevices);
                 initialGroupDevicesStatuses.push({
                   online: "Expired",
                   items: expiredDevices,
@@ -359,7 +389,7 @@ const ControlRoom = () => {
                 notConnectedDevices.push({ ...element, checked: false });
               }
               if (i === data.data.length - 1) {
-                // console.log("notConnectedDevices", notConnectedDevices);
+                // // console.log("notConnectedDevices", notConnectedDevices);
                 initialGroupDevicesStatuses.push({
                   online: "Not Connected",
                   items: notConnectedDevices,
@@ -369,8 +399,8 @@ const ControlRoom = () => {
 
             // Update state with initialGroupDevicesStatuses
             setgroupdevicesStatuses(initialGroupDevicesStatuses);
-            // console.log("statuses", statuses);
-            // console.log("groupDevicesStatuses", initialGroupDevicesStatuses);
+            // // console.log("statuses", statuses);
+            // // console.log("groupDevicesStatuses", initialGroupDevicesStatuses);
             dispatch(setDevicesStatuses(initialGroupDevicesStatuses));
           }
         }

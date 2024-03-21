@@ -33,14 +33,14 @@ const CreateCompanyForm = () => {
 
   useEffect(() => {
     getAll({ url: "timezone/get-all-timezones" }).then((data: any) => {
-      console.log("api call --- >", data);
+      // console.log("api call --- >", data);
       if (data !== undefined) {
         if (data.success) {
-          console.log("hhg");
+          // console.log("hhg");
           dispatch(setTimeZones(data.data));
         }
         if (!data.success) {
-          console.log("hhg");
+          // console.log("hhg");
           dispatch(setTimeZones([]));
         }
       }
@@ -48,14 +48,14 @@ const CreateCompanyForm = () => {
   }, []);
   useEffect(() => {
     getAll({ url: "permissions/get-all-permissions" }).then((data: any) => {
-      console.log("api call --- >", data);
+      // console.log("api call --- >", data);
       if (data !== undefined) {
         if (data.success) {
-          console.log("hhg");
+          // console.log("hhg");
           dispatch(setPermissions(data.data));
         }
         if (!data.success) {
-          console.log("hhg");
+          // console.log("hhg");
           dispatch(setPermissions([]));
         }
       }
@@ -65,14 +65,14 @@ const CreateCompanyForm = () => {
   useEffect(() => {
     getAll({ url: "server-management/get-all-active-servers" }).then(
       (data: any) => {
-        console.log("api call --- >", data);
+        // console.log("api call --- >", data);
         if (data !== undefined) {
           if (data.success) {
-            console.log("hhg");
+            // console.log("hhg");
             dispatch(setServers(data.data.activeServers));
           }
           if (!data.success) {
-            console.log("hhg");
+            // console.log("hhg");
             dispatch(setServers([]));
           }
         }
@@ -81,14 +81,14 @@ const CreateCompanyForm = () => {
   }, []);
   useEffect(() => {
     getAll({ url: "crm-module/get-all-active-modules" }).then((data: any) => {
-      console.log("api call --- >", data);
+      // console.log("api call --- >", data);
       if (data !== undefined) {
         if (data.success) {
-          console.log("hhg");
+          // console.log("hhg");
           dispatch(setCRMModules(data.data));
         }
         if (!data.success) {
-          console.log("hhg");
+          // console.log("hhg");
           dispatch(setCRMModules([]));
         }
       }
@@ -97,14 +97,14 @@ const CreateCompanyForm = () => {
 
   useEffect(() => {
     getAll({ url: "city/get-all-active-cities" }).then((data: any) => {
-      console.log("api call --- >", data);
+      // console.log("api call --- >", data);
       if (data !== undefined) {
         if (data.success) {
-          console.log("hhg");
+          // console.log("hhg");
           dispatch(setCities(data.data));
         }
         if (!data.success) {
-          console.log("hhg");
+          // console.log("hhg");
           dispatch(setCities([]));
         }
       }
@@ -112,14 +112,14 @@ const CreateCompanyForm = () => {
   }, []);
   useEffect(() => {
     getAll({ url: "package/get-all-active-packages" }).then((data: any) => {
-      console.log("api call --- >", data);
+      // console.log("api call --- >", data);
       if (data !== undefined) {
         if (data.success) {
-          console.log("hhg");
+          // console.log("hhg");
           dispatch(setPackages(data.data));
         }
         if (!data.success) {
-          console.log("hhg");
+          // console.log("hhg");
           dispatch(setPackages([]));
         }
       }

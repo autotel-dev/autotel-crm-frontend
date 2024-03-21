@@ -24,7 +24,7 @@ const ShoppingPlace = () => {
   var dashboard = userPermissions.find(
     (item: any) => item.title === "Dashboard"
   );
-  console.log("Dashboard", dashboard);
+  // console.log("Dashboard", dashboard);
   return (
     <>
       <Breadcrumbs mainTitle="Dashboard" parent="Dashboard" title="Dashboard" />

@@ -65,7 +65,7 @@ const SuccessfullyFormSubmitted = ({
   };
 
   const createServerSubmitted = async () => {
-    console.log("createServerRedux", createServer);
+    // console.log("createServerRedux", createServer);
 
     try {
       await create(createServer, {
@@ -86,12 +86,12 @@ const SuccessfullyFormSubmitted = ({
           }
 
           if (data.success) {
-            console.log(data);
+            // console.log(data);
             setLoading(false);
             dispatch(setServersStart());
             getAll({ url: "server-management/get-all-servers" }).then(
               (data: any) => {
-                console.log("api call --- >", data);
+                // console.log("api call --- >", data);
                 if (data == undefined) {
                   Swal.fire({
                     text: "Failed to fetch due to connection refused",
@@ -116,7 +116,7 @@ const SuccessfullyFormSubmitted = ({
                 if (data !== undefined) {
                   dispatch(setNoDataFound(data.message));
                   if (data.success) {
-                    console.log("hhg");
+                    // console.log("hhg");
                     dispatch(setServers(data.data.allServers));
                     dispatch(setFilterServers(data.data.allServers));
                     navigate(`${process.env.PUBLIC_URL}/super-admin/setup/server_details`);
@@ -130,7 +130,7 @@ const SuccessfullyFormSubmitted = ({
       // Handle successful post creation (e.g., show a success message, redirect, etc.)
     } catch (error: any) {
       // Handle error (e.g., show an error message)
-      console.error("Error creating post:", error);
+      // console.error("Error creating post:", error);
       setLoading(false);
     }
   };
@@ -149,7 +149,7 @@ const SuccessfullyFormSubmitted = ({
         ...createServer,
       })
     );
-    console.log("createServerRedux --- UseEffect -- >", createServer);
+    // console.log("createServerRedux --- UseEffect -- >", createServer);
   }, [
     apiKeys,
     serverInfo,

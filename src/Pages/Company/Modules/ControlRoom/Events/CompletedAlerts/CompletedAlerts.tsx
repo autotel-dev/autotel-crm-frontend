@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 
 const AssignedAlerts = () => {
   const { completedAlerts } = useSelector((state: any) => state.alerts);
-   // console.log("completedAlertsData", completedAlerts);
+   // // console.log("completedAlertsData", completedAlerts);
 
   const [dataList, setDataList]: any = useState([]);
   const [loading, setLoading] = useState(false); // State to manage loading

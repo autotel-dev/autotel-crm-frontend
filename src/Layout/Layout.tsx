@@ -18,7 +18,7 @@ const Layout = () => {
   const { userPermissions } = useSelector(
     (state: any) => state.userPermissions
   );
-  console.log("userPermissions---> ", userPermissions);
+  // console.log("userPermissions---> ", userPermissions);
 
   const [open, setOpen] = useState<boolean>(false);
   const { toggleSidebar, scroll } = useAppSelector((state) => state.layout);

@@ -30,7 +30,7 @@ const Servers = () => {
 
     dispatch(setServers(filtered));
 
-    console.log(filtered);
+    // console.log(filtered);
   };
   
   return (

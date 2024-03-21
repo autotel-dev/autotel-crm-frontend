@@ -12,10 +12,10 @@ const RecentLogs = () => {
   const dispatch = useDispatch();
   useEffect(() => {
     getAll({ url: "system-logs/get-all-system-logs" }).then((data: any) => {
-      console.log("api call --- >", data);
+      // console.log("api call --- >", data);
       if (data !== undefined) {
         if (data.success) {
-          console.log("hhg");
+          // console.log("hhg");
           dispatch(setRecentLogs(data.data));
         }
       }

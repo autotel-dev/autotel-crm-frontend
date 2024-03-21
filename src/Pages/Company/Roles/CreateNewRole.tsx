@@ -67,9 +67,9 @@ const CreateNewRole = () => {
   const [givenPermissions, setGivenPermissions] = useState<any[]>([]);
 
   const handleCheckboxChange = (index: any, key: any) => {
-    console.log("index", index);
-    console.log("key", key);
-    console.log("givenPermission", givenPermissions);
+    // console.log("index", index);
+    // console.log("key", key);
+    // console.log("givenPermission", givenPermissions);
 
     setGivenPermissions((prevPermissions: any) => {
       const updatedPermissions = [...prevPermissions];
@@ -98,7 +98,7 @@ const CreateNewRole = () => {
           }),
       };
 
-      console.log(role);
+      // console.log(role);
       try {
         await create(role, { url: "sub-role/create-sub-role" }).then(
           (data: any) => {
@@ -126,7 +126,7 @@ const CreateNewRole = () => {
               });
             }
             if (data.success) {
-              console.log(data);
+              // console.log(data);
               setLoading(false);
               setAddModal(false);
               reset({
@@ -146,11 +146,11 @@ const CreateNewRole = () => {
               dispatch(setRolesStart());
               getAll({ url: "sub-role/get-all-sub-roles" }).then(
                 (data: any) => {
-                  console.log("api call --- >", data);
+                  // console.log("api call --- >", data);
                   dispatch(setRolesEnd());
                   if (data !== undefined) {
                     if (data.success) {
-                      console.log("hhg");
+                      // console.log("hhg");
                       dispatch(setRoles(data.data));
                       dispatch(setFilterRoles(data.data));
                     }
@@ -163,7 +163,7 @@ const CreateNewRole = () => {
         // Handle successful post creation (e.g., show a success message, redirect, etc.)
       } catch (error: any) {
         // Handle error (e.g., show an error message)
-        console.error("Error creati post:", error);
+        // console.error("Error creati post:", error);
         setLoading(false);
         setAddModal(false);
         reset({

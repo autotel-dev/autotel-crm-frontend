@@ -60,8 +60,8 @@ const ServerInfoForm = ({ callbackActive }: BusinessFormCommonProps) => {
       serverSpecifications !== ""
     ) {
       dispatch(setServerInfo(serverInfoForm));
-      console.log("serverInfoForm -->", serverInfoForm);
-      console.log("serverInfo--- >", serverInfo);
+      // console.log("serverInfoForm -->", serverInfoForm);
+      // console.log("serverInfo--- >", serverInfo);
       dispatch(
         setCreateServer({
           ...createServer,

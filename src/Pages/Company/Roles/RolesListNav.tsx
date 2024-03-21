@@ -21,7 +21,7 @@ const RolesListNav = () => {
           <NavLink
             className={activeTab === "1" ? "active" : ""}
             onClick={() => {
-              console.log(filterRoles);
+              // console.log(filterRoles);
 
               dispatch(setActiveTab("1"));
               filterRoles.map((item: any, index: any) => {
@@ -40,7 +40,7 @@ const RolesListNav = () => {
           <NavLink
             className={activeTab === "3" ? "active" : ""}
             onClick={() => {
-              console.log(filterRoles);
+              // console.log(filterRoles);
 
               dispatch(setActiveTab("3"));
               filterRoles.map((item: any, index: any) => {
@@ -61,13 +61,13 @@ const RolesListNav = () => {
           <NavLink
             className={activeTab === "2" ? "active" : ""}
             onClick={() => {
-              console.log(filterRoles);
+              // console.log(filterRoles);
 
               dispatch(setActiveTab("2"));
               filterRoles.map((item: any, index: any) => {
                 if (item.isActive) {
                   tempList.push(item);
-                  console.log("isActive -- >", 1);
+                  // console.log("isActive -- >", 1);
                 }
               });
               dispatch(setInActiveActiveRoles("No active roles found"));

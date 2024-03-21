@@ -27,7 +27,7 @@ const Account = () => {
   var legalAttachements = userPermissions.find(
     (item: any) => item.title === "Legal Documents"
   );
-  console.log("legalAttachements", legalAttachements);
+  // console.log("legalAttachements", legalAttachements);
   const dispatch = useDispatch();
   const [userDataLoading, setUserDataLoading] = useState(true);
   const [serverPermissionsLoading, setServerPermissionsLoading] =
@@ -46,7 +46,7 @@ const Account = () => {
 
     if (getUserRole() === "COMPANY") {
       getAll({ url: "company/permissions" }).then((data: any) => {
-        console.log("api call --- >", data);
+        // console.log("api call --- >", data);
         if (data == undefined) {
           setServerPermissionsLoading(false);
         }
@@ -63,7 +63,7 @@ const Account = () => {
     }
 
     getAll({ url: "user/get-user" }).then((parentData: any) => {
-      console.log("api call --- >", parentData);
+      // console.log("api call --- >", parentData);
       // if (parentData == undefined) {
       //   setUserDataLoading(false);
       //   setUndefinedData(true);
@@ -103,55 +103,55 @@ const Account = () => {
             getImage({
               url: `${IMAGE_BASE_URL}/${parentData.data.user.cnicFront.url}`,
             }).then(async (data: any) => {
-              console.log("image api --- >", data);
+              // console.log("image api --- >", data);
               ticketImages.push({
                 key: "cnicFront",
                 url: parentData.data.user.cnicFront.url,
                 blob: data,
               });
-              console.log("Ticket Images", ticketImages);
+              // console.log("Ticket Images", ticketImages);
               // cnicBack
               getImage({
                 url: `${IMAGE_BASE_URL}/${parentData.data.user.cnicBack.url}`,
               }).then(async (data: any) => {
-                console.log("image api --- >", data);
+                // console.log("image api --- >", data);
                 ticketImages.push({
                   key: "cnicBack",
                   url: parentData.data.user.cnicBack.url,
                   blob: data,
                 });
 
-                console.log("Ticket Images", ticketImages);
+                // console.log("Ticket Images", ticketImages);
                 // ptaCertificate
                 getImage({
                   url: `${IMAGE_BASE_URL}/${parentData.data.user.ptaCertificate.url}`,
                 }).then(async (data: any) => {
-                  console.log("image api --- >", data);
+                  // console.log("image api --- >", data);
                   ticketImages.push({
                     key: "ptaCertificate",
                     url: parentData.data.user.ptaCertificate.url,
                     blob: data,
                   });
 
-                  console.log("Ticket Images", ticketImages);
+                  // console.log("Ticket Images", ticketImages);
                   // ntnCertificate
                   getImage({
                     url: `${IMAGE_BASE_URL}/${parentData.data.user.ntnCertificate.url}`,
                   }).then(async (data: any) => {
-                    console.log("image api --- >", data);
+                    // console.log("image api --- >", data);
                     ticketImages.push({
                       key: "ntnCertificate",
                       url: parentData.data.user.ntnCertificate.url,
                       blob: data,
                     });
 
-                    console.log("Ticket Images", ticketImages);
+                    // console.log("Ticket Images", ticketImages);
 
                     // otherAttachment
                     getImage({
                       url: `${IMAGE_BASE_URL}/${parentData.data.user.otherAttachment.url}`,
                     }).then(async (data: any) => {
-                      console.log("image api --- >", data);
+                      // console.log("image api --- >", data);
                       ticketImages.push({
                         key: "otherAttachment",
                         url: parentData.data.user.otherAttachment.url,
@@ -159,7 +159,7 @@ const Account = () => {
                       });
 
                       setTicketImages(ticketImages);
-                      console.log("Ticket Images", ticketImages);
+                      // console.log("Ticket Images", ticketImages);
                       if (ticketImages.length == 5) {
                         setUserDataLoading(false);
                       }

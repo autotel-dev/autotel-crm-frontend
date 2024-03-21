@@ -7,19 +7,12 @@ import { CheckCircle } from "react-feather";
 import { useDispatch, useSelector } from "react-redux";
 import { H3 } from "../../../AbstractElements";
 import { create, getAll } from "../../../Api";
-import {
-  setFilterOperators,
-  setInActiveActiveUsers,
-  setOperators,
-  setOperatorsEnd,
-  setOperatorsStart,
-} from "../../../ReaduxToolkit/Reducer/OperatorSlice";
+
 import { jwtDecode } from "jwt-decode";
 import { Select } from "antd";
 import Swal from "sweetalert2";
 import { ReportsType } from "./ReportsType/ReportsTypes";
 import { setReports } from "../../../ReaduxToolkit/Reducer/ReportsSlice";
-import Loader from "../../Loader/Loader";
 import CustomDropdown from "./CustomDropdown";
 
 const CreateNewReport = ({ dropDownDevices }: any) => {
@@ -30,7 +23,7 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
   useEffect(() => {
     if (authToken !== null) {
       const decodedToken = jwtDecode(authToken);
-      console.log(decodedToken);
+      // console.log(decodedToken);
       setDecodedToken(decodedToken);
     }
   }, []);
@@ -124,29 +117,29 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
         startDate: startDate,
         endDate: endDate,
       };
-      console.log(report);
+      // console.log(report);
 
       try {
         const today = new Date(); // Get current date and time
-        console.log("today", today);
-        console.log("endDate", endDate);
+        // console.log("today", today);
+        // console.log("endDate", endDate);
         const endDateTime = new Date(endDate);
-        console.log("endDateTime", endDateTime);
+        // console.log("endDateTime", endDateTime);
 
         // If endDate is today's date, set time to current time
 
-        console.log("today time: ", today.getTime());
-        console.log("endDateTime time: ", endDateTime.getTime());
+        // console.log("today time: ", today.getTime());
+        // console.log("endDateTime time: ", endDateTime.getTime());
 
-        console.log("before setting time: ", endDateTime);
+        // console.log("before setting time: ", endDateTime);
 
         endDateTime.setTime(today.getTime());
 
-        console.log("after setting time: ", endDateTime);
+        // console.log("after setting time: ", endDateTime);
 
-        console.log("called");
-        console.log("endDateTime", endDateTime);
-        console.log("today", today);
+        // console.log("called");
+        // console.log("endDateTime", endDateTime);
+        // console.log("today", today);
         var deviceIds: number[];
         if (selectedItems.length == 0) {
           const allItems = await dropDownDevices.flatMap((group: any) =>
@@ -156,14 +149,14 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
               title: item.title,
             }))
           );
-          console.log("allItems", allItems);
+          // console.log("allItems", allItems);
 
           await setSelectedItems([...allItems]);
           deviceIds = await selectedItems.map((device: any) => device.deviceId);
-          console.log(deviceIds);
+          // console.log(deviceIds);
         } else {
           deviceIds = await selectedItems.map((device: any) => device.deviceId);
-          console.log(deviceIds);
+          // console.log(deviceIds);
         }
 
         await create(
@@ -178,7 +171,7 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
             url: `reports${type}`,
           }
         ).then((data: any) => {
-          console.log("data", data);
+          // console.log("data", data);
 
           if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
             setLoading(false);
@@ -209,14 +202,14 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
             setType("Select Type");
           }
           if (data.success) {
-            console.log(data);
+            // console.log(data);
             tempReports.push({
               title: report.title,
               startDate: startDate,
               endDate: endDate,
               data: data.data,
             });
-            console.log("Reports", reports);
+            // console.log("Reports", reports);
             dispatch(setReports(tempReports));
             setSelectedItems([]);
             const yesterday = new Date();
@@ -232,7 +225,7 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
         // Handle successful post creation (e.g., show a success message, redirect, etc.)
       } catch (error: any) {
         // Handle error (e.g., show an error message)
-        console.error("Error creating post:", error);
+        // console.error("Error creating post:", error);
         setSelectedItems([]);
         const yesterday = new Date();
         yesterday.setDate(yesterday.getDate() - 1); // Subtract one day
@@ -265,11 +258,11 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
   };
 
   const handleReportTypeChange = (selectedOption: any) => {
-    console.log("SelectedOption", selectedOption);
+    // console.log("SelectedOption", selectedOption);
     setReportType(selectedOption);
     handleDateSelection(selectedOption);
-    console.log("Start Date", startDate);
-    console.log("End Date", endDate);
+    // console.log("Start Date", startDate);
+    // console.log("End Date", endDate);
   };
 
   const handleDateSelection = (selectedType: string) => {
@@ -282,7 +275,7 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
         start = new Date(today);
         start.setDate(today.getDate() - 1);
         end = new Date(today);
-        end.setDate(today.getDate() - 1);
+        end.setDate(today.getDate());
         break;
       case "previous Week":
         start = new Date(today);
@@ -388,7 +381,7 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
                         .localeCompare((optionB?.label ?? "").toLowerCase())
                     }
                     onChange={(e: any) => {
-                      console.log(e);
+                      // console.log(e);
                       setType(e);
                     }}
                     options={reportsTypeList}
@@ -419,7 +412,7 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
                           .localeCompare((optionB?.label ?? "").toLowerCase())
                       }
                       //   onChange={(e: any) => {
-                      //     //   console.log(e);
+                      //     //   // console.log(e);
                       //     //   setRole(e);
                       //   }}
                       //   options={reportPeriodList}
@@ -456,7 +449,7 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
                       //     .localeCompare((optionB?.label ?? "").toLowerCase())
                       // }
                       // onChange={(e: any) => {
-                      //   console.log(e);
+                      //   // console.log(e);
                       //   setType(e);
                       // }}
                       // options={reportsTypeList}
@@ -464,7 +457,7 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
                       style={{ width: "100%", height: 36 }}
                       onChange={(e: any) => {
                         // setSelectedOption(value);
-                        console.log("e", e);
+                        // console.log("e", e);
                       }}
                     >
                       <OptGroup>
@@ -519,7 +512,7 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
                       value={startDate.slice(0, 10)}
                       onChange={(e) => {
                         setStartDate(new Date(e.target.value).toISOString());
-                        console.log("e", e.target.value);
+                        // console.log("e", e.target.value);
                       }}
                     />
                   </Col>
@@ -541,7 +534,7 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
                       value={endDate.slice(0, 10)}
                       onChange={(e) => {
                         setEndDate(new Date(e.target.value).toISOString());
-                        console.log("e", e.target.value);
+                        // console.log("e", e.target.value);
                       }}
                     />
                   </Col>

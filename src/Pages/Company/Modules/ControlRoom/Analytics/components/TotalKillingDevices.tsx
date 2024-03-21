@@ -23,11 +23,15 @@ import Loader from "../../../../../Loader/Loader";
 interface PropsTypes {
   isVisible: boolean; // Change 'boolean' to the actual type of isVisible
   setIsVisible: any;
+  fromDate: any;
+  toDate: any;
 }
 
 const TotalKillingDevices: React.FC<PropsTypes> = ({
   isVisible,
   setIsVisible = () => {},
+  fromDate,
+  toDate,
 }) => {
   const { killedDevices } = useSelector((state: any) => state.alerts);
   const { devices } = useSelector((state: any) => state.monitoring);
@@ -77,14 +81,14 @@ const TotalKillingDevices: React.FC<PropsTypes> = ({
         return {
           ...device,
           remainingTime: calculateRemainingTime(
-            new Date(device.updatedAt).toLocaleString()
+            new Date(device.createdAt).toLocaleString()
           ),
           deviceData: deviceData ? { ...deviceData } : null,
         };
       });
 
       setDataList(updatedDataList);
-      // console.log("dataList", dataList);
+      // // console.log("dataList", dataList);
     }
   }, [killedDevices, devices]);
 
@@ -94,7 +98,7 @@ const TotalKillingDevices: React.FC<PropsTypes> = ({
         prevDataList.map((device: any) => ({
           ...device,
           remainingTime: calculateRemainingTime(
-            new Date(device.updatedAt).toLocaleString()
+            new Date(device.createdAt).toLocaleString()
           ),
         }))
       );
@@ -156,7 +160,7 @@ const TotalKillingDevices: React.FC<PropsTypes> = ({
         });
 
       setDataList((prevData: any) => [...prevData, ...nextBatch]);
-      // console.log("dataList", dataList);
+      // // console.log("dataList", dataList);
 
       // const nextBatch = killedDevices
       //   .slice(dataList.length, dataList.length + 6)
@@ -259,17 +263,17 @@ const TotalKillingDevices: React.FC<PropsTypes> = ({
                     getAll({
                       url: "control-room/get-all-killed-devices?type=self",
                     }).then((data: any) => {
-                      // console.log("api call --- >", data);
+                      // // console.log("api call --- >", data);
 
                       if (data !== undefined) {
                         if (data.success) {
                           setLoading(false);
-                          // console.log("length --- >", data.data);
+                          // // console.log("length --- >", data.data);
                           dispatch(setKilledDevices(data.data));
                         }
                         if (!data.success) {
                           setLoading(false);
-                          // // console.log("length --- >", data.data);
+                          // // // console.log("length --- >", data.data);
                           dispatch(setKilledDevices([]));
                         }
                       }
@@ -299,17 +303,17 @@ const TotalKillingDevices: React.FC<PropsTypes> = ({
                     getAll({
                       url: "control-room/get-all-killed-devices?type=self",
                     }).then((data: any) => {
-                      // console.log("api call --- >", data);
+                      // // console.log("api call --- >", data);
 
                       if (data !== undefined) {
                         if (data.success) {
                           setLoading(false);
-                          // console.log("length --- >", data.data);
+                          // // console.log("length --- >", data.data);
                           dispatch(setKilledDevices(data.data));
                         }
                         if (!data.success) {
                           setLoading(false);
-                          // // console.log("length --- >", data.data);
+                          // // // console.log("length --- >", data.data);
                           dispatch(setKilledDevices([]));
                         }
                       }
@@ -373,8 +377,8 @@ const TotalKillingDevices: React.FC<PropsTypes> = ({
                       <tbody>
                         {dataList.length == 0 ? (
                           <tr>
-                            <td colSpan={10} style={{ fontSize: "25px" }}>
-                              No Kiling Devices
+                            <td colSpan={11} style={{ fontSize: "25px" }}>
+                              No Kiling Devices Found
                             </td>
                           </tr>
                         ) : (
@@ -520,6 +524,8 @@ const TotalKillingDevices: React.FC<PropsTypes> = ({
                                 setAddModal={setIsUpdateModalOpenForSendCommand}
                                 dropDownDevices={devices}
                                 prevItem={deviceData}
+                                fromDate={fromDate}
+                                toDate={toDate}
                               />
                             </tr>
                           ))

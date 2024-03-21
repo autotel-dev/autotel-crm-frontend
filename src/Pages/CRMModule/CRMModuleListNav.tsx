@@ -24,7 +24,7 @@ const CRMModuleListNav = () => {
             <NavLink
               className={activeTab === "1" ? "active" : ""}
               onClick={() => {
-                console.log(filterCrmModules);
+                // console.log(filterCrmModules);
 
                 dispatch(setActiveTab("1"));
                 filterCrmModules.map((item: any, index: any) => {
@@ -43,13 +43,13 @@ const CRMModuleListNav = () => {
             <NavLink
               className={activeTab === "3" ? "active" : ""}
               onClick={() => {
-                console.log(filterCrmModules);
+                // console.log(filterCrmModules);
 
                 dispatch(setActiveTab("3"));
                 filterCrmModules.map((item: any, index: any) => {
                   if (!item.isActive) {
                     tempList.push(item);
-                    console.log("isNotActive -- >", 1);
+                    // console.log("isNotActive -- >", 1);
                   }
                 });
                 dispatch(setInActiveActiveModules("No Inactive Modules Found"));
@@ -64,13 +64,13 @@ const CRMModuleListNav = () => {
             <NavLink
               className={activeTab === "2" ? "active" : ""}
               onClick={() => {
-                console.log(filterCrmModules);
+                // console.log(filterCrmModules);
 
                 dispatch(setActiveTab("2"));
                 filterCrmModules.map((item: any, index: any) => {
                   if (item.isActive) {
                     tempList.push(item);
-                    console.log("isNotActive -- >", 1);
+                    // console.log("isNotActive -- >", 1);
                   }
                 });
                 dispatch(setInActiveActiveModules("No Active Modules Found"));

@@ -93,7 +93,7 @@ const SelfSendCommands: React.FC<PropsTypes> = ({
 
     return () => clearInterval(interval);
   }, []);
-  console.log("dataList--", dataList);
+  // console.log("dataList--", dataList);
 
   const calculateRemainingTime = (timestamp: string): string => {
     // Convert the timestamp to a Date object
@@ -256,8 +256,8 @@ const SelfSendCommands: React.FC<PropsTypes> = ({
                   <tbody>
                     {dataList.length == 0 ? (
                       <tr>
-                        <td colSpan={10} style={{ fontSize: "25px" }}>
-                          No Send Commands
+                        <td colSpan={11} style={{ fontSize: "25px" }}>
+                          No Send Commands Found
                         </td>
                       </tr>
                     ) : (

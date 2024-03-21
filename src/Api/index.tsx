@@ -57,16 +57,16 @@ export const login = async (postData: loginTypes): Promise<void> => {
       body: JSON.stringify(postData),
     });
     const result = await response.json();
-    console.log(result);
+    // console.log(result);
 
     if (!result["success"]) {
-      console.log("result: ", result);
+      // console.log("result: ", result);
       if (result.statusCode !== 401) {
         var alertData = {
           title: "Invalid Login",
           text: result.message,
         };
-        console.log("alertData: 1 ", alertData);
+        // console.log("alertData: 1 ", alertData);
         errorAlert(alertData);
       }
 
@@ -78,7 +78,7 @@ export const login = async (postData: loginTypes): Promise<void> => {
     }
     return result;
   } catch (error: any) {
-    console.error("Error creating login:", error);
+    // console.error("Error creating login:", error);
 
     // throw new Error("Failed to create ciloginty");
   }
@@ -115,16 +115,16 @@ export const otpVerification = async (
       }
     );
     const result = await response.json();
-    console.log(result);
+    // console.log(result);
 
     if (!result["success"]) {
-      console.log("result: ", result);
+      // console.log("result: ", result);
       if (result.statusCode !== 401) {
         var alertData = {
           title: "Invalid Login",
           text: result.message,
         };
-        console.log("alertData: 1 ", alertData);
+        // console.log("alertData: 1 ", alertData);
         errorAlert(alertData);
       }
 
@@ -137,7 +137,7 @@ export const otpVerification = async (
     return result;
     // Handle success (optional)
   } catch (error: any) {
-    console.error("Error creating login:", error);
+    // console.error("Error creating login:", error);
 
     // throw new Error("Failed to create ciloginty");
   }
@@ -165,11 +165,11 @@ export const create = async (postData: any, url: URLTypes): Promise<void> => {
     });
 
     const result = response.data;
-    console.log("Response data:", response.data);
+    // console.log("Response data:", response.data);
 
     return result;
   } catch (error: any) {
-    console.error("Error creating:", error.message);
+    // console.error("Error creating:", error.message);
     return error.response.data;
   }
 };
@@ -203,11 +203,11 @@ export const otpEnabled = async (
     );
 
     const result = response.data;
-    console.log("Response data:", response.data);
+    // console.log("Response data:", response.data);
 
     return result;
   } catch (error: any) {
-    console.error("Error OTPEnabled:", error.message);
+    // console.error("Error OTPEnabled:", error.message);
     return error.response.data;
   }
 };
@@ -239,11 +239,11 @@ export const resendOTP = async (userId: any, url: URLTypes): Promise<void> => {
     );
 
     const result = response.data;
-    console.log("Response data:", response.data);
+    // console.log("Response data:", response.data);
 
     return result;
   } catch (error: any) {
-    console.error("Error resendOTP:", error.message);
+    // console.error("Error resendOTP:", error.message);
     return error.response.data;
   }
 };
@@ -272,14 +272,14 @@ export const createCom = async (
     const response = await axios.post(`${API_BASE_URL}/${url.url}`, formData, {
       headers: multipartHeader(),
     });
-    console.log("api call -- >");
+    // console.log("api call -- >");
 
     const result = response.data;
-    console.log("Response data:", response.data);
+    // console.log("Response data:", response.data);
 
     return result;
   } catch (error: any) {
-    console.error("Error creatingCompany:", error.message);
+    // console.error("Error creatingCompany:", error.message);
     return error.response.data;
   }
 };
@@ -307,11 +307,11 @@ export const update = async (postData: any, url: URLTypes): Promise<void> => {
     });
 
     const result = response.data;
-    console.log("Response data:", response.data);
+    // console.log("Response data:", response.data);
 
     return result;
   } catch (error: any) {
-    console.error("Error updating:", error.message);
+    // console.error("Error updating:", error.message);
     return error.response.data;
   }
 };
@@ -342,11 +342,11 @@ export const updateWithMultipart = async (
     });
 
     const result = response.data;
-    console.log("Response data:", response.data);
+    // console.log("Response data:", response.data);
 
     return result;
   } catch (error: any) {
-    console.error("Error updatingMultipart:", error.message);
+    // console.error("Error updatingMultipart:", error.message);
     return error.response.data;
   }
 };
@@ -377,10 +377,10 @@ export const createWithMultipart = async (
     });
 
     const result = response.data;
-    console.log("Response data:", response.data);
+    // console.log("Response data:", response.data);
     return result;
   } catch (error: any) {
-    console.error("Error creatingMultipart:", error.response.data);
+    // console.error("Error creatingMultipart:", error.response.data);
     return error.response.data;
   }
 };
@@ -408,10 +408,10 @@ export const patch = async (postData: any, url: URLTypes): Promise<void> => {
     });
 
     const result = response.data;
-    console.log("Response data:", response.data);
+    // console.log("Response data:", response.data);
     return result;
   } catch (error: any) {
-    console.error("Error when Patching:", error.message);
+    // console.error("Error when Patching:", error.message);
     return error.response.data;
   }
 };
@@ -433,18 +433,18 @@ export const deleteSingle = async (url: URLTypes): Promise<void> => {
     return error;
   }
   // -----------------------
-  console.log(`${API_BASE_URL}/${url.url}`);
-  console.log(header());
+  // console.log(`${API_BASE_URL}/${url.url}`);
+  // console.log(header());
 
   try {
     const response = await axios.delete(`${API_BASE_URL}/${url.url}`, {
       headers: header(),
     });
     const result = response.data;
-    console.log("Response data:", response.data);
+    // console.log("Response data:", response.data);
     return result;
   } catch (error: any) {
-    console.error("Error deleting:", error.message);
+    // console.error("Error deleting:", error.message);
     return error.response.data;
   }
 };
@@ -466,18 +466,18 @@ export const getAll = async (url: URLTypes): Promise<void> => {
     return error;
   }
   // -----------------------
-  console.log(`${API_BASE_URL}/${url.url}`);
-  console.log(header());
+  // console.log(`${API_BASE_URL}/${url.url}`);
+  // console.log(header());
 
   try {
     const response = await axios.get(`${API_BASE_URL}/${url.url}`, {
       headers: header(),
     });
     const result = response.data;
-    console.log("Response data:", response.data);
+    // console.log("Response data:", response.data);
     return result;
   } catch (error: any) {
-    console.error("Error get-all:", error.message);
+    // console.error("Error get-all:", error.message);
     return error.response.data;
   }
 };
@@ -501,7 +501,7 @@ export const getImage = async (url: URLTypes) => {
 
     // Handle success (optional)
   } catch (error: any) {
-    console.error("Error get-all:", error);
+    // console.error("Error get-all:", error);
   }
 };
 

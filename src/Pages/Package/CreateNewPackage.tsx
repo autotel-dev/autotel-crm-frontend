@@ -58,7 +58,7 @@ const CreateNewPackage = () => {
         days: packageDays,
       };
 
-      console.log(packag);
+      // console.log(packag);
       try {
         await create(packag, { url: "package/create-package" }).then(
           (data: any) => {
@@ -90,7 +90,7 @@ const CreateNewPackage = () => {
               }
 
               if (data.success) {
-                console.log(data);
+                // console.log(data);
                 setLoading(false);
                 dispatch(setPackageDuration(null));
                 dispatch(setPackageDays(null));
@@ -101,7 +101,7 @@ const CreateNewPackage = () => {
                 });
                 getAll({ url: "package/get-all-packages" }).then(
                   (data: any) => {
-                    console.log("api call --- >", data);
+                    // console.log("api call --- >", data);
                     if (data == undefined) {
                       Swal.fire({
                         text: "Failed to fetch due to connection refused",
@@ -118,7 +118,7 @@ const CreateNewPackage = () => {
                     dispatch(setPackagesEnd());
                     if (data !== undefined) {
                       if (data.success) {
-                        console.log("hhg");
+                        // console.log("hhg");
                         dispatch(setPackages(data.data));
                         dispatch(setFilterPackages(data.data));
                       }
@@ -132,9 +132,9 @@ const CreateNewPackage = () => {
         // Handle successful post creation (e.g., show a success message, redirect, etc.)
       } catch (error: any) {
         // Handle error (e.g., show an error message)
-        console.error("Error creating post:", error);
+        // console.error("Error creating post:", error);
         setLoading(false);
-        console.log(packag);
+        // console.log(packag);
         setAddModal(false);
         reset({
           title: "",

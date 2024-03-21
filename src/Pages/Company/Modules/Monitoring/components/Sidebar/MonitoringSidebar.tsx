@@ -98,8 +98,8 @@ const MonitoringSidebar = () => {
 
             // // Update state with initialGroupDevices
             // setgroupdevices(initialGroupDevices);
-            // console.log("groups", groups);
-            // console.log("groupDevices", groupdevices);
+            // // console.log("groups", groups);
+            // // console.log("groupDevices", groupdevices);
             // dispatch(setDevices(initialGroupDevices));
           }}
         >
@@ -126,7 +126,7 @@ const MonitoringSidebar = () => {
             //   return item.items.filter(bodyItem => bodyItem.icon_color === "green");
             // });
 
-            // console.log(filteredDevices);
+            // // console.log(filteredDevices);
 
             // -----------------------------------
 
@@ -134,7 +134,7 @@ const MonitoringSidebar = () => {
             //   item.items.filter(bodyItem => bodyItem.icon_color === "green")
             // ).flat();
 
-            // console.log(filteredDevices);
+            // // console.log(filteredDevices);
             setStatusDevices("online");
             // const array =
             //   devicesStatuses.find(
@@ -165,8 +165,8 @@ const MonitoringSidebar = () => {
 
             // // Update state with initialGroupDevices
             // setgroupdevices(initialGroupDevices);
-            // console.log("groups", groups);
-            // console.log("groupDevices", groupdevices);
+            // // console.log("groups", groups);
+            // // console.log("groupDevices", groupdevices);
             // dispatch(setDevices(initialGroupDevices));
           }}
         >
@@ -226,8 +226,8 @@ const MonitoringSidebar = () => {
 
             // // Update state with initialGroupDevices
             // setgroupdevices(initialGroupDevices);
-            // console.log("groups", groups);
-            // console.log("groupDevices", groupdevices);
+            // // console.log("groups", groups);
+            // // console.log("groupDevices", groupdevices);
             // dispatch(setDevices(initialGroupDevices));
           }}
         >
@@ -287,8 +287,8 @@ const MonitoringSidebar = () => {
 
             // // Update state with initialGroupDevices
             // setgroupdevices(initialGroupDevices);
-            // console.log("groups", groups);
-            // console.log("groupDevices", groupdevices);
+            // // console.log("groups", groups);
+            // // console.log("groupDevices", groupdevices);
             // dispatch(setDevices(initialGroupDevices));
           }}
         >
@@ -347,8 +347,8 @@ const MonitoringSidebar = () => {
 
             // // Update state with initialGroupDevices
             // setgroupdevices(initialGroupDevices);
-            // console.log("groups", groups);
-            // console.log("groupDevices", groupdevices);
+            // // console.log("groups", groups);
+            // // console.log("groupDevices", groupdevices);
             // dispatch(setDevices(initialGroupDevices));
           }}
         >
@@ -408,8 +408,8 @@ const MonitoringSidebar = () => {
 
             // // Update state with initialGroupDevices
             // setgroupdevices(initialGroupDevices);
-            // console.log("groups", groups);
-            // console.log("groupDevices", groupdevices);
+            // // console.log("groups", groups);
+            // // console.log("groupDevices", groupdevices);
             // dispatch(setDevices(initialGroupDevices));
           }}
         >
@@ -470,8 +470,8 @@ const MonitoringSidebar = () => {
 
             //   // Update state with initialGroupDevices
             //   setgroupdevices(initialGroupDevices);
-            //   console.log("groups", groups);
-            //   console.log("groupDevices", groupdevices);
+            //   // console.log("groups", groups);
+            //   // console.log("groupDevices", groupdevices);
             //   dispatch(setDevices(initialGroupDevices));
             // }
           }}

@@ -39,9 +39,9 @@ const ServerManagement = () => {
       (data: any) => {
         const options = { year: "numeric", month: "2-digit", day: "2-digit" };
         const startTime = new Date().toISOString();
-        console.log("startTime: ", startTime);
+        // console.log("startTime: ", startTime);
         dispatch(setTime(startTime.toString().slice(0, 10)));
-        console.log("api call --- >", data);
+        // console.log("api call --- >", data);
 
         if (data !== undefined) {
           dispatch(setNoDataFound(data.message));
@@ -59,7 +59,7 @@ const ServerManagement = () => {
             setLoading(false);
           }
           if (data.success) {
-            console.log("hhg");
+            // console.log("hhg");
             dispatch(setServerManagement(data.data.serverHealthStatistics));
             setLoading(false);
           }

@@ -30,7 +30,7 @@ const Province = () => {
 
     dispatch(setProvinces(filtered));
 
-    console.log(filtered);
+    // console.log(filtered);
   };
 
   return (

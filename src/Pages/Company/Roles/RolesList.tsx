@@ -32,7 +32,7 @@ const RolesList = () => {
     dispatch(setFilterRoles([]));
     dispatch(setRolesStart());
     getAll({ url: "sub-role/get-all-sub-roles" }).then((data: any) => {
-      console.log("api call --- >", data);
+      // console.log("api call --- >", data);
       // if (data == undefined) {
       //   Swal.fire({
       //     text: "Failed to fetch due to connection refused",
@@ -62,7 +62,7 @@ const RolesList = () => {
           });
         }
         if (data.success) {
-          console.log("hhg");
+          // console.log("hhg");
           dispatch(setRoles(data.data));
           dispatch(setFilterRoles(data.data));
         }
@@ -93,24 +93,24 @@ const RolesList = () => {
                     const changeStatus = {
                       isActive: !row.isActive,
                     };
-                    console.log(changeStatus);
+                    // console.log(changeStatus);
 
                     // setRowIndex(index);
-                    console.log(e.target.value);
+                    // console.log(e.target.value);
                     try {
                       await patch(changeStatus, {
                         url: `sub-role/change-activation-status/${row._id}`,
                       }).then((data: any) => {
                         if (data.success) {
-                          console.log(data);
+                          // console.log(data);
                           dispatch(setRolesStart());
                           getAll({ url: "sub-role/get-all-sub-roles" }).then(
                             (data: any) => {
-                              console.log("api call --- >", data);
+                              // console.log("api call --- >", data);
                               dispatch(setRolesEnd());
                               if (data !== undefined) {
                                 if (data.success) {
-                                  console.log("hhg");
+                                  // console.log("hhg");
                                   dispatch(setRoles(data.data));
                                   dispatch(setFilterRoles(data.data));
                                 }
@@ -122,7 +122,7 @@ const RolesList = () => {
                       // Handle successful post creation (e.g., show a success message, redirect, etc.)
                     } catch (error) {
                       // Handle error (e.g., show an error message)
-                      console.error("Error creating post:", error);
+                      // console.error("Error creating post:", error);
                     }
                   }}
                 />
@@ -149,7 +149,7 @@ const RolesList = () => {
                 border: "none",
               }}
               onClick={() => {
-                console.log("345678");
+                // console.log("345678");
                 var alertData = {
                   title: "Are you sure?",
                   text: "Once deleted, you will not be able to recover this ",
@@ -172,7 +172,7 @@ const RolesList = () => {
               }}
               onClick={() => {
                 setIsUpdateModalOpen(true);
-                console.log("isUpdateModalOpen: ", isUpdateModalOpen);
+                // console.log("isUpdateModalOpen: ", isUpdateModalOpen);
                 dispatch(setId(row._id));
                 setCountryName(row.name);
                 setIsActive(row.isActive);

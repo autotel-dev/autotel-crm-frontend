@@ -18,7 +18,7 @@ const App = () => {
   useEffect(() => {
     const userId = localStorage.getItem("userId");
     const token = localStorage.getItem("token");
-    console.log(userId);
+    // console.log(userId);
     if (token !== null) {
       getAll({
         url:
@@ -29,8 +29,8 @@ const App = () => {
         // url: "super-admin/get-personalization",
       })
         .then((parentData: any) => {
-          console.log("api call --- >", parentData);
-          console.log("undefined");
+          // console.log("api call --- >", parentData);
+          // console.log("undefined");
           if (parentData == undefined) {
             Swal.fire({
               text: "Failed to Fetch the personalization",
@@ -52,7 +52,7 @@ const App = () => {
           }
         })
         .catch((error) => {
-          console.log("error== >", error);
+          // console.log("error== >", error);
         });
 
       getAll({
@@ -61,13 +61,13 @@ const App = () => {
             ? "user/get-allowed-modules"
             : "crm-module/get-all-active-modules",
       }).then((data: any) => {
-        console.log("active Modules --- >", data);
+        // console.log("active Modules --- >", data);
 
         if (data !== undefined) {
           if (data.success) {
-            console.log("hhg");
+            // console.log("hhg");
 
-            console.log(userId);
+            // console.log(userId);
             dispatch(setActiveCRMModules(data.data));
           }
         }
@@ -75,10 +75,10 @@ const App = () => {
 
       if (getUserRole() == "COMPANY" || getUserRole() == "OPERATOR") {
         getAll({ url: "user/get-permissions" }).then((data: any) => {
-          console.log("api call --- >", data);
+          // console.log("api call --- >", data);
           if (data !== undefined) {
             if (data.success) {
-              console.log("hhg");
+              // console.log("hhg");
               dispatch(setUserPermissions(data.data.allowedPermissions));
             }
           }
@@ -86,10 +86,10 @@ const App = () => {
       }
       if (getUserRole() == "SUPER_ADMIN") {
         getAll({ url: "permissions/get-all-permissions" }).then((data: any) => {
-          console.log("api call --- >", data);
+          // console.log("api call --- >", data);
           if (data !== undefined) {
             if (data.success) {
-              console.log("hhg");
+              // console.log("hhg");
               dispatch(setPermissions(data.data));
             }
           }

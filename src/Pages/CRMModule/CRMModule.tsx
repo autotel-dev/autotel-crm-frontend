@@ -32,7 +32,7 @@ const CRMModule = () => {
 
     dispatch(setCRMModules(filtered));
 
-    console.log(filtered);
+    // console.log(filtered);
   };
   return (
     <>

@@ -21,7 +21,7 @@ const ServersListNav = () => {
             <NavLink
               className={activeTab === "1" ? "active" : ""}
               onClick={() => {
-                console.log(filterServers);
+                // console.log(filterServers);
 
                 dispatch(setActiveTab("1"));
                 filterServers?.map((item: any, index: any) => {
@@ -40,13 +40,13 @@ const ServersListNav = () => {
             <NavLink
               className={activeTab === "3" ? "active" : ""}
               onClick={() => {
-                console.log(filterServers);
+                // console.log(filterServers);
 
                 dispatch(setActiveTab("3"));
                 filterServers?.map((item: any, index: any) => {
                   if (!item.isActive) {
                     tempList.push(item);
-                    console.log("isNotActive -- >", 1);
+                    // console.log("isNotActive -- >", 1);
                   }
                 });
                 
@@ -62,13 +62,13 @@ const ServersListNav = () => {
             <NavLink
               className={activeTab === "2" ? "active" : ""}
               onClick={() => {
-                console.log(filterServers);
+                // console.log(filterServers);
 
                 dispatch(setActiveTab("2"));
                 filterServers?.map((item: any, index: any) => {
                   if (item.isActive) {
                     tempList.push(item);
-                    console.log("isNotActive -- >", 1);
+                    // console.log("isNotActive -- >", 1);
                   }
                 });
                 dispatch(setInActiveActiveServers("No Active Modules Found"));

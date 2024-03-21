@@ -8,16 +8,16 @@ interface propTypes {
 
 const SelectProvinceBox: React.FC<propTypes> = ({ placeholder }) => {
   const { provinces, countryId } = useSelector((state: any) => state.cities);
-  console.log(provinces);
+  // console.log(provinces);
   const [provinceList, setProvinceList] = useState([]);
   const dispatch = useDispatch();
 
   const tempList: any = [];
   useEffect(() => {
-    console.log("provinces in select province xcity boz: ", provinces);
+    // console.log("provinces in select province xcity boz: ", provinces);
     provinces.map((item: any, index: any) => {
-      console.log("countryId -- >", countryId);
-      console.log("item -- >", item);
+      // console.log("countryId -- >", countryId);
+      // console.log("item -- >", item);
 
       if (item.country === countryId) {
         tempList.push({ value: `${item._id}`, label: `${item.name}` });
@@ -41,7 +41,7 @@ const SelectProvinceBox: React.FC<propTypes> = ({ placeholder }) => {
           .localeCompare((optionB?.label ?? "").toLowerCase())
       }
       onChange={(e) => {
-        console.log(e);
+        // console.log(e);
         dispatch(setProvinceId(e));
       }}
       options={provinceList}

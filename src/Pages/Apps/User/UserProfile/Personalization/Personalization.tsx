@@ -30,7 +30,7 @@ import { setUserPersonalizationData } from "../../../../../ReaduxToolkit/Reducer
 
 const Personalization = () => {
   const { userData } = useSelector((state: any) => state.user);
-  //   console.log("Attachements", attachements);
+  //   // console.log("Attachements", attachements);
 
   const [addModal, setAddModal] = useState(false);
   const addToggle = () => {
@@ -49,7 +49,7 @@ const Personalization = () => {
   const { userPersonalizationData } = useSelector(
     (state: any) => state.personalization
   );
-  console.log("userPersonalizationData", userPersonalizationData);
+  // console.log("userPersonalizationData", userPersonalizationData);
 
   const [headerText, setheaderText] = useState<string>(
     userPersonalizationData !== null ? userPersonalizationData.headerText : ""
@@ -112,14 +112,14 @@ const Personalization = () => {
 
   const handleLogoAdd = ({ file, meta, remove }: type, status: any) => {
     if (status === "done") {
-      console.log("File uploaded successfully:", file);
+      // console.log("File uploaded successfully:", file);
       if (isEdit) {
         setEditedlogoImage(file);
       } else {
         setlogoImage(file);
       }
     } else if (status === "removed") {
-      console.log("File removed:", file);
+      // console.log("File removed:", file);
       if (isEdit) {
         setEditedlogoImage(null);
       } else {
@@ -129,7 +129,7 @@ const Personalization = () => {
   };
   const handleBackgroundAdd = ({ file, meta, remove }: type, status: any) => {
     if (status === "done") {
-      console.log("File uploaded successfully:", file);
+      // console.log("File uploaded successfully:", file);
 
       if (isEdit) {
         setEditedbackgroundImage(file);
@@ -137,7 +137,7 @@ const Personalization = () => {
         setbackgroundImage(file);
       }
     } else if (status === "removed") {
-      console.log("File removed:", file);
+      // console.log("File removed:", file);
       if (isEdit) {
         setEditedbackgroundImage(null);
       } else {
@@ -191,7 +191,7 @@ const Personalization = () => {
         url: `personalization/update-personalization/${userPersonalizationData._id}`,
       })
         .then((data: any) => {
-          console.log("api call --- >", data);
+          // console.log("api call --- >", data);
           if (data == undefined) {
             Swal.fire({
               text: `${data.message}`,
@@ -229,7 +229,7 @@ const Personalization = () => {
                     ? `company/get-personalization/${getUserId()}`
                     : "super-admin/get-personalization",
               }).then((parentData: any) => {
-                console.log("api call --- >", parentData);
+                // console.log("api call --- >", parentData);
                 if (parentData == undefined) {
                   Swal.fire({
                     text: "Failed to Fetch",
@@ -259,7 +259,7 @@ const Personalization = () => {
           }
         })
         .catch((err: any) => {
-          console.log("catch data", err);
+          // console.log("catch data", err);
           setLoading(false);
         });
     } else {
@@ -267,7 +267,7 @@ const Personalization = () => {
         url: `personalization/create-personalization`,
       })
         .then((data: any) => {
-          console.log("api call --- >", data);
+          // console.log("api call --- >", data);
           if (data == undefined) {
             Swal.fire({
               text: `${data.message}`,
@@ -296,7 +296,7 @@ const Personalization = () => {
                     ? `company/get-personalization/${getUserId()}`
                     : "super-admin/get-personalization",
               }).then((parentData: any) => {
-                console.log("api call --- >", parentData);
+                // console.log("api call --- >", parentData);
                 if (parentData == undefined) {
                   Swal.fire({
                     text: "Failed to Fetch",
@@ -323,7 +323,7 @@ const Personalization = () => {
           }
         })
         .catch((err: any) => {
-          console.log("catch data", err);
+          // console.log("catch data", err);
           setLoading(false);
         });
     }

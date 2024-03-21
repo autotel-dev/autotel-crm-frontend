@@ -48,11 +48,11 @@ const FirebaseAccountCredentials = ({
   const handleNextButton = () => {
     if (emailAddress !== "" && password !== "") {
       dispatch(setFirebaseAccountCredentials(accountCredentialsForm));
-      console.log("FirebaseAccountCredentialsForm -->", accountCredentialsForm);
-      console.log(
-        "firebaseAccountCreadentials --- >",
-        firebaseAccountCredentials
-      );
+      // console.log("FirebaseAccountCredentialsForm -->", accountCredentialsForm);
+      // console.log(
+      //   "firebaseAccountCreadentials --- >",
+      //   firebaseAccountCredentials
+      // );
       dispatch(
         setCreateServer({
           ...createServer,

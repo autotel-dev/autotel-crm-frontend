@@ -36,7 +36,7 @@ const ProvinceList = () => {
   useEffect(() => {
     dispatch(setProvincesStart());
     getAll({ url: "province/get-all-provinces" }).then((data: any) => {
-      console.log("api call --- >", data);
+      // console.log("api call --- >", data);
       if (data == undefined) {
         Swal.fire({
           text: "No provinces Found",
@@ -65,7 +65,7 @@ const ProvinceList = () => {
           });
         }
         if (data.success) {
-          console.log("hhg");
+          // console.log("hhg");
           dispatch(setProvinces(data.data));
           dispatch(setFilterProvinces(data.data));
         }
@@ -75,10 +75,10 @@ const ProvinceList = () => {
   }, []);
   useEffect(() => {
     getAll({ url: "country/get-all-active-countries" }).then((data: any) => {
-      console.log("api call --- >", data);
+      // console.log("api call --- >", data);
       if (data !== undefined) {
         if (data.success) {
-          console.log("hhg");
+          // console.log("hhg");
           dispatch(setCountries(data.data));
         }
       }
@@ -112,26 +112,26 @@ const ProvinceList = () => {
                   //     isActive: !row.isActive,
                   //     company: decodedToken.userId,
                   //   };
-                  //   console.log(operator);
+                  //   // console.log(operator);
                   //   setIsActive(!row.isActive);
                   //   // setRowIndex(index);
-                  //   console.log(e.target.value);
+                  //   // console.log(e.target.value);
                   //   try {
                   //     await update(operator, {
                   //       url: `operator/update-operator/${row._id}`,
                   //     }).then((data: any) => {
                   //       if (data.success) {
-                  //         console.log(data);
+                  //         // console.log(data);
 
                   //         dispatch(setOperatorsStart());
                   //         getAll({
                   //           url: "operator/get-all-operators",
                   //         }).then((data: any) => {
-                  //           console.log("api call --- >", data);
+                  //           // console.log("api call --- >", data);
                   //           dispatch(setOperatorsEnd());
                   //           if (data !== undefined) {
                   //             if (data.success) {
-                  //               console.log("hhg");
+                  //               // console.log("hhg");
                   //               dispatch(setOperators(data.data));
                   //               dispatch(setFilterOperators(data.data));
                   //             }
@@ -142,7 +142,7 @@ const ProvinceList = () => {
                   //     // Handle successful post creation (e.g., show a success message, redirect, etc.)
                   //   } catch (error) {
                   //     // Handle error (e.g., show an error message)
-                  //     console.error("Error creating post:", error);
+                  //     // console.error("Error creating post:", error);
                   //   }
                   // }}
                 />
@@ -169,7 +169,7 @@ const ProvinceList = () => {
                 border: "none",
               }}
               onClick={() => {
-                console.log("345678");
+                // console.log("345678");
                 var alertData = {
                   title: "Are you sure?",
                   text: "Once deleted, you will not be able to recover this ",
@@ -192,7 +192,7 @@ const ProvinceList = () => {
               }}
               onClick={() => {
                 setIsUpdateModalOpen(true);
-                console.log("isUpdateModalOpen: ", isUpdateModalOpen);
+                // console.log("isUpdateModalOpen: ", isUpdateModalOpen);
                 dispatch(setId(row._id));
                 setProvinceName(row.name);
                 dispatch(setCountryName(row.country.name));

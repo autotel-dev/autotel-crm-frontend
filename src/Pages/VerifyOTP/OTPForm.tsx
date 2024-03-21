@@ -66,7 +66,7 @@ const OTPForm = ({ alignLogo }: CommonFormPropsType) => {
   };
 
   const handleChange = (e: any) => {
-    console.log(e);
+    // console.log(e);
     setOtp(e);
   };
 
@@ -78,10 +78,10 @@ const OTPForm = ({ alignLogo }: CommonFormPropsType) => {
         otpCode: otp,
       };
       setLoading(true);
-      console.log(otpData);
+      // console.log(otpData);
       try {
         await otpVerification(otpData).then((data: any) => {
-          console.log("response: ", data.data);
+          // console.log("response: ", data.data);
           setLoading(false);
           if (!data.success) {
             Swal.fire({
@@ -95,8 +95,8 @@ const OTPForm = ({ alignLogo }: CommonFormPropsType) => {
           if (data.statusCode == 200) {
             dispatch(setUserData(null));
             const token = data.data.authToken;
-            console.log("response: ", data.data);
-            console.log("token: ", token);
+            // console.log("response: ", data.data);
+            // console.log("token: ", token);
             localStorage.setItem("token", token);
             if (getUserRole() == ROLES.SUPER_ADMIN) {
               dispatch(setUserPermissions([]));
@@ -116,17 +116,17 @@ const OTPForm = ({ alignLogo }: CommonFormPropsType) => {
                   ? "user/get-allowed-modules"
                   : "crm-module/get-all-active-modules",
             }).then((data: any) => {
-              console.log("active Modules --- >", data);
+              // console.log("active Modules --- >", data);
 
               if (data !== undefined) {
                 if (!data.success) {
-                  console.log("hhg");
-                  console.log(userId);
+                  // console.log("hhg");
+                  // console.log(userId);
                   dispatch(setActiveCRMModules([]));
                 }
                 if (data.success) {
-                  console.log("hhg");
-                  console.log(userId);
+                  // console.log("hhg");
+                  // console.log(userId);
                   dispatch(setActiveCRMModules(data.data));
                 }
               }
@@ -139,7 +139,7 @@ const OTPForm = ({ alignLogo }: CommonFormPropsType) => {
 
               // url: "super-admin/get-personalization",
             }).then((parentData: any) => {
-              console.log("api call --- >", parentData);
+              // console.log("api call --- >", parentData);
               if (parentData == undefined) {
                 // Swal.fire({
                 //   text: `${parentData.message}`,
@@ -165,10 +165,10 @@ const OTPForm = ({ alignLogo }: CommonFormPropsType) => {
             if (getUserRole() == "COMPANY" || getUserRole() == "OPERATOR") {
               getAll({ url: "user/get-permissions" })
                 .then((data: any) => {
-                  console.log("api call --- >", data);
+                  // console.log("api call --- >", data);
                   if (data !== undefined) {
                     if (data.success) {
-                      console.log("hhg");
+                      // console.log("hhg");
                       dispatch(
                         setUserPermissions(data.data.allowedPermissions)
                       );
@@ -189,15 +189,15 @@ const OTPForm = ({ alignLogo }: CommonFormPropsType) => {
           }
           // if (data.statusCode == 200) {
           //   const token = data.data.authToken;
-          //   console.log("response: ", data.data);
-          //   console.log("token: ", token);
+          //   // console.log("response: ", data.data);
+          //   // console.log("token: ", token);
           //   const decodedToken = jwtDecode(token);
-          //   console.log(decodedToken);
+          //   // console.log(decodedToken);
           //   dispatch(setToken(decodedToken));
           //   const tokenParts = token.split(".");
           //   const payload = JSON.parse(atob(tokenParts[1]));
           //   setDecodedToken(payload);
-          //   console.log("payload", payload);
+          //   // console.log("payload", payload);
 
           //   localStorage.setItem("token", token);
 
@@ -214,7 +214,7 @@ const OTPForm = ({ alignLogo }: CommonFormPropsType) => {
           }
         });
       } catch (error: any) {
-        console.error("Error creating post:", error);
+        // console.error("Error creating post:", error);
         setLoading(false);
       }
     }
@@ -233,14 +233,14 @@ const OTPForm = ({ alignLogo }: CommonFormPropsType) => {
             showCancelButton: false,
           });
           handleResend();
-          console.log(data);
+          // console.log(data);
         } else {
         }
       });
       // Handle successful post creation (e.g., show a success message, redirect, etc.)
     } catch (error: any) {
       // Handle error (e.g., show an error message)
-      console.error("Error creating post:", error);
+      // console.error("Error creating post:", error);
     }
   };
   return (

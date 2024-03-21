@@ -15,7 +15,7 @@ import "./allowedModules.css";
 
 const AllowedModules = () => {
   const { userData } = useSelector((state: any) => state.user);
-  //   console.log("userData", userData);
+  //   // console.log("userData", userData);
 
   return (
     <Col md={12}>

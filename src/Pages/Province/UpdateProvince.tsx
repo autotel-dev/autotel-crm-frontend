@@ -74,11 +74,11 @@ const UpdateProvince: React.FC<PropsTypes> = ({
       });
     }
   };
-  console.log(id);
-  console.log(value);
-  console.log("isActive -- >", isActive);
+  // console.log(id);
+  // console.log(value);
+  // console.log("isActive -- >", isActive);
   // dispatch(setValue(value));
-  console.log("is: ", isVisible);
+  // console.log("is: ", isVisible);
 
   const updateProvince: SubmitHandler<ProvinceType> = async (data) => {
     setLoading(true);
@@ -88,7 +88,7 @@ const UpdateProvince: React.FC<PropsTypes> = ({
         isActive: isActive,
         countryId: countryId,
       };
-      console.log(province);
+      // console.log(province);
       try {
         await update(province, { url: `province/update-province/${id}` }).then(
           (data: any) => {
@@ -110,7 +110,7 @@ const UpdateProvince: React.FC<PropsTypes> = ({
               setIsVisible(!isVisible);
             }
             if (data.success) {
-              console.log(data);
+              // console.log(data);
               setLoading(false);
               setIsVisible(!isVisible);
 
@@ -119,7 +119,7 @@ const UpdateProvince: React.FC<PropsTypes> = ({
               dispatch(setProvincesStart());
               getAll({ url: "province/get-all-provinces" }).then(
                 (data: any) => {
-                  console.log("api call --- >", data);
+                  // console.log("api call --- >", data);
                   if (data == undefined) {
                     Swal.fire({
                       text: "Failed to fetch due to connection refused",
@@ -137,7 +137,7 @@ const UpdateProvince: React.FC<PropsTypes> = ({
                   if (data !== undefined) {
                     dispatch(setNoDataFound(data.message));
                     if (data.success) {
-                      console.log("hhg");
+                      // console.log("hhg");
                       dispatch(setProvinces(data.data));
                       dispatch(setFilterProvinces(data.data));
                     }
@@ -150,7 +150,7 @@ const UpdateProvince: React.FC<PropsTypes> = ({
         // Handle successful post creation (e.g., show a success message, redirect, etc.)
       } catch (error) {
         // Handle error (e.g., show an error message)
-        console.error("Error creating post:", error);
+        // console.error("Error creating post:", error);
 
         setLoading(false);
         setIsVisible(!isVisible);
@@ -180,7 +180,7 @@ const UpdateProvince: React.FC<PropsTypes> = ({
       onClosed={() => {
         // setValue("")
         setIsVisible(false);
-        console.log(value);
+        // console.log(value);
       }}
     >
       <div className="modal-header">
@@ -191,7 +191,7 @@ const UpdateProvince: React.FC<PropsTypes> = ({
           onClick={() => {
             // setValue("")
             setIsVisible(!isVisible);
-            console.log(value);
+            // console.log(value);
           }}
         ></Button>
       </div>
@@ -235,7 +235,7 @@ const UpdateProvince: React.FC<PropsTypes> = ({
                       value={isActive ? "on" : "off"}
                       onChange={(e) => {
                         setIsActive(!isActive);
-                        console.log(e.target.value);
+                        // console.log(e.target.value);
                       }}
                     />
                     <span
@@ -258,7 +258,7 @@ const UpdateProvince: React.FC<PropsTypes> = ({
             onClick={() => {
               // setValue("")
               setIsVisible(!isVisible);
-              console.log(value);
+              // console.log(value);
             }}
           >
             {Cancel}

@@ -21,7 +21,7 @@ const ProvinceListNav = () => {
             <NavLink
               className={activeTab === "1" ? "active" : ""}
               onClick={() => {
-                console.log(filterProvinces);
+                // console.log(filterProvinces);
 
                 dispatch(setActiveTab("1"));
                 filterProvinces.map((item: any, index: any) => {
@@ -40,13 +40,13 @@ const ProvinceListNav = () => {
             <NavLink
               className={activeTab === "2" ? "active" : ""}
               onClick={() => {
-                console.log(filterProvinces);
+                // console.log(filterProvinces);
 
                 dispatch(setActiveTab("2"));
                 filterProvinces.map((item: any, index: any) => {
                   if (!item.isActive) {
                     tempList.push(item);
-                    console.log("isActive -- >", 1);
+                    // console.log("isActive -- >", 1);
                   }
                 });
                 dispatch(setInActiveActiveProvinces("No Inactive Provinces Found"));
@@ -62,13 +62,13 @@ const ProvinceListNav = () => {
             <NavLink
               className={activeTab === "3" ? "active" : ""}
               onClick={() => {
-                console.log(filterProvinces);
+                // console.log(filterProvinces);
 
                 dispatch(setActiveTab("3"));
                 filterProvinces.map((item: any, index: any) => {
                   if (item.isActive) {
                     tempList.push(item);
-                    console.log("isNotActive -- >", 1);
+                    // console.log("isNotActive -- >", 1);
                   }
                 });
                 dispatch(setInActiveActiveProvinces("No Active Provinces Found"));

@@ -20,7 +20,7 @@ const ProfileBox = () => {
     }
   });
 
-  console.log("profile", profile);
+  // console.log("profile", profile);
   const navigate = useNavigate();
   const handleClick = (name: string) => {
     if (name === "Log Out") {
@@ -35,7 +35,7 @@ const ProfileBox = () => {
         );
       }
       // if (getUserRole() == "COMPANY") {
-      //   console.log("Company");
+      //   // console.log("Company");
 
       //   setTimeout(() => {
       //     localStorage.removeItem("token");
@@ -45,7 +45,7 @@ const ProfileBox = () => {
       //     navigate(`${process.env.PUBLIC_URL}/login/${getUserId()}`);
       //   }, 2000);
       // } else {
-      //   console.log("SuperAdmin");
+      //   // console.log("SuperAdmin");
       //   setTimeout(() => {
       //     localStorage.removeItem("token");
       //     localStorage.setItem("userId", "");

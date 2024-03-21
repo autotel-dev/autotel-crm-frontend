@@ -22,7 +22,7 @@ const Monitoring = () => {
   const { devices, isConnected } = useSelector(
     (state: any) => state.monitoring
   );
-  console.log("devices", devices);
+  // console.log("devices", devices);
 
   const groups: any = [];
   const groupDevicesObj: any = {};
@@ -46,7 +46,7 @@ const Monitoring = () => {
     // Function to fetch data and dispatch actions
     const fetchDataAndDispatch = () => {
       getAll({ url: "company/devices" }).then((data: any) => {
-        console.log("data", data);
+        // console.log("data", data);
         // if (data == undefined) {
         //   setUndefinedData(true);
         //   setLoading(false);
@@ -72,8 +72,8 @@ const Monitoring = () => {
           }
           if (data.success) {
             setUndefinedData(false);
-            console.log("api call --- >", data);
-            console.log("length --- >", data.data.length);
+            // console.log("api call --- >", data);
+            // console.log("length --- >", data.data.length);
 
             dispatch(setServerDevices(data.data));
             for (let i = 0; i < data.data.length; i++) {
@@ -144,15 +144,15 @@ const Monitoring = () => {
                 return group;
               }
             );
-            console.log(
-              "updatedInitialGroupDevices",
-              updatedInitialGroupDevices
-            );
+            // console.log(
+            //   "updatedInitialGroupDevices",
+            //   updatedInitialGroupDevices
+            // );
 
             // Update state with initialGroupDevices
             setgroupdevices(updatedInitialGroupDevices);
-            console.log("groups", groups);
-            console.log("groupDevices", groupdevices);
+            // console.log("groups", groups);
+            // console.log("groupDevices", groupdevices);
             dispatch(setDevices(updatedInitialGroupDevices));
             // setLoading(false);
 
@@ -196,7 +196,7 @@ const Monitoring = () => {
                 }
               }
               if (i === data.data.length - 1) {
-                console.log("expiredDevices", expiredDevices);
+                // console.log("expiredDevices", expiredDevices);
                 initialGroupDevicesStatuses.push({
                   online: "Expired",
                   items: expiredDevices,
@@ -214,7 +214,7 @@ const Monitoring = () => {
                 notConnectedDevices.push({ ...element, checked: false });
               }
               if (i === data.data.length - 1) {
-                console.log("notConnectedDevices", notConnectedDevices);
+                // console.log("notConnectedDevices", notConnectedDevices);
                 initialGroupDevicesStatuses.push({
                   online: "Not Connected",
                   items: notConnectedDevices,
@@ -224,24 +224,24 @@ const Monitoring = () => {
 
             // Update state with initialGroupDevicesStatuses
             setgroupdevicesStatuses(initialGroupDevicesStatuses);
-            console.log("statuses", statuses);
-            console.log("groupDevicesStatuses", initialGroupDevicesStatuses);
+            // console.log("statuses", statuses);
+            // console.log("groupDevicesStatuses", initialGroupDevicesStatuses);
             dispatch(setDevicesStatuses(initialGroupDevicesStatuses));
           }
         }
       });
     };
 
-    console.log("Setting up interval...");
+    // console.log("Setting up interval...");
     intervalId = setInterval(() => {
-      console.log("Devices Called");
-      console.log("DevicesCalled in Devices");
+      // console.log("Devices Called");
+      // console.log("DevicesCalled in Devices");
       fetchDataAndDispatch(); // Call function to fetch data and dispatch actions
     }, 60000);
 
     // Cleanup function to clear interval when component unmounts or when loading becomes true
     return () => {
-      console.log("Clearing interval...");
+      // console.log("Clearing interval...");
       clearInterval(intervalId);
     };
   }, [devices]); // Empty dependency array to run the effect only once after mounting
@@ -264,7 +264,7 @@ const Monitoring = () => {
   const getData = () => {
     setLoading(true);
     getAll({ url: "company/devices" }).then((data: any) => {
-      console.log("data", data);
+      // console.log("data", data);
       // if (data == undefined) {
       //   setUndefinedData(true);
       //   setLoading(false);
@@ -291,8 +291,8 @@ const Monitoring = () => {
 
         if (data.success) {
           setUndefinedData(false);
-          console.log("api call --- >", data);
-          console.log("length --- >", data.data.length);
+          // console.log("api call --- >", data);
+          // console.log("length --- >", data.data.length);
 
           dispatch(setServerDevices(data.data));
           for (let i = 0; i < data.data.length; i++) {
@@ -319,8 +319,8 @@ const Monitoring = () => {
 
           // Update state with initialGroupDevices
           setgroupdevices(initialGroupDevices);
-          console.log("groups", groups);
-          console.log("groupDevices", groupdevices);
+          // console.log("groups", groups);
+          // console.log("groupDevices", groupdevices);
           dispatch(setDevices(initialGroupDevices));
           setLoading(false);
 
@@ -364,7 +364,7 @@ const Monitoring = () => {
               }
             }
             if (i === data.data.length - 1) {
-              console.log("expiredDevices", expiredDevices);
+              // console.log("expiredDevices", expiredDevices);
               initialGroupDevicesStatuses.push({
                 online: "Expired",
                 items: expiredDevices,
@@ -382,7 +382,7 @@ const Monitoring = () => {
               notConnectedDevices.push({ ...element, checked: false });
             }
             if (i === data.data.length - 1) {
-              console.log("notConnectedDevices", notConnectedDevices);
+              // console.log("notConnectedDevices", notConnectedDevices);
               initialGroupDevicesStatuses.push({
                 online: "Not Connected",
                 items: notConnectedDevices,
@@ -392,8 +392,8 @@ const Monitoring = () => {
 
           // Update state with initialGroupDevicesStatuses
           setgroupdevicesStatuses(initialGroupDevicesStatuses);
-          console.log("statuses", statuses);
-          console.log("groupDevicesStatuses", initialGroupDevicesStatuses);
+          // console.log("statuses", statuses);
+          // console.log("groupDevicesStatuses", initialGroupDevicesStatuses);
           dispatch(setDevicesStatuses(initialGroupDevicesStatuses));
         }
       }

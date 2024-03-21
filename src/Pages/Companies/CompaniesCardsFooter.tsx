@@ -56,7 +56,7 @@ const CompaniesCardsFooter = ({ item }: CardType) => {
           }}
           onClick={() => {
             setIsUpdateModalOpen(true);
-            console.log("isUpdateModalOpen: ", isUpdateModalOpen);
+            // console.log("isUpdateModalOpen: ", isUpdateModalOpen);
             setId(item._id);
             setPackageId(item.package);
           }}

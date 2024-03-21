@@ -84,7 +84,7 @@ const deleteAlert = (
 
         await deleteSingle({ url: `${uri}/${id}` }).then((data: any) => {
           if (data.success) {
-            console.log(data);
+            // console.log(data);
 
             setTimeout(() => {
               Swal.fire({
@@ -100,7 +100,7 @@ const deleteAlert = (
             if (type == "usersType") {
               getAll({ url: "operator/get-all-operators" }).then(
                 (data: any) => {
-                  console.log("api call --- >", data);
+                  // console.log("api call --- >", data);
                   if (data == undefined) {
                     dispatch(setOperators([]));
                     dispatch(setFilterOperators([]));
@@ -109,7 +109,7 @@ const deleteAlert = (
                   if (data !== undefined) {
                     dispatch(setNoDataFound(data.message));
                     if (data.success) {
-                      console.log("hhg");
+                      // console.log("hhg");
                       dispatch(setOperators(data.data));
                       dispatch(setFilterOperators(data.data));
                     }
@@ -118,7 +118,7 @@ const deleteAlert = (
                       dispatch(setFilterOperators([]));
                     }
                   } else {
-                    console.log("ier67i");
+                    // console.log("ier67i");
                   }
                 }
               );
@@ -126,7 +126,7 @@ const deleteAlert = (
             if (type == "serverType") {
               getAll({ url: "server-management/get-all-servers" }).then(
                 (data: any) => {
-                  console.log("api call --- >", data);
+                  // console.log("api call --- >", data);
                   if (data == undefined) {
                     dispatch(setServers([]));
                     dispatch(setFilterServers([]));
@@ -134,7 +134,7 @@ const deleteAlert = (
                   if (data !== undefined) {
                     dispatch(setNoDataFound(data.message));
                     if (data.success) {
-                      console.log("hhg");
+                      // console.log("hhg");
                       dispatch(setServers(data.data.allServers));
                       dispatch(setFilterServers(data.data.allServers));
                     }
@@ -143,7 +143,7 @@ const deleteAlert = (
                       dispatch(setFilterServers([]));
                     }
                   } else {
-                    console.log("ier67i");
+                    // console.log("ier67i");
                   }
                 }
               );
@@ -151,7 +151,7 @@ const deleteAlert = (
             if (type == "companyType") {
               getAll({ url: "super-admin/get-all-companies" }).then(
                 (data: any) => {
-                  console.log("api call for companies --- >", data);
+                  // console.log("api call for companies --- >", data);
                   if (data == undefined) {
                     dispatch(setCompanies([]));
                     dispatch(setFilterCompanies([]));
@@ -160,7 +160,7 @@ const deleteAlert = (
                   if (data !== undefined) {
                     dispatch(setNoCompanyFound(data.message));
                     if (data.success) {
-                      console.log("hhg");
+                      // console.log("hhg");
                       dispatch(setCompanies(data.data));
                       dispatch(setFilterCompanies(data.data));
                     }
@@ -174,7 +174,7 @@ const deleteAlert = (
             }
             if (type == "cityType") {
               getAll({ url: "city/get-all-cities" }).then((data: any) => {
-                console.log("api call --- >", data);
+                // console.log("api call --- >", data);
                 if (data == undefined) {
                   dispatch(setCities([]));
                   dispatch(setFilterCities([]));
@@ -182,7 +182,7 @@ const deleteAlert = (
                 if (data !== undefined) {
                   dispatch(setNoDataFound(data.message));
                   if (data.success) {
-                    console.log("hhg");
+                    // console.log("hhg");
                     dispatch(setCities(data.data));
                     dispatch(setFilterCities(data.data));
                   }
@@ -191,13 +191,13 @@ const deleteAlert = (
                     dispatch(setFilterCities([]));
                   }
                 } else {
-                  console.log("ier67i");
+                  // console.log("ier67i");
                 }
               });
             } else if (type == "provinceType") {
               getAll({ url: "province/get-all-provinces" }).then(
                 (data: any) => {
-                  console.log("api call --- >", data);
+                  // console.log("api call --- >", data);
                   if (data == undefined) {
                     dispatch(setProvinces([]));
                     dispatch(setFilterProvinces([]));
@@ -205,24 +205,24 @@ const deleteAlert = (
                   if (data !== undefined) {
                     dispatch(setNoDataFound(data.message));
                     if (data.success) {
-                      console.log("hhg");
+                      // console.log("hhg");
                       dispatch(setProvinces(data.data));
                       dispatch(setFilterProvinces(data.data));
 
                       getAll({ url: "city/get-all-cities" }).then(
                         (data: any) => {
-                          console.log("api call --- >", data);
+                          // console.log("api call --- >", data);
                           if (data !== undefined) {
                             if (data.success) {
                               dispatch(setNoDataFound(data.message));
-                              console.log("hhg");
+                              // console.log("hhg");
                               dispatch(setCities(data.data));
                               dispatch(setFilterCities(data.data));
                             } else {
                               dispatch(setCities([]));
                             }
                           } else {
-                            console.log("ier67i");
+                            // console.log("ier67i");
                           }
                         }
                       );
@@ -232,11 +232,11 @@ const deleteAlert = (
                       dispatch(setFilterProvinces([]));
                       getAll({ url: "city/get-all-cities" }).then(
                         (data: any) => {
-                          console.log("api call --- >", data);
+                          // console.log("api call --- >", data);
                           if (data !== undefined) {
                             dispatch(setNoDataFound(data.message));
                             if (data.success) {
-                              console.log("hhg");
+                              // console.log("hhg");
                               dispatch(setCities(data.data));
                               dispatch(setFilterCities(data.data));
                             }
@@ -253,7 +253,7 @@ const deleteAlert = (
               );
             } else if (type == "packageType") {
               getAll({ url: "package/get-all-packages" }).then((data: any) => {
-                console.log("api call --- >", data);
+                // console.log("api call --- >", data);
                 dispatch(setPackagesEnd());
                 if (data == undefined) {
                   dispatch(setPackages([]));
@@ -262,7 +262,7 @@ const deleteAlert = (
                 if (data !== undefined) {
                   dispatch(setNoDataFound(data.message));
                   if (data.success) {
-                    console.log("hhg");
+                    // console.log("hhg");
                     dispatch(setPackages(data.data));
                     dispatch(setFilterPackages(data.data));
                   }
@@ -275,7 +275,7 @@ const deleteAlert = (
             } else if (type == "crmModuleType") {
               getAll({ url: "crm-module/get-all-modules" }).then(
                 (data: any) => {
-                  console.log("api call --- >", data);
+                  // console.log("api call --- >", data);
                   dispatch(setCRMModulesEnd());
                   if (data == undefined) {
                     dispatch(setCRMModules([]));
@@ -284,7 +284,7 @@ const deleteAlert = (
                   if (data !== undefined) {
                     dispatch(setNoDataFound(data.message));
                     if (data.success) {
-                      console.log("hhg");
+                      // console.log("hhg");
                       dispatch(setCRMModules(data.data));
                       dispatch(setFilterCRMModules(data.data));
                     }
@@ -297,7 +297,7 @@ const deleteAlert = (
               );
             } else if (type == "countryType") {
               getAll({ url: "country/get-all-countries" }).then((data: any) => {
-                console.log("api call --- >", data);
+                // console.log("api call --- >", data);
                 if (data == undefined) {
                   dispatch(setCountries([]));
                   dispatch(setFilterCountries([]));
@@ -306,15 +306,15 @@ const deleteAlert = (
                   dispatch(setNoDataFound(data.message));
 
                   if (data.success) {
-                    console.log("hhg");
+                    // console.log("hhg");
                     dispatch(setCountries(data.data));
                     dispatch(setFilterCountries(data.data));
                     getAll({ url: "province/get-all-provinces" }).then(
                       (data: any) => {
-                        console.log("api call --- >", data);
+                        // console.log("api call --- >", data);
                         if (data !== undefined) {
                           if (data.success) {
-                            console.log("hhg");
+                            // console.log("hhg");
                             dispatch(setProvinces(data.data));
                             dispatch(setFilterProvinces(data.data));
                           }
@@ -326,11 +326,11 @@ const deleteAlert = (
                       }
                     );
                     getAll({ url: "city/get-all-cities" }).then((data: any) => {
-                      console.log("api call --- >", data);
+                      // console.log("api call --- >", data);
                       if (data !== undefined) {
                         dispatch(setNoDataFound(data.message));
                         if (data.success) {
-                          console.log("hhg");
+                          // console.log("hhg");
                           dispatch(setCities(data.data));
                           dispatch(setFilterCities(data.data));
                         }
@@ -339,18 +339,18 @@ const deleteAlert = (
                           dispatch(setFilterCities([]));
                         }
                       } else {
-                        console.log("ier67i");
+                        // console.log("ier67i");
                       }
                     });
                   } else {
                     dispatch(setCountries([]));
                     getAll({ url: "province/get-all-provinces" }).then(
                       (data: any) => {
-                        console.log("api call --- >", data);
+                        // console.log("api call --- >", data);
                         if (data !== undefined) {
                           dispatch(setNoDataFound(data.message));
                           if (data.success) {
-                            console.log("hhg");
+                            // console.log("hhg");
                             dispatch(setProvinces(data.data));
                             dispatch(setFilterProvinces(data.data));
                           }
@@ -362,11 +362,11 @@ const deleteAlert = (
                       }
                     );
                     getAll({ url: "city/get-all-cities" }).then((data: any) => {
-                      console.log("api call --- >", data);
+                      // console.log("api call --- >", data);
                       if (data !== undefined) {
                         dispatch(setNoDataFound(data.message));
                         if (data.success) {
-                          console.log("hhg");
+                          // console.log("hhg");
                           dispatch(setCities(data.data));
                           dispatch(setFilterCities(data.data));
                         }
@@ -375,7 +375,7 @@ const deleteAlert = (
                           dispatch(setFilterCities([]));
                         }
                       } else {
-                        console.log("ier67i");
+                        // console.log("ier67i");
                       }
                     });
                   }
@@ -389,7 +389,7 @@ const deleteAlert = (
         // Handle successful post creation (e.g., show a success message, redirect, etc.)
       } catch (error) {
         // Handle error (e.g., show an error message)
-        console.error("Error creating post:", error);
+        // console.error("Error creating post:", error);
         // loading false
       }
     }

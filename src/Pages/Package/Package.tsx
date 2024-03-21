@@ -31,7 +31,7 @@ const Package = () => {
     });
 
     dispatch(setPackages(filtered));
-    console.log(filtered);
+    // console.log(filtered);
   };
 
   return (

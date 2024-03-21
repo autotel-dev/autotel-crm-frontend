@@ -15,7 +15,7 @@ const CustomDropdown: React.FC<PropsTypes> = ({
 }) => {
   const [searchValue, setSearchValue] = useState("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  console.log("data", data);
+  // console.log("data", data);
 
   const handleTitleClick = (group: any) => {
     const isGroupSelected = selectedItems.some(
@@ -77,7 +77,7 @@ const CustomDropdown: React.FC<PropsTypes> = ({
   };
 
   useEffect(() => {
-    console.log("selectedItems", selectedItems);
+    // console.log("selectedItems", selectedItems);
   }, [selectedItems]);
 
   const toggleDropdown = () => {

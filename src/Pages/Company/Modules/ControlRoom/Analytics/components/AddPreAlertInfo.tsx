@@ -13,18 +13,25 @@ import { AddPreInfoAlertType, SendCommandType } from "./Type/SendCommandType";
 import { H3 } from "../../../../../../AbstractElements";
 import DevicesDropdown from "./DevicesDropdown/DevicesDropdown";
 import { create, getAll } from "../../../../../../Api";
-import { setDashboardStatistics } from "../../../../../../ReaduxToolkit/Reducer/AlertsSlice";
+import {
+  setDashboardStatistics,
+  setPreInfoAlerts,
+} from "../../../../../../ReaduxToolkit/Reducer/AlertsSlice";
 
 interface PropsTypes {
   addModal: boolean; // Change 'boolean' to the actual type of isVisible
   setAddModal: any;
   dropDownDevices: any;
+  fromDate: any;
+  toDate: any;
 }
 
 const AddPreAlertInfo: React.FC<PropsTypes> = ({
   addModal,
   setAddModal = () => {},
   dropDownDevices,
+  fromDate,
+  toDate,
 }) => {
   const { reports, reportsType } = useSelector((state: any) => state.reports);
   var tempReports: any = [...reports];
@@ -33,7 +40,7 @@ const AddPreAlertInfo: React.FC<PropsTypes> = ({
   useEffect(() => {
     if (authToken !== null) {
       const decodedToken = jwtDecode(authToken);
-      console.log(decodedToken);
+      // console.log(decodedToken);
       setDecodedToken(decodedToken);
     }
   }, []);
@@ -84,7 +91,6 @@ const AddPreAlertInfo: React.FC<PropsTypes> = ({
   ) => {
     setLoading(true);
     if (selectedItems.length !== 0 && data.message !== "") {
-      const currentDateTime = new Date();
       const selectedEndDate = new Date(endDate.slice(0, 10) + "T" + endTime);
       const selectedstartDate = new Date(
         startDate.slice(0, 10) + "T" + startTime
@@ -96,28 +102,28 @@ const AddPreAlertInfo: React.FC<PropsTypes> = ({
       //   selectedEndDate.toDateString() === currentDateTime.toDateString() &&
       //   selectedEndDate > currentDateTime
       // ) {
-      //   console.log(
+      //   // console.log(
       //     "selectedEndDate.toDateString()",
       //     selectedEndDate.toDateString()
       //   );
-      //   console.log(
+      //   // console.log(
       //     "currentDateTime.toDateString()",
       //     currentDateTime.toDateString()
       //   );
-      //   console.log("selectedEndDate", selectedEndDate);
-      //   console.log("currentDateTime", currentDateTime);
+      //   // console.log("selectedEndDate", selectedEndDate);
+      //   // console.log("currentDateTime", currentDateTime);
 
       //   adjustedEndDate.setDate(selectedEndDate.getDate() - 1);
       // }
-      // console.log(
+      // // console.log(
       //   "adjustedEndTime",
       //   `${adjustedEndDate.getHours()}:
       //     ${adjustedEndDate.getMinutes()}:
       //    ${adjustedEndDate.getSeconds()}`
       // );
-      // console.log("adjustedEndDate", `${adjustedEndDate}`);
-      console.log("selectedstartDate -- ", `${selectedstartDate}`);
-      console.log("selectedEndDate -- ", `${selectedEndDate}`);
+      // // console.log("adjustedEndDate", `${adjustedEndDate}`);
+      // console.log("selectedstartDate -- ", `${selectedstartDate}`);
+      // console.log("selectedEndDate -- ", `${selectedEndDate}`);
 
       const addPreInfoData = {
         preInfoMessage: data.message,
@@ -125,14 +131,13 @@ const AddPreAlertInfo: React.FC<PropsTypes> = ({
         toDate: selectedEndDate,
         deviceData: selectedItems[0],
       };
-      console.log("addPreInfoData -- ", addPreInfoData);
-    
+      // console.log("addPreInfoData -- ", addPreInfoData);
 
       try {
         await create(addPreInfoData, {
           url: `control-room/add-pre-info`,
         }).then(async (data: any) => {
-          // console.log("data", data);
+          // // console.log("data", data);
 
           setLoading(false);
           if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
@@ -150,30 +155,46 @@ const AddPreAlertInfo: React.FC<PropsTypes> = ({
             addToggle();
           }
           if (data.success) {
-            // console.log(data);
-            setLoading(false);
+            // // console.log(data);
 
-            getAll({ url: "control-room/dashboard/statistics" }).then(
+            getAll({ url: "control-room/get-all-pre-infos" }).then(
               (data: any) => {
-                // console.log("api call --- >", data);
+                // // console.log("api call --- >", data);
 
                 if (data !== undefined) {
                   if (data.success) {
-                    // // console.log("length --- >", data.data);
-                    dispatch(
-                      setDashboardStatistics(data.data.controlRoomStatistics)
-                    );
+                    // // // console.log("length --- >", data.data);
+                    dispatch(setPreInfoAlerts(data.data));
                   }
                 }
               }
             );
+            const fromDateUpdated = new Date(fromDate);
+            fromDateUpdated.setMinutes(new Date().getMinutes());
+            fromDateUpdated.setSeconds(new Date().getSeconds() + 10);
+            const toDateUpdated = new Date(toDate);
+            toDateUpdated.setMinutes(new Date().getMinutes());
+            toDateUpdated.setSeconds(new Date().getSeconds() + 10);
+
+            getAll({
+              url: `control-room/dashboard/statistics?fromDate=${fromDateUpdated}&toDate=${toDateUpdated}`,
+            }).then((data: any) => {
+              // // console.log("api call --- >", data);
+
+              if (data !== undefined) {
+                if (data.success) {
+                  // // // console.log("length --- >", data.data);
+                  dispatch(setDashboardStatistics(data.data));
+                }
+              }
+            });
             addToggle();
           }
         });
         // Handle successful post creation (e.g., show a success message, redirect, etc.)
       } catch (error: any) {
         // Handle error (e.g., show an error message)
-        // console.error("Error creating post:", error);
+        // // console.error("Error creating post:", error);
 
         setLoading(false);
         addToggle();
@@ -233,7 +254,7 @@ const AddPreAlertInfo: React.FC<PropsTypes> = ({
                   value={startDate.slice(0, 10)}
                   onChange={(e) => {
                     setStartDate(new Date(e.target.value).toISOString());
-                    console.log("e", e.target.value);
+                    // console.log("e", e.target.value);
                   }}
                 />
               </Col>
@@ -253,7 +274,7 @@ const AddPreAlertInfo: React.FC<PropsTypes> = ({
                   type="time"
                   value={startTime}
                   onChange={(e) => {
-                    console.log(e.target.value);
+                    // console.log(e.target.value);
                     setStartTime(e.target.value);
                   }}
                 />
@@ -275,7 +296,7 @@ const AddPreAlertInfo: React.FC<PropsTypes> = ({
                   value={endDate.slice(0, 10)}
                   onChange={(e) => {
                     setEndDate(new Date(e.target.value).toISOString());
-                    console.log("e", e.target.value);
+                    // console.log("e", e.target.value);
                   }}
                 />
               </Col>
@@ -295,7 +316,7 @@ const AddPreAlertInfo: React.FC<PropsTypes> = ({
                   type="time"
                   value={endTime}
                   onChange={(e) => {
-                    console.log(e.target.value);
+                    // console.log(e.target.value);
                     setEndTime(e.target.value);
                   }}
                 />

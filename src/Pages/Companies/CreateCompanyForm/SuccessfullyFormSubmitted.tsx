@@ -64,7 +64,7 @@ const SuccessfullyFormSubmitted = ({
     imageBackground,
     companyLogo,
   } = useSelector((state: any) => state.companies);
-  console.log("createCompany", createCompany);
+  // console.log("createCompany", createCompany);
 
   // const [formData, setFormData] = useState({});
   const dispatch = useDispatch();
@@ -77,13 +77,13 @@ const SuccessfullyFormSubmitted = ({
   };
 
   useEffect(() => {
-    console.log("CNICFront:", cnicFront);
-    console.log("CNICBack:", cnicBack);
+    // console.log("CNICFront:", cnicFront);
+    // console.log("CNICBack:", cnicBack);
   });
 
   function checkFileTypeByExtension(fileName: any, file: any) {
-    console.log("filename", fileName);
-    console.log("file", file);
+    // console.log("filename", fileName);
+    // console.log("file", file);
 
     const imageExtensions = ["jpg", "jpeg", "png", "gif"];
     const pdfExtension = "pdf";
@@ -114,7 +114,7 @@ const SuccessfullyFormSubmitted = ({
   };
 
   const onDocumentLoadError = (error: any) => {
-    console.error("Error while loading the document:", error);
+    // console.error("Error while loading the document:", error);
   };
 
   const handleSubmit = async (e: any) => {
@@ -169,10 +169,10 @@ const SuccessfullyFormSubmitted = ({
       "packageExpirationDate",
       createCompany.packageExpirationDate
     );
-    console.log("createCompany--- >", createCompany);
+    // console.log("createCompany--- >", createCompany);
 
     for (const [key, value] of formData.entries()) {
-      console.log(`Key: ${key}, Value: ${value}`);
+      // console.log(`Key: ${key}, Value: ${value}`);
     }
 
     try {
@@ -194,11 +194,11 @@ const SuccessfullyFormSubmitted = ({
         }
 
         if (data.success) {
-          console.log(data);
+          // console.log(data);
           setLoading(false);
           dispatch(setCompaniesStart());
           getAll({ url: "super-admin/get-all-companies" }).then((data: any) => {
-            console.log("api call --- >", data);
+            // console.log("api call --- >", data);
             if (data == undefined) {
               Swal.fire({
                 text: "Failed to fetch due to connection refused",
@@ -227,7 +227,7 @@ const SuccessfullyFormSubmitted = ({
             if (data !== undefined) {
               dispatch(setNoDataFound(data.message));
               if (data.success) {
-                console.log("hhg");
+                // console.log("hhg");
                 dispatch(setCompanies(data.data));
                 dispatch(setFilterCompanies(data.data));
                 navigate(`${process.env.PUBLIC_URL}/super-admin/companies`);
@@ -237,7 +237,7 @@ const SuccessfullyFormSubmitted = ({
         }
       });
     } catch (error: any) {
-      console.error("Error creating post:", error);
+      // console.error("Error creating post:", error);
 
       setLoading(false);
     }

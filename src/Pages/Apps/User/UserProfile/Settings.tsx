@@ -51,7 +51,7 @@ const Settings = () => {
           ? `company/get-personalization/${getOperatorCompanyUserId()}`
           : "super-admin/get-personalization",
     }).then((parentData: any) => {
-      console.log("api call --- >", parentData);
+      // console.log("api call --- >", parentData);
       if (parentData == undefined) {
         // setUndefinedData(true);
         Swal.fire({

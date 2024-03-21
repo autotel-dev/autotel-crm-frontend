@@ -38,15 +38,15 @@ const Countries = () => {
 
     dispatch(setOperators(filtered));
 
-    console.log(filtered);
+    // console.log(filtered);
   };
 
   useEffect(() => {
     getAll({ url: "sub-role/get-all-active-sub-roles" }).then((data: any) => {
-      console.log("api call --- >", data);
+      // console.log("api call --- >", data);
       if (data !== undefined) {
         if (data.success) {
-          console.log("hhg");
+          // console.log("hhg");
           dispatch(setRoles(data.data));
           dispatch(setFilterRoles(data.data));
         }

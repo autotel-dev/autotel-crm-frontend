@@ -57,7 +57,7 @@ const CreateNewCity = () => {
         provinceId: provinceId,
         countryId: countryId,
       };
-      console.log(city);
+      // console.log(city);
       try {
         await create(city, { url: "city/create-city" }).then((data: any) => {
           if (data !== undefined) {
@@ -89,7 +89,7 @@ const CreateNewCity = () => {
               dispatch(setProvinceId(null));
             }
             if (data.success) {
-              console.log(data);
+              // console.log(data);
               dispatch(setProvinceId(null));
               dispatch(setCountryId(null));
               setLoading(false);
@@ -101,7 +101,7 @@ const CreateNewCity = () => {
               dispatch(setProvinceId(null));
               dispatch(setCitiesStart());
               getAll({ url: "city/get-all-cities" }).then((data: any) => {
-                console.log("api call --- >", data);
+                // console.log("api call --- >", data);
                 if (data == undefined) {
                   Swal.fire({
                     text: "Failed to fetch due to connection refused",
@@ -118,7 +118,7 @@ const CreateNewCity = () => {
                 dispatch(setCitiesEnd());
                 if (data !== undefined) {
                   if (data.success) {
-                    console.log("hhg");
+                    // console.log("hhg");
                     dispatch(setCities(data.data));
                     dispatch(setFilterCities(data.data));
                   }
@@ -130,7 +130,7 @@ const CreateNewCity = () => {
         // Handle successful post creation (e.g., show a success message, redirect, etc.)
       } catch (error: any) {
         // Handle error (e.g., show an error message)
-        console.error("Error creating post:", error);
+        // console.error("Error creating post:", error);
 
         setLoading(false);
         setAddModal(false);

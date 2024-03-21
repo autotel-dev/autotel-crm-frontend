@@ -50,7 +50,7 @@ const Companies = () => {
 
     dispatch(setCompanies(filtered));
 
-    console.log(filtered);
+    // console.log(filtered);
   };
 
   useEffect(() => {
@@ -60,7 +60,7 @@ const Companies = () => {
   useEffect(() => {
     dispatch(setCompaniesStart());
     getAll({ url: "super-admin/get-all-companies" }).then((data: any) => {
-      console.log("api call --- >", data);
+      // console.log("api call --- >", data);
       if (data == undefined) {
         Swal.fire({
           text: "Companies not Found",
@@ -92,7 +92,7 @@ const Companies = () => {
           setLoading(false);
         }
         if (data.success) {
-          console.log("hhg");
+          // console.log("hhg");
           dispatch(setCompanies(data.data));
           dispatch(setFilterCompanies(data.data));
           setLoading(false);
@@ -103,14 +103,14 @@ const Companies = () => {
   }, []);
   useEffect(() => {
     getAll({ url: "timezone/get-all-timezones" }).then((data: any) => {
-      console.log("api call --- >", data);
+      // console.log("api call --- >", data);
       if (data !== undefined) {
         if (data.success) {
-          console.log("hhg");
+          // console.log("hhg");
           dispatch(setTimeZones(data.data));
         }
         if (!data.success) {
-          console.log("hhg");
+          // console.log("hhg");
           dispatch(setTimeZones([]));
         }
       }
@@ -118,14 +118,14 @@ const Companies = () => {
   }, []);
   useEffect(() => {
     getAll({ url: "permissions/get-all-permissions" }).then((data: any) => {
-      console.log("api call --- >", data);
+      // console.log("api call --- >", data);
       if (data !== undefined) {
         if (data.success) {
-          console.log("hhg");
+          // console.log("hhg");
           dispatch(setPermissions(data.data));
         }
         if (!data.success) {
-          console.log("hhg");
+          // console.log("hhg");
           dispatch(setPermissions([]));
         }
       }
@@ -135,14 +135,14 @@ const Companies = () => {
   useEffect(() => {
     getAll({ url: "server-management/get-all-active-servers" }).then(
       (data: any) => {
-        console.log("api call --- >", data);
+        // console.log("api call --- >", data);
         if (data !== undefined) {
           if (data.success) {
-            console.log("hhg");
+            // console.log("hhg");
             dispatch(setServers(data.data.activeServers));
           }
           if (!data.success) {
-            console.log("hhg");
+            // console.log("hhg");
             dispatch(setServers([]));
           }
         }
@@ -151,14 +151,14 @@ const Companies = () => {
   }, []);
   useEffect(() => {
     getAll({ url: "crm-module/get-all-active-modules" }).then((data: any) => {
-      console.log("api call --- >", data);
+      // console.log("api call --- >", data);
       if (data !== undefined) {
         if (data.success) {
-          console.log("hhg");
+          // console.log("hhg");
           dispatch(setCRMModules(data.data));
         }
         if (!data.success) {
-          console.log("hhg");
+          // console.log("hhg");
           dispatch(setCRMModules([]));
         }
       }
@@ -167,14 +167,14 @@ const Companies = () => {
 
   useEffect(() => {
     getAll({ url: "city/get-all-active-cities" }).then((data: any) => {
-      console.log("api call --- >", data);
+      // console.log("api call --- >", data);
       if (data !== undefined) {
         if (data.success) {
-          console.log("hhg");
+          // console.log("hhg");
           dispatch(setCities(data.data));
         }
         if (!data.success) {
-          console.log("hhg");
+          // console.log("hhg");
           dispatch(setCities([]));
         }
       }
@@ -182,14 +182,14 @@ const Companies = () => {
   }, []);
   useEffect(() => {
     getAll({ url: "package/get-all-active-packages" }).then((data: any) => {
-      console.log("api call --- >", data);
+      // console.log("api call --- >", data);
       if (data !== undefined) {
         if (data.success) {
-          console.log("hhg");
+          // console.log("hhg");
           dispatch(setPackages(data.data));
         }
         if (!data.success) {
-          console.log("hhg");
+          // console.log("hhg");
           dispatch(setPackages([]));
         }
       }

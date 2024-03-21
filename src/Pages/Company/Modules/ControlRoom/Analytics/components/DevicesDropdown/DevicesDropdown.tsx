@@ -14,7 +14,7 @@ const DevicesDropdown: React.FC<PropsTypes> = ({
 }) => {
   const [searchValue, setSearchValue] = useState("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  console.log("data", data);
+  // console.log("data", data);
 
   // const handleTitleClick = (group: any) => {
   //   const isGroupSelected = selectedItems.some(
@@ -39,8 +39,8 @@ const DevicesDropdown: React.FC<PropsTypes> = ({
   // };
 
   const handleItemClick = (device: any, id: any) => {
-    console.log("selectedItems--", selectedItems);
-    console.log("devicee--", device);
+    // console.log("selectedItems--", selectedItems);
+    // console.log("devicee--", device);
 
     const index = selectedItems.findIndex(
       (selectedItem) => selectedItem.id === id
@@ -57,7 +57,7 @@ const DevicesDropdown: React.FC<PropsTypes> = ({
   };
 
   useEffect(() => {
-    // console.log("selectedItems", selectedItems);
+    // // console.log("selectedItems", selectedItems);
   }, [selectedItems]);
 
   const toggleDropdown = () => {

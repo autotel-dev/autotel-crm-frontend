@@ -53,8 +53,8 @@ const ServerCredentials = ({ callbackActive }: BusinessFormCommonProps) => {
   const handleNextButton = () => {
     if (multiCloudWebLogin !== "" && loginPasswordSoftware !== "") {
       dispatch(setServerCredentials(accountCredentialsForm));
-      console.log("serverInfoForm -->", accountCredentialsForm);
-      console.log("serverCredentials--- >", serverCredentials);
+      // console.log("serverInfoForm -->", accountCredentialsForm);
+      // console.log("serverCredentials--- >", serverCredentials);
       dispatch(
         setCreateServer({
           ...createServer,

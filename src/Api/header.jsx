@@ -6,7 +6,7 @@ import { getUserRole } from "./globals";
 
 // Retrieve the current state from the Redux store
 // var token = state.user.token; // Access the specific value from the state
-// console.log("tokenValue -- >", token);
+// // console.log("tokenValue -- >", token);
 
 export const header = () => {
   var token;
@@ -14,12 +14,12 @@ export const header = () => {
   const state = Store.getState();
   if (authToken !== null) {
     getUserRole();
-    console.log("IF part");
+    // console.log("IF part");
     token = authToken;
   } else {
     token = state.user.token;
     getUserRole();
-    console.log("Else part");
+    // console.log("Else part");
   }
 
   return {
@@ -34,12 +34,12 @@ export const multipartHeader = () => {
   const state = Store.getState();
   if (authToken !== null) {
     getUserRole();
-    console.log("IF part");
+    // console.log("IF part");
     token = authToken;
   } else {
     token = state.user.token;
     getUserRole();
-    console.log("Else part");
+    // console.log("Else part");
   }
   return {
     "Content-Type": "multipart/form-data",
@@ -50,13 +50,13 @@ export const multipartHeader = () => {
 export const serverCredentials = (serverID) => {
   const authToken = localStorage.getItem("token");
   const decodedToken = jwtDecode(authToken);
-  console.log(decodedToken);
+  // console.log(decodedToken);
 
   for (let i = 0; i < decodedToken.serverCredentials.length; i++) {
     const element = decodedToken.serverCredentials[i];
-    console.log("element", element);
+    // console.log("element", element);
     if (element.serverId == serverID) {
-      console.log(element);
+      // console.log(element);
       return element;
     }
   }

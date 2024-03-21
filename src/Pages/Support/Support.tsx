@@ -39,7 +39,7 @@ const Support = () => {
 
     if (getUserRole() === "SUPER_ADMIN") {
       getAll({ url: "support/bug-report/get-statistics" }).then((data: any) => {
-        console.log("api call --- >", data);
+        // console.log("api call --- >", data);
         // if (data == undefined) {
         //   Swal.fire({
         //     text: "F",
@@ -66,7 +66,7 @@ const Support = () => {
           }
 
           if (data.success) {
-            console.log("hhg");
+            // console.log("hhg");
 
             // const statisticsArray = Object.entries(
             //   data.data.bugReportsStatistics
@@ -85,7 +85,7 @@ const Support = () => {
                 .replace("Count", " Tickets");
               return { key: [formattedKey], value: value };
             });
-            console.log(mappedArray);
+            // console.log(mappedArray);
             dispatch(setSupportStatistics(mappedArray));
             setStatisticsLoading(false);
           }
@@ -99,7 +99,7 @@ const Support = () => {
           ? "company/get-all-bug-reports"
           : "support/bug-report/get-all-bug-reports",
     }).then((data: any) => {
-      console.log("api call --- >", data);
+      // console.log("api call --- >", data);
 
       if (data == undefined) {
         Swal.fire({
@@ -131,7 +131,7 @@ const Support = () => {
         }
 
         if (data.success) {
-          console.log("hhg");
+          // console.log("hhg");
           dispatch(setBugReports(data.data.allBugReports));
           setReportsLoading(false);
           setStatisticsLoading(false);
@@ -141,10 +141,10 @@ const Support = () => {
 
     getAll({ url: "support/bug-report/get-priorty-status-types" }).then(
       (data: any) => {
-        console.log("api call --- >", data);
+        // console.log("api call --- >", data);
         if (data !== undefined) {
           if (data.success) {
-            console.log("hhg");
+            // console.log("hhg");
             dispatch(
               setPriorityStatuses(data.data.bugReportPriortyStatusTypes)
             );
@@ -154,10 +154,10 @@ const Support = () => {
     );
 
     getAll({ url: "support/bug-report/get-status-types" }).then((data: any) => {
-      console.log("api call --- >", data);
+      // console.log("api call --- >", data);
       if (data !== undefined) {
         if (data.success) {
-          console.log("hhg");
+          // console.log("hhg");
           dispatch(setStatuses(data.data.bugReportStatusTypes));
         }
       }

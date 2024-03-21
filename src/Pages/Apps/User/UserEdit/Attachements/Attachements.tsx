@@ -13,7 +13,7 @@ interface propTypes {
 
 const Attachements = ({ attachements }: propTypes) => {
   const { userData } = useSelector((state: any) => state.user);
-  //   console.log("Attachements", attachements);
+  //   // console.log("Attachements", attachements);
 
   const [addModal, setAddModal] = useState(false);
   const addToggle = () => {
@@ -34,7 +34,7 @@ const Attachements = ({ attachements }: propTypes) => {
   };
 
   function checkFileTypeByExtension(fileName: any) {
-    console.log("filename", fileName);
+    // console.log("filename", fileName);
 
     const imageExtensions = ["jpg", "jpeg", "png", "gif"];
     const pdfExtension = "pdf";
@@ -78,7 +78,7 @@ const Attachements = ({ attachements }: propTypes) => {
       const imgData = canvas.toDataURL();
       setImage(imgData);
     } catch (error) {
-      console.error("Error rendering PDF:", error);
+      // console.error("Error rendering PDF:", error);
     }
   };
 

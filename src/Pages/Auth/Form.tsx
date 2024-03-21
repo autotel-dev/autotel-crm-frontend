@@ -49,10 +49,10 @@ const CommonForm = ({ alignLogo }: CommonFormPropsType) => {
         password: data.password,
       };
       setLoading(true);
-      console.log(loginData);
+      // console.log(loginData);
       try {
         await login(loginData).then(async (data: any) => {
-          console.log("response: ", data);
+          // console.log("response: ", data);
           setLoading(false);
           // if (data == undefined) {
           //   Swal.fire({
@@ -77,7 +77,7 @@ const CommonForm = ({ alignLogo }: CommonFormPropsType) => {
           if (data.statusCode == 401) {
             if (data.data) {
               if (data.data.isOtpEnabled) {
-                console.log("response: ", data.data);
+                // console.log("response: ", data.data);
 
                 localStorage.setItem("userId", data.data.userId);
                 navigate(`${process.env.PUBLIC_URL}/verifyOTP`);
@@ -94,8 +94,8 @@ const CommonForm = ({ alignLogo }: CommonFormPropsType) => {
           } else if (data.statusCode == 200) {
             dispatch(setUserData(null));
             const token = data.data.authToken;
-            console.log("response: ", data.data);
-            console.log("token: ", token);
+            // console.log("response: ", data.data);
+            // console.log("token: ", token);
             localStorage.setItem("token", token);
             if (getUserRole() == ROLES.SUPER_ADMIN) {
               dispatch(setUserPermissions([]));
@@ -115,17 +115,17 @@ const CommonForm = ({ alignLogo }: CommonFormPropsType) => {
                   ? "user/get-allowed-modules"
                   : "crm-module/get-all-active-modules",
             }).then((data: any) => {
-              console.log("active Modules --- >", data);
+              // console.log("active Modules --- >", data);
 
               if (data !== undefined) {
                 if (!data.success) {
-                  console.log("hhg");
-                  console.log(userId);
+                  // console.log("hhg");
+                  // console.log(userId);
                   dispatch(setActiveCRMModules([]));
                 }
                 if (data.success) {
-                  console.log("hhg");
-                  console.log(userId);
+                  // console.log("hhg");
+                  // console.log(userId);
                   dispatch(setActiveCRMModules(data.data));
                 }
               }
@@ -138,7 +138,7 @@ const CommonForm = ({ alignLogo }: CommonFormPropsType) => {
 
               // url: "super-admin/get-personalization",
             }).then((parentData: any) => {
-              console.log("api call --- >", parentData);
+              // console.log("api call --- >", parentData);
               if (parentData == undefined) {
                 // Swal.fire({
                 //   text: `${parentData.message}`,
@@ -164,10 +164,10 @@ const CommonForm = ({ alignLogo }: CommonFormPropsType) => {
             if (getUserRole() == "COMPANY" || getUserRole() == "OPERATOR") {
               getAll({ url: "user/get-permissions" })
                 .then((data: any) => {
-                  console.log("api call --- >", data);
+                  // console.log("api call --- >", data);
                   if (data !== undefined) {
                     if (data.success) {
-                      console.log("hhg");
+                      // console.log("hhg");
                       dispatch(
                         setUserPermissions(data.data.allowedPermissions)
                       );
@@ -196,7 +196,7 @@ const CommonForm = ({ alignLogo }: CommonFormPropsType) => {
         // Handle successful post creation (e.g., show a success message, redirect, etc.)
       } catch (error: any) {
         // Handle error (e.g., show an error message)
-        console.error("Error creating post:", error);
+        // console.error("Error creating post:", error);
         setLoading(false);
         // if (error.response.statusCode == 401) {
         //     errorAlert();

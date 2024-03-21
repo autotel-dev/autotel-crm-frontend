@@ -16,17 +16,17 @@ import { useEffect } from "react";
 const Routers = () => {
   const { userId } = useParams();
   useEffect(() => {
-    console.log("userId", userId);
-    // console.log("useParams", userId);
+    // console.log("userId", userId);
+    // // console.log("useParams", userId);
   }, []);
   // if (id !== "" && id !== undefined) {
   //   localStorageId = localStorage.setItem("userId", id);
   // }
   const token = localStorage.getItem("token");
-  console.log(token);
+  // console.log(token);
 
-  console.log("window.location.pathname: ", window.location.pathname);
-  console.log("process.env.PUBLIC_URL: ", process.env.PUBLIC_URL);
+  // console.log("window.location.pathname: ", window.location.pathname);
+  // console.log("process.env.PUBLIC_URL: ", process.env.PUBLIC_URL);
 
   return (
     <BrowserRouter basename={"/"}>

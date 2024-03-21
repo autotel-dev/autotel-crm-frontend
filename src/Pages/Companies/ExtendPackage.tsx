@@ -72,10 +72,10 @@ const ExtendPackage: React.FC<PropsTypes> = ({
       setIsVisible(!isVisible);
     }
   };
-  console.log(companyId);
-  console.log(packageId);
+  // console.log(companyId);
+  // console.log(packageId);
   // dispatch(setValue(value));
-  console.log("is: ", isVisible);
+  // console.log("is: ", isVisible);
 
   const updateExtendedDays: SubmitHandler<ProvinceType> = async (data) => {
     setLoading(true);
@@ -89,7 +89,7 @@ const ExtendPackage: React.FC<PropsTypes> = ({
     //   };
     // }
 
-    console.log("extendedDays -- >", extendedDays);
+    // console.log("extendedDays -- >", extendedDays);
 
     try {
       const response = await axios.patch(
@@ -101,21 +101,21 @@ const ExtendPackage: React.FC<PropsTypes> = ({
       );
 
       const result = response.data;
-      console.log("Response data of change password:", response.data);
+      // console.log("Response data of change password:", response.data);
       if (result.success) {
-        console.log("extended Days api", result);
+        // console.log("extended Days api", result);
         setLoading(false);
         setIsVisible(!isVisible);
 
         // dispatch(setValue(""));
         dispatch(setCompaniesStart());
         getAll({ url: "super-admin/get-all-companies" }).then((data: any) => {
-          console.log("api call --- >", data);
+          // console.log("api call --- >", data);
           dispatch(setCompaniesEnd());
           if (data !== undefined) {
             dispatch(setNoDataFound(data.message));
             if (data.success) {
-              console.log("hhg");
+              // console.log("hhg");
               dispatch(setCompanies(data.data));
               dispatch(setFilterCompanies(data.data));
             }
@@ -149,7 +149,7 @@ const ExtendPackage: React.FC<PropsTypes> = ({
       onClosed={() => {
         // setValue("")
         setIsVisible(false);
-        // console.log(value);
+        // // console.log(value);
       }}
     >
       <div className="modal-header">
@@ -160,7 +160,7 @@ const ExtendPackage: React.FC<PropsTypes> = ({
           onClick={() => {
             // setValue("")
             setIsVisible(!isVisible);
-            // console.log(value);
+            // // console.log(value);
           }}
         ></Button>
       </div>

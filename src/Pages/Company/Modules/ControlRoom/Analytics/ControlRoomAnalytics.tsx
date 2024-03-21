@@ -22,38 +22,67 @@ import SelfSendCommands from "./components/SelfSendCommands";
 import { getAll } from "../../../../../Api";
 import { setDashboardStatistics } from "../../../../../ReaduxToolkit/Reducer/AlertsSlice";
 import { ApexOptions } from "apexcharts";
+import TotalPreInfoAlerts from "./components/TotalPreInfoAlerts";
 
 const ControlRoomAnalytics = () => {
   const { devices } = useSelector((state: any) => state.monitoring);
-  const { dashboardStatistics } = useSelector((state: any) => state.alerts);
+  const { dashboardStatistics, liveAlertsData } = useSelector(
+    (state: any) => state.alerts
+  );
 
   // Initialize empty arrays for categories and data
-  let totalKilledDevicesByDayCategories: string[] = [];
-  let totalKilledDevicesByDayData: number[] = [];
-  let totalCommandedDevicesByDayCategories: string[] = [];
-  let totalCommandedDevicesByDayData: number[] = [];
-  let totalPreInfosByDayCategories: string[] = [];
-  let totalPreInfosByDayData: number[] = [];
+  const [
+    totalKilledDevicesByDayCategories,
+    setTotalKilledDevicesByDayCategories,
+  ] = useState([]);
+  const [totalKilledDevicesByDayData, setTotalKilledDevicesByDayData] =
+    useState([]);
+  const [
+    totalCommandedDevicesByDayCategories,
+    setTotalCommandedDevicesByDayCategories,
+  ] = useState([]);
+  const [totalCommandedDevicesByDayData, setTotalCommandedDevicesByDayData] =
+    useState([]);
+  const [totalPreInfosByDayCategories, setTotalPreInfosByDayCategories] =
+    useState([]);
+  const [totalPreInfosByDayData, setTotalPreInfosByDayData] = useState([]);
   useEffect(() => {
+    // console.log(
+    //   "dashboardStatistics?.controlRoomAnalytics?",
+    //   dashboardStatistics
+    // );
+
+    var killedDevicesDays: any = [];
+    var killedDevicesCategories: any = [];
+    var totalCommandedDevicesDays: any = [];
+    var totalCommandedDevicesCategories: any = [];
+    var totalPreInfosDays: any = [];
+    var totalPreInfosCategories: any = [];
     dashboardStatistics?.controlRoomAnalytics?.totalKilledDevicesByDay.forEach(
       (item: any) => {
-        totalKilledDevicesByDayCategories.push(item.dayOfWeek);
-        totalKilledDevicesByDayData.push(item.count);
+        killedDevicesCategories.push(item.dayOfWeek);
+        killedDevicesDays.push(item.count);
       }
     );
+    setTotalKilledDevicesByDayCategories(killedDevicesCategories);
+    setTotalKilledDevicesByDayData(killedDevicesDays);
     dashboardStatistics?.controlRoomAnalytics?.totalCommandedDevicesByDay.forEach(
       (item: any) => {
-        totalCommandedDevicesByDayCategories.push(item.dayOfWeek);
-        totalCommandedDevicesByDayData.push(item.count);
+        totalCommandedDevicesCategories.push(item.dayOfWeek);
+        totalCommandedDevicesDays.push(item.count);
       }
     );
+    setTotalCommandedDevicesByDayCategories(totalCommandedDevicesCategories);
+    setTotalCommandedDevicesByDayData(totalCommandedDevicesDays);
     dashboardStatistics?.controlRoomAnalytics?.totalPreInfosByDay.forEach(
       (item: any) => {
-        totalPreInfosByDayCategories.push(item.dayOfWeek);
-        totalPreInfosByDayData.push(item.count);
+        totalPreInfosCategories.push(item.dayOfWeek);
+        totalPreInfosDays.push(item.count);
       }
     );
-  }, [dashboardStatistics]);
+    setTotalPreInfosByDayCategories(totalPreInfosCategories);
+    setTotalPreInfosByDayData(totalPreInfosDays);
+  }, []);
 
   // Map data from totalKilledDevicesByDay to categories and data arrays
 
@@ -68,12 +97,12 @@ const ControlRoomAnalytics = () => {
       categories: totalKilledDevicesByDayCategories,
     },
     colors: [
-      "#35bfbf21",
-      "#35bfbf21",
-      "#35bfbf21",
-      "#35bfbf21",
-      "#35bfbf21",
-      "#35bfbf21",
+      "#33BFBF",
+      "#33BFBF",
+      "#33BFBF",
+      "#33BFBF",
+      "#33BFBF",
+      "#33BFBF",
       "#33BFBF",
     ],
     chart: {
@@ -105,11 +134,11 @@ const ControlRoomAnalytics = () => {
     series: [
       {
         name: "Commands",
-        data: [0, 40, 25, 80, 35, 40, 38],
+        data: totalCommandedDevicesByDayData,
       },
     ],
     xaxis: {
-      categories: ["Mon", "Tue", "Wed", "Thurs", "Fri", "Sat", "Sun"],
+      categories: totalCommandedDevicesByDayCategories,
     },
     chart: {
       height: 95,
@@ -215,11 +244,11 @@ const ControlRoomAnalytics = () => {
     series: [
       {
         name: "Pre Info",
-        data: [0, 40, 25, 80, 35, 40, 38],
+        data: totalPreInfosByDayData,
       },
     ],
     xaxis: {
-      categories: ["Mon", "Tue", "Wed", "Thurs", "Fri", "Sat", "Sun"],
+      categories: totalPreInfosByDayCategories,
     },
     chart: {
       height: 95,
@@ -261,6 +290,64 @@ const ControlRoomAnalytics = () => {
         },
       ],
     },
+    responsive: [
+      {
+        breakpoint: 1800,
+        options: {
+          chart: {
+            height: 80,
+          },
+        },
+      },
+      {
+        breakpoint: 1500,
+        options: {
+          chart: {
+            height: 80,
+          },
+        },
+      },
+      {
+        breakpoint: 1400,
+        options: {
+          chart: {
+            height: 80,
+          },
+        },
+      },
+      {
+        breakpoint: 1200,
+        options: {
+          chart: {
+            height: 70,
+          },
+          grid: {
+            padding: {
+              top: 0,
+              right: 0,
+              bottom: 0,
+              left: 5,
+            },
+          },
+        },
+      },
+      {
+        breakpoint: 576,
+        options: {
+          chart: {
+            offsetY: 0,
+          },
+        },
+      },
+      {
+        breakpoint: 376,
+        options: {
+          chart: {
+            height: 50,
+          },
+        },
+      },
+    ],
   };
 
   const controlRoomAnalytics = [
@@ -320,6 +407,11 @@ const ControlRoomAnalytics = () => {
     setIsUpdateModalOpenForGetSendCommands,
   ] = useState(false);
 
+  const [
+    isUpdateModalOpenForPreInfoAlerts,
+    setIsUpdateModalOpenForPreInfoAlerts,
+  ] = useState(false);
+
   const [selectedFilter, setSelectedFilter] = useState("Today");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [containerWidth, setContainerWidth] = useState("350px");
@@ -358,6 +450,13 @@ const ControlRoomAnalytics = () => {
   };
 
   const dispatch = useDispatch();
+  const yesterday = new Date();
+  yesterday.setDate(yesterday.getDate() - 1);
+  const startDate = yesterday.toISOString();
+  const endDate = new Date().toISOString();
+
+  const [fromDate, setFromDate] = useState(startDate);
+  const [toDate, setToDate] = useState(endDate);
   return (
     <>
       <div style={{ width: "100%", display: "flex", justifyContent: "end" }}>
@@ -439,20 +538,18 @@ const ControlRoomAnalytics = () => {
                       yesterday.setDate(yesterday.getDate() - 1);
                       const startDate = yesterday.toISOString();
                       const endDate = new Date().toISOString();
+                      setFromDate(startDate);
+                      setToDate(endDate);
 
                       getAll({
                         url: `control-room/dashboard/statistics?fromDate=${startDate}&toDate=${endDate}`,
                       }).then((data: any) => {
-                        // console.log("api call --- >", data);
+                        // // console.log("api call --- >", data);
 
                         if (data !== undefined) {
                           if (data.success) {
-                            // // console.log("length --- >", data.data);
-                            dispatch(
-                              setDashboardStatistics(
-                                data.data.controlRoomStatistics
-                              )
-                            );
+                            // // // console.log("length --- >", data.data);
+                            dispatch(setDashboardStatistics(data.data));
                             toggleDropdown();
                           }
                         }
@@ -469,21 +566,19 @@ const ControlRoomAnalytics = () => {
                       oneWeek.setDate(oneWeek.getDate() - 7);
                       const startDate = oneWeek.toISOString();
                       const endDate = new Date().toISOString();
+                      setFromDate(startDate);
+                      setToDate(endDate);
 
                       getAll({
                         url: `control-room/dashboard/statistics?fromDate=${startDate}&toDate=${endDate}`,
                       }).then((data: any) => {
-                        // console.log("api call --- >", data);
+                        // // console.log("api call --- >", data);
 
                         if (data !== undefined) {
                           if (data.success) {
-                            // // console.log("length --- >", data.data);
+                            // // // console.log("length --- >", data.data);
 
-                            dispatch(
-                              setDashboardStatistics(
-                                data.data.controlRoomStatistics
-                              )
-                            );
+                            dispatch(setDashboardStatistics(data.data));
                             toggleDropdown();
                           }
                         }
@@ -500,20 +595,18 @@ const ControlRoomAnalytics = () => {
                       oneMonth.setDate(oneMonth.getDate() - 30);
                       const startDate = oneMonth.toISOString();
                       const endDate = new Date().toISOString();
+                      setFromDate(startDate);
+                      setToDate(endDate);
 
                       getAll({
                         url: `control-room/dashboard/statistics?fromDate=${startDate}&toDate=${endDate}`,
                       }).then((data: any) => {
-                        // console.log("api call --- >", data);
+                        // // console.log("api call --- >", data);
 
                         if (data !== undefined) {
                           if (data.success) {
-                            // // console.log("length --- >", data.data);
-                            dispatch(
-                              setDashboardStatistics(
-                                data.data.controlRoomStatistics
-                              )
-                            );
+                            // // // console.log("length --- >", data.data);
+                            dispatch(setDashboardStatistics(data.data));
                             toggleDropdown();
                           }
                         }
@@ -553,7 +646,12 @@ const ControlRoomAnalytics = () => {
                           <H3>{controlRoomAnalytics[0].title}</H3>
                         </div>
                       </div>
-                      <H3>{dashboardStatistics.totalKilledDevicesCount}</H3>
+                      <H3>
+                        {
+                          dashboardStatistics?.controlRoomStatistics
+                            ?.totalKilledDevicesCount
+                        }
+                      </H3>
                       <div>
                         <button
                           className="btn-primary"
@@ -607,6 +705,8 @@ const ControlRoomAnalytics = () => {
             <TotalKillingDevices
               isVisible={isUpdateModalOpenForkillingDevices}
               setIsVisible={setIsUpdateModalOpenForkillingDevices}
+              fromDate={fromDate}
+              toDate={toDate}
             />
             {/*  */}
             <Col xl="3" lg="6" md="6" sm="12" className="box-col-3">
@@ -639,75 +739,48 @@ const ControlRoomAnalytics = () => {
                           </div>
                         </div>
                       </div>
-                      <div style={{ display: "flex", justifyContent: "start" }}>
-                        <div style={{ fontSize: "16px", fontWeight: "bold" }}>
-                          Auto Tel:
-                        </div>
-                        <div
-                          style={{
-                            marginLeft: "20px",
-                            display: "flex",
-                            alignItems: "center",
-                          }}
-                        >
-                          <div
-                            style={{
-                              height: "10px",
-                              width: "10px",
-                              borderRadius: "50px",
-                              backgroundColor: "red",
-                              marginRight: "5px",
-                            }}
-                          ></div>
-                          <div>Not Connected</div>
-                        </div>
-                      </div>
-                      <div style={{ display: "flex", justifyContent: "start" }}>
-                        <div style={{ fontSize: "16px", fontWeight: "bold" }}>
-                          Auto Tel:{" "}
-                        </div>
-                        <div
-                          style={{
-                            marginLeft: "20px",
-                            display: "flex",
-                            alignItems: "center",
-                          }}
-                        >
-                          <div
-                            style={{
-                              height: "10px",
-                              width: "10px",
-                              borderRadius: "50px",
-                              backgroundColor: "green",
-                              marginRight: "5px",
-                            }}
-                          ></div>
-                          <div>Connected</div>
-                        </div>
-                      </div>
-                      <div style={{ display: "flex", justifyContent: "start" }}>
-                        <div style={{ fontSize: "16px", fontWeight: "bold" }}>
-                          Auto Tel:{" "}
-                        </div>
-                        <div
-                          style={{
-                            marginLeft: "20px",
-                            display: "flex",
-                            alignItems: "center",
-                          }}
-                        >
-                          <div
-                            style={{
-                              height: "10px",
-                              width: "10px",
-                              borderRadius: "50px",
-                              backgroundColor: "green",
-                              marginRight: "5px",
-                            }}
-                          ></div>
-                          <div>Connected</div>
-                        </div>
-                      </div>
+                      {liveAlertsData?.connectedServers?.map(
+                        (server: any, index: any) => {
+                          return (
+                            <div
+                              style={{
+                                display: "flex",
+                                justifyContent: "start",
+                              }}
+                            >
+                              <div
+                                style={{ fontSize: "16px", fontWeight: "bold" }}
+                              >
+                                {server?.server?.companyName} :
+                              </div>
+                              <div
+                                style={{
+                                  marginLeft: "20px",
+                                  display: "flex",
+                                  alignItems: "center",
+                                }}
+                              >
+                                <div
+                                  style={{
+                                    height: "10px",
+                                    width: "10px",
+                                    borderRadius: "50px",
+                                    backgroundColor: `${
+                                      server?.isConnected ? "green" : "red"
+                                    }`,
+                                    marginRight: "5px",
+                                  }}
+                                ></div>
+                                <div>
+                                  {server?.isConnected
+                                    ? "Connected"
+                                    : "Not Connected"}
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        }
+                      )}
                     </Col>
                   </Row>
                 </CardBody>
@@ -730,7 +803,10 @@ const ControlRoomAnalytics = () => {
                       </div>
                       <div style={{ fontSize: "16px", fontWeight: "bold" }}>
                         <H3>
-                          {dashboardStatistics.totalCommandedDevicesCount}
+                          {
+                            dashboardStatistics?.controlRoomStatistics
+                              ?.totalCommandedDevicesCount
+                          }
                         </H3>
                       </div>
                       <div>
@@ -799,6 +875,8 @@ const ControlRoomAnalytics = () => {
               setAddModal={setIsUpdateModalOpenForSendCommand}
               dropDownDevices={devices}
               prevItem=""
+              fromDate={fromDate}
+              toDate={toDate}
             />
             <SelfSendCommands
               isVisible={isUpdateModalOpenForGetSendCommands}
@@ -819,7 +897,10 @@ const ControlRoomAnalytics = () => {
                         </div>
                       </div>
                       <div style={{ fontSize: "16px", fontWeight: "bold" }}>
-                        8
+                        {
+                          dashboardStatistics?.controlRoomStatistics
+                            ?.totalPreInfosCount
+                        }
                       </div>
                       <div style={{ display: "flex" }}>
                         <button
@@ -850,7 +931,7 @@ const ControlRoomAnalytics = () => {
                             marginLeft: "10px",
                           }}
                           onClick={() => {
-                            setIsUpdateModalOpenForkillingDevices(true);
+                            setIsUpdateModalOpenForPreInfoAlerts(true);
                           }}
                         >
                           View
@@ -869,11 +950,11 @@ const ControlRoomAnalytics = () => {
                         {selectedFilter}
                       </div>
                       <ReactApexChart
-                        id={controlRoomAnalytics[1].chartId}
-                        options={controlRoomAnalytics[1].charts}
-                        series={controlRoomAnalytics[1].charts.series}
-                        type={controlRoomAnalytics[1].charts.chart?.type}
-                        height={controlRoomAnalytics[1].charts.chart?.height}
+                        id={controlRoomAnalytics[2].chartId}
+                        options={controlRoomAnalytics[2].charts}
+                        series={controlRoomAnalytics[2].charts.series}
+                        type={controlRoomAnalytics[2].charts.chart?.type}
+                        height={controlRoomAnalytics[2].charts.chart?.height}
                       />
                     </Col>
                   </Row>
@@ -885,10 +966,12 @@ const ControlRoomAnalytics = () => {
               addModal={isUpdateModalOpenForPreAlertinfo}
               setAddModal={setIsUpdateModalOpenForPreAlertinfo}
               dropDownDevices={devices}
+              fromDate={fromDate}
+              toDate={toDate}
             />
-            <TotalKillingDevices
-              isVisible={isUpdateModalOpenForkillingDevices}
-              setIsVisible={setIsUpdateModalOpenForkillingDevices}
+            <TotalPreInfoAlerts
+              isVisible={isUpdateModalOpenForPreInfoAlerts}
+              setIsVisible={setIsUpdateModalOpenForPreInfoAlerts}
             />
           </Row>
         </Col>

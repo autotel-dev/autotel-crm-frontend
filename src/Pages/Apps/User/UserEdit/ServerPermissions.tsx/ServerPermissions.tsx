@@ -16,7 +16,7 @@ import { formatUnderscoredString } from "../../../../../Api/globals";
 
 const ServerPermissions = () => {
   const { serverPermissions } = useSelector((state: any) => state.user);
-  console.log("serverPermissions", serverPermissions);
+  // console.log("serverPermissions", serverPermissions);
 
   return (
     <Col md={12}>

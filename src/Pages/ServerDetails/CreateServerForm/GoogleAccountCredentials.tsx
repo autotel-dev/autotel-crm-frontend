@@ -41,8 +41,8 @@ const GoogleAccountCredentials = ({
   const handleNextButton = () => {
     if (emailAddress !== "" && password !== "") {
       dispatch(setGoogleAccountCreadentials(accountCredentialsForm));
-      console.log("GoogleaccountCredentialsForm -->", accountCredentialsForm);
-      console.log("googleAccountCreadentials --- >", googleAccountCreadentials);
+      // console.log("GoogleaccountCredentialsForm -->", accountCredentialsForm);
+      // console.log("googleAccountCreadentials --- >", googleAccountCreadentials);
       dispatch(
         setCreateServer({
           ...createServer,
