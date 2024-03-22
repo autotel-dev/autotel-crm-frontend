@@ -59,7 +59,9 @@ const SendCommand: React.FC<PropsTypes> = ({
         message: "",
       });
       setLoading(false);
-      setSelectedItems([]);
+      if (prevItem == "") {
+        setSelectedItems([]);
+      }
       setType("");
     }
   };

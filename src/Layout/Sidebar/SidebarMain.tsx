@@ -26,14 +26,14 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
     (state: any) => state.userPermissions
   );
   var user = userPermissions.find((item: any) => item.title === "User");
-  // // console.log("user", user);
+  // console.log("user", user);
   var support = userPermissions.find((item: any) => item.title === "Support");
-  // // console.log("support", support);
+  // console.log("support", support);
 
-  // // console.log("userPermissions:", userPermissions);
-  // // console.log("getUserRole()", getUserRole());
+  // console.log("userPermissions:", userPermissions);
+  // // // console.log("getUserRole()", getUserRole());
 
-  // // console.log("crmActiveModules", crmActiveModules);
+  // // // console.log("crmActiveModules", crmActiveModules);
 
   const SidebarMenuComponent: SidebarMenuTypes[] = [
     {
@@ -246,24 +246,34 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
     },
   ];
 
-  var filteredCompanyMenu = CompanySidebarMenuComponent.filter((item) => {
-    if (user !== undefined && item.title === user.title) {
-      return user.read;
-    } else if (support !== undefined && item.title === support.title) {
-      return support.read;
-    } else {
-      return true;
+  var filteredCompanyMenu = CompanySidebarMenuComponent.filter(
+    (item, index) => {
+      if (user == undefined && index == 3) {
+        return false;
+      } else if (support == undefined && index == 4) {
+        return false;
+      } else if (user !== undefined && item.title === user.title) {
+        return user.read;
+      } else if (support !== undefined && item.title === support.title) {
+        return support.read;
+      } else {
+        return true;
+      }
     }
-  });
-  var filteredOperatorMenu = OperatorSidebarMenuComponent.filter((item) => {
-    if (user !== undefined && item.title === user.title) {
-      return user.read;
-    } else if (support !== undefined && item.title === support.title) {
-      return support.read;
-    } else {
-      return true;
+  );
+  var filteredOperatorMenu = OperatorSidebarMenuComponent.filter(
+    (item, index) => {
+      if (support == undefined && index == 2) {
+        return false;
+      } else if (user !== undefined && item.title === user.title) {
+        return user.read;
+      } else if (support !== undefined && item.title === support.title) {
+        return support.read;
+      } else {
+        return true;
+      }
     }
-  });
+  );
   const { sidebarIconType } = useAppSelector((state) => state.themeCustomizer);
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState<string[]>([]);
@@ -290,7 +300,7 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
   useEffect(() => {
     if (authToken !== null) {
       const decodedToken = jwtDecode(authToken);
-      // // console.log(decodedToken);
+      // // // console.log(decodedToken);
       setDecodedToken(decodedToken);
     }
   }, []);

@@ -57,14 +57,14 @@ const UpdateUser: React.FC<PropsTypes> = ({
 
   // setValue
 }) => {
-  // console.log("id", id);
+  // console.log("allowedModules", allowedModules);
 
   const [decodedToken, setDecodedToken]: any = useState(null);
   const authToken = localStorage.getItem("token");
   useEffect(() => {
     if (authToken !== null) {
       const decodedToken = jwtDecode(authToken);
-      // console.log(decodedToken);
+      // // console.log(decodedToken);
       setDecodedToken(decodedToken);
     }
   }, []);
@@ -95,6 +95,22 @@ const UpdateUser: React.FC<PropsTypes> = ({
       });
     }
   };
+  const { roles } = useSelector((state: any) => state.roles);
+  const { crmActiveModules } = useSelector((state: any) => state.crmModules);
+  const [rolesList, setRolesList] = useState([]);
+  const [role, setRole] = useState("");
+  // // console.log("Roles", roles);
+
+  const tempRolesList: any = [];
+  useEffect(() => {
+    roles.map((item: any, index: any) => {
+      tempRolesList.push({
+        value: `${item._id}`,
+        label: `${item.name}`,
+      });
+    });
+    setRolesList(tempRolesList);
+  }, []);
 
   const updateUser: SubmitHandler<UserType> = async (data) => {
     setLoading(true);
@@ -105,8 +121,10 @@ const UpdateUser: React.FC<PropsTypes> = ({
         phoneNo: data.phoneNo,
         isActive: isActive,
         company: decodedToken.userId,
+        allowedModules: allowedModules,
+        subRole: role !== "" ? role : subRole,
       };
-      // console.log(operator);
+      // // console.log(operator);
       try {
         await update(operator, { url: `operator/update-operator/${id}` }).then(
           (data: any) => {
@@ -128,14 +146,14 @@ const UpdateUser: React.FC<PropsTypes> = ({
               setIsVisible(!isVisible);
             }
             if (data.success) {
-              // console.log(data);
+              // // console.log(data);
               setLoading(false);
               setIsVisible(!isVisible);
 
               dispatch(setOperatorsStart());
               getAll({ url: "operator/get-all-operators" }).then(
                 (data: any) => {
-                  // console.log("api call --- >", data);
+                  // // console.log("api call --- >", data);
                   if (data == undefined) {
                     Swal.fire({
                       text: "Failed to fetch due to connection refused",
@@ -152,7 +170,7 @@ const UpdateUser: React.FC<PropsTypes> = ({
                   dispatch(setOperatorsEnd());
                   if (data !== undefined) {
                     if (data.success) {
-                      // console.log("hhg");
+                      // // console.log("hhg");
                       dispatch(setOperators(data.data));
                       dispatch(setFilterOperators(data.data));
                     }
@@ -165,7 +183,7 @@ const UpdateUser: React.FC<PropsTypes> = ({
         // Handle successful post creation (e.g., show a success message, redirect, etc.)
       } catch (error) {
         // Handle error (e.g., show an error message)
-        // console.error("Error creating post:", error);
+        // // console.error("Error creating post:", error);
         setLoading(false);
         setIsVisible(!isVisible);
       }
@@ -185,22 +203,9 @@ const UpdateUser: React.FC<PropsTypes> = ({
     setValue("isActive", isActive);
   }, [isActive, setValue]);
 
-  const { roles } = useSelector((state: any) => state.roles);
-  const { crmActiveModules } = useSelector((state: any) => state.crmModules);
-  const [rolesList, setRolesList] = useState([]);
-  const [role, setRole] = useState("");
-  // console.log("Roles", roles);
-
-  const tempRolesList: any = [];
   useEffect(() => {
-    roles.map((item: any, index: any) => {
-      tempRolesList.push({
-        value: `${item._id}`,
-        label: `${item.name}`,
-      });
-    });
-    setRolesList(tempRolesList);
-  }, []);
+    setValue("subRole", subRole);
+  }, [subRole, setValue]);
 
   const handleModuleClick = (moduleId: any) => {
     const index = allowedModules.findIndex(
@@ -289,9 +294,10 @@ const UpdateUser: React.FC<PropsTypes> = ({
                 <Label>Select User Role </Label>
               </div>
               <Select
-                // defaultValue={
-                //   roles.find((role: any) => role._id === subRole).name
-                // }
+                defaultValue={
+                  roles &&
+                  roles.find((role: any) => role?._id === subRole)?.name
+                }
                 showSearch
                 style={{ width: 250, height: 36 }}
                 placeholder="Select Role"
@@ -305,7 +311,7 @@ const UpdateUser: React.FC<PropsTypes> = ({
                     .localeCompare((optionB?.label ?? "").toLowerCase())
                 }
                 onChange={(e: any) => {
-                  // console.log(e);
+                  // // console.log(e);
                   setRole(e);
                 }}
                 options={rolesList}
@@ -327,7 +333,9 @@ const UpdateUser: React.FC<PropsTypes> = ({
               }}
             >
               {roles
-                .filter((item: any) => item._id === role)
+                .filter(
+                  (item: any) => item._id === (role !== "" ? role : subRole)
+                )
                 .map((filteredRole: any) =>
                   filteredRole.permissions.map(
                     (permission: any, index: any) => {
@@ -492,6 +500,9 @@ const UpdateUser: React.FC<PropsTypes> = ({
             >
               <Row>
                 {crmActiveModules.map((module: any, index: any) => {
+                  const isChecked =
+                    Array.isArray(allowedModules) &&
+                    allowedModules.includes(module._id);
                   return (
                     <div key={index}>
                       <Row>
@@ -529,7 +540,7 @@ const UpdateUser: React.FC<PropsTypes> = ({
                                 type="checkbox"
                                 name="key"
                                 value="value"
-                                // checked={allowedModules.includes(module._id)}
+                                checked={isChecked}
                                 onChange={() => {
                                   handleModuleClick(module._id);
                                 }}
@@ -559,7 +570,7 @@ const UpdateUser: React.FC<PropsTypes> = ({
                       value={isActive ? "on" : "off"}
                       onChange={(e) => {
                         setIsActive(!isActive);
-                        // console.log(e.target.value);
+                        // // console.log(e.target.value);
                       }}
                     />
                     <span

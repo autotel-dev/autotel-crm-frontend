@@ -47,7 +47,7 @@ const ControlRoomAnalytics = () => {
     useState([]);
   const [totalPreInfosByDayData, setTotalPreInfosByDayData] = useState([]);
   useEffect(() => {
-    // console.log(
+    // // console.log(
     //   "dashboardStatistics?.controlRoomAnalytics?",
     //   dashboardStatistics
     // );
@@ -82,7 +82,7 @@ const ControlRoomAnalytics = () => {
     );
     setTotalPreInfosByDayCategories(totalPreInfosCategories);
     setTotalPreInfosByDayData(totalPreInfosDays);
-  }, []);
+  }, [dashboardStatistics]);
 
   // Map data from totalKilledDevicesByDay to categories and data arrays
 
@@ -544,11 +544,11 @@ const ControlRoomAnalytics = () => {
                       getAll({
                         url: `control-room/dashboard/statistics?fromDate=${startDate}&toDate=${endDate}`,
                       }).then((data: any) => {
-                        // // console.log("api call --- >", data);
+                        // // // console.log("api call --- >", data);
 
                         if (data !== undefined) {
                           if (data.success) {
-                            // // // console.log("length --- >", data.data);
+                            // // // // console.log("length --- >", data.data);
                             dispatch(setDashboardStatistics(data.data));
                             toggleDropdown();
                           }
@@ -572,11 +572,11 @@ const ControlRoomAnalytics = () => {
                       getAll({
                         url: `control-room/dashboard/statistics?fromDate=${startDate}&toDate=${endDate}`,
                       }).then((data: any) => {
-                        // // console.log("api call --- >", data);
+                        // // // console.log("api call --- >", data);
 
                         if (data !== undefined) {
                           if (data.success) {
-                            // // // console.log("length --- >", data.data);
+                            // // // // console.log("length --- >", data.data);
 
                             dispatch(setDashboardStatistics(data.data));
                             toggleDropdown();
@@ -601,11 +601,11 @@ const ControlRoomAnalytics = () => {
                       getAll({
                         url: `control-room/dashboard/statistics?fromDate=${startDate}&toDate=${endDate}`,
                       }).then((data: any) => {
-                        // // console.log("api call --- >", data);
+                        // // // console.log("api call --- >", data);
 
                         if (data !== undefined) {
                           if (data.success) {
-                            // // // console.log("length --- >", data.data);
+                            // // // // console.log("length --- >", data.data);
                             dispatch(setDashboardStatistics(data.data));
                             toggleDropdown();
                           }

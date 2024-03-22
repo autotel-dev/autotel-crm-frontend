@@ -33,6 +33,12 @@ const TotalKillingDevices: React.FC<PropsTypes> = ({
   fromDate,
   toDate,
 }) => {
+  const { userPermissions } = useSelector(
+    (state: any) => state.userPermissions
+  );
+  var allAlertsPreview = userPermissions.find(
+    (item: any) => item.title === "All Alerts Preview"
+  );
   const { killedDevices } = useSelector((state: any) => state.alerts);
   const { devices } = useSelector((state: any) => state.monitoring);
   const [isUpdateModalOpenForSendCommand, setIsUpdateModalOpenForSendCommand] =
@@ -88,7 +94,7 @@ const TotalKillingDevices: React.FC<PropsTypes> = ({
       });
 
       setDataList(updatedDataList);
-      // // console.log("dataList", dataList);
+      // // // console.log("dataList", dataList);
     }
   }, [killedDevices, devices]);
 
@@ -160,7 +166,7 @@ const TotalKillingDevices: React.FC<PropsTypes> = ({
         });
 
       setDataList((prevData: any) => [...prevData, ...nextBatch]);
-      // // console.log("dataList", dataList);
+      // // // console.log("dataList", dataList);
 
       // const nextBatch = killedDevices
       //   .slice(dataList.length, dataList.length + 6)
@@ -234,308 +240,533 @@ const TotalKillingDevices: React.FC<PropsTypes> = ({
       <ModalBody>
         <Card className="invoice-card">
           <CardBody className="transaction-card">
-            <Nav
-              tabs
-              className="simple-wrapper"
-              style={{
-                backgroundColor: "#63d5be",
-                borderTopLeftRadius: "10px",
-                borderTopRightRadius: "10px",
-              }}
-            >
-              <NavItem
-                style={{
-                  width: "50%",
-                  height: "50px",
-                  textAlign: "center",
-                  fontSize: "22px",
-                  cursor: "pointer",
-                }}
-              >
-                <NavLink
-                  className={` ${basicTab === "1" ? "active" : ""}`}
+            {allAlertsPreview !== undefined && allAlertsPreview?.read ? (
+              <div>
+                <Nav
+                  tabs
+                  className="simple-wrapper"
                   style={{
-                    color: `${basicTab === "1" ? "#63d5be" : "white"}`,
+                    backgroundColor: "#63d5be",
+                    borderTopLeftRadius: "10px",
+                    borderTopRightRadius: "10px",
                   }}
-                  onClick={() => {
-                    setBasicTab("1");
-                    setLoading(true);
-                    getAll({
-                      url: "control-room/get-all-killed-devices?type=self",
-                    }).then((data: any) => {
-                      // // console.log("api call --- >", data);
+                >
+                  <NavItem
+                    style={{
+                      width: "50%",
+                      height: "50px",
+                      textAlign: "center",
+                      fontSize: "22px",
+                      cursor: "pointer",
+                    }}
+                  >
+                    <NavLink
+                      className={` ${basicTab === "1" ? "active" : ""}`}
+                      style={{
+                        color: `${basicTab === "1" ? "#63d5be" : "white"}`,
+                      }}
+                      onClick={() => {
+                        setBasicTab("1");
+                        setLoading(true);
+                        getAll({
+                          url: "control-room/get-all-killed-devices?type=self",
+                        }).then((data: any) => {
+                          // // // console.log("api call --- >", data);
 
-                      if (data !== undefined) {
-                        if (data.success) {
-                          setLoading(false);
-                          // // console.log("length --- >", data.data);
-                          dispatch(setKilledDevices(data.data));
-                        }
-                        if (!data.success) {
-                          setLoading(false);
-                          // // // console.log("length --- >", data.data);
-                          dispatch(setKilledDevices([]));
-                        }
-                      }
-                    });
-                  }}
-                >
-                  Self
-                </NavLink>
-              </NavItem>
-              <NavItem
-                style={{
-                  width: "50%",
-                  height: "50px",
-                  textAlign: "center",
-                  fontSize: "22px",
-                  cursor: "pointer",
-                }}
-              >
-                <NavLink
-                  className={` ${basicTab === "2" ? "active" : ""}`}
-                  style={{
-                    color: `${basicTab === "2" ? "#63d5be" : "white"}`,
-                  }}
-                  onClick={() => {
-                    setBasicTab("2");
-                    setLoading(true);
-                    getAll({
-                      url: "control-room/get-all-killed-devices?type=self",
-                    }).then((data: any) => {
-                      // // console.log("api call --- >", data);
+                          if (data !== undefined) {
+                            if (data.success) {
+                              setLoading(false);
+                              // // // console.log("length --- >", data.data);
+                              dispatch(setKilledDevices(data.data));
+                            }
+                            if (!data.success) {
+                              setLoading(false);
+                              // // // // console.log("length --- >", data.data);
+                              dispatch(setKilledDevices([]));
+                            }
+                          }
+                        });
+                      }}
+                    >
+                      Self
+                    </NavLink>
+                  </NavItem>
+                  <NavItem
+                    style={{
+                      width: "50%",
+                      height: "50px",
+                      textAlign: "center",
+                      fontSize: "22px",
+                      cursor: "pointer",
+                    }}
+                  >
+                    <NavLink
+                      className={` ${basicTab === "2" ? "active" : ""}`}
+                      style={{
+                        color: `${basicTab === "2" ? "#63d5be" : "white"}`,
+                      }}
+                      onClick={() => {
+                        setBasicTab("2");
+                        setLoading(true);
+                        getAll({
+                          url: "control-room/get-all-killed-devices?type=self",
+                        }).then((data: any) => {
+                          // // // console.log("api call --- >", data);
 
-                      if (data !== undefined) {
-                        if (data.success) {
-                          setLoading(false);
-                          // // console.log("length --- >", data.data);
-                          dispatch(setKilledDevices(data.data));
-                        }
-                        if (!data.success) {
-                          setLoading(false);
-                          // // // console.log("length --- >", data.data);
-                          dispatch(setKilledDevices([]));
-                        }
-                      }
-                    });
-                  }}
-                >
-                  All
-                </NavLink>
-              </NavItem>
-            </Nav>
-            <TabContent activeTab={basicTab}>
-              {loading ? (
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    height: "50vh",
-                    backgroundColor: "white",
-                    alignItems: "center",
-                  }}
-                >
-                  <div style={{ textAlign: "center" }}>
-                    <Loader />
-                  </div>
-                </div>
-              ) : (
-                <div
-                  ref={containerRef}
-                  className="table-responsive theme-scrollbar recent-wrapper"
-                  style={{
-                    overflowY: "scroll",
-                    maxHeight: "calc(66vh - 20px)", // Subtract scrollbar width from max height
-                    WebkitOverflowScrolling: "touch", // Enable momentum scrolling on iOS
-                    scrollbarWidth: "thin", // Specify scrollbar width
-                    WebkitBorderRadius: "5px", // For WebKit browsers (Chrome, Safari)
-                    MozBorderRadius: "5px", // For Mozilla Firefox
-                    borderRadius: "5px", // For other browsers
-                    scrollbarColor: "lightgray transparent", // Specify scrollbar color
-                  }}
-                  onScroll={handleScroll}
-                >
-                  <div className="table-responsive theme-scrollbar recent-wrapper">
-                    <Table className="display order-wrapper" id="recent-order">
-                      <thead>
-                        <tr>
-                          {tableHeader.map((data, index) => (
-                            <th
-                              key={index}
-                              style={{
-                                width:
-                                  data == "Last Packet" || data == "Killed Time"
-                                    ? "10%"
-                                    : "8%",
-                              }}
-                            >
-                              {data}
-                            </th>
-                          ))}
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {dataList.length == 0 ? (
-                          <tr>
-                            <td colSpan={11} style={{ fontSize: "25px" }}>
-                              No Kiling Devices Found
-                            </td>
-                          </tr>
-                        ) : (
-                          dataList.map((data: any, index: any) => (
-                            <tr style={{ cursor: "pointer" }} key={index}>
-                              <td style={{ width: "8%" }}>{data.deviceId}</td>
-                              <td style={{ width: "8%" }}>{data.deviceName}</td>
-
-                              <td style={{ width: "8%" }}>
-                                <div
+                          if (data !== undefined) {
+                            if (data.success) {
+                              setLoading(false);
+                              // // // console.log("length --- >", data.data);
+                              dispatch(setKilledDevices(data.data));
+                            }
+                            if (!data.success) {
+                              setLoading(false);
+                              // // // // console.log("length --- >", data.data);
+                              dispatch(setKilledDevices([]));
+                            }
+                          }
+                        });
+                      }}
+                    >
+                      All
+                    </NavLink>
+                  </NavItem>
+                </Nav>
+                <TabContent activeTab={basicTab}>
+                  {loading ? (
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "center",
+                        height: "50vh",
+                        backgroundColor: "white",
+                        alignItems: "center",
+                      }}
+                    >
+                      <div style={{ textAlign: "center" }}>
+                        <Loader />
+                      </div>
+                    </div>
+                  ) : (
+                    <div
+                      ref={containerRef}
+                      className="table-responsive theme-scrollbar recent-wrapper"
+                      style={{
+                        overflowY: "scroll",
+                        maxHeight: "calc(66vh - 20px)", // Subtract scrollbar width from max height
+                        WebkitOverflowScrolling: "touch", // Enable momentum scrolling on iOS
+                        scrollbarWidth: "thin", // Specify scrollbar width
+                        WebkitBorderRadius: "5px", // For WebKit browsers (Chrome, Safari)
+                        MozBorderRadius: "5px", // For Mozilla Firefox
+                        borderRadius: "5px", // For other browsers
+                        scrollbarColor: "lightgray transparent", // Specify scrollbar color
+                      }}
+                      onScroll={handleScroll}
+                    >
+                      <div className="table-responsive theme-scrollbar recent-wrapper">
+                        <Table
+                          className="display order-wrapper"
+                          id="recent-order"
+                        >
+                          <thead>
+                            <tr>
+                              {tableHeader.map((data, index) => (
+                                <th
+                                  key={index}
                                   style={{
-                                    padding: "5px",
-                                    backgroundColor:
-                                      data.onlineStatus === "ack"
-                                        ? "rgba(255, 0, 0, 0.1)"
-                                        : data.onlineStatus === "engine"
-                                        ? "rgba(255, 165, 0, 0.1)"
-                                        : data.onlineStatus === "online"
-                                        ? "rgba(0, 255, 0, 0.1)"
-                                        : "rgba(0, 0, 0, 0.1)",
-                                    color:
-                                      data.onlineStatus === "ack"
-                                        ? "red"
-                                        : data.onlineStatus === "engine"
-                                        ? "orange"
-                                        : data.onlineStatus === "online"
-                                        ? "green"
-                                        : "black",
-                                    borderRadius: "5px",
+                                    width:
+                                      data == "Last Packet" ||
+                                      data == "Killed Time"
+                                        ? "10%"
+                                        : "8%",
                                   }}
                                 >
-                                  {data.onlineStatus === "ack"
-                                    ? "Stop"
-                                    : data.onlineStatus === "engine"
-                                    ? "Idle"
-                                    : data.onlineStatus === "online"
-                                    ? "Moving"
-                                    : "Offline"}
-                                </div>
-                              </td>
-                              <td style={{ width: "10%" }}>
-                                <div className="d-flex">
-                                  <div className="flex-grow-1 ms-2">
-                                    <H4>
-                                      {format(
-                                        new Date(
-                                          new Date(
-                                            data.lastPacketTimeStamp * 1000
-                                          ).toISOString()
-                                        ).toLocaleString(),
-                                        "date"
-                                      )}
-                                    </H4>
-                                    <span style={{ fontSize: "10px" }}>
-                                      {/* {data.updatedAt.toString().slice(11, 19)} */}
-                                      {format(
-                                        new Date(
-                                          new Date(
-                                            data.lastPacketTimeStamp * 1000
-                                          ).toISOString()
-                                        ).toLocaleString(),
-                                        "time"
-                                      )}
-                                    </span>
-                                  </div>
-                                </div>
-                              </td>
-                              <td style={{ width: "8%" }}>{data.latitude}</td>
-                              <td style={{ width: "8%" }}>{data.longitude}</td>
-                              <td style={{ width: "8%" }}>
-                                {data.address == undefined ||
-                                data.address == "" ||
-                                data.address == null
-                                  ? "N/A"
-                                  : data.address}
-                              </td>
-                              <td style={{ width: "10%" }}>
-                                {data.server.companyName}
-                              </td>
-                              <td style={{ width: "8%" }}>
-                                <div className="d-flex">
-                                  <div className="flex-grow-1 ms-2">
-                                    <H4>
-                                      {format(
-                                        new Date(
-                                          data.updatedAt
-                                        ).toLocaleString(),
-                                        "date"
-                                      )}
-                                    </H4>
-                                    <span style={{ fontSize: "10px" }}>
-                                      {/* {data.updatedAt.toString().slice(11, 19)} */}
-                                      {format(
-                                        new Date(
-                                          data.updatedAt
-                                        ).toLocaleString(),
-                                        "time"
-                                      )}
-                                    </span>
-                                  </div>
-                                </div>
-                              </td>
-                              <td style={{ width: "8%" }}>
-                                <div
-                                  style={{
-                                    padding: "5px",
-                                    backgroundColor: data.isKilled
-                                      ? "rgba(255, 0, 0, 0.1)"
-                                      : "rgba(0, 255, 0, 0.1)",
-                                    color: data.isKilled ? "red" : "green",
-                                    borderRadius: "5px",
-                                  }}
-                                >
-                                  {data.isKilled ? "Killed" : "Released"}
-                                </div>
-                              </td>
-                              <td style={{ width: "8%" }}>
-                                {data.remainingTime}
-                              </td>
-                              <td style={{ width: "8%" }}>
-                                <div>
-                                  <button
-                                    className="btn-primary"
-                                    style={{
-                                      borderRadius: "5px",
-                                      padding: "5px 15px",
-                                      color: "white",
-                                      outline: "none",
-                                      border: "none",
-                                      marginTop: "10px",
-                                    }}
-                                    onClick={() => {
-                                      setDeviceData(data.deviceData);
-                                      setIsUpdateModalOpenForSendCommand(true);
-                                    }}
-                                  >
-                                    Release
-                                  </button>
-                                </div>
-                              </td>
-                              <SendCommand
-                                addModal={isUpdateModalOpenForSendCommand}
-                                setAddModal={setIsUpdateModalOpenForSendCommand}
-                                dropDownDevices={devices}
-                                prevItem={deviceData}
-                                fromDate={fromDate}
-                                toDate={toDate}
-                              />
+                                  {data}
+                                </th>
+                              ))}
                             </tr>
-                          ))
-                        )}
-                      </tbody>
-                    </Table>
-                  </div>
+                          </thead>
+                          <tbody>
+                            {dataList.length == 0 ? (
+                              <tr>
+                                <td colSpan={11} style={{ fontSize: "25px" }}>
+                                  No Kiling Devices Found
+                                </td>
+                              </tr>
+                            ) : (
+                              dataList.map((data: any, index: any) => (
+                                <tr style={{ cursor: "pointer" }} key={index}>
+                                  <td style={{ width: "8%" }}>
+                                    {data.deviceId}
+                                  </td>
+                                  <td style={{ width: "8%" }}>
+                                    {data.deviceName}
+                                  </td>
+
+                                  <td style={{ width: "8%" }}>
+                                    <div
+                                      style={{
+                                        padding: "5px",
+                                        backgroundColor:
+                                          data.onlineStatus === "ack"
+                                            ? "rgba(255, 0, 0, 0.1)"
+                                            : data.onlineStatus === "engine"
+                                            ? "rgba(255, 165, 0, 0.1)"
+                                            : data.onlineStatus === "online"
+                                            ? "rgba(0, 255, 0, 0.1)"
+                                            : "rgba(0, 0, 0, 0.1)",
+                                        color:
+                                          data.onlineStatus === "ack"
+                                            ? "red"
+                                            : data.onlineStatus === "engine"
+                                            ? "orange"
+                                            : data.onlineStatus === "online"
+                                            ? "green"
+                                            : "black",
+                                        borderRadius: "5px",
+                                      }}
+                                    >
+                                      {data.onlineStatus === "ack"
+                                        ? "Stop"
+                                        : data.onlineStatus === "engine"
+                                        ? "Idle"
+                                        : data.onlineStatus === "online"
+                                        ? "Moving"
+                                        : "Offline"}
+                                    </div>
+                                  </td>
+                                  <td style={{ width: "10%" }}>
+                                    <div className="d-flex">
+                                      <div className="flex-grow-1 ms-2">
+                                        <H4>
+                                          {format(
+                                            new Date(
+                                              new Date(
+                                                data.lastPacketTimeStamp * 1000
+                                              ).toISOString()
+                                            ).toLocaleString(),
+                                            "date"
+                                          )}
+                                        </H4>
+                                        <span style={{ fontSize: "10px" }}>
+                                          {/* {data.updatedAt.toString().slice(11, 19)} */}
+                                          {format(
+                                            new Date(
+                                              new Date(
+                                                data.lastPacketTimeStamp * 1000
+                                              ).toISOString()
+                                            ).toLocaleString(),
+                                            "time"
+                                          )}
+                                        </span>
+                                      </div>
+                                    </div>
+                                  </td>
+                                  <td style={{ width: "8%" }}>
+                                    {data.latitude}
+                                  </td>
+                                  <td style={{ width: "8%" }}>
+                                    {data.longitude}
+                                  </td>
+                                  <td style={{ width: "8%" }}>
+                                    {data.address == undefined ||
+                                    data.address == "" ||
+                                    data.address == null
+                                      ? "N/A"
+                                      : data.address}
+                                  </td>
+                                  <td style={{ width: "10%" }}>
+                                    {data.server.companyName}
+                                  </td>
+                                  <td style={{ width: "8%" }}>
+                                    <div className="d-flex">
+                                      <div className="flex-grow-1 ms-2">
+                                        <H4>
+                                          {format(
+                                            new Date(
+                                              data.updatedAt
+                                            ).toLocaleString(),
+                                            "date"
+                                          )}
+                                        </H4>
+                                        <span style={{ fontSize: "10px" }}>
+                                          {/* {data.updatedAt.toString().slice(11, 19)} */}
+                                          {format(
+                                            new Date(
+                                              data.updatedAt
+                                            ).toLocaleString(),
+                                            "time"
+                                          )}
+                                        </span>
+                                      </div>
+                                    </div>
+                                  </td>
+                                  <td style={{ width: "8%" }}>
+                                    <div
+                                      style={{
+                                        padding: "5px",
+                                        backgroundColor: data.isKilled
+                                          ? "rgba(255, 0, 0, 0.1)"
+                                          : "rgba(0, 255, 0, 0.1)",
+                                        color: data.isKilled ? "red" : "green",
+                                        borderRadius: "5px",
+                                      }}
+                                    >
+                                      {data.isKilled ? "Killed" : "Released"}
+                                    </div>
+                                  </td>
+                                  <td style={{ width: "8%" }}>
+                                    {data.remainingTime}
+                                  </td>
+                                  <td style={{ width: "8%" }}>
+                                    <div>
+                                      <button
+                                        className="btn-primary"
+                                        style={{
+                                          borderRadius: "5px",
+                                          padding: "5px 15px",
+                                          color: "white",
+                                          outline: "none",
+                                          border: "none",
+                                          marginTop: "10px",
+                                        }}
+                                        onClick={() => {
+                                          setDeviceData(data.deviceData);
+                                          setIsUpdateModalOpenForSendCommand(
+                                            true
+                                          );
+                                        }}
+                                      >
+                                        Release
+                                      </button>
+                                    </div>
+                                  </td>
+                                  <SendCommand
+                                    addModal={isUpdateModalOpenForSendCommand}
+                                    setAddModal={
+                                      setIsUpdateModalOpenForSendCommand
+                                    }
+                                    dropDownDevices={devices}
+                                    prevItem={deviceData}
+                                    fromDate={fromDate}
+                                    toDate={toDate}
+                                  />
+                                </tr>
+                              ))
+                            )}
+                          </tbody>
+                        </Table>
+                      </div>
+                    </div>
+                  )}
+                </TabContent>
+              </div>
+            ) : loading ? (
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  height: "50vh",
+                  backgroundColor: "white",
+                  alignItems: "center",
+                }}
+              >
+                <div style={{ textAlign: "center" }}>
+                  <Loader />
                 </div>
-              )}
-            </TabContent>
+              </div>
+            ) : (
+              <div
+                ref={containerRef}
+                className="table-responsive theme-scrollbar recent-wrapper"
+                style={{
+                  overflowY: "scroll",
+                  maxHeight: "calc(66vh - 20px)", // Subtract scrollbar width from max height
+                  WebkitOverflowScrolling: "touch", // Enable momentum scrolling on iOS
+                  scrollbarWidth: "thin", // Specify scrollbar width
+                  WebkitBorderRadius: "5px", // For WebKit browsers (Chrome, Safari)
+                  MozBorderRadius: "5px", // For Mozilla Firefox
+                  borderRadius: "5px", // For other browsers
+                  scrollbarColor: "lightgray transparent", // Specify scrollbar color
+                }}
+                onScroll={handleScroll}
+              >
+                <div className="table-responsive theme-scrollbar recent-wrapper">
+                  <Table className="display order-wrapper" id="recent-order">
+                    <thead>
+                      <tr>
+                        {tableHeader.map((data, index) => (
+                          <th
+                            key={index}
+                            style={{
+                              width:
+                                data == "Last Packet" || data == "Killed Time"
+                                  ? "10%"
+                                  : "8%",
+                            }}
+                          >
+                            {data}
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {dataList.length == 0 ? (
+                        <tr>
+                          <td colSpan={11} style={{ fontSize: "25px" }}>
+                            No Kiling Devices Found
+                          </td>
+                        </tr>
+                      ) : (
+                        dataList.map((data: any, index: any) => (
+                          <tr style={{ cursor: "pointer" }} key={index}>
+                            <td style={{ width: "8%" }}>{data.deviceId}</td>
+                            <td style={{ width: "8%" }}>{data.deviceName}</td>
+
+                            <td style={{ width: "8%" }}>
+                              <div
+                                style={{
+                                  padding: "5px",
+                                  backgroundColor:
+                                    data.onlineStatus === "ack"
+                                      ? "rgba(255, 0, 0, 0.1)"
+                                      : data.onlineStatus === "engine"
+                                      ? "rgba(255, 165, 0, 0.1)"
+                                      : data.onlineStatus === "online"
+                                      ? "rgba(0, 255, 0, 0.1)"
+                                      : "rgba(0, 0, 0, 0.1)",
+                                  color:
+                                    data.onlineStatus === "ack"
+                                      ? "red"
+                                      : data.onlineStatus === "engine"
+                                      ? "orange"
+                                      : data.onlineStatus === "online"
+                                      ? "green"
+                                      : "black",
+                                  borderRadius: "5px",
+                                }}
+                              >
+                                {data.onlineStatus === "ack"
+                                  ? "Stop"
+                                  : data.onlineStatus === "engine"
+                                  ? "Idle"
+                                  : data.onlineStatus === "online"
+                                  ? "Moving"
+                                  : "Offline"}
+                              </div>
+                            </td>
+                            <td style={{ width: "10%" }}>
+                              <div className="d-flex">
+                                <div className="flex-grow-1 ms-2">
+                                  <H4>
+                                    {format(
+                                      new Date(
+                                        new Date(
+                                          data.lastPacketTimeStamp * 1000
+                                        ).toISOString()
+                                      ).toLocaleString(),
+                                      "date"
+                                    )}
+                                  </H4>
+                                  <span style={{ fontSize: "10px" }}>
+                                    {/* {data.updatedAt.toString().slice(11, 19)} */}
+                                    {format(
+                                      new Date(
+                                        new Date(
+                                          data.lastPacketTimeStamp * 1000
+                                        ).toISOString()
+                                      ).toLocaleString(),
+                                      "time"
+                                    )}
+                                  </span>
+                                </div>
+                              </div>
+                            </td>
+                            <td style={{ width: "8%" }}>{data.latitude}</td>
+                            <td style={{ width: "8%" }}>{data.longitude}</td>
+                            <td style={{ width: "8%" }}>
+                              {data.address == undefined ||
+                              data.address == "" ||
+                              data.address == null
+                                ? "N/A"
+                                : data.address}
+                            </td>
+                            <td style={{ width: "10%" }}>
+                              {data.server.companyName}
+                            </td>
+                            <td style={{ width: "8%" }}>
+                              <div className="d-flex">
+                                <div className="flex-grow-1 ms-2">
+                                  <H4>
+                                    {format(
+                                      new Date(data.updatedAt).toLocaleString(),
+                                      "date"
+                                    )}
+                                  </H4>
+                                  <span style={{ fontSize: "10px" }}>
+                                    {/* {data.updatedAt.toString().slice(11, 19)} */}
+                                    {format(
+                                      new Date(data.updatedAt).toLocaleString(),
+                                      "time"
+                                    )}
+                                  </span>
+                                </div>
+                              </div>
+                            </td>
+                            <td style={{ width: "8%" }}>
+                              <div
+                                style={{
+                                  padding: "5px",
+                                  backgroundColor: data.isKilled
+                                    ? "rgba(255, 0, 0, 0.1)"
+                                    : "rgba(0, 255, 0, 0.1)",
+                                  color: data.isKilled ? "red" : "green",
+                                  borderRadius: "5px",
+                                }}
+                              >
+                                {data.isKilled ? "Killed" : "Released"}
+                              </div>
+                            </td>
+                            <td style={{ width: "8%" }}>
+                              {data.remainingTime}
+                            </td>
+                            <td style={{ width: "8%" }}>
+                              <div>
+                                <button
+                                  className="btn-primary"
+                                  style={{
+                                    borderRadius: "5px",
+                                    padding: "5px 15px",
+                                    color: "white",
+                                    outline: "none",
+                                    border: "none",
+                                    marginTop: "10px",
+                                  }}
+                                  onClick={() => {
+                                    setDeviceData(data.deviceData);
+                                    setIsUpdateModalOpenForSendCommand(true);
+                                  }}
+                                >
+                                  Release
+                                </button>
+                              </div>
+                            </td>
+                            <SendCommand
+                              addModal={isUpdateModalOpenForSendCommand}
+                              setAddModal={setIsUpdateModalOpenForSendCommand}
+                              dropDownDevices={devices}
+                              prevItem={deviceData}
+                              fromDate={fromDate}
+                              toDate={toDate}
+                            />
+                          </tr>
+                        ))
+                      )}
+                    </tbody>
+                  </Table>
+                </div>
+              </div>
+            )}
           </CardBody>
         </Card>
       </ModalBody>

@@ -1,36 +1,12 @@
 import ShoppingPlace from "../Pages/DashBoard/ShoppingPlace/ShoppingPlace";
 import CRMDashboard from "../Pages/DashBoard/CRMDashboard/CRMDashboard";
 import General from "../Pages/Widgets/General/General";
-import Typography from "../Pages/Ui-Kits/Typography/Typography";
-import Avatars from "../Pages/Ui-Kits/Avatars/Avatars";
-import HelperClasses from "../Pages/Ui-Kits/HelperClasses/HelperClasses";
-import Grid from "../Pages/Ui-Kits/Grid/Grid";
-import TagPills from "../Pages/Ui-Kits/TagPills/TagPills";
 import Chart from "../Pages/Widgets/Chart/Chart";
-import Scrollable from "../Pages/BonusUi/Scrollable/Scrollable";
-import TreeView from "../Pages/BonusUi/TreeView/TreeView";
-import Toasts from "../Pages/BonusUi/Toasts/Toasts";
-import Rating from "../Pages/BonusUi/Rating/Rating";
 import Dropzone from "../Pages/BonusUi/Dropzone/Dropzone";
-import Tour from "../Pages/BonusUi/Tour/Tour";
-import SweetAlert from "../Pages/BonusUi/SweetAlert/SweetAlert";
-import Ribbons from "../Pages/BonusUi/Ribbons/Ribbons";
-import Paginations from "../Pages/BonusUi/Paginations/Paginations";
 import Breadcrumb from "../Pages/BonusUi/Breadcrumb/Breadcrumb";
-import RangeSlider from "../Pages/BonusUi/RangeSlider/RangeSlider";
-import ImageCropper from "../Pages/BonusUi/ImageCropper/ImageCropper";
 import BasicCard from "../Pages/BonusUi/BasicCard/BasicCard";
 import CreativeCard from "../Pages/BonusUi/CreativeCard/CreativeCard";
-import TimeLine from "../Pages/BonusUi/TimeLine/TimeLine";
-import OwlCarousel from "../Pages/BonusUi/OwlCarousel/OwlCarousel";
-import Progressbar from "../Pages/Ui-Kits/Progressbar/Progressbar";
-import Alert from "../Pages/Ui-Kits/Alert/Alert";
-import Modal from "../Pages/Ui-Kits/Modal/Modal";
 import Popover from "../Pages/Ui-Kits/Popover/Popover";
-import Tooltip from "../Pages/Ui-Kits/Tooltip/Tooltip";
-import Dropdown from "../Pages/Ui-Kits/Dropdown/Dropdown";
-import Accordion from "../Pages/Ui-Kits/Accordion/Accordion";
-import Tabs from "../Pages/Ui-Kits/Tabs/Tabs";
 import SamplePage from "../Pages/MISCELLANEOUS/SamplePage/SamplePage";
 import GalleryGrid from "../Pages/MISCELLANEOUS/Gallery/GalleryGrid/GalleryGrid";
 import GalleryGridWithDescription from "../Pages/MISCELLANEOUS/Gallery/GalleryGridWithDescription/GalleryGridWithDescription";
@@ -114,12 +90,10 @@ import ICOIcon from "../Pages/Icons/ICOIcon/ICOIcon";
 import ThemifyIcon from "../Pages/Icons/ThemifyIcon/ThemifyIcon";
 import FeatherIcons from "../Pages/Icons/FeatherIcons/FeathersIcons";
 import WhetherIcon from "../Pages/Icons/WhetherIcon/WhetherIcon";
-import Lists from "../Pages/Ui-Kits/Lists/Lists";
 import FooterDark from "../Pages/PageLayout/FooterDark/FooterDark";
 import FooterFixed from "../Pages/PageLayout/FooterFixed/FooterFixed";
 import HideNavScrollContainer from "../Pages/PageLayout/HideNavScrollContainer/HideNavScrollContainer";
 import FlieManager from "../Pages/Apps/FlieManager/FlieManager";
-import CionModal from "../Pages/Ui-Kits/Modal/BasicModal/CubaModal";
 import Cities from "../Pages/Cities/Cities";
 import Province from "../Pages/Province/Province";
 import Package from "../Pages/Package/Package";
@@ -183,46 +157,17 @@ const routes = [
   },
 
   // Bonus Ui
-  {
-    path: `${process.env.PUBLIC_URL}/bonusui/scrollable`,
-    Component: <Scrollable />,
-  },
-  {
-    path: `${process.env.PUBLIC_URL}/bonusui/treeview`,
-    Component: <TreeView />,
-  },
-  { path: `${process.env.PUBLIC_URL}/bonusui/toasts`, Component: <Toasts /> },
-  { path: `${process.env.PUBLIC_URL}/bonusui/rating`, Component: <Rating /> },
+
   {
     path: `${process.env.PUBLIC_URL}/bonusui/dropzone`,
     Component: <Dropzone />,
   },
-  { path: `${process.env.PUBLIC_URL}/bonusui/tour`, Component: <Tour /> },
-  {
-    path: `${process.env.PUBLIC_URL}/bonusui/sweetalert2`,
-    Component: <SweetAlert />,
-  },
-  {
-    path: `${process.env.PUBLIC_URL}/bonusui/owlcarousel`,
-    Component: <OwlCarousel />,
-  },
-  { path: `${process.env.PUBLIC_URL}/bonusui/ribbons`, Component: <Ribbons /> },
-  {
-    path: `${process.env.PUBLIC_URL}/bonusui/pagination`,
-    Component: <Paginations />,
-  },
+
   {
     path: `${process.env.PUBLIC_URL}/bonusui/breadcrumb`,
     Component: <Breadcrumb />,
   },
-  {
-    path: `${process.env.PUBLIC_URL}/bonusui/rangeslider`,
-    Component: <RangeSlider />,
-  },
-  {
-    path: `${process.env.PUBLIC_URL}/bonusui/imagecropper`,
-    Component: <ImageCropper />,
-  },
+
   {
     path: `${process.env.PUBLIC_URL}/bonusui/basiccard`,
     Component: <BasicCard />,
@@ -231,47 +176,10 @@ const routes = [
     path: `${process.env.PUBLIC_URL}/bonusui/creativecard`,
     Component: <CreativeCard />,
   },
-  {
-    path: `${process.env.PUBLIC_URL}/bonusui/timeline`,
-    Component: <TimeLine />,
-  },
 
   //Ui-kits routes
-  {
-    path: `${process.env.PUBLIC_URL}/uikits/typography`,
-    Component: <Typography />,
-  },
-  { path: `${process.env.PUBLIC_URL}/uikits/avatars`, Component: <Avatars /> },
-  {
-    path: `${process.env.PUBLIC_URL}/uikits/helperclasses`,
-    Component: <HelperClasses />,
-  },
-  { path: `${process.env.PUBLIC_URL}/uikits/grid`, Component: <Grid /> },
-  {
-    path: `${process.env.PUBLIC_URL}/uikits/tag&pills`,
-    Component: <TagPills />,
-  },
-  {
-    path: `${process.env.PUBLIC_URL}/uikits/progress`,
-    Component: <Progressbar />,
-  },
-  { path: `${process.env.PUBLIC_URL}/uikits/modal`, Component: <Modal /> },
-  {
-    path: `${process.env.PUBLIC_URL}/uikits/modal/basicmodal/inputModal`,
-    Component: <CionModal />,
-  },
-  { path: `${process.env.PUBLIC_URL}/uikits/alert`, Component: <Alert /> },
+
   { path: `${process.env.PUBLIC_URL}/uikits/popover`, Component: <Popover /> },
-  { path: `${process.env.PUBLIC_URL}/uikits/tooltip`, Component: <Tooltip /> },
-  {
-    path: `${process.env.PUBLIC_URL}/uikits/dropdown`,
-    Component: <Dropdown />,
-  },
-  {
-    path: `${process.env.PUBLIC_URL}/uikits/accordion`,
-    Component: <Accordion />,
-  },
-  { path: `${process.env.PUBLIC_URL}/uikits/tab`, Component: <Tabs /> },
 
   //  MISCELLANEOUS
   {
@@ -545,7 +453,6 @@ const routes = [
     path: `${process.env.PUBLIC_URL}/forms/formlayout/twofactor`,
     Component: <TwoFactor />,
   },
-  { path: `${process.env.PUBLIC_URL}/uikits/lists`, Component: <Lists /> },
 
   //  Forms
   // Controls
