@@ -45,7 +45,7 @@ const EditProfileForm = () => {
     (state: any) => state.userPermissions
   );
   var profile = userPermissions.find((item: any) => item.title === "Profile");
-  // console.log("profile", profile);
+  // // console.log("profile", profile);
   const { userData } = useSelector((state: any) => state.user);
   const [name, setName] = useState<string>(userData.fullName);
   const [phoneNo, setPhoneNo] = useState<string>(userData.phoneNo);
@@ -74,10 +74,12 @@ const EditProfileForm = () => {
         url:
           getUserRole() == "COMPANY"
             ? "company/update-company"
+            : getUserRole() == "OPERATOR"
+            ? "company/update-operator"
             : `super-admin/update-super-admin`,
       })
         .then((data: any) => {
-          // console.log("api call --- >", data);
+          // // console.log("api call --- >", data);
           if (data !== undefined) {
             if (
               !data.success &&
@@ -98,7 +100,7 @@ const EditProfileForm = () => {
             }
             if (data.success) {
               getAll({ url: "user/get-user" }).then((parentData: any) => {
-                // console.log("api call --- >", parentData);
+                // // console.log("api call --- >", parentData);
                 if (parentData == undefined) {
                   Swal.fire({
                     text: "Failed to Fetch",
@@ -126,7 +128,7 @@ const EditProfileForm = () => {
           }
         })
         .catch((err: any) => {
-          // console.log("catch data", err);
+          // // console.log("catch data", err);
 
           setLoading(false);
           setIsEdit(!isEdit);

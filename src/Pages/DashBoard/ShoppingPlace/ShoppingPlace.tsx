@@ -16,6 +16,8 @@ import Invoice from "../ShoppingPlace/Invoice/Invoice";
 import ProductSales from "../ShoppingPlace/ProductSales/ProductSales";
 import Breadcrumbs from "../../../CommonElements/Breadcrumbs/Breadcrumbs";
 import { useSelector } from "react-redux";
+import { getUserRole } from "../../../Api/globals";
+import { ROLES } from "../../../constants/roles";
 
 const ShoppingPlace = () => {
   const { userPermissions } = useSelector(
@@ -24,11 +26,26 @@ const ShoppingPlace = () => {
   var dashboard = userPermissions.find(
     (item: any) => item.title === "Dashboard"
   );
-  // console.log("Dashboard", dashboard);
+  // // console.log("Dashboard", dashboard);
   return (
     <>
       <Breadcrumbs mainTitle="Dashboard" parent="Dashboard" title="Dashboard" />
-      {dashboard !== undefined && dashboard?.read ? (
+      {getUserRole() == ROLES.SUPER_ADMIN ? (
+        <Container fluid className="dashboard_default">
+          <Row className="widget-grid">
+            <TotalEarning />
+            <RecentOrders />
+            <TopSeller />
+            <NewProduct />
+            <TopCountries />
+            <ActivityTimeline />
+            <SalesSummary />
+            <WeekendSale />
+            <Invoice />
+            <ProductSales />
+          </Row>
+        </Container>
+      ) : dashboard !== undefined && dashboard?.read ? (
         <Container fluid className="dashboard_default">
           <Row className="widget-grid">
             <TotalEarning />
