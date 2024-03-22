@@ -10,8 +10,10 @@ const ProfileBox = () => {
     (state: any) => state.userPermissions
   );
   var profile = userPermissions.find((item: any) => item.title === "Profile");
-  var profileMenu = profilesMessage.filter((item) => {
-    if (profile !== undefined && item.name === "Account") {
+  var profileMenu = profilesMessage.filter((item, index) => {
+    if (profile == undefined && index == 0) {
+      return false;
+    } else if (profile !== undefined && item.name === "Account") {
       return profile.read;
     } else if (item.name == "Settings") {
       return getUserRole() == "OPERATOR" ? false : true;
@@ -20,7 +22,7 @@ const ProfileBox = () => {
     }
   });
 
-  // console.log("profile", profile);
+  // // console.log("profile", profile);
   const navigate = useNavigate();
   const handleClick = (name: string) => {
     if (name === "Log Out") {
@@ -35,7 +37,7 @@ const ProfileBox = () => {
         );
       }
       // if (getUserRole() == "COMPANY") {
-      //   // console.log("Company");
+      //   // // console.log("Company");
 
       //   setTimeout(() => {
       //     localStorage.removeItem("token");
@@ -45,7 +47,7 @@ const ProfileBox = () => {
       //     navigate(`${process.env.PUBLIC_URL}/login/${getUserId()}`);
       //   }, 2000);
       // } else {
-      //   // console.log("SuperAdmin");
+      //   // // console.log("SuperAdmin");
       //   setTimeout(() => {
       //     localStorage.removeItem("token");
       //     localStorage.setItem("userId", "");
