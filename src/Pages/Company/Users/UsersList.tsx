@@ -130,6 +130,8 @@ const UsersList = () => {
                       phoneNo: row.phoneNo,
                       isActive: !row.isActive,
                       company: decodedToken.userId,
+                      allowedModules: row.allowedModules,
+                      subRole: row.subRole,
                     };
                     // console.log(operator);
                     setIsActive(!row.isActive);
@@ -166,9 +168,11 @@ const UsersList = () => {
                   }}
                 />
                 <span
-                  className={`switch-state ${
-                    row.isActive ? "bg-primary" : "bg-secondary"
-                  }`}
+                  // className={`switch-state ${
+                  //   row.isActive ? "bg-primary" : "bg-secondary"
+                  // }`}
+                  className="switch-state"
+                  style={{ backgroundColor: row.isActive ? "green" : "red" }}
                 />
               </Label>
             </div>
