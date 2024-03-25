@@ -12,7 +12,7 @@ import {
 } from "reactstrap";
 import { CheckCircle } from "react-feather";
 import { useDispatch, useSelector } from "react-redux";
-import { H3 } from "../../../AbstractElements";
+import { H3, P } from "../../../AbstractElements";
 import { UserType } from "./UserTypes/UserTypes";
 import { create, getAll } from "../../../Api";
 import {
@@ -227,7 +227,7 @@ const CreateNewUser = () => {
             >
               <Row>
                 <FormGroup className="col-md-12 create-group">
-                  <Label>User Name</Label>
+                  <P>User Name</P>
                   <input
                     className="form-control"
                     type="text"
@@ -238,7 +238,7 @@ const CreateNewUser = () => {
                   </span>
                 </FormGroup>
                 <FormGroup className="col-md-12 create-group">
-                  <Label>Email Address</Label>
+                  <P>Email Address</P>
                   <input
                     className="form-control"
                     type="text"
@@ -249,7 +249,7 @@ const CreateNewUser = () => {
                   </span>
                 </FormGroup>
                 <FormGroup className="col-md-12 create-group">
-                  <Label>Password</Label>
+                  <P>Password</P>
                   <input
                     className="form-control"
                     type="text"
@@ -260,7 +260,7 @@ const CreateNewUser = () => {
                   </span>
                 </FormGroup>
                 <FormGroup className="col-md-12 create-group">
-                  <Label>Phone Number</Label>
+                  <P>Phone Number</P>
                   <input
                     className="form-control"
                     type="text"
@@ -273,7 +273,7 @@ const CreateNewUser = () => {
 
                 <FormGroup className="col-md-12 create-group">
                   <div>
-                    <Label>Select User Role </Label>
+                    <P>Select User Role </P>
                   </div>
                   <Select
                     showSearch
@@ -281,12 +281,12 @@ const CreateNewUser = () => {
                     placeholder="Select Role"
                     optionFilterProp="children"
                     filterOption={(input: any, option: any) =>
-                      (option?.label ?? "").includes(input)
+                      (option?.P ?? "").includes(input)
                     }
                     filterSort={(optionA: any, optionB: any) =>
-                      (optionA?.label ?? "")
+                      (optionA?.P ?? "")
                         .toLowerCase()
-                        .localeCompare((optionB?.label ?? "").toLowerCase())
+                        .localeCompare((optionB?.P ?? "").toLowerCase())
                     }
                     onChange={(e: any) => {
                       // console.log(e);
@@ -296,7 +296,7 @@ const CreateNewUser = () => {
                   />
                 </FormGroup>
 
-                {role !== "" && <Label>Given Permissions</Label>}
+                {role !== "" && <P>Given Permissions : </P>}
                 <FormGroup
                   className="col-md-12 create-group"
                   style={{
@@ -331,23 +331,16 @@ const CreateNewUser = () => {
                                     alignItems: "center",
                                   }}
                                 >
-                                  <span
-                                    style={{
-                                      fontSize: "17px",
-                                      margin: "15px 0px",
-                                      fontWeight: "bold",
-                                    }}
-                                  >
-                                    {permission.title}
-                                  </span>
+                                  <P>{permission.title}</P>
 
                                   <div>
-                                    <label
+                                    <Label
                                       style={{
                                         display: "inline-block",
                                         position: "relative",
                                         cursor: "not-allowed",
                                         marginRight: "25px",
+                                        marginBottom: "15px",
                                         fontSize: "18px",
                                       }}
                                       onClick={(e) => e.stopPropagation()}
@@ -368,13 +361,14 @@ const CreateNewUser = () => {
                                         }
                                       ></span>
                                       Read
-                                    </label>
-                                    <label
+                                    </Label>
+                                    <Label
                                       style={{
                                         display: "inline-block",
                                         position: "relative",
                                         cursor: "not-allowed",
                                         marginRight: "25px",
+                                        marginBottom: "15px",
                                         fontSize: "18px",
                                       }}
                                       onClick={(e) => e.stopPropagation()}
@@ -395,13 +389,14 @@ const CreateNewUser = () => {
                                         }
                                       ></span>
                                       Create
-                                    </label>
-                                    <label
+                                    </Label>
+                                    <Label
                                       style={{
                                         display: "inline-block",
                                         position: "relative",
                                         cursor: "not-allowed",
                                         marginRight: "25px",
+                                        marginBottom: "15px",
                                         fontSize: "18px",
                                       }}
                                       onClick={(e) => e.stopPropagation()}
@@ -422,13 +417,14 @@ const CreateNewUser = () => {
                                         }
                                       ></span>
                                       Edit
-                                    </label>
-                                    <label
+                                    </Label>
+                                    <Label
                                       style={{
                                         display: "inline-block",
                                         position: "relative",
                                         cursor: "not-allowed",
                                         marginRight: "25px",
+                                        marginBottom: "15px",
                                         fontSize: "18px",
                                       }}
                                       onClick={(e) => e.stopPropagation()}
@@ -449,8 +445,8 @@ const CreateNewUser = () => {
                                         }
                                       ></span>
                                       Delete
-                                    </label>
-                                    {/* Similarly, add labels for other permissions */}
+                                    </Label>
+                                    {/* Similarly, add Ps for other permissions */}
                                   </div>
                                 </Col>
                               </Row>
@@ -460,7 +456,7 @@ const CreateNewUser = () => {
                       )
                     )}
                 </FormGroup>
-                <Label>Allowed Modules</Label>
+                <P>Allowed Modules : </P>
                 <FormGroup
                   className="col-md-12 create-group"
                   style={{
@@ -493,18 +489,15 @@ const CreateNewUser = () => {
                                 alignItems: "center",
                               }}
                             >
-                              <span
-                                style={{ fontSize: "17px", margin: "15px 0px" }}
-                              >
-                                {module.name}
-                              </span>
+                              <P>{module.name}</P>
                               <div>
-                                <label
+                                <Label
                                   style={{
                                     display: "inline-block",
                                     position: "relative",
                                     cursor: "pointer",
                                     marginRight: "25px",
+                                    marginBottom: "15px",
                                     fontSize: "18px",
                                   }}
                                   onClick={(e) => e.stopPropagation()}
@@ -526,7 +519,7 @@ const CreateNewUser = () => {
                                     onClick={(e) => e.stopPropagation()}
                                     className="green"
                                   ></span>
-                                </label>
+                                </Label>
                               </div>
                             </Col>
                           </Row>

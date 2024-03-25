@@ -64,13 +64,14 @@ const ViewModal: React.FC<PropsTypes> = ({
             <Table className="display order-wrapper" id="recent-order">
               <thead>
                 <tr>
+                  <th style={{ width: "7%" }}>ID</th>
                   <th style={{ width: "7%" }}>Event ID</th>
                   <th style={{ width: "7%" }}>Device ID</th>
                   <th style={{ width: "7%" }}>Device Name</th>
                   <th style={{ width: "7%" }}>Latitude</th>
                   <th style={{ width: "7%" }}>Longitude</th>
-                  <th style={{ width: "7%" }}>Speed</th>
                   <th style={{ width: "7%" }}>Type</th>
+                  <th style={{ width: "7%" }}>Speed</th>
                   <th style={{ width: "7%" }}>Message</th>
                   <th style={{ width: "7%" }}>User Role</th>
                   <th style={{ width: "7%" }}>Completion Response</th>
@@ -94,6 +95,7 @@ const ViewModal: React.FC<PropsTypes> = ({
                       <td style={{ width: "7%" }}>{row.deviceName}</td>
                       <td style={{ width: "7%" }}>{row.latitude}</td>
                       <td style={{ width: "7%" }}>{row.longitude}</td>
+                      <td style={{ width: "7%" }}>{row.type}</td>
                       <td style={{ width: "7%" }}>{row.speed}</td>
                       <td style={{ width: "7%" }}>{row.message}</td>
                       <td style={{ width: "7%" }}>{row.userRole}</td>

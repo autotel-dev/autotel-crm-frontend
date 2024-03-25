@@ -9,7 +9,7 @@ import { CheckCircle } from "react-feather";
 import { useDispatch, useSelector } from "react-redux";
 import { Type } from "./CountryTypes/CountryTypes";
 import { Cancel } from "../../../utils/Constant";
-import { H3 } from "../../../AbstractElements";
+import { H3, P } from "../../../AbstractElements";
 import { create, getAll } from "../../../Api";
 import {
   setFilterRoles,
@@ -63,7 +63,9 @@ const CreateNewRole = () => {
     }
   };
 
-  const { userPermissions } = useSelector((state: any) => state.userPermissions);
+  const { userPermissions } = useSelector(
+    (state: any) => state.userPermissions
+  );
   const [givenPermissions, setGivenPermissions] = useState<any[]>([]);
 
   const handleCheckboxChange = (index: any, key: any) => {
@@ -200,7 +202,7 @@ const CreateNewRole = () => {
             >
               <Row>
                 <FormGroup className="col-md-12 create-group">
-                  <Label>Role Name</Label>
+                  <P>Role Name</P>
                   <input
                     className="form-control"
                     type="text"
@@ -210,7 +212,7 @@ const CreateNewRole = () => {
                     {errors.name && "Country name is required"}
                   </span>
                 </FormGroup>
-                <H3 className="modal-title"> Permissions</H3>
+                <P> Permissions</P>
                 <FormGroup
                   className="col-md-12 create-group"
                   style={{
@@ -244,9 +246,8 @@ const CreateNewRole = () => {
                           >
                             <span
                               style={{
-                                fontSize: "17px",
-                                margin: "15px 0px",
-                                fontWeight: "bold",
+                                fontSize: "16px",
+                                margin: "5px 0px",
                               }}
                             >
                               <label
@@ -255,7 +256,7 @@ const CreateNewRole = () => {
                                   position: "relative",
                                   cursor: "pointer",
                                   marginRight: "25px",
-                                  fontSize: "18px",
+                                  fontSize: "16px",
                                 }}
                                 onClick={(e) => e.stopPropagation()}
                               >
@@ -274,7 +275,7 @@ const CreateNewRole = () => {
                                   className="green"
                                 ></span>
                               </label>
-                              {permission.title}
+                             {permission.title}
                             </span>
                             {permission.checked && (
                               <div>
@@ -287,7 +288,7 @@ const CreateNewRole = () => {
                                         ? "not-allowed"
                                         : "pointer",
                                     marginRight: "25px",
-                                    fontSize: "18px",
+                                    fontSize: "16px",
                                   }}
                                   onClick={(e) => e.stopPropagation()}
                                 >
@@ -323,7 +324,7 @@ const CreateNewRole = () => {
                                         ? "not-allowed"
                                         : "pointer",
                                     marginRight: "25px",
-                                    fontSize: "18px",
+                                    fontSize: "16px",
                                   }}
                                   onClick={(e) => e.stopPropagation()}
                                 >
@@ -359,7 +360,7 @@ const CreateNewRole = () => {
                                         ? "not-allowed"
                                         : "pointer",
                                     marginRight: "25px",
-                                    fontSize: "18px",
+                                    fontSize: "16px",
                                   }}
                                   onClick={(e) => e.stopPropagation()}
                                 >
@@ -395,7 +396,7 @@ const CreateNewRole = () => {
                                         ? "not-allowed"
                                         : "pointer",
                                     marginRight: "25px",
-                                    fontSize: "18px",
+                                    fontSize: "16px",
                                   }}
                                   onClick={(e) => e.stopPropagation()}
                                 >

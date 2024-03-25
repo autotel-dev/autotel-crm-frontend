@@ -10,6 +10,7 @@ import {
   DropdownToggle,
   DropdownMenu,
   DropdownItem,
+  CardHeader,
   // Button,
 } from "reactstrap";
 
@@ -26,6 +27,7 @@ import { DownOutlined, UserOutlined } from "@ant-design/icons";
 import { setReports } from "../../../ReaduxToolkit/Reducer/ReportsSlice";
 import { jsPDF } from "jspdf";
 import "jspdf-autotable";
+import { H4 } from "../../../AbstractElements";
 
 const ReportsList = () => {
   const { reports } = useSelector((state: any) => state.reports);
@@ -76,6 +78,7 @@ const ReportsList = () => {
 
   const pdfData = {
     reportTableHeaders: [
+      "Id",
       "Event Id",
       "Device Id",
       "Device Name",
@@ -309,7 +312,9 @@ const ReportsList = () => {
       <Container fluid>
         <Col sm="12">
           <Card>
-            <CommonHeader title="All Reports" />
+          <CardHeader className="pb-0">
+            <H4>All Reports</H4>
+          </CardHeader>
             <CardBody>
               <div className="table-responsive product-table">
                 {loading ? (

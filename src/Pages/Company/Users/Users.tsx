@@ -50,6 +50,12 @@ const Countries = () => {
           dispatch(setRoles(data.data));
           dispatch(setFilterRoles(data.data));
         }
+        if (!data.success) {
+          // console.log("hhg");
+          dispatch(setRoles([]));
+          dispatch(setFilterRoles([]));
+          
+        }
       }
     });
   }, []);

@@ -2,6 +2,7 @@ import {
   Button,
   Card,
   CardBody,
+  CardHeader,
   Col,
   Form,
   FormGroup,
@@ -10,7 +11,7 @@ import {
   Row,
 } from "reactstrap";
 import CommonHeader from "../../../../../Common/CommonHeader";
-import { H3, H6, Image, P } from "../../../../../AbstractElements";
+import { H5, H6, Image, P, H4 } from "../../../../../AbstractElements";
 import { dynamicImage } from "../../../../../Service";
 import {
   AboutMe,
@@ -40,7 +41,9 @@ const EditMyProfile = () => {
   return (
     <Col xl={4}>
       <Card>
-        <CommonHeader title={MyProfile} headClass="card-title mb-0 pb-0" />
+        <CardHeader className="pb-0">
+          <H4 className="card-title mb-0">My Profile</H4>
+        </CardHeader>
         <CardBody>
           <Form onSubmit={(event) => event.preventDefault()}>
             <Row className="mb-3">
@@ -54,35 +57,35 @@ const EditMyProfile = () => {
                 />
               </div>
               <Col>
-                <H3 className="mb-1">{userData.fullName}</H3>
+                <H5 className="mb-1">{userData.fullName}</H5>
                 <P className="mb-4">{formatUnderscoredString(userData.role)}</P>
               </Col>
             </Row>
 
             <FormGroup>
-              <H3 className="mb-1">Email Address</H3>
-              <Label>{userData.emailAddress}</Label>
+              <H5 className="mb-1">Email Address</H5>
+              <P>{userData.emailAddress}</P>
             </FormGroup>
             <FormGroup>
-              <H3 className="mb-1">Phone Number</H3>
-              <Label>{userData.phoneNo}</Label>
+              <H5 className="mb-1">Phone Number</H5>
+              <P>{userData.phoneNo}</P>
             </FormGroup>
             {getUserRole() == "COMPANY" && userData.address !== null && (
               <FormGroup>
-                <H3 className="mb-1">{userData.address}</H3>
-                <Label>Address</Label>
+                <H5 className="mb-1">{userData.address}</H5>
+                <P>Address</P>
               </FormGroup>
             )}
             {getUserRole() == "COMPANY" && userData.gstNo !== null && (
               <FormGroup>
-                <H3 className="mb-1">Gst No</H3>
-                <Label>{userData.gstNo}</Label>
+                <H5 className="mb-1">Gst No</H5>
+                <P>{userData.gstNo}</P>
               </FormGroup>
             )}
             {getUserRole() == "COMPANY" && userData.ntn !== null && (
               <FormGroup>
-                <H3 className="mb-1">NTN</H3>
-                <Label>{userData.ntn}</Label>
+                <H5 className="mb-1">NTN</H5>
+                <P>{userData.ntn}</P>
               </FormGroup>
             )}
 
@@ -91,10 +94,9 @@ const EditMyProfile = () => {
                 style={{
                   display: "flex",
                   justifyContent: "space-between",
-                  marginTop: "30px",
                 }}
               >
-                <H3>Account Status</H3>
+                <H5>Account Status</H5>
                 <div className="d-flex">
                   <div
                     className={`text-end flex-shrink-0 icon-state 

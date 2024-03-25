@@ -7,7 +7,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { Button, FormGroup, Label, Modal, ModalBody, Row } from "reactstrap";
 import { Cancel } from "../../utils/Constant";
 import { CheckCircle } from "react-feather";
-import { H3 } from "../../AbstractElements";
+import { H3, P } from "../../AbstractElements";
 import { create, createCom, getAll } from "../../Api";
 import { useDispatch, useSelector } from "react-redux";
 import Swal from "sweetalert2";
@@ -262,7 +262,7 @@ const CreateNewTicket = () => {
           >
             <Row>
               <FormGroup className="col-md-12 create-group">
-                <Label>Name</Label>
+                <P>Name</P>
                 <input
                   className="form-control"
                   type="text"
@@ -273,7 +273,7 @@ const CreateNewTicket = () => {
                 </span>
               </FormGroup>
               <FormGroup className="col-md-12 create-group">
-                <Label>Description</Label>
+                <P>Description</P>
 
                 <textarea
                   className="form-control"
@@ -301,13 +301,14 @@ const CreateNewTicket = () => {
               />
             </div>
             <div>
-              <label
+              <Label
                 htmlFor="imageInput"
                 style={{
                   cursor: "pointer",
                   backgroundColor: "lightgray",
                   color: "white",
                   padding: "10px",
+                  fontSize: "15px",
                   borderRadius: "5px",
                   border: "1px solid gray",
                 }}
@@ -321,7 +322,7 @@ const CreateNewTicket = () => {
                   style={{ display: "none" }}
                   onChange={handleImageChange}
                 />
-              </label>
+              </Label>
               <div style={{ marginTop: "10px" }}>
                 {selectedImages.map((image, index) => (
                   <div

@@ -10,21 +10,8 @@ import {
   Label,
   Row,
 } from "reactstrap";
-import {
-  AboutMe,
-  Address,
-  City,
-  Company,
-  Country,
-  EditProfile,
-  Emailaddress,
-  FirstName,
-  Lastname,
-  PostalCode,
-  UpdateProfile,
-  Username,
-} from "../../../../../utils/Constant";
-import { H3 } from "../../../../../AbstractElements";
+
+import { H3, H4, P } from "../../../../../AbstractElements";
 import { useDispatch, useSelector } from "react-redux";
 import { getUserRole } from "../../../../../Api/globals";
 import { getAll, update } from "../../../../../Api";
@@ -139,13 +126,13 @@ const EditProfileForm = () => {
     <Col xl={8}>
       <Form className="card" onSubmit={editUserProfile}>
         <CardHeader className="pb-0">
-          <H3 className="card-title mb-0">{EditProfile}</H3>
+          <H4>Edit Profile</H4>
         </CardHeader>
         <CardBody>
           <Row>
             <Col md={12}>
               <FormGroup>
-                <Label>Name</Label>
+                <P>Name</P>
                 <Input
                   type="text"
                   placeholder="Enter Name here"
@@ -158,7 +145,7 @@ const EditProfileForm = () => {
             </Col>
             <Col md={12}>
               <FormGroup>
-                <Label>Phone Number</Label>
+                <P>Phone Number</P>
                 <Input
                   type="text"
                   placeholder="Enter Phone Number here"
@@ -172,7 +159,7 @@ const EditProfileForm = () => {
             {getUserRole() == "COMPANY" && userData.address !== null && (
               <Col md={12}>
                 <FormGroup>
-                  <Label>Address</Label>
+                  <P>Address</P>
                   <Input
                     type="text"
                     placeholder="Enter Address here"
@@ -186,55 +173,55 @@ const EditProfileForm = () => {
             )}
             {/* <Col md={5}>
               <FormGroup>
-                <Label >{Company}</Label>
+                <P >{Company}</P>
                 <Input type="text" placeholder="Company" />
               </FormGroup>
             </Col>
             <Col sm={6} md={3} >
               <FormGroup>
-                <Label>{Username}</Label>
+                <P>{Username}</P>
                 <Input type="text" placeholder="Username" />
               </FormGroup>
             </Col>
             <Col sm={6} md={4} >
               <FormGroup>
-                <Label >{Emailaddress}</Label>
+                <P >{Emailaddress}</P>
                 <Input type="email" placeholder="Email" />
               </FormGroup>
             </Col>
             <Col sm={6} md={6} >
               <FormGroup>
-                <Label >{FirstName}</Label>
+                <P >{FirstName}</P>
                 <Input type="text" placeholder="Company" />
               </FormGroup>
             </Col>
             <Col sm={6} md={6} >
               <FormGroup>
-                <Label >{Lastname}</Label>
+                <P >{Lastname}</P>
                 <Input type="text" placeholder="Last Name" />
               </FormGroup>
             </Col>
             <Col md={12}>
               <FormGroup>
-                <Label >{Address}</Label>
+                <P >{Address}</P>
                 <Input type="text" placeholder="Home Address" />
               </FormGroup>
             </Col>
             <Col sm={6} md={4} >
               <FormGroup>
-                <Label >{City}</Label>
+                <P >{City}</P>
                 <Input type="text" placeholder="City" />
               </FormGroup>
             </Col>
             <Col sm={6} md={3} >
               <FormGroup>
-                <Label >{PostalCode}</Label>
+                <P >{PostalCode}</P>
                 <Input type="number" placeholder="ZIP Code" />
               </FormGroup>
             </Col>
             <Col md={5}>
               <FormGroup>
-                <Label>{Country}</Label>
+                <P>{Country}</P>
                 <Input type='select' className="btn-square form-select">
                   <option>{'Select'}</option>
                   <option>{'Germany'}</option>
@@ -245,7 +232,7 @@ const EditProfileForm = () => {
               </FormGroup>
             </Col>
             <Col md={12}>
-              <Label>{AboutMe}</Label>
+              <P>{AboutMe}</P>
               <textarea className="form-control" rows={3} placeholder="Enter About your description" />
             </Col> */}
           </Row>

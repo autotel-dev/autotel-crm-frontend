@@ -5,7 +5,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { Button, FormGroup, Label, Modal, ModalBody, Row } from "reactstrap";
 import { CheckCircle } from "react-feather";
 import { useDispatch, useSelector } from "react-redux";
-import { H3 } from "../../../AbstractElements";
+import { H3, P } from "../../../AbstractElements";
 import { create, getAll } from "../../../Api";
 
 import { jwtDecode } from "jwt-decode";
@@ -91,7 +91,7 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
     periodList.map((item: any, index: any) => {
       tempReportPeriodList.push({
         value: `${item.name}`,
-        label: `${item.name}`,
+        P: `${item.name}`,
       });
     });
     setReportPeriodType(tempReportPeriodList);
@@ -353,7 +353,7 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
             >
               <Row>
                 <FormGroup className="col-md-6 create-group">
-                  <Label>Title</Label>
+                  <P>Title</P>
                   <input
                     className="form-control"
                     type="text"
@@ -365,7 +365,7 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
                 </FormGroup>
                 <FormGroup className="col-md-6 create-group">
                   <div>
-                    <Label>Report Type</Label>
+                    <P>Report Type</P>
                   </div>
                   <Select
                     showSearch
@@ -373,12 +373,12 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
                     placeholder="Select Type"
                     optionFilterProp="children"
                     filterOption={(input: any, option: any) =>
-                      (option?.label ?? "").includes(input)
+                      (option?.P ?? "").includes(input)
                     }
                     filterSort={(optionA: any, optionB: any) =>
-                      (optionA?.label ?? "")
+                      (optionA?.P ?? "")
                         .toLowerCase()
-                        .localeCompare((optionB?.label ?? "").toLowerCase())
+                        .localeCompare((optionB?.P ?? "").toLowerCase())
                     }
                     onChange={(e: any) => {
                       // console.log(e);
@@ -404,12 +404,12 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
                       placeholder="Select Period"
                       optionFilterProp="children"
                       filterOption={(input: any, option: any) =>
-                        (option?.label ?? "").includes(input)
+                        (option?.P ?? "").includes(input)
                       }
                       filterSort={(optionA: any, optionB: any) =>
-                        (optionA?.label ?? "")
+                        (optionA?.P ?? "")
                           .toLowerCase()
-                          .localeCompare((optionB?.label ?? "").toLowerCase())
+                          .localeCompare((optionB?.P ?? "").toLowerCase())
                       }
                       //   onChange={(e: any) => {
                       //     //   // console.log(e);
@@ -428,7 +428,7 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
                   style={{ marginTop: "-25px" }}
                 >
                   <div>
-                    <Label>Devices</Label>
+                    <P>Devices</P>
                   </div>
                   <CustomDropdown
                     data={dropDownDevices}
@@ -441,12 +441,12 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
                       // placeholder="Select Type"
                       // optionFilterProp="children"
                       // filterOption={(input: any, option: any) =>
-                      //   (option?.label ?? "").includes(input)
+                      //   (option?.P ?? "").includes(input)
                       // }
                       // filterSort={(optionA: any, optionB: any) =>
-                      //   (optionA?.label ?? "")
+                      //   (optionA?.P ?? "")
                       //     .toLowerCase()
-                      //     .localeCompare((optionB?.label ?? "").toLowerCase())
+                      //     .localeCompare((optionB?.P ?? "").toLowerCase())
                       // }
                       // onChange={(e: any) => {
                       //   // console.log(e);
@@ -473,7 +473,7 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
 
                       {dropDownDevices.map((group: any) => (
                         <OptGroup
-                          label={
+                          P={
                             <strong
                               style={{
                                 background: "lightgray",

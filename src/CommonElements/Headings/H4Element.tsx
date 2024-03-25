@@ -1,14 +1,17 @@
 import { ReactNode } from "react";
 
 interface propsTypes {
-    children?: ReactNode;
-    className?: string;
-  
+  children?: ReactNode;
+  className?: string;
 }
 
-const H4 = (props:propsTypes) => {
+const H4 = (props: propsTypes) => {
   const { children = "" } = props;
-  return <h4 {...props}>{children}</h4>;
+  return (
+    <h3 {...props} style={{ fontSize: "20px", fontWeight: "bold" }}>
+      {children}
+    </h3>
+  );
 };
 
 export default H4;

@@ -6,14 +6,15 @@
 	display: inline-block;
 	// width: 60px;
 	// height: 34px;
-	width: 52px;
-	height: 30px;
+	width: 44px;
+	height: 26px;
 	input {
 		display: none;
 		&:checked+.switch-state {
 			background-color: var(--theme-default);
 			&:before {
-				transform: translateX(22.5px);
+				// transform: translateX(26px);
+				transform: translateX(18px);
 			}
 		}
 		&:focus+.switch-state {
@@ -34,15 +35,15 @@
 	&:before {
 		position: absolute;
 		content: "";
-		height: 23.5px;
-		width: 23.5px;
+		height: 20px;
+		width: 20px;
 		// height: 26px;
 		// width: 26px;
 		
 		// left: 4px;
 		// bottom: 4px;
 		left: 3px;
-		bottom: 3.2px;
+		bottom: 3.08px;
 		background-color: $white;
 		transition: .4s;
 		border-radius: 20px;
@@ -53,7 +54,7 @@
 		&:after {
 			content: "\efb8";
 			font-family: $font-ICO;
-			left: 7px;
+			left:6px;
 			// left: 10px;
 			position: absolute;
 			// top: 10px;
@@ -68,7 +69,7 @@
 			&:after {
 				content: "\efad";
 				// left: 36px;
-				left: 30px;
+				left: 25px;
 				opacity: 1;
 				transition: .4s;
 			}

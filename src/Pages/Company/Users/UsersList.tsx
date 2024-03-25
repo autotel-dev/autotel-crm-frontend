@@ -1,4 +1,13 @@
-import { Card, CardBody, Col, Container, Input, Label, Row } from "reactstrap";
+import {
+  Card,
+  CardBody,
+  CardHeader,
+  Col,
+  Container,
+  Input,
+  Label,
+  Row,
+} from "reactstrap";
 import CommonHeader from "../../../Common/CommonHeader";
 import DataTable from "react-data-table-component";
 import { useEffect, useState } from "react";
@@ -21,6 +30,7 @@ import { jwtDecode } from "jwt-decode";
 import { formatUnderscoredString, getUserRole } from "../../../Api/globals";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
+import { H4 } from "../../../AbstractElements";
 
 const UsersList = () => {
   const { operators, loading, activeInActiveOperators } = useSelector(
@@ -168,11 +178,11 @@ const UsersList = () => {
                   }}
                 />
                 <span
-                  className={`switch-state ${
-                    row.isActive ? "bg-primary" : "bg-secondary"
-                  }`}
-                  // className="switch-state"
-                  // style={{ backgroundColor: row.isActive ? "green" : "red" }}
+                  // className={`switch-state ${
+                  //   row.isActive ? "bg-primary" : "bg-secondary"
+                  // }`}
+                  className="switch-state"
+                  style={{ backgroundColor: row.isActive ? "green" : "red" }}
                 />
               </Label>
             </div>
@@ -241,10 +251,12 @@ const UsersList = () => {
 
   return (
     <>
-      <Container fluid>
+      <Container fluid> 
         <Col sm="12">
           <Card>
-            <CommonHeader title="All Users" />
+            <CardHeader className="pb-0">
+              <H4>All Users</H4>
+            </CardHeader>
             <CardBody>
               <div className="table-responsive product-table">
                 {loading ? (

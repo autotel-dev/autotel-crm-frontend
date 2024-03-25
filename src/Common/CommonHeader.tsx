@@ -1,18 +1,23 @@
 import { CardHeader } from "reactstrap";
 import { Fragment } from "react";
-import { H3, P } from "../AbstractElements";
+import { H3, H4, P } from "../AbstractElements";
 type ObjectType = {
-    text?: string;
-    code?: string;
-  };
-  type PropsTypes = {
-    headClass?: string;
-    title: string;
-    subTitle?: ObjectType[];
-    subTitle2?:ObjectType[];
-  };
+  text?: string;
+  code?: string;
+};
+type PropsTypes = {
+  headClass?: string;
+  title: string;
+  subTitle?: ObjectType[];
+  subTitle2?: ObjectType[];
+};
 
-const CommonHeader = ({ headClass, title, subTitle ,subTitle2}: PropsTypes) => {
+const CommonHeader = ({
+  headClass,
+  title,
+  subTitle,
+  subTitle2,
+}: PropsTypes) => {
   return (
     <CardHeader className={headClass}>
       <H3 className="mb-0">{title}</H3>
@@ -24,7 +29,8 @@ const CommonHeader = ({ headClass, title, subTitle ,subTitle2}: PropsTypes) => {
             </Fragment>
           ))}
         </P>
-      )}{subTitle2 && (
+      )}
+      {subTitle2 && (
         <P className="f-m-light mt-1">
           {subTitle2.map((data, index) => (
             <Fragment key={index}>

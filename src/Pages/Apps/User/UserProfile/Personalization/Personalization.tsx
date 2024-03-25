@@ -3,6 +3,7 @@ import {
   Card,
   CardBody,
   CardFooter,
+  CardHeader,
   Col,
   Form,
   FormGroup,
@@ -13,7 +14,7 @@ import {
   Row,
 } from "reactstrap";
 import CommonHeader from "../../../../../Common/CommonHeader";
-import { H4, H5 } from "../../../../../AbstractElements";
+import { H4, H5, P } from "../../../../../AbstractElements";
 import { useDispatch, useSelector } from "react-redux";
 import React, { useEffect, useState } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
@@ -333,15 +334,14 @@ const Personalization = () => {
     <Col md={12}>
       <Form className="card" onSubmit={createPersonalization}>
         <Card>
-          <CommonHeader
-            title="Personalization"
-            headClass="card-title mb-0 pb-0"
-          />
+          <CardHeader className="pb-0">
+            <H4>Personalization</H4>
+          </CardHeader>
           <CardBody>
             <Row>
               <Col md={6}>
                 <FormGroup>
-                  <Label>Header Text</Label>
+                  <P>Header Text</P>
                   <Input
                     type="text"
                     placeholder="Enter Header Text here"
@@ -356,7 +356,7 @@ const Personalization = () => {
               </Col>
               <Col md={6}>
                 <FormGroup>
-                  <Label>Sub Header Text</Label>
+                  <P>Sub Header Text</P>
                   <Input
                     type="text"
                     placeholder="Enter Sub Text here"
@@ -371,7 +371,7 @@ const Personalization = () => {
               </Col>
               <Col md={4}>
                 <FormGroup>
-                  <Label>Primary Color</Label>
+                  <P>Primary Color</P>
                   <Input
                     type="color"
                     placeholder="Enter Primary Color here"
@@ -387,7 +387,7 @@ const Personalization = () => {
               </Col>
               <Col md={4}>
                 <FormGroup>
-                  <Label>Secondary Color</Label>
+                  <P>Secondary Color</P>
                   <Input
                     type="color"
                     placeholder="Enter Secondary Color here"
@@ -403,7 +403,7 @@ const Personalization = () => {
               </Col>
               <Col md={4}>
                 <FormGroup>
-                  <Label>Custom Color 1</Label>
+                  <P>Custom Color 1</P>
                   <Input
                     type="color"
                     placeholder="Enter Custom Color 1"
@@ -419,7 +419,7 @@ const Personalization = () => {
               </Col>
               <Col md={4}>
                 <FormGroup>
-                  <Label>Custom Color 2</Label>
+                  <P>Custom Color 2</P>
                   <Input
                     type="color"
                     placeholder="Enter Custom Color 2"
@@ -435,7 +435,7 @@ const Personalization = () => {
               </Col>
               <Col md={4}>
                 <FormGroup>
-                  <Label>Background Color</Label>
+                  <P>Background Color</P>
                   <Input
                     type="color"
                     placeholder="Enter Background COlor"
@@ -451,7 +451,7 @@ const Personalization = () => {
               </Col>
               <Col md={4}>
                 <FormGroup>
-                  <Label>Text Color</Label>
+                  <P>Text Color</P>
                   <Input
                     type="color"
                     placeholder="Enter Text Color"
