@@ -8,6 +8,7 @@ import {
   setApiKeys,
   setCreateServer,
 } from "../../../ReaduxToolkit/Reducer/ServerDetailsSlice";
+import { P } from "../../../AbstractElements";
 
 const ApiKeys = ({ callbackActive }: BusinessFormCommonProps) => {
   const { apiKeys, createServer } = useSelector(
@@ -46,10 +47,10 @@ const ApiKeys = ({ callbackActive }: BusinessFormCommonProps) => {
     >
       <Row className="g-3">
         <Col sm={6}>
-          <Label>
+          <P>
             API Key
             <span className="txt-danger">*</span>
-          </Label>
+          </P>
           <Input
             value={googleMapApiKey}
             name="googleMapApiKey"

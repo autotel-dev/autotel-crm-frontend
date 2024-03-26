@@ -7,7 +7,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { Button, FormGroup, Label, Modal, ModalBody, Row } from "reactstrap";
 import { Cancel } from "../../utils/Constant";
 import { CheckCircle } from "react-feather";
-import { H3 } from "../../AbstractElements";
+import { H3, P } from "../../AbstractElements";
 import { create, getAll } from "../../Api";
 import { useDispatch, useSelector } from "react-redux";
 import { ProvinceType } from "./ProvinceTypes/ProvinceTypes";
@@ -173,7 +173,7 @@ const CreateNewProvince = () => {
             >
               <Row>
                 <FormGroup className="col-md-12 create-group">
-                  <Label>Province Name</Label>
+                  <P>Province Name</P>
                   <input
                     className="form-control"
                     type="text"
@@ -191,7 +191,10 @@ const CreateNewProvince = () => {
                   justifyContent: "space-between",
                 }}
               >
-                <SelectCountryBox placeholder={"Select Country"} />
+                <div>
+                  <P>Select Country</P>
+                  <SelectCountryBox placeholder={"Select Country"} />
+                </div>
               </div>
               <Button color="primary" className="me-1">
                 {loading ? "Loading ..." : `Add`}

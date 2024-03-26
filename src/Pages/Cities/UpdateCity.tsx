@@ -10,7 +10,7 @@ import {
   Row,
 } from "reactstrap";
 import { Cancel } from "../../utils/Constant";
-import { H3 } from "../../AbstractElements";
+import { H3, P } from "../../AbstractElements";
 import { CitiesType } from "./CityTypes/CityTypes";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -198,7 +198,7 @@ const UpdateCity: React.FC<PropsTypes> = ({
         >
           <Row>
             <FormGroup className="col-md-12 create-group">
-              <Label>City Name</Label>
+              <P>City Name</P>
               <input
                 className="form-control"
                 type="text"
@@ -219,11 +219,11 @@ const UpdateCity: React.FC<PropsTypes> = ({
                 }}
               >
                 <div>
-                  <span>Select Country</span>
+                  <P>Select Country</P>
                   <SelectCountryBox placeholder={"Select Country"} />
                 </div>
                 <div>
-                  <span>Select Province</span>
+                  <P>Select Province</P>
                   <SelectProvinceBox placeholder={"Select Province"} />
                 </div>
               </div>

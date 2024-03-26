@@ -10,6 +10,7 @@ import FileAttachementComponent from "./FileAttachementComponent";
 import { setCreateCompany } from "../../../ReaduxToolkit/Reducer/CompanySlice";
 import { useDispatch, useSelector } from "react-redux";
 import { create } from "../../../Api";
+import { H4 } from "../../../AbstractElements";
 
 const Attachements = ({ callbackActive }: BusinessFormCommonProps) => {
   // const subTitle = [
@@ -136,16 +137,10 @@ const Attachements = ({ callbackActive }: BusinessFormCommonProps) => {
       <div>
         <Row className="g-3">
           <Col xs={12}>
-            <Label
-              style={{
-                fontSize: "25px",
-                fontWeight: "bold",
-                marginLeft: "10px",
-              }}
-            >
+            <H4>
               Legal Attachements
               <span className="txt-danger">*</span>
-            </Label>
+            </H4>
           </Col>
         </Row>
         <Row
@@ -156,8 +151,8 @@ const Attachements = ({ callbackActive }: BusinessFormCommonProps) => {
             borderRadius: "10px",
             marginTop: "15px",
             marginBottom: "40px",
-            marginLeft: "15px",
-            marginRight: "15px",
+            marginLeft: "5px",
+            marginRight: "5px",
           }}
         >
           <FileAttachementComponent

@@ -8,6 +8,7 @@ import {
   setCreateServer,
   setServerInfo,
 } from "../../../ReaduxToolkit/Reducer/ServerDetailsSlice";
+import { P } from "../../../AbstractElements";
 
 const ServerInfoForm = ({ callbackActive }: BusinessFormCommonProps) => {
   const dispatch = useDispatch();
@@ -82,10 +83,10 @@ const ServerInfoForm = ({ callbackActive }: BusinessFormCommonProps) => {
     >
       <Row className="g-3">
         <Col xl={4} sm={6}>
-          <Label>
+          <P>
             Full Name
             <span className="txt-danger">*</span>
-          </Label>
+          </P>
           <Input
             type="text"
             placeholder="Enter Full Name"
@@ -95,10 +96,10 @@ const ServerInfoForm = ({ callbackActive }: BusinessFormCommonProps) => {
           />
         </Col>
         <Col xl={4} sm={6}>
-          <Label>
+          <P>
             Service Provider
             <span className="txt-danger">*</span>
-          </Label>
+          </P>
           <Input
             type="text"
             placeholder="Enter Service Provider"
@@ -108,10 +109,10 @@ const ServerInfoForm = ({ callbackActive }: BusinessFormCommonProps) => {
           />
         </Col>
         <Col xl={4} xs={12}>
-          <Label>
+          <P>
             IP Address
             <span className="txt-danger">*</span>
-          </Label>
+          </P>
           <Input
             id="ipAddress"
             type="text"
@@ -122,10 +123,10 @@ const ServerInfoForm = ({ callbackActive }: BusinessFormCommonProps) => {
           />
         </Col>
         <Col xl={4} sm={6}>
-          <Label>
+          <P>
             Server URL
             <span className="txt-danger">*</span>
-          </Label>
+          </P>
           <Input
             type="text"
             placeholder="Enter Server URL"
@@ -135,10 +136,10 @@ const ServerInfoForm = ({ callbackActive }: BusinessFormCommonProps) => {
           />
         </Col>
         <Col xl={4} sm={6}>
-          <Label>
+          <P>
             Login User Software
             <span className="txt-danger">*</span>
-          </Label>
+          </P>
           <Input
             type="text"
             placeholder="Enter Login User Software"
@@ -148,10 +149,10 @@ const ServerInfoForm = ({ callbackActive }: BusinessFormCommonProps) => {
           />
         </Col>
         <Col xl={4} xs={12}>
-          <Label>
+          <P>
             Operating System
             <span className="txt-danger">*</span>
-          </Label>
+          </P>
           <Input
             id="operatingSystem"
             type="text"
@@ -162,10 +163,10 @@ const ServerInfoForm = ({ callbackActive }: BusinessFormCommonProps) => {
           />
         </Col>
         <Col xl={4} xs={12}>
-          <Label>
+          <P>
             Login User Server
             <span className="txt-danger">*</span>
-          </Label>
+          </P>
           <Input
             id="loginUserServer"
             type="text"
@@ -176,10 +177,10 @@ const ServerInfoForm = ({ callbackActive }: BusinessFormCommonProps) => {
           />
         </Col>
         <Col xl={4} xs={12}>
-          <Label>
+          <P>
             SSH Port
             <span className="txt-danger">*</span>
-          </Label>
+          </P>
           <Input
             id="sshPort"
             type="text"
@@ -190,10 +191,10 @@ const ServerInfoForm = ({ callbackActive }: BusinessFormCommonProps) => {
           />
         </Col>
         <Col xl={4} xs={12}>
-          <Label>
+          <P>
             Server Specifications
             <span className="txt-danger">*</span>
-          </Label>
+          </P>
           <Input
             id="serverSpecifications"
             type="text"

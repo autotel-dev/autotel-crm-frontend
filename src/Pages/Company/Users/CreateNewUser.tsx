@@ -25,6 +25,7 @@ import {
 import { jwtDecode } from "jwt-decode";
 import { Select } from "antd";
 import Swal from "sweetalert2";
+import "./permissionsStyle.css";
 
 const CreateNewUser = () => {
   const { crmActiveModules } = useSelector((state: any) => state.crmModules);
@@ -426,6 +427,7 @@ const CreateNewUser = () => {
                                         marginRight: "25px",
                                         marginBottom: "15px",
                                         fontSize: "18px",
+                                        verticalAlign:"center"
                                       }}
                                       onClick={(e) => e.stopPropagation()}
                                     >
@@ -496,7 +498,7 @@ const CreateNewUser = () => {
                                     display: "inline-block",
                                     position: "relative",
                                     cursor: "pointer",
-                                    marginRight: "25px",
+                                    marginRight: "55px",
                                     marginBottom: "15px",
                                     fontSize: "18px",
                                   }}

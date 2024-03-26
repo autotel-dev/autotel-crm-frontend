@@ -17,6 +17,7 @@ import { setCreateCompany } from "../../../ReaduxToolkit/Reducer/CompanySlice";
 import SelectCitiesBox from "./SelectCitiesBox";
 import SelectPackageBox from "./SelectPackageBox";
 import SelectTimeZoneBox from "./SelectTimeZoneBox";
+import { P } from "../../../AbstractElements";
 
 const CompanyInfoForm = ({ callbackActive }: BusinessFormCommonProps) => {
   const dispatch = useDispatch();
@@ -85,10 +86,10 @@ const CompanyInfoForm = ({ callbackActive }: BusinessFormCommonProps) => {
     >
       <Row className="g-3">
         <Col xl={4} xs={12}>
-          <Label>
+          <P>
             Company Name
             <span className="txt-danger">*</span>
-          </Label>
+          </P>
           <Input
             type="text"
             placeholder="Enter Company Name"
@@ -98,10 +99,10 @@ const CompanyInfoForm = ({ callbackActive }: BusinessFormCommonProps) => {
           />
         </Col>
         <Col xl={4} xs={12}>
-          <Label>
+          <P>
             Phone No
             <span className="txt-danger">*</span>
-          </Label>
+          </P>
           <Input
             type="text"
             placeholder="Enter Phone No"
@@ -112,10 +113,10 @@ const CompanyInfoForm = ({ callbackActive }: BusinessFormCommonProps) => {
         </Col>
 
         <Col xl={4} xs={12}>
-          <Label>
+          <P>
             Address
             <span className="txt-danger">*</span>
-          </Label>
+          </P>
           <Input
             type="text"
             placeholder="Enter address"
@@ -125,10 +126,10 @@ const CompanyInfoForm = ({ callbackActive }: BusinessFormCommonProps) => {
           />
         </Col>
         <Col xl={4} xs={12}>
-          <Label>
+          <P>
             Contact Person Name
             <span className="txt-danger">*</span>
-          </Label>
+          </P>
           <Input
             type="text"
             placeholder="Enter Contact Person Name"
@@ -138,10 +139,10 @@ const CompanyInfoForm = ({ callbackActive }: BusinessFormCommonProps) => {
           />
         </Col>
         <Col xl={4} xs={12}>
-          <Label>
+          <P>
             NTN
             <span className="txt-danger">*</span>
-          </Label>
+          </P>
           <Input
             id="ntn"
             type="text"
@@ -152,10 +153,10 @@ const CompanyInfoForm = ({ callbackActive }: BusinessFormCommonProps) => {
           />
         </Col>
         <Col xl={4} xs={12}>
-          <Label>
+          <P>
             Gst No
             <span className="txt-danger">*</span>
-          </Label>
+          </P>
           <Input
             id="gstNo"
             type="text"
@@ -166,10 +167,10 @@ const CompanyInfoForm = ({ callbackActive }: BusinessFormCommonProps) => {
           />
         </Col>
         <Col xl={4} xs={12}>
-          <Label>
+          <P>
             Contact Person Number
             <span className="txt-danger">*</span>
-          </Label>
+          </P>
           <Input
             id="contactPersonNumber"
             type="text"
@@ -180,10 +181,10 @@ const CompanyInfoForm = ({ callbackActive }: BusinessFormCommonProps) => {
           />
         </Col>
         <Col xl={4} xs={12}>
-          <Label>
+          <P>
             CNIC Number
             <span className="txt-danger">*</span>
-          </Label>
+          </P>
           <Input
             id="cnicNumber"
             type="text"
@@ -195,10 +196,10 @@ const CompanyInfoForm = ({ callbackActive }: BusinessFormCommonProps) => {
         </Col>
 
         <Col xl={4} xs={12}>
-          <Label>
+          <P>
             Package Expiration Date
             <span className="txt-danger">*</span>
-          </Label>
+          </P>
           <Input
             id="packageExpirationDate"
             type="date"
@@ -210,28 +211,28 @@ const CompanyInfoForm = ({ callbackActive }: BusinessFormCommonProps) => {
         </Col>
         <Col xl={4} xs={12}>
           <div>
-            <Label>
+            <P>
               Select City
               <span className="txt-danger">*</span>
-            </Label>
+            </P>
           </div>
           <SelectCitiesBox placeholder="Select City" />
         </Col>
         <Col xl={4} xs={12}>
           <div>
-            <Label>
+            <P>
               Select Package
               <span className="txt-danger">*</span>
-            </Label>
+            </P>
           </div>
           <SelectPackageBox placeholder="Select Package" />
         </Col>
         <Col xl={4} xs={12}>
           <div>
-            <Label>
+            <P>
               Select Time Zone
               <span className="txt-danger">*</span>
-            </Label>
+            </P>
           </div>
           <SelectTimeZoneBox placeholder="Select Time Zone" />
         </Col>

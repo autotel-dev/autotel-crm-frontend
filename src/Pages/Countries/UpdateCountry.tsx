@@ -10,7 +10,7 @@ import {
   Row,
 } from "reactstrap";
 import { Cancel } from "../../utils/Constant";
-import { H3 } from "../../AbstractElements";
+import { H3,P } from "../../AbstractElements";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getAll, update } from "../../Api";
@@ -194,7 +194,7 @@ const UpdateCountry: React.FC<PropsTypes> = ({
         >
           <Row>
             <FormGroup className="col-md-12 ">
-              <Label>Country Name</Label>
+              <P>Country Name</P>
               <input
                 className="form-control"
                 type="text"

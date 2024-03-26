@@ -48,10 +48,10 @@ const ServerCredentials = ({ callbackActive }: BusinessFormCommonProps) => {
             <Col md={6}>
               <Row className="g-3">
                 <Col xs={12}>
-                  <Label>
+                  <P>
                     Select Servers
                     <span className="txt-danger">*</span>
-                  </Label>
+                  </P>
                 </Col>
                 <Col md={6} sm={12} sx={12}>
                   <SelectServerBox placeholder="Select Servers" />

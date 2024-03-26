@@ -19,6 +19,7 @@ import {
 } from "../../../ReaduxToolkit/Reducer/ServerDetailsSlice";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
+import { P } from "../../../AbstractElements";
 
 const ServerCredentials = ({ callbackActive }: BusinessFormCommonProps) => {
   const { serverCredentials, createServer } = useSelector(
@@ -74,10 +75,10 @@ const ServerCredentials = ({ callbackActive }: BusinessFormCommonProps) => {
     >
       <Row className="g-3">
         <Col sm={6}>
-          <Label>
+          <P>
             Multi Cloud Web Login
             <span className="txt-danger">*</span>
-          </Label>
+          </P>
           <Input
             value={multiCloudWebLogin}
             name="multiCloudWebLogin"
@@ -87,10 +88,10 @@ const ServerCredentials = ({ callbackActive }: BusinessFormCommonProps) => {
           />
         </Col>
         <Col sm={6}>
-          <Label>
+          <P>
             Login Password Software
             <span className="txt-danger">*</span>
-          </Label>
+          </P>
 
           <InputGroup>
             <Input
@@ -123,10 +124,10 @@ const ServerCredentials = ({ callbackActive }: BusinessFormCommonProps) => {
           </InputGroup>
         </Col>
         <Col sm={6}>
-          <Label>
+          <P>
             Login Password Server
             <span className="txt-danger">*</span>
-          </Label>
+          </P>
 
           <InputGroup>
             <Input

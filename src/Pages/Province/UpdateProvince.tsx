@@ -10,7 +10,7 @@ import {
   Row,
 } from "reactstrap";
 import { Cancel } from "../../utils/Constant";
-import { H3 } from "../../AbstractElements";
+import { H3, P } from "../../AbstractElements";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getAll, update } from "../../Api";
@@ -202,7 +202,7 @@ const UpdateProvince: React.FC<PropsTypes> = ({
         >
           <Row>
             <FormGroup className="col-md-12 create-group">
-              <Label>Province Name</Label>
+              <P>Province Name</P>
               <input
                 className="form-control"
                 type="text"
@@ -221,7 +221,10 @@ const UpdateProvince: React.FC<PropsTypes> = ({
                   justifyContent: "space-between",
                 }}
               >
-                <SelectCountryBox placeholder={"Select Country"} />
+                <div>
+                  <P>Select Country</P>
+                  <SelectCountryBox placeholder={"Select Country"} />
+                </div>
               </div>
               <div className="d-flex">
                 <div

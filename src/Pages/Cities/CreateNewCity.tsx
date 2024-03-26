@@ -7,7 +7,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { Button, FormGroup, Label, Modal, ModalBody, Row } from "reactstrap";
 import { Cancel } from "../../utils/Constant";
 import { CheckCircle } from "react-feather";
-import { H3 } from "../../AbstractElements";
+import { H3, P } from "../../AbstractElements";
 import { CitiesType } from "./CityTypes/CityTypes";
 import { create, getAll } from "../../Api";
 import { useDispatch, useSelector } from "react-redux";
@@ -179,7 +179,7 @@ const CreateNewCity = () => {
             >
               <Row>
                 <FormGroup className="col-md-12 create-group">
-                  <Label>City Name</Label>
+                  <P>City Name</P>
                   <input
                     className="form-control"
                     type="text"
@@ -198,11 +198,11 @@ const CreateNewCity = () => {
                 }}
               >
                 <div>
-                  <span>Select Country</span>
+                  <P>Select Country</P>
                   <SelectCountryBox placeholder={"Select Country"} />
                 </div>
                 <div>
-                  <span>Select Province</span>
+                  <P>Select Province</P>
                   <SelectProvinceBox placeholder={"Select Province"} />
                 </div>
               </div>

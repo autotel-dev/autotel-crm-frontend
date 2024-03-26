@@ -10,7 +10,7 @@ import {
   Row,
 } from "reactstrap";
 import { Cancel } from "../../utils/Constant";
-import { H3 } from "../../AbstractElements";
+import { H3 ,P} from "../../AbstractElements";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getAll, update } from "../../Api";
@@ -204,7 +204,7 @@ const UpdateCRMModule: React.FC<PropsTypes> = ({
         >
           <Row>
             <FormGroup className="col-md-12 create-group">
-              <Label>Module Name</Label>
+              <P>Module Name</P>
               <input
                 className="form-control"
                 type="text"
@@ -219,7 +219,7 @@ const UpdateCRMModule: React.FC<PropsTypes> = ({
           </Row>
           <Row>
             <FormGroup className="col-md-12 create-group">
-              <Label>Icon Class</Label>
+              <P>Icon Class</P>
               <input
                 className="form-control"
                 type="text"

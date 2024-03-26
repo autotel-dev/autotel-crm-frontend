@@ -12,6 +12,7 @@ import {
   setImageBackground,
   setComapnyLogo,
 } from "../../../ReaduxToolkit/Reducer/CompanySlice";
+import { H5 } from "../../../AbstractElements";
 
 interface propTypes {
   heading: any;
@@ -98,7 +99,8 @@ const FileAttachementComponent: React.FC<propTypes> = ({
   return (
     <Col lg={4}>
       <Card>
-        <CommonHeader title={heading} subTitle={subTitle} headClass="pb-0" />
+        {/* <CommonHeader title={heading} subTitle={subTitle} headClass="pb-0" /> */}
+        <H5>{heading}</H5>
         <CardBody>
           <Dropzone
             onChangeStatus={handleAdd}

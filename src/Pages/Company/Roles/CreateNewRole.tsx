@@ -24,6 +24,7 @@ import Swal from "sweetalert2";
 //   setCountries,
 //   setFilterCountries,
 // } from "../../ReaduxToolkit/Reducer/CountrySlice";
+import "./permissionsStyle.css";
 
 const CreateNewRole = () => {
   const dispatch = useDispatch();

@@ -205,7 +205,7 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
     },
     // {
     //   title: "Tasks",
-    //   svgIcon: "home",
+    //   svgIcon: "task",
     //   link: `${process.env.PUBLIC_URL}/company/tasks`,
     // },
     {
@@ -236,7 +236,7 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
 
     // {
     //   title: "Users",
-    //   svgIcon: "home",
+    //   svgIcon: "user",
     //   link: `${process.env.PUBLIC_URL}/company/users`,
     // },
     {

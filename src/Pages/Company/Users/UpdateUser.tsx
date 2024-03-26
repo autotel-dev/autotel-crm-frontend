@@ -26,6 +26,7 @@ import {
 } from "../../../ReaduxToolkit/Reducer/OperatorSlice";
 import Swal from "sweetalert2";
 import { Select } from "antd";
+import "./permissionsStyle.css";
 // import { setNoDataFound } from "../../ReaduxToolkit/Reducer/NoDataFoundSlice";
 
 interface PropsTypes {
@@ -529,7 +530,7 @@ const UpdateUser: React.FC<PropsTypes> = ({
                                 display: "inline-block",
                                 position: "relative",
                                 cursor: "pointer",
-                                marginRight: "25px",
+                                marginRight: "55px",
                                 marginBottom: "15px",
                                 fontSize: "18px",
                               }}

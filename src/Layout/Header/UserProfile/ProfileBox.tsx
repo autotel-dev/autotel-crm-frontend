@@ -4,6 +4,7 @@ import { profilesMessage } from "../../../Data/Layout/Header/ProfilesData";
 import FeatherIcons from "../../../utils/CommonSvgIcon/FeatherIcons";
 import { getUserId, getUserRole } from "../../../Api/globals";
 import { useSelector } from "react-redux";
+import { ROLES } from "../../../constants/roles";
 
 const ProfileBox = () => {
   const { userPermissions } = useSelector(
@@ -11,7 +12,7 @@ const ProfileBox = () => {
   );
   var profile = userPermissions.find((item: any) => item.title === "Profile");
   var profileMenu = profilesMessage.filter((item, index) => {
-    if (profile == undefined && index == 0) {
+    if (profile == undefined && index == 0 && getUserRole() !== ROLES.SUPER_ADMIN) {
       return false;
     } else if (profile !== undefined && item.name === "Account") {
       return profile.read;

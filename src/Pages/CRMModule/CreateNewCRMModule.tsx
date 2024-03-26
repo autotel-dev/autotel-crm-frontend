@@ -4,7 +4,7 @@ import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Button, FormGroup, Label, Modal, ModalBody, Row } from "reactstrap";
 import { Cancel } from "../../utils/Constant";
-import { H3 } from "../../AbstractElements";
+import { H3 ,P} from "../../AbstractElements";
 import { create, getAll } from "../../Api";
 import { useDispatch, useSelector } from "react-redux";
 import { Type } from "../Countries/CountryTypes/CountryTypes";
@@ -156,7 +156,7 @@ const CreateNewCRMModule = () => {
             >
               <Row>
                 <FormGroup className="col-md-12 create-group">
-                  <Label>Module Name</Label>
+                  <P>Module Name</P>
                   <input
                     className="form-control"
                     type="text"
@@ -169,7 +169,7 @@ const CreateNewCRMModule = () => {
               </Row>
               <Row>
                 <FormGroup className="col-md-12 create-group">
-                  <Label>Icon Class</Label>
+                  <P>Icon Class</P>
                   <input
                     className="form-control"
                     type="text"

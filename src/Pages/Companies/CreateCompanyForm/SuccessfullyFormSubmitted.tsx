@@ -1,4 +1,4 @@
-import { H2, Image } from "../../../AbstractElements";
+import { H4, Image, P } from "../../../AbstractElements";
 import { dynamicImage } from "../../../Service";
 import { SuccessfullyCompleted } from "../../../utils/Constant";
 import { BusinessFormCommonProps } from "../../../Types/Forms/FormLayout/FormWizardTypes";
@@ -66,7 +66,6 @@ const SuccessfullyFormSubmitted = ({
   } = useSelector((state: any) => state.companies);
   // console.log("createCompany", createCompany);
 
-  // const [formData, setFormData] = useState({});
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -77,9 +76,9 @@ const SuccessfullyFormSubmitted = ({
   };
 
   useEffect(() => {
-    // console.log("CNICFront:", cnicFront);
-    // console.log("CNICBack:", cnicBack);
-  });
+    dispatch(setServerCredentials(serverCredentials));
+    // console.log("serverCredentials in preview", serverCredentials);
+  }, [serverCredentials]);
 
   function checkFileTypeByExtension(fileName: any, file: any) {
     // console.log("filename", fileName);
@@ -246,7 +245,7 @@ const SuccessfullyFormSubmitted = ({
   return (
     <div className="form-completed">
       <div style={{ display: "flex", justifyContent: "space-between" }}>
-        <H2>Company Info</H2>
+        <H4>Company Info</H4>
         <Row>
           <Col
             xs={9}
@@ -262,10 +261,10 @@ const SuccessfullyFormSubmitted = ({
       <Form style={{ marginBottom: "65px", marginTop: "20px" }}>
         <Row className="g-3">
           <Col xl={4} sm={6}>
-            <Label>
+            <P>
               Company Name
               <span className="txt-danger">*</span>
-            </Label>
+            </P>
             <Input
               type="text"
               placeholder="Enter Company Name"
@@ -275,10 +274,10 @@ const SuccessfullyFormSubmitted = ({
             />
           </Col>
           <Col xl={4} sm={6}>
-            <Label>
+            <P>
               Phone Number
               <span className="txt-danger">*</span>
-            </Label>
+            </P>
             <Input
               type="text"
               placeholder="Enter Phone Number"
@@ -288,10 +287,10 @@ const SuccessfullyFormSubmitted = ({
             />
           </Col>
           <Col xl={4} xs={12}>
-            <Label>
+            <P>
               Address
               <span className="txt-danger">*</span>
-            </Label>
+            </P>
             <Input
               id="address"
               type="text"
@@ -302,10 +301,10 @@ const SuccessfullyFormSubmitted = ({
             />
           </Col>
           <Col xl={4} sm={6}>
-            <Label>
+            <P>
               Contact Person Name
               <span className="txt-danger">*</span>
-            </Label>
+            </P>
             <Input
               type="text"
               placeholder="Enter Contact Person Name"
@@ -315,10 +314,10 @@ const SuccessfullyFormSubmitted = ({
             />
           </Col>
           <Col xl={4} sm={6}>
-            <Label>
+            <P>
               NTN
               <span className="txt-danger">*</span>
-            </Label>
+            </P>
             <Input
               type="text"
               placeholder="Enter ntn"
@@ -328,10 +327,10 @@ const SuccessfullyFormSubmitted = ({
             />
           </Col>
           <Col xl={4} xs={12}>
-            <Label>
+            <P>
               GST Number
               <span className="txt-danger">*</span>
-            </Label>
+            </P>
             <Input
               id="gstNo"
               type="text"
@@ -342,10 +341,10 @@ const SuccessfullyFormSubmitted = ({
             />
           </Col>
           <Col xl={4} xs={12}>
-            <Label>
+            <P>
               Contact Person Number
               <span className="txt-danger">*</span>
-            </Label>
+            </P>
             <Input
               id="contactPersonNumber"
               type="text"
@@ -356,10 +355,10 @@ const SuccessfullyFormSubmitted = ({
             />
           </Col>
           <Col xl={4} xs={12}>
-            <Label>
+            <P>
               CNIC Number
               <span className="txt-danger">*</span>
-            </Label>
+            </P>
             <Input
               id="cnicNumber"
               type="text"
@@ -370,10 +369,10 @@ const SuccessfullyFormSubmitted = ({
             />
           </Col>
           <Col xl={4} xs={12}>
-            <Label>
+            <P>
               Package Expiration Date
               <span className="txt-danger">*</span>
-            </Label>
+            </P>
             <Input
               id="packageExpirationDate"
               type="text"
@@ -387,10 +386,10 @@ const SuccessfullyFormSubmitted = ({
             if (item._id == createCompany.city) {
               return (
                 <Col xl={4} xs={12}>
-                  <Label>
+                  <P>
                     City
                     <span className="txt-danger">*</span>
-                  </Label>
+                  </P>
                   <Input
                     id="city"
                     type="text"
@@ -407,10 +406,10 @@ const SuccessfullyFormSubmitted = ({
             if (item._id == createCompany.package) {
               return (
                 <Col xl={4} xs={12}>
-                  <Label>
+                  <P>
                     Package Name
                     <span className="txt-danger">*</span>
-                  </Label>
+                  </P>
                   <Input
                     id="package"
                     type="text"
@@ -427,10 +426,10 @@ const SuccessfullyFormSubmitted = ({
             if (item == createCompany.timezone) {
               return (
                 <Col xl={4} xs={12}>
-                  <Label>
+                  <P>
                     Timezone
                     <span className="txt-danger">*</span>
-                  </Label>
+                  </P>
                   <Input
                     id="timezone"
                     type="text"
@@ -447,15 +446,15 @@ const SuccessfullyFormSubmitted = ({
       </Form>
       {/*  */}
 
-      <H2>Account Credentials</H2>
+      <H4>Account Credentials</H4>
 
       <Form style={{ marginBottom: "65px", marginTop: "20px" }}>
         <Row className="g-3">
           <Col sm={6}>
-            <Label>
+            <P>
               Email Address
               <span className="txt-danger">*</span>
-            </Label>
+            </P>
             <Input
               defaultValue={createCompany.emailAddress}
               disabled
@@ -465,10 +464,10 @@ const SuccessfullyFormSubmitted = ({
             />
           </Col>
           <Col sm={6}>
-            <Label>
+            <P>
               Password
               <span className="txt-danger">*</span>
-            </Label>
+            </P>
             {/* <Input
               type={showPassword ? "text" : "password"}
               placeholder="Enter Password"
@@ -508,10 +507,10 @@ const SuccessfullyFormSubmitted = ({
             </InputGroup>
           </Col>
           {/* <Col sm={6}>
-            <Label>
+            <P>
               Image Title
               <span className="txt-danger">*</span>
-            </Label>
+            </P>
             <Input
               type="text"
               placeholder="Enter Image Title"
@@ -521,10 +520,10 @@ const SuccessfullyFormSubmitted = ({
             />
           </Col>
           <Col sm={6}>
-            <Label>
+            <P>
               Company Title
               <span className="txt-danger">*</span>
-            </Label>
+            </P>
             <Input
               type="text"
               placeholder="Enter Company Title"
@@ -536,10 +535,10 @@ const SuccessfullyFormSubmitted = ({
           <div style={{ display: "flex", justifyContent: "space-evenly" }}>
             {imageBackground !== null && (
               <div>
-                <Label>
+                <P>
                   Image Background
                   <span className="txt-danger">*</span>
-                </Label>
+                </P>
                 <img
                   src={URL.createObjectURL(imageBackground)}
                   alt=""
@@ -549,10 +548,10 @@ const SuccessfullyFormSubmitted = ({
             )}
             {companyLogo !== null && (
               <div>
-                <Label>
+                <P>
                   Image Background
                   <span className="txt-danger">*</span>
-                </Label>
+                </P>
                 <img
                   src={URL.createObjectURL(companyLogo)}
                   alt=""
@@ -564,16 +563,16 @@ const SuccessfullyFormSubmitted = ({
         </Row>
       </Form>
 
-      <H2>Server Credentials</H2>
+      <H4>Server Credentials</H4>
       <Form style={{ marginBottom: "65px", marginTop: "20px" }}>
         {serverCredentials.map((item: any, index: any) => {
           return (
             <div
               style={{
                 padding: "20px",
-                border: "2px solid black",
+                border: "1px solid black",
                 borderRadius: "10px",
-                margin: "20px",
+                margin: "20px 0px",
               }}
             >
               <Row className="g-3">
@@ -590,10 +589,10 @@ const SuccessfullyFormSubmitted = ({
                   })}
                 </Col>
                 <Col sm={6}>
-                  <Label>
+                  <P>
                     Email Address
                     <span className="txt-danger">*</span>
-                  </Label>
+                  </P>
                   <Input
                     defaultValue={item.emailAddress}
                     disabled
@@ -604,10 +603,10 @@ const SuccessfullyFormSubmitted = ({
                 </Col>
 
                 <Col sm={6}>
-                  <Label>
+                  <P>
                     Password
                     <span className="txt-danger">*</span>
-                  </Label>
+                  </P>
                   <Input
                     defaultValue={item.password}
                     disabled
@@ -617,10 +616,10 @@ const SuccessfullyFormSubmitted = ({
                   />
                 </Col>
                 <Col sm={6}>
-                  <Label>
+                  <P>
                     Server Id
                     <span className="txt-danger">*</span>
-                  </Label>
+                  </P>
                   <Input
                     type="text"
                     placeholder="Enter Server"
@@ -630,10 +629,10 @@ const SuccessfullyFormSubmitted = ({
                   />
                 </Col>
                 <Col sm={6}>
-                  <Label>
+                  <P>
                     Host Url
                     <span className="txt-danger">*</span>
-                  </Label>
+                  </P>
                   <Input
                     type="text"
                     placeholder="Enter Host Url"
@@ -647,7 +646,7 @@ const SuccessfullyFormSubmitted = ({
           );
         })}
       </Form>
-      <H2>Allowed CRM Modules</H2>
+      <H4>Allowed CRM Modules</H4>
       <Form style={{ marginBottom: "65px", marginTop: "20px" }}>
         {allowedModules.map((item: any, index: any) => {
           return (
@@ -672,10 +671,10 @@ const SuccessfullyFormSubmitted = ({
                       className={`text-end flex-shrink-0 icon-state 
                             }`}
                     >
-                      <Label className="switch mb-0">
+                      <P className="switch mb-0">
                         <Input type="checkbox" defaultChecked={true} disabled />
                         <span className={`switch-state bg-primary`} />
-                      </Label>
+                      </P>
                     </div>
                   </div>
                 </Col>
@@ -685,7 +684,7 @@ const SuccessfullyFormSubmitted = ({
         })}
       </Form>
 
-      <H2>Allowed Permissions</H2>
+      <H4>Allowed Permissions</H4>
       <Form style={{ marginBottom: "65px", marginTop: "20px" }}>
         <div
           style={{
@@ -725,7 +724,7 @@ const SuccessfullyFormSubmitted = ({
                         fontWeight: "bold",
                       }}
                     >
-                      <label
+                      <Label
                         style={{
                           display: "inline-block",
                           position: "relative",
@@ -747,12 +746,12 @@ const SuccessfullyFormSubmitted = ({
                           onClick={(e) => e.stopPropagation()}
                           className="green"
                         ></span>
-                      </label>
+                      </Label>
                       {permission.title}
                     </span>
                     {permission.checked && (
                       <div>
-                        <label
+                        <Label
                           style={{
                             display: "inline-block",
                             position: "relative",
@@ -775,8 +774,8 @@ const SuccessfullyFormSubmitted = ({
                             className="green"
                           ></span>
                           Read
-                        </label>
-                        <label
+                        </Label>
+                        <Label
                           style={{
                             display: "inline-block",
                             position: "relative",
@@ -799,8 +798,8 @@ const SuccessfullyFormSubmitted = ({
                             className="green"
                           ></span>
                           Create
-                        </label>
-                        <label
+                        </Label>
+                        <Label
                           style={{
                             display: "inline-block",
                             position: "relative",
@@ -823,8 +822,8 @@ const SuccessfullyFormSubmitted = ({
                             className="green"
                           ></span>
                           Edit
-                        </label>
-                        <label
+                        </Label>
+                        <Label
                           style={{
                             display: "inline-block",
                             position: "relative",
@@ -847,7 +846,7 @@ const SuccessfullyFormSubmitted = ({
                             className="green"
                           ></span>
                           Delete
-                        </label>
+                        </Label>
                       </div>
                     )}
                   </Col>
@@ -858,7 +857,7 @@ const SuccessfullyFormSubmitted = ({
         </div>
       </Form>
 
-      <H2>Legal Attachements</H2>
+      <H4>Legal Attachements</H4>
 
       <Form style={{ marginBottom: "65px", marginTop: "20px" }}>
         <Row className="g-3">
@@ -872,10 +871,10 @@ const SuccessfullyFormSubmitted = ({
             {cnicFront !== null &&
             checkFileTypeByExtension(cnicFront.name, cnicFront) == "image" ? (
               <div>
-                <Label style={{ fontSize: "18px", fontWeight: "bold" }}>
+                <P style={{ fontSize: "18px", fontWeight: "bold" }}>
                   CNIC Front
                   <span className="txt-danger">*</span>
-                </Label>
+                </P>
                 <img
                   src={URL.createObjectURL(cnicFront)}
                   alt=""
@@ -890,10 +889,10 @@ const SuccessfullyFormSubmitted = ({
               cnicFront !== null &&
               checkFileTypeByExtension(cnicFront.name, cnicFront) == "pdf" && (
                 <div>
-                  <Label style={{ fontSize: "18px", fontWeight: "bold" }}>
+                  <P style={{ fontSize: "18px", fontWeight: "bold" }}>
                     CNIC Front
                     <span className="txt-danger">*</span>
-                  </Label>
+                  </P>
                   <PDFViewer
                     file={cnicFront}
                     name={cnicFront.name.toString().slice(0, 20)}
@@ -904,10 +903,10 @@ const SuccessfullyFormSubmitted = ({
             {cnicBack !== null &&
             checkFileTypeByExtension(cnicBack.name, cnicBack) == "image" ? (
               <div>
-                <Label style={{ fontSize: "18px", fontWeight: "bold" }}>
+                <P style={{ fontSize: "18px", fontWeight: "bold" }}>
                   CNIC Back
                   <span className="txt-danger">*</span>
-                </Label>
+                </P>
                 <img
                   src={URL.createObjectURL(cnicBack)}
                   alt=""
@@ -922,10 +921,10 @@ const SuccessfullyFormSubmitted = ({
               cnicBack !== null &&
               checkFileTypeByExtension(cnicBack.name, cnicBack) == "pdf" && (
                 <div>
-                  <Label style={{ fontSize: "18px", fontWeight: "bold" }}>
+                  <P style={{ fontSize: "18px", fontWeight: "bold" }}>
                     CNIC Back
                     <span className="txt-danger">*</span>
-                  </Label>
+                  </P>
                   <PDFViewer
                     file={cnicBack}
                     name={cnicBack.name.toString().slice(0, 20)}
@@ -936,10 +935,10 @@ const SuccessfullyFormSubmitted = ({
             {ntnFile !== null &&
             checkFileTypeByExtension(ntnFile.name, ntnFile) == "image" ? (
               <div>
-                <Label style={{ fontSize: "18px", fontWeight: "bold" }}>
+                <P style={{ fontSize: "18px", fontWeight: "bold" }}>
                   NTN File
                   <span className="txt-danger">*</span>
-                </Label>
+                </P>
                 <img
                   src={URL.createObjectURL(ntnFile)}
                   alt=""
@@ -954,10 +953,10 @@ const SuccessfullyFormSubmitted = ({
               ntnFile !== null &&
               checkFileTypeByExtension(ntnFile.name, ntnFile) == "pdf" && (
                 <div>
-                  <Label style={{ fontSize: "18px", fontWeight: "bold" }}>
+                  <P style={{ fontSize: "18px", fontWeight: "bold" }}>
                     NTN File
                     <span className="txt-danger">*</span>
-                  </Label>
+                  </P>
                   <PDFViewer
                     file={ntnFile}
                     name={ntnFile.name.toString().slice(0, 20)}
@@ -969,10 +968,10 @@ const SuccessfullyFormSubmitted = ({
             checkFileTypeByExtension(ptaCertificate.name, ptaCertificate) ==
               "image" ? (
               <div>
-                <Label style={{ fontSize: "18px", fontWeight: "bold" }}>
+                <P style={{ fontSize: "18px", fontWeight: "bold" }}>
                   PTA Certificate
                   <span className="txt-danger">*</span>
-                </Label>
+                </P>
                 <img
                   src={URL.createObjectURL(ptaCertificate)}
                   alt=""
@@ -988,10 +987,10 @@ const SuccessfullyFormSubmitted = ({
               checkFileTypeByExtension(ptaCertificate.name, ptaCertificate) ==
                 "pdf" && (
                 <div>
-                  <Label style={{ fontSize: "18px", fontWeight: "bold" }}>
+                  <P style={{ fontSize: "18px", fontWeight: "bold" }}>
                     PTA Certificate
                     <span className="txt-danger">*</span>
-                  </Label>
+                  </P>
                   <PDFViewer
                     file={ptaCertificate}
                     name={ptaCertificate.name.toString().slice(0, 20)}
@@ -1002,10 +1001,10 @@ const SuccessfullyFormSubmitted = ({
             {other !== null &&
             checkFileTypeByExtension(other.name, other) == "image" ? (
               <div>
-                <Label style={{ fontSize: "18px", fontWeight: "bold" }}>
+                <P style={{ fontSize: "18px", fontWeight: "bold" }}>
                   Other
                   <span className="txt-danger">*</span>
-                </Label>
+                </P>
                 <img
                   src={URL.createObjectURL(other)}
                   alt=""
@@ -1020,10 +1019,10 @@ const SuccessfullyFormSubmitted = ({
               other !== null &&
               checkFileTypeByExtension(other.name, other) == "pdf" && (
                 <div>
-                  <Label style={{ fontSize: "18px", fontWeight: "bold" }}>
+                  <P style={{ fontSize: "18px", fontWeight: "bold" }}>
                     Other
                     <span className="txt-danger">*</span>
-                  </Label>
+                  </P>
                   <PDFViewer
                     file={other}
                     name={other.name.toString().slice(0, 20)}

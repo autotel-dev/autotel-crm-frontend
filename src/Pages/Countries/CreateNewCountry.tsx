@@ -5,7 +5,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { Button, FormGroup, Label, Modal, ModalBody, Row } from "reactstrap";
 import { Cancel } from "../../utils/Constant";
 import { CheckCircle } from "react-feather";
-import { H3 } from "../../AbstractElements";
+import { H3 ,P} from "../../AbstractElements";
 import { create, getAll } from "../../Api";
 import { useDispatch, useSelector } from "react-redux";
 import { Type } from "./CountryTypes/CountryTypes";
@@ -159,7 +159,7 @@ const CreateNewCountry = () => {
             >
               <Row>
                 <FormGroup className="col-md-12 create-group">
-                  <Label>Country Name</Label>
+                  <P>Country Name</P>
                   <input
                     className="form-control"
                     type="text"

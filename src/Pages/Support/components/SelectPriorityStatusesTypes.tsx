@@ -8,7 +8,7 @@ interface propTypes {
 
 const SelectPriorityStatusesTypes: React.FC<propTypes> = ({ placeholder }) => {
   const { priorityStatuses } = useSelector((state: any) => state.support);
-  console.log(priorityStatuses);
+  // console.log(priorityStatuses);
   const [priorityStatusesList, setPriorityStatusesList] = useState([]);
   const dispatch = useDispatch();
 
@@ -34,7 +34,7 @@ const SelectPriorityStatusesTypes: React.FC<propTypes> = ({ placeholder }) => {
           .localeCompare((optionB?.label ?? "").toLowerCase())
       }
       onChange={(e) => {
-        console.log(e);
+        // console.log(e);
         dispatch(setPriorityStatus(e));
       }}
       options={priorityStatusesList}
