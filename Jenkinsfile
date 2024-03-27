@@ -15,13 +15,16 @@ pipeline {
             steps {
                 // Install project dependencies
                 sh 'npm install --force'
+                // Install ts-node as a dev dependency
+                sh 'npm install ts-node --save-dev'
             }
         }
         
         stage('Build') {
-             steps {
-        // Build the React project with npm and set max-old-space-size
-        sh 'NODE_OPTIONS="--max-old-space-size=8192" npm run build --force'
+            steps {
+                // Run TypeScript file with ts-node and set max-old-space-size
+                sh '/usr/bin/node --max-old-space-size=8192 ./node_modules/ts-node/dist/bin.js src/index.tsx'
+                sh 'npm run build --force'
             }
         }
         
