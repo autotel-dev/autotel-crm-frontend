@@ -15,8 +15,6 @@ pipeline {
             steps {
                 // Install project dependencies
                 sh 'npm install --force'
-                // Install ts-node as a dev dependency
-                sh 'npm install ts-node --save-dev --force'
             }
         }
         
