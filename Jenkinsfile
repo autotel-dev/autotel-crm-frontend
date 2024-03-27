@@ -1,6 +1,10 @@
 pipeline {
     agent any
     
+    environment {
+        NODE_OPTIONS = '--max-old-space-size=8192'
+    }
+
     stages {
         stage('Checkout') {
             steps {
@@ -18,8 +22,6 @@ pipeline {
         
         stage('Build') {
             steps {
-                // Set max-old-space-size to 8192
-                sh '/usr/bin/node --max-old-space-size=8192 /var/lib/jenkins/workspace/crmfrontend/node_modules/fork-ts-checker-webpack-plugin/lib/typescript-reporter/reporter/TypeScriptReporterRpcService.js --disable-ipc-channel'
                 sh 'npm run build --force'
             }
         }
