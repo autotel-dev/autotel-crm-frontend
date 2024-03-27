@@ -10,6 +10,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 script {
+                    echo 'Checking out code...'
                     git url: 'https://github.com/mindflaretech/Autotel-CRM-Updated.git', credentialsId: '01', branch: 'main'
                 }
             }
@@ -17,25 +18,37 @@ pipeline {
         
         stage('Install Dependencies') {
             steps {
-                sh 'npm install --force'
+                script {
+                    echo 'Installing dependencies...'
+                    sh 'npm install --force'
+                }
             }
         }
         
         stage('Build') {
             steps {
-                sh 'npm run build --force'
+                script {
+                    echo 'Building...'
+                    sh 'npm run build --force'
+                }
             }
         }
         
         stage('Test') {
             steps {
-                sh 'npm test --force'
+                script {
+                    echo 'Running tests...'
+                    sh 'npm test --force'
+                }
             }
         }
         
         stage('Deploy') {
             steps {
-                sh 'scp -r build /usr/share/nginx/html'
+                script {
+                    echo 'Deploying...'
+                    sh 'scp -r build /usr/share/nginx/html'
+                }
             }
         }
     }
