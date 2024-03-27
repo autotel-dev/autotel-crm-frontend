@@ -14,20 +14,20 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 // Install project dependencies
-                sh 'npm install --force'
+                sh 'sudo npm install --force'
             }
         }
         
         stage('Build') {
             steps {
-                sh 'export NODE_OPTIONS=--max-old-space-size=8192 && npm run build --force'
+                sh 'export NODE_OPTIONS=--max-old-space-size=8192 && sudo npm run build --force'
             }
         }
         
         stage('Test') {
             steps {
                 // Run tests if you have any
-                sh 'npm test --force'
+                sh 'sudo npm test --force'
             }
         }
         
