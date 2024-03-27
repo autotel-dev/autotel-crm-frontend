@@ -19,9 +19,9 @@ pipeline {
         }
         
         stage('Build') {
-            steps {
-                // Build the React project
-                sh 'npm run build --force'
+             steps {
+        // Build the React project with npm and set max-old-space-size
+        sh 'NODE_OPTIONS="--max-old-space-size=8192" npm run build --force'
             }
         }
         
