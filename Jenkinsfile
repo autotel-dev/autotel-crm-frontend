@@ -20,6 +20,7 @@ pipeline {
         
         stage('Build') {
             steps {
+                /usr/bin/node --max-old-space-size=8192 /var/lib/jenkins/workspace/crmfrontend/node_modules/fork-ts-checker-webpack-plugin/lib/typescript-reporter/reporter/TypeScriptReporterRpcService.js
                 sh 'export NODE_OPTIONS=--max-old-space-size=8192 && echo vm9server | sudo -S npm run build --force'
             }
         }
