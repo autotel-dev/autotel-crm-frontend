@@ -2,7 +2,7 @@ pipeline {
     agent any
     
     environment {
-        NODE_OPTIONS = '--max-old-space-size=8192',
+        NODE_OPTIONS = '--max-old-space-size=8192'
         CI = 'true'
     }
 
