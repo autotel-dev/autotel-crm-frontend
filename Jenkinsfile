@@ -22,7 +22,7 @@ pipeline {
         
         stage('Build') {
             steps {
-                sh 'npm --max-old-space-size=8192 run build --force'
+                sh 'export NODE_OPTIONS=--max-old-space-size=8192 && npm run build --force'
             }
         }
         
