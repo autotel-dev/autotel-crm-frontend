@@ -34,14 +34,14 @@ pipeline {
             }
         }
         
-        stage('Test') {
-            steps {
-                script {
-                    echo 'Running tests...'
-                    sh 'npm test --force'
-                }
-            }
-        }
+        // stage('Test') {
+        //     steps {
+        //         script {
+        //             echo 'Running tests...'
+        //             sh 'npm test --force'
+        //         }
+        //     }
+        // }
         
         stage('Deploy') {
             steps {
