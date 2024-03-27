@@ -3,7 +3,7 @@ pipeline {
     
     environment {
         NODE_OPTIONS = '--max-old-space-size=8192'
-        CI = 'true'
+        CI = 'flase'
     }
 
     stages {
