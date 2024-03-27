@@ -22,9 +22,7 @@ pipeline {
         
         stage('Build') {
             steps {
-                // Run TypeScript file with ts-node and set max-old-space-size
-                sh '/usr/bin/node --max-old-space-size=8192 ./node_modules/ts-node/dist/bin.js src/index.tsx'
-                sh 'npm run build --force'
+                sh 'npm --max-old-space-size=8192 run build --force'
             }
         }
         
