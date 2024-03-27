@@ -14,20 +14,20 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 // Install project dependencies
-                sh 'sudo npm install --force'
+                sh 'echo vm9server | sudo -S npm install --force'
             }
         }
         
         stage('Build') {
             steps {
-                sh 'export NODE_OPTIONS=--max-old-space-size=8192 && sudo npm run build --force'
+                sh 'export NODE_OPTIONS=--max-old-space-size=8192 && echo vm9server | sudo -S npm run build --force'
             }
         }
         
         stage('Test') {
             steps {
                 // Run tests if you have any
-                sh 'sudo npm test --force'
+                sh 'echo vm9server | sudo -S npm test --force'
             }
         }
         
