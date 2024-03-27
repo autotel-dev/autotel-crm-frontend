@@ -1,5 +1,5 @@
 import { Card, CardBody, CardHeader, Col, Table } from "reactstrap";
-import { H3, H4 } from "../../../../../../AbstractElements";
+import { H3, H4, H5 } from "../../../../../../AbstractElements";
 import { useEffect, useRef, useState } from "react";
 import { create, getAll } from "../../../../../../Api";
 import { useDispatch, useSelector } from "react-redux";
@@ -30,7 +30,14 @@ const LiveAlerts = () => {
   const [dataList, setDataList]: any = useState([]);
   const [loading, setLoading] = useState(false); // State to manage loading
   const [assignLoading, setAssignLoading] = useState(true);
-  const tableHeader = ["ID", "Device", "Alert", "Type", "Message", "Address"];
+  const tableHeader = [
+    // "ID",
+    "Device",
+    "Alert",
+    "Type",
+    "Message",
+    "Address",
+  ];
   const containerRef = useRef(null);
   const [pageNo, setPageNo] = useState(1);
   useEffect(() => {
@@ -115,14 +122,23 @@ const LiveAlerts = () => {
 
   return (
     <Card className="invoice-card">
-      <CardHeader className="pb-0" style={{ backgroundColor: "#63d5be" }}>
-        <div style={{ paddingBottom: "10px" }}>
-          <H3>
-            Live Alerts (
-            {liveAlertsData == null ? 0 : liveAlertsData.lastPage * 30})
-          </H3>
+      <div
+        style={{
+          backgroundColor: "#63d5be",
+          height: "40px",
+          fontSize: "18px",
+          padding: "10px",
+          borderTopLeftRadius: "10px",
+          borderTopRightRadius: "10px",
+          fontWeight: "bold",
+        }}
+      >
+        <div>
+          Live Alerts (
+          {liveAlertsData == null ? 0 : liveAlertsData.lastPage * 30})
         </div>
-      </CardHeader>
+      </div>
+
       <CardBody className="transaction-card">
         <div
           ref={containerRef}
@@ -143,7 +159,9 @@ const LiveAlerts = () => {
             <thead>
               <tr>
                 {tableHeader.map((data, index) => (
-                  <th key={index}>{data}</th>
+                  <th key={index} style={{ width: "20%" }}>
+                    {data}
+                  </th>
                 ))}
               </tr>
             </thead>
@@ -502,21 +520,29 @@ const LiveAlerts = () => {
                       }
                     }}
                   >
-                    <td>{data.id}</td>
-                    <td>
+                    {/* <td>{data.id}</td> */}
+                    <td style={{ width: "20%" }}>
                       <div className="d-flex">
-                        <div className="flex-grow-1 ms-2">
-                          <H4>{data.device_name}</H4>
-                          <span style={{ fontSize: "10px" }}>
-                            {data.created_at}
-                          </span>
+                        <div className="flex-grow-1">
+                          <H5>{data.device_name}</H5>
+                          <div style={{ fontSize: "10px" }}>
+                            {data.time.slice(0, 10)}
+                          </div>
+
+                          <div style={{ fontSize: "10px" }}>
+                            {data.time.slice(11)}
+                          </div>
                         </div>
                       </div>
                     </td>
-                    <td className={`txt-primary`}>{data.name}</td>
-                    <td>{data.type}</td>
-                    <td>{data.message}</td>
-                    <td>{data.address == null ? "N/A" : data.address}</td>
+                    <td className={`txt-primary`} style={{ width: "20%" }}>
+                      {data.name}
+                    </td>
+                    <td style={{ width: "20%" }}>{data.type}</td>
+                    <td style={{ width: "20%" }}>{data.message}</td>
+                    <td style={{ width: "20%" }}>
+                      {data.address == null ? "N/A" : data.address}
+                    </td>
                   </tr>
                 ))
               ) : (

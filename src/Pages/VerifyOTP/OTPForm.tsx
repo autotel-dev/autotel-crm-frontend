@@ -161,6 +161,14 @@ const OTPForm = ({ alignLogo }: CommonFormPropsType) => {
                 }
               }
             });
+            dispatch(setUserData(null));
+            getAll({ url: "user/get-user" }).then((parentData: any) => {
+              if (parentData !== undefined) {
+                if (parentData.success) {
+                  dispatch(setUserData(parentData.data.user));
+                }
+              }
+            });
 
             if (getUserRole() == "COMPANY" || getUserRole() == "OPERATOR") {
               getAll({ url: "user/get-permissions" })

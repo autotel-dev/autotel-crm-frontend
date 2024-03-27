@@ -10,6 +10,7 @@ import { setActiveCRMModules } from "./ReaduxToolkit/Reducer/CRMModuleSlice";
 import { getUserRole } from "./Api/globals";
 import { setPermissions } from "./ReaduxToolkit/Reducer/CompanySlice";
 import { setUserPermissions } from "./ReaduxToolkit/Reducer/PermissionSlice";
+import { setUserData } from "./ReaduxToolkit/Reducer/UserSlice";
 const App = () => {
   const { userPermissions } = useSelector(
     (state: any) => state.userPermissions
@@ -84,6 +85,14 @@ const App = () => {
           }
         });
       }
+      dispatch(setUserData(null));
+      getAll({ url: "user/get-user" }).then((parentData: any) => {
+        if (parentData !== undefined) {
+          if (parentData.success) {
+            dispatch(setUserData(parentData.data.user));
+          }
+        }
+      });
       if (getUserRole() == "SUPER_ADMIN") {
         getAll({ url: "permissions/get-all-permissions" }).then((data: any) => {
           // console.log("api call --- >", data);

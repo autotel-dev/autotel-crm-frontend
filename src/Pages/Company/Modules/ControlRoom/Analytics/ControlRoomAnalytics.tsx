@@ -141,7 +141,7 @@ const ControlRoomAnalytics = () => {
       categories: totalCommandedDevicesByDayCategories,
     },
     chart: {
-      height: 95,
+      height: 65,
       offsetY: 30,
       type: "area",
       sparkline: {
@@ -180,64 +180,64 @@ const ControlRoomAnalytics = () => {
         },
       ],
     },
-    responsive: [
-      {
-        breakpoint: 1800,
-        options: {
-          chart: {
-            height: 80,
-          },
-        },
-      },
-      {
-        breakpoint: 1500,
-        options: {
-          chart: {
-            height: 80,
-          },
-        },
-      },
-      {
-        breakpoint: 1400,
-        options: {
-          chart: {
-            height: 80,
-          },
-        },
-      },
-      {
-        breakpoint: 1200,
-        options: {
-          chart: {
-            height: 70,
-          },
-          grid: {
-            padding: {
-              top: 0,
-              right: 0,
-              bottom: 0,
-              left: 5,
-            },
-          },
-        },
-      },
-      {
-        breakpoint: 576,
-        options: {
-          chart: {
-            offsetY: 0,
-          },
-        },
-      },
-      {
-        breakpoint: 376,
-        options: {
-          chart: {
-            height: 50,
-          },
-        },
-      },
-    ],
+    // responsive: [
+    //   {
+    //     breakpoint: 1800,
+    //     options: {
+    //       chart: {
+    //         height: 80,
+    //       },
+    //     },
+    //   },
+    //   {
+    //     breakpoint: 1500,
+    //     options: {
+    //       chart: {
+    //         height: 70,
+    //       },
+    //     },
+    //   },
+    //   {
+    //     breakpoint: 1400,
+    //     options: {
+    //       chart: {
+    //         height: 60,
+    //       },
+    //     },
+    //   },
+    //   {
+    //     breakpoint: 1200,
+    //     options: {
+    //       chart: {
+    //         height: 55,
+    //       },
+    //       grid: {
+    //         padding: {
+    //           top: 0,
+    //           right: 0,
+    //           bottom: 0,
+    //           left: 5,
+    //         },
+    //       },
+    //     },
+    //   },
+    //   {
+    //     breakpoint: 576,
+    //     options: {
+    //       chart: {
+    //         offsetY: 0,
+    //       },
+    //     },
+    //   },
+    //   {
+    //     breakpoint: 376,
+    //     options: {
+    //       chart: {
+    //         height: 50,
+    //       },
+    //     },
+    //   },
+    // ],
   };
 
   const preAlertInfo: ApexOptions = {
@@ -251,7 +251,7 @@ const ControlRoomAnalytics = () => {
       categories: totalPreInfosByDayCategories,
     },
     chart: {
-      height: 95,
+      height: 65,
       offsetY: 30,
       type: "area",
       sparkline: {
@@ -290,64 +290,64 @@ const ControlRoomAnalytics = () => {
         },
       ],
     },
-    responsive: [
-      {
-        breakpoint: 1800,
-        options: {
-          chart: {
-            height: 80,
-          },
-        },
-      },
-      {
-        breakpoint: 1500,
-        options: {
-          chart: {
-            height: 80,
-          },
-        },
-      },
-      {
-        breakpoint: 1400,
-        options: {
-          chart: {
-            height: 80,
-          },
-        },
-      },
-      {
-        breakpoint: 1200,
-        options: {
-          chart: {
-            height: 70,
-          },
-          grid: {
-            padding: {
-              top: 0,
-              right: 0,
-              bottom: 0,
-              left: 5,
-            },
-          },
-        },
-      },
-      {
-        breakpoint: 576,
-        options: {
-          chart: {
-            offsetY: 0,
-          },
-        },
-      },
-      {
-        breakpoint: 376,
-        options: {
-          chart: {
-            height: 50,
-          },
-        },
-      },
-    ],
+    // responsive: [
+    //   {
+    //     breakpoint: 1800,
+    //     options: {
+    //       chart: {
+    //         height: 80,
+    //       },
+    //     },
+    //   },
+    //   {
+    //     breakpoint: 1500,
+    //     options: {
+    //       chart: {
+    //         height: 80,
+    //       },
+    //     },
+    //   },
+    //   {
+    //     breakpoint: 1400,
+    //     options: {
+    //       chart: {
+    //         height: 80,
+    //       },
+    //     },
+    //   },
+    //   {
+    //     breakpoint: 1200,
+    //     options: {
+    //       chart: {
+    //         height: 70,
+    //       },
+    //       grid: {
+    //         padding: {
+    //           top: 0,
+    //           right: 0,
+    //           bottom: 0,
+    //           left: 5,
+    //         },
+    //       },
+    //     },
+    //   },
+    //   {
+    //     breakpoint: 576,
+    //     options: {
+    //       chart: {
+    //         offsetY: 0,
+    //       },
+    //     },
+    //   },
+    //   {
+    //     breakpoint: 376,
+    //     options: {
+    //       chart: {
+    //         height: 50,
+    //       },
+    //     },
+    //   },
+    // ],
   };
 
   const controlRoomAnalytics = [
@@ -641,17 +641,22 @@ const ControlRoomAnalytics = () => {
                       <div className="d-flex">
                         <div
                           className="flex-grow-1"
-                          style={{ margin: "5px 0px" }}
+                          style={{
+                            margin: "5px 0px",
+                            whiteSpace: "nowrap",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                          }}
                         >
-                          <H3>{controlRoomAnalytics[0].title}</H3>
+                          <H4>{controlRoomAnalytics[0].title}</H4>
                         </div>
                       </div>
-                      <H3>
+                      <H4>
                         {
                           dashboardStatistics?.controlRoomStatistics
                             ?.totalKilledDevicesCount
                         }
-                      </H3>
+                      </H4>
                       <div>
                         <button
                           className="btn-primary"
@@ -661,7 +666,8 @@ const ControlRoomAnalytics = () => {
                             color: "white",
                             outline: "none",
                             border: "none",
-                            marginTop: "30px",
+
+                            marginTop: "3vh",
                           }}
                           onClick={() => {
                             setIsUpdateModalOpenForkillingDevices(true);
@@ -725,7 +731,7 @@ const ControlRoomAnalytics = () => {
                               justifyContent: "space-between",
                             }}
                           >
-                            <H3>Connected Servers</H3>
+                            <H4>Connected Servers</H4>
                             <div
                               style={{
                                 display: "flex",
@@ -795,19 +801,23 @@ const ControlRoomAnalytics = () => {
                     <Col sm="7" className="box-col-7">
                       <div className="d-flex">
                         <div
-                          className="flex-grow-1"
-                          style={{ margin: "5px 0px" }}
+                          style={{
+                            margin: "5px 0px",
+                            whiteSpace: "nowrap",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                          }}
                         >
-                          <H3>Send Command</H3>
+                          <H4>Send Command</H4>
                         </div>
                       </div>
                       <div style={{ fontSize: "16px", fontWeight: "bold" }}>
-                        <H3>
+                        <H4>
                           {
                             dashboardStatistics?.controlRoomStatistics
                               ?.totalCommandedDevicesCount
                           }
-                        </H3>
+                        </H4>
                       </div>
                       <div>
                         <div style={{ display: "flex" }}>
@@ -819,7 +829,7 @@ const ControlRoomAnalytics = () => {
                               color: "white",
                               outline: "none",
                               border: "none",
-                              marginTop: "30px",
+                              marginTop: "3vh",
                             }}
                             onClick={() => {
                               setIsUpdateModalOpenForSendCommand(true);
@@ -835,7 +845,7 @@ const ControlRoomAnalytics = () => {
                               color: "white",
                               outline: "none",
                               border: "none",
-                              marginTop: "30px",
+                              marginTop: "3vh",
                               marginLeft: "10px",
                             }}
                             onClick={() => {
@@ -858,6 +868,7 @@ const ControlRoomAnalytics = () => {
                       >
                         {selectedFilter}
                       </div>
+
                       <ReactApexChart
                         id={controlRoomAnalytics[1].chartId}
                         options={controlRoomAnalytics[1].charts}
@@ -891,16 +902,23 @@ const ControlRoomAnalytics = () => {
                       <div className="d-flex">
                         <div
                           className="flex-grow-1"
-                          style={{ margin: "5px 0px" }}
+                          style={{
+                            margin: "5px 0px",
+                            whiteSpace: "nowrap",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                          }}
                         >
-                          <H3>Pre Alert info</H3>
+                          <H4>Pre Alert info</H4>
                         </div>
                       </div>
                       <div style={{ fontSize: "16px", fontWeight: "bold" }}>
-                        {
-                          dashboardStatistics?.controlRoomStatistics
-                            ?.totalPreInfosCount
-                        }
+                        <H4>
+                          {
+                            dashboardStatistics?.controlRoomStatistics
+                              ?.totalPreInfosCount
+                          }
+                        </H4>
                       </div>
                       <div style={{ display: "flex" }}>
                         <button
@@ -911,7 +929,7 @@ const ControlRoomAnalytics = () => {
                             color: "white",
                             outline: "none",
                             border: "none",
-                            marginTop: "30px",
+                            marginTop: "3vh",
                           }}
                           onClick={() => {
                             setIsUpdateModalOpenForPreAlertinfo(true);
@@ -927,7 +945,7 @@ const ControlRoomAnalytics = () => {
                             color: "white",
                             outline: "none",
                             border: "none",
-                            marginTop: "30px",
+                            marginTop: "3vh",
                             marginLeft: "10px",
                           }}
                           onClick={() => {
@@ -949,6 +967,7 @@ const ControlRoomAnalytics = () => {
                       >
                         {selectedFilter}
                       </div>
+
                       <ReactApexChart
                         id={controlRoomAnalytics[2].chartId}
                         options={controlRoomAnalytics[2].charts}

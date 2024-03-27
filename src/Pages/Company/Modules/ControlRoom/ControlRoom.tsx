@@ -457,9 +457,9 @@ const ControlRoom = () => {
                       <NavItem
                         style={{
                           width: "50%",
-                          height: "50px",
+                          height: "40px",
                           textAlign: "center",
-                          fontSize: "22px",
+                          fontSize: "18px",
                           cursor: "pointer",
                         }}
                       >
@@ -476,9 +476,9 @@ const ControlRoom = () => {
                       <NavItem
                         style={{
                           width: "50%",
-                          height: "50px",
+                          height: "40px",
                           textAlign: "center",
-                          fontSize: "22px",
+                          fontSize: "18px",
                           cursor: "pointer",
                         }}
                       >

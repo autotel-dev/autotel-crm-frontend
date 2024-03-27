@@ -165,38 +165,38 @@ const TotalPreInfoAlerts: React.FC<PropsTypes> = ({
                           <td style={{ width: "15%" }}>
                             <div className="d-flex">
                               <div className="flex-grow-1 ms-2">
-                                <H4>
+                                <div style={{ fontSize: "10px" }}>
                                   {format(
-                                    new Date(data.from).toLocaleString(),
+                                    new Date(data?.from).toLocaleString(),
                                     "date"
                                   )}
-                                </H4>
-                                <span style={{ fontSize: "10px" }}>
+                                </div>
+                                <div style={{ fontSize: "10px" }}>
                                   {/* {data.updatedAt.toString().slice(11, 19)} */}
                                   {format(
-                                    new Date(data.from).toLocaleString(),
+                                    new Date(data?.from).toLocaleString(),
                                     "time"
                                   )}
-                                </span>
+                                </div>
                               </div>
                             </div>
                           </td>
                           <td style={{ width: "15%" }}>
                             <div className="d-flex">
                               <div className="flex-grow-1 ms-2">
-                                <H4>
+                                <div style={{ fontSize: "10px" }}>
                                   {format(
-                                    new Date(data.to).toLocaleString(),
+                                    new Date(data?.to).toLocaleString(),
                                     "date"
                                   )}
-                                </H4>
-                                <span style={{ fontSize: "10px" }}>
+                                </div>
+                                <div style={{ fontSize: "10px" }}>
                                   {/* {data.updatedAt.toString().slice(11, 19)} */}
                                   {format(
-                                    new Date(data.to).toLocaleString(),
+                                    new Date(data?.to).toLocaleString(),
                                     "time"
                                   )}
-                                </span>
+                                </div>
                               </div>
                             </div>
                           </td>

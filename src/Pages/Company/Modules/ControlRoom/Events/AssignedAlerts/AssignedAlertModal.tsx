@@ -18,6 +18,7 @@ import ResponseForm from "./modalComponents/Response";
 import CustomerInfo from "./modalComponents/CustomerInfo";
 import Loader from "../../../../../Loader/Loader";
 import { setModalData } from "../../../../../../ReaduxToolkit/Reducer/AlertsSlice";
+import VehicleInfo from "./modalComponents/VehicleInfo";
 
 interface PropsTypes {
   isVisible: boolean; // Change 'boolean' to the actual type of isVisible
@@ -46,10 +47,14 @@ const AssignedAlertModal: React.FC<PropsTypes> = ({
     },
     {
       id: "3",
-      element: <PreviousAlerts />,
+      element: <VehicleInfo />,
     },
     {
       id: "4",
+      element: <PreviousAlerts />,
+    },
+    {
+      id: "5",
       element: (
         <ResponseForm
           isVisible={isVisible}
@@ -140,10 +145,10 @@ const AssignedAlertModal: React.FC<PropsTypes> = ({
                   <NavItem
                     key={index}
                     style={{
-                      width: "25%",
-                      height: "55px",
+                      width: "20%",
+                      height: "40px",
                       textAlign: "center",
-                      fontSize: "22px",
+                      fontSize: "18px",
                       cursor: "pointer",
                     }}
                   >
@@ -159,13 +164,18 @@ const AssignedAlertModal: React.FC<PropsTypes> = ({
                         : item.id === "2"
                         ? "Customer Info"
                         : item.id === "3"
+                        ? "Vehicle Info"
+                        : item.id === "3"
                         ? "History"
                         : "Response"}
                     </NavLink>
                   </NavItem>
                 ))}
               </Nav>
-              <TabContent activeTab={basicTab} style={{ height: "70vh" }}>
+              <TabContent
+                activeTab={basicTab}
+                style={{ height: "70vh", overflowY: "auto" }}
+              >
                 {modalTabs &&
                   modalTabs.map((item, index) => (
                     <TabPane

@@ -112,9 +112,28 @@ const TicketTable = () => {
     <div className="table-responsive support-table">
       <Row style={{ display: "flex", alignItems: "center" }}>
         <Col
-          md={12}
-          lg={support != undefined && support?.create ? 10 : 12}
-          xl={support != undefined && support?.create ? 10 : 12}
+          sm={support != undefined && support?.create ? 12 : 12}
+          md={
+            support != undefined && support?.create
+              ? 10
+              : getUserRole() == ROLES.SUPER_ADMIN
+              ? 12
+              : 12
+          }
+          lg={
+            support != undefined && support?.create
+              ? 10
+              : getUserRole() == ROLES.SUPER_ADMIN
+              ? 10
+              : 12
+          }
+          xl={
+            support != undefined && support?.create
+              ? 10
+              : getUserRole() == ROLES.SUPER_ADMIN
+              ? 10
+              : 12
+          }
         >
           <input
             type="text"
@@ -136,7 +155,8 @@ const TicketTable = () => {
         </Col>
         {getUserRole() == ROLES.SUPER_ADMIN ? (
           <Col
-            md={12}
+            sm={support != undefined && support?.create ? 2 : 0}
+            md={support != undefined && support?.create ? 2 : 0}
             lg={support != undefined && support?.create ? 2 : 0}
             xl={support != undefined && support?.create ? 2 : 0}
           >
@@ -146,7 +166,7 @@ const TicketTable = () => {
             getUserRole() == ROLES.OPERATOR) &&
           support != undefined &&
           support?.create ? (
-          <Col md={12} lg={2} xl={2}>
+          <Col sm={12} md={12} lg={2} xl={2}>
             <CreateNewTicket />
           </Col>
         ) : null}

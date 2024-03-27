@@ -4,7 +4,7 @@ import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Button, FormGroup, Label, Modal, ModalBody, Row } from "reactstrap";
 import { useDispatch, useSelector } from "react-redux";
-import { H3 } from "../../../../../../../AbstractElements";
+import { H3, P } from "../../../../../../../AbstractElements";
 
 const CustomerInfo = () => {
   const dispatch = useDispatch();
@@ -18,7 +18,7 @@ const CustomerInfo = () => {
       >
         <Row style={{ paddingTop: "20px" }}>
           <FormGroup className="col-md-6 create-group">
-            <Label>Customer Name</Label>
+            <P>Customer Name</P>
             <input
               className="form-control"
               type="text"
@@ -27,7 +27,7 @@ const CustomerInfo = () => {
             />
           </FormGroup>
           <FormGroup className="col-md-6 create-group">
-            <Label>Mobile Number 1</Label>
+            <P>Mobile Number 1</P>
             <input
               className="form-control"
               type="text"
@@ -36,7 +36,7 @@ const CustomerInfo = () => {
             />
           </FormGroup>
           <FormGroup className="col-md-6 create-group">
-            <Label>Mobile Number 2</Label>
+            <P>Mobile Number 2</P>
             <input
               className="form-control"
               type="text"
@@ -45,7 +45,7 @@ const CustomerInfo = () => {
             />
           </FormGroup>
           <FormGroup className="col-md-6 create-group">
-            <Label>Secondary Mobile Number</Label>
+            <P>Secondary Mobile Number</P>
             <input
               className="form-control"
               type="text"
@@ -54,7 +54,7 @@ const CustomerInfo = () => {
             />
           </FormGroup>
           <FormGroup className="col-md-6 create-group">
-            <Label>Emergency Contact 1</Label>
+            <P>Emergency Contact 1</P>
             <input
               className="form-control"
               type="text"
@@ -63,7 +63,7 @@ const CustomerInfo = () => {
             />
           </FormGroup>
           <FormGroup className="col-md-6 create-group">
-            <Label>Emergency Contact 2</Label>
+            <P>Emergency Contact 2</P>
             <input
               className="form-control"
               type="text"
@@ -72,7 +72,7 @@ const CustomerInfo = () => {
             />
           </FormGroup>
           <FormGroup className="col-md-6 create-group">
-            <Label>CNIC Number</Label>
+            <P>CNIC Number</P>
             <input
               className="form-control"
               type="text"
@@ -81,7 +81,7 @@ const CustomerInfo = () => {
             />
           </FormGroup>
           <FormGroup className="col-md-6 create-group">
-            <Label>Address</Label>
+            <P>Address</P>
             <input
               className="form-control"
               type="text"
@@ -90,7 +90,7 @@ const CustomerInfo = () => {
             />
           </FormGroup>
           <FormGroup className="col-md-6 create-group">
-            <Label>Mother Name</Label>
+            <P>Mother Name</P>
             <input
               className="form-control"
               type="text"
@@ -99,7 +99,7 @@ const CustomerInfo = () => {
             />
           </FormGroup>
           <FormGroup className="col-md-6 create-group">
-            <Label>Date Of Birth</Label>
+            <P>Date Of Birth</P>
             <input
               className="form-control"
               type="text"
@@ -108,7 +108,7 @@ const CustomerInfo = () => {
             />
           </FormGroup>
           <FormGroup className="col-md-6 create-group">
-            <Label>Normal Password</Label>
+            <P>Normal Password</P>
             <input
               className="form-control"
               type="text"
@@ -117,7 +117,7 @@ const CustomerInfo = () => {
             />
           </FormGroup>
           <FormGroup className="col-md-6 create-group">
-            <Label>Emergency Password</Label>
+            <P>Emergency Password</P>
             <input
               className="form-control"
               type="text"
@@ -126,7 +126,7 @@ const CustomerInfo = () => {
             />
           </FormGroup>
           <FormGroup className="col-md-6 create-group">
-            <Label>Instructions</Label>
+            <P>Instructions</P>
             <input
               className="form-control"
               type="text"
@@ -135,7 +135,7 @@ const CustomerInfo = () => {
             />
           </FormGroup>
           <FormGroup className="col-md-6 create-group">
-            <Label>SIM Number</Label>
+            <P>SIM Number</P>
             <input
               className="form-control"
               type="text"

@@ -27,7 +27,7 @@ const TicketList = () => {
                 <Card className="ecommerce-widget">
                   <CardBody className="support-ticket-font">
                     <Row>
-                      <Col xs={9}>
+                      <Col xs={12}>
                         {/* <span>{item.title}</span> */}
                         <H3 className="total-num counter">
                           <CountUp
@@ -51,9 +51,9 @@ const TicketList = () => {
                         </span>
                       </Col>
                       {/* <ProfitAndLoss /> */}
-                      <Col xs={3}>
+                      {/* <Col xs={3}>
                         <div></div>
-                      </Col>
+                      </Col> */}
                     </Row>
                     <Progress
                       className="sm-progress-bar mt-4"

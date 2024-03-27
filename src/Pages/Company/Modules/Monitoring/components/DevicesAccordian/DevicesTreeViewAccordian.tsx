@@ -474,7 +474,8 @@ const DevicesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
                                       {bodyItem.name}
                                     </span>
                                     <span style={{ fontSize: "12px" }}>
-                                      {formattedDate(bodyItem.timestamp)}
+                                      {/* {formattedDate(bodyItem.timestamp)} */}
+                                      {bodyItem.time.slice(0,10)} , {bodyItem.time.slice(11)}
                                     </span>
                                   </div>
                                 </div>

@@ -1,22 +1,22 @@
 import { Card, CardBody, CardHeader, Col, Table } from "reactstrap";
-import { H3, H4 } from "../../../../../../AbstractElements";
+import { H3, H4, H5 } from "../../../../../../AbstractElements";
 import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 
 const AssignedAlerts = () => {
   const { completedAlerts } = useSelector((state: any) => state.alerts);
-   // // console.log("completedAlertsData", completedAlerts);
+  // // console.log("completedAlertsData", completedAlerts);
 
   const [dataList, setDataList]: any = useState([]);
   const [loading, setLoading] = useState(false); // State to manage loading
   const tableHeader = [
-    "ID",
+    // "ID",
     "Device",
     "Alert",
     "Type",
     "Message",
     "Address",
-    "Response",
+    "Completion Response",
   ];
   const containerRef = useRef(null);
   const [pageNo, setPageNo] = useState(1);
@@ -66,7 +66,15 @@ const AssignedAlerts = () => {
               <thead>
                 <tr>
                   {tableHeader.map((data, index) => (
-                    <th key={index}>{data}</th>
+                    <th
+                      key={index}
+                      style={{
+                        width:
+                          data == "Device" || data == "Type" ? "15%" : "20%",
+                      }}
+                    >
+                      {data}
+                    </th>
                   ))}
                 </tr>
               </thead>
@@ -80,29 +88,32 @@ const AssignedAlerts = () => {
                 ) : (
                   dataList.map((data: any, index: any) => (
                     <tr style={{ cursor: "pointer" }} key={index}>
-                      <td>{data.eventId}</td>
-                      <td>
+                      {/* <td>{data.eventId}</td> */}
+                      <td style={{ width: "15%" }}>
                         <div className="d-flex">
-                          <div className="flex-grow-1 ms-2">
-                            <H4>{data.deviceName}</H4>
-                            <span style={{ fontSize: "10px" }}>
-                              {data.createdAt.toString().slice(0, 10) +
-                                " " +
-                                data.createdAt.toString().slice(11, 19)}
-                            </span>
+                          <div className="flex-grow-1">
+                            <H5>{data.deviceName}</H5>
+                            <div style={{ fontSize: "10px" }}>
+                              {data.createdAt.slice(0, 10)}
+                            </div>
+                            
+                            <div style={{ fontSize: "10px" }}>
+                              {data.createdAt.slice(11, 19)}
+                            </div>
                           </div>
                         </div>
                       </td>
-
-                      <td className={`txt-primary`}>{data.message}</td>
-                      <td>{data.type}</td>
-                      <td>{data.message}</td>
-                      <td>
-                        {data.address == null && data.address == undefined
-                          ? "N/A"
-                          : data.address}
+                      <td className={`txt-primary`} style={{ width: "20%" }}>
+                        {data.message}
                       </td>
-                      <td>{data.completionResponse}</td>
+                      <td style={{ width: "15%" }}>{data.type}</td>
+                      <td style={{ width: "20%" }}>{data.message}</td>
+                      <td style={{ width: "20%" }}>
+                        {data.address == null ? "N/A" : data.address}
+                      </td>
+                      <td style={{ width: "20%" }}>
+                        {data.completionResponse}
+                      </td>
                     </tr>
                   ))
                 )}

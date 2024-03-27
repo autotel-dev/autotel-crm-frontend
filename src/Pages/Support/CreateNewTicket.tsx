@@ -241,10 +241,12 @@ const CreateNewTicket = () => {
         }}
         onClick={addToggle}
       >
-        <div style={{ marginRight: "2%" }}>
+        <div
+          style={{ marginRight: "2.5%", display: "flex", alignItems: "center" }}
+        >
           <PlusCircle />
         </div>
-        <span style={{ fontSize: "120%" }}>Create New Ticket</span>
+        <span style={{ fontSize: "1em" }}>Create New Ticket</span>
       </button>
       <Modal isOpen={addModal} toggle={addToggle} size="lg" centered>
         <div className="modal-header">

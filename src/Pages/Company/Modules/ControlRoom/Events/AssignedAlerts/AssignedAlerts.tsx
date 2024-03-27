@@ -1,5 +1,5 @@
 import { Card, CardBody, CardHeader, Col, Table } from "reactstrap";
-import { H3, H4 } from "../../../../../../AbstractElements";
+import { H3, H4, H5 } from "../../../../../../AbstractElements";
 import { useEffect, useRef, useState } from "react";
 import AssignedAlertModal from "./AssignedAlertModal";
 import { useDispatch, useSelector } from "react-redux";
@@ -23,7 +23,14 @@ const AssignedAlerts = () => {
 
   const [dataList, setDataList]: any = useState([]);
   const [loading, setLoading] = useState(false); // State to manage loading
-  const tableHeader = ["ID", "Device", "Alert", "Type", "Message", "Address"];
+  const tableHeader = [
+    // "ID",
+    "Device",
+    "Alert",
+    "Type",
+    "Message",
+    "Address",
+  ];
   const containerRef = useRef(null);
 
   useEffect(() => {
@@ -61,6 +68,7 @@ const AssignedAlerts = () => {
           className="table-responsive theme-scrollbar recent-wrapper"
           style={{
             overflowY: "scroll",
+            overflowX: "auto",
             maxHeight: "calc(66vh - 20px)", // Subtract scrollbar width from max height
             WebkitOverflowScrolling: "touch", // Enable momentum scrolling on iOS
             scrollbarWidth: "thin", // Specify scrollbar width
@@ -75,9 +83,11 @@ const AssignedAlerts = () => {
             <Table className="display order-wrapper" id="recent-order">
               <thead>
                 <tr>
-                  {tableHeader.map((data, index) => (
-                    <th key={index}>{data}</th>
-                  ))}
+                  <th>Device</th>
+                  <th>Alert</th>
+                  <th>Type</th>
+                  <th>Message</th>
+                  <th>Address</th>
                 </tr>
               </thead>
               <tbody>
@@ -141,31 +151,27 @@ const AssignedAlerts = () => {
                           dispatch(setModalData(undefined));
                           // // console.error("Error creating post:", error);
                         }
-
                       }}
                     >
-                      <td>{data.eventId}</td>
+                      {/* <td>{data.eventId}</td> */}
                       <td>
                         <div className="d-flex">
-                          <div className="flex-grow-1 ms-2">
-                            <H4>{data.deviceName}</H4>
-                            <span style={{ fontSize: "10px" }}>
-                              {data.createdAt.toString().slice(0, 10) +
-                                " " +
-                                data.createdAt.toString().slice(11, 19)}
-                            </span>
+                          <div className="flex-grow-1">
+                            <H5>{data.deviceName}</H5>
+                            <div style={{ fontSize: "10px" }}>
+                              {data.createdAt.slice(0, 10)}
+                            </div>
+
+                            <div style={{ fontSize: "10px" }}>
+                              {data.createdAt.slice(11, 19)}
+                            </div>
                           </div>
                         </div>
                       </td>
-
                       <td className={`txt-primary`}>{data.message}</td>
                       <td>{data.type}</td>
                       <td>{data.message}</td>
-                      <td>
-                        {data.address == null && data.address == undefined
-                          ? "N/A"
-                          : data.address}
-                      </td>
+                      <td>{data.address == null ? "N/A" : data.address}</td>
                     </tr>
                   ))
                 )}

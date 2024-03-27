@@ -254,9 +254,9 @@ const TotalKillingDevices: React.FC<PropsTypes> = ({
                   <NavItem
                     style={{
                       width: "50%",
-                      height: "50px",
+                      height: "40px",
                       textAlign: "center",
-                      fontSize: "22px",
+                      fontSize: "18px",
                       cursor: "pointer",
                     }}
                   >
@@ -294,9 +294,9 @@ const TotalKillingDevices: React.FC<PropsTypes> = ({
                   <NavItem
                     style={{
                       width: "50%",
-                      height: "50px",
+                      height: "40px",
                       textAlign: "center",
-                      fontSize: "22px",
+                      fontSize: "18px",
                       cursor: "pointer",
                     }}
                   >
@@ -438,27 +438,27 @@ const TotalKillingDevices: React.FC<PropsTypes> = ({
                                   <td style={{ width: "10%" }}>
                                     <div className="d-flex">
                                       <div className="flex-grow-1 ms-2">
-                                        <H4>
+                                        <div style={{ fontSize: "10px" }}>
                                           {format(
                                             new Date(
                                               new Date(
-                                                data.lastPacketTimeStamp * 1000
+                                                data?.lastPacketTimeStamp * 1000
                                               ).toISOString()
                                             ).toLocaleString(),
                                             "date"
                                           )}
-                                        </H4>
-                                        <span style={{ fontSize: "10px" }}>
+                                        </div>
+                                        <div style={{ fontSize: "10px" }}>
                                           {/* {data.updatedAt.toString().slice(11, 19)} */}
                                           {format(
                                             new Date(
                                               new Date(
-                                                data.lastPacketTimeStamp * 1000
+                                                data?.lastPacketTimeStamp * 1000
                                               ).toISOString()
                                             ).toLocaleString(),
                                             "time"
                                           )}
-                                        </span>
+                                        </div>
                                       </div>
                                     </div>
                                   </td>
@@ -481,23 +481,23 @@ const TotalKillingDevices: React.FC<PropsTypes> = ({
                                   <td style={{ width: "8%" }}>
                                     <div className="d-flex">
                                       <div className="flex-grow-1 ms-2">
-                                        <H4>
+                                        <div style={{ fontSize: "10px" }}>
                                           {format(
                                             new Date(
-                                              data.updatedAt
+                                              data.createdAt
                                             ).toLocaleString(),
                                             "date"
                                           )}
-                                        </H4>
-                                        <span style={{ fontSize: "10px" }}>
+                                        </div>
+                                        <div style={{ fontSize: "10px" }}>
                                           {/* {data.updatedAt.toString().slice(11, 19)} */}
                                           {format(
                                             new Date(
-                                              data.updatedAt
+                                              data.createdAt
                                             ).toLocaleString(),
                                             "time"
                                           )}
-                                        </span>
+                                        </div>
                                       </div>
                                     </div>
                                   </td>

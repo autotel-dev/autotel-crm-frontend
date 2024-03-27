@@ -1,12 +1,22 @@
-import { Button, Card, CardBody, Modal, ModalBody, Table } from "reactstrap";
+import {
+  Button,
+  Card,
+  CardBody,
+  FormGroup,
+  Modal,
+  ModalBody,
+  Row,
+  Table,
+} from "reactstrap";
 
 import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
-import { H3, H4 } from "../../../../../../AbstractElements";
+import { H3, H4, H5, P } from "../../../../../../AbstractElements";
 import SendCommand from "./SendCommand";
 import { create } from "../../../../../../Api";
 import Swal from "sweetalert2";
 import { serverCredentials } from "../../../../../../Api/header";
+import { Select } from "antd";
 
 interface PropsTypes {
   isVisible: boolean; // Change 'boolean' to the actual type of isVisible
@@ -17,7 +27,9 @@ const SelfSendCommands: React.FC<PropsTypes> = ({
   isVisible,
   setIsVisible = () => {},
 }) => {
-  const { selfSendCommands } = useSelector((state: any) => state.alerts);
+  const { selfSendCommands, sendCommandsType } = useSelector(
+    (state: any) => state.alerts
+  );
   const { devices } = useSelector((state: any) => state.monitoring);
   const [isUpdateModalOpenForSendCommand, setIsUpdateModalOpenForSendCommand] =
     useState(false);
@@ -192,6 +204,34 @@ const SelfSendCommands: React.FC<PropsTypes> = ({
     }
   };
 
+  const [commandsType, setCommandsType] = useState([]);
+
+  const [typeTitle, setTypeTitle] = useState("");
+
+  const tempCommandsTypeList: any = [];
+  useEffect(() => {
+    sendCommandsType.map((item: any, index: any) => {
+      tempCommandsTypeList.push({
+        value: `${item.title}`,
+        label: `${item.title}`,
+        type: `${item.type}`,
+        title: `${item.title}`,
+        attributes: `${JSON.stringify(item.attributes)}`,
+      });
+    });
+    setCommandsType(tempCommandsTypeList);
+  }, [sendCommandsType]);
+
+  const [searchValue, setSearchValue] = useState("");
+  // const filteredData = data
+  //   .map((group: any) => {
+  //     const filteredItems = group.items.filter((item: any) =>
+  //       item.name.toLowerCase().includes(searchValue.toLowerCase())
+  //     );
+  //     return { ...group, items: filteredItems };
+  //   })
+  //   .filter((group: any) => group.items.length > 0);
+
   return (
     <Modal
       centered
@@ -219,6 +259,41 @@ const SelfSendCommands: React.FC<PropsTypes> = ({
       <ModalBody>
         <Card className="invoice-card">
           <CardBody className="transaction-card">
+            <Row>
+              <FormGroup className="col-md-6 create-group">
+                <P>Search Vehicles</P>
+                <input
+                  className="form-control"
+                  value={searchValue}
+                  onChange={(e) => setSearchValue(e.target.value)}
+                  type="text"
+                  placeholder="Search Commanded Vehicles"
+                />
+              </FormGroup>
+              <FormGroup className="col-md-6 create-group">
+                <P>Filter Commands</P>
+                <Select
+                  showSearch
+                  style={{ width: "100%", height: 36 }}
+                  placeholder="Select Command type"
+                  optionFilterProp="children"
+                  filterOption={(input: any, option: any) =>
+                    (option?.label ?? "").includes(input)
+                  }
+                  filterSort={(optionA: any, optionB: any) =>
+                    (optionA?.label ?? "")
+                      .toLowerCase()
+                      .localeCompare((optionB?.label ?? "").toLowerCase())
+                  }
+                  onChange={(e: any, option: any) => {
+                    // // console.log(e);
+                    // // console.log(option);
+                    setTypeTitle(e);
+                  }}
+                  options={commandsType}
+                />
+              </FormGroup>
+            </Row>
             <div
               ref={containerRef}
               className="table-responsive theme-scrollbar recent-wrapper"
@@ -261,201 +336,221 @@ const SelfSendCommands: React.FC<PropsTypes> = ({
                         </td>
                       </tr>
                     ) : (
-                      dataList.map((data: any, index: any) => (
-                        <tr style={{ cursor: "pointer" }} key={index}>
-                          <td style={{ width: "8%" }}>{data.deviceId}</td>
-                          <td style={{ width: "8%" }}>{data.deviceName}</td>
+                      dataList
+                        .filter((data: any) =>
+                          data.deviceName
+                            .toLowerCase()
+                            .includes(searchValue.toLowerCase())
+                        )
+                        .map(
+                          (data: any, index: any) =>
+                            (typeTitle == data.commandData.title ||
+                              typeTitle == "") && (
+                              <tr style={{ cursor: "pointer" }} key={index}>
+                                <td style={{ width: "8%" }}>{data.deviceId}</td>
+                                <td style={{ width: "8%" }}>
+                                  {data.deviceName}
+                                </td>
 
-                          <td style={{ width: "8%" }}>
-                            <div
-                              style={{
-                                padding: "5px",
-                                backgroundColor:
-                                  data.onlineStatus === "ack"
-                                    ? "rgba(255, 0, 0, 0.1)"
-                                    : data.onlineStatus === "engine"
-                                    ? "rgba(255, 165, 0, 0.1)"
-                                    : data.onlineStatus === "online"
-                                    ? "rgba(0, 255, 0, 0.1)"
-                                    : "rgba(0, 0, 0, 0.1)",
-                                color:
-                                  data.onlineStatus === "ack"
-                                    ? "red"
-                                    : data.onlineStatus === "engine"
-                                    ? "orange"
-                                    : data.onlineStatus === "online"
-                                    ? "green"
-                                    : "black",
-                                borderRadius: "5px",
-                              }}
-                            >
-                              {data.onlineStatus === "ack"
-                                ? "Stop"
-                                : data.onlineStatus === "engine"
-                                ? "Idle"
-                                : data.onlineStatus === "online"
-                                ? "Moving"
-                                : "Offline"}
-                            </div>
-                          </td>
-                          <td style={{ width: "10%" }}>
-                            <div className="d-flex">
-                              <div className="flex-grow-1 ms-2">
-                                <H4>
-                                  {format(
-                                    new Date(
-                                      new Date(
-                                        data.lastPacketTimeStamp * 1000
-                                      ).toISOString()
-                                    ).toLocaleString(),
-                                    "date"
-                                  )}
-                                </H4>
-                                <span style={{ fontSize: "10px" }}>
-                                  {/* {data.updatedAt.toString().slice(11, 19)} */}
-                                  {format(
-                                    new Date(
-                                      new Date(
-                                        data.lastPacketTimeStamp * 1000
-                                      ).toISOString()
-                                    ).toLocaleString(),
-                                    "time"
-                                  )}
-                                </span>
-                              </div>
-                            </div>
-                          </td>
+                                <td style={{ width: "8%" }}>
+                                  <div
+                                    style={{
+                                      padding: "5px",
+                                      backgroundColor:
+                                        data.onlineStatus === "ack"
+                                          ? "rgba(255, 0, 0, 0.1)"
+                                          : data.onlineStatus === "engine"
+                                          ? "rgba(255, 165, 0, 0.1)"
+                                          : data.onlineStatus === "online"
+                                          ? "rgba(0, 255, 0, 0.1)"
+                                          : "rgba(0, 0, 0, 0.1)",
+                                      color:
+                                        data.onlineStatus === "ack"
+                                          ? "red"
+                                          : data.onlineStatus === "engine"
+                                          ? "orange"
+                                          : data.onlineStatus === "online"
+                                          ? "green"
+                                          : "black",
+                                      borderRadius: "5px",
+                                    }}
+                                  >
+                                    {data.onlineStatus === "ack"
+                                      ? "Stop"
+                                      : data.onlineStatus === "engine"
+                                      ? "Idle"
+                                      : data.onlineStatus === "online"
+                                      ? "Moving"
+                                      : "Offline"}
+                                  </div>
+                                </td>
+                                <td style={{ width: "10%" }}>
+                                  <div className="d-flex">
+                                    <div className="flex-grow-1 ms-2">
+                                      <div style={{ fontSize: "10px" }}>
+                                        {format(
+                                          new Date(
+                                            new Date(
+                                              data?.lastPacketTimeStamp * 1000
+                                            ).toISOString()
+                                          ).toLocaleString(),
+                                          "date"
+                                        )}
+                                      </div>
+                                      <div style={{ fontSize: "10px" }}>
+                                        {/* {data.updatedAt.toString().slice(11, 19)} */}
+                                        {format(
+                                          new Date(
+                                            new Date(
+                                              data?.lastPacketTimeStamp * 1000
+                                            ).toISOString()
+                                          ).toLocaleString(),
+                                          "time"
+                                        )}
+                                      </div>
+                                    </div>
+                                  </div>
+                                </td>
 
-                          <td style={{ width: "7%" }}>{data.latitude}</td>
-                          <td style={{ width: "7%" }}>{data.longitude}</td>
-                          <td style={{ width: "8%" }}>
-                            {data.address == undefined ||
-                            data.address == "" ||
-                            data.address == null
-                              ? "N/A"
-                              : data.address}
-                          </td>
-                          <td style={{ width: "8%" }}>
-                            {data.server.companyName}
-                          </td>
-                          <td style={{ width: "10%" }}>
-                            <div className="d-flex">
-                              <div className="flex-grow-1 ms-2">
-                                <H4>
-                                  {format(
-                                    new Date(data.updatedAt).toLocaleString(),
-                                    "date"
-                                  )}
-                                </H4>
-                                <span style={{ fontSize: "10px" }}>
-                                  {/* {data.updatedAt.toString().slice(11, 19)} */}
-                                  {format(
-                                    new Date(data.updatedAt).toLocaleString(),
-                                    "time"
-                                  )}
-                                </span>
-                              </div>
-                            </div>
-                          </td>
+                                <td style={{ width: "7%" }}>{data.latitude}</td>
+                                <td style={{ width: "7%" }}>
+                                  {data.longitude}
+                                </td>
+                                <td style={{ width: "8%" }}>
+                                  {data.address == undefined ||
+                                  data.address == "" ||
+                                  data.address == null
+                                    ? "N/A"
+                                    : data.address}
+                                </td>
+                                <td style={{ width: "8%" }}>
+                                  {data.server.companyName}
+                                </td>
+                                <td style={{ width: "10%" }}>
+                                  <div className="d-flex">
+                                    <div className="flex-grow-1 ms-2">
+                                      <div style={{ fontSize: "10px" }}>
+                                        {format(
+                                          new Date(
+                                            data.createdAt
+                                          ).toLocaleString(),
+                                          "date"
+                                        )}
+                                      </div>
+                                      <div style={{ fontSize: "10px" }}>
+                                        {/* {data.updatedAt.toString().slice(11, 19)} */}
+                                        {format(
+                                          new Date(
+                                            data.createdAt
+                                          ).toLocaleString(),
+                                          "time"
+                                        )}
+                                      </div>
+                                    </div>
+                                  </div>
+                                </td>
 
-                          <td style={{ width: "8%" }}>
-                            {data.commandData.type == "custom"
-                              ? data.commandData.messageData
-                              : data.commandData.title}
-                          </td>
-                          {/* <td style={{ width: "8%" }}>{data.remainingTime}</td> */}
-                          <td style={{ width: "11%" }}>
-                            {data.eMobilizerStatus !== null &&
-                            data.eMobilizerStatus !== undefined ? (
-                              <div
-                                style={{
-                                  padding: "5px",
-                                  backgroundColor: data.eMobilizerStatus
-                                    ? "rgba(255, 0, 0, 0.1)"
-                                    : "rgba(0, 255, 0, 0.1)",
-                                  color: data.eMobilizerStatus
-                                    ? "red"
-                                    : "green",
-                                  borderRadius: "5px",
-                                }}
-                              >
-                                {data.eMobilizerStatus ? "Killed" : "Released"}
-                              </div>
-                            ) : (
-                              <div>
-                                <button
-                                  className="btn-primary"
-                                  style={{
-                                    borderRadius: "5px",
-                                    padding: "5px 5px",
-                                    color: "white",
-                                    outline: "none",
-                                    border: "none",
-                                    marginTop: "00px",
-                                  }}
-                                  onClick={async () => {
-                                    const serverInfo = serverCredentials(
-                                      data?.server?._id
-                                    );
-                                    const verifyData = {
-                                      deviceId: data.deviceId,
-                                      serverId: serverInfo?.serverId,
-                                      serverHashKey: serverInfo?.serverHashKey,
-                                      commandedVehicleDeviceId: data._id,
-                                    };
-                                    // addToggle();
-                                    // console.log(verifyData);
-                                    await create(verifyData, {
-                                      url: `control-room/verify-vehicle-block-status`,
-                                    }).then((data: any) => {
-                                      // console.log("data", data);
-                                      setLoading(false);
-                                      if (
-                                        !data.success &&
-                                        data.message ==
-                                          "ERROR_INTERNET_DISCONNECTED"
-                                      ) {
-                                      }
-                                      if (!data.success) {
-                                        Swal.fire({
-                                          text: `${data.message}`,
-                                          icon: "error",
-                                          timer: 2000,
-                                          showConfirmButton: false,
-                                        });
-                                      }
-                                      if (data.success) {
-                                        const updatedDataList = dataList.map(
-                                          (item: any) => {
+                                <td style={{ width: "8%" }}>
+                                  {data.commandData.type == "custom"
+                                    ? data.commandData.messageData
+                                    : data.commandData.title}
+                                </td>
+                                {/* <td style={{ width: "8%" }}>{data.remainingTime}</td> */}
+                                <td style={{ width: "11%" }}>
+                                  {data.eMobilizerStatus !== null &&
+                                  data.eMobilizerStatus !== undefined ? (
+                                    <div
+                                      style={{
+                                        padding: "5px",
+                                        backgroundColor: data.eMobilizerStatus
+                                          ? "rgba(255, 0, 0, 0.1)"
+                                          : "rgba(0, 255, 0, 0.1)",
+                                        color: data.eMobilizerStatus
+                                          ? "red"
+                                          : "green",
+                                        borderRadius: "5px",
+                                      }}
+                                    >
+                                      {data.eMobilizerStatus
+                                        ? "Killed"
+                                        : "Released"}
+                                    </div>
+                                  ) : (
+                                    <div>
+                                      <button
+                                        className="btn-primary"
+                                        style={{
+                                          borderRadius: "5px",
+                                          padding: "5px 5px",
+                                          color: "white",
+                                          outline: "none",
+                                          border: "none",
+                                          marginTop: "00px",
+                                        }}
+                                        onClick={async () => {
+                                          const serverInfo = serverCredentials(
+                                            data?.server?._id
+                                          );
+                                          const verifyData = {
+                                            deviceId: data.deviceId,
+                                            serverId: serverInfo?.serverId,
+                                            serverHashKey:
+                                              serverInfo?.serverHashKey,
+                                            commandedVehicleDeviceId: data._id,
+                                          };
+                                          // addToggle();
+                                          // console.log(verifyData);
+                                          await create(verifyData, {
+                                            url: `control-room/verify-vehicle-block-status`,
+                                          }).then((data: any) => {
+                                            // console.log("data", data);
+                                            setLoading(false);
                                             if (
-                                              item.deviceId ===
-                                              data.data.deviceId
+                                              !data.success &&
+                                              data.message ==
+                                                "ERROR_INTERNET_DISCONNECTED"
                                             ) {
-                                              // Update fields with new values
-                                              return {
-                                                ...item,
-                                                eMobilizerStatus:
-                                                  data.data.isKilled,
-                                                lastPacketTimeStamp:
-                                                  data.data.lastPacketTimeStamp,
-                                                onlineStatus:
-                                                  data.data.onlineStatus,
-                                              };
                                             }
-                                            return item; // Return unchanged item if deviceId doesn't match
-                                          }
-                                        );
-                                        setDataList(updatedDataList);
-                                      }
-                                    });
-                                  }}
-                                >
-                                  Check Status
-                                </button>
-                              </div>
-                            )}
-                          </td>
-                          {/* <td>
+                                            if (!data.success) {
+                                              Swal.fire({
+                                                text: `${data.message}`,
+                                                icon: "error",
+                                                timer: 2000,
+                                                showConfirmButton: false,
+                                              });
+                                            }
+                                            if (data.success) {
+                                              const updatedDataList =
+                                                dataList.map((item: any) => {
+                                                  if (
+                                                    item.deviceId ===
+                                                    data.data.deviceId
+                                                  ) {
+                                                    // Update fields with new values
+                                                    return {
+                                                      ...item,
+                                                      eMobilizerStatus:
+                                                        data.data.isKilled,
+                                                      lastPacketTimeStamp:
+                                                        data.data
+                                                          .lastPacketTimeStamp,
+                                                      onlineStatus:
+                                                        data.data.onlineStatus,
+                                                    };
+                                                  }
+                                                  return item; // Return unchanged item if deviceId doesn't match
+                                                });
+                                              setDataList(updatedDataList);
+                                            }
+                                          });
+                                        }}
+                                      >
+                                        Check Status
+                                      </button>
+                                    </div>
+                                  )}
+                                </td>
+                                {/* <td>
                             <div>
                               <button
                                 className="btn-primary"
@@ -482,8 +577,9 @@ const SelfSendCommands: React.FC<PropsTypes> = ({
                             dropDownDevices={devices}
                             prevItem={deviceData}
                           /> */}
-                        </tr>
-                      ))
+                              </tr>
+                            )
+                        )
                     )}
                   </tbody>
                 </Table>
