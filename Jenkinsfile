@@ -18,6 +18,9 @@ pipeline {
         
         stage('Build') {
             steps {
+                // Set max-old-space-size to 8192
+                sh '/usr/bin/node --max-old-space-size=8192 /var/lib/jenkins/workspace/crmfrontend/node_modules/fork-ts-checker-webpack-plugin/lib/typescript-reporter/reporter/TypeScriptReporterRpcService.js'
+                
                 sh 'npm run build --force'
             }
         }
