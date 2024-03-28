@@ -47,7 +47,7 @@ pipeline {
             steps {
                 script {
                     echo 'Deploying...'
-                    sh 'scp -r build /usr/share/nginx/html'
+                    sh 'sudo scp -r build /usr/share/nginx/html/'
                 }
             }
         }
