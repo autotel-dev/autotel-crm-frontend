@@ -123,7 +123,7 @@ const SuccessfullyFormSubmitted = ({
     formData.append("fullName", createCompany.fullName);
     formData.append("cnicNumber", createCompany.cnicNumber);
     formData.append("contactPersonName", createCompany.contactPersonName);
-    formData.append("contactPersonNumber", createCompany.contactPersonNumber);
+    formData.append("contactPersonPhoneNo", createCompany.contactPersonNumber);
     formData.append("emailAddress", createCompany.emailAddress);
     formData.append("address", createCompany.address);
     formData.append("city", createCompany.city);
@@ -671,10 +671,10 @@ const SuccessfullyFormSubmitted = ({
                       className={`text-end flex-shrink-0 icon-state 
                             }`}
                     >
-                      <P className="switch mb-0">
+                      <Label className="switch mb-0">
                         <Input type="checkbox" defaultChecked={true} disabled />
                         <span className={`switch-state bg-primary`} />
-                      </P>
+                      </Label>
                     </div>
                   </div>
                 </Col>

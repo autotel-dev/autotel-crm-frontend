@@ -29,7 +29,7 @@ const CompanyInfoForm = ({ callbackActive }: BusinessFormCommonProps) => {
     contactPersonName: "",
     ntn: "",
     gstNo: "",
-    contactPersonNumber: "",
+    contactPersonPhoneNo: "",
     cnicNumber: "",
     packageExpirationDate: "",
   });
@@ -41,7 +41,7 @@ const CompanyInfoForm = ({ callbackActive }: BusinessFormCommonProps) => {
     contactPersonName,
     ntn,
     gstNo,
-    contactPersonNumber,
+    contactPersonPhoneNo,
     cnicNumber,
   } = companyInfoForm;
   const getUserData = (event: ChangeEvent<HTMLInputElement>) => {
@@ -56,12 +56,8 @@ const CompanyInfoForm = ({ callbackActive }: BusinessFormCommonProps) => {
       fullName !== "" &&
       phoneNo !== "" &&
       packageExpirationDate !== "" &&
-      address !== "" &&
       contactPersonName !== "" &&
-      ntn !== "" &&
-      gstNo !== "" &&
-      contactPersonNumber !== "" &&
-      cnicNumber !== ""
+      contactPersonPhoneNo !== ""
     ) {
       // dispatch(setCreateCompany(companyInfoForm));
       // console.log("personalDetailsForm -->", companyInfoForm);
@@ -115,7 +111,7 @@ const CompanyInfoForm = ({ callbackActive }: BusinessFormCommonProps) => {
         <Col xl={4} xs={12}>
           <P>
             Address
-            <span className="txt-danger">*</span>
+            {/* <span className="txt-danger">*</span> */}
           </P>
           <Input
             type="text"
@@ -141,7 +137,7 @@ const CompanyInfoForm = ({ callbackActive }: BusinessFormCommonProps) => {
         <Col xl={4} xs={12}>
           <P>
             NTN
-            <span className="txt-danger">*</span>
+            {/* <span className="txt-danger">*</span> */}
           </P>
           <Input
             id="ntn"
@@ -155,7 +151,7 @@ const CompanyInfoForm = ({ callbackActive }: BusinessFormCommonProps) => {
         <Col xl={4} xs={12}>
           <P>
             Gst No
-            <span className="txt-danger">*</span>
+            {/* <span className="txt-danger">*</span> */}
           </P>
           <Input
             id="gstNo"
@@ -174,16 +170,16 @@ const CompanyInfoForm = ({ callbackActive }: BusinessFormCommonProps) => {
           <Input
             id="contactPersonNumber"
             type="text"
-            placeholder="Enter Contact Person Number"
-            value={contactPersonNumber}
-            name="contactPersonNumber"
+            placeholder="Enter Contact Person Phone Number"
+            value={contactPersonPhoneNo}
+            name="contactPersonPhoneNo"
             onChange={getUserData}
           />
         </Col>
         <Col xl={4} xs={12}>
           <P>
             CNIC Number
-            <span className="txt-danger">*</span>
+            {/* <span className="txt-danger">*</span> */}
           </P>
           <Input
             id="cnicNumber"

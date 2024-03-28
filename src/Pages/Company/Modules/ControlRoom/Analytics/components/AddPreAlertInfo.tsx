@@ -221,7 +221,7 @@ const AddPreAlertInfo: React.FC<PropsTypes> = ({
         ></Button>
       </div>
 
-      <ModalBody style={{ height: "50vh" }}>
+      <ModalBody>
         <form
           className="form-bookmark needs-validation"
           onSubmit={handleSubmit(addPreInfoAlertHandler)}

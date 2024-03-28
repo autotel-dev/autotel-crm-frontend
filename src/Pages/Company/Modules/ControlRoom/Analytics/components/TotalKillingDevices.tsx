@@ -10,11 +10,13 @@ import {
   NavLink,
   TabContent,
   TabPane,
+  Row,
+  FormGroup,
 } from "reactstrap";
 
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { H3, H4 } from "../../../../../../AbstractElements";
+import { H3, H4, P } from "../../../../../../AbstractElements";
 import SendCommand from "./SendCommand";
 import { getAll } from "../../../../../../Api";
 import { setKilledDevices } from "../../../../../../ReaduxToolkit/Reducer/AlertsSlice";
@@ -212,6 +214,7 @@ const TotalKillingDevices: React.FC<PropsTypes> = ({
   };
   const [basicTab, setBasicTab] = useState("1");
   const dispatch = useDispatch();
+  const [searchValue, setSearchValue] = useState("");
 
   return (
     <Modal
@@ -240,6 +243,18 @@ const TotalKillingDevices: React.FC<PropsTypes> = ({
       <ModalBody>
         <Card className="invoice-card">
           <CardBody className="transaction-card">
+            <Row>
+              <FormGroup className="col-md-12 create-group">
+                <P>Search Vehicles</P>
+                <input
+                  className="form-control"
+                  value={searchValue}
+                  onChange={(e) => setSearchValue(e.target.value)}
+                  type="text"
+                  placeholder="Search Commanded Vehicles"
+                />
+              </FormGroup>
+            </Row>
             {allAlertsPreview !== undefined && allAlertsPreview?.read ? (
               <div>
                 <Nav
@@ -394,165 +409,175 @@ const TotalKillingDevices: React.FC<PropsTypes> = ({
                                 </td>
                               </tr>
                             ) : (
-                              dataList.map((data: any, index: any) => (
-                                <tr style={{ cursor: "pointer" }} key={index}>
-                                  <td style={{ width: "8%" }}>
-                                    {data.deviceId}
-                                  </td>
-                                  <td style={{ width: "8%" }}>
-                                    {data.deviceName}
-                                  </td>
+                              dataList
+                                .filter((data: any) =>
+                                  data.deviceName
+                                    .toLowerCase()
+                                    .includes(searchValue.toLowerCase())
+                                )
+                                .map((data: any, index: any) => (
+                                  <tr style={{ cursor: "pointer" }} key={index}>
+                                    <td style={{ width: "8%" }}>
+                                      {data.deviceId}
+                                    </td>
+                                    <td style={{ width: "8%" }}>
+                                      {data.deviceName}
+                                    </td>
 
-                                  <td style={{ width: "8%" }}>
-                                    <div
-                                      style={{
-                                        padding: "5px",
-                                        backgroundColor:
-                                          data.onlineStatus === "ack"
-                                            ? "rgba(255, 0, 0, 0.1)"
-                                            : data.onlineStatus === "engine"
-                                            ? "rgba(255, 165, 0, 0.1)"
-                                            : data.onlineStatus === "online"
-                                            ? "rgba(0, 255, 0, 0.1)"
-                                            : "rgba(0, 0, 0, 0.1)",
-                                        color:
-                                          data.onlineStatus === "ack"
-                                            ? "red"
-                                            : data.onlineStatus === "engine"
-                                            ? "orange"
-                                            : data.onlineStatus === "online"
-                                            ? "green"
-                                            : "black",
-                                        borderRadius: "5px",
-                                      }}
-                                    >
-                                      {data.onlineStatus === "ack"
-                                        ? "Stop"
-                                        : data.onlineStatus === "engine"
-                                        ? "Idle"
-                                        : data.onlineStatus === "online"
-                                        ? "Moving"
-                                        : "Offline"}
-                                    </div>
-                                  </td>
-                                  <td style={{ width: "10%" }}>
-                                    <div className="d-flex">
-                                      <div className="flex-grow-1 ms-2">
-                                        <div style={{ fontSize: "10px" }}>
-                                          {format(
-                                            new Date(
-                                              new Date(
-                                                data?.lastPacketTimeStamp * 1000
-                                              ).toISOString()
-                                            ).toLocaleString(),
-                                            "date"
-                                          )}
-                                        </div>
-                                        <div style={{ fontSize: "10px" }}>
-                                          {/* {data.updatedAt.toString().slice(11, 19)} */}
-                                          {format(
-                                            new Date(
-                                              new Date(
-                                                data?.lastPacketTimeStamp * 1000
-                                              ).toISOString()
-                                            ).toLocaleString(),
-                                            "time"
-                                          )}
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </td>
-                                  <td style={{ width: "8%" }}>
-                                    {data.latitude}
-                                  </td>
-                                  <td style={{ width: "8%" }}>
-                                    {data.longitude}
-                                  </td>
-                                  <td style={{ width: "8%" }}>
-                                    {data.address == undefined ||
-                                    data.address == "" ||
-                                    data.address == null
-                                      ? "N/A"
-                                      : data.address}
-                                  </td>
-                                  <td style={{ width: "10%" }}>
-                                    {data.server.companyName}
-                                  </td>
-                                  <td style={{ width: "8%" }}>
-                                    <div className="d-flex">
-                                      <div className="flex-grow-1 ms-2">
-                                        <div style={{ fontSize: "10px" }}>
-                                          {format(
-                                            new Date(
-                                              data.createdAt
-                                            ).toLocaleString(),
-                                            "date"
-                                          )}
-                                        </div>
-                                        <div style={{ fontSize: "10px" }}>
-                                          {/* {data.updatedAt.toString().slice(11, 19)} */}
-                                          {format(
-                                            new Date(
-                                              data.createdAt
-                                            ).toLocaleString(),
-                                            "time"
-                                          )}
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </td>
-                                  <td style={{ width: "8%" }}>
-                                    <div
-                                      style={{
-                                        padding: "5px",
-                                        backgroundColor: data.isKilled
-                                          ? "rgba(255, 0, 0, 0.1)"
-                                          : "rgba(0, 255, 0, 0.1)",
-                                        color: data.isKilled ? "red" : "green",
-                                        borderRadius: "5px",
-                                      }}
-                                    >
-                                      {data.isKilled ? "Killed" : "Released"}
-                                    </div>
-                                  </td>
-                                  <td style={{ width: "8%" }}>
-                                    {data.remainingTime}
-                                  </td>
-                                  <td style={{ width: "8%" }}>
-                                    <div>
-                                      <button
-                                        className="btn-primary"
+                                    <td style={{ width: "8%" }}>
+                                      <div
                                         style={{
+                                          padding: "5px",
+                                          backgroundColor:
+                                            data.onlineStatus === "ack"
+                                              ? "rgba(255, 0, 0, 0.1)"
+                                              : data.onlineStatus === "engine"
+                                              ? "rgba(255, 165, 0, 0.1)"
+                                              : data.onlineStatus === "online"
+                                              ? "rgba(0, 255, 0, 0.1)"
+                                              : "rgba(0, 0, 0, 0.1)",
+                                          color:
+                                            data.onlineStatus === "ack"
+                                              ? "red"
+                                              : data.onlineStatus === "engine"
+                                              ? "orange"
+                                              : data.onlineStatus === "online"
+                                              ? "green"
+                                              : "black",
                                           borderRadius: "5px",
-                                          padding: "5px 15px",
-                                          color: "white",
-                                          outline: "none",
-                                          border: "none",
-                                          marginTop: "10px",
-                                        }}
-                                        onClick={() => {
-                                          setDeviceData(data.deviceData);
-                                          setIsUpdateModalOpenForSendCommand(
-                                            true
-                                          );
                                         }}
                                       >
-                                        Release
-                                      </button>
-                                    </div>
-                                  </td>
-                                  <SendCommand
-                                    addModal={isUpdateModalOpenForSendCommand}
-                                    setAddModal={
-                                      setIsUpdateModalOpenForSendCommand
-                                    }
-                                    dropDownDevices={devices}
-                                    prevItem={deviceData}
-                                    fromDate={fromDate}
-                                    toDate={toDate}
-                                  />
-                                </tr>
-                              ))
+                                        {data.onlineStatus === "ack"
+                                          ? "Stop"
+                                          : data.onlineStatus === "engine"
+                                          ? "Idle"
+                                          : data.onlineStatus === "online"
+                                          ? "Moving"
+                                          : "Offline"}
+                                      </div>
+                                    </td>
+                                    <td style={{ width: "10%" }}>
+                                      <div className="d-flex">
+                                        <div className="flex-grow-1 ms-2">
+                                          <div style={{ fontSize: "10px" }}>
+                                            {format(
+                                              new Date(
+                                                new Date(
+                                                  data?.lastPacketTimeStamp *
+                                                    1000
+                                                ).toISOString()
+                                              ).toLocaleString(),
+                                              "date"
+                                            )}
+                                          </div>
+                                          <div style={{ fontSize: "10px" }}>
+                                            {/* {data.updatedAt.toString().slice(11, 19)} */}
+                                            {format(
+                                              new Date(
+                                                new Date(
+                                                  data?.lastPacketTimeStamp *
+                                                    1000
+                                                ).toISOString()
+                                              ).toLocaleString(),
+                                              "time"
+                                            )}
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </td>
+                                    <td style={{ width: "8%" }}>
+                                      {data.latitude}
+                                    </td>
+                                    <td style={{ width: "8%" }}>
+                                      {data.longitude}
+                                    </td>
+                                    <td style={{ width: "8%" }}>
+                                      {data.address == undefined ||
+                                      data.address == "" ||
+                                      data.address == null
+                                        ? "N/A"
+                                        : data.address}
+                                    </td>
+                                    <td style={{ width: "10%" }}>
+                                      {data.server.companyName}
+                                    </td>
+                                    <td style={{ width: "8%" }}>
+                                      <div className="d-flex">
+                                        <div className="flex-grow-1 ms-2">
+                                          <div style={{ fontSize: "10px" }}>
+                                            {format(
+                                              new Date(
+                                                data.createdAt
+                                              ).toLocaleString(),
+                                              "date"
+                                            )}
+                                          </div>
+                                          <div style={{ fontSize: "10px" }}>
+                                            {/* {data.updatedAt.toString().slice(11, 19)} */}
+                                            {format(
+                                              new Date(
+                                                data.createdAt
+                                              ).toLocaleString(),
+                                              "time"
+                                            )}
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </td>
+                                    <td style={{ width: "8%" }}>
+                                      <div
+                                        style={{
+                                          padding: "5px",
+                                          backgroundColor: data.isKilled
+                                            ? "rgba(255, 0, 0, 0.1)"
+                                            : "rgba(0, 255, 0, 0.1)",
+                                          color: data.isKilled
+                                            ? "red"
+                                            : "green",
+                                          borderRadius: "5px",
+                                        }}
+                                      >
+                                        {data.isKilled ? "Killed" : "Released"}
+                                      </div>
+                                    </td>
+                                    <td style={{ width: "8%" }}>
+                                      {data.remainingTime}
+                                    </td>
+                                    <td style={{ width: "8%" }}>
+                                      <div>
+                                        <button
+                                          className="btn-primary"
+                                          style={{
+                                            borderRadius: "5px",
+                                            padding: "5px 15px",
+                                            color: "white",
+                                            outline: "none",
+                                            border: "none",
+                                            marginTop: "10px",
+                                          }}
+                                          onClick={() => {
+                                            setDeviceData(data.deviceData);
+                                            setIsUpdateModalOpenForSendCommand(
+                                              true
+                                            );
+                                          }}
+                                        >
+                                          Release
+                                        </button>
+                                      </div>
+                                    </td>
+                                    <SendCommand
+                                      addModal={isUpdateModalOpenForSendCommand}
+                                      setAddModal={
+                                        setIsUpdateModalOpenForSendCommand
+                                      }
+                                      dropDownDevices={devices}
+                                      prevItem={deviceData}
+                                      fromDate={fromDate}
+                                      toDate={toDate}
+                                    />
+                                  </tr>
+                                ))
                             )}
                           </tbody>
                         </Table>

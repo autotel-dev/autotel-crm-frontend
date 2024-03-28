@@ -1,8 +1,17 @@
-import { Button, Card, CardBody, Modal, ModalBody, Table } from "reactstrap";
+import {
+  Button,
+  Card,
+  CardBody,
+  FormGroup,
+  Modal,
+  ModalBody,
+  Row,
+  Table,
+} from "reactstrap";
 
 import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
-import { H3, H4 } from "../../../../../../AbstractElements";
+import { H3, H4, P } from "../../../../../../AbstractElements";
 
 interface PropsTypes {
   isVisible: boolean; // Change 'boolean' to the actual type of isVisible
@@ -78,6 +87,8 @@ const TotalPreInfoAlerts: React.FC<PropsTypes> = ({
     }
   };
 
+  const [searchValue, setSearchValue] = useState("");
+
   return (
     <Modal
       centered
@@ -105,6 +116,18 @@ const TotalPreInfoAlerts: React.FC<PropsTypes> = ({
       <ModalBody>
         <Card className="invoice-card">
           <CardBody className="transaction-card">
+            <Row>
+              <FormGroup className="col-md-12 create-group">
+                <P>Search Vehicles</P>
+                <input
+                  className="form-control"
+                  value={searchValue}
+                  onChange={(e) => setSearchValue(e.target.value)}
+                  type="text"
+                  placeholder="Search Commanded Vehicles"
+                />
+              </FormGroup>
+            </Row>
             <div
               ref={containerRef}
               className="table-responsive theme-scrollbar recent-wrapper"
@@ -144,64 +167,70 @@ const TotalPreInfoAlerts: React.FC<PropsTypes> = ({
                         </td>
                       </tr>
                     ) : (
-                      dataList.map((data: any, index: any) => (
-                        <tr style={{ cursor: "pointer" }} key={index}>
-                          <td style={{ width: "10%" }}>{data.deviceId}</td>
-                          <td style={{ width: "10%" }}>{data.deviceName}</td>
+                      dataList
+                        .filter((data: any) =>
+                          data.deviceName
+                            .toLowerCase()
+                            .includes(searchValue.toLowerCase())
+                        )
+                        .map((data: any, index: any) => (
+                          <tr style={{ cursor: "pointer" }} key={index}>
+                            <td style={{ width: "10%" }}>{data.deviceId}</td>
+                            <td style={{ width: "10%" }}>{data.deviceName}</td>
 
-                          <td style={{ width: "10%" }}>
-                            {data.addedByUser.fullName}
-                          </td>
-                          <td style={{ width: "10%" }}>
-                            {data.company.fullName}
-                          </td>
-                          <td style={{ width: "15%" }}>
-                            {data.server.companyName}
-                          </td>
-                          <td style={{ width: "15%" }}>
-                            {data.preInfoMessage}
-                          </td>
+                            <td style={{ width: "10%" }}>
+                              {data.addedByUser.fullName}
+                            </td>
+                            <td style={{ width: "10%" }}>
+                              {data.company.fullName}
+                            </td>
+                            <td style={{ width: "15%" }}>
+                              {data.server.companyName}
+                            </td>
+                            <td style={{ width: "15%" }}>
+                              {data.preInfoMessage}
+                            </td>
 
-                          <td style={{ width: "15%" }}>
-                            <div className="d-flex">
-                              <div className="flex-grow-1 ms-2">
-                                <div style={{ fontSize: "10px" }}>
-                                  {format(
-                                    new Date(data?.from).toLocaleString(),
-                                    "date"
-                                  )}
-                                </div>
-                                <div style={{ fontSize: "10px" }}>
-                                  {/* {data.updatedAt.toString().slice(11, 19)} */}
-                                  {format(
-                                    new Date(data?.from).toLocaleString(),
-                                    "time"
-                                  )}
+                            <td style={{ width: "15%" }}>
+                              <div className="d-flex">
+                                <div className="flex-grow-1 ms-2">
+                                  <div style={{ fontSize: "10px" }}>
+                                    {format(
+                                      new Date(data?.from).toLocaleString(),
+                                      "date"
+                                    )}
+                                  </div>
+                                  <div style={{ fontSize: "10px" }}>
+                                    {/* {data.updatedAt.toString().slice(11, 19)} */}
+                                    {format(
+                                      new Date(data?.from).toLocaleString(),
+                                      "time"
+                                    )}
+                                  </div>
                                 </div>
                               </div>
-                            </div>
-                          </td>
-                          <td style={{ width: "15%" }}>
-                            <div className="d-flex">
-                              <div className="flex-grow-1 ms-2">
-                                <div style={{ fontSize: "10px" }}>
-                                  {format(
-                                    new Date(data?.to).toLocaleString(),
-                                    "date"
-                                  )}
-                                </div>
-                                <div style={{ fontSize: "10px" }}>
-                                  {/* {data.updatedAt.toString().slice(11, 19)} */}
-                                  {format(
-                                    new Date(data?.to).toLocaleString(),
-                                    "time"
-                                  )}
+                            </td>
+                            <td style={{ width: "15%" }}>
+                              <div className="d-flex">
+                                <div className="flex-grow-1 ms-2">
+                                  <div style={{ fontSize: "10px" }}>
+                                    {format(
+                                      new Date(data?.to).toLocaleString(),
+                                      "date"
+                                    )}
+                                  </div>
+                                  <div style={{ fontSize: "10px" }}>
+                                    {/* {data.updatedAt.toString().slice(11, 19)} */}
+                                    {format(
+                                      new Date(data?.to).toLocaleString(),
+                                      "time"
+                                    )}
+                                  </div>
                                 </div>
                               </div>
-                            </div>
-                          </td>
-                        </tr>
-                      ))
+                            </td>
+                          </tr>
+                        ))
                     )}
                   </tbody>
                 </Table>

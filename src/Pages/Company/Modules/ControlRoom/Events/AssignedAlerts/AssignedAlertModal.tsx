@@ -165,8 +165,8 @@ const AssignedAlertModal: React.FC<PropsTypes> = ({
                         ? "Customer Info"
                         : item.id === "3"
                         ? "Vehicle Info"
-                        : item.id === "3"
-                        ? "History"
+                        : item.id === "4"
+                        ? "Alert History"
                         : "Response"}
                     </NavLink>
                   </NavItem>

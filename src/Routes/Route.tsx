@@ -126,6 +126,7 @@ import NotAccessible from "../Pages/NotAccessible/NotAccessible";
 import { ROLES } from "../constants/roles";
 import { PERMISSION_VALUES } from "../constants/permissions";
 import NoInternetConnection from "../Pages/NoInternetConnection/NoInternetConnection";
+import UpdateCompanyForm from "../Pages/Companies/UpdateCompanyForm/UpdateCompanyForm";
 
 const routes = [
   // dashboard routes
@@ -652,7 +653,7 @@ const routes = [
     permissionValue: "CreateNewServer",
   },
   {
-    path: `${process.env.PUBLIC_URL}/super-admin/setup/server_details/updareServer`,
+    path: `${process.env.PUBLIC_URL}/super-admin/setup/server_details/update-server`,
     Component: <UpdateServerForm />,
     allowedUserRoles: [ROLES.SUPER_ADMIN],
     isProtected: true,
@@ -700,6 +701,13 @@ const routes = [
     allowedUserRoles: [ROLES.SUPER_ADMIN],
     isProtected: true,
     permissionValue: "Companies",
+  },
+  {
+    path: `${process.env.PUBLIC_URL}/super-admin/setup/company/update-company`,
+    Component: <UpdateCompanyForm />,
+    allowedUserRoles: [ROLES.SUPER_ADMIN],
+    isProtected: true,
+    permissionValue: "UpdateCompany",
   },
 
   {

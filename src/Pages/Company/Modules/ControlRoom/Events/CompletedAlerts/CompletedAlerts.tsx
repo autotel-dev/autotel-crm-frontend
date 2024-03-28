@@ -1,5 +1,13 @@
-import { Card, CardBody, CardHeader, Col, Table } from "reactstrap";
-import { H3, H4, H5 } from "../../../../../../AbstractElements";
+import {
+  Card,
+  CardBody,
+  CardHeader,
+  Col,
+  FormGroup,
+  Row,
+  Table,
+} from "reactstrap";
+import { H3, H4, H5, P } from "../../../../../../AbstractElements";
 import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 
@@ -43,9 +51,24 @@ const AssignedAlerts = () => {
     }
   };
 
+  const [searchValue, setSearchValue] = useState("");
+
   return (
     <Card className="invoice-card">
       <CardBody className="transaction-card">
+        <Row>
+          <FormGroup className="col-md-12 create-group">
+            <P>Search Vehicles</P>
+            <input
+              className="form-control"
+              value={searchValue}
+              onChange={(e) => setSearchValue(e.target.value)}
+              type="text"
+              placeholder="Search Commanded Vehicles"
+            />
+          </FormGroup>
+        </Row>
+
         <div
           ref={containerRef}
           className="table-responsive theme-scrollbar recent-wrapper"
@@ -86,36 +109,42 @@ const AssignedAlerts = () => {
                     </td>
                   </tr>
                 ) : (
-                  dataList.map((data: any, index: any) => (
-                    <tr style={{ cursor: "pointer" }} key={index}>
-                      {/* <td>{data.eventId}</td> */}
-                      <td style={{ width: "15%" }}>
-                        <div className="d-flex">
-                          <div className="flex-grow-1">
-                            <H5>{data.deviceName}</H5>
-                            <div style={{ fontSize: "10px" }}>
-                              {data.createdAt.slice(0, 10)}
-                            </div>
-                            
-                            <div style={{ fontSize: "10px" }}>
-                              {data.createdAt.slice(11, 19)}
+                  dataList
+                    .filter((data: any) =>
+                      data.deviceName
+                        .toLowerCase()
+                        .includes(searchValue.toLowerCase())
+                    )
+                    .map((data: any, index: any) => (
+                      <tr style={{ cursor: "pointer" }} key={index}>
+                        {/* <td>{data.eventId}</td> */}
+                        <td style={{ width: "15%" }}>
+                          <div className="d-flex">
+                            <div className="flex-grow-1">
+                              <H5>{data.deviceName}</H5>
+                              <div style={{ fontSize: "10px" }}>
+                                {data.createdAt.slice(0, 10)}
+                              </div>
+
+                              <div style={{ fontSize: "10px" }}>
+                                {data.createdAt.slice(11, 19)}
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      </td>
-                      <td className={`txt-primary`} style={{ width: "20%" }}>
-                        {data.message}
-                      </td>
-                      <td style={{ width: "15%" }}>{data.type}</td>
-                      <td style={{ width: "20%" }}>{data.message}</td>
-                      <td style={{ width: "20%" }}>
-                        {data.address == null ? "N/A" : data.address}
-                      </td>
-                      <td style={{ width: "20%" }}>
-                        {data.completionResponse}
-                      </td>
-                    </tr>
-                  ))
+                        </td>
+                        <td className={`txt-primary`} style={{ width: "20%" }}>
+                          {data.message}
+                        </td>
+                        <td style={{ width: "15%" }}>{data.type}</td>
+                        <td style={{ width: "20%" }}>{data.message}</td>
+                        <td style={{ width: "20%" }}>
+                          {data.address == null ? "N/A" : data.address}
+                        </td>
+                        <td style={{ width: "20%" }}>
+                          {data.completionResponse}
+                        </td>
+                      </tr>
+                    ))
                 )}
               </tbody>
             </Table>

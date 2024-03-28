@@ -76,7 +76,7 @@ const VehicleInfo = () => {
             <input
               className="form-control"
               type="text"
-              defaultValue={modalData?.vehicleInfo?.chasesNo}
+              defaultValue={modalData?.vehicleInfo?.chasisNo}
               disabled
             />
           </FormGroup>

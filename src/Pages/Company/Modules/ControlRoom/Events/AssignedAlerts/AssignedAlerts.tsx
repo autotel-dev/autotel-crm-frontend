@@ -1,5 +1,5 @@
-import { Card, CardBody, CardHeader, Col, Table } from "reactstrap";
-import { H3, H4, H5 } from "../../../../../../AbstractElements";
+import { Card, CardBody, CardHeader, Col, FormGroup, Row, Table } from "reactstrap";
+import { H3, H4, H5, P } from "../../../../../../AbstractElements";
 import { useEffect, useRef, useState } from "react";
 import AssignedAlertModal from "./AssignedAlertModal";
 import { useDispatch, useSelector } from "react-redux";
@@ -60,9 +60,24 @@ const AssignedAlerts = () => {
   const [basicTab, setBasicTab] = useState("1");
   const [fisrtTime, setFirstTime] = useState(true);
 
+  const [searchValue, setSearchValue] = useState("");
+
   return (
     <Card className="invoice-card">
       <CardBody className="transaction-card">
+      <Row>
+        <FormGroup className="col-md-12 create-group">
+          <P>Search Vehicles</P>
+          <input
+            className="form-control"
+            value={searchValue}
+            onChange={(e) => setSearchValue(e.target.value)}
+            type="text"
+            placeholder="Search Commanded Vehicles"
+          />
+        </FormGroup>
+      </Row>
+
         <div
           ref={containerRef}
           className="table-responsive theme-scrollbar recent-wrapper"
@@ -98,7 +113,13 @@ const AssignedAlerts = () => {
                     </td>
                   </tr>
                 ) : (
-                  dataList.map((data: any, index: any) => (
+                  dataList
+                  .filter((data: any) =>
+                    data.deviceName
+                      .toLowerCase()
+                      .includes(searchValue.toLowerCase())
+                  )
+                  .map((data: any, index: any) =>  (
                     <tr
                       style={{
                         cursor: "pointer",
