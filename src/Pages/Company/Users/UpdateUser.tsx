@@ -131,7 +131,7 @@ const UpdateUser: React.FC<PropsTypes> = ({
           (data: any) => {
             if (
               !data.success &&
-              data.message == "ERROR_INTERNET_DISCONNECTED"
+              data.message === "ERROR_INTERNET_DISCONNECTED"
             ) {
               setLoading(false);
               setIsVisible(!isVisible);
@@ -155,7 +155,7 @@ const UpdateUser: React.FC<PropsTypes> = ({
               getAll({ url: "operator/get-all-operators" }).then(
                 (data: any) => {
                   // // console.log("api call --- >", data);
-                  if (data == undefined) {
+                  if (data === undefined) {
                     Swal.fire({
                       text: "Failed to fetch due to connection refused",
                       icon: "error",

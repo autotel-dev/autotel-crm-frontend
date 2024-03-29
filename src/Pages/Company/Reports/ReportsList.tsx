@@ -50,10 +50,10 @@ const ReportsList = () => {
   ) {
     // message.info("Click on left button.");
     // console.log("click left button", e);
-    if (selectedTypes[index] == "Excel") {
+    if (selectedTypes[index] === "Excel") {
       xlsx(excelData, settings);
     }
-    // else if (selectedTypes[index] == "PDF") {
+    // else if (selectedTypes[index] === "PDF") {
     //   downloadPDF();
     // }
 

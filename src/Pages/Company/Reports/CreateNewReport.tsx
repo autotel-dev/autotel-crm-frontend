@@ -141,7 +141,7 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
         // console.log("endDateTime", endDateTime);
         // console.log("today", today);
         var deviceIds: number[];
-        if (selectedItems.length == 0) {
+        if (selectedItems.length === 0) {
           const allItems = await dropDownDevices.flatMap((group: any) =>
             group.items.map((item: any) => ({
               deviceId: item.id,
@@ -173,7 +173,7 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
         ).then((data: any) => {
           // console.log("data", data);
 
-          if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
+          if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
             setLoading(false);
             setSelectedItems([]);
             const yesterday = new Date();
@@ -232,7 +232,7 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
         setStartDate(yesterday.toISOString());
         // setStartDate(new Date().toISOString());
         setEndDate(new Date().toISOString());
-        if (data == undefined) {
+        if (data === undefined) {
           Swal.fire({
             text: "Failed to create due to connection refused",
             icon: "error",

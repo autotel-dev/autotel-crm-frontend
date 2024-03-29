@@ -70,19 +70,19 @@ const EditMyProfile = () => {
               <H5 className="mb-1">Phone Number</H5>
               <P>{userData.phoneNo}</P>
             </FormGroup>
-            {getUserRole() == "COMPANY" && userData.address !== null && (
+            {getUserRole() === "COMPANY" && userData.address !== null && (
               <FormGroup>
                 <H5 className="mb-1">{userData.address}</H5>
                 <P>Address</P>
               </FormGroup>
             )}
-            {getUserRole() == "COMPANY" && userData.gstNo !== null && (
+            {getUserRole() === "COMPANY" && userData.gstNo !== null && (
               <FormGroup>
                 <H5 className="mb-1">Gst No</H5>
                 <P>{userData.gstNo}</P>
               </FormGroup>
             )}
-            {getUserRole() == "COMPANY" && userData.ntn !== null && (
+            {getUserRole() === "COMPANY" && userData.ntn !== null && (
               <FormGroup>
                 <H5 className="mb-1">NTN</H5>
                 <P>{userData.ntn}</P>
@@ -109,7 +109,7 @@ const EditMyProfile = () => {
                       <Input
                         type="checkbox"
                         defaultChecked={
-                          accountStatus == "ACTIVE" ? true : false
+                          accountStatus === "ACTIVE" ? true : false
                         }
                         disabled
                         style={{ cursor: "not-allowed" }}
@@ -117,7 +117,7 @@ const EditMyProfile = () => {
                       <span
                         style={{ cursor: "not-allowed" }}
                         className={`switch-state ${
-                          accountStatus == "ACTIVE"
+                          accountStatus === "ACTIVE"
                             ? "bg-primary"
                             : "bg-secondary"
                         }`}

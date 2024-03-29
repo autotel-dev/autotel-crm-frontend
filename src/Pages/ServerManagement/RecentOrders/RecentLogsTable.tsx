@@ -59,7 +59,7 @@ const RecentLogsTable = () => {
                     {formatUnderscoredString(data.activity)}
                   </td>
                   <td style={{ width: "15%" }}>
-                    {data.user?.fullName == null ? "N/A" : data.user?.fullName}
+                    {data.user?.fullName === null ? "N/A" : data.user?.fullName}
                   </td>
                   <td style={{ width: "15%" }}>
                     {formatUnderscoredString(data.role)}

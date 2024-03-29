@@ -197,40 +197,42 @@ const SelfSendCommands: React.FC<PropsTypes> = ({
       .toString()
       .padStart(2, "0")}:${seconds.toString().padStart(2, "0")} ${amPm}`;
 
-    if (type == "date") {
+    if (type === "date") {
       return formattedDate;
-    } else if (type == "time") {
+    } else if (type === "time") {
       return formattedTime;
     }
   };
 
-  const [commandsType, setCommandsType] = useState([]);
-
   const [typeTitle, setTypeTitle] = useState("");
 
-  const tempCommandsTypeList: any = [];
-  useEffect(() => {
-    sendCommandsType.map((item: any, index: any) => {
-      tempCommandsTypeList.push({
-        value: `${item.title}`,
-        label: `${item.title}`,
-        type: `${item.type}`,
-        title: `${item.title}`,
-        attributes: `${JSON.stringify(item.attributes)}`,
-      });
-    });
-    setCommandsType(tempCommandsTypeList);
-  }, [sendCommandsType]);
+  const tempCommandsTypeList: any = [
+    { value: `Custom command`, label: `Custom command` },
+    {
+      value: `Kill Engine(GPRS template)`,
+      label: `Kill Engine(GPRS template)`,
+    },
+    { value: `RESET(GPRS template)`, label: `RESET(GPRS template)` },
+    {
+      value: `Resume Engine(GPRS template)`,
+      label: `Resume Engine(GPRS template)`,
+    },
+  ];
+  const [commandsType, setCommandsType] = useState(tempCommandsTypeList);
+  // useEffect(() => {
+  //   sendCommandsType.map((item: any, index: any) => {
+  //     tempCommandsTypeList.push({
+  //       value: `${item.title}`,
+  //       label: `${item.title}`,
+  //       type: `${item.type}`,
+  //       title: `${item.title}`,
+  //       attributes: `${JSON.stringify(item.attributes)}`,
+  //     });
+  //   });
+  //   setCommandsType(tempCommandsTypeList);
+  // }, [sendCommandsType]);
 
   const [searchValue, setSearchValue] = useState("");
-  // const filteredData = data
-  //   .map((group: any) => {
-  //     const filteredItems = group.items.filter((item: any) =>
-  //       item.name.toLowerCase().includes(searchValue.toLowerCase())
-  //     );
-  //     return { ...group, items: filteredItems };
-  //   })
-  //   .filter((group: any) => group.items.length > 0);
 
   return (
     <Modal
@@ -318,7 +320,7 @@ const SelfSendCommands: React.FC<PropsTypes> = ({
                           key={index}
                           style={{
                             width:
-                              data == "Last Packet" || data == "Killed Time"
+                              data === "Last Packet" || data === "Killed Time"
                                 ? "10%"
                                 : "8%",
                           }}
@@ -329,7 +331,7 @@ const SelfSendCommands: React.FC<PropsTypes> = ({
                     </tr>
                   </thead>
                   <tbody>
-                    {dataList.length == 0 ? (
+                    {dataList.length === 0 ? (
                       <tr>
                         <td colSpan={11} style={{ fontSize: "25px" }}>
                           No Send Commands Found
@@ -344,8 +346,8 @@ const SelfSendCommands: React.FC<PropsTypes> = ({
                         )
                         .map(
                           (data: any, index: any) =>
-                            (typeTitle == data.commandData.title ||
-                              typeTitle == "") && (
+                            (typeTitle === data.commandData.title ||
+                              typeTitle === "") && (
                               <tr style={{ cursor: "pointer" }} key={index}>
                                 <td style={{ width: "8%" }}>{data.deviceId}</td>
                                 <td style={{ width: "8%" }}>
@@ -417,9 +419,9 @@ const SelfSendCommands: React.FC<PropsTypes> = ({
                                   {data.longitude}
                                 </td>
                                 <td style={{ width: "8%" }}>
-                                  {data.address == undefined ||
-                                  data.address == "" ||
-                                  data.address == null
+                                  {data.address === undefined ||
+                                  data.address === "" ||
+                                  data.address === null
                                     ? "N/A"
                                     : data.address}
                                 </td>
@@ -451,7 +453,7 @@ const SelfSendCommands: React.FC<PropsTypes> = ({
                                 </td>
 
                                 <td style={{ width: "8%" }}>
-                                  {data.commandData.type == "custom"
+                                  {data.commandData.type === "custom"
                                     ? data.commandData.messageData
                                     : data.commandData.title}
                                 </td>

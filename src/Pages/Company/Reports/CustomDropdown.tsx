@@ -98,7 +98,7 @@ const CustomDropdown: React.FC<PropsTypes> = ({
     <div className="custom-dropdown">
       <div className="dropdown-toggle" onClick={toggleDropdown}>
         <div className="selected-items">
-          {selectedItems.length == 0 && "No device selected"}
+          {selectedItems.length === 0 && "No device selected"}
           {selectedItems.map((item: any) => `${item.name}, `)}
         </div>
       </div>

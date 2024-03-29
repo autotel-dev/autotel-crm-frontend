@@ -37,7 +37,7 @@ const ProvinceList = () => {
     dispatch(setProvincesStart());
     getAll({ url: "province/get-all-provinces" }).then((data: any) => {
       // console.log("api call --- >", data);
-      if (data == undefined) {
+      if (data === undefined) {
         Swal.fire({
           text: "No provinces Found",
           icon: "error",
@@ -53,7 +53,7 @@ const ProvinceList = () => {
 
       if (data !== undefined) {
         dispatch(setNoDataFound(data.message));
-        if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
+        if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
           dispatch(setIsConnected(true));
         }
         if (!data.success) {

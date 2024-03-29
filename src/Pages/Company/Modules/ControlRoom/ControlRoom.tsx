@@ -69,15 +69,15 @@ const ControlRoom = () => {
       // // console.log("api call --- >", data);
       // // console.log("data,data");
 
-      if (data == undefined) {
+      if (data === undefined) {
         dispatch(setLiveAlerts([]));
         dispatch(setLiveAlertsData(null));
       }
       if (data !== undefined) {
-        if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
+        if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
           dispatch(setIsConnected(true));
         }
-        if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
+        if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
           Swal.fire({
             text: `${data.message}`,
             icon: "error",
@@ -104,15 +104,15 @@ const ControlRoom = () => {
     getAll({ url: "company/get-all-assigned-events" }).then((data: any) => {
       // // console.log("assigned --- >", data);
       // setLoading(false);
-      if (data == undefined) {
+      if (data === undefined) {
         dispatch(setAssignedAlerts([]));
       }
       if (data !== undefined) {
-        if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
+        if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
           dispatch(setIsConnected(true));
           setLoading(false);
         }
-        if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
+        if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
           Swal.fire({
             text: `${data.message}`,
             icon: "error",
@@ -134,14 +134,14 @@ const ControlRoom = () => {
     getAll({ url: "company/get-all-completed-events" }).then((data: any) => {
       // // console.log("completed --- >", data);
       // setLoading(false);
-      if (data == undefined) {
+      if (data === undefined) {
         dispatch(setCompletedAlerts([]));
       }
       if (data !== undefined) {
-        if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
+        if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
           dispatch(setIsConnected(true));
         }
-        if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
+        if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
           Swal.fire({
             text: `${data.message}`,
             icon: "error",
@@ -272,10 +272,10 @@ const ControlRoom = () => {
   const [groupdevicesStatuses, setgroupdevicesStatuses]: any = useState([]);
 
   useEffect(() => {
-    if (devices.length == 0) {
+    if (devices.length === 0) {
       getAll({ url: "company/devices" }).then((data: any) => {
         // // console.log("data", data);
-        // if (data == undefined) {
+        // if (data === undefined) {
         //   setDevicesLoading(false);
         //   Swal.fire({
         //     text: "Failed to Fetch",
@@ -285,7 +285,7 @@ const ControlRoom = () => {
         //   });
         // }
         if (data !== undefined) {
-          if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
+          if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
             dispatch(setIsConnected(true));
           }
           if (!data.success) {
@@ -382,7 +382,7 @@ const ControlRoom = () => {
             for (let i = 0; i < data.data.length; i++) {
               const element = data.data[i];
               if (
-                element.time == null ||
+                element.time === null ||
                 element.time === "" ||
                 element.time === undefined
               ) {
@@ -429,7 +429,7 @@ const ControlRoom = () => {
           <Row className="widget-grid">
             <Breadcrumbs
               mainTitle="Control Room"
-              parent={getUserRole() == ROLES.COMPANY ? "Company" : "Operator"}
+              parent={getUserRole() === ROLES.COMPANY ? "Company" : "Operator"}
               title="Module / Control Room"
             />
           </Row>

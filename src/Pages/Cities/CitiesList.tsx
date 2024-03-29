@@ -1,15 +1,9 @@
 import { Card, CardBody, Col, Container, Input, Row } from "reactstrap";
 import CommonHeader from "../../Common/CommonHeader";
 import { citiesListHeading } from "../../utils/Constant";
-import DataTable from "react-data-table-component";
-import { citiesTableColumns } from "./CitiesData/CitiesData";
 import { useEffect, useState } from "react";
 // import { getCities, updateCity } from "../../Api";
-import { SubmitHandler, useForm } from "react-hook-form";
-import { Button, FormGroup, Label, Modal, ModalBody } from "reactstrap";
-import { Cancel } from "../../utils/Constant";
-import { H3 } from "../../AbstractElements";
-import { CitiesType } from "./CityTypes/CityTypes";
+import { Label } from "reactstrap";
 import UpdateCity from "./UpdateCity";
 import { getAll } from "../../Api";
 import { useDispatch, useSelector } from "react-redux";
@@ -21,7 +15,6 @@ import {
   setFilterCities,
   setId,
   setProvinces,
-  setValue,
   setNoCityFound,
   setInActiveActiveCities,
   setIsConnected,
@@ -30,35 +23,23 @@ import deleteAlert from "../Alerts/DeleteAlert";
 import "./tableStyle.css";
 import Loader from "../Loader/Loader";
 import Swal from "sweetalert2";
-import { useNavigate } from "react-router-dom";
-import NoInternetConnection from "../NoInternetConnection/NoInternetConnection";
 
 const CitiesList = () => {
-  const {
-    cities,
-    loading,
-    error,
-    id,
-    value,
-    noCityFound,
-    activeInActiveCities,
-  } = useSelector((state: any) => state.cities);
-  const { noDataFound } = useSelector((state: any) => state.noDataFound);
+  const { cities, loading, id, activeInActiveCities } = useSelector(
+    (state: any) => state.cities
+  );
 
-  const [load, setLoad] = useState(false);
   const dispatch = useDispatch();
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [cityName, setCityName] = useState("");
   const [isActive, setIsActive] = useState(false);
-  const navigate = useNavigate();
-  const [isConneceted, SetIsConneceted] = useState(true);
 
   useEffect(() => {
     dispatch(setCitiesStart());
     // setLoad(true);
     getAll({ url: "city/get-all-cities" }).then((data: any) => {
       // console.log("api call --- >", data);
-      if (data == undefined) {
+      if (data === undefined) {
         Swal.fire({
           text: "No cities Found",
           icon: "error",
@@ -74,7 +55,7 @@ const CitiesList = () => {
 
       if (data !== undefined) {
         dispatch(setNoCityFound(data.message));
-        if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
+        if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
           dispatch(setIsConnected(true));
         }
         if (!data.success) {

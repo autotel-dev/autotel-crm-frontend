@@ -1,12 +1,9 @@
-import { PlusCircle } from "react-feather";
-import { Col } from "reactstrap";
+
 import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Button, FormGroup, Label, Modal, ModalBody, Row } from "reactstrap";
-import { CheckCircle } from "react-feather";
 import { useDispatch, useSelector } from "react-redux";
 
-import { jwtDecode } from "jwt-decode";
 import { Select } from "antd";
 import Swal from "sweetalert2";
 import { SendCommandType } from "./Type/SendCommandType";
@@ -20,7 +17,6 @@ import {
 } from "../../../../../../ReaduxToolkit/Reducer/AlertsSlice";
 import { create, getAll } from "../../../../../../Api";
 import { serverCredentials } from "../../../../../../Api/header";
-import Loader from "../../../../../Loader/Loader";
 
 interface PropsTypes {
   addModal: boolean; // Change 'boolean' to the actual type of isVisible
@@ -59,7 +55,7 @@ const SendCommand: React.FC<PropsTypes> = ({
         message: "",
       });
       setLoading(false);
-      if (prevItem == "") {
+      if (prevItem === "") {
         setSelectedItems([]);
       }
       setType("");
@@ -130,7 +126,7 @@ const SendCommand: React.FC<PropsTypes> = ({
         commandType: type,
         commandData: {
           ...singleCommandData,
-          messageData: type == "custom" ? data.message : null,
+          messageData: type === "custom" ? data.message : null,
         },
         deviceData: selectedItems[0],
       };
@@ -143,7 +139,7 @@ const SendCommand: React.FC<PropsTypes> = ({
           // console.log("data send command", data);
 
           setLoading(false);
-          if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
+          if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
             setLoading(false);
             addToggle();
           }
@@ -192,7 +188,7 @@ const SendCommand: React.FC<PropsTypes> = ({
                   setLoading(false);
                   if (
                     !data.success &&
-                    data.message == "ERROR_INTERNET_DISCONNECTED"
+                    data.message === "ERROR_INTERNET_DISCONNECTED"
                   ) {
                     setLoading(false);
                     addToggle();
@@ -322,7 +318,7 @@ const SendCommand: React.FC<PropsTypes> = ({
                   defaultValue={selectedItems[0].name}
                 />
               )}
-              {prevItem == "" && (
+              {prevItem === "" && (
                 <DevicesDropdown
                   data={dropDownDevices}
                   selectedItems={selectedItems}
@@ -363,7 +359,7 @@ const SendCommand: React.FC<PropsTypes> = ({
                 />
               </FormGroup>
             )}
-            {type == "custom" && (
+            {type === "custom" && (
               <FormGroup className="col-md-12 create-group">
                 <Label>Message</Label>
                 <textarea

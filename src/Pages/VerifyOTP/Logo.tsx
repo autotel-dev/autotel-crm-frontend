@@ -1,7 +1,4 @@
 import React from "react";
-import { Link } from "react-router-dom";
-import { Image } from "../../AbstractElements";
-import { dynamicImage } from "../../Service";
 import Logoo from "../../assets/Logo.png";
 import { useSelector } from "react-redux";
 import { IMAGE_BASE_URL } from "../../Api";

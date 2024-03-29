@@ -41,7 +41,7 @@ const EditProfileForm = () => {
   const [isEdit, setIsEdit] = useState(false);
   const dispatch = useDispatch();
   useEffect(() => {
-    if (getUserRole() == "COMPANY") {
+    if (getUserRole() === "COMPANY") {
       setAddress(userData.address);
     }
   }, []);
@@ -53,15 +53,15 @@ const EditProfileForm = () => {
       const formData = new FormData();
       formData.append("fullName", name);
       formData.append("phoneNo", phoneNo);
-      if (getUserRole() == "COMPANY") {
+      if (getUserRole() === "COMPANY") {
         formData.append("address", address);
       }
 
       update(formData, {
         url:
-          getUserRole() == "COMPANY"
+          getUserRole() === "COMPANY"
             ? "company/update-company"
-            : getUserRole() == "OPERATOR"
+            : getUserRole() === "OPERATOR"
             ? "company/update-operator"
             : `super-admin/update-super-admin`,
       })
@@ -70,7 +70,7 @@ const EditProfileForm = () => {
           if (data !== undefined) {
             if (
               !data.success &&
-              data.message == "ERROR_INTERNET_DISCONNECTED"
+              data.message === "ERROR_INTERNET_DISCONNECTED"
             ) {
               setLoading(false);
               setIsEdit(!isEdit);
@@ -88,7 +88,7 @@ const EditProfileForm = () => {
             if (data.success) {
               getAll({ url: "user/get-user" }).then((parentData: any) => {
                 // // console.log("api call --- >", parentData);
-                if (parentData == undefined) {
+                if (parentData === undefined) {
                   Swal.fire({
                     text: "Failed to Fetch",
                     icon: "error",
@@ -156,7 +156,7 @@ const EditProfileForm = () => {
                 />
               </FormGroup>
             </Col>
-            {getUserRole() == "COMPANY" && userData.address !== null && (
+            {getUserRole() === "COMPANY" && userData.address !== null && (
               <Col md={12}>
                 <FormGroup>
                   <P>Address</P>
@@ -237,7 +237,7 @@ const EditProfileForm = () => {
             </Col> */}
           </Row>
         </CardBody>
-        {getUserRole() == ROLES.SUPER_ADMIN ? (
+        {getUserRole() === ROLES.SUPER_ADMIN ? (
           <CardFooter className="text-end">
             {isEdit && (
               <Button
@@ -266,8 +266,8 @@ const EditProfileForm = () => {
               {loading ? "Loading..." : isEdit ? "Save" : "Edit"}
             </Button>
           </CardFooter>
-        ) : (getUserRole() == ROLES.COMPANY ||
-            getUserRole() == ROLES.OPERATOR) &&
+        ) : (getUserRole() === ROLES.COMPANY ||
+            getUserRole() === ROLES.OPERATOR) &&
           profile != undefined &&
           profile?.edit ? (
           <CardFooter className="text-end">
@@ -291,7 +291,7 @@ const EditProfileForm = () => {
               type="submit"
               disabled={loading}
               onClick={(e) => {
-                if (isEdit == false) {
+                if (isEdit === false) {
                   e.preventDefault();
                   setIsEdit(!isEdit);
                 }

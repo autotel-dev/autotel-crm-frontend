@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { Navigate, Outlet, useParams } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
 import Loader from "../Pages/Loader/Loader";
 import { getUserRole } from "../Api/globals";
 import { getAll } from "../Api";
 import { PERMISSION_VALUES } from "../constants/permissions";
-import Roles from "../Pages/Company/Roles/Roles";
 import { ROLES } from "../constants/roles";
 import Swal from "sweetalert2";
 import NoInternetConnection from "../Pages/NoInternetConnection/NoInternetConnection";
@@ -62,7 +61,7 @@ const ProtectedRoute: React.FC<PropTypes> = ({
           // console.log("module keywork check");
           // console.log("In modules condition: pathname:", pathname);
           // console.log("Last Endpoint:", lastEndpoint);
-          if (userRole == "COMPANY" || userRole == "OPERATOR") {
+          if (userRole === "COMPANY" || userRole === "OPERATOR") {
             // console.log("company or operator check");
             getAll({
               url: "user/get-allowed-modules",
@@ -72,7 +71,7 @@ const ProtectedRoute: React.FC<PropTypes> = ({
               if (data !== undefined) {
                 if (
                   !data.success &&
-                  data.message == "ERROR_INTERNET_DISCONNECTED"
+                  data.message === "ERROR_INTERNET_DISCONNECTED"
                 ) {
                   setIsConnected(true);
                 }
@@ -112,14 +111,14 @@ const ProtectedRoute: React.FC<PropTypes> = ({
           }
         } else {
           if (
-            // permissionValue == PERMISSION_VALUES.DASHBOARD ||
-            permissionValue == PERMISSION_VALUES.USER ||
-            permissionValue == PERMISSION_VALUES.SUPPORT ||
-            permissionValue == PERMISSION_VALUES.PROFILE
+            // permissionValue === PERMISSION_VALUES.DASHBOARD ||
+            permissionValue === PERMISSION_VALUES.USER ||
+            permissionValue === PERMISSION_VALUES.SUPPORT ||
+            permissionValue === PERMISSION_VALUES.PROFILE
           ) {
             // if (
-            //   userRole == ROLES.SUPER_ADMIN &&
-            //   permissionValue == PERMISSION_VALUES.DASHBOARD
+            //   userRole === ROLES.SUPER_ADMIN &&
+            //   permissionValue === PERMISSION_VALUES.DASHBOARD
             // ) {
             //   setLoading(false);
             //   setIsConnected(false);
@@ -135,7 +134,7 @@ const ProtectedRoute: React.FC<PropTypes> = ({
               if (data !== undefined) {
                 if (
                   !data.success &&
-                  data.message == "ERROR_INTERNET_DISCONNECTED"
+                  data.message === "ERROR_INTERNET_DISCONNECTED"
                 ) {
                   setIsConnected(true);
                 }
@@ -172,8 +171,8 @@ const ProtectedRoute: React.FC<PropTypes> = ({
               }
             });
           }
-          if (permissionValue == "Settings") {
-            if (userRole == ROLES.OPERATOR) {
+          if (permissionValue === "Settings") {
+            if (userRole === ROLES.OPERATOR) {
               setLoading(false);
               setIsConnected(false);
               setHasPermission(false);
@@ -202,64 +201,6 @@ const ProtectedRoute: React.FC<PropTypes> = ({
 
     validatePermissions();
   }, [hasPermission]);
-
-  // useEffect(() => {
-  //   if (role === getUserRole()) {
-  //     // console.log("this", role);
-  //     if (user !== undefined && user.title == title && user.read == false) {
-  //       setHasPermission(false);
-  //       setLoading(false);
-  //       // console.log("this", user);
-  //       return;
-  //     } else if (
-  //       support !== undefined &&
-  //       user.title == title &&
-  //       support.read == false
-  //     ) {
-  //       setHasPermission(false);
-  //       setLoading(false);
-  //       // console.log("this", support);
-  //       return;
-  //     } else if (
-  //       profile !== undefined &&
-  //       profile.title == title &&
-  //       profile.read == false
-  //     ) {
-  //       setHasPermission(false);
-  //       setLoading(false);
-  //       // console.log("this", profile);
-  //       return;
-  //     } else if (monitoring !== undefined && title == "Monitoring") {
-  //       setHasPermission(false);
-  //       setLoading(false);
-  //       // console.log("this", monitoring);
-  //       return;
-  //     } else if (controlRoom !== undefined && title == "Control Room") {
-  //       setHasPermission(false);
-  //       setLoading(false);
-  //       // console.log("this", controlRoom);
-  //       return;
-  //     }
-  //   } else if (role == "OPERATOR,COMPANY,SUPER_ADMIN") {
-  //     // console.log("this", role);
-  //     // console.log("this", profile);
-  //     if (
-  //       profile !== undefined &&
-  //       profile.title == title &&
-  //       profile.read == false
-  //     ) {
-  //       setHasPermission(false);
-  //       setLoading(false);
-  //       // console.log("this", profile);
-  //       return;
-  //     }
-  //   } else {
-  //     // console.log("this", role);
-  //     setHasPermission(false);
-  //     setLoading(false);
-  //     // console.log("else", "else");
-  //   }
-  // }, []);
 
   return loading ? (
     <div

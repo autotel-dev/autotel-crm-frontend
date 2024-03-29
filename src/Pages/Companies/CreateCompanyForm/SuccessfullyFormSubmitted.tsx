@@ -179,7 +179,7 @@ const SuccessfullyFormSubmitted = ({
       await createCom(formData, {
         url: "super-admin/create-company",
       }).then((data: any) => {
-        if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
+        if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
           setLoading(false);
         }
         if (!data.success) {
@@ -198,7 +198,7 @@ const SuccessfullyFormSubmitted = ({
           dispatch(setCompaniesStart());
           getAll({ url: "super-admin/get-all-companies" }).then((data: any) => {
             // console.log("api call --- >", data);
-            if (data == undefined) {
+            if (data === undefined) {
               Swal.fire({
                 text: "Failed to fetch due to connection refused",
                 icon: "error",
@@ -383,7 +383,7 @@ const SuccessfullyFormSubmitted = ({
             />
           </Col>
           {cities.map((item: any, index: any) => {
-            if (item._id == createCompany.city) {
+            if (item._id === createCompany.city) {
               return (
                 <Col xl={4} xs={12}>
                   <P>
@@ -403,7 +403,7 @@ const SuccessfullyFormSubmitted = ({
             }
           })}
           {packages.map((item: any, index: any) => {
-            if (item._id == createCompany.package) {
+            if (item._id === createCompany.package) {
               return (
                 <Col xl={4} xs={12}>
                   <P>
@@ -423,7 +423,7 @@ const SuccessfullyFormSubmitted = ({
             }
           })}
           {timezones.map((item: any, index: any) => {
-            if (item == createCompany.timezone) {
+            if (item === createCompany.timezone) {
               return (
                 <Col xl={4} xs={12}>
                   <P>
@@ -578,7 +578,7 @@ const SuccessfullyFormSubmitted = ({
               <Row className="g-3">
                 <Col lg={12} sm={12}>
                   {servers.map((serverItem: any, index: any) => {
-                    if (item.server == serverItem._id) {
+                    if (item.server === serverItem._id) {
                       return (
                         <CommonHeader
                           title={serverItem.companyName}
@@ -661,7 +661,7 @@ const SuccessfullyFormSubmitted = ({
             >
               <Col md={6} style={{ display: "flex" }}>
                 {crmModules.map((module: any, index: any) => {
-                  if (item == module._id) {
+                  if (item === module._id) {
                     return <Col md={6}>{module.name}</Col>;
                   }
                 })}
@@ -869,7 +869,7 @@ const SuccessfullyFormSubmitted = ({
             }}
           >
             {cnicFront !== null &&
-            checkFileTypeByExtension(cnicFront.name, cnicFront) == "image" ? (
+            checkFileTypeByExtension(cnicFront.name, cnicFront) === "image" ? (
               <div>
                 <P style={{ fontSize: "18px", fontWeight: "bold" }}>
                   CNIC Front
@@ -887,7 +887,7 @@ const SuccessfullyFormSubmitted = ({
               </div>
             ) : (
               cnicFront !== null &&
-              checkFileTypeByExtension(cnicFront.name, cnicFront) == "pdf" && (
+              checkFileTypeByExtension(cnicFront.name, cnicFront) === "pdf" && (
                 <div>
                   <P style={{ fontSize: "18px", fontWeight: "bold" }}>
                     CNIC Front
@@ -901,7 +901,7 @@ const SuccessfullyFormSubmitted = ({
               )
             )}
             {cnicBack !== null &&
-            checkFileTypeByExtension(cnicBack.name, cnicBack) == "image" ? (
+            checkFileTypeByExtension(cnicBack.name, cnicBack) === "image" ? (
               <div>
                 <P style={{ fontSize: "18px", fontWeight: "bold" }}>
                   CNIC Back
@@ -919,7 +919,7 @@ const SuccessfullyFormSubmitted = ({
               </div>
             ) : (
               cnicBack !== null &&
-              checkFileTypeByExtension(cnicBack.name, cnicBack) == "pdf" && (
+              checkFileTypeByExtension(cnicBack.name, cnicBack) === "pdf" && (
                 <div>
                   <P style={{ fontSize: "18px", fontWeight: "bold" }}>
                     CNIC Back
@@ -933,7 +933,7 @@ const SuccessfullyFormSubmitted = ({
               )
             )}
             {ntnFile !== null &&
-            checkFileTypeByExtension(ntnFile.name, ntnFile) == "image" ? (
+            checkFileTypeByExtension(ntnFile.name, ntnFile) === "image" ? (
               <div>
                 <P style={{ fontSize: "18px", fontWeight: "bold" }}>
                   NTN File
@@ -951,7 +951,7 @@ const SuccessfullyFormSubmitted = ({
               </div>
             ) : (
               ntnFile !== null &&
-              checkFileTypeByExtension(ntnFile.name, ntnFile) == "pdf" && (
+              checkFileTypeByExtension(ntnFile.name, ntnFile) === "pdf" && (
                 <div>
                   <P style={{ fontSize: "18px", fontWeight: "bold" }}>
                     NTN File
@@ -999,7 +999,7 @@ const SuccessfullyFormSubmitted = ({
               )
             )}
             {other !== null &&
-            checkFileTypeByExtension(other.name, other) == "image" ? (
+            checkFileTypeByExtension(other.name, other) === "image" ? (
               <div>
                 <P style={{ fontSize: "18px", fontWeight: "bold" }}>
                   Other
@@ -1017,7 +1017,7 @@ const SuccessfullyFormSubmitted = ({
               </div>
             ) : (
               other !== null &&
-              checkFileTypeByExtension(other.name, other) == "pdf" && (
+              checkFileTypeByExtension(other.name, other) === "pdf" && (
                 <div>
                   <P style={{ fontSize: "18px", fontWeight: "bold" }}>
                     Other

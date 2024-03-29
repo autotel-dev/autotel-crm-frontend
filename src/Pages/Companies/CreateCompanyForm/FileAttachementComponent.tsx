@@ -37,7 +37,7 @@ const FileAttachementComponent: React.FC<propTypes> = ({
     remove: any;
   }
   const handleAdd = ({ file, meta, remove }: type, status: any) => {
-    if (category == "imageBackground") {
+    if (category === "imageBackground") {
       if (status === "done") {
         // console.log("File uploaded successfully:", file);
         dispatch(setImageBackground(file));
@@ -46,7 +46,7 @@ const FileAttachementComponent: React.FC<propTypes> = ({
 
         dispatch(setImageBackground(null));
       }
-    } else if (category == "companyLogo") {
+    } else if (category === "companyLogo") {
       if (status === "done") {
         // console.log("File uploaded successfully:", file);
         dispatch(setComapnyLogo(file));
@@ -54,7 +54,7 @@ const FileAttachementComponent: React.FC<propTypes> = ({
         // console.log("File removed:", file);
         dispatch(setComapnyLogo(null));
       }
-    } else if (category == "cnicBack") {
+    } else if (category === "cnicBack") {
       if (status === "done") {
         // console.log("File uploaded successfully:", file);
         dispatch(setCNICBack(file));
@@ -62,7 +62,7 @@ const FileAttachementComponent: React.FC<propTypes> = ({
         // console.log("File removed:", file);
         dispatch(setCNICBack(null));
       }
-    } else if (category == "cnicFront") {
+    } else if (category === "cnicFront") {
       if (status === "done") {
         // console.log("File uploaded successfully:", file);
         dispatch(setCNICFront(file));
@@ -70,7 +70,7 @@ const FileAttachementComponent: React.FC<propTypes> = ({
         // console.log("File removed:", file);
         dispatch(setCNICFront(null));
       }
-    } else if (category == "ptaCertificate") {
+    } else if (category === "ptaCertificate") {
       if (status === "done") {
         // console.log("File uploaded successfully:", file);
         dispatch(setPTACertificate(file));
@@ -78,7 +78,7 @@ const FileAttachementComponent: React.FC<propTypes> = ({
         // console.log("File removed:", file);
         dispatch(setPTACertificate(null));
       }
-    } else if (category == "ntnFile") {
+    } else if (category === "ntnFile") {
       if (status === "done") {
         // console.log("File uploaded successfully:", file);
         dispatch(setNTNFile(file));
@@ -86,7 +86,7 @@ const FileAttachementComponent: React.FC<propTypes> = ({
         // console.log("File removed:", file);
         dispatch(setNTNFile(null));
       }
-    } else if (category == "other") {
+    } else if (category === "other") {
       if (status === "done") {
         // console.log("File uploaded successfully:", file);
         dispatch(setOther(file));

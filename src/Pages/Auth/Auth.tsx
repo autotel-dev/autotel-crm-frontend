@@ -1,14 +1,10 @@
 import { Col, Container, Row } from "reactstrap";
 import CommonForm from "./Form";
-import { Image } from "../../AbstractElements";
-import { dynamicImage } from "../../Service";
 import BcakgroundImage from "../../assets/Background Image.png";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { IMAGE_BASE_URL, getAll } from "../../Api";
-import { getUserRole } from "../../Api/globals";
 import Swal from "sweetalert2";
-import { useParams } from "react-router-dom";
 import { setUserPersonalizationData } from "../../ReaduxToolkit/Reducer/PersonalizationSlice";
 import Loader from "../Loader/Loader";
 const LoginForm = () => {
@@ -17,10 +13,7 @@ const LoginForm = () => {
     (state: any) => state.personalization
   );
   const dispatch = useDispatch();
-  const [userDataLoading, setUserDataLoading] = useState(false);
-  const [serverPermissionsLoading, setServerPermissionsLoading] =
-    useState(false);
-  // const { id } = useParams();
+
 
   useEffect(() => {
     const userId = localStorage.getItem("userId");
@@ -28,7 +21,7 @@ const LoginForm = () => {
 
     getAll({
       url:
-        userId == null && userId == undefined
+        userId === null && userId === undefined
           ? "super-admin/get-personalization"
           : `company/get-personalization/${userId}`,
 
@@ -37,7 +30,7 @@ const LoginForm = () => {
       .then((parentData: any) => {
         // console.log("api call --- >", parentData);
         // console.log("undenid");
-        if (parentData == undefined) {
+        if (parentData === undefined) {
           Swal.fire({
             text: "Failed to Fetch the personalization",
             icon: "error",

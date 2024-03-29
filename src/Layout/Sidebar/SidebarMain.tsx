@@ -248,9 +248,9 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
 
   var filteredCompanyMenu = CompanySidebarMenuComponent.filter(
     (item, index) => {
-      if (user == undefined && index == 3) {
+      if (user === undefined && index === 3) {
         return false;
-      } else if (support == undefined && index == 4) {
+      } else if (support === undefined && index === 4) {
         return false;
       } else if (user !== undefined && item.title === user.title) {
         return user.read;
@@ -263,7 +263,7 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
   );
   var filteredOperatorMenu = OperatorSidebarMenuComponent.filter(
     (item, index) => {
-      if (support == undefined && index == 2) {
+      if (support === undefined && index === 2) {
         return false;
       } else if (user !== undefined && item.title === user.title) {
         return user.read;
@@ -312,7 +312,7 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
           <UL className="sidebar-links simple-list" id="simple-bar">
             <SimpleBar className="w-100 simplebar-scrollable-y h-100">
               <SidebarBack />
-              {decodedToken.role == "SUPER_ADMIN"
+              {decodedToken.role === "SUPER_ADMIN"
                 ? SidebarMenuComponent.map((data, index) => (
                     <LI className={`sidebar-list`} key={index}>
                       <Link
@@ -369,7 +369,7 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
                       )}
                     </LI>
                   ))
-                : decodedToken.role == "OPERATOR"
+                : decodedToken.role === "OPERATOR"
                 ? filteredOperatorMenu !== undefined &&
                   filteredOperatorMenu?.map((data: any, index: any) => (
                     <LI className={`sidebar-list`} key={index}>

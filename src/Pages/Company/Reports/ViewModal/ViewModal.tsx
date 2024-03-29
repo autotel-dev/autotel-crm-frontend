@@ -80,7 +80,7 @@ const ViewModal: React.FC<PropsTypes> = ({
                 </tr>
               </thead>
               <tbody>
-                {dataList.length == 0 ? (
+                {dataList.length === 0 ? (
                   <tr>
                     <td colSpan={7} style={{ fontSize: "25px" }}>
                       No Previous Alerts Found

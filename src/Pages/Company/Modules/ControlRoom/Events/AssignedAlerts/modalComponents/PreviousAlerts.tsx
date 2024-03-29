@@ -68,7 +68,7 @@ const PreviousAlerts = () => {
                 </tr>
               </thead>
               <tbody>
-                {dataList.length == 0 ? (
+                {dataList.length === 0 ? (
                   <tr>
                     <td colSpan={7} style={{ fontSize: "25px" }}>
                       No Previous Alerts Found
@@ -95,12 +95,12 @@ const PreviousAlerts = () => {
                       <td>{data.type}</td>
                       <td>{data.message}</td>
                       <td>
-                        {data.address == null && data.address == undefined
+                        {data.address === null && data.address === undefined
                           ? "N/A"
                           : data.address}
                       </td>
                       <td>
-                        {data.completionResponse == ""
+                        {data.completionResponse === ""
                           ? "N/A"
                           : data.completionResponse}
                       </td>

@@ -49,7 +49,7 @@ const ServersList = () => {
     dispatch(setServersStart());
     getAll({ url: "server-management/get-all-servers" }).then((data: any) => {
       // console.log("api call --- >", data);
-      // if (data == undefined) {
+      // if (data === undefined) {
       //   Swal.fire({
       //     text: "Failed to fetch due to connection refused",
       //     icon: "error",
@@ -65,7 +65,7 @@ const ServersList = () => {
 
       if (data !== undefined) {
         dispatch(setNoDataFound(data.message));
-        if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
+        if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
           dispatch(setIsConnected(true));
         }
         if (!data.success) {
@@ -198,7 +198,7 @@ const ServersList = () => {
               onClick={() => {
                 dispatch(setServer(row));
                 navigate(
-                  `${process.env.PUBLIC_URL}/super-admin/setup/server_details/updareServer`
+                  `${process.env.PUBLIC_URL}/super-admin/setup/server_details/update-server`
                 );
               }}
             >

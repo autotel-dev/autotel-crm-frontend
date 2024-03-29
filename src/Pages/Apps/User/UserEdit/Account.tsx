@@ -47,7 +47,7 @@ const Account = () => {
     if (getUserRole() === "COMPANY") {
       getAll({ url: "company/permissions" }).then((data: any) => {
         // console.log("api call --- >", data);
-        if (data == undefined) {
+        if (data === undefined) {
           setServerPermissionsLoading(false);
         }
         if (data !== undefined) {
@@ -64,7 +64,7 @@ const Account = () => {
 
     getAll({ url: "user/get-user" }).then((parentData: any) => {
       // console.log("api call --- >", parentData);
-      // if (parentData == undefined) {
+      // if (parentData === undefined) {
       //   setUserDataLoading(false);
       //   setUndefinedData(true);
       //   Swal.fire({
@@ -78,7 +78,7 @@ const Account = () => {
       if (parentData !== undefined) {
         if (
           !parentData.success &&
-          parentData.message == "ERROR_INTERNET_DISCONNECTED"
+          parentData.message === "ERROR_INTERNET_DISCONNECTED"
         ) {
           setIsConnected(true);
         }
@@ -160,7 +160,7 @@ const Account = () => {
 
                       setTicketImages(ticketImages);
                       // console.log("Ticket Images", ticketImages);
-                      if (ticketImages.length == 5) {
+                      if (ticketImages.length === 5) {
                         setUserDataLoading(false);
                       }
                     });

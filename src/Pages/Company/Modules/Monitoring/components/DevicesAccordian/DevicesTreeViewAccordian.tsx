@@ -52,7 +52,7 @@ const DevicesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
   }, [devices]);
 
   const toggle = (id: string) => {
-    open == id ? setOpen("") : setOpen(id);
+    open === id ? setOpen("") : setOpen(id);
     setItemsLength(6);
   };
   const handleCheckboxClick = (e: any, group: any) => {
@@ -141,7 +141,7 @@ const DevicesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
         .every((item: any) => item.checked === true);
       if (
         allItemsChecked &&
-        selectedDevice.id == deviceToUpdate.items[index].id &&
+        selectedDevice.id === deviceToUpdate.items[index].id &&
         !selectedDevice.checked
       ) {
         allItemsChecked = true;
@@ -286,15 +286,15 @@ const DevicesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
           {matchedGroups
             .filter((item: any) =>
               item.items.some((bodyItem: any) =>
-                statusDevices == "Expired"
-                  ? bodyItem.time == statusDevices
-                  : statusDevices == "Not Connecetd"
-                  ? bodyItem.time == null ||
+                statusDevices === "Expired"
+                  ? bodyItem.time === statusDevices
+                  : statusDevices === "Not Connecetd"
+                  ? bodyItem.time === null ||
                     bodyItem.time === "" ||
                     bodyItem.time === undefined
-                  : statusDevices == ""
-                  ? bodyItem.online == bodyItem.online
-                  : bodyItem.online == statusDevices
+                  : statusDevices === ""
+                  ? bodyItem.online === bodyItem.online
+                  : bodyItem.online === statusDevices
               )
             )
             .filter((item: any) =>
@@ -302,7 +302,7 @@ const DevicesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
                 (bodyItem: any) =>
                   bodyItem.name.toLowerCase().includes(searchValue) ||
                   bodyItem.imei.includes(searchValue) ||
-                  bodyItem.id == searchValue
+                  bodyItem.id === searchValue
               )
             )
             .map((item: any, index: any) => {
@@ -332,15 +332,15 @@ const DevicesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
                           {
                             item.items
                               .filter((bodyItem: any) =>
-                                statusDevices == "Expired"
-                                  ? bodyItem.time == statusDevices
-                                  : statusDevices == "Not Connecetd"
-                                  ? bodyItem.time == null ||
+                                statusDevices === "Expired"
+                                  ? bodyItem.time === statusDevices
+                                  : statusDevices === "Not Connecetd"
+                                  ? bodyItem.time === null ||
                                     bodyItem.time === "" ||
                                     bodyItem.time === undefined
-                                  : statusDevices == ""
-                                  ? bodyItem.online == bodyItem.online
-                                  : bodyItem.online == statusDevices
+                                  : statusDevices === ""
+                                  ? bodyItem.online === bodyItem.online
+                                  : bodyItem.online === statusDevices
                               )
                               .filter(
                                 (bodyItem: any) =>
@@ -348,14 +348,14 @@ const DevicesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
                                     .toLowerCase()
                                     .includes(searchValue) ||
                                   bodyItem.imei.includes(searchValue) ||
-                                  bodyItem.id == searchValue
+                                  bodyItem.id === searchValue
                               ).length
                           }
                           )
                         </span>
                         <FeatherIcons
                           iconName={
-                            open == `${index}` ? "ChevronUp" : "ChevronDown"
+                            open === `${index}` ? "ChevronUp" : "ChevronDown"
                           }
                           className="svg-color"
                         />
@@ -368,21 +368,21 @@ const DevicesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
                     >
                       {item.items
                         .filter((bodyItem: any) =>
-                          statusDevices == "Expired"
-                            ? bodyItem.time == statusDevices
-                            : statusDevices == "Not Connecetd"
-                            ? bodyItem.time == null ||
+                          statusDevices === "Expired"
+                            ? bodyItem.time === statusDevices
+                            : statusDevices === "Not Connecetd"
+                            ? bodyItem.time === null ||
                               bodyItem.time === "" ||
                               bodyItem.time === undefined
-                            : statusDevices == ""
-                            ? bodyItem.online == bodyItem.online
-                            : bodyItem.online == statusDevices
+                            : statusDevices === ""
+                            ? bodyItem.online === bodyItem.online
+                            : bodyItem.online === statusDevices
                         )
                         .filter(
                           (bodyItem: any) =>
                             bodyItem.name.toLowerCase().includes(searchValue) ||
                             bodyItem.imei.includes(searchValue) ||
-                            bodyItem.id == searchValue
+                            bodyItem.id === searchValue
                         )
                         .slice(0, itemsLength)
                         .map((bodyItem: any, bodyindex: any) => {
@@ -601,21 +601,21 @@ A 40 40 0 0 1 90 50"
                         })}
                       {item.items
                         .filter((bodyItem: any) =>
-                          statusDevices == "Expired"
-                            ? bodyItem.time == statusDevices
-                            : statusDevices == "Not Connecetd"
-                            ? bodyItem.time == null ||
+                          statusDevices === "Expired"
+                            ? bodyItem.time === statusDevices
+                            : statusDevices === "Not Connecetd"
+                            ? bodyItem.time === null ||
                               bodyItem.time === "" ||
                               bodyItem.time === undefined
-                            : statusDevices == ""
-                            ? bodyItem.online == bodyItem.online
-                            : bodyItem.online == statusDevices
+                            : statusDevices === ""
+                            ? bodyItem.online === bodyItem.online
+                            : bodyItem.online === statusDevices
                         )
                         .filter(
                           (bodyItem: any) =>
                             bodyItem.name.toLowerCase().includes(searchValue) ||
                             bodyItem.imei.includes(searchValue) ||
-                            bodyItem.id == searchValue
+                            bodyItem.id === searchValue
                         ).length >= 6 && (
                         <div
                           style={{

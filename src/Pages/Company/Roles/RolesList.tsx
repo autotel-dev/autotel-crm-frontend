@@ -43,7 +43,7 @@ const RolesList = () => {
     dispatch(setRolesStart());
     getAll({ url: "sub-role/get-all-sub-roles" }).then((data: any) => {
       // // console.log("api call --- >", data);
-      // if (data == undefined) {
+      // if (data === undefined) {
       //   Swal.fire({
       //     text: "Failed to fetch due to connection refused",
       //     icon: "error",
@@ -60,7 +60,7 @@ const RolesList = () => {
 
       if (data !== undefined) {
         dispatch(setNoDataFound(data.message));
-        if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
+        if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
           dispatch(setIsConnected(true));
         }
         if (!data.success) {

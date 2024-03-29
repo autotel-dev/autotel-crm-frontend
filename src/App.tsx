@@ -23,7 +23,7 @@ const App = () => {
     if (token !== null) {
       getAll({
         url:
-          userId == null && userId == undefined
+          userId === null && userId === undefined
             ? "super-admin/get-personalization"
             : `company/get-personalization/${userId}`,
 
@@ -32,7 +32,7 @@ const App = () => {
         .then((parentData: any) => {
           // console.log("api call --- >", parentData);
           // console.log("undefined");
-          if (parentData == undefined) {
+          if (parentData === undefined) {
             Swal.fire({
               text: "Failed to Fetch the personalization",
               icon: "error",
@@ -58,7 +58,7 @@ const App = () => {
 
       getAll({
         url:
-          getUserRole() == "COMPANY" || getUserRole() == "OPERATOR"
+          getUserRole() === "COMPANY" || getUserRole() === "OPERATOR"
             ? "user/get-allowed-modules"
             : "crm-module/get-all-active-modules",
       }).then((data: any) => {
@@ -74,7 +74,7 @@ const App = () => {
         }
       });
 
-      if (getUserRole() == "COMPANY" || getUserRole() == "OPERATOR") {
+      if (getUserRole() === "COMPANY" || getUserRole() === "OPERATOR") {
         getAll({ url: "user/get-permissions" }).then((data: any) => {
           // console.log("api call --- >", data);
           if (data !== undefined) {
@@ -93,7 +93,7 @@ const App = () => {
           }
         }
       });
-      if (getUserRole() == "SUPER_ADMIN") {
+      if (getUserRole() === "SUPER_ADMIN") {
         getAll({ url: "permissions/get-all-permissions" }).then((data: any) => {
           // console.log("api call --- >", data);
           if (data !== undefined) {

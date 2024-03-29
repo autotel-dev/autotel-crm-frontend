@@ -60,7 +60,7 @@ const ResponseForm: React.FC<PropsTypes> = ({
         await create(completedResponse, {
           url: "alert-events/complete-an-alert-event",
         }).then((data: any) => {
-          if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
+          if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
             setLoading(false);
             setIsVisible(!isVisible);
           }
@@ -93,7 +93,7 @@ const ResponseForm: React.FC<PropsTypes> = ({
                   // // console.log("length --- >", data.data.length);
                   dispatch(setAssignedAlerts(data.data));
                 }
-                if (data.statusCode == 404) {
+                if (data.statusCode === 404) {
                   dispatch(setAssignedAlerts([]));
                 }
               }

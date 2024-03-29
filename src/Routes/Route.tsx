@@ -51,7 +51,6 @@ import Todo from "../Pages/Apps/Todo/Todo";
 import SocialApp from "../Pages/Apps/SocialApp/SocialApp";
 import Calender from "../Pages/Apps/Calender/Calender";
 import Tasks from "../Pages/Apps/Tasks/Tasks";
-import UserProfile from "../Pages/Apps/User/UserProfile/Settings";
 import UserCard from "../Pages/Apps/User/UserCard/UserCard";
 import EmailApp from "../Pages/Apps/Email/EmailApp/EmailApp";
 import EmailCompose from "../Pages/Apps/Email/EmailCompose/EmailCompose";
@@ -65,20 +64,6 @@ import BasicDataTables from "../Pages/Tables/DataTables/BasicInt/BasicDataTables
 import AdvanceInit from "../Pages/Tables/DataTables/AdvanceInit/AdvanceInit";
 import APIDataTables from "../Pages/Tables/DataTables/APIDataTables/APIDataTables";
 import DataSources from "../Pages/Tables/DataTables/DataSources/DataSources";
-import FormWizard from "../Pages/Forms/FormsLayout/FormWizard/FormWizard";
-import TwoFactor from "../Pages/Forms/FormsLayout/TwoFactor/TwoFactor";
-import FormWizardTwo from "../Pages/Forms/FormsLayout/FormWizard2/FormWizardTwo";
-import FormValidation from "../Pages/Forms/FormsControl/FormValidition/FormValidation";
-import BaseInput from "../Pages/Forms/FormsControl/BaseInput/BaseInput";
-import CheckboxRadio from "../Pages/Forms/FormsControl/Checkbox&Radio/Checkbox&Radio";
-import InputGroups from "../Pages/Forms/FormsControl/InputGroups/InputGroups";
-import InputMask from "../Pages/Forms/FormsControl/InputMask/InputMask";
-import MegaOptions from "../Pages/Forms/FormsControl/MegaOptions/MegaOptions";
-import Datepicker from "../Pages/Forms/FormWidgets/Datepicker/Datepicker";
-import Touchspin from "../Pages/Forms/FormWidgets/Touchspin/Touchspin";
-import Switch from "../Pages/Forms/FormWidgets/Switch/Switch";
-import Typeahead from "../Pages/Forms/FormWidgets/Typeahead/Typeahead";
-import Clipboard from "../Pages/Forms/FormWidgets/Clipboard/Clipboard";
 import DefaultStyle from "../Pages/Buttons/DefaultStyle/DefaultStyle";
 import FlatButtons from "../Pages/Buttons/FlatButtons/FlatButtons";
 import EdgeButtons from "../Pages/Buttons/EdgeButtons/EdgeButtons";
@@ -99,8 +84,6 @@ import Province from "../Pages/Province/Province";
 import Package from "../Pages/Package/Package";
 import CRMModule from "../Pages/CRMModule/CRMModule";
 import Support from "../Pages/Support/Support";
-import Login from "../Pages/Authentication/Login";
-import LoginForm from "../Pages/Auth/Auth";
 import Companies from "../Pages/Companies/Companies";
 import Countries from "../Pages/Countries/Countries";
 import CreateCompanyForm from "../Pages/Companies/CreateCompanyForm/CreateCompanyForm";
@@ -440,69 +423,7 @@ const routes = [
     path: `${process.env.PUBLIC_URL}/tables/datatables/api`,
     Component: <APIDataTables />,
   },
-  //  Forms
-  // Form Wizard
-  {
-    path: `${process.env.PUBLIC_URL}/forms/formlayout/formwizard1`,
-    Component: <FormWizard />,
-  },
-  {
-    path: `${process.env.PUBLIC_URL}/forms/formlayout/formwizard2`,
-    Component: <FormWizardTwo />,
-  },
-  {
-    path: `${process.env.PUBLIC_URL}/forms/formlayout/twofactor`,
-    Component: <TwoFactor />,
-  },
 
-  //  Forms
-  // Controls
-  {
-    path: `${process.env.PUBLIC_URL}/forms/formcontrols/formvalidation`,
-    Component: <FormValidation />,
-  },
-  {
-    path: `${process.env.PUBLIC_URL}/forms/formcontrols/baseinputs`,
-    Component: <BaseInput />,
-  },
-  {
-    path: `${process.env.PUBLIC_URL}/forms/formcontrols/checkbox&radio`,
-    Component: <CheckboxRadio />,
-  },
-  {
-    path: `${process.env.PUBLIC_URL}/forms/formcontrols/inputgroups`,
-    Component: <InputGroups />,
-  },
-  {
-    path: `${process.env.PUBLIC_URL}/forms/formcontrols/inputmask`,
-    Component: <InputMask />,
-  },
-  {
-    path: `${process.env.PUBLIC_URL}/forms/formcontrols/megaoptions`,
-    Component: <MegaOptions />,
-  },
-
-  // Widgets
-  {
-    path: `${process.env.PUBLIC_URL}/forms/formwidgets/datepicker`,
-    Component: <Datepicker />,
-  },
-  {
-    path: `${process.env.PUBLIC_URL}/forms/formwidgets/touchspin`,
-    Component: <Touchspin />,
-  },
-  {
-    path: `${process.env.PUBLIC_URL}/forms/formwidgets/switch`,
-    Component: <Switch />,
-  },
-  {
-    path: `${process.env.PUBLIC_URL}/forms/formwidgets/typeahead`,
-    Component: <Typeahead />,
-  },
-  {
-    path: `${process.env.PUBLIC_URL}/forms/formwidgets/clipboard`,
-    Component: <Clipboard />,
-  },
 
   //  Buttons
   {

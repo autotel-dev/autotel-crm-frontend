@@ -2,11 +2,11 @@ import { PlusCircle } from "react-feather";
 import { Col } from "reactstrap";
 import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { Button, FormGroup, Label, Modal, ModalBody, Row } from "reactstrap";
+import { Button, FormGroup,  Modal, ModalBody, Row } from "reactstrap";
 import { Cancel } from "../../utils/Constant";
 import { H3 ,P} from "../../AbstractElements";
 import { create, getAll } from "../../Api";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { Type } from "../Countries/CountryTypes/CountryTypes";
 import {
   setCRMModules,
@@ -19,7 +19,7 @@ import Swal from "sweetalert2";
 
 const CreateNewCRMModule = () => {
   const dispatch = useDispatch();
-  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
+
   const [loading, setLoading] = useState(false);
   const {
     register,
@@ -52,7 +52,7 @@ const CreateNewCRMModule = () => {
             if (data !== undefined) {
               if (
                 !data.success &&
-                data.message == "ERROR_INTERNET_DISCONNECTED"
+                data.message === "ERROR_INTERNET_DISCONNECTED"
               ) {
                 setLoading(false);
                 setAddModal(false);
@@ -87,7 +87,7 @@ const CreateNewCRMModule = () => {
                 getAll({ url: "crm-module/get-all-modules" }).then(
                   (data: any) => {
                     // console.log("api call --- >", data);
-                    if (data == undefined) {
+                    if (data === undefined) {
                       Swal.fire({
                         text: "Failed to fetch due to connection refused",
                         icon: "error",

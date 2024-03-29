@@ -107,7 +107,7 @@ const CreateNewRole = () => {
           (data: any) => {
             if (
               !data.success &&
-              data.message == "ERROR_INTERNET_DISCONNECTED"
+              data.message === "ERROR_INTERNET_DISCONNECTED"
             ) {
               setLoading(false);
               setAddModal(false);
@@ -285,7 +285,7 @@ const CreateNewRole = () => {
                                     display: "inline-block",
                                     position: "relative",
                                     cursor:
-                                      permission.read == "disabled"
+                                      permission.read === "disabled"
                                         ? "not-allowed"
                                         : "pointer",
                                     marginRight: "25px",
@@ -297,7 +297,7 @@ const CreateNewRole = () => {
                                     type="checkbox"
                                     name="key"
                                     value="value"
-                                    disabled={permission.read == "disabled"}
+                                    disabled={permission.read === "disabled"}
                                     checked={permission.read}
                                     onChange={() => {
                                       if (permission.read !== "disabled") {
@@ -309,7 +309,7 @@ const CreateNewRole = () => {
                                   <span
                                     onClick={(e) => e.stopPropagation()}
                                     className={
-                                      permission.read == "disabled"
+                                      permission.read === "disabled"
                                         ? "red"
                                         : "green"
                                     }
@@ -321,7 +321,7 @@ const CreateNewRole = () => {
                                     display: "inline-block",
                                     position: "relative",
                                     cursor:
-                                      permission.create == "disabled"
+                                      permission.create === "disabled"
                                         ? "not-allowed"
                                         : "pointer",
                                     marginRight: "25px",
@@ -333,7 +333,7 @@ const CreateNewRole = () => {
                                     type="checkbox"
                                     name="key"
                                     value="value"
-                                    disabled={permission.create == "disabled"}
+                                    disabled={permission.create === "disabled"}
                                     checked={permission.create}
                                     onChange={() => {
                                       if (permission.create !== "disabled") {
@@ -345,7 +345,7 @@ const CreateNewRole = () => {
                                   <span
                                     onClick={(e) => e.stopPropagation()}
                                     className={
-                                      permission.create == "disabled"
+                                      permission.create === "disabled"
                                         ? "red"
                                         : "green"
                                     }
@@ -357,7 +357,7 @@ const CreateNewRole = () => {
                                     display: "inline-block",
                                     position: "relative",
                                     cursor:
-                                      permission.edit == "disabled"
+                                      permission.edit === "disabled"
                                         ? "not-allowed"
                                         : "pointer",
                                     marginRight: "25px",
@@ -369,7 +369,7 @@ const CreateNewRole = () => {
                                     type="checkbox"
                                     name="key"
                                     value="value"
-                                    disabled={permission.edit == "disabled"}
+                                    disabled={permission.edit === "disabled"}
                                     checked={permission.edit}
                                     onChange={() => {
                                       if (permission.edit !== "disabled") {
@@ -381,7 +381,7 @@ const CreateNewRole = () => {
                                   <span
                                     onClick={(e) => e.stopPropagation()}
                                     className={
-                                      permission.edit == "disabled"
+                                      permission.edit === "disabled"
                                         ? "red"
                                         : "green"
                                     }
@@ -393,7 +393,7 @@ const CreateNewRole = () => {
                                     display: "inline-block",
                                     position: "relative",
                                     cursor:
-                                      permission.delete == "disabled"
+                                      permission.delete === "disabled"
                                         ? "not-allowed"
                                         : "pointer",
                                     marginRight: "25px",
@@ -405,7 +405,7 @@ const CreateNewRole = () => {
                                     type="checkbox"
                                     name="key"
                                     value="value"
-                                    disabled={permission.delete == "disabled"}
+                                    disabled={permission.delete === "disabled"}
                                     checked={permission.delete}
                                     onChange={() => {
                                       if (permission.delete !== "disabled") {
@@ -417,7 +417,7 @@ const CreateNewRole = () => {
                                   <span
                                     onClick={(e) => e.stopPropagation()}
                                     className={
-                                      permission.delete == "disabled"
+                                      permission.delete === "disabled"
                                         ? "red"
                                         : "green"
                                     }

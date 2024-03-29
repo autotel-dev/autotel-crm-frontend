@@ -125,7 +125,7 @@ const OTPForm = ({ toggle }: propsType) => {
 
   return (
     <div>
-      {showChangePasswordForm == false ? (
+      {showChangePasswordForm === false ? (
         <div>
           <Form
             onSubmit={(e) => {
@@ -198,7 +198,7 @@ const OTPForm = ({ toggle }: propsType) => {
                 </span>
               </H4>
             </div>
-            {timer == 0 && (
+            {timer === 0 && (
               <H4>
                 <span
                   style={{

@@ -45,14 +45,14 @@ const Settings = () => {
   useEffect(() => {
     getAll({
       url:
-        getUserRole() == "COMPANY"
+        getUserRole() === "COMPANY"
           ? `company/get-personalization/${getUserId()}`
-          : getUserRole() == "OPERATOR"
+          : getUserRole() === "OPERATOR"
           ? `company/get-personalization/${getOperatorCompanyUserId()}`
           : "super-admin/get-personalization",
     }).then((parentData: any) => {
       // console.log("api call --- >", parentData);
-      if (parentData == undefined) {
+      if (parentData === undefined) {
         // setUndefinedData(true);
         Swal.fire({
           text: "No personalization found",
@@ -67,7 +67,7 @@ const Settings = () => {
       if (parentData !== undefined) {
         if (
           !parentData.success &&
-          parentData.message == "ERROR_INTERNET_DISCONNECTED"
+          parentData.message === "ERROR_INTERNET_DISCONNECTED"
         ) {
           dispatch(setIsConnected(true));
         }

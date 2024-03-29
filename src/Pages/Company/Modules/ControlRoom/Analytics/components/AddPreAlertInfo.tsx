@@ -140,7 +140,7 @@ const AddPreAlertInfo: React.FC<PropsTypes> = ({
           // // console.log("data", data);
 
           setLoading(false);
-          if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
+          if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
             setLoading(false);
             addToggle();
           }

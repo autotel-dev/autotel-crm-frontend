@@ -109,16 +109,16 @@ const Attachements = ({ attachements }: propTypes) => {
           <Row>
             <div style={{ display: "flex", flexWrap: "wrap" }}>
               {attachements.map((data, imageIndex) =>
-                checkFileTypeByExtension(data.url) == "pdf" ? (
+                checkFileTypeByExtension(data.url) === "pdf" ? (
                   <div>
                     <H5>
                       {data.key === "cnicFront"
                         ? "CNIC Front"
                         : data.key === "cnicBack"
                         ? "CNIC Back"
-                        : data.key == "ptaCertificate"
+                        : data.key === "ptaCertificate"
                         ? "PTA Certificate"
-                        : data.key == "ntnCertificate"
+                        : data.key === "ntnCertificate"
                         ? "NTN Certificate"
                         : "Other Attachment"}
                     </H5>
@@ -156,13 +156,13 @@ const Attachements = ({ attachements }: propTypes) => {
                         }}
                         className="btn-primary"
                       >
-                        {data.key == "cnicFront"
+                        {data.key === "cnicFront"
                           ? "CNIC Front"
-                          : data.key == "cnicBack"
+                          : data.key === "cnicBack"
                           ? "CNIC Back"
-                          : data.key == "ptaCertificate"
+                          : data.key === "ptaCertificate"
                           ? "PTA Certificate"
-                          : data.key == "ntnCertificate"
+                          : data.key === "ntnCertificate"
                           ? "NTN Certificate"
                           : "Other Attachment"}
                       </div>
@@ -196,7 +196,7 @@ const Attachements = ({ attachements }: propTypes) => {
                           border: "0.5px solid lightgray",
                         }}
                       />
-                      {isHovered && index == imageIndex && (
+                      {isHovered && index === imageIndex && (
                         <div
                           style={{
                             position: "absolute",

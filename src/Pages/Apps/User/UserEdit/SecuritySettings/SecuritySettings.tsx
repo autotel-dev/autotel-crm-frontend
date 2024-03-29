@@ -34,7 +34,7 @@ const SecuritySettings = () => {
           // console.log(data);
           getAll({ url: "user/get-user" }).then((parentData: any) => {
             // console.log("api call --- >", parentData);
-            if (parentData == undefined) {
+            if (parentData === undefined) {
               setLoading(false);
               Swal.fire({
                 text: "Failed to Fetch",

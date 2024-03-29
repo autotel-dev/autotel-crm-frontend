@@ -36,7 +36,7 @@ const CountriesList = () => {
     dispatch(setCountriesStart());
     getAll({ url: "country/get-all-countries" }).then((data: any) => {
       // console.log("api call --- >", data);
-      if (data == undefined) {
+      if (data === undefined) {
         Swal.fire({
           text: "No countries Found",
           icon: "error",
@@ -54,7 +54,7 @@ const CountriesList = () => {
         // console.log("Data", data);
 
         dispatch(setNoDataFound(data.message));
-        if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
+        if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
           dispatch(setIsConnected(true));
         }
         if (!data.success) {

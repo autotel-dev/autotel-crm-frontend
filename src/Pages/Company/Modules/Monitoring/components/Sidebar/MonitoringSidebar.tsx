@@ -52,7 +52,7 @@ const MonitoringSidebar = () => {
             cursor: "pointer",
           }}
         >
-          {collapsedWidth == "500px" ? (
+          {collapsedWidth === "500px" ? (
             <ImArrowLeft style={{ color: "white", marginBottom: "5px" }} />
           ) : (
             <ImArrowRight style={{ color: "white", marginBottom: "5px" }} />

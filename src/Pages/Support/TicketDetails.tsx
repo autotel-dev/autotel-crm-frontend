@@ -79,7 +79,7 @@ const TicketDetails = () => {
 
   useEffect(() => {
     setLoading(true);
-    if (tableRow.status == "NEW" && getUserRole() == "SUPER_ADMIN") {
+    if (tableRow.status === "NEW" && getUserRole() === "SUPER_ADMIN") {
       // console.log("IF");
       patch(
         { updatedStatus: "IN_PROGRESS", resolvingDate: null },
@@ -98,7 +98,7 @@ const TicketDetails = () => {
                 if (data.success) {
                   dispatch(setTicketDetails(data.data.bugReport));
                   setTicketImages([]);
-                  if (data.data.bugReport.images.length == 0) {
+                  if (data.data.bugReport.images.length === 0) {
                     setLoading(false);
                   }
                   data.data.bugReport.images.map((image: any, index: any) => {
@@ -113,7 +113,7 @@ const TicketDetails = () => {
                       // console.log("Ticket Images", ticketImages);
                       // console.log("objectURL: ", data);
                     });
-                    if (index == data.data.bugReport.images.length - 1) {
+                    if (index === data.data.bugReport.images.length - 1) {
                       setLoading(false);
                     }
                   });
@@ -133,7 +133,7 @@ const TicketDetails = () => {
           if (data.success) {
             dispatch(setTicketDetails(data.data.bugReport));
             setTicketImages([]);
-            if (data.data.bugReport.images.length == 0) {
+            if (data.data.bugReport.images.length === 0) {
               setLoading(false);
             }
             data.data.bugReport.images.map((image: any, index: any) => {
@@ -148,7 +148,7 @@ const TicketDetails = () => {
                 // console.log("Ticket Images", ticketImages);
                 // console.log("objectURL: ", data);
               });
-              if (index == data.data.bugReport.images.length - 1) {
+              if (index === data.data.bugReport.images.length - 1) {
                 setLoading(false);
               }
             });
@@ -267,7 +267,7 @@ const TicketDetails = () => {
       ).then((data: any) => {
         // console.log("api call --- >", data);
         if (data !== undefined) {
-          if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
+          if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
             setEdit(false);
           }
           if (!data.success) {
@@ -319,7 +319,7 @@ const TicketDetails = () => {
     ).then((data: any) => {
       // console.log("api call --- >", data);
       if (data !== undefined) {
-        if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
+        if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
         }
         if (!data.success) {
           Swal.fire({
@@ -516,7 +516,7 @@ const TicketDetails = () => {
                               border: "0.5px solid lightgray",
                             }}
                           />
-                          {isHovered && index == imageIndex && (
+                          {isHovered && index === imageIndex && (
                             <div
                               style={{
                                 position: "absolute",
@@ -693,18 +693,18 @@ const TicketDetails = () => {
                             <div
                               style={{
                                 backgroundColor:
-                                  getUserId() == reply.user._id
+                                  getUserId() === reply.user._id
                                     ? "#def4fb"
                                     : "whitesmoke",
                                 padding: "15px",
                                 marginLeft:
-                                  getUserId() == reply.user._id ? "40%" : "0px",
+                                  getUserId() === reply.user._id ? "40%" : "0px",
                                 marginRight:
-                                  getUserId() == reply.user._id ? "0px" : "40%",
+                                  getUserId() === reply.user._id ? "0px" : "40%",
                                 borderRadius: "10px",
                                 marginBottom: `${
-                                  index == 2 &&
-                                  index == ticketDetails.messages.length - 1
+                                  index === 2 &&
+                                  index === ticketDetails.messages.length - 1
                                     ? "50px"
                                     : "20px"
                                 }`,
@@ -788,22 +788,22 @@ const TicketDetails = () => {
                               <div
                                 style={{
                                   backgroundColor:
-                                    getUserId() == reply.user._id
+                                    getUserId() === reply.user._id
                                       ? "#def4fb"
                                       : "whitesmoke",
                                   marginLeft:
-                                    getUserId() == reply.user._id
+                                    getUserId() === reply.user._id
                                       ? "40%"
                                       : "0px",
                                   marginRight:
-                                    getUserId() == reply.user._id
+                                    getUserId() === reply.user._id
                                       ? "0px"
                                       : "40%",
                                   padding: "15px",
                                   borderRadius: "10px",
                                   marginBottom: `${
-                                    index == 2 &&
-                                    index == ticketDetails.messages.length - 1
+                                    index === 2 &&
+                                    index === ticketDetails.messages.length - 1
                                       ? "50px"
                                       : "20px"
                                   }`,
@@ -898,7 +898,7 @@ const TicketDetails = () => {
                         }}
                         onClick={() => {
                           setShowMore(!showMore);
-                          // if (itemsLength == 2) {
+                          // if (itemsLength === 2) {
                           //   setItemsLength(ticketDetails.messages.length);
                           //   setShowMore(true);
                           // } else {
@@ -963,13 +963,13 @@ const TicketDetails = () => {
                             >
                               <div></div>
                               <div style={{ display: "flex" }}>
-                                {getUserRole() == "SUPER_ADMIN" && (
+                                {getUserRole() === "SUPER_ADMIN" && (
                                   <button
                                     className="btn btn-primary"
                                     disabled={
                                       formatUnderscoredString(
                                         ticketDetails.status
-                                      ) == "Resolved"
+                                      ) === "Resolved"
                                     }
                                     style={{
                                       color: "white",
@@ -1015,7 +1015,7 @@ const TicketDetails = () => {
                                   >
                                     {formatUnderscoredString(
                                       ticketDetails.status
-                                    ) == "Resolved"
+                                    ) === "Resolved"
                                       ? "Completed"
                                       : "Complete"}
                                   </button>
@@ -1394,7 +1394,7 @@ const TicketDetails = () => {
                             Go to Reply
                           </button>
                         )}
-                        {getUserRole() == "SUPER_ADMIN" &&
+                        {getUserRole() === "SUPER_ADMIN" &&
                           formatUnderscoredString(ticketDetails.status) !==
                             "Resolved" && (
                             <button

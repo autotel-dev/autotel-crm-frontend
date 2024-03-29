@@ -127,7 +127,7 @@ const UpdateCompanyForm = () => {
   //           getAll({ url: "server-management/get-all-servers" }).then(
   //             (data: any) => {
   //               // console.log("api call --- >", data);
-  //               // if (data == undefined) {
+  //               // if (data === undefined) {
   //               //   Swal.fire({
   //               //     text: "Failed to fetch due to connection refused",
   //               //     icon: "error",
@@ -146,7 +146,7 @@ const UpdateCompanyForm = () => {
   //                 dispatch(setNoDataFound(data.message));
   //                 if (
   //                   !data.success &&
-  //                   data.message == "ERROR_INTERNET_DISCONNECTED"
+  //                   data.message === "ERROR_INTERNET_DISCONNECTED"
   //                 ) {
   //                   setLoading(false);
   //                 }

@@ -206,9 +206,9 @@ const TotalKillingDevices: React.FC<PropsTypes> = ({
       .toString()
       .padStart(2, "0")}:${seconds.toString().padStart(2, "0")} ${amPm}`;
 
-    if (type == "date") {
+    if (type === "date") {
       return formattedDate;
-    } else if (type == "time") {
+    } else if (type === "time") {
       return formattedTime;
     }
   };
@@ -390,8 +390,8 @@ const TotalKillingDevices: React.FC<PropsTypes> = ({
                                   key={index}
                                   style={{
                                     width:
-                                      data == "Last Packet" ||
-                                      data == "Killed Time"
+                                      data === "Last Packet" ||
+                                      data === "Killed Time"
                                         ? "10%"
                                         : "8%",
                                   }}
@@ -402,7 +402,7 @@ const TotalKillingDevices: React.FC<PropsTypes> = ({
                             </tr>
                           </thead>
                           <tbody>
-                            {dataList.length == 0 ? (
+                            {dataList.length === 0 ? (
                               <tr>
                                 <td colSpan={11} style={{ fontSize: "25px" }}>
                                   No Kiling Devices Found
@@ -492,9 +492,9 @@ const TotalKillingDevices: React.FC<PropsTypes> = ({
                                       {data.longitude}
                                     </td>
                                     <td style={{ width: "8%" }}>
-                                      {data.address == undefined ||
-                                      data.address == "" ||
-                                      data.address == null
+                                      {data.address === undefined ||
+                                      data.address === "" ||
+                                      data.address === null
                                         ? "N/A"
                                         : data.address}
                                     </td>
@@ -625,7 +625,7 @@ const TotalKillingDevices: React.FC<PropsTypes> = ({
                             key={index}
                             style={{
                               width:
-                                data == "Last Packet" || data == "Killed Time"
+                                data === "Last Packet" || data === "Killed Time"
                                   ? "10%"
                                   : "8%",
                             }}
@@ -636,7 +636,7 @@ const TotalKillingDevices: React.FC<PropsTypes> = ({
                       </tr>
                     </thead>
                     <tbody>
-                      {dataList.length == 0 ? (
+                      {dataList.length === 0 ? (
                         <tr>
                           <td colSpan={11} style={{ fontSize: "25px" }}>
                             No Kiling Devices Found
@@ -710,9 +710,9 @@ const TotalKillingDevices: React.FC<PropsTypes> = ({
                             <td style={{ width: "8%" }}>{data.latitude}</td>
                             <td style={{ width: "8%" }}>{data.longitude}</td>
                             <td style={{ width: "8%" }}>
-                              {data.address == undefined ||
-                              data.address == "" ||
-                              data.address == null
+                              {data.address === undefined ||
+                              data.address === "" ||
+                              data.address === null
                                 ? "N/A"
                                 : data.address}
                             </td>

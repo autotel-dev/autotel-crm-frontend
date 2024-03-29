@@ -10,17 +10,15 @@ import {
   Row,
 } from "reactstrap";
 import { Cancel } from "../../utils/Constant";
-import { H3 ,P} from "../../AbstractElements";
+import { H3, P } from "../../AbstractElements";
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { getAll, update } from "../../Api";
 import {
   setCRMModules,
   setFilterCRMModules,
   setCRMModulesStart,
   setCRMModulesEnd,
-  setId,
-  setValue,
   setInActiveActiveModules,
 } from "../../ReaduxToolkit/Reducer/CRMModuleSlice";
 import { setNoDataFound } from "../../ReaduxToolkit/Reducer/NoDataFoundSlice";
@@ -65,7 +63,6 @@ const UpdateCRMModule: React.FC<PropsTypes> = ({
       isActive: isActive,
     },
   });
-  const [addModal, setAddModal] = useState(false);
   const addToggle = () => {
     if (!loading) {
       setIsVisible(!isVisible);
@@ -95,7 +92,7 @@ const UpdateCRMModule: React.FC<PropsTypes> = ({
           (data: any) => {
             if (
               !data.success &&
-              data.message == "ERROR_INTERNET_DISCONNECTED"
+              data.message === "ERROR_INTERNET_DISCONNECTED"
             ) {
               setLoading(false);
               setIsVisible(!isVisible);
@@ -120,7 +117,7 @@ const UpdateCRMModule: React.FC<PropsTypes> = ({
               getAll({ url: "crm-module/get-all-modules" }).then(
                 (data: any) => {
                   // // console.log("api call --- >", data);
-                  if (data == undefined) {
+                  if (data === undefined) {
                     Swal.fire({
                       text: "Failed to fetch due to connection refused",
                       icon: "error",

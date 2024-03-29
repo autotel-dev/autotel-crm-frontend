@@ -1,6 +1,5 @@
 import { ChangeEvent, useState } from 'react';
 import { Col, Container, Row } from 'reactstrap'
-import ShowError from '../../../Forms/FormsLayout/FormWizard/NumberingWizard/CommonError/ShowError';
 import { Finish, Href, Next, Previous } from '../../../../utils/Constant';
 import SideBarList from './SideBarList';
 import SignUpAccount from './SignUpAccount';
@@ -34,7 +33,7 @@ const RegisterWizard = () => {
     } else if (country !== "" && state !== "" && city !== "" && level === 4) {
       setShowFinish(true);
     } else {
-      ShowError();
+      // ShowError();
     }
   };
 

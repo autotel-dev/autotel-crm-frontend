@@ -145,7 +145,7 @@ const LiveAlerts = () => {
       >
         <div>
           Live Alerts (
-          {liveAlertsData == null ? 0 : liveAlertsData.lastPage * 30})
+          {liveAlertsData === null ? 0 : liveAlertsData.lastPage * 30})
         </div>
       </div>
 
@@ -235,7 +235,7 @@ const LiveAlerts = () => {
                             }).then((dataa: any) => {
                               if (
                                 !dataa.success &&
-                                dataa.message == "ERROR_INTERNET_DISCONNECTED"
+                                dataa.message === "ERROR_INTERNET_DISCONNECTED"
                               ) {
                                 setAssignLoading(false);
                               }
@@ -513,7 +513,7 @@ const LiveAlerts = () => {
                                                   setAssignedAlerts(data.data)
                                                 );
                                               }
-                                              if (data.statusCode == 404) {
+                                              if (data.statusCode === 404) {
                                                 dispatch(setAssignedAlerts([]));
                                               }
                                             }
@@ -573,7 +573,7 @@ const LiveAlerts = () => {
                       <td style={{ width: "20%" }}>{data.type}</td>
                       <td style={{ width: "20%" }}>{data.message}</td>
                       <td style={{ width: "20%" }}>
-                        {data.address == null ? "N/A" : data.address}
+                        {data.address === null ? "N/A" : data.address}
                       </td>
                     </tr>
                   ))

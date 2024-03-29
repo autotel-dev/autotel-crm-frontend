@@ -71,7 +71,7 @@ const DevicesDropdown: React.FC<PropsTypes> = ({
         (item: any) =>
           item.name.toLowerCase().includes(searchValue.toLowerCase()) ||
           item.imei.includes(searchValue) ||
-          item.id == searchValue
+          item.id === searchValue
       );
       return { ...group, items: filteredItems };
     })
@@ -81,7 +81,7 @@ const DevicesDropdown: React.FC<PropsTypes> = ({
     <div className="custom-dropdown">
       <div className="dropdown-toggle" onClick={toggleDropdown}>
         <div className="selected-items">
-          {selectedItems.length == 0 && "No device selected"}
+          {selectedItems.length === 0 && "No device selected"}
           {selectedItems.map((item: any) => `${item.name} `)}
         </div>
       </div>

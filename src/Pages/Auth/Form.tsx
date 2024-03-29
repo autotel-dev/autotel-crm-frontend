@@ -1,19 +1,17 @@
 import { useState } from "react";
 import Logo from "./Logo";
-import { H3, P, H6 } from "../../AbstractElements";
-import { Button, Form, FormGroup, Input, Label } from "reactstrap";
+import { H3, P } from "../../AbstractElements";
+import { Button, Form, FormGroup,  Label } from "reactstrap";
 import { EmailAddress, Password } from "../../utils/Constant";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { Link, useNavigate } from "react-router-dom";
+import {  useNavigate } from "react-router-dom";
 import { getAll, login } from "../../Api";
-import successAlert from "../Alerts/SuccessAlert";
-import errorAlert from "../Alerts/ErrorAlert";
+
 import { useDispatch } from "react-redux";
 import { setActiveCRMModules } from "../../ReaduxToolkit/Reducer/CRMModuleSlice";
 import { getOperatorCompanyUserId, getUserRole } from "../../Api/globals";
 import Swal from "sweetalert2";
 import { setUserPersonalizationData } from "../../ReaduxToolkit/Reducer/PersonalizationSlice";
-import { setPermissions } from "../../ReaduxToolkit/Reducer/CompanySlice";
 import { setUserPermissions } from "../../ReaduxToolkit/Reducer/PermissionSlice";
 import { ROLES } from "../../constants/roles";
 import { setUserData } from "../../ReaduxToolkit/Reducer/UserSlice";
@@ -29,7 +27,6 @@ export interface CommonFormPropsType {
 const CommonForm = ({ alignLogo }: CommonFormPropsType) => {
   const [showPassWord, setShowPassWord] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [formData, setFormData] = useState({});
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const header = "Sign In ";
@@ -54,7 +51,7 @@ const CommonForm = ({ alignLogo }: CommonFormPropsType) => {
         await login(loginData).then(async (data: any) => {
           // console.log("response: ", data);
           setLoading(false);
-          // if (data == undefined) {
+          // if (data === undefined) {
           //   Swal.fire({
           //     text: "Connection Refused or not connected",
           //     icon: "error",
@@ -74,7 +71,7 @@ const CommonForm = ({ alignLogo }: CommonFormPropsType) => {
             });
           }
 
-          if (data.statusCode == 401) {
+          if (data.statusCode === 401) {
             if (data.data) {
               if (data.data.isOtpEnabled) {
                 // console.log("response: ", data.data);
@@ -91,27 +88,27 @@ const CommonForm = ({ alignLogo }: CommonFormPropsType) => {
                 showCancelButton: false,
               });
             }
-          } else if (data.statusCode == 200) {
+          } else if (data.statusCode === 200) {
             dispatch(setUserData(null));
             const token = data.data.authToken;
             // console.log("response: ", data.data);
             // console.log("token: ", token);
             localStorage.setItem("token", token);
-            if (getUserRole() == ROLES.SUPER_ADMIN) {
+            if (getUserRole() === ROLES.SUPER_ADMIN) {
               dispatch(setUserPermissions([]));
             }
 
-            if (getUserRole() == "OPERATOR") {
+            if (getUserRole() === "OPERATOR") {
               localStorage.setItem("userId", getOperatorCompanyUserId());
-            } else if (getUserRole() == "COMPANY") {
+            } else if (getUserRole() === "COMPANY") {
               localStorage.setItem("userId", data.data.userId);
-            } else if (getUserRole() == "SUPER_ADMIN") {
+            } else if (getUserRole() === "SUPER_ADMIN") {
               localStorage.removeItem("userId");
             }
             const userId = localStorage.getItem("userId");
             getAll({
               url:
-                getUserRole() == "COMPANY" || getUserRole() == "OPERATOR"
+                getUserRole() === "COMPANY" || getUserRole() === "OPERATOR"
                   ? "user/get-allowed-modules"
                   : "crm-module/get-all-active-modules",
             }).then((data: any) => {
@@ -132,14 +129,14 @@ const CommonForm = ({ alignLogo }: CommonFormPropsType) => {
             });
             getAll({
               url:
-                userId == null && userId == undefined
+                userId === null && userId === undefined
                   ? "super-admin/get-personalization"
                   : `company/get-personalization/${userId}`,
 
               // url: "super-admin/get-personalization",
             }).then((parentData: any) => {
               // console.log("api call --- >", parentData);
-              if (parentData == undefined) {
+              if (parentData === undefined) {
                 // Swal.fire({
                 //   text: `${parentData.message}`,
                 //   icon: "error",
@@ -169,7 +166,7 @@ const CommonForm = ({ alignLogo }: CommonFormPropsType) => {
               }
             });
 
-            if (getUserRole() == "COMPANY" || getUserRole() == "OPERATOR") {
+            if (getUserRole() === "COMPANY" || getUserRole() === "OPERATOR") {
               getAll({ url: "user/get-permissions" })
                 .then((data: any) => {
                   // console.log("api call --- >", data);
@@ -206,7 +203,7 @@ const CommonForm = ({ alignLogo }: CommonFormPropsType) => {
         // Handle error (e.g., show an error message)
         // console.error("Error creating post:", error);
         setLoading(false);
-        // if (error.response.statusCode == 401) {
+        // if (error.response.statusCode === 401) {
         //     errorAlert();
         //   }
       }

@@ -106,7 +106,7 @@ const AssignedAlerts = () => {
                 </tr>
               </thead>
               <tbody>
-                {dataList.length == 0 ? (
+                {dataList.length === 0 ? (
                   <tr>
                     <td colSpan={6} style={{ fontSize: "25px" }}>
                       No Assigned Alerts Found
@@ -150,7 +150,7 @@ const AssignedAlerts = () => {
                             // // console.log(data);
                             if (
                               !data.success &&
-                              data.message == "ERROR_INTERNET_DISCONNECTED"
+                              data.message === "ERROR_INTERNET_DISCONNECTED"
                             ) {
                             }
                             if (!data.success) {
@@ -192,7 +192,7 @@ const AssignedAlerts = () => {
                       <td className={`txt-primary`}>{data.message}</td>
                       <td>{data.type}</td>
                       <td>{data.message}</td>
-                      <td>{data.address == null ? "N/A" : data.address}</td>
+                      <td>{data.address === null ? "N/A" : data.address}</td>
                     </tr>
                   ))
                 )}

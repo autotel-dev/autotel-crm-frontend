@@ -17,7 +17,6 @@ import { useDispatch, useSelector } from "react-redux";
 import Loader from "../Loader/Loader";
 import { getUserRole } from "../../Api/globals";
 import Swal from "sweetalert2";
-import { useNavigate } from "react-router-dom";
 import NoInternetConnection from "../NoInternetConnection/NoInternetConnection";
 
 const Support = () => {
@@ -27,7 +26,6 @@ const Support = () => {
   const dispatch = useDispatch();
   const [statisticsloading, setStatisticsLoading] = useState(true);
   const [reportsLoading, setReportsLoading] = useState(true);
-  const navigate = useNavigate();
   useEffect(() => {
     dispatch(setIsConnected(false));
   }, []);
@@ -40,7 +38,7 @@ const Support = () => {
     if (getUserRole() === "SUPER_ADMIN") {
       getAll({ url: "support/bug-report/get-statistics" }).then((data: any) => {
         // console.log("api call --- >", data);
-        // if (data == undefined) {
+        // if (data === undefined) {
         //   Swal.fire({
         //     text: "F",
         //     icon: "error",
@@ -52,7 +50,7 @@ const Support = () => {
         //   return;
         // }
         if (data !== undefined) {
-          if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
+          if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
             dispatch(setIsConnected(true));
           }
           if (!data.success) {
@@ -101,7 +99,7 @@ const Support = () => {
     }).then((data: any) => {
       // console.log("api call --- >", data);
 
-      if (data == undefined) {
+      if (data === undefined) {
         Swal.fire({
           text: "Support Data not Found",
           icon: "error",
@@ -115,7 +113,7 @@ const Support = () => {
       }
 
       if (data !== undefined) {
-        if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
+        if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
           dispatch(setIsConnected(true));
         }
         if (!data.success) {

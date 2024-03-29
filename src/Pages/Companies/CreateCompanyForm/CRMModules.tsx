@@ -131,7 +131,7 @@ const CRMModules = ({ callbackActive }: BusinessFormCommonProps) => {
                             <Label className="switch mb-0">
                               <Input
                                 type="checkbox"
-                                defaultChecked={switches == "on" ? true : false}
+                                defaultChecked={switches === "on" ? true : false}
                                 value={switches === "on" ? "on" : "off"}
                                 onChange={(e) => {
                                   if (switches === "on") {

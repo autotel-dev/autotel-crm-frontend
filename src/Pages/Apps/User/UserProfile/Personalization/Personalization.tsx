@@ -193,7 +193,7 @@ const Personalization = () => {
       })
         .then((data: any) => {
           // console.log("api call --- >", data);
-          if (data == undefined) {
+          if (data === undefined) {
             Swal.fire({
               text: `${data.message}`,
               icon: "error",
@@ -206,7 +206,7 @@ const Personalization = () => {
           if (data !== undefined) {
             if (
               !data.success &&
-              data.message == "ERROR_INTERNET_DISCONNECTED"
+              data.message === "ERROR_INTERNET_DISCONNECTED"
             ) {
               setLoading(false);
               setIsEdit(!isEdit);
@@ -226,12 +226,12 @@ const Personalization = () => {
               setEditedbackgroundImage(null);
               getAll({
                 url:
-                  getUserRole() == "COMPANY"
+                  getUserRole() === "COMPANY"
                     ? `company/get-personalization/${getUserId()}`
                     : "super-admin/get-personalization",
               }).then((parentData: any) => {
                 // console.log("api call --- >", parentData);
-                if (parentData == undefined) {
+                if (parentData === undefined) {
                   Swal.fire({
                     text: "Failed to Fetch",
                     icon: "error",
@@ -269,7 +269,7 @@ const Personalization = () => {
       })
         .then((data: any) => {
           // console.log("api call --- >", data);
-          if (data == undefined) {
+          if (data === undefined) {
             Swal.fire({
               text: `${data.message}`,
               icon: "error",
@@ -293,12 +293,12 @@ const Personalization = () => {
             if (data.success) {
               getAll({
                 url:
-                  getUserRole() == "COMPANY"
+                  getUserRole() === "COMPANY"
                     ? `company/get-personalization/${getUserId()}`
                     : "super-admin/get-personalization",
               }).then((parentData: any) => {
                 // console.log("api call --- >", parentData);
-                if (parentData == undefined) {
+                if (parentData === undefined) {
                   Swal.fire({
                     text: "Failed to Fetch",
                     icon: "error",
@@ -466,7 +466,7 @@ const Personalization = () => {
                 </FormGroup>
               </Col>
 
-              {userPersonalizationData == null ? (
+              {userPersonalizationData === null ? (
                 <Row>
                   <Col md={6}>
                     <Card>
@@ -679,7 +679,7 @@ const Personalization = () => {
                 style={{
                   display: "flex",
                   // justifyContent:
-                  //   userPersonalizationData == null ? "end" : "space-between",
+                  //   userPersonalizationData === null ? "end" : "space-between",
                   justifyContent: "end",
                 }}
               >
@@ -703,7 +703,7 @@ const Personalization = () => {
                   type="submit"
                   disabled={loading}
                   onClick={(e) => {
-                    if (isEdit == false && userPersonalizationData !== null) {
+                    if (isEdit === false && userPersonalizationData !== null) {
                       e.preventDefault();
                       setIsEdit(true);
                     }
@@ -711,7 +711,7 @@ const Personalization = () => {
                 >
                   {loading
                     ? "Loading..."
-                    : userPersonalizationData == null
+                    : userPersonalizationData === null
                     ? "Create"
                     : isEdit
                     ? "Save"

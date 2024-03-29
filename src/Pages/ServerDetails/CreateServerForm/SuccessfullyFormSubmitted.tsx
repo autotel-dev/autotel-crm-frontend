@@ -72,7 +72,7 @@ const SuccessfullyFormSubmitted = ({
         url: "server-management/create-server",
       }).then((data: any) => {
         if (data !== undefined) {
-          if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
+          if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
             setLoading(false);
           }
           if (!data.success) {
@@ -92,7 +92,7 @@ const SuccessfullyFormSubmitted = ({
             getAll({ url: "server-management/get-all-servers" }).then(
               (data: any) => {
                 // console.log("api call --- >", data);
-                if (data == undefined) {
+                if (data === undefined) {
                   Swal.fire({
                     text: "Failed to fetch due to connection refused",
                     icon: "error",

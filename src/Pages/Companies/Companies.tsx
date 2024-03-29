@@ -61,7 +61,7 @@ const Companies = () => {
     dispatch(setCompaniesStart());
     getAll({ url: "super-admin/get-all-companies" }).then((data: any) => {
       // console.log("api call --- >", data);
-      if (data == undefined) {
+      if (data === undefined) {
         Swal.fire({
           text: "Companies not Found",
           icon: "error",
@@ -78,7 +78,7 @@ const Companies = () => {
 
       if (data !== undefined) {
         dispatch(setNoDataFound(data.message));
-        if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
+        if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
           dispatch(setIsConnected(true));
           setLoading(false);
         }

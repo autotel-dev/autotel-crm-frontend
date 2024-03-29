@@ -80,9 +80,9 @@ const TotalPreInfoAlerts: React.FC<PropsTypes> = ({
       .toString()
       .padStart(2, "0")}:${seconds.toString().padStart(2, "0")} ${amPm}`;
 
-    if (type == "date") {
+    if (type === "date") {
       return formattedDate;
-    } else if (type == "time") {
+    } else if (type === "time") {
       return formattedTime;
     }
   };
@@ -160,7 +160,7 @@ const TotalPreInfoAlerts: React.FC<PropsTypes> = ({
                     </tr>
                   </thead>
                   <tbody>
-                    {dataList.length == 0 ? (
+                    {dataList.length === 0 ? (
                       <tr>
                         <td colSpan={11} style={{ fontSize: "25px" }}>
                           No Pre Infos Found

@@ -1,14 +1,10 @@
 import { PlusCircle } from "react-feather";
-import { Col } from "reactstrap";
-import { createNewCity } from "../../utils/Constant";
-import { Link } from "react-router-dom";
-import { Fragment, useState } from "react";
+import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Button, FormGroup, Label, Modal, ModalBody, Row } from "reactstrap";
 import { Cancel } from "../../utils/Constant";
-import { CheckCircle } from "react-feather";
 import { H3, P } from "../../AbstractElements";
-import { create, createCom, getAll } from "../../Api";
+import { createCom, getAll } from "../../Api";
 import { useDispatch, useSelector } from "react-redux";
 import Swal from "sweetalert2";
 import SelectPriorityStatusesTypes from "./components/SelectPriorityStatusesTypes";
@@ -91,7 +87,7 @@ const CreateNewTicket = () => {
         await createCom(formData, {
           url: "support/bug-report/report-new-bug",
         }).then((data: any) => {
-          if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
+          if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
             setSelectedFiles([]);
             setSelectedImages([]);
             setLoading(false);
@@ -148,7 +144,7 @@ const CreateNewTicket = () => {
               }
             });
 
-            if (getUserRole() == "SUPER_ADMIN") {
+            if (getUserRole() === "SUPER_ADMIN") {
               getAll({ url: "support/bug-report/get-statistics" }).then(
                 (data: any) => {
                   // console.log("api call --- >", data);

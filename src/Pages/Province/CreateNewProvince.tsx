@@ -59,7 +59,7 @@ const CreateNewProvince = () => {
             if (data !== undefined) {
               if (
                 !data.success &&
-                data.message == "ERROR_INTERNET_DISCONNECTED"
+                data.message === "ERROR_INTERNET_DISCONNECTED"
               ) {
                 setLoading(false);
                 setAddModal(false);
@@ -96,7 +96,7 @@ const CreateNewProvince = () => {
                 getAll({ url: "province/get-all-provinces" }).then(
                   (data: any) => {
                     // console.log("api call --- >", data);
-                    if (data == undefined) {
+                    if (data === undefined) {
                       Swal.fire({
                         text: "Failed to fetch due to connection refused",
                         icon: "error",

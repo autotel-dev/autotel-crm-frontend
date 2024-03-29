@@ -58,7 +58,7 @@ const SelectCountryBox: React.FC<propTypes> = ({ placeholder }) => {
         dispatch(setCountryId(e));
         // provinces.map((item: any, index: any) => {
         //   // console.log("item.country._id: ", item)
-        //   if (item.country == e) {
+        //   if (item.country === e) {
         //     // console.log("788")
         //     provinceTempList.push({
         //       value: `${item._id}`,
