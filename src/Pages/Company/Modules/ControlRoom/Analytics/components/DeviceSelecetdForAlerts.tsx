@@ -16,6 +16,7 @@ import {
 } from "../../../../../../ReaduxToolkit/Reducer/AlertsSlice";
 import { create, getAll } from "../../../../../../Api";
 import { serverCredentials } from "../../../../../../Api/header";
+import TotalAlertsForSpecificDevices from "./TotalAlertsForSpecificDevices";
 
 interface PropsTypes {
   addModal: boolean; // Change 'boolean' to the actual type of isVisible
@@ -60,6 +61,10 @@ const DeviceSelecetdForAlerts: React.FC<PropsTypes> = ({
     }
   };
   const [selectedItems, setSelectedItems]: any = useState([]);
+  const [
+    isUpdateModalOpenForSelecteddeviceAlerts,
+    setIsUpdateModalOpenForSelecteddeviceAlerts,
+  ] = useState(false);
 
   //   const sendCommandHandler: SubmitHandler<SendCommandType> = async (
   //     data: any
@@ -290,12 +295,22 @@ const DeviceSelecetdForAlerts: React.FC<PropsTypes> = ({
               Cancel
             </Button>
             &nbsp;&nbsp;
-            <Button color="primary" className="me-1">
+            <Button
+              color="primary"
+              className="me-1"
+              onClick={() => {
+                setIsUpdateModalOpenForSelecteddeviceAlerts(true);
+              }}
+            >
               {loading ? "Loading ..." : `Open`}
             </Button>
           </div>
         </form>
       </ModalBody>
+      <TotalAlertsForSpecificDevices
+        isVisible={isUpdateModalOpenForSelecteddeviceAlerts}
+        setIsVisible={setIsUpdateModalOpenForSelecteddeviceAlerts}
+      />
     </Modal>
   );
 };

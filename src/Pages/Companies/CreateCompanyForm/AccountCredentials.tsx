@@ -101,13 +101,7 @@ const AccountCredentials = ({ callbackActive }: BusinessFormCommonProps) => {
             Password
             <span className="txt-danger">*</span>
           </P>
-          {/* <Input
-            type="password"
-            placeholder="Enter Password"
-            value={password}
-            name="password"
-            onChange={getUserData}
-          /> */}
+         
 
           <InputGroup>
             <Input

@@ -4,8 +4,11 @@ import {
   CardHeader,
   Col,
   FormGroup,
+  PopoverBody,
+  PopoverHeader,
   Row,
   Table,
+  UncontrolledPopover,
 } from "reactstrap";
 import { H3, H4, H5, P } from "../../../../../../AbstractElements";
 import { useEffect, useRef, useState } from "react";
@@ -137,9 +140,23 @@ const AssignedAlerts = () => {
                         </td>
                         <td style={{ width: "15%" }}>{data.type}</td>
                         <td style={{ width: "20%" }}>{data.message}</td>
-                        <td style={{ width: "20%" }}>
-                          {data.address == null ? "N/A" : data.address}
+                        <td id="Popover" style={{ width: "20%" }}>
+                          {data.address == null
+                            ? "N/A"
+                            : data.address.length > 10
+                            ? data.address.substring(0, 10) + "..."
+                            : data.address}
                         </td>
+                        {data.address != null && (
+                          <UncontrolledPopover
+                            placement="top"
+                            trigger="hover"
+                            target="Popover"
+                          >
+                            <PopoverHeader>Address</PopoverHeader>
+                            <PopoverBody>{data.address}</PopoverBody>
+                          </UncontrolledPopover>
+                        )}
                         <td style={{ width: "20%" }}>
                           {data.completionResponse}
                         </td>

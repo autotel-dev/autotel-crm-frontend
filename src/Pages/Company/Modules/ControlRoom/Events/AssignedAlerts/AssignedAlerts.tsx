@@ -1,4 +1,15 @@
-import { Card, CardBody, CardHeader, Col, FormGroup, Row, Table } from "reactstrap";
+import {
+  Card,
+  CardBody,
+  CardHeader,
+  Col,
+  FormGroup,
+  PopoverBody,
+  PopoverHeader,
+  Row,
+  Table,
+  UncontrolledPopover,
+} from "reactstrap";
 import { H3, H4, H5, P } from "../../../../../../AbstractElements";
 import { useEffect, useRef, useState } from "react";
 import AssignedAlertModal from "./AssignedAlertModal";
@@ -65,18 +76,18 @@ const AssignedAlerts = () => {
   return (
     <Card className="invoice-card">
       <CardBody className="transaction-card">
-      <Row>
-        <FormGroup className="col-md-12 create-group">
-          <P>Search Vehicles</P>
-          <input
-            className="form-control"
-            value={searchValue}
-            onChange={(e) => setSearchValue(e.target.value)}
-            type="text"
-            placeholder="Search Assigned Vehicles"
-          />
-        </FormGroup>
-      </Row>
+        <Row>
+          <FormGroup className="col-md-12 create-group">
+            <P>Search Vehicles</P>
+            <input
+              className="form-control"
+              value={searchValue}
+              onChange={(e) => setSearchValue(e.target.value)}
+              type="text"
+              placeholder="Search Assigned Vehicles"
+            />
+          </FormGroup>
+        </Row>
 
         <div
           ref={containerRef}
@@ -114,87 +125,103 @@ const AssignedAlerts = () => {
                   </tr>
                 ) : (
                   dataList
-                  .filter((data: any) =>
-                    data.deviceName
-                      .toLowerCase()
-                      .includes(searchValue.toLowerCase())
-                  )
-                  .map((data: any, index: any) =>  (
-                    <tr
-                      style={{
-                        cursor: "pointer",
-                      }}
-                      key={index}
-                      onClick={async () => {
-                        // if (
-                        //   allAlertsPreview != undefined &&
-                        //   allAlertsPreview?.edit
-                        // ) {
-                        // }
-                        const serverInfo = serverCredentials(data.server);
-                        // // console.log("serverInfo", serverInfo);
-                        setBasicTab("1");
-                        setIsUpdateModalOpen(true);
-                        // // console.log("isUpdateModalOpen: ", isUpdateModalOpen);
-                        const sendData = {
-                          eventId: data._id,
-                          serverId: serverInfo?.serverId,
-                          serverHashKey: serverInfo?.serverHashKey,
-                          deviceId: data.deviceId,
-                        };
-                        // // console.log(sendData);
-                        try {
-                          await create(sendData, {
-                            url: "alert-events/get-alert-event-by-id",
-                          }).then((data: any) => {
-                            // // console.log(data);
-                            if (
-                              !data.success &&
-                              data.message === "ERROR_INTERNET_DISCONNECTED"
-                            ) {
-                            }
-                            if (!data.success) {
-                              Swal.fire({
-                                text: `${data.message}`,
-                                icon: "error",
-                                timer: 2000,
-                                showConfirmButton: false,
-                              });
-                              setIsUpdateModalOpen(false);
-                            }
-                            if (data.success) {
-                              dispatch(setModalData(data.data));
-                            }
-                          });
-                          // Handle successful post creation (e.g., show a success message, redirect, etc.)
-                        } catch (error: any) {
-                          // Handle error (e.g., show an error message)
-                          dispatch(setModalData(undefined));
-                          // // console.error("Error creating post:", error);
-                        }
-                      }}
-                    >
-                      {/* <td>{data.eventId}</td> */}
-                      <td>
-                        <div className="d-flex">
-                          <div className="flex-grow-1">
-                            <H5>{data.deviceName}</H5>
-                            <div style={{ fontSize: "10px" }}>
-                              {data.createdAt.slice(0, 10)}
-                            </div>
+                    .filter((data: any) =>
+                      data.deviceName
+                        .toLowerCase()
+                        .includes(searchValue.toLowerCase())
+                    )
+                    .map((data: any, index: any) => (
+                      <tr
+                        style={{
+                          cursor: "pointer",
+                        }}
+                        key={index}
+                        onClick={async () => {
+                          // if (
+                          //   allAlertsPreview != undefined &&
+                          //   allAlertsPreview?.edit
+                          // ) {
+                          // }
+                          const serverInfo = serverCredentials(data.server);
+                          // // console.log("serverInfo", serverInfo);
+                          setBasicTab("1");
+                          setIsUpdateModalOpen(true);
+                          // // console.log("isUpdateModalOpen: ", isUpdateModalOpen);
+                          const sendData = {
+                            eventId: data._id,
+                            serverId: serverInfo?.serverId,
+                            serverHashKey: serverInfo?.serverHashKey,
+                            deviceId: data.deviceId,
+                          };
+                          // // console.log(sendData);
+                          try {
+                            await create(sendData, {
+                              url: "alert-events/get-alert-event-by-id",
+                            }).then((data: any) => {
+                              // // console.log(data);
+                              if (
+                                !data.success &&
+                                data.message === "ERROR_INTERNET_DISCONNECTED"
+                              ) {
+                              }
+                              if (!data.success) {
+                                Swal.fire({
+                                  text: `${data.message}`,
+                                  icon: "error",
+                                  timer: 2000,
+                                  showConfirmButton: false,
+                                });
+                                setIsUpdateModalOpen(false);
+                              }
+                              if (data.success) {
+                                dispatch(setModalData(data.data));
+                              }
+                            });
+                            // Handle successful post creation (e.g., show a success message, redirect, etc.)
+                          } catch (error: any) {
+                            // Handle error (e.g., show an error message)
+                            dispatch(setModalData(undefined));
+                            // // console.error("Error creating post:", error);
+                          }
+                        }}
+                      >
+                        {/* <td>{data.eventId}</td> */}
+                        <td>
+                          <div className="d-flex">
+                            <div className="flex-grow-1">
+                              <H5>{data.deviceName}</H5>
+                              <div style={{ fontSize: "10px" }}>
+                                {data.createdAt.slice(0, 10)}
+                              </div>
 
-                            <div style={{ fontSize: "10px" }}>
-                              {data.createdAt.slice(11, 19)}
+                              <div style={{ fontSize: "10px" }}>
+                                {data.createdAt.slice(11, 19)}
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      </td>
-                      <td className={`txt-primary`}>{data.message}</td>
-                      <td>{data.type}</td>
-                      <td>{data.message}</td>
-                      <td>{data.address == null ? "N/A" : data.address}</td>
-                    </tr>
-                  ))
+                        </td>
+                        <td className={`txt-primary`}>{data.message}</td>
+                        <td>{data.type}</td>
+                        <td>{data.message}</td>
+                        <td id="Popover">
+                          {data.address == null
+                            ? "N/A"
+                            : data.address.length > 10
+                            ? data.address.substring(0, 10) + "..."
+                            : data.address}
+                        </td>
+                        {data.address != null && (
+                          <UncontrolledPopover
+                            placement="top"
+                            trigger="hover"
+                            target="Popover"
+                          >
+                            <PopoverHeader>Address</PopoverHeader>
+                            <PopoverBody>{data.address}</PopoverBody>
+                          </UncontrolledPopover>
+                        )}
+                      </tr>
+                    ))
                 )}
               </tbody>
             </Table>
