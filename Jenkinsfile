@@ -11,7 +11,7 @@ pipeline {
             steps {
                 script {
                     echo 'Checking out code...'
-                    git url: 'https://github.com/mindflaretech/Autotel-CRM-Updated.git', credentialsId: '01', branch: 'main'
+                    git url: 'https://github.com/mindflaretech/Autotel-CRM-Updated.git', credentialsId: '01', branch: 'frontend/bilal'
                 }
             }
         }
