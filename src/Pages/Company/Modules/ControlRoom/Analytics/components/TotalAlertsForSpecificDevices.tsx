@@ -86,7 +86,8 @@ const TotalAlertsForSpecificDevices: React.FC<PropsTypes> = ({
       <ModalBody>
         <Card className="invoice-card">
           <CardBody className="transaction-card">
-            <Row>
+            <H3>This feature is under development</H3>
+            {/* <Row>
               <FormGroup className="col-md-12 create-group">
                 <P>Search Alerts</P>
                 <input
@@ -98,20 +99,20 @@ const TotalAlertsForSpecificDevices: React.FC<PropsTypes> = ({
                 />
               </FormGroup>
             </Row>
-
+            
             <div
               ref={containerRef}
               className="table-responsive theme-scrollbar recent-wrapper"
               style={{
                 overflowY: "scroll",
                 overflowX: "auto",
-                maxHeight: "calc(66vh - 20px)", // Subtract scrollbar width from max height
-                WebkitOverflowScrolling: "touch", // Enable momentum scrolling on iOS
-                scrollbarWidth: "thin", // Specify scrollbar width
-                WebkitBorderRadius: "5px", // For WebKit browsers (Chrome, Safari)
-                MozBorderRadius: "5px", // For Mozilla Firefox
-                borderRadius: "5px", // For other browsers
-                scrollbarColor: "lightgray transparent", // Specify scrollbar color
+                maxHeight: "calc(66vh - 20px)",
+                WebkitOverflowScrolling: "touch",
+                scrollbarWidth: "thin",
+                WebkitBorderRadius: "5px",
+                MozBorderRadius: "5px",
+                borderRadius: "5px",
+                scrollbarColor: "lightgray transparent",
               }}
               onScroll={handleScroll}
             >
@@ -147,7 +148,7 @@ const TotalAlertsForSpecificDevices: React.FC<PropsTypes> = ({
                             }}
                             key={index}
                           >
-                            {/* <td>{data.eventId}</td> */}
+                           
                             <td>
                               <div className="d-flex">
                                 <div className="flex-grow-1">
@@ -174,7 +175,7 @@ const TotalAlertsForSpecificDevices: React.FC<PropsTypes> = ({
                   </tbody>
                 </Table>
               </div>
-            </div>
+            </div> */}
           </CardBody>
         </Card>
       </ModalBody>
