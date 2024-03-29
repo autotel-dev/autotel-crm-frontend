@@ -73,7 +73,7 @@ const AssignedAlerts = () => {
             value={searchValue}
             onChange={(e) => setSearchValue(e.target.value)}
             type="text"
-            placeholder="Search Commanded Vehicles"
+            placeholder="Search Assigned Vehicles"
           />
         </FormGroup>
       </Row>
@@ -192,7 +192,7 @@ const AssignedAlerts = () => {
                       <td className={`txt-primary`}>{data.message}</td>
                       <td>{data.type}</td>
                       <td>{data.message}</td>
-                      <td>{data.address === null ? "N/A" : data.address}</td>
+                      <td>{data.address == null ? "N/A" : data.address}</td>
                     </tr>
                   ))
                 )}

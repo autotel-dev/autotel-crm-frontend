@@ -37,7 +37,7 @@ const TicketTable = () => {
         description: item?.description,
         isActive: item?.isActive ? "true" : "false",
         status: item?.status,
-        priorty: item?.priorty === null ? "N/A" : item?.priorty,
+        priorty: item?.priorty == null ? "N/A" : item?.priorty,
         date: `${item?.updatedAt.toString().slice(0, 10)},  ${new Date(
           item?.updatedAt
         )

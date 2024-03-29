@@ -232,7 +232,7 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
         setStartDate(yesterday.toISOString());
         // setStartDate(new Date().toISOString());
         setEndDate(new Date().toISOString());
-        if (data === undefined) {
+        if (data == undefined) {
           Swal.fire({
             text: "Failed to create due to connection refused",
             icon: "error",

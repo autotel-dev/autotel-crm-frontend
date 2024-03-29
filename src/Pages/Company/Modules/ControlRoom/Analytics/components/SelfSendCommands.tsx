@@ -419,9 +419,9 @@ const SelfSendCommands: React.FC<PropsTypes> = ({
                                   {data.longitude}
                                 </td>
                                 <td style={{ width: "8%" }}>
-                                  {data.address === undefined ||
+                                  {data.address == undefined ||
                                   data.address === "" ||
-                                  data.address === null
+                                  data.address == null
                                     ? "N/A"
                                     : data.address}
                                 </td>

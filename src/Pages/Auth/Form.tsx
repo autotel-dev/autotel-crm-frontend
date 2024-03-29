@@ -51,7 +51,7 @@ const CommonForm = ({ alignLogo }: CommonFormPropsType) => {
         await login(loginData).then(async (data: any) => {
           // console.log("response: ", data);
           setLoading(false);
-          // if (data === undefined) {
+          // if (data == undefined) {
           //   Swal.fire({
           //     text: "Connection Refused or not connected",
           //     icon: "error",
@@ -129,14 +129,14 @@ const CommonForm = ({ alignLogo }: CommonFormPropsType) => {
             });
             getAll({
               url:
-                userId === null && userId === undefined
+              userId == null && userId == undefined
                   ? "super-admin/get-personalization"
                   : `company/get-personalization/${userId}`,
 
               // url: "super-admin/get-personalization",
             }).then((parentData: any) => {
               // console.log("api call --- >", parentData);
-              if (parentData === undefined) {
+              if (parentData == undefined) {
                 // Swal.fire({
                 //   text: `${parentData.message}`,
                 //   icon: "error",

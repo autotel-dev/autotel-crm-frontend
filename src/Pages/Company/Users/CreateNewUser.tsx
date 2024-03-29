@@ -127,7 +127,7 @@ const CreateNewUser = () => {
               getAll({ url: "operator/get-all-operators" }).then(
                 (data: any) => {
                   // console.log("api call --- >", data);
-                  if (data === undefined) {
+                  if (data == undefined) {
                     Swal.fire({
                       text: "Failed to fetch due to connection refused",
                       icon: "error",

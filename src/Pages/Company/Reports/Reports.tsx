@@ -34,7 +34,7 @@ const Reports = () => {
     setLoading(true);
     getAll({ url: "company/devices" }).then((data: any) => {
       // console.log("data", data);
-      if (data === undefined) {
+      if (data == undefined) {
         setUndefinedData(true);
         setLoading(false);
         Swal.fire({
@@ -98,7 +98,7 @@ const Reports = () => {
     getData();
     getAll({ url: "reports/get-all-report-types" }).then((data: any) => {
       // console.log("data", data);
-      // if (data === undefined) {
+      // if (data == undefined) {
       //   Swal.fire({
       //     text: "Failed to Fetch due to connection refused",
       //     icon: "error",

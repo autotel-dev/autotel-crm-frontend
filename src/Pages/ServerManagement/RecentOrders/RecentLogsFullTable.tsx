@@ -111,7 +111,7 @@ const RecentLogsFullTable = () => {
                             {formatUnderscoredString(data.activity)}
                           </td>
                           <td style={{ width: "15%" }}>
-                            {data.user?.fullName === null
+                            {data.user?.fullName == null
                               ? "N/A"
                               : data.user?.fullName}
                           </td>

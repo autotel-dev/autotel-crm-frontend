@@ -44,23 +44,29 @@ const Attachements = ({ callbackActive }: BusinessFormCommonProps) => {
 
   const handleNextButton = (e: any) => {
     e.preventDefault();
-    if (
-      cnicFront !== null &&
-      cnicBack !== null &&
-      ptaCertificate !== null &&
-      ntnFile !== null &&
-      other !== null
-    ) {
-      dispatch(
-        setCreateCompany({
-          ...createCompany,
-        })
-      );
+    // if (
+    //   cnicFront !== null &&
+    //   cnicBack !== null &&
+    //   ptaCertificate !== null &&
+    //   ntnFile !== null &&
+    //   other !== null
+    // ) {
+    // dispatch(
+    //   setCreateCompany({
+    //     ...createCompany,
+    //   })
+    // );
 
-      callbackActive(6);
-    } else {
-      ShowError();
-    }
+    //   callbackActive(6);
+    // } else {
+    //   ShowError();
+    // }
+    callbackActive(6);
+    dispatch(
+      setCreateCompany({
+        ...createCompany,
+      })
+    );
   };
 
   // const onImageChange = (event: any) => {

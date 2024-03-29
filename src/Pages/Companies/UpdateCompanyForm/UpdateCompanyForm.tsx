@@ -1,4 +1,4 @@
-import { H4, Image, P } from "../../../AbstractElements";
+import { H4, P } from "../../../AbstractElements";
 import Breadcrumbs from "../../../CommonElements/Breadcrumbs/Breadcrumbs";
 import {
   Button,
@@ -6,12 +6,10 @@ import {
   CardBody,
   Col,
   Form,
-  FormGroup,
-  InputGroup,
   Input,
-  Label,
   Row,
   Container,
+  InputGroup,
 } from "reactstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
@@ -19,16 +17,13 @@ import { useEffect, useState } from "react";
 import { setNoDataFound } from "../../../ReaduxToolkit/Reducer/NoDataFoundSlice";
 import { create, getAll, update } from "../../../Api";
 import { useLocation, useNavigate } from "react-router-dom";
-import {
-  setServersStart,
-  setServers,
-  setServersEnd,
-  setFilterServers,
-  setInActiveActiveServers,
-} from "../../../ReaduxToolkit/Reducer/ServerDetailsSlice";
+
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import Swal from "sweetalert2";
+import SelectCitiesBox from "./SelectCitiesBox";
+import SelectPackageBox from "./SelectPackageBox";
+import SelectTimeZoneBox from "./SelectTimeZoneBox";
 
 interface PropsTypes {
   location: any;
@@ -42,6 +37,8 @@ const UpdateCompanyForm = () => {
   const [formData, setFormData]: any = useState({
     fullName: company?.fullName,
     phoneNo: company?.phoneNo,
+    emailAddress: company?.emailAddress,
+    password: company?.password,
     packageExpirationDate: company?.packageExpirationDate,
     address: company?.address,
     contactPersonName: company?.contactPersonName,
@@ -127,7 +124,7 @@ const UpdateCompanyForm = () => {
   //           getAll({ url: "server-management/get-all-servers" }).then(
   //             (data: any) => {
   //               // console.log("api call --- >", data);
-  //               // if (data === undefined) {
+  //               // if (data == undefined) {
   //               //   Swal.fire({
   //               //     text: "Failed to fetch due to connection refused",
   //               //     icon: "error",
@@ -183,9 +180,9 @@ const UpdateCompanyForm = () => {
   return (
     <>
       <Breadcrumbs
-        mainTitle="Update Server Details"
-        parent="Update Server Details"
-        title=""
+        mainTitle="Update Company"
+        parent="Companies"
+        title="Update Company"
       />
       <Container fluid>
         <Row>
@@ -337,49 +334,63 @@ const UpdateCompanyForm = () => {
                           }
                         />
                       </Col>
-                      </Row> 
-                      {/* Row commented if below will uncomment */}
-                      {/*
-                      <Col xl={4} xs={12}>
+                      <Col xl={4} xs={6}>
                         <P>
-                          SSH Port
+                          Package Expiration Date
                           <span className="txt-danger">*</span>
                         </P>
                         <Input
-                          id="sshPort"
-                          type="text"
-                          placeholder="Enter SSH Port"
-                          defaultValue={formData.sshPort}
-                          name="sshPort"
-                          onChange={(e) =>
-                            updateFormData("sshPort", e.target.value)
-                          }
+                          id="packageExpirationDate"
+                          type="date"
+                          value={formData.packageExpirationDate.slice(0, 10)}
+                          name="packageExpirationDate"
+                          onChange={(e) => {
+                            updateFormData(
+                              "packageExpirationDate",
+                              e.target.value
+                            );
+                          }}
                         />
                       </Col>
-                      <Col xl={4} xs={12}>
-                        <P>
-                          Server Specifications
-                          <span className="txt-danger">*</span>
-                        </P>
-                        <Input
-                          id="serverSpecifications"
-                          type="text"
-                          placeholder="Enter Server Specifications"
-                          defaultValue={formData.serverSpecifications}
-                          name="serverSpecifications"
-                          onChange={(e) =>
-                            updateFormData(
-                              "serverSpecifications",
-                              e.target.value
-                            )
-                          }
+                      <Col xl={4} xs={6}>
+                        <div>
+                          <P>
+                            Select City
+                            <span className="txt-danger">*</span>
+                          </P>
+                        </div>
+                        <SelectCitiesBox
+                          placeholder="Select City"
+                          defaultValue={formData.city}
+                        />
+                      </Col>
+                      <Col xl={4} xs={6}>
+                        <div>
+                          <P>
+                            Select Package
+                            <span className="txt-danger">*</span>
+                          </P>
+                        </div>
+                        <SelectPackageBox
+                          placeholder="Select Package"
+                          defaultValue={formData.package}
+                        />
+                      </Col>
+                      <Col xl={4} xs={6}>
+                        <div>
+                          <P>
+                            Select Time Zone
+                            <span className="txt-danger">*</span>
+                          </P>
+                        </div>
+                        <SelectTimeZoneBox
+                          placeholder="Select Time Zone"
+                          defaultValue={formData.timezone}
                         />
                       </Col>
                     </Row>
 
-                    
-
-                    <H4>Server Credentials</H4>
+                    <H4>Account Credentials</H4>
 
                     <Row
                       className="g-3"
@@ -387,41 +398,37 @@ const UpdateCompanyForm = () => {
                     >
                       <Col sm={6}>
                         <P>
-                          Multi Cloud Web Login
+                          Email Address
                           <span className="txt-danger">*</span>
                         </P>
                         <Input
-                          defaultValue={formData.multiCloudWebLogin}
-                          name="multiCloudWebLogin"
+                          value={formData.emailAddress}
+                          name="emailAddress"
+                          onChange={(e) => {
+                            updateFormData("emailAddress", e.target.value);
+                          }}
                           type="email"
-                          placeholder="Enter Multi Cloud Web Login Email"
-                          onChange={(e) =>
-                            updateFormData("multiCloudWebLogin", e.target.value)
-                          }
+                          placeholder="Enter Email Address"
                         />
                       </Col>
                       <Col sm={6}>
                         <P>
-                          Login Password Software
+                          Password
                           <span className="txt-danger">*</span>
                         </P>
 
                         <InputGroup>
                           <Input
                             type={showPassword ? "text" : "password"}
-                            placeholder="Enter Login Password Software"
-                            defaultValue={formData.loginPasswordSoftware}
-                            name="loginPasswordSoftware"
-                            onChange={(e) =>
-                              updateFormData(
-                                "loginPasswordSoftware",
-                                e.target.value
-                              )
-                            }
+                            placeholder="Enter Password"
+                            value={formData.password}
+                            name="password"
+                            onChange={(e) => {
+                              updateFormData("password", e.target.value);
+                            }}
                           />
                           <Button
                             color="white"
-                            // className="bg-transparent"
                             onClick={togglePasswordVisibility}
                             style={{
                               backgroundColor: "transparent",
@@ -442,6 +449,8 @@ const UpdateCompanyForm = () => {
                         </InputGroup>
                       </Col>
                     </Row>
+                    {/* Row commented if below will uncomment */}
+                    {/*
 
                     <H4>Google Account Credentials</H4>
 
@@ -602,7 +611,6 @@ const UpdateCompanyForm = () => {
                         />
                       </Col>
                      </Row> */}
-                   
                   </Form>
                   <Row>
                     <Col

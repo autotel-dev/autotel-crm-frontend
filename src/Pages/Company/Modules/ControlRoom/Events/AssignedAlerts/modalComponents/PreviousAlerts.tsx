@@ -95,7 +95,7 @@ const PreviousAlerts = () => {
                       <td>{data.type}</td>
                       <td>{data.message}</td>
                       <td>
-                        {data.address === null && data.address === undefined
+                        {data.address == null && data.address == undefined
                           ? "N/A"
                           : data.address}
                       </td>

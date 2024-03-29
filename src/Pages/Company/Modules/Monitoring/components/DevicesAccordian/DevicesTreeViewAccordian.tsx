@@ -289,9 +289,9 @@ const DevicesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
                 statusDevices === "Expired"
                   ? bodyItem.time === statusDevices
                   : statusDevices === "Not Connecetd"
-                  ? bodyItem.time === null ||
+                  ? bodyItem.time == null ||
                     bodyItem.time === "" ||
-                    bodyItem.time === undefined
+                    bodyItem.time == undefined
                   : statusDevices === ""
                   ? bodyItem.online === bodyItem.online
                   : bodyItem.online === statusDevices
@@ -335,9 +335,9 @@ const DevicesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
                                 statusDevices === "Expired"
                                   ? bodyItem.time === statusDevices
                                   : statusDevices === "Not Connecetd"
-                                  ? bodyItem.time === null ||
+                                  ? bodyItem.time == null ||
                                     bodyItem.time === "" ||
-                                    bodyItem.time === undefined
+                                    bodyItem.time == undefined
                                   : statusDevices === ""
                                   ? bodyItem.online === bodyItem.online
                                   : bodyItem.online === statusDevices
@@ -371,9 +371,9 @@ const DevicesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
                           statusDevices === "Expired"
                             ? bodyItem.time === statusDevices
                             : statusDevices === "Not Connecetd"
-                            ? bodyItem.time === null ||
+                            ? bodyItem.time == null ||
                               bodyItem.time === "" ||
-                              bodyItem.time === undefined
+                              bodyItem.time == undefined
                             : statusDevices === ""
                             ? bodyItem.online === bodyItem.online
                             : bodyItem.online === statusDevices
@@ -604,9 +604,9 @@ A 40 40 0 0 1 90 50"
                           statusDevices === "Expired"
                             ? bodyItem.time === statusDevices
                             : statusDevices === "Not Connecetd"
-                            ? bodyItem.time === null ||
+                            ? bodyItem.time == null ||
                               bodyItem.time === "" ||
-                              bodyItem.time === undefined
+                              bodyItem.time == undefined
                             : statusDevices === ""
                             ? bodyItem.online === bodyItem.online
                             : bodyItem.online === statusDevices

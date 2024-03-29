@@ -101,7 +101,7 @@ const deleteAlert = (
               getAll({ url: "operator/get-all-operators" }).then(
                 (data: any) => {
                   // console.log("api call --- >", data);
-                  if (data === undefined) {
+                  if (data == undefined) {
                     dispatch(setOperators([]));
                     dispatch(setFilterOperators([]));
                   }
@@ -127,7 +127,7 @@ const deleteAlert = (
               getAll({ url: "server-management/get-all-servers" }).then(
                 (data: any) => {
                   // console.log("api call --- >", data);
-                  if (data === undefined) {
+                  if (data == undefined) {
                     dispatch(setServers([]));
                     dispatch(setFilterServers([]));
                   }
@@ -152,7 +152,7 @@ const deleteAlert = (
               getAll({ url: "super-admin/get-all-companies" }).then(
                 (data: any) => {
                   // console.log("api call for companies --- >", data);
-                  if (data === undefined) {
+                  if (data == undefined) {
                     dispatch(setCompanies([]));
                     dispatch(setFilterCompanies([]));
                   }
@@ -175,7 +175,7 @@ const deleteAlert = (
             if (type === "cityType") {
               getAll({ url: "city/get-all-cities" }).then((data: any) => {
                 // console.log("api call --- >", data);
-                if (data === undefined) {
+                if (data == undefined) {
                   dispatch(setCities([]));
                   dispatch(setFilterCities([]));
                 }
@@ -198,7 +198,7 @@ const deleteAlert = (
               getAll({ url: "province/get-all-provinces" }).then(
                 (data: any) => {
                   // console.log("api call --- >", data);
-                  if (data === undefined) {
+                  if (data == undefined) {
                     dispatch(setProvinces([]));
                     dispatch(setFilterProvinces([]));
                   }
@@ -255,7 +255,7 @@ const deleteAlert = (
               getAll({ url: "package/get-all-packages" }).then((data: any) => {
                 // console.log("api call --- >", data);
                 dispatch(setPackagesEnd());
-                if (data === undefined) {
+                if (data == undefined) {
                   dispatch(setPackages([]));
                   dispatch(setFilterPackages([]));
                 }
@@ -277,7 +277,7 @@ const deleteAlert = (
                 (data: any) => {
                   // console.log("api call --- >", data);
                   dispatch(setCRMModulesEnd());
-                  if (data === undefined) {
+                  if (data == undefined) {
                     dispatch(setCRMModules([]));
                     dispatch(setFilterCRMModules([]));
                   }
@@ -298,7 +298,7 @@ const deleteAlert = (
             } else if (type === "countryType") {
               getAll({ url: "country/get-all-countries" }).then((data: any) => {
                 // console.log("api call --- >", data);
-                if (data === undefined) {
+                if (data == undefined) {
                   dispatch(setCountries([]));
                   dispatch(setFilterCountries([]));
                 }

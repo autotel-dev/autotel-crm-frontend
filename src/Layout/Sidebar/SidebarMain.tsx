@@ -248,9 +248,9 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
 
   var filteredCompanyMenu = CompanySidebarMenuComponent.filter(
     (item, index) => {
-      if (user === undefined && index === 3) {
+      if (user == undefined && index === 3) {
         return false;
-      } else if (support === undefined && index === 4) {
+      } else if (support == undefined && index === 4) {
         return false;
       } else if (user !== undefined && item.title === user.title) {
         return user.read;
@@ -263,7 +263,7 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
   );
   var filteredOperatorMenu = OperatorSidebarMenuComponent.filter(
     (item, index) => {
-      if (support === undefined && index === 2) {
+      if (support == undefined && index === 2) {
         return false;
       } else if (user !== undefined && item.title === user.title) {
         return user.read;

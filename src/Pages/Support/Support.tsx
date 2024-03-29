@@ -38,7 +38,7 @@ const Support = () => {
     if (getUserRole() === "SUPER_ADMIN") {
       getAll({ url: "support/bug-report/get-statistics" }).then((data: any) => {
         // console.log("api call --- >", data);
-        // if (data === undefined) {
+        // if (data == undefined) {
         //   Swal.fire({
         //     text: "F",
         //     icon: "error",
@@ -99,7 +99,7 @@ const Support = () => {
     }).then((data: any) => {
       // console.log("api call --- >", data);
 
-      if (data === undefined) {
+      if (data == undefined) {
         Swal.fire({
           text: "Support Data not Found",
           icon: "error",
@@ -181,7 +181,7 @@ const Support = () => {
                   />
                   {!statisticsloading && !reportsLoading ? (
                     <CardBody>
-                      {supportStatistics === null &&
+                      {supportStatistics == null &&
                       getUserRole() === "SUPER_ADMIN" ? (
                         <div
                           style={{

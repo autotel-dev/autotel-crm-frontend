@@ -1,4 +1,13 @@
-import { Badge, Card, CardBody, Col, Row } from "reactstrap";
+import {
+  Badge,
+  Card,
+  CardBody,
+  Col,
+  PopoverBody,
+  PopoverHeader,
+  Row,
+  UncontrolledPopover,
+} from "reactstrap";
 import "./AnalyticsCss.css";
 import ReactApexChart from "react-apexcharts";
 
@@ -23,6 +32,7 @@ import { getAll } from "../../../../../Api";
 import { setDashboardStatistics } from "../../../../../ReaduxToolkit/Reducer/AlertsSlice";
 import { ApexOptions } from "apexcharts";
 import TotalPreInfoAlerts from "./components/TotalPreInfoAlerts";
+import DeviceSelecetdForAlerts from "./components/DeviceSelecetdForAlerts";
 
 const ControlRoomAnalytics = () => {
   const { devices } = useSelector((state: any) => state.monitoring);
@@ -47,11 +57,6 @@ const ControlRoomAnalytics = () => {
     useState([]);
   const [totalPreInfosByDayData, setTotalPreInfosByDayData] = useState([]);
   useEffect(() => {
-    // // console.log(
-    //   "dashboardStatistics?.controlRoomAnalytics?",
-    //   dashboardStatistics
-    // );
-
     var killedDevicesDays: any = [];
     var killedDevicesCategories: any = [];
     var totalCommandedDevicesDays: any = [];
@@ -412,6 +417,11 @@ const ControlRoomAnalytics = () => {
     setIsUpdateModalOpenForPreInfoAlerts,
   ] = useState(false);
 
+  const [
+    isUpdateModalOpenForDeviceSelecetdForAlerts,
+    setIsUpdateModalOpenForDeviceSelecetdForAlerts,
+  ] = useState(false);
+
   const [selectedFilter, setSelectedFilter] = useState("Today");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [containerWidth, setContainerWidth] = useState("350px");
@@ -752,16 +762,17 @@ const ControlRoomAnalytics = () => {
                               style={{
                                 display: "flex",
                                 justifyContent: "start",
+                                alignItems: "center",
                               }}
                             >
                               <div
-                                style={{ fontSize: "16px", fontWeight: "bold" }}
+                                style={{ fontSize: "14px", fontWeight: "bold" }}
                               >
                                 {server?.server?.companyName} :
                               </div>
                               <div
                                 style={{
-                                  marginLeft: "20px",
+                                  marginLeft: "5px",
                                   display: "flex",
                                   alignItems: "center",
                                 }}
@@ -777,10 +788,77 @@ const ControlRoomAnalytics = () => {
                                     marginRight: "5px",
                                   }}
                                 ></div>
-                                <div>
+                                <div id="Popover">
                                   {server?.isConnected
                                     ? "Connected"
                                     : "Not Connected"}
+                                </div>
+                                {server?.isConnected == false && (
+                                  <UncontrolledPopover
+                                    placement="top"
+                                    trigger="hover"
+                                    target="Popover"
+                                  >
+                                    <PopoverHeader>Reason</PopoverHeader>
+                                    <PopoverBody>{server?.reason}</PopoverBody>
+                                  </UncontrolledPopover>
+                                )}
+                                <div
+                                  style={{
+                                    marginLeft: "5px",
+                                    marginRight: "5px",
+                                  }}
+                                  id="Popover1"
+                                >
+                                  <button
+                                    className="btn-primary"
+                                    style={{
+                                      borderRadius: "5px",
+                                      padding: "0.5px 6px",
+                                      color: "white",
+                                      fontSize: "9px",
+                                      width: "50px",
+                                      cursor: "not-allowed",
+                                      outline: "none",
+                                      border: "none",
+                                    }}
+                                    onClick={() => {}}
+                                  >
+                                    Vehicle Data
+                                  </button>
+                                </div>
+                                <UncontrolledPopover
+                                  placement="top"
+                                  trigger="hover"
+                                  target="Popover1"
+                                >
+                                  <PopoverHeader>
+                                    In Development Mode
+                                  </PopoverHeader>
+                                  <PopoverBody>
+                                    This feature is in development mode
+                                  </PopoverBody>
+                                </UncontrolledPopover>
+                                <div style={{ marginLeft: "0px" }}>
+                                  <button
+                                    className="btn-primary"
+                                    style={{
+                                      borderRadius: "5px",
+                                      padding: "0.5px 6px",
+                                      color: "white",
+                                      fontSize: "9px",
+                                      width: "45px",
+                                      outline: "none",
+                                      border: "none",
+                                    }}
+                                    onClick={() => {
+                                      setIsUpdateModalOpenForDeviceSelecetdForAlerts(
+                                        true
+                                      );
+                                    }}
+                                  >
+                                    Alert Data
+                                  </button>
                                 </div>
                               </div>
                             </div>
@@ -792,6 +870,14 @@ const ControlRoomAnalytics = () => {
                 </CardBody>
               </Card>
             </Col>
+            <DeviceSelecetdForAlerts
+              addModal={isUpdateModalOpenForDeviceSelecetdForAlerts}
+              setAddModal={setIsUpdateModalOpenForDeviceSelecetdForAlerts}
+              dropDownDevices={devices}
+              prevItem=""
+              fromDate={fromDate}
+              toDate={toDate}
+            />
 
             {/*  */}
             <Col xl="3" lg="6" md="6" sm="12" className="box-col-3">

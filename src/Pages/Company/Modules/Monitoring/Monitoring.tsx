@@ -47,7 +47,7 @@ const Monitoring = () => {
     const fetchDataAndDispatch = () => {
       getAll({ url: "company/devices" }).then((data: any) => {
         // console.log("data", data);
-        // if (data === undefined) {
+        // if (data == undefined) {
         //   setUndefinedData(true);
         //   setLoading(false);
         //   Swal.fire({
@@ -207,9 +207,9 @@ const Monitoring = () => {
             for (let i = 0; i < data.data.length; i++) {
               const element = data.data[i];
               if (
-                element.time === null ||
+                element.time == null ||
                 element.time === "" ||
-                element.time === undefined
+                element.time == undefined
               ) {
                 notConnectedDevices.push({ ...element, checked: false });
               }
@@ -265,7 +265,7 @@ const Monitoring = () => {
     setLoading(true);
     getAll({ url: "company/devices" }).then((data: any) => {
       // console.log("data", data);
-      // if (data === undefined) {
+      // if (data == undefined) {
       //   setUndefinedData(true);
       //   setLoading(false);
       //   Swal.fire({
@@ -375,9 +375,9 @@ const Monitoring = () => {
           for (let i = 0; i < data.data.length; i++) {
             const element = data.data[i];
             if (
-              element.time === null ||
+              element.time == null ||
               element.time === "" ||
-              element.time === undefined
+              element.time == undefined
             ) {
               notConnectedDevices.push({ ...element, checked: false });
             }

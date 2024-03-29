@@ -96,7 +96,7 @@ const AssignedAlertModal: React.FC<PropsTypes> = ({
       </div>
       <ModalBody>
         <>
-          {modalData === null ? (
+          {modalData == null ? (
             <div
               style={{
                 display: "flex",
@@ -110,7 +110,7 @@ const AssignedAlertModal: React.FC<PropsTypes> = ({
                 <Loader />
               </div>
             </div>
-          ) : modalData === undefined ? (
+          ) : modalData == undefined ? (
             <div
               style={{
                 display: "flex",

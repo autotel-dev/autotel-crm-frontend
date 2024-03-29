@@ -52,7 +52,7 @@ const Settings = () => {
           : "super-admin/get-personalization",
     }).then((parentData: any) => {
       // console.log("api call --- >", parentData);
-      if (parentData === undefined) {
+      if (parentData == undefined) {
         // setUndefinedData(true);
         Swal.fire({
           text: "No personalization found",

@@ -60,7 +60,8 @@ const MonitoringSidebar = () => {
         </div>
         <div
           style={{
-            backgroundColor: "#3d3de9",
+            backgroundColor: "white",
+            color: "black",
             transform: "rotate(-90deg)",
             textAlign: "center",
             display: "flex",
@@ -110,7 +111,7 @@ const MonitoringSidebar = () => {
         </div>
         <div
           style={{
-            backgroundColor: "#3cff3c",
+            backgroundColor: "#23d33f",
             transform: "rotate(-90deg)",
             textAlign: "center",
             display: "flex",
@@ -253,7 +254,7 @@ const MonitoringSidebar = () => {
         </div>
         <div
           style={{
-            backgroundColor: "#fd5959",
+            backgroundColor: "#ff4747",
             transform: "rotate(-90deg)",
             textAlign: "center",
             display: "flex",
@@ -319,7 +320,7 @@ const MonitoringSidebar = () => {
         </div>
         <div
           style={{
-            backgroundColor: "#7b7bff",
+            backgroundColor: "#225fff",
             transform: "rotate(-90deg)",
             textAlign: "center",
             display: "flex",
@@ -453,7 +454,7 @@ const MonitoringSidebar = () => {
         </div>
         <div
           style={{
-            backgroundColor: "#e76be7",
+            backgroundColor: "#c961fe",
             transform: "rotate(-90deg)",
             textAlign: "center",
             display: "flex",

@@ -36,7 +36,7 @@ const CountriesList = () => {
     dispatch(setCountriesStart());
     getAll({ url: "country/get-all-countries" }).then((data: any) => {
       // console.log("api call --- >", data);
-      if (data === undefined) {
+      if (data == undefined) {
         Swal.fire({
           text: "No countries Found",
           icon: "error",

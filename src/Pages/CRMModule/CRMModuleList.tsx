@@ -36,7 +36,7 @@ const CRMModuleList = () => {
     dispatch(setCRMModulesStart());
     getAll({ url: "crm-module/get-all-modules" }).then((data: any) => {
       // console.log("api call --- >", data);
-      if (data === undefined) {
+      if (data == undefined) {
         Swal.fire({
           text: "No CRM Modules Found",
           icon: "error",

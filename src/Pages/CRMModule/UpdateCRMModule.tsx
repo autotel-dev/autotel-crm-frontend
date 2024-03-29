@@ -117,7 +117,7 @@ const UpdateCRMModule: React.FC<PropsTypes> = ({
               getAll({ url: "crm-module/get-all-modules" }).then(
                 (data: any) => {
                   // // console.log("api call --- >", data);
-                  if (data === undefined) {
+                  if (data == undefined) {
                     Swal.fire({
                       text: "Failed to fetch due to connection refused",
                       icon: "error",

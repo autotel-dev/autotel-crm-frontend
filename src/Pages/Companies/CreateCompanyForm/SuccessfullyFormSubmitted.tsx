@@ -162,6 +162,22 @@ const SuccessfullyFormSubmitted = ({
     if (other !== null) {
       formData.append("otherAttachment", other);
     }
+    //
+    if (cnicFront == null) {
+      formData.append("cnicFront", "");
+    }
+    if (cnicBack == null) {
+      formData.append("cnicBack", "");
+    }
+    if (ptaCertificate == null) {
+      formData.append("ptaCertificate", "");
+    }
+    if (ntnFile == null) {
+      formData.append("ntnCertificate", "");
+    }
+    if (other == null) {
+      formData.append("otherAttachment", "");
+    }
 
     formData.append("package", createCompany.package);
     formData.append(
@@ -198,7 +214,7 @@ const SuccessfullyFormSubmitted = ({
           dispatch(setCompaniesStart());
           getAll({ url: "super-admin/get-all-companies" }).then((data: any) => {
             // console.log("api call --- >", data);
-            if (data === undefined) {
+            if (data == undefined) {
               Swal.fire({
                 text: "Failed to fetch due to connection refused",
                 icon: "error",
@@ -349,7 +365,7 @@ const SuccessfullyFormSubmitted = ({
               id="contactPersonNumber"
               type="text"
               placeholder="Enter Contact Person Number"
-              defaultValue={createCompany.contactPersonNumber}
+              defaultValue={createCompany.contactPersonPhoneNo}
               disabled
               name="contactPersonNumber"
             />
@@ -864,13 +880,13 @@ const SuccessfullyFormSubmitted = ({
           <div
             style={{
               display: "flex",
-              justifyContent: "space-between",
+              justifyContent: "start",
               flexWrap: "wrap",
             }}
           >
             {cnicFront !== null &&
             checkFileTypeByExtension(cnicFront.name, cnicFront) === "image" ? (
-              <div>
+              <div style={{ marginRight: "10px" }}>
                 <P style={{ fontSize: "18px", fontWeight: "bold" }}>
                   CNIC Front
                   <span className="txt-danger">*</span>
@@ -888,7 +904,7 @@ const SuccessfullyFormSubmitted = ({
             ) : (
               cnicFront !== null &&
               checkFileTypeByExtension(cnicFront.name, cnicFront) === "pdf" && (
-                <div>
+                <div style={{ marginRight: "10px" }}>
                   <P style={{ fontSize: "18px", fontWeight: "bold" }}>
                     CNIC Front
                     <span className="txt-danger">*</span>
@@ -902,7 +918,7 @@ const SuccessfullyFormSubmitted = ({
             )}
             {cnicBack !== null &&
             checkFileTypeByExtension(cnicBack.name, cnicBack) === "image" ? (
-              <div>
+              <div style={{ marginRight: "10px" }}>
                 <P style={{ fontSize: "18px", fontWeight: "bold" }}>
                   CNIC Back
                   <span className="txt-danger">*</span>
@@ -920,7 +936,7 @@ const SuccessfullyFormSubmitted = ({
             ) : (
               cnicBack !== null &&
               checkFileTypeByExtension(cnicBack.name, cnicBack) === "pdf" && (
-                <div>
+                <div style={{ marginRight: "10px" }}>
                   <P style={{ fontSize: "18px", fontWeight: "bold" }}>
                     CNIC Back
                     <span className="txt-danger">*</span>
@@ -934,7 +950,7 @@ const SuccessfullyFormSubmitted = ({
             )}
             {ntnFile !== null &&
             checkFileTypeByExtension(ntnFile.name, ntnFile) === "image" ? (
-              <div>
+              <div style={{ marginRight: "10px" }}>
                 <P style={{ fontSize: "18px", fontWeight: "bold" }}>
                   NTN File
                   <span className="txt-danger">*</span>
@@ -952,7 +968,7 @@ const SuccessfullyFormSubmitted = ({
             ) : (
               ntnFile !== null &&
               checkFileTypeByExtension(ntnFile.name, ntnFile) === "pdf" && (
-                <div>
+                <div style={{ marginRight: "10px" }}>
                   <P style={{ fontSize: "18px", fontWeight: "bold" }}>
                     NTN File
                     <span className="txt-danger">*</span>
@@ -967,7 +983,7 @@ const SuccessfullyFormSubmitted = ({
             {ptaCertificate !== null &&
             checkFileTypeByExtension(ptaCertificate.name, ptaCertificate) ==
               "image" ? (
-              <div>
+              <div style={{ marginRight: "10px" }}>
                 <P style={{ fontSize: "18px", fontWeight: "bold" }}>
                   PTA Certificate
                   <span className="txt-danger">*</span>
@@ -986,7 +1002,7 @@ const SuccessfullyFormSubmitted = ({
               ptaCertificate !== null &&
               checkFileTypeByExtension(ptaCertificate.name, ptaCertificate) ==
                 "pdf" && (
-                <div>
+                <div style={{ marginRight: "10px" }}>
                   <P style={{ fontSize: "18px", fontWeight: "bold" }}>
                     PTA Certificate
                     <span className="txt-danger">*</span>
@@ -1000,7 +1016,7 @@ const SuccessfullyFormSubmitted = ({
             )}
             {other !== null &&
             checkFileTypeByExtension(other.name, other) === "image" ? (
-              <div>
+              <div style={{ marginRight: "10px" }}>
                 <P style={{ fontSize: "18px", fontWeight: "bold" }}>
                   Other
                   <span className="txt-danger">*</span>
@@ -1018,7 +1034,7 @@ const SuccessfullyFormSubmitted = ({
             ) : (
               other !== null &&
               checkFileTypeByExtension(other.name, other) === "pdf" && (
-                <div>
+                <div style={{ marginRight: "10px" }}>
                   <P style={{ fontSize: "18px", fontWeight: "bold" }}>
                     Other
                     <span className="txt-danger">*</span>

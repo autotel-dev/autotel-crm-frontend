@@ -3,9 +3,7 @@
 import Swal from "sweetalert2";
 import errorAlert from "../Pages/Alerts/ErrorAlert";
 import successAlert from "../Pages/Alerts/SuccessAlert";
-import { CitiesType } from "../Pages/Cities/CityTypes/CityTypes";
 import { header, multipartHeader } from "./header";
-import { setNoDataFound } from "../ReaduxToolkit/Reducer/NoDataFoundSlice";
 import axios from "axios";
 const api = `${process.env.PUBLIC_URL}/api`;
 export const ChatMemberApi = `${api}/chatMember.json`;

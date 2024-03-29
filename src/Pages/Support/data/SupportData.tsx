@@ -185,7 +185,7 @@ export const supportColumns = [
 //     description: item.description,
 //     isActive: item.isActive ? "true" : "false",
 //     status: item.status,
-//     priorty: item.priorty === null ? "N/A" : item.priorty,
+//     priorty: item.priorty == null ? "N/A" : item.priorty,
 //     date: "2024-02-19",
 //   }));
 // };

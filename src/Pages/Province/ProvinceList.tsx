@@ -37,7 +37,7 @@ const ProvinceList = () => {
     dispatch(setProvincesStart());
     getAll({ url: "province/get-all-provinces" }).then((data: any) => {
       // console.log("api call --- >", data);
-      if (data === undefined) {
+      if (data == undefined) {
         Swal.fire({
           text: "No provinces Found",
           icon: "error",

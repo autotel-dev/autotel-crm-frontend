@@ -21,7 +21,7 @@ const LoginForm = () => {
 
     getAll({
       url:
-        userId === null && userId === undefined
+        userId == null && userId == undefined
           ? "super-admin/get-personalization"
           : `company/get-personalization/${userId}`,
 
@@ -30,7 +30,7 @@ const LoginForm = () => {
       .then((parentData: any) => {
         // console.log("api call --- >", parentData);
         // console.log("undenid");
-        if (parentData === undefined) {
+        if (parentData == undefined) {
           Swal.fire({
             text: "Failed to Fetch the personalization",
             icon: "error",

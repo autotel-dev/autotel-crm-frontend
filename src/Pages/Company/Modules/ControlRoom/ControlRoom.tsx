@@ -69,7 +69,7 @@ const ControlRoom = () => {
       // // console.log("api call --- >", data);
       // // console.log("data,data");
 
-      if (data === undefined) {
+      if (data == undefined) {
         dispatch(setLiveAlerts([]));
         dispatch(setLiveAlertsData(null));
       }
@@ -104,7 +104,7 @@ const ControlRoom = () => {
     getAll({ url: "company/get-all-assigned-events" }).then((data: any) => {
       // // console.log("assigned --- >", data);
       // setLoading(false);
-      if (data === undefined) {
+      if (data == undefined) {
         dispatch(setAssignedAlerts([]));
       }
       if (data !== undefined) {
@@ -134,7 +134,7 @@ const ControlRoom = () => {
     getAll({ url: "company/get-all-completed-events" }).then((data: any) => {
       // // console.log("completed --- >", data);
       // setLoading(false);
-      if (data === undefined) {
+      if (data == undefined) {
         dispatch(setCompletedAlerts([]));
       }
       if (data !== undefined) {
@@ -275,7 +275,7 @@ const ControlRoom = () => {
     if (devices.length === 0) {
       getAll({ url: "company/devices" }).then((data: any) => {
         // // console.log("data", data);
-        // if (data === undefined) {
+        // if (data == undefined) {
         //   setDevicesLoading(false);
         //   Swal.fire({
         //     text: "Failed to Fetch",
@@ -382,9 +382,9 @@ const ControlRoom = () => {
             for (let i = 0; i < data.data.length; i++) {
               const element = data.data[i];
               if (
-                element.time === null ||
+                element.time == null ||
                 element.time === "" ||
-                element.time === undefined
+                element.time == undefined
               ) {
                 notConnectedDevices.push({ ...element, checked: false });
               }

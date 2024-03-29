@@ -23,7 +23,7 @@ const App = () => {
     if (token !== null) {
       getAll({
         url:
-          userId === null && userId === undefined
+          userId == null && userId == undefined
             ? "super-admin/get-personalization"
             : `company/get-personalization/${userId}`,
 
@@ -32,7 +32,7 @@ const App = () => {
         .then((parentData: any) => {
           // console.log("api call --- >", parentData);
           // console.log("undefined");
-          if (parentData === undefined) {
+          if (parentData == undefined) {
             Swal.fire({
               text: "Failed to Fetch the personalization",
               icon: "error",

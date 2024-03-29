@@ -43,7 +43,7 @@ const PackageList = () => {
     dispatch(setPackagesStart());
     getAll({ url: "package/get-all-packages" }).then((data: any) => {
       // console.log("api call --- >", data);
-      if (data === undefined) {
+      if (data == undefined) {
         Swal.fire({
           text: "No packages Found",
           icon: "error",

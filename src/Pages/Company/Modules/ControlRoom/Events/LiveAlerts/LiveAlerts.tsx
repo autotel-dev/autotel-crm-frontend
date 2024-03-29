@@ -97,7 +97,7 @@ const LiveAlerts = () => {
       getAll({ url: "company/alert-events?pageNo=1" }).then((data: any) => {
         // console.log("api call --- >", data);
 
-        if (data === undefined) {
+        if (data == undefined) {
           dispatch(setLiveAlerts([]));
           dispatch(setLiveAlertsData(null));
         } else {
@@ -145,7 +145,7 @@ const LiveAlerts = () => {
       >
         <div>
           Live Alerts (
-          {liveAlertsData === null ? 0 : liveAlertsData.lastPage * 30})
+          {liveAlertsData == null ? 0 : liveAlertsData.lastPage * 30})
         </div>
       </div>
 
@@ -158,7 +158,7 @@ const LiveAlerts = () => {
               value={searchValue}
               onChange={(e) => setSearchValue(e.target.value)}
               type="text"
-              placeholder="Search Commanded Vehicles"
+              placeholder="Search Vehicles"
             />
           </FormGroup>
         </Row>
@@ -202,7 +202,7 @@ const LiveAlerts = () => {
                         cursor: "pointer",
                       }}
                       onClick={async () => {
-                        if (data.preInfo === null) {
+                        if (data.preInfo == null) {
                           if (assignLoading) {
                             Swal.fire({
                               text: "Loading....",
@@ -239,13 +239,16 @@ const LiveAlerts = () => {
                               ) {
                                 setAssignLoading(false);
                               }
-                              if (!dataa.success) {
+                              if (dataa.success == false) {
                                 Swal.fire({
-                                  text: `${data.message}`,
+                                  text: `${dataa.message}`,
                                   icon: "error",
                                   timer: 2000,
                                   showConfirmButton: false,
                                 });
+                                console.log("Failed");
+                                console.log("Data : ", dataa);
+
                                 setAssignLoading(false);
                               }
 
@@ -272,7 +275,7 @@ const LiveAlerts = () => {
                                 }).then((data: any) => {
                                   // console.log("assigned --- >", data);
                                   // setLoading(false);
-                                  if (data !== undefined) {
+                                  if (data != undefined) {
                                     if (data.success) {
                                       setAssignLoading(true);
                                       // console.log("length --- >", data.data.length);
@@ -351,7 +354,7 @@ const LiveAlerts = () => {
                                   }
                                   if (!dataa.success) {
                                     Swal.fire({
-                                      text: `${data.message}`,
+                                      text: `${dataa.message}`,
                                       icon: "error",
                                       timer: 2000,
                                       showConfirmButton: false,
@@ -382,7 +385,7 @@ const LiveAlerts = () => {
                                     }).then((data: any) => {
                                       // console.log("assigned --- >", data);
                                       // setLoading(false);
-                                      if (data !== undefined) {
+                                      if (data != undefined) {
                                         if (data.success) {
                                           setAssignLoading(true);
                                           // console.log("length --- >", data.data.length);
@@ -573,7 +576,7 @@ const LiveAlerts = () => {
                       <td style={{ width: "20%" }}>{data.type}</td>
                       <td style={{ width: "20%" }}>{data.message}</td>
                       <td style={{ width: "20%" }}>
-                        {data.address === null ? "N/A" : data.address}
+                        {data.address == null ? "N/A" : data.address}
                       </td>
                     </tr>
                   ))

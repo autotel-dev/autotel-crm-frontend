@@ -193,7 +193,7 @@ const Personalization = () => {
       })
         .then((data: any) => {
           // console.log("api call --- >", data);
-          if (data === undefined) {
+          if (data == undefined) {
             Swal.fire({
               text: `${data.message}`,
               icon: "error",
@@ -231,7 +231,7 @@ const Personalization = () => {
                     : "super-admin/get-personalization",
               }).then((parentData: any) => {
                 // console.log("api call --- >", parentData);
-                if (parentData === undefined) {
+                if (parentData == undefined) {
                   Swal.fire({
                     text: "Failed to Fetch",
                     icon: "error",
@@ -269,7 +269,7 @@ const Personalization = () => {
       })
         .then((data: any) => {
           // console.log("api call --- >", data);
-          if (data === undefined) {
+          if (data == undefined) {
             Swal.fire({
               text: `${data.message}`,
               icon: "error",
@@ -298,7 +298,7 @@ const Personalization = () => {
                     : "super-admin/get-personalization",
               }).then((parentData: any) => {
                 // console.log("api call --- >", parentData);
-                if (parentData === undefined) {
+                if (parentData == undefined) {
                   Swal.fire({
                     text: "Failed to Fetch",
                     icon: "error",
@@ -466,7 +466,7 @@ const Personalization = () => {
                 </FormGroup>
               </Col>
 
-              {userPersonalizationData === null ? (
+              {userPersonalizationData == null ? (
                 <Row>
                   <Col md={6}>
                     <Card>
@@ -679,7 +679,7 @@ const Personalization = () => {
                 style={{
                   display: "flex",
                   // justifyContent:
-                  //   userPersonalizationData === null ? "end" : "space-between",
+                  //   userPersonalizationData == null ? "end" : "space-between",
                   justifyContent: "end",
                 }}
               >
@@ -711,7 +711,7 @@ const Personalization = () => {
                 >
                   {loading
                     ? "Loading..."
-                    : userPersonalizationData === null
+                    : userPersonalizationData == null
                     ? "Create"
                     : isEdit
                     ? "Save"

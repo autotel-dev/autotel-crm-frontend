@@ -47,7 +47,7 @@ const Account = () => {
     if (getUserRole() === "COMPANY") {
       getAll({ url: "company/permissions" }).then((data: any) => {
         // console.log("api call --- >", data);
-        if (data === undefined) {
+        if (data == undefined) {
           setServerPermissionsLoading(false);
         }
         if (data !== undefined) {
@@ -64,7 +64,7 @@ const Account = () => {
 
     getAll({ url: "user/get-user" }).then((parentData: any) => {
       // console.log("api call --- >", parentData);
-      // if (parentData === undefined) {
+      // if (parentData == undefined) {
       //   setUserDataLoading(false);
       //   setUndefinedData(true);
       //   Swal.fire({
@@ -109,65 +109,67 @@ const Account = () => {
                 url: parentData.data.user.cnicFront.url,
                 blob: data,
               });
+              setTicketImages(ticketImages);
               // console.log("Ticket Images", ticketImages);
               // cnicBack
-              getImage({
-                url: `${IMAGE_BASE_URL}/${parentData.data.user.cnicBack.url}`,
-              }).then(async (data: any) => {
-                // console.log("image api --- >", data);
-                ticketImages.push({
-                  key: "cnicBack",
-                  url: parentData.data.user.cnicBack.url,
-                  blob: data,
-                });
-
-                // console.log("Ticket Images", ticketImages);
-                // ptaCertificate
-                getImage({
-                  url: `${IMAGE_BASE_URL}/${parentData.data.user.ptaCertificate.url}`,
-                }).then(async (data: any) => {
-                  // console.log("image api --- >", data);
-                  ticketImages.push({
-                    key: "ptaCertificate",
-                    url: parentData.data.user.ptaCertificate.url,
-                    blob: data,
-                  });
-
-                  // console.log("Ticket Images", ticketImages);
-                  // ntnCertificate
-                  getImage({
-                    url: `${IMAGE_BASE_URL}/${parentData.data.user.ntnCertificate.url}`,
-                  }).then(async (data: any) => {
-                    // console.log("image api --- >", data);
-                    ticketImages.push({
-                      key: "ntnCertificate",
-                      url: parentData.data.user.ntnCertificate.url,
-                      blob: data,
-                    });
-
-                    // console.log("Ticket Images", ticketImages);
-
-                    // otherAttachment
-                    getImage({
-                      url: `${IMAGE_BASE_URL}/${parentData.data.user.otherAttachment.url}`,
-                    }).then(async (data: any) => {
-                      // console.log("image api --- >", data);
-                      ticketImages.push({
-                        key: "otherAttachment",
-                        url: parentData.data.user.otherAttachment.url,
-                        blob: data,
-                      });
-
-                      setTicketImages(ticketImages);
-                      // console.log("Ticket Images", ticketImages);
-                      if (ticketImages.length === 5) {
-                        setUserDataLoading(false);
-                      }
-                    });
-                  });
-                });
-              });
             });
+            getImage({
+              url: `${IMAGE_BASE_URL}/${parentData.data.user.cnicBack.url}`,
+            }).then(async (data: any) => {
+              // console.log("image api --- >", data);
+              ticketImages.push({
+                key: "cnicBack",
+                url: parentData.data.user.cnicBack.url,
+                blob: data,
+              });
+              setTicketImages(ticketImages);
+              // console.log("Ticket Images", ticketImages);
+              // ptaCertificate
+            });
+            getImage({
+              url: `${IMAGE_BASE_URL}/${parentData.data.user.ptaCertificate.url}`,
+            }).then(async (data: any) => {
+              // console.log("image api --- >", data);
+              ticketImages.push({
+                key: "ptaCertificate",
+                url: parentData.data.user.ptaCertificate.url,
+                blob: data,
+              });
+              setTicketImages(ticketImages);
+              // console.log("Ticket Images", ticketImages);
+              // ntnCertificate
+            });
+            getImage({
+              url: `${IMAGE_BASE_URL}/${parentData.data.user.ntnCertificate.url}`,
+            }).then(async (data: any) => {
+              // console.log("image api --- >", data);
+              ticketImages.push({
+                key: "ntnCertificate",
+                url: parentData.data.user.ntnCertificate.url,
+                blob: data,
+              });
+              setTicketImages(ticketImages);
+              // console.log("Ticket Images", ticketImages);
+
+              // otherAttachment
+            });
+            getImage({
+              url: `${IMAGE_BASE_URL}/${parentData.data.user.otherAttachment.url}`,
+            }).then(async (data: any) => {
+              // console.log("image api --- >", data);
+              ticketImages.push({
+                key: "otherAttachment",
+                url: parentData.data.user.otherAttachment.url,
+                blob: data,
+              });
+
+              setTicketImages(ticketImages);
+              // console.log("Ticket Images", ticketImages);
+              // if (ticketImages.length === 5) {
+              //   setUserDataLoading(false);
+              // }
+            });
+            setUserDataLoading(false);
           }
         }
       }

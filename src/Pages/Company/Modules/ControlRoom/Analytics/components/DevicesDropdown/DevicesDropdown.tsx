@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "./DevicesDropdown.css"; // Import your CSS file for styling
 
 interface PropsTypes {
@@ -60,6 +60,25 @@ const DevicesDropdown: React.FC<PropsTypes> = ({
     // // console.log("selectedItems", selectedItems);
   }, [selectedItems]);
 
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const handleClickOutside = (event: MouseEvent) => {
+    if (
+      dropdownRef.current &&
+      !dropdownRef.current.contains(event.target as Node)
+    ) {
+      // Add type assertion here
+      setIsDropdownOpen(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
     setSearchValue("");
@@ -86,7 +105,7 @@ const DevicesDropdown: React.FC<PropsTypes> = ({
         </div>
       </div>
       {isDropdownOpen && (
-        <div className="dropdown-options">
+        <div className="dropdown-options" ref={dropdownRef}>
           <input
             type="text"
             value={searchValue}

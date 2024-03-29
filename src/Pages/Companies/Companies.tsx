@@ -61,7 +61,7 @@ const Companies = () => {
     dispatch(setCompaniesStart());
     getAll({ url: "super-admin/get-all-companies" }).then((data: any) => {
       // console.log("api call --- >", data);
-      if (data === undefined) {
+      if (data == undefined) {
         Swal.fire({
           text: "Companies not Found",
           icon: "error",

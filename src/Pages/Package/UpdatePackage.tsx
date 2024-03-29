@@ -135,7 +135,7 @@ const UpdatePackage: React.FC<PropsTypes> = ({
               dispatch(setPackagesStart());
               getAll({ url: "package/get-all-packages" }).then((data: any) => {
                 // console.log("api call --- >", data);
-                if (data === undefined) {
+                if (data == undefined) {
                   Swal.fire({
                     text: "Failed to fetch due to connection refused",
                     icon: "error",

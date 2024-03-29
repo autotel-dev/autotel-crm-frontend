@@ -39,7 +39,7 @@ const CitiesList = () => {
     // setLoad(true);
     getAll({ url: "city/get-all-cities" }).then((data: any) => {
       // console.log("api call --- >", data);
-      if (data === undefined) {
+      if (data == undefined) {
         Swal.fire({
           text: "No cities Found",
           icon: "error",

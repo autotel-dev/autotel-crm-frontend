@@ -13,7 +13,7 @@ const FileContent = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [myFile, setMyFile] = useState(filesData);
   const fileList = myFile.filter((data) => {
-    if (searchTerm === null) return data;
+    if (searchTerm == null) return data;
     if (data.title.toLowerCase().includes(searchTerm.toLowerCase())) {
       return data;
     }

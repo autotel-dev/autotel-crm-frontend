@@ -124,7 +124,7 @@ const TotalPreInfoAlerts: React.FC<PropsTypes> = ({
                   value={searchValue}
                   onChange={(e) => setSearchValue(e.target.value)}
                   type="text"
-                  placeholder="Search Commanded Vehicles"
+                  placeholder="Search Pre Info Vehicles"
                 />
               </FormGroup>
             </Row>
