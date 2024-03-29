@@ -74,7 +74,7 @@ const CompaniesCardsFooter = ({ item }: CardType) => {
         >
           Extend
         </button>
-        <button
+        {/* <button
           style={{
             width: "100%",
             padding: "10px",
@@ -94,7 +94,7 @@ const CompaniesCardsFooter = ({ item }: CardType) => {
           }}
         >
           Edit
-        </button>
+        </button> */}
         <button
           style={{
             width: "100%",

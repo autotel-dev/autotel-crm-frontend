@@ -123,7 +123,7 @@ const SuccessfullyFormSubmitted = ({
     formData.append("fullName", createCompany.fullName);
     formData.append("cnicNumber", createCompany.cnicNumber);
     formData.append("contactPersonName", createCompany.contactPersonName);
-    formData.append("contactPersonPhoneNo", createCompany.contactPersonNumber);
+    formData.append("contactPersonPhoneNo", createCompany.contactPersonPhoneNo);
     formData.append("emailAddress", createCompany.emailAddress);
     formData.append("address", createCompany.address);
     formData.append("city", createCompany.city);

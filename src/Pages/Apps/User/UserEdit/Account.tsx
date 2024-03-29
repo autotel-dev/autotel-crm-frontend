@@ -104,25 +104,29 @@ const Account = () => {
               url: `${IMAGE_BASE_URL}/${parentData.data.user.cnicFront.url}`,
             }).then(async (data: any) => {
               // console.log("image api --- >", data);
-              ticketImages.push({
-                key: "cnicFront",
-                url: parentData.data.user.cnicFront.url,
-                blob: data,
-              });
-              setTicketImages(ticketImages);
-              // console.log("Ticket Images", ticketImages);
-              // cnicBack
+
+              if (parentData.data.user.cnicFront.url !== "") {
+                ticketImages.push({
+                  key: "cnicFront",
+                  url: parentData.data.user.cnicFront.url,
+                  blob: data,
+                });
+                setTicketImages(ticketImages);
+              }
             });
             getImage({
               url: `${IMAGE_BASE_URL}/${parentData.data.user.cnicBack.url}`,
             }).then(async (data: any) => {
+              if (parentData.data.user.cnicBack.url !== "") {
+                ticketImages.push({
+                  key: "cnicBack",
+                  url: parentData.data.user.cnicBack.url,
+                  blob: data,
+                });
+                setTicketImages(ticketImages);
+              }
               // console.log("image api --- >", data);
-              ticketImages.push({
-                key: "cnicBack",
-                url: parentData.data.user.cnicBack.url,
-                blob: data,
-              });
-              setTicketImages(ticketImages);
+
               // console.log("Ticket Images", ticketImages);
               // ptaCertificate
             });
@@ -130,12 +134,14 @@ const Account = () => {
               url: `${IMAGE_BASE_URL}/${parentData.data.user.ptaCertificate.url}`,
             }).then(async (data: any) => {
               // console.log("image api --- >", data);
-              ticketImages.push({
-                key: "ptaCertificate",
-                url: parentData.data.user.ptaCertificate.url,
-                blob: data,
-              });
-              setTicketImages(ticketImages);
+              if (parentData.data.user.ptaCertificate.url !== "") {
+                ticketImages.push({
+                  key: "ptaCertificate",
+                  url: parentData.data.user.ptaCertificate.url,
+                  blob: data,
+                });
+                setTicketImages(ticketImages);
+              }
               // console.log("Ticket Images", ticketImages);
               // ntnCertificate
             });
@@ -143,12 +149,14 @@ const Account = () => {
               url: `${IMAGE_BASE_URL}/${parentData.data.user.ntnCertificate.url}`,
             }).then(async (data: any) => {
               // console.log("image api --- >", data);
-              ticketImages.push({
-                key: "ntnCertificate",
-                url: parentData.data.user.ntnCertificate.url,
-                blob: data,
-              });
-              setTicketImages(ticketImages);
+              if (parentData.data.user.ntnCertificate.url !== "") {
+                ticketImages.push({
+                  key: "ntnCertificate",
+                  url: parentData.data.user.ntnCertificate.url,
+                  blob: data,
+                });
+                setTicketImages(ticketImages);
+              }
               // console.log("Ticket Images", ticketImages);
 
               // otherAttachment
@@ -157,13 +165,14 @@ const Account = () => {
               url: `${IMAGE_BASE_URL}/${parentData.data.user.otherAttachment.url}`,
             }).then(async (data: any) => {
               // console.log("image api --- >", data);
-              ticketImages.push({
-                key: "otherAttachment",
-                url: parentData.data.user.otherAttachment.url,
-                blob: data,
-              });
-
-              setTicketImages(ticketImages);
+              if (parentData.data.user.otherAttachment.url !== "") {
+                ticketImages.push({
+                  key: "otherAttachment",
+                  url: parentData.data.user.otherAttachment.url,
+                  blob: data,
+                });
+                setTicketImages(ticketImages);
+              }
               // console.log("Ticket Images", ticketImages);
               // if (ticketImages.length === 5) {
               //   setUserDataLoading(false);
