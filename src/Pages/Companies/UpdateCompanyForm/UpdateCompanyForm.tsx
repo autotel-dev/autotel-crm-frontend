@@ -235,13 +235,13 @@ const UpdateCompanyForm = () => {
     if (field == "checked") {
       const permissionTitle = title;
       const foundIndex = updatedPermissions.findIndex(
-        (permission) => permission.title === permissionTitle
+        (permission) => permission.title == permissionTitle
       );
 
       if (foundIndex !== -1) {
         // If the permission already exists, remove it from the array
         updatedPermissions = updatedPermissions.filter(
-          (_, idx) => idx !== foundIndex
+          (item, index) => item.title == permissionTitle
         );
       } else {
         // If the permission doesn't exist, find and add it from the permissions data
@@ -367,8 +367,10 @@ const UpdateCompanyForm = () => {
     console.log("option", option);
 
     const updatedList = formData.serverCredentials.filter(
-      (item: any) => item.server !== value
+      (item: any) => item.server._id == option.server
     );
+    console.log("updatedList", updatedList);
+
     setFormData({ ...formData, serverCredentials: updatedList });
   };
 
@@ -672,6 +674,9 @@ const UpdateCompanyForm = () => {
 
                         <H4>Server Credentials</H4>
                         <Select
+                          defaultValue={formData.serverCredentials.map(
+                            (server: any) => server.server.companyName
+                          )}
                           showSearch
                           mode="multiple"
                           style={{ width: 500, height: 36 }}
@@ -688,7 +693,14 @@ const UpdateCompanyForm = () => {
                               )
                           }
                           onChange={(selectedValues, selectedOptions) => {
-                            const newServers = selectedOptions.map(
+                            const newlySelectedServers = selectedOptions.filter(
+                              (option: any) =>
+                                !formData.serverCredentials.some(
+                                  (server: any) => server.label === option.label
+                                )
+                            );
+
+                            const newServers = newlySelectedServers.map(
                               (option: any) => ({
                                 label: option.label,
                                 server: {
@@ -709,19 +721,6 @@ const UpdateCompanyForm = () => {
                               serverCredentials: updatedCredentials,
                             }));
 
-                            // formData.serverCredentials.map(
-                            //   (item: any, index: any) => {
-                            //     const isMatch = e.some((id: any) => {
-                            //       // Implement your own logic to check if the JSON objects match
-                            //       // In this example, we're checking if both id and name match
-                            //       if (id === item.server) {
-                            //         // console.log("The element found");
-                            //       } else {
-                            //         // console.log("No match found.");
-                            //       }
-                            //     });
-                            //   }
-                            // );
                             // console.log("reduxServerAdItemsList -- >", serversAddItemsList);
                           }}
                           options={serverList}
