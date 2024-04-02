@@ -41,7 +41,7 @@ const EditProfileForm = () => {
   const [isEdit, setIsEdit] = useState(false);
   const dispatch = useDispatch();
   useEffect(() => {
-    if (getUserRole() === "COMPANY") {
+    if (getUserRole() === ROLES.COMPANY) {
       setAddress(userData.address);
     }
   }, []);
@@ -53,15 +53,15 @@ const EditProfileForm = () => {
       const formData = new FormData();
       formData.append("fullName", name);
       formData.append("phoneNo", phoneNo);
-      if (getUserRole() === "COMPANY") {
+      if (getUserRole() === ROLES.COMPANY) {
         formData.append("address", address);
       }
 
       update(formData, {
         url:
-          getUserRole() === "COMPANY"
+          getUserRole() === ROLES.COMPANY
             ? "company/update-company"
-            : getUserRole() === "OPERATOR"
+            : getUserRole() === ROLES.OPERATOR
             ? "company/update-operator"
             : `super-admin/update-super-admin`,
       })
@@ -156,7 +156,7 @@ const EditProfileForm = () => {
                 />
               </FormGroup>
             </Col>
-            {getUserRole() === "COMPANY" && userData.address !== null && (
+            {getUserRole() === ROLES.COMPANY && userData.address !== null && (
               <Col md={12}>
                 <FormGroup>
                   <P>Address</P>

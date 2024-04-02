@@ -28,6 +28,7 @@ import {
 } from "../../../../../Api";
 import { getUserId, getUserRole } from "../../../../../Api/globals";
 import { setUserPersonalizationData } from "../../../../../ReaduxToolkit/Reducer/PersonalizationSlice";
+import { ROLES } from "../../../../../constants/roles";
 
 const Personalization = () => {
   const { userData } = useSelector((state: any) => state.user);
@@ -226,7 +227,7 @@ const Personalization = () => {
               setEditedbackgroundImage(null);
               getAll({
                 url:
-                  getUserRole() === "COMPANY"
+                  getUserRole() === ROLES.COMPANY
                     ? `company/get-personalization/${getUserId()}`
                     : "super-admin/get-personalization",
               }).then((parentData: any) => {
@@ -293,7 +294,7 @@ const Personalization = () => {
             if (data.success) {
               getAll({
                 url:
-                  getUserRole() === "COMPANY"
+                  getUserRole() === ROLES.COMPANY
                     ? `company/get-personalization/${getUserId()}`
                     : "super-admin/get-personalization",
               }).then((parentData: any) => {

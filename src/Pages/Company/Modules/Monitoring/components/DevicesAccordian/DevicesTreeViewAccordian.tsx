@@ -52,7 +52,7 @@ const DevicesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
   }, [devices]);
 
   const toggle = (id: string) => {
-    open === id ? setOpen("") : setOpen(id);
+    open == id ? setOpen("") : setOpen(id);
     setItemsLength(6);
   };
   const handleCheckboxClick = (e: any, group: any) => {
@@ -300,9 +300,11 @@ const DevicesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
             .filter((item: any) =>
               item.items.some(
                 (bodyItem: any) =>
-                  bodyItem.name.toLowerCase().includes(searchValue) ||
+                  bodyItem.name
+                    .toLowerCase()
+                    .includes(searchValue.toLowerCase()) ||
                   bodyItem.imei.includes(searchValue) ||
-                  bodyItem.id === searchValue
+                  bodyItem.id == searchValue
               )
             )
             .map((item: any, index: any) => {
@@ -346,9 +348,9 @@ const DevicesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
                                 (bodyItem: any) =>
                                   bodyItem.name
                                     .toLowerCase()
-                                    .includes(searchValue) ||
+                                    .includes(searchValue.toLowerCase()) ||
                                   bodyItem.imei.includes(searchValue) ||
-                                  bodyItem.id === searchValue
+                                  bodyItem.id == searchValue
                               ).length
                           }
                           )
@@ -380,9 +382,11 @@ const DevicesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
                         )
                         .filter(
                           (bodyItem: any) =>
-                            bodyItem.name.toLowerCase().includes(searchValue) ||
+                            bodyItem.name
+                              .toLowerCase()
+                              .includes(searchValue.toLowerCase()) ||
                             bodyItem.imei.includes(searchValue) ||
-                            bodyItem.id === searchValue
+                            bodyItem.id == searchValue
                         )
                         .slice(0, itemsLength)
                         .map((bodyItem: any, bodyindex: any) => {
@@ -475,7 +479,8 @@ const DevicesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
                                     </span>
                                     <span style={{ fontSize: "12px" }}>
                                       {/* {formattedDate(bodyItem.timestamp)} */}
-                                      {bodyItem.time.slice(0,10)} , {bodyItem.time.slice(11)}
+                                      {bodyItem.time.slice(0, 10)} ,{" "}
+                                      {bodyItem.time.slice(11)}
                                     </span>
                                   </div>
                                 </div>
@@ -613,9 +618,11 @@ A 40 40 0 0 1 90 50"
                         )
                         .filter(
                           (bodyItem: any) =>
-                            bodyItem.name.toLowerCase().includes(searchValue) ||
+                            bodyItem.name
+                              .toLowerCase()
+                              .includes(searchValue.toLowerCase()) ||
                             bodyItem.imei.includes(searchValue) ||
-                            bodyItem.id === searchValue
+                            bodyItem.id == searchValue
                         ).length >= 6 && (
                         <div
                           style={{

@@ -5,12 +5,14 @@ interface PropsTypes {
   data: any;
   selectedItems: any[];
   setSelectedItems: React.Dispatch<React.SetStateAction<any[]>>;
+  serverID: any;
 }
 
 const DevicesDropdown: React.FC<PropsTypes> = ({
   data,
   selectedItems,
   setSelectedItems,
+  serverID,
 }) => {
   const [searchValue, setSearchValue] = useState("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -90,11 +92,38 @@ const DevicesDropdown: React.FC<PropsTypes> = ({
         (item: any) =>
           item.name.toLowerCase().includes(searchValue.toLowerCase()) ||
           item.imei.includes(searchValue) ||
-          item.id === searchValue
+          item.id == searchValue
       );
       return { ...group, items: filteredItems };
     })
     .filter((group: any) => group.items.length > 0);
+
+  // const filteredData = data
+  //   .map((group: any) => {
+  //     const filteredItems = group.items.filter(
+  //       (item: any) =>
+  //         item.name.toLowerCase().includes(searchValue.toLowerCase()) ||
+  //         item.imei.includes(searchValue) ||
+  //         item.id == searchValue
+  //     );
+  //     const filteredByServer = filteredItems.filter(
+  //       (item: any) => item.server !== serverID
+  //     );
+  //     if (serverID !== "") {
+  //       // Additional condition to filter by serverID
+
+  //       // Check if filteredByServer is empty
+  //       if (filteredByServer.length === 0) {
+  //         return null; // Return null if filteredByServer is empty
+  //       }
+  //     }
+
+  //     return {
+  //       ...group,
+  //       items: serverID !== "" ? filteredByServer : filteredItems,
+  //     };
+  //   })
+  //   .filter((group: any) => group.items.length > 0); // Filter out null groups
 
   return (
     <div className="custom-dropdown">

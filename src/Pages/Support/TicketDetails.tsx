@@ -25,6 +25,7 @@ import {
 } from "../../Api/globals";
 import { useParams } from "react-router-dom";
 import Swal from "sweetalert2";
+import { ROLES } from "../../constants/roles";
 
 const TicketDetails = () => {
   const { ticketId } = useParams();
@@ -79,7 +80,7 @@ const TicketDetails = () => {
 
   useEffect(() => {
     setLoading(true);
-    if (tableRow.status === "NEW" && getUserRole() === "SUPER_ADMIN") {
+    if (tableRow.status === "NEW" && getUserRole() === ROLES.SUPER_ADMIN) {
       // console.log("IF");
       patch(
         { updatedStatus: "IN_PROGRESS", resolvingDate: null },
@@ -963,7 +964,7 @@ const TicketDetails = () => {
                             >
                               <div></div>
                               <div style={{ display: "flex" }}>
-                                {getUserRole() === "SUPER_ADMIN" && (
+                                {getUserRole() === ROLES.SUPER_ADMIN && (
                                   <button
                                     className="btn btn-primary"
                                     disabled={
@@ -1394,7 +1395,7 @@ const TicketDetails = () => {
                             Go to Reply
                           </button>
                         )}
-                        {getUserRole() === "SUPER_ADMIN" &&
+                        {getUserRole() === ROLES.SUPER_ADMIN &&
                           formatUnderscoredString(ticketDetails.status) !==
                             "Resolved" && (
                             <button

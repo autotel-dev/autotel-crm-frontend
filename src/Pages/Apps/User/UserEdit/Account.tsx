@@ -19,6 +19,7 @@ import Attachements from "./Attachements/Attachements";
 import Swal from "sweetalert2";
 import AllowedModules from "./AllowedModules/AllowedModules";
 import NoInternetConnection from "../../../NoInternetConnection/NoInternetConnection";
+import { ROLES } from "../../../../constants/roles";
 
 const Account = () => {
   const { userPermissions } = useSelector(
@@ -44,7 +45,7 @@ const Account = () => {
     setUserDataLoading(true);
     setServerPermissionsLoading(true);
 
-    if (getUserRole() === "COMPANY") {
+    if (getUserRole() === ROLES.COMPANY) {
       getAll({ url: "company/permissions" }).then((data: any) => {
         // console.log("api call --- >", data);
         if (data == undefined) {
@@ -95,10 +96,10 @@ const Account = () => {
         if (parentData.success) {
           setUndefinedData(false);
           dispatch(setUserData(parentData.data.user));
-          if (getUserRole() === "SUPER_ADMIN" || getUserRole() === "OPERATOR") {
+          if (getUserRole() === ROLES.SUPER_ADMIN || getUserRole() === ROLES.OPERATOR) {
             setServerPermissionsLoading(false);
             setUserDataLoading(false);
-          } else if (getUserRole() === "COMPANY") {
+          } else if (getUserRole() === ROLES.COMPANY) {
             // cnicFront
             getImage({
               url: `${IMAGE_BASE_URL}/${parentData.data.user.cnicFront.url}`,
@@ -219,13 +220,13 @@ const Account = () => {
                   <EditMyProfile />
                   <EditProfileForm />
 
-                  {getUserRole() === "COMPANY" && <AllowedModules />}
-                  {getUserRole() === "COMPANY" &&
+                  {getUserRole() === ROLES.COMPANY && <AllowedModules />}
+                  {getUserRole() === ROLES.COMPANY &&
                     legalAttachements !== undefined &&
                     legalAttachements?.read && (
                       <Attachements attachements={ticketImages} />
                     )}
-                  {getUserRole() === "COMPANY" && <ServerPermissions />}
+                  {getUserRole() === ROLES.COMPANY && <ServerPermissions />}
                   <SecuritySettings />
 
                   {/* <AddProjectsAndUpload /> */}

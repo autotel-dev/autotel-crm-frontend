@@ -425,6 +425,7 @@ const ControlRoomAnalytics = () => {
   const [selectedFilter, setSelectedFilter] = useState("Today");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [containerWidth, setContainerWidth] = useState("350px");
+  const [serverID, setServerID] = useState("");
 
   const dropdownRef = useRef<HTMLDivElement>(null); // Add type assertion here
 
@@ -643,9 +644,9 @@ const ControlRoomAnalytics = () => {
           }}
         >
           <Row>
-            <Col xl="3" lg="6" md="6" sm="12" className="box-col-3">
+            <Col xl="3" lg="6" md="6" sm="12">
               <Card className="total-earning">
-                <CardBody>
+                <CardBody style={{ maxHeight: "160px", padding: "1em" }}>
                   <Row style={{ height: "16vh" }}>
                     <Col sm="7" className="box-col-7">
                       <div className="d-flex">
@@ -727,7 +728,7 @@ const ControlRoomAnalytics = () => {
             {/*  */}
             <Col xl="3" lg="6" md="6" sm="12" className="box-col-3">
               <Card className="total-earning">
-                <CardBody>
+                <CardBody style={{ maxHeight: "160px", padding: "1em" }}>
                   <Row style={{ height: "16vh" }}>
                     <Col sm="12" className="box-col-7">
                       <div className="d-flex">
@@ -814,10 +815,10 @@ const ControlRoomAnalytics = () => {
                                     className="btn-primary"
                                     style={{
                                       borderRadius: "5px",
-                                      padding: "0.5px 6px",
+                                      padding: "0.5px 4px",
                                       color: "white",
-                                      fontSize: "9px",
-                                      width: "50px",
+                                      fontSize: "8px",
+                                      width: "45px",
                                       cursor: "not-allowed",
                                       outline: "none",
                                       border: "none",
@@ -844,14 +845,15 @@ const ControlRoomAnalytics = () => {
                                     className="btn-primary"
                                     style={{
                                       borderRadius: "5px",
-                                      padding: "0.5px 6px",
+                                      padding: "0.5px 4px",
                                       color: "white",
-                                      fontSize: "9px",
-                                      width: "45px",
+                                      fontSize: "8px",
+                                      width: "40px",
                                       outline: "none",
                                       border: "none",
                                     }}
                                     onClick={() => {
+                                      setServerID(server?.server?._id);
                                       setIsUpdateModalOpenForDeviceSelecetdForAlerts(
                                         true
                                       );
@@ -875,14 +877,13 @@ const ControlRoomAnalytics = () => {
               setAddModal={setIsUpdateModalOpenForDeviceSelecetdForAlerts}
               dropDownDevices={devices}
               prevItem=""
-              fromDate={fromDate}
-              toDate={toDate}
+              serverID={serverID}
             />
 
             {/*  */}
             <Col xl="3" lg="6" md="6" sm="12" className="box-col-3">
               <Card className="total-earning">
-                <CardBody>
+                <CardBody style={{ maxHeight: "160px", padding: "1em" }}>
                   <Row style={{ height: "16vh" }}>
                     <Col sm="7" className="box-col-7">
                       <div className="d-flex">
@@ -982,7 +983,7 @@ const ControlRoomAnalytics = () => {
             {/*  */}
             <Col xl="3" lg="6" md="6" sm="12" className="box-col-3">
               <Card className="total-earning">
-                <CardBody>
+                <CardBody style={{ maxHeight: "160px", padding: "1em" }}>
                   <Row style={{ height: "16vh" }}>
                     <Col sm="7" className="box-col-7">
                       <div className="d-flex">

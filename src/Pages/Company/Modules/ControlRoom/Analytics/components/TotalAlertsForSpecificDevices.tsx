@@ -17,6 +17,7 @@ import { create } from "../../../../../../Api";
 import Swal from "sweetalert2";
 import { serverCredentials } from "../../../../../../Api/header";
 import { Select } from "antd";
+import Loader from "../../../../../Loader/Loader";
 
 interface PropsTypes {
   isVisible: boolean; // Change 'boolean' to the actual type of isVisible
@@ -27,22 +28,21 @@ const TotalAlertsForSpecificDevices: React.FC<PropsTypes> = ({
   isVisible,
   setIsVisible = () => {},
 }) => {
-  const { selfSendCommands, assignedAlerts } = useSelector(
-    (state: any) => state.alerts
-  );
+  const { deviceSelecetdAlerts } = useSelector((state: any) => state.alerts);
 
-  const [dataList, setDataList]: any = useState([...selfSendCommands]);
+  const [dataList, setDataList]: any = useState([]);
   const [loading, setLoading] = useState(false); // State to manage loading
 
   const [searchValue, setSearchValue] = useState("");
   const containerRef = useRef(null);
   useEffect(() => {
-    if (assignedAlerts.length < 12) {
-      setDataList(assignedAlerts.slice(0, 12)); // Initially display the first 6 elements
+    if (deviceSelecetdAlerts.length < 12) {
+      setDataList(deviceSelecetdAlerts.slice(0, 12)); // Initially display the first 6 elements
     }
-  }, [assignedAlerts]);
+    console.log("deviceSelecetdAlerts---", deviceSelecetdAlerts);
+  }, [deviceSelecetdAlerts]);
   useEffect(() => {
-    setDataList(assignedAlerts.slice(0, 12)); // Initially display the first 6 elements
+    setDataList(deviceSelecetdAlerts?.slice(0, 12)); // Initially display the first 6 elements
   }, []);
 
   const handleScroll = () => {
@@ -51,7 +51,7 @@ const TotalAlertsForSpecificDevices: React.FC<PropsTypes> = ({
     const bottomOffset = scrollHeight - (scrollTop + clientHeight);
     if (bottomOffset < 50) {
       // If scrolled to the bottom
-      const nextBatch = assignedAlerts.slice(
+      const nextBatch = deviceSelecetdAlerts?.slice(
         dataList.length,
         dataList.length + 6
       ); // Fetch the next 6 elements
@@ -86,8 +86,7 @@ const TotalAlertsForSpecificDevices: React.FC<PropsTypes> = ({
       <ModalBody>
         <Card className="invoice-card">
           <CardBody className="transaction-card">
-            <H3>This feature is under development</H3>
-            {/* <Row>
+            <Row>
               <FormGroup className="col-md-12 create-group">
                 <P>Search Alerts</P>
                 <input
@@ -99,12 +98,12 @@ const TotalAlertsForSpecificDevices: React.FC<PropsTypes> = ({
                 />
               </FormGroup>
             </Row>
-            
+
             <div
               ref={containerRef}
               className="table-responsive theme-scrollbar recent-wrapper"
               style={{
-                overflowY: "scroll",
+                overflowY: "auto",
                 overflowX: "auto",
                 maxHeight: "calc(66vh - 20px)",
                 WebkitOverflowScrolling: "touch",
@@ -128,18 +127,36 @@ const TotalAlertsForSpecificDevices: React.FC<PropsTypes> = ({
                     </tr>
                   </thead>
                   <tbody>
-                    {dataList.length === 0 ? (
+                    {deviceSelecetdAlerts == null ? (
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "center",
+                          height: "60vh",
+                          backgroundColor: "white",
+                          alignItems: "center",
+                        }}
+                      >
+                        <div style={{ textAlign: "center" }}>
+                          <Loader />
+                        </div>
+                      </div>
+                    ) : deviceSelecetdAlerts.length == 0 ? (
                       <tr>
                         <td colSpan={6} style={{ fontSize: "25px" }}>
-                          No Assigned Alerts Found
+                          No Device Alerts Found
                         </td>
                       </tr>
                     ) : (
                       dataList
-                        .filter((data: any) =>
-                          data.deviceName
-                            .toLowerCase()
-                            .includes(searchValue.toLowerCase())
+                        .filter(
+                          (data: any) =>
+                            data?.deviceName
+                              .toLowerCase()
+                              .includes(searchValue.toLowerCase()) ||
+                            data?.message
+                              .toLowerCase()
+                              .includes(searchValue.toLowerCase())
                         )
                         .map((data: any, index: any) => (
                           <tr
@@ -148,26 +165,25 @@ const TotalAlertsForSpecificDevices: React.FC<PropsTypes> = ({
                             }}
                             key={index}
                           >
-                           
                             <td>
                               <div className="d-flex">
                                 <div className="flex-grow-1">
                                   <H5>{data.deviceName}</H5>
                                   <div style={{ fontSize: "10px" }}>
-                                    {data.createdAt.slice(0, 10)}
+                                    {data?.createdAt.slice(0, 10)}
                                   </div>
 
                                   <div style={{ fontSize: "10px" }}>
-                                    {data.createdAt.slice(11, 19)}
+                                    {data?.createdAt.slice(11, 19)}
                                   </div>
                                 </div>
                               </div>
                             </td>
-                            <td className={`txt-primary`}>{data.message}</td>
-                            <td>{data.type}</td>
-                            <td>{data.message}</td>
+                            <td className={`txt-primary`}>{data?.message}</td>
+                            <td>{data?.type}</td>
+                            <td>{data?.message}</td>
                             <td>
-                              {data.address == null ? "N/A" : data.address}
+                              {data?.address == null ? "N/A" : data?.address}
                             </td>
                           </tr>
                         ))
@@ -175,7 +191,7 @@ const TotalAlertsForSpecificDevices: React.FC<PropsTypes> = ({
                   </tbody>
                 </Table>
               </div>
-            </div> */}
+            </div>
           </CardBody>
         </Card>
       </ModalBody>

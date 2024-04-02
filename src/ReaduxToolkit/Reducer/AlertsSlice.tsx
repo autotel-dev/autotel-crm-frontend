@@ -10,6 +10,7 @@ const initialState = {
   killedDevices: [],
   selfSendCommands: [],
   preInfos: [],
+  deviceSelecetdAlerts: null,
   dashboardStatistics: null,
   loading: false,
   error: null,
@@ -58,6 +59,9 @@ const AlertsSlice = createSlice({
     setPreInfoAlerts: (state, action) => {
       state.preInfos = action.payload;
     },
+    setDeviceSelecetdAlerts: (state, action) => {
+      state.deviceSelecetdAlerts = action.payload;
+    },
 
     setSelfSendCommands: (state, action) => {
       state.selfSendCommands = action.payload;
@@ -89,6 +93,7 @@ export const {
   setKilledDevices,
   setSelfSendCommands,
   setPreInfoAlerts,
+  setDeviceSelecetdAlerts,
   setDashboardStatistics,
   setAlertsEnd,
   setNoAlertsFound,

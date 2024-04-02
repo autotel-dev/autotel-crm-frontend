@@ -13,6 +13,7 @@ import { useSelector } from "react-redux";
 import { getUserRole } from "../Api/globals";
 import Loader from "../Pages/Loader/Loader";
 import Loaderr, { LoaderForPermissions } from "./Loader/Loader";
+import { ROLES } from "../constants/roles";
 
 const Layout = () => {
   const { userPermissions } = useSelector(
@@ -51,7 +52,7 @@ const Layout = () => {
   }, [layout]);
   return (
     <>
-      {getUserRole() !== "SUPER_ADMIN" && userPermissions.length < 0 ? (
+      {getUserRole() !== ROLES.SUPER_ADMIN && userPermissions.length < 0 ? (
         <Loader />
       ) : (
         <>

@@ -12,12 +12,16 @@ const ProfileBox = () => {
   );
   var profile = userPermissions.find((item: any) => item.title === "Profile");
   var profileMenu = profilesMessage.filter((item, index) => {
-    if (profile == undefined && index === 0 && getUserRole() !== ROLES.SUPER_ADMIN) {
+    if (
+      profile == undefined &&
+      index === 0 &&
+      getUserRole() !== ROLES.SUPER_ADMIN
+    ) {
       return false;
     } else if (profile !== undefined && item.name === "Account") {
       return profile.read;
     } else if (item.name === "Settings") {
-      return getUserRole() === "OPERATOR" ? false : true;
+      return getUserRole() === ROLES.OPERATOR ? false : true;
     } else {
       return true;
     }
@@ -27,7 +31,7 @@ const ProfileBox = () => {
   const navigate = useNavigate();
   const handleClick = (name: string) => {
     if (name == "Log Out") {
-      if (getUserRole() == "SUPER_ADMIN") {
+      if (getUserRole() == ROLES.SUPER_ADMIN) {
         localStorage.removeItem("token");
         localStorage.removeItem("userId");
         navigate(`${process.env.PUBLIC_URL}/login`);

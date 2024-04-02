@@ -235,6 +235,7 @@ const AddPreAlertInfo: React.FC<PropsTypes> = ({
                 data={dropDownDevices}
                 selectedItems={selectedItems}
                 setSelectedItems={setSelectedItems}
+                serverID=""
               />
             </FormGroup>
 

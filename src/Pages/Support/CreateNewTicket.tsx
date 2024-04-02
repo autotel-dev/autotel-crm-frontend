@@ -17,6 +17,7 @@ import {
 } from "../../ReaduxToolkit/Reducer/SupportSlice";
 import { setNoDataFound } from "../../ReaduxToolkit/Reducer/NoDataFoundSlice";
 import { getUserRole } from "../../Api/globals";
+import { ROLES } from "../../constants/roles";
 
 interface TicketType {
   name: string;
@@ -129,7 +130,7 @@ const CreateNewTicket = () => {
             dispatch(setReportsStart());
             getAll({
               url:
-                getUserRole() === "COMPANY"
+                getUserRole() === ROLES.COMPANY
                   ? "company/get-all-bug-reports"
                   : "support/bug-report/get-all-bug-reports",
             }).then((data: any) => {
@@ -144,7 +145,7 @@ const CreateNewTicket = () => {
               }
             });
 
-            if (getUserRole() === "SUPER_ADMIN") {
+            if (getUserRole() === ROLES.SUPER_ADMIN) {
               getAll({ url: "support/bug-report/get-statistics" }).then(
                 (data: any) => {
                   // console.log("api call --- >", data);

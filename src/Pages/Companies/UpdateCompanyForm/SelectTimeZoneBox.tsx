@@ -5,11 +5,13 @@ import { setCreateCompany } from "../../../ReaduxToolkit/Reducer/CompanySlice";
 interface propTypes {
   placeholder: any;
   defaultValue: any;
+  setUpdatedTimeZone: any;
 }
 
 const SelectTimeZoneBox: React.FC<propTypes> = ({
   placeholder,
   defaultValue,
+  setUpdatedTimeZone,
 }) => {
   const { cities, createCompany, timezones } = useSelector(
     (state: any) => state.companies
@@ -45,12 +47,7 @@ const SelectTimeZoneBox: React.FC<propTypes> = ({
       }
       onChange={(e) => {
         // console.log(e);
-        dispatch(
-          setCreateCompany({
-            ...createCompany,
-            timezone: e,
-          })
-        );
+        setUpdatedTimeZone(e);
       }}
       options={timeZoneList}
     />

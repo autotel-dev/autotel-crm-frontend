@@ -27,6 +27,7 @@ import {
   getUserRole,
 } from "../../../../../Api/globals";
 import { useState } from "react";
+import { ROLES } from "../../../../../constants/roles";
 
 // interface PropTypes {
 //   isEdit: boolean;
@@ -70,19 +71,19 @@ const EditMyProfile = () => {
               <H5 className="mb-1">Phone Number</H5>
               <P>{userData.phoneNo}</P>
             </FormGroup>
-            {getUserRole() === "COMPANY" && userData.address !== null && (
+            {getUserRole() === ROLES.COMPANY && userData.address !== null && (
               <FormGroup>
                 <H5 className="mb-1">{userData.address}</H5>
                 <P>Address</P>
               </FormGroup>
             )}
-            {getUserRole() === "COMPANY" && userData.gstNo !== null && (
+            {getUserRole() === ROLES.COMPANY && userData.gstNo !== null && (
               <FormGroup>
                 <H5 className="mb-1">Gst No</H5>
                 <P>{userData.gstNo}</P>
               </FormGroup>
             )}
-            {getUserRole() === "COMPANY" && userData.ntn !== null && (
+            {getUserRole() === ROLES.COMPANY && userData.ntn !== null && (
               <FormGroup>
                 <H5 className="mb-1">NTN</H5>
                 <P>{userData.ntn}</P>

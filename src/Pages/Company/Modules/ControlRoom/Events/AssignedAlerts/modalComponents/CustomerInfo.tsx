@@ -135,7 +135,7 @@ const CustomerInfo = () => {
             />
           </FormGroup>
           <FormGroup className="col-md-6 create-group">
-            <P>SIM Number</P>
+            <P>Value Added Services</P>
             <input
               className="form-control"
               type="text"

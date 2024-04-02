@@ -5,11 +5,13 @@ import { setCreateCompany } from "../../../ReaduxToolkit/Reducer/CompanySlice";
 interface propTypes {
   placeholder: any;
   defaultValue: any;
+  setUpdatedCity: any;
 }
 
 const SelectCitiesBox: React.FC<propTypes> = ({
   placeholder,
   defaultValue,
+  setUpdatedCity,
 }) => {
   const { cities, createCompany } = useSelector(
     (state: any) => state.companies
@@ -45,13 +47,7 @@ const SelectCitiesBox: React.FC<propTypes> = ({
       }
       onChange={(e) => {
         // console.log(e);
-        setCityId(e);
-        dispatch(
-          setCreateCompany({
-            ...createCompany,
-            city: e,
-          })
-        );
+        setUpdatedCity(e);
         // dispatch(setCountryId(e));
       }}
       options={cityList}

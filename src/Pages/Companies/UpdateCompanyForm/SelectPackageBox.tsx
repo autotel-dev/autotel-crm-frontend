@@ -6,11 +6,13 @@ import { setCreateCompany } from "../../../ReaduxToolkit/Reducer/CompanySlice";
 interface propTypes {
   placeholder: any;
   defaultValue: any;
+  setUpdatedPackage: any;
 }
 
 const SelectPackageBox: React.FC<propTypes> = ({
   placeholder,
   defaultValue,
+  setUpdatedPackage,
 }) => {
   const { packages, createCompany } = useSelector(
     (state: any) => state.companies
@@ -47,13 +49,7 @@ const SelectPackageBox: React.FC<propTypes> = ({
       }
       onChange={(e) => {
         // console.log(e);
-        setPackageId(e);
-        dispatch(
-          setCreateCompany({
-            ...createCompany,
-            package: e,
-          })
-        );
+        setUpdatedPackage(e);
         // dispatch(setCountryId(e));
       }}
       options={packageList}

@@ -23,6 +23,7 @@ import {
   setUserPersonalizationData,
 } from "../../../../ReaduxToolkit/Reducer/PersonalizationSlice";
 import NoInternetConnection from "../../../NoInternetConnection/NoInternetConnection";
+import { ROLES } from "../../../../constants/roles";
 
 const Settings = () => {
   const { userPersonalizationData, isConnected } = useSelector(
@@ -45,9 +46,9 @@ const Settings = () => {
   useEffect(() => {
     getAll({
       url:
-        getUserRole() === "COMPANY"
+        getUserRole() === ROLES.COMPANY
           ? `company/get-personalization/${getUserId()}`
-          : getUserRole() === "OPERATOR"
+          : getUserRole() === ROLES.OPERATOR
           ? `company/get-personalization/${getOperatorCompanyUserId()}`
           : "super-admin/get-personalization",
     }).then((parentData: any) => {

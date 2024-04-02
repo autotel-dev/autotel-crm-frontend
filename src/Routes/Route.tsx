@@ -424,7 +424,6 @@ const routes = [
     Component: <APIDataTables />,
   },
 
-
   //  Buttons
   {
     path: `${process.env.PUBLIC_URL}/buttons/defaultstyle`,
@@ -624,7 +623,7 @@ const routes = [
     permissionValue: "Companies",
   },
   {
-    path: `${process.env.PUBLIC_URL}/super-admin/setup/company/update-company`,
+    path: `${process.env.PUBLIC_URL}/super-admin/setup/company/update-company/:companyId`,
     Component: <UpdateCompanyForm />,
     allowedUserRoles: [ROLES.SUPER_ADMIN],
     isProtected: true,

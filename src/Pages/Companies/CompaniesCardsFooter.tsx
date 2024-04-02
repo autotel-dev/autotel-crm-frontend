@@ -74,7 +74,7 @@ const CompaniesCardsFooter = ({ item }: CardType) => {
         >
           Extend
         </button>
-        {/* <button
+        <button
           style={{
             width: "100%",
             padding: "10px",
@@ -89,12 +89,12 @@ const CompaniesCardsFooter = ({ item }: CardType) => {
           onClick={() => {
             dispatch(setCompany(item));
             navigate(
-              `${process.env.PUBLIC_URL}/super-admin/setup/company/update-company`
+              `${process.env.PUBLIC_URL}/super-admin/setup/company/update-company/${item._id}`
             );
           }}
         >
           Edit
-        </button> */}
+        </button>
         <button
           style={{
             width: "100%",

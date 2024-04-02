@@ -98,17 +98,17 @@ const CommonForm = ({ alignLogo }: CommonFormPropsType) => {
               dispatch(setUserPermissions([]));
             }
 
-            if (getUserRole() === "OPERATOR") {
+            if (getUserRole() === ROLES.OPERATOR) {
               localStorage.setItem("userId", getOperatorCompanyUserId());
-            } else if (getUserRole() === "COMPANY") {
+            } else if (getUserRole() === ROLES.COMPANY) {
               localStorage.setItem("userId", data.data.userId);
-            } else if (getUserRole() === "SUPER_ADMIN") {
+            } else if (getUserRole() === ROLES.SUPER_ADMIN) {
               localStorage.removeItem("userId");
             }
             const userId = localStorage.getItem("userId");
             getAll({
               url:
-                getUserRole() === "COMPANY" || getUserRole() === "OPERATOR"
+                getUserRole() === ROLES.COMPANY || getUserRole() === ROLES.COMPANY
                   ? "user/get-allowed-modules"
                   : "crm-module/get-all-active-modules",
             }).then((data: any) => {
@@ -166,7 +166,7 @@ const CommonForm = ({ alignLogo }: CommonFormPropsType) => {
               }
             });
 
-            if (getUserRole() === "COMPANY" || getUserRole() === "OPERATOR") {
+            if (getUserRole() === ROLES.COMPANY || getUserRole() === ROLES.OPERATOR) {
               getAll({ url: "user/get-permissions" })
                 .then((data: any) => {
                   // console.log("api call --- >", data);
@@ -268,7 +268,7 @@ const CommonForm = ({ alignLogo }: CommonFormPropsType) => {
                   color="primary"
                   className="btn-block w-100"
                 >
-                  {loading ? "Loading..." : "SignIn"}
+                  {loading ? "Loading..." : "Sign In"}
                 </Button>
               </div>
             </FormGroup>
