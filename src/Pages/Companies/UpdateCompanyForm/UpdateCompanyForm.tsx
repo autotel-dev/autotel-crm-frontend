@@ -54,6 +54,7 @@ const UpdateCompanyForm = () => {
   const navigate = useNavigate();
   const { companyId } = useParams();
   const [serverList, setServerList] = useState([]);
+  const { Option } = Select;
 
   const tempList: any = [];
   useEffect(() => {
@@ -90,98 +91,45 @@ const UpdateCompanyForm = () => {
             });
             setLoading(false);
           }
+
           if (data.success) {
-            const formDataWithChecked = { ...data.data };
-            if (formDataWithChecked.permissions) {
-              formDataWithChecked.permissions =
-                formDataWithChecked.permissions.map((permission: any) => ({
-                  ...permission,
-                  checked: true,
-                }));
-            }
+            // const adminPermissions = data.data;
+            // if (formData.permissions && permissions) {
+            const formDataWithChecked = {
+              ...data.data,
+              permissions: permissions.map((permission: any) => {
+                const matchingAdminPermission = data.data.permissions.find(
+                  (adminPermission: any) =>
+                    adminPermission.value === permission.value
+                );
+                if (matchingAdminPermission) {
+                  return {
+                    ...permission,
+                    checked: true,
+                    read: matchingAdminPermission.read,
+                    create: matchingAdminPermission.create,
+                    edit: matchingAdminPermission.edit,
+                    delete: matchingAdminPermission.delete,
+                  };
+                } else {
+                  return {
+                    ...permission,
+                    checked: false,
+                    read: false,
+                    create: false,
+                    edit: false,
+                    delete: false,
+                  };
+                }
+              }),
+            };
+
+            // }
             const allowedModuleIds = data.data.allowedModules.map(
               (module: any) => module._id
             );
             setRemovedModules(allowedModuleIds);
             setFormData(formDataWithChecked);
-            // getImage({
-            //   url: `${IMAGE_BASE_URL}/${data.data.user.cnicFront.url}`,
-            // }).then(async (data: any) => {
-            //   // console.log("image api --- >", data);
-
-            //   if (data.data.user.cnicFront.url !== "") {
-            //     ticketImages.push({
-            //       key: "cnicFront",
-            //       url: data.data.user.cnicFront.url,
-            //       blob: data,
-            //     });
-            //     setTicketImages(ticketImages);
-            //   }
-            // });
-            // getImage({
-            //   url: `${IMAGE_BASE_URL}/${data.data.user.cnicBack.url}`,
-            // }).then(async (data: any) => {
-            //   if (data.data.user.cnicBack.url !== "") {
-            //     ticketImages.push({
-            //       key: "cnicBack",
-            //       url: data.data.user.cnicBack.url,
-            //       blob: data,
-            //     });
-            //     setTicketImages(ticketImages);
-            //   }
-            //   // console.log("image api --- >", data);
-
-            //   // console.log("Ticket Images", ticketImages);
-            //   // ptaCertificate
-            // });
-            // getImage({
-            //   url: `${IMAGE_BASE_URL}/${data.data.user.ptaCertificate.url}`,
-            // }).then(async (data: any) => {
-            //   // console.log("image api --- >", data);
-            //   if (data.data.user.ptaCertificate.url !== "") {
-            //     ticketImages.push({
-            //       key: "ptaCertificate",
-            //       url: data.data.user.ptaCertificate.url,
-            //       blob: data,
-            //     });
-            //     setTicketImages(ticketImages);
-            //   }
-            //   // console.log("Ticket Images", ticketImages);
-            //   // ntnCertificate
-            // });
-            // getImage({
-            //   url: `${IMAGE_BASE_URL}/${data.data.user.ntnCertificate.url}`,
-            // }).then(async (data: any) => {
-            //   // console.log("image api --- >", data);
-            //   if (data.data.user.ntnCertificate.url !== "") {
-            //     ticketImages.push({
-            //       key: "ntnCertificate",
-            //       url: data.data.user.ntnCertificate.url,
-            //       blob: data,
-            //     });
-            //     setTicketImages(ticketImages);
-            //   }
-            //   // console.log("Ticket Images", ticketImages);
-
-            //   // otherAttachment
-            // });
-            // getImage({
-            //   url: `${IMAGE_BASE_URL}/${data.data.user.otherAttachment.url}`,
-            // }).then(async (data: any) => {
-            //   // console.log("image api --- >", data);
-            //   if (data.data.user.otherAttachment.url !== "") {
-            //     ticketImages.push({
-            //       key: "otherAttachment",
-            //       url: data.data.user.otherAttachment.url,
-            //       blob: data,
-            //     });
-            //     setTicketImages(ticketImages);
-            //   }
-            //   // console.log("Ticket Images", ticketImages);
-            //   // if (ticketImages.length === 5) {
-            //   //   setUserDataLoading(false);
-            //   // }
-            // });
             setLoading(false);
           }
         }
@@ -229,30 +177,8 @@ const UpdateCompanyForm = () => {
     let updatedPermissions = [...formData.permissions];
 
     // Update the specific permission field if it's not "checked"
-    if (field !== "checked") {
-      updatedPermissions[index][field] = value;
-    }
-    if (field == "checked") {
-      const permissionTitle = title;
-      const foundIndex = updatedPermissions.findIndex(
-        (permission) => permission.title == permissionTitle
-      );
 
-      if (foundIndex !== -1) {
-        // If the permission already exists, remove it from the array
-        updatedPermissions = updatedPermissions.filter(
-          (item, index) => item.title == permissionTitle
-        );
-      } else {
-        // If the permission doesn't exist, find and add it from the permissions data
-        const newPermission = permissions.find(
-          (permission: any) => permission.title === permissionTitle
-        );
-        if (newPermission) {
-          updatedPermissions.push(newPermission);
-        }
-      }
-    }
+    updatedPermissions[index][field] = value;
 
     // Check if the permission title exists in formData.permissions
 
@@ -269,16 +195,16 @@ const UpdateCompanyForm = () => {
     const updatedModules = [...removedModules];
 
     // If the module is being unchecked, remove it from the array
+    console.log("updatedModules", updatedModules);
+    console.log("value", value);
+
     if (updatedModules.includes(value)) {
-      if (updatedModules.length == 1) {
-        updatedModules.pop();
-      } else {
-        updatedModules.splice(index, 1);
-      }
+      updatedModules.splice(index, 1);
+      setRemovedModules(updatedModules);
     } else {
       updatedModules.push(item._id);
+      setRemovedModules(updatedModules);
     }
-    setRemovedModules(updatedModules);
 
     // setFormData({ ...formData, allowedModules: updatedModules });
   };
@@ -308,8 +234,8 @@ const UpdateCompanyForm = () => {
       ...formData,
       allowedModules: removedModules,
       permissions: updatedPermissions,
-      package: updatedPackage !== "" ? updatedPackage : formData.package,
-      city: updatedCity !== "" ? updatedCity : formData.city,
+      package: updatedPackage !== "" ? updatedPackage : formData.package._id,
+      city: updatedCity !== "" ? updatedCity : formData.city._id,
       timezone: updatedTimeZone !== "" ? updatedTimeZone : formData.timezone,
       serverCredentials: convertedServerCredentials,
     };
@@ -367,7 +293,7 @@ const UpdateCompanyForm = () => {
     console.log("option", option);
 
     const updatedList = formData.serverCredentials.filter(
-      (item: any) => item.server._id == option.server
+      (item: any) => item.server._id !== value
     );
     console.log("updatedList", updatedList);
 
@@ -558,7 +484,7 @@ const UpdateCompanyForm = () => {
                             <Input
                               id="packageExpirationDate"
                               type="date"
-                              value={formData.packageExpirationDate.slice(
+                              value={formData?.packageExpirationDate?.slice(
                                 0,
                                 10
                               )}
@@ -580,7 +506,7 @@ const UpdateCompanyForm = () => {
                             </div>
                             <SelectCitiesBox
                               placeholder="Select City"
-                              defaultValue={formData.city._id}
+                              defaultValue={formData?.city?._id}
                               setUpdatedCity={setUpdatedCity}
                             />
                           </Col>
@@ -593,8 +519,8 @@ const UpdateCompanyForm = () => {
                             </div>
                             <SelectPackageBox
                               placeholder="Select Package"
-                              defaultValue={formData.package._id}
-                              setUpdatedPackage={setUpdatedCity}
+                              defaultValue={formData?.package?._id}
+                              setUpdatedPackage={setUpdatedPackage}
                             />
                           </Col>
                           <Col xl={4} xs={6}>
@@ -606,8 +532,8 @@ const UpdateCompanyForm = () => {
                             </div>
                             <SelectTimeZoneBox
                               placeholder="Select Time Zone"
-                              defaultValue={formData.timezone}
-                              setUpdatedTimeZone={setUpdatedCity}
+                              defaultValue={formData?.timezone}
+                              setUpdatedTimeZone={setUpdatedTimeZone}
                             />
                           </Col>
                         </Row>
@@ -677,6 +603,9 @@ const UpdateCompanyForm = () => {
                           defaultValue={formData.serverCredentials.map(
                             (server: any) => server.server.companyName
                           )}
+                          value={formData.serverCredentials.map(
+                            (server: any) => server.server._id
+                          )}
                           showSearch
                           mode="multiple"
                           style={{ width: 500, height: 36 }}
@@ -693,16 +622,31 @@ const UpdateCompanyForm = () => {
                               )
                           }
                           onChange={(selectedValues, selectedOptions) => {
+                            // const newlySelectedServers = selectedOptions.filter(
+                            //   (option: any) =>
+                            //     !formData.serverCredentials.some(
+                            //       (server: any) => server.label === option.label
+                            //     )
+                            // );
                             const newlySelectedServers = selectedOptions.filter(
                               (option: any) =>
                                 !formData.serverCredentials.some(
-                                  (server: any) => server.label === option.label
+                                  (server: any) =>
+                                    server.server._id === option.server
                                 )
+                            );
+                            console.log("selectedValues", selectedValues);
+
+                            console.log(
+                              "newlySelectedServers",
+                              newlySelectedServers
                             );
 
                             const newServers = newlySelectedServers.map(
                               (option: any) => ({
                                 label: option.label,
+                                emailAddress: "",
+                                password: "",
                                 server: {
                                   _id: option.server,
                                   companyName: option.label,
@@ -723,6 +667,21 @@ const UpdateCompanyForm = () => {
 
                             // console.log("reduxServerAdItemsList -- >", serversAddItemsList);
                           }}
+                          // Custom rendering for options
+                          dropdownRender={(menu) => (
+                            <div>
+                              {menu}
+                              {formData.serverCredentials.map((server: any) => (
+                                <Option
+                                  key={server.server._id}
+                                  value={server.server._id}
+                                  disabled
+                                >
+                                  {server.server.companyName}
+                                </Option>
+                              ))}
+                            </div>
+                          )}
                           options={serverList}
                           onDeselect={handleDeselect}
                         />
@@ -753,7 +712,7 @@ const UpdateCompanyForm = () => {
                                         <span className="txt-danger">*</span>
                                       </P>
                                       <Input
-                                        defaultValue={item.emailAddress}
+                                        value={item.emailAddress}
                                         name="emailAddress"
                                         type="email"
                                         placeholder="Enter Email Address"
@@ -773,7 +732,7 @@ const UpdateCompanyForm = () => {
                                         <span className="txt-danger">*</span>
                                       </P>
                                       <Input
-                                        defaultValue={item.password}
+                                        value={item.password}
                                         name="password"
                                         type="email"
                                         placeholder="Enter Password"
@@ -794,7 +753,7 @@ const UpdateCompanyForm = () => {
                                       <Input
                                         type="text"
                                         placeholder="Enter Server"
-                                        defaultValue={item.server._id}
+                                        value={item.server._id}
                                         name="server"
                                         disabled
                                       />
@@ -807,7 +766,7 @@ const UpdateCompanyForm = () => {
                                       <Input
                                         type="text"
                                         placeholder="Enter Host Url"
-                                        defaultValue={item.hostUrl}
+                                        value={item.hostUrl}
                                         name="hostUrl"
                                         disabled
                                       />
@@ -845,7 +804,10 @@ const UpdateCompanyForm = () => {
                                         <Label className="switch mb-0">
                                           <Input
                                             type="checkbox"
-                                            defaultChecked={removedModules.includes(
+                                            // defaultChecked={removedModules.includes(
+                                            //   item._id
+                                            // )}
+                                            checked={removedModules.includes(
                                               item._id
                                             )}
                                             onChange={(e) =>
@@ -858,7 +820,11 @@ const UpdateCompanyForm = () => {
                                             }
                                           />
                                           <span
-                                            className={`switch-state bg-primary`}
+                                            className={`switch-state ${
+                                              removedModules.includes(item._id)
+                                                ? `bg-primary`
+                                                : `bg-secondary`
+                                            }`}
                                           />
                                         </Label>
                                       </div>
@@ -886,70 +852,32 @@ const UpdateCompanyForm = () => {
                               scrollbarColor: "lightgray transparent", // Specify scrollbar color
                             }}
                           >
-                            {permissions?.map((permission: any, index: any) => {
-                              return (
-                                <div key={index}>
-                                  <Row>
-                                    <Col
-                                      key={index}
-                                      xl={10}
-                                      lg={10}
-                                      md={10}
-                                      sm={12}
-                                      xs={12}
-                                      // xs={12}
-                                      style={{
-                                        display: "flex",
-                                        justifyContent: "space-between",
-                                        alignItems: "center",
-                                      }}
-                                    >
-                                      <span
+                            {formData.permissions?.map(
+                              (permission: any, index: any) => {
+                                return (
+                                  <div key={index}>
+                                    <Row>
+                                      <Col
+                                        key={index}
+                                        xl={10}
+                                        lg={10}
+                                        md={10}
+                                        sm={12}
+                                        xs={12}
+                                        // xs={12}
                                         style={{
-                                          fontSize: "17px",
-                                          margin: "10px 0px",
-                                          fontWeight: "bold",
+                                          display: "flex",
+                                          justifyContent: "space-between",
+                                          alignItems: "center",
                                         }}
                                       >
-                                        <Label
+                                        <span
                                           style={{
-                                            display: "inline-block",
-                                            position: "relative",
-                                            cursor: "pointer",
-                                            marginRight: "25px",
-                                            fontSize: "18px",
+                                            fontSize: "17px",
+                                            margin: "10px 0px",
+                                            fontWeight: "bold",
                                           }}
-                                          onClick={(e) => e.stopPropagation()}
                                         >
-                                          <input
-                                            type="checkbox"
-                                            name="key"
-                                            value="value"
-                                            checked={
-                                              permission.title ==
-                                              formData?.permissions[index]
-                                                ?.title
-                                            }
-                                            onChange={(e) =>
-                                              handlePermissionChange(
-                                                index,
-                                                "checked",
-                                                e.target.checked,
-                                                permission.title
-                                              )
-                                            }
-                                            style={{ display: "none" }} // Hide the default checkbox
-                                          />
-                                          <span
-                                            onClick={(e) => e.stopPropagation()}
-                                            className="green"
-                                          ></span>
-                                        </Label>
-                                        {permission.title}
-                                      </span>
-                                      {permission.title ==
-                                        formData?.permissions[index]?.title && (
-                                        <div>
                                           <Label
                                             style={{
                                               display: "inline-block",
@@ -964,14 +892,11 @@ const UpdateCompanyForm = () => {
                                               type="checkbox"
                                               name="key"
                                               value="value"
-                                              checked={
-                                                formData?.permissions[index]
-                                                  ?.read
-                                              }
+                                              checked={permission.checked}
                                               onChange={(e) =>
                                                 handlePermissionChange(
                                                   index,
-                                                  "read",
+                                                  "checked",
                                                   e.target.checked,
                                                   permission.title
                                                 )
@@ -984,123 +909,160 @@ const UpdateCompanyForm = () => {
                                               }
                                               className="green"
                                             ></span>
-                                            Read
                                           </Label>
-                                          <Label
-                                            style={{
-                                              display: "inline-block",
-                                              position: "relative",
-                                              cursor: "pointer",
-                                              marginRight: "25px",
-                                              fontSize: "18px",
-                                            }}
-                                            onClick={(e) => e.stopPropagation()}
-                                          >
-                                            <input
-                                              type="checkbox"
-                                              name="key"
-                                              value="value"
-                                              checked={
-                                                formData?.permissions[index]
-                                                  ?.create
-                                              }
-                                              onChange={(e) =>
-                                                handlePermissionChange(
-                                                  index,
-                                                  "create",
-                                                  e.target.checked,
-                                                  permission.title
-                                                )
-                                              }
-                                              style={{ display: "none" }} // Hide the default checkbox
-                                            />
-                                            <span
+                                          {permission.title}
+                                        </span>
+
+                                        {permission.checked && (
+                                          <div>
+                                            <Label
+                                              style={{
+                                                display: "inline-block",
+                                                position: "relative",
+                                                cursor: "pointer",
+                                                marginRight: "25px",
+                                                fontSize: "18px",
+                                              }}
                                               onClick={(e) =>
                                                 e.stopPropagation()
                                               }
-                                              className="green"
-                                            ></span>
-                                            Create
-                                          </Label>
-                                          <Label
-                                            style={{
-                                              display: "inline-block",
-                                              position: "relative",
-                                              cursor: "pointer",
-                                              marginRight: "25px",
-                                              fontSize: "18px",
-                                            }}
-                                            onClick={(e) => e.stopPropagation()}
-                                          >
-                                            <input
-                                              type="checkbox"
-                                              name="key"
-                                              value="value"
-                                              checked={
-                                                formData?.permissions[index]
-                                                  ?.edit
-                                              }
-                                              onChange={(e) =>
-                                                handlePermissionChange(
-                                                  index,
-                                                  "edit",
-                                                  e.target.checked,
-                                                  permission.title
-                                                )
-                                              }
-                                              style={{ display: "none" }} // Hide the default checkbox
-                                            />
-                                            <span
+                                            >
+                                              <input
+                                                type="checkbox"
+                                                name="key"
+                                                value="value"
+                                                checked={permission.read}
+                                                onChange={(e) =>
+                                                  handlePermissionChange(
+                                                    index,
+                                                    "read",
+                                                    e.target.checked,
+                                                    permission.title
+                                                  )
+                                                }
+                                                style={{ display: "none" }} // Hide the default checkbox
+                                              />
+                                              <span
+                                                onClick={(e) =>
+                                                  e.stopPropagation()
+                                                }
+                                                className="green"
+                                              ></span>
+                                              Read
+                                            </Label>
+                                            <Label
+                                              style={{
+                                                display: "inline-block",
+                                                position: "relative",
+                                                cursor: "pointer",
+                                                marginRight: "25px",
+                                                fontSize: "18px",
+                                              }}
                                               onClick={(e) =>
                                                 e.stopPropagation()
                                               }
-                                              className="green"
-                                            ></span>
-                                            Edit
-                                          </Label>
-                                          <Label
-                                            style={{
-                                              display: "inline-block",
-                                              position: "relative",
-                                              cursor: "pointer",
-                                              marginRight: "25px",
-                                              fontSize: "18px",
-                                            }}
-                                            onClick={(e) => e.stopPropagation()}
-                                          >
-                                            <input
-                                              type="checkbox"
-                                              name="key"
-                                              value="value"
-                                              checked={
-                                                formData?.permissions[index]
-                                                  ?.delete
-                                              }
-                                              onChange={(e) =>
-                                                handlePermissionChange(
-                                                  index,
-                                                  "delete",
-                                                  e.target.checked,
-                                                  permission.title
-                                                )
-                                              }
-                                              style={{ display: "none" }} // Hide the default checkbox
-                                            />
-                                            <span
+                                            >
+                                              <input
+                                                type="checkbox"
+                                                name="key"
+                                                value="value"
+                                                checked={permission.create}
+                                                onChange={(e) =>
+                                                  handlePermissionChange(
+                                                    index,
+                                                    "create",
+                                                    e.target.checked,
+                                                    permission.title
+                                                  )
+                                                }
+                                                style={{ display: "none" }} // Hide the default checkbox
+                                              />
+                                              <span
+                                                onClick={(e) =>
+                                                  e.stopPropagation()
+                                                }
+                                                className="green"
+                                              ></span>
+                                              Create
+                                            </Label>
+                                            <Label
+                                              style={{
+                                                display: "inline-block",
+                                                position: "relative",
+                                                cursor: "pointer",
+                                                marginRight: "25px",
+                                                fontSize: "18px",
+                                              }}
                                               onClick={(e) =>
                                                 e.stopPropagation()
                                               }
-                                              className="green"
-                                            ></span>
-                                            Delete
-                                          </Label>
-                                        </div>
-                                      )}
-                                    </Col>
-                                  </Row>
-                                </div>
-                              );
-                            })}
+                                            >
+                                              <input
+                                                type="checkbox"
+                                                name="key"
+                                                value="value"
+                                                checked={permission.edit}
+                                                onChange={(e) =>
+                                                  handlePermissionChange(
+                                                    index,
+                                                    "edit",
+                                                    e.target.checked,
+                                                    permission.title
+                                                  )
+                                                }
+                                                style={{ display: "none" }} // Hide the default checkbox
+                                              />
+                                              <span
+                                                onClick={(e) =>
+                                                  e.stopPropagation()
+                                                }
+                                                className="green"
+                                              ></span>
+                                              Edit
+                                            </Label>
+                                            <Label
+                                              style={{
+                                                display: "inline-block",
+                                                position: "relative",
+                                                cursor: "pointer",
+                                                marginRight: "25px",
+                                                fontSize: "18px",
+                                              }}
+                                              onClick={(e) =>
+                                                e.stopPropagation()
+                                              }
+                                            >
+                                              <input
+                                                type="checkbox"
+                                                name="key"
+                                                value="value"
+                                                checked={permission.delete}
+                                                onChange={(e) =>
+                                                  handlePermissionChange(
+                                                    index,
+                                                    "delete",
+                                                    e.target.checked,
+                                                    permission.title
+                                                  )
+                                                }
+                                                style={{ display: "none" }} // Hide the default checkbox
+                                              />
+                                              <span
+                                                onClick={(e) =>
+                                                  e.stopPropagation()
+                                                }
+                                                className="green"
+                                              ></span>
+                                              Delete
+                                            </Label>
+                                          </div>
+                                        )}
+                                      </Col>
+                                    </Row>
+                                  </div>
+                                );
+                              }
+                            )}
                           </div>
                         </Form>
                         {/* Row commented if below will uncomment */}
