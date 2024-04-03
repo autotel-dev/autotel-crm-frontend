@@ -110,6 +110,7 @@ import { ROLES } from "../constants/roles";
 import { PERMISSION_VALUES } from "../constants/permissions";
 import NoInternetConnection from "../Pages/NoInternetConnection/NoInternetConnection";
 import UpdateCompanyForm from "../Pages/Companies/UpdateCompanyForm/UpdateCompanyForm";
+import UnderProductionPage from "../Pages/UnderProductionPage/UnderProductionPage";
 
 const routes = [
   // dashboard routes
@@ -664,14 +665,14 @@ const routes = [
   },
   {
     path: `${process.env.PUBLIC_URL}/company/setup/emailTemplates`,
-    Component: <ShoppingPlace />,
+    Component: <UnderProductionPage />,
     allowedUserRoles: [ROLES.COMPANY],
     isProtected: true,
     permissionValue: "EmailTemplates",
   },
   {
     path: `${process.env.PUBLIC_URL}/company/setup/whatsappTemplates`,
-    Component: <ShoppingPlace />,
+    Component: <UnderProductionPage />,
     allowedUserRoles: [ROLES.COMPANY],
     isProtected: true,
     permissionValue: "WhatsAppTemplates",

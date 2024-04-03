@@ -1,4 +1,4 @@
-import { H4, P } from "../../../AbstractElements";
+import { H4, H5, P } from "../../../AbstractElements";
 import Breadcrumbs from "../../../CommonElements/Breadcrumbs/Breadcrumbs";
 import {
   Button,
@@ -11,6 +11,9 @@ import {
   Container,
   InputGroup,
   Label,
+  Modal,
+  ModalBody,
+  CardHeader,
 } from "reactstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
@@ -35,6 +38,9 @@ import {
 import Loader from "../../Loader/Loader";
 import CommonHeader from "../../../Common/CommonHeader";
 import { Select } from "antd";
+import { Document, Page, pdfjs } from "react-pdf";
+
+pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
 
 interface PropsTypes {
   location: any;
@@ -93,8 +99,6 @@ const UpdateCompanyForm = () => {
           }
 
           if (data.success) {
-            // const adminPermissions = data.data;
-            // if (formData.permissions && permissions) {
             const formDataWithChecked = {
               ...data.data,
               permissions: permissions.map((permission: any) => {
@@ -124,12 +128,93 @@ const UpdateCompanyForm = () => {
               }),
             };
 
-            // }
-            const allowedModuleIds = data.data.allowedModules.map(
-              (module: any) => module._id
-            );
-            setRemovedModules(allowedModuleIds);
             setFormData(formDataWithChecked);
+            const updatedCrmModules = crmModules.map((module: any) => {
+              const foundModule = data.data.allowedModules.find(
+                (allowedModule: any) => allowedModule._id === module._id
+              );
+              return {
+                ...module,
+                checked: !!foundModule, // Set checked to true if foundModule is truthy, otherwise false
+              };
+            });
+            setRemovedModules(updatedCrmModules);
+
+            if (data.data.cnicFront.url !== "") {
+              getImage({
+                url: `${IMAGE_BASE_URL}/${data.data.cnicFront.url}`,
+              }).then(async (dataa: any) => {
+                console.log("image api cnicF--- >", data);
+
+                ticketImages.push({
+                  key: "cnicFront",
+                  url: data.data?.cnicFront.url,
+                  blob: dataa,
+                });
+                setTicketImages(ticketImages);
+                console.log("ticketImages", ticketImages);
+              });
+            }
+            if (data.data.cnicBack.url !== "") {
+              getImage({
+                url: `${IMAGE_BASE_URL}/${data.data.cnicBack.url}`,
+              }).then(async (dataa: any) => {
+                console.log("image api cnicB--- >", data);
+                ticketImages.push({
+                  key: "cnicBack",
+                  url: data.data?.cnicBack.url,
+                  blob: dataa,
+                });
+                setTicketImages(ticketImages);
+                console.log("ticketImages", ticketImages);
+              });
+            }
+            if (data.data.ptaCertificate.url !== "") {
+              getImage({
+                url: `${IMAGE_BASE_URL}/${data.data.ptaCertificate.url}`,
+              }).then(async (dataa: any) => {
+                console.log("image api pta --- >", data);
+
+                ticketImages.push({
+                  key: "ptaCertificate",
+                  url: data.data?.ptaCertificate.url,
+                  blob: dataa,
+                });
+                setTicketImages(ticketImages);
+                console.log("ticketImages", ticketImages);
+              });
+            }
+            if (data.data.ntnCertificate.url !== "") {
+              getImage({
+                url: `${IMAGE_BASE_URL}/${data.data.ntnCertificate.url}`,
+              }).then(async (dataa: any) => {
+                console.log("image api ntn --- >", data);
+
+                ticketImages.push({
+                  key: "ntnCertificate",
+                  url: data.data?.ntnCertificate.url,
+                  blob: dataa,
+                });
+                setTicketImages(ticketImages);
+                console.log("ticketImages", ticketImages);
+              });
+            }
+            if (data.data.otherAttachment.url !== "") {
+              getImage({
+                url: `${IMAGE_BASE_URL}/${data.data.otherAttachment.url}`,
+              }).then(async (dataa: any) => {
+                console.log("image api --- >", data);
+
+                ticketImages.push({
+                  key: "otherAttachment",
+                  url: data.data?.otherAttachment.url,
+                  blob: dataa,
+                });
+                setTicketImages(ticketImages);
+                console.log("ticketImages", ticketImages);
+              });
+            }
+            setTicketImages(ticketImages);
             setLoading(false);
           }
         }
@@ -195,16 +280,8 @@ const UpdateCompanyForm = () => {
     const updatedModules = [...removedModules];
 
     // If the module is being unchecked, remove it from the array
-    console.log("updatedModules", updatedModules);
-    console.log("value", value);
-
-    if (updatedModules.includes(value)) {
-      updatedModules.splice(index, 1);
-      setRemovedModules(updatedModules);
-    } else {
-      updatedModules.push(item._id);
-      setRemovedModules(updatedModules);
-    }
+    updatedModules[index][field] = value;
+    setRemovedModules(updatedModules);
 
     // setFormData({ ...formData, allowedModules: updatedModules });
   };
@@ -230,9 +307,18 @@ const UpdateCompanyForm = () => {
       return permissionWithoutChecked;
     });
     // console.log("updatedFormData", formData);
+
+    const updatedRemoveModules = removedModules.filter(
+      (module: any) => module.checked
+    );
+    const updatedModuless = updatedRemoveModules.map((module: any) => {
+      const { _id, ...rest } = module;
+      return _id;
+    });
+
     const updatedFormData = {
       ...formData,
-      allowedModules: removedModules,
+      allowedModules: updatedModuless,
       permissions: updatedPermissions,
       package: updatedPackage !== "" ? updatedPackage : formData.package._id,
       city: updatedCity !== "" ? updatedCity : formData.city._id,
@@ -247,6 +333,15 @@ const UpdateCompanyForm = () => {
         // console.log("update Server form updated");
 
         setLoading(false);
+        if (!data.success) {
+          Swal.fire({
+            text: `${data.message}`,
+            icon: "error",
+            timer: 2000,
+            showConfirmButton: false,
+          });
+          setLoading(false);
+        }
 
         if (data.success) {
           // console.log(data);
@@ -298,6 +393,83 @@ const UpdateCompanyForm = () => {
     console.log("updatedList", updatedList);
 
     setFormData({ ...formData, serverCredentials: updatedList });
+  };
+
+  // Attachement ASSETS
+
+  const [addModal, setAddModal] = useState(false);
+  const addToggle = () => {
+    setAddModal(!addModal);
+  };
+
+  const [imageUrl, setImageUrl] = useState("");
+  const [isHovered, setIsHovered] = useState(false);
+  const [index, setIndex] = useState(0);
+
+  const handleMouseEnter = (index: any) => {
+    setIsHovered(true);
+    setIndex(index);
+  };
+  const handleMouseLeave = (index: any) => {
+    setIsHovered(false);
+    setIndex(index);
+  };
+
+  function checkFileTypeByExtension(fileName: any) {
+    // console.log("filename", fileName);
+
+    const imageExtensions = ["jpg", "jpeg", "png", "gif"];
+    const pdfExtension = "pdf";
+
+    const extension = fileName.split(".").pop().toLowerCase();
+
+    if (imageExtensions.includes(extension)) {
+      return "image";
+    } else if (extension === pdfExtension) {
+      return "pdf";
+    } else {
+      return "unknown";
+    }
+  }
+
+  const [image, setImage] = useState<string | null>(null);
+  const onDocumentLoadSuccess = async (file: any) => {
+    try {
+      const pdf = await pdfjs.getDocument(file).promise;
+      const page = await pdf.getPage(1);
+      const viewport = page.getViewport({ scale: 1 });
+
+      const canvas = document.createElement("canvas");
+      const context = canvas.getContext("2d");
+      canvas.height = viewport.height;
+      canvas.width = viewport.width;
+
+      if (!context) {
+        throw new Error("Canvas context is null");
+      }
+      canvas.height = viewport.height;
+      canvas.width = viewport.width;
+
+      const renderContext = {
+        canvasContext: context,
+        viewport: viewport,
+      };
+
+      await page.render(renderContext).promise;
+
+      const imgData = canvas.toDataURL();
+      setImage(imgData);
+    } catch (error) {
+      // console.error("Error rendering PDF:", error);
+    }
+  };
+
+  const handleClick = (
+    event: React.MouseEvent<HTMLDivElement, MouseEvent>,
+    file: any
+  ) => {
+    event.preventDefault();
+    window.open(file, "_blank");
   };
 
   return (
@@ -436,10 +608,10 @@ const UpdateCompanyForm = () => {
                             <Input
                               type="text"
                               placeholder="Enter Gst Number"
-                              defaultValue={formData.gstno}
-                              name="gstno"
+                              defaultValue={formData.gstNo}
+                              name="gstNo"
                               onChange={(e) =>
-                                updateFormData("gstno", e.target.value)
+                                updateFormData("gstNo", e.target.value)
                               }
                             />
                           </Col>
@@ -782,7 +954,7 @@ const UpdateCompanyForm = () => {
                         <Form
                           style={{ marginBottom: "65px", marginTop: "20px" }}
                         >
-                          {crmModules.map((item: any, index: any) => {
+                          {removedModules.map((item: any, index: any) => {
                             return (
                               <div
                                 style={{
@@ -807,21 +979,19 @@ const UpdateCompanyForm = () => {
                                             // defaultChecked={removedModules.includes(
                                             //   item._id
                                             // )}
-                                            checked={removedModules.includes(
-                                              item._id
-                                            )}
+                                            checked={item.checked}
                                             onChange={(e) =>
                                               handleAllowedModuleChange(
                                                 index,
-                                                "_id",
-                                                item._id,
+                                                "checked",
+                                                !item.checked,
                                                 item
                                               )
                                             }
                                           />
                                           <span
                                             className={`switch-state ${
-                                              removedModules.includes(item._id)
+                                              item.checked
                                                 ? `bg-primary`
                                                 : `bg-secondary`
                                             }`}
@@ -1086,6 +1256,165 @@ const UpdateCompanyForm = () => {
                     </div>
                   </CardBody>
                 </Card>
+                <Card>
+                  <CardHeader className="pb-0">
+                    <H4>Attachments</H4>
+                  </CardHeader>
+                  <CardBody>
+                    <Row>
+                      <div style={{ display: "flex", flexWrap: "wrap" }}>
+                        {ticketImages.map((data, imageIndex) =>
+                          checkFileTypeByExtension(data.url) === "pdf" ? (
+                            <div>
+                              <H5>
+                                {data.key === "cnicFront"
+                                  ? "CNIC Front"
+                                  : data.key === "cnicBack"
+                                  ? "CNIC Back"
+                                  : data.key === "ptaCertificate"
+                                  ? "PTA Certificate"
+                                  : data.key === "ntnCertificate"
+                                  ? "NTN Certificate"
+                                  : "Other Attachment"}
+                              </H5>
+                              <div
+                                style={{
+                                  width: "300px",
+                                  marginRight: "20px",
+                                  marginBottom: "20px",
+                                  cursor: "pointer",
+                                }}
+                                onClick={(e) => handleClick(e, data.blob)} // Add onClick event handler
+                              >
+                                {image && <img src={image} alt="First Page" />}
+                                <div
+                                  style={{
+                                    height: "160px",
+                                    overflow: "hidden", // Changed from "scroll" to "hidden"
+                                    border: "1px solid lightgray",
+                                  }}
+                                >
+                                  <Document
+                                    file={data.blob}
+                                    onLoadSuccess={() =>
+                                      onDocumentLoadSuccess(image)
+                                    }
+                                  >
+                                    <Page pageNumber={1} width={300} />
+                                  </Document>
+                                </div>
+                                <div
+                                  style={{
+                                    padding: "8px 15px",
+                                    fontSize: "16px",
+                                    borderBottomLeftRadius: "5px",
+                                    borderBottomRightRadius: "5px",
+                                    overflow: "clip",
+                                  }}
+                                  className="btn-primary"
+                                >
+                                  {data.key === "cnicFront"
+                                    ? "CNIC Front"
+                                    : data.key === "cnicBack"
+                                    ? "CNIC Back"
+                                    : data.key === "ptaCertificate"
+                                    ? "PTA Certificate"
+                                    : data.key === "ntnCertificate"
+                                    ? "NTN Certificate"
+                                    : "Other Attachment"}
+                                </div>
+                              </div>
+                            </div>
+                          ) : (
+                            <div>
+                              <H5>
+                                {data.key === "cnicFront"
+                                  ? "CNIC Front"
+                                  : "CNIC Back"}
+                              </H5>
+                              <div
+                                style={{
+                                  position: "relative",
+                                  marginRight: "20px",
+                                  marginBottom: "20px",
+                                }}
+                                onMouseEnter={() =>
+                                  handleMouseEnter(imageIndex)
+                                }
+                                onMouseLeave={() =>
+                                  handleMouseLeave(imageIndex)
+                                }
+                                onClick={() => {
+                                  setImageUrl(data.blob);
+                                  addToggle();
+                                }}
+                              >
+                                <img
+                                  src={data.blob}
+                                  alt=""
+                                  height={200}
+                                  width={300}
+                                  style={{
+                                    borderRadius: "10px",
+                                    border: "0.5px solid lightgray",
+                                  }}
+                                />
+                                {isHovered && index === imageIndex && (
+                                  <div
+                                    style={{
+                                      position: "absolute",
+                                      top: 0,
+                                      left: 0,
+                                      width: "100%",
+                                      height: "100%",
+                                      background: "rgba(0, 0, 0, 0.7)", // Light black color with opacity
+                                      borderRadius: "10px",
+                                      display: "flex",
+                                      flexDirection: "column",
+                                      justifyContent: "center",
+                                      alignItems: "center",
+                                    }}
+                                  >
+                                    <span
+                                      style={{
+                                        fontSize: "20px",
+                                        color: "white",
+                                        fontWeight: "bold",
+                                      }}
+                                    >
+                                      View Image
+                                    </span>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          )
+                        )}
+                        <Modal
+                          isOpen={addModal}
+                          toggle={addToggle}
+                          size="lg"
+                          centered
+                        >
+                          <ModalBody>
+                            <div>
+                              <div className="modal-header"></div>
+                              <img
+                                src={imageUrl}
+                                alt=""
+                                height={500}
+                                width="100%"
+                              />
+                            </div>
+                          </ModalBody>
+                        </Modal>
+                      </div>
+                    </Row>
+                  </CardBody>
+                </Card>
+                {/* {ticketImages && ticketImages.length > 0 && (
+                 
+                )} */}
               </Col>
             </Row>
           </Container>
