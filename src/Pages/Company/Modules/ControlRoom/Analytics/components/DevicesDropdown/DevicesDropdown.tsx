@@ -33,9 +33,9 @@ const DevicesDropdown: React.FC<PropsTypes> = ({
   //     ];
   //     setSelectedItems(newSelectedItems);
   //   } else {
-  //     const updatedItems = selectedItems.filter(
-  //       (item) => item.title !== group.title
-  //     );
+  // const updatedItems = selectedItems.filter(
+  //   (item) => item.title !== group.title
+  // );
   //     setSelectedItems(updatedItems);
   //   }
   // };
@@ -106,9 +106,9 @@ const DevicesDropdown: React.FC<PropsTypes> = ({
   //         item.imei.includes(searchValue) ||
   //         item.id == searchValue
   //     );
-  //     const filteredByServer = filteredItems.filter(
-  //       (item: any) => item.server !== serverID
-  //     );
+  // const filteredByServer = filteredItems.filter(
+  //   (item: any) => item.server !== serverID
+  // );
   //     if (serverID !== "") {
   //       // Additional condition to filter by serverID
 
@@ -142,24 +142,7 @@ const DevicesDropdown: React.FC<PropsTypes> = ({
             placeholder="Search..."
             className="search-input"
           />
-          {/* <div style={{ display: "flex" }}>
-            <button
-              onClick={(e: any) => {
-                e.preventDefault(); // Add this line
-                handleSelectAll();
-              }}
-            >
-              Select All
-            </button>
-            <button
-              onClick={(e: any) => {
-                e.preventDefault(); // Add this line
-                handleDeselectAll();
-              }}
-            >
-              Deselect All
-            </button>
-          </div> */}
+
           {filteredData.map((group: any) => (
             <div key={group.title} style={{ padding: "10px 10px 0px 10px" }}>
               <div className="group-header">
@@ -174,29 +157,74 @@ const DevicesDropdown: React.FC<PropsTypes> = ({
                 />
                 <div className="group-title">{group.title}</div>
               </div>
-              {group.items.map((item: any) => (
-                <div
-                  key={item.id}
-                  className={`item ${
-                    selectedItems.some(
-                      (selectedItem) => selectedItem.name === item.name
+              {serverID !== ""
+                ? group.items
+                    .filter(
+                      (bodyItem: any) =>
+                        bodyItem.name
+                          .toLowerCase()
+                          .includes(searchValue.toLowerCase()) ||
+                        bodyItem.imei.includes(searchValue) ||
+                        bodyItem.id == searchValue
                     )
-                      ? "selected"
-                      : ""
-                  }`}
-                  onClick={() => handleItemClick(item, item.id)}
-                  style={{ padding: "10px" }}
-                >
-                  <input
-                    type="checkbox"
-                    checked={selectedItems.some(
-                      (selectedItem) => selectedItem.name === item.name
-                    )}
-                    onChange={() => handleItemClick(item, item.id)}
-                  />
-                  <span>{`${item.name}`}</span>
-                </div>
-              ))}
+                    .filter((item: any) => item.server._id == serverID)
+                    .slice(0, 150)
+                    .map((item: any) => (
+                      <div
+                        key={item.id}
+                        className={`item ${
+                          selectedItems.some(
+                            (selectedItem) => selectedItem.name === item.name
+                          )
+                            ? "selected"
+                            : ""
+                        }`}
+                        onClick={() => handleItemClick(item, item.id)}
+                        style={{ padding: "10px" }}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={selectedItems.some(
+                            (selectedItem) => selectedItem.name === item.name
+                          )}
+                          onChange={() => handleItemClick(item, item.id)}
+                        />
+                        <span>{`${item.name}`}</span>
+                      </div>
+                    ))
+                : group.items
+                    .filter(
+                      (bodyItem: any) =>
+                        bodyItem.name
+                          .toLowerCase()
+                          .includes(searchValue.toLowerCase()) ||
+                        bodyItem.imei.includes(searchValue) ||
+                        bodyItem.id == searchValue
+                    )
+                    .slice(0, 150)
+                    .map((item: any) => (
+                      <div
+                        key={item.id}
+                        className={`item ${
+                          selectedItems.some(
+                            (selectedItem) => selectedItem.name === item.name
+                          )
+                            ? "selected"
+                            : ""
+                        }`}
+                        onClick={() => handleItemClick(item, item.id)}
+                        style={{ padding: "10px" }}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={selectedItems.some(
+                            (selectedItem) => selectedItem.name === item.name
+                          )}
+                          onChange={() => handleItemClick(item, item.id)}
+                        />
+                        <span>{`${item.name}`}</span>
+                      </div>
+                    ))}
             </div>
           ))}
         </div>

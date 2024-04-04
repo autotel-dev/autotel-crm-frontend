@@ -477,6 +477,8 @@ const ControlRoomAnalytics = () => {
   const [toDate, setToDate] = useState(endDate);
 
   const [isHovered, setIsHovered] = useState(false);
+  const [id, setId] = useState("");
+
   return (
     <>
       <div style={{ width: "100%", display: "flex", justifyContent: "end" }}>
@@ -721,33 +723,29 @@ const ControlRoomAnalytics = () => {
                           justifyContent: "space-between",
                         }}
                       >
-                        <div>
-                          <div
-                            style={{
-                              display: "flex",
-                              justifyContent: "end",
-                              marginBottom: "-10px",
-                              color: "green",
-                            }}
-                          >
-                            {selectedFilter}
-                          </div>
-                          <ReactApexChart
-                            id={controlRoomAnalytics[0].chartId}
-                            options={{
-                              ...controlRoomAnalytics[0].charts,
-                              xaxis: {
-                                ...controlRoomAnalytics[0].charts.xaxis,
-                              },
-                            }}
-                            // options={controlRoomAnalytics[0].charts}
-                            series={controlRoomAnalytics[0].charts.series}
-                            type={controlRoomAnalytics[0].charts.chart?.type}
-                            height={
-                              controlRoomAnalytics[0].charts.chart?.height
-                            }
-                          />
+                        <div
+                          style={{
+                            display: "flex",
+                            justifyContent: "end",
+                            marginBottom: "-10px",
+                            color: "green",
+                          }}
+                        >
+                          {selectedFilter}
                         </div>
+                        <ReactApexChart
+                          id={controlRoomAnalytics[0].chartId}
+                          options={{
+                            ...controlRoomAnalytics[0].charts,
+                            xaxis: {
+                              ...controlRoomAnalytics[0].charts.xaxis,
+                            },
+                          }}
+                          // options={controlRoomAnalytics[0].charts}
+                          series={controlRoomAnalytics[0].charts.series}
+                          type={controlRoomAnalytics[0].charts.chart?.type}
+                          height={controlRoomAnalytics[0].charts.chart?.height}
+                        />
                       </Col>
                     </Row>
                   </CardBody>
@@ -870,75 +868,96 @@ const ControlRoomAnalytics = () => {
                                     style={{
                                       padding: "8px",
                                       borderRadius: "50%",
-                                      backgroundColor: isHovered
-                                        ? "#f2f2f2"
-                                        : "transparent",
+                                      backgroundColor:
+                                        isHovered && server?.server._id == id
+                                          ? "#f2f2f2"
+                                          : "transparent",
                                       transition: "background-color 0.3s",
                                       display: "inline-flex",
                                       alignItems: "center",
                                       justifyContent: "center",
                                       cursor: "pointer",
                                     }}
-                                    onMouseEnter={() => setIsHovered(true)}
-                                    onMouseLeave={() => setIsHovered(false)}
+                                    onMouseEnter={() => {
+                                      setId(server?.server._id);
+                                      setIsHovered(true);
+                                      // toggleConnectedServersDropdown();
+                                    }}
+                                    onMouseLeave={() => {
+                                      // setId("");
+                                      setIsHovered(false);
+                                      // toggleConnectedServersDropdown();
+                                    }}
                                     onClick={() => {
                                       toggleConnectedServersDropdown();
                                     }}
                                   >
                                     <VscKebabVertical />
                                   </div>
-                                  {isConnecetedServersDropdownOpen && (
-                                    <div
-                                      className="custom-conneceted-servers-dropdown-analytics"
-                                      style={{
-                                        position: "absolute",
-                                        top: "100%",
-                                        right: 0,
-                                        zIndex: 1000,
-                                      }}
-                                    >
-                                      <div className="conneceted-servers-dropdown-options-analytics">
-                                        <div
-                                          id="Popover1"
-                                          className="item"
-                                          onClick={() => {
-                                            toggleConnectedServersDropdown();
-                                          }}
-                                        >
-                                          Vehicle Data
-                                        </div>
-                                        <UncontrolledPopover
-                                          placement="top"
-                                          trigger="hover"
-                                          target="Popover1"
-                                        >
-                                          <PopoverHeader>
-                                            In Development Mode
-                                          </PopoverHeader>
-                                          <PopoverBody>
-                                            This feature is in development mode
-                                          </PopoverBody>
-                                        </UncontrolledPopover>
-                                        <div
-                                          className="item"
-                                          onClick={() => {
-                                            toggleConnectedServersDropdown();
-                                            setServerID(server?.server?._id);
-                                            setIsUpdateModalOpenForDeviceSelecetdForAlerts(
-                                              true
-                                            );
-                                          }}
-                                        >
-                                          Alert Data
+                                  {isConnecetedServersDropdownOpen &&
+                                    server?.server._id == id && (
+                                      <div
+                                        className="custom-conneceted-servers-dropdown-analytics"
+                                        style={{
+                                          position: "absolute",
+                                          top: "100%",
+                                          right: 0,
+                                          zIndex: 1000,
+                                        }}
+                                      >
+                                        <div className="conneceted-servers-dropdown-options-analytics">
+                                          <div
+                                            id="Popover1"
+                                            className="item"
+                                            onClick={() => {
+                                              toggleConnectedServersDropdown();
+                                            }}
+                                          >
+                                            Vehicle Data
+                                          </div>
+                                          <UncontrolledPopover
+                                            placement="top"
+                                            trigger="hover"
+                                            target="Popover1"
+                                          >
+                                            <PopoverHeader>
+                                              In Development Mode
+                                            </PopoverHeader>
+                                            <PopoverBody>
+                                              This feature is in development
+                                              mode
+                                            </PopoverBody>
+                                          </UncontrolledPopover>
+                                          <div
+                                            className="item"
+                                            onClick={() => {
+                                              toggleConnectedServersDropdown();
+                                              setServerID(server?.server?._id);
+                                              setIsUpdateModalOpenForDeviceSelecetdForAlerts(
+                                                true
+                                              );
+                                            }}
+                                          >
+                                            Alert Data
+                                          </div>
                                         </div>
                                       </div>
-                                    </div>
-                                  )}
+                                    )}
                                 </div>
                               </div>
                             );
                           }
                         )}
+
+                        {/* {liveAlertsData?.connectedServers?.map(
+                          (server: any, index: any) => (
+                            <ServerItem
+                              key={index}
+                              server={server}
+                              index={index}
+                            />
+                          )
+                        )} */}
                       </Col>
                     </Row>
                   </CardBody>

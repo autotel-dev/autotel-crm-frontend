@@ -65,9 +65,9 @@ const LiveAlerts = () => {
       setDataList((prevData: any) => [...prevData, ...nextBatch]); // Append to the existing data
     }
     if (
-      dataList[dataList.length - 1]?.id ===
-        liveAlerts[liveAlerts.length - 1]?.id &&
-      !loading
+      dataList[dataList.length - 1]?.deviceId ===
+        liveAlerts[liveAlerts.length - 1]?.deviceId &&
+      loading !== true
     ) {
       setLoading(true); // Set loading to true before making API call
       const url = `company/alert-events?pageNo=${pageNo + 1}`;
@@ -77,7 +77,7 @@ const LiveAlerts = () => {
 
         if (data !== undefined) {
           if (data.success) {
-            setPageNo(pageNo + 1);
+            setPageNo((prevPageNo) => prevPageNo + 1);
             // console.log("length --- >", data.data.allAlertEvents.length);
             const temp = [...liveAlerts, ...data.data.allAlertEvents];
             // console.log("temp", temp);
@@ -89,6 +89,7 @@ const LiveAlerts = () => {
           }
         }
       });
+      console.log("pageNo", pageNo);
     }
   };
 
@@ -194,7 +195,7 @@ const LiveAlerts = () => {
               {dataList.length > 0 ? (
                 dataList
                   .filter((data: any) =>
-                    data.device_name
+                    data.deviceName
                       .toLowerCase()
                       .includes(searchValue.toLowerCase())
                   )
@@ -218,14 +219,15 @@ const LiveAlerts = () => {
                           // console.log("serverInfo", serverInfo);
 
                           const assignEvent = {
-                            eventId: data.id,
-                            deviceId: data.device_id,
-                            deviceName: data.device_name,
+                            eventId: data.eventId,
+                            deviceId: data.deviceId,
+                            deviceName: data.deviceName,
                             latitude: data.latitude,
                             longitude: data.longitude,
                             speed: data.speed,
                             type: data.type,
                             message: data.message,
+                            time: data.time,
                             serverId: serverInfo?.serverId,
                             serverHashKey: serverInfo?.serverHashKey,
                           };
@@ -330,18 +332,19 @@ const LiveAlerts = () => {
                               // console.log("serverInfo", serverInfo);
 
                               const assignEvent = {
-                                eventId: data.id,
-                                deviceId: data.device_id,
-                                deviceName: data.device_name,
+                                eventId: data.eventId,
+                                deviceId: data.deviceId,
+                                deviceName: data.deviceName,
                                 latitude: data.latitude,
                                 longitude: data.longitude,
                                 speed: data.speed,
                                 type: data.type,
                                 message: data.message,
+                                time: data.time,
                                 serverId: serverInfo?.serverId,
                                 serverHashKey: serverInfo?.serverHashKey,
                               };
-                              // console.log(assignEvent);
+                              console.log(assignEvent);
                               try {
                                 // console.log("liveAlerts[index]: ", liveAlerts[index]);
 
@@ -421,14 +424,15 @@ const LiveAlerts = () => {
                               // console.log("serverInfo", serverInfo);
 
                               const assignEvent = {
-                                eventId: data.id,
-                                deviceId: data.device_id,
-                                deviceName: data.device_name,
+                                eventId: data.eventId,
+                                deviceId: data.deviceId,
+                                deviceName: data.deviceName,
                                 latitude: data.latitude,
                                 longitude: data.longitude,
                                 speed: data.speed,
                                 type: data.type,
                                 message: data.message,
+                                time: data.time,
                                 serverId: serverInfo?.serverId,
                                 serverHashKey: serverInfo?.serverHashKey,
                               };
@@ -562,7 +566,7 @@ const LiveAlerts = () => {
                       <td style={{ width: "20%" }}>
                         <div className="d-flex">
                           <div className="flex-grow-1">
-                            <H5>{data.device_name}</H5>
+                            <H5>{data.deviceName}</H5>
                             <div style={{ fontSize: "10px" }}>
                               {data.time.slice(0, 10)}
                             </div>

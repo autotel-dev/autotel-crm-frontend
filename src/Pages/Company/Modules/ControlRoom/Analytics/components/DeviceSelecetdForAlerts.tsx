@@ -34,7 +34,7 @@ const DeviceSelecetdForAlerts: React.FC<PropsTypes> = ({
   prevItem,
   serverID,
 }) => {
-  // // // console.log("Previtem", prevItem);
+  // console.log("serverID", serverID);
 
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);

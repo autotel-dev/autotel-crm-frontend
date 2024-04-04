@@ -52,11 +52,13 @@ const UpdateCompanyForm = () => {
   const [formData, setFormData]: any = useState({});
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(true);
+  const [attachementImagesLoading, setAttachementImagesLoading] =
+    useState(true);
   const [removedModules, setRemovedModules]: any = useState([]);
   const [updatedCity, setUpdatedCity] = useState("");
   const [updatedPackage, setUpdatedPackage] = useState("");
   const [updatedTimeZone, setUpdatedTimeZone] = useState("");
-  const [ticketImages, setTicketImages] = useState<any[]>([]);
+  const [attachementImages, setAttachementImages] = useState<any[]>([]);
   const navigate = useNavigate();
   const { companyId } = useParams();
   const [serverList, setServerList] = useState([]);
@@ -140,82 +142,82 @@ const UpdateCompanyForm = () => {
             });
             setRemovedModules(updatedCrmModules);
 
-            if (data.data.cnicFront.url !== "") {
-              getImage({
-                url: `${IMAGE_BASE_URL}/${data.data.cnicFront.url}`,
-              }).then(async (dataa: any) => {
-                console.log("image api cnicF--- >", data);
-
-                ticketImages.push({
+            getImage({
+              url: `${IMAGE_BASE_URL}/${data.data.cnicFront.url}`,
+            }).then(async (dataa: any) => {
+              if (data.data.cnicFront.url !== "") {
+                attachementImages.push({
                   key: "cnicFront",
                   url: data.data?.cnicFront.url,
                   blob: dataa,
                 });
-                setTicketImages(ticketImages);
-                console.log("ticketImages", ticketImages);
-              });
-            }
-            if (data.data.cnicBack.url !== "") {
+              }
+
+              setAttachementImages(attachementImages);
+
+              // setFormData(formData);
               getImage({
                 url: `${IMAGE_BASE_URL}/${data.data.cnicBack.url}`,
               }).then(async (dataa: any) => {
-                console.log("image api cnicB--- >", data);
-                ticketImages.push({
-                  key: "cnicBack",
-                  url: data.data?.cnicBack.url,
-                  blob: dataa,
-                });
-                setTicketImages(ticketImages);
-                console.log("ticketImages", ticketImages);
-              });
-            }
-            if (data.data.ptaCertificate.url !== "") {
-              getImage({
-                url: `${IMAGE_BASE_URL}/${data.data.ptaCertificate.url}`,
-              }).then(async (dataa: any) => {
-                console.log("image api pta --- >", data);
+                if (data.data.cnicBack.url !== "") {
+                  attachementImages.push({
+                    key: "cnicBack",
+                    url: data.data?.cnicBack.url,
+                    blob: dataa,
+                  });
+                }
+                setAttachementImages(attachementImages);
 
-                ticketImages.push({
-                  key: "ptaCertificate",
-                  url: data.data?.ptaCertificate.url,
-                  blob: dataa,
-                });
-                setTicketImages(ticketImages);
-                console.log("ticketImages", ticketImages);
-              });
-            }
-            if (data.data.ntnCertificate.url !== "") {
-              getImage({
-                url: `${IMAGE_BASE_URL}/${data.data.ntnCertificate.url}`,
-              }).then(async (dataa: any) => {
-                console.log("image api ntn --- >", data);
+                // setFormData(formData);
+                getImage({
+                  url: `${IMAGE_BASE_URL}/${data.data.ptaCertificate.url}`,
+                }).then(async (dataa: any) => {
+                  if (data.data.ptaCertificate.url !== "") {
+                    attachementImages.push({
+                      key: "ptaCertificate",
+                      url: data.data?.ptaCertificate.url,
+                      blob: dataa,
+                    });
+                  }
+                  setAttachementImages(attachementImages);
 
-                ticketImages.push({
-                  key: "ntnCertificate",
-                  url: data.data?.ntnCertificate.url,
-                  blob: dataa,
-                });
-                setTicketImages(ticketImages);
-                console.log("ticketImages", ticketImages);
-              });
-            }
-            if (data.data.otherAttachment.url !== "") {
-              getImage({
-                url: `${IMAGE_BASE_URL}/${data.data.otherAttachment.url}`,
-              }).then(async (dataa: any) => {
-                console.log("image api --- >", data);
+                  // setFormData(formData);
+                  getImage({
+                    url: `${IMAGE_BASE_URL}/${data.data.ntnCertificate.url}`,
+                  }).then(async (dataa: any) => {
+                    if (data.data.ntnCertificate.url !== "") {
+                      attachementImages.push({
+                        key: "ntnCertificate",
+                        url: data.data?.ntnCertificate.url,
+                        blob: dataa,
+                      });
+                    }
+                    setAttachementImages(attachementImages);
 
-                ticketImages.push({
-                  key: "otherAttachment",
-                  url: data.data?.otherAttachment.url,
-                  blob: dataa,
+                    // setFormData(formData);
+                    getImage({
+                      url: `${IMAGE_BASE_URL}/${data.data.otherAttachment.url}`,
+                    }).then(async (dataa: any) => {
+                      if (data.data.otherAttachment.url !== "") {
+                        attachementImages.push({
+                          key: "otherAttachment",
+                          url: data.data?.otherAttachment.url,
+                          blob: dataa,
+                        });
+                      }
+                      setAttachementImages(attachementImages);
+
+                      // setFormData(formData);
+                      setLoading(false);
+                    });
+                  });
                 });
-                setTicketImages(ticketImages);
-                console.log("ticketImages", ticketImages);
               });
-            }
-            setTicketImages(ticketImages);
-            setLoading(false);
+            });
+
+            // if (attachementImages.length === 5) {
+            //   setLoading(false);
+            // }
           }
         }
       }
@@ -1261,58 +1263,13 @@ const UpdateCompanyForm = () => {
                     <H4>Attachments</H4>
                   </CardHeader>
                   <CardBody>
-                    <Row>
-                      <div style={{ display: "flex", flexWrap: "wrap" }}>
-                        {ticketImages.map((data, imageIndex) =>
-                          checkFileTypeByExtension(data.url) === "pdf" ? (
-                            <div>
-                              <H5>
-                                {data.key === "cnicFront"
-                                  ? "CNIC Front"
-                                  : data.key === "cnicBack"
-                                  ? "CNIC Back"
-                                  : data.key === "ptaCertificate"
-                                  ? "PTA Certificate"
-                                  : data.key === "ntnCertificate"
-                                  ? "NTN Certificate"
-                                  : "Other Attachment"}
-                              </H5>
-                              <div
-                                style={{
-                                  width: "300px",
-                                  marginRight: "20px",
-                                  marginBottom: "20px",
-                                  cursor: "pointer",
-                                }}
-                                onClick={(e) => handleClick(e, data.blob)} // Add onClick event handler
-                              >
-                                {image && <img src={image} alt="First Page" />}
-                                <div
-                                  style={{
-                                    height: "160px",
-                                    overflow: "hidden", // Changed from "scroll" to "hidden"
-                                    border: "1px solid lightgray",
-                                  }}
-                                >
-                                  <Document
-                                    file={data.blob}
-                                    onLoadSuccess={() =>
-                                      onDocumentLoadSuccess(image)
-                                    }
-                                  >
-                                    <Page pageNumber={1} width={300} />
-                                  </Document>
-                                </div>
-                                <div
-                                  style={{
-                                    padding: "8px 15px",
-                                    fontSize: "16px",
-                                    borderBottomLeftRadius: "5px",
-                                    borderBottomRightRadius: "5px",
-                                    overflow: "clip",
-                                  }}
-                                  className="btn-primary"
-                                >
+                    {attachementImages.length > 0 ? (
+                      <Row>
+                        <div style={{ display: "flex", flexWrap: "wrap" }}>
+                          {attachementImages.map((data, imageIndex) =>
+                            checkFileTypeByExtension(data.url) === "pdf" ? (
+                              <div>
+                                <H5>
                                   {data.key === "cnicFront"
                                     ? "CNIC Front"
                                     : data.key === "cnicBack"
@@ -1322,99 +1279,147 @@ const UpdateCompanyForm = () => {
                                     : data.key === "ntnCertificate"
                                     ? "NTN Certificate"
                                     : "Other Attachment"}
-                                </div>
-                              </div>
-                            </div>
-                          ) : (
-                            <div>
-                              <H5>
-                                {data.key === "cnicFront"
-                                  ? "CNIC Front"
-                                  : "CNIC Back"}
-                              </H5>
-                              <div
-                                style={{
-                                  position: "relative",
-                                  marginRight: "20px",
-                                  marginBottom: "20px",
-                                }}
-                                onMouseEnter={() =>
-                                  handleMouseEnter(imageIndex)
-                                }
-                                onMouseLeave={() =>
-                                  handleMouseLeave(imageIndex)
-                                }
-                                onClick={() => {
-                                  setImageUrl(data.blob);
-                                  addToggle();
-                                }}
-                              >
-                                <img
-                                  src={data.blob}
-                                  alt=""
-                                  height={200}
-                                  width={300}
+                                </H5>
+                                <div
                                   style={{
-                                    borderRadius: "10px",
-                                    border: "0.5px solid lightgray",
+                                    width: "300px",
+                                    marginRight: "20px",
+                                    marginBottom: "20px",
+                                    cursor: "pointer",
                                   }}
-                                />
-                                {isHovered && index === imageIndex && (
+                                  onClick={(e) => handleClick(e, data.blob)} // Add onClick event handler
+                                >
+                                  {image && (
+                                    <img src={image} alt="First Page" />
+                                  )}
                                   <div
                                     style={{
-                                      position: "absolute",
-                                      top: 0,
-                                      left: 0,
-                                      width: "100%",
-                                      height: "100%",
-                                      background: "rgba(0, 0, 0, 0.7)", // Light black color with opacity
-                                      borderRadius: "10px",
-                                      display: "flex",
-                                      flexDirection: "column",
-                                      justifyContent: "center",
-                                      alignItems: "center",
+                                      height: "160px",
+                                      overflow: "hidden", // Changed from "scroll" to "hidden"
+                                      border: "1px solid lightgray",
                                     }}
                                   >
-                                    <span
+                                    <Document
+                                      file={data.blob}
+                                      onLoadSuccess={() =>
+                                        onDocumentLoadSuccess(image)
+                                      }
+                                    >
+                                      <Page pageNumber={1} width={300} />
+                                    </Document>
+                                  </div>
+                                  <div
+                                    style={{
+                                      padding: "8px 15px",
+                                      fontSize: "16px",
+                                      borderBottomLeftRadius: "5px",
+                                      borderBottomRightRadius: "5px",
+                                      overflow: "clip",
+                                    }}
+                                    className="btn-primary"
+                                  >
+                                    {data.key === "cnicFront"
+                                      ? "CNIC Front"
+                                      : data.key === "cnicBack"
+                                      ? "CNIC Back"
+                                      : data.key === "ptaCertificate"
+                                      ? "PTA Certificate"
+                                      : data.key === "ntnCertificate"
+                                      ? "NTN Certificate"
+                                      : "Other Attachment"}
+                                  </div>
+                                </div>
+                              </div>
+                            ) : (
+                              <div>
+                                <H5>
+                                  {data.key === "cnicFront"
+                                    ? "CNIC Front"
+                                    : "CNIC Back"}
+                                </H5>
+                                <div
+                                  style={{
+                                    position: "relative",
+                                    marginRight: "20px",
+                                    marginBottom: "20px",
+                                  }}
+                                  onMouseEnter={() =>
+                                    handleMouseEnter(imageIndex)
+                                  }
+                                  onMouseLeave={() =>
+                                    handleMouseLeave(imageIndex)
+                                  }
+                                  onClick={() => {
+                                    setImageUrl(data.blob);
+                                    addToggle();
+                                  }}
+                                >
+                                  <img
+                                    src={data.blob}
+                                    alt=""
+                                    height={200}
+                                    width={300}
+                                    style={{
+                                      borderRadius: "10px",
+                                      border: "0.5px solid lightgray",
+                                    }}
+                                  />
+                                  {isHovered && index === imageIndex && (
+                                    <div
                                       style={{
-                                        fontSize: "20px",
-                                        color: "white",
-                                        fontWeight: "bold",
+                                        position: "absolute",
+                                        top: 0,
+                                        left: 0,
+                                        width: "100%",
+                                        height: "100%",
+                                        background: "rgba(0, 0, 0, 0.7)", // Light black color with opacity
+                                        borderRadius: "10px",
+                                        display: "flex",
+                                        flexDirection: "column",
+                                        justifyContent: "center",
+                                        alignItems: "center",
                                       }}
                                     >
-                                      View Image
-                                    </span>
-                                  </div>
-                                )}
+                                      <span
+                                        style={{
+                                          fontSize: "20px",
+                                          color: "white",
+                                          fontWeight: "bold",
+                                        }}
+                                      >
+                                        View Image
+                                      </span>
+                                    </div>
+                                  )}
+                                </div>
                               </div>
-                            </div>
-                          )
-                        )}
-                        <Modal
-                          isOpen={addModal}
-                          toggle={addToggle}
-                          size="lg"
-                          centered
-                        >
-                          <ModalBody>
-                            <div>
-                              <div className="modal-header"></div>
-                              <img
-                                src={imageUrl}
-                                alt=""
-                                height={500}
-                                width="100%"
-                              />
-                            </div>
-                          </ModalBody>
-                        </Modal>
-                      </div>
-                    </Row>
+                            )
+                          )}
+                          <Modal
+                            isOpen={addModal}
+                            toggle={addToggle}
+                            size="lg"
+                            centered
+                          >
+                            <ModalBody>
+                              <div>
+                                <div className="modal-header"></div>
+                                <img
+                                  src={imageUrl}
+                                  alt=""
+                                  height={500}
+                                  width="100%"
+                                />
+                              </div>
+                            </ModalBody>
+                          </Modal>
+                        </div>
+                      </Row>
+                    ) : (
+                      <div>No attachments found</div>
+                    )}
                   </CardBody>
                 </Card>
-                {/* {ticketImages && ticketImages.length > 0 && (
-                 
-                )} */}
               </Col>
             </Row>
           </Container>
