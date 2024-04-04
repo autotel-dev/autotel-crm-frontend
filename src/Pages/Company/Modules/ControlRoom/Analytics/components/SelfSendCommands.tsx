@@ -525,7 +525,7 @@ const SelfSendCommands: React.FC<PropsTypes> = ({
                                               const updatedDataList =
                                                 dataList.map((item: any) => {
                                                   if (
-                                                    item.deviceId ===
+                                                    item.deviceId ==
                                                     data.data.deviceId
                                                   ) {
                                                     // Update fields with new values
