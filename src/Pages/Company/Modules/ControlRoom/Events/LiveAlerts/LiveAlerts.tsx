@@ -195,7 +195,7 @@ const LiveAlerts = () => {
               {dataList.length > 0 ? (
                 dataList
                   .filter((data: any) =>
-                    data.deviceName
+                    data?.deviceName
                       .toLowerCase()
                       .includes(searchValue.toLowerCase())
                   )
@@ -219,9 +219,9 @@ const LiveAlerts = () => {
                           // console.log("serverInfo", serverInfo);
 
                           const assignEvent = {
-                            eventId: data.eventId,
-                            deviceId: data.deviceId,
-                            deviceName: data.deviceName,
+                            eventId: data?.eventId,
+                            deviceId: data?.deviceId,
+                            deviceName: data?.deviceName,
                             latitude: data.latitude,
                             longitude: data.longitude,
                             speed: data.speed,
@@ -332,9 +332,9 @@ const LiveAlerts = () => {
                               // console.log("serverInfo", serverInfo);
 
                               const assignEvent = {
-                                eventId: data.eventId,
-                                deviceId: data.deviceId,
-                                deviceName: data.deviceName,
+                                eventId: data?.eventId,
+                                deviceId: data?.deviceId,
+                                deviceName: data?.deviceName,
                                 latitude: data.latitude,
                                 longitude: data.longitude,
                                 speed: data.speed,
@@ -424,9 +424,9 @@ const LiveAlerts = () => {
                               // console.log("serverInfo", serverInfo);
 
                               const assignEvent = {
-                                eventId: data.eventId,
-                                deviceId: data.deviceId,
-                                deviceName: data.deviceName,
+                                eventId: data?.eventId,
+                                deviceId: data?.deviceId,
+                                deviceName: data?.deviceName,
                                 latitude: data.latitude,
                                 longitude: data.longitude,
                                 speed: data.speed,
@@ -566,7 +566,7 @@ const LiveAlerts = () => {
                       <td style={{ width: "20%" }}>
                         <div className="d-flex">
                           <div className="flex-grow-1">
-                            <H5>{data.deviceName}</H5>
+                            <H5>{data?.deviceName}</H5>
                             <div style={{ fontSize: "10px" }}>
                               {data.time.slice(0, 10)}
                             </div>
