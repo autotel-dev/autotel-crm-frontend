@@ -836,18 +836,18 @@ const ControlRoomAnalytics = () => {
                                       }}
                                     ></div>
                                     <div
-                                      id="Popover"
+                                      id="Popover2"
                                       style={{ cursor: "pointer" }}
                                     >
                                       {server?.isConnected
                                         ? "Connected"
                                         : "Not Connected"}
                                     </div>
-                                    {server?.isConnected == false && (
+                                    {!server?.isConnected && (
                                       <UncontrolledPopover
                                         placement="top"
                                         trigger="hover"
-                                        target="Popover"
+                                        target="Popover2"
                                       >
                                         <PopoverHeader>Reason</PopoverHeader>
                                         <PopoverBody>

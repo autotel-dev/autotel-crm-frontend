@@ -49,7 +49,12 @@ const RightHeader = () => {
         <div
           style={{ paddingRight: "10px", borderRight: "1px solid lightGray" }}
         >
-          <P>{displaytimeZone(userData?.timezone)}</P>
+          {/* <P style={{ fontSize: "13px" }}>
+            {displaytimeZone(userData?.timezone)}
+          </P> */}
+          <p style={{ marginBottom: "4px", fontSize: "13px" }}>
+            {displaytimeZone(userData?.timezone)}
+          </p>
         </div>
         <Notifications />
         {/* <Bookmark /> */}

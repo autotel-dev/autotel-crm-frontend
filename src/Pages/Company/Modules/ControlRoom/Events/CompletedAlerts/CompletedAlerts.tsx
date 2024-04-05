@@ -32,13 +32,13 @@ const AssignedAlerts = () => {
   const containerRef = useRef(null);
   const [pageNo, setPageNo] = useState(1);
   useEffect(() => {
-    if (completedAlerts.length < 12) {
+    if (completedAlerts.length > 12) {
       setDataList(completedAlerts.slice(0, 12)); // Initially display the first 6 elements
     }
   }, [completedAlerts]);
   useEffect(() => {
     setDataList(completedAlerts.slice(0, 12)); // Initially display the first 6 elements
-  }, []);
+  }, [completedAlerts]);
 
   const handleScroll = () => {
     if (!containerRef.current) return; // Ensure containerRef.current exists
@@ -140,7 +140,10 @@ const AssignedAlerts = () => {
                         </td>
                         <td style={{ width: "15%" }}>{data.type}</td>
                         <td style={{ width: "20%" }}>{data.message}</td>
-                        <td id="Popover" style={{ width: "20%" }}>
+                        <td
+                          id="addressCompletedAlerts"
+                          style={{ width: "20%" }}
+                        >
                           {data.address == null
                             ? "N/A"
                             : data.address.length > 10
@@ -151,7 +154,7 @@ const AssignedAlerts = () => {
                           <UncontrolledPopover
                             placement="top"
                             trigger="hover"
-                            target="Popover"
+                            target="addressCompletedAlerts"
                           >
                             <PopoverHeader>Address</PopoverHeader>
                             <PopoverBody>{data.address}</PopoverBody>

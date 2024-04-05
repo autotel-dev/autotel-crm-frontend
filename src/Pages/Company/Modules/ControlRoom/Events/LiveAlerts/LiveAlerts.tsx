@@ -65,8 +65,11 @@ const LiveAlerts = () => {
       setDataList((prevData: any) => [...prevData, ...nextBatch]); // Append to the existing data
     }
     if (
-      dataList[dataList.length - 1]?.deviceId ===
-        liveAlerts[liveAlerts.length - 1]?.deviceId &&
+      // dataList[dataList.length - 1]?.deviceId ===
+      //   liveAlerts[liveAlerts.length - 1]?.deviceId &&
+      // loading !== true
+      bottomOffset < 5 &&
+      dataList.length == liveAlerts.length &&
       loading !== true
     ) {
       setLoading(true); // Set loading to true before making API call
@@ -83,13 +86,32 @@ const LiveAlerts = () => {
             // console.log("temp", temp);
             setLoading(false);
             dispatch(setLiveAlerts(temp));
+
+            // // Scroll to the top of the table
+            // if (containerRef.current) {
+            //   containerRef.current.scrollTop = 0;
+            // }
+            // For scroll on top
+            // if (containerRef.current) {
+            //   (containerRef.current as HTMLElement).scrollTop = 0;
+            // }
+
+            if (containerRef.current) {
+              const containerHeight = (containerRef.current as HTMLElement)
+                .clientHeight;
+              const tableHeight = (containerRef.current as HTMLElement)
+                .scrollHeight;
+              const middlePosition = (tableHeight - containerHeight) / 2;
+
+              (containerRef.current as HTMLElement).scrollTop = middlePosition;
+            }
           }
           if (!data.success) {
             setLoading(false);
           }
         }
       });
-      console.log("pageNo", pageNo);
+      // console.log("pageNo", pageNo);
     }
   };
 
@@ -106,10 +128,14 @@ const LiveAlerts = () => {
           dispatch(setLiveAlertsData(null));
         } else {
           if (data.success) {
+            setPageNo(1);
             // console.log("length --- >", data.data.allAlertEvents.length);
             dispatch(setLiveAlerts(data.data.allAlertEvents));
             dispatch(setLiveAlertsData(data.data));
             setDataList(liveAlerts.slice(0, 12));
+            if (containerRef.current) {
+              (containerRef.current as HTMLElement).scrollTop = 0;
+            }
           } else {
             dispatch(setLiveAlerts([]));
             dispatch(setLiveAlertsData(null));
@@ -282,9 +308,9 @@ const LiveAlerts = () => {
                                   // setLoading(false);
                                   if (data != undefined) {
                                     if (data.success) {
-                                      setAssignLoading(true);
                                       // console.log("length --- >", data.data.length);
                                       dispatch(setAssignedAlerts(data.data));
+                                      setAssignLoading(true);
                                     }
                                   }
                                 });
@@ -582,7 +608,7 @@ const LiveAlerts = () => {
                       </td>
                       <td style={{ width: "20%" }}>{data.type}</td>
                       <td style={{ width: "20%" }}>{data.message}</td>
-                      <td id="Popover" style={{ width: "20%" }}>
+                      <td id="addressLiveAlerts" style={{ width: "20%" }}>
                         {data.address == null
                           ? "N/A"
                           : data.address.length > 10
@@ -593,7 +619,7 @@ const LiveAlerts = () => {
                         <UncontrolledPopover
                           placement="top"
                           trigger="hover"
-                          target="Popover"
+                          target="addressLiveAlerts"
                         >
                           <PopoverHeader>Address</PopoverHeader>
                           <PopoverBody>{data.address}</PopoverBody>

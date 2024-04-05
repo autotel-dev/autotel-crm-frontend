@@ -328,7 +328,9 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
                             sidebarIconType === "fill" ? "fill-" : ""
                           }${data.svgIcon}`}
                         />
-                        <span>{t(data.title)}</span>
+                        <span style={{ fontSize: "13px" }}>
+                          {t(data.title)}
+                        </span>
                       </Link>
                       {data.link ? (
                         <div></div>
@@ -386,7 +388,9 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
                             sidebarIconType === "fill" ? "fill-" : ""
                           }${data.svgIcon}`}
                         />
-                        <span>{t(data.title)}</span>
+                        <span style={{ fontSize: "13px" }}>
+                          {t(data.title)}
+                        </span>
                       </Link>
                       {data.link ? (
                         <div></div>
@@ -433,7 +437,9 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
                             sidebarIconType === "fill" ? "fill-" : ""
                           }${data.svgIcon}`}
                         />
-                        <span>{t(data.title)}</span>
+                        <span style={{ fontSize: "13px" }}>
+                          {t(data.title)}
+                        </span>
                       </Link>
                       {data.link ? (
                         <div></div>
