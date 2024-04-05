@@ -495,6 +495,7 @@ const SelfSendCommands: React.FC<PropsTypes> = ({
                                           );
                                           const verifyData = {
                                             deviceId: data.deviceId,
+                                            // commandedDeviceId: data._id,
                                             serverId: serverInfo?.serverId,
                                             serverHashKey:
                                               serverInfo?.serverHashKey,
@@ -525,8 +526,7 @@ const SelfSendCommands: React.FC<PropsTypes> = ({
                                               const updatedDataList =
                                                 dataList.map((item: any) => {
                                                   if (
-                                                    item.deviceId ==
-                                                    data.data.deviceId
+                                                    item._id == data.data._id
                                                   ) {
                                                     // Update fields with new values
                                                     return {
