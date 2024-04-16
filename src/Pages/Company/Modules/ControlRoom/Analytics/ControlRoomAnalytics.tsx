@@ -449,10 +449,39 @@ const ControlRoomAnalytics = () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
-  const toggleDropdown = () => {
+  const toggleDropdown = (e: any) => {
+    e.stopPropagation(); // Stop event propagation
     setIsDropdownOpen(!isDropdownOpen);
   };
-  const toggleConnectedServersDropdown = () => {
+
+  const handleClickOutsideForConnectedServers = (event: MouseEvent) => {
+    const target = event.target as HTMLElement; // Type assertion
+    // Check if the click originated from a specific element
+    if (
+      event.target &&
+      connnectedServersDropdownRef.current &&
+      !connnectedServersDropdownRef.current.contains(event.target as Node) &&
+      // Add your specific condition here, for example:
+      !target.classList.contains("exclude-from-close")
+    ) {
+      setIsConnecetedServersDropdownOpen(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener(
+      "mousedown",
+      handleClickOutsideForConnectedServers
+    );
+    return () => {
+      document.removeEventListener(
+        "mousedown",
+        handleClickOutsideForConnectedServers
+      );
+    };
+  }, []);
+  const toggleConnectedServersDropdown = (e: any) => {
+    e.stopPropagation(); // Stop event propagation
     setIsConnecetedServersDropdownOpen(!isConnecetedServersDropdownOpen);
   };
 
@@ -525,7 +554,9 @@ const ControlRoomAnalytics = () => {
                   paddingRight: "45px",
                   borderRight: "1px solid black",
                 }}
-                onClick={toggleDropdown}
+                onClick={(e: any) => {
+                  toggleDropdown(e);
+                }}
               >
                 Filter : {selectedFilter}
               </div>
@@ -536,7 +567,11 @@ const ControlRoomAnalytics = () => {
                 style={{
                   cursor: "pointer",
                 }}
-                onClick={toggleDropdown}
+                onClick={(e: any) => {
+                  toggleDropdown(e);
+                }}
+                // onMouseOver={toggleDropdown}
+                // onMouseOut={toggleDropdown}
               >
                 <div style={{ fontSize: "24px", color: "white" }}>&#9776;</div>
               </div>
@@ -557,8 +592,8 @@ const ControlRoomAnalytics = () => {
               {isDropdownOpen && (
                 <div className="dropdown-options-analytics">
                   <div
-                    className="item"
-                    onClick={() => {
+                    className="dropdown-item"
+                    onClick={(e) => {
                       setSelectedFilter("Today");
                       const yesterday = new Date();
                       yesterday.setDate(yesterday.getDate() - 1);
@@ -576,7 +611,7 @@ const ControlRoomAnalytics = () => {
                           if (data.success) {
                             // // // // console.log("length --- >", data.data);
                             dispatch(setDashboardStatistics(data.data));
-                            toggleDropdown();
+                            toggleDropdown(e);
                           }
                         }
                       });
@@ -585,8 +620,8 @@ const ControlRoomAnalytics = () => {
                     Today
                   </div>
                   <div
-                    className="item"
-                    onClick={() => {
+                    className="dropdown-item"
+                    onClick={(e) => {
                       setSelectedFilter("1 Week");
                       const oneWeek = new Date();
                       oneWeek.setDate(oneWeek.getDate() - 7);
@@ -605,7 +640,7 @@ const ControlRoomAnalytics = () => {
                             // // // // console.log("length --- >", data.data);
 
                             dispatch(setDashboardStatistics(data.data));
-                            toggleDropdown();
+                            toggleDropdown(e);
                           }
                         }
                       });
@@ -614,8 +649,8 @@ const ControlRoomAnalytics = () => {
                     1 Week
                   </div>
                   <div
-                    className="item"
-                    onClick={() => {
+                    className="dropdown-item"
+                    onClick={(e) => {
                       setSelectedFilter("1 Month");
                       const oneMonth = new Date();
                       oneMonth.setDate(oneMonth.getDate() - 30);
@@ -633,7 +668,7 @@ const ControlRoomAnalytics = () => {
                           if (data.success) {
                             // // // // console.log("length --- >", data.data);
                             dispatch(setDashboardStatistics(data.data));
-                            toggleDropdown();
+                            toggleDropdown(e);
                           }
                         }
                       });
@@ -810,8 +845,8 @@ const ControlRoomAnalytics = () => {
                                       fontWeight: "bold",
                                     }}
                                   >
-                                    {server?.server?.companyName.slice(0, 13)}
-                                    {server?.server?.companyName.length > 12
+                                    {server?.server?.companyName.slice(0, 21)}
+                                    {server?.server?.companyName.length > 20
                                       ? "..."
                                       : ""}{" "}
                                     :
@@ -836,7 +871,9 @@ const ControlRoomAnalytics = () => {
                                       }}
                                     ></div>
                                     <div
-                                      id="Popover2"
+                                      id={
+                                        !server?.isConnected ? "Popover2" : ""
+                                      }
                                       style={{ cursor: "pointer" }}
                                     >
                                       {server?.isConnected
@@ -888,8 +925,8 @@ const ControlRoomAnalytics = () => {
                                       setIsHovered(false);
                                       // toggleConnectedServersDropdown();
                                     }}
-                                    onClick={() => {
-                                      toggleConnectedServersDropdown();
+                                    onClick={(e) => {
+                                      toggleConnectedServersDropdown(e);
                                     }}
                                   >
                                     <VscKebabVertical />
@@ -908,9 +945,9 @@ const ControlRoomAnalytics = () => {
                                         <div className="conneceted-servers-dropdown-options-analytics">
                                           <div
                                             id="Popover1"
-                                            className="item"
-                                            onClick={() => {
-                                              toggleConnectedServersDropdown();
+                                            className="dropdown-item exclude-from-close"
+                                            onClick={(e) => {
+                                              toggleConnectedServersDropdown(e);
                                             }}
                                           >
                                             Vehicle Data
@@ -929,13 +966,14 @@ const ControlRoomAnalytics = () => {
                                             </PopoverBody>
                                           </UncontrolledPopover>
                                           <div
-                                            className="item"
-                                            onClick={() => {
-                                              toggleConnectedServersDropdown();
+                                            className="dropdown-item exclude-from-close"
+                                            onClick={(e) => {
+                                              e.stopPropagation();
                                               setServerID(server?.server?._id);
                                               setIsUpdateModalOpenForDeviceSelecetdForAlerts(
                                                 true
                                               );
+                                              toggleConnectedServersDropdown(e);
                                             }}
                                           >
                                             Alert Data

@@ -67,9 +67,16 @@ const Location = (props) => {
   }, []);
 
   const handleMarkerClick = (props, marker) => {
+    // console.log("marker", marker);
     setActiveMarker(marker);
     setShowInfoWindow(true);
   };
+
+  useEffect(() => {
+    if (modalData && modalData.alertEvent) {
+      handleMarkerClick();
+    }
+  }, [modalData]);
 
   if (!props.google) {
     return <div>Error: Google Maps API failed to load.</div>;

@@ -59,6 +59,28 @@ const TotalAlertsForSpecificDevices: React.FC<PropsTypes> = ({
     }
   };
 
+  const [typeTitle, setTypeTitle] = useState("");
+
+  const tempAlertTypeList: any = [];
+  const [alertsType, setAlertsType] = useState(tempAlertTypeList);
+  useEffect(() => {
+    const messageSet = new Set(); // Using a Set to maintain unique titles
+
+    deviceSelecetdAlerts.forEach((item: any) => {
+      const message = item.message;
+      // Check if the title is not already in the set
+      if (!messageSet.has(message)) {
+        tempAlertTypeList.push({
+          value: message,
+          label: message,
+        });
+        messageSet.add(message); // Add the title to the set to mark it as seen
+      }
+    });
+
+    setAlertsType(tempAlertTypeList);
+  }, [deviceSelecetdAlerts]);
+
   return (
     <Modal
       centered
@@ -87,14 +109,35 @@ const TotalAlertsForSpecificDevices: React.FC<PropsTypes> = ({
         <Card className="invoice-card">
           <CardBody className="transaction-card">
             <Row>
-              <FormGroup className="col-md-12 create-group">
-                <P>Search Alerts</P>
+              <FormGroup className="col-md-6 create-group">
+                <P>Search Vehicles</P>
                 <input
                   className="form-control"
                   value={searchValue}
                   onChange={(e) => setSearchValue(e.target.value)}
                   type="text"
                   placeholder="Search Device Alerts"
+                />
+              </FormGroup>
+              <FormGroup className="col-md-6 create-group">
+                <P>Filter Alerts Type</P>
+                <Select
+                  showSearch
+                  style={{ width: "100%", height: 36 }}
+                  placeholder="Select Alert Type"
+                  optionFilterProp="children"
+                  filterOption={(input: any, option: any) =>
+                    (option?.label ?? "").includes(input)
+                  }
+                  filterSort={(optionA: any, optionB: any) =>
+                    (optionA?.label ?? "")
+                      .toLowerCase()
+                      .localeCompare((optionB?.label ?? "").toLowerCase())
+                  }
+                  onChange={(e: any, option: any) => {
+                    setTypeTitle(e);
+                  }}
+                  options={alertsType}
                 />
               </FormGroup>
             </Row>
@@ -158,35 +201,43 @@ const TotalAlertsForSpecificDevices: React.FC<PropsTypes> = ({
                               .toLowerCase()
                               .includes(searchValue.toLowerCase())
                         )
-                        .map((data: any, index: any) => (
-                          <tr
-                            style={{
-                              cursor: "pointer",
-                            }}
-                            key={index}
-                          >
-                            <td>
-                              <div className="d-flex">
-                                <div className="flex-grow-1">
-                                  <H5>{data.deviceName}</H5>
-                                  <div style={{ fontSize: "10px" }}>
-                                    {data?.createdAt.slice(0, 10)}
-                                  </div>
+                        .map(
+                          (data: any, index: any) =>
+                            (typeTitle === data?.message ||
+                              typeTitle === "") && (
+                              <tr
+                                style={{
+                                  cursor: "pointer",
+                                }}
+                                key={index}
+                              >
+                                <td>
+                                  <div className="d-flex">
+                                    <div className="flex-grow-1">
+                                      <H5>{data.deviceName}</H5>
+                                      <div style={{ fontSize: "10px" }}>
+                                        {data?.createdAt.slice(0, 10)}
+                                      </div>
 
-                                  <div style={{ fontSize: "10px" }}>
-                                    {data?.createdAt.slice(11, 19)}
+                                      <div style={{ fontSize: "10px" }}>
+                                        {data?.createdAt.slice(11, 19)}
+                                      </div>
+                                    </div>
                                   </div>
-                                </div>
-                              </div>
-                            </td>
-                            <td className={`txt-primary`}>{data?.message}</td>
-                            <td>{data?.type}</td>
-                            <td>{data?.message}</td>
-                            <td>
-                              {data?.address == null ? "N/A" : data?.address}
-                            </td>
-                          </tr>
-                        ))
+                                </td>
+                                <td className={`txt-primary`}>
+                                  {data?.message}
+                                </td>
+                                <td>{data?.type}</td>
+                                <td>{data?.message}</td>
+                                <td>
+                                  {data?.address == null
+                                    ? "N/A"
+                                    : data?.address}
+                                </td>
+                              </tr>
+                            )
+                        )
                     )}
                   </tbody>
                 </Table>

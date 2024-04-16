@@ -71,7 +71,8 @@ const ShoppingPlace = () => {
             height: "85vh",
           }}
         >
-          <div>Welcome to the Autotel Private Limited</div>
+          {/* <div>Welcome to the Autotel Private Limited</div> */}
+          <div>Something better is Coming</div>
         </div>
       )}
     </>

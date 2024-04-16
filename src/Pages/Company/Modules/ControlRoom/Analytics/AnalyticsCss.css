@@ -72,12 +72,15 @@
   margin-right: 5px;
 }
 
-.item {
+.dropdown-item {
   cursor: pointer;
   display: flex;
   align-items: center;
-  padding: 5px;
-  margin-left: 10px;
+  padding-left: 10px;
+  padding: 10px;
+}
+.dropdown-item:hover {
+  background-color: #e5e5e5;
 }
 .item input[type="checkbox"] {
   margin-right: 5px;

@@ -27,9 +27,7 @@ const SelfSendCommands: React.FC<PropsTypes> = ({
   isVisible,
   setIsVisible = () => {},
 }) => {
-  const { selfSendCommands, sendCommandsType } = useSelector(
-    (state: any) => state.alerts
-  );
+  const { selfSendCommands } = useSelector((state: any) => state.alerts);
   const { devices } = useSelector((state: any) => state.monitoring);
   const [isUpdateModalOpenForSendCommand, setIsUpdateModalOpenForSendCommand] =
     useState(false);
@@ -206,31 +204,37 @@ const SelfSendCommands: React.FC<PropsTypes> = ({
 
   const [typeTitle, setTypeTitle] = useState("");
 
-  const tempCommandsTypeList: any = [
-    { value: `Custom command`, label: `Custom command` },
-    {
-      value: `Kill Engine(GPRS template)`,
-      label: `Kill Engine(GPRS template)`,
-    },
-    { value: `RESET(GPRS template)`, label: `RESET(GPRS template)` },
-    {
-      value: `Resume Engine(GPRS template)`,
-      label: `Resume Engine(GPRS template)`,
-    },
-  ];
+  // const tempCommandsTypeList: any = [
+  //   { value: `Custom command`, label: `Custom command` },
+  //   {
+  //     value: `Kill Engine(GPRS template)`,
+  //     label: `Kill Engine(GPRS template)`,
+  //   },
+  //   { value: `RESET(GPRS template)`, label: `RESET(GPRS template)` },
+  //   {
+  //     value: `Resume Engine(GPRS template)`,
+  //     label: `Resume Engine(GPRS template)`,
+  //   },
+  // ];
+  const tempCommandsTypeList: any = [];
   const [commandsType, setCommandsType] = useState(tempCommandsTypeList);
-  // useEffect(() => {
-  //   sendCommandsType.map((item: any, index: any) => {
-  //     tempCommandsTypeList.push({
-  //       value: `${item.title}`,
-  //       label: `${item.title}`,
-  //       type: `${item.type}`,
-  //       title: `${item.title}`,
-  //       attributes: `${JSON.stringify(item.attributes)}`,
-  //     });
-  //   });
-  //   setCommandsType(tempCommandsTypeList);
-  // }, [sendCommandsType]);
+  useEffect(() => {
+    const titleSet = new Set(); // Using a Set to maintain unique titles
+
+    selfSendCommands.forEach((item: any) => {
+      const title = item.commandData.title;
+      // Check if the title is not already in the set
+      if (!titleSet.has(title)) {
+        tempCommandsTypeList.push({
+          value: title,
+          label: title,
+        });
+        titleSet.add(title); // Add the title to the set to mark it as seen
+      }
+    });
+
+    setCommandsType(tempCommandsTypeList);
+  }, [selfSendCommands]);
 
   const [searchValue, setSearchValue] = useState("");
 
@@ -334,7 +338,7 @@ const SelfSendCommands: React.FC<PropsTypes> = ({
                     {dataList.length === 0 ? (
                       <tr>
                         <td colSpan={11} style={{ fontSize: "25px" }}>
-                          No Send Commands Found
+                          No Commands Found
                         </td>
                       </tr>
                     ) : (
@@ -434,7 +438,7 @@ const SelfSendCommands: React.FC<PropsTypes> = ({
                                       <div style={{ fontSize: "10px" }}>
                                         {format(
                                           new Date(
-                                            data.createdAt
+                                            data?.createdAt
                                           ).toLocaleString(),
                                           "date"
                                         )}
@@ -443,7 +447,7 @@ const SelfSendCommands: React.FC<PropsTypes> = ({
                                         {/* {data.updatedAt.toString().slice(11, 19)} */}
                                         {format(
                                           new Date(
-                                            data.createdAt
+                                            data?.createdAt
                                           ).toLocaleString(),
                                           "time"
                                         )}
@@ -454,7 +458,7 @@ const SelfSendCommands: React.FC<PropsTypes> = ({
 
                                 <td style={{ width: "8%" }}>
                                   {data.commandData.type === "custom"
-                                    ? data.commandData.messageData
+                                    ? data.commandData.title
                                     : data.commandData.title}
                                 </td>
                                 {/* <td style={{ width: "8%" }}>{data.remainingTime}</td> */}

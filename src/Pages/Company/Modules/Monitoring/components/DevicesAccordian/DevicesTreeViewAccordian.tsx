@@ -242,6 +242,29 @@ const DevicesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
   //   // console.log("selectedDevices-->", Devicess);
   // };
 
+  const handleSelectAll = () => {
+    const updatedDevices = devices.map((device: any) => {
+      const updatedItems = device.items.map((item: any) => ({
+        ...item,
+        checked: true, // Set checked to the opposite of group.checked
+      }));
+      return { ...device, checked: true, items: updatedItems };
+    });
+
+    dispatch(setDevices(updatedDevices));
+  };
+  const handleDeselectAll = () => {
+    const updatedDevices = devices.map((device: any) => {
+      const updatedItems = device.items.map((item: any) => ({
+        ...item,
+        checked: false, // Set checked to the opposite of group.checked
+      }));
+      return { ...device, checked: false, items: updatedItems };
+    });
+
+    dispatch(setDevices(updatedDevices));
+  };
+
   const formattedDate = (timeStamp: string) => {
     var ts = parseInt(timeStamp) * 1000;
 
@@ -281,6 +304,54 @@ const DevicesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
           outline: "none",
         }}
       />
+      <div style={{ display: "flex" }}>
+        <button
+          onClick={(e: any) => {
+            e.preventDefault(); // Add this line
+            e.stopPropagation();
+            handleSelectAll();
+          }}
+          style={{
+            width: "45%",
+            padding: "10px 15px",
+            // boxShadow: "0px 5px 18px lightgray",
+            borderRadius: "10px",
+            backgroundColor: "gray",
+            color: "white",
+            margin: "10px",
+            marginBottom: "10px",
+            marginTop: "0px",
+            border: "0px",
+            outline: "none",
+            textAlign: "center",
+          }}
+        >
+          Select All
+        </button>
+        <button
+          onClick={(e: any) => {
+            e.preventDefault(); // Add this line
+            e.stopPropagation();
+            handleDeselectAll();
+          }}
+          style={{
+            width: "45%",
+            padding: "10px 15px",
+            // boxShadow: "0px 5px 18px lightgray",
+            borderRadius: "10px",
+            backgroundColor: "gray",
+            color: "white",
+            margin: "10px",
+            marginBottom: "10px",
+            marginTop: "0px",
+            border: "0px",
+            outline: "none",
+            textAlign: "center",
+          }}
+        >
+          Deselect All
+        </button>
+      </div>
       {matchedGroups.length > 0 && (
         <Accordion open={open} toggle={toggle} className="dark-accordion">
           {matchedGroups

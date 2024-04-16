@@ -1,10 +1,10 @@
 import { useState } from "react";
 import Logo from "./Logo";
 import { H3, P } from "../../AbstractElements";
-import { Button, Form, FormGroup,  Label } from "reactstrap";
+import { Button, Form, FormGroup, Label } from "reactstrap";
 import { EmailAddress, Password } from "../../utils/Constant";
 import { SubmitHandler, useForm } from "react-hook-form";
-import {  useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { getAll, login } from "../../Api";
 
 import { useDispatch } from "react-redux";
@@ -108,7 +108,8 @@ const CommonForm = ({ alignLogo }: CommonFormPropsType) => {
             const userId = localStorage.getItem("userId");
             getAll({
               url:
-                getUserRole() === ROLES.COMPANY || getUserRole() === ROLES.COMPANY
+                getUserRole() === ROLES.COMPANY ||
+                getUserRole() === ROLES.OPERATOR
                   ? "user/get-allowed-modules"
                   : "crm-module/get-all-active-modules",
             }).then((data: any) => {
@@ -129,7 +130,7 @@ const CommonForm = ({ alignLogo }: CommonFormPropsType) => {
             });
             getAll({
               url:
-              userId == null && userId == undefined
+                userId == null && userId == undefined
                   ? "super-admin/get-personalization"
                   : `company/get-personalization/${userId}`,
 
@@ -166,7 +167,10 @@ const CommonForm = ({ alignLogo }: CommonFormPropsType) => {
               }
             });
 
-            if (getUserRole() === ROLES.COMPANY || getUserRole() === ROLES.OPERATOR) {
+            if (
+              getUserRole() === ROLES.COMPANY ||
+              getUserRole() === ROLES.OPERATOR
+            ) {
               getAll({ url: "user/get-permissions" })
                 .then((data: any) => {
                   // console.log("api call --- >", data);

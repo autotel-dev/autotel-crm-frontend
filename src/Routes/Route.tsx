@@ -111,6 +111,7 @@ import { PERMISSION_VALUES } from "../constants/permissions";
 import NoInternetConnection from "../Pages/NoInternetConnection/NoInternetConnection";
 import UpdateCompanyForm from "../Pages/Companies/UpdateCompanyForm/UpdateCompanyForm";
 import UnderProductionPage from "../Pages/UnderProductionPage/UnderProductionPage";
+import Dashboard from "../Pages/DashBoard/Dashboard";
 
 const routes = [
   // dashboard routes
@@ -516,7 +517,7 @@ const routes = [
   // Dashboard
   {
     path: `${process.env.PUBLIC_URL}/dashboard`,
-    Component: <ShoppingPlace />,
+    Component: <Dashboard />,
     isProtected: true,
     allowedUserRoles: [ROLES.SUPER_ADMIN, ROLES.COMPANY, ROLES.OPERATOR],
     permissionValue: PERMISSION_VALUES.DASHBOARD,
@@ -648,7 +649,7 @@ const routes = [
   // Dashboard
   {
     path: `${process.env.PUBLIC_URL}/dashboard`,
-    Component: <ShoppingPlace />,
+    Component: <Dashboard />,
     isProtected: true,
     allowedUserRoles: [ROLES.SUPER_ADMIN, ROLES.COMPANY, ROLES.OPERATOR],
     permissionValue: PERMISSION_VALUES.DASHBOARD,
@@ -733,7 +734,7 @@ const routes = [
   // Dashboard
   {
     path: `${process.env.PUBLIC_URL}/dashboard`,
-    Component: <ShoppingPlace />,
+    Component: <Dashboard />,
     isProtected: true,
     allowedUserRoles: [ROLES.SUPER_ADMIN, ROLES.COMPANY, ROLES.OPERATOR],
     permissionValue: PERMISSION_VALUES.DASHBOARD,

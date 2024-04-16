@@ -1,5 +1,3 @@
-
-
 const UnderProductionPage = () => {
   return (
     <div
@@ -12,7 +10,7 @@ const UnderProductionPage = () => {
         height: "85vh",
       }}
     >
-      <div>This feature is under development</div>
+      <div>Something better is Coming</div>
     </div>
   );
 };

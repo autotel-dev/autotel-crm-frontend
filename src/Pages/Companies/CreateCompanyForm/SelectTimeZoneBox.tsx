@@ -28,9 +28,11 @@ const SelectTimeZoneBox: React.FC<propTypes> = ({ placeholder }) => {
       style={{ width: "100%", height: 36 }}
       placeholder={placeholder}
       optionFilterProp="children"
-      filterOption={(input: any, option: any) =>
-        (option?.label ?? "").includes(input)
-      }
+      filterOption={(input: any, option: any) => {
+        const inputLower = input.toLowerCase();
+        const optionLabelLower = option?.label.toLowerCase();
+        return optionLabelLower.includes(inputLower);
+      }}
       filterSort={(optionA: any, optionB: any) =>
         (optionA?.label ?? "")
           .toLowerCase()
