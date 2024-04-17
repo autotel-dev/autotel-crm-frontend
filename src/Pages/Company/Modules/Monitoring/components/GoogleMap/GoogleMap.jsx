@@ -128,7 +128,13 @@
 // export default MapContainer;
 
 import { useEffect, useRef, useState } from "react";
-import { Map, Marker, GoogleApiWrapper, Circle } from "google-maps-react";
+import {
+  Map,
+  Marker,
+  GoogleApiWrapper,
+  Circle,
+  Polyline,
+} from "google-maps-react";
 import { useSelector } from "react-redux";
 import "./googleMap.css";
 
@@ -148,22 +154,22 @@ const GoogleMap = (props) => {
     }
   };
 
-  const calculateBearing = (pointA, pointB) => {
-    const lat1 = parseFloat(pointA.lat);
-    const lon1 = parseFloat(pointA.lng);
-    const lat2 = parseFloat(pointB.lat);
-    const lon2 = parseFloat(pointB.lng);
+  // const calculateBearing = (pointA, pointB) => {
+  //   const lat1 = parseFloat(pointA.lat);
+  //   const lon1 = parseFloat(pointA.lng);
+  //   const lat2 = parseFloat(pointB.lat);
+  //   const lon2 = parseFloat(pointB.lng);
 
-    const y = Math.sin(lon2 - lon1) * Math.cos(lat2);
-    const x =
-      Math.cos(lat1) * Math.sin(lat2) -
-      Math.sin(lat1) * Math.cos(lat2) * Math.cos(lon2 - lon1);
-    let brng = Math.atan2(y, x);
-    brng = (brng * 180) / Math.PI;
-    brng = (brng + 360) % 360;
+  //   const y = Math.sin(lon2 - lon1) * Math.cos(lat2);
+  //   const x =
+  //     Math.cos(lat1) * Math.sin(lat2) -
+  //     Math.sin(lat1) * Math.cos(lat2) * Math.cos(lon2 - lon1);
+  //   let brng = Math.atan2(y, x);
+  //   brng = (brng * 180) / Math.PI;
+  //   brng = (brng + 360) % 360;
 
-    return brng;
-  };
+  //   return brng;
+  // };
 
   const zoomIn = () => {
     if (mapRef.current) {
@@ -178,13 +184,238 @@ const GoogleMap = (props) => {
     }
   };
   useEffect(() => {
-    // console.log("UseEffect Called");
-    // console.log("ExpandedDevice", expandedDevice);
     if (expandedDevice !== null) {
       zoomToMarker(expandedDevice);
-      // console.log("ExpandedDevice", expandedDevice);
     }
   }, [expandedDevice]);
+  const [createdMarkers, setCreatedMarkers] = useState(); // Array to store references to created markers
+
+  // useEffect(() => {
+  //   const tempMarkers = [];
+  //   devices.forEach((marker) => {
+  //     marker.items.forEach((item) => {
+  //       // Check if item is checked
+  //       if (item.checked) {
+  //         const iconUrl = `${item.server.url}/${item.icon.path}`;
+  //         const img = new Image();
+  //         img.crossOrigin = "Anonymous"; // Set crossOrigin attribute on the image
+  //         img.src = iconUrl;
+
+  //         img.onload = () => {
+  //           const canvas = document.createElement("canvas");
+  //           const context = canvas.getContext("2d");
+
+  //           // Calculate canvas dimensions to accommodate rotated image
+  //           const canvasWidth = Math.max(img.width, img.height); // Set canvas width to the larger dimension
+  //           const canvasHeight = canvasWidth; // Set canvas height to match canvasWidth for square canvas
+
+  //           canvas.width = canvasWidth;
+  //           canvas.height = canvasHeight;
+
+  //           // Clear canvas
+  //           context.clearRect(0, 0, canvas.width, canvas.height);
+
+  //           // Rotate and draw image
+  //           context.translate(canvas.width / 2, canvas.height / 2);
+  //           context.rotate((item.course * Math.PI) / 180); // Convert degrees to radians
+  //           context.drawImage(
+  //             img,
+  //             -img.width / 2,
+  //             -img.height / 2,
+  //             img.width,
+  //             img.height
+  //           );
+
+  //           // Convert canvas to data URL
+  //           const rotatedIconUrl = canvas.toDataURL();
+
+  //           // Create the marker
+  //           const markerInstance = new window.google.maps.Marker({
+  //             position: {
+  //               lat: parseFloat(item.lat),
+  //               lng: parseFloat(item.lng),
+  //             },
+  //             icon: {
+  //               url: rotatedIconUrl,
+  //               scaledSize: new window.google.maps.Size(
+  //                 canvasWidth,
+  //                 canvasHeight
+  //               ), // Use canvas dimensions
+  //             },
+  //             map: mapRef.current.map,
+  //           });
+
+  //           // Create info window
+  //           const infoWindow = new window.google.maps.InfoWindow({
+  //             content: `<div>
+  //           <h3>Device Info</h3>
+  //           <br />
+  //           <p>
+  //             <span style={{ fontWeight: "bold" }}>Device ID: </span>
+  //             <span> ${item.id}</span>
+  //           </p>
+  //           <p>
+  //             <span style={{ fontWeight: "bold" }}>Alert: </span>
+  //             <span>${item.name}</span>
+  //           </p>
+  //           <p>
+  //             <span style={{ fontWeight: "bold" }}>Latitude: </span>
+  //             <span> ${item.lat}</span>
+  //           </p>
+  //           <p>
+  //             <span style={{ fontWeight: "bold" }}>Longitude: </span>
+  //             <span> ${item.lng}</span>
+  //           </p>
+
+  //         </div>`, // You can customize this content as needed
+  //           });
+
+  //           // Open info window when marker is clicked
+  //           markerInstance.addListener("click", () => {
+  //             infoWindow.open(mapRef.current.map, markerInstance);
+  //           });
+
+  //           // Store the marker instance and item in createdMarkers
+  //           createdMarkers?.map((marker) => {
+  //             if (marker.id !== item.id) {
+  //               tempMarkers.push({
+  //                 markerInstance,
+  //                 checked: true,
+  //                 id: item.id,
+  //               });
+  //               setCreatedMarkers(tempMarkers);
+  //             }
+  //           });
+
+  //           // return createdMarkers;
+  //         };
+  //       } else {
+  //         // Remove the marker from the map if item.checked is false
+  //         tempMarkers?.map((marker) => {
+  //           if (marker.id == item.id) {
+  //             return {
+  //               ...marker,
+  //               checked: false,
+  //             };
+  //           }
+  //         });
+  //         setCreatedMarkers(tempMarkers);
+  //       }
+  //     });
+  //   });
+
+  //   // Clean up: Remove all markers not corresponding to checked items
+  //   return () => {
+  //     createdMarkers?.forEach(({ markerInstance, checked, id }) => {
+  //       if (!checked) {
+  //         markerInstance.setMap(null);
+  //       }
+  //     });
+  //   };
+  // }, [props.google, devices, createdMarkers]);
+
+  useEffect(() => {
+    // Array to store references to created markers
+    const createdMarkers = [];
+
+    // Loop through devices and their items
+    devices?.forEach((marker) => {
+      marker.items.forEach((item) => {
+        // Check if item is checked
+        if (item.checked) {
+          const iconUrl = `${item.server.url}/${item.icon.path}`;
+          const img = new Image();
+          img.crossOrigin = "Anonymous"; // Set crossOrigin attribute on the image
+          img.src = iconUrl;
+
+          img.onload = () => {
+            const canvas = document.createElement("canvas");
+            const context = canvas.getContext("2d");
+
+            // Calculate canvas dimensions to accommodate rotated image
+            const canvasWidth = Math.max(img.width, img.height);
+            const canvasHeight = canvasWidth;
+
+            canvas.width = canvasWidth;
+            canvas.height = canvasHeight;
+
+            // Clear canvas
+            context.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Rotate and draw image
+            context.translate(canvas.width / 2, canvas.height / 2);
+            context.rotate((item.course * Math.PI) / 180);
+            context.drawImage(
+              img,
+              -img.width / 2,
+              -img.height / 2,
+              img.width,
+              img.height
+            );
+
+            // Convert canvas to data URL
+            const rotatedIconUrl = canvas.toDataURL();
+
+            // Create the marker
+            const markerInstance = new window.google.maps.Marker({
+              position: {
+                lat: parseFloat(item.lat),
+                lng: parseFloat(item.lng),
+              },
+
+              icon: {
+                url: rotatedIconUrl,
+                scaledSize: new window.google.maps.Size(
+                  canvasWidth,
+                  canvasHeight
+                ),
+              },
+              map: mapRef.current.map,
+            });
+
+            // Create info window
+            const infoWindow = new window.google.maps.InfoWindow({
+              content: `<div>
+              <h3>Device Info</h3>
+              <br />
+              <p>
+                <span style={{ fontWeight: "bold" }}>Device ID: </span>
+                <span> ${item.id}</span>
+              </p>
+              <p>
+                <span style={{ fontWeight: "bold" }}>Device Name: </span>
+                <span>${item.name}</span>
+              </p>
+              <p>
+              <span style={{ fontWeight: "bold" }}>LatLng: </span>
+              <a href="https://www.google.com/maps/search/?api=1&query=${item.lat},${item.lng}" target="_blank">${item.lat},${item.lng}</a>
+            </p>
+
+            </div>`, // You can customize this content as needed
+            });
+
+            // Open info window when marker is clicked
+            markerInstance.addListener("click", () => {
+              infoWindow.open(mapRef.current.map, markerInstance);
+            });
+
+            // Store the marker instance and item in createdMarkers
+            createdMarkers.push({ markerInstance, item, id: item.id });
+          };
+        }
+      });
+    });
+
+    // Clean up: Remove markers for unchecked items
+    return () => {
+      createdMarkers.forEach(({ markerInstance, item, id }) => {
+        // Check if the item is unchecked
+        if (id == item.id) {
+          markerInstance.setMap(null); // Remove marker from the map
+        }
+      });
+    };
+  }, [props.google, devices]);
 
   if (!props.google) {
     return <div>Error: Google Maps API failed to load.</div>;
@@ -220,7 +451,7 @@ const GoogleMap = (props) => {
         );
       })} */}
 
-      {devices.map((marker) =>
+      {/* {devices.map((marker) =>
         marker.items
           .filter((item) => item.checked) // Filter items where checked is true
           .map((item) => {
@@ -228,6 +459,7 @@ const GoogleMap = (props) => {
             const icon = {
               url: `${item.server.url}/${item.icon.path}`,
               scaledSize: new window.google.maps.Size(22, 40),
+              rotation: item.course, // Apply rotation directly to the icon if supported
             };
 
             return (
@@ -239,14 +471,10 @@ const GoogleMap = (props) => {
                   lng: parseFloat(item.lng),
                 }}
                 icon={icon}
-                // rotation={170}
-                style={{
-                  transform: "rotate(45deg)",
-                }}
               />
             );
           })
-      )}
+      )} */}
 
       {/* Custom Zoom Control */}
       <div className="custom-zoom-control">

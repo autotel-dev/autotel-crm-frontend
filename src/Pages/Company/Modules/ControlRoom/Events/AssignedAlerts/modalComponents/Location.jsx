@@ -119,13 +119,15 @@ const Location = (props) => {
               <span style={{ fontWeight: "bold" }}>Alert: </span>
               <span> {modalData.alertEvent.message}</span>
             </p>
+
             <p>
-              <span style={{ fontWeight: "bold" }}>Latitude: </span>
-              <span> {modalData.alertEvent.latitude}</span>
-            </p>
-            <p>
-              <span style={{ fontWeight: "bold" }}>Longitude: </span>
-              <span> {modalData.alertEvent.longitude}</span>
+              <span style={{ fontWeight: "bold" }}>LatLng: </span>
+              <a
+                href={`https://www.google.com/maps/search/?api=1&query=${modalData.alertEvent.latitude},${modalData.alertEvent.longitude}`}
+                target="_blank"
+              >
+                {modalData.alertEvent.latitude},{modalData.alertEvent.longitude}
+              </a>
             </p>
             {/* Add more device details here */}
           </div>

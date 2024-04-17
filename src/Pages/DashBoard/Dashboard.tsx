@@ -16,6 +16,9 @@ import WeekendSale from "./ShoppingPlace/WeekendSale/WeekendSale";
 import Invoice from "./ShoppingPlace/Invoice/Invoice";
 import ProductSales from "./ShoppingPlace/ProductSales/ProductSales";
 import KilledVehicles from "./Control Room/KilledVehicles";
+import { useEffect, useState } from "react";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 
 const Dashboard = () => {
   const { userPermissions } = useSelector(
@@ -24,6 +27,16 @@ const Dashboard = () => {
   var dashboard = userPermissions.find(
     (item: any) => item.title === "Dashboard"
   );
+  const [loading, setLoading] = useState<boolean>(true);
+
+  // Simulating data fetching with a timeout
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false); // Simulate completion of data fetching after 2 seconds
+    }, 2000);
+
+    return () => clearTimeout(timer); // Cleanup the timeout on component unmount
+  }, []);
   // // console.log("Dashboard", dashboard);
   return (
     <>
@@ -48,11 +61,95 @@ const Dashboard = () => {
         getUserRole() === ROLES.COMPANY ? (
         <Container fluid className="crm_dashboard">
           <Row className="widget-grid">
-            <General />
+            {/* Skeleton loading effect */}
+            {loading ? (
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                }}
+              >
+                <div
+                  style={{
+                    marginBottom: "20px",
+                    marginRight: "20px",
+                  }}
+                >
+                  <div
+                    style={{
+                      marginBottom: "20px",
+                    }}
+                  >
+                    <Skeleton width={350} height={200} />
+                  </div>
+                  <div>
+                    <Skeleton width={350} height={210} />
+                  </div>
+                </div>
+                <div
+                  style={{
+                    marginBottom: "20px",
+                    marginRight: "20px",
+                  }}
+                >
+                  <Skeleton width={700} height={440} />
+                </div>
+                <div
+                  style={{
+                    marginBottom: "20px",
+                    marginRight: "20px",
+                  }}
+                >
+                  <div
+                    style={{
+                      marginBottom: "20px",
+                    }}
+                  >
+                    <Skeleton width={350} height={200} />
+                  </div>
+                  <div>
+                    <Skeleton width={350} height={210} />
+                  </div>
+                </div>
+                {/* Example for an avatar */}
+                {/* <Skeleton count={3} height={20} /> Example for text */}
+              </div>
+            ) : (
+              <General />
+            )}
+
             <Col xl="12" lg="12" md="12" sm="12">
               <Row>
-                <AlertsOverview />
-                <KilledVehicles />
+                {loading ? (
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <div
+                      style={{
+                        marginBottom: "20px",
+                        marginRight: "20px",
+                      }}
+                    >
+                      <Skeleton width={700} height={450} />
+                    </div>
+                    <div
+                      style={{
+                        marginBottom: "20px",
+                        marginRight: "20px",
+                      }}
+                    >
+                      <Skeleton width={700} height={440} />
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    <AlertsOverview />
+                    <KilledVehicles />
+                  </>
+                )}
               </Row>
             </Col>
           </Row>

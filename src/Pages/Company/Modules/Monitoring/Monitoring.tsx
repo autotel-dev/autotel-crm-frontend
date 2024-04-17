@@ -252,7 +252,9 @@ const Monitoring = () => {
     document.body.style.overflow = "hidden";
     // Re-enable scrolling when the component unmounts
     dispatch(setExpandedDevice(null));
-    getData();
+    if (devices.length == 0) {
+      getData();
+    }
 
     return () => {
       document.body.style.overflow = "unset";
