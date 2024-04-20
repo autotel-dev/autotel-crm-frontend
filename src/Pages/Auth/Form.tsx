@@ -277,7 +277,14 @@ const CommonForm = ({ alignLogo }: CommonFormPropsType) => {
                 {ForgotPassword}
               </Link> */}
               <div className="text-end mt-2">
-                {userPersonalizationData &&
+                <Button
+                  disabled={loading}
+                  color="primary"
+                  className="btn-block w-100"
+                >
+                  {loading ? "Loading..." : "Sign In"}
+                </Button>
+                {/* {userPersonalizationData &&
                 userPersonalizationData.primaryColor &&
                 userPersonalizationData.primaryColor !==
                   userPersonalizationData.secondaryColor ? (
@@ -317,7 +324,7 @@ const CommonForm = ({ alignLogo }: CommonFormPropsType) => {
                   >
                     {loading ? "Loading..." : "Sign In"}
                   </Button>
-                )}
+                )} */}
               </div>
             </FormGroup>
           </Form>
