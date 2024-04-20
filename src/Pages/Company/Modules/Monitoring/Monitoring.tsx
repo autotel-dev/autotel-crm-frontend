@@ -19,7 +19,7 @@ const Monitoring = () => {
   const apiKey = "AIzaSyDI3fB-ItM1LpMOyMg_P8UxTUuxHCyQS34"; // Replace with your actual API key
 
   const dispatch = useDispatch();
-  const { devices, isConnected } = useSelector(
+  const { devices, isConnected, expandedDevice } = useSelector(
     (state: any) => state.monitoring
   );
   // console.log("devices", devices);
@@ -110,6 +110,24 @@ const Monitoring = () => {
                   // Update the checked status of each item in the group
                   const updatedItems = group.items.map(
                     (device: any, deviceIndex: any) => {
+                      // const deviceData = device;
+                      if (expandedDevice != null) {
+                        if (device.id === expandedDevice.deviceId) {
+                          console.log("device", device);
+                          console.log("expandedDevice", expandedDevice);
+                          dispatch(
+                            setExpandedDevice({
+                              position: {
+                                lat: device.lat,
+                                lng: device.lng,
+                              },
+                              tail: device.tail,
+                              deviceId: device.id,
+                            })
+                          );
+                        }
+                      }
+
                       const correspondingDevice = correspondingGroup.items.find(
                         (device: any) =>
                           device.id ===
@@ -122,6 +140,7 @@ const Monitoring = () => {
                           checked: correspondingDevice.checked,
                         };
                       }
+
                       return device;
                     }
                   );
@@ -244,7 +263,7 @@ const Monitoring = () => {
       // console.log("Clearing interval...");
       clearInterval(intervalId);
     };
-  }, [devices]); // Empty dependency array to run the effect only once after mounting
+  }, [devices, expandedDevice]); // Empty dependency array to run the effect only once after mounting
 
   // ------------------------------------------------
 

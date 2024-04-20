@@ -70,7 +70,8 @@ const LiveAlerts = () => {
       // loading !== true
       bottomOffset < 5 &&
       dataList.length == liveAlerts.length &&
-      loading !== true
+      loading !== true &&
+      liveAlertsData.lastPage > 1
     ) {
       setLoading(true); // Set loading to true before making API call
       const url = `company/alert-events?pageNo=${pageNo + 1}`;
@@ -175,7 +176,12 @@ const LiveAlerts = () => {
       >
         <div>
           Live Alerts (
-          {liveAlertsData == null ? 0 : liveAlertsData.lastPage * 30})
+          {liveAlertsData == null
+            ? 0
+            : liveAlertsData.lastPage > 1
+            ? liveAlertsData.lastPage * 30
+            : liveAlerts.length}
+          )
         </div>
       </div>
 
@@ -254,6 +260,7 @@ const LiveAlerts = () => {
                             type: data.type,
                             message: data.message,
                             time: data.time,
+                            course: data.course,
                             serverId: serverInfo?.serverId,
                             serverHashKey: serverInfo?.serverHashKey,
                           };

@@ -75,7 +75,7 @@ const App = () => {
         }
       });
 
-      if (getUserRole() === ROLES.COMPANY || getUserRole() === ROLES.OPERATOR) {
+      if (getUserRole() == ROLES.COMPANY || getUserRole() == ROLES.OPERATOR) {
         getAll({ url: "user/get-permissions" }).then((data: any) => {
           // console.log("api call --- >", data);
           if (data !== undefined) {

@@ -7,7 +7,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { getAll, login } from "../../Api";
 
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setActiveCRMModules } from "../../ReaduxToolkit/Reducer/CRMModuleSlice";
 import { getOperatorCompanyUserId, getUserRole } from "../../Api/globals";
 import Swal from "sweetalert2";
@@ -15,6 +15,7 @@ import { setUserPersonalizationData } from "../../ReaduxToolkit/Reducer/Personal
 import { setUserPermissions } from "../../ReaduxToolkit/Reducer/PermissionSlice";
 import { ROLES } from "../../constants/roles";
 import { setUserData } from "../../ReaduxToolkit/Reducer/UserSlice";
+import { setDevices } from "../../ReaduxToolkit/Reducer/MonitoringSlice";
 
 interface loginTypes {
   emailAddress: string; // Change 'boolean' to the actual type of isVisible
@@ -25,6 +26,9 @@ export interface CommonFormPropsType {
   alignLogo?: string;
 }
 const CommonForm = ({ alignLogo }: CommonFormPropsType) => {
+  const { userPersonalizationData } = useSelector(
+    (state: any) => state.personalization
+  );
   const [showPassWord, setShowPassWord] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -94,6 +98,12 @@ const CommonForm = ({ alignLogo }: CommonFormPropsType) => {
             // console.log("response: ", data.data);
             // console.log("token: ", token);
             localStorage.setItem("token", token);
+            if (
+              getUserRole() == ROLES.COMPANY ||
+              getUserRole() == ROLES.OPERATOR
+            ) {
+              dispatch(setDevices([]));
+            }
             if (getUserRole() === ROLES.SUPER_ADMIN) {
               dispatch(setUserPermissions([]));
             }
@@ -267,13 +277,47 @@ const CommonForm = ({ alignLogo }: CommonFormPropsType) => {
                 {ForgotPassword}
               </Link> */}
               <div className="text-end mt-2">
-                <Button
-                  disabled={loading}
-                  color="primary"
-                  className="btn-block w-100"
-                >
-                  {loading ? "Loading..." : "Sign In"}
-                </Button>
+                {userPersonalizationData &&
+                userPersonalizationData.primaryColor &&
+                userPersonalizationData.primaryColor !==
+                  userPersonalizationData.secondaryColor ? (
+                  <button
+                    disabled={loading}
+                    style={{
+                      fontWeight: "bold",
+                      backgroundColor: `${
+                        userPersonalizationData &&
+                        userPersonalizationData.primaryColor
+                      }
+                  `,
+                      padding: "10px 10px",
+                      borderRadius: "5px",
+                      color: "white",
+                      //     color: `${
+                      //       userPersonalizationData &&
+                      //       userPersonalizationData.secondaryColor
+                      //     }
+                      // `,
+                      outline: "none",
+                      border: `${
+                        userPersonalizationData &&
+                        userPersonalizationData.primaryColor
+                      }
+                  `,
+                    }}
+                    className="btn-block w-100"
+                  >
+                    {loading ? "Loading..." : "Sign In"}
+                  </button>
+                ) : (
+                  <Button
+                    disabled={loading}
+                    color="primary"
+                    className="btn-block w-100"
+                  >
+                    {loading ? "Loading..." : "Sign In"}
+                  </Button>
+                )}
               </div>
             </FormGroup>
           </Form>

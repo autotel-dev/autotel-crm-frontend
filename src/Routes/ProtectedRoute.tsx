@@ -111,6 +111,14 @@ const ProtectedRoute: React.FC<PropTypes> = ({
           }
         } else {
           if (
+            allowedUserRoles.includes(userRole) &&
+            permissionValue === PERMISSION_VALUES.PROFILE
+          ) {
+            setLoading(false);
+            setHasPermission(true);
+            return;
+          }
+          if (
             // permissionValue === PERMISSION_VALUES.DASHBOARD ||
             permissionValue === PERMISSION_VALUES.USER ||
             permissionValue === PERMISSION_VALUES.SUPPORT ||

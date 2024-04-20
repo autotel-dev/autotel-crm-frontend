@@ -275,7 +275,7 @@ const EditProfileForm = () => {
               <Button
                 style={{ marginRight: "15px" }}
                 color="primary"
-                type="submit"
+                // type="submit"
                 disabled={loading}
                 onClick={(e) => {
                   e.preventDefault();
@@ -291,7 +291,7 @@ const EditProfileForm = () => {
               type="submit"
               disabled={loading}
               onClick={(e) => {
-                if (isEdit === false) {
+                if (!isEdit) {
                   e.preventDefault();
                   setIsEdit(!isEdit);
                 }

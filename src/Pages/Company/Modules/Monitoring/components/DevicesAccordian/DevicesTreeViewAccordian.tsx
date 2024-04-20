@@ -12,6 +12,7 @@ import SVG from "../../../../../../utils/CommonSvgIcon/SVG";
 import {
   setDevices,
   setExpandedDevice,
+  setItem,
   setSelecetdDevices,
 } from "../../../../../../ReaduxToolkit/Reducer/MonitoringSlice";
 import "./inputStyle.css";
@@ -28,7 +29,7 @@ const DevicesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
   const svgRef = useRef(null);
 
   const [itemsLength, setItemsLength] = useState(6);
-  const { devices, selectedDevices } = useSelector(
+  const { devices, selectedDevices, expandedDevice } = useSelector(
     (state: any) => state.monitoring
   );
   const [searchValue, setSearchValue] = useState("");
@@ -170,6 +171,16 @@ const DevicesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
         checked: allItemsChecked,
         items: deviceToUpdate.items.map((item: any) => {
           if (selectedDevice.id === item.id) {
+            if (
+              expandedDevice != null &&
+              selectedDevice.id == expandedDevice.deviceId &&
+              selectedDevice.checked
+            ) {
+              dispatch(setExpandedDevice(null));
+              dispatch(
+                setItem({ id: selectedDevice.id, title: selectedDevice.title })
+              );
+            }
             // Update the checked property if the IDs match
             return {
               ...item,
@@ -474,8 +485,12 @@ const DevicesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
                               onClick={(e) => {
                                 dispatch(
                                   setExpandedDevice({
-                                    lat: bodyItem.lat,
-                                    lng: bodyItem.lng,
+                                    position: {
+                                      lat: bodyItem.lat,
+                                      lng: bodyItem.lng,
+                                    },
+                                    tail: bodyItem.tail,
+                                    deviceId: bodyItem.id,
                                   })
                                 );
                               }}
@@ -546,7 +561,9 @@ const DevicesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
                                         fontSize: "16px",
                                       }}
                                     >
-                                      {bodyItem.name}
+                                      {bodyItem.name.length > 26
+                                        ? `${bodyItem.name.slice(0, 26)}...`
+                                        : bodyItem.name}
                                     </span>
                                     <span style={{ fontSize: "12px" }}>
                                       {/* {formattedDate(bodyItem.timestamp)} */}
