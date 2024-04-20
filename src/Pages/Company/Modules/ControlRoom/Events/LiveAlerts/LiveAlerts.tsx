@@ -178,8 +178,10 @@ const LiveAlerts = () => {
           Live Alerts (
           {liveAlertsData == null
             ? 0
+            : liveAlerts.length < 15
+            ? liveAlerts.length
             : liveAlertsData.lastPage > 1
-            ? liveAlertsData.lastPage * 30
+            ? liveAlerts.length + (liveAlertsData.lastPage - 1) * 30
             : liveAlerts.length}
           )
         </div>
