@@ -99,17 +99,17 @@ const CommonForm = ({ alignLogo }: CommonFormPropsType) => {
             // console.log("token: ", token);
 
             localStorage.setItem("token", token);
-            if (getUserRole() == ROLES.COMPANY) {
-              const savedPositionsString = localStorage.getItem("positions");
-              if (savedPositionsString == null || savedPositionsString == undefined) {
-                const positions = {
-                  box1: { x: 0, y: 0 },
-                  box2: { x: 0, y: 0 },
-                  box3: { x: 0, y: 0 },
-                };
-                localStorage.setItem("positions", JSON.stringify(positions));
-              }
-            }
+            // if (getUserRole() == ROLES.COMPANY) {
+            //   const savedPositionsString = localStorage.getItem("positions");
+            //   if (savedPositionsString == null || savedPositionsString == undefined) {
+            //     const positions = {
+            //       box1: { x: 0, y: 0 },
+            //       box2: { x: 0, y: 0 },
+            //       box3: { x: 0, y: 0 },
+            //     };
+            //     localStorage.setItem("positions", JSON.stringify(positions));
+            //   }
+            // }
 
             if (
               getUserRole() == ROLES.COMPANY ||

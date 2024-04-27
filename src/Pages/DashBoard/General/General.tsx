@@ -71,26 +71,26 @@ const General = () => {
     },
   };
 
-  const [positions, setPositions] = useState(() => {
-    const savedPositionsString = localStorage.getItem("positions");
-    if (savedPositionsString !== null) {
-      const savedPositions = JSON.parse(savedPositionsString);
-      return savedPositions;
-    }
-  });
+  // const [positions, setPositions] = useState(() => {
+  //   const savedPositionsString = localStorage.getItem("positions");
+  //   if (savedPositionsString !== null) {
+  //     const savedPositions = JSON.parse(savedPositionsString);
+  //     return savedPositions;
+  //   }
+  // });
 
-  const handleDrag = (key: string, e: any, ui: any) => {
-    const { x, y } = ui;
-    setPositions((prevPositions: any) => ({
-      ...prevPositions,
-      [key]: { x, y }, // Update position for the specific draggable element
-    }));
-  };
+  // const handleDrag = (key: string, e: any, ui: any) => {
+  //   const { x, y } = ui;
+  //   setPositions((prevPositions: any) => ({
+  //     ...prevPositions,
+  //     [key]: { x, y }, // Update position for the specific draggable element
+  //   }));
+  // };
 
   // useEffect to save positions to localStorage when positions change
-  useEffect(() => {
-    localStorage.setItem("positions", JSON.stringify(positions));
-  }, [positions]);
+  // useEffect(() => {
+  //   localStorage.setItem("positions", JSON.stringify(positions));
+  // }, [positions]);
 
   const [daysRemaining, setDaysRemaining] = useState(0);
 
@@ -202,7 +202,7 @@ const General = () => {
         </div>
       ) : (
         <Row style={{ display: "flex" }}>
-          <Draggable
+          {/* <Draggable
             handle=".handle"
             defaultPosition={positions.box1}
             grid={[1, 1]}
@@ -211,83 +211,85 @@ const General = () => {
             onDrag={(e, ui) => handleDrag("box1", e, ui)}
             onStop={() => {}}
           >
-            <Col xl="3" className="box">
-              <Card className="widget-sell handle">
-                <CardBody className="pb-0">
-                  <Row>
-                    <Col xl="12" lg="12" sm="12" className="mb-3">
-                      <div className="sale">
-                        <H5>
-                          Total Operators (
-                          {generalData.operatorStatistics.totalActiveOperators +
-                            generalData.operatorStatistics
-                              .totalInActiveOperators}
-                          )
-                        </H5>
-                        <div
-                          style={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                          }}
-                        >
-                          {/* <H5>{data.count}</H5> */}
-                          {/* <div id="donutchart">
+            
+          </Draggable> */}
+
+          <Col xl="3" className="box">
+            <Card className="widget-sell handle">
+              <CardBody className="pb-0">
+                <Row>
+                  <Col xl="12" lg="12" sm="12" className="mb-3">
+                    <div className="sale">
+                      <H5>
+                        Total Operators (
+                        {generalData.operatorStatistics.totalActiveOperators +
+                          generalData.operatorStatistics.totalInActiveOperators}
+                        )
+                      </H5>
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                        }}
+                      >
+                        {/* <H5>{data.count}</H5> */}
+                        {/* <div id="donutchart">
                               <ReactApexChart
                                 options={apexDonutCharts}
                                 series={apexDonutCharts.series}
                                 type="donut"
                               />
                             </div> */}
+                        <div
+                          style={{
+                            display: "flex",
+                            flexDirection: "row",
+                            width: "85%", // Set the width of the outer container
+                            height: "170px", // Set the height of the outer container
+                            // backgroundColor: "gray", // Remove the background color
+                          }}
+                        >
                           <div
                             style={{
-                              display: "flex",
-                              flexDirection: "row",
-                              width: "85%", // Set the width of the outer container
-                              height: "170px", // Set the height of the outer container
-                              // backgroundColor: "gray", // Remove the background color
+                              flex: "1",
+                              marginRight: "0px",
+                              // backgroundColor: "gray",
                             }}
                           >
-                            <div
-                              style={{
-                                flex: "1",
-                                marginRight: "0px",
-                                // backgroundColor: "gray",
+                            <Chart
+                              width={"100%"}
+                              height={"100%"} // Set the height of the chart to fill the outer container
+                              chartType={"PieChart"}
+                              loader={<div>{"Loading Chart"}</div>}
+                              data={[
+                                ["Task", "Hours per Day"],
+                                [
+                                  "Active",
+                                  generalData.operatorStatistics
+                                    .totalActiveOperators,
+                                ],
+                                [
+                                  "Inctive",
+                                  generalData.operatorStatistics
+                                    .totalInActiveOperators,
+                                ],
+                              ]}
+                              options={{
+                                backgroundColor: "transparent", // Set chart background color as transparent
+                                chartArea: {
+                                  backgroundColor: "transparent", // Set chart area background color as transparent
+                                  top: 10, // Set padding of the top of chart area to 0
+                                  left: 25, // Set padding of the left of chart area to 0
+                                  right: 0,
+                                },
+                                pieHole: 0.4,
+                                pieSliceText: "value", // Display the exact values of each option
                               }}
-                            >
-                              <Chart
-                                width={"100%"}
-                                height={"100%"} // Set the height of the chart to fill the outer container
-                                chartType={"PieChart"}
-                                loader={<div>{"Loading Chart"}</div>}
-                                data={[
-                                  ["Task", "Hours per Day"],
-                                  [
-                                    "Active",
-                                    generalData.operatorStatistics
-                                      .totalActiveOperators,
-                                  ],
-                                  [
-                                    "Inctive",
-                                    generalData.operatorStatistics
-                                      .totalInActiveOperators,
-                                  ],
-                                ]}
-                                options={{
-                                  backgroundColor: "transparent", // Set chart background color as transparent
-                                  chartArea: {
-                                    backgroundColor: "transparent", // Set chart area background color as transparent
-                                    top: 10, // Set padding of the top of chart area to 0
-                                    left: 25, // Set padding of the left of chart area to 0
-                                    right: 0,
-                                  },
-                                  pieHole: 0.4,
-                                  pieSliceText: "value", // Display the exact values of each option
-                                }}
-                              />
-                            </div>
+                            />
                           </div>
                         </div>
-                        {/* <P className="d-flex">
+                      </div>
+                      {/* <P className="d-flex">
                         <span className={`bg-light-${data.color} me-2`}>
                           <SVG iconId={data.svgIcon} />
                         </span>
@@ -296,82 +298,81 @@ const General = () => {
                         </span>
                       </P>
                       <span className="sale-title">{data.time}</span> */}
-                      </div>
-                    </Col>
-                    <Col xl="12" lg="12" sm="12" className="mb-3">
-                      <div className="sale">
-                        <H5>
-                          Total Servers (
-                          {generalData.companyServerStatistics
-                            .totalActiveServers +
-                            generalData.companyServerStatistics
-                              .totalInActiveServers}
-                          )
-                        </H5>
+                    </div>
+                  </Col>
+                  <Col xl="12" lg="12" sm="12" className="mb-3">
+                    <div className="sale">
+                      <H5>
+                        Total Servers (
+                        {generalData.companyServerStatistics
+                          .totalActiveServers +
+                          generalData.companyServerStatistics
+                            .totalInActiveServers}
+                        )
+                      </H5>
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                        }}
+                      >
                         <div
                           style={{
                             display: "flex",
-                            justifyContent: "space-between",
+                            flexDirection: "row",
+                            width: "85%", // Set the width of the outer container
+                            height: "170px", // Set the height of the outer container
+                            // backgroundColor: "gray", // Remove the background color
                           }}
                         >
                           <div
                             style={{
-                              display: "flex",
-                              flexDirection: "row",
-                              width: "85%", // Set the width of the outer container
-                              height: "170px", // Set the height of the outer container
-                              // backgroundColor: "gray", // Remove the background color
+                              flex: "1",
+                              marginRight: "0px",
+                              // backgroundColor: "gray",
                             }}
                           >
-                            <div
-                              style={{
-                                flex: "1",
-                                marginRight: "0px",
-                                // backgroundColor: "gray",
+                            <Chart
+                              width={"100%"}
+                              height={"100%"} // Set the height of the chart to fill the outer container
+                              chartType={"PieChart"}
+                              loader={<div>{"Loading Chart"}</div>}
+                              data={[
+                                ["Task", "Hours per Day"],
+                                [
+                                  "Connected",
+                                  generalData.companyServerStatistics
+                                    .totalActiveServers,
+                                ],
+                                [
+                                  "Disconnected",
+                                  generalData.companyServerStatistics
+                                    .totalInActiveServers,
+                                ],
+                              ]}
+                              options={{
+                                backgroundColor: "transparent", // Set chart background color as transparent
+                                chartArea: {
+                                  backgroundColor: "transparent", // Set chart area background color as transparent
+                                  top: 10, // Set padding of the top of chart area to 0
+                                  left: 25, // Set padding of the left of chart area to 0
+                                  right: 0,
+                                },
+                                pieSliceText: "value", // Display the exact values of each option
                               }}
-                            >
-                              <Chart
-                                width={"100%"}
-                                height={"100%"} // Set the height of the chart to fill the outer container
-                                chartType={"PieChart"}
-                                loader={<div>{"Loading Chart"}</div>}
-                                data={[
-                                  ["Task", "Hours per Day"],
-                                  [
-                                    "Connected",
-                                    generalData.companyServerStatistics
-                                      .totalActiveServers,
-                                  ],
-                                  [
-                                    "Disconnected",
-                                    generalData.companyServerStatistics
-                                      .totalInActiveServers,
-                                  ],
-                                ]}
-                                options={{
-                                  backgroundColor: "transparent", // Set chart background color as transparent
-                                  chartArea: {
-                                    backgroundColor: "transparent", // Set chart area background color as transparent
-                                    top: 10, // Set padding of the top of chart area to 0
-                                    left: 25, // Set padding of the left of chart area to 0
-                                    right: 0,
-                                  },
-                                  pieSliceText: "value", // Display the exact values of each option
-                                }}
-                                rootProps={pieChart.rootProps}
-                              />
-                            </div>
+                              rootProps={pieChart.rootProps}
+                            />
                           </div>
                         </div>
                       </div>
-                    </Col>
-                  </Row>
-                </CardBody>
-              </Card>
-            </Col>
-          </Draggable>
+                    </div>
+                  </Col>
+                </Row>
+              </CardBody>
+            </Card>
+          </Col>
 
-          <Draggable
+          {/* <Draggable
             handle=".handle1"
             defaultPosition={positions.box2}
             grid={[1, 1]}
@@ -380,87 +381,90 @@ const General = () => {
             onDrag={(e, ui) => handleDrag("box2", e, ui)}
             onStop={() => {}}
           >
-            <Col xl="6" className="box">
-              <Row className="handle1">
-                <Col xl="12" lg="12">
-                  <Card className="deal-open">
-                    <CardHeader className="pb-0">
-                      <div className="header-top">
-                        <H5 className="m-0">Operator Performance</H5>
-                      </div>
-                    </CardHeader>
-                    <CardBody>
+            
+          </Draggable> */}
+
+          <Col xl="6" className="box">
+            <Row className="handle1">
+              <Col xl="12" lg="12">
+                <Card className="deal-open">
+                  <CardHeader className="pb-0">
+                    <div className="header-top">
+                      <H5 className="m-0">Operator Performance</H5>
+                    </div>
+                  </CardHeader>
+                  <CardBody>
+                    <div
+                      style={{
+                        margin: "15px 0px",
+                        display: "flex",
+                        justifyContent: "space-between",
+                      }}
+                    >
                       <div
                         style={{
-                          margin: "15px 0px",
-                          display: "flex",
-                          justifyContent: "space-between",
+                          width: "32%",
+                          padding: "6px",
+                          textAlign: "center",
+                          backgroundColor: "rgb(51, 191, 191)",
+                          borderRadius: "10px",
+                          color: "white",
                         }}
                       >
-                        <div
-                          style={{
-                            width: "32%",
-                            padding: "6px",
-                            textAlign: "center",
-                            backgroundColor: "rgb(51, 191, 191)",
-                            borderRadius: "10px",
-                            color: "white",
-                          }}
-                        >
-                          Total:&nbsp;
-                          {
-                            generalData.companyAlertEventsStatistics
-                              .totalLiveAlerts
-                          }
-                        </div>
-                        <div
-                          style={{
-                            width: "32%",
-                            padding: "6px",
-                            textAlign: "center",
-                            backgroundColor: "rgb(255, 97, 80)",
-                            borderRadius: "10px",
-                            color: "white",
-                          }}
-                        >
-                          Assigned: &nbsp;
-                          {
-                            generalData.companyAlertEventsStatistics
-                              .totalAssignedAlerts
-                          }
-                        </div>
-                        <div
-                          style={{
-                            width: "32%",
-                            padding: "6px",
-                            textAlign: "center",
-                            backgroundColor: "rgb(81, 187, 37)",
-                            borderRadius: "10px",
-                            color: "white",
-                          }}
-                        >
-                          Completed:&nbsp;
-                          {
-                            generalData.companyAlertEventsStatistics
-                              .totalCompletedAlerts
-                          }
-                        </div>
+                        Total:&nbsp;
+                        {
+                          generalData.companyAlertEventsStatistics
+                            .totalLiveAlerts
+                        }
                       </div>
-                      <UL
-                        className="theme-scrollbar"
+                      <div
                         style={{
-                          overflowY: "scroll",
-                          overflowX: "auto",
-                          maxHeight: "calc(38vh - 20px)", // Subtract scrollbar width from max height
-                          WebkitOverflowScrolling: "touch", // Enable momentum scrolling on iOS
-                          scrollbarWidth: "thin", // Specify scrollbar width
-                          WebkitBorderRadius: "5px", // For WebKit browsers (Chrome, Safari)
-                          MozBorderRadius: "5px", // For Mozilla Firefox
-                          borderRadius: "5px", // For other browsers
-                          scrollbarColor: "lightgray transparent", // Specify scrollbar color
+                          width: "32%",
+                          padding: "6px",
+                          textAlign: "center",
+                          backgroundColor: "rgb(255, 97, 80)",
+                          borderRadius: "10px",
+                          color: "white",
                         }}
                       >
-                        {/* <Collapse
+                        Assigned: &nbsp;
+                        {
+                          generalData.companyAlertEventsStatistics
+                            .totalAssignedAlerts
+                        }
+                      </div>
+                      <div
+                        style={{
+                          width: "32%",
+                          padding: "6px",
+                          textAlign: "center",
+                          backgroundColor: "rgb(81, 187, 37)",
+                          borderRadius: "10px",
+                          color: "white",
+                        }}
+                      >
+                        Completed:&nbsp;
+                        {
+                          generalData.companyAlertEventsStatistics
+                            .totalCompletedAlerts
+                        }
+                      </div>
+                    </div>
+                    <UL
+                      className="theme-scrollbar"
+                      style={{
+                        overflowY: "scroll",
+                        overflowX: "auto",
+                        maxHeight: "calc(38vh - 20px)", // Subtract scrollbar width from max height
+                        WebkitOverflowScrolling: "touch", // Enable momentum scrolling on iOS
+                        scrollbarWidth: "thin", // Specify scrollbar width
+                        WebkitBorderRadius: "5px", // For WebKit browsers (Chrome, Safari)
+                        MozBorderRadius: "5px", // For Mozilla Firefox
+                        borderRadius: "5px", // For other browsers
+                        scrollbarColor: "lightgray transparent", // Specify scrollbar color
+                      }}
+                    >
+                      {/* <Collapse
                           defaultActiveKey={[""]}
                           // onChange={onChange}
                           items={items}
@@ -471,76 +475,76 @@ const General = () => {
                           }}
                         /> */}
 
-                        {operatorPerformance.map((data: any, index: any) => (
-                          <>
-                            <li
-                              className="d-flex align-items-center"
-                              key={index}
+                      {operatorPerformance.map((data: any, index: any) => (
+                        <>
+                          <li
+                            className="d-flex align-items-center"
+                            key={index}
+                            style={{
+                              padding: "10px 12px",
+                              display: "flex",
+                              justifyContent: "space-between",
+                              cursor: "pointer",
+                            }}
+                            onClick={() => {
+                              setIsUpdateModalOpenForOperatorAlerts(true);
+                              setAlertsData(data.alerts);
+                            }}
+                          >
+                            <div
                               style={{
-                                padding: "10px 12px",
                                 display: "flex",
-                                justifyContent: "space-between",
-                                cursor: "pointer",
-                              }}
-                              onClick={() => {
-                                setIsUpdateModalOpenForOperatorAlerts(true);
-                                setAlertsData(data.alerts);
                               }}
                             >
-                              <div
-                                style={{
-                                  display: "flex",
-                                }}
-                              >
-                                {/* <Image
+                              {/* <Image
                                 src={dynamicImage(
                                   `dashboard-2/user/${data.img}.jpg`
                                 )}
                                 alt=""
                               /> */}
-                                <div
-                                  style={{
-                                    display: "flex",
-                                    flexDirection: "column",
-                                  }}
-                                >
-                                  <Link className="ms-2" to={Href}>
-                                    <h5
-                                      style={{
-                                        fontSize: "16px",
-                                        fontWeight: "bold",
-                                      }}
-                                    >
-                                      {data.operator.fullName}
-                                    </h5>
-                                    <span
-                                      style={{
-                                        fontSize: "13px",
-                                      }}
-                                    >
-                                      {data.operator.emailAddress}
-                                    </span>
-                                  </Link>
-                                </div>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  flexDirection: "column",
+                                }}
+                              >
+                                <Link className="ms-2" to={Href}>
+                                  <h5
+                                    style={{
+                                      fontSize: "16px",
+                                      fontWeight: "bold",
+                                    }}
+                                  >
+                                    {data.operator.fullName}
+                                  </h5>
+                                  <span
+                                    style={{
+                                      fontSize: "13px",
+                                    }}
+                                  >
+                                    {data.operator.emailAddress}
+                                  </span>
+                                </Link>
                               </div>
-                              <div>
-                                <span
-                                  style={{
-                                    fontSize: "16px",
-                                    fontWeight: "bold",
-                                  }}
-                                >
-                                  Alerts Catered: &nbsp;
-                                </span>
-                                <span
-                                  style={{
-                                    fontSize: "20px",
-                                  }}
-                                >
-                                  {data.alerts.length}
-                                </span>
-                              </div>
-                              {/* <div
+                            </div>
+                            <div>
+                              <span
+                                style={{
+                                  fontSize: "16px",
+                                  fontWeight: "bold",
+                                }}
+                              >
+                                Alerts Catered: &nbsp;
+                              </span>
+                              <span
+                                style={{
+                                  fontSize: "20px",
+                                }}
+                              >
+                                {data.alerts.length}
+                              </span>
+                            </div>
+                            {/* <div
                               style={{
                                 textAlign: "center",
                                 width: "30%",
@@ -560,25 +564,24 @@ const General = () => {
                                 </Progress>
                               </Fragment>
                             </div> */}
-                            </li>
-                          </>
-                        ))}
-                        {isUpdateModalOpenForOperatorAlerts && (
-                          <OperatorAlerts
-                            isVisible={isUpdateModalOpenForOperatorAlerts}
-                            setIsVisible={setIsUpdateModalOpenForOperatorAlerts}
-                            data={alertsData}
-                          />
-                        )}
-                      </UL>
-                    </CardBody>
-                  </Card>
-                </Col>
-              </Row>
-            </Col>
-          </Draggable>
+                          </li>
+                        </>
+                      ))}
+                      {isUpdateModalOpenForOperatorAlerts && (
+                        <OperatorAlerts
+                          isVisible={isUpdateModalOpenForOperatorAlerts}
+                          setIsVisible={setIsUpdateModalOpenForOperatorAlerts}
+                          data={alertsData}
+                        />
+                      )}
+                    </UL>
+                  </CardBody>
+                </Card>
+              </Col>
+            </Row>
+          </Col>
 
-          <Draggable
+          {/* <Draggable
             handle=".handle2"
             defaultPosition={positions.box3}
             grid={[1, 1]}
@@ -587,79 +590,82 @@ const General = () => {
             onDrag={(e, ui) => handleDrag("box3", e, ui)}
             onStop={() => {}}
           >
-            <Col xl="3" className="box">
-              <Card className="widget-sell handle2">
-                <CardBody className="pb-0">
-                  <Row>
-                    <Col xl="12" lg="12" sm="12" className="mb-3">
-                      <div className="sale">
-                        <H5>Package Expiry ({daysRemaining})</H5>
-                        <div
-                          style={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                          }}
-                        >
-                          {/* <H5>{data.count}</H5> */}
-                          {/* <div id="donutchart">
+            
+          </Draggable> */}
+
+          <Col xl="3" className="box">
+            <Card className="widget-sell handle2">
+              <CardBody className="pb-0">
+                <Row>
+                  <Col xl="12" lg="12" sm="12" className="mb-3">
+                    <div className="sale">
+                      <H5>Package Expiry ({daysRemaining})</H5>
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                        }}
+                      >
+                        {/* <H5>{data.count}</H5> */}
+                        {/* <div id="donutchart">
                               <ReactApexChart
                                 options={apexDonutCharts}
                                 series={apexDonutCharts.series}
                                 type="donut"
                               />
                             </div> */}
+                        <div
+                          style={{
+                            display: "flex",
+                            flexDirection: "row",
+                            width: "85%", // Set the width of the outer container
+                            height: "170px", // Set the height of the outer container
+                            // backgroundColor: "gray", // Remove the background color
+                          }}
+                        >
                           <div
                             style={{
-                              display: "flex",
-                              flexDirection: "row",
-                              width: "85%", // Set the width of the outer container
-                              height: "170px", // Set the height of the outer container
-                              // backgroundColor: "gray", // Remove the background color
+                              flex: "1",
+                              marginRight: "0px",
+                              // backgroundColor: "gray",
                             }}
                           >
-                            <div
-                              style={{
-                                flex: "1",
-                                marginRight: "0px",
-                                // backgroundColor: "gray",
+                            <Chart
+                              width={"100%"}
+                              height={"100%"} // Set the height of the chart to fill the outer container
+                              chartType={"PieChart"}
+                              loader={<div>{"Loading Chart"}</div>}
+                              data={[
+                                ["Task", "Hours per Day"],
+                                [
+                                  "Remaining",
+                                  daysRemaining < 0 ? 0 : daysRemaining,
+                                ],
+                                [
+                                  "Spend",
+                                  daysRemaining > 0
+                                    ? generalData.companyPackageStatistics
+                                        .packageDays - daysRemaining
+                                    : generalData.companyPackageStatistics
+                                        .packageDays,
+                                ],
+                              ]}
+                              options={{
+                                backgroundColor: "transparent", // Set chart background color as transparent
+                                chartArea: {
+                                  backgroundColor: "transparent", // Set chart area background color as transparent
+                                  top: 10, // Set padding of the top of chart area to 0
+                                  left: 25, // Set padding of the left of chart area to 0
+                                  right: 0,
+                                },
+                                pieHole: 0.4,
+                                pieSliceText: "value", // Display the exact values of each option
                               }}
-                            >
-                              <Chart
-                                width={"100%"}
-                                height={"100%"} // Set the height of the chart to fill the outer container
-                                chartType={"PieChart"}
-                                loader={<div>{"Loading Chart"}</div>}
-                                data={[
-                                  ["Task", "Hours per Day"],
-                                  [
-                                    "Remaining",
-                                    daysRemaining < 0 ? 0 : daysRemaining,
-                                  ],
-                                  [
-                                    "Spend",
-                                    daysRemaining > 0
-                                      ? generalData.companyPackageStatistics
-                                          .packageDays - daysRemaining
-                                      : generalData.companyPackageStatistics
-                                          .packageDays,
-                                  ],
-                                ]}
-                                options={{
-                                  backgroundColor: "transparent", // Set chart background color as transparent
-                                  chartArea: {
-                                    backgroundColor: "transparent", // Set chart area background color as transparent
-                                    top: 10, // Set padding of the top of chart area to 0
-                                    left: 25, // Set padding of the left of chart area to 0
-                                    right: 0,
-                                  },
-                                  pieHole: 0.4,
-                                  pieSliceText: "value", // Display the exact values of each option
-                                }}
-                              />
-                            </div>
+                            />
                           </div>
                         </div>
-                        {/* <P className="d-flex">
+                      </div>
+                      {/* <P className="d-flex">
                         <span className={`bg-light-${data.color} me-2`}>
                           <SVG iconId={data.svgIcon} />
                         </span>
@@ -668,64 +674,63 @@ const General = () => {
                         </span>
                       </P>
                       <span className="sale-title">{data.time}</span> */}
-                      </div>
-                    </Col>
-                    <Col xl="12" lg="12" sm="12" className="mb-3">
-                      <div className="sale">
-                        <H5>Total Leads ( 1 )</H5>
+                    </div>
+                  </Col>
+                  <Col xl="12" lg="12" sm="12" className="mb-3">
+                    <div className="sale">
+                      <H5>Total Leads ( 1 )</H5>
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                        }}
+                      >
                         <div
                           style={{
                             display: "flex",
-                            justifyContent: "space-between",
+                            flexDirection: "row",
+                            width: "85%", // Set the width of the outer container
+                            height: "170px", // Set the height of the outer container
+                            // backgroundColor: "gray", // Remove the background color
                           }}
                         >
                           <div
                             style={{
-                              display: "flex",
-                              flexDirection: "row",
-                              width: "85%", // Set the width of the outer container
-                              height: "170px", // Set the height of the outer container
-                              // backgroundColor: "gray", // Remove the background color
+                              flex: "1",
+                              marginRight: "0px",
+                              // backgroundColor: "gray",
                             }}
                           >
-                            <div
-                              style={{
-                                flex: "1",
-                                marginRight: "0px",
-                                // backgroundColor: "gray",
+                            <Chart
+                              width={"100%"}
+                              height={"100%"} // Set the height of the chart to fill the outer container
+                              chartType={"PieChart"}
+                              loader={<div>{"Loading Chart"}</div>}
+                              data={[
+                                ["Task", "Hours per Day"],
+                                ["Active", 1],
+                              ]}
+                              options={{
+                                backgroundColor: "transparent", // Set chart background color as transparent
+                                chartArea: {
+                                  backgroundColor: "transparent", // Set chart area background color as transparent
+                                  top: 10, // Set padding of the top of chart area to 0
+                                  left: 25, // Set padding of the left of chart area to 0
+                                  right: 0,
+                                },
+                                pieSliceText: "value", // Display the exact values of each option
                               }}
-                            >
-                              <Chart
-                                width={"100%"}
-                                height={"100%"} // Set the height of the chart to fill the outer container
-                                chartType={"PieChart"}
-                                loader={<div>{"Loading Chart"}</div>}
-                                data={[
-                                  ["Task", "Hours per Day"],
-                                  ["Active", 1],
-                                ]}
-                                options={{
-                                  backgroundColor: "transparent", // Set chart background color as transparent
-                                  chartArea: {
-                                    backgroundColor: "transparent", // Set chart area background color as transparent
-                                    top: 10, // Set padding of the top of chart area to 0
-                                    left: 25, // Set padding of the left of chart area to 0
-                                    right: 0,
-                                  },
-                                  pieSliceText: "value", // Display the exact values of each option
-                                }}
-                                rootProps={pieChart.rootProps}
-                              />
-                            </div>
+                              rootProps={pieChart.rootProps}
+                            />
                           </div>
                         </div>
                       </div>
-                    </Col>
-                  </Row>
-                </CardBody>
-              </Card>
-            </Col>
-          </Draggable>
+                    </div>
+                  </Col>
+                </Row>
+              </CardBody>
+            </Card>
+          </Col>
         </Row>
       )}
     </Col>
