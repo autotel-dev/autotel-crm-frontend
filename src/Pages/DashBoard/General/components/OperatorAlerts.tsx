@@ -256,7 +256,19 @@ const OperatorAlerts: React.FC<PropsTypes> = ({
                     <tr>
                       {tableHeader.map((data, index) => (
                         <th key={index} style={{ width: "14%" }}>
-                          {data}
+                          {data == "Count Down" ? (
+                            <div
+                              style={{
+                                display: "flex",
+                                flexDirection: "column",
+                              }}
+                            >
+                              <span>{data}</span>
+                              <span>(HH:MM:SS)</span>
+                            </div>
+                          ) : (
+                            data
+                          )}
                         </th>
                       ))}
                     </tr>
@@ -321,7 +333,9 @@ const OperatorAlerts: React.FC<PropsTypes> = ({
                                 <td style={{ width: "14%" }}>
                                   {data.assignedTo.fullName}
                                 </td>
-                                <td style={{ width: "14%" }}>
+                                <td
+                                  style={{ width: "14%", fontWeight: "bold" }}
+                                >
                                   {data.remainingTime}
                                 </td>
                               </tr>
