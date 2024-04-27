@@ -65,7 +65,9 @@ const SuccessfullyFormSubmitted = ({
     companyLogo,
   } = useSelector((state: any) => state.companies);
   // console.log("createCompany", createCompany);
-
+  const { userPersonalizationData } = useSelector(
+    (state: any) => state.personalization
+  );
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -263,14 +265,39 @@ const SuccessfullyFormSubmitted = ({
       <div style={{ display: "flex", justifyContent: "space-between" }}>
         <H4>Company Info</H4>
         <Row>
-          <Col
-            xs={9}
-            className="text-end d-flex justify-content-end gap-2 align-center"
-          >
-            <Button color="primary" onClick={() => callbackActive(1)}>
-              Edit
-            </Button>
-          </Col>
+          {userPersonalizationData == null &&
+          userPersonalizationData?.primaryColor == null ? (
+            <Col
+              xs={9}
+              className="text-end d-flex justify-content-end gap-2 align-center"
+            >
+              <Button color="primary" onClick={() => callbackActive(1)}>
+                Edit
+              </Button>
+            </Col>
+          ) : (
+            <Col
+              xs={9}
+              className="text-end d-flex justify-content-end gap-2 align-center"
+            >
+              <button
+                style={{
+                  borderRadius: "5px",
+                  padding: "8px 25px",
+                  color: "white",
+                  backgroundColor: `${
+                    userPersonalizationData &&
+                    userPersonalizationData.primaryColor
+                  }`,
+                  border: "none",
+                  outline: "none",
+                }}
+                onClick={() => callbackActive(1)}
+              >
+                Edit
+              </button>
+            </Col>
+          )}
         </Row>
       </div>
 
@@ -1050,21 +1077,21 @@ const SuccessfullyFormSubmitted = ({
         </Row>
       </Form>
       <Row>
-        <Col
-          xs={12}
-          className="text-end d-flex justify-content-end gap-2 align-center"
-        >
-          {/* <Button color="primary">Print</Button> */}
-          <Button
-            disabled={loading ? true : false}
-            color="primary"
-            onClick={(e) => {
-              handleSubmit(e);
-            }}
+          <Col
+            xs={12}
+            className="text-end d-flex justify-content-end gap-2 align-center"
           >
-            {loading ? "Loading..." : "Submit"}
-          </Button>
-        </Col>
+            {/* <Button color="primary">Print</Button> */}
+            <Button
+              disabled={loading ? true : false}
+              color="primary"
+              onClick={(e) => {
+                handleSubmit(e);
+              }}
+            >
+              {loading ? "Loading..." : "Submit"}
+            </Button>
+          </Col>
       </Row>
     </div>
   );

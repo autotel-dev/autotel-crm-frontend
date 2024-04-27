@@ -61,9 +61,7 @@ const EditProfileForm = () => {
         url:
           getUserRole() === ROLES.COMPANY
             ? "company/update-company"
-            : getUserRole() === ROLES.OPERATOR
-            ? "company/update-operator"
-            : `super-admin/update-super-admin`,
+            : "super-admin/update-super-admin",
       })
         .then((data: any) => {
           // // console.log("api call --- >", data);
@@ -259,8 +257,10 @@ const EditProfileForm = () => {
               type="submit"
               disabled={loading}
               onClick={(e) => {
-                e.preventDefault();
-                setIsEdit(!isEdit);
+                if (!isEdit) {
+                  e.preventDefault();
+                  setIsEdit(!isEdit);
+                }
               }}
             >
               {loading ? "Loading..." : isEdit ? "Save" : "Edit"}

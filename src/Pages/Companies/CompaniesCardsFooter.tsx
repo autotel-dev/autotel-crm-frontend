@@ -1,4 +1,4 @@
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { H3, LI, UL } from "../../AbstractElements";
 import deleteAlert from "../Alerts/DeleteAlert";
 import { CardType } from "./DataType/CompaniesDataType";
@@ -10,10 +10,14 @@ import { setCompany } from "../../ReaduxToolkit/Reducer/CompanySlice";
 import { useNavigate } from "react-router-dom";
 
 const CompaniesCardsFooter = ({ item }: CardType) => {
+  const { userPersonalizationData } = useSelector(
+    (state: any) => state.personalization
+  );
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [packageId, setPackageId] = useState("");
+  const [packageExpirationDate, setPackageExpirationDate] = useState("");
   const [id, setId] = useState("");
   const [modal, setModal] = useState(false);
   const toggle = () => {
@@ -59,7 +63,13 @@ const CompaniesCardsFooter = ({ item }: CardType) => {
             padding: "10px",
             color: "white",
             fontSize: "14px",
-            background: "#35bfbf",
+            // backgroundColor: `${
+            //   userPersonalizationData !== null &&
+            //   userPersonalizationData?.customColor2 !== null
+            //     ? userPersonalizationData?.customColor2
+            //     : "#35bfbf"
+            // }`,
+            backgroundColor: "#35bfbf",
             borderRadius: "5px",
             border: "none",
             outline: "none",
@@ -70,6 +80,7 @@ const CompaniesCardsFooter = ({ item }: CardType) => {
             // console.log("isUpdateModalOpen: ", isUpdateModalOpen);
             setId(item._id);
             setPackageId(item.package);
+            setPackageExpirationDate(item.packageExpirationDate);
           }}
         >
           Extend
@@ -126,6 +137,7 @@ const CompaniesCardsFooter = ({ item }: CardType) => {
         setIsVisible={setIsUpdateModalOpen}
         companyId={id}
         packageId={packageId}
+        packageExpirationDate={packageExpirationDate}
       />
       {/* <CommonModal modalData={ModalData}>
         <ChangePasswordModal toggle={toggle} />

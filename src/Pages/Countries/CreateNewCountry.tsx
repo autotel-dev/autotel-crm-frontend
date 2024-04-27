@@ -5,7 +5,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { Button, FormGroup, Label, Modal, ModalBody, Row } from "reactstrap";
 import { Cancel } from "../../utils/Constant";
 import { CheckCircle } from "react-feather";
-import { H3 ,P} from "../../AbstractElements";
+import { H3, P } from "../../AbstractElements";
 import { create, getAll } from "../../Api";
 import { useDispatch, useSelector } from "react-redux";
 import { Type } from "./CountryTypes/CountryTypes";
@@ -19,6 +19,9 @@ import {
 import Swal from "sweetalert2";
 
 const CreateNewCountry = () => {
+  const { userPersonalizationData } = useSelector(
+    (state: any) => state.personalization
+  );
   const dispatch = useDispatch();
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -136,8 +139,16 @@ const CreateNewCountry = () => {
     <Col md={6}>
       <div className="text-end">
         <button
-          className="btn btn-primary"
-          style={{ color: "white" }}
+          className={`btn ${
+            userPersonalizationData?.customColor2 == null ? "btn-primary" : ""
+          }`}
+          style={{
+            color: "white",
+            backgroundColor: `${
+              userPersonalizationData !== null &&
+              userPersonalizationData?.customColor2
+            }`,
+          }}
           onClick={addToggle}
         >
           <PlusCircle />

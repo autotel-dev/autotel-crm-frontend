@@ -28,6 +28,9 @@ import Swal from "sweetalert2";
 import "./permissionsStyle.css";
 
 const CreateNewUser = () => {
+  const { userPersonalizationData } = useSelector(
+    (state: any) => state.personalization
+  );
   const { crmActiveModules } = useSelector((state: any) => state.crmModules);
   const [decodedToken, setDecodedToken]: any = useState(null);
   const authToken = localStorage.getItem("token");
@@ -205,8 +208,16 @@ const CreateNewUser = () => {
     <Col md={6}>
       <div className="text-end">
         <button
-          className="btn btn-primary"
-          style={{ color: "white" }}
+          className={`btn ${
+            userPersonalizationData?.customColor2 == null ? "btn-primary" : ""
+          }`}
+          style={{
+            color: "white",
+            backgroundColor: `${
+              userPersonalizationData !== null &&
+              userPersonalizationData?.customColor2
+            }`,
+          }}
           onClick={addToggle}
         >
           <PlusCircle />
@@ -427,7 +438,7 @@ const CreateNewUser = () => {
                                         marginRight: "25px",
                                         marginBottom: "15px",
                                         fontSize: "18px",
-                                        verticalAlign:"center"
+                                        verticalAlign: "center",
                                       }}
                                       onClick={(e) => e.stopPropagation()}
                                     >

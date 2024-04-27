@@ -20,6 +20,9 @@ import SelectTimeZoneBox from "./SelectTimeZoneBox";
 import { P } from "../../../AbstractElements";
 
 const CompanyInfoForm = ({ callbackActive }: BusinessFormCommonProps) => {
+  const { userPersonalizationData } = useSelector(
+    (state: any) => state.personalization
+  );
   const dispatch = useDispatch();
   const { createCompany } = useSelector((state: any) => state.companies);
   const [companyInfoForm, setCompanyInfoForm] = useState({
@@ -234,9 +237,9 @@ const CompanyInfoForm = ({ callbackActive }: BusinessFormCommonProps) => {
         </Col>
 
         <Col xs={12} className="text-end">
-          <Button color="primary" onClick={handleNextButton}>
-            {Continue}
-          </Button>
+              <Button color="primary" onClick={handleNextButton}>
+                {Continue}
+              </Button>
         </Col>
       </Row>
     </Form>

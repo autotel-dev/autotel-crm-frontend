@@ -46,6 +46,9 @@ interface PropsTypes {
   location: any;
 }
 const UpdateCompanyForm = () => {
+  const { userPersonalizationData } = useSelector(
+    (state: any) => state.personalization
+  );
   const { crmModules, servers, permissions } = useSelector(
     (state: any) => state.companies
   );
@@ -1240,20 +1243,20 @@ const UpdateCompanyForm = () => {
                         {/* Row commented if below will uncomment */}
                       </Form>
                       <Row>
-                        <Col
-                          xs={12}
-                          className="text-end d-flex justify-content-end gap-2 align-center"
-                        >
-                          {/* <Button color="primary">Print</Button> */}
-                          <Button
-                            color="primary"
-                            onClick={(e) => {
-                              updateCompanySubmitted(e);
-                            }}
+                          <Col
+                            xs={12}
+                            className="text-end d-flex justify-content-end gap-2 align-center"
                           >
-                            {loading ? "Loading..." : "Submit"}
-                          </Button>
-                        </Col>
+                            {/* <Button color="primary">Print</Button> */}
+                            <Button
+                              color="primary"
+                              onClick={(e) => {
+                                updateCompanySubmitted(e);
+                              }}
+                            >
+                              {loading ? "Loading..." : "Submit"}
+                            </Button>
+                          </Col>
                       </Row>
                     </div>
                   </CardBody>

@@ -109,20 +109,20 @@ const SecuritySettings = () => {
                 </div>
               </div>
             </Col>
-            <div
-              className="form-footer"
-              style={{ display: "flex", justifyContent: "end" }}
-            >
-              <Button
-                color="primary"
-                className="d-block"
-                onClick={() => {
-                  otpEnabledChange();
-                }}
+              <div
+                className="form-footer"
+                style={{ display: "flex", justifyContent: "end" }}
               >
-                {loading ? "Loading..." : "Save"}
-              </Button>
-            </div>
+                <Button
+                  color="primary"
+                  className="d-block"
+                  onClick={() => {
+                    otpEnabledChange();
+                  }}
+                >
+                  {loading ? "Loading..." : "Save"}
+                </Button>
+              </div>
           </Row>
         </CardBody>
       </Card>

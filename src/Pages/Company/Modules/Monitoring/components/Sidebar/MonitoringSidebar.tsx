@@ -107,6 +107,11 @@ const MonitoringSidebar = () => {
           Total
           <br />
           {serverDevices.length}
+          {/* {
+            devicesStatuses.map(
+              (item: any, index: any) => item.online === "online"
+            ).items.length
+          } */}
           {/* Total &nbsp;=&nbsp; {serverDevices.length} */}
         </div>
         <div

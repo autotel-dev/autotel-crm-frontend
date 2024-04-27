@@ -3,11 +3,15 @@ import { BusinessFormCommonProps } from "../../../../Types/Forms/FormLayout/Form
 import { customHorizontalWizardNavData } from "../../../../Data/Forms/FormsLayout/FormWizardData";
 import { H3 } from "../../../../AbstractElements";
 import { NavData } from "./NavData";
+import { useSelector } from "react-redux";
 
 const NavComponent = ({
   callbackActive,
   activeTab,
 }: BusinessFormCommonProps) => {
+  const { userPersonalizationData } = useSelector(
+    (state: any) => state.personalization
+  );
   const handleTab = (id: number | undefined) => {
     if (id !== undefined) {
       callbackActive(id);
@@ -18,12 +22,45 @@ const NavComponent = ({
       {NavData.map((data, index) => (
         <NavItem key={index}>
           <NavLink
-            className={`b-r-0 ${activeTab === index + 1 ? "active" : ""}`}
+            style={{
+              color: "white",
+              backgroundColor: `${
+                userPersonalizationData && activeTab === index + 1
+                  ? userPersonalizationData?.customColor2
+                  : "white"
+              }`,
+            }}
+            className={`b-r-0 ${
+              activeTab === index + 1
+                ? userPersonalizationData &&
+                  userPersonalizationData?.customColor2 == null &&
+                  "active"
+                : ""
+            }`}
             onClick={() => handleTab(data.activeTab)}
           >
-            <div className="horizontal-wizard">
+            <div
+              className="horizontal-wizard"
+              style={{
+                color: `${
+                  userPersonalizationData !== null && activeTab === index + 1
+                    ? "white"
+                    : "black"
+                }`,
+              }}
+            >
               <div className="stroke-icon-wizard">
-                <i className={`fa ${data.iconName}`} />
+                <i
+                  className={`fa ${data.iconName}`}
+                  style={{
+                    color: `${
+                      userPersonalizationData !== null &&
+                      activeTab === index + 1
+                        ? "white"
+                        : "black"
+                    }`,
+                  }}
+                />
               </div>
               <div className="horizontal-wizard-content">
                 <H3>{data.tittle}</H3>

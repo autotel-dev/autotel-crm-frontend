@@ -21,6 +21,9 @@ import {
 import "./permissionsStyle.css";
 
 const CRMModules = ({ callbackActive }: BusinessFormCommonProps) => {
+  const { userPersonalizationData } = useSelector(
+    (state: any) => state.personalization
+  );
   const { allowedModules, crmModules, createCompany, permissions } =
     useSelector((state: any) => state.companies);
   const dispatch = useDispatch();
@@ -131,7 +134,9 @@ const CRMModules = ({ callbackActive }: BusinessFormCommonProps) => {
                             <Label className="switch mb-0">
                               <Input
                                 type="checkbox"
-                                defaultChecked={switches === "on" ? true : false}
+                                defaultChecked={
+                                  switches === "on" ? true : false
+                                }
                                 value={switches === "on" ? "on" : "off"}
                                 onChange={(e) => {
                                   if (switches === "on") {
@@ -401,15 +406,15 @@ const CRMModules = ({ callbackActive }: BusinessFormCommonProps) => {
             </Col>
           </Row>
         </Col>
-        <Col
-          xs={12}
-          className="text-end d-flex justify-content-end gap-2 align-center"
-        >
+            <Col
+              xs={12}
+              className="text-end d-flex justify-content-end gap-2 align-center"
+            >
           <Button color="primary">{Previous}</Button>
-          <Button color="primary" onClick={handleNextButton}>
-            {Continue}
-          </Button>
-        </Col>
+              <Button color="primary" onClick={handleNextButton}>
+                {Continue}
+              </Button>
+            </Col>
       </Row>
     </Form>
   );

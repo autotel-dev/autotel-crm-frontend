@@ -146,7 +146,16 @@ const ViewModal: React.FC<PropsTypes> = ({
                         </td>
                       ) : (
                         <td style={{ width: "10%" }}>
-                          {row.alertEventCloseDate}
+                          <div className="d-flex">
+                            <div className="flex-grow-1 ms-2">
+                              <div style={{ fontSize: "10px" }}>
+                                {row.alertEventCloseDate.slice(0, 10)}
+                              </div>
+                              <div style={{ fontSize: "10px" }}>
+                                {row.alertEventCloseDate.slice(11, 19)}
+                              </div>
+                            </div>
+                          </div>
                         </td>
                       )}
                       <td style={{ width: "10%" }}>

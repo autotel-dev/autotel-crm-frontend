@@ -36,6 +36,9 @@ import DeviceSelecetdForAlerts from "./components/DeviceSelecetdForAlerts";
 import { VscKebabVertical } from "react-icons/vsc";
 
 const ControlRoomAnalytics = () => {
+  const { userPersonalizationData } = useSelector(
+    (state: any) => state.personalization
+  );
   const { devices } = useSelector((state: any) => state.monitoring);
   const { dashboardStatistics, liveAlertsData } = useSelector(
     (state: any) => state.alerts
@@ -517,10 +520,16 @@ const ControlRoomAnalytics = () => {
             overflow: "hidden",
             height: "30px",
             transition: "width 0.5s",
-
+            color: "white",
+            backgroundColor: `${
+              userPersonalizationData !== null &&
+              userPersonalizationData?.customColor2
+            }`,
             borderRadius: "5px",
           }}
-          className="btn-primary"
+          className={`${
+            userPersonalizationData?.customColor2 == null ? "btn-primary" : ""
+          }`}
         >
           <div
             style={{
@@ -731,13 +740,21 @@ const ControlRoomAnalytics = () => {
                         </div>
                         <div>
                           <button
-                            className="btn-primary"
+                            className={`${
+                              userPersonalizationData?.customColor2 == null
+                                ? "btn-primary"
+                                : ""
+                            }`}
                             style={{
                               borderRadius: "5px",
                               padding: "5px 15px",
-                              color: "white",
                               outline: "none",
                               border: "none",
+                              color: "white",
+                              backgroundColor: `${
+                                userPersonalizationData !== null &&
+                                userPersonalizationData?.customColor2
+                              }`,
 
                               // marginTop: "3vh",
                             }}
@@ -894,94 +911,102 @@ const ControlRoomAnalytics = () => {
                                     )}
                                   </div>
                                 </div>
-                                <div
-                                  style={{
-                                    position: "relative",
-                                    display: "inline-block",
-                                  }}
-                                >
+                                {devices.length !== 0 && (
                                   <div
-                                    ref={connnectedServersDropdownRef}
                                     style={{
-                                      padding: "8px",
-                                      borderRadius: "50%",
-                                      backgroundColor:
-                                        isHovered && server?.server._id == id
-                                          ? "#f2f2f2"
-                                          : "transparent",
-                                      transition: "background-color 0.3s",
-                                      display: "inline-flex",
-                                      alignItems: "center",
-                                      justifyContent: "center",
-                                      cursor: "pointer",
-                                    }}
-                                    onMouseEnter={() => {
-                                      setId(server?.server._id);
-                                      setIsHovered(true);
-                                      // toggleConnectedServersDropdown();
-                                    }}
-                                    onMouseLeave={() => {
-                                      // setId("");
-                                      setIsHovered(false);
-                                      // toggleConnectedServersDropdown();
-                                    }}
-                                    onClick={(e) => {
-                                      toggleConnectedServersDropdown(e);
+                                      position: "relative",
+                                      display: "inline-block",
                                     }}
                                   >
-                                    <VscKebabVertical />
-                                  </div>
-                                  {isConnecetedServersDropdownOpen &&
-                                    server?.server._id == id && (
-                                      <div
-                                        className="custom-conneceted-servers-dropdown-analytics"
-                                        style={{
-                                          position: "absolute",
-                                          top: "100%",
-                                          right: 0,
-                                          zIndex: 1000,
-                                        }}
-                                      >
-                                        <div className="conneceted-servers-dropdown-options-analytics">
-                                          <div
-                                            id="Popover1"
-                                            className="dropdown-item exclude-from-close"
-                                            onClick={(e) => {
-                                              toggleConnectedServersDropdown(e);
-                                            }}
-                                          >
-                                            Vehicle Data
-                                          </div>
-                                          <UncontrolledPopover
-                                            placement="top"
-                                            trigger="hover"
-                                            target="Popover1"
-                                          >
-                                            <PopoverHeader>
-                                              In Development Mode
-                                            </PopoverHeader>
-                                            <PopoverBody>
-                                              This feature is in development
-                                              mode
-                                            </PopoverBody>
-                                          </UncontrolledPopover>
-                                          <div
-                                            className="dropdown-item exclude-from-close"
-                                            onClick={(e) => {
-                                              e.stopPropagation();
-                                              setServerID(server?.server?._id);
-                                              setIsUpdateModalOpenForDeviceSelecetdForAlerts(
-                                                true
-                                              );
-                                              toggleConnectedServersDropdown(e);
-                                            }}
-                                          >
-                                            Alert Data
+                                    <div
+                                      ref={connnectedServersDropdownRef}
+                                      style={{
+                                        padding: "8px",
+                                        borderRadius: "50%",
+                                        backgroundColor:
+                                          isHovered && server?.server._id == id
+                                            ? "#f2f2f2"
+                                            : "transparent",
+                                        transition: "background-color 0.3s",
+                                        display: "inline-flex",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                        cursor: "pointer",
+                                      }}
+                                      onMouseEnter={() => {
+                                        setId(server?.server._id);
+                                        setIsHovered(true);
+                                        // toggleConnectedServersDropdown();
+                                      }}
+                                      onMouseLeave={() => {
+                                        // setId("");
+                                        setIsHovered(false);
+                                        // toggleConnectedServersDropdown();
+                                      }}
+                                      onClick={(e) => {
+                                        toggleConnectedServersDropdown(e);
+                                      }}
+                                    >
+                                      <VscKebabVertical />
+                                    </div>
+                                    {isConnecetedServersDropdownOpen &&
+                                      server?.server._id == id && (
+                                        <div
+                                          className="custom-conneceted-servers-dropdown-analytics"
+                                          style={{
+                                            position: "absolute",
+                                            top: "100%",
+                                            right: 0,
+                                            zIndex: 1000,
+                                          }}
+                                        >
+                                          <div className="conneceted-servers-dropdown-options-analytics">
+                                            <div
+                                              id="Popover1"
+                                              className="dropdown-item exclude-from-close"
+                                              onClick={(e) => {
+                                                toggleConnectedServersDropdown(
+                                                  e
+                                                );
+                                              }}
+                                            >
+                                              Vehicle Data
+                                            </div>
+                                            <UncontrolledPopover
+                                              placement="top"
+                                              trigger="hover"
+                                              target="Popover1"
+                                            >
+                                              <PopoverHeader>
+                                                In Development Mode
+                                              </PopoverHeader>
+                                              <PopoverBody>
+                                                This feature is in development
+                                                mode
+                                              </PopoverBody>
+                                            </UncontrolledPopover>
+                                            <div
+                                              className="dropdown-item exclude-from-close"
+                                              onClick={(e) => {
+                                                e.stopPropagation();
+                                                setServerID(
+                                                  server?.server?._id
+                                                );
+                                                setIsUpdateModalOpenForDeviceSelecetdForAlerts(
+                                                  true
+                                                );
+                                                toggleConnectedServersDropdown(
+                                                  e
+                                                );
+                                              }}
+                                            >
+                                              Alert Data
+                                            </div>
                                           </div>
                                         </div>
-                                      </div>
-                                    )}
-                                </div>
+                                      )}
+                                  </div>
+                                )}
                               </div>
                             );
                           }
@@ -1048,29 +1073,60 @@ const ControlRoomAnalytics = () => {
                         <div>
                           <div style={{ display: "flex" }}>
                             <button
-                              className="btn-primary"
+                              className={`${
+                                userPersonalizationData?.customColor2 == null
+                                  ? "btn-primary"
+                                  : ""
+                              }`}
                               style={{
                                 borderRadius: "5px",
                                 padding: "5px 15px",
-                                color: "white",
                                 outline: "none",
                                 border: "none",
+                                color: "white",
+                                backgroundColor: `${
+                                  userPersonalizationData !== null &&
+                                  userPersonalizationData?.customColor2
+                                }`,
                                 // marginTop: "3vh",
                               }}
                               onClick={() => {
                                 setIsUpdateModalOpenForSendCommand(true);
                               }}
+                              disabled={devices.length == 0}
+                              id="sendButtonWaitForDevices"
                             >
                               Send
                             </button>
+                            {devices.length == 0 && (
+                              <UncontrolledPopover
+                                placement="top"
+                                trigger="hover"
+                                target="sendButtonWaitForDevices"
+                              >
+                                <PopoverHeader>Reason</PopoverHeader>
+                                <PopoverBody>
+                                  Please wait a while because devices are
+                                  loading in background
+                                </PopoverBody>
+                              </UncontrolledPopover>
+                            )}
                             <button
-                              className="btn-primary"
+                              className={`${
+                                userPersonalizationData?.customColor2 == null
+                                  ? "btn-primary"
+                                  : ""
+                              }`}
                               style={{
                                 borderRadius: "5px",
                                 padding: "5px 15px",
-                                color: "white",
                                 outline: "none",
                                 border: "none",
+                                color: "white",
+                                backgroundColor: `${
+                                  userPersonalizationData !== null &&
+                                  userPersonalizationData?.customColor2
+                                }`,
                                 // marginTop: "3vh",
                                 marginLeft: "10px",
                               }}
@@ -1170,29 +1226,60 @@ const ControlRoomAnalytics = () => {
                         </div>
                         <div style={{ display: "flex" }}>
                           <button
-                            className="btn-primary"
+                            className={`${
+                              userPersonalizationData?.customColor2 == null
+                                ? "btn-primary"
+                                : ""
+                            }`}
                             style={{
                               borderRadius: "5px",
                               padding: "5px 15px",
-                              color: "white",
                               outline: "none",
                               border: "none",
+                              color: "white",
+                              backgroundColor: `${
+                                userPersonalizationData !== null &&
+                                userPersonalizationData?.customColor2
+                              }`,
                               // marginTop: "3vh",
                             }}
                             onClick={() => {
                               setIsUpdateModalOpenForPreAlertinfo(true);
                             }}
+                            disabled={devices.length == 0}
+                            id="addButtonWaitForDevices"
                           >
                             Add
                           </button>
+                          {devices.length == 0 && (
+                            <UncontrolledPopover
+                              placement="top"
+                              trigger="hover"
+                              target="addButtonWaitForDevices"
+                            >
+                              <PopoverHeader>Reason</PopoverHeader>
+                              <PopoverBody>
+                                Please wait a while because devices are loading
+                                in background
+                              </PopoverBody>
+                            </UncontrolledPopover>
+                          )}
                           <button
-                            className="btn-primary"
+                            className={`${
+                              userPersonalizationData?.customColor2 == null
+                                ? "btn-primary"
+                                : ""
+                            }`}
                             style={{
                               borderRadius: "5px",
                               padding: "5px 15px",
-                              color: "white",
                               outline: "none",
                               border: "none",
+                              color: "white",
+                              backgroundColor: `${
+                                userPersonalizationData !== null &&
+                                userPersonalizationData?.customColor2
+                              }`,
                               // marginTop: "3vh",
                               marginLeft: "10px",
                             }}

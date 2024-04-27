@@ -342,7 +342,7 @@ const Personalization = () => {
             <Row>
               <Col md={6}>
                 <FormGroup>
-                  <P>Header Text</P>
+                  <P>Login Page Header Text</P>
                   <Input
                     type="text"
                     placeholder="Enter Header Text here"
@@ -357,7 +357,7 @@ const Personalization = () => {
               </Col>
               <Col md={6}>
                 <FormGroup>
-                  <P>Sub Header Text</P>
+                  <P>Login Page Sub Header Text</P>
                   <Input
                     type="text"
                     placeholder="Enter Sub Text here"
@@ -404,7 +404,7 @@ const Personalization = () => {
               </Col>
               <Col md={4}>
                 <FormGroup>
-                  <P>Custom Color 1</P>
+                  <P>Background Color</P>
                   <Input
                     type="color"
                     placeholder="Enter Custom Color 1"
@@ -420,7 +420,7 @@ const Personalization = () => {
               </Col>
               <Col md={4}>
                 <FormGroup>
-                  <P>Custom Color 2</P>
+                  <P>Buttons and Bars Color</P>
                   <Input
                     type="color"
                     placeholder="Enter Custom Color 2"
@@ -436,7 +436,7 @@ const Personalization = () => {
               </Col>
               <Col md={4}>
                 <FormGroup>
-                  <P>Background Color</P>
+                  <P>Login Page Background Color</P>
                   <Input
                     type="color"
                     placeholder="Enter Background COlor"
@@ -452,7 +452,7 @@ const Personalization = () => {
               </Col>
               <Col md={4}>
                 <FormGroup>
-                  <P>Text Color</P>
+                  <P>Login Page Text Color</P>
                   <Input
                     type="color"
                     placeholder="Enter Text Color"
@@ -679,8 +679,7 @@ const Personalization = () => {
               <CardFooter
                 style={{
                   display: "flex",
-                  // justifyContent:
-                  //   userPersonalizationData == null ? "end" : "space-between",
+
                   justifyContent: "end",
                 }}
               >

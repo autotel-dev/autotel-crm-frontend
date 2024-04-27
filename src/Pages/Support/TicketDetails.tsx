@@ -28,6 +28,9 @@ import Swal from "sweetalert2";
 import { ROLES } from "../../constants/roles";
 
 const TicketDetails = () => {
+  const { userPersonalizationData } = useSelector(
+    (state: any) => state.personalization
+  );
   const { ticketId } = useParams();
   const [itemsLength, setItemsLength] = useState(2);
   const [showMore, setShowMore] = useState(false);
@@ -429,7 +432,12 @@ const TicketDetails = () => {
                     </div>
                     <div
                       style={{
-                        color: "#35bfbf",
+                        color: `${
+                          userPersonalizationData !== null &&
+                          userPersonalizationData?.customColor2 !== null
+                            ? userPersonalizationData?.customColor2
+                            : "#35bfbf"
+                        }`,
                         fontWeight: "normal",
                         fontSize: "20px",
                         marginBottom: "10px",
@@ -469,7 +477,12 @@ const TicketDetails = () => {
                       <Col
                         md={3}
                         style={{
-                          color: "#35bfbf",
+                          color: `${
+                            userPersonalizationData !== null &&
+                            userPersonalizationData?.customColor2 !== null
+                              ? userPersonalizationData?.customColor2
+                              : "#35bfbf"
+                          }`,
                           margin: "25px 0px",
                           fontSize: "20px",
                         }}
@@ -607,7 +620,12 @@ const TicketDetails = () => {
                           <Col
                             md={3}
                             style={{
-                              color: "#35bfbf",
+                              color: `${
+                                userPersonalizationData !== null &&
+                                userPersonalizationData?.customColor2 !== null
+                                  ? userPersonalizationData?.customColor2
+                                  : "#35bfbf"
+                              }`,
                               margin: "25px 0px",
                               fontSize: "20px",
                             }}
@@ -653,7 +671,15 @@ const TicketDetails = () => {
                         >
                           <a
                             href="#"
-                            style={{ color: "#167a93", fontSize: "20px" }}
+                            style={{
+                              color: `${
+                                userPersonalizationData !== null &&
+                                userPersonalizationData?.customColor2 !== null
+                                  ? userPersonalizationData?.customColor2
+                                  : "#35bfbf"
+                              }`,
+                              fontSize: "20px",
+                            }}
                           >
                             {
                               ticketDetails.messages[
@@ -699,9 +725,13 @@ const TicketDetails = () => {
                                     : "whitesmoke",
                                 padding: "15px",
                                 marginLeft:
-                                  getUserId() === reply.user._id ? "40%" : "0px",
+                                  getUserId() === reply.user._id
+                                    ? "40%"
+                                    : "0px",
                                 marginRight:
-                                  getUserId() === reply.user._id ? "0px" : "40%",
+                                  getUserId() === reply.user._id
+                                    ? "0px"
+                                    : "40%",
                                 borderRadius: "10px",
                                 marginBottom: `${
                                   index === 2 &&
@@ -966,7 +996,12 @@ const TicketDetails = () => {
                               <div style={{ display: "flex" }}>
                                 {getUserRole() === ROLES.SUPER_ADMIN && (
                                   <button
-                                    className="btn btn-primary"
+                                    className={`btn ${
+                                      userPersonalizationData?.customColor2 ==
+                                      null
+                                        ? "btn-primary"
+                                        : ""
+                                    }`}
                                     disabled={
                                       formatUnderscoredString(
                                         ticketDetails.status
@@ -974,6 +1009,10 @@ const TicketDetails = () => {
                                     }
                                     style={{
                                       color: "white",
+                                      backgroundColor: `${
+                                        userPersonalizationData !== null &&
+                                        userPersonalizationData?.customColor2
+                                      }`,
                                       display: "flex",
                                       alignItems: "center",
                                       justifyContent: "center",
@@ -1022,9 +1061,18 @@ const TicketDetails = () => {
                                   </button>
                                 )}
                                 <button
-                                  className="btn btn-primary"
+                                  className={`btn ${
+                                    userPersonalizationData?.customColor2 ==
+                                    null
+                                      ? "btn-primary"
+                                      : ""
+                                  }`}
                                   style={{
                                     color: "white",
+                                    backgroundColor: `${
+                                      userPersonalizationData !== null &&
+                                      userPersonalizationData?.customColor2
+                                    }`,
                                     display: "flex",
                                     alignItems: "center",
                                     justifyContent: "center",
@@ -1064,13 +1112,18 @@ const TicketDetails = () => {
                   <div>
                     <div
                       style={{
-                        // backgroundColor: "",
+                        backgroundColor: `${
+                          userPersonalizationData !== null &&
+                          userPersonalizationData?.customColor2 !== null
+                            ? userPersonalizationData?.customColor2
+                            : "#35bfbf"
+                        }`,
                         color: "white",
                         fontWeight: "bold",
                         padding: "20px",
                         fontSize: "25px",
                       }}
-                      className="btn-primary"
+                      // className="btn-primary"
                     >
                       Tickets Info
                     </div>
@@ -1377,9 +1430,17 @@ const TicketDetails = () => {
                         {formatUnderscoredString(ticketDetails.status) !==
                           "Resolved" && (
                           <button
-                            className="btn btn-primary"
+                            className={`btn ${
+                              userPersonalizationData?.customColor2 == null
+                                ? "btn-primary"
+                                : ""
+                            }`}
                             style={{
                               color: "white",
+                              backgroundColor: `${
+                                userPersonalizationData !== null &&
+                                userPersonalizationData?.customColor2
+                              }`,
                               display: "flex",
                               alignItems: "center",
                               justifyContent: "center",
@@ -1399,9 +1460,17 @@ const TicketDetails = () => {
                           formatUnderscoredString(ticketDetails.status) !==
                             "Resolved" && (
                             <button
-                              className="btn btn-primary"
+                              className={`btn ${
+                                userPersonalizationData?.customColor2 == null
+                                  ? "btn-primary"
+                                  : ""
+                              }`}
                               style={{
                                 color: "white",
+                                backgroundColor: `${
+                                  userPersonalizationData !== null &&
+                                  userPersonalizationData?.customColor2
+                                }`,
                                 display: "flex",
                                 alignItems: "center",
                                 justifyContent: "center",

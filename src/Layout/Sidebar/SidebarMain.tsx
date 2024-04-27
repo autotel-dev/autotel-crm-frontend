@@ -305,10 +305,24 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
     }
   }, []);
 
+  const { userPersonalizationData } = useSelector(
+    (state: any) => state.personalization
+  );
+
   return (
     <nav className="sidebar-main">
       {decodedToken !== null && (
-        <div id="sidebar-menu">
+        <div
+          id="sidebar-menu"
+          style={{
+            backgroundColor: `${
+              userPersonalizationData !== null &&
+              userPersonalizationData?.secondaryColor !== null
+                ? userPersonalizationData?.secondaryColor
+                : ""
+            }`,
+          }}
+        >
           <UL className="sidebar-links simple-list" id="simple-bar">
             <SimpleBar className="w-100 simplebar-scrollable-y h-100">
               <SidebarBack />
@@ -319,6 +333,14 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
                         className={`sidebar-link sidebar-title ${
                           sideMenu === data.title ? "active" : ""
                         }`}
+                        // style={{
+                        //   color: `${
+                        //     userPersonalizationData !== null &&
+                        //     userPersonalizationData?.customColor2 !== null &&
+                        //     sideMenu === data.title &&
+                        //     userPersonalizationData?.customColor2
+                        //   }`,
+                        // }}
                         to={data.link ? data.link : "#"}
                         onClick={() => handleClick(data)}
                       >
@@ -328,7 +350,11 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
                             sidebarIconType === "fill" ? "fill-" : ""
                           }${data.svgIcon}`}
                         />
-                        <span style={{ fontSize: "13px" }}>
+                        <span
+                          style={{
+                            fontSize: "13px",
+                          }}
+                        >
                           {t(data.title)}
                         </span>
                       </Link>

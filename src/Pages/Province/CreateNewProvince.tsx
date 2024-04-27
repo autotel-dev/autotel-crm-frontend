@@ -24,6 +24,9 @@ import SelectCountryBox from "./components/SelectCountryBox";
 import Swal from "sweetalert2";
 
 const CreateNewProvince = () => {
+  const { userPersonalizationData } = useSelector(
+    (state: any) => state.personalization
+  );
   const dispatch = useDispatch();
   const { countryId } = useSelector((state: any) => state.provinces);
 
@@ -150,8 +153,16 @@ const CreateNewProvince = () => {
     <Col md={6}>
       <div className="text-end">
         <button
-          className="btn btn-primary"
-          style={{ color: "white" }}
+          className={`btn ${
+            userPersonalizationData?.customColor2 == null ? "btn-primary" : ""
+          }`}
+          style={{
+            color: "white",
+            backgroundColor: `${
+              userPersonalizationData !== null &&
+              userPersonalizationData?.customColor2
+            }`,
+          }}
           onClick={addToggle}
         >
           <PlusCircle />

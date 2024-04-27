@@ -20,6 +20,9 @@ import Swal from "sweetalert2";
 import SelectPackageBox from "./components/SelectPackageBox";
 
 const CreateNewPackage = () => {
+  const { userPersonalizationData } = useSelector(
+    (state: any) => state.personalization
+  );
   const dispatch = useDispatch();
   const { packageDuration, packageDays } = useSelector(
     (state: any) => state.packages
@@ -157,8 +160,16 @@ const CreateNewPackage = () => {
     <Col md={6}>
       <div className="text-end">
         <button
-          className="btn btn-primary"
-          style={{ color: "white" }}
+          className={`btn ${
+            userPersonalizationData?.customColor2 == null ? "btn-primary" : ""
+          }`}
+          style={{
+            color: "white",
+            backgroundColor: `${
+              userPersonalizationData !== null &&
+              userPersonalizationData?.customColor2
+            }`,
+          }}
           onClick={addToggle}
         >
           <PlusCircle />

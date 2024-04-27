@@ -2,11 +2,11 @@ import { PlusCircle } from "react-feather";
 import { Col } from "reactstrap";
 import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { Button, FormGroup,  Modal, ModalBody, Row } from "reactstrap";
+import { Button, FormGroup, Modal, ModalBody, Row } from "reactstrap";
 import { Cancel } from "../../utils/Constant";
-import { H3 ,P} from "../../AbstractElements";
+import { H3, P } from "../../AbstractElements";
 import { create, getAll } from "../../Api";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Type } from "../Countries/CountryTypes/CountryTypes";
 import {
   setCRMModules,
@@ -18,6 +18,9 @@ import {
 import Swal from "sweetalert2";
 
 const CreateNewCRMModule = () => {
+  const { userPersonalizationData } = useSelector(
+    (state: any) => state.personalization
+  );
   const dispatch = useDispatch();
 
   const [loading, setLoading] = useState(false);
@@ -133,8 +136,15 @@ const CreateNewCRMModule = () => {
     <Col md={6}>
       <div className="text-end">
         <button
-          className="btn btn-primary"
-          style={{ color: "white" }}
+          className={`btn ${
+            userPersonalizationData?.customColor2 == null ? "btn-primary" : ""
+          }`}
+          style={{
+            color: "white",
+            backgroundColor: `${
+              userPersonalizationData !== null && userPersonalizationData.customColor2
+            }`,
+          }}
           onClick={addToggle}
         >
           <PlusCircle />
@@ -180,17 +190,17 @@ const CreateNewCRMModule = () => {
                   </span>
                 </FormGroup>
               </Row>
-              <Button color="primary" className="me-1">
-                {loading ? "Loading ..." : `Add`}
-              </Button>
-              &nbsp;&nbsp;
-              <Button
-                disabled={loading ? true : false}
-                color="secondary"
-                onClick={addToggle}
-              >
-                {Cancel}
-              </Button>
+                  <Button color="primary" className="me-1">
+                    {loading ? "Loading ..." : `Add`}
+                  </Button>
+                  &nbsp;&nbsp;
+                  <Button
+                    disabled={loading ? true : false}
+                    color="secondary"
+                    onClick={addToggle}
+                  >
+                    {Cancel}
+                  </Button>
             </form>
           </ModalBody>
         </Modal>

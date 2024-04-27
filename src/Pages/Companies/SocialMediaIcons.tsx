@@ -5,8 +5,12 @@ import { SocialMediaIconsPropsTypes } from "../../Types/Apps/User/UserProfile";
 import { socialMediaIconsData } from "./Data/SocialMediaIconsData";
 import { CardType } from "./DataType/CompaniesDataType";
 import { MdOutlineEmail } from "react-icons/md";
+import { useSelector } from "react-redux";
 
 const SocialMediaIcons = ({ item }: any) => {
+  const { userPersonalizationData } = useSelector(
+    (state: any) => state.personalization
+  );
   const redirectToWhatsAppWeb = (whatsAppNumber: any) => {
     const initialMessage = "Hello Dear";
 
@@ -45,8 +49,22 @@ const SocialMediaIcons = ({ item }: any) => {
         style={{ cursor: "pointer" }}
       >
         <i
-          className={`fa fa-whatsapp me-0 txt-primary`}
-          style={{ fontSize: "22px", marginBottom: "0px" }}
+          className="fa fa-whatsapp me-0 txt-primary"
+          // className={`fa fa-whatsapp me-0 ${
+          //   userPersonalizationData &&
+          //   userPersonalizationData?.primaryColor !== null
+          //     ? ""
+          //     : "txt-primary"
+          // }`}
+          style={{
+            fontSize: "22px",
+            marginBottom: "0px",
+            // color: `${
+            //   userPersonalizationData && userPersonalizationData?.primaryColor
+            //     ? userPersonalizationData?.primaryColor
+            //     : "#35bfbf"
+            // }`,
+          }}
         ></i>
       </li>
 
@@ -55,8 +73,22 @@ const SocialMediaIcons = ({ item }: any) => {
         style={{ cursor: "pointer" }}
       >
         <MdOutlineEmail
-          className={`me-0 txt-primary`}
-          style={{ fontSize: "24px", marginBottom: "0px" }}
+          className="me-0 txt-primary"
+          // className={`me-0 ${
+          //   userPersonalizationData &&
+          //   userPersonalizationData?.primaryColor !== null
+          //     ? ""
+          //     : "txt-primary"
+          // }`}
+          style={{
+            fontSize: "25px",
+            marginBottom: "0px",
+            // color: `${
+            //   userPersonalizationData && userPersonalizationData?.primaryColor
+            //     ? userPersonalizationData?.primaryColor
+            //     : "#35bfbf"
+            // }`,
+          }}
         />
       </li>
       <li
@@ -64,8 +96,22 @@ const SocialMediaIcons = ({ item }: any) => {
         style={{ cursor: "pointer" }}
       >
         <i
-          className={`fa fa-mobile me-0 txt-primary`}
-          style={{ fontSize: "24px", marginBottom: "0px" }}
+          className="fa fa-mobile me-0 txt-primary"
+          // className={`fa fa-mobile me-0 ${
+          //   userPersonalizationData &&
+          //   userPersonalizationData?.primaryColor !== null
+          //     ? ""
+          //     : "txt-primary"
+          // }`}
+          style={{
+            fontSize: "22px",
+            marginBottom: "0px",
+            // color: `${
+            //   userPersonalizationData && userPersonalizationData?.primaryColor
+            //     ? userPersonalizationData?.primaryColor
+            //     : "#35bfbf"
+            // }`,
+          }}
         ></i>
       </li>
     </UL>

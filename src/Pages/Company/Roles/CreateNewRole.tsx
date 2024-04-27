@@ -27,6 +27,9 @@ import Swal from "sweetalert2";
 import "./permissionsStyle.css";
 
 const CreateNewRole = () => {
+  const { userPersonalizationData } = useSelector(
+    (state: any) => state.personalization
+  );
   const dispatch = useDispatch();
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -180,8 +183,16 @@ const CreateNewRole = () => {
     <Col md={6}>
       <div className="text-end">
         <button
-          className="btn btn-primary"
-          style={{ color: "white" }}
+          className={`btn ${
+            userPersonalizationData?.customColor2 == null ? "btn-primary" : ""
+          }`}
+          style={{
+            color: "white",
+            backgroundColor: `${
+              userPersonalizationData !== null &&
+              userPersonalizationData?.customColor2
+            }`,
+          }}
           onClick={addToggle}
         >
           <PlusCircle />
@@ -276,7 +287,7 @@ const CreateNewRole = () => {
                                   className="green"
                                 ></span>
                               </label>
-                             {permission.title}
+                              {permission.title}
                             </span>
                             {permission.checked && (
                               <div>

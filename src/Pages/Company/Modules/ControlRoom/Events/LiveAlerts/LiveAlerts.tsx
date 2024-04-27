@@ -26,6 +26,9 @@ import { serverCredentials } from "../../../../../../Api/header";
 import { getUserRole } from "../../../../../../Api/globals";
 
 const LiveAlerts = () => {
+  const { userPersonalizationData } = useSelector(
+    (state: any) => state.personalization
+  );
   const dispatch = useDispatch();
   const { liveAlerts, liveAlertsData } = useSelector(
     (state: any) => state.alerts
@@ -165,7 +168,11 @@ const LiveAlerts = () => {
     <Card className="invoice-card">
       <div
         style={{
-          backgroundColor: "#63d5be",
+          backgroundColor:
+            userPersonalizationData !== null &&
+            userPersonalizationData?.customColor2 !== null
+              ? userPersonalizationData?.customColor2
+              : "#63d5be",
           height: "40px",
           fontSize: "18px",
           padding: "10px",

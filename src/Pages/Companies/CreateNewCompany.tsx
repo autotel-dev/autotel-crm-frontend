@@ -1,5 +1,5 @@
 import { PlusCircle } from "react-feather";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Col } from "reactstrap";
 
@@ -7,14 +7,24 @@ import { useEffect } from "react";
 import { getAll } from "../../Api";
 
 const CreateNewCompany = () => {
-  
+  const { userPersonalizationData } = useSelector(
+    (state: any) => state.personalization
+  );
   const navigate = useNavigate();
   return (
     <Col md={6}>
       <div className="text-end">
         <button
-          className="btn btn-primary"
-          style={{ color: "white" }}
+          className={`btn ${
+            userPersonalizationData?.customColor2 == null ? "btn-primary" : ""
+          }`}
+          style={{
+            color: "white",
+            backgroundColor: `${
+              userPersonalizationData !== null &&
+              userPersonalizationData?.customColor2
+            }`,
+          }}
           onClick={() => {
             navigate(
               `${process.env.PUBLIC_URL}/super-admin/companies/createComapany`
@@ -22,7 +32,7 @@ const CreateNewCompany = () => {
           }}
         >
           <PlusCircle />
-          Create New Comapny
+          Create New Company
         </button>
       </div>
     </Col>

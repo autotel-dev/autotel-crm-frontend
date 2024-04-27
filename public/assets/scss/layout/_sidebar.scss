@@ -835,16 +835,16 @@
           color: $primary-color;
           font-weight: 500;
           &+.breadcrumb-item {
-            &:before {
-              content: $breadcrumb-content;
-              color: $primary-color;
-            }
+            // &:before {
+            //   content: $breadcrumb-content;
+            //   color: $primary-color;
+            // }
           }
           a {
             svg {
               width: 16px;
               height: 16px;
-              stroke: $primary-color;
+              // stroke: $primary-color;
               vertical-align: text-top;
             }
           }

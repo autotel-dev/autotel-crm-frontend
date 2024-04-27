@@ -1,7 +1,7 @@
 export const boxesData1 = [
   {
     title: "Total operator",
-    count: "60",
+    count: "5",
     svgIcon: "arrow-down",
     percentage: "- 36.28%",
     time: "Then last week",
@@ -9,7 +9,7 @@ export const boxesData1 = [
   },
   {
     title: "Total Servers",
-    count: "3",
+    count: "5",
     svgIcon: "arrow-top",
     percentage: "+14.28%",
     time: "Since last month",
@@ -20,7 +20,7 @@ export const boxesData1 = [
 export const boxesData2 = [
   {
     title: "Package Expiry",
-    count: "45",
+    count: "5",
     svgIcon: "arrow-down",
     percentage: "- 36.28%",
     time: "Then last week",
@@ -28,7 +28,7 @@ export const boxesData2 = [
   },
   {
     title: "Leads",
-    count: "654",
+    count: "5",
     svgIcon: "arrow-top",
     percentage: "+20.28%",
     time: "Since last 6 month",

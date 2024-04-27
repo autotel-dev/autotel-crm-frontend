@@ -19,6 +19,9 @@ const Layout = () => {
   const { userPermissions } = useSelector(
     (state: any) => state.userPermissions
   );
+  const { userPersonalizationData } = useSelector(
+    (state: any) => state.personalization
+  );
   // console.log("userPermissions---> ", userPermissions);
 
   const [open, setOpen] = useState<boolean>(false);
@@ -68,16 +71,31 @@ const Layout = () => {
           }  ${scroll ? "d-none" : "d-block"}`}
         > */}
             {/* <div className={`page-header ${open ? "sidebar-default" : ""} ${toggleSidebar ? "close_icon" : ""}  ${scroll ? "d-none" : "d-block"}`}> */}
-            <div className={`page-header d-block`}>
+            <div
+              className={`page-header d-block`}
+              style={{
+                backgroundColor: `${
+                  userPersonalizationData !== null &&
+                  userPersonalizationData?.primaryColor !== null
+                    ? userPersonalizationData?.primaryColor
+                    : ""
+                }`,
+              }}
+            >
               <Header />
             </div>
             <div className="page-body-wrapper">
               <Sidebar setOpen={setOpen} open={open} />
               <div
                 className="page-body"
-                // style={{
-                //   backgroundColor: "yellow",
-                // }}
+                style={{
+                  backgroundColor: `${
+                    userPersonalizationData !== null &&
+                    userPersonalizationData?.customColor1 !== null
+                      ? userPersonalizationData?.customColor1
+                      : ""
+                  }`,
+                }}
               >
                 <Outlet />
               </div>

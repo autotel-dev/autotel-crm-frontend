@@ -15,8 +15,10 @@ import { useDispatch, useSelector } from "react-redux";
 import AddServersComponent from "./AddServersComponent";
 import { setCreateCompany } from "../../../ReaduxToolkit/Reducer/CompanySlice";
 
-
 const ServerCredentials = ({ callbackActive }: BusinessFormCommonProps) => {
+  const { userPersonalizationData } = useSelector(
+    (state: any) => state.personalization
+  );
   const { servers, serversAddItemsList, serverCredentials } = useSelector(
     (state: any) => state.companies
   );
@@ -71,9 +73,9 @@ const ServerCredentials = ({ callbackActive }: BusinessFormCommonProps) => {
           className="text-end d-flex justify-content-end gap-2 align-center"
         >
           <Button color="primary">{Previous}</Button>
-          <Button color="primary" onClick={handleNextButton}>
-            {Continue}
-          </Button>
+                <Button color="primary" onClick={handleNextButton}>
+                  {Continue}
+                </Button>
         </Col>
       </Row>
     </Form>

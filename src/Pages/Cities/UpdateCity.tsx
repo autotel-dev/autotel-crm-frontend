@@ -48,6 +48,9 @@ const UpdateCity: React.FC<PropsTypes> = ({
   setIsActive,
   // setValue
 }) => {
+  const { userPersonalizationData } = useSelector(
+    (state: any) => state.personalization
+  );
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
 
@@ -270,20 +273,20 @@ const UpdateCity: React.FC<PropsTypes> = ({
             </Row>
           </div> */}
           <Button color="primary" className="me-1">
-            {loading ? "Loading ..." : `Update`}
-          </Button>
-          &nbsp;&nbsp;
-          <Button
-            disabled={loading ? true : false}
-            color="secondary"
-            onClick={() => {
-              // setValue("")
-              setIsVisible(!isVisible);
-              // console.log(value);
-            }}
-          >
-            {Cancel}
-          </Button>
+                {loading ? "Loading ..." : `Update`}
+              </Button>
+              &nbsp;&nbsp;
+              <Button
+                disabled={loading ? true : false}
+                color="secondary"
+                onClick={() => {
+                  // setValue("")
+                  setIsVisible(!isVisible);
+                  // console.log(value);
+                }}
+              >
+                {Cancel}
+              </Button>
         </form>
       </ModalBody>
     </Modal>

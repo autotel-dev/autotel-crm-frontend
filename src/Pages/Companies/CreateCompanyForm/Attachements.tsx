@@ -13,6 +13,9 @@ import { create } from "../../../Api";
 import { H4 } from "../../../AbstractElements";
 
 const Attachements = ({ callbackActive }: BusinessFormCommonProps) => {
+  const { userPersonalizationData } = useSelector(
+    (state: any) => state.personalization
+  );
   // const subTitle = [
   //   {
   //     text: "",
@@ -328,13 +331,10 @@ const Attachements = ({ callbackActive }: BusinessFormCommonProps) => {
       </div> */}
       <Row>
         <Col xs={12} className="text-end">
-          <Button color="primary" onClick={handleNextButton}>
-            Next
-          </Button>
-          {/* <Button color="primary" onClick={handleSubmit}>
-            Submit
-          </Button> */}
-        </Col>
+              <Button color="primary" onClick={handleNextButton}>
+                Next
+              </Button>
+            </Col>
       </Row>
     </Form>
   );

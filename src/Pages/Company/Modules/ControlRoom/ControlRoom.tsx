@@ -40,6 +40,9 @@ import { getUserRole } from "../../../../Api/globals";
 import { ROLES } from "../../../../constants/roles";
 
 const ControlRoom = () => {
+  const { userPersonalizationData } = useSelector(
+    (state: any) => state.personalization
+  );
   const { assignedAlerts, completedAlerts, isConnected, liveAlerts } =
     useSelector((state: any) => state.alerts);
   const { devices } = useSelector((state: any) => state.monitoring);
@@ -434,7 +437,7 @@ const ControlRoom = () => {
             />
           </Row>
 
-          {!loading && !devicesLoading ? (
+          {!loading ? (
             <Row>
               <Row>
                 <ControlRoomAnalytics />
@@ -449,7 +452,13 @@ const ControlRoom = () => {
                       tabs
                       className="simple-wrapper"
                       style={{
-                        backgroundColor: "#63d5be",
+                        backgroundColor: `${
+                          userPersonalizationData !== null &&
+                          userPersonalizationData?.customColor2 !== null
+                            ? userPersonalizationData?.customColor2
+                            : "#63d5be"
+                        }`,
+
                         borderTopLeftRadius: "10px",
                         borderTopRightRadius: "10px",
                       }}
@@ -466,7 +475,14 @@ const ControlRoom = () => {
                         <NavLink
                           className={` ${basicTab === "1" ? "active" : ""}`}
                           style={{
-                            color: `${basicTab === "1" ? "#63d5be" : "white"}`,
+                            color: `${
+                              basicTab === "1"
+                                ? userPersonalizationData !== null &&
+                                  userPersonalizationData?.customColor2 !== null
+                                  ? userPersonalizationData?.customColor2
+                                  : "#63d5be"
+                                : "white"
+                            }`,
                           }}
                           onClick={() => setBasicTab("1")}
                         >
@@ -485,7 +501,14 @@ const ControlRoom = () => {
                         <NavLink
                           className={` ${basicTab === "2" ? "active" : ""}`}
                           style={{
-                            color: `${basicTab === "2" ? "#63d5be" : "white"}`,
+                            color: `${
+                              basicTab === "2"
+                                ? userPersonalizationData !== null &&
+                                  userPersonalizationData?.customColor2 !== null
+                                  ? userPersonalizationData?.customColor2
+                                  : "#63d5be"
+                                : "white"
+                            }`,
                           }}
                           onClick={() => setBasicTab("2")}
                         >

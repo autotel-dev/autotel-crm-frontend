@@ -25,6 +25,9 @@ import SelectCountryBox from "./components/SelectCountryBox";
 import Swal from "sweetalert2";
 
 const CreateNewCity = () => {
+  const { userPersonalizationData } = useSelector(
+    (state: any) => state.personalization
+  );
   const { provinceId, countryId } = useSelector((state: any) => state.cities);
   const dispatch = useDispatch();
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
@@ -156,9 +159,15 @@ const CreateNewCity = () => {
     <Col md={6}>
       <div className="text-end">
         <button
-          className="btn btn-primary"
-          style={{ color: "white" }}
-          onClick={addToggle}
+          className={`btn ${
+            userPersonalizationData?.customColor2 == null ? "btn-primary" : ""
+          }`}
+          style={{
+            color: "white",
+            backgroundColor: `${
+              userPersonalizationData && userPersonalizationData?.customColor2
+            }`,
+          }}
         >
           <PlusCircle />
           {createNewCity}
@@ -206,17 +215,17 @@ const CreateNewCity = () => {
                   <SelectProvinceBox placeholder={"Select Province"} />
                 </div>
               </div>
-              <Button color="primary" className="me-1">
-                {loading ? "Loading ..." : `Add`}
-              </Button>
-              &nbsp;&nbsp;
-              <Button
-                disabled={loading ? true : false}
-                color="secondary"
-                onClick={addToggle}
-              >
-                {Cancel}
-              </Button>
+                  <Button color="primary" className="me-1">
+                    {loading ? "Loading ..." : `Add`}
+                  </Button>
+                  &nbsp;&nbsp;
+                  <Button
+                    disabled={loading ? true : false}
+                    color="secondary"
+                    onClick={addToggle}
+                  >
+                    {Cancel}
+                  </Button>
             </form>
           </ModalBody>
         </Modal>

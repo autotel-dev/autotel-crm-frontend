@@ -16,6 +16,9 @@ import { setReports } from "../../../ReaduxToolkit/Reducer/ReportsSlice";
 import CustomDropdown from "./CustomDropdown";
 
 const CreateNewReport = ({ dropDownDevices }: any) => {
+  const { userPersonalizationData } = useSelector(
+    (state: any) => state.personalization
+  );
   const { reports, reportsType } = useSelector((state: any) => state.reports);
   var tempReports: any = [...reports];
   const [decodedToken, setDecodedToken]: any = useState(null);
@@ -312,8 +315,16 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
     <Col md={6}>
       <div className="text-end">
         <button
-          className="btn btn-primary"
-          style={{ color: "white" }}
+          className={`btn ${
+            userPersonalizationData?.customColor2 == null ? "btn-primary" : ""
+          }`}
+          style={{
+            color: "white",
+            backgroundColor: `${
+              userPersonalizationData !== null &&
+              userPersonalizationData?.customColor2
+            }`,
+          }}
           onClick={addToggle}
         >
           <PlusCircle />

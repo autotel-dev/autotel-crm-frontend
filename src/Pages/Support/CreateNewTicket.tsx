@@ -30,6 +30,9 @@ interface Image {
 }
 
 const CreateNewTicket = () => {
+  const { userPersonalizationData } = useSelector(
+    (state: any) => state.personalization
+  );
   const dispatch = useDispatch();
   const { priorityStatus } = useSelector((state: any) => state.support);
 
@@ -226,9 +229,14 @@ const CreateNewTicket = () => {
   return (
     <div className="text-end">
       <button
-        className="btn btn-primary"
+        className={`btn ${
+          userPersonalizationData?.customColor2 == null ? "btn-primary" : ""
+        }`}
         style={{
           color: "white",
+          backgroundColor: `${
+            userPersonalizationData !== null && userPersonalizationData?.customColor2
+          }`,
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
@@ -349,17 +357,17 @@ const CreateNewTicket = () => {
                 ))}
               </div>
             </div>
-            <Button color="primary" className="me-1">
-              {loading ? "Loading ..." : `Add`}
-            </Button>
-            &nbsp;&nbsp;
-            <Button
-              disabled={loading ? true : false}
-              color="secondary"
-              onClick={addToggle}
-            >
-              {Cancel}
-            </Button>
+                <Button color="primary" className="me-1">
+                  {loading ? "Loading ..." : `Add`}
+                </Button>
+                &nbsp;&nbsp;
+                <Button
+                  disabled={loading ? true : false}
+                  color="secondary"
+                  onClick={addToggle}
+                >
+                  {Cancel}
+                </Button>
           </form>
         </ModalBody>
       </Modal>

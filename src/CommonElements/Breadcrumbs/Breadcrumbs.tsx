@@ -2,12 +2,28 @@ import { Link } from "react-router-dom";
 import { Breadcrumb, BreadcrumbItem, Col, Row } from "reactstrap";
 import SVG from "../../utils/CommonSvgIcon/SVG";
 import H3 from "../Headings/H3Element";
+import { useSelector } from "react-redux";
 export interface propsTypes {
   mainTitle: string;
   parent: string;
   title: string;
 }
 const Breadcrumbs = ({ mainTitle, parent, title }: propsTypes) => {
+  const { userPersonalizationData } = useSelector(
+    (state: any) => state.personalization
+  );
+  const getBeforeStyles = () => {
+    return {
+      content: "/",
+      width: "2px",
+      backgroundColor:
+        userPersonalizationData !== null &&
+        userPersonalizationData?.customColor2 !== null
+          ? userPersonalizationData?.customColor2
+          : "#33BFBF",
+    };
+  };
+
   return (
     <Col xs="12">
       <div className="page-title">
@@ -19,11 +35,50 @@ const Breadcrumbs = ({ mainTitle, parent, title }: propsTypes) => {
             <Breadcrumb>
               <BreadcrumbItem>
                 <Link to={`${process.env.PUBLIC_URL}/dashboards/shoppingplace`}>
-                  <SVG iconId="stroke-home" className="stroke-icon" />
+                  <SVG
+                    iconId="stroke-home"
+                    className="personalization"
+                    color={`${
+                      userPersonalizationData !== null &&
+                      userPersonalizationData?.customColor2 !== null
+                        ? userPersonalizationData?.customColor2
+                        : "#35bfbf"
+                    }`}
+                  />
                 </Link>
               </BreadcrumbItem>
-              <BreadcrumbItem>{parent}</BreadcrumbItem>
-              <BreadcrumbItem className="active">{title}</BreadcrumbItem>
+              <BreadcrumbItem
+                style={{
+                  fontWeight: "500",
+                  color: `${
+                    userPersonalizationData !== null &&
+                    userPersonalizationData?.customColor2 !== null
+                      ? `${userPersonalizationData?.customColor2}`
+                      : "#33BFBF"
+                  }`,
+                }}
+              >
+                {/* Render the ::before pseudo-element inline */}
+                {/* <span style={getBeforeStyles()}></span> */}
+                {parent}
+              </BreadcrumbItem>
+              {/* <BreadcrumbItem>{parent}</BreadcrumbItem> */}
+              {/* <BreadcrumbItem className="active">{title}</BreadcrumbItem> */}
+              <BreadcrumbItem
+                style={{
+                  fontWeight: "normal",
+                  color: `${
+                    userPersonalizationData !== null &&
+                    userPersonalizationData?.customColor2 !== null
+                      ? `${userPersonalizationData?.customColor2}`
+                      : "#33BFBF"
+                  }`,
+                }}
+              >
+                {/* Render the ::before pseudo-element inline */}
+                {/* <span style={getBeforeStyles()}></span> */}
+                {title}
+              </BreadcrumbItem>
             </Breadcrumb>
           </Col>
         </Row>

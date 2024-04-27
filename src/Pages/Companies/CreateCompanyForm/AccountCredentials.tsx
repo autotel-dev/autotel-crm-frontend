@@ -29,6 +29,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 
 const AccountCredentials = ({ callbackActive }: BusinessFormCommonProps) => {
+  const { userPersonalizationData } = useSelector(
+    (state: any) => state.personalization
+  );
   const { createCompany, imageBackground, companyLogo } = useSelector(
     (state: any) => state.companies
   );
@@ -101,7 +104,6 @@ const AccountCredentials = ({ callbackActive }: BusinessFormCommonProps) => {
             Password
             <span className="txt-danger">*</span>
           </P>
-         
 
           <InputGroup>
             <Input
@@ -171,17 +173,17 @@ const AccountCredentials = ({ callbackActive }: BusinessFormCommonProps) => {
             category="companyLogo"
           />
         </Row> */}
-        <Col
-          xs={12}
-          className="text-end d-flex justify-content-end gap-2 align-center"
-        >
-          <Button color="primary" onClick={() => callbackActive(1)}>
-            {Previous}
-          </Button>
-          <Button color="primary" onClick={handleNextButton}>
-            {Continue}
-          </Button>
-        </Col>
+            <Col
+              xs={12}
+              className="text-end d-flex justify-content-end gap-2 align-center"
+            >
+              <Button color="primary" onClick={() => callbackActive(1)}>
+                {Previous}
+              </Button>
+              <Button color="primary" onClick={handleNextButton}>
+                {Continue}
+              </Button>
+            </Col>
       </Row>
     </Form>
   );
