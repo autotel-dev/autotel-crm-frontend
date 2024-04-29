@@ -916,8 +916,7 @@ const General = () => {
                       >
                         Total:&nbsp;
                         {
-                          operatorPerformance.companyAlertEventsStatistics
-                            .totalLiveAlerts
+                          operatorPerformance?.companyAlertEventsStatistics?.totalLiveAlerts
                         }
                       </div>
                       <div
@@ -932,8 +931,7 @@ const General = () => {
                       >
                         Assigned: &nbsp;
                         {
-                          operatorPerformance.companyAlertEventsStatistics
-                            .totalAssignedAlerts
+                          operatorPerformance?.companyAlertEventsStatistics?.totalAssignedAlerts
                         }
                       </div>
                       <div
@@ -948,8 +946,7 @@ const General = () => {
                       >
                         Completed:&nbsp;
                         {
-                          operatorPerformance.companyAlertEventsStatistics
-                            .totalCompletedAlerts
+                          operatorPerformance?.companyAlertEventsStatistics?.totalCompletedAlerts
                         }
                       </div>
                     </div>
