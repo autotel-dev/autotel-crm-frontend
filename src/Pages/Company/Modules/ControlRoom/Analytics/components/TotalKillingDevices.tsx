@@ -546,7 +546,10 @@ const TotalKillingDevices: React.FC<PropsTypes> = ({
                                             : "Released"}
                                         </div>
                                       </td>
-                                      <td style={{ width: "8%" }}>
+                                      <td
+                                        className="micro-5-charted-regular"
+                                        style={{ width: "8%" }}
+                                      >
                                         {data.remainingTime}
                                       </td>
                                       <td style={{ width: "8%" }}>
@@ -779,7 +782,10 @@ const TotalKillingDevices: React.FC<PropsTypes> = ({
                                   {data.isKilled ? "Killed" : "Released"}
                                 </div>
                               </td>
-                              <td style={{ width: "8%" }}>
+                              <td
+                                className="micro-5-charted-regular"
+                                style={{ width: "8%" }}
+                              >
                                 {data.remainingTime}
                               </td>
                               <td style={{ width: "8%" }}>

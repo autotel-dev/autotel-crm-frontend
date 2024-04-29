@@ -189,7 +189,14 @@ const AssignedAlerts = () => {
                         <td>
                           <div className="d-flex">
                             <div className="flex-grow-1">
-                              <H5>{data.deviceName}</H5>
+                              <h5
+                                style={{
+                                  fontSize: "14px",
+                                  fontWeight: "bold",
+                                }}
+                              >
+                                {data.deviceName}
+                              </h5>
                               <div style={{ fontSize: "10px" }}>
                                 {data.createdAt.slice(0, 10)}
                               </div>

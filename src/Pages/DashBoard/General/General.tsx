@@ -1,4 +1,15 @@
-import { Card, CardBody, CardHeader, Col, Progress, Row } from "reactstrap";
+import {
+  Button,
+  Card,
+  CardBody,
+  CardHeader,
+  Col,
+  FormGroup,
+  Modal,
+  ModalBody,
+  Progress,
+  Row,
+} from "reactstrap";
 import SVG from "../../../utils/CommonSvgIcon/SVG";
 import { H3, H5, P, Image, LI, UL } from "../../../AbstractElements";
 import { boxesData1, boxesData2, operatorPerformanceData } from "./GeneralData";
@@ -6,7 +17,7 @@ import { boxesData1, boxesData2, operatorPerformanceData } from "./GeneralData";
 import { Link } from "react-router-dom";
 import { dynamicImage } from "../../../Service";
 import { Href } from "../../../utils/Constant";
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import ReactApexChart from "react-apexcharts";
 import { apexDonutCharts } from "../../../Data/Charts/ApexChartsData";
 import { ApexOptions } from "apexcharts";
@@ -24,6 +35,8 @@ import {
 } from "../../../ReaduxToolkit/Reducer/DashboardSlice";
 import { useDispatch, useSelector } from "react-redux";
 import OperatorAlerts from "./components/OperatorAlerts";
+import { getUserRole } from "../../../Api/globals";
+import { ROLES } from "../../../constants/roles";
 
 interface DraggableBoxProps {
   initialPosition: { x: number; y: number };
@@ -95,39 +108,41 @@ const General = () => {
   const [daysRemaining, setDaysRemaining] = useState(0);
 
   useEffect(() => {
-    getAll({ url: "company/dashboard/general" }).then((data: any) => {
-      // console.log("api call --- >", data);
-      if (data !== undefined) {
-        if (data.success) {
-          // // console.log("length --- >", data.data);
-          const expirationDate = new Date(
-            data.data.companyPackageStatistics.packageExpirationDate
-          );
-          const today = new Date();
-          const differenceInTime = expirationDate.getTime() - today.getTime();
-          const differenceInDays = Math.ceil(
-            differenceInTime / (1000 * 3600 * 24)
-          );
-          setDaysRemaining(differenceInDays);
-          dispatch(setGeneralData(data.data));
-
-          setGeneralLoading(false);
-        }
-        if (!data.success) {
-          // // // console.log("length --- >", data.data);
-          dispatch(setGeneralData(null));
-          setGeneralLoading(false);
-        }
-      }
-    });
-
-    getAll({ url: "company/dashboard/operators-performance" }).then(
-      (data: any) => {
+    if (getUserRole() == ROLES.COMPANY) {
+      getAll({ url: "company/dashboard/general" }).then((data: any) => {
         // console.log("api call --- >", data);
         if (data !== undefined) {
           if (data.success) {
             // // console.log("length --- >", data.data);
-            dispatch(setOperatorPerformance(data.data.groupedAlerts));
+            const expirationDate = new Date(
+              data.data.companyPackageStatistics.packageExpirationDate
+            );
+            const today = new Date();
+            const differenceInTime = expirationDate.getTime() - today.getTime();
+            const differenceInDays = Math.ceil(
+              differenceInTime / (1000 * 3600 * 24)
+            );
+            setDaysRemaining(differenceInDays);
+            dispatch(setGeneralData(data.data));
+
+            setGeneralLoading(false);
+          }
+          if (!data.success) {
+            // // // console.log("length --- >", data.data);
+            dispatch(setGeneralData(null));
+            setGeneralLoading(false);
+          }
+        }
+      });
+
+      getAll({
+        url: `company/dashboard/operators-performance?fromDate=${fromDate}&toDate=${toDate}`,
+      }).then((data: any) => {
+        // console.log("api call --- >", data);
+        if (data !== undefined) {
+          if (data.success) {
+            // // console.log("length --- >", data.data);
+            dispatch(setOperatorPerformance(data.data));
             setOperatorPerformanceLoading(false);
           }
           if (!data.success) {
@@ -136,8 +151,8 @@ const General = () => {
             setOperatorPerformanceLoading(false);
           }
         }
-      }
-    );
+      });
+    }
   }, []);
   const [
     isUpdateModalOpenForOperatorAlerts,
@@ -145,6 +160,51 @@ const General = () => {
   ] = useState(false);
 
   const [alertsData, setAlertsData] = useState();
+
+  const yesterday = new Date();
+  yesterday.setDate(yesterday.getDate() - 1);
+  const startDate = yesterday.toISOString();
+  const endDate = new Date().toISOString();
+
+  const [fromDate, setFromDate] = useState(startDate);
+  const [toDate, setToDate] = useState(endDate);
+
+  const [selectedFilter, setSelectedFilter] = useState("Today");
+  const dropdownRef = useRef<HTMLDivElement>(null); // Add type assertion here
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+  // const handleClickOutside = (event: MouseEvent) => {
+  //   if (
+  //     dropdownRef.current &&
+  //     !dropdownRef.current.contains(event.target as Node)
+  //   ) {
+  //     // Add type assertion here
+  //     setIsDropdownOpen(false);
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   document.addEventListener("mousedown", handleClickOutside);
+  //   return () => {
+  //     document.removeEventListener("mousedown", handleClickOutside);
+  //   };
+  // }, []);
+
+  const toggleDropdown = (e: any) => {
+    e.stopPropagation(); // Stop event propagation
+    setIsDropdownOpen(!isDropdownOpen);
+  };
+
+  const [customFilterModal, setCustomFilterModal] = useState(false);
+
+  const [addModal, setAddModal] = useState(false);
+
+  const addToggle = () => {
+    // if (!generalloading) {
+    setAddModal(!addModal);
+
+    // }
+  };
 
   return (
     <Col xl="12" lg="12" md="12" sm="12">
@@ -215,37 +275,51 @@ const General = () => {
           </Draggable> */}
 
           <Col xl="3" className="box">
-            <Card className="widget-sell handle">
+            <Card
+              className="widget-sell handle"
+              style={{ minHeight: "410px", maxHeight: "410px" }}
+            >
               <CardBody className="pb-0">
                 <Row>
                   <Col xl="12" lg="12" sm="12" className="mb-3">
                     <div className="sale">
-                      <H5>
-                        Total Operators (
-                        {generalData.operatorStatistics.totalActiveOperators +
-                          generalData.operatorStatistics.totalInActiveOperators}
-                        )
-                      </H5>
-                      <div
-                        style={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                        }}
-                      >
-                        {/* <H5>{data.count}</H5> */}
-                        {/* <div id="donutchart">
-                              <ReactApexChart
-                                options={apexDonutCharts}
-                                series={apexDonutCharts.series}
-                                type="donut"
-                              />
-                            </div> */}
+                      <div>
+                        <div
+                          style={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                          }}
+                        >
+                          <H5>Total Operators</H5>
+                          <div
+                            style={{
+                              padding: "6px",
+                              width: "35px",
+                              height: "35px",
+                              borderRadius: "100px",
+                              backgroundColor: "black",
+                              color: "white",
+                              display: "flex",
+                              justifyContent: "center",
+                              alignItems: "center",
+                              fontFamily: "Sedan, serif",
+                              fontWeight: "400",
+                              fontStyle: "normal",
+                            }}
+                          >
+                            {generalData.operatorStatistics
+                              .totalActiveOperators +
+                              generalData.operatorStatistics
+                                .totalInActiveOperators}
+                          </div>
+                        </div>
+
                         <div
                           style={{
                             display: "flex",
                             flexDirection: "row",
                             width: "85%", // Set the width of the outer container
-                            height: "170px", // Set the height of the outer container
+                            height: "22vh", // Set the height of the outer container
                             // backgroundColor: "gray", // Remove the background color
                           }}
                         >
@@ -284,6 +358,7 @@ const General = () => {
                                 },
                                 pieHole: 0.4,
                                 pieSliceText: "value", // Display the exact values of each option
+                                colors: ["#51bb25", "#ff6150"], // Custom colors for Active and Inactive options respectively
                               }}
                             />
                           </div>
@@ -302,26 +377,43 @@ const General = () => {
                   </Col>
                   <Col xl="12" lg="12" sm="12" className="mb-3">
                     <div className="sale">
-                      <H5>
-                        Total Servers (
-                        {generalData.companyServerStatistics
-                          .totalActiveServers +
-                          generalData.companyServerStatistics
-                            .totalInActiveServers}
-                        )
-                      </H5>
-                      <div
-                        style={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                        }}
-                      >
+                      <div>
+                        <div
+                          style={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                          }}
+                        >
+                          <H5>Total Servers</H5>
+                          <div
+                            style={{
+                              padding: "6px",
+                              width: "35px",
+                              height: "35px",
+                              borderRadius: "100px",
+                              backgroundColor: "black",
+                              color: "white",
+                              display: "flex",
+                              justifyContent: "center",
+                              alignItems: "center",
+                              fontFamily: "Sedan, serif",
+                              fontWeight: "400",
+                              fontStyle: "normal",
+                            }}
+                          >
+                            {generalData.companyServerStatistics
+                              .totalActiveServers +
+                              generalData.companyServerStatistics
+                                .totalInActiveServers}
+                          </div>
+                        </div>
+
                         <div
                           style={{
                             display: "flex",
                             flexDirection: "row",
                             width: "85%", // Set the width of the outer container
-                            height: "170px", // Set the height of the outer container
+                            height: "22vh", // Set the height of the outer container
                             // backgroundColor: "gray", // Remove the background color
                           }}
                         >
@@ -359,6 +451,7 @@ const General = () => {
                                   right: 0,
                                 },
                                 pieSliceText: "value", // Display the exact values of each option
+                                colors: ["#51bb25", "#ff6150"], // Custom colors for Active and Inactive options respectively
                               }}
                               rootProps={pieChart.rootProps}
                             />
@@ -387,10 +480,420 @@ const General = () => {
           <Col xl="6" className="box">
             <Row className="handle1">
               <Col xl="12" lg="12">
-                <Card className="deal-open">
+                <Card
+                  className="deal-open"
+                  style={{ minHeight: "410px", maxHeight: "410px" }}
+                >
                   <CardHeader className="pb-0">
-                    <div className="header-top">
+                    <div
+                      className="header-top"
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                      }}
+                    >
                       <H5 className="m-0">Operator Performance</H5>
+                      <div>
+                        <div
+                          style={{
+                            width: "250px",
+                            overflow: "hidden",
+                            height: "30px",
+                            // transition: "width 0.5s",
+                            color: "white",
+                            borderRadius: "5px",
+                          }}
+                          className="btn-primary"
+                        >
+                          <div
+                            style={{
+                              padding: "10px",
+                              height: "30px",
+                              display: "flex",
+                              justifyContent: "space-between",
+                              alignItems: "center",
+                            }}
+                          >
+                            <div
+                              style={{
+                                cursor: "pointer",
+                                fontSize: "14px",
+                                color: "white",
+                                paddingRight: "45px",
+                                borderRight: "1px solid black",
+                              }}
+                              onClick={(e: any) => {
+                                toggleDropdown(e);
+                              }}
+                            >
+                              Filter : {selectedFilter}
+                              {/* Filter : Today */}
+                            </div>
+                            <div
+                              style={{
+                                cursor: "pointer",
+                              }}
+                              onClick={(e: any) => {
+                                toggleDropdown(e);
+                              }}
+                            >
+                              <div style={{ fontSize: "24px", color: "white" }}>
+                                &#9776;
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div
+                          ref={dropdownRef}
+                          style={{
+                            width: "250px",
+                            display: "flex",
+                            justifyContent: "end",
+                          }}
+                        >
+                          {isDropdownOpen && (
+                            <div
+                              className="custom-dropdown-analytics"
+                              style={{
+                                width: "250px",
+                                position: "absolute",
+                                zIndex: "1",
+                              }}
+                            >
+                              {isDropdownOpen && (
+                                <div
+                                  className="dropdown-options-analytics"
+                                  style={{
+                                    width: "250px",
+                                    overflow: "hidden",
+                                  }}
+                                >
+                                  <div
+                                    style={{
+                                      width: "250px",
+                                    }}
+                                    className="dropdown-item"
+                                    onClick={(e) => {
+                                      setGeneralLoading(true);
+                                      setSelectedFilter("Yesterday");
+                                      const dayBeforeYesterday = new Date();
+
+                                      dayBeforeYesterday.setDate(
+                                        dayBeforeYesterday.getDate() - 2
+                                      );
+
+                                      const yesterday = new Date();
+                                      yesterday.setDate(
+                                        yesterday.getDate() - 1
+                                      );
+                                      const startDate =
+                                        dayBeforeYesterday.toISOString();
+                                      const endDate = yesterday.toISOString();
+                                      setFromDate(startDate);
+                                      setToDate(endDate);
+
+                                      getAll({
+                                        url: `company/dashboard/operators-performance?fromDate=${startDate}&toDate=${endDate}`,
+                                      }).then((data: any) => {
+                                        toggleDropdown(e);
+                                        // console.log("api call --- >", data);
+                                        if (data !== undefined) {
+                                          if (data.success) {
+                                            // // console.log("length --- >", data.data);
+                                            dispatch(
+                                              setOperatorPerformance(data.data)
+                                            );
+                                            setGeneralLoading(false);
+                                          }
+                                          if (!data.success) {
+                                            // // // console.log("length --- >", data.data);
+                                            dispatch(
+                                              setOperatorPerformance([])
+                                            );
+                                            setGeneralLoading(false);
+                                          }
+                                        }
+                                      });
+                                    }}
+                                  >
+                                    Yesterday
+                                  </div>
+                                  <div
+                                    style={{
+                                      width: "250px",
+                                    }}
+                                    className="dropdown-item"
+                                    onClick={(e) => {
+                                      setGeneralLoading(true);
+                                      setSelectedFilter("Today");
+                                      const yesterday = new Date();
+                                      yesterday.setDate(
+                                        yesterday.getDate() - 1
+                                      );
+                                      const startDate = yesterday.toISOString();
+                                      const endDate = new Date().toISOString();
+                                      setFromDate(startDate);
+                                      setToDate(endDate);
+
+                                      getAll({
+                                        url: `company/dashboard/operators-performance?fromDate=${startDate}&toDate=${endDate}`,
+                                      }).then((data: any) => {
+                                        toggleDropdown(e);
+                                        // console.log("api call --- >", data);
+                                        if (data !== undefined) {
+                                          if (data.success) {
+                                            // // console.log("length --- >", data.data);
+                                            dispatch(
+                                              setOperatorPerformance(data.data)
+                                            );
+                                            setGeneralLoading(false);
+                                          }
+                                          if (!data.success) {
+                                            // // // console.log("length --- >", data.data);
+                                            dispatch(
+                                              setOperatorPerformance([])
+                                            );
+                                            setGeneralLoading(false);
+                                          }
+                                        }
+                                      });
+                                    }}
+                                  >
+                                    Today
+                                  </div>
+                                  <div
+                                    style={{
+                                      width: "250px",
+                                    }}
+                                    className="dropdown-item"
+                                    onClick={(e) => {
+                                      setGeneralLoading(true);
+                                      setSelectedFilter("1 Week");
+                                      const oneWeek = new Date();
+                                      oneWeek.setDate(oneWeek.getDate() - 7);
+                                      const startDate = oneWeek.toISOString();
+                                      const endDate = new Date().toISOString();
+                                      setFromDate(startDate);
+                                      setToDate(endDate);
+
+                                      getAll({
+                                        url: `company/dashboard/operators-performance?fromDate=${startDate}&toDate=${endDate}`,
+                                      }).then((data: any) => {
+                                        toggleDropdown(e);
+                                        // console.log("api call --- >", data);
+                                        if (data !== undefined) {
+                                          if (data.success) {
+                                            // // console.log("length --- >", data.data);
+                                            dispatch(
+                                              setOperatorPerformance(data.data)
+                                            );
+                                            setGeneralLoading(false);
+                                          }
+                                          if (!data.success) {
+                                            // // // console.log("length --- >", data.data);
+                                            dispatch(
+                                              setOperatorPerformance([])
+                                            );
+                                            setGeneralLoading(false);
+                                          }
+                                        }
+                                      });
+                                    }}
+                                  >
+                                    1 Week
+                                  </div>
+                                  <div
+                                    style={{
+                                      width: "250px",
+                                    }}
+                                    className="dropdown-item"
+                                    onClick={(e) => {
+                                      setGeneralLoading(true);
+                                      setSelectedFilter("1 Month");
+                                      const oneMonth = new Date();
+                                      oneMonth.setDate(oneMonth.getDate() - 30);
+                                      const startDate = oneMonth.toISOString();
+                                      const endDate = new Date().toISOString();
+                                      setFromDate(startDate);
+                                      setToDate(endDate);
+
+                                      getAll({
+                                        url: `company/dashboard/operators-performance?fromDate=${startDate}&toDate=${endDate}`,
+                                      }).then((data: any) => {
+                                        toggleDropdown(e);
+                                        // console.log("api call --- >", data);
+                                        if (data !== undefined) {
+                                          if (data.success) {
+                                            // // console.log("length --- >", data.data);
+                                            dispatch(
+                                              setOperatorPerformance(data.data)
+                                            );
+                                            setGeneralLoading(false);
+                                          }
+                                          if (!data.success) {
+                                            // // // console.log("length --- >", data.data);
+                                            dispatch(
+                                              setOperatorPerformance([])
+                                            );
+                                            setGeneralLoading(false);
+                                          }
+                                        }
+                                      });
+                                    }}
+                                  >
+                                    1 Month
+                                  </div>
+
+                                  <div
+                                    style={{
+                                      width: "250px",
+                                    }}
+                                    className="dropdown-item"
+                                    onClick={(e) => {
+                                      setSelectedFilter("Custom");
+                                      addToggle();
+                                      // toggleDropdown(e);
+                                    }}
+                                  >
+                                    Custom
+                                  </div>
+
+                                  <Modal
+                                    isOpen={addModal}
+                                    toggle={addToggle}
+                                    size="md"
+                                    centered
+                                  >
+                                    <div className="modal-header">
+                                      <H3 className="modal-title">
+                                        Custom Filter Date
+                                      </H3>
+                                      <Button
+                                        color="transprant"
+                                        className="btn-close"
+                                        onClick={addToggle}
+                                      ></Button>
+                                    </div>
+
+                                    <ModalBody>
+                                      <form className="form-bookmark needs-validation">
+                                        <Row>
+                                          <FormGroup
+                                            className="col-md-12 create-group"
+                                            style={{
+                                              alignItems: "center",
+                                            }}
+                                          >
+                                            <div>Date From:</div>
+                                            <Col md={12}>
+                                              <input
+                                                className="form-control"
+                                                type="date"
+                                                value={fromDate.slice(0, 10)}
+                                                onChange={(e) => {
+                                                  setFromDate(
+                                                    new Date(
+                                                      e.target.value
+                                                    ).toISOString()
+                                                  );
+                                                  // console.log("e", e.target.value);
+                                                }}
+                                              />
+                                            </Col>
+                                          </FormGroup>
+                                          <FormGroup
+                                            className="col-md-12 create-group"
+                                            style={{
+                                              alignItems: "center",
+                                            }}
+                                          >
+                                            <div>Date To:</div>
+                                            <Col md={12}>
+                                              <input
+                                                className="form-control"
+                                                type="date"
+                                                value={toDate.slice(0, 10)}
+                                                onChange={(e) => {
+                                                  // console.log(e.target.value);
+                                                  setToDate(
+                                                    new Date(
+                                                      e.target.value
+                                                    ).toISOString()
+                                                  );
+                                                }}
+                                              />
+                                            </Col>
+                                          </FormGroup>
+                                        </Row>
+                                        <div
+                                          style={{
+                                            display: "flex",
+                                            justifyContent: "end",
+                                            alignItems: "end",
+                                            marginTop: "-20px",
+                                          }}
+                                        >
+                                          <Button
+                                            disabled={
+                                              generalloading ? true : false
+                                            }
+                                            color="secondary"
+                                            onClick={(e) => {
+                                              e.preventDefault();
+                                              addToggle();
+                                            }}
+                                          >
+                                            Cancel
+                                          </Button>
+                                          &nbsp;&nbsp;
+                                          <Button
+                                            color="primary"
+                                            className="me-1"
+                                            onClick={(e) => {
+                                              e.preventDefault();
+                                              setGeneralLoading(true);
+                                              getAll({
+                                                url: `company/dashboard/operators-performance?fromDate=${fromDate}&toDate=${toDate}`,
+                                              }).then((data: any) => {
+                                                toggleDropdown(e);
+                                                // console.log("api call --- >", data);
+                                                if (data !== undefined) {
+                                                  if (data.success) {
+                                                    // // console.log("length --- >", data.data);
+                                                    dispatch(
+                                                      setOperatorPerformance(
+                                                        data.data
+                                                      )
+                                                    );
+                                                    setGeneralLoading(false);
+                                                    addToggle();
+                                                  }
+                                                  if (!data.success) {
+                                                    // // // console.log("length --- >", data.data);
+                                                    dispatch(
+                                                      setOperatorPerformance([])
+                                                    );
+                                                    setGeneralLoading(false);
+                                                    addToggle();
+                                                  }
+                                                }
+                                              });
+                                            }}
+                                          >
+                                            {generalloading
+                                              ? "Loading ..."
+                                              : `Set`}
+                                          </Button>
+                                        </div>
+                                      </form>
+                                    </ModalBody>
+                                  </Modal>
+                                </div>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      </div>
                     </div>
                   </CardHeader>
                   <CardBody>
@@ -413,7 +916,7 @@ const General = () => {
                       >
                         Total:&nbsp;
                         {
-                          generalData.companyAlertEventsStatistics
+                          operatorPerformance.companyAlertEventsStatistics
                             .totalLiveAlerts
                         }
                       </div>
@@ -429,7 +932,7 @@ const General = () => {
                       >
                         Assigned: &nbsp;
                         {
-                          generalData.companyAlertEventsStatistics
+                          operatorPerformance.companyAlertEventsStatistics
                             .totalAssignedAlerts
                         }
                       </div>
@@ -445,7 +948,7 @@ const General = () => {
                       >
                         Completed:&nbsp;
                         {
-                          generalData.companyAlertEventsStatistics
+                          operatorPerformance.companyAlertEventsStatistics
                             .totalCompletedAlerts
                         }
                       </div>
@@ -475,98 +978,127 @@ const General = () => {
                           }}
                         /> */}
 
-                      {operatorPerformance.map((data: any, index: any) => (
-                        <>
-                          <li
-                            className="d-flex align-items-center"
-                            key={index}
-                            style={{
-                              padding: "10px 12px",
-                              display: "flex",
-                              justifyContent: "space-between",
-                              cursor: "pointer",
-                            }}
-                            onClick={() => {
-                              setIsUpdateModalOpenForOperatorAlerts(true);
-                              setAlertsData(data.alerts);
-                            }}
-                          >
-                            <div
+                      {operatorPerformance.groupedAlerts.map(
+                        (data: any, index: any) => (
+                          <>
+                            <li
+                              className="d-flex align-items-center"
+                              key={index}
                               style={{
+                                padding: "10px 12px",
                                 display: "flex",
+                                justifyContent: "space-between",
+                                cursor: "pointer",
+                              }}
+                              onClick={() => {
+                                setIsUpdateModalOpenForOperatorAlerts(true);
+                                setAlertsData(data.alerts);
                               }}
                             >
-                              {/* <Image
+                              <div
+                                style={{
+                                  display: "flex",
+                                }}
+                              >
+                                {/* <Image
                                 src={dynamicImage(
                                   `dashboard-2/user/${data.img}.jpg`
                                 )}
                                 alt=""
                               /> */}
+                                <div
+                                  style={{
+                                    display: "flex",
+                                    flexDirection: "column",
+                                  }}
+                                >
+                                  <Link className="ms-2" to={Href}>
+                                    <h5
+                                      style={{
+                                        fontSize: "16px",
+                                        fontWeight: "bold",
+                                      }}
+                                    >
+                                      {data.operator.fullName}
+                                    </h5>
+                                    <span
+                                      style={{
+                                        fontSize: "13px",
+                                      }}
+                                    >
+                                      {data.operator.emailAddress}
+                                    </span>
+                                  </Link>
+                                </div>
+                              </div>
+
                               <div
                                 style={{
-                                  display: "flex",
-                                  flexDirection: "column",
+                                  textAlign: "center",
+                                  width: "30%",
+                                  alignItems: "center",
                                 }}
                               >
-                                <Link className="ms-2" to={Href}>
-                                  <h5
-                                    style={{
-                                      fontSize: "16px",
-                                      fontWeight: "bold",
-                                    }}
+                                <H5>
+                                  {operatorPerformance.totalAlertEventsOfCompany ==
+                                  0
+                                    ? 0
+                                    : (
+                                        (data.alerts.length /
+                                          operatorPerformance.totalAlertEventsOfCompany) *
+                                        100
+                                      ).toFixed(0)}
+                                  %
+                                </H5>
+                                <Fragment key={index}>
+                                  <Progress
+                                    value={
+                                      operatorPerformance.totalAlertEventsOfCompany ==
+                                      0
+                                        ? 0
+                                        : (
+                                            (data.alerts.length /
+                                              operatorPerformance.totalAlertEventsOfCompany) *
+                                            100
+                                          ).toFixed(0)
+                                    }
+                                    // className="mb-4"
+                                    striped={true}
+                                    color="success"
+                                    animated={true}
                                   >
-                                    {data.operator.fullName}
-                                  </h5>
-                                  <span
-                                    style={{
-                                      fontSize: "13px",
-                                    }}
-                                  >
-                                    {data.operator.emailAddress}
-                                  </span>
-                                </Link>
+                                    {operatorPerformance.totalAlertEventsOfCompany ==
+                                    0
+                                      ? 0
+                                      : (
+                                          (data.alerts.length /
+                                            operatorPerformance.totalAlertEventsOfCompany) *
+                                          100
+                                        ).toFixed(0)}
+                                  </Progress>
+                                </Fragment>
                               </div>
-                            </div>
-                            <div>
-                              <span
-                                style={{
-                                  fontSize: "16px",
-                                  fontWeight: "bold",
-                                }}
-                              >
-                                Alerts Catered: &nbsp;
-                              </span>
-                              <span
-                                style={{
-                                  fontSize: "20px",
-                                }}
-                              >
-                                {data.alerts.length}
-                              </span>
-                            </div>
-                            {/* <div
-                              style={{
-                                textAlign: "center",
-                                width: "30%",
-                                alignItems: "center",
-                              }}
-                            >
-                              <H5>50%</H5>
-                              <Fragment key={index}>
-                                <Progress
-                                  value={50}
-                                  className="mb-4"
-                                  striped={true}
-                                  color="success"
-                                  animated={true}
+                              <div>
+                                <span
+                                  style={{
+                                    fontSize: "16px",
+                                    fontWeight: "bold",
+                                  }}
                                 >
-                                  50
-                                </Progress>
-                              </Fragment>
-                            </div> */}
-                          </li>
-                        </>
-                      ))}
+                                  Alerts Catered: &nbsp;
+                                </span>
+                                <span
+                                  style={{
+                                    fontSize: "20px",
+                                  }}
+                                >
+                                  {data.alerts.length}
+                                </span>
+                              </div>
+                            </li>
+                          </>
+                        )
+                      )}
                       {isUpdateModalOpenForOperatorAlerts && (
                         <OperatorAlerts
                           isVisible={isUpdateModalOpenForOperatorAlerts}
@@ -594,32 +1126,48 @@ const General = () => {
           </Draggable> */}
 
           <Col xl="3" className="box">
-            <Card className="widget-sell handle2">
+            <Card
+              className="widget-sell handle2"
+              style={{ minHeight: "410px", maxHeight: "410px" }}
+            >
               <CardBody className="pb-0">
                 <Row>
                   <Col xl="12" lg="12" sm="12" className="mb-3">
                     <div className="sale">
-                      <H5>Package Expiry ({daysRemaining})</H5>
-                      <div
-                        style={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                        }}
-                      >
-                        {/* <H5>{data.count}</H5> */}
-                        {/* <div id="donutchart">
-                              <ReactApexChart
-                                options={apexDonutCharts}
-                                series={apexDonutCharts.series}
-                                type="donut"
-                              />
-                            </div> */}
+                      <div>
+                        <div
+                          style={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                          }}
+                        >
+                          <H5>Package Expiry - Days</H5>
+                          <div
+                            style={{
+                              padding: "6px",
+                              width: "35px",
+                              height: "35px",
+                              borderRadius: "100px",
+                              backgroundColor: "black",
+                              color: "white",
+                              display: "flex",
+                              justifyContent: "center",
+                              alignItems: "center",
+                              fontFamily: "Sedan, serif",
+                              fontWeight: "400",
+                              fontStyle: "normal",
+                            }}
+                          >
+                            {daysRemaining}
+                          </div>
+                        </div>
+
                         <div
                           style={{
                             display: "flex",
                             flexDirection: "row",
                             width: "85%", // Set the width of the outer container
-                            height: "170px", // Set the height of the outer container
+                            height: "22vh", // Set the height of the outer container
                             // backgroundColor: "gray", // Remove the background color
                           }}
                         >
@@ -642,7 +1190,7 @@ const General = () => {
                                   daysRemaining < 0 ? 0 : daysRemaining,
                                 ],
                                 [
-                                  "Spend",
+                                  "Passed",
                                   daysRemaining > 0
                                     ? generalData.companyPackageStatistics
                                         .packageDays - daysRemaining
@@ -660,37 +1208,50 @@ const General = () => {
                                 },
                                 pieHole: 0.4,
                                 pieSliceText: "value", // Display the exact values of each option
+                                colors: ["#51bb25", "#ff6150"], // Custom colors for Active and Inactive options respectively
                               }}
                             />
                           </div>
                         </div>
                       </div>
-                      {/* <P className="d-flex">
-                        <span className={`bg-light-${data.color} me-2`}>
-                          <SVG iconId={data.svgIcon} />
-                        </span>
-                        <span className={`font-${data.color}`}>
-                          {data.percentage}
-                        </span>
-                      </P>
-                      <span className="sale-title">{data.time}</span> */}
                     </div>
                   </Col>
                   <Col xl="12" lg="12" sm="12" className="mb-3">
                     <div className="sale">
-                      <H5>Total Leads ( 1 )</H5>
-                      <div
-                        style={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                        }}
-                      >
+                      <div>
+                        <div
+                          style={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                          }}
+                        >
+                          <H5>Total Leads</H5>
+                          <div
+                            style={{
+                              padding: "6px",
+                              width: "35px",
+                              height: "35px",
+                              borderRadius: "100px",
+                              backgroundColor: "black",
+                              color: "white",
+                              display: "flex",
+                              justifyContent: "center",
+                              alignItems: "center",
+                              fontFamily: "Sedan, serif",
+                              fontWeight: "400",
+                              fontStyle: "normal",
+                            }}
+                          >
+                            1
+                          </div>
+                        </div>
+
                         <div
                           style={{
                             display: "flex",
                             flexDirection: "row",
                             width: "85%", // Set the width of the outer container
-                            height: "170px", // Set the height of the outer container
+                            height: "22vh", // Set the height of the outer container
                             // backgroundColor: "gray", // Remove the background color
                           }}
                         >
@@ -719,6 +1280,7 @@ const General = () => {
                                   right: 0,
                                 },
                                 pieSliceText: "value", // Display the exact values of each option
+                                colors: ["#51bb25", "#ff6150"], // Custom colors for Active and Inactive options respectively
                               }}
                               rootProps={pieChart.rootProps}
                             />

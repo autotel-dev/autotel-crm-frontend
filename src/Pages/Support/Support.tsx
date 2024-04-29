@@ -96,6 +96,8 @@ const Support = () => {
       url:
         getUserRole() === ROLES.COMPANY
           ? "company/get-all-bug-reports"
+          : getUserRole() === ROLES.OPERATOR
+          ? "operator/get-all-bug-reports"
           : "support/bug-report/get-all-bug-reports",
     }).then((data: any) => {
       // console.log("api call --- >", data);

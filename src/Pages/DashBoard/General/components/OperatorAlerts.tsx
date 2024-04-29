@@ -14,6 +14,7 @@ import { useSelector } from "react-redux";
 import Swal from "sweetalert2";
 import { Select } from "antd";
 import { H3, H5, P } from "../../../../AbstractElements";
+import { Heading5 } from "../../../../utils/Constant";
 
 interface PropsTypes {
   isVisible: boolean; // Change 'boolean' to the actual type of isVisible
@@ -35,6 +36,7 @@ const OperatorAlerts: React.FC<PropsTypes> = ({
     "Message",
     "Address",
     "User",
+    "Completion Response",
     "Count Down",
   ];
   const containerRef = useRef(null);
@@ -255,7 +257,7 @@ const OperatorAlerts: React.FC<PropsTypes> = ({
                   <thead>
                     <tr>
                       {tableHeader.map((data, index) => (
-                        <th key={index} style={{ width: "14%" }}>
+                        <th key={index} style={{ width: "12%" }}>
                           {data == "Count Down" ? (
                             <div
                               style={{
@@ -298,15 +300,23 @@ const OperatorAlerts: React.FC<PropsTypes> = ({
                                 key={index}
                               >
                                 {/* <td>{data.eventId}</td> */}
-                                <td style={{ width: "14%" }}>
+                                <td style={{ width: "12%" }}>
                                   <div className="d-flex">
                                     <div className="flex-grow-1">
-                                      <H5>{data.deviceName}</H5>
-                                      <div style={{ fontSize: "10px" }}>
+                                    <h5
+                                      style={{
+                                        fontSize: "14px",
+                                        fontWeight: "bold",
+                                      }}
+                                    >
+                                      {data.deviceName}
+                                    </h5>
+
+                                      <div style={{ fontSize: "12px" }}>
                                         {data.createdAt.slice(0, 10)}
                                       </div>
 
-                                      <div style={{ fontSize: "10px" }}>
+                                      <div style={{ fontSize: "12px" }}>
                                         {data.createdAt.slice(11, 19)}
                                       </div>
                                     </div>
@@ -314,15 +324,15 @@ const OperatorAlerts: React.FC<PropsTypes> = ({
                                 </td>
                                 <td
                                   className={`txt-primary`}
-                                  style={{ width: "14%" }}
+                                  style={{ width: "12%" }}
                                 >
                                   {data.message}
                                 </td>
-                                <td style={{ width: "14%" }}>{data.type}</td>
-                                <td style={{ width: "14%" }}>{data.message}</td>
+                                <td style={{ width: "12%" }}>{data.type}</td>
+                                <td style={{ width: "12%" }}>{data.message}</td>
                                 <td
                                   id="addressAssignedAlerts"
-                                  style={{ width: "14%" }}
+                                  style={{ width: "12%" }}
                                 >
                                   {data.address == null
                                     ? "N/A"
@@ -330,11 +340,17 @@ const OperatorAlerts: React.FC<PropsTypes> = ({
                                     ? data.address.substring(0, 10) + "..."
                                     : data.address}
                                 </td>
-                                <td style={{ width: "14%" }}>
+                                <td style={{ width: "12%" }}>
                                   {data.assignedTo.fullName}
                                 </td>
+                                <td style={{ width: "12%" }}>
+                                  {data.completionResponse == ""
+                                    ? "N/A"
+                                    : data.completionResponse}
+                                </td>
                                 <td
-                                  style={{ width: "14%", fontWeight: "bold" }}
+                                  className="micro-5-charted-regular"
+                                  style={{ width: "12%" }}
                                 >
                                   {data.remainingTime}
                                 </td>

@@ -1,2 +1,12 @@
 // App Scss //
 @import '../public/assets/scss/app.scss';
+
+@import url('https://fonts.googleapis.com/css2?family=Micro+5+Charted&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Sedan:ital@0;1&display=swap');
+
+.micro-5-charted-regular {
+    font-family: "Micro 5 Charted", sans-serif;
+    font-weight: bold;
+    font-style: normal;
+    font-size: 28px;
+  }

@@ -230,7 +230,9 @@ const KilledVehicles: React.FC<PropsTypes> = ({ fromDate, toDate }) => {
                 }}
               >
                 <div className="header-top">
-                  <H5 className="m-0">Killed Vehicles</H5>
+                  <H5 className="m-0">
+                    Killed Vehicles ({killedDevices.length})
+                  </H5>
                 </div>
               </CardHeader>
               <Row style={{ marginTop: "20px" }}>
@@ -250,7 +252,7 @@ const KilledVehicles: React.FC<PropsTypes> = ({ fromDate, toDate }) => {
                 className="table-responsive theme-scrollbar recent-wrapper"
                 style={{
                   overflowY: "scroll",
-                  maxHeight: "calc(66vh - 20px)", // Subtract scrollbar width from max height
+                  maxHeight: "calc(45vh - 20px)", // Subtract scrollbar width from max height
                   WebkitOverflowScrolling: "touch", // Enable momentum scrolling on iOS
                   scrollbarWidth: "thin", // Specify scrollbar width
                   WebkitBorderRadius: "5px", // For WebKit browsers (Chrome, Safari)
@@ -305,6 +307,7 @@ const KilledVehicles: React.FC<PropsTypes> = ({ fromDate, toDate }) => {
                               .toLowerCase()
                               .includes(searchValue.toLowerCase())
                           )
+
                           .map((data: any, index: any) => (
                             <tr style={{ cursor: "pointer" }} key={index}>
                               <td style={{ width: "8%" }}>{data.deviceId}</td>
@@ -418,7 +421,10 @@ const KilledVehicles: React.FC<PropsTypes> = ({ fromDate, toDate }) => {
                                   {data.isKilled ? "Killed" : "Released"}
                                 </div>
                               </td>
-                              <td style={{ width: "8%", fontWeight: "bold" }}>
+                              <td
+                                className="micro-5-charted-regular"
+                                style={{ width: "8%" }}
+                              >
                                 {data.remainingTime}
                               </td>
                               <td style={{ width: "8%" }}>

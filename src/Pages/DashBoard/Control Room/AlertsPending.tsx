@@ -185,7 +185,7 @@ const AlertsPending = () => {
       <Card>
         <CardHeader className="pb-0">
           <div className="header-top">
-            <H5 className="m-0">Alerts Pending</H5>
+            <H5 className="m-0">Alerts Pending ({alertsPending.length})</H5>
           </div>
         </CardHeader>
         <CardBody>
@@ -231,7 +231,8 @@ const AlertsPending = () => {
             style={{
               overflowY: "scroll",
               overflowX: "auto",
-              maxHeight: "calc(48vh - 20px)", // Subtract scrollbar width from max height
+              minHeight: "332px",
+              maxHeight: "332px", // Subtract scrollbar width from max height
               WebkitOverflowScrolling: "touch", // Enable momentum scrolling on iOS
               scrollbarWidth: "thin", // Specify scrollbar width
               WebkitBorderRadius: "5px", // For WebKit browsers (Chrome, Safari)
@@ -291,7 +292,14 @@ const AlertsPending = () => {
                               <td style={{ width: "14%" }}>
                                 <div className="d-flex">
                                   <div className="flex-grow-1">
-                                    <H5>{data.deviceName}</H5>
+                                    <h5
+                                      style={{
+                                        fontSize: "14px",
+                                        fontWeight: "bold",
+                                      }}
+                                    >
+                                      {data.deviceName}
+                                    </h5>
                                     <div style={{ fontSize: "10px" }}>
                                       {data.createdAt.slice(0, 10)}
                                     </div>
@@ -323,7 +331,15 @@ const AlertsPending = () => {
                               <td style={{ width: "14%" }}>
                                 {data.assignedTo.fullName}
                               </td>
-                              <td style={{ width: "14%", fontWeight: "bold" }}>
+                              <td
+                                className="micro-5-charted-regular"
+                                style={{
+                                  width: "14%",
+                                  // fontFamily: "Micro 5 Charted",
+                                  // fontWeight: "400",
+                                  // fontStyle: "normal",
+                                }}
+                              >
                                 {data.remainingTime}
                               </td>
                             </tr>

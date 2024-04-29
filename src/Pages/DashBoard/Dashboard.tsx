@@ -65,51 +65,53 @@ const Dashboard = () => {
   // // console.log("Dashboard", dashboard);
 
   useEffect(() => {
-    getAll({ url: "company/dashboard/alerts-overview" }).then((data: any) => {
-      // console.log("api call --- >", data);
-      if (data !== undefined) {
-        if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
-          dispatch(setIsConnected(true));
-        }
-        if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
-          Swal.fire({
-            text: `${data.message}`,
-            icon: "error",
-            timer: 2000,
-            showConfirmButton: false,
-          });
-        }
-        if (data.success) {
-          // // console.log("length --- >", data.data);
-          dispatch(setAlertsOverview(data.data.alertsOverview));
-          dispatch(setAlertsPending(data.data.allPendingAlerts));
-          setAlertsOverviewLoading(false);
-        }
-        if (!data.success) {
-          // // // console.log("length --- >", data.data);
-          dispatch(setAlertsOverview(null));
-          dispatch(setAlertsPending([]));
-          setAlertsOverviewLoading(false);
-        }
-      }
-    });
-
-    getAll({ url: "control-room/get-all-killed-devices?type=all" }).then(
-      (data: any) => {
-        // // console.log("api call --- >", data);
-
+    if (getUserRole() == ROLES.COMPANY) {
+      getAll({ url: "company/dashboard/alerts-overview" }).then((data: any) => {
+        // console.log("api call --- >", data);
         if (data !== undefined) {
+          if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
+            dispatch(setIsConnected(true));
+          }
+          if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
+            Swal.fire({
+              text: `${data.message}`,
+              icon: "error",
+              timer: 2000,
+              showConfirmButton: false,
+            });
+          }
           if (data.success) {
             // // console.log("length --- >", data.data);
-            dispatch(setKilledDevices(data.data));
+            dispatch(setAlertsOverview(data.data.alertsOverview));
+            dispatch(setAlertsPending(data.data.allPendingAlerts));
+            setAlertsOverviewLoading(false);
           }
           if (!data.success) {
             // // // console.log("length --- >", data.data);
-            dispatch(setKilledDevices([]));
+            dispatch(setAlertsOverview(null));
+            dispatch(setAlertsPending([]));
+            setAlertsOverviewLoading(false);
           }
         }
-      }
-    );
+      });
+
+      getAll({ url: "control-room/get-all-killed-devices?type=all" }).then(
+        (data: any) => {
+          // // console.log("api call --- >", data);
+
+          if (data !== undefined) {
+            if (data.success) {
+              // // console.log("length --- >", data.data);
+              dispatch(setKilledDevices(data.data));
+            }
+            if (!data.success) {
+              // // // console.log("length --- >", data.data);
+              dispatch(setKilledDevices([]));
+            }
+          }
+        }
+      );
+    }
   }, []);
   const yesterday = new Date();
   yesterday.setDate(yesterday.getDate() - 1);
