@@ -340,7 +340,7 @@ const AlertsPending = () => {
                                   // fontStyle: "normal",
                                 }}
                               >
-                                {data.remainingTime}
+                                {data?.remainingTime}
                               </td>
                             </tr>
                           )

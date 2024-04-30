@@ -173,22 +173,24 @@ const General = () => {
   const dropdownRef = useRef<HTMLDivElement>(null); // Add type assertion here
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-  // const handleClickOutside = (event: MouseEvent) => {
-  //   if (
-  //     dropdownRef.current &&
-  //     !dropdownRef.current.contains(event.target as Node)
-  //   ) {
-  //     // Add type assertion here
-  //     setIsDropdownOpen(false);
-  //   }
-  // };
+  const handleClickOutside = (event: MouseEvent) => {
+    if (
+      dropdownRef.current &&
+      !dropdownRef.current.contains(event.target as Node) &&
+      !document.querySelector(".modal-content")?.contains(event.target as Node)
+    ) {
+      // Add type assertion here
+      setIsDropdownOpen(false);
+      setAddModal(false);
+    }
+  };
 
-  // useEffect(() => {
-  //   document.addEventListener("mousedown", handleClickOutside);
-  //   return () => {
-  //     document.removeEventListener("mousedown", handleClickOutside);
-  //   };
-  // }, []);
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const toggleDropdown = (e: any) => {
     e.stopPropagation(); // Stop event propagation
@@ -282,7 +284,10 @@ const General = () => {
               <CardBody className="pb-0">
                 <Row>
                   <Col xl="12" lg="12" sm="12" className="mb-3">
-                    <div className="sale">
+                    <div
+                      className="sale"
+                      style={{ minHeight: "180px", maxHeight: "180px" }}
+                    >
                       <div>
                         <div
                           style={{
@@ -307,10 +312,8 @@ const General = () => {
                               fontStyle: "normal",
                             }}
                           >
-                            {generalData.operatorStatistics
-                              .totalActiveOperators +
-                              generalData.operatorStatistics
-                                .totalInActiveOperators}
+                            {generalData?.operatorStatistics?.totalActiveOperators +
+                              generalData?.operatorStatistics?.totalInActiveOperators}
                           </div>
                         </div>
 
@@ -318,8 +321,8 @@ const General = () => {
                           style={{
                             display: "flex",
                             flexDirection: "row",
-                            width: "85%", // Set the width of the outer container
-                            height: "22vh", // Set the height of the outer container
+                            width: "90%", // Set the width of the outer container
+                            height: "160px", // Set the height of the outer container
                             // backgroundColor: "gray", // Remove the background color
                           }}
                         >
@@ -339,20 +342,18 @@ const General = () => {
                                 ["Task", "Hours per Day"],
                                 [
                                   "Active",
-                                  generalData.operatorStatistics
-                                    .totalActiveOperators,
+                                  generalData?.operatorStatistics?.totalActiveOperators,
                                 ],
                                 [
                                   "Inctive",
-                                  generalData.operatorStatistics
-                                    .totalInActiveOperators,
+                                  generalData?.operatorStatistics?.totalInActiveOperators,
                                 ],
                               ]}
                               options={{
                                 backgroundColor: "transparent", // Set chart background color as transparent
                                 chartArea: {
                                   backgroundColor: "transparent", // Set chart area background color as transparent
-                                  top: 10, // Set padding of the top of chart area to 0
+                                  top: "5%", // Set padding of the top of chart area to 0
                                   left: 25, // Set padding of the left of chart area to 0
                                   right: 0,
                                 },
@@ -376,7 +377,10 @@ const General = () => {
                     </div>
                   </Col>
                   <Col xl="12" lg="12" sm="12" className="mb-3">
-                    <div className="sale">
+                    <div
+                      className="sale"
+                      style={{ minHeight: "180px", maxHeight: "180px" }}
+                    >
                       <div>
                         <div
                           style={{
@@ -401,10 +405,8 @@ const General = () => {
                               fontStyle: "normal",
                             }}
                           >
-                            {generalData.companyServerStatistics
-                              .totalActiveServers +
-                              generalData.companyServerStatistics
-                                .totalInActiveServers}
+                            {generalData?.companyServerStatistics?.totalActiveServers +
+                              generalData?.companyServerStatistics?.totalInActiveServers}
                           </div>
                         </div>
 
@@ -412,8 +414,8 @@ const General = () => {
                           style={{
                             display: "flex",
                             flexDirection: "row",
-                            width: "85%", // Set the width of the outer container
-                            height: "22vh", // Set the height of the outer container
+                            width: "93%", // Set the width of the outer container
+                            height: "160px", // Set the height of the outer container
                             // backgroundColor: "gray", // Remove the background color
                           }}
                         >
@@ -433,20 +435,18 @@ const General = () => {
                                 ["Task", "Hours per Day"],
                                 [
                                   "Connected",
-                                  generalData.companyServerStatistics
-                                    .totalActiveServers,
+                                  generalData?.companyServerStatistics?.totalActiveServers,
                                 ],
                                 [
                                   "Disconnected",
-                                  generalData.companyServerStatistics
-                                    .totalInActiveServers,
+                                  generalData?.companyServerStatistics?.totalInActiveServers,
                                 ],
                               ]}
                               options={{
                                 backgroundColor: "transparent", // Set chart background color as transparent
                                 chartArea: {
                                   backgroundColor: "transparent", // Set chart area background color as transparent
-                                  top: 10, // Set padding of the top of chart area to 0
+                                  top: "5%", // Set padding of the top of chart area to 0
                                   left: 25, // Set padding of the left of chart area to 0
                                   right: 0,
                                 },
@@ -757,7 +757,6 @@ const General = () => {
                                   >
                                     Custom
                                   </div>
-
                                   <Modal
                                     isOpen={addModal}
                                     toggle={addToggle}
@@ -775,7 +774,7 @@ const General = () => {
                                       ></Button>
                                     </div>
 
-                                    <ModalBody>
+                                    <ModalBody className="modal-content">
                                       <form className="form-bookmark needs-validation">
                                         <Row>
                                           <FormGroup
@@ -867,6 +866,7 @@ const General = () => {
                                                     );
                                                     setGeneralLoading(false);
                                                     addToggle();
+                                                    // setSelectedFilter("Today");
                                                   }
                                                   if (!data.success) {
                                                     // // // console.log("length --- >", data.data);
@@ -916,7 +916,8 @@ const General = () => {
                       >
                         Total:&nbsp;
                         {
-                          operatorPerformance?.companyAlertEventsStatistics?.totalLiveAlerts
+                          operatorPerformance?.companyAlertEventsStatistics
+                            ?.totalLiveAlerts
                         }
                       </div>
                       <div
@@ -931,7 +932,8 @@ const General = () => {
                       >
                         Assigned: &nbsp;
                         {
-                          operatorPerformance?.companyAlertEventsStatistics?.totalAssignedAlerts
+                          operatorPerformance?.companyAlertEventsStatistics
+                            ?.totalAssignedAlerts
                         }
                       </div>
                       <div
@@ -946,7 +948,8 @@ const General = () => {
                       >
                         Completed:&nbsp;
                         {
-                          operatorPerformance?.companyAlertEventsStatistics?.totalCompletedAlerts
+                          operatorPerformance?.companyAlertEventsStatistics
+                            ?.totalCompletedAlerts
                         }
                       </div>
                     </div>
@@ -1130,7 +1133,10 @@ const General = () => {
               <CardBody className="pb-0">
                 <Row>
                   <Col xl="12" lg="12" sm="12" className="mb-3">
-                    <div className="sale">
+                    <div
+                      className="sale"
+                      style={{ minHeight: "180px", maxHeight: "180px" }}
+                    >
                       <div>
                         <div
                           style={{
@@ -1163,8 +1169,8 @@ const General = () => {
                           style={{
                             display: "flex",
                             flexDirection: "row",
-                            width: "85%", // Set the width of the outer container
-                            height: "22vh", // Set the height of the outer container
+                            width: "90%", // Set the width of the outer container
+                            height: "160px", // Set the height of the outer container
                             // backgroundColor: "gray", // Remove the background color
                           }}
                         >
@@ -1189,17 +1195,15 @@ const General = () => {
                                 [
                                   "Passed",
                                   daysRemaining > 0
-                                    ? generalData.companyPackageStatistics
-                                        .packageDays - daysRemaining
-                                    : generalData.companyPackageStatistics
-                                        .packageDays,
+                                    ? generalData?.companyPackageStatistics?.packageDays - daysRemaining
+                                    : generalData?.companyPackageStatistics?.packageDays,
                                 ],
                               ]}
                               options={{
                                 backgroundColor: "transparent", // Set chart background color as transparent
                                 chartArea: {
                                   backgroundColor: "transparent", // Set chart area background color as transparent
-                                  top: 10, // Set padding of the top of chart area to 0
+                                  top: "5%", // Set padding of the top of chart area to 0
                                   left: 25, // Set padding of the left of chart area to 0
                                   right: 0,
                                 },
@@ -1214,7 +1218,10 @@ const General = () => {
                     </div>
                   </Col>
                   <Col xl="12" lg="12" sm="12" className="mb-3">
-                    <div className="sale">
+                    <div
+                      className="sale"
+                      style={{ minHeight: "180px", maxHeight: "180px" }}
+                    >
                       <div>
                         <div
                           style={{
@@ -1247,8 +1254,8 @@ const General = () => {
                           style={{
                             display: "flex",
                             flexDirection: "row",
-                            width: "85%", // Set the width of the outer container
-                            height: "22vh", // Set the height of the outer container
+                            width: "90%", // Set the width of the outer container
+                            height: "160px", // Set the height of the outer container
                             // backgroundColor: "gray", // Remove the background color
                           }}
                         >
@@ -1272,7 +1279,7 @@ const General = () => {
                                 backgroundColor: "transparent", // Set chart background color as transparent
                                 chartArea: {
                                   backgroundColor: "transparent", // Set chart area background color as transparent
-                                  top: 10, // Set padding of the top of chart area to 0
+                                  top: "5%", // Set padding of the top of chart area to 0
                                   left: 25, // Set padding of the left of chart area to 0
                                   right: 0,
                                 },

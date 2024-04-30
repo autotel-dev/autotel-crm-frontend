@@ -425,7 +425,7 @@ const KilledVehicles: React.FC<PropsTypes> = ({ fromDate, toDate }) => {
                                 className="micro-5-charted-regular"
                                 style={{ width: "8%" }}
                               >
-                                {data.remainingTime}
+                                {data?.remainingTime}
                               </td>
                               <td style={{ width: "8%" }}>
                                 <div>

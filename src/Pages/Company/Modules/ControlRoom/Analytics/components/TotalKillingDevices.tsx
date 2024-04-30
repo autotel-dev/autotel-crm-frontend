@@ -550,7 +550,7 @@ const TotalKillingDevices: React.FC<PropsTypes> = ({
                                         className="micro-5-charted-regular"
                                         style={{ width: "8%" }}
                                       >
-                                        {data.remainingTime}
+                                        {data?.remainingTime}
                                       </td>
                                       <td style={{ width: "8%" }}>
                                         <div>
@@ -786,7 +786,7 @@ const TotalKillingDevices: React.FC<PropsTypes> = ({
                                 className="micro-5-charted-regular"
                                 style={{ width: "8%" }}
                               >
-                                {data.remainingTime}
+                                {data?.remainingTime}
                               </td>
                               <td style={{ width: "8%" }}>
                                 <div>

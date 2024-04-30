@@ -352,7 +352,7 @@ const OperatorAlerts: React.FC<PropsTypes> = ({
                                   className="micro-5-charted-regular"
                                   style={{ width: "12%" }}
                                 >
-                                  {data.remainingTime}
+                                  {data?.remainingTime}
                                 </td>
                               </tr>
                             )
