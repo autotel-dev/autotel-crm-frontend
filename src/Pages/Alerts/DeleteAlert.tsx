@@ -39,6 +39,10 @@ import {
   setFilterOperators,
   setOperators,
 } from "../../ReaduxToolkit/Reducer/OperatorSlice";
+import {
+  setComplainsTypes,
+  setFilterComplainsTypes,
+} from "../../ReaduxToolkit/Reducer/ComplainsTypeSlice";
 
 const deleteAlert = (
   alertData: alertTypes,
@@ -71,6 +75,8 @@ const deleteAlert = (
         uri = `super-admin/delete-company`;
       } else if (type === "usersType") {
         uri = `operator/delete-operator`;
+      } else if (type === "complainType") {
+        uri = `complaint-center/internal-complaint-type/delete-type`;
       }
 
       try {
@@ -97,6 +103,32 @@ const deleteAlert = (
             //   text: "Poof! Your city has been deleted!",
             //   icon: "success",
             // });
+            if (type === "complainType") {
+              getAll({
+                url: "complaint-center/internal-complaint-type/get-all-types",
+              }).then((data: any) => {
+                // console.log("api call --- >", data);
+                if (data == undefined) {
+                  dispatch(setComplainsTypes([]));
+                  dispatch(setFilterComplainsTypes([]));
+                }
+
+                if (data !== undefined) {
+                  dispatch(setNoDataFound(data.message));
+                  if (data.success) {
+                    // console.log("hhg");
+                    dispatch(setComplainsTypes(data.data));
+                    dispatch(setFilterComplainsTypes(data.data));
+                  }
+                  if (!data.success) {
+                    dispatch(setComplainsTypes([]));
+                    dispatch(setFilterComplainsTypes([]));
+                  }
+                } else {
+                  // console.log("ier67i");
+                }
+              });
+            }
             if (type === "usersType") {
               getAll({ url: "operator/get-all-operators" }).then(
                 (data: any) => {

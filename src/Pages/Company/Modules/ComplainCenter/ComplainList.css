@@ -1,0 +1,48 @@
+.widget-sell .sale {
+  background-color: #f5f6f9;
+  width: 100%;
+  padding: 17px;
+  height: 180px;
+}
+.widget-sell .sale h3 {
+  font-weight: 600;
+  color: #1f2f3e;
+  margin-bottom: 15px;
+}
+/* .widget-sell .sale h5 {
+  font-weight: bold;
+  font-size: 26px;
+  color: #1f2f3e;
+  margin-bottom: 20px;
+} */
+.widget-sell .sale p {
+  color: lightgray;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 0;
+  align-items: center !important;
+}
+.widget-sell .sale p span[class*="bg-"] {
+  width: 20px;
+  height: 20px;
+  border-radius: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.widget-sell .sale p span[class*="bg-"] svg {
+  position: absolute;
+  fill: #ff6150;
+  padding-top: 0;
+  width: 14px;
+  height: 14px;
+}
+.widget-sell .sale span.sale-title {
+  font-weight: 600;
+  color: #848789;
+  margin-left: 25px;
+}
+[dir="rtl"] .widget-sell .sale span.sale-title {
+  margin-left: unset;
+  margin-right: 25px;
+}

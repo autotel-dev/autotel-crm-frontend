@@ -176,12 +176,12 @@ const Support = () => {
             <Row>
               <Col sm={12}>
                 <Card>
-                  <CommonHeader
+                  {/* <CommonHeader
                     title=""
                     subTitle={[
                       { text: "List of supports opened by customers" },
                     ]}
-                  />
+                  /> */}
                   {!statisticsloading && !reportsLoading ? (
                     <CardBody>
                       {supportStatistics == null &&

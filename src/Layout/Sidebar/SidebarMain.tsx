@@ -72,6 +72,12 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
         },
         {
           svgIcon: "bonus-kit",
+          title: "Complain types",
+          link: `${process.env.PUBLIC_URL}/super-admin/setup/complain-types`,
+        },
+
+        {
+          svgIcon: "bonus-kit",
           title: "Email Templates",
           link: `${process.env.PUBLIC_URL}/dashboards/crmdashboard`,
         },

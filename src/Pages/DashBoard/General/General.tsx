@@ -38,6 +38,12 @@ import OperatorAlerts from "./components/OperatorAlerts";
 import { getUserRole } from "../../../Api/globals";
 import { ROLES } from "../../../constants/roles";
 
+import {
+  setDevices,
+  setDevicesStatuses,
+} from "../../../ReaduxToolkit/Reducer/MonitoringSlice";
+import Swal from "sweetalert2";
+
 interface DraggableBoxProps {
   initialPosition: { x: number; y: number };
 }
@@ -53,6 +59,7 @@ const General = () => {
   const { generalData, operatorPerformance } = useSelector(
     (state: any) => state.dashboard
   );
+  const { devices } = useSelector((state: any) => state.monitoring);
   const donutChart = {
     chartType: "PieChart",
     data: [
@@ -208,6 +215,143 @@ const General = () => {
     // }
   };
 
+  const groups: any = [];
+  const groupDevicesObj: any = {};
+  const initialGroupDevices: any = [];
+
+  const statuses: any = [];
+  const statusDevicesObj: any = {};
+  var initialGroupDevicesStatuses: any = [];
+
+  const [groupdevices, setgroupdevices]: any = useState([]);
+  const [groupdevicesStatuses, setgroupdevicesStatuses]: any = useState([]);
+
+  useEffect(() => {
+    if (devices.length === 0 && getUserRole() == ROLES.COMPANY) {
+      getAll({ url: "company/devices" }).then((data: any) => {
+        if (data !== undefined) {
+          // if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
+          //   dispatch(setIsConnected(true));
+          // }
+          if (!data.success) {
+            Swal.fire({
+              text: `${data.message}`,
+              icon: "error",
+              timer: 2000,
+              showConfirmButton: false,
+            });
+          }
+          console.log("error");
+
+          if (data.success) {
+            // // console.log("api call --- >", data);
+            // // console.log("length --- >", data.data.length);
+
+            for (let i = 0; i < data.data.length; i++) {
+              const element = data.data[i].title;
+              if (!groups.includes(element)) {
+                groups.push(element);
+              }
+            }
+
+            groups.forEach((title: any) => {
+              groupDevicesObj[title] = data.data
+                .filter((obj: any) => obj.title === title)
+                .map((item: any) => ({ ...item, checked: false }));
+            });
+
+            // Convert groupDevicesObj to initialGroupDevices array format
+            Object.keys(groupDevicesObj).forEach((title: any) => {
+              initialGroupDevices.push({
+                title,
+                checked: false,
+                items: groupDevicesObj[title],
+              });
+            });
+
+            // Update state with initialGroupDevices
+            setgroupdevices(initialGroupDevices);
+            // // console.log("groups", groups);
+            // // console.log("groupDevices", groupdevices);
+            dispatch(setDevices(initialGroupDevices));
+
+            // ---------------------- For device status-----------------------------------
+
+            for (let i = 0; i < data.data.length; i++) {
+              const element = data.data[i].online;
+              if (!statuses.includes(element)) {
+                statuses.push(element);
+                // setMyArray((prevArray) => [...prevArray, element]);
+              }
+            }
+            statuses.forEach((online: any) => {
+              statusDevicesObj[online] = data.data
+                .filter((obj: any) => obj.online === online)
+                .map((item: any) => ({ ...item, checked: false }));
+            });
+
+            // Convert groupDevicesObj to initialGroupDevices array format
+            Object.keys(statusDevicesObj).forEach((online: any) => {
+              initialGroupDevicesStatuses.push({
+                online,
+                items: statusDevicesObj[online],
+              });
+            });
+
+            const expiredDevices = [];
+            const notConnectedDevices = [];
+            const currentDate = new Date(); // Get the current date and time
+
+            for (let i = 0; i < data.data.length; i++) {
+              const element = data.data[i];
+              if (
+                element.expiration_date != null &&
+                element.expiration_date !== ""
+              ) {
+                const expirationDate = new Date(element.expiration_date); // Convert expiration date string to Date object
+                if (expirationDate < currentDate) {
+                  // Compare expiration date with current date
+                  expiredDevices.push({ ...element, checked: false });
+                }
+              }
+              if (i === data.data.length - 1) {
+                // // console.log("expiredDevices", expiredDevices);
+                initialGroupDevicesStatuses.push({
+                  online: "Expired",
+                  items: expiredDevices,
+                });
+              }
+            }
+
+            for (let i = 0; i < data.data.length; i++) {
+              const element = data.data[i];
+              if (
+                element.time == null ||
+                element.time === "" ||
+                element.time == undefined
+              ) {
+                notConnectedDevices.push({ ...element, checked: false });
+              }
+              if (i === data.data.length - 1) {
+                // // console.log("notConnectedDevices", notConnectedDevices);
+                initialGroupDevicesStatuses.push({
+                  online: "Not Connected",
+                  items: notConnectedDevices,
+                });
+              }
+            }
+
+            // Update state with initialGroupDevicesStatuses
+            setgroupdevicesStatuses(initialGroupDevicesStatuses);
+            // // console.log("statuses", statuses);
+            // // console.log("groupDevicesStatuses", initialGroupDevicesStatuses);
+            dispatch(setDevicesStatuses(initialGroupDevicesStatuses));
+          }
+        }
+      });
+    }
+  }, []);
+
   return (
     <Col xl="12" lg="12" md="12" sm="12">
       {generalloading == true ? (
@@ -276,7 +420,7 @@ const General = () => {
             
           </Draggable> */}
 
-          <Col xl="3" className="box">
+          <Col xl="3">
             <Card
               className="widget-sell handle"
               style={{ minHeight: "410px", maxHeight: "410px" }}
@@ -312,8 +456,12 @@ const General = () => {
                               fontStyle: "normal",
                             }}
                           >
-                            {generalData?.operatorStatistics?.totalActiveOperators +
-                              generalData?.operatorStatistics?.totalInActiveOperators}
+                            {generalData !== null
+                              ? generalData?.operatorStatistics
+                                  ?.totalActiveOperators +
+                                generalData?.operatorStatistics
+                                  ?.totalInActiveOperators
+                              : 0}
                           </div>
                         </div>
 
@@ -342,11 +490,13 @@ const General = () => {
                                 ["Task", "Hours per Day"],
                                 [
                                   "Active",
-                                  generalData?.operatorStatistics?.totalActiveOperators,
+                                  generalData?.operatorStatistics
+                                    ?.totalActiveOperators,
                                 ],
                                 [
                                   "Inctive",
-                                  generalData?.operatorStatistics?.totalInActiveOperators,
+                                  generalData?.operatorStatistics
+                                    ?.totalInActiveOperators,
                                 ],
                               ]}
                               options={{
@@ -405,8 +555,12 @@ const General = () => {
                               fontStyle: "normal",
                             }}
                           >
-                            {generalData?.companyServerStatistics?.totalActiveServers +
-                              generalData?.companyServerStatistics?.totalInActiveServers}
+                            {generalData !== null
+                              ? generalData?.companyServerStatistics
+                                  ?.totalActiveServers +
+                                generalData?.companyServerStatistics
+                                  ?.totalInActiveServers
+                              : 0}
                           </div>
                         </div>
 
@@ -435,11 +589,13 @@ const General = () => {
                                 ["Task", "Hours per Day"],
                                 [
                                   "Connected",
-                                  generalData?.companyServerStatistics?.totalActiveServers,
+                                  generalData?.companyServerStatistics
+                                    ?.totalActiveServers,
                                 ],
                                 [
                                   "Disconnected",
-                                  generalData?.companyServerStatistics?.totalInActiveServers,
+                                  generalData?.companyServerStatistics
+                                    ?.totalInActiveServers,
                                 ],
                               ]}
                               options={{
@@ -978,7 +1134,7 @@ const General = () => {
                           }}
                         /> */}
 
-                      {operatorPerformance.groupedAlerts.map(
+                      {operatorPerformance?.groupedAlerts?.map(
                         (data: any, index: any) => (
                           <>
                             <li
@@ -1040,12 +1196,12 @@ const General = () => {
                                 }}
                               >
                                 <H5>
-                                  {operatorPerformance.totalAlertEventsOfCompany ==
+                                  {operatorPerformance?.totalAlertEventsOfCompany ==
                                   0
                                     ? 0
                                     : (
                                         (data.alerts.length /
-                                          operatorPerformance.totalAlertEventsOfCompany) *
+                                          operatorPerformance?.totalAlertEventsOfCompany) *
                                         100
                                       ).toFixed(0)}
                                   %
@@ -1053,12 +1209,12 @@ const General = () => {
                                 <Fragment key={index}>
                                   <Progress
                                     value={
-                                      operatorPerformance.totalAlertEventsOfCompany ==
+                                      operatorPerformance?.totalAlertEventsOfCompany ==
                                       0
                                         ? 0
                                         : (
                                             (data.alerts.length /
-                                              operatorPerformance.totalAlertEventsOfCompany) *
+                                              operatorPerformance?.totalAlertEventsOfCompany) *
                                             100
                                           ).toFixed(0)
                                     }
@@ -1067,12 +1223,12 @@ const General = () => {
                                     color="success"
                                     animated={true}
                                   >
-                                    {operatorPerformance.totalAlertEventsOfCompany ==
+                                    {operatorPerformance?.totalAlertEventsOfCompany ==
                                     0
                                       ? 0
                                       : (
                                           (data.alerts.length /
-                                            operatorPerformance.totalAlertEventsOfCompany) *
+                                            operatorPerformance?.totalAlertEventsOfCompany) *
                                           100
                                         ).toFixed(0)}
                                   </Progress>
@@ -1195,8 +1351,10 @@ const General = () => {
                                 [
                                   "Passed",
                                   daysRemaining > 0
-                                    ? generalData?.companyPackageStatistics?.packageDays - daysRemaining
-                                    : generalData?.companyPackageStatistics?.packageDays,
+                                    ? generalData?.companyPackageStatistics
+                                        ?.packageDays - daysRemaining
+                                    : generalData?.companyPackageStatistics
+                                        ?.packageDays,
                                 ],
                               ]}
                               options={{

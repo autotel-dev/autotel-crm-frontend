@@ -30,6 +30,7 @@ import PersonalizationSlice from "./Reducer/PersonalizationSlice";
 import ReportsSlice from "./Reducer/ReportsSlice";
 import PermissionSlice from "./Reducer/PermissionSlice";
 import DashboardSlice from "./Reducer/DashboardSlice";
+import ComplainsTypeSlice from "./Reducer/ComplainsTypeSlice";
 
 const Store = configureStore({
   reducer: {
@@ -64,6 +65,7 @@ const Store = configureStore({
     reports: ReportsSlice,
     userPermissions: PermissionSlice,
     dashboard: DashboardSlice,
+    complainTypes: ComplainsTypeSlice,
   },
 });
 

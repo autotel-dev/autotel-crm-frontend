@@ -112,6 +112,9 @@ import NoInternetConnection from "../Pages/NoInternetConnection/NoInternetConnec
 import UpdateCompanyForm from "../Pages/Companies/UpdateCompanyForm/UpdateCompanyForm";
 import UnderProductionPage from "../Pages/UnderProductionPage/UnderProductionPage";
 import Dashboard from "../Pages/DashBoard/Dashboard";
+import ComplainDetails from "../Pages/Company/Modules/ComplainCenter/ComplainDetails";
+import ComplainCenter from "../Pages/Company/Modules/ComplainCenter/ComplainCenter";
+import ComplainType from "../Pages/ComplainType/ComplainType";
 
 const routes = [
   // dashboard routes
@@ -561,6 +564,13 @@ const routes = [
     permissionValue: "CRMModules",
   },
   {
+    path: `${process.env.PUBLIC_URL}/super-admin/setup/complain-types`,
+    Component: <ComplainType />,
+    allowedUserRoles: [ROLES.SUPER_ADMIN],
+    isProtected: true,
+    permissionValue: "ComplainTypes",
+  },
+  {
     path: `${process.env.PUBLIC_URL}/super-admin/setup/server_details`,
     Component: <Servers />,
     allowedUserRoles: [ROLES.SUPER_ADMIN],
@@ -694,6 +704,18 @@ const routes = [
     isProtected: true,
     allowedUserRoles: [ROLES.COMPANY],
     permissionValue: "Control Room",
+  },
+
+  {
+    path: `${process.env.PUBLIC_URL}/company/modules/complain-center`,
+    Component: <ComplainCenter />,
+    isProtected: true,
+    allowedUserRoles: [ROLES.COMPANY],
+    permissionValue: "Complain Center",
+  },
+  {
+    path: `${process.env.PUBLIC_URL}/company/modules/complain-center/complainDetails/:complainId`,
+    Component: <ComplainDetails />,
   },
   // Users
   {
