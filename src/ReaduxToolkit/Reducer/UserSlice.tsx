@@ -4,6 +4,7 @@ const initialState = {
   token: null,
   userData: null,
   serverPermissions: [],
+  loginData: null,
 };
 
 const UserSlice = createSlice({
@@ -19,9 +20,12 @@ const UserSlice = createSlice({
     setServerPermissions: (state, action) => {
       state.serverPermissions = action.payload;
     },
+    setLoginData: (state, action) => {
+      state.loginData = action.payload;
+    },
   },
 });
-export const { setToken, setUserData, setServerPermissions } =
+export const { setToken, setUserData, setServerPermissions, setLoginData } =
   UserSlice.actions;
 
 export default UserSlice.reducer;

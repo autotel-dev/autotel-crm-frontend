@@ -37,9 +37,11 @@ import {
   setDevices,
   setDevicesStatuses,
 } from "../../ReaduxToolkit/Reducer/MonitoringSlice";
+import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
   const dispatch = useDispatch();
+  const { loginData } = useSelector((state: any) => state.user);
   const { userPermissions } = useSelector(
     (state: any) => state.userPermissions
   );
@@ -51,6 +53,46 @@ const Dashboard = () => {
 
   const [alertsOverviewloading, setAlertsOverviewLoading] =
     useState<boolean>(true);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const showSwalAlerts = (errors: any, index: any) => {
+      // Base case: If index is equal to the length of errors array, stop recursion
+      if (index === errors.length) return;
+
+      const server = errors[index].server;
+      const serverError = errors[index].serverError;
+
+      Swal.fire({
+        title: `${server.companyName}`,
+        text: `${serverError.message}`,
+        icon: "error",
+        showCancelButton: true,
+        confirmButtonText: "OK",
+        cancelButtonText: "Update Credentials", // Add "Update Credentials" button
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // User clicked "OK", recursively call showSwalAlerts with the next index
+          showSwalAlerts(errors, index + 1);
+        } else if (result.dismiss === Swal.DismissReason.cancel) {
+          // User clicked "Update Credentials", handle update logic here
+          // You can add your update logic here or call a separate function
+          navigate(`${process.env.PUBLIC_URL}/users/account`);
+          // console.log("Update Credentials clicked");
+        }
+      });
+    };
+
+    const timer = setTimeout(() => {
+      const serverErrors = loginData?.data?.serverErrors;
+      // If there are server errors, start showing alerts
+      if (serverErrors && serverErrors.length !== 0) {
+        showSwalAlerts(serverErrors, 0); // Start from index 0
+      }
+    }, 5000);
+
+    return () => clearTimeout(timer); // Cleanup the timeout on component unmount
+  }, [loginData]);
 
   // Simulating data fetching with a timeout
   useEffect(() => {

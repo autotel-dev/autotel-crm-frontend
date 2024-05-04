@@ -268,7 +268,7 @@ const GoogleMap = (props) => {
 
     // Clean up: Remove markers for unchecked items
     return () => {
-      console.log("Cleaning up markers...");
+      // console.log("Cleaning up markers...");
       createdMarkers.forEach(({ markerInstance, markerItem, id }) => {
         // If item is unchecked, remove its corresponding marker from the map
         markerInstance.setMap(null);

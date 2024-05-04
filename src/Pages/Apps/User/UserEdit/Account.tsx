@@ -6,7 +6,7 @@ import EditProfileForm from "./EditProfileForm/EditProfileForm";
 import AddProjectsAndUpload from "./AddProjectsAndUpload/AddProjectsAndUpload";
 import SecuritySettings from "./SecuritySettings/SecuritySettings";
 import ServerPermissions from "./ServerPermissions.tsx/ServerPermissions";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { IMAGE_BASE_URL, getAll, getImage } from "../../../../Api";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -20,6 +20,7 @@ import Swal from "sweetalert2";
 import AllowedModules from "./AllowedModules/AllowedModules";
 import NoInternetConnection from "../../../NoInternetConnection/NoInternetConnection";
 import { ROLES } from "../../../../constants/roles";
+import ServerCredentials from "./ServerCredentials/ServerCredentials";
 
 const Account = () => {
   const { userPermissions } = useSelector(
@@ -27,6 +28,9 @@ const Account = () => {
   );
   var legalAttachements = userPermissions.find(
     (item: any) => item.title === "Legal Documents"
+  );
+  var serverCredentialsPermissions = userPermissions.find(
+    (item: any) => item.value === "SERVER_CREDENTIALS"
   );
   // console.log("legalAttachements", legalAttachements);
   const dispatch = useDispatch();
@@ -37,6 +41,10 @@ const Account = () => {
   const [ticketImages, setTicketImages] = useState<any[]>([]);
   const [undefinedData, setUndefinedData] = useState<any>(false);
   const [isConnected, setIsConnected] = useState(false);
+  const serverCredentialsComponent = useRef<HTMLDivElement>(null);
+  // const handleGoToServerCredentials = () => {
+
+  // };
 
   useEffect(() => {
     setIsConnected(false);
@@ -64,18 +72,6 @@ const Account = () => {
     }
 
     getAll({ url: "user/get-user" }).then((parentData: any) => {
-      // console.log("api call --- >", parentData);
-      // if (parentData == undefined) {
-      //   setUserDataLoading(false);
-      //   setUndefinedData(true);
-      //   Swal.fire({
-      //     text: "Failed to Fetch due to connection refused",
-      //     icon: "error",
-      //     timer: 2000,
-      //     showConfirmButton: false,
-      //   });
-      // }
-
       if (parentData !== undefined) {
         if (
           !parentData.success &&
@@ -96,7 +92,10 @@ const Account = () => {
         if (parentData.success) {
           setUndefinedData(false);
           dispatch(setUserData(parentData.data.user));
-          if (getUserRole() === ROLES.SUPER_ADMIN || getUserRole() === ROLES.OPERATOR) {
+          if (
+            getUserRole() === ROLES.SUPER_ADMIN ||
+            getUserRole() === ROLES.OPERATOR
+          ) {
             setServerPermissionsLoading(false);
             setUserDataLoading(false);
           } else if (getUserRole() === ROLES.COMPANY) {
@@ -227,6 +226,12 @@ const Account = () => {
                       <Attachements attachements={ticketImages} />
                     )}
                   {getUserRole() === ROLES.COMPANY && <ServerPermissions />}
+
+                  {(getUserRole() === ROLES.COMPANY ||
+                    getUserRole() === ROLES.OPERATOR) &&
+                    serverCredentialsPermissions !== undefined &&
+                    serverCredentialsPermissions?.read && <ServerCredentials />}
+
                   <SecuritySettings />
 
                   {/* <AddProjectsAndUpload /> */}

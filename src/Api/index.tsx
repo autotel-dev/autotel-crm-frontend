@@ -16,7 +16,6 @@ export const ChatApi = `${api}/chats.json`;
 export const API_BASE_URL = "https://crmapi.autotel.pk/api/v1";
 export const IMAGE_BASE_URL = "https://crmapi.autotel.pk";
 
-
 interface URLTypes {
   url: String;
 }
@@ -458,7 +457,7 @@ export const getAll = async (url: URLTypes): Promise<void> => {
     const error: any = {
       success: false,
       message: "ERROR_INTERNET_DISCONNECTED",
-      statusCode: 401,
+      // statusCode: 401,
     };
     return error;
   }
@@ -472,10 +471,20 @@ export const getAll = async (url: URLTypes): Promise<void> => {
     });
     const result = response.data;
     // console.log("Response data:", response.data);
+    // console.log("result", result);
     return result;
   } catch (error: any) {
     // console.error("Error get-all:", error.message);
-    return error.response.data;
+    // console.log("error", error);
+    if (error.response.data.statusCode == 401) {
+      Swal.fire({
+        text: `${error.response.data.message}`,
+        icon: "error",
+        showConfirmButton: true,
+      });
+    } else {
+      return error.response.data;
+    }
   }
 };
 

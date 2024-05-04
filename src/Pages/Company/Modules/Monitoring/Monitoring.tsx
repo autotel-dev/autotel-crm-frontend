@@ -35,6 +35,7 @@ const Monitoring = () => {
 
   const [groupdevices, setgroupdevices]: any = useState([]);
   const [groupdevicesStatuses, setgroupdevicesStatuses]: any = useState([]);
+  const [serverErrors, setServerErrors] = useState([]);
 
   useEffect(() => {
     dispatch(setIsConnected(false));
@@ -74,17 +75,20 @@ const Monitoring = () => {
             setUndefinedData(false);
             // console.log("api call --- >", data);
             // console.log("length --- >", data.data.length);
+            if (data.data.serverErrors.length !== 0) {
+              setServerErrors(data.data.serverErrors);
+            }
 
-            dispatch(setServerDevices(data.data));
-            for (let i = 0; i < data.data.length; i++) {
-              const element = data.data[i].title;
+            dispatch(setServerDevices(data.data.allDevices));
+            for (let i = 0; i < data.data.allDevices.length; i++) {
+              const element = data.data.allDevices[i].title;
               if (!groups.includes(element)) {
                 groups.push(element);
               }
             }
 
             groups.forEach((title: any) => {
-              groupDevicesObj[title] = data.data
+              groupDevicesObj[title] = data.data.allDevices
                 .filter((obj: any) => obj.title === title)
                 .map((item: any) => ({ ...item, checked: false }));
             });
@@ -177,15 +181,15 @@ const Monitoring = () => {
 
             // ---------------------- For device status-----------------------------------
 
-            for (let i = 0; i < data.data.length; i++) {
-              const element = data.data[i].online;
+            for (let i = 0; i < data.data.allDevices.length; i++) {
+              const element = data.data.allDevices[i].online;
               if (!statuses.includes(element)) {
                 statuses.push(element);
                 // setMyArray((prevArray) => [...prevArray, element]);
               }
             }
             statuses.forEach((online: any) => {
-              statusDevicesObj[online] = data.data
+              statusDevicesObj[online] = data.data.allDevices
                 .filter((obj: any) => obj.online === online)
                 .map((item: any) => ({ ...item, checked: false }));
             });
@@ -202,8 +206,8 @@ const Monitoring = () => {
             const notConnectedDevices = [];
             const currentDate = new Date(); // Get the current date and time
 
-            for (let i = 0; i < data.data.length; i++) {
-              const element = data.data[i];
+            for (let i = 0; i < data.data.allDevices.length; i++) {
+              const element = data.data.allDevices[i];
               if (
                 element.expiration_date != null &&
                 element.expiration_date !== ""
@@ -214,7 +218,7 @@ const Monitoring = () => {
                   expiredDevices.push({ ...element, checked: false });
                 }
               }
-              if (i === data.data.length - 1) {
+              if (i === data.data.allDevices.length - 1) {
                 // console.log("expiredDevices", expiredDevices);
                 initialGroupDevicesStatuses.push({
                   online: "Expired",
@@ -223,8 +227,8 @@ const Monitoring = () => {
               }
             }
 
-            for (let i = 0; i < data.data.length; i++) {
-              const element = data.data[i];
+            for (let i = 0; i < data.data.allDevices.length; i++) {
+              const element = data.data.allDevices[i];
               if (
                 element.time == null ||
                 element.time === "" ||
@@ -285,17 +289,6 @@ const Monitoring = () => {
   const getData = () => {
     setLoading(true);
     getAll({ url: "company/devices" }).then((data: any) => {
-      // console.log("data", data);
-      // if (data == undefined) {
-      //   setUndefinedData(true);
-      //   setLoading(false);
-      //   Swal.fire({
-      //     text: "Failed to Fetch",
-      //     icon: "error",
-      //     timer: 2000,
-      //     showConfirmButton: false,
-      //   });
-      // }
       if (data !== undefined) {
         if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
           dispatch(setIsConnected(true));
@@ -315,16 +308,19 @@ const Monitoring = () => {
           // console.log("api call --- >", data);
           // console.log("length --- >", data.data.length);
 
-          dispatch(setServerDevices(data.data));
-          for (let i = 0; i < data.data.length; i++) {
-            const element = data.data[i].title;
+          if (data.data.serverErrors.length !== 0) {
+            setServerErrors(data.data.serverErrors);
+          }
+          dispatch(setServerDevices(data.data.allDevices));
+          for (let i = 0; i < data.data.allDevices.length; i++) {
+            const element = data.data.allDevices[i].title;
             if (!groups.includes(element)) {
               groups.push(element);
             }
           }
 
           groups.forEach((title: any) => {
-            groupDevicesObj[title] = data.data
+            groupDevicesObj[title] = data.data.allDevices
               .filter((obj: any) => obj.title === title)
               .map((item: any) => ({ ...item, checked: false }));
           });
@@ -347,15 +343,15 @@ const Monitoring = () => {
 
           // ---------------------- For device status-----------------------------------
 
-          for (let i = 0; i < data.data.length; i++) {
-            const element = data.data[i].online;
+          for (let i = 0; i < data.data.allDevices.length; i++) {
+            const element = data.data.allDevices[i].online;
             if (!statuses.includes(element)) {
               statuses.push(element);
               // setMyArray((prevArray) => [...prevArray, element]);
             }
           }
           statuses.forEach((online: any) => {
-            statusDevicesObj[online] = data.data
+            statusDevicesObj[online] = data.data.allDevices
               .filter((obj: any) => obj.online === online)
               .map((item: any) => ({ ...item, checked: false }));
           });
@@ -372,8 +368,8 @@ const Monitoring = () => {
           const notConnectedDevices = [];
           const currentDate = new Date(); // Get the current date and time
 
-          for (let i = 0; i < data.data.length; i++) {
-            const element = data.data[i];
+          for (let i = 0; i < data.data.allDevices.length; i++) {
+            const element = data.data.allDevices[i];
             if (
               element.expiration_date != null &&
               element.expiration_date !== ""
@@ -393,8 +389,8 @@ const Monitoring = () => {
             }
           }
 
-          for (let i = 0; i < data.data.length; i++) {
-            const element = data.data[i];
+          for (let i = 0; i < data.data.allDevices.length; i++) {
+            const element = data.data.allDevices[i];
             if (
               element.time == null ||
               element.time === "" ||
@@ -420,29 +416,50 @@ const Monitoring = () => {
       }
     });
   };
+
+  useEffect(() => {
+    const showSwalAlerts = (errors: any, index: any) => {
+      // Base case: If index is equal to the length of errors array, stop recursion
+      if (index === errors.length) return;
+
+      const server = errors[index].server;
+      const serverError = errors[index].serverError;
+
+      Swal.fire({
+        title: `${server?.companyName}`,
+        text: `${serverError?.message}`,
+        icon: "error",
+        showCancelButton: true,
+        confirmButtonText: "OK",
+        cancelButtonText: "Update Credentials", // Add "Update Credentials" button
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // User clicked "OK", recursively call showSwalAlerts with the next index
+          showSwalAlerts(errors, index + 1);
+        } else if (result.dismiss === Swal.DismissReason.cancel) {
+          // User clicked "Update Credentials", handle update logic here
+          // You can add your update logic here or call a separate function
+          navigate(`${process.env.PUBLIC_URL}/users/account`);
+          // console.log("Update Credentials clicked");
+        }
+      });
+    };
+
+    const timer = setTimeout(() => {
+      // const serverErrorss = serverErrors;
+      // If there are server errors, start showing alerts
+      if (serverErrors && serverErrors.length !== 0) {
+        showSwalAlerts(serverErrors, 0); // Start from index 0
+      }
+    }, 5000);
+
+    return () => clearTimeout(timer); // Cleanup the timeout on component unmount
+  }, [serverErrors]);
+
   const [undefinedData, setUndefinedData] = useState<any>(false);
   return (
     <>
       {isConnected ? (
-        // <div
-        //   style={{
-        //     display: "flex",
-        //     justifyContent: "center",
-        //     height: "80vh",
-        //     backgroundColor: "white",
-        //     alignItems: "center",
-        //   }}
-        // >
-        //   <div
-        //     style={{
-        //       textAlign: "center",
-        //       fontSize: "25px",
-        //       fontWeight: "bold",
-        //     }}
-        //   >
-        //     No Data Found
-        //   </div>
-        // </div>
         <NoInternetConnection />
       ) : !loading ? (
         devices.length > 0 && (

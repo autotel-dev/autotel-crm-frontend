@@ -160,7 +160,7 @@ const UpdateServerForm = () => {
                   // console.log("hhg");
                   dispatch(setServers(data.data.allServers));
                   dispatch(setFilterServers(data.data.allServers));
-                  navigate(`${process.env.PUBLIC_URL}/setup/server_details`);
+                  navigate(`${process.env.PUBLIC_URL}/super-admin/setup/server_details`);
                 }
               }
               dispatch(setServersEnd());

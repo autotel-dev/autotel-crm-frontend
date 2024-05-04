@@ -14,7 +14,6 @@ const LoginForm = () => {
   );
   const dispatch = useDispatch();
 
-
   useEffect(() => {
     const userId = localStorage.getItem("userId");
     // console.log(userId);
@@ -56,6 +55,39 @@ const LoginForm = () => {
         // console.log("error== >", error);
       });
   }, []);
+
+  const [text, setText] = useState("");
+  const [index, setIndex] = useState(0);
+  const [typing, setTyping] = useState(true);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (typing) {
+        setText((prevText) =>
+          prevText.length < userPersonalizationData?.subHeaderText.length
+            ? userPersonalizationData?.subHeaderText.slice(
+                0,
+                prevText.length + 1
+              )
+            : prevText
+        );
+
+        if (text === userPersonalizationData?.subHeaderText) {
+          setTyping(false);
+        }
+      } else {
+        setText((prevText) =>
+          prevText.length > 0 ? prevText.slice(0, prevText.length - 1) : ""
+        );
+
+        if (text === "") {
+          setTyping(true);
+        }
+      }
+    }, 70);
+
+    return () => clearInterval(interval);
+  }, [typing, text, userPersonalizationData?.subHeaderText]);
   return (
     <Container fluid>
       {loading ? (
@@ -73,7 +105,15 @@ const LoginForm = () => {
           </div>
         </div>
       ) : (
-        <Row>
+        <Row
+          style={{
+            // backgroundColor: `${
+            //   userPersonalizationData && userPersonalizationData.backgroundColor
+            // }`,
+            backgroundImage:
+              "linear-gradient(to bottom, rgba(220, 220, 220, 0.5), rgba(53, 191, 191, 1))",
+          }}
+        >
           <Col
             xl={5}
             className="b-center bg-size p-0"
@@ -82,10 +122,10 @@ const LoginForm = () => {
               flexDirection: "column",
               justifyContent: "center",
               alignItems: "center",
-              backgroundColor: `${
-                userPersonalizationData &&
-                userPersonalizationData.backgroundColor
-              }`,
+              // backgroundColor: `${
+              //   userPersonalizationData &&
+              //   userPersonalizationData.backgroundColor
+              // }`,
             }}
           >
             {/* <Image
@@ -105,6 +145,7 @@ const LoginForm = () => {
                     ? `${userPersonalizationData.textColor}`
                     : "black",
               }}
+              className="lilita-one-regular"
             >
               {userPersonalizationData !== null
                 ? userPersonalizationData.headerText
@@ -113,7 +154,7 @@ const LoginForm = () => {
             <div
               style={{
                 width: "80%",
-                fontWeight: "bold",
+                // fontWeight: "bold",
                 fontSize: "20px",
                 textAlign: "center",
                 marginBottom: "60px",
@@ -122,10 +163,14 @@ const LoginForm = () => {
                     ? `${userPersonalizationData.textColor}`
                     : "black",
               }}
+              className="pacifico-regular"
             >
               {userPersonalizationData !== null
-                ? userPersonalizationData.subHeaderText
+                ? text
                 : "The best tracking platform in the tracking industry"}
+              {/* {userPersonalizationData !== null
+                ? userPersonalizationData.subHeaderText
+                : "The best tracking platform in the tracking industry"} */}
             </div>
 
             <img

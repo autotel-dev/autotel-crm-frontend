@@ -29,6 +29,7 @@ import {
 import { getUserId, getUserRole } from "../../../../../Api/globals";
 import { setUserPersonalizationData } from "../../../../../ReaduxToolkit/Reducer/PersonalizationSlice";
 import { ROLES } from "../../../../../constants/roles";
+import { Select } from "antd";
 
 const Personalization = () => {
   const { userData } = useSelector((state: any) => state.user);
@@ -40,13 +41,21 @@ const Personalization = () => {
   };
 
   const [imageUrl, setImageUrl] = useState("");
-  const [isHovered, setIsHovered] = useState(false);
+  const [isHoveredForAccountLogo, setIsHoveredForAccountLogo] = useState(false);
+  const [isHoveredForLoginPageLogo, setIsHoveredForLoginPageLogo] =
+    useState(false);
 
-  const handleMouseEnter = () => {
-    setIsHovered(true);
+  const handleMouseEnterForAccountLogo = () => {
+    setIsHoveredForAccountLogo(true);
   };
-  const handleMouseLeave = () => {
-    setIsHovered(false);
+  const handleMouseLeaveForAccountLogo = () => {
+    setIsHoveredForAccountLogo(false);
+  };
+  const handleMouseEnterForLoginPageLogo = () => {
+    setIsHoveredForLoginPageLogo(true);
+  };
+  const handleMouseLeaveForLoginPageLogo = () => {
+    setIsHoveredForLoginPageLogo(false);
   };
   const { userPersonalizationData } = useSelector(
     (state: any) => state.personalization
@@ -331,6 +340,33 @@ const Personalization = () => {
     }
   };
 
+  const backgroundTypeList = [
+    {
+      label: "Solid",
+      value: "Solid",
+    },
+    {
+      label: "Gradient",
+      value: "Gradient",
+    },
+  ];
+  const [backgroundType, setBackgroundType] = useState("Solid");
+  const gradientDirectionTypes = [
+    {
+      label: "Right",
+      value: "right",
+    },
+    {
+      label: "Left",
+      value: "left",
+    },
+    {
+      label: "Top",
+      value: "top",
+    },
+  ];
+  const [gradientDirection, setGradientDirection] = useState("");
+
   return (
     <Col md={12}>
       <Form className="card" onSubmit={createPersonalization}>
@@ -340,9 +376,80 @@ const Personalization = () => {
           </CardHeader>
           <CardBody>
             <Row>
+              <Col md={3}>
+                <FormGroup>
+                  <P>Primary Color</P>
+                  <Input
+                    type="color"
+                    placeholder="Enter Primary Color here"
+                    defaultValue={primaryColor}
+                    value={primaryColor}
+                    disabled={
+                      userPersonalizationData !== null && !isEdit ? true : false
+                    }
+                    onChange={(e) => setprimaryColor(e.target.value)}
+                    style={{ height: "50px" }}
+                  />
+                </FormGroup>
+              </Col>
+              <Col md={3}>
+                <FormGroup>
+                  <P>Secondary Color</P>
+                  <Input
+                    type="color"
+                    placeholder="Enter Secondary Color here"
+                    defaultValue={secondaryClor}
+                    value={secondaryClor}
+                    disabled={
+                      userPersonalizationData !== null && !isEdit ? true : false
+                    }
+                    onChange={(e) => setsecondaryClor(e.target.value)}
+                    style={{ height: "50px" }}
+                  />
+                </FormGroup>
+              </Col>
+              <Col md={3}>
+                <FormGroup>
+                  <P>Background Color</P>
+                  <Input
+                    type="color"
+                    placeholder="Enter Custom Color 1"
+                    defaultValue={customColor1}
+                    value={customColor1}
+                    disabled={
+                      userPersonalizationData !== null && !isEdit ? true : false
+                    }
+                    onChange={(e) => setcustomColor1(e.target.value)}
+                    style={{ height: "50px" }}
+                  />
+                </FormGroup>
+              </Col>
+              <Col md={3}>
+                <FormGroup>
+                  <P>Buttons and Bars Color</P>
+                  <Input
+                    type="color"
+                    placeholder="Enter Custom Color 2"
+                    defaultValue={customColor2}
+                    value={customColor2}
+                    disabled={
+                      userPersonalizationData !== null && !isEdit ? true : false
+                    }
+                    onChange={(e) => setcustomColor2(e.target.value)}
+                    style={{ height: "50px" }}
+                  />
+                </FormGroup>
+              </Col>
+              <CardHeader
+                style={{
+                  padding: "20px 12px",
+                }}
+              >
+                <H4>Login Page Settings</H4>
+              </CardHeader>
               <Col md={6}>
                 <FormGroup>
-                  <P>Login Page Header Text</P>
+                  <P>Header Text</P>
                   <Input
                     type="text"
                     placeholder="Enter Header Text here"
@@ -357,7 +464,7 @@ const Personalization = () => {
               </Col>
               <Col md={6}>
                 <FormGroup>
-                  <P>Login Page Sub Header Text</P>
+                  <P>Sub Header Text</P>
                   <Input
                     type="text"
                     placeholder="Enter Sub Text here"
@@ -370,89 +477,55 @@ const Personalization = () => {
                   />
                 </FormGroup>
               </Col>
-              <Col md={4}>
+
+              <Col md={backgroundType == "Solid" ? 3 : 4}>
                 <FormGroup>
-                  <P>Primary Color</P>
-                  <Input
-                    type="color"
-                    placeholder="Enter Primary Color here"
-                    defaultValue={primaryColor}
-                    value={primaryColor}
-                    disabled={
-                      userPersonalizationData !== null && !isEdit ? true : false
+                  <P>Background Type</P>
+                  <Select
+                    showSearch
+                    style={{ width: "100%", height: 50 }}
+                    placeholder="Select Type"
+                    optionFilterProp="children"
+                    filterOption={(input: any, option: any) =>
+                      (option?.label ?? "").includes(input)
                     }
-                    onChange={(e) => setprimaryColor(e.target.value)}
-                    style={{ height: "60px" }}
+                    filterSort={(optionA: any, optionB: any) =>
+                      (optionA?.label ?? "")
+                        .toLowerCase()
+                        .localeCompare((optionB?.label ?? "").toLowerCase())
+                    }
+                    onChange={(e) => {
+                      console.log(e);
+                      setBackgroundType(e);
+                    }}
+                    options={backgroundTypeList}
                   />
                 </FormGroup>
               </Col>
-              <Col md={4}>
+
+              {backgroundType == "Solid" && (
+                <Col md={backgroundType == "Solid" ? 3 : 4}>
+                  <FormGroup>
+                    <P>Background Color</P>
+                    <Input
+                      type="color"
+                      placeholder="Enter Background COlor"
+                      defaultValue={backgroundColor}
+                      value={backgroundColor}
+                      disabled={
+                        userPersonalizationData !== null && !isEdit
+                          ? true
+                          : false
+                      }
+                      onChange={(e) => setbackgroundColor(e.target.value)}
+                      style={{ height: "50px" }}
+                    />
+                  </FormGroup>
+                </Col>
+              )}
+              <Col md={backgroundType == "Solid" ? 3 : 4}>
                 <FormGroup>
-                  <P>Secondary Color</P>
-                  <Input
-                    type="color"
-                    placeholder="Enter Secondary Color here"
-                    defaultValue={secondaryClor}
-                    value={secondaryClor}
-                    disabled={
-                      userPersonalizationData !== null && !isEdit ? true : false
-                    }
-                    onChange={(e) => setsecondaryClor(e.target.value)}
-                    style={{ height: "60px" }}
-                  />
-                </FormGroup>
-              </Col>
-              <Col md={4}>
-                <FormGroup>
-                  <P>Background Color</P>
-                  <Input
-                    type="color"
-                    placeholder="Enter Custom Color 1"
-                    defaultValue={customColor1}
-                    value={customColor1}
-                    disabled={
-                      userPersonalizationData !== null && !isEdit ? true : false
-                    }
-                    onChange={(e) => setcustomColor1(e.target.value)}
-                    style={{ height: "60px" }}
-                  />
-                </FormGroup>
-              </Col>
-              <Col md={4}>
-                <FormGroup>
-                  <P>Buttons and Bars Color</P>
-                  <Input
-                    type="color"
-                    placeholder="Enter Custom Color 2"
-                    defaultValue={customColor2}
-                    value={customColor2}
-                    disabled={
-                      userPersonalizationData !== null && !isEdit ? true : false
-                    }
-                    onChange={(e) => setcustomColor2(e.target.value)}
-                    style={{ height: "60px" }}
-                  />
-                </FormGroup>
-              </Col>
-              <Col md={4}>
-                <FormGroup>
-                  <P>Login Page Background Color</P>
-                  <Input
-                    type="color"
-                    placeholder="Enter Background COlor"
-                    defaultValue={backgroundColor}
-                    value={backgroundColor}
-                    disabled={
-                      userPersonalizationData !== null && !isEdit ? true : false
-                    }
-                    onChange={(e) => setbackgroundColor(e.target.value)}
-                    style={{ height: "60px" }}
-                  />
-                </FormGroup>
-              </Col>
-              <Col md={4}>
-                <FormGroup>
-                  <P>Login Page Text Color</P>
+                  <P>Text Color 1</P>
                   <Input
                     type="color"
                     placeholder="Enter Text Color"
@@ -462,17 +535,107 @@ const Personalization = () => {
                       userPersonalizationData !== null && !isEdit ? true : false
                     }
                     onChange={(e) => settextColor(e.target.value)}
-                    style={{ height: "60px" }}
+                    style={{ height: "50px" }}
                   />
                 </FormGroup>
               </Col>
+              <Col md={backgroundType == "Solid" ? 3 : 4}>
+                <FormGroup>
+                  <P>Text Color 2</P>
+                  <Input
+                    type="color"
+                    placeholder="Enter Text Color"
+                    defaultValue={textColor}
+                    value={textColor}
+                    disabled={
+                      userPersonalizationData !== null && !isEdit ? true : false
+                    }
+                    onChange={(e) => settextColor(e.target.value)}
+                    style={{ height: "50px" }}
+                  />
+                </FormGroup>
+              </Col>
+
+              {backgroundType == "Gradient" && (
+                <>
+                  <Col md={4}>
+                    <FormGroup>
+                      <P>Direction</P>
+                      <Select
+                        showSearch
+                        style={{ width: "100%", height: 50 }}
+                        placeholder="Select Direction"
+                        optionFilterProp="children"
+                        filterOption={(input: any, option: any) =>
+                          (option?.label ?? "").includes(input)
+                        }
+                        filterSort={(optionA: any, optionB: any) =>
+                          (optionA?.label ?? "")
+                            .toLowerCase()
+                            .localeCompare((optionB?.label ?? "").toLowerCase())
+                        }
+                        onChange={(e) => {
+                          console.log(e);
+                          setGradientDirection(e);
+                        }}
+                        options={gradientDirectionTypes}
+                      />
+                    </FormGroup>
+                  </Col>
+
+                  <Col md={4}>
+                    <FormGroup>
+                      <P>Color 1</P>
+                      <Input
+                        type="color"
+                        placeholder="Enter Text Color"
+                        defaultValue={textColor}
+                        value={textColor}
+                        disabled={
+                          userPersonalizationData !== null && !isEdit
+                            ? true
+                            : false
+                        }
+                        onChange={(e) => settextColor(e.target.value)}
+                        style={{ height: "50px" }}
+                      />
+                    </FormGroup>
+                  </Col>
+                  <Col md={4}>
+                    <FormGroup>
+                      <P>Color 2</P>
+                      <Input
+                        type="color"
+                        placeholder="Enter Text Color"
+                        defaultValue={textColor}
+                        value={textColor}
+                        disabled={
+                          userPersonalizationData !== null && !isEdit
+                            ? true
+                            : false
+                        }
+                        onChange={(e) => settextColor(e.target.value)}
+                        style={{ height: "50px" }}
+                      />
+                    </FormGroup>
+                  </Col>
+                </>
+              )}
+
+              <CardHeader
+                style={{
+                  padding: "20px 12px",
+                }}
+              >
+                <H4>Login Uploads</H4>
+              </CardHeader>
 
               {userPersonalizationData == null ? (
                 <Row>
                   <Col md={6}>
                     <Card>
                       <CommonHeader
-                        title="Logo Image"
+                        title="Account Logo"
                         subTitle={subTitle}
                         headClass="pb-0"
                       />
@@ -490,7 +653,7 @@ const Personalization = () => {
                   <Col md={6}>
                     <Card>
                       <CommonHeader
-                        title="Background Image"
+                        title="Login Page Logo"
                         subTitle={subTitle}
                         headClass="pb-0"
                       />
@@ -511,7 +674,7 @@ const Personalization = () => {
                   <Col md={6}>
                     <Card>
                       <CommonHeader
-                        title="Logo Image"
+                        title="Account Logo"
                         subTitle={subTitle}
                         headClass="pb-0"
                       />
@@ -529,7 +692,7 @@ const Personalization = () => {
                   <Col md={6}>
                     <Card>
                       <CommonHeader
-                        title="Background Image"
+                        title="Login Page Logo"
                         subTitle={subTitle}
                         headClass="pb-0"
                       />
@@ -548,112 +711,132 @@ const Personalization = () => {
               ) : (
                 <Row>
                   <div style={{ display: "flex", flexWrap: "wrap" }}>
-                    <div
-                      style={{
-                        position: "relative",
-                        marginRight: "20px",
-                        marginBottom: "20px",
-                      }}
-                      onMouseEnter={() => handleMouseEnter()}
-                      onMouseLeave={() => handleMouseLeave()}
-                      onClick={() => {
-                        setImageUrl(
-                          `${IMAGE_BASE_URL}/${userPersonalizationData.logoImage.url}`
-                        );
-                        addToggle();
-                      }}
-                    >
-                      <img
-                        src={`${IMAGE_BASE_URL}/${userPersonalizationData.logoImage.url}`}
-                        alt=""
-                        height={230}
-                        width={360}
+                    <div>
+                      <CardHeader
                         style={{
-                          borderRadius: "10px",
-                          border: "0.5px solid lightgray",
+                          padding: "20px 12px",
                         }}
-                      />
-                      {isHovered && (
-                        <div
+                      >
+                        <H5>Account Logo</H5>
+                      </CardHeader>
+                      <div
+                        style={{
+                          position: "relative",
+                          marginRight: "20px",
+                          marginBottom: "20px",
+                        }}
+                        onMouseEnter={() => handleMouseEnterForAccountLogo()}
+                        onMouseLeave={() => handleMouseLeaveForAccountLogo()}
+                        onClick={() => {
+                          setImageUrl(
+                            `${IMAGE_BASE_URL}/${userPersonalizationData.logoImage.url}`
+                          );
+                          addToggle();
+                        }}
+                      >
+                        <img
+                          src={`${IMAGE_BASE_URL}/${userPersonalizationData.logoImage.url}`}
+                          alt=""
+                          height={230}
+                          width={360}
                           style={{
-                            position: "absolute",
-                            top: 0,
-                            left: 0,
-                            width: "100%",
-                            height: "100%",
-                            background: "rgba(0, 0, 0, 0.7)", // Light black color with opacity
                             borderRadius: "10px",
-                            display: "flex",
-                            flexDirection: "column",
-                            justifyContent: "center",
-                            alignItems: "center",
+                            border: "0.5px solid lightgray",
                           }}
-                        >
-                          <span
+                        />
+                        {isHoveredForAccountLogo && (
+                          <div
                             style={{
-                              fontSize: "20px",
-                              color: "white",
-                              fontWeight: "bold",
+                              position: "absolute",
+                              top: 0,
+                              left: 0,
+                              width: "100%",
+                              height: "100%",
+                              background: "rgba(0, 0, 0, 0.7)", // Light black color with opacity
+                              borderRadius: "10px",
+                              display: "flex",
+                              flexDirection: "column",
+                              justifyContent: "center",
+                              alignItems: "center",
                             }}
                           >
-                            View Image
-                          </span>
-                        </div>
-                      )}
+                            <span
+                              style={{
+                                fontSize: "20px",
+                                color: "white",
+                                fontWeight: "bold",
+                              }}
+                            >
+                              View Image
+                            </span>
+                          </div>
+                        )}
+                      </div>
                     </div>
-                    <div
-                      style={{
-                        position: "relative",
-                        marginRight: "20px",
-                        marginBottom: "20px",
-                      }}
-                      onMouseEnter={() => handleMouseEnter()}
-                      onMouseLeave={() => handleMouseLeave()}
-                      onClick={() => {
-                        setImageUrl(
-                          `${IMAGE_BASE_URL}/${userPersonalizationData.backgroundImage.url}`
-                        );
-                        addToggle();
-                      }}
-                    >
-                      <img
-                        src={`${IMAGE_BASE_URL}/${userPersonalizationData.backgroundImage.url}`}
-                        alt=""
-                        height={230}
-                        width={360}
+
+                    <div>
+                      <CardHeader
                         style={{
-                          borderRadius: "10px",
-                          border: "0.5px solid lightgray",
+                          padding: "20px 12px",
                         }}
-                      />
-                      {isHovered && (
-                        <div
+                      >
+                        <H5>Login Page Logo</H5>
+                      </CardHeader>
+                      <div
+                        style={{
+                          position: "relative",
+                          marginRight: "20px",
+                          marginBottom: "20px",
+                        }}
+                        onMouseEnter={() => handleMouseEnterForLoginPageLogo()}
+                        onMouseLeave={() => handleMouseLeaveForLoginPageLogo()}
+                        onClick={() => {
+                          setImageUrl(
+                            `${IMAGE_BASE_URL}/${userPersonalizationData.backgroundImage.url}`
+                          );
+                          addToggle();
+                        }}
+                      >
+                        <img
+                          src={`${IMAGE_BASE_URL}/${userPersonalizationData.backgroundImage.url}`}
+                          alt=""
+                          height={230}
+                          width={360}
                           style={{
-                            position: "absolute",
-                            top: 0,
-                            left: 0,
-                            width: "100%",
-                            height: "100%",
-                            background: "rgba(0, 0, 0, 0.7)", // Light black color with opacity
                             borderRadius: "10px",
-                            display: "flex",
-                            flexDirection: "column",
-                            justifyContent: "center",
-                            alignItems: "center",
+                            border: "0.5px solid lightgray",
                           }}
-                        >
-                          <span
+                        />
+                        {isHoveredForLoginPageLogo && (
+                          <div
                             style={{
-                              fontSize: "20px",
-                              color: "white",
-                              fontWeight: "bold",
+                              position: "absolute",
+                              top: 0,
+                              left: 0,
+                              width: "100%",
+                              height: "100%",
+                              background: "rgba(0, 0, 0, 0.7)", // Light black color with opacity
+                              borderRadius: "10px",
+                              display: "flex",
+                              flexDirection: "column",
+                              justifyContent: "center",
+                              alignItems: "center",
                             }}
                           >
-                            View Image
-                          </span>
-                        </div>
-                      )}
+                            <span
+                              style={{
+                                fontSize: "20px",
+                                color: "white",
+                                fontWeight: "bold",
+                              }}
+                            >
+                              View Image
+                            </span>
+                          </div>
+                        )}
+                      </div>
                     </div>
+
                     <Modal
                       isOpen={addModal}
                       toggle={addToggle}

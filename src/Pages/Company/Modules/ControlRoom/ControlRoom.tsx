@@ -33,6 +33,7 @@ import ControlRoomAnalytics from "./Analytics/ControlRoomAnalytics";
 import {
   setDevices,
   setDevicesStatuses,
+  setServerDevices,
 } from "../../../../ReaduxToolkit/Reducer/MonitoringSlice";
 import { useNavigate } from "react-router-dom";
 import NoInternetConnection from "../../../NoInternetConnection/NoInternetConnection";
@@ -50,6 +51,7 @@ const ControlRoom = () => {
   const [loading, setLoading] = useState(true);
   const [devicesLoading, setDevicesLoading] = useState(true);
   const navigate = useNavigate();
+  const [serverErrors, setServerErrors] = useState([]);
   const { userPermissions } = useSelector(
     (state: any) => state.userPermissions
   );
@@ -90,6 +92,9 @@ const ControlRoom = () => {
         }
         if (data.success) {
           // // console.log("length --- >", data.data.allAlertEvents.length);
+          if (data.data.serverErrors.length !== 0) {
+            setServerErrors(data.data.serverErrors);
+          }
           dispatch(setLiveAlerts(data.data.allAlertEvents));
           dispatch(setLiveAlertsData(data.data));
         }
@@ -304,16 +309,17 @@ const ControlRoom = () => {
           if (data.success) {
             // // console.log("api call --- >", data);
             // // console.log("length --- >", data.data.length);
+            dispatch(setServerDevices(data.data.allDevices));
 
-            for (let i = 0; i < data.data.length; i++) {
-              const element = data.data[i].title;
+            for (let i = 0; i < data.data.allDevices.length; i++) {
+              const element = data.data.allDevices[i].title;
               if (!groups.includes(element)) {
                 groups.push(element);
               }
             }
 
             groups.forEach((title: any) => {
-              groupDevicesObj[title] = data.data
+              groupDevicesObj[title] = data.data.allDevices
                 .filter((obj: any) => obj.title === title)
                 .map((item: any) => ({ ...item, checked: false }));
             });
@@ -336,15 +342,15 @@ const ControlRoom = () => {
 
             // ---------------------- For device status-----------------------------------
 
-            for (let i = 0; i < data.data.length; i++) {
-              const element = data.data[i].online;
+            for (let i = 0; i < data.data.allDevices.length; i++) {
+              const element = data.data.allDevices[i].online;
               if (!statuses.includes(element)) {
                 statuses.push(element);
                 // setMyArray((prevArray) => [...prevArray, element]);
               }
             }
             statuses.forEach((online: any) => {
-              statusDevicesObj[online] = data.data
+              statusDevicesObj[online] = data.data.allDevices
                 .filter((obj: any) => obj.online === online)
                 .map((item: any) => ({ ...item, checked: false }));
             });
@@ -361,8 +367,8 @@ const ControlRoom = () => {
             const notConnectedDevices = [];
             const currentDate = new Date(); // Get the current date and time
 
-            for (let i = 0; i < data.data.length; i++) {
-              const element = data.data[i];
+            for (let i = 0; i < data.data.allDevices.length; i++) {
+              const element = data.data.allDevices[i];
               if (
                 element.expiration_date != null &&
                 element.expiration_date !== ""
@@ -382,8 +388,8 @@ const ControlRoom = () => {
               }
             }
 
-            for (let i = 0; i < data.data.length; i++) {
-              const element = data.data[i];
+            for (let i = 0; i < data.data.allDevices.length; i++) {
+              const element = data.data.allDevices[i];
               if (
                 element.time == null ||
                 element.time === "" ||
@@ -410,6 +416,45 @@ const ControlRoom = () => {
       });
     }
   }, []);
+
+  useEffect(() => {
+    const showSwalAlerts = (errors: any, index: any) => {
+      // Base case: If index is equal to the length of errors array, stop recursion
+      if (index === errors.length) return;
+
+      const server = errors[index].server;
+      const serverError = errors[index].serverError;
+
+      Swal.fire({
+        title: `${server?.companyName}`,
+        text: `${serverError?.message}`,
+        icon: "error",
+        showCancelButton: true,
+        confirmButtonText: "OK",
+        cancelButtonText: "Update Credentials", // Add "Update Credentials" button
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // User clicked "OK", recursively call showSwalAlerts with the next index
+          showSwalAlerts(errors, index + 1);
+        } else if (result.dismiss === Swal.DismissReason.cancel) {
+          // User clicked "Update Credentials", handle update logic here
+          // You can add your update logic here or call a separate function
+          navigate(`${process.env.PUBLIC_URL}/users/account`);
+          // console.log("Update Credentials clicked");
+        }
+      });
+    };
+
+    const timer = setTimeout(() => {
+      // const serverErrorss = serverErrors;
+      // If there are server errors, start showing alerts
+      if (serverErrors && serverErrors.length !== 0) {
+        showSwalAlerts(serverErrors, 0); // Start from index 0
+      }
+    }, 5000);
+
+    return () => clearTimeout(timer); // Cleanup the timeout on component unmount
+  }, [serverErrors]);
 
   const events = [
     {

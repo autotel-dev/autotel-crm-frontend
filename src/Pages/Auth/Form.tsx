@@ -14,7 +14,10 @@ import Swal from "sweetalert2";
 import { setUserPersonalizationData } from "../../ReaduxToolkit/Reducer/PersonalizationSlice";
 import { setUserPermissions } from "../../ReaduxToolkit/Reducer/PermissionSlice";
 import { ROLES } from "../../constants/roles";
-import { setUserData } from "../../ReaduxToolkit/Reducer/UserSlice";
+import {
+  setLoginData,
+  setUserData,
+} from "../../ReaduxToolkit/Reducer/UserSlice";
 import { setDevices } from "../../ReaduxToolkit/Reducer/MonitoringSlice";
 
 interface loginTypes {
@@ -54,6 +57,7 @@ const CommonForm = ({ alignLogo }: CommonFormPropsType) => {
       try {
         await login(loginData).then(async (data: any) => {
           // console.log("response: ", data);
+
           setLoading(false);
           // if (data == undefined) {
           //   Swal.fire({
@@ -87,29 +91,19 @@ const CommonForm = ({ alignLogo }: CommonFormPropsType) => {
             } else {
               Swal.fire({
                 text: `${data.message}`,
-                icon: "info",
+                icon: "error",
                 timer: 2000,
                 showCancelButton: false,
               });
             }
           } else if (data.statusCode === 200) {
+            dispatch(setLoginData(data));
             dispatch(setUserData(null));
             const token = data.data.authToken;
             // console.log("response: ", data.data);
             // console.log("token: ", token);
 
             localStorage.setItem("token", token);
-            // if (getUserRole() == ROLES.COMPANY) {
-            //   const savedPositionsString = localStorage.getItem("positions");
-            //   if (savedPositionsString == null || savedPositionsString == undefined) {
-            //     const positions = {
-            //       box1: { x: 0, y: 0 },
-            //       box2: { x: 0, y: 0 },
-            //       box3: { x: 0, y: 0 },
-            //     };
-            //     localStorage.setItem("positions", JSON.stringify(positions));
-            //   }
-            // }
 
             if (
               getUserRole() == ROLES.COMPANY ||
@@ -239,9 +233,9 @@ const CommonForm = ({ alignLogo }: CommonFormPropsType) => {
   return (
     <div className="login-card login-dark">
       <div>
-        <div>
+        {/* <div>
           <Logo alignLogo={alignLogo} />
-        </div>
+        </div> */}
         <div className="login-main">
           <Form className="theme-form" onSubmit={handleSubmit(loginData)}>
             <H3>{header}</H3>

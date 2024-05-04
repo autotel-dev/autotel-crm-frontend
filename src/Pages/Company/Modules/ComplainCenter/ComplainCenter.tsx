@@ -149,19 +149,17 @@ const ComplainCenter = () => {
         <NoInternetConnection />
       ) : (
         <div>
-          <Breadcrumbs mainTitle="Complain Center" parent="Complains" title="complain center" />
+          <Breadcrumbs
+            mainTitle="Complain Center"
+            parent="Complains"
+            title="complain center"
+          />
           <Container fluid>
             <Row>
               <Col sm={12}>
-                <Card>
-                  {/* <CommonHeader
-                    title=""
-                    subTitle={[
-                      { text: "List of supports opened by customers" },
-                    ]}
-                  /> */}
+                <div>
                   {!statisticsloading && !reportsLoading ? (
-                    <CardBody>
+                    <>
                       {supportStatistics == null &&
                       getUserRole() === ROLES.SUPER_ADMIN ? (
                         <div
@@ -187,24 +185,33 @@ const ComplainCenter = () => {
                         getUserRole() === ROLES.SUPER_ADMIN && <ComplainList />
                       )}
                       {getUserRole() !== ROLES.SUPER_ADMIN && <ComplainList />}
-                      <ComplainTable />
-                    </CardBody>
+
+                      <Card>
+                        <CardBody>
+                          <ComplainTable />
+                        </CardBody>
+                      </Card>
+                    </>
                   ) : (
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "center",
-                        height: "60vh",
-                        backgroundColor: "white",
-                        alignItems: "center",
-                      }}
-                    >
-                      <div style={{ textAlign: "center" }}>
-                        <Loader />
-                      </div>
-                    </div>
+                    <Card>
+                      <CardBody>
+                        <div
+                          style={{
+                            display: "flex",
+                            justifyContent: "center",
+                            height: "60vh",
+                            backgroundColor: "white",
+                            alignItems: "center",
+                          }}
+                        >
+                          <div style={{ textAlign: "center" }}>
+                            <Loader />
+                          </div>
+                        </div>
+                      </CardBody>
+                    </Card>
                   )}
-                </Card>
+                </div>
               </Col>
             </Row>
           </Container>

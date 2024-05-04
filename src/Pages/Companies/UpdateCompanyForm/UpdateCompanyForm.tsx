@@ -392,8 +392,8 @@ const UpdateCompanyForm = () => {
     console.log("value", value);
     console.log("option", option);
 
-    const updatedList = formData.serverCredentials.filter(
-      (item: any) => item.server._id !== value
+    const updatedList = formData?.serverCredentials?.filter(
+      (item: any) => item?.server?._id !== value
     );
     console.log("updatedList", updatedList);
 
@@ -777,11 +777,11 @@ const UpdateCompanyForm = () => {
 
                         <H4>Server Credentials</H4>
                         <Select
-                          defaultValue={formData.serverCredentials.map(
-                            (server: any) => server.server.companyName
+                          defaultValue={formData?.serverCredentials.map(
+                            (server: any) => server?.server?.companyName
                           )}
-                          value={formData.serverCredentials.map(
-                            (server: any) => server.server._id
+                          value={formData?.serverCredentials?.map(
+                            (server: any) => server?.server?._id
                           )}
                           showSearch
                           mode="multiple"
@@ -809,7 +809,7 @@ const UpdateCompanyForm = () => {
                               (option: any) =>
                                 !formData.serverCredentials.some(
                                   (server: any) =>
-                                    server.server._id === option.server
+                                    server?.server?._id === option.server
                                 )
                             );
                             console.log("selectedValues", selectedValues);
@@ -848,13 +848,13 @@ const UpdateCompanyForm = () => {
                           dropdownRender={(menu) => (
                             <div>
                               {menu}
-                              {formData.serverCredentials.map((server: any) => (
+                              {formData?.serverCredentials?.map((server: any) => (
                                 <Option
-                                  key={server.server._id}
-                                  value={server.server._id}
+                                  key={server?.server?._id}
+                                  value={server?.server?._id}
                                   disabled
                                 >
-                                  {server.server.companyName}
+                                  {server?.server?.companyName}
                                 </Option>
                               ))}
                             </div>
@@ -865,7 +865,7 @@ const UpdateCompanyForm = () => {
                         <Form
                           style={{ marginBottom: "65px", marginTop: "20px" }}
                         >
-                          {formData.serverCredentials.map(
+                          {formData?.serverCredentials?.map(
                             (item: any, index: any) => {
                               return (
                                 <div
@@ -879,7 +879,7 @@ const UpdateCompanyForm = () => {
                                   <Row className="g-3">
                                     <Col lg={12} sm={12}>
                                       <CommonHeader
-                                        title={item.server.companyName}
+                                        title={item?.server?.companyName}
                                         headClass="pb-0"
                                       />
                                     </Col>
@@ -889,7 +889,7 @@ const UpdateCompanyForm = () => {
                                         <span className="txt-danger">*</span>
                                       </P>
                                       <Input
-                                        value={item.emailAddress}
+                                        value={item?.emailAddress}
                                         name="emailAddress"
                                         type="email"
                                         placeholder="Enter Email Address"
@@ -909,7 +909,7 @@ const UpdateCompanyForm = () => {
                                         <span className="txt-danger">*</span>
                                       </P>
                                       <Input
-                                        value={item.password}
+                                        value={item?.password}
                                         name="password"
                                         type="email"
                                         placeholder="Enter Password"
@@ -930,7 +930,7 @@ const UpdateCompanyForm = () => {
                                       <Input
                                         type="text"
                                         placeholder="Enter Server"
-                                        value={item.server._id}
+                                        value={item?.server?._id}
                                         name="server"
                                         disabled
                                       />
@@ -943,7 +943,7 @@ const UpdateCompanyForm = () => {
                                       <Input
                                         type="text"
                                         placeholder="Enter Host Url"
-                                        value={item.hostUrl}
+                                        value={item?.hostUrl}
                                         name="hostUrl"
                                         disabled
                                       />

@@ -41,6 +41,7 @@ import { ROLES } from "../../../constants/roles";
 import {
   setDevices,
   setDevicesStatuses,
+  setServerDevices,
 } from "../../../ReaduxToolkit/Reducer/MonitoringSlice";
 import Swal from "sweetalert2";
 
@@ -241,21 +242,22 @@ const General = () => {
               showConfirmButton: false,
             });
           }
-          console.log("error");
+          // console.log("error");
 
           if (data.success) {
             // // console.log("api call --- >", data);
             // // console.log("length --- >", data.data.length);
+            dispatch(setServerDevices(data.data.allDevices));
 
-            for (let i = 0; i < data.data.length; i++) {
-              const element = data.data[i].title;
+            for (let i = 0; i < data.data.allDevices.length; i++) {
+              const element = data.data.allDevices[i].title;
               if (!groups.includes(element)) {
                 groups.push(element);
               }
             }
 
             groups.forEach((title: any) => {
-              groupDevicesObj[title] = data.data
+              groupDevicesObj[title] = data.data.allDevices
                 .filter((obj: any) => obj.title === title)
                 .map((item: any) => ({ ...item, checked: false }));
             });
@@ -277,15 +279,15 @@ const General = () => {
 
             // ---------------------- For device status-----------------------------------
 
-            for (let i = 0; i < data.data.length; i++) {
-              const element = data.data[i].online;
+            for (let i = 0; i < data.data.allDevices.length; i++) {
+              const element = data.data.allDevices[i].online;
               if (!statuses.includes(element)) {
                 statuses.push(element);
                 // setMyArray((prevArray) => [...prevArray, element]);
               }
             }
             statuses.forEach((online: any) => {
-              statusDevicesObj[online] = data.data
+              statusDevicesObj[online] = data.data.allDevices
                 .filter((obj: any) => obj.online === online)
                 .map((item: any) => ({ ...item, checked: false }));
             });
@@ -302,8 +304,8 @@ const General = () => {
             const notConnectedDevices = [];
             const currentDate = new Date(); // Get the current date and time
 
-            for (let i = 0; i < data.data.length; i++) {
-              const element = data.data[i];
+            for (let i = 0; i < data.data.allDevices.length; i++) {
+              const element = data.data.allDevices[i];
               if (
                 element.expiration_date != null &&
                 element.expiration_date !== ""
@@ -323,8 +325,8 @@ const General = () => {
               }
             }
 
-            for (let i = 0; i < data.data.length; i++) {
-              const element = data.data[i];
+            for (let i = 0; i < data.data.allDevices.length; i++) {
+              const element = data.data.allDevices[i];
               if (
                 element.time == null ||
                 element.time === "" ||
@@ -451,9 +453,9 @@ const General = () => {
                               display: "flex",
                               justifyContent: "center",
                               alignItems: "center",
-                              fontFamily: "Sedan, serif",
-                              fontWeight: "400",
-                              fontStyle: "normal",
+                              // fontFamily: "Sedan, serif",
+                              // fontWeight: "400",
+                              // fontStyle: "normal",
                             }}
                           >
                             {generalData !== null
@@ -507,9 +509,10 @@ const General = () => {
                                   left: 25, // Set padding of the left of chart area to 0
                                   right: 0,
                                 },
-                                pieHole: 0.4,
+                                // pieHole: 0.4,
                                 pieSliceText: "value", // Display the exact values of each option
                                 colors: ["#51bb25", "#ff6150"], // Custom colors for Active and Inactive options respectively
+                                is3D: true, // Set the chart type to 3D
                               }}
                             />
                           </div>
@@ -550,9 +553,9 @@ const General = () => {
                               display: "flex",
                               justifyContent: "center",
                               alignItems: "center",
-                              fontFamily: "Sedan, serif",
-                              fontWeight: "400",
-                              fontStyle: "normal",
+                              // fontFamily: "Sedan, serif",
+                              // fontWeight: "400",
+                              // fontStyle: "normal",
                             }}
                           >
                             {generalData !== null
@@ -1312,9 +1315,9 @@ const General = () => {
                               display: "flex",
                               justifyContent: "center",
                               alignItems: "center",
-                              fontFamily: "Sedan, serif",
-                              fontWeight: "400",
-                              fontStyle: "normal",
+                              // fontFamily: "Sedan, serif",
+                              // fontWeight: "400",
+                              // fontStyle: "normal",
                             }}
                           >
                             {daysRemaining}
@@ -1365,9 +1368,10 @@ const General = () => {
                                   left: 25, // Set padding of the left of chart area to 0
                                   right: 0,
                                 },
-                                pieHole: 0.4,
+                                // pieHole: 0.4,
                                 pieSliceText: "value", // Display the exact values of each option
                                 colors: ["#51bb25", "#ff6150"], // Custom colors for Active and Inactive options respectively
+                                is3D: true, // Set the chart type to 3D
                               }}
                             />
                           </div>
@@ -1399,9 +1403,9 @@ const General = () => {
                               display: "flex",
                               justifyContent: "center",
                               alignItems: "center",
-                              fontFamily: "Sedan, serif",
-                              fontWeight: "400",
-                              fontStyle: "normal",
+                              // fontFamily: "Sedan, serif",
+                              // fontWeight: "400",
+                              // fontStyle: "normal",
                             }}
                           >
                             1
