@@ -27,6 +27,7 @@ import { getAll } from "../../../Api";
 import { setKilledDevices } from "../../../ReaduxToolkit/Reducer/AlertsSlice";
 import Loader from "../../Loader/Loader";
 import SendCommand from "../../Company/Modules/ControlRoom/Analytics/components/SendCommand";
+import Swal from "sweetalert2";
 
 interface PropsTypes {
   fromDate: any;
@@ -40,7 +41,9 @@ const KilledVehicles: React.FC<PropsTypes> = ({ fromDate, toDate }) => {
   var allAlertsPreview = userPermissions.find(
     (item: any) => item.title === "All Alerts Preview"
   );
-  const { killedDevices } = useSelector((state: any) => state.alerts);
+  const { killedDevices, liveAlertsData } = useSelector(
+    (state: any) => state.alerts
+  );
   const { devices } = useSelector((state: any) => state.monitoring);
   const [isUpdateModalOpenForSendCommand, setIsUpdateModalOpenForSendCommand] =
     useState(false);
@@ -440,8 +443,25 @@ const KilledVehicles: React.FC<PropsTypes> = ({ fromDate, toDate }) => {
                                       marginTop: "10px",
                                     }}
                                     onClick={() => {
-                                      setDeviceData(data.deviceData);
-                                      setIsUpdateModalOpenForSendCommand(true);
+                                      var checkServer =
+                                        liveAlertsData?.connectedServers?.find(
+                                          (item: any) =>
+                                            item.server._id === data.server._id
+                                        );
+                                      if (checkServer?.isConnected) {
+                                        setDeviceData(data.deviceData);
+                                        setIsUpdateModalOpenForSendCommand(
+                                          true
+                                        );
+                                      } else {
+                                        Swal.fire({
+                                          title: `${checkServer.server.companyName}`,
+                                          text: `You cannot relase this device because the Server Credentaisl that attached with it  are wrong`,
+                                          icon: "error",
+                                          // timer: 2000,
+                                          showConfirmButton: true,
+                                        });
+                                      }
                                     }}
                                     disabled={devices.length == 0}
                                     id="releaseButtonWaitForDevices"

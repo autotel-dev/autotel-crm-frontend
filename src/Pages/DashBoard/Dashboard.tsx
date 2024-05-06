@@ -24,6 +24,8 @@ import {
   setAssignedAlerts,
   setIsConnected,
   setKilledDevices,
+  setLiveAlerts,
+  setLiveAlertsData,
 } from "../../ReaduxToolkit/Reducer/AlertsSlice";
 import Swal from "sweetalert2";
 import AlertsPending from "./Control Room/AlertsPending";
@@ -38,6 +40,7 @@ import {
   setDevicesStatuses,
 } from "../../ReaduxToolkit/Reducer/MonitoringSlice";
 import { useNavigate } from "react-router-dom";
+import { setErrorData } from "../../ReaduxToolkit/Reducer/UserSlice";
 
 const Dashboard = () => {
   const dispatch = useDispatch();
@@ -77,7 +80,9 @@ const Dashboard = () => {
         } else if (result.dismiss === Swal.DismissReason.cancel) {
           // User clicked "Update Credentials", handle update logic here
           // You can add your update logic here or call a separate function
+          dispatch(setErrorData(true));
           navigate(`${process.env.PUBLIC_URL}/users/account`);
+
           // console.log("Update Credentials clicked");
         }
       });
@@ -105,6 +110,40 @@ const Dashboard = () => {
   // // console.log("Dashboard", dashboard);
 
   useEffect(() => {
+    dispatch(setLiveAlerts([]));
+    dispatch(setLiveAlertsData(null));
+
+    getAll({ url: "company/alert-events?pageNo=1" }).then((data: any) => {
+      if (data == undefined) {
+        dispatch(setLiveAlerts([]));
+        dispatch(setLiveAlertsData(null));
+      }
+      if (data !== undefined) {
+        if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
+          dispatch(setIsConnected(true));
+        }
+        if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
+          Swal.fire({
+            text: `${data.message}`,
+            icon: "error",
+            timer: 2000,
+            showConfirmButton: false,
+          });
+        }
+        if (data.success) {
+          // // console.log("length --- >", data.data.allAlertEvents.length);
+
+          dispatch(setLiveAlerts(data.data.allAlertEvents));
+          dispatch(setLiveAlertsData(data.data));
+        }
+        if (!data.success) {
+          // // console.log("length --- >", data.data.allAlertEvents.length);
+          dispatch(setLiveAlerts([]));
+          dispatch(setLiveAlertsData([]));
+        }
+      }
+    });
+
     if (getUserRole() == ROLES.COMPANY) {
       getAll({ url: "company/dashboard/alerts-overview" }).then((data: any) => {
         // console.log("api call --- >", data);

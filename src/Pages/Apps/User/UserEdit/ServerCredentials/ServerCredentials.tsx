@@ -14,14 +14,16 @@ import {
 import CommonHeader from "../../../../../Common/CommonHeader";
 import { H1, H3, H4, H5, P } from "../../../../../AbstractElements";
 import { useEffect, useState } from "react";
-import { getAll, otpEnabled, patch } from "../../../../../Api";
+import { create, getAll, otpEnabled, patch } from "../../../../../Api";
 import { useDispatch, useSelector } from "react-redux";
 import Swal from "sweetalert2";
 import { setUserData } from "../../../../../ReaduxToolkit/Reducer/UserSlice";
 import { Select } from "antd";
 import { useNavigate } from "react-router-dom";
 
-const ServerCredentials = () => {
+const ServerCredentials = (notConnectedServers: any) => {
+  // console.log("notConnectedServers", notConnectedServers);
+
   const { userPermissions } = useSelector(
     (state: any) => state.userPermissions
   );
@@ -32,11 +34,15 @@ const ServerCredentials = () => {
   const [isEdit, setIsEdit] = useState(false);
   const [isEnabled, setIsEnabled] = useState(userData.isOtpEnabled);
   const [loading, setLoading] = useState(false);
+  const [testConnectionLoading, setTestConnectionLoading] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [formData, setFormData]: any = useState({
     serverCredentials: userData.serverCredentials,
   });
+  const [notConnectedServersID, setNotConnectedServersID]: any = useState(
+    notConnectedServers.notConnectedServers
+  );
 
   const handleServerCredentialChange = (index: any, field: any, value: any) => {
     const updatedCredentials = formData.serverCredentials.map(
@@ -78,7 +84,7 @@ const ServerCredentials = () => {
             text: `Server Credentials has been changed.Press OK to logout.`,
             icon: "success",
             showCancelButton: false,
-            confirmButtonText: "OK",
+            confirmButtonText: "Logout",
             allowOutsideClick: false,
           }).then((result) => {
             if (result.isConfirmed) {
@@ -196,6 +202,80 @@ const ServerCredentials = () => {
                         />
                       </Col>
                     </Row>
+                    {notConnectedServersID?.includes(item?.server?._id) && (
+                      <CardFooter
+                        className="text-end"
+                        style={{
+                          margin: "0px -20px",
+                        }}
+                      >
+                        {isEdit && (
+                          <Button
+                            color="primary"
+                            type="submit"
+                            disabled={loading}
+                            onClick={async (e) => {
+                              e.preventDefault();
+                              const updatedCredentials = {
+                                emailAddress: item?.emailAddress,
+                                password: item?.password,
+                                serverId: item.server._id,
+                              };
+
+                              // console.log("updatedServerCredentials", updatedCredentials);
+
+                              setTestConnectionLoading(true);
+                              try {
+                                await create(updatedCredentials, {
+                                  url: "company/server-credentials/test-connection",
+                                }).then((data: any) => {
+                                  if (data.success) {
+                                    setTestConnectionLoading(false);
+                                    console.log(data);
+                                    if (data.statusCode == 200) {
+                                      Swal.fire({
+                                        title: `Congratulations`,
+                                        text: `${data.message}`,
+                                        icon: "success",
+                                        confirmButtonText: "OK",
+                                      });
+                                      const notConnectedServers =
+                                        notConnectedServersID.filter(
+                                          (id: any) => id !== item.server._id
+                                        );
+                                      setNotConnectedServersID(
+                                        notConnectedServers
+                                      );
+                                    }
+                                  } else {
+                                    Swal.fire({
+                                      title: `Oops`,
+                                      text: `${data.message}`,
+                                      icon: "error",
+                                      confirmButtonText: "OK",
+                                    });
+                                    setTestConnectionLoading(false);
+                                  }
+                                });
+                                // Handle successful post creation (e.g., show a success message, redirect, etc.)
+                              } catch (error: any) {
+                                // console.log("error", error);
+
+                                // Handle error (e.g., show an error message)
+                                // console.error("Error creating post:", error);
+                                setTestConnectionLoading(false);
+                              }
+                            }}
+                          >
+                            Test Connection
+                            {/* {testConnectionLoading &&
+                          notConnectedServersID?.includes(item?.server?._id)
+                            ? "Loading"
+                            : "Test Connection"} */}
+                          </Button>
+                        )}
+                      </CardFooter>
+                    )}
                   </div>
                 );
               })}
@@ -218,21 +298,34 @@ const ServerCredentials = () => {
                   </Button>
                 )}
 
-                <Button
-                  color="primary"
-                  type="submit"
-                  disabled={loading}
-                  onClick={(e) => {
-                    if (!isEdit) {
+                {!isEdit && (
+                  <Button
+                    color="primary"
+                    type="submit"
+                    disabled={loading}
+                    onClick={(e) => {
+                      if (!isEdit) {
+                        e.preventDefault();
+                        setIsEdit(!isEdit);
+                      }
+                    }}
+                  >
+                    Edit
+                  </Button>
+                )}
+                {isEdit && notConnectedServersID.length == 0 && (
+                  <Button
+                    color="primary"
+                    type="submit"
+                    disabled={loading}
+                    onClick={(e) => {
                       e.preventDefault();
-                      setIsEdit(!isEdit);
-                    } else {
                       updateServerCredentials();
-                    }
-                  }}
-                >
-                  {loading ? "Loading..." : isEdit ? "Save" : "Edit"}
-                </Button>
+                    }}
+                  >
+                    Save
+                  </Button>
+                )}
               </CardFooter>
             ) : null}
             {/* <div

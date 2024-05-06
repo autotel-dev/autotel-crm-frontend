@@ -39,6 +39,7 @@ import { useNavigate } from "react-router-dom";
 import NoInternetConnection from "../../../NoInternetConnection/NoInternetConnection";
 import { getUserRole } from "../../../../Api/globals";
 import { ROLES } from "../../../../constants/roles";
+import { setErrorData } from "../../../../ReaduxToolkit/Reducer/UserSlice";
 
 const ControlRoom = () => {
   const { userPersonalizationData } = useSelector(
@@ -439,7 +440,9 @@ const ControlRoom = () => {
         } else if (result.dismiss === Swal.DismissReason.cancel) {
           // User clicked "Update Credentials", handle update logic here
           // You can add your update logic here or call a separate function
+          dispatch(setErrorData(true));
           navigate(`${process.env.PUBLIC_URL}/users/account`);
+
           // console.log("Update Credentials clicked");
         }
       });

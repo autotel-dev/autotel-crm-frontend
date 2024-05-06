@@ -60,16 +60,16 @@ const Reports = () => {
           // console.log("api call --- >", data);
           // console.log("length --- >", data.data.length);
 
-          setDropDownDevices(data.data);
-          for (let i = 0; i < data.data.length; i++) {
-            const element = data.data[i].title;
+          setDropDownDevices(data.data.allDevices);
+          for (let i = 0; i < data.data.allDevices.length; i++) {
+            const element = data.data.allDevices[i].title;
             if (!groups.includes(element)) {
               groups.push(element);
             }
           }
 
           groups.forEach((title: any) => {
-            groupDevicesObj[title] = data.data
+            groupDevicesObj[title] = data.data.allDevices
               .filter((obj: any) => obj.title === title)
               .map((item: any) => ({ ...item, checked: false }));
           });

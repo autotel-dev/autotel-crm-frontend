@@ -608,14 +608,14 @@ const routes = [
 
   // Support
   {
-    path: `${process.env.PUBLIC_URL}/super-admin/support`,
+    path: `${process.env.PUBLIC_URL}/support`,
     Component: <Support />,
     allowedUserRoles: [ROLES.SUPER_ADMIN],
     isProtected: true,
     permissionValue: "Support",
   },
   {
-    path: `${process.env.PUBLIC_URL}/super-admin/support/ticketDetails/:ticketId`,
+    path: `${process.env.PUBLIC_URL}/support/ticketDetails/:ticketId`,
     Component: <TicketDetails />,
   },
   // Tasks
@@ -728,7 +728,7 @@ const routes = [
 
   // Support
   {
-    path: `${process.env.PUBLIC_URL}/company/support`,
+    path: `${process.env.PUBLIC_URL}/support`,
     Component: <Support />,
     isProtected: true,
     allowedUserRoles: [ROLES.COMPANY, ROLES.OPERATOR],
@@ -776,7 +776,7 @@ const routes = [
     permissionValue: "Control Room",
   },
   {
-    path: `${process.env.PUBLIC_URL}/operator/support`,
+    path: `${process.env.PUBLIC_URL}/support`,
     Component: <Support />,
     isProtected: true,
     allowedUserRoles: [ROLES.OPERATOR],

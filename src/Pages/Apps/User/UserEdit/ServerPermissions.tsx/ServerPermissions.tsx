@@ -58,7 +58,7 @@ const ServerPermissions = () => {
                     /> */}
                   </div>
 
-                  {Object.keys(server.userPermissions).map((key, index) => (
+                  {Object.keys(server?.userPermissions).map((key, index) => (
                     <Row>
                       <Col
                         key={index}

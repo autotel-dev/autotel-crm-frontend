@@ -14,6 +14,7 @@ import Loader from "../../../Loader/Loader";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import NoInternetConnection from "../../../NoInternetConnection/NoInternetConnection";
+import { setErrorData } from "../../../../ReaduxToolkit/Reducer/UserSlice";
 
 const Monitoring = () => {
   const apiKey = "AIzaSyDI3fB-ItM1LpMOyMg_P8UxTUuxHCyQS34"; // Replace with your actual API key
@@ -439,6 +440,7 @@ const Monitoring = () => {
         } else if (result.dismiss === Swal.DismissReason.cancel) {
           // User clicked "Update Credentials", handle update logic here
           // You can add your update logic here or call a separate function
+          dispatch(setErrorData(true));
           navigate(`${process.env.PUBLIC_URL}/users/account`);
           // console.log("Update Credentials clicked");
         }

@@ -16,7 +16,11 @@ import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { IMAGE_BASE_URL, getAll, getImage, patch } from "../../Api";
 import Loader from "../Loader/Loader";
-import { setTicketDetails } from "../../ReaduxToolkit/Reducer/SupportSlice";
+import {
+  setPriorityStatuses,
+  setStatuses,
+  setTicketDetails,
+} from "../../ReaduxToolkit/Reducer/SupportSlice";
 import { Select } from "antd";
 import {
   formatUnderscoredString,
@@ -37,6 +41,8 @@ const TicketDetails = () => {
   const [imageUrl, setImageUrl] = useState("");
   const [ticketImages, setTicketImages] = useState<any[]>([]);
   const [full, setFull] = useState(false);
+  const [changeStatus, setChangeStatus] = useState("");
+  const [changePriortyStatus, setChangePriortyStatus] = useState("");
 
   const { tableRow, ticketDetails } = useSelector(
     (state: any) => state.support
@@ -83,7 +89,7 @@ const TicketDetails = () => {
 
   useEffect(() => {
     setLoading(true);
-    if (tableRow.status === "NEW" && getUserRole() === ROLES.SUPER_ADMIN) {
+    if (tableRow?.status === "NEW" && getUserRole() === ROLES.SUPER_ADMIN) {
       // console.log("IF");
       patch(
         { updatedStatus: "IN_PROGRESS", resolvingDate: null },
@@ -136,6 +142,8 @@ const TicketDetails = () => {
         if (data !== undefined) {
           if (data.success) {
             dispatch(setTicketDetails(data.data.bugReport));
+            setChangeStatus(ticketDetails?.status);
+            setChangePriortyStatus(ticketDetails?.priorty);
             setTicketImages([]);
             if (data.data.bugReport.images.length === 0) {
               setLoading(false);
@@ -255,10 +263,7 @@ const TicketDetails = () => {
     return time;
   };
   const [isEdit, setEdit] = useState(false);
-  const [changeStatus, setChangeStatus] = useState(tableRow.status);
-  const [changePriortyStatus, setChangePriortyStatus] = useState(
-    tableRow.priorty
-  );
+
   const handleEdit = () => {
     setEdit(!isEdit);
     if (isEdit) {
@@ -362,28 +367,52 @@ const TicketDetails = () => {
   // console.log(priorityStatuses);
   const [priorityStatusesList, setPriorityStatusesList] = useState([]);
   const [statusesList, setStatusesList] = useState([]);
-
   const tempPriorityStatusesList: any = [];
   const tempStatusesList: any = [];
-  useEffect(() => {
-    priorityStatuses.map((item: any, index: any) => {
-      tempPriorityStatusesList.push({
-        value: `${item.value}`,
-        label: `${item.title}`,
-      });
-    });
-    setPriorityStatusesList(tempPriorityStatusesList);
 
-    statuses.forEach((item: any) => {
-      if (item.value !== "RESOLVED") {
-        tempStatusesList.push({
-          value: `${item.value}`,
-          label: `${item.title}`,
-        });
+  useEffect(() => {
+    getAll({ url: "support/bug-report/get-priorty-status-types" }).then(
+      (data: any) => {
+        // console.log("api call --- >", data);
+        if (data !== undefined) {
+          if (data.success) {
+            // console.log("hhg");
+            dispatch(
+              setPriorityStatuses(data.data.bugReportPriortyStatusTypes)
+            );
+            priorityStatuses?.map((item: any, index: any) => {
+              tempPriorityStatusesList.push({
+                value: `${item.value}`,
+                label: `${item.title}`,
+              });
+            });
+            setPriorityStatusesList(tempPriorityStatusesList);
+          }
+        }
+      }
+    );
+  }, [priorityStatuses]);
+
+  useEffect(() => {
+    getAll({ url: "support/bug-report/get-status-types" }).then((data: any) => {
+      // console.log("api call --- >", data);
+      if (data !== undefined) {
+        if (data.success) {
+          // console.log("hhg");
+          dispatch(setStatuses(data.data.bugReportStatusTypes));
+          statuses?.forEach((item: any) => {
+            if (item.value !== "RESOLVED") {
+              tempStatusesList.push({
+                value: `${item.value}`,
+                label: `${item.title}`,
+              });
+            }
+          });
+          setStatusesList(tempStatusesList);
+        }
       }
     });
-    setStatusesList(tempStatusesList);
-  }, []);
+  }, [statuses]);
 
   return (
     <>

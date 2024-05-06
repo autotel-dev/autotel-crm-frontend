@@ -134,7 +134,7 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
     {
       title: "Support",
       svgIcon: "home",
-      link: `${process.env.PUBLIC_URL}/super-admin/support`,
+      link: `${process.env.PUBLIC_URL}/support`,
     },
     // {
     //   title: "Tasks",
@@ -207,7 +207,7 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
     {
       title: "Support",
       svgIcon: "home",
-      link: `${process.env.PUBLIC_URL}/company/support`,
+      link: `${process.env.PUBLIC_URL}/support`,
     },
     // {
     //   title: "Tasks",
@@ -248,7 +248,7 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
     {
       title: "Support",
       svgIcon: "home",
-      link: `${process.env.PUBLIC_URL}/operator/support`,
+      link: `${process.env.PUBLIC_URL}/support`,
     },
   ];
 

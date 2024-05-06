@@ -840,186 +840,202 @@ const ControlRoomAnalytics = () => {
                             </div>
                           </div>
                         </div>
-                        {liveAlertsData?.connectedServers?.map(
-                          (server: any, index: any) => {
-                            return (
-                              <div
-                                style={{
-                                  display: "flex",
-                                  justifyContent: "space-between",
-                                  alignItems: "center",
-                                }}
-                              >
+                        <div
+                          style={{
+                            overflow: "auto",
+                            height: "75px",
+                            scrollbarWidth: "none" /* Firefox */,
+                          }}
+                        >
+                          {liveAlertsData?.connectedServers?.map(
+                            (server: any, index: any) => {
+                              return (
                                 <div
                                   style={{
                                     display: "flex",
-                                    justifyContent: "start",
+                                    justifyContent: "space-between",
+                                    alignItems: "center",
                                   }}
                                 >
                                   <div
                                     style={{
-                                      fontSize: "14px",
-                                      fontWeight: "bold",
-                                    }}
-                                  >
-                                    {server?.server?.companyName.slice(0, 21)}
-                                    {server?.server?.companyName.length > 20
-                                      ? "..."
-                                      : ""}{" "}
-                                    :
-                                  </div>
-
-                                  <div
-                                    style={{
-                                      marginLeft: "5px",
                                       display: "flex",
-                                      alignItems: "center",
+                                      justifyContent: "start",
                                     }}
                                   >
                                     <div
                                       style={{
-                                        height: "10px",
-                                        width: "10px",
-                                        borderRadius: "50px",
-                                        backgroundColor: `${
-                                          server?.isConnected ? "green" : "red"
-                                        }`,
-                                        marginRight: "5px",
+                                        fontSize: "14px",
+                                        fontWeight: "bold",
                                       }}
-                                    ></div>
-                                    <div
-                                      id={
-                                        !server?.isConnected ? "Popover2" : ""
-                                      }
-                                      style={{ cursor: "pointer" }}
                                     >
-                                      {server?.isConnected
-                                        ? "Connected"
-                                        : "Not Connected"}
+                                      {server?.server?.companyName.slice(0, 21)}
+                                      {server?.server?.companyName.length > 20
+                                        ? "..."
+                                        : ""}{" "}
+                                      :
                                     </div>
-                                    {!server?.isConnected && (
-                                      <UncontrolledPopover
-                                        placement="top"
-                                        trigger="hover"
-                                        target="Popover2"
-                                      >
-                                        <PopoverHeader>Reason</PopoverHeader>
-                                        <PopoverBody>
-                                          {server?.reason}
-                                        </PopoverBody>
-                                      </UncontrolledPopover>
-                                    )}
-                                  </div>
-                                </div>
 
-                                <div
-                                  style={{
-                                    position: "relative",
-                                    display: "inline-block",
-                                  }}
-                                  id="threeDotsLoading"
-                                >
-                                  <div
-                                    ref={connnectedServersDropdownRef}
-                                    style={{
-                                      padding: "8px",
-                                      borderRadius: "50%",
-                                      backgroundColor:
-                                        isHovered && server?.server._id == id
-                                          ? "#f2f2f2"
-                                          : "transparent",
-                                      transition: "background-color 0.3s",
-                                      display: "inline-flex",
-                                      alignItems: "center",
-                                      justifyContent: "center",
-                                      cursor: "pointer",
-                                    }}
-                                    onMouseEnter={() => {
-                                      setId(server?.server._id);
-                                      setIsHovered(true);
-                                      // toggleConnectedServersDropdown();
-                                    }}
-                                    onMouseLeave={() => {
-                                      // setId("");
-                                      setIsHovered(false);
-                                      // toggleConnectedServersDropdown();
-                                    }}
-                                    onClick={(e) => {
-                                      if (devices.length > 0) {
-                                        toggleConnectedServersDropdown(e);
-                                      }
-                                    }}
-                                  >
-                                    <VscKebabVertical />
-                                  </div>
-                                  {isConnecetedServersDropdownOpen &&
-                                    server?.server._id == id && (
+                                    <div
+                                      style={{
+                                        marginLeft: "5px",
+                                        display: "flex",
+                                        alignItems: "center",
+                                      }}
+                                    >
                                       <div
-                                        className="custom-conneceted-servers-dropdown-analytics"
                                         style={{
-                                          position: "absolute",
-                                          top: "100%",
-                                          right: 0,
-                                          zIndex: 1000,
+                                          height: "10px",
+                                          width: "10px",
+                                          borderRadius: "50px",
+                                          backgroundColor: `${
+                                            server?.isConnected
+                                              ? "green"
+                                              : "red"
+                                          }`,
+                                          marginRight: "5px",
                                         }}
+                                      ></div>
+                                      <div
+                                        id={
+                                          !server?.isConnected ? "Popover2" : ""
+                                        }
+                                        style={{ cursor: "pointer" }}
                                       >
-                                        <div className="conneceted-servers-dropdown-options-analytics">
-                                          <div
-                                            id="Popover1"
-                                            className="dropdown-item exclude-from-close"
-                                            onClick={(e) => {
-                                              toggleConnectedServersDropdown(e);
-                                            }}
-                                          >
-                                            Vehicle Data
-                                          </div>
-                                          <UncontrolledPopover
-                                            placement="top"
-                                            trigger="hover"
-                                            target="Popover1"
-                                          >
-                                            <PopoverHeader>
-                                              In Development Mode
-                                            </PopoverHeader>
-                                            <PopoverBody>
-                                              This feature is in development
-                                              mode
-                                            </PopoverBody>
-                                          </UncontrolledPopover>
-                                          <div
-                                            className="dropdown-item exclude-from-close"
-                                            onClick={(e) => {
-                                              e.stopPropagation();
-                                              setServerID(server?.server?._id);
-                                              setIsUpdateModalOpenForDeviceSelecetdForAlerts(
-                                                true
-                                              );
-                                              toggleConnectedServersDropdown(e);
-                                            }}
-                                          >
-                                            Alert Data
+                                        {server?.isConnected
+                                          ? "Connected"
+                                          : "Not Connected"}
+                                      </div>
+                                      {!server?.isConnected && (
+                                        <UncontrolledPopover
+                                          placement="top"
+                                          trigger="hover"
+                                          target="Popover2"
+                                        >
+                                          <PopoverHeader>Reason</PopoverHeader>
+                                          <PopoverBody>
+                                            {server?.reason}
+                                          </PopoverBody>
+                                        </UncontrolledPopover>
+                                      )}
+                                    </div>
+                                  </div>
+
+                                  <div
+                                    style={{
+                                      position: "relative",
+                                      display: "inline-block",
+                                    }}
+                                    id="threeDotsLoading"
+                                  >
+                                    <div
+                                      ref={connnectedServersDropdownRef}
+                                      style={{
+                                        padding: "8px",
+                                        borderRadius: "50%",
+                                        backgroundColor:
+                                          isHovered && server?.server._id == id
+                                            ? "#f2f2f2"
+                                            : "transparent",
+                                        transition: "background-color 0.3s",
+                                        display: "inline-flex",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                        cursor: "pointer",
+                                      }}
+                                      onMouseEnter={() => {
+                                        setId(server?.server._id);
+                                        setIsHovered(true);
+                                        // toggleConnectedServersDropdown();
+                                      }}
+                                      onMouseLeave={() => {
+                                        // setId("");
+                                        setIsHovered(false);
+                                        // toggleConnectedServersDropdown();
+                                      }}
+                                      onClick={(e) => {
+                                        if (devices.length > 0) {
+                                          toggleConnectedServersDropdown(e);
+                                        }
+                                      }}
+                                    >
+                                      <VscKebabVertical />
+                                    </div>
+                                    {isConnecetedServersDropdownOpen &&
+                                      server?.server._id == id && (
+                                        <div
+                                          className="custom-conneceted-servers-dropdown-analytics"
+                                          style={{
+                                            position: "absolute",
+                                            top: "100%",
+                                            right: 0,
+                                            zIndex: 1000,
+                                          }}
+                                        >
+                                          <div className="conneceted-servers-dropdown-options-analytics">
+                                            <div
+                                              id="Popover1"
+                                              className="dropdown-item exclude-from-close"
+                                              onClick={(e) => {
+                                                toggleConnectedServersDropdown(
+                                                  e
+                                                );
+                                              }}
+                                            >
+                                              Vehicle Data
+                                            </div>
+                                            <UncontrolledPopover
+                                              placement="top"
+                                              trigger="hover"
+                                              target="Popover1"
+                                            >
+                                              <PopoverHeader>
+                                                In Development Mode
+                                              </PopoverHeader>
+                                              <PopoverBody>
+                                                This feature is in development
+                                                mode
+                                              </PopoverBody>
+                                            </UncontrolledPopover>
+                                            <div
+                                              className="dropdown-item exclude-from-close"
+                                              onClick={(e) => {
+                                                e.stopPropagation();
+                                                setServerID(
+                                                  server?.server?._id
+                                                );
+                                                setIsUpdateModalOpenForDeviceSelecetdForAlerts(
+                                                  true
+                                                );
+                                                toggleConnectedServersDropdown(
+                                                  e
+                                                );
+                                              }}
+                                            >
+                                              Alert Data
+                                            </div>
                                           </div>
                                         </div>
-                                      </div>
-                                    )}
+                                      )}
+                                  </div>
+                                  {devices.length == 0 && (
+                                    <UncontrolledPopover
+                                      placement="top"
+                                      trigger="hover"
+                                      target="threeDotsLoading"
+                                    >
+                                      <PopoverHeader>Reason</PopoverHeader>
+                                      <PopoverBody>
+                                        Please wait a while because devices are
+                                        loading in background
+                                      </PopoverBody>
+                                    </UncontrolledPopover>
+                                  )}
                                 </div>
-                                {devices.length == 0 && (
-                                  <UncontrolledPopover
-                                    placement="top"
-                                    trigger="hover"
-                                    target="threeDotsLoading"
-                                  >
-                                    <PopoverHeader>Reason</PopoverHeader>
-                                    <PopoverBody>
-                                      Please wait a while because devices are
-                                      loading in background
-                                    </PopoverBody>
-                                  </UncontrolledPopover>
-                                )}
-                              </div>
-                            );
-                          }
-                        )}
+                              );
+                            }
+                          )}
+                        </div>
 
                         {/* {liveAlertsData?.connectedServers?.map(
                           (server: any, index: any) => (

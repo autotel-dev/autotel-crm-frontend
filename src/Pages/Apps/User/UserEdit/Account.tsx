@@ -26,6 +26,7 @@ const Account = () => {
   const { userPermissions } = useSelector(
     (state: any) => state.userPermissions
   );
+  const { errorData, userData } = useSelector((state: any) => state.user);
   var legalAttachements = userPermissions.find(
     (item: any) => item.title === "Legal Documents"
   );
@@ -41,10 +42,19 @@ const Account = () => {
   const [ticketImages, setTicketImages] = useState<any[]>([]);
   const [undefinedData, setUndefinedData] = useState<any>(false);
   const [isConnected, setIsConnected] = useState(false);
-  const serverCredentialsComponent = useRef<HTMLDivElement>(null);
-  // const handleGoToServerCredentials = () => {
-
-  // };
+  const [notConnectedServers, setNotConnectedServers]: any = useState([]);
+  const serverCredentialsComponent = useRef<HTMLDivElement | null>(null);
+  const handleGoToServerCredentaisl = () => {
+    if (!serverCredentialsComponent.current) return; // Ensure textareaRef.current exists
+    // Scroll to the textarea
+    (serverCredentialsComponent.current as HTMLDivElement).scrollIntoView({
+      behavior: "smooth",
+      block: "start", // Scroll to the center of the viewport
+      inline: "nearest", // Scroll to the nearest edge of the viewport
+    });
+    // Focus on the textarea
+    (serverCredentialsComponent.current as HTMLDivElement).focus();
+  };
 
   useEffect(() => {
     setIsConnected(false);
@@ -55,6 +65,12 @@ const Account = () => {
 
     if (getUserRole() === ROLES.COMPANY) {
       getAll({ url: "company/permissions" }).then((data: any) => {
+        const serverIDs = data.data.serverErrors.map(
+          (item: any, index: any) => {
+            return item.server._id;
+          }
+        );
+        setNotConnectedServers(serverIDs);
         // console.log("api call --- >", data);
         if (data == undefined) {
           setServerPermissionsLoading(false);
@@ -65,7 +81,7 @@ const Account = () => {
           }
           if (data.success) {
             setServerPermissionsLoading(false);
-            dispatch(setServerPermissions(data.data));
+            dispatch(setServerPermissions(data.data.userPermissionsArray));
           }
         }
       });
@@ -184,6 +200,11 @@ const Account = () => {
       }
     });
   }, []);
+  useEffect(() => {
+    if (errorData) {
+      handleGoToServerCredentaisl();
+    }
+  });
 
   return (
     <>
@@ -227,10 +248,16 @@ const Account = () => {
                     )}
                   {getUserRole() === ROLES.COMPANY && <ServerPermissions />}
 
-                  {(getUserRole() === ROLES.COMPANY ||
-                    getUserRole() === ROLES.OPERATOR) &&
-                    serverCredentialsPermissions !== undefined &&
-                    serverCredentialsPermissions?.read && <ServerCredentials />}
+                  <div ref={serverCredentialsComponent}>
+                    {(getUserRole() === ROLES.COMPANY ||
+                      getUserRole() === ROLES.OPERATOR) &&
+                      serverCredentialsPermissions !== undefined &&
+                      serverCredentialsPermissions?.read && (
+                        <ServerCredentials
+                          notConnectedServers={notConnectedServers}
+                        />
+                      )}
+                  </div>
 
                   <SecuritySettings />
 

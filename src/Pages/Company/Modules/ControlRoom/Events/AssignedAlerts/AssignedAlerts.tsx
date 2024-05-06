@@ -22,7 +22,9 @@ import Swal from "sweetalert2";
 
 const AssignedAlerts = () => {
   const dispatch = useDispatch();
-  const { assignedAlerts } = useSelector((state: any) => state.alerts);
+  const { assignedAlerts, liveAlertsData } = useSelector(
+    (state: any) => state.alerts
+  );
   const { userPermissions } = useSelector(
     (state: any) => state.userPermissions
   );
@@ -137,51 +139,65 @@ const AssignedAlerts = () => {
                         }}
                         key={index}
                         onClick={async () => {
-                          // if (
-                          //   allAlertsPreview != undefined &&
-                          //   allAlertsPreview?.edit
-                          // ) {
-                          // }
-                          const serverInfo = serverCredentials(data.server);
-                          // // console.log("serverInfo", serverInfo);
-                          setBasicTab("1");
-                          setIsUpdateModalOpen(true);
-                          // // console.log("isUpdateModalOpen: ", isUpdateModalOpen);
-                          const sendData = {
-                            eventId: data._id,
-                            serverId: serverInfo?.serverId,
-                            serverHashKey: serverInfo?.serverHashKey,
-                            deviceId: data.deviceId,
-                          };
-                          // // console.log(sendData);
-                          try {
-                            await create(sendData, {
-                              url: "alert-events/get-alert-event-by-id",
-                            }).then((data: any) => {
-                              // // console.log(data);
-                              if (
-                                !data.success &&
-                                data.message === "ERROR_INTERNET_DISCONNECTED"
-                              ) {
-                              }
-                              if (!data.success) {
-                                Swal.fire({
-                                  text: `${data.message}`,
-                                  icon: "error",
-                                  timer: 2000,
-                                  showConfirmButton: false,
-                                });
-                                setIsUpdateModalOpen(false);
-                              }
-                              if (data.success) {
-                                dispatch(setModalData(data.data));
-                              }
+                          // liveAlertsData?.connectedServers?.map(
+                          //   (item: any, index: any) => {
+                          //     console.log("item", item);
+                          //   }
+                          // );
+                          var checkServer =
+                            liveAlertsData?.connectedServers?.find(
+                              (item: any) => item.server._id === data.server
+                            );
+                          // console.log("server", checkServer);
+                          if (checkServer.isConnected) {
+                            const serverInfo = serverCredentials(data.server);
+
+                            setBasicTab("1");
+                            setIsUpdateModalOpen(true);
+
+                            const sendData = {
+                              eventId: data._id,
+                              serverId: serverInfo?.serverId,
+                              serverHashKey: serverInfo?.serverHashKey,
+                              deviceId: data.deviceId,
+                            };
+
+                            try {
+                              await create(sendData, {
+                                url: "alert-events/get-alert-event-by-id",
+                              }).then((data: any) => {
+                                // // console.log(data);
+                                if (
+                                  !data.success &&
+                                  data.message === "ERROR_INTERNET_DISCONNECTED"
+                                ) {
+                                }
+                                if (!data.success) {
+                                  Swal.fire({
+                                    text: `${data.message}`,
+                                    icon: "error",
+                                    timer: 2000,
+                                    showConfirmButton: false,
+                                  });
+                                  setIsUpdateModalOpen(false);
+                                }
+                                if (data.success) {
+                                  dispatch(setModalData(data.data));
+                                }
+                              });
+                              // Handle successful post creation (e.g., show a success message, redirect, etc.)
+                            } catch (error: any) {
+                              // Handle error (e.g., show an error message)
+                              dispatch(setModalData(undefined));
+                            }
+                          } else {
+                            Swal.fire({
+                              title: `${checkServer.server.companyName}`,
+                              text: `You cannot get the info of this alert because its Server Credentials are wrong`,
+                              icon: "error",
+                              // timer: 2000,
+                              showConfirmButton: true,
                             });
-                            // Handle successful post creation (e.g., show a success message, redirect, etc.)
-                          } catch (error: any) {
-                            // Handle error (e.g., show an error message)
-                            dispatch(setModalData(undefined));
-                            // // console.error("Error creating post:", error);
                           }
                         }}
                       >

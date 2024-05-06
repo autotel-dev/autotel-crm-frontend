@@ -104,7 +104,7 @@ const TicketTable = () => {
     // Navigate to the ticketDetails page with the row data
     dispatch(setTableRow(row));
     navigate(
-      `${process.env.PUBLIC_URL}/super-admin/support/ticketDetails/${row.ticket_id}`
+      `${process.env.PUBLIC_URL}/support/ticketDetails/${row.ticket_id}`
     );
   };
   return (
