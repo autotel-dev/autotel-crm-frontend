@@ -65,7 +65,7 @@ const Account = () => {
 
     if (getUserRole() === ROLES.COMPANY) {
       getAll({ url: "company/permissions" }).then((data: any) => {
-        const serverIDs = data.data.serverErrors.map(
+        const serverIDs = data.data?.serverErrors?.map(
           (item: any, index: any) => {
             return item.server._id;
           }
@@ -81,7 +81,7 @@ const Account = () => {
           }
           if (data.success) {
             setServerPermissionsLoading(false);
-            dispatch(setServerPermissions(data.data.userPermissionsArray));
+            dispatch(setServerPermissions(data.data?.userPermissionsArray));
           }
         }
       });

@@ -47,7 +47,7 @@ const ServerPermissions = () => {
               )
             )} */}
 
-            {serverPermissions.map((server: any, index: any) => {
+            {serverPermissions?.map((server: any, index: any) => {
               return (
                 <div key={index}>
                   <div style={{ marginBottom: "20px" }}>

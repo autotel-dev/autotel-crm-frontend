@@ -812,12 +812,12 @@ const UpdateCompanyForm = () => {
                                     server?.server?._id === option.server
                                 )
                             );
-                            console.log("selectedValues", selectedValues);
+                            // console.log("selectedValues", selectedValues);
 
-                            console.log(
-                              "newlySelectedServers",
-                              newlySelectedServers
-                            );
+                            // console.log(
+                            //   "newlySelectedServers",
+                            //   newlySelectedServers
+                            // );
 
                             const newServers = newlySelectedServers.map(
                               (option: any) => ({
