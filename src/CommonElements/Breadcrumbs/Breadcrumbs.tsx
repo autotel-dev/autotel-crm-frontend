@@ -18,8 +18,8 @@ const Breadcrumbs = ({ mainTitle, parent, title }: propsTypes) => {
       width: "2px",
       backgroundColor:
         userPersonalizationData !== null &&
-        userPersonalizationData?.customColor2 !== null
-          ? userPersonalizationData?.customColor2
+        userPersonalizationData?.buttonsAndBarsColor !== null
+          ? userPersonalizationData?.buttonsAndBarsColor
           : "#33BFBF",
     };
   };
@@ -40,8 +40,8 @@ const Breadcrumbs = ({ mainTitle, parent, title }: propsTypes) => {
                     className="personalization"
                     color={`${
                       userPersonalizationData !== null &&
-                      userPersonalizationData?.customColor2 !== null
-                        ? userPersonalizationData?.customColor2
+                      userPersonalizationData?.buttonsAndBarsColor !== null
+                        ? userPersonalizationData?.buttonsAndBarsColor
                         : "#35bfbf"
                     }`}
                   />
@@ -52,8 +52,8 @@ const Breadcrumbs = ({ mainTitle, parent, title }: propsTypes) => {
                   fontWeight: "500",
                   color: `${
                     userPersonalizationData !== null &&
-                    userPersonalizationData?.customColor2 !== null
-                      ? `${userPersonalizationData?.customColor2}`
+                    userPersonalizationData?.buttonsAndBarsColor !== null
+                      ? `${userPersonalizationData?.buttonsAndBarsColor}`
                       : "#33BFBF"
                   }`,
                 }}
@@ -69,8 +69,8 @@ const Breadcrumbs = ({ mainTitle, parent, title }: propsTypes) => {
                   fontWeight: "normal",
                   color: `${
                     userPersonalizationData !== null &&
-                    userPersonalizationData?.customColor2 !== null
-                      ? `${userPersonalizationData?.customColor2}`
+                    userPersonalizationData?.buttonsAndBarsColor !== null
+                      ? `${userPersonalizationData?.buttonsAndBarsColor}`
                       : "#33BFBF"
                   }`,
                 }}

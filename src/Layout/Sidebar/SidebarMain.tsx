@@ -342,9 +342,9 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
                         // style={{
                         //   color: `${
                         //     userPersonalizationData !== null &&
-                        //     userPersonalizationData?.customColor2 !== null &&
+                        //     userPersonalizationData?.buttonsAndBarsColor !== null &&
                         //     sideMenu === data.title &&
-                        //     userPersonalizationData?.customColor2
+                        //     userPersonalizationData?.buttonsAndBarsColor
                         //   }`,
                         // }}
                         to={data.link ? data.link : "#"}

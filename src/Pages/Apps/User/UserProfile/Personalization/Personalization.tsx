@@ -80,33 +80,62 @@ const Personalization = () => {
       ? userPersonalizationData.secondaryColor
       : "#000000"
   );
-  const [customColor1, setcustomColor1] = useState<string>(
-    userPersonalizationData !== null
-      ? userPersonalizationData.customColor1
-      : "#000000"
-  );
-  const [customColor2, setcustomColor2] = useState<string>(
-    userPersonalizationData !== null
-      ? userPersonalizationData.customColor2
-      : "#000000"
-  );
-  const [backgroundColor, setbackgroundColor] = useState<string>(
+  const [backgroundColor, setBackgroundColor] = useState<string>(
     userPersonalizationData !== null
       ? userPersonalizationData.backgroundColor
       : "#000000"
   );
-  const [textColor, settextColor] = useState<string>(
+  const [buttonsAndBarsColor, setButtonsAndBarsColor] = useState<string>(
     userPersonalizationData !== null
-      ? userPersonalizationData.textColor
+      ? userPersonalizationData.buttonsAndBarsColor
+      : "#000000"
+  );
+  const [loginPageBackgroundColor, setLoginPageBackgroundColor] =
+    useState<string>(
+      userPersonalizationData !== null
+        ? userPersonalizationData.loginPageBackgroundColor
+        : "#000000"
+    );
+  const [loginPageTextColor1, setloginPageTextColor1] = useState<string>(
+    userPersonalizationData !== null
+      ? userPersonalizationData.loginPageTextColor1
+      : "#000000"
+  );
+  const [loginPageTextColor2, setloginPageTextColor2] = useState<string>(
+    userPersonalizationData !== null
+      ? userPersonalizationData.loginPageTextColor2
+      : "#000000"
+  );
+  const [loginPageBackgroundType, setLoginPageBackgroundType] =
+    useState<string>(
+      userPersonalizationData !== null
+        ? userPersonalizationData.loginPageBackgroundType
+        : "SOLID"
+    );
+  const [direction, setDirection] = useState<string>(
+    userPersonalizationData !== null
+      ? userPersonalizationData.gradient.direction
+      : "right"
+  );
+  const [color1, setColor1] = useState<string>(
+    userPersonalizationData !== null
+      ? userPersonalizationData.gradient.color1
+      : "#000000"
+  );
+  const [color2, setColor2] = useState<string>(
+    userPersonalizationData !== null
+      ? userPersonalizationData.gradient.color2
       : "#000000"
   );
   const [logoImage, setlogoImage] = useState(
-    userPersonalizationData !== null ? userPersonalizationData.logoImage : null
+    userPersonalizationData !== null
+      ? userPersonalizationData.accountLogo
+      : null
   );
 
   const [backgroundImage, setbackgroundImage] = useState(
     userPersonalizationData !== null
-      ? userPersonalizationData.backgroundImage
+      ? userPersonalizationData.loginPageLogo
       : null
   );
 
@@ -171,30 +200,44 @@ const Personalization = () => {
   const createPersonalization = (e: any) => {
     e.preventDefault();
     setLoading(true);
+    const gradient = {
+      direction: direction,
+      color1: color1,
+      color2: color2,
+    };
     const formData = new FormData();
     formData.append("headerText", headerText);
     formData.append("subHeaderText", subHeaderText);
     formData.append("primaryColor", primaryColor);
     formData.append("secondaryColor", secondaryClor);
-    formData.append("customColor1", customColor1);
-    formData.append("customColor2", customColor2);
     formData.append("backgroundColor", backgroundColor);
-    formData.append("textColor", textColor);
+    formData.append("buttonsAndBarsColor", buttonsAndBarsColor);
+    // if (loginPageBackgroundType == "SOLID") {
+    formData.append("loginPageBackgroundColor", loginPageBackgroundColor);
+    // }
+
+    formData.append("loginPageTextColor1", loginPageTextColor1);
+    formData.append("loginPageTextColor2", loginPageTextColor2);
+    formData.append("loginPageBackgroundType", loginPageBackgroundType);
+    if (loginPageBackgroundType == "GRADIENT") {
+      formData.append("gradient", JSON.stringify(gradient));
+    }
+
     formData.append("type", "DEFAULT");
 
     if (isEdit) {
       if (editedLogoImage !== null) {
-        formData.append("logoImage", editedLogoImage);
+        formData.append("accountLogo", editedLogoImage);
       }
       if (editedbackgroundImage !== null) {
-        formData.append("backgroundImage", editedbackgroundImage);
+        formData.append("loginPageLogo", editedbackgroundImage);
       }
     } else {
       if (logoImage !== null) {
-        formData.append("logoImage", logoImage);
+        formData.append("accountLogo", logoImage);
       }
       if (backgroundImage !== null) {
-        formData.append("backgroundImage", backgroundImage);
+        formData.append("loginPageLogo", backgroundImage);
       }
     }
     if (isEdit && userPersonalizationData !== null) {
@@ -343,11 +386,11 @@ const Personalization = () => {
   const backgroundTypeList = [
     {
       label: "Solid",
-      value: "Solid",
+      value: "SOLID",
     },
     {
       label: "Gradient",
-      value: "Gradient",
+      value: "GRADIENT",
     },
   ];
   const [backgroundType, setBackgroundType] = useState("Solid");
@@ -362,7 +405,7 @@ const Personalization = () => {
     },
     {
       label: "Top",
-      value: "top",
+      value: "bottom",
     },
   ];
   const [gradientDirection, setGradientDirection] = useState("");
@@ -414,12 +457,12 @@ const Personalization = () => {
                   <Input
                     type="color"
                     placeholder="Enter Custom Color 1"
-                    defaultValue={customColor1}
-                    value={customColor1}
+                    defaultValue={backgroundColor}
+                    value={backgroundColor}
                     disabled={
                       userPersonalizationData !== null && !isEdit ? true : false
                     }
-                    onChange={(e) => setcustomColor1(e.target.value)}
+                    onChange={(e) => setBackgroundColor(e.target.value)}
                     style={{ height: "50px" }}
                   />
                 </FormGroup>
@@ -430,12 +473,12 @@ const Personalization = () => {
                   <Input
                     type="color"
                     placeholder="Enter Custom Color 2"
-                    defaultValue={customColor2}
-                    value={customColor2}
+                    defaultValue={buttonsAndBarsColor}
+                    value={buttonsAndBarsColor}
                     disabled={
                       userPersonalizationData !== null && !isEdit ? true : false
                     }
-                    onChange={(e) => setcustomColor2(e.target.value)}
+                    onChange={(e) => setButtonsAndBarsColor(e.target.value)}
                     style={{ height: "50px" }}
                   />
                 </FormGroup>
@@ -478,11 +521,17 @@ const Personalization = () => {
                 </FormGroup>
               </Col>
 
-              <Col md={backgroundType == "Solid" ? 3 : 4}>
+              <Col md={loginPageBackgroundType == "SOLID" ? 3 : 4}>
                 <FormGroup>
                   <P>Background Type</P>
                   <Select
                     showSearch
+                    defaultValue={
+                      loginPageBackgroundType == ""
+                        ? "SOLID"
+                        : loginPageBackgroundType
+                    }
+                    value={loginPageBackgroundType}
                     style={{ width: "100%", height: 50 }}
                     placeholder="Select Type"
                     optionFilterProp="children"
@@ -496,67 +545,69 @@ const Personalization = () => {
                     }
                     onChange={(e) => {
                       console.log(e);
-                      setBackgroundType(e);
+                      setLoginPageBackgroundType(e);
                     }}
                     options={backgroundTypeList}
                   />
                 </FormGroup>
               </Col>
 
-              {backgroundType == "Solid" && (
-                <Col md={backgroundType == "Solid" ? 3 : 4}>
+              {loginPageBackgroundType == "SOLID" && (
+                <Col md={loginPageBackgroundType == "SOLID" ? 3 : 4}>
                   <FormGroup>
                     <P>Background Color</P>
                     <Input
                       type="color"
                       placeholder="Enter Background COlor"
-                      defaultValue={backgroundColor}
-                      value={backgroundColor}
+                      defaultValue={loginPageBackgroundColor}
+                      value={loginPageBackgroundColor}
                       disabled={
                         userPersonalizationData !== null && !isEdit
                           ? true
                           : false
                       }
-                      onChange={(e) => setbackgroundColor(e.target.value)}
+                      onChange={(e) =>
+                        setLoginPageBackgroundColor(e.target.value)
+                      }
                       style={{ height: "50px" }}
                     />
                   </FormGroup>
                 </Col>
               )}
-              <Col md={backgroundType == "Solid" ? 3 : 4}>
+              <Col md={loginPageBackgroundType == "SOLID" ? 3 : 4}>
                 <FormGroup>
                   <P>Text Color 1</P>
                   <Input
                     type="color"
                     placeholder="Enter Text Color"
-                    defaultValue={textColor}
-                    value={textColor}
+                    defaultValue={loginPageTextColor1}
+                    value={loginPageTextColor1}
                     disabled={
                       userPersonalizationData !== null && !isEdit ? true : false
                     }
-                    onChange={(e) => settextColor(e.target.value)}
+                    onChange={(e) => setloginPageTextColor1(e.target.value)}
                     style={{ height: "50px" }}
                   />
                 </FormGroup>
               </Col>
-              <Col md={backgroundType == "Solid" ? 3 : 4}>
+              <Col md={loginPageBackgroundType == "SOLID" ? 3 : 4}>
                 <FormGroup>
                   <P>Text Color 2</P>
                   <Input
                     type="color"
                     placeholder="Enter Text Color"
-                    defaultValue={textColor}
-                    value={textColor}
+                    defaultValue={loginPageTextColor2}
+                    value={loginPageTextColor2}
                     disabled={
                       userPersonalizationData !== null && !isEdit ? true : false
                     }
-                    onChange={(e) => settextColor(e.target.value)}
+                    onChange={(e) => setloginPageTextColor2(e.target.value)}
                     style={{ height: "50px" }}
                   />
                 </FormGroup>
               </Col>
 
-              {backgroundType == "Gradient" && (
+              {loginPageBackgroundType == "GRADIENT" && (
                 <>
                   <Col md={4}>
                     <FormGroup>
@@ -576,7 +627,7 @@ const Personalization = () => {
                         }
                         onChange={(e) => {
                           console.log(e);
-                          setGradientDirection(e);
+                          setDirection(e);
                         }}
                         options={gradientDirectionTypes}
                       />
@@ -589,14 +640,14 @@ const Personalization = () => {
                       <Input
                         type="color"
                         placeholder="Enter Text Color"
-                        defaultValue={textColor}
-                        value={textColor}
+                        defaultValue={color1}
+                        value={color1}
                         disabled={
                           userPersonalizationData !== null && !isEdit
                             ? true
                             : false
                         }
-                        onChange={(e) => settextColor(e.target.value)}
+                        onChange={(e) => setColor1(e.target.value)}
                         style={{ height: "50px" }}
                       />
                     </FormGroup>
@@ -607,14 +658,14 @@ const Personalization = () => {
                       <Input
                         type="color"
                         placeholder="Enter Text Color"
-                        defaultValue={textColor}
-                        value={textColor}
+                        defaultValue={color2}
+                        value={color2}
                         disabled={
                           userPersonalizationData !== null && !isEdit
                             ? true
                             : false
                         }
-                        onChange={(e) => settextColor(e.target.value)}
+                        onChange={(e) => setColor2(e.target.value)}
                         style={{ height: "50px" }}
                       />
                     </FormGroup>
@@ -729,13 +780,13 @@ const Personalization = () => {
                         onMouseLeave={() => handleMouseLeaveForAccountLogo()}
                         onClick={() => {
                           setImageUrl(
-                            `${IMAGE_BASE_URL}/${userPersonalizationData.logoImage.url}`
+                            `${IMAGE_BASE_URL}/${userPersonalizationData.accountLogo.url}`
                           );
                           addToggle();
                         }}
                       >
                         <img
-                          src={`${IMAGE_BASE_URL}/${userPersonalizationData.logoImage.url}`}
+                          src={`${IMAGE_BASE_URL}/${userPersonalizationData.accountLogo.url}`}
                           alt=""
                           height={230}
                           width={360}
@@ -792,13 +843,13 @@ const Personalization = () => {
                         onMouseLeave={() => handleMouseLeaveForLoginPageLogo()}
                         onClick={() => {
                           setImageUrl(
-                            `${IMAGE_BASE_URL}/${userPersonalizationData.backgroundImage.url}`
+                            `${IMAGE_BASE_URL}/${userPersonalizationData.loginPageLogo.url}`
                           );
                           addToggle();
                         }}
                       >
                         <img
-                          src={`${IMAGE_BASE_URL}/${userPersonalizationData.backgroundImage.url}`}
+                          src={`${IMAGE_BASE_URL}/${userPersonalizationData.loginPageLogo.url}`}
                           alt=""
                           height={230}
                           width={360}

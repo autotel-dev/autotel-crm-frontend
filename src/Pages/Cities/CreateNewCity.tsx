@@ -160,12 +160,12 @@ const CreateNewCity = () => {
       <div className="text-end">
         <button
           className={`btn ${
-            userPersonalizationData?.customColor2 == null ? "btn-primary" : ""
+            userPersonalizationData?.buttonsAndBarsColor == null ? "btn-primary" : ""
           }`}
           style={{
             color: "white",
             backgroundColor: `${
-              userPersonalizationData && userPersonalizationData?.customColor2
+              userPersonalizationData && userPersonalizationData?.buttonsAndBarsColor
             }`,
           }}
         >

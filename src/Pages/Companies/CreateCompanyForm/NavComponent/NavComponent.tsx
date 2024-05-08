@@ -26,14 +26,14 @@ const NavComponent = ({
               color: "white",
               backgroundColor: `${
                 userPersonalizationData && activeTab === index + 1
-                  ? userPersonalizationData?.customColor2
+                  ? userPersonalizationData?.buttonsAndBarsColor
                   : "white"
               }`,
             }}
             className={`b-r-0 ${
               activeTab === index + 1
                 ? userPersonalizationData &&
-                  userPersonalizationData?.customColor2 == null &&
+                  userPersonalizationData?.buttonsAndBarsColor == null &&
                   "active"
                 : ""
             }`}

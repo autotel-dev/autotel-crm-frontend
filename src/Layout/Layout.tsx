@@ -91,8 +91,8 @@ const Layout = () => {
                 style={{
                   backgroundColor: `${
                     userPersonalizationData !== null &&
-                    userPersonalizationData?.customColor1 !== null
-                      ? userPersonalizationData?.customColor1
+                    userPersonalizationData?.backgroundColor !== null
+                      ? userPersonalizationData?.backgroundColor
                       : ""
                   }`,
                 }}

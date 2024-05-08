@@ -523,12 +523,12 @@ const ControlRoomAnalytics = () => {
             color: "white",
             backgroundColor: `${
               userPersonalizationData !== null &&
-              userPersonalizationData?.customColor2
+              userPersonalizationData?.buttonsAndBarsColor
             }`,
             borderRadius: "5px",
           }}
           className={`${
-            userPersonalizationData?.customColor2 == null ? "btn-primary" : ""
+            userPersonalizationData?.buttonsAndBarsColor == null ? "btn-primary" : ""
           }`}
         >
           <div
@@ -741,7 +741,7 @@ const ControlRoomAnalytics = () => {
                         <div>
                           <button
                             className={`${
-                              userPersonalizationData?.customColor2 == null
+                              userPersonalizationData?.buttonsAndBarsColor == null
                                 ? "btn-primary"
                                 : ""
                             }`}
@@ -753,7 +753,7 @@ const ControlRoomAnalytics = () => {
                               color: "white",
                               backgroundColor: `${
                                 userPersonalizationData !== null &&
-                                userPersonalizationData?.customColor2
+                                userPersonalizationData?.buttonsAndBarsColor
                               }`,
 
                               // marginTop: "3vh",
@@ -1099,7 +1099,7 @@ const ControlRoomAnalytics = () => {
                           <div style={{ display: "flex" }}>
                             <button
                               className={`${
-                                userPersonalizationData?.customColor2 == null
+                                userPersonalizationData?.buttonsAndBarsColor == null
                                   ? "btn-primary"
                                   : ""
                               }`}
@@ -1111,7 +1111,7 @@ const ControlRoomAnalytics = () => {
                                 color: "white",
                                 backgroundColor: `${
                                   userPersonalizationData !== null &&
-                                  userPersonalizationData?.customColor2
+                                  userPersonalizationData?.buttonsAndBarsColor
                                 }`,
                                 // marginTop: "3vh",
                               }}
@@ -1138,7 +1138,7 @@ const ControlRoomAnalytics = () => {
                             )}
                             <button
                               className={`${
-                                userPersonalizationData?.customColor2 == null
+                                userPersonalizationData?.buttonsAndBarsColor == null
                                   ? "btn-primary"
                                   : ""
                               }`}
@@ -1150,7 +1150,7 @@ const ControlRoomAnalytics = () => {
                                 color: "white",
                                 backgroundColor: `${
                                   userPersonalizationData !== null &&
-                                  userPersonalizationData?.customColor2
+                                  userPersonalizationData?.buttonsAndBarsColor
                                 }`,
                                 // marginTop: "3vh",
                                 marginLeft: "10px",
@@ -1252,7 +1252,7 @@ const ControlRoomAnalytics = () => {
                         <div style={{ display: "flex" }}>
                           <button
                             className={`${
-                              userPersonalizationData?.customColor2 == null
+                              userPersonalizationData?.buttonsAndBarsColor == null
                                 ? "btn-primary"
                                 : ""
                             }`}
@@ -1264,7 +1264,7 @@ const ControlRoomAnalytics = () => {
                               color: "white",
                               backgroundColor: `${
                                 userPersonalizationData !== null &&
-                                userPersonalizationData?.customColor2
+                                userPersonalizationData?.buttonsAndBarsColor
                               }`,
                               // marginTop: "3vh",
                             }}
@@ -1291,7 +1291,7 @@ const ControlRoomAnalytics = () => {
                           )}
                           <button
                             className={`${
-                              userPersonalizationData?.customColor2 == null
+                              userPersonalizationData?.buttonsAndBarsColor == null
                                 ? "btn-primary"
                                 : ""
                             }`}
@@ -1303,7 +1303,7 @@ const ControlRoomAnalytics = () => {
                               color: "white",
                               backgroundColor: `${
                                 userPersonalizationData !== null &&
-                                userPersonalizationData?.customColor2
+                                userPersonalizationData?.buttonsAndBarsColor
                               }`,
                               // marginTop: "3vh",
                               marginLeft: "10px",

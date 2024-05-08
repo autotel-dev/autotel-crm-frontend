@@ -502,8 +502,8 @@ const ControlRoom = () => {
                       style={{
                         backgroundColor: `${
                           userPersonalizationData !== null &&
-                          userPersonalizationData?.customColor2 !== null
-                            ? userPersonalizationData?.customColor2
+                          userPersonalizationData?.buttonsAndBarsColor !== null
+                            ? userPersonalizationData?.buttonsAndBarsColor
                             : "#63d5be"
                         }`,
 
@@ -526,8 +526,8 @@ const ControlRoom = () => {
                             color: `${
                               basicTab === "1"
                                 ? userPersonalizationData !== null &&
-                                  userPersonalizationData?.customColor2 !== null
-                                  ? userPersonalizationData?.customColor2
+                                  userPersonalizationData?.buttonsAndBarsColor !== null
+                                  ? userPersonalizationData?.buttonsAndBarsColor
                                   : "#63d5be"
                                 : "white"
                             }`,
@@ -552,8 +552,8 @@ const ControlRoom = () => {
                             color: `${
                               basicTab === "2"
                                 ? userPersonalizationData !== null &&
-                                  userPersonalizationData?.customColor2 !== null
-                                  ? userPersonalizationData?.customColor2
+                                  userPersonalizationData?.buttonsAndBarsColor !== null
+                                  ? userPersonalizationData?.buttonsAndBarsColor
                                   : "#63d5be"
                                 : "white"
                             }`,

@@ -107,11 +107,26 @@ const LoginForm = () => {
       ) : (
         <Row
           style={{
-            // backgroundColor: `${
-            //   userPersonalizationData && userPersonalizationData.backgroundColor
-            // }`,
-            backgroundImage:
-              "linear-gradient(to bottom, rgba(220, 220, 220, 0.5), rgba(53, 191, 191, 1))",
+            backgroundColor: `${
+              userPersonalizationData !== null &&
+              userPersonalizationData.loginPageBackgroundType == "SOLID" &&
+              userPersonalizationData &&
+              userPersonalizationData.backgroundColor
+            }`,
+            backgroundImage: `${
+              userPersonalizationData !== null &&
+              userPersonalizationData.loginPageBackgroundType == "GRADIENT" &&
+              `linear-gradient(to ${
+                userPersonalizationData !== null &&
+                userPersonalizationData.gradient.direction
+              }, ${
+                userPersonalizationData !== null &&
+                userPersonalizationData.gradient.color1
+              }, ${
+                userPersonalizationData !== null &&
+                userPersonalizationData.gradient.color2
+              })`
+            }`,
           }}
         >
           <Col
@@ -142,7 +157,7 @@ const LoginForm = () => {
                 textAlign: "center",
                 color:
                   userPersonalizationData !== null
-                    ? `${userPersonalizationData.textColor}`
+                    ? `${userPersonalizationData.loginPageTextColor1}`
                     : "black",
               }}
               className="lilita-one-regular"
@@ -160,7 +175,7 @@ const LoginForm = () => {
                 marginBottom: "60px",
                 color:
                   userPersonalizationData !== null
-                    ? `${userPersonalizationData.textColor}`
+                    ? `${userPersonalizationData.loginPageTextColor2}`
                     : "black",
               }}
               className="pacifico-regular"
@@ -176,7 +191,7 @@ const LoginForm = () => {
             <img
               src={
                 userPersonalizationData !== null
-                  ? `${IMAGE_BASE_URL}/${userPersonalizationData.backgroundImage.url}`
+                  ? `${IMAGE_BASE_URL}/${userPersonalizationData.loginPageLogo.url}`
                   : BcakgroundImage
               }
               alt=""

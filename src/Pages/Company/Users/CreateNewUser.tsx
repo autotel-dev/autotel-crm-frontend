@@ -209,13 +209,13 @@ const CreateNewUser = () => {
       <div className="text-end">
         <button
           className={`btn ${
-            userPersonalizationData?.customColor2 == null ? "btn-primary" : ""
+            userPersonalizationData?.buttonsAndBarsColor == null ? "btn-primary" : ""
           }`}
           style={{
             color: "white",
             backgroundColor: `${
               userPersonalizationData !== null &&
-              userPersonalizationData?.customColor2
+              userPersonalizationData?.buttonsAndBarsColor
             }`,
           }}
           onClick={addToggle}

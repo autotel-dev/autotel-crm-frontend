@@ -170,8 +170,8 @@ const LiveAlerts = () => {
         style={{
           backgroundColor:
             userPersonalizationData !== null &&
-            userPersonalizationData?.customColor2 !== null
-              ? userPersonalizationData?.customColor2
+            userPersonalizationData?.buttonsAndBarsColor !== null
+              ? userPersonalizationData?.buttonsAndBarsColor
               : "#63d5be",
           height: "40px",
           fontSize: "18px",

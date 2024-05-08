@@ -137,7 +137,7 @@ const CreateNewCRMModule = () => {
       <div className="text-end">
         <button
           className={`btn ${
-            userPersonalizationData?.customColor2 == null ? "btn-primary" : ""
+            userPersonalizationData?.buttonsAndBarsColor == null ? "btn-primary" : ""
           }`}
           style={{
             color: "white",

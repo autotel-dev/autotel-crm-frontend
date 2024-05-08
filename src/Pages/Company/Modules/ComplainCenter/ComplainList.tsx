@@ -254,12 +254,12 @@ const ComplainList = () => {
             color: "white",
             backgroundColor: `${
               userPersonalizationData !== null &&
-              userPersonalizationData?.customColor2
+              userPersonalizationData?.buttonsAndBarsColor
             }`,
             borderRadius: "5px",
           }}
           className={`${
-            userPersonalizationData?.customColor2 == null ? "btn-primary" : ""
+            userPersonalizationData?.buttonsAndBarsColor == null ? "btn-primary" : ""
           }`}
         >
           <div

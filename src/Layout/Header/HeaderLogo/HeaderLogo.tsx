@@ -21,7 +21,7 @@ const HeaderLogo = () => {
           <img
             src={
               userPersonalizationData !== null
-                ? `${IMAGE_BASE_URL}/${userPersonalizationData.logoImage.url}`
+                ? `${IMAGE_BASE_URL}/${userPersonalizationData.accountLogo.url}`
                 : Logo
             }
             alt=""

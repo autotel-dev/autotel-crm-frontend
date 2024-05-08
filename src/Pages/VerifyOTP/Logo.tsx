@@ -29,7 +29,7 @@ const Logo = ({ alignLogo }: PropsType) => {
       <img
         src={
           userPersonalizationData !== null
-            ? `${IMAGE_BASE_URL}/${userPersonalizationData.logoImage.url}`
+            ? `${IMAGE_BASE_URL}/${userPersonalizationData.accountLogo.url}`
             : Logoo
         }
         alt=""

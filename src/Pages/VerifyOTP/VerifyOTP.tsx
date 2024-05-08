@@ -69,7 +69,7 @@ const VerifyOTP = () => {
           <img
             src={
               userPersonalizationData !== null
-                ? `${IMAGE_BASE_URL}/${userPersonalizationData.backgroundImage.url}`
+                ? `${IMAGE_BASE_URL}/${userPersonalizationData.loginPageLogo.url}`
                 : BcakgroundImage
             }
             alt=""

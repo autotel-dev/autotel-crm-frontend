@@ -463,8 +463,8 @@ const TicketDetails = () => {
                       style={{
                         color: `${
                           userPersonalizationData !== null &&
-                          userPersonalizationData?.customColor2 !== null
-                            ? userPersonalizationData?.customColor2
+                          userPersonalizationData?.buttonsAndBarsColor !== null
+                            ? userPersonalizationData?.buttonsAndBarsColor
                             : "#35bfbf"
                         }`,
                         fontWeight: "normal",
@@ -508,8 +508,8 @@ const TicketDetails = () => {
                         style={{
                           color: `${
                             userPersonalizationData !== null &&
-                            userPersonalizationData?.customColor2 !== null
-                              ? userPersonalizationData?.customColor2
+                            userPersonalizationData?.buttonsAndBarsColor !== null
+                              ? userPersonalizationData?.buttonsAndBarsColor
                               : "#35bfbf"
                           }`,
                           margin: "25px 0px",
@@ -651,8 +651,8 @@ const TicketDetails = () => {
                             style={{
                               color: `${
                                 userPersonalizationData !== null &&
-                                userPersonalizationData?.customColor2 !== null
-                                  ? userPersonalizationData?.customColor2
+                                userPersonalizationData?.buttonsAndBarsColor !== null
+                                  ? userPersonalizationData?.buttonsAndBarsColor
                                   : "#35bfbf"
                               }`,
                               margin: "25px 0px",
@@ -703,8 +703,8 @@ const TicketDetails = () => {
                             style={{
                               color: `${
                                 userPersonalizationData !== null &&
-                                userPersonalizationData?.customColor2 !== null
-                                  ? userPersonalizationData?.customColor2
+                                userPersonalizationData?.buttonsAndBarsColor !== null
+                                  ? userPersonalizationData?.buttonsAndBarsColor
                                   : "#35bfbf"
                               }`,
                               fontSize: "20px",
@@ -1026,7 +1026,7 @@ const TicketDetails = () => {
                                 {getUserRole() === ROLES.SUPER_ADMIN && (
                                   <button
                                     className={`btn ${
-                                      userPersonalizationData?.customColor2 ==
+                                      userPersonalizationData?.buttonsAndBarsColor ==
                                       null
                                         ? "btn-primary"
                                         : ""
@@ -1040,7 +1040,7 @@ const TicketDetails = () => {
                                       color: "white",
                                       backgroundColor: `${
                                         userPersonalizationData !== null &&
-                                        userPersonalizationData?.customColor2
+                                        userPersonalizationData?.buttonsAndBarsColor
                                       }`,
                                       display: "flex",
                                       alignItems: "center",
@@ -1091,7 +1091,7 @@ const TicketDetails = () => {
                                 )}
                                 <button
                                   className={`btn ${
-                                    userPersonalizationData?.customColor2 ==
+                                    userPersonalizationData?.buttonsAndBarsColor ==
                                     null
                                       ? "btn-primary"
                                       : ""
@@ -1100,7 +1100,7 @@ const TicketDetails = () => {
                                     color: "white",
                                     backgroundColor: `${
                                       userPersonalizationData !== null &&
-                                      userPersonalizationData?.customColor2
+                                      userPersonalizationData?.buttonsAndBarsColor
                                     }`,
                                     display: "flex",
                                     alignItems: "center",
@@ -1143,8 +1143,8 @@ const TicketDetails = () => {
                       style={{
                         backgroundColor: `${
                           userPersonalizationData !== null &&
-                          userPersonalizationData?.customColor2 !== null
-                            ? userPersonalizationData?.customColor2
+                          userPersonalizationData?.buttonsAndBarsColor !== null
+                            ? userPersonalizationData?.buttonsAndBarsColor
                             : "#35bfbf"
                         }`,
                         color: "white",
@@ -1460,7 +1460,7 @@ const TicketDetails = () => {
                           "Resolved" && (
                           <button
                             className={`btn ${
-                              userPersonalizationData?.customColor2 == null
+                              userPersonalizationData?.buttonsAndBarsColor == null
                                 ? "btn-primary"
                                 : ""
                             }`}
@@ -1468,7 +1468,7 @@ const TicketDetails = () => {
                               color: "white",
                               backgroundColor: `${
                                 userPersonalizationData !== null &&
-                                userPersonalizationData?.customColor2
+                                userPersonalizationData?.buttonsAndBarsColor
                               }`,
                               display: "flex",
                               alignItems: "center",
@@ -1490,7 +1490,7 @@ const TicketDetails = () => {
                             "Resolved" && (
                             <button
                               className={`btn ${
-                                userPersonalizationData?.customColor2 == null
+                                userPersonalizationData?.buttonsAndBarsColor == null
                                   ? "btn-primary"
                                   : ""
                               }`}
@@ -1498,7 +1498,7 @@ const TicketDetails = () => {
                                 color: "white",
                                 backgroundColor: `${
                                   userPersonalizationData !== null &&
-                                  userPersonalizationData?.customColor2
+                                  userPersonalizationData?.buttonsAndBarsColor
                                 }`,
                                 display: "flex",
                                 alignItems: "center",

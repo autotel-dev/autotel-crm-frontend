@@ -65,8 +65,8 @@ const CompaniesCardsFooter = ({ item }: CardType) => {
             fontSize: "14px",
             // backgroundColor: `${
             //   userPersonalizationData !== null &&
-            //   userPersonalizationData?.customColor2 !== null
-            //     ? userPersonalizationData?.customColor2
+            //   userPersonalizationData?.buttonsAndBarsColor !== null
+            //     ? userPersonalizationData?.buttonsAndBarsColor
             //     : "#35bfbf"
             // }`,
             backgroundColor: "#35bfbf",

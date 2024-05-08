@@ -435,8 +435,8 @@ const ComplainDetails = () => {
                       style={{
                         color: `${
                           userPersonalizationData !== null &&
-                          userPersonalizationData?.customColor2 !== null
-                            ? userPersonalizationData?.customColor2
+                          userPersonalizationData?.buttonsAndBarsColor !== null
+                            ? userPersonalizationData?.buttonsAndBarsColor
                             : "#35bfbf"
                         }`,
                         fontWeight: "normal",
@@ -480,8 +480,8 @@ const ComplainDetails = () => {
                         style={{
                           color: `${
                             userPersonalizationData !== null &&
-                            userPersonalizationData?.customColor2 !== null
-                              ? userPersonalizationData?.customColor2
+                            userPersonalizationData?.buttonsAndBarsColor !== null
+                              ? userPersonalizationData?.buttonsAndBarsColor
                               : "#35bfbf"
                           }`,
                           margin: "25px 0px",
@@ -623,8 +623,8 @@ const ComplainDetails = () => {
                             style={{
                               color: `${
                                 userPersonalizationData !== null &&
-                                userPersonalizationData?.customColor2 !== null
-                                  ? userPersonalizationData?.customColor2
+                                userPersonalizationData?.buttonsAndBarsColor !== null
+                                  ? userPersonalizationData?.buttonsAndBarsColor
                                   : "#35bfbf"
                               }`,
                               margin: "25px 0px",
@@ -675,8 +675,8 @@ const ComplainDetails = () => {
                             style={{
                               color: `${
                                 userPersonalizationData !== null &&
-                                userPersonalizationData?.customColor2 !== null
-                                  ? userPersonalizationData?.customColor2
+                                userPersonalizationData?.buttonsAndBarsColor !== null
+                                  ? userPersonalizationData?.buttonsAndBarsColor
                                   : "#35bfbf"
                               }`,
                               fontSize: "20px",
@@ -998,7 +998,7 @@ const ComplainDetails = () => {
                                 {getUserRole() === ROLES.SUPER_ADMIN && (
                                   <button
                                     className={`btn ${
-                                      userPersonalizationData?.customColor2 ==
+                                      userPersonalizationData?.buttonsAndBarsColor ==
                                       null
                                         ? "btn-primary"
                                         : ""
@@ -1012,7 +1012,7 @@ const ComplainDetails = () => {
                                       color: "white",
                                       backgroundColor: `${
                                         userPersonalizationData !== null &&
-                                        userPersonalizationData?.customColor2
+                                        userPersonalizationData?.buttonsAndBarsColor
                                       }`,
                                       display: "flex",
                                       alignItems: "center",
@@ -1063,7 +1063,7 @@ const ComplainDetails = () => {
                                 )}
                                 <button
                                   className={`btn ${
-                                    userPersonalizationData?.customColor2 ==
+                                    userPersonalizationData?.buttonsAndBarsColor ==
                                     null
                                       ? "btn-primary"
                                       : ""
@@ -1072,7 +1072,7 @@ const ComplainDetails = () => {
                                     color: "white",
                                     backgroundColor: `${
                                       userPersonalizationData !== null &&
-                                      userPersonalizationData?.customColor2
+                                      userPersonalizationData?.buttonsAndBarsColor
                                     }`,
                                     display: "flex",
                                     alignItems: "center",
@@ -1115,8 +1115,8 @@ const ComplainDetails = () => {
                       style={{
                         backgroundColor: `${
                           userPersonalizationData !== null &&
-                          userPersonalizationData?.customColor2 !== null
-                            ? userPersonalizationData?.customColor2
+                          userPersonalizationData?.buttonsAndBarsColor !== null
+                            ? userPersonalizationData?.buttonsAndBarsColor
                             : "#35bfbf"
                         }`,
                         color: "white",
@@ -1432,7 +1432,7 @@ const ComplainDetails = () => {
                           "Resolved" && (
                           <button
                             className={`btn ${
-                              userPersonalizationData?.customColor2 == null
+                              userPersonalizationData?.buttonsAndBarsColor == null
                                 ? "btn-primary"
                                 : ""
                             }`}
@@ -1440,7 +1440,7 @@ const ComplainDetails = () => {
                               color: "white",
                               backgroundColor: `${
                                 userPersonalizationData !== null &&
-                                userPersonalizationData?.customColor2
+                                userPersonalizationData?.buttonsAndBarsColor
                               }`,
                               display: "flex",
                               alignItems: "center",
@@ -1462,7 +1462,7 @@ const ComplainDetails = () => {
                             "Resolved" && (
                             <button
                               className={`btn ${
-                                userPersonalizationData?.customColor2 == null
+                                userPersonalizationData?.buttonsAndBarsColor == null
                                   ? "btn-primary"
                                   : ""
                               }`}
@@ -1470,7 +1470,7 @@ const ComplainDetails = () => {
                                 color: "white",
                                 backgroundColor: `${
                                   userPersonalizationData !== null &&
-                                  userPersonalizationData?.customColor2
+                                  userPersonalizationData?.buttonsAndBarsColor
                                 }`,
                                 display: "flex",
                                 alignItems: "center",
