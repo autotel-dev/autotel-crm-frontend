@@ -707,7 +707,7 @@ const routes = [
   },
 
   {
-    path: `${process.env.PUBLIC_URL}/company/modules/complain-center`,
+    path: `${process.env.PUBLIC_URL}/company/modules/complaint-center`,
     Component: <ComplainCenter />,
     isProtected: true,
     allowedUserRoles: [ROLES.COMPANY],
@@ -776,7 +776,7 @@ const routes = [
     permissionValue: "Control Room",
   },
   {
-    path: `${process.env.PUBLIC_URL}/operator/modules/complain-center`,
+    path: `${process.env.PUBLIC_URL}/operator/modules/complaint-center`,
     Component: <ComplainCenter />,
     isProtected: true,
     allowedUserRoles: [ROLES.OPERATOR],
