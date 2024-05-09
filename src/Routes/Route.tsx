@@ -776,6 +776,13 @@ const routes = [
     permissionValue: "Control Room",
   },
   {
+    path: `${process.env.PUBLIC_URL}/operator/modules/complain-center`,
+    Component: <ComplainCenter />,
+    isProtected: true,
+    allowedUserRoles: [ROLES.OPERATOR],
+    permissionValue: "Complain Center",
+  },
+  {
     path: `${process.env.PUBLIC_URL}/support`,
     Component: <Support />,
     isProtected: true,

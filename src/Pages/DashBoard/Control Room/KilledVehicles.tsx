@@ -79,8 +79,7 @@ const KilledVehicles: React.FC<PropsTypes> = ({ fromDate, toDate }) => {
         return {
           ...device,
           remainingTime: calculateRemainingTime(
-            new Date(device.createdAt).toLocaleString()
-          ),
+            device.createdAt),
           deviceData: deviceData ? { ...deviceData } : null,
         };
       });
@@ -96,8 +95,7 @@ const KilledVehicles: React.FC<PropsTypes> = ({ fromDate, toDate }) => {
         prevDataList.map((device: any) => ({
           ...device,
           remainingTime: calculateRemainingTime(
-            new Date(device.createdAt).toLocaleString()
-          ),
+            device.createdAt),
         }))
       );
     }, 1000);
@@ -145,14 +143,13 @@ const KilledVehicles: React.FC<PropsTypes> = ({ fromDate, toDate }) => {
           );
           const deviceData = matchedDevice
             ? matchedDevice.items.find(
-                (item: any) => item.id === device.deviceId
-              )
+              (item: any) => item.id === device.deviceId
+            )
             : null;
           return {
             ...device,
             remainingTime: calculateRemainingTime(
-              new Date(device.updatedAt).toLocaleString()
-            ),
+              device.createdAt),
             deviceData: deviceData ? { ...deviceData } : null,
           };
         });
@@ -324,28 +321,28 @@ const KilledVehicles: React.FC<PropsTypes> = ({ fromDate, toDate }) => {
                                       data.onlineStatus === "ack"
                                         ? "rgba(255, 0, 0, 0.1)"
                                         : data.onlineStatus === "engine"
-                                        ? "rgba(255, 165, 0, 0.1)"
-                                        : data.onlineStatus === "online"
-                                        ? "rgba(0, 255, 0, 0.1)"
-                                        : "rgba(0, 0, 0, 0.1)",
+                                          ? "rgba(255, 165, 0, 0.1)"
+                                          : data.onlineStatus === "online"
+                                            ? "rgba(0, 255, 0, 0.1)"
+                                            : "rgba(0, 0, 0, 0.1)",
                                     color:
                                       data.onlineStatus === "ack"
                                         ? "red"
                                         : data.onlineStatus === "engine"
-                                        ? "orange"
-                                        : data.onlineStatus === "online"
-                                        ? "green"
-                                        : "black",
+                                          ? "orange"
+                                          : data.onlineStatus === "online"
+                                            ? "green"
+                                            : "black",
                                     borderRadius: "5px",
                                   }}
                                 >
                                   {data.onlineStatus === "ack"
                                     ? "Stop"
                                     : data.onlineStatus === "engine"
-                                    ? "Idle"
-                                    : data.onlineStatus === "online"
-                                    ? "Moving"
-                                    : "Offline"}
+                                      ? "Idle"
+                                      : data.onlineStatus === "online"
+                                        ? "Moving"
+                                        : "Offline"}
                                 </div>
                               </td>
                               <td style={{ width: "10%" }}>
@@ -379,8 +376,8 @@ const KilledVehicles: React.FC<PropsTypes> = ({ fromDate, toDate }) => {
                               <td style={{ width: "8%" }}>{data.longitude}</td>
                               <td style={{ width: "8%" }}>
                                 {data.address == undefined ||
-                                data.address === "" ||
-                                data.address == null
+                                  data.address === "" ||
+                                  data.address == null
                                   ? "N/A"
                                   : data.address}
                               </td>

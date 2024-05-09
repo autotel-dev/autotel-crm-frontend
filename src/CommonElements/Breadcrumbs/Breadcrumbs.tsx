@@ -18,7 +18,7 @@ const Breadcrumbs = ({ mainTitle, parent, title }: propsTypes) => {
       width: "2px",
       backgroundColor:
         userPersonalizationData !== null &&
-        userPersonalizationData?.buttonsAndBarsColor !== null
+        userPersonalizationData?.buttonsAndBarsColor !== ""
           ? userPersonalizationData?.buttonsAndBarsColor
           : "#33BFBF",
     };
@@ -40,7 +40,7 @@ const Breadcrumbs = ({ mainTitle, parent, title }: propsTypes) => {
                     className="personalization"
                     color={`${
                       userPersonalizationData !== null &&
-                      userPersonalizationData?.buttonsAndBarsColor !== null
+                      userPersonalizationData?.buttonsAndBarsColor !== ""
                         ? userPersonalizationData?.buttonsAndBarsColor
                         : "#35bfbf"
                     }`}

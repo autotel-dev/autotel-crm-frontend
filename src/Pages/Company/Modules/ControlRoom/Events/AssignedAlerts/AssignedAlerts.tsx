@@ -139,11 +139,7 @@ const AssignedAlerts = () => {
                         }}
                         key={index}
                         onClick={async () => {
-                          // liveAlertsData?.connectedServers?.map(
-                          //   (item: any, index: any) => {
-                          //     console.log("item", item);
-                          //   }
-                          // );
+
                           var checkServer =
                             liveAlertsData?.connectedServers?.find(
                               (item: any) => item.server._id === data.server
@@ -230,8 +226,8 @@ const AssignedAlerts = () => {
                           {data.address == null
                             ? "N/A"
                             : data.address.length > 10
-                            ? data.address.substring(0, 10) + "..."
-                            : data.address}
+                              ? data.address.substring(0, 10) + "..."
+                              : data.address}
                         </td>
                         {data.address != null && (
                           <UncontrolledPopover

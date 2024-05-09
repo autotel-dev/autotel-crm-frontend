@@ -44,6 +44,7 @@ import {
   setServerDevices,
 } from "../../../ReaduxToolkit/Reducer/MonitoringSlice";
 import Swal from "sweetalert2";
+import './general.css'
 
 interface DraggableBoxProps {
   initialPosition: { x: number; y: number };
@@ -355,58 +356,61 @@ const General = () => {
   }, []);
 
   return (
-    <Col xl="12" lg="12" md="12" sm="12">
+    <Col xl="12" lg="12" md="12" sm="12" style={{
+
+
+    }}>
       {generalloading == true ? (
         <div
           style={{
             display: "flex",
             justifyContent: "space-between",
+            paddingRight: "40px"
           }}
         >
-          <div
+          <Col xl="3" lg="3" md="3" sm="3"
             style={{
               marginBottom: "20px",
               marginRight: "20px",
             }}
           >
-            <div
+            <Col xl="12" lg="12" md="12" sm="12"
               style={{
                 marginBottom: "20px",
               }}
+              className="skeleton"
             >
-              <Skeleton width={350} height={200} />
-            </div>
-            <div>
-              <Skeleton width={350} height={210} />
-            </div>
-          </div>
-          <div
+            </Col>
+            <Col xl="12" lg="12" md="12" sm="12" className="skeleton">
+            </Col>
+          </Col>
+          <Col xl="6" lg="6" md="6" sm="6"
+            style={{
+              marginBottom: "20px",
+              marginRight: "20px",
+            }}
+
+          >
+            <Col xl="12" lg="12" md="12" sm="12" className="skeleton2">
+            </Col>
+          </Col>
+          <Col xl="3" lg="3" md="3" sm="3"
             style={{
               marginBottom: "20px",
               marginRight: "20px",
             }}
           >
-            <Skeleton width={700} height={440} />
-          </div>
-          <div
-            style={{
-              marginBottom: "20px",
-              marginRight: "20px",
-            }}
-          >
-            <div
+            <Col xl="12" lg="12" md="12" sm="12"
               style={{
                 marginBottom: "20px",
               }}
+              className="skeleton"
             >
-              <Skeleton width={350} height={200} />
-            </div>
-            <div>
-              <Skeleton width={350} height={210} />
-            </div>
-          </div>
-          {/* Example for an avatar */}
-          {/* <Skeleton count={3} height={20} /> Example for text */}
+            </Col>
+            <Col xl="12" lg="12" md="12" sm="12" className="skeleton">
+            </Col>
+          </Col>
+
         </div>
       ) : (
         <Row style={{ display: "flex" }}>
@@ -460,9 +464,9 @@ const General = () => {
                           >
                             {generalData !== null
                               ? generalData?.operatorStatistics
-                                  ?.totalActiveOperators +
-                                generalData?.operatorStatistics
-                                  ?.totalInActiveOperators
+                                ?.totalActiveOperators +
+                              generalData?.operatorStatistics
+                                ?.totalInActiveOperators
                               : 0}
                           </div>
                         </div>
@@ -560,9 +564,9 @@ const General = () => {
                           >
                             {generalData !== null
                               ? generalData?.companyServerStatistics
-                                  ?.totalActiveServers +
-                                generalData?.companyServerStatistics
-                                  ?.totalInActiveServers
+                                ?.totalActiveServers +
+                              generalData?.companyServerStatistics
+                                ?.totalInActiveServers
                               : 0}
                           </div>
                         </div>
@@ -1200,26 +1204,26 @@ const General = () => {
                               >
                                 <H5>
                                   {operatorPerformance?.totalAlertEventsOfCompany ==
-                                  0
+                                    0
                                     ? 0
                                     : (
-                                        (data.alerts.length /
-                                          operatorPerformance?.totalAlertEventsOfCompany) *
-                                        100
-                                      ).toFixed(0)}
+                                      (data.alerts.length /
+                                        operatorPerformance?.totalAlertEventsOfCompany) *
+                                      100
+                                    ).toFixed(0)}
                                   %
                                 </H5>
                                 <Fragment key={index}>
                                   <Progress
                                     value={
                                       operatorPerformance?.totalAlertEventsOfCompany ==
-                                      0
+                                        0
                                         ? 0
                                         : (
-                                            (data.alerts.length /
-                                              operatorPerformance?.totalAlertEventsOfCompany) *
-                                            100
-                                          ).toFixed(0)
+                                          (data.alerts.length /
+                                            operatorPerformance?.totalAlertEventsOfCompany) *
+                                          100
+                                        ).toFixed(0)
                                     }
                                     // className="mb-4"
                                     striped={true}
@@ -1227,13 +1231,13 @@ const General = () => {
                                     animated={true}
                                   >
                                     {operatorPerformance?.totalAlertEventsOfCompany ==
-                                    0
+                                      0
                                       ? 0
                                       : (
-                                          (data.alerts.length /
-                                            operatorPerformance?.totalAlertEventsOfCompany) *
-                                          100
-                                        ).toFixed(0)}
+                                        (data.alerts.length /
+                                          operatorPerformance?.totalAlertEventsOfCompany) *
+                                        100
+                                      ).toFixed(0)}
                                   </Progress>
                                 </Fragment>
                               </div>
@@ -1355,9 +1359,9 @@ const General = () => {
                                   "Passed",
                                   daysRemaining > 0
                                     ? generalData?.companyPackageStatistics
-                                        ?.packageDays - daysRemaining
+                                      ?.packageDays - daysRemaining
                                     : generalData?.companyPackageStatistics
-                                        ?.packageDays,
+                                      ?.packageDays,
                                 ],
                               ]}
                               options={{
@@ -1466,6 +1470,8 @@ const General = () => {
 };
 
 export default General;
+
+{/* <Skeleton width={700} height={440} /> */ }
 
 {
   /* <Draggable

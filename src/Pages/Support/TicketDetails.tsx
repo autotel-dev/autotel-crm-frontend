@@ -190,10 +190,11 @@ const TicketDetails = () => {
       hours = 12;
     }
 
-    return `${day}, ${hours}:${
-      minutes < 10 ? "0" + minutes : minutes
-    } ${amOrPm}`;
+    return `${day}, ${hours}:${minutes < 10 ? "0" + minutes : minutes
+      } ${amOrPm}`;
   };
+
+  const [sendMessageLoading, setSendMessageLoading] = useState(false);
 
   const sendMessage = () => {
     if (replyText.length > 0) {
@@ -203,6 +204,7 @@ const TicketDetails = () => {
           url: `support/bug-report/${ticketId}/send-message`,
         }
       ).then((data: any) => {
+        setSendMessageLoading(false);
         // console.log("api call --- >", data);
         setReplyText("");
         if (data !== undefined) {
@@ -210,6 +212,7 @@ const TicketDetails = () => {
             getAll({
               url: `support/bug-report/get-bug-report/${ticketId}`,
             }).then((data: any) => {
+
               // console.log("api call --- >", data);
               if (data !== undefined) {
                 if (data.success) {
@@ -356,6 +359,7 @@ const TicketDetails = () => {
               }
             }
           });
+
         }
       }
     });
@@ -391,7 +395,7 @@ const TicketDetails = () => {
         }
       }
     );
-  }, [priorityStatuses]);
+  }, []);
 
   useEffect(() => {
     getAll({ url: "support/bug-report/get-status-types" }).then((data: any) => {
@@ -412,7 +416,7 @@ const TicketDetails = () => {
         }
       }
     });
-  }, [statuses]);
+  }, []);
 
   return (
     <>
@@ -461,12 +465,11 @@ const TicketDetails = () => {
                     </div>
                     <div
                       style={{
-                        color: `${
-                          userPersonalizationData !== null &&
+                        color: `${userPersonalizationData !== null &&
                           userPersonalizationData?.buttonsAndBarsColor !== null
-                            ? userPersonalizationData?.buttonsAndBarsColor
-                            : "#35bfbf"
-                        }`,
+                          ? userPersonalizationData?.buttonsAndBarsColor
+                          : "#35bfbf"
+                          }`,
                         fontWeight: "normal",
                         fontSize: "20px",
                         marginBottom: "10px",
@@ -506,12 +509,11 @@ const TicketDetails = () => {
                       <Col
                         md={3}
                         style={{
-                          color: `${
-                            userPersonalizationData !== null &&
+                          color: `${userPersonalizationData !== null &&
                             userPersonalizationData?.buttonsAndBarsColor !== null
-                              ? userPersonalizationData?.buttonsAndBarsColor
-                              : "#35bfbf"
-                          }`,
+                            ? userPersonalizationData?.buttonsAndBarsColor
+                            : "#35bfbf"
+                            }`,
                           margin: "25px 0px",
                           fontSize: "20px",
                         }}
@@ -649,12 +651,11 @@ const TicketDetails = () => {
                           <Col
                             md={3}
                             style={{
-                              color: `${
-                                userPersonalizationData !== null &&
+                              color: `${userPersonalizationData !== null &&
                                 userPersonalizationData?.buttonsAndBarsColor !== null
-                                  ? userPersonalizationData?.buttonsAndBarsColor
-                                  : "#35bfbf"
-                              }`,
+                                ? userPersonalizationData?.buttonsAndBarsColor
+                                : "#35bfbf"
+                                }`,
                               margin: "25px 0px",
                               fontSize: "20px",
                             }}
@@ -701,12 +702,11 @@ const TicketDetails = () => {
                           <a
                             href="#"
                             style={{
-                              color: `${
-                                userPersonalizationData !== null &&
+                              color: `${userPersonalizationData !== null &&
                                 userPersonalizationData?.buttonsAndBarsColor !== null
-                                  ? userPersonalizationData?.buttonsAndBarsColor
-                                  : "#35bfbf"
-                              }`,
+                                ? userPersonalizationData?.buttonsAndBarsColor
+                                : "#35bfbf"
+                                }`,
                               fontSize: "20px",
                             }}
                           >
@@ -762,12 +762,11 @@ const TicketDetails = () => {
                                     ? "0px"
                                     : "40%",
                                 borderRadius: "10px",
-                                marginBottom: `${
-                                  index === 2 &&
+                                marginBottom: `${index === 2 &&
                                   index === ticketDetails.messages.length - 1
-                                    ? "50px"
-                                    : "20px"
-                                }`,
+                                  ? "50px"
+                                  : "20px"
+                                  }`,
                                 marginTop: "10px",
                               }}
                             >
@@ -861,12 +860,11 @@ const TicketDetails = () => {
                                       : "40%",
                                   padding: "15px",
                                   borderRadius: "10px",
-                                  marginBottom: `${
-                                    index === 2 &&
+                                  marginBottom: `${index === 2 &&
                                     index === ticketDetails.messages.length - 1
-                                      ? "50px"
-                                      : "20px"
-                                  }`,
+                                    ? "50px"
+                                    : "20px"
+                                    }`,
                                   marginTop: "10px",
                                 }}
                               >
@@ -980,68 +978,124 @@ const TicketDetails = () => {
                       >
                         {formatUnderscoredString(ticketDetails.status) !==
                           "Resolved" && (
-                          <div
-                            style={{
-                              border: "1px solid lightgray",
-                            }}
-                          >
-                            <textarea
-                              ref={textareaRef}
-                              onChange={handleChange}
-                              value={replyText}
-                              className="form-control replyText"
-                              placeholder="Reply Here..."
-                              rows={3} // Minimum number of visible lines
+                            <div
                               style={{
-                                maxHeight: "100px", // Maximum height for 5 lines of text
-                                resize: "vertical", // Allow vertical resizing within the specified range
-                                borderRadius: "0px",
-                                fontSize: "20px",
-                                overflowY: "auto",
-                                WebkitOverflowScrolling: "touch", // Enable momentum scrolling on iOS
-                                scrollbarWidth: "thin", // Specify scrollbar width
-                                WebkitBorderRadius: "5px !important", // For WebKit browsers (Chrome, Safari)
-                                MozBorderRadius: "5px !important", // For Mozilla Firefox
-                                scrollbarColor: "lightgray transparent", // Specify scrollbar color
-                                outline: "0px",
-                                border: "0px",
+                                border: "1px solid lightgray",
                               }}
-                            />
-                            <style>
-                              {`
+                            >
+                              <textarea
+                                ref={textareaRef}
+                                onChange={handleChange}
+                                value={replyText}
+                                className="form-control replyText"
+                                placeholder="Reply Here..."
+                                rows={3} // Minimum number of visible lines
+                                style={{
+                                  maxHeight: "100px", // Maximum height for 5 lines of text
+                                  resize: "vertical", // Allow vertical resizing within the specified range
+                                  borderRadius: "0px",
+                                  fontSize: "20px",
+                                  overflowY: "auto",
+                                  WebkitOverflowScrolling: "touch", // Enable momentum scrolling on iOS
+                                  scrollbarWidth: "thin", // Specify scrollbar width
+                                  WebkitBorderRadius: "5px !important", // For WebKit browsers (Chrome, Safari)
+                                  MozBorderRadius: "5px !important", // For Mozilla Firefox
+                                  scrollbarColor: "lightgray transparent", // Specify scrollbar color
+                                  outline: "0px",
+                                  border: "0px",
+                                }}
+                              />
+                              <style>
+                                {`
     .replyText::placeholder {
       font-size: 18px;
   }`}
-                            </style>
-                            <div
-                              style={{
-                                backgroundColor: "whitesmoke",
-                                padding: "20px",
-                                display: "flex",
-                                justifyContent: "space-between",
-                              }}
-                            >
-                              <div></div>
-                              <div style={{ display: "flex" }}>
-                                {getUserRole() === ROLES.SUPER_ADMIN && (
-                                  <button
-                                    className={`btn ${
-                                      userPersonalizationData?.buttonsAndBarsColor ==
-                                      null
+                              </style>
+                              <div
+                                style={{
+                                  backgroundColor: "whitesmoke",
+                                  padding: "20px",
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                }}
+                              >
+                                <div></div>
+                                <div style={{ display: "flex" }}>
+                                  {getUserRole() === ROLES.SUPER_ADMIN && (
+                                    <button
+                                      className={`btn ${userPersonalizationData?.buttonsAndBarsColor ==
+                                        null
                                         ? "btn-primary"
                                         : ""
-                                    }`}
-                                    disabled={
-                                      formatUnderscoredString(
+                                        }`}
+                                      disabled={
+                                        formatUnderscoredString(
+                                          ticketDetails.status
+                                        ) === "Resolved"
+                                      }
+                                      style={{
+                                        color: "white",
+                                        backgroundColor: `${userPersonalizationData !== null &&
+                                          userPersonalizationData?.buttonsAndBarsColor
+                                          }`,
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                        padding: "5px 20px",
+                                        margin: "0px 15px",
+                                        height: "50px",
+                                        width: "auto",
+                                        fontSize: "18px",
+                                        fontWeight: "bold",
+                                      }}
+                                      onClick={() => {
+                                        Swal.fire({
+                                          title: "Complete Alert",
+                                          text: "Are you sure , you want to complete this ticket",
+                                          icon: "warning",
+                                          showCancelButton: true,
+                                        }).then(async (result) => {
+                                          if (result.isConfirmed) {
+                                            try {
+                                              Swal.fire({
+                                                text: "Loading...",
+                                                icon: "info",
+                                                // timer: 2000,
+                                                showCancelButton: false,
+                                                showConfirmButton: false,
+                                              });
+                                              handleResolved();
+                                              // Handle successful post creation (e.g., show a success message, redirect, etc.)
+                                            } catch (error) {
+                                              // Handle error (e.g., show an error message)
+                                              // console.error(
+                                              //   "Error creating post:",
+                                              //   error
+                                              // );
+                                              // loading false
+                                            }
+                                          }
+                                        });
+                                      }}
+                                    >
+                                      {formatUnderscoredString(
                                         ticketDetails.status
                                       ) === "Resolved"
-                                    }
+                                        ? "Completed"
+                                        : "Complete"}
+                                    </button>
+                                  )}
+                                  <button
+                                    className={`btn ${userPersonalizationData?.buttonsAndBarsColor ==
+                                      null
+                                      ? "btn-primary"
+                                      : ""
+                                      }`}
                                     style={{
                                       color: "white",
-                                      backgroundColor: `${
-                                        userPersonalizationData !== null &&
+                                      backgroundColor: `${userPersonalizationData !== null &&
                                         userPersonalizationData?.buttonsAndBarsColor
-                                      }`,
+                                        }`,
                                       display: "flex",
                                       alignItems: "center",
                                       justifyContent: "center",
@@ -1053,76 +1107,19 @@ const TicketDetails = () => {
                                       fontWeight: "bold",
                                     }}
                                     onClick={() => {
-                                      Swal.fire({
-                                        title: "Complete Alert",
-                                        text: "Are you sure , you want to complete this ticket",
-                                        icon: "warning",
-                                        showCancelButton: true,
-                                      }).then(async (result) => {
-                                        if (result.isConfirmed) {
-                                          try {
-                                            Swal.fire({
-                                              text: "Loading...",
-                                              icon: "info",
-                                              // timer: 2000,
-                                              showCancelButton: false,
-                                              showConfirmButton: false,
-                                            });
-                                            handleResolved();
-                                            // Handle successful post creation (e.g., show a success message, redirect, etc.)
-                                          } catch (error) {
-                                            // Handle error (e.g., show an error message)
-                                            // console.error(
-                                            //   "Error creating post:",
-                                            //   error
-                                            // );
-                                            // loading false
-                                          }
-                                        }
-                                      });
+                                      setSendMessageLoading(true);
+                                      sendMessage();
                                     }}
                                   >
-                                    {formatUnderscoredString(
-                                      ticketDetails.status
-                                    ) === "Resolved"
-                                      ? "Completed"
-                                      : "Complete"}
+                                    <div style={{ marginRight: "10px" }}>
+                                      <IoSend color="white" />
+                                    </div>
+                                    {sendMessageLoading ? "Loading.." : "Send"}
                                   </button>
-                                )}
-                                <button
-                                  className={`btn ${
-                                    userPersonalizationData?.buttonsAndBarsColor ==
-                                    null
-                                      ? "btn-primary"
-                                      : ""
-                                  }`}
-                                  style={{
-                                    color: "white",
-                                    backgroundColor: `${
-                                      userPersonalizationData !== null &&
-                                      userPersonalizationData?.buttonsAndBarsColor
-                                    }`,
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                    padding: "5px 20px",
-                                    margin: "0px 15px",
-                                    height: "50px",
-                                    width: "auto",
-                                    fontSize: "18px",
-                                    fontWeight: "bold",
-                                  }}
-                                  onClick={sendMessage}
-                                >
-                                  <div style={{ marginRight: "10px" }}>
-                                    <IoSend color="white" />
-                                  </div>
-                                  Send
-                                </button>
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        )}
+                          )}
                       </Col>
                     </div>
                   </div>
@@ -1141,18 +1138,17 @@ const TicketDetails = () => {
                   <div>
                     <div
                       style={{
-                        backgroundColor: `${
-                          userPersonalizationData !== null &&
+                        backgroundColor: `${userPersonalizationData !== null &&
                           userPersonalizationData?.buttonsAndBarsColor !== null
-                            ? userPersonalizationData?.buttonsAndBarsColor
-                            : "#35bfbf"
-                        }`,
+                          ? userPersonalizationData?.buttonsAndBarsColor
+                          : "#35bfbf"
+                          }`,
                         color: "white",
                         fontWeight: "bold",
                         padding: "20px",
                         fontSize: "25px",
                       }}
-                      // className="btn-primary"
+                    // className="btn-primary"
                     >
                       Tickets Info
                     </div>
@@ -1316,8 +1312,8 @@ const TicketDetails = () => {
                                 ticketDetails.priorty === "LOW"
                                   ? "green"
                                   : ticketDetails.priorty === "HIGH"
-                                  ? "red"
-                                  : "orange",
+                                    ? "red"
+                                    : "orange",
                               fontWeight: "bold",
                             }}
                           >
@@ -1374,10 +1370,10 @@ const TicketDetails = () => {
                                 ticketDetails.status === "NEW"
                                   ? "blue"
                                   : ticketDetails.status === "IN_PROGRESS"
-                                  ? "orange"
-                                  : ticketDetails.status === "PENDING"
-                                  ? "red"
-                                  : "green",
+                                    ? "orange"
+                                    : ticketDetails.status === "PENDING"
+                                      ? "red"
+                                      : "green",
                               fontWeight: "bold",
                             }}
                           >
@@ -1441,10 +1437,10 @@ const TicketDetails = () => {
                         >
                           {ticketDetails.messages.length >= 1
                             ? calculateTimeAgo(
-                                ticketDetails.messages[
-                                  ticketDetails.messages.length - 1
-                                ].updatedAt
-                              )
+                              ticketDetails.messages[
+                                ticketDetails.messages.length - 1
+                              ].updatedAt
+                            )
                             : "N/A"}
                         </div>
                       </div>
@@ -1458,48 +1454,44 @@ const TicketDetails = () => {
                       >
                         {formatUnderscoredString(ticketDetails.status) !==
                           "Resolved" && (
-                          <button
-                            className={`btn ${
-                              userPersonalizationData?.buttonsAndBarsColor == null
+                            <button
+                              className={`btn ${userPersonalizationData?.buttonsAndBarsColor == null
                                 ? "btn-primary"
                                 : ""
-                            }`}
-                            style={{
-                              color: "white",
-                              backgroundColor: `${
-                                userPersonalizationData !== null &&
-                                userPersonalizationData?.buttonsAndBarsColor
-                              }`,
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                              padding: "5px 0px",
-                              margin: "0px 0px",
-                              height: "50px",
-                              width: "130px",
-                              fontSize: "18px",
-                              fontWeight: "bold",
-                            }}
-                            onClick={handleGoToReply}
-                          >
-                            Go to Reply
-                          </button>
-                        )}
-                        {getUserRole() === ROLES.SUPER_ADMIN &&
-                          formatUnderscoredString(ticketDetails.status) !==
-                            "Resolved" && (
-                            <button
-                              className={`btn ${
-                                userPersonalizationData?.buttonsAndBarsColor == null
-                                  ? "btn-primary"
-                                  : ""
-                              }`}
+                                }`}
                               style={{
                                 color: "white",
-                                backgroundColor: `${
-                                  userPersonalizationData !== null &&
+                                backgroundColor: `${userPersonalizationData !== null &&
                                   userPersonalizationData?.buttonsAndBarsColor
-                                }`,
+                                  }`,
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                padding: "5px 0px",
+                                margin: "0px 0px",
+                                height: "50px",
+                                width: "130px",
+                                fontSize: "18px",
+                                fontWeight: "bold",
+                              }}
+                              onClick={handleGoToReply}
+                            >
+                              Go to Reply
+                            </button>
+                          )}
+                        {getUserRole() === ROLES.SUPER_ADMIN &&
+                          formatUnderscoredString(ticketDetails.status) !==
+                          "Resolved" && (
+                            <button
+                              className={`btn ${userPersonalizationData?.buttonsAndBarsColor == null
+                                ? "btn-primary"
+                                : ""
+                                }`}
+                              style={{
+                                color: "white",
+                                backgroundColor: `${userPersonalizationData !== null &&
+                                  userPersonalizationData?.buttonsAndBarsColor
+                                  }`,
                                 display: "flex",
                                 alignItems: "center",
                                 justifyContent: "center",

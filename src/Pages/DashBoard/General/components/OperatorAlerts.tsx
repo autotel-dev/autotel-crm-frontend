@@ -24,7 +24,7 @@ interface PropsTypes {
 
 const OperatorAlerts: React.FC<PropsTypes> = ({
   isVisible,
-  setIsVisible = () => {},
+  setIsVisible = () => { },
   data,
 }) => {
   const [dataList, setDataList]: any = useState([...data]);
@@ -48,8 +48,7 @@ const OperatorAlerts: React.FC<PropsTypes> = ({
         return {
           ...alertData,
           remainingTime: calculateRemainingTime(
-            new Date(alertData.createdAt).toLocaleString()
-          ),
+            alertData.createdAt),
         };
       });
 
@@ -64,8 +63,7 @@ const OperatorAlerts: React.FC<PropsTypes> = ({
         prevDataList.map((device: any) => ({
           ...device,
           remainingTime: calculateRemainingTime(
-            new Date(device.updatedAt).toLocaleString()
-          ),
+            device.createdAt),
         }))
       );
     }, 1000);
@@ -112,8 +110,7 @@ const OperatorAlerts: React.FC<PropsTypes> = ({
           return {
             ...alertData,
             remainingTime: calculateRemainingTime(
-              new Date(alertData.createdAt).toLocaleString()
-            ),
+              alertData.createdAt),
           };
         });
 
@@ -303,14 +300,14 @@ const OperatorAlerts: React.FC<PropsTypes> = ({
                                 <td style={{ width: "12%" }}>
                                   <div className="d-flex">
                                     <div className="flex-grow-1">
-                                    <h5
-                                      style={{
-                                        fontSize: "14px",
-                                        fontWeight: "bold",
-                                      }}
-                                    >
-                                      {data.deviceName}
-                                    </h5>
+                                      <h5
+                                        style={{
+                                          fontSize: "14px",
+                                          fontWeight: "bold",
+                                        }}
+                                      >
+                                        {data.deviceName}
+                                      </h5>
 
                                       <div style={{ fontSize: "12px" }}>
                                         {data.createdAt.slice(0, 10)}
@@ -337,8 +334,8 @@ const OperatorAlerts: React.FC<PropsTypes> = ({
                                   {data.address == null
                                     ? "N/A"
                                     : data.address.length > 10
-                                    ? data.address.substring(0, 10) + "..."
-                                    : data.address}
+                                      ? data.address.substring(0, 10) + "..."
+                                      : data.address}
                                 </td>
                                 <td style={{ width: "12%" }}>
                                   {data.assignedTo.fullName}

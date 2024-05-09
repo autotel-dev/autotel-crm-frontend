@@ -300,7 +300,7 @@ const SendCommand: React.FC<PropsTypes> = ({
         ></Button>
       </div>
 
-      <ModalBody style={{ height: "50vh" }}>
+      <ModalBody style={{ height: "65vh" }}>
         <form
           className="form-bookmark needs-validation"
           onSubmit={handleSubmit(sendCommandHandler)}

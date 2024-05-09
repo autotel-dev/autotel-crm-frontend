@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { supportColumns, SupportDataType } from "./data/SupportData";
+import { supportColumns, ComplainDataType } from "./data/SupportData";
 import { Button, Col, Row } from "reactstrap";
 import DataTable from "react-data-table-component";
 import { Delete, DeleteData } from "../../../../utils/Constant";
@@ -15,31 +15,31 @@ import CreateNewComplain from "./CreateNewComplain";
 const ComplainTable = () => {
   const dispatch = useDispatch();
   // Function to transform supportData into allBugReports format
-  const { bugReports } = useSelector((state: any) => state.support);
+  const { allComplains } = useSelector((state: any) => state.complainCenter);
   const { userPermissions } = useSelector(
     (state: any) => state.userPermissions
   );
-  var support = userPermissions.find((item: any) => item.title === "Support");
+
   // console.log("support", support);
   const supportData = () => {
-    return bugReports
+    return allComplains
       .filter(
         (item: any) =>
-          item.ticketId.toLowerCase().split("-")[1].includes(searchValue) ||
-          item.name.toLowerCase().includes(searchValue) ||
-          item.user.emailAddress.toLowerCase().includes(searchValue)
+          item.complaintId.toLowerCase().split("-")[1].includes(searchValue) ||
+          item.description.toLowerCase().includes(searchValue) ||
+          item.deviceName.toLowerCase().includes(searchValue)
       )
       .map((item: any) => ({
-        ticket_id: item?._id,
-        id: item?.ticketId,
-        username: item?.user?.fullName,
-        email: item?.user?.emailAddress,
-        ticket_name: item?.name,
+        complaint_id: item?._id,
+        id: item?.complaintId,
+        device_name: item?.deviceName,
+        user: item?.createdBy.fullName,
         description: item?.description,
-        isActive: item?.isActive ? "true" : "false",
+        role: item?.subRole.name,
+        server: item?.server.companyName,
         status: item?.status,
         priorty: item?.priorty == null ? "N/A" : item?.priorty,
-        date: `${item?.updatedAt.toString().slice(0, 10)},  ${new Date(
+        date: `${item?.createdAt.toString().slice(0, 10)},  ${new Date(
           item?.updatedAt
         )
           .toLocaleString("en-US", {
@@ -65,7 +65,7 @@ const ComplainTable = () => {
   // console.log("allBugReports", supportData());
   useEffect(() => {
     setData(supportData());
-  }, [bugReports]);
+  }, [allComplains]);
 
   const navigate = useNavigate();
   // const history = useHistory();
@@ -81,14 +81,14 @@ const ComplainTable = () => {
     if (
       window.confirm(
         `Are you sure you want to delete:\r ${selectedRows.map(
-          (r: SupportDataType) => r.id
+          (r: ComplainDataType) => r.id
         )}?`
       )
     ) {
       setToggleDelete(!toggleDelete);
       setData(
         data.filter((item: any) =>
-          selectedRows.filter((elem: SupportDataType) => elem.id === item.id)
+          selectedRows.filter((elem: ComplainDataType) => elem.id === item.id)
             .length > 0
             ? false
             : true
@@ -112,27 +112,15 @@ const ComplainTable = () => {
     <div className="table-responsive support-table">
       <Row style={{ display: "flex", alignItems: "center" }}>
         <Col
-          sm={support !== undefined && support?.create ? 12 : 12}
+          sm={12}
           md={
-            support !== undefined && support?.create
-              ? 10
-              : getUserRole() === ROLES.SUPER_ADMIN
-              ? 12
-              : 12
+            10
           }
           lg={
-            support !== undefined && support?.create
-              ? 10
-              : getUserRole() === ROLES.SUPER_ADMIN
-              ? 10
-              : 12
+            10
           }
           xl={
-            support !== undefined && support?.create
-              ? 10
-              : getUserRole() === ROLES.SUPER_ADMIN
-              ? 10
-              : 12
+            10
           }
         >
           <input
@@ -156,21 +144,20 @@ const ComplainTable = () => {
         </Col>
         {getUserRole() === ROLES.SUPER_ADMIN ? (
           <Col
-            sm={support !== undefined && support?.create ? 2 : 0}
-            md={support !== undefined && support?.create ? 2 : 0}
-            lg={support !== undefined && support?.create ? 2 : 0}
-            xl={support !== undefined && support?.create ? 2 : 0}
+            sm={12}
+            md={2}
+            lg={2}
+            xl={2}
           >
             <CreateNewComplain />
           </Col>
         ) : (getUserRole() === ROLES.COMPANY ||
-            getUserRole() === ROLES.OPERATOR) &&
-          support !== undefined &&
-          support?.create ? (
-          <Col sm={12} md={12} lg={2} xl={2}>
-            <CreateNewComplain />
-          </Col>
-        ) : null}
+          getUserRole() === ROLES.OPERATOR)
+          ? (
+            <Col sm={12} md={12} lg={2} xl={2}>
+              <CreateNewComplain />
+            </Col>
+          ) : null}
       </Row>
       {selectedRows.length !== 0 && (
         <div
@@ -188,8 +175,8 @@ const ComplainTable = () => {
         striped={true}
         pagination
         selectableRows
-        onSelectedRowsChange={handleRowSelected}
-        onRowClicked={handleRowClicked} // Pass the event handler for row clicks
+        // onSelectedRowsChange={handleRowSelected}
+        // onRowClicked={handleRowClicked} // Pass the event handler for row clicks
         clearSelectedRows={toggleDelete}
         style={{
           cursor: "pointer",

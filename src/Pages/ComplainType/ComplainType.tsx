@@ -3,19 +3,18 @@ import Breadcrumbs from "../../CommonElements/Breadcrumbs/Breadcrumbs";
 import { setup } from "../../utils/Constant";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  setCountries,
-  setIsConnected,
-} from "../../ReaduxToolkit/Reducer/CountrySlice";
+
 import NoInternetConnection from "../NoInternetConnection/NoInternetConnection";
 import ComplainTypeListNav from "./ComplainTypeListNav";
 import ComplainTypeList from "./ComplainTypeList";
+import { setComplainTypePriorities, setComplainsTypes, setIsConnected } from "../../ReaduxToolkit/Reducer/ComplainsTypeSlice";
+import { getAll } from "../../Api";
 
 const ComplainType = () => {
   const dispatch = useDispatch();
   const [searchValue, setSearchValue] = useState("");
-  const { countries, filterCountries, isConnected } = useSelector(
-    (state: any) => state.countries
+  const { complainTypes, filterComplainTypes, isConnected } = useSelector(
+    (state: any) => state.complainTypes
   );
   // const [filteredCountries, setFilteredCountries]: any = useState([]);
   useEffect(() => {
@@ -24,17 +23,28 @@ const ComplainType = () => {
   const filterCountriess = (e: any) => {
     const searchKey = e.target.value;
     setSearchValue(searchKey);
-    const filtered = filterCountries.filter((country: any, index: any) => {
-      return country.name.toLowerCase().includes(searchKey.toLowerCase());
+    const filtered = filterComplainTypes.filter((complainType: any, index: any) => {
+      return complainType.title.toLowerCase().includes(searchKey.toLowerCase());
       // ^ Add 'return' statement here
     });
 
-    dispatch(setCountries(filtered));
+    dispatch(setComplainsTypes(filtered));
 
     // console.log(filtered);
   };
 
-  // Update original countries whenever Redux countries change
+  useEffect(() => {
+    getAll({ url: "complaint-center/get-priorty-status-types" }).then((data: any) => {
+      // console.log("api call --- >", data);
+      if (data !== undefined) {
+        if (data.success) {
+          // console.log("hhg");
+          dispatch(setComplainTypePriorities(data.data.internalComplaintPriortyStatusTypes));
+        }
+      }
+    });
+  }, [])
+
 
   return (
     <>

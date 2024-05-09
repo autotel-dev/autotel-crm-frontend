@@ -21,6 +21,8 @@ import NoInternetConnection from "../../../NoInternetConnection/NoInternetConnec
 import { ROLES } from "../../../../constants/roles";
 import ComplainList from "./ComplainList";
 import ComplainTable from "./ComplainTable";
+import { setAllComplains, setComplainRoleSelection, setComplainStatusTypes, setComplainTypesList } from "../../../../ReaduxToolkit/Reducer/ComplainCenterSlice";
+import { setDevices, setDevicesStatuses, setServerDevices } from "../../../../ReaduxToolkit/Reducer/MonitoringSlice";
 
 const ComplainCenter = () => {
   const { supportStatistics, isConnected } = useSelector(
@@ -28,15 +30,15 @@ const ComplainCenter = () => {
   );
   const dispatch = useDispatch();
   const [statisticsloading, setStatisticsLoading] = useState(true);
-  const [reportsLoading, setReportsLoading] = useState(true);
+  const [complaintsLoading, setComplaintsLoading] = useState(true);
   useEffect(() => {
     dispatch(setIsConnected(false));
   }, []);
   useEffect(() => {
-    dispatch(setBugReports([]));
+    dispatch(setAllComplains([]));
     dispatch(setSupportStatistics(null));
     setStatisticsLoading(true);
-    setReportsLoading(true);
+    setComplaintsLoading(true);
 
     getAll({ url: "support/bug-report/get-statistics" }).then((data: any) => {
       if (data !== undefined) {
@@ -71,24 +73,18 @@ const ComplainCenter = () => {
     });
 
     getAll({
-      url:
-        getUserRole() === ROLES.COMPANY
-          ? "company/get-all-bug-reports"
-          : getUserRole() === ROLES.OPERATOR
-          ? "operator/get-all-bug-reports"
-          : "support/bug-report/get-all-bug-reports",
+      url: "complaint-center/get-all-internal-complaints",
     }).then((data: any) => {
       // console.log("api call --- >", data);
-
       if (data == undefined) {
         Swal.fire({
-          text: "Support Data not Found",
+          text: "Complaints not Found",
           icon: "error",
           timer: 2000,
           showConfirmButton: false,
         });
-        dispatch(setBugReports([]));
-        setReportsLoading(false);
+        dispatch(setAllComplains([]));
+        setComplaintsLoading(false);
         setStatisticsLoading(false);
         return;
       }
@@ -104,43 +100,203 @@ const ComplainCenter = () => {
             timer: 2000,
             showConfirmButton: false,
           });
-          dispatch(setBugReports([]));
-          setReportsLoading(false);
+          dispatch(setAllComplains([]));
+          setComplaintsLoading(false);
           setStatisticsLoading(false);
         }
 
         if (data.success) {
           // console.log("hhg");
-          dispatch(setBugReports(data.data.allBugReports));
-          setReportsLoading(false);
+          dispatch(setAllComplains(data.data.allInternalComplaints));
+          setComplaintsLoading(false);
           setStatisticsLoading(false);
         }
       }
     });
 
-    getAll({ url: "support/bug-report/get-priorty-status-types" }).then(
-      (data: any) => {
-        // console.log("api call --- >", data);
-        if (data !== undefined) {
-          if (data.success) {
-            // console.log("hhg");
-            dispatch(
-              setPriorityStatuses(data.data.bugReportPriortyStatusTypes)
-            );
-          }
-        }
-      }
-    );
 
-    getAll({ url: "support/bug-report/get-status-types" }).then((data: any) => {
+  }, []);
+
+  useEffect(() => {
+    getAll({ url: "complaint-center/internal-complaint-type/get-all-active-types" }).then((data: any) => {
       // console.log("api call --- >", data);
       if (data !== undefined) {
         if (data.success) {
           // console.log("hhg");
-          dispatch(setStatuses(data.data.bugReportStatusTypes));
+          dispatch(setComplainTypesList(data.data));
         }
       }
     });
+    getAll({ url: "complaint-center/get-status-types" }).then((data: any) => {
+      // console.log("api call --- >", data);
+      if (data !== undefined) {
+        if (data.success) {
+          // console.log("hhg");
+          dispatch(setComplainStatusTypes(data.data.internalComplaintStatusTypes));
+        }
+      }
+    });
+
+    getAll({ url: "sub-role/get-all-active-sub-roles" }).then((data: any) => {
+      // console.log("api call --- >", data);
+      if (data !== undefined) {
+        if (data.success) {
+          // console.log("hhg");
+          dispatch(setComplainRoleSelection(data.data));
+        }
+      }
+    });
+
+  }, [])
+  const { devices } = useSelector((state: any) => state.monitoring);
+
+  const groups: any = [];
+  const groupDevicesObj: any = {};
+  const initialGroupDevices: any = [];
+
+  const statuses: any = [];
+  const statusDevicesObj: any = {};
+  var initialGroupDevicesStatuses: any = [];
+
+  const [groupdevices, setgroupdevices]: any = useState([]);
+  const [groupdevicesStatuses, setgroupdevicesStatuses]: any = useState([]);
+
+  useEffect(() => {
+    if (devices.length === 0) {
+      getAll({ url: "company/devices" }).then((data: any) => {
+        // // console.log("data", data);
+        // if (data == undefined) {
+        //   setDevicesLoading(false);
+        //   Swal.fire({
+        //     text: "Failed to Fetch",
+        //     icon: "error",
+        //     timer: 2000,
+        //     showConfirmButton: false,
+        //   });
+        // }
+        if (data !== undefined) {
+          if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
+            dispatch(setIsConnected(true));
+          }
+          if (!data.success) {
+            Swal.fire({
+              text: `${data.message}`,
+              icon: "error",
+              timer: 2000,
+              showConfirmButton: false,
+            });
+            // setDevicesLoading(false);
+          }
+
+          if (data.success) {
+            // // console.log("api call --- >", data);
+            // // console.log("length --- >", data.data.length);
+            dispatch(setServerDevices(data.data.allDevices));
+
+            for (let i = 0; i < data.data.allDevices.length; i++) {
+              const element = data.data.allDevices[i].title;
+              if (!groups.includes(element)) {
+                groups.push(element);
+              }
+            }
+
+            groups.forEach((title: any) => {
+              groupDevicesObj[title] = data.data.allDevices
+                .filter((obj: any) => obj.title === title)
+                .map((item: any) => ({ ...item, checked: false }));
+            });
+
+            // Convert groupDevicesObj to initialGroupDevices array format
+            Object.keys(groupDevicesObj).forEach((title: any) => {
+              initialGroupDevices.push({
+                title,
+                checked: false,
+                items: groupDevicesObj[title],
+              });
+            });
+
+            // Update state with initialGroupDevices
+            setgroupdevices(initialGroupDevices);
+            // // console.log("groups", groups);
+            // // console.log("groupDevices", groupdevices);
+            dispatch(setDevices(initialGroupDevices));
+            // setDevicesLoading(false);
+
+            // ---------------------- For device status-----------------------------------
+
+            for (let i = 0; i < data.data.allDevices.length; i++) {
+              const element = data.data.allDevices[i].online;
+              if (!statuses.includes(element)) {
+                statuses.push(element);
+                // setMyArray((prevArray) => [...prevArray, element]);
+              }
+            }
+            statuses.forEach((online: any) => {
+              statusDevicesObj[online] = data.data.allDevices
+                .filter((obj: any) => obj.online === online)
+                .map((item: any) => ({ ...item, checked: false }));
+            });
+
+            // Convert groupDevicesObj to initialGroupDevices array format
+            Object.keys(statusDevicesObj).forEach((online: any) => {
+              initialGroupDevicesStatuses.push({
+                online,
+                items: statusDevicesObj[online],
+              });
+            });
+
+            const expiredDevices = [];
+            const notConnectedDevices = [];
+            const currentDate = new Date(); // Get the current date and time
+
+            for (let i = 0; i < data.data.allDevices.length; i++) {
+              const element = data.data.allDevices[i];
+              if (
+                element.expiration_date != null &&
+                element.expiration_date !== ""
+              ) {
+                const expirationDate = new Date(element.expiration_date); // Convert expiration date string to Date object
+                if (expirationDate < currentDate) {
+                  // Compare expiration date with current date
+                  expiredDevices.push({ ...element, checked: false });
+                }
+              }
+              if (i === data.data.length - 1) {
+                // // console.log("expiredDevices", expiredDevices);
+                initialGroupDevicesStatuses.push({
+                  online: "Expired",
+                  items: expiredDevices,
+                });
+              }
+            }
+
+            for (let i = 0; i < data.data.allDevices.length; i++) {
+              const element = data.data.allDevices[i];
+              if (
+                element.time == null ||
+                element.time === "" ||
+                element.time == undefined
+              ) {
+                notConnectedDevices.push({ ...element, checked: false });
+              }
+              if (i === data.data.length - 1) {
+                // // console.log("notConnectedDevices", notConnectedDevices);
+                initialGroupDevicesStatuses.push({
+                  online: "Not Connected",
+                  items: notConnectedDevices,
+                });
+              }
+            }
+
+            // Update state with initialGroupDevicesStatuses
+            setgroupdevicesStatuses(initialGroupDevicesStatuses);
+            // // console.log("statuses", statuses);
+            // // console.log("groupDevicesStatuses", initialGroupDevicesStatuses);
+            dispatch(setDevicesStatuses(initialGroupDevicesStatuses));
+          }
+        }
+      });
+    }
   }, []);
 
   return (
@@ -158,10 +314,10 @@ const ComplainCenter = () => {
             <Row>
               <Col sm={12}>
                 <div>
-                  {!statisticsloading && !reportsLoading ? (
+                  {!statisticsloading && !complaintsLoading ? (
                     <>
                       {supportStatistics == null &&
-                      getUserRole() === ROLES.SUPER_ADMIN ? (
+                        getUserRole() === ROLES.SUPER_ADMIN ? (
                         <div
                           style={{
                             display: "flex",

@@ -22,6 +22,7 @@ import {
   setInActiveComplainsTypes,
   setId,
   setIsConnected,
+  setComplainTypePriorities,
 } from "../../ReaduxToolkit/Reducer/ComplainsTypeSlice";
 
 const ComplainTypeList = () => {
@@ -33,6 +34,8 @@ const ComplainTypeList = () => {
   const [complainTitle, setComplainTitle] = useState("");
   const [isActive, setIsActive] = useState(false);
   const navigate = useNavigate();
+
+
   useEffect(() => {
     dispatch(setComplainsTypesStart());
     getAll({
@@ -78,12 +81,14 @@ const ComplainTypeList = () => {
       dispatch(setComplainsTypesEnd());
     });
   }, []);
+ 
 
   const renderTableRows = () => {
     return complainTypes?.map((row: any) => (
       <tr key={row.id}>
         <td>{row._id}</td>
         <td>{row.title}</td>
+        <td>{row.priorty}</td>
         <td>
           <div className="d-flex" style={{ justifyContent: "center" }}>
             <div
@@ -96,49 +101,49 @@ const ComplainTypeList = () => {
                   defaultChecked={row.isActive}
                   value={row.isActive}
                   checked={row.isActive}
-                  // onChange={async (e: any) => {
-                  //   //  --------------------------
+                // onChange={async (e: any) => {
+                //   //  --------------------------
 
-                  //   const operator = {
-                  //     fullName: row.fullName,
-                  //     emailAddress: row.emailAddress,
-                  //     phoneNo: row.phoneNo,
-                  //     isActive: !row.isActive,
-                  //     company: decodedToken.userId,
-                  //   };
-                  //   // console.log(operator);
-                  //   setIsActive(!row.isActive);
-                  //   // setRowIndex(index);
-                  //   // console.log(e.target.value);
-                  //   try {
-                  //     await update(operator, {
-                  //       url: `operator/update-operator/${row._id}`,
-                  //     }).then((data: any) => {
-                  //       if (data.success) {
-                  //         // console.log(data);
+                //   const operator = {
+                //     fullName: row.fullName,
+                //     emailAddress: row.emailAddress,
+                //     phoneNo: row.phoneNo,
+                //     isActive: !row.isActive,
+                //     company: decodedToken.userId,
+                //   };
+                //   // console.log(operator);
+                //   setIsActive(!row.isActive);
+                //   // setRowIndex(index);
+                //   // console.log(e.target.value);
+                //   try {
+                //     await update(operator, {
+                //       url: `operator/update-operator/${row._id}`,
+                //     }).then((data: any) => {
+                //       if (data.success) {
+                //         // console.log(data);
 
-                  //         dispatch(setOperatorsStart());
-                  //         getAll({
-                  //           url: "operator/get-all-operators",
-                  //         }).then((data: any) => {
-                  //           // console.log("api call --- >", data);
-                  //           dispatch(setOperatorsEnd());
-                  //           if (data !== undefined) {
-                  //             if (data.success) {
-                  //               // console.log("hhg");
-                  //               dispatch(setOperators(data.data));
-                  //               dispatch(setFilterOperators(data.data));
-                  //             }
-                  //           }
-                  //         });
-                  //       }
-                  //     });
-                  //     // Handle successful post creation (e.g., show a success message, redirect, etc.)
-                  //   } catch (error) {
-                  //     // Handle error (e.g., show an error message)
-                  //     // console.error("Error creating post:", error);
-                  //   }
-                  // }}
+                //         dispatch(setOperatorsStart());
+                //         getAll({
+                //           url: "operator/get-all-operators",
+                //         }).then((data: any) => {
+                //           // console.log("api call --- >", data);
+                //           dispatch(setOperatorsEnd());
+                //           if (data !== undefined) {
+                //             if (data.success) {
+                //               // console.log("hhg");
+                //               dispatch(setOperators(data.data));
+                //               dispatch(setFilterOperators(data.data));
+                //             }
+                //           }
+                //         });
+                //       }
+                //     });
+                //     // Handle successful post creation (e.g., show a success message, redirect, etc.)
+                //   } catch (error) {
+                //     // Handle error (e.g., show an error message)
+                //     // console.error("Error creating post:", error);
+                //   }
+                // }}
                 />
                 <span
                   // className={`switch-state ${
@@ -219,6 +224,7 @@ const ComplainTypeList = () => {
                         <tr>
                           <th>ID</th>
                           <th>Title</th>
+                          <th>Priority</th>
                           <th>Status</th>
                           <th>Actions</th>
                         </tr>
@@ -250,7 +256,7 @@ const ComplainTypeList = () => {
                 isActive={isActive}
                 setIsActive={setIsActive}
 
-                // setValue={setCityName}
+              // setValue={setCityName}
               />
             </CardBody>
           </Card>

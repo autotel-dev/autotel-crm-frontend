@@ -12,6 +12,8 @@ const LoginForm = () => {
   const { userPersonalizationData } = useSelector(
     (state: any) => state.personalization
   );
+
+
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -66,9 +68,9 @@ const LoginForm = () => {
         setText((prevText) =>
           prevText.length < userPersonalizationData?.subHeaderText.length
             ? userPersonalizationData?.subHeaderText.slice(
-                0,
-                prevText.length + 1
-              )
+              0,
+              prevText.length + 1
+            )
             : prevText
         );
 
@@ -76,11 +78,19 @@ const LoginForm = () => {
           setTyping(false);
         }
       } else {
-        setText((prevText) =>
-          prevText.length > 0 ? prevText.slice(0, prevText.length - 1) : ""
-        );
+        // setText((prevText) =>
+        //   prevText.length > 0 ? prevText.slice(0, prevText.length - 1) : ""
+        // );
 
-        if (text === "") {
+        // if (text === "") {
+        //   setTyping(true);
+        // }
+        setText((prevText) => {
+          const remainingChars = prevText.length > 3 ? prevText.slice(0, prevText.length - 1) : userPersonalizationData?.subHeaderText.slice(0, 3);
+          return remainingChars;
+        });
+
+        if (text === userPersonalizationData?.subHeaderText.slice(0, 3)) {
           setTyping(true);
         }
       }
@@ -107,26 +117,18 @@ const LoginForm = () => {
       ) : (
         <Row
           style={{
-            backgroundColor: `${
-              userPersonalizationData !== null &&
+            backgroundColor: `${userPersonalizationData !== null &&
               userPersonalizationData.loginPageBackgroundType == "SOLID" &&
               userPersonalizationData &&
               userPersonalizationData.backgroundColor
-            }`,
-            backgroundImage: `${
-              userPersonalizationData !== null &&
+              }`,
+            backgroundImage: `${userPersonalizationData !== null &&
               userPersonalizationData.loginPageBackgroundType == "GRADIENT" &&
-              `linear-gradient(to ${
-                userPersonalizationData !== null &&
-                userPersonalizationData.gradient.direction
-              }, ${
-                userPersonalizationData !== null &&
-                userPersonalizationData.gradient.color1
-              }, ${
-                userPersonalizationData !== null &&
-                userPersonalizationData.gradient.color2
+              `linear-gradient(to ${JSON.parse(userPersonalizationData.gradient).direction
+              }, ${JSON.parse(userPersonalizationData.gradient).color1
+              }, ${JSON.parse(userPersonalizationData.gradient).color2
               })`
-            }`,
+              }`,
           }}
         >
           <Col
@@ -190,7 +192,7 @@ const LoginForm = () => {
 
             <img
               src={
-                userPersonalizationData !== null
+                userPersonalizationData !== null && userPersonalizationData.loginPageLogo.url !== ""
                   ? `${IMAGE_BASE_URL}/${userPersonalizationData.loginPageLogo.url}`
                   : BcakgroundImage
               }

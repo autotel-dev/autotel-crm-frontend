@@ -18,6 +18,7 @@ import {
   setFilterComplainsTypes,
   setInActiveComplainsTypes,
 } from "../../ReaduxToolkit/Reducer/ComplainsTypeSlice";
+import SelectPriorityBox from "./components/SelectPriorityBox";
 
 const CreateNewComplainType = () => {
   const { userPersonalizationData } = useSelector(
@@ -25,6 +26,7 @@ const CreateNewComplainType = () => {
   );
   const dispatch = useDispatch();
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
+  const [priority, setPriority] = useState("");
   const [loading, setLoading] = useState(false);
   const {
     register,
@@ -47,6 +49,7 @@ const CreateNewComplainType = () => {
     if (data.title !== "") {
       const complainType = {
         title: data.title,
+        priorty: priority
       };
       // console.log(city);
       try {
@@ -140,15 +143,13 @@ const CreateNewComplainType = () => {
     <Col md={6}>
       <div className="text-end">
         <button
-          className={`btn ${
-            userPersonalizationData?.buttonsAndBarsColor == null ? "btn-primary" : ""
-          }`}
+          className={`btn ${userPersonalizationData?.buttonsAndBarsColor == null ? "btn-primary" : ""
+            }`}
           style={{
             color: "white",
-            backgroundColor: `${
-              userPersonalizationData !== null &&
+            backgroundColor: `${userPersonalizationData !== null &&
               userPersonalizationData?.buttonsAndBarsColor
-            }`,
+              }`,
           }}
           onClick={addToggle}
         >
@@ -182,6 +183,18 @@ const CreateNewComplainType = () => {
                   </span>
                 </FormGroup>
               </Row>
+              <div
+                style={{
+                  marginBottom: "20px",
+                  display: "flex",
+                  justifyContent: "space-between",
+                }}
+              >
+                <div>
+                  <P>Select Priority</P>
+                  <SelectPriorityBox priority={priority} setPriority={setPriority} />
+                </div>
+              </div>
               <Button color="primary" className="me-1">
                 {loading ? "Loading ..." : `Add`}
               </Button>

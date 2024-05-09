@@ -31,27 +31,15 @@ export const ticketData = [
   },
 ];
 
-// export const supportData = [
-//   {
-//     id: "123456",
-//     username: "john_doe",
-//     email: "john@example.com",
-//     ticket_name: "Sample Ticket",
-//     description: "This is a sample description.",
-//     isActive: "true",
-//     status: "Open",
-//     priority: "High",
-//     date: "2024-02-19",
-//   },
-// ];
 
-export interface SupportDataType {
+
+export interface ComplainDataType {
   id: string;
-  username: string;
-  email: string;
-  ticket_name: string;
+  device_name: string;
+  user:string;
   description: string;
-  isActive: string;
+  role: string;
+  server: string;
   status: string;
   priorty: string;
   date: string;
@@ -60,53 +48,54 @@ export interface SupportDataType {
 export const supportColumns = [
   {
     name: "id",
-    selector: (row: SupportDataType) => row["id"],
+    selector: (row: ComplainDataType) => row["id"],
     sortable: true,
-    center: false,
-    width: "120px", // Set the width for this column
+    center: true,
+    width: "180px", // Set the width for this column
   },
   {
-    name: "Username",
-    selector: (row: SupportDataType) => row["username"],
+    name: "Device Name",
+    selector: (row: ComplainDataType) => row["device_name"],
     sortable: true,
-    center: false,
+    center: true,
     width: "150px", // Set the width for this column
   },
   {
-    name: "Email",
-    selector: (row: SupportDataType) => row["email"],
+    name: "User",
+    selector: (row: ComplainDataType) => row["user"],
     sortable: true,
     center: true,
-    width: "200px",
-  },
-  {
-    name: "Ticket Name",
-    selector: (row: SupportDataType) => row["ticket_name"],
-    sortable: true,
-    center: true,
-    width: "200px", // Set the width for this column
+    width: "150px", // Set the width for this column
   },
   {
     name: "Description",
-    selector: (row: SupportDataType) => row["description"],
+    selector: (row: ComplainDataType) => row["description"],
     sortable: true,
     center: true,
     width: "230px", // Set the width for this column
   },
   {
-    name: "IsActive",
-    selector: (row: SupportDataType) => row["isActive"],
+    name: "Role",
+    selector: (row: ComplainDataType) => row["role"],
     sortable: true,
     center: true,
-    width: "100px", // Set the width for this column
+    width: "200px", // Set the width for this column
   },
   {
+    name: "Server",
+    selector: (row: ComplainDataType) => row["server"],
+    sortable: true,
+    center: true,
+    width: "230px", // Set the width for this column
+  },
+
+  {
     name: "Status",
-    selector: (row: SupportDataType) => row["status"],
+    selector: (row: ComplainDataType) => row["status"],
     sortable: true,
     center: true,
     width: "150px", // Set the width for this column
-    cell: (row: SupportDataType) => (
+    cell: (row: ComplainDataType) => (
       <div
         style={{
           width: "120px",
@@ -117,18 +106,18 @@ export const supportColumns = [
             row.status === "NEW"
               ? "rgba(0, 0, 255, 0.1)"
               : row.status === "IN_PROGRESS"
-              ? "rgba(255, 165, 0, 0.1)"
-              : row.status === "PENDING"
-              ? "rgba(255, 0, 0, 0.1)"
-              : "rgba(0, 255, 0, 0.1)",
+                ? "rgba(255, 165, 0, 0.1)"
+                : row.status === "PENDING"
+                  ? "rgba(255, 0, 0, 0.1)"
+                  : "rgba(0, 255, 0, 0.1)",
           color:
             row.status === "NEW"
               ? "blue"
               : row.status === "IN_PROGRESS"
-              ? "orange"
-              : row.status === "PENDING"
-              ? "red"
-              : "green",
+                ? "orange"
+                : row.status === "PENDING"
+                  ? "red"
+                  : "green",
         }}
       >
         {formatUnderscoredString(row.status)}
@@ -137,11 +126,11 @@ export const supportColumns = [
   },
   {
     name: "Priority",
-    selector: (row: SupportDataType) => row["priorty"],
+    selector: (row: ComplainDataType) => row["priorty"],
     sortable: true,
     center: true,
     width: "100px", // Set the width for this column
-    cell: (row: SupportDataType) => (
+    cell: (row: ComplainDataType) => (
       <div
         style={{
           width: "90px",
@@ -152,14 +141,14 @@ export const supportColumns = [
             row.priorty === "LOW"
               ? "rgba(0, 255, 0, 0.1)"
               : row.priorty === "HIGH"
-              ? "rgba(255, 0, 0, 0.1)"
-              : "rgba(255, 200, 0, 0.1)",
+                ? "rgba(255, 0, 0, 0.1)"
+                : "rgba(255, 200, 0, 0.1)",
           color:
             row.priorty === "LOW"
               ? "green"
               : row.priorty === "HIGH"
-              ? "red"
-              : "orange",
+                ? "red"
+                : "orange",
         }}
       >
         {formatUnderscoredString(row.priorty)}
@@ -168,7 +157,7 @@ export const supportColumns = [
   },
   {
     name: "Date",
-    selector: (row: SupportDataType) => row["date"],
+    selector: (row: ComplainDataType) => row["date"],
     sortable: true,
     center: true,
     width: "200px", // Set the width for this column

@@ -3,6 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   complainTypes: [],
   filterComplainTypes: [],
+  setComplainTypePriorities: [],
   activeInActiveComplainTypes: "All",
   loading: false,
   error: null,
@@ -23,6 +24,9 @@ const ComplainsTypeSlice = createSlice({
       state.complainTypes = action.payload;
       state.error = null;
       state.loading = false;
+    },
+    setComplainTypePriorities: (state, action) => {
+      state.setComplainTypePriorities = action.payload;
     },
     setFilterComplainsTypes: (state, action) => {
       state.filterComplainTypes = action.payload;
@@ -59,6 +63,7 @@ export const {
   setId,
   setValue,
   setNoComplainsTypesFound,
+  setComplainTypePriorities,
   setIsConnected,
 } = ComplainsTypeSlice.actions;
 

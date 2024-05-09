@@ -57,6 +57,7 @@ const ServerCredentials = (notConnectedServers: any) => {
     setFormData({ ...formData, serverCredentials: updatedCredentials });
   };
 
+
   const updateServerCredentials = async () => {
     const updatedCredentials = formData.serverCredentials.map(
       (credential: any) => ({
@@ -281,7 +282,7 @@ const ServerCredentials = (notConnectedServers: any) => {
               })}
             </Form>
             {serverCredentialsPermissions != undefined &&
-            serverCredentialsPermissions?.edit ? (
+              serverCredentialsPermissions?.edit ? (
               <CardFooter className="text-end">
                 {isEdit && (
                   <Button
@@ -323,7 +324,7 @@ const ServerCredentials = (notConnectedServers: any) => {
                       updateServerCredentials();
                     }}
                   >
-                    Save
+                    {loading ? "Loading..." : "Save"}
                   </Button>
                 )}
               </CardFooter>

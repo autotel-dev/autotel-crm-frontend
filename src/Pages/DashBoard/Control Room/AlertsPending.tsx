@@ -53,7 +53,7 @@ const AlertsPending = () => {
           return {
             ...alertData,
             remainingTime: calculateRemainingTime(
-              new Date(alertData.createdAt).toLocaleString()
+              alertData.createdAt
             ),
           };
         });
@@ -61,7 +61,7 @@ const AlertsPending = () => {
       setDataList(updatedDataList);
       // console.log("dataList", dataList);
     }
-  }, [alertsPending]);
+  }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -69,7 +69,7 @@ const AlertsPending = () => {
         prevDataList.map((device: any) => ({
           ...device,
           remainingTime: calculateRemainingTime(
-            new Date(device.updatedAt).toLocaleString()
+            device.createdAt
           ),
         }))
       );
@@ -81,16 +81,22 @@ const AlertsPending = () => {
 
   const calculateRemainingTime = (timestamp: string): string => {
     // Convert the timestamp to a Date object
+
+
     const targetDate = new Date(timestamp);
 
     // Get the current time
     const currentTime = new Date();
 
+
+
     // Calculate the difference in milliseconds
     const difference = currentTime.getTime() - targetDate.getTime();
-
+    // console.log("remainigSeconds -- ", difference);
     // Convert the difference to seconds
     const remainingSeconds = Math.floor(difference / 1000);
+
+
 
     // Check if the remaining time is negative (i.e., the target time has already passed)
     if (remainingSeconds <= 0) return "00:00:00";
@@ -117,7 +123,7 @@ const AlertsPending = () => {
           return {
             ...alertData,
             remainingTime: calculateRemainingTime(
-              new Date(alertData.createdAt).toLocaleString()
+              alertData.createdAt
             ),
           };
         });
@@ -325,8 +331,8 @@ const AlertsPending = () => {
                                 {data.address == null
                                   ? "N/A"
                                   : data.address.length > 10
-                                  ? data.address.substring(0, 10) + "..."
-                                  : data.address}
+                                    ? data.address.substring(0, 10) + "..."
+                                    : data.address}
                               </td>
                               <td style={{ width: "14%" }}>
                                 {data.assignedTo.fullName}

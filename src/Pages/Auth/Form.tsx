@@ -126,7 +126,7 @@ const CommonForm = ({ alignLogo }: CommonFormPropsType) => {
             getAll({
               url:
                 getUserRole() === ROLES.COMPANY ||
-                getUserRole() === ROLES.OPERATOR
+                  getUserRole() === ROLES.OPERATOR
                   ? "user/get-allowed-modules"
                   : "crm-module/get-all-active-modules",
             }).then((data: any) => {
@@ -258,6 +258,14 @@ const CommonForm = ({ alignLogo }: CommonFormPropsType) => {
               <Label className="col-form-label">{Password}</Label>
               <div className="form-input position-relative">
                 <input
+                  //     style={{
+                  //       backgroundColor: `${userPersonalizationData &&
+                  //         userPersonalizationData.buttonsAndBarsColor !== "" && userPersonalizationData.buttonsAndBarsColor
+                  //         }
+
+                  // `,
+
+                  // }}
                   className="form-control"
                   type={showPassWord ? "text" : "password"}
                   placeholder="*********"
@@ -267,6 +275,12 @@ const CommonForm = ({ alignLogo }: CommonFormPropsType) => {
 
                 <div className="show-hide">
                   <span
+                    style={{
+                      color: `${userPersonalizationData &&
+                        userPersonalizationData.buttonsAndBarsColor !== "" && userPersonalizationData.buttonsAndBarsColor
+                        }
+              `,
+                    }}
                     onClick={() => setShowPassWord(!showPassWord)}
                     className={!showPassWord ? "show" : ""}
                   />
@@ -284,39 +298,29 @@ const CommonForm = ({ alignLogo }: CommonFormPropsType) => {
                 {ForgotPassword}
               </Link> */}
               <div className="text-end mt-2">
-                <Button
+                {/* <Button
                   disabled={loading}
                   color="primary"
                   className="btn-block w-100"
                 >
                   {loading ? "Loading..." : "Sign In"}
-                </Button>
-                {/* {userPersonalizationData &&
-                userPersonalizationData.primaryColor &&
-                userPersonalizationData.primaryColor !==
-                  userPersonalizationData.secondaryColor ? (
+                </Button> */}
+                {userPersonalizationData &&
+                  userPersonalizationData.buttonsAndBarsColor !== "" ? (
                   <button
                     disabled={loading}
                     style={{
                       fontWeight: "bold",
-                      backgroundColor: `${
-                        userPersonalizationData &&
-                        userPersonalizationData.primaryColor
-                      }
+                      backgroundColor: `${userPersonalizationData.buttonsAndBarsColor
+                        }
                   `,
                       padding: "10px 10px",
                       borderRadius: "5px",
                       color: "white",
-                      //     color: `${
-                      //       userPersonalizationData &&
-                      //       userPersonalizationData.secondaryColor
-                      //     }
-                      // `,
                       outline: "none",
-                      border: `${
-                        userPersonalizationData &&
-                        userPersonalizationData.primaryColor
-                      }
+                      border: `${userPersonalizationData &&
+                        userPersonalizationData.buttonsAndBarsColor
+                        }
                   `,
                     }}
                     className="btn-block w-100"
@@ -331,7 +335,7 @@ const CommonForm = ({ alignLogo }: CommonFormPropsType) => {
                   >
                     {loading ? "Loading..." : "Sign In"}
                   </Button>
-                )} */}
+                )}
               </div>
             </FormGroup>
           </Form>

@@ -113,18 +113,18 @@ const Personalization = () => {
         : "SOLID"
     );
   const [direction, setDirection] = useState<string>(
-    userPersonalizationData !== null
-      ? userPersonalizationData.gradient.direction
+    userPersonalizationData !== null && userPersonalizationData.gradient.direction !== ""
+      ? JSON.parse(userPersonalizationData.gradient).direction
       : "right"
   );
   const [color1, setColor1] = useState<string>(
-    userPersonalizationData !== null
-      ? userPersonalizationData.gradient.color1
+    userPersonalizationData !== null && userPersonalizationData.gradient.color1 !== ""
+      ? JSON.parse(userPersonalizationData.gradient).color1
       : "#000000"
   );
   const [color2, setColor2] = useState<string>(
-    userPersonalizationData !== null
-      ? userPersonalizationData.gradient.color2
+    userPersonalizationData !== null && userPersonalizationData.gradient.color2 !== ""
+      ? JSON.parse(userPersonalizationData.gradient).color2
       : "#000000"
   );
   const [logoImage, setlogoImage] = useState(
@@ -404,7 +404,7 @@ const Personalization = () => {
       value: "left",
     },
     {
-      label: "Top",
+      label: "Bottom",
       value: "bottom",
     },
   ];
@@ -544,7 +544,7 @@ const Personalization = () => {
                         .localeCompare((optionB?.label ?? "").toLowerCase())
                     }
                     onChange={(e) => {
-                      console.log(e);
+                      // console.log(e);
                       setLoginPageBackgroundType(e);
                     }}
                     options={backgroundTypeList}
@@ -614,6 +614,9 @@ const Personalization = () => {
                       <P>Direction</P>
                       <Select
                         showSearch
+                        defaultValue={direction == ""
+                          ? ""
+                          : direction}
                         style={{ width: "100%", height: 50 }}
                         placeholder="Select Direction"
                         optionFilterProp="children"
@@ -626,7 +629,7 @@ const Personalization = () => {
                             .localeCompare((optionB?.label ?? "").toLowerCase())
                         }
                         onChange={(e) => {
-                          console.log(e);
+                          // console.log(e);
                           setDirection(e);
                         }}
                         options={gradientDirectionTypes}
@@ -946,10 +949,10 @@ const Personalization = () => {
                   {loading
                     ? "Loading..."
                     : userPersonalizationData == null
-                    ? "Create"
-                    : isEdit
-                    ? "Save"
-                    : "Edit"}
+                      ? "Create"
+                      : isEdit
+                        ? "Save"
+                        : "Edit"}
                 </Button>
               </CardFooter>
             </Row>
