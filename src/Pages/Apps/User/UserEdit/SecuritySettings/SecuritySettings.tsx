@@ -2,6 +2,7 @@ import {
   Button,
   Card,
   CardBody,
+  CardHeader,
   Col,
   Input,
   Label,
@@ -9,7 +10,7 @@ import {
   Table,
 } from "reactstrap";
 import CommonHeader from "../../../../../Common/CommonHeader";
-import { H1, H3, H4, H5 } from "../../../../../AbstractElements";
+import { H1, H3, H4, H5, P } from "../../../../../AbstractElements";
 import { useState } from "react";
 import { getAll, otpEnabled } from "../../../../../Api";
 import { useDispatch, useSelector } from "react-redux";
@@ -64,10 +65,9 @@ const SecuritySettings = () => {
   return (
     <Col md={12}>
       <Card>
-        <CommonHeader
-          title="Security Settings"
-          headClass="card-title mb-0 pb-0"
-        />
+        <CardHeader className="pb-0">
+          <H4>Security Settings</H4>
+        </CardHeader>
         <CardBody>
           <Row>
             <Col
@@ -82,7 +82,7 @@ const SecuritySettings = () => {
                 alignItems: "center",
               }}
             >
-              <H4>OTP Enabled</H4>
+              <P>OTP Enabled</P>
               <div className="d-flex">
                 <div
                   className={`text-end flex-shrink-0 icon-state 
@@ -109,20 +109,20 @@ const SecuritySettings = () => {
                 </div>
               </div>
             </Col>
-            <div
-              className="form-footer"
-              style={{ display: "flex", justifyContent: "end" }}
-            >
-              <Button
-                color="primary"
-                className="d-block"
-                onClick={() => {
-                  otpEnabledChange();
-                }}
+              <div
+                className="form-footer"
+                style={{ display: "flex", justifyContent: "end" }}
               >
-                {loading ? "Loading..." : "Save"}
-              </Button>
-            </div>
+                <Button
+                  color="primary"
+                  className="d-block"
+                  onClick={() => {
+                    otpEnabledChange();
+                  }}
+                >
+                  {loading ? "Loading..." : "Save"}
+                </Button>
+              </div>
           </Row>
         </CardBody>
       </Card>

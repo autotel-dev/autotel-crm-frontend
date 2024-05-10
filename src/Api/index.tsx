@@ -3,9 +3,7 @@
 import Swal from "sweetalert2";
 import errorAlert from "../Pages/Alerts/ErrorAlert";
 import successAlert from "../Pages/Alerts/SuccessAlert";
-import { CitiesType } from "../Pages/Cities/CityTypes/CityTypes";
 import { header, multipartHeader } from "./header";
-import { setNoDataFound } from "../ReaduxToolkit/Reducer/NoDataFoundSlice";
 import axios from "axios";
 const api = `${process.env.PUBLIC_URL}/api`;
 export const ChatMemberApi = `${api}/chatMember.json`;
@@ -13,10 +11,10 @@ export const ChatApi = `${api}/chats.json`;
 
 // // api.ts
 
-export const API_BASE_URL = "http://124.29.238.127:8080/api/v1";
-export const IMAGE_BASE_URL = "http://124.29.238.127:8080";
-// export const API_BASE_URL = process.env.API_BASE_URL;
-// export const IMAGE_BASE_URL = process.env.;
+// export const API_BASE_URL = "http://124.29.238.127:8080/api/v1";
+// export const IMAGE_BASE_URL = "http://124.29.238.127:8080";
+export const API_BASE_URL = "https://crmapi.autotel.pk/api/v1";
+export const IMAGE_BASE_URL = "https://crmapi.autotel.pk";
 
 interface URLTypes {
   url: String;
@@ -73,13 +71,12 @@ export const login = async (postData: loginTypes): Promise<void> => {
       // throw new Error("Failed to login ");
       return result;
     }
-    if (result.statusCode == 200) {
+    if (result.statusCode === 200) {
       successAlert();
     }
     return result;
   } catch (error: any) {
     // console.error("Error creating login:", error);
-
     // throw new Error("Failed to create ciloginty");
   }
 };
@@ -131,14 +128,13 @@ export const otpVerification = async (
       // throw new Error("Failed to login ");
       return result;
     }
-    if (result.statusCode == 200) {
+    if (result.statusCode === 200) {
       successAlert();
     }
     return result;
     // Handle success (optional)
   } catch (error: any) {
     // console.error("Error creating login:", error);
-
     // throw new Error("Failed to create ciloginty");
   }
 };
@@ -461,7 +457,7 @@ export const getAll = async (url: URLTypes): Promise<void> => {
     const error: any = {
       success: false,
       message: "ERROR_INTERNET_DISCONNECTED",
-      statusCode: 401,
+      // statusCode: 401,
     };
     return error;
   }
@@ -475,10 +471,20 @@ export const getAll = async (url: URLTypes): Promise<void> => {
     });
     const result = response.data;
     // console.log("Response data:", response.data);
+    // console.log("result", result);
     return result;
   } catch (error: any) {
     // console.error("Error get-all:", error.message);
-    return error.response.data;
+    // console.log("error", error);
+    if (error.response.data.statusCode == 401) {
+      Swal.fire({
+        text: `${error.response.data.message}`,
+        icon: "error",
+        showConfirmButton: true,
+      });
+    } else {
+      return error.response.data;
+    }
   }
 };
 

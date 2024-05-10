@@ -10,7 +10,7 @@ import {
   Row,
 } from "reactstrap";
 import { Cancel } from "../../utils/Constant";
-import { H3 } from "../../AbstractElements";
+import { H3, P } from "../../AbstractElements";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getAll, update } from "../../Api";
@@ -45,6 +45,9 @@ const UpdateCountry: React.FC<PropsTypes> = ({
 
   // setValue
 }) => {
+  const { userPersonalizationData } = useSelector(
+    (state: any) => state.personalization
+  );
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
 
@@ -89,7 +92,7 @@ const UpdateCountry: React.FC<PropsTypes> = ({
           (data: any) => {
             if (
               !data.success &&
-              data.message == "ERROR_INTERNET_DISCONNECTED"
+              data.message === "ERROR_INTERNET_DISCONNECTED"
             ) {
               setLoading(false);
               setIsVisible(!isVisible);
@@ -194,7 +197,7 @@ const UpdateCountry: React.FC<PropsTypes> = ({
         >
           <Row>
             <FormGroup className="col-md-12 ">
-              <Label>Country Name</Label>
+              <P>Country Name</P>
               <input
                 className="form-control"
                 type="text"
@@ -247,20 +250,20 @@ const UpdateCountry: React.FC<PropsTypes> = ({
             </Row>
           </div>
           <Button color="primary" className="me-1">
-            {loading ? "Loading ..." : `Update`}
-          </Button>
-          &nbsp;&nbsp;
-          <Button
-            disabled={loading ? true : false}
-            color="secondary"
-            onClick={() => {
-              // setValue("")
-              setIsVisible(!isVisible);
-              // console.log(value);
-            }}
-          >
-            {Cancel}
-          </Button>
+                {loading ? "Loading ..." : `Update`}
+              </Button>
+              &nbsp;&nbsp;
+              <Button
+                disabled={loading ? true : false}
+                color="secondary"
+                onClick={() => {
+                  // setValue("")
+                  setIsVisible(!isVisible);
+                  // console.log(value);
+                }}
+              >
+                {Cancel}
+              </Button>
         </form>
       </ModalBody>
     </Modal>

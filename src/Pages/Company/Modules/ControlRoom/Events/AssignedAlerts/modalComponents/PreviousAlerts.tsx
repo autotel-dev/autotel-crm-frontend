@@ -1,4 +1,4 @@
-import { Card, CardBody, CardHeader, Col, Table } from "reactstrap";
+import { Card, CardBody, CardHeader, Col, PopoverBody, PopoverHeader, Table, UncontrolledPopover } from "reactstrap";
 
 import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
@@ -6,7 +6,7 @@ import { H4 } from "../../../../../../../AbstractElements";
 
 const PreviousAlerts = () => {
   const { modalData } = useSelector((state: any) => state.alerts);
-   // // console.log("completedAlertsData", modalData.previousAlerts);
+  // // console.log("completedAlertsData", modalData.previousAlerts);
 
   const [dataList, setDataList]: any = useState([]);
   const [loading, setLoading] = useState(false); // State to manage loading
@@ -68,7 +68,7 @@ const PreviousAlerts = () => {
                 </tr>
               </thead>
               <tbody>
-                {dataList.length == 0 ? (
+                {dataList.length === 0 ? (
                   <tr>
                     <td colSpan={7} style={{ fontSize: "25px" }}>
                       No Previous Alerts Found
@@ -94,13 +94,25 @@ const PreviousAlerts = () => {
                       <td className={`txt-primary`}>{data.message}</td>
                       <td>{data.type}</td>
                       <td>{data.message}</td>
-                      <td>
-                        {data.address == null && data.address == undefined
+                      <td id="Popover" style={{ width: "20%" }}>
+                        {data.address == null
                           ? "N/A"
+                          : data.address.length > 10
+                          ? data.address.substring(0, 10) + "..."
                           : data.address}
                       </td>
+                      {data.address != null && (
+                        <UncontrolledPopover
+                          placement="top"
+                          trigger="hover"
+                          target="Popover"
+                        >
+                          <PopoverHeader>Address</PopoverHeader>
+                          <PopoverBody>{data.address}</PopoverBody>
+                        </UncontrolledPopover>
+                      )}
                       <td>
-                        {data.completionResponse == ""
+                        {data.completionResponse === ""
                           ? "N/A"
                           : data.completionResponse}
                       </td>

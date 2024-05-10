@@ -7,7 +7,7 @@ export interface propsTypes {
   
   const H3 = (props: propsTypes) => {
     const { children = "" } = props;
-    return <h3 {...props}>{children}</h3>;
+    return <h3 {...props} style={{ fontSize: "22px" }}>{children}</h3>;
   };
   
   export default H3;

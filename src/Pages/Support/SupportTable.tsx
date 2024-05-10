@@ -4,7 +4,6 @@ import { Button, Col, Row } from "reactstrap";
 import DataTable from "react-data-table-component";
 import { Delete, DeleteData } from "../../utils/Constant";
 import { H4 } from "../../AbstractElements";
-import { PlusCircle } from "react-feather";
 import { useNavigate } from "react-router-dom";
 import CreateNewTicket from "./CreateNewTicket";
 import { useDispatch, useSelector } from "react-redux";
@@ -105,16 +104,35 @@ const TicketTable = () => {
     // Navigate to the ticketDetails page with the row data
     dispatch(setTableRow(row));
     navigate(
-      `${process.env.PUBLIC_URL}/super-admin/support/ticketDetails/${row.ticket_id}`
+      `${process.env.PUBLIC_URL}/support/ticketDetails/${row.ticket_id}`
     );
   };
   return (
     <div className="table-responsive support-table">
       <Row style={{ display: "flex", alignItems: "center" }}>
         <Col
-          md={12}
-          lg={support != undefined && support?.create ? 10 : 12}
-          xl={support != undefined && support?.create ? 10 : 12}
+          sm={support !== undefined && support?.create ? 12 : 12}
+          md={
+            support !== undefined && support?.create
+              ? 10
+              : getUserRole() === ROLES.SUPER_ADMIN
+              ? 12
+              : 12
+          }
+          lg={
+            support !== undefined && support?.create
+              ? 10
+              : getUserRole() === ROLES.SUPER_ADMIN
+              ? 10
+              : 12
+          }
+          xl={
+            support !== undefined && support?.create
+              ? 10
+              : getUserRole() === ROLES.SUPER_ADMIN
+              ? 10
+              : 12
+          }
         >
           <input
             type="text"
@@ -134,19 +152,20 @@ const TicketTable = () => {
             }}
           />
         </Col>
-        {getUserRole() == ROLES.SUPER_ADMIN ? (
+        {getUserRole() === ROLES.SUPER_ADMIN ? (
           <Col
-            md={12}
-            lg={support != undefined && support?.create ? 2 : 0}
-            xl={support != undefined && support?.create ? 2 : 0}
+            sm={support !== undefined && support?.create ? 2 : 0}
+            md={support !== undefined && support?.create ? 2 : 0}
+            lg={support !== undefined && support?.create ? 2 : 0}
+            xl={support !== undefined && support?.create ? 2 : 0}
           >
             <CreateNewTicket />
           </Col>
-        ) : (getUserRole() == ROLES.COMPANY ||
-            getUserRole() == ROLES.OPERATOR) &&
-          support != undefined &&
+        ) : (getUserRole() === ROLES.COMPANY ||
+            getUserRole() === ROLES.OPERATOR) &&
+          support !== undefined &&
           support?.create ? (
-          <Col md={12} lg={2} xl={2}>
+          <Col sm={12} md={12} lg={2} xl={2}>
             <CreateNewTicket />
           </Col>
         ) : null}

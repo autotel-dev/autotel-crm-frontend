@@ -32,6 +32,9 @@ import Loader from "../Loader/Loader";
 import NoInternetConnection from "../NoInternetConnection/NoInternetConnection";
 
 const Companies = () => {
+  const { userPersonalizationData } = useSelector(
+    (state: any) => state.personalization
+  );
   const dispatch = useDispatch();
   const [searchValue, setSearchValue] = useState("");
   const { companies, filterCompanies, isConnected } = useSelector(
@@ -78,7 +81,7 @@ const Companies = () => {
 
       if (data !== undefined) {
         dispatch(setNoDataFound(data.message));
-        if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
+        if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
           dispatch(setIsConnected(true));
           setLoading(false);
         }
@@ -253,7 +256,32 @@ const Companies = () => {
                   >
                     <Card
                       className="social-profile"
-                      style={{ backgroundColor: "rgba(53, 191, 191,0.2)" }}
+                      style={{
+                        // backgroundColor: `${
+                        //   userPersonalizationData &&
+                        //   userPersonalizationData.primaryColor
+                        //     ? `rgba(${parseInt(
+                        //         userPersonalizationData.primaryColor.slice(
+                        //           1,
+                        //           3
+                        //         ),
+                        //         16
+                        //       )}, ${parseInt(
+                        //         userPersonalizationData.primaryColor.slice(
+                        //           3,
+                        //           5
+                        //         ),
+                        //         16
+                        //       )}, ${parseInt(
+                        //         userPersonalizationData.primaryColor.slice(5),
+                        //         16
+                        //       )}, 0.2)`
+                        //     : "rgba(53, 191, 191, 0.2)"
+
+
+                        // }`,
+                        backgroundColor: "rgba(53, 191, 191,0.2)"
+                      }}
                     >
                       <CardBody>
                         <div className="social-img-wrap">

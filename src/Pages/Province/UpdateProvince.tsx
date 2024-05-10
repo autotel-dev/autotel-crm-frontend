@@ -10,7 +10,7 @@ import {
   Row,
 } from "reactstrap";
 import { Cancel } from "../../utils/Constant";
-import { H3 } from "../../AbstractElements";
+import { H3, P } from "../../AbstractElements";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getAll, update } from "../../Api";
@@ -46,6 +46,9 @@ const UpdateProvince: React.FC<PropsTypes> = ({
   setIsActive,
   // setValue
 }) => {
+  const { userPersonalizationData } = useSelector(
+    (state: any) => state.personalization
+  );
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const { countryName, countryId } = useSelector(
@@ -94,7 +97,7 @@ const UpdateProvince: React.FC<PropsTypes> = ({
           (data: any) => {
             if (
               !data.success &&
-              data.message == "ERROR_INTERNET_DISCONNECTED"
+              data.message === "ERROR_INTERNET_DISCONNECTED"
             ) {
               setLoading(false);
               setIsVisible(!isVisible);
@@ -202,7 +205,7 @@ const UpdateProvince: React.FC<PropsTypes> = ({
         >
           <Row>
             <FormGroup className="col-md-12 create-group">
-              <Label>Province Name</Label>
+              <P>Province Name</P>
               <input
                 className="form-control"
                 type="text"
@@ -221,7 +224,10 @@ const UpdateProvince: React.FC<PropsTypes> = ({
                   justifyContent: "space-between",
                 }}
               >
-                <SelectCountryBox placeholder={"Select Country"} />
+                <div>
+                  <P>Select Country</P>
+                  <SelectCountryBox placeholder={"Select Country"} />
+                </div>
               </div>
               <div className="d-flex">
                 <div
@@ -249,20 +255,20 @@ const UpdateProvince: React.FC<PropsTypes> = ({
             </FormGroup>
           </Row>
           <Button color="primary" className="me-1">
-            {loading ? "Loading ..." : `Update`}
-          </Button>
-          &nbsp;&nbsp;
-          <Button
-            disabled={loading ? true : false}
-            color="secondary"
-            onClick={() => {
-              // setValue("")
-              setIsVisible(!isVisible);
-              // console.log(value);
-            }}
-          >
-            {Cancel}
-          </Button>
+                {loading ? "Loading ..." : `Update`}
+              </Button>
+              &nbsp;&nbsp;
+              <Button
+                disabled={loading ? true : false}
+                color="secondary"
+                onClick={() => {
+                  // setValue("")
+                  setIsVisible(!isVisible);
+                  // console.log(value);
+                }}
+              >
+                {Cancel}
+              </Button>
         </form>
       </ModalBody>
     </Modal>

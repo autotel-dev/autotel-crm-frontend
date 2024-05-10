@@ -1,4 +1,13 @@
-import { Card, CardBody, Col, Container, Input, Label, Row } from "reactstrap";
+import {
+  Card,
+  CardBody,
+  CardHeader,
+  Col,
+  Container,
+  Input,
+  Label,
+  Row,
+} from "reactstrap";
 
 import { useEffect, useState } from "react";
 // import { getAll } from "../../Api";
@@ -19,9 +28,10 @@ import {
 import { setOperatorsEnd } from "../../../ReaduxToolkit/Reducer/OperatorSlice";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
+import { H4 } from "../../../AbstractElements";
 
 const RolesList = () => {
-  const { roles, activeInActiveRoles,loading } = useSelector(
+  const { roles, activeInActiveRoles, loading } = useSelector(
     (state: any) => state.roles
   );
   const dispatch = useDispatch();
@@ -50,7 +60,7 @@ const RolesList = () => {
 
       if (data !== undefined) {
         dispatch(setNoDataFound(data.message));
-        if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
+        if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
           dispatch(setIsConnected(true));
         }
         if (!data.success) {
@@ -93,7 +103,7 @@ const RolesList = () => {
                     const changeStatus = {
                       isActive: !row.isActive,
                     };
-                  
+
                     try {
                       await patch(changeStatus, {
                         url: `sub-role/change-activation-status/${row._id}`,
@@ -124,9 +134,11 @@ const RolesList = () => {
                   }}
                 />
                 <span
-                  className={`switch-state ${
-                    row.isActive ? "bg-primary" : "bg-secondary"
-                  }`}
+                  // className={`switch-state ${
+                  //   row.isActive ? "bg-primary" : "bg-secondary"
+                  // }`}
+                  className="switch-state"
+                  style={{ backgroundColor: row.isActive ? "green" : "red" }}
                 />
               </Label>
             </div>
@@ -188,7 +200,9 @@ const RolesList = () => {
       <Container fluid>
         <Col sm="12">
           <Card>
-            <CommonHeader title="All Roles" />
+            <CardHeader className="pb-0">
+              <H4>All Roles</H4>
+            </CardHeader>
             <CardBody>
               <div className="table-responsive product-table">
                 {loading ? (
@@ -219,7 +233,7 @@ const RolesList = () => {
                       ? activeInActiveRoles
                       : "No Roles Found"}
                   </div>
-                )}  
+                )}
 
                 {/* )} */}
               </div>

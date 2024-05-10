@@ -1,14 +1,10 @@
 import { PlusCircle } from "react-feather";
-import { Col } from "reactstrap";
-import { createNewCity } from "../../utils/Constant";
-import { Link } from "react-router-dom";
-import { Fragment, useState } from "react";
+import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Button, FormGroup, Label, Modal, ModalBody, Row } from "reactstrap";
 import { Cancel } from "../../utils/Constant";
-import { CheckCircle } from "react-feather";
-import { H3 } from "../../AbstractElements";
-import { create, createCom, getAll } from "../../Api";
+import { H3, P } from "../../AbstractElements";
+import { createCom, getAll } from "../../Api";
 import { useDispatch, useSelector } from "react-redux";
 import Swal from "sweetalert2";
 import SelectPriorityStatusesTypes from "./components/SelectPriorityStatusesTypes";
@@ -21,6 +17,7 @@ import {
 } from "../../ReaduxToolkit/Reducer/SupportSlice";
 import { setNoDataFound } from "../../ReaduxToolkit/Reducer/NoDataFoundSlice";
 import { getUserRole } from "../../Api/globals";
+import { ROLES } from "../../constants/roles";
 
 interface TicketType {
   name: string;
@@ -33,6 +30,9 @@ interface Image {
 }
 
 const CreateNewTicket = () => {
+  const { userPersonalizationData } = useSelector(
+    (state: any) => state.personalization
+  );
   const dispatch = useDispatch();
   const { priorityStatus } = useSelector((state: any) => state.support);
 
@@ -91,7 +91,7 @@ const CreateNewTicket = () => {
         await createCom(formData, {
           url: "support/bug-report/report-new-bug",
         }).then((data: any) => {
-          if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
+          if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
             setSelectedFiles([]);
             setSelectedImages([]);
             setLoading(false);
@@ -133,7 +133,7 @@ const CreateNewTicket = () => {
             dispatch(setReportsStart());
             getAll({
               url:
-                getUserRole() === "COMPANY"
+                getUserRole() === ROLES.COMPANY
                   ? "company/get-all-bug-reports"
                   : "support/bug-report/get-all-bug-reports",
             }).then((data: any) => {
@@ -148,7 +148,7 @@ const CreateNewTicket = () => {
               }
             });
 
-            if (getUserRole() == "SUPER_ADMIN") {
+            if (getUserRole() === ROLES.SUPER_ADMIN) {
               getAll({ url: "support/bug-report/get-statistics" }).then(
                 (data: any) => {
                   // console.log("api call --- >", data);
@@ -229,9 +229,14 @@ const CreateNewTicket = () => {
   return (
     <div className="text-end">
       <button
-        className="btn btn-primary"
+        className={`btn ${
+          userPersonalizationData?.buttonsAndBarsColor == null ? "btn-primary" : ""
+        }`}
         style={{
           color: "white",
+          backgroundColor: `${
+            userPersonalizationData !== null && userPersonalizationData?.buttonsAndBarsColor
+          }`,
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
@@ -241,10 +246,12 @@ const CreateNewTicket = () => {
         }}
         onClick={addToggle}
       >
-        <div style={{ marginRight: "2%" }}>
+        <div
+          style={{ marginRight: "2.5%", display: "flex", alignItems: "center" }}
+        >
           <PlusCircle />
         </div>
-        <span style={{ fontSize: "120%" }}>Create New Ticket</span>
+        <span style={{ fontSize: "1em" }}>Create New Ticket</span>
       </button>
       <Modal isOpen={addModal} toggle={addToggle} size="lg" centered>
         <div className="modal-header">
@@ -262,7 +269,7 @@ const CreateNewTicket = () => {
           >
             <Row>
               <FormGroup className="col-md-12 create-group">
-                <Label>Name</Label>
+                <P>Name</P>
                 <input
                   className="form-control"
                   type="text"
@@ -273,7 +280,7 @@ const CreateNewTicket = () => {
                 </span>
               </FormGroup>
               <FormGroup className="col-md-12 create-group">
-                <Label>Description</Label>
+                <P>Description</P>
 
                 <textarea
                   className="form-control"
@@ -301,13 +308,14 @@ const CreateNewTicket = () => {
               />
             </div>
             <div>
-              <label
+              <Label
                 htmlFor="imageInput"
                 style={{
                   cursor: "pointer",
                   backgroundColor: "lightgray",
                   color: "white",
                   padding: "10px",
+                  fontSize: "15px",
                   borderRadius: "5px",
                   border: "1px solid gray",
                 }}
@@ -321,7 +329,7 @@ const CreateNewTicket = () => {
                   style={{ display: "none" }}
                   onChange={handleImageChange}
                 />
-              </label>
+              </Label>
               <div style={{ marginTop: "10px" }}>
                 {selectedImages.map((image, index) => (
                   <div
@@ -349,17 +357,17 @@ const CreateNewTicket = () => {
                 ))}
               </div>
             </div>
-            <Button color="primary" className="me-1">
-              {loading ? "Loading ..." : `Add`}
-            </Button>
-            &nbsp;&nbsp;
-            <Button
-              disabled={loading ? true : false}
-              color="secondary"
-              onClick={addToggle}
-            >
-              {Cancel}
-            </Button>
+                <Button color="primary" className="me-1">
+                  {loading ? "Loading ..." : `Add`}
+                </Button>
+                &nbsp;&nbsp;
+                <Button
+                  disabled={loading ? true : false}
+                  color="secondary"
+                  onClick={addToggle}
+                >
+                  {Cancel}
+                </Button>
           </form>
         </ModalBody>
       </Modal>

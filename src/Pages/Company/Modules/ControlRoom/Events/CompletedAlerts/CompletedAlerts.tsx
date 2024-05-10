@@ -1,33 +1,44 @@
-import { Card, CardBody, CardHeader, Col, Table } from "reactstrap";
-import { H3, H4 } from "../../../../../../AbstractElements";
+import {
+  Card,
+  CardBody,
+  CardHeader,
+  Col,
+  FormGroup,
+  PopoverBody,
+  PopoverHeader,
+  Row,
+  Table,
+  UncontrolledPopover,
+} from "reactstrap";
+import { H3, H4, H5, P } from "../../../../../../AbstractElements";
 import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 
 const AssignedAlerts = () => {
   const { completedAlerts } = useSelector((state: any) => state.alerts);
-   // // console.log("completedAlertsData", completedAlerts);
+  // // console.log("completedAlertsData", completedAlerts);
 
   const [dataList, setDataList]: any = useState([]);
   const [loading, setLoading] = useState(false); // State to manage loading
   const tableHeader = [
-    "ID",
+    // "ID",
     "Device",
     "Alert",
     "Type",
     "Message",
     "Address",
-    "Response",
+    "Completion Response",
   ];
   const containerRef = useRef(null);
   const [pageNo, setPageNo] = useState(1);
   useEffect(() => {
-    if (completedAlerts.length < 12) {
+    if (completedAlerts.length > 12) {
       setDataList(completedAlerts.slice(0, 12)); // Initially display the first 6 elements
     }
   }, [completedAlerts]);
   useEffect(() => {
     setDataList(completedAlerts.slice(0, 12)); // Initially display the first 6 elements
-  }, []);
+  }, [completedAlerts]);
 
   const handleScroll = () => {
     if (!containerRef.current) return; // Ensure containerRef.current exists
@@ -43,9 +54,24 @@ const AssignedAlerts = () => {
     }
   };
 
+  const [searchValue, setSearchValue] = useState("");
+
   return (
     <Card className="invoice-card">
       <CardBody className="transaction-card">
+        <Row>
+          <FormGroup className="col-md-12 create-group">
+            <P>Search Vehicles</P>
+            <input
+              className="form-control"
+              value={searchValue}
+              onChange={(e) => setSearchValue(e.target.value)}
+              type="text"
+              placeholder="Search Completed Vehicles"
+            />
+          </FormGroup>
+        </Row>
+
         <div
           ref={containerRef}
           className="table-responsive theme-scrollbar recent-wrapper"
@@ -66,45 +92,86 @@ const AssignedAlerts = () => {
               <thead>
                 <tr>
                   {tableHeader.map((data, index) => (
-                    <th key={index}>{data}</th>
+                    <th
+                      key={index}
+                      style={{
+                        width:
+                          data === "Device" || data === "Type" ? "15%" : "20%",
+                      }}
+                    >
+                      {data}
+                    </th>
                   ))}
                 </tr>
               </thead>
               <tbody>
-                {dataList.length == 0 ? (
+                {dataList.length === 0 ? (
                   <tr>
                     <td colSpan={7} style={{ fontSize: "25px" }}>
                       No Completed Alerts Found
                     </td>
                   </tr>
                 ) : (
-                  dataList.map((data: any, index: any) => (
-                    <tr style={{ cursor: "pointer" }} key={index}>
-                      <td>{data.eventId}</td>
-                      <td>
-                        <div className="d-flex">
-                          <div className="flex-grow-1 ms-2">
-                            <H4>{data.deviceName}</H4>
-                            <span style={{ fontSize: "10px" }}>
-                              {data.createdAt.toString().slice(0, 10) +
-                                " " +
-                                data.createdAt.toString().slice(11, 19)}
-                            </span>
-                          </div>
-                        </div>
-                      </td>
+                  dataList
+                    .filter((data: any) =>
+                      data.deviceName
+                        .toLowerCase()
+                        .includes(searchValue.toLowerCase())
+                    )
+                    .map((data: any, index: any) => (
+                      <tr style={{ cursor: "pointer" }} key={index}>
+                        {/* <td>{data.eventId}</td> */}
+                        <td style={{ width: "15%" }}>
+                          <div className="d-flex">
+                            <div className="flex-grow-1">
+                              <h5
+                                style={{
+                                  fontSize: "14px",
+                                  fontWeight: "bold",
+                                }}
+                              >
+                                {data.deviceName}
+                              </h5>
+                              <div style={{ fontSize: "10px" }}>
+                                {data.createdAt.slice(0, 10)}
+                              </div>
 
-                      <td className={`txt-primary`}>{data.message}</td>
-                      <td>{data.type}</td>
-                      <td>{data.message}</td>
-                      <td>
-                        {data.address == null && data.address == undefined
-                          ? "N/A"
-                          : data.address}
-                      </td>
-                      <td>{data.completionResponse}</td>
-                    </tr>
-                  ))
+                              <div style={{ fontSize: "10px" }}>
+                                {data.createdAt.slice(11, 19)}
+                              </div>
+                            </div>
+                          </div>
+                        </td>
+                        <td className={`txt-primary`} style={{ width: "20%" }}>
+                          {data.message}
+                        </td>
+                        <td style={{ width: "15%" }}>{data.type}</td>
+                        <td style={{ width: "20%" }}>{data.message}</td>
+                        <td
+                          id="addressCompletedAlerts"
+                          style={{ width: "20%" }}
+                        >
+                          {data.address == null
+                            ? "N/A"
+                            : data.address.length > 10
+                            ? data.address.substring(0, 10) + "..."
+                            : data.address}
+                        </td>
+                        {data.address != null && (
+                          <UncontrolledPopover
+                            placement="top"
+                            trigger="hover"
+                            target="addressCompletedAlerts"
+                          >
+                            <PopoverHeader>Address</PopoverHeader>
+                            <PopoverBody>{data.address}</PopoverBody>
+                          </UncontrolledPopover>
+                        )}
+                        <td style={{ width: "20%" }}>
+                          {data.completionResponse}
+                        </td>
+                      </tr>
+                    ))
                 )}
               </tbody>
             </Table>

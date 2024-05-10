@@ -12,6 +12,7 @@ import SVG from "../../../../../../utils/CommonSvgIcon/SVG";
 import {
   setDevices,
   setExpandedDevice,
+  setItem,
   setSelecetdDevices,
 } from "../../../../../../ReaduxToolkit/Reducer/MonitoringSlice";
 import "./inputStyle.css";
@@ -28,7 +29,7 @@ const DevicesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
   const svgRef = useRef(null);
 
   const [itemsLength, setItemsLength] = useState(6);
-  const { devices, selectedDevices } = useSelector(
+  const { devices, selectedDevices, expandedDevice } = useSelector(
     (state: any) => state.monitoring
   );
   const [searchValue, setSearchValue] = useState("");
@@ -141,7 +142,7 @@ const DevicesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
         .every((item: any) => item.checked === true);
       if (
         allItemsChecked &&
-        selectedDevice.id == deviceToUpdate.items[index].id &&
+        selectedDevice.id === deviceToUpdate.items[index].id &&
         !selectedDevice.checked
       ) {
         allItemsChecked = true;
@@ -170,6 +171,16 @@ const DevicesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
         checked: allItemsChecked,
         items: deviceToUpdate.items.map((item: any) => {
           if (selectedDevice.id === item.id) {
+            if (
+              expandedDevice != null &&
+              selectedDevice.id == expandedDevice.deviceId &&
+              selectedDevice.checked
+            ) {
+              dispatch(setExpandedDevice(null));
+              dispatch(
+                setItem({ id: selectedDevice.id, title: selectedDevice.title })
+              );
+            }
             // Update the checked property if the IDs match
             return {
               ...item,
@@ -242,6 +253,29 @@ const DevicesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
   //   // console.log("selectedDevices-->", Devicess);
   // };
 
+  const handleSelectAll = () => {
+    const updatedDevices = devices.map((device: any) => {
+      const updatedItems = device.items.map((item: any) => ({
+        ...item,
+        checked: true, // Set checked to the opposite of group.checked
+      }));
+      return { ...device, checked: true, items: updatedItems };
+    });
+
+    dispatch(setDevices(updatedDevices));
+  };
+  const handleDeselectAll = () => {
+    const updatedDevices = devices.map((device: any) => {
+      const updatedItems = device.items.map((item: any) => ({
+        ...item,
+        checked: false, // Set checked to the opposite of group.checked
+      }));
+      return { ...device, checked: false, items: updatedItems };
+    });
+
+    dispatch(setDevices(updatedDevices));
+  };
+
   const formattedDate = (timeStamp: string) => {
     var ts = parseInt(timeStamp) * 1000;
 
@@ -281,26 +315,76 @@ const DevicesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
           outline: "none",
         }}
       />
+      <div style={{ display: "flex" }}>
+        <button
+          onClick={(e: any) => {
+            e.preventDefault(); // Add this line
+            e.stopPropagation();
+            handleSelectAll();
+          }}
+          style={{
+            width: "45%",
+            padding: "10px 15px",
+            // boxShadow: "0px 5px 18px lightgray",
+            borderRadius: "10px",
+            backgroundColor: "gray",
+            color: "white",
+            margin: "10px",
+            marginBottom: "10px",
+            marginTop: "0px",
+            border: "0px",
+            outline: "none",
+            textAlign: "center",
+          }}
+        >
+          Select All
+        </button>
+        <button
+          onClick={(e: any) => {
+            e.preventDefault(); // Add this line
+            e.stopPropagation();
+            handleDeselectAll();
+          }}
+          style={{
+            width: "45%",
+            padding: "10px 15px",
+            // boxShadow: "0px 5px 18px lightgray",
+            borderRadius: "10px",
+            backgroundColor: "gray",
+            color: "white",
+            margin: "10px",
+            marginBottom: "10px",
+            marginTop: "0px",
+            border: "0px",
+            outline: "none",
+            textAlign: "center",
+          }}
+        >
+          Deselect All
+        </button>
+      </div>
       {matchedGroups.length > 0 && (
         <Accordion open={open} toggle={toggle} className="dark-accordion">
           {matchedGroups
             .filter((item: any) =>
               item.items.some((bodyItem: any) =>
-                statusDevices == "Expired"
-                  ? bodyItem.time == statusDevices
-                  : statusDevices == "Not Connecetd"
+                statusDevices === "Expired"
+                  ? bodyItem.time === statusDevices
+                  : statusDevices === "Not Connecetd"
                   ? bodyItem.time == null ||
                     bodyItem.time === "" ||
-                    bodyItem.time === undefined
-                  : statusDevices == ""
-                  ? bodyItem.online == bodyItem.online
-                  : bodyItem.online == statusDevices
+                    bodyItem.time == undefined
+                  : statusDevices === ""
+                  ? bodyItem.online === bodyItem.online
+                  : bodyItem.online === statusDevices
               )
             )
             .filter((item: any) =>
               item.items.some(
                 (bodyItem: any) =>
-                  bodyItem.name.toLowerCase().includes(searchValue) ||
+                  bodyItem.name
+                    .toLowerCase()
+                    .includes(searchValue.toLowerCase()) ||
                   bodyItem.imei.includes(searchValue) ||
                   bodyItem.id == searchValue
               )
@@ -332,21 +416,21 @@ const DevicesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
                           {
                             item.items
                               .filter((bodyItem: any) =>
-                                statusDevices == "Expired"
-                                  ? bodyItem.time == statusDevices
-                                  : statusDevices == "Not Connecetd"
+                                statusDevices === "Expired"
+                                  ? bodyItem.time === statusDevices
+                                  : statusDevices === "Not Connecetd"
                                   ? bodyItem.time == null ||
                                     bodyItem.time === "" ||
-                                    bodyItem.time === undefined
-                                  : statusDevices == ""
-                                  ? bodyItem.online == bodyItem.online
-                                  : bodyItem.online == statusDevices
+                                    bodyItem.time == undefined
+                                  : statusDevices === ""
+                                  ? bodyItem.online === bodyItem.online
+                                  : bodyItem.online === statusDevices
                               )
                               .filter(
                                 (bodyItem: any) =>
                                   bodyItem.name
                                     .toLowerCase()
-                                    .includes(searchValue) ||
+                                    .includes(searchValue.toLowerCase()) ||
                                   bodyItem.imei.includes(searchValue) ||
                                   bodyItem.id == searchValue
                               ).length
@@ -355,7 +439,7 @@ const DevicesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
                         </span>
                         <FeatherIcons
                           iconName={
-                            open == `${index}` ? "ChevronUp" : "ChevronDown"
+                            open === `${index}` ? "ChevronUp" : "ChevronDown"
                           }
                           className="svg-color"
                         />
@@ -368,19 +452,21 @@ const DevicesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
                     >
                       {item.items
                         .filter((bodyItem: any) =>
-                          statusDevices == "Expired"
-                            ? bodyItem.time == statusDevices
-                            : statusDevices == "Not Connecetd"
+                          statusDevices === "Expired"
+                            ? bodyItem.time === statusDevices
+                            : statusDevices === "Not Connecetd"
                             ? bodyItem.time == null ||
                               bodyItem.time === "" ||
-                              bodyItem.time === undefined
-                            : statusDevices == ""
-                            ? bodyItem.online == bodyItem.online
-                            : bodyItem.online == statusDevices
+                              bodyItem.time == undefined
+                            : statusDevices === ""
+                            ? bodyItem.online === bodyItem.online
+                            : bodyItem.online === statusDevices
                         )
                         .filter(
                           (bodyItem: any) =>
-                            bodyItem.name.toLowerCase().includes(searchValue) ||
+                            bodyItem.name
+                              .toLowerCase()
+                              .includes(searchValue.toLowerCase()) ||
                             bodyItem.imei.includes(searchValue) ||
                             bodyItem.id == searchValue
                         )
@@ -399,8 +485,12 @@ const DevicesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
                               onClick={(e) => {
                                 dispatch(
                                   setExpandedDevice({
-                                    lat: bodyItem.lat,
-                                    lng: bodyItem.lng,
+                                    position: {
+                                      lat: bodyItem.lat,
+                                      lng: bodyItem.lng,
+                                    },
+                                    tail: bodyItem.tail,
+                                    deviceId: bodyItem.id,
                                   })
                                 );
                               }}
@@ -471,10 +561,14 @@ const DevicesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
                                         fontSize: "16px",
                                       }}
                                     >
-                                      {bodyItem.name}
+                                      {bodyItem.name.length > 26
+                                        ? `${bodyItem.name.slice(0, 26)}...`
+                                        : bodyItem.name}
                                     </span>
                                     <span style={{ fontSize: "12px" }}>
-                                      {formattedDate(bodyItem.timestamp)}
+                                      {/* {formattedDate(bodyItem.timestamp)} */}
+                                      {bodyItem.time.slice(0, 10)} ,{" "}
+                                      {bodyItem.time.slice(11)}
                                     </span>
                                   </div>
                                 </div>
@@ -600,19 +694,21 @@ A 40 40 0 0 1 90 50"
                         })}
                       {item.items
                         .filter((bodyItem: any) =>
-                          statusDevices == "Expired"
-                            ? bodyItem.time == statusDevices
-                            : statusDevices == "Not Connecetd"
+                          statusDevices === "Expired"
+                            ? bodyItem.time === statusDevices
+                            : statusDevices === "Not Connecetd"
                             ? bodyItem.time == null ||
                               bodyItem.time === "" ||
-                              bodyItem.time === undefined
-                            : statusDevices == ""
-                            ? bodyItem.online == bodyItem.online
-                            : bodyItem.online == statusDevices
+                              bodyItem.time == undefined
+                            : statusDevices === ""
+                            ? bodyItem.online === bodyItem.online
+                            : bodyItem.online === statusDevices
                         )
                         .filter(
                           (bodyItem: any) =>
-                            bodyItem.name.toLowerCase().includes(searchValue) ||
+                            bodyItem.name
+                              .toLowerCase()
+                              .includes(searchValue.toLowerCase()) ||
                             bodyItem.imei.includes(searchValue) ||
                             bodyItem.id == searchValue
                         ).length >= 6 && (

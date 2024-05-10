@@ -72,6 +72,12 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
         },
         {
           svgIcon: "bonus-kit",
+          title: "Complain types",
+          link: `${process.env.PUBLIC_URL}/super-admin/setup/complain-types`,
+        },
+
+        {
+          svgIcon: "bonus-kit",
           title: "Email Templates",
           link: `${process.env.PUBLIC_URL}/dashboards/crmdashboard`,
         },
@@ -128,7 +134,7 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
     {
       title: "Support",
       svgIcon: "home",
-      link: `${process.env.PUBLIC_URL}/super-admin/support`,
+      link: `${process.env.PUBLIC_URL}/support`,
     },
     // {
     //   title: "Tasks",
@@ -201,11 +207,11 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
     {
       title: "Support",
       svgIcon: "home",
-      link: `${process.env.PUBLIC_URL}/company/support`,
+      link: `${process.env.PUBLIC_URL}/support`,
     },
     // {
     //   title: "Tasks",
-    //   svgIcon: "home",
+    //   svgIcon: "task",
     //   link: `${process.env.PUBLIC_URL}/company/tasks`,
     // },
     {
@@ -236,21 +242,21 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
 
     // {
     //   title: "Users",
-    //   svgIcon: "home",
+    //   svgIcon: "user",
     //   link: `${process.env.PUBLIC_URL}/company/users`,
     // },
     {
       title: "Support",
       svgIcon: "home",
-      link: `${process.env.PUBLIC_URL}/operator/support`,
+      link: `${process.env.PUBLIC_URL}/support`,
     },
   ];
 
   var filteredCompanyMenu = CompanySidebarMenuComponent.filter(
     (item, index) => {
-      if (user == undefined && index == 3) {
+      if (user == undefined && index === 3) {
         return false;
-      } else if (support == undefined && index == 4) {
+      } else if (support == undefined && index === 4) {
         return false;
       } else if (user !== undefined && item.title === user.title) {
         return user.read;
@@ -263,7 +269,7 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
   );
   var filteredOperatorMenu = OperatorSidebarMenuComponent.filter(
     (item, index) => {
-      if (support == undefined && index == 2) {
+      if (support == undefined && index === 2) {
         return false;
       } else if (user !== undefined && item.title === user.title) {
         return user.read;
@@ -305,20 +311,42 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
     }
   }, []);
 
+  const { userPersonalizationData } = useSelector(
+    (state: any) => state.personalization
+  );
+
   return (
     <nav className="sidebar-main">
       {decodedToken !== null && (
-        <div id="sidebar-menu">
+        <div
+          id="sidebar-menu"
+          style={{
+            backgroundColor: `${
+              userPersonalizationData !== null &&
+              userPersonalizationData?.secondaryColor !== null
+                ? userPersonalizationData?.secondaryColor
+                : ""
+            }`,
+          }}
+        >
           <UL className="sidebar-links simple-list" id="simple-bar">
             <SimpleBar className="w-100 simplebar-scrollable-y h-100">
               <SidebarBack />
-              {decodedToken.role == "SUPER_ADMIN"
+              {decodedToken.role === "SUPER_ADMIN"
                 ? SidebarMenuComponent.map((data, index) => (
                     <LI className={`sidebar-list`} key={index}>
                       <Link
                         className={`sidebar-link sidebar-title ${
                           sideMenu === data.title ? "active" : ""
                         }`}
+                        // style={{
+                        //   color: `${
+                        //     userPersonalizationData !== null &&
+                        //     userPersonalizationData?.buttonsAndBarsColor !== null &&
+                        //     sideMenu === data.title &&
+                        //     userPersonalizationData?.buttonsAndBarsColor
+                        //   }`,
+                        // }}
                         to={data.link ? data.link : "#"}
                         onClick={() => handleClick(data)}
                       >
@@ -328,7 +356,13 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
                             sidebarIconType === "fill" ? "fill-" : ""
                           }${data.svgIcon}`}
                         />
-                        <span>{t(data.title)}</span>
+                        <span
+                          style={{
+                            fontSize: "13px",
+                          }}
+                        >
+                          {t(data.title)}
+                        </span>
                       </Link>
                       {data.link ? (
                         <div></div>
@@ -369,7 +403,7 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
                       )}
                     </LI>
                   ))
-                : decodedToken.role == "OPERATOR"
+                : decodedToken.role === "OPERATOR"
                 ? filteredOperatorMenu !== undefined &&
                   filteredOperatorMenu?.map((data: any, index: any) => (
                     <LI className={`sidebar-list`} key={index}>
@@ -386,7 +420,9 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
                             sidebarIconType === "fill" ? "fill-" : ""
                           }${data.svgIcon}`}
                         />
-                        <span>{t(data.title)}</span>
+                        <span style={{ fontSize: "13px" }}>
+                          {t(data.title)}
+                        </span>
                       </Link>
                       {data.link ? (
                         <div></div>
@@ -433,7 +469,9 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
                             sidebarIconType === "fill" ? "fill-" : ""
                           }${data.svgIcon}`}
                         />
-                        <span>{t(data.title)}</span>
+                        <span style={{ fontSize: "13px" }}>
+                          {t(data.title)}
+                        </span>
                       </Link>
                       {data.link ? (
                         <div></div>

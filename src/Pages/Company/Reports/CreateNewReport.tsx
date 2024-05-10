@@ -5,7 +5,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { Button, FormGroup, Label, Modal, ModalBody, Row } from "reactstrap";
 import { CheckCircle } from "react-feather";
 import { useDispatch, useSelector } from "react-redux";
-import { H3 } from "../../../AbstractElements";
+import { H3, P } from "../../../AbstractElements";
 import { create, getAll } from "../../../Api";
 
 import { jwtDecode } from "jwt-decode";
@@ -16,6 +16,9 @@ import { setReports } from "../../../ReaduxToolkit/Reducer/ReportsSlice";
 import CustomDropdown from "./CustomDropdown";
 
 const CreateNewReport = ({ dropDownDevices }: any) => {
+  const { userPersonalizationData } = useSelector(
+    (state: any) => state.personalization
+  );
   const { reports, reportsType } = useSelector((state: any) => state.reports);
   var tempReports: any = [...reports];
   const [decodedToken, setDecodedToken]: any = useState(null);
@@ -78,20 +81,19 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
   const [reportPeriodList, setReportPeriodType] = useState([]);
 
   const periodList: any = [
-    { _id: 1, name: "Yesterday" },
-    { _id: 2, name: "previous Week" },
-    { _id: 3, name: "2 weeks" },
-    { _id: 5, name: "Previous Month" },
-    { _id: 6, name: "Previous 2 Months" },
-    { _id: 7, name: "This Month" },
-    { _id: 8, name: "This Week" },
+    { _id: 1, name: "Today" },
+    { _id: 2, name: "Yesterday" },
+    { _id: 3, name: "This Week" },
+    { _id: 4, name: "Last Week" },
+    { _id: 5, name: "This Month" },
+    { _id: 6, name: "Last Month" },
   ];
   const tempReportPeriodList: any = [];
   useEffect(() => {
     periodList.map((item: any, index: any) => {
       tempReportPeriodList.push({
         value: `${item.name}`,
-        label: `${item.name}`,
+        P: `${item.name}`,
       });
     });
     setReportPeriodType(tempReportPeriodList);
@@ -117,31 +119,10 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
         startDate: startDate,
         endDate: endDate,
       };
-      // console.log(report);
 
       try {
-        const today = new Date(); // Get current date and time
-        // console.log("today", today);
-        // console.log("endDate", endDate);
-        const endDateTime = new Date(endDate);
-        // console.log("endDateTime", endDateTime);
-
-        // If endDate is today's date, set time to current time
-
-        // console.log("today time: ", today.getTime());
-        // console.log("endDateTime time: ", endDateTime.getTime());
-
-        // console.log("before setting time: ", endDateTime);
-
-        endDateTime.setTime(today.getTime());
-
-        // console.log("after setting time: ", endDateTime);
-
-        // console.log("called");
-        // console.log("endDateTime", endDateTime);
-        // console.log("today", today);
         var deviceIds: number[];
-        if (selectedItems.length == 0) {
+        if (selectedItems.length === 0) {
           const allItems = await dropDownDevices.flatMap((group: any) =>
             group.items.map((item: any) => ({
               deviceId: item.id,
@@ -161,8 +142,7 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
 
         await create(
           {
-            // fromDate: new Date(startDate).toISOString(),
-            toDate: endDateTime.toISOString(), // Convert to ISO format
+            toDate: endDate, // Convert to ISO format
             fromDate: startDate,
             // toDate: endDate, // Convert to ISO format
             deviceIds: deviceIds,
@@ -173,7 +153,7 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
         ).then((data: any) => {
           // console.log("data", data);
 
-          if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
+          if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
             setLoading(false);
             setSelectedItems([]);
             const yesterday = new Date();
@@ -271,13 +251,19 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
     let end: Date;
 
     switch (selectedType) {
-      case "Yesterday":
+      case "Today":
         start = new Date(today);
         start.setDate(today.getDate() - 1);
         end = new Date(today);
         end.setDate(today.getDate());
         break;
-      case "previous Week":
+      case "Yesterday":
+        start = new Date(today);
+        start.setDate(today.getDate() - 2);
+        end = new Date(today);
+        end.setDate(today.getDate() - 1);
+        break;
+      case "Last Week":
         start = new Date(today);
         start.setDate(today.getDate() - today.getDay() - 6 - 7); // Previous Monday
         end = new Date(today);
@@ -288,19 +274,19 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
         start.setDate(today.getDate() - today.getDay()); // This Monday
         end = new Date(today);
         break; // Today is the end of the week
-      case "2 weeks":
-        start = new Date(today);
-        start.setDate(today.getDate() - 13); // 14 days ago
-        end = new Date(today);
-        break; // Today
-      case "Previous Month":
+      // case "2 weeks":
+      //   start = new Date(today);
+      //   start.setDate(today.getDate() - 13); // 14 days ago
+      //   end = new Date(today);
+      //   break; // Today
+      case "Last Month":
         start = new Date(today.getFullYear(), today.getMonth() - 1, 1);
         end = new Date(today.getFullYear(), today.getMonth(), 0);
         break;
-      case "Previous 2 Months":
-        start = new Date(today.getFullYear(), today.getMonth() - 2, 1);
-        end = new Date(today.getFullYear(), today.getMonth(), 0);
-        break;
+      // case "Previous 2 Months":
+      //   start = new Date(today.getFullYear(), today.getMonth() - 2, 1);
+      //   end = new Date(today.getFullYear(), today.getMonth(), 0);
+      //   break;
       case "This Month":
         start = new Date(today.getFullYear(), today.getMonth(), 1);
         end = new Date(today.getFullYear(), today.getMonth() + 1, 0);
@@ -329,8 +315,18 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
     <Col md={6}>
       <div className="text-end">
         <button
-          className="btn btn-primary"
-          style={{ color: "white" }}
+          className={`btn ${
+            userPersonalizationData?.buttonsAndBarsColor == null
+              ? "btn-primary"
+              : ""
+          }`}
+          style={{
+            color: "white",
+            backgroundColor: `${
+              userPersonalizationData !== null &&
+              userPersonalizationData?.buttonsAndBarsColor
+            }`,
+          }}
           onClick={addToggle}
         >
           <PlusCircle />
@@ -346,14 +342,14 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
             ></Button>
           </div>
 
-          <ModalBody style={{ height: "50vh" }}>
+          <ModalBody>
             <form
               className="form-bookmark needs-validation"
               onSubmit={handleSubmit(addReport)}
             >
               <Row>
                 <FormGroup className="col-md-6 create-group">
-                  <Label>Title</Label>
+                  <P>Title</P>
                   <input
                     className="form-control"
                     type="text"
@@ -365,7 +361,7 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
                 </FormGroup>
                 <FormGroup className="col-md-6 create-group">
                   <div>
-                    <Label>Report Type</Label>
+                    <P>Report Type</P>
                   </div>
                   <Select
                     showSearch
@@ -373,12 +369,12 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
                     placeholder="Select Type"
                     optionFilterProp="children"
                     filterOption={(input: any, option: any) =>
-                      (option?.label ?? "").includes(input)
+                      (option?.P ?? "").includes(input)
                     }
                     filterSort={(optionA: any, optionB: any) =>
-                      (optionA?.label ?? "")
+                      (optionA?.P ?? "")
                         .toLowerCase()
-                        .localeCompare((optionB?.label ?? "").toLowerCase())
+                        .localeCompare((optionB?.P ?? "").toLowerCase())
                     }
                     onChange={(e: any) => {
                       // console.log(e);
@@ -404,13 +400,13 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
                       placeholder="Select Period"
                       optionFilterProp="children"
                       filterOption={(input: any, option: any) =>
-                        (option?.label ?? "").includes(input)
+                        (option?.P ?? "").includes(input)
                       }
-                      filterSort={(optionA: any, optionB: any) =>
-                        (optionA?.label ?? "")
-                          .toLowerCase()
-                          .localeCompare((optionB?.label ?? "").toLowerCase())
-                      }
+                      // filterSort={(optionA: any, optionB: any) =>
+                      //   (optionA?.P ?? "")
+                      //     .toLowerCase()
+                      //     .localeCompare((optionB?.P ?? "").toLowerCase())
+                      // }
                       //   onChange={(e: any) => {
                       //     //   // console.log(e);
                       //     //   setRole(e);
@@ -428,7 +424,7 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
                   style={{ marginTop: "-25px" }}
                 >
                   <div>
-                    <Label>Devices</Label>
+                    <P>Devices</P>
                   </div>
                   <CustomDropdown
                     data={dropDownDevices}
@@ -441,12 +437,12 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
                       // placeholder="Select Type"
                       // optionFilterProp="children"
                       // filterOption={(input: any, option: any) =>
-                      //   (option?.label ?? "").includes(input)
+                      //   (option?.P ?? "").includes(input)
                       // }
                       // filterSort={(optionA: any, optionB: any) =>
-                      //   (optionA?.label ?? "")
+                      //   (optionA?.P ?? "")
                       //     .toLowerCase()
-                      //     .localeCompare((optionB?.label ?? "").toLowerCase())
+                      //     .localeCompare((optionB?.P ?? "").toLowerCase())
                       // }
                       // onChange={(e: any) => {
                       //   // console.log(e);
@@ -473,7 +469,7 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
 
                       {dropDownDevices.map((group: any) => (
                         <OptGroup
-                          label={
+                          P={
                             <strong
                               style={{
                                 background: "lightgray",

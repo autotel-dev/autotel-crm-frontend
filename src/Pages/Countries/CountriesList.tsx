@@ -54,7 +54,7 @@ const CountriesList = () => {
         // console.log("Data", data);
 
         dispatch(setNoDataFound(data.message));
-        if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
+        if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
           dispatch(setIsConnected(true));
         }
         if (!data.success) {
@@ -138,9 +138,11 @@ const CountriesList = () => {
                   // }}
                 />
                 <span
-                  className={`switch-state ${
-                    row.isActive ? "bg-primary" : "bg-secondary"
-                  }`}
+                  // className={`switch-state ${
+                  //   row.isActive ? "bg-primary" : "bg-secondary"
+                  // }`}
+                  className="switch-state"
+                  style={{ backgroundColor: row.isActive ? "green" : "red" }}
                 />
               </Label>
             </div>

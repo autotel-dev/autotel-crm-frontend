@@ -2,7 +2,7 @@ import { ChangeEvent, useEffect, useState } from "react";
 import { BusinessFormCommonProps } from "../../../Types/Forms/FormLayout/FormWizardTypes";
 import ShowError from "./ShowError";
 import { Button, Col, Form, FormGroup, Input, Label, Row } from "reactstrap";
-import { P } from "../../../AbstractElements";
+import { H4, H5, P } from "../../../AbstractElements";
 import { itemsName } from "../../../Data/Forms/FormsLayout/FormWizardData";
 import {
   ContactNumber,
@@ -21,6 +21,9 @@ import {
 import "./permissionsStyle.css";
 
 const CRMModules = ({ callbackActive }: BusinessFormCommonProps) => {
+  const { userPersonalizationData } = useSelector(
+    (state: any) => state.personalization
+  );
   const { allowedModules, crmModules, createCompany, permissions } =
     useSelector((state: any) => state.companies);
   const dispatch = useDispatch();
@@ -108,16 +111,16 @@ const CRMModules = ({ callbackActive }: BusinessFormCommonProps) => {
             <Col md={8}>
               <Row className="g-3">
                 <Col xs={12}>
-                  <Label style={{ fontSize: "25px", fontWeight: "bold" }}>
+                  <H4>
                     Select CRM Modules
                     <span className="txt-danger">*</span>
-                  </Label>
+                  </H4>
                 </Col>
                 {crmModules.map((item: any, index: any) => {
                   return (
                     <div
                       style={{
-                        margin: "15px",
+                        margin: "12px",
                         fontSize: "16px",
                         fontWeight: "bold",
                         display: "flex",
@@ -126,15 +129,14 @@ const CRMModules = ({ callbackActive }: BusinessFormCommonProps) => {
                     >
                       <Col md={6}>{item.name}</Col>
                       <Col md={6}>
-                        <div className="d-flex" key={index}>
-                          <div
-                            className={`text-end flex-shrink-0 icon-state
-                            }`}
-                          >
+                        <div className="d-flex">
+                          <div className={`text-end flex-shrink-0 icon-state`}>
                             <Label className="switch mb-0">
                               <Input
                                 type="checkbox"
-                                defaultChecked={switches == "on" ? true : false}
+                                defaultChecked={
+                                  switches === "on" ? true : false
+                                }
                                 value={switches === "on" ? "on" : "off"}
                                 onChange={(e) => {
                                   if (switches === "on") {
@@ -204,10 +206,10 @@ const CRMModules = ({ callbackActive }: BusinessFormCommonProps) => {
             <Col md={10}>
               <Row className="g-3">
                 <Col xs={12}>
-                  <Label style={{ fontSize: "25px", fontWeight: "bold" }}>
+                  <H4>
                     Select Permissions
                     <span className="txt-danger">*</span>
-                  </Label>
+                  </H4>
                 </Col>
                 <div
                   className="col-md-12 create-group"
@@ -243,14 +245,15 @@ const CRMModules = ({ callbackActive }: BusinessFormCommonProps) => {
                           >
                             <span
                               style={{
-                                fontSize: "17px",
+                                fontSize: "16px",
                                 margin: "15px 0px",
                                 fontWeight: "bold",
                               }}
                             >
                               <label
                                 style={{
-                                  display: "inline-block",
+                                  display: "inline-flex", // Use flexbox
+                                  alignItems: "center", // Center items vertically
                                   position: "relative",
                                   cursor: "pointer",
                                   marginRight: "25px",
@@ -273,13 +276,16 @@ const CRMModules = ({ callbackActive }: BusinessFormCommonProps) => {
                                   className="green"
                                 ></span>
                               </label>
-                              {permission.title}
+                              <span style={{ marginTop: "5px" }}>
+                                {permission.title}
+                              </span>
                             </span>
                             {permission.checked && (
                               <div>
                                 <label
                                   style={{
-                                    display: "inline-block",
+                                    display: "inline-flex", // Use flexbox
+                                    alignItems: "center", // Center items vertically
                                     position: "relative",
                                     cursor: "pointer",
                                     marginRight: "25px",
@@ -301,11 +307,12 @@ const CRMModules = ({ callbackActive }: BusinessFormCommonProps) => {
                                     onClick={(e) => e.stopPropagation()}
                                     className="green"
                                   ></span>
-                                  Read
+                                  <span style={{ marginTop: "5px" }}>Read</span>
                                 </label>
                                 <label
                                   style={{
-                                    display: "inline-block",
+                                    display: "inline-flex", // Use flexbox
+                                    alignItems: "center", // Center items vertically
                                     position: "relative",
                                     cursor: "pointer",
                                     marginRight: "25px",
@@ -327,11 +334,14 @@ const CRMModules = ({ callbackActive }: BusinessFormCommonProps) => {
                                     onClick={(e) => e.stopPropagation()}
                                     className="green"
                                   ></span>
-                                  Create
+                                  <span style={{ marginTop: "5px" }}>
+                                    Create
+                                  </span>
                                 </label>
                                 <label
                                   style={{
-                                    display: "inline-block",
+                                    display: "inline-flex", // Use flexbox
+                                    alignItems: "center", // Center items vertically
                                     position: "relative",
                                     cursor: "pointer",
                                     marginRight: "25px",
@@ -353,11 +363,12 @@ const CRMModules = ({ callbackActive }: BusinessFormCommonProps) => {
                                     onClick={(e) => e.stopPropagation()}
                                     className="green"
                                   ></span>
-                                  Edit
+                                  <span style={{ marginTop: "5px" }}>Edit</span>
                                 </label>
                                 <label
                                   style={{
-                                    display: "inline-block",
+                                    display: "inline-flex", // Use flexbox
+                                    alignItems: "center", // Center items vertically
                                     position: "relative",
                                     cursor: "pointer",
                                     marginRight: "25px",
@@ -379,7 +390,9 @@ const CRMModules = ({ callbackActive }: BusinessFormCommonProps) => {
                                     onClick={(e) => e.stopPropagation()}
                                     className="green"
                                   ></span>
-                                  Delete
+                                  <span style={{ marginTop: "5px" }}>
+                                    Delete
+                                  </span>
                                 </label>
                               </div>
                             )}
@@ -393,15 +406,15 @@ const CRMModules = ({ callbackActive }: BusinessFormCommonProps) => {
             </Col>
           </Row>
         </Col>
-        <Col
-          xs={12}
-          className="text-end d-flex justify-content-end gap-2 align-center"
-        >
+            <Col
+              xs={12}
+              className="text-end d-flex justify-content-end gap-2 align-center"
+            >
           <Button color="primary">{Previous}</Button>
-          <Button color="primary" onClick={handleNextButton}>
-            {Continue}
-          </Button>
-        </Col>
+              <Button color="primary" onClick={handleNextButton}>
+                {Continue}
+              </Button>
+            </Col>
       </Row>
     </Form>
   );

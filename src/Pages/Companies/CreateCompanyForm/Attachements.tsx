@@ -10,8 +10,12 @@ import FileAttachementComponent from "./FileAttachementComponent";
 import { setCreateCompany } from "../../../ReaduxToolkit/Reducer/CompanySlice";
 import { useDispatch, useSelector } from "react-redux";
 import { create } from "../../../Api";
+import { H4 } from "../../../AbstractElements";
 
 const Attachements = ({ callbackActive }: BusinessFormCommonProps) => {
+  const { userPersonalizationData } = useSelector(
+    (state: any) => state.personalization
+  );
   // const subTitle = [
   //   {
   //     text: "",
@@ -43,23 +47,29 @@ const Attachements = ({ callbackActive }: BusinessFormCommonProps) => {
 
   const handleNextButton = (e: any) => {
     e.preventDefault();
-    if (
-      cnicFront !== null &&
-      cnicBack !== null &&
-      ptaCertificate !== null &&
-      ntnFile !== null &&
-      other !== null
-    ) {
-      dispatch(
-        setCreateCompany({
-          ...createCompany,
-        })
-      );
+    // if (
+    //   cnicFront !== null &&
+    //   cnicBack !== null &&
+    //   ptaCertificate !== null &&
+    //   ntnFile !== null &&
+    //   other !== null
+    // ) {
+    // dispatch(
+    //   setCreateCompany({
+    //     ...createCompany,
+    //   })
+    // );
 
-      callbackActive(6);
-    } else {
-      ShowError();
-    }
+    //   callbackActive(6);
+    // } else {
+    //   ShowError();
+    // }
+    callbackActive(6);
+    dispatch(
+      setCreateCompany({
+        ...createCompany,
+      })
+    );
   };
 
   // const onImageChange = (event: any) => {
@@ -136,16 +146,10 @@ const Attachements = ({ callbackActive }: BusinessFormCommonProps) => {
       <div>
         <Row className="g-3">
           <Col xs={12}>
-            <Label
-              style={{
-                fontSize: "25px",
-                fontWeight: "bold",
-                marginLeft: "10px",
-              }}
-            >
+            <H4>
               Legal Attachements
               <span className="txt-danger">*</span>
-            </Label>
+            </H4>
           </Col>
         </Row>
         <Row
@@ -156,8 +160,8 @@ const Attachements = ({ callbackActive }: BusinessFormCommonProps) => {
             borderRadius: "10px",
             marginTop: "15px",
             marginBottom: "40px",
-            marginLeft: "15px",
-            marginRight: "15px",
+            marginLeft: "5px",
+            marginRight: "5px",
           }}
         >
           <FileAttachementComponent
@@ -327,13 +331,10 @@ const Attachements = ({ callbackActive }: BusinessFormCommonProps) => {
       </div> */}
       <Row>
         <Col xs={12} className="text-end">
-          <Button color="primary" onClick={handleNextButton}>
-            Next
-          </Button>
-          {/* <Button color="primary" onClick={handleSubmit}>
-            Submit
-          </Button> */}
-        </Col>
+              <Button color="primary" onClick={handleNextButton}>
+                Next
+              </Button>
+            </Col>
       </Row>
     </Form>
   );

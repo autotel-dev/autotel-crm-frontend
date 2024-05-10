@@ -1,23 +1,18 @@
 import { useEffect, useState } from "react";
 import Logo from "./Logo";
-import { H3, P, H6, H1, H5, H4 } from "../../AbstractElements";
+import { H1, H4 } from "../../AbstractElements";
 import { Button, Form, FormGroup, Input, Label } from "reactstrap";
-import { EmailAddress, Password } from "../../utils/Constant";
-import { SubmitHandler, useForm } from "react-hook-form";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { getAll, login, otpVerification, resendOTP } from "../../Api";
-import successAlert from "../Alerts/SuccessAlert";
-import errorAlert from "../Alerts/ErrorAlert";
+
 import OTPInput from "react-otp-input";
 import "./otpstyles.css";
 import Swal from "sweetalert2";
-import { setToken, setUserData } from "../../ReaduxToolkit/Reducer/UserSlice";
+import { setUserData } from "../../ReaduxToolkit/Reducer/UserSlice";
 import { useDispatch } from "react-redux";
-import { jwtDecode } from "jwt-decode";
 import { getOperatorCompanyUserId, getUserRole } from "../../Api/globals";
 import { setUserPersonalizationData } from "../../ReaduxToolkit/Reducer/PersonalizationSlice";
 import { setActiveCRMModules } from "../../ReaduxToolkit/Reducer/CRMModuleSlice";
-import { setPermissions } from "../../ReaduxToolkit/Reducer/CompanySlice";
 import { setUserPermissions } from "../../ReaduxToolkit/Reducer/PermissionSlice";
 import { ROLES } from "../../constants/roles";
 // import OTPInput, { ResendOTP } from "otp-input-react";
@@ -29,7 +24,6 @@ const OTPForm = ({ alignLogo }: CommonFormPropsType) => {
   const [otp, setOtp] = useState("");
   const userId = localStorage.getItem("userId");
   const [loading, setLoading] = useState(false);
-  const [decodedToken, setDecodedToken] = useState(null);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const header = "Verification Code";
@@ -92,27 +86,27 @@ const OTPForm = ({ alignLogo }: CommonFormPropsType) => {
             });
           }
 
-          if (data.statusCode == 200) {
+          if (data.statusCode === 200) {
             dispatch(setUserData(null));
             const token = data.data.authToken;
             // console.log("response: ", data.data);
             // console.log("token: ", token);
             localStorage.setItem("token", token);
-            if (getUserRole() == ROLES.SUPER_ADMIN) {
+            if (getUserRole() === ROLES.SUPER_ADMIN) {
               dispatch(setUserPermissions([]));
             }
 
-            if (getUserRole() == "OPERATOR") {
+            if (getUserRole() === ROLES.OPERATOR) {
               localStorage.setItem("userId", getOperatorCompanyUserId());
-            } else if (getUserRole() == "COMPANY") {
+            } else if (getUserRole() === ROLES.COMPANY) {
               localStorage.setItem("userId", data.data.userId);
-            } else if (getUserRole() == "SUPER_ADMIN") {
+            } else if (getUserRole() === ROLES.SUPER_ADMIN) {
               localStorage.removeItem("userId");
             }
             const userId = localStorage.getItem("userId");
             getAll({
               url:
-                getUserRole() == "COMPANY" || getUserRole() == "OPERATOR"
+                getUserRole() === ROLES.COMPANY || getUserRole() === ROLES.OPERATOR
                   ? "user/get-allowed-modules"
                   : "crm-module/get-all-active-modules",
             }).then((data: any) => {
@@ -133,7 +127,7 @@ const OTPForm = ({ alignLogo }: CommonFormPropsType) => {
             });
             getAll({
               url:
-                userId == null && userId == undefined
+              userId == null && userId == undefined
                   ? "super-admin/get-personalization"
                   : `company/get-personalization/${userId}`,
 
@@ -161,8 +155,16 @@ const OTPForm = ({ alignLogo }: CommonFormPropsType) => {
                 }
               }
             });
+            dispatch(setUserData(null));
+            getAll({ url: "user/get-user" }).then((parentData: any) => {
+              if (parentData !== undefined) {
+                if (parentData.success) {
+                  dispatch(setUserData(parentData.data.user));
+                }
+              }
+            });
 
-            if (getUserRole() == "COMPANY" || getUserRole() == "OPERATOR") {
+            if (getUserRole() === ROLES.COMPANY || getUserRole() === ROLES.OPERATOR) {
               getAll({ url: "user/get-permissions" })
                 .then((data: any) => {
                   // console.log("api call --- >", data);
@@ -187,7 +189,7 @@ const OTPForm = ({ alignLogo }: CommonFormPropsType) => {
               navigate(`${process.env.PUBLIC_URL}/dashboard`);
             }
           }
-          // if (data.statusCode == 200) {
+          // if (data.statusCode === 200) {
           //   const token = data.data.authToken;
           //   // console.log("response: ", data.data);
           //   // console.log("token: ", token);
@@ -302,7 +304,7 @@ const OTPForm = ({ alignLogo }: CommonFormPropsType) => {
                 </span>
               </H4>
             </div>
-            {timer == 0 && (
+            {timer === 0 && (
               <H4>
                 <span
                   style={{

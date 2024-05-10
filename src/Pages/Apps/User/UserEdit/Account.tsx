@@ -6,7 +6,7 @@ import EditProfileForm from "./EditProfileForm/EditProfileForm";
 import AddProjectsAndUpload from "./AddProjectsAndUpload/AddProjectsAndUpload";
 import SecuritySettings from "./SecuritySettings/SecuritySettings";
 import ServerPermissions from "./ServerPermissions.tsx/ServerPermissions";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { IMAGE_BASE_URL, getAll, getImage } from "../../../../Api";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -19,13 +19,19 @@ import Attachements from "./Attachements/Attachements";
 import Swal from "sweetalert2";
 import AllowedModules from "./AllowedModules/AllowedModules";
 import NoInternetConnection from "../../../NoInternetConnection/NoInternetConnection";
+import { ROLES } from "../../../../constants/roles";
+import ServerCredentials from "./ServerCredentials/ServerCredentials";
 
 const Account = () => {
   const { userPermissions } = useSelector(
     (state: any) => state.userPermissions
   );
+  const { errorData, userData } = useSelector((state: any) => state.user);
   var legalAttachements = userPermissions.find(
     (item: any) => item.title === "Legal Documents"
+  );
+  var serverCredentialsPermissions = userPermissions.find(
+    (item: any) => item.value === "SERVER_CREDENTIALS"
   );
   // console.log("legalAttachements", legalAttachements);
   const dispatch = useDispatch();
@@ -36,6 +42,19 @@ const Account = () => {
   const [ticketImages, setTicketImages] = useState<any[]>([]);
   const [undefinedData, setUndefinedData] = useState<any>(false);
   const [isConnected, setIsConnected] = useState(false);
+  const [notConnectedServers, setNotConnectedServers]: any = useState([]);
+  const serverCredentialsComponent = useRef<HTMLDivElement | null>(null);
+  const handleGoToServerCredentaisl = () => {
+    if (!serverCredentialsComponent.current) return; // Ensure textareaRef.current exists
+    // Scroll to the textarea
+    (serverCredentialsComponent.current as HTMLDivElement).scrollIntoView({
+      behavior: "smooth",
+      block: "start", // Scroll to the center of the viewport
+      inline: "nearest", // Scroll to the nearest edge of the viewport
+    });
+    // Focus on the textarea
+    (serverCredentialsComponent.current as HTMLDivElement).focus();
+  };
 
   useEffect(() => {
     setIsConnected(false);
@@ -44,8 +63,14 @@ const Account = () => {
     setUserDataLoading(true);
     setServerPermissionsLoading(true);
 
-    if (getUserRole() === "COMPANY") {
+    if (getUserRole() === ROLES.COMPANY) {
       getAll({ url: "company/permissions" }).then((data: any) => {
+        const serverIDs = data.data?.serverErrors?.map(
+          (item: any, index: any) => {
+            return item.server._id;
+          }
+        );
+        setNotConnectedServers(serverIDs);
         // console.log("api call --- >", data);
         if (data == undefined) {
           setServerPermissionsLoading(false);
@@ -56,29 +81,17 @@ const Account = () => {
           }
           if (data.success) {
             setServerPermissionsLoading(false);
-            dispatch(setServerPermissions(data.data));
+            dispatch(setServerPermissions(data.data?.userPermissionsArray));
           }
         }
       });
     }
 
     getAll({ url: "user/get-user" }).then((parentData: any) => {
-      // console.log("api call --- >", parentData);
-      // if (parentData == undefined) {
-      //   setUserDataLoading(false);
-      //   setUndefinedData(true);
-      //   Swal.fire({
-      //     text: "Failed to Fetch due to connection refused",
-      //     icon: "error",
-      //     timer: 2000,
-      //     showConfirmButton: false,
-      //   });
-      // }
-
       if (parentData !== undefined) {
         if (
           !parentData.success &&
-          parentData.message == "ERROR_INTERNET_DISCONNECTED"
+          parentData.message === "ERROR_INTERNET_DISCONNECTED"
         ) {
           setIsConnected(true);
         }
@@ -95,84 +108,103 @@ const Account = () => {
         if (parentData.success) {
           setUndefinedData(false);
           dispatch(setUserData(parentData.data.user));
-          if (getUserRole() === "SUPER_ADMIN" || getUserRole() === "OPERATOR") {
+          if (
+            getUserRole() === ROLES.SUPER_ADMIN ||
+            getUserRole() === ROLES.OPERATOR
+          ) {
             setServerPermissionsLoading(false);
             setUserDataLoading(false);
-          } else if (getUserRole() === "COMPANY") {
+          } else if (getUserRole() === ROLES.COMPANY) {
             // cnicFront
             getImage({
               url: `${IMAGE_BASE_URL}/${parentData.data.user.cnicFront.url}`,
             }).then(async (data: any) => {
               // console.log("image api --- >", data);
-              ticketImages.push({
-                key: "cnicFront",
-                url: parentData.data.user.cnicFront.url,
-                blob: data,
-              });
-              // console.log("Ticket Images", ticketImages);
-              // cnicBack
-              getImage({
-                url: `${IMAGE_BASE_URL}/${parentData.data.user.cnicBack.url}`,
-              }).then(async (data: any) => {
-                // console.log("image api --- >", data);
+
+              if (parentData.data.user.cnicFront.url !== "") {
+                ticketImages.push({
+                  key: "cnicFront",
+                  url: parentData.data.user.cnicFront.url,
+                  blob: data,
+                });
+                setTicketImages(ticketImages);
+              }
+            });
+            getImage({
+              url: `${IMAGE_BASE_URL}/${parentData.data.user.cnicBack.url}`,
+            }).then(async (data: any) => {
+              if (parentData.data.user.cnicBack.url !== "") {
                 ticketImages.push({
                   key: "cnicBack",
                   url: parentData.data.user.cnicBack.url,
                   blob: data,
                 });
+                setTicketImages(ticketImages);
+              }
+              // console.log("image api --- >", data);
 
-                // console.log("Ticket Images", ticketImages);
-                // ptaCertificate
-                getImage({
-                  url: `${IMAGE_BASE_URL}/${parentData.data.user.ptaCertificate.url}`,
-                }).then(async (data: any) => {
-                  // console.log("image api --- >", data);
-                  ticketImages.push({
-                    key: "ptaCertificate",
-                    url: parentData.data.user.ptaCertificate.url,
-                    blob: data,
-                  });
-
-                  // console.log("Ticket Images", ticketImages);
-                  // ntnCertificate
-                  getImage({
-                    url: `${IMAGE_BASE_URL}/${parentData.data.user.ntnCertificate.url}`,
-                  }).then(async (data: any) => {
-                    // console.log("image api --- >", data);
-                    ticketImages.push({
-                      key: "ntnCertificate",
-                      url: parentData.data.user.ntnCertificate.url,
-                      blob: data,
-                    });
-
-                    // console.log("Ticket Images", ticketImages);
-
-                    // otherAttachment
-                    getImage({
-                      url: `${IMAGE_BASE_URL}/${parentData.data.user.otherAttachment.url}`,
-                    }).then(async (data: any) => {
-                      // console.log("image api --- >", data);
-                      ticketImages.push({
-                        key: "otherAttachment",
-                        url: parentData.data.user.otherAttachment.url,
-                        blob: data,
-                      });
-
-                      setTicketImages(ticketImages);
-                      // console.log("Ticket Images", ticketImages);
-                      if (ticketImages.length == 5) {
-                        setUserDataLoading(false);
-                      }
-                    });
-                  });
-                });
-              });
+              // console.log("Ticket Images", ticketImages);
+              // ptaCertificate
             });
+            getImage({
+              url: `${IMAGE_BASE_URL}/${parentData.data.user.ptaCertificate.url}`,
+            }).then(async (data: any) => {
+              // console.log("image api --- >", data);
+              if (parentData.data.user.ptaCertificate.url !== "") {
+                ticketImages.push({
+                  key: "ptaCertificate",
+                  url: parentData.data.user.ptaCertificate.url,
+                  blob: data,
+                });
+                setTicketImages(ticketImages);
+              }
+              // console.log("Ticket Images", ticketImages);
+              // ntnCertificate
+            });
+            getImage({
+              url: `${IMAGE_BASE_URL}/${parentData.data.user.ntnCertificate.url}`,
+            }).then(async (data: any) => {
+              // console.log("image api --- >", data);
+              if (parentData.data.user.ntnCertificate.url !== "") {
+                ticketImages.push({
+                  key: "ntnCertificate",
+                  url: parentData.data.user.ntnCertificate.url,
+                  blob: data,
+                });
+                setTicketImages(ticketImages);
+              }
+              // console.log("Ticket Images", ticketImages);
+
+              // otherAttachment
+            });
+            getImage({
+              url: `${IMAGE_BASE_URL}/${parentData.data.user.otherAttachment.url}`,
+            }).then(async (data: any) => {
+              // console.log("image api --- >", data);
+              if (parentData.data.user.otherAttachment.url !== "") {
+                ticketImages.push({
+                  key: "otherAttachment",
+                  url: parentData.data.user.otherAttachment.url,
+                  blob: data,
+                });
+                setTicketImages(ticketImages);
+              }
+              // console.log("Ticket Images", ticketImages);
+              // if (ticketImages.length === 5) {
+              //   setUserDataLoading(false);
+              // }
+            });
+            setUserDataLoading(false);
           }
         }
       }
     });
   }, []);
+  useEffect(() => {
+    if (errorData) {
+      handleGoToServerCredentaisl();
+    }
+  });
 
   return (
     <>
@@ -208,13 +240,25 @@ const Account = () => {
                   <EditMyProfile />
                   <EditProfileForm />
 
-                  {getUserRole() === "COMPANY" && <AllowedModules />}
-                  {getUserRole() === "COMPANY" &&
+                  {getUserRole() === ROLES.COMPANY && <AllowedModules />}
+                  {getUserRole() === ROLES.COMPANY &&
                     legalAttachements !== undefined &&
                     legalAttachements?.read && (
                       <Attachements attachements={ticketImages} />
                     )}
-                  {getUserRole() === "COMPANY" && <ServerPermissions />}
+                  {getUserRole() === ROLES.COMPANY && <ServerPermissions />}
+
+                  <div ref={serverCredentialsComponent}>
+                    {(getUserRole() === ROLES.COMPANY ||
+                      getUserRole() === ROLES.OPERATOR) &&
+                      serverCredentialsPermissions !== undefined &&
+                      serverCredentialsPermissions?.read && (
+                        <ServerCredentials
+                          notConnectedServers={notConnectedServers}
+                        />
+                      )}
+                  </div>
+
                   <SecuritySettings />
 
                   {/* <AddProjectsAndUpload /> */}

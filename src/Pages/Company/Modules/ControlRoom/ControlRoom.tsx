@@ -33,13 +33,18 @@ import ControlRoomAnalytics from "./Analytics/ControlRoomAnalytics";
 import {
   setDevices,
   setDevicesStatuses,
+  setServerDevices,
 } from "../../../../ReaduxToolkit/Reducer/MonitoringSlice";
 import { useNavigate } from "react-router-dom";
 import NoInternetConnection from "../../../NoInternetConnection/NoInternetConnection";
 import { getUserRole } from "../../../../Api/globals";
 import { ROLES } from "../../../../constants/roles";
+import { setErrorData } from "../../../../ReaduxToolkit/Reducer/UserSlice";
 
 const ControlRoom = () => {
+  const { userPersonalizationData } = useSelector(
+    (state: any) => state.personalization
+  );
   const { assignedAlerts, completedAlerts, isConnected, liveAlerts } =
     useSelector((state: any) => state.alerts);
   const { devices } = useSelector((state: any) => state.monitoring);
@@ -47,6 +52,7 @@ const ControlRoom = () => {
   const [loading, setLoading] = useState(true);
   const [devicesLoading, setDevicesLoading] = useState(true);
   const navigate = useNavigate();
+  const [serverErrors, setServerErrors] = useState([]);
   const { userPermissions } = useSelector(
     (state: any) => state.userPermissions
   );
@@ -74,10 +80,10 @@ const ControlRoom = () => {
         dispatch(setLiveAlertsData(null));
       }
       if (data !== undefined) {
-        if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
+        if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
           dispatch(setIsConnected(true));
         }
-        if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
+        if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
           Swal.fire({
             text: `${data.message}`,
             icon: "error",
@@ -87,6 +93,9 @@ const ControlRoom = () => {
         }
         if (data.success) {
           // // console.log("length --- >", data.data.allAlertEvents.length);
+          if (data.data.serverErrors.length !== 0) {
+            setServerErrors(data.data.serverErrors);
+          }
           dispatch(setLiveAlerts(data.data.allAlertEvents));
           dispatch(setLiveAlertsData(data.data));
         }
@@ -108,11 +117,11 @@ const ControlRoom = () => {
         dispatch(setAssignedAlerts([]));
       }
       if (data !== undefined) {
-        if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
+        if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
           dispatch(setIsConnected(true));
           setLoading(false);
         }
-        if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
+        if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
           Swal.fire({
             text: `${data.message}`,
             icon: "error",
@@ -138,10 +147,10 @@ const ControlRoom = () => {
         dispatch(setCompletedAlerts([]));
       }
       if (data !== undefined) {
-        if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
+        if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
           dispatch(setIsConnected(true));
         }
-        if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
+        if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
           Swal.fire({
             text: `${data.message}`,
             icon: "error",
@@ -272,7 +281,7 @@ const ControlRoom = () => {
   const [groupdevicesStatuses, setgroupdevicesStatuses]: any = useState([]);
 
   useEffect(() => {
-    if (devices.length == 0) {
+    if (devices.length === 0) {
       getAll({ url: "company/devices" }).then((data: any) => {
         // // console.log("data", data);
         // if (data == undefined) {
@@ -285,7 +294,7 @@ const ControlRoom = () => {
         //   });
         // }
         if (data !== undefined) {
-          if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
+          if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
             dispatch(setIsConnected(true));
           }
           if (!data.success) {
@@ -301,16 +310,17 @@ const ControlRoom = () => {
           if (data.success) {
             // // console.log("api call --- >", data);
             // // console.log("length --- >", data.data.length);
+            dispatch(setServerDevices(data.data.allDevices));
 
-            for (let i = 0; i < data.data.length; i++) {
-              const element = data.data[i].title;
+            for (let i = 0; i < data.data.allDevices.length; i++) {
+              const element = data.data.allDevices[i].title;
               if (!groups.includes(element)) {
                 groups.push(element);
               }
             }
 
             groups.forEach((title: any) => {
-              groupDevicesObj[title] = data.data
+              groupDevicesObj[title] = data.data.allDevices
                 .filter((obj: any) => obj.title === title)
                 .map((item: any) => ({ ...item, checked: false }));
             });
@@ -333,15 +343,15 @@ const ControlRoom = () => {
 
             // ---------------------- For device status-----------------------------------
 
-            for (let i = 0; i < data.data.length; i++) {
-              const element = data.data[i].online;
+            for (let i = 0; i < data.data.allDevices.length; i++) {
+              const element = data.data.allDevices[i].online;
               if (!statuses.includes(element)) {
                 statuses.push(element);
                 // setMyArray((prevArray) => [...prevArray, element]);
               }
             }
             statuses.forEach((online: any) => {
-              statusDevicesObj[online] = data.data
+              statusDevicesObj[online] = data.data.allDevices
                 .filter((obj: any) => obj.online === online)
                 .map((item: any) => ({ ...item, checked: false }));
             });
@@ -358,8 +368,8 @@ const ControlRoom = () => {
             const notConnectedDevices = [];
             const currentDate = new Date(); // Get the current date and time
 
-            for (let i = 0; i < data.data.length; i++) {
-              const element = data.data[i];
+            for (let i = 0; i < data.data.allDevices.length; i++) {
+              const element = data.data.allDevices[i];
               if (
                 element.expiration_date != null &&
                 element.expiration_date !== ""
@@ -379,12 +389,12 @@ const ControlRoom = () => {
               }
             }
 
-            for (let i = 0; i < data.data.length; i++) {
-              const element = data.data[i];
+            for (let i = 0; i < data.data.allDevices.length; i++) {
+              const element = data.data.allDevices[i];
               if (
                 element.time == null ||
                 element.time === "" ||
-                element.time === undefined
+                element.time == undefined
               ) {
                 notConnectedDevices.push({ ...element, checked: false });
               }
@@ -408,6 +418,47 @@ const ControlRoom = () => {
     }
   }, []);
 
+  useEffect(() => {
+    const showSwalAlerts = (errors: any, index: any) => {
+      // Base case: If index is equal to the length of errors array, stop recursion
+      if (index === errors.length) return;
+
+      const server = errors[index].server;
+      const serverError = errors[index].serverError;
+
+      Swal.fire({
+        title: `${server?.companyName}`,
+        text: `${serverError?.message}`,
+        icon: "error",
+        showCancelButton: true,
+        confirmButtonText: "OK",
+        cancelButtonText: "Update Credentials", // Add "Update Credentials" button
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // User clicked "OK", recursively call showSwalAlerts with the next index
+          showSwalAlerts(errors, index + 1);
+        } else if (result.dismiss === Swal.DismissReason.cancel) {
+          // User clicked "Update Credentials", handle update logic here
+          // You can add your update logic here or call a separate function
+          dispatch(setErrorData(true));
+          navigate(`${process.env.PUBLIC_URL}/users/account`);
+
+          // console.log("Update Credentials clicked");
+        }
+      });
+    };
+
+    const timer = setTimeout(() => {
+      // const serverErrorss = serverErrors;
+      // If there are server errors, start showing alerts
+      if (serverErrors && serverErrors.length !== 0) {
+        showSwalAlerts(serverErrors, 0); // Start from index 0
+      }
+    }, 5000);
+
+    return () => clearTimeout(timer); // Cleanup the timeout on component unmount
+  }, [serverErrors]);
+
   const events = [
     {
       id: "1",
@@ -429,12 +480,12 @@ const ControlRoom = () => {
           <Row className="widget-grid">
             <Breadcrumbs
               mainTitle="Control Room"
-              parent={getUserRole() == ROLES.COMPANY ? "Company" : "Operator"}
+              parent={getUserRole() === ROLES.COMPANY ? "Company" : "Operator"}
               title="Module / Control Room"
             />
           </Row>
 
-          {!loading && !devicesLoading ? (
+          {!loading ? (
             <Row>
               <Row>
                 <ControlRoomAnalytics />
@@ -449,7 +500,13 @@ const ControlRoom = () => {
                       tabs
                       className="simple-wrapper"
                       style={{
-                        backgroundColor: "#63d5be",
+                        backgroundColor: `${
+                          userPersonalizationData !== null &&
+                          userPersonalizationData?.buttonsAndBarsColor !== null
+                            ? userPersonalizationData?.buttonsAndBarsColor
+                            : "#63d5be"
+                        }`,
+
                         borderTopLeftRadius: "10px",
                         borderTopRightRadius: "10px",
                       }}
@@ -457,16 +514,23 @@ const ControlRoom = () => {
                       <NavItem
                         style={{
                           width: "50%",
-                          height: "50px",
+                          height: "40px",
                           textAlign: "center",
-                          fontSize: "22px",
+                          fontSize: "18px",
                           cursor: "pointer",
                         }}
                       >
                         <NavLink
                           className={` ${basicTab === "1" ? "active" : ""}`}
                           style={{
-                            color: `${basicTab === "1" ? "#63d5be" : "white"}`,
+                            color: `${
+                              basicTab === "1"
+                                ? userPersonalizationData !== null &&
+                                  userPersonalizationData?.buttonsAndBarsColor !== null
+                                  ? userPersonalizationData?.buttonsAndBarsColor
+                                  : "#63d5be"
+                                : "white"
+                            }`,
                           }}
                           onClick={() => setBasicTab("1")}
                         >
@@ -476,16 +540,23 @@ const ControlRoom = () => {
                       <NavItem
                         style={{
                           width: "50%",
-                          height: "50px",
+                          height: "40px",
                           textAlign: "center",
-                          fontSize: "22px",
+                          fontSize: "18px",
                           cursor: "pointer",
                         }}
                       >
                         <NavLink
                           className={` ${basicTab === "2" ? "active" : ""}`}
                           style={{
-                            color: `${basicTab === "2" ? "#63d5be" : "white"}`,
+                            color: `${
+                              basicTab === "2"
+                                ? userPersonalizationData !== null &&
+                                  userPersonalizationData?.buttonsAndBarsColor !== null
+                                  ? userPersonalizationData?.buttonsAndBarsColor
+                                  : "#63d5be"
+                                : "white"
+                            }`,
                           }}
                           onClick={() => setBasicTab("2")}
                         >

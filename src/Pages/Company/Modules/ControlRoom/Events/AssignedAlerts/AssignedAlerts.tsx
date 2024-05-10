@@ -1,5 +1,16 @@
-import { Card, CardBody, CardHeader, Col, Table } from "reactstrap";
-import { H3, H4 } from "../../../../../../AbstractElements";
+import {
+  Card,
+  CardBody,
+  CardHeader,
+  Col,
+  FormGroup,
+  PopoverBody,
+  PopoverHeader,
+  Row,
+  Table,
+  UncontrolledPopover,
+} from "reactstrap";
+import { H3, H4, H5, P } from "../../../../../../AbstractElements";
 import { useEffect, useRef, useState } from "react";
 import AssignedAlertModal from "./AssignedAlertModal";
 import { useDispatch, useSelector } from "react-redux";
@@ -11,7 +22,9 @@ import Swal from "sweetalert2";
 
 const AssignedAlerts = () => {
   const dispatch = useDispatch();
-  const { assignedAlerts } = useSelector((state: any) => state.alerts);
+  const { assignedAlerts, liveAlertsData } = useSelector(
+    (state: any) => state.alerts
+  );
   const { userPermissions } = useSelector(
     (state: any) => state.userPermissions
   );
@@ -23,17 +36,24 @@ const AssignedAlerts = () => {
 
   const [dataList, setDataList]: any = useState([]);
   const [loading, setLoading] = useState(false); // State to manage loading
-  const tableHeader = ["ID", "Device", "Alert", "Type", "Message", "Address"];
+  const tableHeader = [
+    // "ID",
+    "Device",
+    "Alert",
+    "Type",
+    "Message",
+    "Address",
+  ];
   const containerRef = useRef(null);
 
   useEffect(() => {
-    if (assignedAlerts.length < 12) {
+    if (assignedAlerts.length > 12) {
       setDataList(assignedAlerts.slice(0, 12)); // Initially display the first 6 elements
     }
   }, [assignedAlerts]);
   useEffect(() => {
     setDataList(assignedAlerts.slice(0, 12)); // Initially display the first 6 elements
-  }, []);
+  }, [assignedAlerts]);
 
   const handleScroll = () => {
     if (!containerRef.current) return; // Ensure containerRef.current exists
@@ -53,14 +73,30 @@ const AssignedAlerts = () => {
   const [basicTab, setBasicTab] = useState("1");
   const [fisrtTime, setFirstTime] = useState(true);
 
+  const [searchValue, setSearchValue] = useState("");
+
   return (
     <Card className="invoice-card">
       <CardBody className="transaction-card">
+        <Row>
+          <FormGroup className="col-md-12 create-group">
+            <P>Search Vehicles</P>
+            <input
+              className="form-control"
+              value={searchValue}
+              onChange={(e) => setSearchValue(e.target.value)}
+              type="text"
+              placeholder="Search Assigned Vehicles"
+            />
+          </FormGroup>
+        </Row>
+
         <div
           ref={containerRef}
           className="table-responsive theme-scrollbar recent-wrapper"
           style={{
             overflowY: "scroll",
+            overflowX: "auto",
             maxHeight: "calc(66vh - 20px)", // Subtract scrollbar width from max height
             WebkitOverflowScrolling: "touch", // Enable momentum scrolling on iOS
             scrollbarWidth: "thin", // Specify scrollbar width
@@ -75,99 +111,136 @@ const AssignedAlerts = () => {
             <Table className="display order-wrapper" id="recent-order">
               <thead>
                 <tr>
-                  {tableHeader.map((data, index) => (
-                    <th key={index}>{data}</th>
-                  ))}
+                  <th>Device</th>
+                  <th>Alert</th>
+                  <th>Type</th>
+                  <th>Message</th>
+                  <th>Address</th>
                 </tr>
               </thead>
               <tbody>
-                {dataList.length == 0 ? (
+                {dataList.length === 0 ? (
                   <tr>
                     <td colSpan={6} style={{ fontSize: "25px" }}>
                       No Assigned Alerts Found
                     </td>
                   </tr>
                 ) : (
-                  dataList.map((data: any, index: any) => (
-                    <tr
-                      style={{
-                        cursor: "pointer",
-                      }}
-                      key={index}
-                      onClick={async () => {
-                        // if (
-                        //   allAlertsPreview != undefined &&
-                        //   allAlertsPreview?.edit
-                        // ) {
-                        // }
-                        const serverInfo = serverCredentials(data.server);
-                        // // console.log("serverInfo", serverInfo);
-                        setBasicTab("1");
-                        setIsUpdateModalOpen(true);
-                        // // console.log("isUpdateModalOpen: ", isUpdateModalOpen);
-                        const sendData = {
-                          eventId: data._id,
-                          serverId: serverInfo?.serverId,
-                          serverHashKey: serverInfo?.serverHashKey,
-                          deviceId: data.deviceId,
-                        };
-                        // // console.log(sendData);
-                        try {
-                          await create(sendData, {
-                            url: "alert-events/get-alert-event-by-id",
-                          }).then((data: any) => {
-                            // // console.log(data);
-                            if (
-                              !data.success &&
-                              data.message == "ERROR_INTERNET_DISCONNECTED"
-                            ) {
-                            }
-                            if (!data.success) {
-                              Swal.fire({
-                                text: `${data.message}`,
-                                icon: "error",
-                                timer: 2000,
-                                showConfirmButton: false,
+                  dataList
+                    .filter((data: any) =>
+                      data.deviceName
+                        .toLowerCase()
+                        .includes(searchValue.toLowerCase())
+                    )
+                    .map((data: any, index: any) => (
+                      <tr
+                        style={{
+                          cursor: "pointer",
+                        }}
+                        key={index}
+                        onClick={async () => {
+
+                          var checkServer =
+                            liveAlertsData?.connectedServers?.find(
+                              (item: any) => item.server._id === data.server
+                            );
+                          // console.log("server", checkServer);
+                          if (checkServer.isConnected) {
+                            const serverInfo = serverCredentials(data.server);
+
+                            setBasicTab("1");
+                            setIsUpdateModalOpen(true);
+
+                            const sendData = {
+                              eventId: data._id,
+                              serverId: serverInfo?.serverId,
+                              serverHashKey: serverInfo?.serverHashKey,
+                              deviceId: data.deviceId,
+                            };
+
+                            try {
+                              await create(sendData, {
+                                url: "alert-events/get-alert-event-by-id",
+                              }).then((data: any) => {
+                                // // console.log(data);
+                                if (
+                                  !data.success &&
+                                  data.message === "ERROR_INTERNET_DISCONNECTED"
+                                ) {
+                                }
+                                if (!data.success) {
+                                  Swal.fire({
+                                    text: `${data.message}`,
+                                    icon: "error",
+                                    timer: 2000,
+                                    showConfirmButton: false,
+                                  });
+                                  setIsUpdateModalOpen(false);
+                                }
+                                if (data.success) {
+                                  dispatch(setModalData(data.data));
+                                }
                               });
-                              setIsUpdateModalOpen(false);
+                              // Handle successful post creation (e.g., show a success message, redirect, etc.)
+                            } catch (error: any) {
+                              // Handle error (e.g., show an error message)
+                              dispatch(setModalData(undefined));
                             }
-                            if (data.success) {
-                              dispatch(setModalData(data.data));
-                            }
-                          });
-                          // Handle successful post creation (e.g., show a success message, redirect, etc.)
-                        } catch (error: any) {
-                          // Handle error (e.g., show an error message)
-                          dispatch(setModalData(undefined));
-                          // // console.error("Error creating post:", error);
-                        }
+                          } else {
+                            Swal.fire({
+                              title: `${checkServer.server.companyName}`,
+                              text: `You cannot get the info of this alert because its Server Credentials are wrong`,
+                              icon: "error",
+                              // timer: 2000,
+                              showConfirmButton: true,
+                            });
+                          }
+                        }}
+                      >
+                        {/* <td>{data.eventId}</td> */}
+                        <td>
+                          <div className="d-flex">
+                            <div className="flex-grow-1">
+                              <h5
+                                style={{
+                                  fontSize: "14px",
+                                  fontWeight: "bold",
+                                }}
+                              >
+                                {data.deviceName}
+                              </h5>
+                              <div style={{ fontSize: "10px" }}>
+                                {data.createdAt.slice(0, 10)}
+                              </div>
 
-                      }}
-                    >
-                      <td>{data.eventId}</td>
-                      <td>
-                        <div className="d-flex">
-                          <div className="flex-grow-1 ms-2">
-                            <H4>{data.deviceName}</H4>
-                            <span style={{ fontSize: "10px" }}>
-                              {data.createdAt.toString().slice(0, 10) +
-                                " " +
-                                data.createdAt.toString().slice(11, 19)}
-                            </span>
+                              <div style={{ fontSize: "10px" }}>
+                                {data.createdAt.slice(11, 19)}
+                              </div>
+                            </div>
                           </div>
-                        </div>
-                      </td>
-
-                      <td className={`txt-primary`}>{data.message}</td>
-                      <td>{data.type}</td>
-                      <td>{data.message}</td>
-                      <td>
-                        {data.address == null && data.address == undefined
-                          ? "N/A"
-                          : data.address}
-                      </td>
-                    </tr>
-                  ))
+                        </td>
+                        <td className={`txt-primary`}>{data.message}</td>
+                        <td>{data.type}</td>
+                        <td>{data.message}</td>
+                        <td id="addressAssignedAlerts">
+                          {data.address == null
+                            ? "N/A"
+                            : data.address.length > 10
+                              ? data.address.substring(0, 10) + "..."
+                              : data.address}
+                        </td>
+                        {data.address != null && (
+                          <UncontrolledPopover
+                            placement="top"
+                            trigger="hover"
+                            target="addressAssignedAlerts"
+                          >
+                            <PopoverHeader>Address</PopoverHeader>
+                            <PopoverBody>{data.address}</PopoverBody>
+                          </UncontrolledPopover>
+                        )}
+                      </tr>
+                    ))
                 )}
               </tbody>
             </Table>

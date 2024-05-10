@@ -1,7 +1,5 @@
 import { Card, CardBody, Col, Container, Input, Label, Row } from "reactstrap";
 import CommonHeader from "../../Common/CommonHeader";
-import { citiesListHeading } from "../../utils/Constant";
-import DataTable from "react-data-table-component";
 import { useEffect, useState } from "react";
 import { getAll } from "../../Api";
 import { useDispatch, useSelector } from "react-redux";
@@ -15,7 +13,6 @@ import {
   setCRMModulesStart,
   setCRMModulesEnd,
   setId,
-  setValue,
   setInActiveActiveModules,
   setIsConnected,
 } from "../../ReaduxToolkit/Reducer/CRMModuleSlice";
@@ -26,15 +23,14 @@ import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 
 const CRMModuleList = () => {
-  const { crmModules, loading, error, id, value, activeInActiveModules } =
-    useSelector((state: any) => state.crmModules);
-  const { noDataFound } = useSelector((state: any) => state.noDataFound);
+  const { crmModules, loading, id, activeInActiveModules } = useSelector(
+    (state: any) => state.crmModules
+  );
   const dispatch = useDispatch();
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [moduleName, setModuleName] = useState("");
   const [iconClass, setIconClass] = useState("");
   const [isActive, setIsActive] = useState(false);
-  const navigate = useNavigate();
 
   useEffect(() => {
     dispatch(setCRMModulesStart());
@@ -56,7 +52,7 @@ const CRMModuleList = () => {
 
       if (data !== undefined) {
         dispatch(setNoDataFound(data.message));
-        if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
+        if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
           dispatch(setIsConnected(true));
         }
         if (!data.success) {
@@ -143,9 +139,11 @@ const CRMModuleList = () => {
                   // }}
                 />
                 <span
-                  className={`switch-state ${
-                    row.isActive ? "bg-primary" : "bg-secondary"
-                  }`}
+                  // className={`switch-state ${
+                  //   row.isActive ? "bg-primary" : "bg-secondary"
+                  // }`}
+                  className="switch-state"
+                  style={{ backgroundColor: row.isActive ? "green" : "red" }}
                 />
               </Label>
             </div>

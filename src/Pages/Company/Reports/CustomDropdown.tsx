@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "./CustomDropdown.css"; // Import your CSS file for styling
 import { Data } from "@react-google-maps/api";
 
@@ -80,6 +80,25 @@ const CustomDropdown: React.FC<PropsTypes> = ({
     // console.log("selectedItems", selectedItems);
   }, [selectedItems]);
 
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const handleClickOutside = (event: MouseEvent) => {
+    if (
+      dropdownRef.current &&
+      !dropdownRef.current.contains(event.target as Node)
+    ) {
+      // Add type assertion here
+      setIsDropdownOpen(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
     setSearchValue("");
@@ -87,8 +106,11 @@ const CustomDropdown: React.FC<PropsTypes> = ({
 
   const filteredData = data
     .map((group: any) => {
-      const filteredItems = group.items.filter((item: any) =>
-        item.name.toLowerCase().includes(searchValue.toLowerCase())
+      const filteredItems = group.items.filter(
+        (item: any) =>
+          item.name.toLowerCase().includes(searchValue.toLowerCase()) ||
+          item.imei.includes(searchValue) ||
+          item.id == searchValue
       );
       return { ...group, items: filteredItems };
     })
@@ -98,12 +120,12 @@ const CustomDropdown: React.FC<PropsTypes> = ({
     <div className="custom-dropdown">
       <div className="dropdown-toggle" onClick={toggleDropdown}>
         <div className="selected-items">
-          {selectedItems.length == 0 && "No device selected"}
+          {selectedItems.length === 0 && "No device selected"}
           {selectedItems.map((item: any) => `${item.name}, `)}
         </div>
       </div>
       {isDropdownOpen && (
-        <div className="dropdown-options">
+        <div className="dropdown-options" ref={dropdownRef}>
           <input
             type="text"
             value={searchValue}
@@ -143,29 +165,41 @@ const CustomDropdown: React.FC<PropsTypes> = ({
                 />
                 <div className="group-title">{group.title}</div>
               </div>
-              {group.items.map((item: any) => (
-                <div
-                  key={item.id}
-                  className={`item ${
-                    selectedItems.some(
-                      (selectedItem) => selectedItem.name === item.name
-                    )
-                      ? "selected"
-                      : ""
-                  }`}
-                  onClick={() => handleItemClick(item.id, item.name, group)}
-                  style={{ padding: "10px" }}
-                >
-                  <input
-                    type="checkbox"
-                    checked={selectedItems.some(
-                      (selectedItem) => selectedItem.name === item.name
-                    )}
-                    onChange={() => handleItemClick(item.id, item.name, group)}
-                  />
-                  <span>{`${item.name}`}</span>
-                </div>
-              ))}
+              {group.items
+                .filter(
+                  (bodyItem: any) =>
+                    bodyItem.name
+                      .toLowerCase()
+                      .includes(searchValue.toLowerCase()) ||
+                    bodyItem.imei.includes(searchValue) ||
+                    bodyItem.id == searchValue
+                )
+                .slice(0, 150)
+                .map((item: any) => (
+                  <div
+                    key={item.id}
+                    className={`item ${
+                      selectedItems.some(
+                        (selectedItem) => selectedItem.name === item.name
+                      )
+                        ? "selected"
+                        : ""
+                    }`}
+                    onClick={() => handleItemClick(item.id, item.name, group)}
+                    style={{ padding: "10px" }}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={selectedItems.some(
+                        (selectedItem) => selectedItem.name === item.name
+                      )}
+                      onChange={() =>
+                        handleItemClick(item.id, item.name, group)
+                      }
+                    />
+                    <span>{`${item.name}`}</span>
+                  </div>
+                ))}
             </div>
           ))}
         </div>

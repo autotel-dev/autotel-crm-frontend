@@ -2,9 +2,9 @@ import { PlusCircle } from "react-feather";
 import { Col } from "reactstrap";
 import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { Button, FormGroup, Label, Modal, ModalBody, Row } from "reactstrap";
+import { Button, FormGroup, Modal, ModalBody, Row } from "reactstrap";
 import { Cancel } from "../../utils/Constant";
-import { H3 } from "../../AbstractElements";
+import { H3, P } from "../../AbstractElements";
 import { create, getAll } from "../../Api";
 import { useDispatch, useSelector } from "react-redux";
 import { Type } from "../Countries/CountryTypes/CountryTypes";
@@ -18,8 +18,11 @@ import {
 import Swal from "sweetalert2";
 
 const CreateNewCRMModule = () => {
+  const { userPersonalizationData } = useSelector(
+    (state: any) => state.personalization
+  );
   const dispatch = useDispatch();
-  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
+
   const [loading, setLoading] = useState(false);
   const {
     register,
@@ -52,7 +55,7 @@ const CreateNewCRMModule = () => {
             if (data !== undefined) {
               if (
                 !data.success &&
-                data.message == "ERROR_INTERNET_DISCONNECTED"
+                data.message === "ERROR_INTERNET_DISCONNECTED"
               ) {
                 setLoading(false);
                 setAddModal(false);
@@ -133,8 +136,15 @@ const CreateNewCRMModule = () => {
     <Col md={6}>
       <div className="text-end">
         <button
-          className="btn btn-primary"
-          style={{ color: "white" }}
+          className={`btn ${
+            userPersonalizationData?.buttonsAndBarsColor == null ? "btn-primary" : ""
+          }`}
+          style={{
+            color: "white",
+            backgroundColor: `${
+              userPersonalizationData !== null && userPersonalizationData.customColor2
+            }`,
+          }}
           onClick={addToggle}
         >
           <PlusCircle />
@@ -156,7 +166,7 @@ const CreateNewCRMModule = () => {
             >
               <Row>
                 <FormGroup className="col-md-12 create-group">
-                  <Label>Module Name</Label>
+                  <P>Module Name</P>
                   <input
                     className="form-control"
                     type="text"
@@ -169,7 +179,7 @@ const CreateNewCRMModule = () => {
               </Row>
               <Row>
                 <FormGroup className="col-md-12 create-group">
-                  <Label>Icon Class</Label>
+                  <P>Icon Class</P>
                   <input
                     className="form-control"
                     type="text"
@@ -180,17 +190,17 @@ const CreateNewCRMModule = () => {
                   </span>
                 </FormGroup>
               </Row>
-              <Button color="primary" className="me-1">
-                {loading ? "Loading ..." : `Add`}
-              </Button>
-              &nbsp;&nbsp;
-              <Button
-                disabled={loading ? true : false}
-                color="secondary"
-                onClick={addToggle}
-              >
-                {Cancel}
-              </Button>
+                  <Button color="primary" className="me-1">
+                    {loading ? "Loading ..." : `Add`}
+                  </Button>
+                  &nbsp;&nbsp;
+                  <Button
+                    disabled={loading ? true : false}
+                    color="secondary"
+                    onClick={addToggle}
+                  >
+                    {Cancel}
+                  </Button>
             </form>
           </ModalBody>
         </Modal>

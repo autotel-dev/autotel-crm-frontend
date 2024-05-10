@@ -17,8 +17,8 @@ import { useDispatch, useSelector } from "react-redux";
 import Loader from "../Loader/Loader";
 import { getUserRole } from "../../Api/globals";
 import Swal from "sweetalert2";
-import { useNavigate } from "react-router-dom";
 import NoInternetConnection from "../NoInternetConnection/NoInternetConnection";
+import { ROLES } from "../../constants/roles";
 
 const Support = () => {
   const { supportStatistics, isConnected } = useSelector(
@@ -27,7 +27,6 @@ const Support = () => {
   const dispatch = useDispatch();
   const [statisticsloading, setStatisticsLoading] = useState(true);
   const [reportsLoading, setReportsLoading] = useState(true);
-  const navigate = useNavigate();
   useEffect(() => {
     dispatch(setIsConnected(false));
   }, []);
@@ -37,7 +36,7 @@ const Support = () => {
     setStatisticsLoading(true);
     setReportsLoading(true);
 
-    if (getUserRole() === "SUPER_ADMIN") {
+    if (getUserRole() === ROLES.SUPER_ADMIN) {
       getAll({ url: "support/bug-report/get-statistics" }).then((data: any) => {
         // console.log("api call --- >", data);
         // if (data == undefined) {
@@ -52,7 +51,7 @@ const Support = () => {
         //   return;
         // }
         if (data !== undefined) {
-          if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
+          if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
             dispatch(setIsConnected(true));
           }
           if (!data.success) {
@@ -95,8 +94,10 @@ const Support = () => {
 
     getAll({
       url:
-        getUserRole() === "COMPANY"
+        getUserRole() === ROLES.COMPANY
           ? "company/get-all-bug-reports"
+          : getUserRole() === ROLES.OPERATOR
+          ? "operator/get-all-bug-reports"
           : "support/bug-report/get-all-bug-reports",
     }).then((data: any) => {
       // console.log("api call --- >", data);
@@ -115,7 +116,7 @@ const Support = () => {
       }
 
       if (data !== undefined) {
-        if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
+        if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
           dispatch(setIsConnected(true));
         }
         if (!data.success) {
@@ -175,16 +176,16 @@ const Support = () => {
             <Row>
               <Col sm={12}>
                 <Card>
-                  <CommonHeader
+                  {/* <CommonHeader
                     title=""
                     subTitle={[
                       { text: "List of supports opened by customers" },
                     ]}
-                  />
+                  /> */}
                   {!statisticsloading && !reportsLoading ? (
                     <CardBody>
-                      {supportStatistics === null &&
-                      getUserRole() === "SUPER_ADMIN" ? (
+                      {supportStatistics == null &&
+                      getUserRole() === ROLES.SUPER_ADMIN ? (
                         <div
                           style={{
                             display: "flex",
@@ -205,7 +206,7 @@ const Support = () => {
                           </div>
                         </div>
                       ) : (
-                        getUserRole() === "SUPER_ADMIN" && <SupportList />
+                        getUserRole() === ROLES.SUPER_ADMIN && <SupportList />
                       )}
                       <SupportTable />
                     </CardBody>

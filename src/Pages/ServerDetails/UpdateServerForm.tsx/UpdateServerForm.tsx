@@ -1,4 +1,4 @@
-import { H2, Image } from "../../../AbstractElements";
+import { H4, Image,P } from "../../../AbstractElements";
 import Breadcrumbs from "../../../CommonElements/Breadcrumbs/Breadcrumbs";
 import ShowError from "../CreateServerForm/ShowError";
 import {
@@ -143,7 +143,7 @@ const UpdateServerForm = () => {
                 dispatch(setNoDataFound(data.message));
                 if (
                   !data.success &&
-                  data.message == "ERROR_INTERNET_DISCONNECTED"
+                  data.message === "ERROR_INTERNET_DISCONNECTED"
                 ) {
                   setLoading(false);
                 }
@@ -160,7 +160,7 @@ const UpdateServerForm = () => {
                   // console.log("hhg");
                   dispatch(setServers(data.data.allServers));
                   dispatch(setFilterServers(data.data.allServers));
-                  navigate(`${process.env.PUBLIC_URL}/setup/server_details`);
+                  navigate(`${process.env.PUBLIC_URL}/super-admin/setup/server_details`);
                 }
               }
               dispatch(setServersEnd());
@@ -198,7 +198,7 @@ const UpdateServerForm = () => {
                         marginTop: "30px",
                       }}
                     >
-                      <H2>Server Info</H2>
+                      <H4>Server Info</H4>
                       <Row>
                         <Col
                           xs={9}
@@ -212,10 +212,10 @@ const UpdateServerForm = () => {
                       style={{ marginBottom: "65px", marginTop: "20px" }}
                     >
                       <Col xl={4} sm={6}>
-                        <Label>
+                        <P>
                           Company Name
                           <span className="txt-danger">*</span>
-                        </Label>
+                        </P>
                         <Input
                           type="text"
                           placeholder="Enter Company Name"
@@ -227,10 +227,10 @@ const UpdateServerForm = () => {
                         />
                       </Col>
                       <Col xl={4} sm={6}>
-                        <Label>
+                        <P>
                           Service Provider
                           <span className="txt-danger">*</span>
-                        </Label>
+                        </P>
                         <Input
                           type="text"
                           placeholder="Enter Service Provider"
@@ -242,10 +242,10 @@ const UpdateServerForm = () => {
                         />
                       </Col>
                       <Col xl={4} xs={12}>
-                        <Label>
+                        <P>
                           IP Address
                           <span className="txt-danger">*</span>
-                        </Label>
+                        </P>
                         <Input
                           id="ipAddress"
                           type="text"
@@ -258,10 +258,10 @@ const UpdateServerForm = () => {
                         />
                       </Col>
                       <Col xl={4} sm={6}>
-                        <Label>
+                        <P>
                           Server URL
                           <span className="txt-danger">*</span>
-                        </Label>
+                        </P>
                         <Input
                           type="text"
                           placeholder="Enter Server URL"
@@ -274,10 +274,10 @@ const UpdateServerForm = () => {
                         />
                       </Col>
                       <Col xl={4} sm={6}>
-                        <Label>
+                        <P>
                           Login User Software
                           <span className="txt-danger">*</span>
-                        </Label>
+                        </P>
                         <Input
                           type="text"
                           placeholder="Enter Login User Software"
@@ -289,10 +289,10 @@ const UpdateServerForm = () => {
                         />
                       </Col>
                       <Col xl={4} xs={12}>
-                        <Label>
+                        <P>
                           Operating System
                           <span className="txt-danger">*</span>
-                        </Label>
+                        </P>
                         <Input
                           id="operatingSystem"
                           type="text"
@@ -305,10 +305,10 @@ const UpdateServerForm = () => {
                         />
                       </Col>
                       <Col xl={4} xs={12}>
-                        <Label>
+                        <P>
                           Login User Server
                           <span className="txt-danger">*</span>
-                        </Label>
+                        </P>
                         <Input
                           id="loginUserServer"
                           type="text"
@@ -321,10 +321,10 @@ const UpdateServerForm = () => {
                         />
                       </Col>
                       <Col xl={4} xs={12}>
-                        <Label>
+                        <P>
                           SSH Port
                           <span className="txt-danger">*</span>
-                        </Label>
+                        </P>
                         <Input
                           id="sshPort"
                           type="text"
@@ -337,10 +337,10 @@ const UpdateServerForm = () => {
                         />
                       </Col>
                       <Col xl={4} xs={12}>
-                        <Label>
+                        <P>
                           Server Specifications
                           <span className="txt-danger">*</span>
-                        </Label>
+                        </P>
                         <Input
                           id="serverSpecifications"
                           type="text"
@@ -359,17 +359,17 @@ const UpdateServerForm = () => {
 
                     {/*  */}
 
-                    <H2>Server Credentials</H2>
+                    <H4>Server Credentials</H4>
 
                     <Row
                       className="g-3"
                       style={{ marginBottom: "65px", marginTop: "20px" }}
                     >
                       <Col sm={6}>
-                        <Label>
+                        <P>
                           Multi Cloud Web Login
                           <span className="txt-danger">*</span>
-                        </Label>
+                        </P>
                         <Input
                           defaultValue={formData.multiCloudWebLogin}
                           name="multiCloudWebLogin"
@@ -381,10 +381,10 @@ const UpdateServerForm = () => {
                         />
                       </Col>
                       <Col sm={6}>
-                        <Label>
+                        <P>
                           Login Password Software
                           <span className="txt-danger">*</span>
-                        </Label>
+                        </P>
 
                         <InputGroup>
                           <Input
@@ -423,17 +423,17 @@ const UpdateServerForm = () => {
                       </Col>
                     </Row>
 
-                    <H2>Google Account Credentials</H2>
+                    <H4>Google Account Credentials</H4>
 
                     <Row
                       className="g-3"
                       style={{ marginBottom: "65px", marginTop: "20px" }}
                     >
                       <Col sm={6}>
-                        <Label>
+                        <P>
                           Email Address
                           <span className="txt-danger">*</span>
-                        </Label>
+                        </P>
                         <Input
                           defaultValue={formData.googleAccount.emailAddress}
                           name="emailAddress"
@@ -449,10 +449,10 @@ const UpdateServerForm = () => {
                         />
                       </Col>
                       <Col sm={6}>
-                        <Label>
+                        <P>
                           Password
                           <span className="txt-danger">*</span>
-                        </Label>
+                        </P>
 
                         <InputGroup>
                           <Input
@@ -492,17 +492,17 @@ const UpdateServerForm = () => {
                       </Col>
                     </Row>
 
-                    <H2>Firebase Account credentials</H2>
+                    <H4>Firebase Account credentials</H4>
 
                     <Row
                       className="g-3"
                       style={{ marginBottom: "65px", marginTop: "20px" }}
                     >
                       <Col sm={6}>
-                        <Label>
+                        <P>
                           Email Address
                           <span className="txt-danger">*</span>
-                        </Label>
+                        </P>
                         <Input
                           defaultValue={formData.firebaseAccount.emailAddress}
                           name="emailAddress"
@@ -518,10 +518,10 @@ const UpdateServerForm = () => {
                         />
                       </Col>
                       <Col sm={6}>
-                        <Label>
+                        <P>
                           Password
                           <span className="txt-danger">*</span>
-                        </Label>
+                        </P>
                         <InputGroup>
                           <Input
                             defaultValue={formData.firebaseAccount.password}
@@ -560,17 +560,17 @@ const UpdateServerForm = () => {
                       </Col>
                     </Row>
 
-                    <H2>API Keys</H2>
+                    <H4>API Keys</H4>
 
                     <Row
                       className="g-3"
                       style={{ marginBottom: "65px", marginTop: "20px" }}
                     >
                       <Col sm={6}>
-                        <Label>
+                        <P>
                           Google Maps API Key
                           <span className="txt-danger">*</span>
-                        </Label>
+                        </P>
                         <Input
                           defaultValue={formData.googleMapApiKey}
                           name="googleMapApiKey"

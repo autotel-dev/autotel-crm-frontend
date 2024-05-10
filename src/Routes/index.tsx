@@ -8,13 +8,11 @@ import {
 import PrivateRoute from "./PrivateRoute";
 import LayoutRoutes from "./LayoutRoutes";
 import { authRoutes } from "./AuthRoutes";
-import Login from "../Pages/Authentication/Login";
 import LoginForm from "../Pages/Auth/Auth";
 import VerifyOTP from "../Pages/VerifyOTP/VerifyOTP";
 import { useEffect } from "react";
 
 const Routers = () => {
-  const { userId } = useParams();
   useEffect(() => {
     // console.log("userId", userId);
     // // console.log("useParams", userId);

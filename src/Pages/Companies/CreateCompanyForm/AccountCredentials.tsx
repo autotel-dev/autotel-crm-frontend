@@ -18,7 +18,7 @@ import {
   PAN,
   Previous,
 } from "../../../utils/Constant";
-import { H3, Image, LI, UL } from "../../../AbstractElements";
+import { H3, Image, LI, P, UL } from "../../../AbstractElements";
 import { dynamicImage } from "../../../Service";
 import { popularBanksList } from "../../../Data/Forms/FormsLayout/FormWizardData";
 import { setServersAddItemsList } from "../../../ReaduxToolkit/Reducer/CompanySlice";
@@ -29,6 +29,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 
 const AccountCredentials = ({ callbackActive }: BusinessFormCommonProps) => {
+  const { userPersonalizationData } = useSelector(
+    (state: any) => state.personalization
+  );
   const { createCompany, imageBackground, companyLogo } = useSelector(
     (state: any) => state.companies
   );
@@ -84,10 +87,10 @@ const AccountCredentials = ({ callbackActive }: BusinessFormCommonProps) => {
     >
       <Row className="g-3">
         <Col sm={6}>
-          <Label>
+          <P>
             Email Address
             <span className="txt-danger">*</span>
-          </Label>
+          </P>
           <Input
             value={emailAddress}
             name="emailAddress"
@@ -97,17 +100,10 @@ const AccountCredentials = ({ callbackActive }: BusinessFormCommonProps) => {
           />
         </Col>
         <Col sm={6}>
-          <Label>
+          <P>
             Password
             <span className="txt-danger">*</span>
-          </Label>
-          {/* <Input
-            type="password"
-            placeholder="Enter Password"
-            value={password}
-            name="password"
-            onChange={getUserData}
-          /> */}
+          </P>
 
           <InputGroup>
             <Input
@@ -141,10 +137,10 @@ const AccountCredentials = ({ callbackActive }: BusinessFormCommonProps) => {
         </Col>
 
         {/* <Col xl={6} sm={6}>
-          <Label>
+          <P>
             Image Title
             <span className="txt-danger">*</span>
-          </Label>
+          </P>
           <Input
             type="text"
             placeholder="Enter Image Title"
@@ -154,10 +150,10 @@ const AccountCredentials = ({ callbackActive }: BusinessFormCommonProps) => {
           />
         </Col>
         <Col xl={6} sm={6}>
-          <Label>
+          <P>
             Company Title
             <span className="txt-danger">*</span>
-          </Label>
+          </P>
           <Input
             type="text"
             placeholder="Enter Company Title"
@@ -177,17 +173,17 @@ const AccountCredentials = ({ callbackActive }: BusinessFormCommonProps) => {
             category="companyLogo"
           />
         </Row> */}
-        <Col
-          xs={12}
-          className="text-end d-flex justify-content-end gap-2 align-center"
-        >
-          <Button color="primary" onClick={() => callbackActive(1)}>
-            {Previous}
-          </Button>
-          <Button color="primary" onClick={handleNextButton}>
-            {Continue}
-          </Button>
-        </Col>
+            <Col
+              xs={12}
+              className="text-end d-flex justify-content-end gap-2 align-center"
+            >
+              <Button color="primary" onClick={() => callbackActive(1)}>
+                {Previous}
+              </Button>
+              <Button color="primary" onClick={handleNextButton}>
+                {Continue}
+              </Button>
+            </Col>
       </Row>
     </Form>
   );

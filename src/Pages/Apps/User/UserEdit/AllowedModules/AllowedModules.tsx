@@ -2,6 +2,7 @@ import {
   Button,
   Card,
   CardBody,
+  CardHeader,
   Col,
   Input,
   Label,
@@ -9,7 +10,7 @@ import {
   Table,
 } from "reactstrap";
 import CommonHeader from "../../../../../Common/CommonHeader";
-import { H4, H5 } from "../../../../../AbstractElements";
+import { H4, H5, P } from "../../../../../AbstractElements";
 import { useSelector } from "react-redux";
 import "./allowedModules.css";
 
@@ -20,10 +21,9 @@ const AllowedModules = () => {
   return (
     <Col md={12}>
       <Card>
-        <CommonHeader
-          title="Allowed Modules"
-          headClass="card-title mb-0 pb-0"
-        />
+        <CardHeader className="pb-0">
+          <H4>Allowed Modules</H4>
+        </CardHeader>
         <CardBody>
           <Row
             style={{
@@ -55,9 +55,7 @@ const AllowedModules = () => {
                         alignItems: "center",
                       }}
                     >
-                      <span style={{ fontSize: "17px", margin: "15px 0px" }}>
-                        {module.name}
-                      </span>
+                      <P>{module.name}</P>
                       <div>
                         <label
                           style={{
@@ -65,6 +63,7 @@ const AllowedModules = () => {
                             position: "relative",
                             cursor: "pointer",
                             marginRight: "25px",
+                            marginBottom: "15px",
                             fontSize: "18px",
                           }}
                           onClick={(e) => e.stopPropagation()}
