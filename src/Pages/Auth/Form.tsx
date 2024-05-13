@@ -214,7 +214,7 @@ const CommonForm = ({ alignLogo }: CommonFormPropsType) => {
           }
 
           reset({
-            emailAddress: "",
+            // emailAddress: "",
             password: "",
           });
         });

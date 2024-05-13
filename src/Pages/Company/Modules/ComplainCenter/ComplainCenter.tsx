@@ -21,7 +21,7 @@ import NoInternetConnection from "../../../NoInternetConnection/NoInternetConnec
 import { ROLES } from "../../../../constants/roles";
 import ComplainList from "./ComplainList";
 import ComplainTable from "./ComplainTable";
-import { setAllComplains, setComplainRoleSelection, setComplainStatusTypes, setComplainTypesList } from "../../../../ReaduxToolkit/Reducer/ComplainCenterSlice";
+import { setAllComplains, setComplainCenterRoles, setComplainCenterStatistics, setComplainPriorityTypes, setComplainRoleSelection, setComplainStatusTypes, setComplainTypesList } from "../../../../ReaduxToolkit/Reducer/ComplainCenterSlice";
 import { setDevices, setDevicesStatuses, setServerDevices } from "../../../../ReaduxToolkit/Reducer/MonitoringSlice";
 
 const ComplainCenter = () => {
@@ -40,7 +40,9 @@ const ComplainCenter = () => {
     setStatisticsLoading(true);
     setComplaintsLoading(true);
 
-    getAll({ url: "support/bug-report/get-statistics" }).then((data: any) => {
+    getAll({ url: "complaint-center/get-statistics" }).then((data: any) => {
+      // console.log("Data", data);
+
       if (data !== undefined) {
         if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
           dispatch(setIsConnected(true));
@@ -56,17 +58,21 @@ const ComplainCenter = () => {
         }
 
         if (data.success) {
+          dispatch(setComplainCenterRoles(data.data.InternalComplaintsStatistics.subRoleCounts))
           const mappedArray = Object.entries(
-            data.data.bugReportsStatistics
+            data.data.InternalComplaintsStatistics
           ).map(([key, value]) => {
             // Remove "total" from the key and replace "Count" with "Tickets"
-            const formattedKey = key
-              .replace("total", "")
-              .replace("Count", " Complains");
-            return { key: [formattedKey], value: value };
+            if (key !== "subRoleCounts") {
+              const formattedKey = key
+                .replace("total", "")
+                .replace("Count", "");
+              return { key: formattedKey, value: value };
+            }
           });
+          mappedArray.pop()
           // console.log(mappedArray);
-          dispatch(setSupportStatistics(mappedArray));
+          dispatch(setComplainCenterStatistics(mappedArray));
           setStatisticsLoading(false);
         }
       }
@@ -133,6 +139,16 @@ const ComplainCenter = () => {
         if (data.success) {
           // console.log("hhg");
           dispatch(setComplainStatusTypes(data.data.internalComplaintStatusTypes));
+        }
+      }
+    });
+
+    getAll({ url: "complaint-center/get-priorty-status-types" }).then((data: any) => {
+      // console.log("api call --- >", data);
+      if (data !== undefined) {
+        if (data.success) {
+          // console.log("hhg");
+          dispatch(setComplainPriorityTypes(data.data.internalComplaintPriortyStatusTypes));
         }
       }
     });

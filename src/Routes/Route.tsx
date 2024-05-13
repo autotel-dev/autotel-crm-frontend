@@ -115,6 +115,7 @@ import Dashboard from "../Pages/DashBoard/Dashboard";
 import ComplainDetails from "../Pages/Company/Modules/ComplainCenter/ComplainDetails";
 import ComplainCenter from "../Pages/Company/Modules/ComplainCenter/ComplainCenter";
 import ComplainType from "../Pages/ComplainType/ComplainType";
+import EmailGateway from "../Pages/EmailGateway/EmailGateway";
 
 const routes = [
   // dashboard routes
@@ -606,11 +607,19 @@ const routes = [
     permissionValue: "AllLogs",
   },
 
+  {
+    path: `${process.env.PUBLIC_URL}/super-admin/setup/email_gateway`,
+    Component: <EmailGateway />,
+    allowedUserRoles: [ROLES.SUPER_ADMIN],
+    isProtected: true,
+    permissionValue: "EmailGateway",
+  },
+
   // Support
   {
     path: `${process.env.PUBLIC_URL}/support`,
     Component: <Support />,
-    allowedUserRoles: [ROLES.SUPER_ADMIN],
+    allowedUserRoles: [ROLES.SUPER_ADMIN, ROLES.COMPANY, ROLES.OPERATOR],
     isProtected: true,
     permissionValue: "Support",
   },
@@ -714,9 +723,10 @@ const routes = [
     permissionValue: "Complain Center",
   },
   {
-    path: `${process.env.PUBLIC_URL}/company/modules/complain-center/complainDetails/:complainId`,
+    path: `${process.env.PUBLIC_URL}/company/modules/complain-center/complainDetails/:complaintId`,
     Component: <ComplainDetails />,
   },
+
   // Users
   {
     path: `${process.env.PUBLIC_URL}/company/users`,
@@ -727,13 +737,13 @@ const routes = [
   },
 
   // Support
-  {
-    path: `${process.env.PUBLIC_URL}/support`,
-    Component: <Support />,
-    isProtected: true,
-    allowedUserRoles: [ROLES.COMPANY, ROLES.OPERATOR],
-    permissionValue: PERMISSION_VALUES.SUPPORT,
-  },
+  // {
+  //   path: `${process.env.PUBLIC_URL}/support`,
+  //   Component: <Support />,
+  //   isProtected: true,
+  //   allowedUserRoles: [ROLES.COMPANY],
+  //   permissionValue: PERMISSION_VALUES.SUPPORT,
+  // },
   // Tasks
   {
     path: `${process.env.PUBLIC_URL}/company/tasks`,
@@ -783,12 +793,16 @@ const routes = [
     permissionValue: "Complain Center",
   },
   {
-    path: `${process.env.PUBLIC_URL}/support`,
-    Component: <Support />,
-    isProtected: true,
-    allowedUserRoles: [ROLES.OPERATOR],
-    permissionValue: PERMISSION_VALUES.SUPPORT,
+    path: `${process.env.PUBLIC_URL}/operator/modules/complain-center/complainDetails/:complaintId`,
+    Component: <ComplainDetails />,
   },
+  // {
+  //   path: `${process.env.PUBLIC_URL}/support`,
+  //   Component: <Support />,
+  //   isProtected: true,
+  //   allowedUserRoles: [ROLES.OPERATOR],
+  //   permissionValue: PERMISSION_VALUES.SUPPORT,
+  // },
   // Not Accessible
 
   {

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Select } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { setPriorityStatus } from "../../../../../ReaduxToolkit/Reducer/SupportSlice";
+import { getUserRole, getUserRoleID } from "../../../../../Api/globals";
 interface PropTypes {
     priority: any,
     role: string,
@@ -24,8 +25,8 @@ const SelectComplainRole: React.FC<PropTypes> = ({ priority, role, setRole }) =>
     }, []);
     return (
         <Select
-            value={priority == "GENERAL" ? "None" : role}
-            disabled={priority == "GENERAL"}
+            value={getUserRole() == "OPERATOR" ? getUserRoleID() : role}
+            disabled={getUserRole() == "OPERATOR"}
             showSearch
             style={{ width: "100%", height: 36 }}
             placeholder="Select Role"

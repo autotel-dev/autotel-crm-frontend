@@ -96,6 +96,21 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
           title: "Server Management",
           link: `${process.env.PUBLIC_URL}/super-admin/setup/server_management`,
         },
+        {
+          svgIcon: "bonus-kit",
+          title: "SMS Gateway",
+          link: `${process.env.PUBLIC_URL}/dashboards/crmdashboard`,
+        },
+        {
+          svgIcon: "bonus-kit",
+          title: "WhatsApp Gateway",
+          link: `${process.env.PUBLIC_URL}/dashboards/crmdashboard`,
+        },
+        {
+          svgIcon: "bonus-kit",
+          title: "Email Gateway",
+          link: `${process.env.PUBLIC_URL}/super-admin/setup/email_gateway`,
+        },
       ],
     },
     // {

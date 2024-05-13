@@ -37,7 +37,7 @@ interface PropsTypes {
 
 const ExtendPackage: React.FC<PropsTypes> = ({
   isVisible,
-  setIsVisible = () => {},
+  setIsVisible = () => { },
   companyId,
   packageId,
   packageExpirationDate,
@@ -248,7 +248,8 @@ const ExtendPackage: React.FC<PropsTypes> = ({
                       .toISOString()
                       .split("T")[0]
                   }
-                  // {...register("days")}
+                  value={customDate == "" ? new Date().toISOString().split("T")[0] : customDate}
+                // {...register("days")}
                 />
               </FormGroup>
             )}

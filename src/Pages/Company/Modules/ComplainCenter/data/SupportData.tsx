@@ -37,8 +37,8 @@ export interface ComplainDataType {
   id: string;
   device_name: string;
   user:string;
-  description: string;
-  role: string;
+  comment: string;
+  department: string;
   server: string;
   status: string;
   priorty: string;
@@ -51,42 +51,51 @@ export const supportColumns = [
     selector: (row: ComplainDataType) => row["id"],
     sortable: true,
     center: true,
-    width: "180px", // Set the width for this column
+    width: "130px", // Set the width for this column
   },
   {
     name: "Device Name",
     selector: (row: ComplainDataType) => row["device_name"],
     sortable: true,
     center: true,
-    width: "150px", // Set the width for this column
+    width: "140px", // Set the width for this column
   },
   {
     name: "User",
     selector: (row: ComplainDataType) => row["user"],
     sortable: true,
     center: true,
-    width: "150px", // Set the width for this column
+    width: "140px", // Set the width for this column
   },
   {
-    name: "Description",
-    selector: (row: ComplainDataType) => row["description"],
+    name: "Comment",
+    selector: (row: ComplainDataType) => row["comment"],
     sortable: true,
     center: true,
-    width: "230px", // Set the width for this column
+    width: "220px", // Set the width for this column
   },
   {
-    name: "Role",
-    selector: (row: ComplainDataType) => row["role"],
+    name: "Department",
+    selector: (row: ComplainDataType) => row["department"],
     sortable: true,
     center: true,
-    width: "200px", // Set the width for this column
+    width: "140px", // Set the width for this column
+    cell: (row: ComplainDataType) => (
+      <div
+        style={{
+          paddingRight: "10px",
+        }}
+      >
+        {formatUnderscoredString(row.department)}
+      </div>
+    ),
   },
   {
     name: "Server",
     selector: (row: ComplainDataType) => row["server"],
     sortable: true,
     center: true,
-    width: "230px", // Set the width for this column
+    width: "200px", // Set the width for this column
   },
 
   {
@@ -98,7 +107,7 @@ export const supportColumns = [
     cell: (row: ComplainDataType) => (
       <div
         style={{
-          width: "120px",
+          width: "100px",
           textAlign: "center",
           padding: "5px",
           borderRadius: "5px",
@@ -156,7 +165,7 @@ export const supportColumns = [
     ),
   },
   {
-    name: "Date",
+    name: "Date & Time",
     selector: (row: ComplainDataType) => row["date"],
     sortable: true,
     center: true,

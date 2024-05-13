@@ -165,7 +165,7 @@ const ComplainList = () => {
       countrybadge: "warning",
     },
   ];
-  const { supportStatistics } = useSelector((state: any) => state.support);
+  const { complainCenterStatistics, complainCenterRoles } = useSelector((state: any) => state.complainCenter);
   const { userPersonalizationData } = useSelector(
     (state: any) => state.personalization
   );
@@ -252,15 +252,13 @@ const ComplainList = () => {
             height: "30px",
             transition: "width 0.5s",
             color: "white",
-            backgroundColor: `${
-              userPersonalizationData !== null &&
+            backgroundColor: `${userPersonalizationData !== null &&
               userPersonalizationData?.buttonsAndBarsColor
-            }`,
+              }`,
             borderRadius: "5px",
           }}
-          className={`${
-            userPersonalizationData?.buttonsAndBarsColor == null ? "btn-primary" : ""
-          }`}
+          className={`${userPersonalizationData?.buttonsAndBarsColor == null ? "btn-primary" : ""
+            }`}
         >
           <div
             style={{
@@ -310,8 +308,8 @@ const ComplainList = () => {
                 onClick={(e: any) => {
                   toggleDropdown(e);
                 }}
-                // onMouseOver={toggleDropdown}
-                // onMouseOut={toggleDropdown}
+              // onMouseOver={toggleDropdown}
+              // onMouseOut={toggleDropdown}
               >
                 <div style={{ fontSize: "24px", color: "white" }}>&#9776;</div>
               </div>
@@ -333,86 +331,86 @@ const ComplainList = () => {
                 <div className="dropdown-options-analytics">
                   <div
                     className="dropdown-item"
-                    // onClick={(e) => {
-                    //   setSelectedFilter("Today");
-                    //   const yesterday = new Date();
-                    //   yesterday.setDate(yesterday.getDate() - 1);
-                    //   const startDate = yesterday.toISOString();
-                    //   const endDate = new Date().toISOString();
-                    //   setFromDate(startDate);
-                    //   setToDate(endDate);
+                  // onClick={(e) => {
+                  //   setSelectedFilter("Today");
+                  //   const yesterday = new Date();
+                  //   yesterday.setDate(yesterday.getDate() - 1);
+                  //   const startDate = yesterday.toISOString();
+                  //   const endDate = new Date().toISOString();
+                  //   setFromDate(startDate);
+                  //   setToDate(endDate);
 
-                    //   getAll({
-                    //     url: `control-room/dashboard/statistics?fromDate=${startDate}&toDate=${endDate}`,
-                    //   }).then((data: any) => {
-                    //     // // // console.log("api call --- >", data);
+                  //   getAll({
+                  //     url: `control-room/dashboard/statistics?fromDate=${startDate}&toDate=${endDate}`,
+                  //   }).then((data: any) => {
+                  //     // // // console.log("api call --- >", data);
 
-                    //     if (data !== undefined) {
-                    //       if (data.success) {
-                    //         // // // // console.log("length --- >", data.data);
-                    //         dispatch(setDashboardStatistics(data.data));
-                    //         toggleDropdown(e);
-                    //       }
-                    //     }
-                    //   });
-                    // }}
+                  //     if (data !== undefined) {
+                  //       if (data.success) {
+                  //         // // // // console.log("length --- >", data.data);
+                  //         dispatch(setDashboardStatistics(data.data));
+                  //         toggleDropdown(e);
+                  //       }
+                  //     }
+                  //   });
+                  // }}
                   >
                     Today
                   </div>
                   <div
                     className="dropdown-item"
-                    // onClick={(e) => {
-                    //   setSelectedFilter("1 Week");
-                    //   const oneWeek = new Date();
-                    //   oneWeek.setDate(oneWeek.getDate() - 7);
-                    //   const startDate = oneWeek.toISOString();
-                    //   const endDate = new Date().toISOString();
-                    //   setFromDate(startDate);
-                    //   setToDate(endDate);
+                  // onClick={(e) => {
+                  //   setSelectedFilter("1 Week");
+                  //   const oneWeek = new Date();
+                  //   oneWeek.setDate(oneWeek.getDate() - 7);
+                  //   const startDate = oneWeek.toISOString();
+                  //   const endDate = new Date().toISOString();
+                  //   setFromDate(startDate);
+                  //   setToDate(endDate);
 
-                    //   getAll({
-                    //     url: `control-room/dashboard/statistics?fromDate=${startDate}&toDate=${endDate}`,
-                    //   }).then((data: any) => {
-                    //     // // // console.log("api call --- >", data);
+                  //   getAll({
+                  //     url: `control-room/dashboard/statistics?fromDate=${startDate}&toDate=${endDate}`,
+                  //   }).then((data: any) => {
+                  //     // // // console.log("api call --- >", data);
 
-                    //     if (data !== undefined) {
-                    //       if (data.success) {
-                    //         // // // // console.log("length --- >", data.data);
+                  //     if (data !== undefined) {
+                  //       if (data.success) {
+                  //         // // // // console.log("length --- >", data.data);
 
-                    //         dispatch(setDashboardStatistics(data.data));
-                    //         toggleDropdown(e);
-                    //       }
-                    //     }
-                    //   });
-                    // }}
+                  //         dispatch(setDashboardStatistics(data.data));
+                  //         toggleDropdown(e);
+                  //       }
+                  //     }
+                  //   });
+                  // }}
                   >
                     1 Week
                   </div>
                   <div
                     className="dropdown-item"
-                    // onClick={(e) => {
-                    //   setSelectedFilter("1 Month");
-                    //   const oneMonth = new Date();
-                    //   oneMonth.setDate(oneMonth.getDate() - 30);
-                    //   const startDate = oneMonth.toISOString();
-                    //   const endDate = new Date().toISOString();
-                    //   setFromDate(startDate);
-                    //   setToDate(endDate);
+                  // onClick={(e) => {
+                  //   setSelectedFilter("1 Month");
+                  //   const oneMonth = new Date();
+                  //   oneMonth.setDate(oneMonth.getDate() - 30);
+                  //   const startDate = oneMonth.toISOString();
+                  //   const endDate = new Date().toISOString();
+                  //   setFromDate(startDate);
+                  //   setToDate(endDate);
 
-                    //   getAll({
-                    //     url: `control-room/dashboard/statistics?fromDate=${startDate}&toDate=${endDate}`,
-                    //   }).then((data: any) => {
-                    //     // // // console.log("api call --- >", data);
+                  //   getAll({
+                  //     url: `control-room/dashboard/statistics?fromDate=${startDate}&toDate=${endDate}`,
+                  //   }).then((data: any) => {
+                  //     // // // console.log("api call --- >", data);
 
-                    //     if (data !== undefined) {
-                    //       if (data.success) {
-                    //         // // // // console.log("length --- >", data.data);
-                    //         dispatch(setDashboardStatistics(data.data));
-                    //         toggleDropdown(e);
-                    //       }
-                    //     }
-                    //   });
-                    // }}
+                  //     if (data !== undefined) {
+                  //       if (data.success) {
+                  //         // // // // console.log("length --- >", data.data);
+                  //         dispatch(setDashboardStatistics(data.data));
+                  //         toggleDropdown(e);
+                  //       }
+                  //     }
+                  //   });
+                  // }}
                   >
                     1 Month
                   </div>
@@ -433,7 +431,7 @@ const ComplainList = () => {
             <div>
               <Col xl="12" className="widget-sell">
                 <Row>
-                  {saleRevenueData.map((data: any, index: any) => (
+                  {complainCenterStatistics.map((data: any, index: any) => (
                     <Col
                       xl="2"
                       lg="2"
@@ -445,7 +443,7 @@ const ComplainList = () => {
                       }}
                     >
                       <div className="sale">
-                        <H3>{data.title}</H3>
+                        <H3>{data.key !== "InternalComplaints" ? data.key : "Total"}</H3>
                         <h5
                           style={{
                             fontWeight: "bold",
@@ -454,7 +452,7 @@ const ComplainList = () => {
                             marginBottom: "15px",
                           }}
                         >
-                          {data.count}
+                          {data.value}
                         </h5>
                         <P className="d-flex">
                           <span className={`bg-light-${data.color} me-2`}>
@@ -494,10 +492,10 @@ const ComplainList = () => {
                               loader={<div>{"Loading Chart"}</div>}
                               data={[
                                 ["Complains", "Hours per Day"],
-                                ["Pending", 2],
-                                ["New", 3],
-                                ["In Progress", 5],
-                                ["Resolved", 4],
+                                ["Pending", complainCenterStatistics[0]?.value],
+                                ["New", complainCenterStatistics[1]?.value],
+                                ["Resolved", complainCenterStatistics[2]?.value],
+                                ["InProgress", complainCenterStatistics[3]?.value],
                               ]}
                               options={{
                                 backgroundColor: "transparent", // Set chart background color as transparent
@@ -527,78 +525,7 @@ const ComplainList = () => {
                     </div>
                   </Col>
                 </Row>
-                {/* <Row>
-                  <div
-                    style={{
-                      display: "flex",
-                      margin: "20px 0px",
-                      overflow: "scroll",
-                      scrollbarWidth: "none",
-                    }}
-                  >
-                    {topCountriesData.map((data, index) => (
-                      <li
-                        style={{
-                          backgroundColor: "#f5f6f9",
-                          borderRadius: "8px",
-                          padding: "8px",
-                          marginRight: "8px",
-                          listStyle: "none",
-                          display: "flex",
-                          alignItems: "center",
-                        }}
-                        key={index}
-                      >
-                        <div
-                          style={{
-                            width: "35px",
-                            height: "35px",
-                            borderRadius: "100px",
-                          }}
-                        >
-                          <img
-                            height="100%"
-                            width="100%"
-                            src={UserProfile}
-                            alt="user"
-                            style={{
-                              borderRadius: "100px",
-                            }}
-                          />
-                        </div>
-                        <div
-                          className="Countries"
-                          style={{
-                            marginLeft: "10px",
-                            width: "180px",
-                            display: "flex",
-                            justifyContent: "space-between",
-                          }}
-                        >
-                          <H5>{data.country}</H5>
-                          <div
-                            style={{
-                              padding: "6px",
-                              width: "30px",
-                              height: "30px",
-                              borderRadius: "100px",
-                              backgroundColor: "black",
-                              color: "white",
-                              display: "flex",
-                              justifyContent: "center",
-                              alignItems: "center",
-                              // fontFamily: "Sedan, serif",
-                              // fontWeight: "400",
-                              // fontStyle: "normal",
-                            }}
-                          >
-                            5
-                          </div>
-                        </div>
-                      </li>
-                    ))}
-                  </div>
-                </Row> */}
+
                 <Row>
                   <div
                     style={{
@@ -643,9 +570,9 @@ const ComplainList = () => {
                         paddingRight:
                           "24px" /* Add right padding to make space for right bracket */,
                       }}
-                      // onScroll={(e) => setScrollPosition(e.target.scrollLeft)}
+                    // onScroll={(e) => setScrollPosition(e.target.scrollLeft)}
                     >
-                      {topCountriesData.map((data, index) => (
+                      {complainCenterRoles.map((data: any, index: any) => (
                         <li
                           style={{
                             backgroundColor: "#f5f6f9",
@@ -684,7 +611,7 @@ const ComplainList = () => {
                               justifyContent: "space-between",
                             }}
                           >
-                            <H5>{data.country}</H5>
+                            <H5>{data.name}</H5>
                             <div
                               style={{
                                 padding: "6px",
@@ -701,7 +628,7 @@ const ComplainList = () => {
                                 // fontStyle: "normal",
                               }}
                             >
-                              5
+                              {data.count}
                             </div>
                             {/* <H6 className="mt-1 mb-0">{data.percentage}</H6> */}
                           </div>

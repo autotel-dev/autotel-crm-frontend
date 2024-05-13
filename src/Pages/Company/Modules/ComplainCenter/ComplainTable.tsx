@@ -7,10 +7,10 @@ import { H4 } from "../../../../AbstractElements";
 import { useNavigate } from "react-router-dom";
 import CreateNewTicket from "./CreateNewComplain";
 import { useDispatch, useSelector } from "react-redux";
-import { setTableRow } from "../../../../ReaduxToolkit/Reducer/SupportSlice";
 import { getUserRole } from "../../../../Api/globals";
 import { ROLES } from "../../../../constants/roles";
 import CreateNewComplain from "./CreateNewComplain";
+import { setTableRow } from "../../../../ReaduxToolkit/Reducer/ComplainCenterSlice";
 
 const ComplainTable = () => {
   const dispatch = useDispatch();
@@ -34,8 +34,8 @@ const ComplainTable = () => {
         id: item?.complaintId,
         device_name: item?.deviceName,
         user: item?.createdBy.fullName,
-        description: item?.description,
-        role: item?.subRole.name,
+        comment: item?.description,
+        department: item?.subRole.name,
         server: item?.server.companyName,
         status: item?.status,
         priorty: item?.priorty == null ? "N/A" : item?.priorty,
@@ -104,9 +104,17 @@ const ComplainTable = () => {
 
     // Navigate to the ticketDetails page with the row data
     dispatch(setTableRow(row));
-    navigate(
-      `${process.env.PUBLIC_URL}/company/modules/complain-center/complainDetails/${row.ticket_id}`
-    );
+    if (getUserRole() == "COMPANY") {
+      navigate(
+        `${process.env.PUBLIC_URL}/company/modules/complain-center/complainDetails/${row.complaint_id}`
+      );
+    }
+    if (getUserRole() == "OPERATOR") {
+      navigate(
+        `${process.env.PUBLIC_URL}/operator/modules/complain-center/complainDetails/${row.complaint_id}`
+      );
+    }
+
   };
   return (
     <div className="table-responsive support-table">
@@ -176,7 +184,7 @@ const ComplainTable = () => {
         pagination
         selectableRows
         // onSelectedRowsChange={handleRowSelected}
-        // onRowClicked={handleRowClicked} // Pass the event handler for row clicks
+        onRowClicked={handleRowClicked} // Pass the event handler for row clicks
         clearSelectedRows={toggleDelete}
         style={{
           cursor: "pointer",

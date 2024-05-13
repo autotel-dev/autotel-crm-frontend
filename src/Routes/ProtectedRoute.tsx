@@ -36,6 +36,7 @@ const ProtectedRoute: React.FC<PropTypes> = ({
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+
     //   // console.log(
     //     "protected route path here crmActiveModules: ",
     //     crmActiveModules
@@ -50,8 +51,14 @@ const ProtectedRoute: React.FC<PropTypes> = ({
     };
 
     const validatePermissions = () => {
+
+
       const userRole = getUserRole(); // Assuming getUserRole() returns the user's role
+      // console.log("userRole", userRole);
+      // console.log("allowedUserRoles", allowedUserRoles);
+
       if (allowedUserRoles.includes(userRole)) {
+        // console.log("permissionValue outside if dash dash 3", permissionValue);
         // console.log("userRole check");
 
         const pathname = window.location.pathname;
@@ -118,22 +125,15 @@ const ProtectedRoute: React.FC<PropTypes> = ({
             setHasPermission(true);
             return;
           }
+          // console.log("permissionValue outside if", permissionValue);
+
           if (
-            // permissionValue === PERMISSION_VALUES.DASHBOARD ||
             permissionValue === PERMISSION_VALUES.USER ||
             permissionValue === PERMISSION_VALUES.SUPPORT ||
             permissionValue === PERMISSION_VALUES.PROFILE
           ) {
-            // if (
-            //   userRole === ROLES.SUPER_ADMIN &&
-            //   permissionValue === PERMISSION_VALUES.DASHBOARD
-            // ) {
-            //   setLoading(false);
-            //   setIsConnected(false);
-            //   setHasPermission(true);
-            //   return;
-            // }
-            // console.log("permissions check");
+            // console.log("permissionValue inside if", permissionValue);
+
             getAll({
               url: "user/get-permissions",
             }).then((data: any) => {
@@ -208,6 +208,8 @@ const ProtectedRoute: React.FC<PropTypes> = ({
     };
 
     validatePermissions();
+    // console.log("hasPermission", hasPermission);
+
   }, [hasPermission]);
 
   return loading ? (
