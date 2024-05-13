@@ -16,7 +16,7 @@ import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { IMAGE_BASE_URL, getAll, getImage, patch } from "../../../../Api";
 import Loader from "../../../Loader/Loader";
-import { setTicketDetails } from "../../../../ReaduxToolkit/Reducer/SupportSlice";
+
 import { Select } from "antd";
 import {
   formatUnderscoredString,
@@ -27,21 +27,23 @@ import { useParams } from "react-router-dom";
 import Swal from "sweetalert2";
 import { ROLES } from "../../../../constants/roles";
 import Breadcrumbs from "../../../../CommonElements/Breadcrumbs/Breadcrumbs";
+import { setComplainDetails, setComplainPriorityTypes, setComplainStatusTypes } from "../../../../ReaduxToolkit/Reducer/ComplainCenterSlice";
 
 const ComplainDetails = () => {
   const { userPersonalizationData } = useSelector(
     (state: any) => state.personalization
   );
-  const { complainId } = useParams();
+  const { complaintId } = useParams();
   const [itemsLength, setItemsLength] = useState(2);
   const [showMore, setShowMore] = useState(false);
-  const [imageUrl, setImageUrl] = useState("");
-  const [ticketImages, setTicketImages] = useState<any[]>([]);
   const [full, setFull] = useState(false);
 
-  const { tableRow, ticketDetails } = useSelector(
-    (state: any) => state.support
+
+  const { tableRow, complainDetails } = useSelector(
+    (state: any) => state.complainCenter
   );
+  const [changeStatus, setChangeStatus] = useState(tableRow?.status);
+  const [changePriortyStatus, setChangePriortyStatus] = useState(tableRow?.priorty);
   // // console.log("tableRow", tableRow);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null); // Ref for the textarea element
   const [loading, setLoading] = useState(true);
@@ -84,44 +86,25 @@ const ComplainDetails = () => {
 
   useEffect(() => {
     setLoading(true);
-    if (tableRow.status === "NEW" && getUserRole() === ROLES.SUPER_ADMIN) {
+    if (tableRow?.status === "NEW") {
       // console.log("IF");
       patch(
-        { updatedStatus: "IN_PROGRESS", resolvingDate: null },
+        { updatedStatus: "IN_PROGRESS", updatedPriortyStatus: changePriortyStatus, resolvingDate: null },
         {
-          url: `support/bug-report/update-status/${complainId}`,
+          url: `complaint-center/update-internal-complaint/${complaintId}`,
         }
       ).then((data: any) => {
         // console.log("api call --- >", data);
         if (data !== undefined) {
           if (data.success) {
             getAll({
-              url: `support/bug-report/get-bug-report/${complainId}`,
+              url: `complaint-center/get-internal-complaint/${complaintId}`,
             }).then((data: any) => {
               // console.log("api call --- >", data);
               if (data !== undefined) {
                 if (data.success) {
-                  dispatch(setTicketDetails(data.data.bugReport));
-                  setTicketImages([]);
-                  if (data.data.bugReport.images.length === 0) {
-                    setLoading(false);
-                  }
-                  data.data.bugReport.images.map((image: any, index: any) => {
-                    // console.log("image", image.url);
-
-                    getImage({
-                      url: `${IMAGE_BASE_URL}/${image.url}`,
-                    }).then(async (data: any) => {
-                      // console.log("image api --- >", data);
-                      setTicketImages((prevImages) => [...prevImages, data]);
-
-                      // console.log("Ticket Images", ticketImages);
-                      // console.log("objectURL: ", data);
-                    });
-                    if (index === data.data.bugReport.images.length - 1) {
-                      setLoading(false);
-                    }
-                  });
+                  dispatch(setComplainDetails(data.data.internalComplaint));
+                  setLoading(false);
                 }
               }
             });
@@ -131,32 +114,16 @@ const ComplainDetails = () => {
     } else {
       // console.log("Else");
       getAll({
-        url: `support/bug-report/get-bug-report/${complainId}`,
+        url: `complaint-center/get-internal-complaint/${complaintId}`,
       }).then((data: any) => {
         // console.log("api call --- >", data);
         if (data !== undefined) {
           if (data.success) {
-            dispatch(setTicketDetails(data.data.bugReport));
-            setTicketImages([]);
-            if (data.data.bugReport.images.length === 0) {
-              setLoading(false);
-            }
-            data.data.bugReport.images.map((image: any, index: any) => {
-              // console.log("image", image.url);
+            dispatch(setComplainDetails(data.data.internalComplaint));
+            setChangeStatus(complainDetails?.status);
+            setChangePriortyStatus(complainDetails?.priorty);
+            setLoading(false);
 
-              getImage({
-                url: `${IMAGE_BASE_URL}/${image.url}`,
-              }).then(async (data: any) => {
-                // console.log("image api --- >", data);
-                setTicketImages((prevImages) => [...prevImages, data]);
-
-                // console.log("Ticket Images", ticketImages);
-                // console.log("objectURL: ", data);
-              });
-              if (index === data.data.bugReport.images.length - 1) {
-                setLoading(false);
-              }
-            });
           }
         }
       });
@@ -183,41 +150,45 @@ const ComplainDetails = () => {
       hours = 12;
     }
 
-    return `${day}, ${hours}:${
-      minutes < 10 ? "0" + minutes : minutes
-    } ${amOrPm}`;
+    return `${day}, ${hours}:${minutes < 10 ? "0" + minutes : minutes
+      } ${amOrPm}`;
   };
+
+  const [sendMessageLoading, setSendMessageLoading] = useState(false);
 
   const sendMessage = () => {
     if (replyText.length > 0) {
       patch(
         { message: replyText },
         {
-          url: `support/bug-report/${complainId}/send-message`,
+          url: `complaint-center/internal-complaint/${complaintId}/send-message`,
         }
       ).then((data: any) => {
+        setSendMessageLoading(false);
         // console.log("api call --- >", data);
         setReplyText("");
         if (data !== undefined) {
           if (data.success) {
             getAll({
-              url: `support/bug-report/get-bug-report/${complainId}`,
+              url: `complaint-center/get-internal-complaint/${complaintId}`,
             }).then((data: any) => {
+
               // console.log("api call --- >", data);
               if (data !== undefined) {
                 if (data.success) {
-                  dispatch(setTicketDetails(data.data.bugReport));
-                  if (data.data.bugReport.messages.length > 2) {
-                    setItemsLength(data.data.bugReport.messages.length);
+                  dispatch(setComplainDetails(data.data.internalComplaint));
+                  if (data.data.internalComplaint.messages.length > 2) {
+                    setItemsLength(data.data.internalComplaint.messages.length);
                   }
-
-                  // console.log("hhg");
                 }
               }
             });
           }
         }
       });
+    }
+    else {
+      setSendMessageLoading(false)
     }
   };
   const calculateTimeAgo = (date: string) => {
@@ -256,18 +227,15 @@ const ComplainDetails = () => {
     return time;
   };
   const [isEdit, setEdit] = useState(false);
-  const [changeStatus, setChangeStatus] = useState(tableRow.status);
-  const [changePriortyStatus, setChangePriortyStatus] = useState(
-    tableRow.priorty
-  );
+
   const handleEdit = () => {
     setEdit(!isEdit);
     if (isEdit) {
       // console.log("function call");
       patch(
-        { updatedStatus: changeStatus, resolvingDate: null },
+        { updatedStatus: changeStatus, updatedPriortyStatus: changePriortyStatus, resolvingDate: null },
         {
-          url: `support/bug-report/update-status/${complainId}`,
+          url: `complaint-center/update-internal-complaint/${complaintId}`,
         }
       ).then((data: any) => {
         // console.log("api call --- >", data);
@@ -285,26 +253,14 @@ const ComplainDetails = () => {
             setEdit(false);
           }
           if (data.success) {
-            patch(
-              { updatedPriortyStatus: changePriortyStatus },
-              {
-                url: `support/bug-report/update-priorty-status/${complainId}`,
-              }
-            ).then((data: any) => {
+            getAll({
+              url: `complaint-center/get-internal-complaint/${complaintId}`,
+            }).then((data: any) => {
               // console.log("api call --- >", data);
               if (data !== undefined) {
                 if (data.success) {
-                  getAll({
-                    url: `support/bug-report/get-bug-report/${complainId}`,
-                  }).then((data: any) => {
-                    // console.log("api call --- >", data);
-                    if (data !== undefined) {
-                      if (data.success) {
-                        dispatch(setTicketDetails(data.data.bugReport));
-                        setEdit(false);
-                      }
-                    }
-                  });
+                  dispatch(setComplainDetails(data.data.internalComplaint));
+                  setEdit(false);
                 }
               }
             });
@@ -317,9 +273,9 @@ const ComplainDetails = () => {
   const handleResolved = () => {
     // console.log("function call");
     patch(
-      { updatedStatus: "RESOLVED", resolvingDate: new Date() },
+      { updatedStatus: "RESOLVED", updatedPriortyStatus: changePriortyStatus, resolvingDate: new Date() },
       {
-        url: `support/bug-report/update-status/${complainId}`,
+        url: `complaint-center/update-internal-complaint/${complaintId}`,
       }
     ).then((data: any) => {
       // console.log("api call --- >", data);
@@ -343,55 +299,80 @@ const ComplainDetails = () => {
             });
           }, 2000);
           getAll({
-            url: `support/bug-report/get-bug-report/${complainId}`,
+            url: `complaint-center/get-internal-complaint/${complaintId}`,
           }).then((data: any) => {
             // console.log("api call --- >", data);
             if (data !== undefined) {
               if (data.success) {
-                dispatch(setTicketDetails(data.data.bugReport));
+                dispatch(setComplainDetails(data.data.internalComplaint));
               }
             }
           });
+
         }
       }
     });
   };
 
-  const { priorityStatuses, statuses } = useSelector(
-    (state: any) => state.support
+  const { complainPriorityTypes, complainStatusTypes } = useSelector(
+    (state: any) => state.complainCenter
   );
   // console.log(priorityStatuses);
   const [priorityStatusesList, setPriorityStatusesList] = useState([]);
   const [statusesList, setStatusesList] = useState([]);
-
   const tempPriorityStatusesList: any = [];
   const tempStatusesList: any = [];
-  useEffect(() => {
-    priorityStatuses.map((item: any, index: any) => {
-      tempPriorityStatusesList.push({
-        value: `${item.value}`,
-        label: `${item.title}`,
-      });
-    });
-    setPriorityStatusesList(tempPriorityStatusesList);
 
-    statuses.forEach((item: any) => {
-      if (item.value !== "RESOLVED") {
-        tempStatusesList.push({
-          value: `${item.value}`,
-          label: `${item.title}`,
-        });
+  useEffect(() => {
+    getAll({ url: "complaint-center/get-priorty-status-types" }).then(
+      (data: any) => {
+        // console.log("api call --- >", data);
+        if (data !== undefined) {
+          if (data.success) {
+            // console.log("hhg");
+            dispatch(
+              setComplainPriorityTypes(data.data.internalComplaintPriortyStatusTypes)
+            );
+            complainPriorityTypes?.map((item: any, index: any) => {
+              tempPriorityStatusesList.push({
+                value: `${item.value}`,
+                label: `${item.title}`,
+              });
+            });
+            setPriorityStatusesList(tempPriorityStatusesList);
+          }
+        }
+      }
+    );
+  }, []);
+
+  useEffect(() => {
+    getAll({ url: "complaint-center/get-status-types" }).then((data: any) => {
+      // console.log("api call --- >", data);
+      if (data !== undefined) {
+        if (data.success) {
+          // console.log("hhg");
+          dispatch(setComplainStatusTypes(data.data.internalComplaintStatusTypes));
+          complainStatusTypes?.forEach((item: any) => {
+            if (item.value !== "RESOLVED") {
+              tempStatusesList.push({
+                value: `${item.value}`,
+                label: `${item.title}`,
+              });
+            }
+          });
+          setStatusesList(tempStatusesList);
+        }
       }
     });
-    setStatusesList(tempStatusesList);
   }, []);
 
   return (
     <>
       <Breadcrumbs
-        mainTitle="Ticket Details"
-        parent={support}
-        title="Ticket Details"
+        mainTitle="Complaint Details"
+        parent="Complaint Center"
+        title="Complaint Details"
       />
       <Container fluid>
         <Card>
@@ -404,8 +385,7 @@ const ComplainDetails = () => {
               >
                 {!loading && (
                   <CommonHeader
-                    title={`${ticketDetails.name.slice(0, 75)}
-                ${ticketDetails.name.length > 75 ? "..." : ""}`}
+                    title={`${complainDetails.deviceName}`}
                   />
                 )}
               </div>
@@ -428,23 +408,22 @@ const ComplainDetails = () => {
                         fontSize: "24px",
                       }}
                     >
-                      {ticketDetails.user.fullName} -&nbsp;
-                      {formatUnderscoredString(ticketDetails.user.role)}
+                      {complainDetails.createdBy.fullName} -&nbsp;
+                      {formatUnderscoredString(complainDetails.createdBy.role)}
                     </div>
                     <div
                       style={{
-                        color: `${
-                          userPersonalizationData !== null &&
+                        color: `${userPersonalizationData !== null &&
                           userPersonalizationData?.buttonsAndBarsColor !== null
-                            ? userPersonalizationData?.buttonsAndBarsColor
-                            : "#35bfbf"
-                        }`,
+                          ? userPersonalizationData?.buttonsAndBarsColor
+                          : "#35bfbf"
+                          }`,
                         fontWeight: "normal",
                         fontSize: "20px",
                         marginBottom: "10px",
                       }}
                     >
-                      {ticketDetails.user.emailAddress}
+                      {complainDetails.createdBy.emailAddress}
                     </div>
                     <Row>
                       <Col md={9}>
@@ -455,10 +434,10 @@ const ComplainDetails = () => {
                           }}
                         >
                           {full
-                            ? ticketDetails.description
-                            : ticketDetails.description.slice(0, 500)}{" "}
-                          {ticketDetails.description.length > 500 && "...."}
-                          {ticketDetails.description.length > 500 && (
+                            ? complainDetails.description
+                            : complainDetails.description.slice(0, 500)}{" "}
+                          {complainDetails.description.length > 500 && "...."}
+                          {complainDetails.description.length > 500 && (
                             <div
                               style={{
                                 color: "#35bfbf",
@@ -478,17 +457,16 @@ const ComplainDetails = () => {
                       <Col
                         md={3}
                         style={{
-                          color: `${
-                            userPersonalizationData !== null &&
+                          color: `${userPersonalizationData !== null &&
                             userPersonalizationData?.buttonsAndBarsColor !== null
-                              ? userPersonalizationData?.buttonsAndBarsColor
-                              : "#35bfbf"
-                          }`,
+                            ? userPersonalizationData?.buttonsAndBarsColor
+                            : "#35bfbf"
+                            }`,
                           margin: "25px 0px",
                           fontSize: "20px",
                         }}
                       >
-                        {convertDateString(ticketDetails.createdAt)}
+                        {convertDateString(complainDetails.createdAt)}
                       </Col>
                     </Row>
                     <div
@@ -497,102 +475,9 @@ const ComplainDetails = () => {
                       }}
                     >
                       <hr />
-                      <div
-                        style={{
-                          fontSize: "20px",
-                          fontWeight: "bold",
-                        }}
-                      >
-                        {ticketImages.length} Attachements
-                      </div>
                     </div>
-                    <div style={{ display: "flex", flexWrap: "wrap" }}>
-                      {ticketImages.map((image, imageIndex) => (
-                        <div
-                          style={{
-                            position: "relative",
-                            marginRight: "20px",
-                            marginBottom: "20px",
-                          }}
-                          onMouseEnter={() => handleMouseEnter(imageIndex)}
-                          onMouseLeave={() => handleMouseLeave(imageIndex)}
-                          onClick={() => {
-                            setImageUrl(image);
-                            addToggle();
-                          }}
-                        >
-                          <img
-                            src={image}
-                            alt=""
-                            height={200}
-                            width={300}
-                            style={{
-                              borderRadius: "10px",
-                              border: "0.5px solid lightgray",
-                            }}
-                          />
-                          {isHovered && index === imageIndex && (
-                            <div
-                              style={{
-                                position: "absolute",
-                                top: 0,
-                                left: 0,
-                                width: "100%",
-                                height: "100%",
-                                background: "rgba(0, 0, 0, 0.7)", // Light black color with opacity
-                                borderRadius: "10px",
-                                display: "flex",
-                                flexDirection: "column",
-                                justifyContent: "center",
-                                alignItems: "center",
-                              }}
-                            >
-                              <span
-                                style={{
-                                  fontSize: "20px",
-                                  color: "white",
-                                  fontWeight: "bold",
-                                }}
-                              >
-                                View Image
-                              </span>
-                            </div>
-                          )}
-                          {/* <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                      }}
-                    >
-                      <span style={{ fontSize: "18px", color: "gray" }}>
-                        Image name.png
-                      </span>
-                      <span style={{ fontSize: "18px", color: "gray" }}>
-                        124kb
-                      </span>
-                    </div> */}
-                        </div>
-                      ))}
-                      <Modal
-                        isOpen={addModal}
-                        toggle={addToggle}
-                        size="lg"
-                        centered
-                      >
-                        <ModalBody>
-                          <div>
-                            <div className="modal-header"></div>
-                            <img
-                              src={imageUrl}
-                              alt=""
-                              height={500}
-                              width="100%"
-                            />
-                          </div>
-                        </ModalBody>
-                      </Modal>
-                    </div>
-                    {ticketDetails.messages.length >= 1 && (
+
+                    {complainDetails.messages.length >= 1 && (
                       <div
                         style={{
                           backgroundColor: "#def4fb",
@@ -611,8 +496,8 @@ const ComplainDetails = () => {
                               }}
                             >
                               {
-                                ticketDetails.messages[
-                                  ticketDetails.messages.length - 1
+                                complainDetails.messages[
+                                  complainDetails.messages.length - 1
                                 ].messageText
                               }
                             </div>
@@ -621,19 +506,18 @@ const ComplainDetails = () => {
                           <Col
                             md={3}
                             style={{
-                              color: `${
-                                userPersonalizationData !== null &&
+                              color: `${userPersonalizationData !== null &&
                                 userPersonalizationData?.buttonsAndBarsColor !== null
-                                  ? userPersonalizationData?.buttonsAndBarsColor
-                                  : "#35bfbf"
-                              }`,
+                                ? userPersonalizationData?.buttonsAndBarsColor
+                                : "#35bfbf"
+                                }`,
                               margin: "25px 0px",
                               fontSize: "20px",
                             }}
                           >
                             {convertDateString(
-                              ticketDetails.messages[
-                                ticketDetails.messages.length - 1
+                              complainDetails.messages[
+                                complainDetails.messages.length - 1
                               ].createdAt
                             )}
                           </Col>
@@ -657,8 +541,8 @@ const ComplainDetails = () => {
                           }}
                         >
                           {
-                            ticketDetails.messages[
-                              ticketDetails.messages.length - 1
+                            complainDetails.messages[
+                              complainDetails.messages.length - 1
                             ].user.fullName
                           }
                         </div>
@@ -673,18 +557,17 @@ const ComplainDetails = () => {
                           <a
                             href="#"
                             style={{
-                              color: `${
-                                userPersonalizationData !== null &&
+                              color: `${userPersonalizationData !== null &&
                                 userPersonalizationData?.buttonsAndBarsColor !== null
-                                  ? userPersonalizationData?.buttonsAndBarsColor
-                                  : "#35bfbf"
-                              }`,
+                                ? userPersonalizationData?.buttonsAndBarsColor
+                                : "#35bfbf"
+                                }`,
                               fontSize: "20px",
                             }}
                           >
                             {
-                              ticketDetails.messages[
-                                ticketDetails.messages.length - 1
+                              complainDetails.messages[
+                                complainDetails.messages.length - 1
                               ].user.emailAddress
                             }
                           </a>
@@ -692,7 +575,7 @@ const ComplainDetails = () => {
                       </div>
                     )}
 
-                    {ticketDetails.messages.length >= 1 && (
+                    {complainDetails.messages.length >= 1 && (
                       <div
                         style={{
                           color: "black",
@@ -715,7 +598,7 @@ const ComplainDetails = () => {
                         scrollbarColor: "lightgray transparent", // Specify scrollbar color
                       }}
                     >
-                      {ticketDetails.messages.map((reply: any, index: any) => {
+                      {complainDetails.messages.map((reply: any, index: any) => {
                         if (showMore) {
                           return (
                             <div
@@ -734,12 +617,11 @@ const ComplainDetails = () => {
                                     ? "0px"
                                     : "40%",
                                 borderRadius: "10px",
-                                marginBottom: `${
-                                  index === 2 &&
-                                  index === ticketDetails.messages.length - 1
-                                    ? "50px"
-                                    : "20px"
-                                }`,
+                                marginBottom: `${index === 2 &&
+                                  index === complainDetails.messages.length - 1
+                                  ? "50px"
+                                  : "20px"
+                                  }`,
                                 marginTop: "10px",
                               }}
                             >
@@ -833,12 +715,11 @@ const ComplainDetails = () => {
                                       : "40%",
                                   padding: "15px",
                                   borderRadius: "10px",
-                                  marginBottom: `${
-                                    index === 2 &&
-                                    index === ticketDetails.messages.length - 1
-                                      ? "50px"
-                                      : "20px"
-                                  }`,
+                                  marginBottom: `${index === 2 &&
+                                    index === complainDetails.messages.length - 1
+                                    ? "50px"
+                                    : "20px"
+                                    }`,
                                   marginTop: "10px",
                                 }}
                               >
@@ -918,7 +799,7 @@ const ComplainDetails = () => {
                       })}
                     </div>
 
-                    {ticketDetails.messages.length > 2 && (
+                    {complainDetails.messages.length > 2 && (
                       <div
                         style={{
                           display: "flex",
@@ -931,7 +812,7 @@ const ComplainDetails = () => {
                         onClick={() => {
                           setShowMore(!showMore);
                           // if (itemsLength === 2) {
-                          //   setItemsLength(ticketDetails.messages.length);
+                          //   setItemsLength(complainDetails.messages.length);
                           //   setShowMore(true);
                           // } else {
                           //   setItemsLength(2);
@@ -950,70 +831,126 @@ const ComplainDetails = () => {
                           margin: "50px 0px",
                         }}
                       >
-                        {formatUnderscoredString(ticketDetails.status) !==
+                        {formatUnderscoredString(complainDetails.status) !==
                           "Resolved" && (
-                          <div
-                            style={{
-                              border: "1px solid lightgray",
-                            }}
-                          >
-                            <textarea
-                              ref={textareaRef}
-                              onChange={handleChange}
-                              value={replyText}
-                              className="form-control replyText"
-                              placeholder="Reply Here..."
-                              rows={3} // Minimum number of visible lines
+                            <div
                               style={{
-                                maxHeight: "100px", // Maximum height for 5 lines of text
-                                resize: "vertical", // Allow vertical resizing within the specified range
-                                borderRadius: "0px",
-                                fontSize: "20px",
-                                overflowY: "auto",
-                                WebkitOverflowScrolling: "touch", // Enable momentum scrolling on iOS
-                                scrollbarWidth: "thin", // Specify scrollbar width
-                                WebkitBorderRadius: "5px !important", // For WebKit browsers (Chrome, Safari)
-                                MozBorderRadius: "5px !important", // For Mozilla Firefox
-                                scrollbarColor: "lightgray transparent", // Specify scrollbar color
-                                outline: "0px",
-                                border: "0px",
+                                border: "1px solid lightgray",
                               }}
-                            />
-                            <style>
-                              {`
+                            >
+                              <textarea
+                                ref={textareaRef}
+                                onChange={handleChange}
+                                value={replyText}
+                                className="form-control replyText"
+                                placeholder="Reply Here..."
+                                rows={3} // Minimum number of visible lines
+                                style={{
+                                  maxHeight: "100px", // Maximum height for 5 lines of text
+                                  resize: "vertical", // Allow vertical resizing within the specified range
+                                  borderRadius: "0px",
+                                  fontSize: "20px",
+                                  overflowY: "auto",
+                                  WebkitOverflowScrolling: "touch", // Enable momentum scrolling on iOS
+                                  scrollbarWidth: "thin", // Specify scrollbar width
+                                  WebkitBorderRadius: "5px !important", // For WebKit browsers (Chrome, Safari)
+                                  MozBorderRadius: "5px !important", // For Mozilla Firefox
+                                  scrollbarColor: "lightgray transparent", // Specify scrollbar color
+                                  outline: "0px",
+                                  border: "0px",
+                                }}
+                              />
+                              <style>
+                                {`
     .replyText::placeholder {
       font-size: 18px;
   }`}
-                            </style>
-                            <div
-                              style={{
-                                backgroundColor: "whitesmoke",
-                                padding: "20px",
-                                display: "flex",
-                                justifyContent: "space-between",
-                              }}
-                            >
-                              <div></div>
-                              <div style={{ display: "flex" }}>
-                                {getUserRole() === ROLES.SUPER_ADMIN && (
-                                  <button
-                                    className={`btn ${
-                                      userPersonalizationData?.buttonsAndBarsColor ==
-                                      null
+                              </style>
+                              <div
+                                style={{
+                                  backgroundColor: "whitesmoke",
+                                  padding: "20px",
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                }}
+                              >
+                                <div></div>
+                                <div style={{ display: "flex" }}>
+                                  {getUserRole() === ROLES.SUPER_ADMIN && (
+                                    <button
+                                      className={`btn ${userPersonalizationData?.buttonsAndBarsColor ==
+                                        null
                                         ? "btn-primary"
                                         : ""
-                                    }`}
-                                    disabled={
-                                      formatUnderscoredString(
-                                        ticketDetails.status
+                                        }`}
+                                      disabled={
+                                        formatUnderscoredString(
+                                          complainDetails.status
+                                        ) === "Resolved"
+                                      }
+                                      style={{
+                                        color: "white",
+                                        backgroundColor: `${userPersonalizationData !== null &&
+                                          userPersonalizationData?.buttonsAndBarsColor
+                                          }`,
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                        padding: "5px 20px",
+                                        margin: "0px 15px",
+                                        height: "50px",
+                                        width: "auto",
+                                        fontSize: "18px",
+                                        fontWeight: "bold",
+                                      }}
+                                      onClick={() => {
+                                        Swal.fire({
+                                          title: "Complete Alert",
+                                          text: "Are you sure , you want to complete this ticket",
+                                          icon: "warning",
+                                          showCancelButton: true,
+                                        }).then(async (result) => {
+                                          if (result.isConfirmed) {
+                                            try {
+                                              Swal.fire({
+                                                text: "Loading...",
+                                                icon: "info",
+                                                // timer: 2000,
+                                                showCancelButton: false,
+                                                showConfirmButton: false,
+                                              });
+                                              handleResolved();
+                                              // Handle successful post creation (e.g., show a success message, redirect, etc.)
+                                            } catch (error) {
+                                              // Handle error (e.g., show an error message)
+                                              // console.error(
+                                              //   "Error creating post:",
+                                              //   error
+                                              // );
+                                              // loading false
+                                            }
+                                          }
+                                        });
+                                      }}
+                                    >
+                                      {formatUnderscoredString(
+                                        complainDetails.status
                                       ) === "Resolved"
-                                    }
+                                        ? "Completed"
+                                        : "Complete"}
+                                    </button>
+                                  )}
+                                  <button
+                                    className={`btn ${userPersonalizationData?.buttonsAndBarsColor ==
+                                      null
+                                      ? "btn-primary"
+                                      : ""
+                                      }`}
                                     style={{
                                       color: "white",
-                                      backgroundColor: `${
-                                        userPersonalizationData !== null &&
+                                      backgroundColor: `${userPersonalizationData !== null &&
                                         userPersonalizationData?.buttonsAndBarsColor
-                                      }`,
+                                        }`,
                                       display: "flex",
                                       alignItems: "center",
                                       justifyContent: "center",
@@ -1025,76 +962,20 @@ const ComplainDetails = () => {
                                       fontWeight: "bold",
                                     }}
                                     onClick={() => {
-                                      Swal.fire({
-                                        title: "Complete Alert",
-                                        text: "Are you sure , you want to complete this ticket",
-                                        icon: "warning",
-                                        showCancelButton: true,
-                                      }).then(async (result) => {
-                                        if (result.isConfirmed) {
-                                          try {
-                                            Swal.fire({
-                                              text: "Loading...",
-                                              icon: "info",
-                                              // timer: 2000,
-                                              showCancelButton: false,
-                                              showConfirmButton: false,
-                                            });
-                                            handleResolved();
-                                            // Handle successful post creation (e.g., show a success message, redirect, etc.)
-                                          } catch (error) {
-                                            // Handle error (e.g., show an error message)
-                                            // console.error(
-                                            //   "Error creating post:",
-                                            //   error
-                                            // );
-                                            // loading false
-                                          }
-                                        }
-                                      });
+                                      setSendMessageLoading(true);
+                                      sendMessage();
                                     }}
+                                    disabled={replyText.length == 0}
                                   >
-                                    {formatUnderscoredString(
-                                      ticketDetails.status
-                                    ) === "Resolved"
-                                      ? "Completed"
-                                      : "Complete"}
+                                    <div style={{ marginRight: "10px" }}>
+                                      <IoSend color="white" />
+                                    </div>
+                                    {sendMessageLoading ? "Loading.." : "Send"}
                                   </button>
-                                )}
-                                <button
-                                  className={`btn ${
-                                    userPersonalizationData?.buttonsAndBarsColor ==
-                                    null
-                                      ? "btn-primary"
-                                      : ""
-                                  }`}
-                                  style={{
-                                    color: "white",
-                                    backgroundColor: `${
-                                      userPersonalizationData !== null &&
-                                      userPersonalizationData?.buttonsAndBarsColor
-                                    }`,
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                    padding: "5px 20px",
-                                    margin: "0px 15px",
-                                    height: "50px",
-                                    width: "auto",
-                                    fontSize: "18px",
-                                    fontWeight: "bold",
-                                  }}
-                                  onClick={sendMessage}
-                                >
-                                  <div style={{ marginRight: "10px" }}>
-                                    <IoSend color="white" />
-                                  </div>
-                                  Send
-                                </button>
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        )}
+                          )}
                       </Col>
                     </div>
                   </div>
@@ -1110,254 +991,34 @@ const ComplainDetails = () => {
                     borderTopRightRadius: "15px",
                   }}
                 >
-                  <div>
-                    <div
-                      style={{
-                        backgroundColor: `${
-                          userPersonalizationData !== null &&
-                          userPersonalizationData?.buttonsAndBarsColor !== null
+                  <div style={{
+                    display: "flex",
+                    flexDirection: "column"
+                  }}>
+                    <div>
+                      <div
+                        style={{
+                          backgroundColor: `${userPersonalizationData !== null &&
+                            userPersonalizationData?.buttonsAndBarsColor !== null
                             ? userPersonalizationData?.buttonsAndBarsColor
                             : "#35bfbf"
-                        }`,
-                        color: "white",
-                        fontWeight: "bold",
-                        padding: "20px",
-                        fontSize: "25px",
-                      }}
+                            }`,
+                          color: "white",
+                          fontWeight: "bold",
+                          padding: "20px",
+                          fontSize: "25px",
+                        }}
                       // className="btn-primary"
-                    >
-                      Tickets Info
-                    </div>
-                    <div
-                      style={{
-                        backgroundColor: "white",
-                        color: "gray",
-                        padding: "15px",
-                      }}
-                    >
-                      <div
-                        style={{
-                          borderBottom: "1px solid #e1e1e1",
-                          display: "flex",
-                          justifyContent: "space-between",
-                          padding: "25px 0px",
-                        }}
                       >
-                        <div
-                          style={{
-                            fontSize: "20px",
-                            color: "gray",
-                            fontWeight: "bold",
-                          }}
-                        >
-                          Ticket Id
-                        </div>
-                        <div
-                          style={{
-                            fontSize: "20px",
-                            color: "black",
-                          }}
-                        >
-                          {ticketDetails.ticketId}
-                        </div>
+                        Vehicle Info
                       </div>
                       <div
                         style={{
-                          borderBottom: "1px solid #e1e1e1",
-                          display: "flex",
-                          justifyContent: "space-between",
-                          padding: "25px 0px",
+                          backgroundColor: "white",
+                          color: "gray",
+                          padding: "15px",
                         }}
                       >
-                        <div
-                          style={{
-                            fontSize: "20px",
-                            color: "gray",
-                            fontWeight: "bold",
-                          }}
-                        >
-                          Time
-                        </div>
-                        <div
-                          style={{
-                            fontSize: "20px",
-                            color: "black",
-                          }}
-                        >
-                          {convertDateString(ticketDetails.createdAt)}
-                        </div>
-                      </div>
-                      <div
-                        style={{
-                          borderBottom: "1px solid #e1e1e1",
-                          display: "flex",
-                          justifyContent: "space-between",
-                          padding: "25px 0px",
-                        }}
-                      >
-                        <div
-                          style={{
-                            fontSize: "20px",
-                            color: "gray",
-                            fontWeight: "bold",
-                          }}
-                        >
-                          Date
-                        </div>
-                        <div
-                          style={{
-                            fontSize: "20px",
-                            color: "black",
-                          }}
-                        >
-                          {ticketDetails.createdAt.toString().slice(0, 10)}
-                        </div>
-                      </div>
-                      <div
-                        style={{
-                          borderBottom: "1px solid #e1e1e1",
-                          display: "flex",
-                          justifyContent: "space-between",
-                          padding: "25px 0px",
-                        }}
-                      >
-                        <div
-                          style={{
-                            fontSize: "20px",
-                            color: "gray",
-                            fontWeight: "bold",
-                          }}
-                        >
-                          Subject
-                        </div>
-                        <div
-                          style={{
-                            fontSize: "20px",
-                            color: "black",
-                          }}
-                        >
-                          {ticketDetails.name.slice(0, 16)}
-                          {ticketDetails.name.length > 16 && "...."}
-                        </div>
-                      </div>
-                      <div
-                        style={{
-                          borderBottom: "1px solid #e1e1e1",
-                          display: "flex",
-                          justifyContent: "space-between",
-                          padding: "25px 0px",
-                        }}
-                      >
-                        <div
-                          style={{
-                            fontSize: "20px",
-                            color: "gray",
-                            fontWeight: "bold",
-                          }}
-                        >
-                          Priority
-                        </div>
-                        {isEdit ? (
-                          <Select
-                            defaultValue={ticketDetails.priorty}
-                            showSearch
-                            style={{ width: 200, height: 36 }}
-                            placeholder="Select Priority"
-                            optionFilterProp="children"
-                            filterOption={(input: any, option: any) =>
-                              (option?.label ?? "").includes(input)
-                            }
-                            filterSort={(optionA: any, optionB: any) =>
-                              (optionA?.label ?? "")
-                                .toLowerCase()
-                                .localeCompare(
-                                  (optionB?.label ?? "").toLowerCase()
-                                )
-                            }
-                            onChange={(e) => {
-                              // console.log(e);
-                              setChangePriortyStatus(e);
-                            }}
-                            options={priorityStatusesList}
-                          />
-                        ) : (
-                          <div
-                            style={{
-                              fontSize: "20px",
-                              color:
-                                ticketDetails.priorty === "LOW"
-                                  ? "green"
-                                  : ticketDetails.priorty === "HIGH"
-                                  ? "red"
-                                  : "orange",
-                              fontWeight: "bold",
-                            }}
-                          >
-                            {formatUnderscoredString(ticketDetails.priorty)}
-                          </div>
-                        )}
-                      </div>
-
-                      <div
-                        style={{
-                          borderBottom: "1px solid #e1e1e1",
-                          display: "flex",
-                          justifyContent: "space-between",
-                          padding: "25px 0px",
-                        }}
-                      >
-                        <div
-                          style={{
-                            fontSize: "20px",
-                            color: "gray",
-                            fontWeight: "bold",
-                          }}
-                        >
-                          Status
-                        </div>
-                        {isEdit ? (
-                          <Select
-                            defaultValue={ticketDetails.status}
-                            showSearch
-                            style={{ width: 200, height: 36 }}
-                            placeholder="Select Status"
-                            optionFilterProp="children"
-                            filterOption={(input: any, option: any) =>
-                              (option?.label ?? "").includes(input)
-                            }
-                            filterSort={(optionA: any, optionB: any) =>
-                              (optionA?.label ?? "")
-                                .toLowerCase()
-                                .localeCompare(
-                                  (optionB?.label ?? "").toLowerCase()
-                                )
-                            }
-                            onChange={(e) => {
-                              // console.log(e);
-                              setChangeStatus(e);
-                            }}
-                            options={statusesList}
-                          />
-                        ) : (
-                          <div
-                            style={{
-                              fontSize: "20px",
-                              color:
-                                ticketDetails.status === "NEW"
-                                  ? "blue"
-                                  : ticketDetails.status === "IN_PROGRESS"
-                                  ? "orange"
-                                  : ticketDetails.status === "PENDING"
-                                  ? "red"
-                                  : "green",
-                              fontWeight: "bold",
-                            }}
-                          >
-                            {formatUnderscoredString(ticketDetails.status)}
-                          </div>
-                        )}
-                      </div>
-                      {ticketDetails.resolvingDate !== null && (
                         <div
                           style={{
                             borderBottom: "1px solid #e1e1e1",
@@ -1373,7 +1034,7 @@ const ComplainDetails = () => {
                               fontWeight: "bold",
                             }}
                           >
-                            Resolving Date
+                            Customer Name
                           </div>
                           <div
                             style={{
@@ -1381,112 +1042,543 @@ const ComplainDetails = () => {
                               color: "black",
                             }}
                           >
-                            {ticketDetails.resolvingDate
-                              .toString()
-                              .slice(0, 10)}
+                            {complainDetails.deviceInfo.customerName}
                           </div>
                         </div>
-                      )}
-                      <div
-                        style={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                          padding: "25px 0px",
-                          marginBottom: "10px",
-                        }}
-                      >
                         <div
                           style={{
-                            fontSize: "20px",
-                            color: "gray",
-                            fontWeight: "bold",
+                            borderBottom: "1px solid #e1e1e1",
+                            display: "flex",
+                            justifyContent: "space-between",
+                            padding: "25px 0px",
                           }}
                         >
-                          Response
-                        </div>
-                        <div
-                          style={{
-                            fontSize: "20px",
-                            color: "green",
-                            fontWeight: "bold",
-                          }}
-                        >
-                          {ticketDetails.messages.length >= 1
-                            ? calculateTimeAgo(
-                                ticketDetails.messages[
-                                  ticketDetails.messages.length - 1
-                                ].updatedAt
-                              )
-                            : "N/A"}
-                        </div>
-                      </div>
-
-                      <div
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "space-between",
-                        }}
-                      >
-                        {formatUnderscoredString(ticketDetails.status) !==
-                          "Resolved" && (
-                          <button
-                            className={`btn ${
-                              userPersonalizationData?.buttonsAndBarsColor == null
-                                ? "btn-primary"
-                                : ""
-                            }`}
+                          <div
                             style={{
-                              color: "white",
-                              backgroundColor: `${
-                                userPersonalizationData !== null &&
-                                userPersonalizationData?.buttonsAndBarsColor
-                              }`,
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                              padding: "5px 0px",
-                              margin: "0px 0px",
-                              height: "50px",
-                              width: "130px",
-                              fontSize: "18px",
+                              fontSize: "20px",
+                              color: "gray",
                               fontWeight: "bold",
                             }}
-                            onClick={handleGoToReply}
                           >
-                            Go to Reply
-                          </button>
-                        )}
-                        {getUserRole() === ROLES.SUPER_ADMIN &&
-                          formatUnderscoredString(ticketDetails.status) !==
-                            "Resolved" && (
-                            <button
-                              className={`btn ${
-                                userPersonalizationData?.buttonsAndBarsColor == null
-                                  ? "btn-primary"
-                                  : ""
-                              }`}
+                            Mobile No 1
+                          </div>
+                          <div
+                            style={{
+                              fontSize: "20px",
+                              color: "black",
+                            }}
+                          >
+                            {complainDetails.deviceInfo.mobileNo1}
+                          </div>
+                        </div>
+                        <div
+                          style={{
+                            borderBottom: "1px solid #e1e1e1",
+                            display: "flex",
+                            justifyContent: "space-between",
+                            padding: "25px 0px",
+                          }}
+                        >
+                          <div
+                            style={{
+                              fontSize: "20px",
+                              color: "gray",
+                              fontWeight: "bold",
+                            }}
+                          >
+                            Mobile No 2
+                          </div>
+                          <div
+                            style={{
+                              fontSize: "20px",
+                              color: "black",
+                            }}
+                          >
+                            {complainDetails.deviceInfo.mobileNo2}
+                          </div>
+                        </div>
+                        <div
+                          style={{
+                            borderBottom: "1px solid #e1e1e1",
+                            display: "flex",
+                            justifyContent: "space-between",
+                            padding: "25px 0px",
+                          }}
+                        >
+                          <div
+                            style={{
+                              fontSize: "20px",
+                              color: "gray",
+                              fontWeight: "bold",
+                            }}
+                          >
+                            Vehcile Name
+                          </div>
+                          <div
+                            style={{
+                              fontSize: "20px",
+                              color: "black",
+                            }}
+                          >
+                            {complainDetails.deviceInfo.vehicleName}
+                          </div>
+                        </div>
+                        <div
+                          style={{
+                            borderBottom: "1px solid #e1e1e1",
+                            display: "flex",
+                            justifyContent: "space-between",
+                            padding: "25px 0px",
+                          }}
+                        >
+                          <div
+                            style={{
+                              fontSize: "20px",
+                              color: "gray",
+                              fontWeight: "bold",
+                            }}
+                          >
+                            Sim Number
+                          </div>
+                          <div
+                            style={{
+                              fontSize: "20px",
+                              color: "black",
+                            }}
+                          >
+                            {complainDetails.deviceInfo.simNumber}
+                          </div>
+                        </div>
+
+                        <div
+                          style={{
+                            borderBottom: "1px solid #e1e1e1",
+                            display: "flex",
+                            justifyContent: "space-between",
+                            padding: "25px 0px",
+                          }}
+                        >
+                          <div
+                            style={{
+                              fontSize: "20px",
+                              color: "gray",
+                              fontWeight: "bold",
+                            }}
+                          >
+                            IMEI
+                          </div>
+                          <div
+                            style={{
+                              fontSize: "20px",
+                              color: "black",
+                            }}
+                          >
+                            {complainDetails.deviceInfo.imei}
+                          </div>
+                        </div>
+                        <div
+                          style={{
+                            borderBottom: "1px solid #e1e1e1",
+                            display: "flex",
+                            justifyContent: "space-between",
+                            padding: "25px 0px",
+                          }}
+                        >
+                          <div
+                            style={{
+                              fontSize: "20px",
+                              color: "gray",
+                              fontWeight: "bold",
+                            }}
+                          >
+                            Device Model
+                          </div>
+                          <div
+                            style={{
+                              fontSize: "20px",
+                              color: "black",
+                            }}
+                          >
+                            {complainDetails.deviceInfo.deviceModel}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    {/* -----------------------------------Vehicle Info-------------------- */}
+
+
+                    <div>
+                      <div
+                        style={{
+                          backgroundColor: `${userPersonalizationData !== null &&
+                            userPersonalizationData?.buttonsAndBarsColor !== null
+                            ? userPersonalizationData?.buttonsAndBarsColor
+                            : "#35bfbf"
+                            }`,
+                          color: "white",
+                          fontWeight: "bold",
+                          padding: "20px",
+                          fontSize: "25px",
+                        }}
+                      // className="btn-primary"
+                      >
+                        Complain Info
+                      </div>
+                      <div
+                        style={{
+                          backgroundColor: "white",
+                          color: "gray",
+                          padding: "15px",
+                        }}
+                      >
+                        <div
+                          style={{
+                            borderBottom: "1px solid #e1e1e1",
+                            display: "flex",
+                            justifyContent: "space-between",
+                            padding: "25px 0px",
+                          }}
+                        >
+                          <div
+                            style={{
+                              fontSize: "20px",
+                              color: "gray",
+                              fontWeight: "bold",
+                            }}
+                          >
+                            Complain Id
+                          </div>
+                          <div
+                            style={{
+                              fontSize: "20px",
+                              color: "black",
+                            }}
+                          >
+                            {complainDetails.complaintId}
+                          </div>
+                        </div>
+                        <div
+                          style={{
+                            borderBottom: "1px solid #e1e1e1",
+                            display: "flex",
+                            justifyContent: "space-between",
+                            padding: "25px 0px",
+                          }}
+                        >
+                          <div
+                            style={{
+                              fontSize: "20px",
+                              color: "gray",
+                              fontWeight: "bold",
+                            }}
+                          >
+                            Time
+                          </div>
+                          <div
+                            style={{
+                              fontSize: "20px",
+                              color: "black",
+                            }}
+                          >
+                            {convertDateString(complainDetails.createdAt)}
+                          </div>
+                        </div>
+                        <div
+                          style={{
+                            borderBottom: "1px solid #e1e1e1",
+                            display: "flex",
+                            justifyContent: "space-between",
+                            padding: "25px 0px",
+                          }}
+                        >
+                          <div
+                            style={{
+                              fontSize: "20px",
+                              color: "gray",
+                              fontWeight: "bold",
+                            }}
+                          >
+                            Date
+                          </div>
+                          <div
+                            style={{
+                              fontSize: "20px",
+                              color: "black",
+                            }}
+                          >
+                            {complainDetails.createdAt.toString().slice(0, 10)}
+                          </div>
+                        </div>
+                        <div
+                          style={{
+                            borderBottom: "1px solid #e1e1e1",
+                            display: "flex",
+                            justifyContent: "space-between",
+                            padding: "25px 0px",
+                          }}
+                        >
+                          <div
+                            style={{
+                              fontSize: "20px",
+                              color: "gray",
+                              fontWeight: "bold",
+                            }}
+                          >
+                            Type
+                          </div>
+                          <div
+                            style={{
+                              fontSize: "20px",
+                              color: "black",
+                            }}
+                          >
+                            {complainDetails.type.title}
+                          </div>
+                        </div>
+                        <div
+                          style={{
+                            borderBottom: "1px solid #e1e1e1",
+                            display: "flex",
+                            justifyContent: "space-between",
+                            padding: "25px 0px",
+                          }}
+                        >
+                          <div
+                            style={{
+                              fontSize: "20px",
+                              color: "gray",
+                              fontWeight: "bold",
+                            }}
+                          >
+                            Priority
+                          </div>
+                          {isEdit ? (
+                            <Select
+                              defaultValue={complainDetails.priorty}
+                              showSearch
+                              style={{ width: 200, height: 36 }}
+                              placeholder="Select Priority"
+                              optionFilterProp="children"
+                              filterOption={(input: any, option: any) =>
+                                (option?.label ?? "").includes(input)
+                              }
+                              filterSort={(optionA: any, optionB: any) =>
+                                (optionA?.label ?? "")
+                                  .toLowerCase()
+                                  .localeCompare(
+                                    (optionB?.label ?? "").toLowerCase()
+                                  )
+                              }
+                              onChange={(e) => {
+                                // console.log(e);
+                                setChangePriortyStatus(e);
+                              }}
+                              options={priorityStatusesList}
+                            />
+                          ) : (
+                            <div
                               style={{
-                                color: "white",
-                                backgroundColor: `${
-                                  userPersonalizationData !== null &&
-                                  userPersonalizationData?.buttonsAndBarsColor
-                                }`,
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                padding: "5px 0px",
-                                margin: "0px 0px",
-                                height: "50px",
-                                width: "130px",
-                                fontSize: "18px",
+                                fontSize: "20px",
+                                color:
+                                  complainDetails.priorty === "LOW"
+                                    ? "green"
+                                    : complainDetails.priorty === "HIGH"
+                                      ? "red"
+                                      : "orange",
                                 fontWeight: "bold",
                               }}
-                              onClick={handleEdit}
                             >
-                              {isEdit ? "Save" : "Edit"}
-                            </button>
+                              {formatUnderscoredString(complainDetails.priorty)}
+                            </div>
                           )}
+                        </div>
+
+                        <div
+                          style={{
+                            borderBottom: "1px solid #e1e1e1",
+                            display: "flex",
+                            justifyContent: "space-between",
+                            padding: "25px 0px",
+                          }}
+                        >
+                          <div
+                            style={{
+                              fontSize: "20px",
+                              color: "gray",
+                              fontWeight: "bold",
+                            }}
+                          >
+                            Status
+                          </div>
+                          {isEdit ? (
+                            <Select
+                              defaultValue={complainDetails.status}
+                              showSearch
+                              style={{ width: 200, height: 36 }}
+                              placeholder="Select Status"
+                              optionFilterProp="children"
+                              filterOption={(input: any, option: any) =>
+                                (option?.label ?? "").includes(input)
+                              }
+                              filterSort={(optionA: any, optionB: any) =>
+                                (optionA?.label ?? "")
+                                  .toLowerCase()
+                                  .localeCompare(
+                                    (optionB?.label ?? "").toLowerCase()
+                                  )
+                              }
+                              onChange={(e) => {
+                                // console.log(e);
+                                setChangeStatus(e);
+                              }}
+                              options={statusesList}
+                            />
+                          ) : (
+                            <div
+                              style={{
+                                fontSize: "20px",
+                                color:
+                                  complainDetails.status === "NEW"
+                                    ? "blue"
+                                    : complainDetails.status === "IN_PROGRESS"
+                                      ? "orange"
+                                      : complainDetails.status === "PENDING"
+                                        ? "red"
+                                        : "green",
+                                fontWeight: "bold",
+                              }}
+                            >
+                              {formatUnderscoredString(complainDetails.status)}
+                            </div>
+                          )}
+                        </div>
+                        {complainDetails.resolvingDate !== null && (
+                          <div
+                            style={{
+                              borderBottom: "1px solid #e1e1e1",
+                              display: "flex",
+                              justifyContent: "space-between",
+                              padding: "25px 0px",
+                            }}
+                          >
+                            <div
+                              style={{
+                                fontSize: "20px",
+                                color: "gray",
+                                fontWeight: "bold",
+                              }}
+                            >
+                              Resolving Date
+                            </div>
+                            <div
+                              style={{
+                                fontSize: "20px",
+                                color: "black",
+                              }}
+                            >
+                              {complainDetails.resolvingDate
+                                .toString()
+                                .slice(0, 10)}
+                            </div>
+                          </div>
+                        )}
+                        <div
+                          style={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            padding: "25px 0px",
+                            marginBottom: "10px",
+                          }}
+                        >
+                          <div
+                            style={{
+                              fontSize: "20px",
+                              color: "gray",
+                              fontWeight: "bold",
+                            }}
+                          >
+                            Response
+                          </div>
+                          <div
+                            style={{
+                              fontSize: "20px",
+                              color: "green",
+                              fontWeight: "bold",
+                            }}
+                          >
+                            {complainDetails.messages.length >= 1
+                              ? calculateTimeAgo(
+                                complainDetails.messages[
+                                  complainDetails.messages.length - 1
+                                ].updatedAt
+                              )
+                              : "N/A"}
+                          </div>
+                        </div>
+
+                        <div
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                          }}
+                        >
+                          {formatUnderscoredString(complainDetails.status) !==
+                            "Resolved" && (
+                              <button
+                                className={`btn ${userPersonalizationData?.buttonsAndBarsColor == null
+                                  ? "btn-primary"
+                                  : ""
+                                  }`}
+                                style={{
+                                  color: "white",
+                                  backgroundColor: `${userPersonalizationData !== null &&
+                                    userPersonalizationData?.buttonsAndBarsColor
+                                    }`,
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                  padding: "5px 0px",
+                                  margin: "0px 0px",
+                                  height: "50px",
+                                  width: "130px",
+                                  fontSize: "18px",
+                                  fontWeight: "bold",
+                                }}
+                                onClick={handleGoToReply}
+                              >
+                                Go to Reply
+                              </button>
+                            )}
+                          {
+                            formatUnderscoredString(complainDetails.status) !==
+                            "Resolved" && (
+                              <button
+                                className={`btn ${userPersonalizationData?.buttonsAndBarsColor == null
+                                  ? "btn-primary"
+                                  : ""
+                                  }`}
+                                style={{
+                                  color: "white",
+                                  backgroundColor: `${userPersonalizationData !== null &&
+                                    userPersonalizationData?.buttonsAndBarsColor
+                                    }`,
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                  padding: "5px 0px",
+                                  margin: "0px 0px",
+                                  height: "50px",
+                                  width: "130px",
+                                  fontSize: "18px",
+                                  fontWeight: "bold",
+                                }}
+                                onClick={handleEdit}
+                              >
+                                {isEdit ? "Save" : "Edit"}
+                              </button>
+                            )}
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -1515,3 +1607,70 @@ const ComplainDetails = () => {
 };
 
 export default ComplainDetails;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

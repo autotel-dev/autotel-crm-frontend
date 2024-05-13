@@ -13,8 +13,10 @@ export const ChatApi = `${api}/chats.json`;
 
 // export const API_BASE_URL = "http://124.29.238.127:8080/api/v1";
 // export const IMAGE_BASE_URL = "http://124.29.238.127:8080";
-export const API_BASE_URL = "https://crmapi.autotel.pk/api/v1";
-export const IMAGE_BASE_URL = "https://crmapi.autotel.pk";
+export const API_BASE_URL = "http://103.31.81.221:8080/api/v1";
+export const IMAGE_BASE_URL = "http://103.31.81.221:8080";
+// export const API_BASE_URL = "https://crmapi.autotel.pk/api/v1";
+// export const IMAGE_BASE_URL = "https://crmapi.autotel.pk";
 
 interface URLTypes {
   url: String;

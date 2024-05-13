@@ -8,11 +8,12 @@ import { useDispatch, useSelector } from "react-redux";
 
 import Swal from "sweetalert2";
 import { P } from "../../../../../AbstractElements";
-import { setAllComplains, setCreateComplainModalData } from "../../../../../ReaduxToolkit/Reducer/ComplainCenterSlice";
+import { setAllComplains, setComplainCenterRoles, setComplainCenterStatistics, setCreateComplainModalData } from "../../../../../ReaduxToolkit/Reducer/ComplainCenterSlice";
 import SelectComplainTypesList from "../components/SelectComplainTypesList";
 import SelectComplainStatusTypes from "../components/SelectComplainStatusTypes";
 import SelectComplainRole from "../components/SelectComplainRole";
 import { create, getAll } from "../../../../../Api";
+import { getUserRole, getUserRoleID } from "../../../../../Api/globals";
 
 interface ResponseType {
   response?: string;
@@ -57,6 +58,7 @@ const ResponseForm: React.FC<PropsTypes> = ({
       });
     }
   };
+  // console.log(selectedItems);
 
   const createComplain: SubmitHandler<ResponseType> = async (data: any) => {
     setLoading(true);
@@ -68,11 +70,18 @@ const ResponseForm: React.FC<PropsTypes> = ({
         internalComplaintType: type,
         deviceId: selectedItems[0].id,
         deviceName: selectedItems[0].name,
-        subRole: priority == "GENERAL" ? null : role,
+        subRole: getUserRole() == "OPERATOR" ? getUserRoleID() : role,
         server: selectedItems[0].server._id,
         status: priority == "GENERAL" ? "RESOLVED" : statuss,
         deviceInfo: {
-          ok: "ok"
+          customerName: selectedItems[0].customerInfo.name,
+          mobileNo1: selectedItems[0].customerInfo.mobile_1,
+          mobileNo2: selectedItems[0].customerInfo.mobile_2,
+          vehicleName: selectedItems[0].name,
+          simNumber: selectedItems[0].sim_Number,
+          imei: selectedItems[0].imei,
+          deviceModel: selectedItems[0].device_model
+
         },
         resolvingDate: priority == "GENERAL" ? new Date() : null
       }
@@ -121,6 +130,33 @@ const ResponseForm: React.FC<PropsTypes> = ({
                 if (data.statusCode === 404) {
                   dispatch(setAllComplains([]));
                 }
+
+                getAll({ url: "complaint-center/get-statistics" }).then((data: any) => {
+                  // console.log("Data", data);
+
+                  if (data !== undefined) {
+
+
+                    if (data.success) {
+                      dispatch(setComplainCenterRoles(data.data.InternalComplaintsStatistics.subRoleCounts))
+                      const mappedArray = Object.entries(
+                        data.data.InternalComplaintsStatistics
+                      ).map(([key, value]) => {
+                        // Remove "total" from the key and replace "Count" with "Tickets"
+                        if (key !== "subRoleCounts") {
+                          const formattedKey = key
+                            .replace("total", "")
+                            .replace("Count", "");
+                          return { key: formattedKey, value: value };
+                        }
+                      });
+                      mappedArray.pop()
+                      // console.log(mappedArray);
+                      dispatch(setComplainCenterStatistics(mappedArray));
+
+                    }
+                  }
+                });
               }
             });
 
@@ -140,7 +176,10 @@ const ResponseForm: React.FC<PropsTypes> = ({
   };
 
   return (
-    <Col md={12}>
+    <Col md={12} style={{
+      overflow:"auto",
+      overflowX:"hidden"
+    }}>
       <form
         className="form-bookmark needs-validation"
         onSubmit={handleSubmit(createComplain)}

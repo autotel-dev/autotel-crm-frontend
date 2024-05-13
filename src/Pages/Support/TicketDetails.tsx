@@ -31,6 +31,7 @@ import { useParams } from "react-router-dom";
 import Swal from "sweetalert2";
 import { ROLES } from "../../constants/roles";
 
+
 const TicketDetails = () => {
   const { userPersonalizationData } = useSelector(
     (state: any) => state.personalization
@@ -41,8 +42,6 @@ const TicketDetails = () => {
   const [imageUrl, setImageUrl] = useState("");
   const [ticketImages, setTicketImages] = useState<any[]>([]);
   const [full, setFull] = useState(false);
-  const [changeStatus, setChangeStatus] = useState("");
-  const [changePriortyStatus, setChangePriortyStatus] = useState("");
 
   const { tableRow, ticketDetails } = useSelector(
     (state: any) => state.support
@@ -89,7 +88,7 @@ const TicketDetails = () => {
 
   useEffect(() => {
     setLoading(true);
-    if (tableRow?.status === "NEW" && getUserRole() === ROLES.SUPER_ADMIN) {
+    if (tableRow.status === "NEW" && getUserRole() === ROLES.SUPER_ADMIN) {
       // console.log("IF");
       patch(
         { updatedStatus: "IN_PROGRESS", resolvingDate: null },
@@ -142,8 +141,6 @@ const TicketDetails = () => {
         if (data !== undefined) {
           if (data.success) {
             dispatch(setTicketDetails(data.data.bugReport));
-            setChangeStatus(ticketDetails?.status);
-            setChangePriortyStatus(ticketDetails?.priorty);
             setTicketImages([]);
             if (data.data.bugReport.images.length === 0) {
               setLoading(false);
@@ -194,8 +191,6 @@ const TicketDetails = () => {
       } ${amOrPm}`;
   };
 
-  const [sendMessageLoading, setSendMessageLoading] = useState(false);
-
   const sendMessage = () => {
     if (replyText.length > 0) {
       patch(
@@ -204,7 +199,6 @@ const TicketDetails = () => {
           url: `support/bug-report/${ticketId}/send-message`,
         }
       ).then((data: any) => {
-        setSendMessageLoading(false);
         // console.log("api call --- >", data);
         setReplyText("");
         if (data !== undefined) {
@@ -212,7 +206,6 @@ const TicketDetails = () => {
             getAll({
               url: `support/bug-report/get-bug-report/${ticketId}`,
             }).then((data: any) => {
-
               // console.log("api call --- >", data);
               if (data !== undefined) {
                 if (data.success) {
@@ -266,7 +259,10 @@ const TicketDetails = () => {
     return time;
   };
   const [isEdit, setEdit] = useState(false);
-
+  const [changeStatus, setChangeStatus] = useState(tableRow.status);
+  const [changePriortyStatus, setChangePriortyStatus] = useState(
+    tableRow.priorty
+  );
   const handleEdit = () => {
     setEdit(!isEdit);
     if (isEdit) {
@@ -359,7 +355,6 @@ const TicketDetails = () => {
               }
             }
           });
-
         }
       }
     });
@@ -371,51 +366,27 @@ const TicketDetails = () => {
   // console.log(priorityStatuses);
   const [priorityStatusesList, setPriorityStatusesList] = useState([]);
   const [statusesList, setStatusesList] = useState([]);
+
   const tempPriorityStatusesList: any = [];
   const tempStatusesList: any = [];
-
   useEffect(() => {
-    getAll({ url: "support/bug-report/get-priorty-status-types" }).then(
-      (data: any) => {
-        // console.log("api call --- >", data);
-        if (data !== undefined) {
-          if (data.success) {
-            // console.log("hhg");
-            dispatch(
-              setPriorityStatuses(data.data.bugReportPriortyStatusTypes)
-            );
-            priorityStatuses?.map((item: any, index: any) => {
-              tempPriorityStatusesList.push({
-                value: `${item.value}`,
-                label: `${item.title}`,
-              });
-            });
-            setPriorityStatusesList(tempPriorityStatusesList);
-          }
-        }
-      }
-    );
-  }, []);
+    priorityStatuses.map((item: any, index: any) => {
+      tempPriorityStatusesList.push({
+        value: `${item.value}`,
+        label: `${item.title}`,
+      });
+    });
+    setPriorityStatusesList(tempPriorityStatusesList);
 
-  useEffect(() => {
-    getAll({ url: "support/bug-report/get-status-types" }).then((data: any) => {
-      // console.log("api call --- >", data);
-      if (data !== undefined) {
-        if (data.success) {
-          // console.log("hhg");
-          dispatch(setStatuses(data.data.bugReportStatusTypes));
-          statuses?.forEach((item: any) => {
-            if (item.value !== "RESOLVED") {
-              tempStatusesList.push({
-                value: `${item.value}`,
-                label: `${item.title}`,
-              });
-            }
-          });
-          setStatusesList(tempStatusesList);
-        }
+    statuses.forEach((item: any) => {
+      if (item.value !== "RESOLVED") {
+        tempStatusesList.push({
+          value: `${item.value}`,
+          label: `${item.title}`,
+        });
       }
     });
+    setStatusesList(tempStatusesList);
   }, []);
 
   return (
@@ -1106,15 +1077,12 @@ const TicketDetails = () => {
                                       fontSize: "18px",
                                       fontWeight: "bold",
                                     }}
-                                    onClick={() => {
-                                      setSendMessageLoading(true);
-                                      sendMessage();
-                                    }}
+                                    onClick={sendMessage}
                                   >
                                     <div style={{ marginRight: "10px" }}>
                                       <IoSend color="white" />
                                     </div>
-                                    {sendMessageLoading ? "Loading.." : "Send"}
+                                    Send
                                   </button>
                                 </div>
                               </div>

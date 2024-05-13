@@ -22,6 +22,15 @@ export function getUserRole() {
   }
 }
 
+export function getUserRoleID() {
+  const authToken = localStorage.getItem("token");
+  if (authToken !== null) {
+    const decodedToken = jwtDecode(authToken);
+    // console.log(decodedToken);
+    return decodedToken.subRole;
+  }
+}
+
 export function getUserId() {
   const authToken = localStorage.getItem("token");
   if (authToken !== null) {

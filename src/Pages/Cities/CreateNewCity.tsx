@@ -159,15 +159,14 @@ const CreateNewCity = () => {
     <Col md={6}>
       <div className="text-end">
         <button
-          className={`btn ${
-            userPersonalizationData?.buttonsAndBarsColor == null ? "btn-primary" : ""
-          }`}
+          className={`btn ${userPersonalizationData?.buttonsAndBarsColor == null ? "btn-primary" : ""
+            }`}
           style={{
             color: "white",
-            backgroundColor: `${
-              userPersonalizationData && userPersonalizationData?.buttonsAndBarsColor
-            }`,
+            backgroundColor: `${userPersonalizationData && userPersonalizationData?.buttonsAndBarsColor
+              }`,
           }}
+          onClick={addToggle}
         >
           <PlusCircle />
           {createNewCity}
@@ -215,17 +214,17 @@ const CreateNewCity = () => {
                   <SelectProvinceBox placeholder={"Select Province"} />
                 </div>
               </div>
-                  <Button color="primary" className="me-1">
-                    {loading ? "Loading ..." : `Add`}
-                  </Button>
-                  &nbsp;&nbsp;
-                  <Button
-                    disabled={loading ? true : false}
-                    color="secondary"
-                    onClick={addToggle}
-                  >
-                    {Cancel}
-                  </Button>
+              <Button color="primary" className="me-1">
+                {loading ? "Loading ..." : `Add`}
+              </Button>
+              &nbsp;&nbsp;
+              <Button
+                disabled={loading ? true : false}
+                color="secondary"
+                onClick={addToggle}
+              >
+                {Cancel}
+              </Button>
             </form>
           </ModalBody>
         </Modal>
