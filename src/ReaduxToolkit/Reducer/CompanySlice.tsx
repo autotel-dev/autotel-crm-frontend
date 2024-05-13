@@ -14,6 +14,7 @@ const initialState = {
   serverCredentials: [],
   allowedModules: [],
   server: {},
+  company: {},
   loading: false,
   error: null,
   noCompanyFound: "",
@@ -91,6 +92,9 @@ const CompanySlice = createSlice({
     setServer: (state, action) => {
       state.server = action.payload;
     },
+    setCompany: (state, action) => {
+      state.company = action.payload;
+    },
     setServerCredentials: (state, action) => {
       state.serverCredentials = action.payload;
       state.error = null;
@@ -145,6 +149,7 @@ export const {
   setPackages,
   setServersAddItemsList,
   setServer,
+  setCompany,
   setServerCredentials,
   setAllowedModules,
   setNoCompanyFound,
@@ -155,7 +160,7 @@ export const {
   setOther,
   setImageBackground,
   setComapnyLogo,
-  setIsConnected
+  setIsConnected,
 } = CompanySlice.actions;
 
 export default CompanySlice.reducer;

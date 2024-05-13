@@ -10,6 +10,7 @@ import {
   DropdownToggle,
   DropdownMenu,
   DropdownItem,
+  CardHeader,
   // Button,
 } from "reactstrap";
 
@@ -26,6 +27,7 @@ import { DownOutlined, UserOutlined } from "@ant-design/icons";
 import { setReports } from "../../../ReaduxToolkit/Reducer/ReportsSlice";
 import { jsPDF } from "jspdf";
 import "jspdf-autotable";
+import { H4 } from "../../../AbstractElements";
 
 const ReportsList = () => {
   const { reports } = useSelector((state: any) => state.reports);
@@ -48,10 +50,10 @@ const ReportsList = () => {
   ) {
     // message.info("Click on left button.");
     // console.log("click left button", e);
-    if (selectedTypes[index] == "Excel") {
+    if (selectedTypes[index] === "Excel") {
       xlsx(excelData, settings);
     }
-    // else if (selectedTypes[index] == "PDF") {
+    // else if (selectedTypes[index] === "PDF") {
     //   downloadPDF();
     // }
 
@@ -76,6 +78,7 @@ const ReportsList = () => {
 
   const pdfData = {
     reportTableHeaders: [
+      "Id",
       "Event Id",
       "Device Id",
       "Device Name",
@@ -191,6 +194,7 @@ const ReportsList = () => {
   //   // Save PDF
   //   doc.save("report.pdf");
   // };
+  const [title, setTitle] = useState("");
 
   const renderTableRows = () => {
     return reports.map((row: any, index: any) => (
@@ -289,6 +293,7 @@ const ReportsList = () => {
                 setIsUpdateModalOpen(true);
                 setDataList(row.data.reportData);
                 setTableHeader(row.data.reportTableHeaders);
+                setTitle(row.title);
               }}
             >
               View
@@ -309,7 +314,9 @@ const ReportsList = () => {
       <Container fluid>
         <Col sm="12">
           <Card>
-            <CommonHeader title="All Reports" />
+            <CardHeader className="pb-0">
+              <H4>All Reports</H4>
+            </CardHeader>
             <CardBody>
               <div className="table-responsive product-table">
                 {loading ? (
@@ -350,6 +357,7 @@ const ReportsList = () => {
                 setIsVisible={setIsUpdateModalOpen}
                 dataList={dataList}
                 tableHeader={tableHeader}
+                title={title}
               />
             </CardBody>
           </Card>

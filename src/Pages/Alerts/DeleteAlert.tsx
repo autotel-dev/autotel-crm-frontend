@@ -39,6 +39,10 @@ import {
   setFilterOperators,
   setOperators,
 } from "../../ReaduxToolkit/Reducer/OperatorSlice";
+import {
+  setComplainsTypes,
+  setFilterComplainsTypes,
+} from "../../ReaduxToolkit/Reducer/ComplainsTypeSlice";
 
 const deleteAlert = (
   alertData: alertTypes,
@@ -71,6 +75,8 @@ const deleteAlert = (
         uri = `super-admin/delete-company`;
       } else if (type === "usersType") {
         uri = `operator/delete-operator`;
+      } else if (type === "complainType") {
+        uri = `complaint-center/internal-complaint-type/delete-type`;
       }
 
       try {
@@ -97,7 +103,33 @@ const deleteAlert = (
             //   text: "Poof! Your city has been deleted!",
             //   icon: "success",
             // });
-            if (type == "usersType") {
+            if (type === "complainType") {
+              getAll({
+                url: "complaint-center/internal-complaint-type/get-all-types",
+              }).then((data: any) => {
+                // console.log("api call --- >", data);
+                if (data == undefined) {
+                  dispatch(setComplainsTypes([]));
+                  dispatch(setFilterComplainsTypes([]));
+                }
+
+                if (data !== undefined) {
+                  dispatch(setNoDataFound(data.message));
+                  if (data.success) {
+                    // console.log("hhg");
+                    dispatch(setComplainsTypes(data.data));
+                    dispatch(setFilterComplainsTypes(data.data));
+                  }
+                  if (!data.success) {
+                    dispatch(setComplainsTypes([]));
+                    dispatch(setFilterComplainsTypes([]));
+                  }
+                } else {
+                  // console.log("ier67i");
+                }
+              });
+            }
+            if (type === "usersType") {
               getAll({ url: "operator/get-all-operators" }).then(
                 (data: any) => {
                   // console.log("api call --- >", data);
@@ -123,7 +155,7 @@ const deleteAlert = (
                 }
               );
             }
-            if (type == "serverType") {
+            if (type === "serverType") {
               getAll({ url: "server-management/get-all-servers" }).then(
                 (data: any) => {
                   // console.log("api call --- >", data);
@@ -148,7 +180,7 @@ const deleteAlert = (
                 }
               );
             }
-            if (type == "companyType") {
+            if (type === "companyType") {
               getAll({ url: "super-admin/get-all-companies" }).then(
                 (data: any) => {
                   // console.log("api call for companies --- >", data);
@@ -172,7 +204,7 @@ const deleteAlert = (
                 }
               );
             }
-            if (type == "cityType") {
+            if (type === "cityType") {
               getAll({ url: "city/get-all-cities" }).then((data: any) => {
                 // console.log("api call --- >", data);
                 if (data == undefined) {
@@ -194,7 +226,7 @@ const deleteAlert = (
                   // console.log("ier67i");
                 }
               });
-            } else if (type == "provinceType") {
+            } else if (type === "provinceType") {
               getAll({ url: "province/get-all-provinces" }).then(
                 (data: any) => {
                   // console.log("api call --- >", data);
@@ -251,7 +283,7 @@ const deleteAlert = (
                   }
                 }
               );
-            } else if (type == "packageType") {
+            } else if (type === "packageType") {
               getAll({ url: "package/get-all-packages" }).then((data: any) => {
                 // console.log("api call --- >", data);
                 dispatch(setPackagesEnd());
@@ -272,7 +304,7 @@ const deleteAlert = (
                   }
                 }
               });
-            } else if (type == "crmModuleType") {
+            } else if (type === "crmModuleType") {
               getAll({ url: "crm-module/get-all-modules" }).then(
                 (data: any) => {
                   // console.log("api call --- >", data);
@@ -295,7 +327,7 @@ const deleteAlert = (
                   }
                 }
               );
-            } else if (type == "countryType") {
+            } else if (type === "countryType") {
               getAll({ url: "country/get-all-countries" }).then((data: any) => {
                 // console.log("api call --- >", data);
                 if (data == undefined) {

@@ -1,4 +1,4 @@
-import { H2, Image } from "../../../AbstractElements";
+import { H4, Image, P } from "../../../AbstractElements";
 import { BusinessFormCommonProps } from "../../../Types/Forms/FormLayout/FormWizardTypes";
 import {
   Button,
@@ -72,7 +72,7 @@ const SuccessfullyFormSubmitted = ({
         url: "server-management/create-server",
       }).then((data: any) => {
         if (data !== undefined) {
-          if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
+          if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
             setLoading(false);
           }
           if (!data.success) {
@@ -119,7 +119,9 @@ const SuccessfullyFormSubmitted = ({
                     // console.log("hhg");
                     dispatch(setServers(data.data.allServers));
                     dispatch(setFilterServers(data.data.allServers));
-                    navigate(`${process.env.PUBLIC_URL}/super-admin/setup/server_details`);
+                    navigate(
+                      `${process.env.PUBLIC_URL}/super-admin/setup/server_details`
+                    );
                   }
                 }
               }
@@ -163,7 +165,7 @@ const SuccessfullyFormSubmitted = ({
   return (
     <div className="form-completed">
       <div style={{ display: "flex", justifyContent: "space-between" }}>
-        <H2>Server Info</H2>
+        <H4>Server Info</H4>
         <Row>
           <Col
             xs={9}
@@ -179,10 +181,10 @@ const SuccessfullyFormSubmitted = ({
       <Form style={{ marginBottom: "65px", marginTop: "20px" }}>
         <Row className="g-3">
           <Col xl={4} sm={6}>
-            <Label>
+            <P>
               Company Name
               <span className="txt-danger">*</span>
-            </Label>
+            </P>
             <Input
               type="text"
               placeholder="Enter Company Name"
@@ -192,10 +194,10 @@ const SuccessfullyFormSubmitted = ({
             />
           </Col>
           <Col xl={4} sm={6}>
-            <Label>
+            <P>
               Service Provider
               <span className="txt-danger">*</span>
-            </Label>
+            </P>
             <Input
               type="text"
               placeholder="Enter Service Provider"
@@ -205,10 +207,10 @@ const SuccessfullyFormSubmitted = ({
             />
           </Col>
           <Col xl={4} xs={12}>
-            <Label>
+            <P>
               IP Address
               <span className="txt-danger">*</span>
-            </Label>
+            </P>
             <Input
               id="ipAddress"
               type="text"
@@ -219,10 +221,10 @@ const SuccessfullyFormSubmitted = ({
             />
           </Col>
           <Col xl={4} sm={6}>
-            <Label>
+            <P>
               Server URL
               <span className="txt-danger">*</span>
-            </Label>
+            </P>
             <Input
               type="text"
               placeholder="Enter Server URL"
@@ -232,10 +234,10 @@ const SuccessfullyFormSubmitted = ({
             />
           </Col>
           <Col xl={4} sm={6}>
-            <Label>
+            <P>
               Login User Software
               <span className="txt-danger">*</span>
-            </Label>
+            </P>
             <Input
               type="text"
               placeholder="Enter Login User Software"
@@ -245,10 +247,10 @@ const SuccessfullyFormSubmitted = ({
             />
           </Col>
           <Col xl={4} xs={12}>
-            <Label>
+            <P>
               Operating System
               <span className="txt-danger">*</span>
-            </Label>
+            </P>
             <Input
               id="operatingSystem"
               type="text"
@@ -259,10 +261,10 @@ const SuccessfullyFormSubmitted = ({
             />
           </Col>
           <Col xl={4} xs={12}>
-            <Label>
+            <P>
               Login User Server
               <span className="txt-danger">*</span>
-            </Label>
+            </P>
             <Input
               id="loginUserServer"
               type="text"
@@ -273,10 +275,10 @@ const SuccessfullyFormSubmitted = ({
             />
           </Col>
           <Col xl={4} xs={12}>
-            <Label>
+            <P>
               SSH Port
               <span className="txt-danger">*</span>
-            </Label>
+            </P>
             <Input
               id="sshPort"
               type="text"
@@ -287,10 +289,10 @@ const SuccessfullyFormSubmitted = ({
             />
           </Col>
           <Col xl={4} xs={12}>
-            <Label>
+            <P>
               Server Specifications
               <span className="txt-danger">*</span>
-            </Label>
+            </P>
             <Input
               id="serverSpecifications"
               type="text"
@@ -304,15 +306,15 @@ const SuccessfullyFormSubmitted = ({
       </Form>
       {/*  */}
 
-      <H2>Server Credentials</H2>
+      <H4>Server Credentials</H4>
 
       <Form style={{ marginBottom: "65px", marginTop: "20px" }}>
         <Row className="g-3">
           <Col sm={6}>
-            <Label>
+            <P>
               Multi Cloud Web Login
               <span className="txt-danger">*</span>
-            </Label>
+            </P>
             <Input
               defaultValue={serverCredentials.multiCloudWebLogin}
               disabled
@@ -322,10 +324,10 @@ const SuccessfullyFormSubmitted = ({
             />
           </Col>
           <Col sm={6}>
-            <Label>
+            <P>
               Login Password Software
               <span className="txt-danger">*</span>
-            </Label>
+            </P>
 
             <InputGroup>
               <Input
@@ -360,15 +362,15 @@ const SuccessfullyFormSubmitted = ({
         </Row>
       </Form>
 
-      <H2>Google Account Credentials</H2>
+      <H4>Google Account Credentials</H4>
 
       <Form style={{ marginBottom: "65px", marginTop: "20px" }}>
         <Row className="g-3">
           <Col sm={6}>
-            <Label>
+            <P>
               Email Address
               <span className="txt-danger">*</span>
-            </Label>
+            </P>
             <Input
               defaultValue={googleAccountCreadentials.emailAddress}
               disabled
@@ -378,10 +380,10 @@ const SuccessfullyFormSubmitted = ({
             />
           </Col>
           <Col sm={6}>
-            <Label>
+            <P>
               Password
               <span className="txt-danger">*</span>
-            </Label>
+            </P>
 
             <InputGroup>
               <Input
@@ -416,15 +418,15 @@ const SuccessfullyFormSubmitted = ({
         </Row>
       </Form>
 
-      <H2>Firebase Account credentials</H2>
+      <H4>Firebase Account credentials</H4>
 
       <Form style={{ marginBottom: "65px", marginTop: "20px" }}>
         <Row className="g-3">
           <Col sm={6}>
-            <Label>
+            <P>
               Email Address
               <span className="txt-danger">*</span>
-            </Label>
+            </P>
             <Input
               defaultValue={firebaseAccountCredentials.emailAddress}
               disabled
@@ -434,10 +436,10 @@ const SuccessfullyFormSubmitted = ({
             />
           </Col>
           <Col sm={6}>
-            <Label>
+            <P>
               Password
               <span className="txt-danger">*</span>
-            </Label>
+            </P>
             <InputGroup>
               <Input
                 defaultValue={firebaseAccountCredentials.password}
@@ -471,15 +473,15 @@ const SuccessfullyFormSubmitted = ({
         </Row>
       </Form>
 
-      <H2>API Keys</H2>
+      <H4>API Keys</H4>
 
       <Form style={{ marginBottom: "65px", marginTop: "20px" }}>
         <Row className="g-3">
           <Col sm={6}>
-            <Label>
+            <P>
               Google Maps API Key
               <span className="txt-danger">*</span>
-            </Label>
+            </P>
             <Input
               defaultValue={apiKeys}
               disabled

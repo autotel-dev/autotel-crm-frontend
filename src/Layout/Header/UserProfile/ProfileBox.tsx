@@ -3,20 +3,27 @@ import { LI, UL } from "../../../AbstractElements";
 import { profilesMessage } from "../../../Data/Layout/Header/ProfilesData";
 import FeatherIcons from "../../../utils/CommonSvgIcon/FeatherIcons";
 import { getUserId, getUserRole } from "../../../Api/globals";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { ROLES } from "../../../constants/roles";
+import { setErrorData } from "../../../ReaduxToolkit/Reducer/UserSlice";
 
 const ProfileBox = () => {
+  const dispatch = useDispatch();
   const { userPermissions } = useSelector(
     (state: any) => state.userPermissions
   );
   var profile = userPermissions.find((item: any) => item.title === "Profile");
   var profileMenu = profilesMessage.filter((item, index) => {
-    if (profile == undefined && index == 0) {
+    if (
+      profile == undefined &&
+      index === 0 &&
+      getUserRole() !== ROLES.SUPER_ADMIN
+    ) {
       return false;
     } else if (profile !== undefined && item.name === "Account") {
       return profile.read;
-    } else if (item.name == "Settings") {
-      return getUserRole() == "OPERATOR" ? false : true;
+    } else if (item.name === "Settings") {
+      return getUserRole() === ROLES.OPERATOR ? false : true;
     } else {
       return true;
     }
@@ -25,8 +32,11 @@ const ProfileBox = () => {
   // // console.log("profile", profile);
   const navigate = useNavigate();
   const handleClick = (name: string) => {
-    if (name === "Log Out") {
-      if (getUserRole() == "SUPER_ADMIN") {
+    if (name == "Account") {
+      dispatch(setErrorData(false));
+    }
+    if (name == "Log Out") {
+      if (getUserRole() == ROLES.SUPER_ADMIN) {
         localStorage.removeItem("token");
         localStorage.removeItem("userId");
         navigate(`${process.env.PUBLIC_URL}/login`);
@@ -36,26 +46,6 @@ const ProfileBox = () => {
           `${process.env.PUBLIC_URL}/login/${localStorage.getItem("userId")}`
         );
       }
-      // if (getUserRole() == "COMPANY") {
-      //   // // console.log("Company");
-
-      //   setTimeout(() => {
-      //     localStorage.removeItem("token");
-      //     localStorage.setItem("userId", getUserId());
-      //   }, 1500);
-      //   setTimeout(() => {
-      //     navigate(`${process.env.PUBLIC_URL}/login/${getUserId()}`);
-      //   }, 2000);
-      // } else {
-      //   // // console.log("SuperAdmin");
-      //   setTimeout(() => {
-      //     localStorage.removeItem("token");
-      //     localStorage.setItem("userId", "");
-      //   }, 1500);
-      //   setTimeout(() => {
-      //     navigate(`${process.env.PUBLIC_URL}/login/:id`);
-      //   }, 1500);
-      // }
     }
   };
   return (

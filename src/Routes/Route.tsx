@@ -51,7 +51,6 @@ import Todo from "../Pages/Apps/Todo/Todo";
 import SocialApp from "../Pages/Apps/SocialApp/SocialApp";
 import Calender from "../Pages/Apps/Calender/Calender";
 import Tasks from "../Pages/Apps/Tasks/Tasks";
-import UserProfile from "../Pages/Apps/User/UserProfile/Settings";
 import UserCard from "../Pages/Apps/User/UserCard/UserCard";
 import EmailApp from "../Pages/Apps/Email/EmailApp/EmailApp";
 import EmailCompose from "../Pages/Apps/Email/EmailCompose/EmailCompose";
@@ -65,20 +64,6 @@ import BasicDataTables from "../Pages/Tables/DataTables/BasicInt/BasicDataTables
 import AdvanceInit from "../Pages/Tables/DataTables/AdvanceInit/AdvanceInit";
 import APIDataTables from "../Pages/Tables/DataTables/APIDataTables/APIDataTables";
 import DataSources from "../Pages/Tables/DataTables/DataSources/DataSources";
-import FormWizard from "../Pages/Forms/FormsLayout/FormWizard/FormWizard";
-import TwoFactor from "../Pages/Forms/FormsLayout/TwoFactor/TwoFactor";
-import FormWizardTwo from "../Pages/Forms/FormsLayout/FormWizard2/FormWizardTwo";
-import FormValidation from "../Pages/Forms/FormsControl/FormValidition/FormValidation";
-import BaseInput from "../Pages/Forms/FormsControl/BaseInput/BaseInput";
-import CheckboxRadio from "../Pages/Forms/FormsControl/Checkbox&Radio/Checkbox&Radio";
-import InputGroups from "../Pages/Forms/FormsControl/InputGroups/InputGroups";
-import InputMask from "../Pages/Forms/FormsControl/InputMask/InputMask";
-import MegaOptions from "../Pages/Forms/FormsControl/MegaOptions/MegaOptions";
-import Datepicker from "../Pages/Forms/FormWidgets/Datepicker/Datepicker";
-import Touchspin from "../Pages/Forms/FormWidgets/Touchspin/Touchspin";
-import Switch from "../Pages/Forms/FormWidgets/Switch/Switch";
-import Typeahead from "../Pages/Forms/FormWidgets/Typeahead/Typeahead";
-import Clipboard from "../Pages/Forms/FormWidgets/Clipboard/Clipboard";
 import DefaultStyle from "../Pages/Buttons/DefaultStyle/DefaultStyle";
 import FlatButtons from "../Pages/Buttons/FlatButtons/FlatButtons";
 import EdgeButtons from "../Pages/Buttons/EdgeButtons/EdgeButtons";
@@ -99,8 +84,6 @@ import Province from "../Pages/Province/Province";
 import Package from "../Pages/Package/Package";
 import CRMModule from "../Pages/CRMModule/CRMModule";
 import Support from "../Pages/Support/Support";
-import Login from "../Pages/Authentication/Login";
-import LoginForm from "../Pages/Auth/Auth";
 import Companies from "../Pages/Companies/Companies";
 import Countries from "../Pages/Countries/Countries";
 import CreateCompanyForm from "../Pages/Companies/CreateCompanyForm/CreateCompanyForm";
@@ -126,6 +109,13 @@ import NotAccessible from "../Pages/NotAccessible/NotAccessible";
 import { ROLES } from "../constants/roles";
 import { PERMISSION_VALUES } from "../constants/permissions";
 import NoInternetConnection from "../Pages/NoInternetConnection/NoInternetConnection";
+import UpdateCompanyForm from "../Pages/Companies/UpdateCompanyForm/UpdateCompanyForm";
+import UnderProductionPage from "../Pages/UnderProductionPage/UnderProductionPage";
+import Dashboard from "../Pages/DashBoard/Dashboard";
+import ComplainDetails from "../Pages/Company/Modules/ComplainCenter/ComplainDetails";
+import ComplainCenter from "../Pages/Company/Modules/ComplainCenter/ComplainCenter";
+import ComplainType from "../Pages/ComplainType/ComplainType";
+import EmailGateway from "../Pages/EmailGateway/EmailGateway";
 
 const routes = [
   // dashboard routes
@@ -439,69 +429,6 @@ const routes = [
     path: `${process.env.PUBLIC_URL}/tables/datatables/api`,
     Component: <APIDataTables />,
   },
-  //  Forms
-  // Form Wizard
-  {
-    path: `${process.env.PUBLIC_URL}/forms/formlayout/formwizard1`,
-    Component: <FormWizard />,
-  },
-  {
-    path: `${process.env.PUBLIC_URL}/forms/formlayout/formwizard2`,
-    Component: <FormWizardTwo />,
-  },
-  {
-    path: `${process.env.PUBLIC_URL}/forms/formlayout/twofactor`,
-    Component: <TwoFactor />,
-  },
-
-  //  Forms
-  // Controls
-  {
-    path: `${process.env.PUBLIC_URL}/forms/formcontrols/formvalidation`,
-    Component: <FormValidation />,
-  },
-  {
-    path: `${process.env.PUBLIC_URL}/forms/formcontrols/baseinputs`,
-    Component: <BaseInput />,
-  },
-  {
-    path: `${process.env.PUBLIC_URL}/forms/formcontrols/checkbox&radio`,
-    Component: <CheckboxRadio />,
-  },
-  {
-    path: `${process.env.PUBLIC_URL}/forms/formcontrols/inputgroups`,
-    Component: <InputGroups />,
-  },
-  {
-    path: `${process.env.PUBLIC_URL}/forms/formcontrols/inputmask`,
-    Component: <InputMask />,
-  },
-  {
-    path: `${process.env.PUBLIC_URL}/forms/formcontrols/megaoptions`,
-    Component: <MegaOptions />,
-  },
-
-  // Widgets
-  {
-    path: `${process.env.PUBLIC_URL}/forms/formwidgets/datepicker`,
-    Component: <Datepicker />,
-  },
-  {
-    path: `${process.env.PUBLIC_URL}/forms/formwidgets/touchspin`,
-    Component: <Touchspin />,
-  },
-  {
-    path: `${process.env.PUBLIC_URL}/forms/formwidgets/switch`,
-    Component: <Switch />,
-  },
-  {
-    path: `${process.env.PUBLIC_URL}/forms/formwidgets/typeahead`,
-    Component: <Typeahead />,
-  },
-  {
-    path: `${process.env.PUBLIC_URL}/forms/formwidgets/clipboard`,
-    Component: <Clipboard />,
-  },
 
   //  Buttons
   {
@@ -594,7 +521,7 @@ const routes = [
   // Dashboard
   {
     path: `${process.env.PUBLIC_URL}/dashboard`,
-    Component: <ShoppingPlace />,
+    Component: <Dashboard />,
     isProtected: true,
     allowedUserRoles: [ROLES.SUPER_ADMIN, ROLES.COMPANY, ROLES.OPERATOR],
     permissionValue: PERMISSION_VALUES.DASHBOARD,
@@ -638,6 +565,13 @@ const routes = [
     permissionValue: "CRMModules",
   },
   {
+    path: `${process.env.PUBLIC_URL}/super-admin/setup/complain-types`,
+    Component: <ComplainType />,
+    allowedUserRoles: [ROLES.SUPER_ADMIN],
+    isProtected: true,
+    permissionValue: "ComplainTypes",
+  },
+  {
     path: `${process.env.PUBLIC_URL}/super-admin/setup/server_details`,
     Component: <Servers />,
     allowedUserRoles: [ROLES.SUPER_ADMIN],
@@ -652,7 +586,7 @@ const routes = [
     permissionValue: "CreateNewServer",
   },
   {
-    path: `${process.env.PUBLIC_URL}/super-admin/setup/server_details/updareServer`,
+    path: `${process.env.PUBLIC_URL}/super-admin/setup/server_details/update-server`,
     Component: <UpdateServerForm />,
     allowedUserRoles: [ROLES.SUPER_ADMIN],
     isProtected: true,
@@ -673,16 +607,24 @@ const routes = [
     permissionValue: "AllLogs",
   },
 
+  {
+    path: `${process.env.PUBLIC_URL}/super-admin/setup/email_gateway`,
+    Component: <EmailGateway />,
+    allowedUserRoles: [ROLES.SUPER_ADMIN],
+    isProtected: true,
+    permissionValue: "EmailGateway",
+  },
+
   // Support
   {
-    path: `${process.env.PUBLIC_URL}/super-admin/support`,
+    path: `${process.env.PUBLIC_URL}/support`,
     Component: <Support />,
-    allowedUserRoles: [ROLES.SUPER_ADMIN],
+    allowedUserRoles: [ROLES.SUPER_ADMIN, ROLES.COMPANY, ROLES.OPERATOR],
     isProtected: true,
     permissionValue: "Support",
   },
   {
-    path: `${process.env.PUBLIC_URL}/super-admin/support/ticketDetails/:ticketId`,
+    path: `${process.env.PUBLIC_URL}/support/ticketDetails/:ticketId`,
     Component: <TicketDetails />,
   },
   // Tasks
@@ -700,6 +642,13 @@ const routes = [
     allowedUserRoles: [ROLES.SUPER_ADMIN],
     isProtected: true,
     permissionValue: "Companies",
+  },
+  {
+    path: `${process.env.PUBLIC_URL}/super-admin/setup/company/update-company/:companyId`,
+    Component: <UpdateCompanyForm />,
+    allowedUserRoles: [ROLES.SUPER_ADMIN],
+    isProtected: true,
+    permissionValue: "UpdateCompany",
   },
 
   {
@@ -719,7 +668,7 @@ const routes = [
   // Dashboard
   {
     path: `${process.env.PUBLIC_URL}/dashboard`,
-    Component: <ShoppingPlace />,
+    Component: <Dashboard />,
     isProtected: true,
     allowedUserRoles: [ROLES.SUPER_ADMIN, ROLES.COMPANY, ROLES.OPERATOR],
     permissionValue: PERMISSION_VALUES.DASHBOARD,
@@ -736,14 +685,14 @@ const routes = [
   },
   {
     path: `${process.env.PUBLIC_URL}/company/setup/emailTemplates`,
-    Component: <ShoppingPlace />,
+    Component: <UnderProductionPage />,
     allowedUserRoles: [ROLES.COMPANY],
     isProtected: true,
     permissionValue: "EmailTemplates",
   },
   {
     path: `${process.env.PUBLIC_URL}/company/setup/whatsappTemplates`,
-    Component: <ShoppingPlace />,
+    Component: <UnderProductionPage />,
     allowedUserRoles: [ROLES.COMPANY],
     isProtected: true,
     permissionValue: "WhatsAppTemplates",
@@ -765,6 +714,19 @@ const routes = [
     allowedUserRoles: [ROLES.COMPANY],
     permissionValue: "Control Room",
   },
+
+  {
+    path: `${process.env.PUBLIC_URL}/company/modules/complaint-center`,
+    Component: <ComplainCenter />,
+    isProtected: true,
+    allowedUserRoles: [ROLES.COMPANY],
+    permissionValue: "Complain Center",
+  },
+  {
+    path: `${process.env.PUBLIC_URL}/company/modules/complain-center/complainDetails/:complaintId`,
+    Component: <ComplainDetails />,
+  },
+
   // Users
   {
     path: `${process.env.PUBLIC_URL}/company/users`,
@@ -775,13 +737,13 @@ const routes = [
   },
 
   // Support
-  {
-    path: `${process.env.PUBLIC_URL}/company/support`,
-    Component: <Support />,
-    isProtected: true,
-    allowedUserRoles: [ROLES.COMPANY, ROLES.OPERATOR],
-    permissionValue: PERMISSION_VALUES.SUPPORT,
-  },
+  // {
+  //   path: `${process.env.PUBLIC_URL}/support`,
+  //   Component: <Support />,
+  //   isProtected: true,
+  //   allowedUserRoles: [ROLES.COMPANY],
+  //   permissionValue: PERMISSION_VALUES.SUPPORT,
+  // },
   // Tasks
   {
     path: `${process.env.PUBLIC_URL}/company/tasks`,
@@ -804,7 +766,7 @@ const routes = [
   // Dashboard
   {
     path: `${process.env.PUBLIC_URL}/dashboard`,
-    Component: <ShoppingPlace />,
+    Component: <Dashboard />,
     isProtected: true,
     allowedUserRoles: [ROLES.SUPER_ADMIN, ROLES.COMPANY, ROLES.OPERATOR],
     permissionValue: PERMISSION_VALUES.DASHBOARD,
@@ -824,12 +786,23 @@ const routes = [
     permissionValue: "Control Room",
   },
   {
-    path: `${process.env.PUBLIC_URL}/operator/support`,
-    Component: <Support />,
+    path: `${process.env.PUBLIC_URL}/operator/modules/complaint-center`,
+    Component: <ComplainCenter />,
     isProtected: true,
     allowedUserRoles: [ROLES.OPERATOR],
-    permissionValue: PERMISSION_VALUES.SUPPORT,
+    permissionValue: "Complain Center",
   },
+  {
+    path: `${process.env.PUBLIC_URL}/operator/modules/complain-center/complainDetails/:complaintId`,
+    Component: <ComplainDetails />,
+  },
+  // {
+  //   path: `${process.env.PUBLIC_URL}/support`,
+  //   Component: <Support />,
+  //   isProtected: true,
+  //   allowedUserRoles: [ROLES.OPERATOR],
+  //   permissionValue: PERMISSION_VALUES.SUPPORT,
+  // },
   // Not Accessible
 
   {

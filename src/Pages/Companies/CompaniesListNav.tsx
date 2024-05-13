@@ -35,7 +35,7 @@ const CompaniesListNav = () => {
               {all}
             </NavLink>
           </NavItem>
-          <NavItem style={{ cursor: "pointer" }}>
+          {/* <NavItem style={{ cursor: "pointer" }}>
             <NavLink
               className={activeTab === "3" ? "active" : ""}
               onClick={() => {
@@ -75,7 +75,7 @@ const CompaniesListNav = () => {
               <CheckCircle />
               {active}
             </NavLink>
-          </NavItem>
+          </NavItem> */}
         </Nav>
       </Col>
       <CreateNewCompany />

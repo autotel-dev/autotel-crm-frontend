@@ -1,11 +1,8 @@
-import { Progress } from "reactstrap";
-import { dynamicImage } from "../../../Service";
-import { Image } from "../../../AbstractElements";
-import { useSelector } from "react-redux";
+
 import Store from "../../../ReaduxToolkit/Store";
 import { formatUnderscoredString } from "../../../Api/globals";
 
-const state = Store.getState();
+// const state = Store.getState();
 
 export const ticketData = [
   {

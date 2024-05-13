@@ -5,6 +5,7 @@ import { balanceOverviewChart } from "../../../../Data/Dashboard/CRM/ChartData";
 import { H3 } from "../../../../AbstractElements";
 
 const BalanceOverview = () => {
+  
   return (
     <Col xl="7">
       <Card>

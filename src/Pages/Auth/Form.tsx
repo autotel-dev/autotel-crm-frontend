@@ -1,22 +1,24 @@
 import { useState } from "react";
 import Logo from "./Logo";
-import { H3, P, H6 } from "../../AbstractElements";
-import { Button, Form, FormGroup, Input, Label } from "reactstrap";
+import { H3, P } from "../../AbstractElements";
+import { Button, Form, FormGroup, Label } from "reactstrap";
 import { EmailAddress, Password } from "../../utils/Constant";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { getAll, login } from "../../Api";
-import successAlert from "../Alerts/SuccessAlert";
-import errorAlert from "../Alerts/ErrorAlert";
-import { useDispatch } from "react-redux";
+
+import { useDispatch, useSelector } from "react-redux";
 import { setActiveCRMModules } from "../../ReaduxToolkit/Reducer/CRMModuleSlice";
 import { getOperatorCompanyUserId, getUserRole } from "../../Api/globals";
 import Swal from "sweetalert2";
 import { setUserPersonalizationData } from "../../ReaduxToolkit/Reducer/PersonalizationSlice";
-import { setPermissions } from "../../ReaduxToolkit/Reducer/CompanySlice";
 import { setUserPermissions } from "../../ReaduxToolkit/Reducer/PermissionSlice";
 import { ROLES } from "../../constants/roles";
-import { setUserData } from "../../ReaduxToolkit/Reducer/UserSlice";
+import {
+  setLoginData,
+  setUserData,
+} from "../../ReaduxToolkit/Reducer/UserSlice";
+import { setDevices } from "../../ReaduxToolkit/Reducer/MonitoringSlice";
 
 interface loginTypes {
   emailAddress: string; // Change 'boolean' to the actual type of isVisible
@@ -27,9 +29,11 @@ export interface CommonFormPropsType {
   alignLogo?: string;
 }
 const CommonForm = ({ alignLogo }: CommonFormPropsType) => {
+  const { userPersonalizationData } = useSelector(
+    (state: any) => state.personalization
+  );
   const [showPassWord, setShowPassWord] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [formData, setFormData] = useState({});
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const header = "Sign In ";
@@ -53,6 +57,7 @@ const CommonForm = ({ alignLogo }: CommonFormPropsType) => {
       try {
         await login(loginData).then(async (data: any) => {
           // console.log("response: ", data);
+
           setLoading(false);
           // if (data == undefined) {
           //   Swal.fire({
@@ -74,7 +79,7 @@ const CommonForm = ({ alignLogo }: CommonFormPropsType) => {
             });
           }
 
-          if (data.statusCode == 401) {
+          if (data.statusCode === 401) {
             if (data.data) {
               if (data.data.isOtpEnabled) {
                 // console.log("response: ", data.data);
@@ -86,32 +91,42 @@ const CommonForm = ({ alignLogo }: CommonFormPropsType) => {
             } else {
               Swal.fire({
                 text: `${data.message}`,
-                icon: "info",
+                icon: "error",
                 timer: 2000,
                 showCancelButton: false,
               });
             }
-          } else if (data.statusCode == 200) {
+          } else if (data.statusCode === 200) {
+            dispatch(setLoginData(data));
             dispatch(setUserData(null));
             const token = data.data.authToken;
             // console.log("response: ", data.data);
             // console.log("token: ", token);
+
             localStorage.setItem("token", token);
-            if (getUserRole() == ROLES.SUPER_ADMIN) {
+
+            if (
+              getUserRole() == ROLES.COMPANY ||
+              getUserRole() == ROLES.OPERATOR
+            ) {
+              dispatch(setDevices([]));
+            }
+            if (getUserRole() === ROLES.SUPER_ADMIN) {
               dispatch(setUserPermissions([]));
             }
 
-            if (getUserRole() == "OPERATOR") {
+            if (getUserRole() === ROLES.OPERATOR) {
               localStorage.setItem("userId", getOperatorCompanyUserId());
-            } else if (getUserRole() == "COMPANY") {
+            } else if (getUserRole() === ROLES.COMPANY) {
               localStorage.setItem("userId", data.data.userId);
-            } else if (getUserRole() == "SUPER_ADMIN") {
+            } else if (getUserRole() === ROLES.SUPER_ADMIN) {
               localStorage.removeItem("userId");
             }
             const userId = localStorage.getItem("userId");
             getAll({
               url:
-                getUserRole() == "COMPANY" || getUserRole() == "OPERATOR"
+                getUserRole() === ROLES.COMPANY ||
+                  getUserRole() === ROLES.OPERATOR
                   ? "user/get-allowed-modules"
                   : "crm-module/get-all-active-modules",
             }).then((data: any) => {
@@ -160,8 +175,19 @@ const CommonForm = ({ alignLogo }: CommonFormPropsType) => {
                 }
               }
             });
+            dispatch(setUserData(null));
+            getAll({ url: "user/get-user" }).then((parentData: any) => {
+              if (parentData !== undefined) {
+                if (parentData.success) {
+                  dispatch(setUserData(parentData.data.user));
+                }
+              }
+            });
 
-            if (getUserRole() == "COMPANY" || getUserRole() == "OPERATOR") {
+            if (
+              getUserRole() === ROLES.COMPANY ||
+              getUserRole() === ROLES.OPERATOR
+            ) {
               getAll({ url: "user/get-permissions" })
                 .then((data: any) => {
                   // console.log("api call --- >", data);
@@ -188,7 +214,7 @@ const CommonForm = ({ alignLogo }: CommonFormPropsType) => {
           }
 
           reset({
-            emailAddress: "",
+            // emailAddress: "",
             password: "",
           });
         });
@@ -198,7 +224,7 @@ const CommonForm = ({ alignLogo }: CommonFormPropsType) => {
         // Handle error (e.g., show an error message)
         // console.error("Error creating post:", error);
         setLoading(false);
-        // if (error.response.statusCode == 401) {
+        // if (error.response.statusCode === 401) {
         //     errorAlert();
         //   }
       }
@@ -207,9 +233,9 @@ const CommonForm = ({ alignLogo }: CommonFormPropsType) => {
   return (
     <div className="login-card login-dark">
       <div>
-        <div>
+        {/* <div>
           <Logo alignLogo={alignLogo} />
-        </div>
+        </div> */}
         <div className="login-main">
           <Form className="theme-form" onSubmit={handleSubmit(loginData)}>
             <H3>{header}</H3>
@@ -232,6 +258,14 @@ const CommonForm = ({ alignLogo }: CommonFormPropsType) => {
               <Label className="col-form-label">{Password}</Label>
               <div className="form-input position-relative">
                 <input
+                  //     style={{
+                  //       backgroundColor: `${userPersonalizationData &&
+                  //         userPersonalizationData.buttonsAndBarsColor !== "" && userPersonalizationData.buttonsAndBarsColor
+                  //         }
+
+                  // `,
+
+                  // }}
                   className="form-control"
                   type={showPassWord ? "text" : "password"}
                   placeholder="*********"
@@ -241,6 +275,12 @@ const CommonForm = ({ alignLogo }: CommonFormPropsType) => {
 
                 <div className="show-hide">
                   <span
+                    style={{
+                      color: `${userPersonalizationData &&
+                        userPersonalizationData.buttonsAndBarsColor !== "" && userPersonalizationData.buttonsAndBarsColor
+                        }
+              `,
+                    }}
                     onClick={() => setShowPassWord(!showPassWord)}
                     className={!showPassWord ? "show" : ""}
                   />
@@ -258,13 +298,44 @@ const CommonForm = ({ alignLogo }: CommonFormPropsType) => {
                 {ForgotPassword}
               </Link> */}
               <div className="text-end mt-2">
-                <Button
+                {/* <Button
                   disabled={loading}
                   color="primary"
                   className="btn-block w-100"
                 >
-                  {loading ? "Loading..." : "SignIn"}
-                </Button>
+                  {loading ? "Loading..." : "Sign In"}
+                </Button> */}
+                {userPersonalizationData &&
+                  userPersonalizationData.buttonsAndBarsColor !== "" ? (
+                  <button
+                    disabled={loading}
+                    style={{
+                      fontWeight: "bold",
+                      backgroundColor: `${userPersonalizationData.buttonsAndBarsColor
+                        }
+                  `,
+                      padding: "10px 10px",
+                      borderRadius: "5px",
+                      color: "white",
+                      outline: "none",
+                      border: `${userPersonalizationData &&
+                        userPersonalizationData.buttonsAndBarsColor
+                        }
+                  `,
+                    }}
+                    className="btn-block w-100"
+                  >
+                    {loading ? "Loading..." : "Sign In"}
+                  </button>
+                ) : (
+                  <Button
+                    disabled={loading}
+                    color="primary"
+                    className="btn-block w-100"
+                  >
+                    {loading ? "Loading..." : "Sign In"}
+                  </Button>
+                )}
               </div>
             </FormGroup>
           </Form>

@@ -1,8 +1,6 @@
 import { Card, CardBody, Col, Progress, Row } from "reactstrap";
 import { H3 } from "../../AbstractElements";
 import CountUp from "react-countup";
-import ProfitAndLoss from "./ProfitAndLoss";
-import { ticketData } from "./data/SupportData";
 import { useSelector } from "react-redux";
 
 const TicketList = () => {
@@ -27,7 +25,7 @@ const TicketList = () => {
                 <Card className="ecommerce-widget">
                   <CardBody className="support-ticket-font">
                     <Row>
-                      <Col xs={9}>
+                      <Col xs={12}>
                         {/* <span>{item.title}</span> */}
                         <H3 className="total-num counter">
                           <CountUp
@@ -51,18 +49,18 @@ const TicketList = () => {
                         </span>
                       </Col>
                       {/* <ProfitAndLoss /> */}
-                      <Col xs={3}>
+                      {/* <Col xs={3}>
                         <div></div>
-                      </Col>
+                      </Col> */}
                     </Row>
                     <Progress
                       className="sm-progress-bar mt-4"
                       color={
-                        item.key == "Pending Tickets"
+                        item.key === "Pending Tickets"
                           ? "danger"
-                          : item.key == "New Tickets"
+                          : item.key === "New Tickets"
                           ? "seconadry"
-                          : item.key == "Resolved Tickets"
+                          : item.key === "Resolved Tickets"
                           ? "primary"
                           : "warning"
                       }
@@ -78,11 +76,11 @@ const TicketList = () => {
                       <span
                         style={{
                           color: `${
-                            item.key == "Pending Tickets"
+                            item.key === "Pending Tickets"
                               ? "info"
-                              : item.key == "New Tickets"
+                              : item.key === "New Tickets"
                               ? "seconadry"
-                              : item.key == "Resolved Tickets"
+                              : item.key === "Resolved Tickets"
                               ? "primary"
                               : "warning"
                           }`,

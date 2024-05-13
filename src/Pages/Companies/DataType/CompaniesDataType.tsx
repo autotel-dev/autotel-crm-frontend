@@ -12,9 +12,9 @@ export interface CompanyCardTypes {
   icon: string;
   name: string;
   email: string;
-  operator: string;
-  complains: string;
-  expiry: string;
+  totalOperators: number;
+  totalBugReports: number;
+  packageExpirationDate: string;
   package?: any;
 }
 export interface CardType {

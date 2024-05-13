@@ -16,7 +16,11 @@ import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { IMAGE_BASE_URL, getAll, getImage, patch } from "../../Api";
 import Loader from "../Loader/Loader";
-import { setTicketDetails } from "../../ReaduxToolkit/Reducer/SupportSlice";
+import {
+  setPriorityStatuses,
+  setStatuses,
+  setTicketDetails,
+} from "../../ReaduxToolkit/Reducer/SupportSlice";
 import { Select } from "antd";
 import {
   formatUnderscoredString,
@@ -25,8 +29,13 @@ import {
 } from "../../Api/globals";
 import { useParams } from "react-router-dom";
 import Swal from "sweetalert2";
+import { ROLES } from "../../constants/roles";
+
 
 const TicketDetails = () => {
+  const { userPersonalizationData } = useSelector(
+    (state: any) => state.personalization
+  );
   const { ticketId } = useParams();
   const [itemsLength, setItemsLength] = useState(2);
   const [showMore, setShowMore] = useState(false);
@@ -79,7 +88,7 @@ const TicketDetails = () => {
 
   useEffect(() => {
     setLoading(true);
-    if (tableRow.status == "NEW" && getUserRole() == "SUPER_ADMIN") {
+    if (tableRow.status === "NEW" && getUserRole() === ROLES.SUPER_ADMIN) {
       // console.log("IF");
       patch(
         { updatedStatus: "IN_PROGRESS", resolvingDate: null },
@@ -98,7 +107,7 @@ const TicketDetails = () => {
                 if (data.success) {
                   dispatch(setTicketDetails(data.data.bugReport));
                   setTicketImages([]);
-                  if (data.data.bugReport.images.length == 0) {
+                  if (data.data.bugReport.images.length === 0) {
                     setLoading(false);
                   }
                   data.data.bugReport.images.map((image: any, index: any) => {
@@ -113,7 +122,7 @@ const TicketDetails = () => {
                       // console.log("Ticket Images", ticketImages);
                       // console.log("objectURL: ", data);
                     });
-                    if (index == data.data.bugReport.images.length - 1) {
+                    if (index === data.data.bugReport.images.length - 1) {
                       setLoading(false);
                     }
                   });
@@ -133,7 +142,7 @@ const TicketDetails = () => {
           if (data.success) {
             dispatch(setTicketDetails(data.data.bugReport));
             setTicketImages([]);
-            if (data.data.bugReport.images.length == 0) {
+            if (data.data.bugReport.images.length === 0) {
               setLoading(false);
             }
             data.data.bugReport.images.map((image: any, index: any) => {
@@ -148,7 +157,7 @@ const TicketDetails = () => {
                 // console.log("Ticket Images", ticketImages);
                 // console.log("objectURL: ", data);
               });
-              if (index == data.data.bugReport.images.length - 1) {
+              if (index === data.data.bugReport.images.length - 1) {
                 setLoading(false);
               }
             });
@@ -178,9 +187,8 @@ const TicketDetails = () => {
       hours = 12;
     }
 
-    return `${day}, ${hours}:${
-      minutes < 10 ? "0" + minutes : minutes
-    } ${amOrPm}`;
+    return `${day}, ${hours}:${minutes < 10 ? "0" + minutes : minutes
+      } ${amOrPm}`;
   };
 
   const sendMessage = () => {
@@ -267,7 +275,7 @@ const TicketDetails = () => {
       ).then((data: any) => {
         // console.log("api call --- >", data);
         if (data !== undefined) {
-          if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
+          if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
             setEdit(false);
           }
           if (!data.success) {
@@ -319,7 +327,7 @@ const TicketDetails = () => {
     ).then((data: any) => {
       // console.log("api call --- >", data);
       if (data !== undefined) {
-        if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
+        if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
         }
         if (!data.success) {
           Swal.fire({
@@ -428,7 +436,11 @@ const TicketDetails = () => {
                     </div>
                     <div
                       style={{
-                        color: "#35bfbf",
+                        color: `${userPersonalizationData !== null &&
+                          userPersonalizationData?.buttonsAndBarsColor !== null
+                          ? userPersonalizationData?.buttonsAndBarsColor
+                          : "#35bfbf"
+                          }`,
                         fontWeight: "normal",
                         fontSize: "20px",
                         marginBottom: "10px",
@@ -468,7 +480,11 @@ const TicketDetails = () => {
                       <Col
                         md={3}
                         style={{
-                          color: "#35bfbf",
+                          color: `${userPersonalizationData !== null &&
+                            userPersonalizationData?.buttonsAndBarsColor !== null
+                            ? userPersonalizationData?.buttonsAndBarsColor
+                            : "#35bfbf"
+                            }`,
                           margin: "25px 0px",
                           fontSize: "20px",
                         }}
@@ -516,7 +532,7 @@ const TicketDetails = () => {
                               border: "0.5px solid lightgray",
                             }}
                           />
-                          {isHovered && index == imageIndex && (
+                          {isHovered && index === imageIndex && (
                             <div
                               style={{
                                 position: "absolute",
@@ -606,7 +622,11 @@ const TicketDetails = () => {
                           <Col
                             md={3}
                             style={{
-                              color: "#35bfbf",
+                              color: `${userPersonalizationData !== null &&
+                                userPersonalizationData?.buttonsAndBarsColor !== null
+                                ? userPersonalizationData?.buttonsAndBarsColor
+                                : "#35bfbf"
+                                }`,
                               margin: "25px 0px",
                               fontSize: "20px",
                             }}
@@ -652,7 +672,14 @@ const TicketDetails = () => {
                         >
                           <a
                             href="#"
-                            style={{ color: "#167a93", fontSize: "20px" }}
+                            style={{
+                              color: `${userPersonalizationData !== null &&
+                                userPersonalizationData?.buttonsAndBarsColor !== null
+                                ? userPersonalizationData?.buttonsAndBarsColor
+                                : "#35bfbf"
+                                }`,
+                              fontSize: "20px",
+                            }}
                           >
                             {
                               ticketDetails.messages[
@@ -693,21 +720,24 @@ const TicketDetails = () => {
                             <div
                               style={{
                                 backgroundColor:
-                                  getUserId() == reply.user._id
+                                  getUserId() === reply.user._id
                                     ? "#def4fb"
                                     : "whitesmoke",
                                 padding: "15px",
                                 marginLeft:
-                                  getUserId() == reply.user._id ? "40%" : "0px",
+                                  getUserId() === reply.user._id
+                                    ? "40%"
+                                    : "0px",
                                 marginRight:
-                                  getUserId() == reply.user._id ? "0px" : "40%",
+                                  getUserId() === reply.user._id
+                                    ? "0px"
+                                    : "40%",
                                 borderRadius: "10px",
-                                marginBottom: `${
-                                  index == 2 &&
-                                  index == ticketDetails.messages.length - 1
-                                    ? "50px"
-                                    : "20px"
-                                }`,
+                                marginBottom: `${index === 2 &&
+                                  index === ticketDetails.messages.length - 1
+                                  ? "50px"
+                                  : "20px"
+                                  }`,
                                 marginTop: "10px",
                               }}
                             >
@@ -788,25 +818,24 @@ const TicketDetails = () => {
                               <div
                                 style={{
                                   backgroundColor:
-                                    getUserId() == reply.user._id
+                                    getUserId() === reply.user._id
                                       ? "#def4fb"
                                       : "whitesmoke",
                                   marginLeft:
-                                    getUserId() == reply.user._id
+                                    getUserId() === reply.user._id
                                       ? "40%"
                                       : "0px",
                                   marginRight:
-                                    getUserId() == reply.user._id
+                                    getUserId() === reply.user._id
                                       ? "0px"
                                       : "40%",
                                   padding: "15px",
                                   borderRadius: "10px",
-                                  marginBottom: `${
-                                    index == 2 &&
-                                    index == ticketDetails.messages.length - 1
-                                      ? "50px"
-                                      : "20px"
-                                  }`,
+                                  marginBottom: `${index === 2 &&
+                                    index === ticketDetails.messages.length - 1
+                                    ? "50px"
+                                    : "20px"
+                                    }`,
                                   marginTop: "10px",
                                 }}
                               >
@@ -898,7 +927,7 @@ const TicketDetails = () => {
                         }}
                         onClick={() => {
                           setShowMore(!showMore);
-                          // if (itemsLength == 2) {
+                          // if (itemsLength === 2) {
                           //   setItemsLength(ticketDetails.messages.length);
                           //   setShowMore(true);
                           // } else {
@@ -920,59 +949,124 @@ const TicketDetails = () => {
                       >
                         {formatUnderscoredString(ticketDetails.status) !==
                           "Resolved" && (
-                          <div
-                            style={{
-                              border: "1px solid lightgray",
-                            }}
-                          >
-                            <textarea
-                              ref={textareaRef}
-                              onChange={handleChange}
-                              value={replyText}
-                              className="form-control replyText"
-                              placeholder="Reply Here..."
-                              rows={3} // Minimum number of visible lines
+                            <div
                               style={{
-                                maxHeight: "100px", // Maximum height for 5 lines of text
-                                resize: "vertical", // Allow vertical resizing within the specified range
-                                borderRadius: "0px",
-                                fontSize: "20px",
-                                overflowY: "auto",
-                                WebkitOverflowScrolling: "touch", // Enable momentum scrolling on iOS
-                                scrollbarWidth: "thin", // Specify scrollbar width
-                                WebkitBorderRadius: "5px !important", // For WebKit browsers (Chrome, Safari)
-                                MozBorderRadius: "5px !important", // For Mozilla Firefox
-                                scrollbarColor: "lightgray transparent", // Specify scrollbar color
-                                outline: "0px",
-                                border: "0px",
+                                border: "1px solid lightgray",
                               }}
-                            />
-                            <style>
-                              {`
+                            >
+                              <textarea
+                                ref={textareaRef}
+                                onChange={handleChange}
+                                value={replyText}
+                                className="form-control replyText"
+                                placeholder="Reply Here..."
+                                rows={3} // Minimum number of visible lines
+                                style={{
+                                  maxHeight: "100px", // Maximum height for 5 lines of text
+                                  resize: "vertical", // Allow vertical resizing within the specified range
+                                  borderRadius: "0px",
+                                  fontSize: "20px",
+                                  overflowY: "auto",
+                                  WebkitOverflowScrolling: "touch", // Enable momentum scrolling on iOS
+                                  scrollbarWidth: "thin", // Specify scrollbar width
+                                  WebkitBorderRadius: "5px !important", // For WebKit browsers (Chrome, Safari)
+                                  MozBorderRadius: "5px !important", // For Mozilla Firefox
+                                  scrollbarColor: "lightgray transparent", // Specify scrollbar color
+                                  outline: "0px",
+                                  border: "0px",
+                                }}
+                              />
+                              <style>
+                                {`
     .replyText::placeholder {
       font-size: 18px;
   }`}
-                            </style>
-                            <div
-                              style={{
-                                backgroundColor: "whitesmoke",
-                                padding: "20px",
-                                display: "flex",
-                                justifyContent: "space-between",
-                              }}
-                            >
-                              <div></div>
-                              <div style={{ display: "flex" }}>
-                                {getUserRole() == "SUPER_ADMIN" && (
-                                  <button
-                                    className="btn btn-primary"
-                                    disabled={
-                                      formatUnderscoredString(
+                              </style>
+                              <div
+                                style={{
+                                  backgroundColor: "whitesmoke",
+                                  padding: "20px",
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                }}
+                              >
+                                <div></div>
+                                <div style={{ display: "flex" }}>
+                                  {getUserRole() === ROLES.SUPER_ADMIN && (
+                                    <button
+                                      className={`btn ${userPersonalizationData?.buttonsAndBarsColor ==
+                                        null
+                                        ? "btn-primary"
+                                        : ""
+                                        }`}
+                                      disabled={
+                                        formatUnderscoredString(
+                                          ticketDetails.status
+                                        ) === "Resolved"
+                                      }
+                                      style={{
+                                        color: "white",
+                                        backgroundColor: `${userPersonalizationData !== null &&
+                                          userPersonalizationData?.buttonsAndBarsColor
+                                          }`,
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                        padding: "5px 20px",
+                                        margin: "0px 15px",
+                                        height: "50px",
+                                        width: "auto",
+                                        fontSize: "18px",
+                                        fontWeight: "bold",
+                                      }}
+                                      onClick={() => {
+                                        Swal.fire({
+                                          title: "Complete Alert",
+                                          text: "Are you sure , you want to complete this ticket",
+                                          icon: "warning",
+                                          showCancelButton: true,
+                                        }).then(async (result) => {
+                                          if (result.isConfirmed) {
+                                            try {
+                                              Swal.fire({
+                                                text: "Loading...",
+                                                icon: "info",
+                                                // timer: 2000,
+                                                showCancelButton: false,
+                                                showConfirmButton: false,
+                                              });
+                                              handleResolved();
+                                              // Handle successful post creation (e.g., show a success message, redirect, etc.)
+                                            } catch (error) {
+                                              // Handle error (e.g., show an error message)
+                                              // console.error(
+                                              //   "Error creating post:",
+                                              //   error
+                                              // );
+                                              // loading false
+                                            }
+                                          }
+                                        });
+                                      }}
+                                    >
+                                      {formatUnderscoredString(
                                         ticketDetails.status
-                                      ) == "Resolved"
-                                    }
+                                      ) === "Resolved"
+                                        ? "Completed"
+                                        : "Complete"}
+                                    </button>
+                                  )}
+                                  <button
+                                    className={`btn ${userPersonalizationData?.buttonsAndBarsColor ==
+                                      null
+                                      ? "btn-primary"
+                                      : ""
+                                      }`}
                                     style={{
                                       color: "white",
+                                      backgroundColor: `${userPersonalizationData !== null &&
+                                        userPersonalizationData?.buttonsAndBarsColor
+                                        }`,
                                       display: "flex",
                                       alignItems: "center",
                                       justifyContent: "center",
@@ -983,68 +1077,17 @@ const TicketDetails = () => {
                                       fontSize: "18px",
                                       fontWeight: "bold",
                                     }}
-                                    onClick={() => {
-                                      Swal.fire({
-                                        title: "Complete Alert",
-                                        text: "Are you sure , you want to complete this ticket",
-                                        icon: "warning",
-                                        showCancelButton: true,
-                                      }).then(async (result) => {
-                                        if (result.isConfirmed) {
-                                          try {
-                                            Swal.fire({
-                                              text: "Loading...",
-                                              icon: "info",
-                                              // timer: 2000,
-                                              showCancelButton: false,
-                                              showConfirmButton: false,
-                                            });
-                                            handleResolved();
-                                            // Handle successful post creation (e.g., show a success message, redirect, etc.)
-                                          } catch (error) {
-                                            // Handle error (e.g., show an error message)
-                                            // console.error(
-                                            //   "Error creating post:",
-                                            //   error
-                                            // );
-                                            // loading false
-                                          }
-                                        }
-                                      });
-                                    }}
+                                    onClick={sendMessage}
                                   >
-                                    {formatUnderscoredString(
-                                      ticketDetails.status
-                                    ) == "Resolved"
-                                      ? "Completed"
-                                      : "Complete"}
+                                    <div style={{ marginRight: "10px" }}>
+                                      <IoSend color="white" />
+                                    </div>
+                                    Send
                                   </button>
-                                )}
-                                <button
-                                  className="btn btn-primary"
-                                  style={{
-                                    color: "white",
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                    padding: "5px 20px",
-                                    margin: "0px 15px",
-                                    height: "50px",
-                                    width: "auto",
-                                    fontSize: "18px",
-                                    fontWeight: "bold",
-                                  }}
-                                  onClick={sendMessage}
-                                >
-                                  <div style={{ marginRight: "10px" }}>
-                                    <IoSend color="white" />
-                                  </div>
-                                  Send
-                                </button>
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        )}
+                          )}
                       </Col>
                     </div>
                   </div>
@@ -1063,13 +1106,17 @@ const TicketDetails = () => {
                   <div>
                     <div
                       style={{
-                        // backgroundColor: "",
+                        backgroundColor: `${userPersonalizationData !== null &&
+                          userPersonalizationData?.buttonsAndBarsColor !== null
+                          ? userPersonalizationData?.buttonsAndBarsColor
+                          : "#35bfbf"
+                          }`,
                         color: "white",
                         fontWeight: "bold",
                         padding: "20px",
                         fontSize: "25px",
                       }}
-                      className="btn-primary"
+                    // className="btn-primary"
                     >
                       Tickets Info
                     </div>
@@ -1233,8 +1280,8 @@ const TicketDetails = () => {
                                 ticketDetails.priorty === "LOW"
                                   ? "green"
                                   : ticketDetails.priorty === "HIGH"
-                                  ? "red"
-                                  : "orange",
+                                    ? "red"
+                                    : "orange",
                               fontWeight: "bold",
                             }}
                           >
@@ -1291,10 +1338,10 @@ const TicketDetails = () => {
                                 ticketDetails.status === "NEW"
                                   ? "blue"
                                   : ticketDetails.status === "IN_PROGRESS"
-                                  ? "orange"
-                                  : ticketDetails.status === "PENDING"
-                                  ? "red"
-                                  : "green",
+                                    ? "orange"
+                                    : ticketDetails.status === "PENDING"
+                                      ? "red"
+                                      : "green",
                               fontWeight: "bold",
                             }}
                           >
@@ -1358,10 +1405,10 @@ const TicketDetails = () => {
                         >
                           {ticketDetails.messages.length >= 1
                             ? calculateTimeAgo(
-                                ticketDetails.messages[
-                                  ticketDetails.messages.length - 1
-                                ].updatedAt
-                              )
+                              ticketDetails.messages[
+                                ticketDetails.messages.length - 1
+                              ].updatedAt
+                            )
                             : "N/A"}
                         </div>
                       </div>
@@ -1375,32 +1422,44 @@ const TicketDetails = () => {
                       >
                         {formatUnderscoredString(ticketDetails.status) !==
                           "Resolved" && (
-                          <button
-                            className="btn btn-primary"
-                            style={{
-                              color: "white",
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                              padding: "5px 0px",
-                              margin: "0px 0px",
-                              height: "50px",
-                              width: "130px",
-                              fontSize: "18px",
-                              fontWeight: "bold",
-                            }}
-                            onClick={handleGoToReply}
-                          >
-                            Go to Reply
-                          </button>
-                        )}
-                        {getUserRole() == "SUPER_ADMIN" &&
-                          formatUnderscoredString(ticketDetails.status) !==
-                            "Resolved" && (
                             <button
-                              className="btn btn-primary"
+                              className={`btn ${userPersonalizationData?.buttonsAndBarsColor == null
+                                ? "btn-primary"
+                                : ""
+                                }`}
                               style={{
                                 color: "white",
+                                backgroundColor: `${userPersonalizationData !== null &&
+                                  userPersonalizationData?.buttonsAndBarsColor
+                                  }`,
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                padding: "5px 0px",
+                                margin: "0px 0px",
+                                height: "50px",
+                                width: "130px",
+                                fontSize: "18px",
+                                fontWeight: "bold",
+                              }}
+                              onClick={handleGoToReply}
+                            >
+                              Go to Reply
+                            </button>
+                          )}
+                        {getUserRole() === ROLES.SUPER_ADMIN &&
+                          formatUnderscoredString(ticketDetails.status) !==
+                          "Resolved" && (
+                            <button
+                              className={`btn ${userPersonalizationData?.buttonsAndBarsColor == null
+                                ? "btn-primary"
+                                : ""
+                                }`}
+                              style={{
+                                color: "white",
+                                backgroundColor: `${userPersonalizationData !== null &&
+                                  userPersonalizationData?.buttonsAndBarsColor
+                                  }`,
                                 display: "flex",
                                 alignItems: "center",
                                 justifyContent: "center",

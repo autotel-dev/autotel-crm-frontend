@@ -4,8 +4,8 @@ label > input[type="checkbox"] + .red::before {
   content: "";
   display: inline-block;
   vertical-align: bottom;
-  width: 25px;
-  height: 25px;
+  width: 20px;
+  height: 20px;
   border-radius: 10%;
   border-style: solid;
   border-width: 0.15rem;
@@ -17,7 +17,7 @@ label > input[type="checkbox"] + .red::before {
 label > input[type="checkbox"] + .red::before {
   content: "×";
   font-weight: bold;
-  font-size: 22px;
+  font-size: 18px;
   transform: scale(1.1);
   color: #ff6150;
   text-align: center;
@@ -39,8 +39,8 @@ label > input[type="checkbox"] + .green::before {
   content: "";
   display: inline-block;
   vertical-align: bottom;
-  width: 25px;
-  height: 25px;
+  width: 20px;
+  height: 20px;
   border-radius: 10%;
   border-style: solid;
   border-width: 0.15rem;

@@ -65,7 +65,7 @@ const ServersList = () => {
 
       if (data !== undefined) {
         dispatch(setNoDataFound(data.message));
-        if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
+        if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
           dispatch(setIsConnected(true));
         }
         if (!data.success) {
@@ -150,9 +150,11 @@ const ServersList = () => {
                   // }}
                 />
                 <span
-                  className={`switch-state ${
-                    row.isActive ? "bg-primary" : "bg-secondary"
-                  }`}
+                  // className={`switch-state ${
+                  //   row.isActive ? "bg-primary" : "bg-secondary"
+                  // }`}
+                  className="switch-state"
+                  style={{ backgroundColor: row.isActive ? "green" : "red" }}
                 />
               </Label>
             </div>
@@ -196,7 +198,7 @@ const ServersList = () => {
               onClick={() => {
                 dispatch(setServer(row));
                 navigate(
-                  `${process.env.PUBLIC_URL}/super-admin/setup/server_details/updareServer`
+                  `${process.env.PUBLIC_URL}/super-admin/setup/server_details/update-server`
                 );
               }}
             >

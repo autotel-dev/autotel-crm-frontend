@@ -11,7 +11,7 @@ import {
   Col,
 } from "reactstrap";
 import { Cancel } from "../../../utils/Constant";
-import { H3 } from "../../../AbstractElements";
+import { H3, P } from "../../../AbstractElements";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getAll, update } from "../../../Api";
@@ -26,6 +26,7 @@ import {
 } from "../../../ReaduxToolkit/Reducer/OperatorSlice";
 import Swal from "sweetalert2";
 import { Select } from "antd";
+import "./permissionsStyle.css";
 // import { setNoDataFound } from "../../ReaduxToolkit/Reducer/NoDataFoundSlice";
 
 interface PropsTypes {
@@ -130,7 +131,7 @@ const UpdateUser: React.FC<PropsTypes> = ({
           (data: any) => {
             if (
               !data.success &&
-              data.message == "ERROR_INTERNET_DISCONNECTED"
+              data.message === "ERROR_INTERNET_DISCONNECTED"
             ) {
               setLoading(false);
               setIsVisible(!isVisible);
@@ -256,7 +257,7 @@ const UpdateUser: React.FC<PropsTypes> = ({
         >
           <Row>
             <FormGroup className="col-md-12 create-group">
-              <Label>User Name</Label>
+              <P>User Name</P>
               <input
                 className="form-control"
                 type="text"
@@ -267,7 +268,7 @@ const UpdateUser: React.FC<PropsTypes> = ({
               </span>
             </FormGroup>
             <FormGroup className="col-md-12 create-group">
-              <Label>Email Address</Label>
+              <P>Email Address</P>
               <input
                 className="form-control"
                 type="text"
@@ -279,7 +280,7 @@ const UpdateUser: React.FC<PropsTypes> = ({
             </FormGroup>
 
             <FormGroup className="col-md-12 create-group">
-              <Label>Phone Number</Label>
+              <P>Phone Number</P>
               <input
                 className="form-control"
                 type="text"
@@ -291,7 +292,7 @@ const UpdateUser: React.FC<PropsTypes> = ({
             </FormGroup>
             <FormGroup className="col-md-12 create-group">
               <div>
-                <Label>Select User Role </Label>
+                <P>Select User Role </P>
               </div>
               <Select
                 defaultValue={
@@ -318,7 +319,7 @@ const UpdateUser: React.FC<PropsTypes> = ({
               />
             </FormGroup>
 
-            {role !== "" && <Label>Given Permissions</Label>}
+            {role !== "" && <P>Given Permissions : </P>}
             <FormGroup
               className="col-md-12 create-group"
               style={{
@@ -357,9 +358,7 @@ const UpdateUser: React.FC<PropsTypes> = ({
                             >
                               <span
                                 style={{
-                                  fontSize: "17px",
-                                  margin: "15px 0px",
-                                  fontWeight: "bold",
+                                  fontSize: "16px",
                                 }}
                               >
                                 {permission.title}
@@ -372,6 +371,7 @@ const UpdateUser: React.FC<PropsTypes> = ({
                                     position: "relative",
                                     cursor: "not-allowed",
                                     marginRight: "25px",
+                                    marginBottom: "15px",
                                     fontSize: "18px",
                                   }}
                                   onClick={(e) => e.stopPropagation()}
@@ -399,7 +399,8 @@ const UpdateUser: React.FC<PropsTypes> = ({
                                     position: "relative",
                                     cursor: "not-allowed",
                                     marginRight: "25px",
-                                    fontSize: "18px",
+                                    marginBottom: "15px",
+                                    fontSize: "16px",
                                   }}
                                   onClick={(e) => e.stopPropagation()}
                                 >
@@ -426,7 +427,8 @@ const UpdateUser: React.FC<PropsTypes> = ({
                                     position: "relative",
                                     cursor: "not-allowed",
                                     marginRight: "25px",
-                                    fontSize: "18px",
+                                    marginBottom: "15px",
+                                    fontSize: "16px",
                                   }}
                                   onClick={(e) => e.stopPropagation()}
                                 >
@@ -453,7 +455,8 @@ const UpdateUser: React.FC<PropsTypes> = ({
                                     position: "relative",
                                     cursor: "not-allowed",
                                     marginRight: "25px",
-                                    fontSize: "18px",
+                                    marginBottom: "15px",
+                                    fontSize: "16px",
                                   }}
                                   onClick={(e) => e.stopPropagation()}
                                 >
@@ -484,7 +487,7 @@ const UpdateUser: React.FC<PropsTypes> = ({
                   )
                 )}
             </FormGroup>
-            <Label>Allowed Modules</Label>
+            <P>Allowed Modules : </P>
             <FormGroup
               className="col-md-12 create-group"
               style={{
@@ -520,18 +523,15 @@ const UpdateUser: React.FC<PropsTypes> = ({
                             alignItems: "center",
                           }}
                         >
-                          <span
-                            style={{ fontSize: "17px", margin: "15px 0px" }}
-                          >
-                            {module.name}
-                          </span>
+                          <P>{module.name}</P>
                           <div>
                             <label
                               style={{
                                 display: "inline-block",
                                 position: "relative",
                                 cursor: "pointer",
-                                marginRight: "25px",
+                                marginRight: "55px",
+                                marginBottom: "15px",
                                 fontSize: "18px",
                               }}
                               onClick={(e) => e.stopPropagation()}

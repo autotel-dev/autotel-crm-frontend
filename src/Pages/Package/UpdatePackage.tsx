@@ -53,6 +53,9 @@ const UpdatePackage: React.FC<PropsTypes> = ({
   setIsActive,
   // setValue
 }) => {
+  const { userPersonalizationData } = useSelector(
+    (state: any) => state.personalization
+  );
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const { packageDuration, packageDays } = useSelector(
@@ -110,7 +113,7 @@ const UpdatePackage: React.FC<PropsTypes> = ({
           (data: any) => {
             if (
               !data.success &&
-              data.message == "ERROR_INTERNET_DISCONNECTED"
+              data.message === "ERROR_INTERNET_DISCONNECTED"
             ) {
               setLoading(false);
               setIsVisible(!isVisible);
@@ -281,21 +284,21 @@ const UpdatePackage: React.FC<PropsTypes> = ({
               </div>
             </FormGroup>
           </Row>
-          <Button color="primary" className="me-1" disabled={loading}>
-            {loading ? "Loading ..." : `Update`}
-          </Button>
-          &nbsp;&nbsp;
-          <Button
-            disabled={loading ? true : false}
-            color="secondary"
-            onClick={() => {
-              // setValue("")
-              setIsVisible(!isVisible);
-              // console.log(title);
-            }}
-          >
-            {Cancel}
-          </Button>
+              <Button color="primary" className="me-1" disabled={loading}>
+                {loading ? "Loading ..." : `Update`}
+              </Button>
+              &nbsp;&nbsp;
+              <Button
+                disabled={loading ? true : false}
+                color="secondary"
+                onClick={() => {
+                  // setValue("")
+                  setIsVisible(!isVisible);
+                  // console.log(value);
+                }}
+              >
+                {Cancel}
+              </Button>
         </form>
       </ModalBody>
     </Modal>

@@ -140,7 +140,7 @@ const AddPreAlertInfo: React.FC<PropsTypes> = ({
           // // console.log("data", data);
 
           setLoading(false);
-          if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
+          if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
             setLoading(false);
             addToggle();
           }
@@ -221,7 +221,7 @@ const AddPreAlertInfo: React.FC<PropsTypes> = ({
         ></Button>
       </div>
 
-      <ModalBody style={{ height: "50vh" }}>
+      <ModalBody>
         <form
           className="form-bookmark needs-validation"
           onSubmit={handleSubmit(addPreInfoAlertHandler)}
@@ -235,6 +235,7 @@ const AddPreAlertInfo: React.FC<PropsTypes> = ({
                 data={dropDownDevices}
                 selectedItems={selectedItems}
                 setSelectedItems={setSelectedItems}
+                serverID=""
               />
             </FormGroup>
 

@@ -13,10 +13,14 @@ import { useSelector } from "react-redux";
 import { getUserRole } from "../Api/globals";
 import Loader from "../Pages/Loader/Loader";
 import Loaderr, { LoaderForPermissions } from "./Loader/Loader";
+import { ROLES } from "../constants/roles";
 
 const Layout = () => {
   const { userPermissions } = useSelector(
     (state: any) => state.userPermissions
+  );
+  const { userPersonalizationData } = useSelector(
+    (state: any) => state.personalization
   );
   // console.log("userPermissions---> ", userPermissions);
 
@@ -51,7 +55,7 @@ const Layout = () => {
   }, [layout]);
   return (
     <>
-      {getUserRole() !== "SUPER_ADMIN" && userPermissions.length < 0 ? (
+      {getUserRole() !== ROLES.SUPER_ADMIN && userPermissions.length < 0 ? (
         <Loader />
       ) : (
         <>
@@ -67,16 +71,31 @@ const Layout = () => {
           }  ${scroll ? "d-none" : "d-block"}`}
         > */}
             {/* <div className={`page-header ${open ? "sidebar-default" : ""} ${toggleSidebar ? "close_icon" : ""}  ${scroll ? "d-none" : "d-block"}`}> */}
-            <div className={`page-header d-block`}>
+            <div
+              className={`page-header d-block`}
+              style={{
+                backgroundColor: `${
+                  userPersonalizationData !== null &&
+                  userPersonalizationData?.primaryColor !== null
+                    ? userPersonalizationData?.primaryColor
+                    : ""
+                }`,
+              }}
+            >
               <Header />
             </div>
             <div className="page-body-wrapper">
               <Sidebar setOpen={setOpen} open={open} />
               <div
                 className="page-body"
-                // style={{
-                //   backgroundColor: "yellow",
-                // }}
+                style={{
+                  backgroundColor: `${
+                    userPersonalizationData !== null &&
+                    userPersonalizationData?.backgroundColor !== null
+                      ? userPersonalizationData?.backgroundColor
+                      : ""
+                  }`,
+                }}
               >
                 <Outlet />
               </div>

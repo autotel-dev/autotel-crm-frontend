@@ -30,7 +30,7 @@ const ShoppingPlace = () => {
   return (
     <>
       <Breadcrumbs mainTitle="Dashboard" parent="Dashboard" title="Dashboard" />
-      {getUserRole() == ROLES.SUPER_ADMIN ? (
+      {getUserRole() === ROLES.SUPER_ADMIN ? (
         <Container fluid className="dashboard_default">
           <Row className="widget-grid">
             <TotalEarning />
@@ -71,7 +71,8 @@ const ShoppingPlace = () => {
             height: "85vh",
           }}
         >
-          <div>Welcome to the Autotel Private Limited</div>
+          {/* <div>Welcome to the Autotel Private Limited</div> */}
+          <div>Something better is Coming</div>
         </div>
       )}
     </>

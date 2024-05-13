@@ -12,6 +12,7 @@ import {
 } from "../../../ReaduxToolkit/Reducer/ServerDetailsSlice";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
+import { P } from "../../../AbstractElements";
 
 const GoogleAccountCredentials = ({
   callbackActive,
@@ -62,10 +63,10 @@ const GoogleAccountCredentials = ({
     >
       <Row className="g-3">
         <Col sm={6}>
-          <Label>
+          <P>
             Email Address
             <span className="txt-danger">*</span>
-          </Label>
+          </P>
           <Input
             value={emailAddress}
             name="emailAddress"
@@ -75,10 +76,10 @@ const GoogleAccountCredentials = ({
           />
         </Col>
         <Col sm={6}>
-          <Label>
+          <P>
             Password
             <span className="txt-danger">*</span>
-          </Label>
+          </P>
 
           <InputGroup>
             <Input

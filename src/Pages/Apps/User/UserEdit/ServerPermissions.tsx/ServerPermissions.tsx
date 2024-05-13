@@ -2,6 +2,7 @@ import {
   Button,
   Card,
   CardBody,
+  CardHeader,
   Col,
   Input,
   Label,
@@ -9,7 +10,7 @@ import {
   Table,
 } from "reactstrap";
 import CommonHeader from "../../../../../Common/CommonHeader";
-import { H4, H5 } from "../../../../../AbstractElements";
+import { H4, H5, P } from "../../../../../AbstractElements";
 import { useSelector } from "react-redux";
 import "./permissionStyles.css";
 import { formatUnderscoredString } from "../../../../../Api/globals";
@@ -21,10 +22,9 @@ const ServerPermissions = () => {
   return (
     <Col md={12}>
       <Card>
-        <CommonHeader
-          title="Server Permissions"
-          headClass="card-title mb-0 pb-0"
-        />
+        <CardHeader className="pb-0">
+          <H4>Server permissions</H4>
+        </CardHeader>
         <CardBody>
           <Row
             style={{
@@ -47,17 +47,18 @@ const ServerPermissions = () => {
               )
             )} */}
 
-            {serverPermissions.map((server: any, index: any) => {
+            {serverPermissions?.map((server: any, index: any) => {
               return (
                 <div key={index}>
                   <div style={{ marginBottom: "20px" }}>
-                    <CommonHeader
+                  <H5>{index + 1}) {server.server.companyName}</H5>
+                    {/* <CommonHeader
                       title={`${index + 1}) ${server.server.companyName}`}
                       headClass="card-title mb-0 pb-0"
-                    />
+                    /> */}
                   </div>
 
-                  {Object.keys(server.userPermissions).map((key, index) => (
+                  {Object.keys(server?.userPermissions).map((key, index) => (
                     <Row>
                       <Col
                         key={index}
@@ -73,9 +74,9 @@ const ServerPermissions = () => {
                           alignItems: "center",
                         }}
                       >
-                        <span style={{ fontSize: "17px", margin: "15px 0px" }}>
+                        <P style={{ margin: "15px 0px" }}>
                           {formatUnderscoredString(key)}
-                        </span>
+                        </P>
                         <div>
                           <label
                             style={{
@@ -83,7 +84,8 @@ const ServerPermissions = () => {
                               position: "relative",
                               cursor: "pointer",
                               marginRight: "25px",
-                              fontSize: "18px",
+                              marginBottom: "15px",
+                              fontSize: "16px",
                             }}
                             onClick={(e) => e.stopPropagation()}
                           >
@@ -111,7 +113,8 @@ const ServerPermissions = () => {
                               position: "relative",
                               cursor: "pointer",
                               marginRight: "25px",
-                              fontSize: "18px",
+                              marginBottom: "15px",
+                              fontSize: "16px",
                             }}
                             onClick={(e) => e.stopPropagation()}
                           >
@@ -139,7 +142,8 @@ const ServerPermissions = () => {
                               position: "relative",
                               cursor: "pointer",
                               marginRight: "25px",
-                              fontSize: "18px",
+                              marginBottom: "15px",
+                              fontSize: "16px",
                             }}
                             onClick={(e) => e.stopPropagation()}
                           >

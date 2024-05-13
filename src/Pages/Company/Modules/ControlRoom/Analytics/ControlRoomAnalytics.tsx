@@ -1,4 +1,13 @@
-import { Badge, Card, CardBody, Col, Row } from "reactstrap";
+import {
+  Badge,
+  Card,
+  CardBody,
+  Col,
+  PopoverBody,
+  PopoverHeader,
+  Row,
+  UncontrolledPopover,
+} from "reactstrap";
 import "./AnalyticsCss.css";
 import ReactApexChart from "react-apexcharts";
 
@@ -23,8 +32,13 @@ import { getAll } from "../../../../../Api";
 import { setDashboardStatistics } from "../../../../../ReaduxToolkit/Reducer/AlertsSlice";
 import { ApexOptions } from "apexcharts";
 import TotalPreInfoAlerts from "./components/TotalPreInfoAlerts";
+import DeviceSelecetdForAlerts from "./components/DeviceSelecetdForAlerts";
+import { VscKebabVertical } from "react-icons/vsc";
 
 const ControlRoomAnalytics = () => {
+  const { userPersonalizationData } = useSelector(
+    (state: any) => state.personalization
+  );
   const { devices } = useSelector((state: any) => state.monitoring);
   const { dashboardStatistics, liveAlertsData } = useSelector(
     (state: any) => state.alerts
@@ -47,11 +61,6 @@ const ControlRoomAnalytics = () => {
     useState([]);
   const [totalPreInfosByDayData, setTotalPreInfosByDayData] = useState([]);
   useEffect(() => {
-    // // console.log(
-    //   "dashboardStatistics?.controlRoomAnalytics?",
-    //   dashboardStatistics
-    // );
-
     var killedDevicesDays: any = [];
     var killedDevicesCategories: any = [];
     var totalCommandedDevicesDays: any = [];
@@ -108,7 +117,7 @@ const ControlRoomAnalytics = () => {
     chart: {
       height: 70,
       type: "bar",
-      offsetY: 30,
+      offsetY: 0,
       sparkline: {
         enabled: true,
       },
@@ -141,8 +150,8 @@ const ControlRoomAnalytics = () => {
       categories: totalCommandedDevicesByDayCategories,
     },
     chart: {
-      height: 95,
-      offsetY: 30,
+      height: 65,
+      offsetY: 0,
       type: "area",
       sparkline: {
         enabled: true,
@@ -180,64 +189,64 @@ const ControlRoomAnalytics = () => {
         },
       ],
     },
-    responsive: [
-      {
-        breakpoint: 1800,
-        options: {
-          chart: {
-            height: 80,
-          },
-        },
-      },
-      {
-        breakpoint: 1500,
-        options: {
-          chart: {
-            height: 80,
-          },
-        },
-      },
-      {
-        breakpoint: 1400,
-        options: {
-          chart: {
-            height: 80,
-          },
-        },
-      },
-      {
-        breakpoint: 1200,
-        options: {
-          chart: {
-            height: 70,
-          },
-          grid: {
-            padding: {
-              top: 0,
-              right: 0,
-              bottom: 0,
-              left: 5,
-            },
-          },
-        },
-      },
-      {
-        breakpoint: 576,
-        options: {
-          chart: {
-            offsetY: 0,
-          },
-        },
-      },
-      {
-        breakpoint: 376,
-        options: {
-          chart: {
-            height: 50,
-          },
-        },
-      },
-    ],
+    // responsive: [
+    //   {
+    //     breakpoint: 1800,
+    //     options: {
+    //       chart: {
+    //         height: 80,
+    //       },
+    //     },
+    //   },
+    //   {
+    //     breakpoint: 1500,
+    //     options: {
+    //       chart: {
+    //         height: 70,
+    //       },
+    //     },
+    //   },
+    //   {
+    //     breakpoint: 1400,
+    //     options: {
+    //       chart: {
+    //         height: 60,
+    //       },
+    //     },
+    //   },
+    //   {
+    //     breakpoint: 1200,
+    //     options: {
+    //       chart: {
+    //         height: 55,
+    //       },
+    //       grid: {
+    //         padding: {
+    //           top: 0,
+    //           right: 0,
+    //           bottom: 0,
+    //           left: 5,
+    //         },
+    //       },
+    //     },
+    //   },
+    //   {
+    //     breakpoint: 576,
+    //     options: {
+    //       chart: {
+    //         offsetY: 0,
+    //       },
+    //     },
+    //   },
+    //   {
+    //     breakpoint: 376,
+    //     options: {
+    //       chart: {
+    //         height: 50,
+    //       },
+    //     },
+    //   },
+    // ],
   };
 
   const preAlertInfo: ApexOptions = {
@@ -251,8 +260,8 @@ const ControlRoomAnalytics = () => {
       categories: totalPreInfosByDayCategories,
     },
     chart: {
-      height: 95,
-      offsetY: 30,
+      height: 65,
+      offsetY: 0,
       type: "area",
       sparkline: {
         enabled: true,
@@ -290,64 +299,64 @@ const ControlRoomAnalytics = () => {
         },
       ],
     },
-    responsive: [
-      {
-        breakpoint: 1800,
-        options: {
-          chart: {
-            height: 80,
-          },
-        },
-      },
-      {
-        breakpoint: 1500,
-        options: {
-          chart: {
-            height: 80,
-          },
-        },
-      },
-      {
-        breakpoint: 1400,
-        options: {
-          chart: {
-            height: 80,
-          },
-        },
-      },
-      {
-        breakpoint: 1200,
-        options: {
-          chart: {
-            height: 70,
-          },
-          grid: {
-            padding: {
-              top: 0,
-              right: 0,
-              bottom: 0,
-              left: 5,
-            },
-          },
-        },
-      },
-      {
-        breakpoint: 576,
-        options: {
-          chart: {
-            offsetY: 0,
-          },
-        },
-      },
-      {
-        breakpoint: 376,
-        options: {
-          chart: {
-            height: 50,
-          },
-        },
-      },
-    ],
+    // responsive: [
+    //   {
+    //     breakpoint: 1800,
+    //     options: {
+    //       chart: {
+    //         height: 80,
+    //       },
+    //     },
+    //   },
+    //   {
+    //     breakpoint: 1500,
+    //     options: {
+    //       chart: {
+    //         height: 80,
+    //       },
+    //     },
+    //   },
+    //   {
+    //     breakpoint: 1400,
+    //     options: {
+    //       chart: {
+    //         height: 80,
+    //       },
+    //     },
+    //   },
+    //   {
+    //     breakpoint: 1200,
+    //     options: {
+    //       chart: {
+    //         height: 70,
+    //       },
+    //       grid: {
+    //         padding: {
+    //           top: 0,
+    //           right: 0,
+    //           bottom: 0,
+    //           left: 5,
+    //         },
+    //       },
+    //     },
+    //   },
+    //   {
+    //     breakpoint: 576,
+    //     options: {
+    //       chart: {
+    //         offsetY: 0,
+    //       },
+    //     },
+    //   },
+    //   {
+    //     breakpoint: 376,
+    //     options: {
+    //       chart: {
+    //         height: 50,
+    //       },
+    //     },
+    //   },
+    // ],
   };
 
   const controlRoomAnalytics = [
@@ -412,11 +421,20 @@ const ControlRoomAnalytics = () => {
     setIsUpdateModalOpenForPreInfoAlerts,
   ] = useState(false);
 
+  const [
+    isUpdateModalOpenForDeviceSelecetdForAlerts,
+    setIsUpdateModalOpenForDeviceSelecetdForAlerts,
+  ] = useState(false);
+
   const [selectedFilter, setSelectedFilter] = useState("Today");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isConnecetedServersDropdownOpen, setIsConnecetedServersDropdownOpen] =
+    useState(false);
   const [containerWidth, setContainerWidth] = useState("350px");
+  const [serverID, setServerID] = useState("");
 
   const dropdownRef = useRef<HTMLDivElement>(null); // Add type assertion here
+  const connnectedServersDropdownRef = useRef<HTMLDivElement>(null);
 
   const handleClickOutside = (event: MouseEvent) => {
     if (
@@ -434,8 +452,40 @@ const ControlRoomAnalytics = () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
-  const toggleDropdown = () => {
+  const toggleDropdown = (e: any) => {
+    e.stopPropagation(); // Stop event propagation
     setIsDropdownOpen(!isDropdownOpen);
+  };
+
+  const handleClickOutsideForConnectedServers = (event: MouseEvent) => {
+    const target = event.target as HTMLElement; // Type assertion
+    // Check if the click originated from a specific element
+    if (
+      event.target &&
+      connnectedServersDropdownRef.current &&
+      !connnectedServersDropdownRef.current.contains(event.target as Node) &&
+      // Add your specific condition here, for example:
+      !target.classList.contains("exclude-from-close")
+    ) {
+      setIsConnecetedServersDropdownOpen(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener(
+      "mousedown",
+      handleClickOutsideForConnectedServers
+    );
+    return () => {
+      document.removeEventListener(
+        "mousedown",
+        handleClickOutsideForConnectedServers
+      );
+    };
+  }, []);
+  const toggleConnectedServersDropdown = (e: any) => {
+    e.stopPropagation(); // Stop event propagation
+    setIsConnecetedServersDropdownOpen(!isConnecetedServersDropdownOpen);
   };
 
   const toggleContainerWidth = () => {
@@ -457,6 +507,10 @@ const ControlRoomAnalytics = () => {
 
   const [fromDate, setFromDate] = useState(startDate);
   const [toDate, setToDate] = useState(endDate);
+
+  const [isHovered, setIsHovered] = useState(false);
+  const [id, setId] = useState("");
+
   return (
     <>
       <div style={{ width: "100%", display: "flex", justifyContent: "end" }}>
@@ -466,10 +520,16 @@ const ControlRoomAnalytics = () => {
             overflow: "hidden",
             height: "30px",
             transition: "width 0.5s",
-
+            color: "white",
+            backgroundColor: `${
+              userPersonalizationData !== null &&
+              userPersonalizationData?.buttonsAndBarsColor
+            }`,
             borderRadius: "5px",
           }}
-          className="btn-primary"
+          className={`${
+            userPersonalizationData?.buttonsAndBarsColor == null ? "btn-primary" : ""
+          }`}
         >
           <div
             style={{
@@ -503,6 +563,9 @@ const ControlRoomAnalytics = () => {
                   paddingRight: "45px",
                   borderRight: "1px solid black",
                 }}
+                onClick={(e: any) => {
+                  toggleDropdown(e);
+                }}
               >
                 Filter : {selectedFilter}
               </div>
@@ -513,7 +576,11 @@ const ControlRoomAnalytics = () => {
                 style={{
                   cursor: "pointer",
                 }}
-                onClick={toggleDropdown}
+                onClick={(e: any) => {
+                  toggleDropdown(e);
+                }}
+                // onMouseOver={toggleDropdown}
+                // onMouseOut={toggleDropdown}
               >
                 <div style={{ fontSize: "24px", color: "white" }}>&#9776;</div>
               </div>
@@ -521,8 +588,11 @@ const ControlRoomAnalytics = () => {
           </div>
         </div>
       </div>
-      <div ref={dropdownRef} style={{ position: "relative" }}>
-        <div style={{ width: "100%", display: "flex", justifyContent: "end" }}>
+      <div style={{ position: "relative" }}>
+        <div
+          ref={dropdownRef}
+          style={{ width: "100%", display: "flex", justifyContent: "end" }}
+        >
           {isDropdownOpen && (
             <div
               className="custom-dropdown-analytics"
@@ -531,8 +601,8 @@ const ControlRoomAnalytics = () => {
               {isDropdownOpen && (
                 <div className="dropdown-options-analytics">
                   <div
-                    className="item"
-                    onClick={() => {
+                    className="dropdown-item"
+                    onClick={(e) => {
                       setSelectedFilter("Today");
                       const yesterday = new Date();
                       yesterday.setDate(yesterday.getDate() - 1);
@@ -550,7 +620,7 @@ const ControlRoomAnalytics = () => {
                           if (data.success) {
                             // // // // console.log("length --- >", data.data);
                             dispatch(setDashboardStatistics(data.data));
-                            toggleDropdown();
+                            toggleDropdown(e);
                           }
                         }
                       });
@@ -559,8 +629,8 @@ const ControlRoomAnalytics = () => {
                     Today
                   </div>
                   <div
-                    className="item"
-                    onClick={() => {
+                    className="dropdown-item"
+                    onClick={(e) => {
                       setSelectedFilter("1 Week");
                       const oneWeek = new Date();
                       oneWeek.setDate(oneWeek.getDate() - 7);
@@ -579,7 +649,7 @@ const ControlRoomAnalytics = () => {
                             // // // // console.log("length --- >", data.data);
 
                             dispatch(setDashboardStatistics(data.data));
-                            toggleDropdown();
+                            toggleDropdown(e);
                           }
                         }
                       });
@@ -588,8 +658,8 @@ const ControlRoomAnalytics = () => {
                     1 Week
                   </div>
                   <div
-                    className="item"
-                    onClick={() => {
+                    className="dropdown-item"
+                    onClick={(e) => {
                       setSelectedFilter("1 Month");
                       const oneMonth = new Date();
                       oneMonth.setDate(oneMonth.getDate() - 30);
@@ -607,7 +677,7 @@ const ControlRoomAnalytics = () => {
                           if (data.success) {
                             // // // // console.log("length --- >", data.data);
                             dispatch(setDashboardStatistics(data.data));
-                            toggleDropdown();
+                            toggleDropdown(e);
                           }
                         }
                       });
@@ -620,59 +690,91 @@ const ControlRoomAnalytics = () => {
             </div>
           )}
         </div>
-        <Col
-          xl="12"
-          lg="12"
-          md="12"
-          sm="12"
-          style={{
-            height: containerWidth === "350px" ? "100%" : "0",
-            overflow: "hidden",
-            transition: "height 0.5s",
-            marginTop: "20px",
-          }}
-        >
-          <Row>
-            <Col xl="3" lg="6" md="6" sm="12" className="box-col-3">
-              <Card className="total-earning">
-                <CardBody>
-                  <Row style={{ height: "16vh" }}>
-                    <Col sm="7" className="box-col-7">
-                      <div className="d-flex">
-                        <div
-                          className="flex-grow-1"
-                          style={{ margin: "5px 0px" }}
-                        >
-                          <H3>{controlRoomAnalytics[0].title}</H3>
+        <div>
+          <Col
+            xl="12"
+            lg="12"
+            md="12"
+            sm="12"
+            style={{
+              height: containerWidth === "350px" ? "100%" : "0",
+              overflow: "hidden",
+              transition: "height 0.5s",
+              marginTop: "20px",
+            }}
+          >
+            <Row>
+              <Col xl="3" lg="6" md="6" sm="12">
+                <Card className="total-earning">
+                  <CardBody style={{ maxHeight: "160px", padding: "1em" }}>
+                    <Row style={{ height: "16vh" }}>
+                      <Col
+                        sm="7"
+                        className="box-col-7"
+                        style={{
+                          display: "flex",
+                          flexDirection: "column",
+                          justifyContent: "space-between",
+                        }}
+                      >
+                        <div>
+                          <div className="d-flex">
+                            <div
+                              className="flex-grow-1"
+                              style={{
+                                margin: "5px 0px",
+                                whiteSpace: "nowrap",
+                                overflow: "hidden",
+                                textOverflow: "ellipsis",
+                              }}
+                            >
+                              <H4>{controlRoomAnalytics[0].title}</H4>
+                            </div>
+                          </div>
+                          <H4>
+                            {
+                              dashboardStatistics?.controlRoomStatistics
+                                ?.totalKilledDevicesCount
+                            }
+                          </H4>
                         </div>
-                      </div>
-                      <H3>
-                        {
-                          dashboardStatistics?.controlRoomStatistics
-                            ?.totalKilledDevicesCount
-                        }
-                      </H3>
-                      <div>
-                        <button
-                          className="btn-primary"
-                          style={{
-                            borderRadius: "5px",
-                            padding: "5px 15px",
-                            color: "white",
-                            outline: "none",
-                            border: "none",
-                            marginTop: "30px",
-                          }}
-                          onClick={() => {
-                            setIsUpdateModalOpenForkillingDevices(true);
-                          }}
-                        >
-                          View
-                        </button>
-                      </div>
-                    </Col>
-                    <Col sm="5" className={`box-col-5 `}>
-                      <div>
+                        <div>
+                          <button
+                            className={`${
+                              userPersonalizationData?.buttonsAndBarsColor == null
+                                ? "btn-primary"
+                                : ""
+                            }`}
+                            style={{
+                              borderRadius: "5px",
+                              padding: "5px 15px",
+                              outline: "none",
+                              border: "none",
+                              color: "white",
+                              backgroundColor: `${
+                                userPersonalizationData !== null &&
+                                userPersonalizationData?.buttonsAndBarsColor
+                              }`,
+
+                              // marginTop: "3vh",
+                            }}
+                            onClick={() => {
+                              setIsUpdateModalOpenForkillingDevices(true);
+                            }}
+                          >
+                            View
+                          </button>
+                        </div>
+                      </Col>
+                      <Col
+                        sm="5"
+                        className={`box-col-5 `}
+                        style={{
+                          display: "flex",
+                          flexDirection: "column",
+                          justifyContent: "space-between",
+                        }}
+                      >
                         <div
                           style={{
                             display: "flex",
@@ -696,285 +798,571 @@ const ControlRoomAnalytics = () => {
                           type={controlRoomAnalytics[0].charts.chart?.type}
                           height={controlRoomAnalytics[0].charts.chart?.height}
                         />
-                      </div>
-                    </Col>
-                  </Row>
-                </CardBody>
-              </Card>
-            </Col>
-            <TotalKillingDevices
-              isVisible={isUpdateModalOpenForkillingDevices}
-              setIsVisible={setIsUpdateModalOpenForkillingDevices}
-              fromDate={fromDate}
-              toDate={toDate}
-            />
-            {/*  */}
-            <Col xl="3" lg="6" md="6" sm="12" className="box-col-3">
-              <Card className="total-earning">
-                <CardBody>
-                  <Row style={{ height: "16vh" }}>
-                    <Col sm="12" className="box-col-7">
-                      <div className="d-flex">
-                        <div
-                          className="flex-grow-1"
-                          style={{ margin: "5px 0px" }}
-                        >
+                      </Col>
+                    </Row>
+                  </CardBody>
+                </Card>
+              </Col>
+              <TotalKillingDevices
+                isVisible={isUpdateModalOpenForkillingDevices}
+                setIsVisible={setIsUpdateModalOpenForkillingDevices}
+                fromDate={fromDate}
+                toDate={toDate}
+              />
+              {/*  */}
+              <Col xl="3" lg="6" md="6" sm="12" className="box-col-3">
+                <Card className="total-earning">
+                  <CardBody style={{ maxHeight: "160px", padding: "1em" }}>
+                    <Row style={{ height: "16vh" }}>
+                      <Col sm="12" className="box-col-7">
+                        <div className="d-flex">
                           <div
-                            style={{
-                              display: "flex",
-                              justifyContent: "space-between",
-                            }}
+                            className="flex-grow-1"
+                            style={{ margin: "5px 0px" }}
                           >
-                            <H3>Connected Servers</H3>
                             <div
                               style={{
                                 display: "flex",
-                                justifyContent: "end",
-                                marginBottom: "-10px",
-                                color: "green",
+                                justifyContent: "space-between",
                               }}
                             >
-                              {selectedFilter}
+                              <H4>Connected Servers</H4>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "end",
+                                  marginBottom: "-10px",
+                                  color: "green",
+                                }}
+                              >
+                                {selectedFilter}
+                              </div>
                             </div>
                           </div>
                         </div>
-                      </div>
-                      {liveAlertsData?.connectedServers?.map(
-                        (server: any, index: any) => {
-                          return (
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "start",
-                              }}
-                            >
-                              <div
-                                style={{ fontSize: "16px", fontWeight: "bold" }}
-                              >
-                                {server?.server?.companyName} :
-                              </div>
-                              <div
-                                style={{
-                                  marginLeft: "20px",
-                                  display: "flex",
-                                  alignItems: "center",
-                                }}
-                              >
+                        <div
+                          style={{
+                            overflow: "auto",
+                            height: "75px",
+                            scrollbarWidth: "none" /* Firefox */,
+                          }}
+                        >
+                          {liveAlertsData?.connectedServers?.map(
+                            (server: any, index: any) => {
+                              return (
                                 <div
                                   style={{
-                                    height: "10px",
-                                    width: "10px",
-                                    borderRadius: "50px",
-                                    backgroundColor: `${
-                                      server?.isConnected ? "green" : "red"
-                                    }`,
-                                    marginRight: "5px",
+                                    display: "flex",
+                                    justifyContent: "space-between",
+                                    alignItems: "center",
                                   }}
-                                ></div>
-                                <div>
-                                  {server?.isConnected
-                                    ? "Connected"
-                                    : "Not Connected"}
-                                </div>
-                              </div>
-                            </div>
-                          );
-                        }
-                      )}
-                    </Col>
-                  </Row>
-                </CardBody>
-              </Card>
-            </Col>
+                                >
+                                  <div
+                                    style={{
+                                      display: "flex",
+                                      justifyContent: "start",
+                                    }}
+                                  >
+                                    <div
+                                      style={{
+                                        fontSize: "14px",
+                                        fontWeight: "bold",
+                                      }}
+                                    >
+                                      {server?.server?.companyName.slice(0, 21)}
+                                      {server?.server?.companyName.length > 20
+                                        ? "..."
+                                        : ""}{" "}
+                                      :
+                                    </div>
 
-            {/*  */}
-            <Col xl="3" lg="6" md="6" sm="12" className="box-col-3">
-              <Card className="total-earning">
-                <CardBody>
-                  <Row style={{ height: "16vh" }}>
-                    <Col sm="7" className="box-col-7">
-                      <div className="d-flex">
-                        <div
-                          className="flex-grow-1"
-                          style={{ margin: "5px 0px" }}
-                        >
-                          <H3>Send Command</H3>
+                                    <div
+                                      style={{
+                                        marginLeft: "5px",
+                                        display: "flex",
+                                        alignItems: "center",
+                                      }}
+                                    >
+                                      <div
+                                        style={{
+                                          height: "10px",
+                                          width: "10px",
+                                          borderRadius: "50px",
+                                          backgroundColor: `${
+                                            server?.isConnected
+                                              ? "green"
+                                              : "red"
+                                          }`,
+                                          marginRight: "5px",
+                                        }}
+                                      ></div>
+                                      <div
+                                        id={
+                                          !server?.isConnected ? "Popover2" : ""
+                                        }
+                                        style={{ cursor: "pointer" }}
+                                      >
+                                        {server?.isConnected
+                                          ? "Connected"
+                                          : "Not Connected"}
+                                      </div>
+                                      {!server?.isConnected && (
+                                        <UncontrolledPopover
+                                          placement="top"
+                                          trigger="hover"
+                                          target="Popover2"
+                                        >
+                                          <PopoverHeader>Reason</PopoverHeader>
+                                          <PopoverBody>
+                                            {server?.reason}
+                                          </PopoverBody>
+                                        </UncontrolledPopover>
+                                      )}
+                                    </div>
+                                  </div>
+
+                                  <div
+                                    style={{
+                                      position: "relative",
+                                      display: "inline-block",
+                                    }}
+                                    id="threeDotsLoading"
+                                  >
+                                    <div
+                                      ref={connnectedServersDropdownRef}
+                                      style={{
+                                        padding: "8px",
+                                        borderRadius: "50%",
+                                        backgroundColor:
+                                          isHovered && server?.server._id == id
+                                            ? "#f2f2f2"
+                                            : "transparent",
+                                        transition: "background-color 0.3s",
+                                        display: "inline-flex",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                        cursor: "pointer",
+                                      }}
+                                      onMouseEnter={() => {
+                                        setId(server?.server._id);
+                                        setIsHovered(true);
+                                        // toggleConnectedServersDropdown();
+                                      }}
+                                      onMouseLeave={() => {
+                                        // setId("");
+                                        setIsHovered(false);
+                                        // toggleConnectedServersDropdown();
+                                      }}
+                                      onClick={(e) => {
+                                        if (devices.length > 0) {
+                                          toggleConnectedServersDropdown(e);
+                                        }
+                                      }}
+                                    >
+                                      <VscKebabVertical />
+                                    </div>
+                                    {isConnecetedServersDropdownOpen &&
+                                      server?.server._id == id && (
+                                        <div
+                                          className="custom-conneceted-servers-dropdown-analytics"
+                                          style={{
+                                            position: "absolute",
+                                            top: "100%",
+                                            right: 0,
+                                            zIndex: 1000,
+                                          }}
+                                        >
+                                          <div className="conneceted-servers-dropdown-options-analytics">
+                                            <div
+                                              id="Popover1"
+                                              className="dropdown-item exclude-from-close"
+                                              onClick={(e) => {
+                                                toggleConnectedServersDropdown(
+                                                  e
+                                                );
+                                              }}
+                                            >
+                                              Vehicle Data
+                                            </div>
+                                            <UncontrolledPopover
+                                              placement="top"
+                                              trigger="hover"
+                                              target="Popover1"
+                                            >
+                                              <PopoverHeader>
+                                                In Development Mode
+                                              </PopoverHeader>
+                                              <PopoverBody>
+                                                This feature is in development
+                                                mode
+                                              </PopoverBody>
+                                            </UncontrolledPopover>
+                                            <div
+                                              className="dropdown-item exclude-from-close"
+                                              onClick={(e) => {
+                                                e.stopPropagation();
+                                                setServerID(
+                                                  server?.server?._id
+                                                );
+                                                setIsUpdateModalOpenForDeviceSelecetdForAlerts(
+                                                  true
+                                                );
+                                                toggleConnectedServersDropdown(
+                                                  e
+                                                );
+                                              }}
+                                            >
+                                              Alert Data
+                                            </div>
+                                          </div>
+                                        </div>
+                                      )}
+                                  </div>
+                                  {devices.length == 0 && (
+                                    <UncontrolledPopover
+                                      placement="top"
+                                      trigger="hover"
+                                      target="threeDotsLoading"
+                                    >
+                                      <PopoverHeader>Reason</PopoverHeader>
+                                      <PopoverBody>
+                                        Please wait a while because devices are
+                                        loading in background
+                                      </PopoverBody>
+                                    </UncontrolledPopover>
+                                  )}
+                                </div>
+                              );
+                            }
+                          )}
                         </div>
-                      </div>
-                      <div style={{ fontSize: "16px", fontWeight: "bold" }}>
-                        <H3>
-                          {
-                            dashboardStatistics?.controlRoomStatistics
-                              ?.totalCommandedDevicesCount
-                          }
-                        </H3>
-                      </div>
-                      <div>
+
+                        {/* {liveAlertsData?.connectedServers?.map(
+                          (server: any, index: any) => (
+                            <ServerItem
+                              key={index}
+                              server={server}
+                              index={index}
+                            />
+                          )
+                        )} */}
+                      </Col>
+                    </Row>
+                  </CardBody>
+                </Card>
+              </Col>
+              <DeviceSelecetdForAlerts
+                addModal={isUpdateModalOpenForDeviceSelecetdForAlerts}
+                setAddModal={setIsUpdateModalOpenForDeviceSelecetdForAlerts}
+                dropDownDevices={devices}
+                prevItem=""
+                serverID={serverID}
+              />
+
+              {/*  */}
+              <Col xl="3" lg="6" md="6" sm="12" className="box-col-3">
+                <Card className="total-earning">
+                  <CardBody style={{ maxHeight: "160px", padding: "1em" }}>
+                    <Row style={{ height: "16vh" }}>
+                      <Col
+                        sm="7"
+                        className="box-col-7"
+                        style={{
+                          display: "flex",
+                          flexDirection: "column",
+                          justifyContent: "space-between",
+                        }}
+                      >
+                        <div>
+                          <div className="d-flex">
+                            <div
+                              style={{
+                                margin: "5px 0px",
+                                whiteSpace: "nowrap",
+                                overflow: "hidden",
+                                textOverflow: "ellipsis",
+                              }}
+                            >
+                              <H4>Send Command</H4>
+                            </div>
+                          </div>
+                          <div style={{ fontSize: "16px", fontWeight: "bold" }}>
+                            <H4>
+                              {
+                                dashboardStatistics?.controlRoomStatistics
+                                  ?.totalCommandedDevicesCount
+                              }
+                            </H4>
+                          </div>
+                        </div>
+                        <div>
+                          <div style={{ display: "flex" }}>
+                            <button
+                              className={`${
+                                userPersonalizationData?.buttonsAndBarsColor == null
+                                  ? "btn-primary"
+                                  : ""
+                              }`}
+                              style={{
+                                borderRadius: "5px",
+                                padding: "5px 15px",
+                                outline: "none",
+                                border: "none",
+                                color: "white",
+                                backgroundColor: `${
+                                  userPersonalizationData !== null &&
+                                  userPersonalizationData?.buttonsAndBarsColor
+                                }`,
+                                // marginTop: "3vh",
+                              }}
+                              onClick={() => {
+                                setIsUpdateModalOpenForSendCommand(true);
+                              }}
+                              disabled={devices.length == 0}
+                              id="sendButtonWaitForDevices"
+                            >
+                              Send
+                            </button>
+                            {devices.length == 0 && (
+                              <UncontrolledPopover
+                                placement="top"
+                                trigger="hover"
+                                target="sendButtonWaitForDevices"
+                              >
+                                <PopoverHeader>Reason</PopoverHeader>
+                                <PopoverBody>
+                                  Please wait a while because devices are
+                                  loading in background
+                                </PopoverBody>
+                              </UncontrolledPopover>
+                            )}
+                            <button
+                              className={`${
+                                userPersonalizationData?.buttonsAndBarsColor == null
+                                  ? "btn-primary"
+                                  : ""
+                              }`}
+                              style={{
+                                borderRadius: "5px",
+                                padding: "5px 15px",
+                                outline: "none",
+                                border: "none",
+                                color: "white",
+                                backgroundColor: `${
+                                  userPersonalizationData !== null &&
+                                  userPersonalizationData?.buttonsAndBarsColor
+                                }`,
+                                // marginTop: "3vh",
+                                marginLeft: "10px",
+                              }}
+                              onClick={() => {
+                                setIsUpdateModalOpenForGetSendCommands(true);
+                              }}
+                            >
+                              View
+                            </button>
+                          </div>
+                        </div>
+                      </Col>
+                      <Col
+                        sm="5"
+                        className={`box-col-5 `}
+                        style={{
+                          display: "flex",
+                          flexDirection: "column",
+                          justifyContent: "space-between",
+                        }}
+                      >
+                        <div
+                          style={{
+                            display: "flex",
+                            justifyContent: "end",
+                            marginBottom: "-10px",
+                            color: "green",
+                          }}
+                        >
+                          {selectedFilter}
+                        </div>
+
+                        <ReactApexChart
+                          id={controlRoomAnalytics[1].chartId}
+                          options={controlRoomAnalytics[1].charts}
+                          series={controlRoomAnalytics[1].charts.series}
+                          type={controlRoomAnalytics[1].charts.chart?.type}
+                          height={controlRoomAnalytics[1].charts.chart?.height}
+                        />
+                      </Col>
+                    </Row>
+                  </CardBody>
+                </Card>
+              </Col>
+              <SendCommand
+                addModal={isUpdateModalOpenForSendCommand}
+                setAddModal={setIsUpdateModalOpenForSendCommand}
+                dropDownDevices={devices}
+                prevItem=""
+                fromDate={fromDate}
+                toDate={toDate}
+              />
+              <SelfSendCommands
+                isVisible={isUpdateModalOpenForGetSendCommands}
+                setIsVisible={setIsUpdateModalOpenForGetSendCommands}
+              />
+              {/*  */}
+              <Col xl="3" lg="6" md="6" sm="12" className="box-col-3">
+                <Card className="total-earning">
+                  <CardBody
+                    style={{
+                      padding: "1em",
+                    }}
+                  >
+                    <Row style={{ height: "16vh" }}>
+                      <Col
+                        sm="7"
+                        className="box-col-7"
+                        style={{
+                          display: "flex",
+                          flexDirection: "column",
+                          justifyContent: "space-between",
+                        }}
+                      >
+                        <div>
+                          <div className="d-flex">
+                            <div
+                              className="flex-grow-1"
+                              style={{
+                                margin: "5px 0px",
+                                whiteSpace: "nowrap",
+                                overflow: "hidden",
+                                textOverflow: "ellipsis",
+                              }}
+                            >
+                              <H4>Pre Alert info</H4>
+                            </div>
+                          </div>
+                          <div style={{ fontSize: "16px", fontWeight: "bold" }}>
+                            <H4>
+                              {
+                                dashboardStatistics?.controlRoomStatistics
+                                  ?.totalPreInfosCount
+                              }
+                            </H4>
+                          </div>
+                        </div>
                         <div style={{ display: "flex" }}>
                           <button
-                            className="btn-primary"
+                            className={`${
+                              userPersonalizationData?.buttonsAndBarsColor == null
+                                ? "btn-primary"
+                                : ""
+                            }`}
                             style={{
                               borderRadius: "5px",
                               padding: "5px 15px",
-                              color: "white",
                               outline: "none",
                               border: "none",
-                              marginTop: "30px",
+                              color: "white",
+                              backgroundColor: `${
+                                userPersonalizationData !== null &&
+                                userPersonalizationData?.buttonsAndBarsColor
+                              }`,
+                              // marginTop: "3vh",
                             }}
                             onClick={() => {
-                              setIsUpdateModalOpenForSendCommand(true);
+                              setIsUpdateModalOpenForPreAlertinfo(true);
                             }}
+                            disabled={devices.length == 0}
+                            id="addButtonWaitForDevices"
                           >
-                            Send
+                            Add
                           </button>
+                          {devices.length == 0 && (
+                            <UncontrolledPopover
+                              placement="top"
+                              trigger="hover"
+                              target="addButtonWaitForDevices"
+                            >
+                              <PopoverHeader>Reason</PopoverHeader>
+                              <PopoverBody>
+                                Please wait a while because devices are loading
+                                in background
+                              </PopoverBody>
+                            </UncontrolledPopover>
+                          )}
                           <button
-                            className="btn-primary"
+                            className={`${
+                              userPersonalizationData?.buttonsAndBarsColor == null
+                                ? "btn-primary"
+                                : ""
+                            }`}
                             style={{
                               borderRadius: "5px",
                               padding: "5px 15px",
-                              color: "white",
                               outline: "none",
                               border: "none",
-                              marginTop: "30px",
+                              color: "white",
+                              backgroundColor: `${
+                                userPersonalizationData !== null &&
+                                userPersonalizationData?.buttonsAndBarsColor
+                              }`,
+                              // marginTop: "3vh",
                               marginLeft: "10px",
                             }}
                             onClick={() => {
-                              setIsUpdateModalOpenForGetSendCommands(true);
+                              setIsUpdateModalOpenForPreInfoAlerts(true);
                             }}
                           >
                             View
                           </button>
                         </div>
-                      </div>
-                    </Col>
-                    <Col sm="5" className={`box-col-5 `}>
-                      <div
+                      </Col>
+                      <Col
+                        sm="5"
+                        className={`box-col-5 `}
                         style={{
                           display: "flex",
-                          justifyContent: "end",
-                          marginBottom: "-10px",
-                          color: "green",
+                          flexDirection: "column",
+                          justifyContent: "space-between",
                         }}
                       >
-                        {selectedFilter}
-                      </div>
-                      <ReactApexChart
-                        id={controlRoomAnalytics[1].chartId}
-                        options={controlRoomAnalytics[1].charts}
-                        series={controlRoomAnalytics[1].charts.series}
-                        type={controlRoomAnalytics[1].charts.chart?.type}
-                        height={controlRoomAnalytics[1].charts.chart?.height}
-                      />
-                    </Col>
-                  </Row>
-                </CardBody>
-              </Card>
-            </Col>
-            <SendCommand
-              addModal={isUpdateModalOpenForSendCommand}
-              setAddModal={setIsUpdateModalOpenForSendCommand}
-              dropDownDevices={devices}
-              prevItem=""
-              fromDate={fromDate}
-              toDate={toDate}
-            />
-            <SelfSendCommands
-              isVisible={isUpdateModalOpenForGetSendCommands}
-              setIsVisible={setIsUpdateModalOpenForGetSendCommands}
-            />
-            {/*  */}
-            <Col xl="3" lg="6" md="6" sm="12" className="box-col-3">
-              <Card className="total-earning">
-                <CardBody>
-                  <Row style={{ height: "16vh" }}>
-                    <Col sm="7" className="box-col-7">
-                      <div className="d-flex">
                         <div
-                          className="flex-grow-1"
-                          style={{ margin: "5px 0px" }}
+                          style={{
+                            display: "flex",
+                            justifyContent: "end",
+                            marginBottom: "-10px",
+                            color: "green",
+                          }}
                         >
-                          <H3>Pre Alert info</H3>
+                          {selectedFilter}
                         </div>
-                      </div>
-                      <div style={{ fontSize: "16px", fontWeight: "bold" }}>
-                        {
-                          dashboardStatistics?.controlRoomStatistics
-                            ?.totalPreInfosCount
-                        }
-                      </div>
-                      <div style={{ display: "flex" }}>
-                        <button
-                          className="btn-primary"
-                          style={{
-                            borderRadius: "5px",
-                            padding: "5px 15px",
-                            color: "white",
-                            outline: "none",
-                            border: "none",
-                            marginTop: "30px",
-                          }}
-                          onClick={() => {
-                            setIsUpdateModalOpenForPreAlertinfo(true);
-                          }}
-                        >
-                          Add
-                        </button>
-                        <button
-                          className="btn-primary"
-                          style={{
-                            borderRadius: "5px",
-                            padding: "5px 15px",
-                            color: "white",
-                            outline: "none",
-                            border: "none",
-                            marginTop: "30px",
-                            marginLeft: "10px",
-                          }}
-                          onClick={() => {
-                            setIsUpdateModalOpenForPreInfoAlerts(true);
-                          }}
-                        >
-                          View
-                        </button>
-                      </div>
-                    </Col>
-                    <Col sm="5" className={`box-col-5 `}>
-                      <div
-                        style={{
-                          display: "flex",
-                          justifyContent: "end",
-                          marginBottom: "-10px",
-                          color: "green",
-                        }}
-                      >
-                        {selectedFilter}
-                      </div>
-                      <ReactApexChart
-                        id={controlRoomAnalytics[2].chartId}
-                        options={controlRoomAnalytics[2].charts}
-                        series={controlRoomAnalytics[2].charts.series}
-                        type={controlRoomAnalytics[2].charts.chart?.type}
-                        height={controlRoomAnalytics[2].charts.chart?.height}
-                      />
-                    </Col>
-                  </Row>
-                </CardBody>
-              </Card>
-            </Col>
 
-            <AddPreAlertinfo
-              addModal={isUpdateModalOpenForPreAlertinfo}
-              setAddModal={setIsUpdateModalOpenForPreAlertinfo}
-              dropDownDevices={devices}
-              fromDate={fromDate}
-              toDate={toDate}
-            />
-            <TotalPreInfoAlerts
-              isVisible={isUpdateModalOpenForPreInfoAlerts}
-              setIsVisible={setIsUpdateModalOpenForPreInfoAlerts}
-            />
-          </Row>
-        </Col>
+                        <ReactApexChart
+                          id={controlRoomAnalytics[2].chartId}
+                          options={controlRoomAnalytics[2].charts}
+                          series={controlRoomAnalytics[2].charts.series}
+                          type={controlRoomAnalytics[2].charts.chart?.type}
+                          height={controlRoomAnalytics[2].charts.chart?.height}
+                        />
+                      </Col>
+                    </Row>
+                  </CardBody>
+                </Card>
+              </Col>
+
+              <AddPreAlertinfo
+                addModal={isUpdateModalOpenForPreAlertinfo}
+                setAddModal={setIsUpdateModalOpenForPreAlertinfo}
+                dropDownDevices={devices}
+                fromDate={fromDate}
+                toDate={toDate}
+              />
+              <TotalPreInfoAlerts
+                isVisible={isUpdateModalOpenForPreInfoAlerts}
+                setIsVisible={setIsUpdateModalOpenForPreInfoAlerts}
+              />
+            </Row>
+          </Col>
+        </div>
       </div>
     </>
   );
@@ -994,4 +1382,65 @@ export default ControlRoomAnalytics;
                 style={{ color: "white", fontSize: "24px", cursor: "pointer" }}
               />
             )} */
+}
+
+{
+  /* <div
+                                    style={{
+                                      marginLeft: "5px",
+                                      marginRight: "5px",
+                                    }}
+                                    id="Popover1"
+                                  >
+                                    <button
+                                      className="btn-primary"
+                                      style={{
+                                        borderRadius: "5px",
+                                        padding: "0.5px 4px",
+                                        color: "white",
+                                        fontSize: "8px",
+                                        width: "45px",
+                                        cursor: "not-allowed",
+                                        outline: "none",
+                                        border: "none",
+                                      }}
+                                      onClick={() => {}}
+                                    >
+                                      Vehicle Data
+                                    </button>
+                                  </div>
+                                  <UncontrolledPopover
+                                    placement="top"
+                                    trigger="hover"
+                                    target="Popover1"
+                                  >
+                                    <PopoverHeader>
+                                      In Development Mode
+                                    </PopoverHeader>
+                                    <PopoverBody>
+                                      This feature is in development mode
+                                    </PopoverBody>
+                                  </UncontrolledPopover>
+                                  <div style={{ marginLeft: "0px" }}>
+                                    <button
+                                      className="btn-primary"
+                                      style={{
+                                        borderRadius: "5px",
+                                        padding: "0.5px 4px",
+                                        color: "white",
+                                        fontSize: "8px",
+                                        width: "40px",
+                                        outline: "none",
+                                        border: "none",
+                                      }}
+                                      onClick={() => {
+                                        setServerID(server?.server?._id);
+                                        setIsUpdateModalOpenForDeviceSelecetdForAlerts(
+                                          true
+                                        );
+                                      }}
+                                    >
+                                      Alert Data
+                                    </button>
+                                  </div> */
 }

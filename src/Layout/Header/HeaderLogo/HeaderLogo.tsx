@@ -20,8 +20,8 @@ const HeaderLogo = () => {
         <Link to={`${process.env.PUBLIC_URL}/dashboards/shoppingplace`}>
           <img
             src={
-              userPersonalizationData !== null
-                ? `${IMAGE_BASE_URL}/${userPersonalizationData.logoImage.url}`
+              userPersonalizationData !== null && userPersonalizationData.accountLogo.url !== ""
+                ? `${IMAGE_BASE_URL}/${userPersonalizationData.accountLogo.url}`
                 : Logo
             }
             alt=""

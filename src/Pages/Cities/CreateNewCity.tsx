@@ -7,7 +7,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { Button, FormGroup, Label, Modal, ModalBody, Row } from "reactstrap";
 import { Cancel } from "../../utils/Constant";
 import { CheckCircle } from "react-feather";
-import { H3 } from "../../AbstractElements";
+import { H3, P } from "../../AbstractElements";
 import { CitiesType } from "./CityTypes/CityTypes";
 import { create, getAll } from "../../Api";
 import { useDispatch, useSelector } from "react-redux";
@@ -25,6 +25,9 @@ import SelectCountryBox from "./components/SelectCountryBox";
 import Swal from "sweetalert2";
 
 const CreateNewCity = () => {
+  const { userPersonalizationData } = useSelector(
+    (state: any) => state.personalization
+  );
   const { provinceId, countryId } = useSelector((state: any) => state.cities);
   const dispatch = useDispatch();
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
@@ -63,7 +66,7 @@ const CreateNewCity = () => {
           if (data !== undefined) {
             if (
               !data.success &&
-              data.message == "ERROR_INTERNET_DISCONNECTED"
+              data.message === "ERROR_INTERNET_DISCONNECTED"
             ) {
               setLoading(false);
               setAddModal(false);
@@ -156,8 +159,13 @@ const CreateNewCity = () => {
     <Col md={6}>
       <div className="text-end">
         <button
-          className="btn btn-primary"
-          style={{ color: "white" }}
+          className={`btn ${userPersonalizationData?.buttonsAndBarsColor == null ? "btn-primary" : ""
+            }`}
+          style={{
+            color: "white",
+            backgroundColor: `${userPersonalizationData && userPersonalizationData?.buttonsAndBarsColor
+              }`,
+          }}
           onClick={addToggle}
         >
           <PlusCircle />
@@ -179,7 +187,7 @@ const CreateNewCity = () => {
             >
               <Row>
                 <FormGroup className="col-md-12 create-group">
-                  <Label>City Name</Label>
+                  <P>City Name</P>
                   <input
                     className="form-control"
                     type="text"
@@ -198,11 +206,11 @@ const CreateNewCity = () => {
                 }}
               >
                 <div>
-                  <span>Select Country</span>
+                  <P>Select Country</P>
                   <SelectCountryBox placeholder={"Select Country"} />
                 </div>
                 <div>
-                  <span>Select Province</span>
+                  <P>Select Province</P>
                   <SelectProvinceBox placeholder={"Select Province"} />
                 </div>
               </div>

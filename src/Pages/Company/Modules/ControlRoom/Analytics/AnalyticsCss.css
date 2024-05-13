@@ -72,12 +72,15 @@
   margin-right: 5px;
 }
 
-.item {
+.dropdown-item {
   cursor: pointer;
   display: flex;
   align-items: center;
-  padding: 5px;
-  margin-left: 10px;
+  padding-left: 10px;
+  padding: 10px;
+}
+.dropdown-item:hover {
+  background-color: #e5e5e5;
 }
 .item input[type="checkbox"] {
   margin-right: 5px;
@@ -105,4 +108,25 @@
 
 .dropdown-options button:first-child {
   margin-right: 5px;
+}
+/* --------------- */
+
+.custom-conneceted-servers-dropdown-analytics {
+  position: relative;
+  display: inline-block;
+  width: 150px;
+}
+
+.conneceted-servers-dropdown-options-analytics {
+  width: 150px;
+  position: relative;
+  top: 0;
+  left: -200;
+  z-index: 1000;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  max-height: 250px;
+  overflow-y: auto;
 }

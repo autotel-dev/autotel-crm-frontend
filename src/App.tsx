@@ -10,6 +10,8 @@ import { setActiveCRMModules } from "./ReaduxToolkit/Reducer/CRMModuleSlice";
 import { getUserRole } from "./Api/globals";
 import { setPermissions } from "./ReaduxToolkit/Reducer/CompanySlice";
 import { setUserPermissions } from "./ReaduxToolkit/Reducer/PermissionSlice";
+import { setUserData } from "./ReaduxToolkit/Reducer/UserSlice";
+import { ROLES } from "./constants/roles";
 const App = () => {
   const { userPermissions } = useSelector(
     (state: any) => state.userPermissions
@@ -57,7 +59,7 @@ const App = () => {
 
       getAll({
         url:
-          getUserRole() == "COMPANY" || getUserRole() == "OPERATOR"
+          getUserRole() === ROLES.COMPANY || getUserRole() === ROLES.OPERATOR
             ? "user/get-allowed-modules"
             : "crm-module/get-all-active-modules",
       }).then((data: any) => {
@@ -73,7 +75,7 @@ const App = () => {
         }
       });
 
-      if (getUserRole() == "COMPANY" || getUserRole() == "OPERATOR") {
+      if (getUserRole() == ROLES.COMPANY || getUserRole() == ROLES.OPERATOR) {
         getAll({ url: "user/get-permissions" }).then((data: any) => {
           // console.log("api call --- >", data);
           if (data !== undefined) {
@@ -84,7 +86,15 @@ const App = () => {
           }
         });
       }
-      if (getUserRole() == "SUPER_ADMIN") {
+      dispatch(setUserData(null));
+      getAll({ url: "user/get-user" }).then((parentData: any) => {
+        if (parentData !== undefined) {
+          if (parentData.success) {
+            dispatch(setUserData(parentData.data.user));
+          }
+        }
+      });
+      if (getUserRole() === ROLES.SUPER_ADMIN) {
         getAll({ url: "permissions/get-all-permissions" }).then((data: any) => {
           // console.log("api call --- >", data);
           if (data !== undefined) {

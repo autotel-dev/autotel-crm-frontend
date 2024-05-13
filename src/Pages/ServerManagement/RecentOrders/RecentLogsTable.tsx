@@ -22,7 +22,7 @@ const RecentLogsTable = () => {
         <thead>
           <tr>
             {recentLogsHeader.map((data, index) => (
-              <th key={index} style={{ width: "15%", fontWeight: "bold" }}>
+              <th key={index} style={{ width: data == "Activity" ? "15%" : "10%", fontWeight: "bold" }}>
                 {data}
               </th>
             ))}
@@ -33,8 +33,8 @@ const RecentLogsTable = () => {
             if (index < 6) {
               return (
                 <tr key={index}>
-                  <td style={{ width: "15%" }}>{data.systemLogID}</td>
-                  <td style={{ width: "15%" }}>
+                  <td style={{ width: "10%" }}>{data.systemLogID}</td>
+                  <td style={{ width: "10%" }}>
                     <div className="d-flex">
                       <div className="flex-grow-1 ms-2">
                         <Link to={Href}>
@@ -43,7 +43,7 @@ const RecentLogsTable = () => {
                       </div>
                     </div>
                   </td>
-                  <td style={{ width: "15%" }}>
+                  <td style={{ width: "10%" }}>
                     {new Date(data.createdAt)
                       .toLocaleString("en-US", {
                         month: "short",
@@ -58,10 +58,10 @@ const RecentLogsTable = () => {
                   <td style={{ width: "15%" }} className={`txt-primary`}>
                     {formatUnderscoredString(data.activity)}
                   </td>
-                  <td style={{ width: "15%" }}>
+                  <td style={{ width: "10%" }}>
                     {data.user?.fullName == null ? "N/A" : data.user?.fullName}
                   </td>
-                  <td style={{ width: "15%" }}>
+                  <td style={{ width: "10%" }}>
                     {formatUnderscoredString(data.role)}
                   </td>
                 </tr>

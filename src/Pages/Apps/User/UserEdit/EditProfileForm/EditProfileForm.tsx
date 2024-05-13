@@ -10,21 +10,8 @@ import {
   Label,
   Row,
 } from "reactstrap";
-import {
-  AboutMe,
-  Address,
-  City,
-  Company,
-  Country,
-  EditProfile,
-  Emailaddress,
-  FirstName,
-  Lastname,
-  PostalCode,
-  UpdateProfile,
-  Username,
-} from "../../../../../utils/Constant";
-import { H3 } from "../../../../../AbstractElements";
+
+import { H3, H4, P } from "../../../../../AbstractElements";
 import { useDispatch, useSelector } from "react-redux";
 import { getUserRole } from "../../../../../Api/globals";
 import { getAll, update } from "../../../../../Api";
@@ -54,7 +41,7 @@ const EditProfileForm = () => {
   const [isEdit, setIsEdit] = useState(false);
   const dispatch = useDispatch();
   useEffect(() => {
-    if (getUserRole() == "COMPANY") {
+    if (getUserRole() === ROLES.COMPANY) {
       setAddress(userData.address);
     }
   }, []);
@@ -66,24 +53,22 @@ const EditProfileForm = () => {
       const formData = new FormData();
       formData.append("fullName", name);
       formData.append("phoneNo", phoneNo);
-      if (getUserRole() == "COMPANY") {
+      if (getUserRole() === ROLES.COMPANY) {
         formData.append("address", address);
       }
 
       update(formData, {
         url:
-          getUserRole() == "COMPANY"
+          getUserRole() === ROLES.COMPANY
             ? "company/update-company"
-            : getUserRole() == "OPERATOR"
-            ? "company/update-operator"
-            : `super-admin/update-super-admin`,
+            : "super-admin/update-super-admin",
       })
         .then((data: any) => {
           // // console.log("api call --- >", data);
           if (data !== undefined) {
             if (
               !data.success &&
-              data.message == "ERROR_INTERNET_DISCONNECTED"
+              data.message === "ERROR_INTERNET_DISCONNECTED"
             ) {
               setLoading(false);
               setIsEdit(!isEdit);
@@ -139,13 +124,13 @@ const EditProfileForm = () => {
     <Col xl={8}>
       <Form className="card" onSubmit={editUserProfile}>
         <CardHeader className="pb-0">
-          <H3 className="card-title mb-0">{EditProfile}</H3>
+          <H4>Edit Profile</H4>
         </CardHeader>
         <CardBody>
           <Row>
             <Col md={12}>
               <FormGroup>
-                <Label>Name</Label>
+                <P>Name</P>
                 <Input
                   type="text"
                   placeholder="Enter Name here"
@@ -158,7 +143,7 @@ const EditProfileForm = () => {
             </Col>
             <Col md={12}>
               <FormGroup>
-                <Label>Phone Number</Label>
+                <P>Phone Number</P>
                 <Input
                   type="text"
                   placeholder="Enter Phone Number here"
@@ -169,10 +154,10 @@ const EditProfileForm = () => {
                 />
               </FormGroup>
             </Col>
-            {getUserRole() == "COMPANY" && userData.address !== null && (
+            {getUserRole() === ROLES.COMPANY && userData.address !== null && (
               <Col md={12}>
                 <FormGroup>
-                  <Label>Address</Label>
+                  <P>Address</P>
                   <Input
                     type="text"
                     placeholder="Enter Address here"
@@ -186,55 +171,55 @@ const EditProfileForm = () => {
             )}
             {/* <Col md={5}>
               <FormGroup>
-                <Label >{Company}</Label>
+                <P >{Company}</P>
                 <Input type="text" placeholder="Company" />
               </FormGroup>
             </Col>
             <Col sm={6} md={3} >
               <FormGroup>
-                <Label>{Username}</Label>
+                <P>{Username}</P>
                 <Input type="text" placeholder="Username" />
               </FormGroup>
             </Col>
             <Col sm={6} md={4} >
               <FormGroup>
-                <Label >{Emailaddress}</Label>
+                <P >{Emailaddress}</P>
                 <Input type="email" placeholder="Email" />
               </FormGroup>
             </Col>
             <Col sm={6} md={6} >
               <FormGroup>
-                <Label >{FirstName}</Label>
+                <P >{FirstName}</P>
                 <Input type="text" placeholder="Company" />
               </FormGroup>
             </Col>
             <Col sm={6} md={6} >
               <FormGroup>
-                <Label >{Lastname}</Label>
+                <P >{Lastname}</P>
                 <Input type="text" placeholder="Last Name" />
               </FormGroup>
             </Col>
             <Col md={12}>
               <FormGroup>
-                <Label >{Address}</Label>
+                <P >{Address}</P>
                 <Input type="text" placeholder="Home Address" />
               </FormGroup>
             </Col>
             <Col sm={6} md={4} >
               <FormGroup>
-                <Label >{City}</Label>
+                <P >{City}</P>
                 <Input type="text" placeholder="City" />
               </FormGroup>
             </Col>
             <Col sm={6} md={3} >
               <FormGroup>
-                <Label >{PostalCode}</Label>
+                <P >{PostalCode}</P>
                 <Input type="number" placeholder="ZIP Code" />
               </FormGroup>
             </Col>
             <Col md={5}>
               <FormGroup>
-                <Label>{Country}</Label>
+                <P>{Country}</P>
                 <Input type='select' className="btn-square form-select">
                   <option>{'Select'}</option>
                   <option>{'Germany'}</option>
@@ -245,12 +230,12 @@ const EditProfileForm = () => {
               </FormGroup>
             </Col>
             <Col md={12}>
-              <Label>{AboutMe}</Label>
+              <P>{AboutMe}</P>
               <textarea className="form-control" rows={3} placeholder="Enter About your description" />
             </Col> */}
           </Row>
         </CardBody>
-        {getUserRole() == ROLES.SUPER_ADMIN ? (
+        {getUserRole() === ROLES.SUPER_ADMIN ? (
           <CardFooter className="text-end">
             {isEdit && (
               <Button
@@ -272,15 +257,17 @@ const EditProfileForm = () => {
               type="submit"
               disabled={loading}
               onClick={(e) => {
-                e.preventDefault();
-                setIsEdit(!isEdit);
+                if (!isEdit) {
+                  e.preventDefault();
+                  setIsEdit(!isEdit);
+                }
               }}
             >
               {loading ? "Loading..." : isEdit ? "Save" : "Edit"}
             </Button>
           </CardFooter>
-        ) : (getUserRole() == ROLES.COMPANY ||
-            getUserRole() == ROLES.OPERATOR) &&
+        ) : (getUserRole() === ROLES.COMPANY ||
+            getUserRole() === ROLES.OPERATOR) &&
           profile != undefined &&
           profile?.edit ? (
           <CardFooter className="text-end">
@@ -288,7 +275,7 @@ const EditProfileForm = () => {
               <Button
                 style={{ marginRight: "15px" }}
                 color="primary"
-                type="submit"
+                // type="submit"
                 disabled={loading}
                 onClick={(e) => {
                   e.preventDefault();
@@ -304,7 +291,7 @@ const EditProfileForm = () => {
               type="submit"
               disabled={loading}
               onClick={(e) => {
-                if (isEdit == false) {
+                if (!isEdit) {
                   e.preventDefault();
                   setIsEdit(!isEdit);
                 }

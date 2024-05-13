@@ -19,6 +19,7 @@ import {
 } from "../../../ReaduxToolkit/Reducer/ServerDetailsSlice";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
+import { P } from "../../../AbstractElements";
 
 const FirebaseAccountCredentials = ({
   callbackActive,
@@ -72,10 +73,10 @@ const FirebaseAccountCredentials = ({
     >
       <Row className="g-3">
         <Col sm={6}>
-          <Label>
+          <P>
             Email Address
             <span className="txt-danger">*</span>
-          </Label>
+          </P>
           <Input
             value={emailAddress}
             name="emailAddress"
@@ -85,10 +86,10 @@ const FirebaseAccountCredentials = ({
           />
         </Col>
         <Col sm={6}>
-          <Label>
+          <P>
             Password
             <span className="txt-danger">*</span>
-          </Label>
+          </P>
           <InputGroup>
             <Input
               type={showPassword ? "text" : "password"}

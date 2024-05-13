@@ -45,7 +45,7 @@ const ServerManagement = () => {
 
         if (data !== undefined) {
           dispatch(setNoDataFound(data.message));
-          if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
+          if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
             dispatch(setIsConnected(true));
             setLoading(false);
           }

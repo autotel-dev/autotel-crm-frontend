@@ -4,7 +4,7 @@ import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Button, FormGroup, Label, Modal, ModalBody, Row } from "reactstrap";
 import { useDispatch, useSelector } from "react-redux";
-import { H3 } from "../../../../../../../AbstractElements";
+import { H3, P } from "../../../../../../../AbstractElements";
 import { create, getAll } from "../../../../../../../Api";
 import {
   setAssignedAlerts,
@@ -55,12 +55,12 @@ const ResponseForm: React.FC<PropsTypes> = ({
         completionResponse: data.response,
         alertEventCloseDate: new Date().toISOString(),
       };
-       // // console.log(completedResponse);
+      // // console.log(completedResponse);
       try {
         await create(completedResponse, {
           url: "alert-events/complete-an-alert-event",
         }).then((data: any) => {
-          if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
+          if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
             setLoading(false);
             setIsVisible(!isVisible);
           }
@@ -75,7 +75,7 @@ const ResponseForm: React.FC<PropsTypes> = ({
             setIsVisible(!isVisible);
           }
           if (data.success) {
-             // // console.log(data);
+            // // console.log(data);
             setLoading(false);
             setIsVisible(!isVisible);
             reset({
@@ -86,14 +86,14 @@ const ResponseForm: React.FC<PropsTypes> = ({
             getAll({
               url: "company/get-all-assigned-events",
             }).then((data: any) => {
-               // // console.log("assigned --- >", data);
+              // // console.log("assigned --- >", data);
               // setLoading(false);
               if (data !== undefined) {
                 if (data.success) {
-                   // // console.log("length --- >", data.data.length);
+                  // // console.log("length --- >", data.data.length);
                   dispatch(setAssignedAlerts(data.data));
                 }
-                if (data.statusCode == 404) {
+                if (data.statusCode === 404) {
                   dispatch(setAssignedAlerts([]));
                 }
               }
@@ -101,11 +101,11 @@ const ResponseForm: React.FC<PropsTypes> = ({
             getAll({
               url: "company/get-all-completed-events",
             }).then((data: any) => {
-               // // console.log("assigned --- >", data);
+              // // console.log("assigned --- >", data);
               // setLoading(false);
               if (data !== undefined) {
                 if (data.success) {
-                   // // console.log("length --- >", data.data.length);
+                  // // console.log("length --- >", data.data.length);
                   dispatch(setCompletedAlerts(data.data));
                 }
                 // if (!data.success) {
@@ -119,7 +119,7 @@ const ResponseForm: React.FC<PropsTypes> = ({
         // Handle successful post creation (e.g., show a success message, redirect, etc.)
       } catch (error: any) {
         // Handle error (e.g., show an error message)
-         // // console.error("Error creating post:", error);
+        // // console.error("Error creating post:", error);
         setLoading(false);
         setIsVisible(!isVisible);
         reset({
@@ -137,7 +137,7 @@ const ResponseForm: React.FC<PropsTypes> = ({
       >
         <Row style={{ paddingTop: "20px" }}>
           <FormGroup className="col-md-12 create-group">
-            <Label>Response</Label>
+            <P>Response</P>
             <textarea
               className="form-control"
               rows={3} // Minimum number of visible lines

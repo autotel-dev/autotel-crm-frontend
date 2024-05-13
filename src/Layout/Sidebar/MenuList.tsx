@@ -6,36 +6,41 @@ import { useState } from "react";
 import { Href } from "../../utils/Constant";
 import { useAppSelector } from "../../ReaduxToolkit/Hooks";
 import { MenuListInterface } from "./SideBarTypes";
+import { getUserRole } from "../../Api/globals";
 
-const MenuList = ({ subMenuData, setIsOpen, isOpen, level,isClose,setIsClose }: MenuListInterface) => {
-  const [close,setClose] = useState(false)
+const MenuList = ({ subMenuData, setIsOpen, isOpen, level, isClose, setIsClose }: MenuListInterface) => {
+  const [close, setClose] = useState(false)
   const { sidebarIconType } = useAppSelector((state) => state.themeCustomizer);
   const { t } = useTranslation();
   const { layout } = useAppSelector((state) => state.themeCustomizer);
   const handleClick = (item: string) => {
-      const temp:string[] = isOpen;
-      temp[level] = item !== temp[level] ? item : "";
-      setIsOpen([...temp]);
-      setClose(temp[level].includes(item) ? true : false)
-      // setIsClose(true);
+    const temp: string[] = isOpen;
+    temp[level] = item !== temp[level] ? item : "";
+    setIsOpen([...temp]);
+    setClose(temp[level].includes(item) ? true : false)
+    // setIsClose(true);
   };
   return (
-    <div className="hoverd-menu">
+    <div className="hoverd-menu" style={{
+      height: `${subMenuData.title == "Setup" && getUserRole() == "SUPER_ADMIN" && "55vh"}`,
+      overflow: "auto",
+      scrollbarWidth: "none",
+    }}>
       {subMenuData?.subMenu &&
         subMenuData?.subMenu?.map((item, index) => (
           <LI className={level === 0 ? "main-submenu" : ""} key={index} >
             <Link
               className={`${level === 0 ? "d-flex sidebar-menu" : level === 1 ? "submenu-title" : ""} ${isOpen[level] === item.title ? "active" : ""}`}
-              to={item.link ? item.link : Href }
+              to={item.link ? item.link : Href}
               onClick={() => handleClick(item.title)}
             >
               {item.svgIcon && (
-                <SVG className={`${sidebarIconType}-icon`} iconId={item.svgIcon  === "home" ? item.svgIcon : `${sidebarIconType}-${item.svgIcon}`} />
+                <SVG className={`${sidebarIconType}-icon`} iconId={item.svgIcon === "home" ? item.svgIcon : `${sidebarIconType}-${item.svgIcon}`} />
               )}
               {t(item.title)}
-             
+
             </Link>
-          
+
           </LI>
         ))}
     </div>

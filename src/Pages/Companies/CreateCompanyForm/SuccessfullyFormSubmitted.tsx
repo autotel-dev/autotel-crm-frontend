@@ -1,4 +1,4 @@
-import { H2, Image } from "../../../AbstractElements";
+import { H4, Image, P } from "../../../AbstractElements";
 import { dynamicImage } from "../../../Service";
 import { SuccessfullyCompleted } from "../../../utils/Constant";
 import { BusinessFormCommonProps } from "../../../Types/Forms/FormLayout/FormWizardTypes";
@@ -65,8 +65,9 @@ const SuccessfullyFormSubmitted = ({
     companyLogo,
   } = useSelector((state: any) => state.companies);
   // console.log("createCompany", createCompany);
-
-  // const [formData, setFormData] = useState({});
+  const { userPersonalizationData } = useSelector(
+    (state: any) => state.personalization
+  );
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -77,9 +78,9 @@ const SuccessfullyFormSubmitted = ({
   };
 
   useEffect(() => {
-    // console.log("CNICFront:", cnicFront);
-    // console.log("CNICBack:", cnicBack);
-  });
+    dispatch(setServerCredentials(serverCredentials));
+    // console.log("serverCredentials in preview", serverCredentials);
+  }, [serverCredentials]);
 
   function checkFileTypeByExtension(fileName: any, file: any) {
     // console.log("filename", fileName);
@@ -124,7 +125,7 @@ const SuccessfullyFormSubmitted = ({
     formData.append("fullName", createCompany.fullName);
     formData.append("cnicNumber", createCompany.cnicNumber);
     formData.append("contactPersonName", createCompany.contactPersonName);
-    formData.append("contactPersonNumber", createCompany.contactPersonNumber);
+    formData.append("contactPersonPhoneNo", createCompany.contactPersonPhoneNo);
     formData.append("emailAddress", createCompany.emailAddress);
     formData.append("address", createCompany.address);
     formData.append("city", createCompany.city);
@@ -163,6 +164,22 @@ const SuccessfullyFormSubmitted = ({
     if (other !== null) {
       formData.append("otherAttachment", other);
     }
+    //
+    if (cnicFront == null) {
+      formData.append("cnicFront", "");
+    }
+    if (cnicBack == null) {
+      formData.append("cnicBack", "");
+    }
+    if (ptaCertificate == null) {
+      formData.append("ptaCertificate", "");
+    }
+    if (ntnFile == null) {
+      formData.append("ntnCertificate", "");
+    }
+    if (other == null) {
+      formData.append("otherAttachment", "");
+    }
 
     formData.append("package", createCompany.package);
     formData.append(
@@ -180,7 +197,7 @@ const SuccessfullyFormSubmitted = ({
       await createCom(formData, {
         url: "super-admin/create-company",
       }).then((data: any) => {
-        if (!data.success && data.message == "ERROR_INTERNET_DISCONNECTED") {
+        if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
           setLoading(false);
         }
         if (!data.success) {
@@ -246,26 +263,51 @@ const SuccessfullyFormSubmitted = ({
   return (
     <div className="form-completed">
       <div style={{ display: "flex", justifyContent: "space-between" }}>
-        <H2>Company Info</H2>
+        <H4>Company Info</H4>
         <Row>
-          <Col
-            xs={9}
-            className="text-end d-flex justify-content-end gap-2 align-center"
-          >
-            <Button color="primary" onClick={() => callbackActive(1)}>
-              Edit
-            </Button>
-          </Col>
+          {userPersonalizationData == null &&
+          userPersonalizationData?.primaryColor == null ? (
+            <Col
+              xs={9}
+              className="text-end d-flex justify-content-end gap-2 align-center"
+            >
+              <Button color="primary" onClick={() => callbackActive(1)}>
+                Edit
+              </Button>
+            </Col>
+          ) : (
+            <Col
+              xs={9}
+              className="text-end d-flex justify-content-end gap-2 align-center"
+            >
+              <button
+                style={{
+                  borderRadius: "5px",
+                  padding: "8px 25px",
+                  color: "white",
+                  backgroundColor: `${
+                    userPersonalizationData &&
+                    userPersonalizationData.primaryColor
+                  }`,
+                  border: "none",
+                  outline: "none",
+                }}
+                onClick={() => callbackActive(1)}
+              >
+                Edit
+              </button>
+            </Col>
+          )}
         </Row>
       </div>
 
       <Form style={{ marginBottom: "65px", marginTop: "20px" }}>
         <Row className="g-3">
           <Col xl={4} sm={6}>
-            <Label>
+            <P>
               Company Name
               <span className="txt-danger">*</span>
-            </Label>
+            </P>
             <Input
               type="text"
               placeholder="Enter Company Name"
@@ -275,10 +317,10 @@ const SuccessfullyFormSubmitted = ({
             />
           </Col>
           <Col xl={4} sm={6}>
-            <Label>
+            <P>
               Phone Number
               <span className="txt-danger">*</span>
-            </Label>
+            </P>
             <Input
               type="text"
               placeholder="Enter Phone Number"
@@ -288,10 +330,10 @@ const SuccessfullyFormSubmitted = ({
             />
           </Col>
           <Col xl={4} xs={12}>
-            <Label>
+            <P>
               Address
               <span className="txt-danger">*</span>
-            </Label>
+            </P>
             <Input
               id="address"
               type="text"
@@ -302,10 +344,10 @@ const SuccessfullyFormSubmitted = ({
             />
           </Col>
           <Col xl={4} sm={6}>
-            <Label>
+            <P>
               Contact Person Name
               <span className="txt-danger">*</span>
-            </Label>
+            </P>
             <Input
               type="text"
               placeholder="Enter Contact Person Name"
@@ -315,10 +357,10 @@ const SuccessfullyFormSubmitted = ({
             />
           </Col>
           <Col xl={4} sm={6}>
-            <Label>
+            <P>
               NTN
               <span className="txt-danger">*</span>
-            </Label>
+            </P>
             <Input
               type="text"
               placeholder="Enter ntn"
@@ -328,10 +370,10 @@ const SuccessfullyFormSubmitted = ({
             />
           </Col>
           <Col xl={4} xs={12}>
-            <Label>
+            <P>
               GST Number
               <span className="txt-danger">*</span>
-            </Label>
+            </P>
             <Input
               id="gstNo"
               type="text"
@@ -342,24 +384,24 @@ const SuccessfullyFormSubmitted = ({
             />
           </Col>
           <Col xl={4} xs={12}>
-            <Label>
+            <P>
               Contact Person Number
               <span className="txt-danger">*</span>
-            </Label>
+            </P>
             <Input
               id="contactPersonNumber"
               type="text"
               placeholder="Enter Contact Person Number"
-              defaultValue={createCompany.contactPersonNumber}
+              defaultValue={createCompany.contactPersonPhoneNo}
               disabled
               name="contactPersonNumber"
             />
           </Col>
           <Col xl={4} xs={12}>
-            <Label>
+            <P>
               CNIC Number
               <span className="txt-danger">*</span>
-            </Label>
+            </P>
             <Input
               id="cnicNumber"
               type="text"
@@ -370,10 +412,10 @@ const SuccessfullyFormSubmitted = ({
             />
           </Col>
           <Col xl={4} xs={12}>
-            <Label>
+            <P>
               Package Expiration Date
               <span className="txt-danger">*</span>
-            </Label>
+            </P>
             <Input
               id="packageExpirationDate"
               type="text"
@@ -384,13 +426,13 @@ const SuccessfullyFormSubmitted = ({
             />
           </Col>
           {cities.map((item: any, index: any) => {
-            if (item._id == createCompany.city) {
+            if (item._id === createCompany.city) {
               return (
                 <Col xl={4} xs={12}>
-                  <Label>
+                  <P>
                     City
                     <span className="txt-danger">*</span>
-                  </Label>
+                  </P>
                   <Input
                     id="city"
                     type="text"
@@ -404,13 +446,13 @@ const SuccessfullyFormSubmitted = ({
             }
           })}
           {packages.map((item: any, index: any) => {
-            if (item._id == createCompany.package) {
+            if (item._id === createCompany.package) {
               return (
                 <Col xl={4} xs={12}>
-                  <Label>
+                  <P>
                     Package Name
                     <span className="txt-danger">*</span>
-                  </Label>
+                  </P>
                   <Input
                     id="package"
                     type="text"
@@ -424,13 +466,13 @@ const SuccessfullyFormSubmitted = ({
             }
           })}
           {timezones.map((item: any, index: any) => {
-            if (item == createCompany.timezone) {
+            if (item === createCompany.timezone) {
               return (
                 <Col xl={4} xs={12}>
-                  <Label>
+                  <P>
                     Timezone
                     <span className="txt-danger">*</span>
-                  </Label>
+                  </P>
                   <Input
                     id="timezone"
                     type="text"
@@ -447,15 +489,15 @@ const SuccessfullyFormSubmitted = ({
       </Form>
       {/*  */}
 
-      <H2>Account Credentials</H2>
+      <H4>Account Credentials</H4>
 
       <Form style={{ marginBottom: "65px", marginTop: "20px" }}>
         <Row className="g-3">
           <Col sm={6}>
-            <Label>
+            <P>
               Email Address
               <span className="txt-danger">*</span>
-            </Label>
+            </P>
             <Input
               defaultValue={createCompany.emailAddress}
               disabled
@@ -465,10 +507,10 @@ const SuccessfullyFormSubmitted = ({
             />
           </Col>
           <Col sm={6}>
-            <Label>
+            <P>
               Password
               <span className="txt-danger">*</span>
-            </Label>
+            </P>
             {/* <Input
               type={showPassword ? "text" : "password"}
               placeholder="Enter Password"
@@ -508,10 +550,10 @@ const SuccessfullyFormSubmitted = ({
             </InputGroup>
           </Col>
           {/* <Col sm={6}>
-            <Label>
+            <P>
               Image Title
               <span className="txt-danger">*</span>
-            </Label>
+            </P>
             <Input
               type="text"
               placeholder="Enter Image Title"
@@ -521,10 +563,10 @@ const SuccessfullyFormSubmitted = ({
             />
           </Col>
           <Col sm={6}>
-            <Label>
+            <P>
               Company Title
               <span className="txt-danger">*</span>
-            </Label>
+            </P>
             <Input
               type="text"
               placeholder="Enter Company Title"
@@ -536,10 +578,10 @@ const SuccessfullyFormSubmitted = ({
           <div style={{ display: "flex", justifyContent: "space-evenly" }}>
             {imageBackground !== null && (
               <div>
-                <Label>
+                <P>
                   Image Background
                   <span className="txt-danger">*</span>
-                </Label>
+                </P>
                 <img
                   src={URL.createObjectURL(imageBackground)}
                   alt=""
@@ -549,10 +591,10 @@ const SuccessfullyFormSubmitted = ({
             )}
             {companyLogo !== null && (
               <div>
-                <Label>
+                <P>
                   Image Background
                   <span className="txt-danger">*</span>
-                </Label>
+                </P>
                 <img
                   src={URL.createObjectURL(companyLogo)}
                   alt=""
@@ -564,22 +606,22 @@ const SuccessfullyFormSubmitted = ({
         </Row>
       </Form>
 
-      <H2>Server Credentials</H2>
+      <H4>Server Credentials</H4>
       <Form style={{ marginBottom: "65px", marginTop: "20px" }}>
         {serverCredentials.map((item: any, index: any) => {
           return (
             <div
               style={{
                 padding: "20px",
-                border: "2px solid black",
+                border: "1px solid black",
                 borderRadius: "10px",
-                margin: "20px",
+                margin: "20px 0px",
               }}
             >
               <Row className="g-3">
                 <Col lg={12} sm={12}>
                   {servers.map((serverItem: any, index: any) => {
-                    if (item.server == serverItem._id) {
+                    if (item.server === serverItem._id) {
                       return (
                         <CommonHeader
                           title={serverItem.companyName}
@@ -590,10 +632,10 @@ const SuccessfullyFormSubmitted = ({
                   })}
                 </Col>
                 <Col sm={6}>
-                  <Label>
+                  <P>
                     Email Address
                     <span className="txt-danger">*</span>
-                  </Label>
+                  </P>
                   <Input
                     defaultValue={item.emailAddress}
                     disabled
@@ -604,10 +646,10 @@ const SuccessfullyFormSubmitted = ({
                 </Col>
 
                 <Col sm={6}>
-                  <Label>
+                  <P>
                     Password
                     <span className="txt-danger">*</span>
-                  </Label>
+                  </P>
                   <Input
                     defaultValue={item.password}
                     disabled
@@ -617,10 +659,10 @@ const SuccessfullyFormSubmitted = ({
                   />
                 </Col>
                 <Col sm={6}>
-                  <Label>
+                  <P>
                     Server Id
                     <span className="txt-danger">*</span>
-                  </Label>
+                  </P>
                   <Input
                     type="text"
                     placeholder="Enter Server"
@@ -630,10 +672,10 @@ const SuccessfullyFormSubmitted = ({
                   />
                 </Col>
                 <Col sm={6}>
-                  <Label>
+                  <P>
                     Host Url
                     <span className="txt-danger">*</span>
-                  </Label>
+                  </P>
                   <Input
                     type="text"
                     placeholder="Enter Host Url"
@@ -647,7 +689,7 @@ const SuccessfullyFormSubmitted = ({
           );
         })}
       </Form>
-      <H2>Allowed CRM Modules</H2>
+      <H4>Allowed CRM Modules</H4>
       <Form style={{ marginBottom: "65px", marginTop: "20px" }}>
         {allowedModules.map((item: any, index: any) => {
           return (
@@ -662,7 +704,7 @@ const SuccessfullyFormSubmitted = ({
             >
               <Col md={6} style={{ display: "flex" }}>
                 {crmModules.map((module: any, index: any) => {
-                  if (item == module._id) {
+                  if (item === module._id) {
                     return <Col md={6}>{module.name}</Col>;
                   }
                 })}
@@ -685,7 +727,7 @@ const SuccessfullyFormSubmitted = ({
         })}
       </Form>
 
-      <H2>Allowed Permissions</H2>
+      <H4>Allowed Permissions</H4>
       <Form style={{ marginBottom: "65px", marginTop: "20px" }}>
         <div
           style={{
@@ -725,7 +767,7 @@ const SuccessfullyFormSubmitted = ({
                         fontWeight: "bold",
                       }}
                     >
-                      <label
+                      <Label
                         style={{
                           display: "inline-block",
                           position: "relative",
@@ -747,12 +789,12 @@ const SuccessfullyFormSubmitted = ({
                           onClick={(e) => e.stopPropagation()}
                           className="green"
                         ></span>
-                      </label>
+                      </Label>
                       {permission.title}
                     </span>
                     {permission.checked && (
                       <div>
-                        <label
+                        <Label
                           style={{
                             display: "inline-block",
                             position: "relative",
@@ -775,8 +817,8 @@ const SuccessfullyFormSubmitted = ({
                             className="green"
                           ></span>
                           Read
-                        </label>
-                        <label
+                        </Label>
+                        <Label
                           style={{
                             display: "inline-block",
                             position: "relative",
@@ -799,8 +841,8 @@ const SuccessfullyFormSubmitted = ({
                             className="green"
                           ></span>
                           Create
-                        </label>
-                        <label
+                        </Label>
+                        <Label
                           style={{
                             display: "inline-block",
                             position: "relative",
@@ -823,8 +865,8 @@ const SuccessfullyFormSubmitted = ({
                             className="green"
                           ></span>
                           Edit
-                        </label>
-                        <label
+                        </Label>
+                        <Label
                           style={{
                             display: "inline-block",
                             position: "relative",
@@ -847,7 +889,7 @@ const SuccessfullyFormSubmitted = ({
                             className="green"
                           ></span>
                           Delete
-                        </label>
+                        </Label>
                       </div>
                     )}
                   </Col>
@@ -858,24 +900,24 @@ const SuccessfullyFormSubmitted = ({
         </div>
       </Form>
 
-      <H2>Legal Attachements</H2>
+      <H4>Legal Attachements</H4>
 
       <Form style={{ marginBottom: "65px", marginTop: "20px" }}>
         <Row className="g-3">
           <div
             style={{
               display: "flex",
-              justifyContent: "space-between",
+              justifyContent: "start",
               flexWrap: "wrap",
             }}
           >
             {cnicFront !== null &&
-            checkFileTypeByExtension(cnicFront.name, cnicFront) == "image" ? (
-              <div>
-                <Label style={{ fontSize: "18px", fontWeight: "bold" }}>
+            checkFileTypeByExtension(cnicFront.name, cnicFront) === "image" ? (
+              <div style={{ marginRight: "10px" }}>
+                <P style={{ fontSize: "18px", fontWeight: "bold" }}>
                   CNIC Front
                   <span className="txt-danger">*</span>
-                </Label>
+                </P>
                 <img
                   src={URL.createObjectURL(cnicFront)}
                   alt=""
@@ -888,12 +930,12 @@ const SuccessfullyFormSubmitted = ({
               </div>
             ) : (
               cnicFront !== null &&
-              checkFileTypeByExtension(cnicFront.name, cnicFront) == "pdf" && (
-                <div>
-                  <Label style={{ fontSize: "18px", fontWeight: "bold" }}>
+              checkFileTypeByExtension(cnicFront.name, cnicFront) === "pdf" && (
+                <div style={{ marginRight: "10px" }}>
+                  <P style={{ fontSize: "18px", fontWeight: "bold" }}>
                     CNIC Front
                     <span className="txt-danger">*</span>
-                  </Label>
+                  </P>
                   <PDFViewer
                     file={cnicFront}
                     name={cnicFront.name.toString().slice(0, 20)}
@@ -902,12 +944,12 @@ const SuccessfullyFormSubmitted = ({
               )
             )}
             {cnicBack !== null &&
-            checkFileTypeByExtension(cnicBack.name, cnicBack) == "image" ? (
-              <div>
-                <Label style={{ fontSize: "18px", fontWeight: "bold" }}>
+            checkFileTypeByExtension(cnicBack.name, cnicBack) === "image" ? (
+              <div style={{ marginRight: "10px" }}>
+                <P style={{ fontSize: "18px", fontWeight: "bold" }}>
                   CNIC Back
                   <span className="txt-danger">*</span>
-                </Label>
+                </P>
                 <img
                   src={URL.createObjectURL(cnicBack)}
                   alt=""
@@ -920,12 +962,12 @@ const SuccessfullyFormSubmitted = ({
               </div>
             ) : (
               cnicBack !== null &&
-              checkFileTypeByExtension(cnicBack.name, cnicBack) == "pdf" && (
-                <div>
-                  <Label style={{ fontSize: "18px", fontWeight: "bold" }}>
+              checkFileTypeByExtension(cnicBack.name, cnicBack) === "pdf" && (
+                <div style={{ marginRight: "10px" }}>
+                  <P style={{ fontSize: "18px", fontWeight: "bold" }}>
                     CNIC Back
                     <span className="txt-danger">*</span>
-                  </Label>
+                  </P>
                   <PDFViewer
                     file={cnicBack}
                     name={cnicBack.name.toString().slice(0, 20)}
@@ -934,12 +976,12 @@ const SuccessfullyFormSubmitted = ({
               )
             )}
             {ntnFile !== null &&
-            checkFileTypeByExtension(ntnFile.name, ntnFile) == "image" ? (
-              <div>
-                <Label style={{ fontSize: "18px", fontWeight: "bold" }}>
+            checkFileTypeByExtension(ntnFile.name, ntnFile) === "image" ? (
+              <div style={{ marginRight: "10px" }}>
+                <P style={{ fontSize: "18px", fontWeight: "bold" }}>
                   NTN File
                   <span className="txt-danger">*</span>
-                </Label>
+                </P>
                 <img
                   src={URL.createObjectURL(ntnFile)}
                   alt=""
@@ -952,12 +994,12 @@ const SuccessfullyFormSubmitted = ({
               </div>
             ) : (
               ntnFile !== null &&
-              checkFileTypeByExtension(ntnFile.name, ntnFile) == "pdf" && (
-                <div>
-                  <Label style={{ fontSize: "18px", fontWeight: "bold" }}>
+              checkFileTypeByExtension(ntnFile.name, ntnFile) === "pdf" && (
+                <div style={{ marginRight: "10px" }}>
+                  <P style={{ fontSize: "18px", fontWeight: "bold" }}>
                     NTN File
                     <span className="txt-danger">*</span>
-                  </Label>
+                  </P>
                   <PDFViewer
                     file={ntnFile}
                     name={ntnFile.name.toString().slice(0, 20)}
@@ -968,11 +1010,11 @@ const SuccessfullyFormSubmitted = ({
             {ptaCertificate !== null &&
             checkFileTypeByExtension(ptaCertificate.name, ptaCertificate) ==
               "image" ? (
-              <div>
-                <Label style={{ fontSize: "18px", fontWeight: "bold" }}>
+              <div style={{ marginRight: "10px" }}>
+                <P style={{ fontSize: "18px", fontWeight: "bold" }}>
                   PTA Certificate
                   <span className="txt-danger">*</span>
-                </Label>
+                </P>
                 <img
                   src={URL.createObjectURL(ptaCertificate)}
                   alt=""
@@ -987,11 +1029,11 @@ const SuccessfullyFormSubmitted = ({
               ptaCertificate !== null &&
               checkFileTypeByExtension(ptaCertificate.name, ptaCertificate) ==
                 "pdf" && (
-                <div>
-                  <Label style={{ fontSize: "18px", fontWeight: "bold" }}>
+                <div style={{ marginRight: "10px" }}>
+                  <P style={{ fontSize: "18px", fontWeight: "bold" }}>
                     PTA Certificate
                     <span className="txt-danger">*</span>
-                  </Label>
+                  </P>
                   <PDFViewer
                     file={ptaCertificate}
                     name={ptaCertificate.name.toString().slice(0, 20)}
@@ -1000,12 +1042,12 @@ const SuccessfullyFormSubmitted = ({
               )
             )}
             {other !== null &&
-            checkFileTypeByExtension(other.name, other) == "image" ? (
-              <div>
-                <Label style={{ fontSize: "18px", fontWeight: "bold" }}>
+            checkFileTypeByExtension(other.name, other) === "image" ? (
+              <div style={{ marginRight: "10px" }}>
+                <P style={{ fontSize: "18px", fontWeight: "bold" }}>
                   Other
                   <span className="txt-danger">*</span>
-                </Label>
+                </P>
                 <img
                   src={URL.createObjectURL(other)}
                   alt=""
@@ -1018,12 +1060,12 @@ const SuccessfullyFormSubmitted = ({
               </div>
             ) : (
               other !== null &&
-              checkFileTypeByExtension(other.name, other) == "pdf" && (
-                <div>
-                  <Label style={{ fontSize: "18px", fontWeight: "bold" }}>
+              checkFileTypeByExtension(other.name, other) === "pdf" && (
+                <div style={{ marginRight: "10px" }}>
+                  <P style={{ fontSize: "18px", fontWeight: "bold" }}>
                     Other
                     <span className="txt-danger">*</span>
-                  </Label>
+                  </P>
                   <PDFViewer
                     file={other}
                     name={other.name.toString().slice(0, 20)}
@@ -1035,21 +1077,21 @@ const SuccessfullyFormSubmitted = ({
         </Row>
       </Form>
       <Row>
-        <Col
-          xs={12}
-          className="text-end d-flex justify-content-end gap-2 align-center"
-        >
-          {/* <Button color="primary">Print</Button> */}
-          <Button
-            disabled={loading ? true : false}
-            color="primary"
-            onClick={(e) => {
-              handleSubmit(e);
-            }}
+          <Col
+            xs={12}
+            className="text-end d-flex justify-content-end gap-2 align-center"
           >
-            {loading ? "Loading..." : "Submit"}
-          </Button>
-        </Col>
+            {/* <Button color="primary">Print</Button> */}
+            <Button
+              disabled={loading ? true : false}
+              color="primary"
+              onClick={(e) => {
+                handleSubmit(e);
+              }}
+            >
+              {loading ? "Loading..." : "Submit"}
+            </Button>
+          </Col>
       </Row>
     </div>
   );

@@ -9,7 +9,7 @@ import {
   PAN,
   Previous,
 } from "../../../utils/Constant";
-import { H3, Image, LI, UL } from "../../../AbstractElements";
+import { H3, Image, LI, P, UL } from "../../../AbstractElements";
 import { dynamicImage } from "../../../Service";
 import { popularBanksList } from "../../../Data/Forms/FormsLayout/FormWizardData";
 import CommonHeader from "../../../Common/CommonHeader";
@@ -24,6 +24,7 @@ interface propTypes {
 }
 
 const AddServersComponent: React.FC<propTypes> = ({ server }) => {
+  const [isEdit, setIsEdit] = useState(false);
   const [addServersForm, setAddServersForm] = useState({
     emailAddress: "",
     password: "",
@@ -31,7 +32,7 @@ const AddServersComponent: React.FC<propTypes> = ({ server }) => {
     hostUrl: `${server.hostUrl}`,
   });
   const dispatch = useDispatch();
-  const { createCompany, serverCredentials } = useSelector(
+  const { createCompany, serverCredentials, serversAddItemsList } = useSelector(
     (state: any) => state.companies
   );
   const { emailAddress, password } = addServersForm;
@@ -54,13 +55,13 @@ const AddServersComponent: React.FC<propTypes> = ({ server }) => {
     // console.log(serverCredentials);
   };
 
-    const handleNextButton = () => {
-      if (emailAddress !== "" && password !== "") {
-        // callbackActive(3);
-      } else {
-        ShowError();
-      }
-    };
+  const handleNextButton = () => {
+    if (emailAddress !== "" && password !== "") {
+      // callbackActive(3);
+    } else {
+      ShowError();
+    }
+  };
   return (
     <Form
       onSubmit={(event) => event.preventDefault()}
@@ -70,9 +71,9 @@ const AddServersComponent: React.FC<propTypes> = ({ server }) => {
       <div
         style={{
           padding: "20px",
-          border: "2px solid black",
+          border: "1px solid black",
           borderRadius: "10px",
-          margin: "20px",
+          margin: "20px 0px",
         }}
       >
         <Row className="g-3">
@@ -80,12 +81,20 @@ const AddServersComponent: React.FC<propTypes> = ({ server }) => {
             <CommonHeader title={server.label} headClass="pb-0" />
           </Col>
           <Col sm={6}>
-            <Label>
+            <P>
               Email Address
               <span className="txt-danger">*</span>
-            </Label>
+            </P>
             <Input
               value={emailAddress}
+              disabled={
+                !isEdit &&
+                serverCredentials.some(
+                  (item: any) => item.server === server.server
+                )
+                  ? true
+                  : false
+              }
               name="emailAddress"
               onChange={getUserData}
               type="email"
@@ -93,12 +102,20 @@ const AddServersComponent: React.FC<propTypes> = ({ server }) => {
             />
           </Col>
           <Col sm={6}>
-            <Label>
+            <P>
               Password
               <span className="txt-danger">*</span>
-            </Label>
+            </P>
             <Input
               type="text"
+              disabled={
+                !isEdit &&
+                serverCredentials.some(
+                  (item: any) => item.server === server.server
+                )
+                  ? true
+                  : false
+              }
               placeholder="Enter Password"
               value={password}
               name="password"
@@ -112,22 +129,75 @@ const AddServersComponent: React.FC<propTypes> = ({ server }) => {
             <Button
               color="primary"
               onClick={() => {
-                addServer();
-              }}
-              disabled={
-                serverCredentials.some(
+                if (isEdit) {
+                  // console.log("server", server);
+                  // console.log("serverCredentials", serverCredentials);
+                  const updatedList = serversAddItemsList.filter(
+                    (item: any) => item.value !== server.server
+                  );
+                  dispatch(setServerCredentials(updatedList));
+
+                  // const filteredServers = serverCredentials.filter(
+                  //   (item: any) => item.server !== server.server
+                  // );
+                  // dispatch(setServerCredentials([...filteredServers]));
+                  // console.log("filteredServers", filteredServers);
+                  // console.log("addServersForm", addServersForm);
+
+                  dispatch(
+                    setServerCredentials([
+                      ...serverCredentials.filter(
+                        (item: any) => item.server !== server.server
+                      ),
+                      addServersForm,
+                    ])
+                  );
+                  // const updatedList = [...filteredServers, addServersForm];
+
+                  // dispatch(setServerCredentials(updatedList));
+                  // console.log(
+                  //   "serverCredentials after filter",
+                  //   serverCredentials
+                  // );
+
+                  setIsEdit(false);
+                  return;
+                }
+                const isPresent = serverCredentials.some(
                   (item: any) => item.server === server.server
-                )
-                  ? true
-                  : false
-              }
+                );
+                if (isPresent) {
+                  setIsEdit(true);
+                } else {
+                  addServer();
+                }
+              }}
+              // disabled={
+              //   serverCredentials.some(
+              //     (item: any) => item.server === server.server
+              //   )
+              //     ? true
+              //     : false
+              // }
             >
               {serverCredentials.some(
                 (item: any) => item.server === server.server
               )
-                ? "Added"
+                ? isEdit
+                  ? "Add"
+                  : "Edit"
                 : "Add"}
             </Button>
+            {isEdit && (
+              <Button
+                color="primary"
+                onClick={() => {
+                  setIsEdit(false);
+                }}
+              >
+                Cancel
+              </Button>
+            )}
           </Col>
         </Row>
       </div>

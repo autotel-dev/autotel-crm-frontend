@@ -1,4 +1,13 @@
-import { Button, Card, CardBody, Col, Modal, ModalBody, Row } from "reactstrap";
+import {
+  Button,
+  Card,
+  CardBody,
+  CardHeader,
+  Col,
+  Modal,
+  ModalBody,
+  Row,
+} from "reactstrap";
 import CommonHeader from "../../../../../Common/CommonHeader";
 import { H4, H5 } from "../../../../../AbstractElements";
 import { useSelector } from "react-redux";
@@ -93,16 +102,26 @@ const Attachements = ({ attachements }: propTypes) => {
   return (
     <Col md={12}>
       <Card>
-        <CommonHeader title="Attachements" headClass="card-title mb-0 pb-0" />
+        <CardHeader className="pb-0">
+          <H4>Attachments</H4>
+        </CardHeader>
         <CardBody>
           <Row>
             <div style={{ display: "flex", flexWrap: "wrap" }}>
               {attachements.map((data, imageIndex) =>
-                checkFileTypeByExtension(data.url) == "pdf" ? (
+                checkFileTypeByExtension(data.url) === "pdf" ? (
                   <div>
-                    <div style={{ fontSize: "20px", fontWeight: "bold" }}>
-                      {data.key}
-                    </div>
+                    <H5>
+                      {data.key === "cnicFront"
+                        ? "CNIC Front"
+                        : data.key === "cnicBack"
+                        ? "CNIC Back"
+                        : data.key === "ptaCertificate"
+                        ? "PTA Certificate"
+                        : data.key === "ntnCertificate"
+                        ? "NTN Certificate"
+                        : "Other Attachment"}
+                    </H5>
                     <div
                       style={{
                         width: "300px",
@@ -137,15 +156,23 @@ const Attachements = ({ attachements }: propTypes) => {
                         }}
                         className="btn-primary"
                       >
-                        {data.key.toString().slice(0, 10)}
+                        {data.key === "cnicFront"
+                          ? "CNIC Front"
+                          : data.key === "cnicBack"
+                          ? "CNIC Back"
+                          : data.key === "ptaCertificate"
+                          ? "PTA Certificate"
+                          : data.key === "ntnCertificate"
+                          ? "NTN Certificate"
+                          : "Other Attachment"}
                       </div>
                     </div>
                   </div>
                 ) : (
                   <div>
-                    <div style={{ fontSize: "20px", fontWeight: "bold" }}>
-                      {data.key}
-                    </div>
+                    <H5>
+                      {data.key === "cnicFront" ? "CNIC Front" : "CNIC Back"}
+                    </H5>
                     <div
                       style={{
                         position: "relative",
@@ -169,7 +196,7 @@ const Attachements = ({ attachements }: propTypes) => {
                           border: "0.5px solid lightgray",
                         }}
                       />
-                      {isHovered && index == imageIndex && (
+                      {isHovered && index === imageIndex && (
                         <div
                           style={{
                             position: "absolute",
