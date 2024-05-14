@@ -78,10 +78,9 @@ const ResponseForm: React.FC<PropsTypes> = ({
           mobileNo1: selectedItems[0].customerInfo.mobile_1,
           mobileNo2: selectedItems[0].customerInfo.mobile_2,
           vehicleName: selectedItems[0].name,
-          simNumber: selectedItems[0].sim_Number,
+          simNumber: selectedItems[0].sim_number,
           imei: selectedItems[0].imei,
           deviceModel: selectedItems[0].device_model
-
         },
         resolvingDate: priority == "GENERAL" ? new Date() : null
       }

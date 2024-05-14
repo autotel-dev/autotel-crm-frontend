@@ -116,6 +116,8 @@ import ComplainDetails from "../Pages/Company/Modules/ComplainCenter/ComplainDet
 import ComplainCenter from "../Pages/Company/Modules/ComplainCenter/ComplainCenter";
 import ComplainType from "../Pages/ComplainType/ComplainType";
 import EmailGateway from "../Pages/EmailGateway/EmailGateway";
+import SMSGateway from "../Pages/SMSGateway/SMSGateway";
+import WhatsAppGateway from "../Pages/WhatsAppGateway/WhatsAppGateway";
 
 const routes = [
   // dashboard routes
@@ -558,7 +560,7 @@ const routes = [
     permissionValue: "Packages",
   },
   {
-    path: `${process.env.PUBLIC_URL}/super-admin/setup/crm_module`,
+    path: `${process.env.PUBLIC_URL}/super-admin/setup/crm-module`,
     Component: <CRMModule />,
     allowedUserRoles: [ROLES.SUPER_ADMIN],
     isProtected: true,
@@ -572,7 +574,7 @@ const routes = [
     permissionValue: "ComplainTypes",
   },
   {
-    path: `${process.env.PUBLIC_URL}/super-admin/setup/server_details`,
+    path: `${process.env.PUBLIC_URL}/super-admin/setup/server-details`,
     Component: <Servers />,
     allowedUserRoles: [ROLES.SUPER_ADMIN],
     isProtected: true,
@@ -593,7 +595,7 @@ const routes = [
     permissionValue: "UpdateServer",
   },
   {
-    path: `${process.env.PUBLIC_URL}/super-admin/setup/server_management`,
+    path: `${process.env.PUBLIC_URL}/super-admin/setup/server-management`,
     Component: <ServerManagement />,
     allowedUserRoles: [ROLES.SUPER_ADMIN],
     isProtected: true,
@@ -608,12 +610,27 @@ const routes = [
   },
 
   {
-    path: `${process.env.PUBLIC_URL}/super-admin/setup/email_gateway`,
+    path: `${process.env.PUBLIC_URL}/super-admin/setup/email-gateway`,
     Component: <EmailGateway />,
     allowedUserRoles: [ROLES.SUPER_ADMIN],
     isProtected: true,
     permissionValue: "EmailGateway",
   },
+  {
+    path: `${process.env.PUBLIC_URL}/super-admin/setup/sms-gateway`,
+    Component: <SMSGateway />,
+    allowedUserRoles: [ROLES.SUPER_ADMIN],
+    isProtected: true,
+    permissionValue: "SMSGateway",
+  },
+  {
+    path: `${process.env.PUBLIC_URL}/super-admin/setup/whatsapp-gateway`,
+    Component: <WhatsAppGateway />,
+    allowedUserRoles: [ROLES.SUPER_ADMIN],
+    isProtected: true,
+    permissionValue: "WhatsAppGateway",
+  },
+
 
   // Support
   {
