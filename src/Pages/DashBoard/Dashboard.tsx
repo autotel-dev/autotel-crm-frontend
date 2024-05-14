@@ -154,19 +154,49 @@ const Dashboard = () => {
           }
           if (data.success) {
             // // console.log("length --- >", data.data);
-            dispatch(setAlertsOverview(data.data.alertsOverview));
+
+            interface Alert {
+              dayOfWeek: string;
+              totalAssigned: number;
+              totalCompleted: number;
+              totalAlerts: number;
+            }
+
+            const alertsOverview: {
+              dayOfWeek: string[];
+              totalAssigned: number[];
+              totalCompleted: number[];
+              totalAlerts: number[];
+            } = {
+              dayOfWeek: [],
+              totalAssigned: [],
+              totalCompleted: [],
+              totalAlerts: []
+            };
+
+            (data.data.alertsOverview as Alert[]).forEach(day => {
+              alertsOverview.dayOfWeek.push(day.dayOfWeek);
+              alertsOverview.totalAssigned.push(day.totalAssigned);
+              alertsOverview.totalCompleted.push(day.totalCompleted);
+              alertsOverview.totalAlerts.push(day.totalAlerts);
+            });
+            // console.log(alertsOverview);
+            setTimeout(() => {
+              dispatch(setAlertsOverview(alertsOverview));
+            }, 500)
+            
             dispatch(setAlertsPending(data.data.allPendingAlerts));
             setTimeout(() => {
-              // setAlertsOverviewLoading(false);
-            }, 2000)
+              setAlertsOverviewLoading(false);
+            }, 2500)
           }
           if (!data.success) {
             // // // console.log("length --- >", data.data);
             dispatch(setAlertsOverview(null));
             dispatch(setAlertsPending([]));
             setTimeout(() => {
-              // setAlertsOverviewLoading(false);
-            }, 2000)
+              setAlertsOverviewLoading(false);
+            }, 2500)
           }
         }
       });
@@ -228,7 +258,7 @@ const Dashboard = () => {
 
             <Col xl="12" lg="12" md="12" sm="12">
               <Row>
-                {loading == true && alertsOverviewloading == true ? (
+                {alertsOverviewloading == true ? (
                   <div
                     style={{
                       display: "flex",

@@ -36,7 +36,7 @@ export const ticketData = [
 export interface ComplainDataType {
   id: string;
   device_name: string;
-  user:string;
+  user: string;
   comment: string;
   department: string;
   server: string;
@@ -83,6 +83,9 @@ export const supportColumns = [
     cell: (row: ComplainDataType) => (
       <div
         style={{
+          whiteSpace: "nowrap", // Ensures text remains on a single line
+          overflow: "hidden", // Hides any overflowing text
+          textOverflow: "ellipsis", // Shows an ellipsis (...) if the text is too long
           paddingRight: "10px",
         }}
       >

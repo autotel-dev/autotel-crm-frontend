@@ -6,7 +6,7 @@ export interface propsTypes {
   }
   
   const H6 = (props: propsTypes) => {
-    return <h6 {...props}>{props.children}</h6>;
+    return <h6 {...props} style={{ fontSize: "14px", fontWeight: "bold" }}>{props.children}</h6>;
   };
   
   export default H6;

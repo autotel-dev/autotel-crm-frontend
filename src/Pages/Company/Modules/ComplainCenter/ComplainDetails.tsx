@@ -1042,7 +1042,7 @@ const ComplainDetails = () => {
                               color: "black",
                             }}
                           >
-                            {complainDetails.deviceInfo.customerName}
+                            {complainDetails.deviceInfo.customerName }
                           </div>
                         </div>
                         <div

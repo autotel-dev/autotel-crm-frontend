@@ -9,13 +9,16 @@ import {
   SidebarMenu,
   CompanySidebarMenu,
 } from "../../Data/Layout/Sidebar/Menu";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { SidebarMenuTypes } from "../../Data/Layout/Sidebar/SidebarTypes";
 import { useAppSelector } from "../../ReaduxToolkit/Hooks";
 import { useSelector } from "react-redux";
 import { jwtDecode } from "jwt-decode";
 import { getUserRole } from "../../Api/globals";
+import { IoMdArrowDropdown, IoMdArrowDropup } from "react-icons/io";
+
+
 export interface PropsTypes {
   setOpen: (item: boolean) => void;
   open?: boolean;
@@ -302,6 +305,8 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
   const [isActive, setIsActive] = useState("");
   const [isClose, setIsClose] = useState(false);
   const { layout } = useAppSelector((state) => state.themeCustomizer);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const [showArrow, setShowArrow] = useState(false);
   const handleClick = (item: SidebarMenuTypes) => {
     if (layout === "material-icon") {
       let menu: string = sideMenu;
@@ -337,9 +342,9 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
           id="sidebar-menu"
           style={{
             backgroundColor: `${userPersonalizationData !== null &&
-                userPersonalizationData?.secondaryColor !== null
-                ? userPersonalizationData?.secondaryColor
-                : ""
+              userPersonalizationData?.secondaryColor !== null
+              ? userPersonalizationData?.secondaryColor
+              : ""
               }`,
           }}
         >
@@ -394,20 +399,44 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
 
                           style={{
                             display: `${data.title === sideMenu && !data.link
-                                ? "block"
-                                : "block"
+                              ? "block"
+                              : "block"
                               }`,
                           }}
                         >
                           {!data.link && (
-                            <MenuList
-                              subMenuData={data}
-                              isOpen={isOpen}
-                              setIsOpen={setIsOpen}
-                              level={0}
-                              isClose={isClose}
-                              setIsClose={setIsClose}
-                            />
+                            <div>
+                              <MenuList
+                                subMenuData={data}
+                                isOpen={isOpen}
+                                setIsOpen={setIsOpen}
+                                level={0}
+                                isClose={isClose}
+                                setIsClose={setIsClose}
+                                menuRef={menuRef}
+                                showArrow={showArrow}
+                                setShowArrow={setShowArrow}
+                              />
+                              {/* {
+                                (data.title == "Setup" && getUserRole() == "SUPER_ADMIN") && !showArrow ? <IoMdArrowDropdown style={{
+                                  marginBottom: "-8px",
+                                  marginTop: "5px",
+                                  display: "flex",
+                                  justifyContent: "center",
+                                  width: "100%",
+                                  fontSize: "20px",
+                                  height: "20px"
+                                }} /> : data.title == "Setup" && getUserRole() == "SUPER_ADMIN" && <IoMdArrowDropup style={{
+                                  marginBottom: "-8px",
+                                  marginTop: "5px",
+                                  display: "flex",
+                                  justifyContent: "center",
+                                  width: "100%",
+                                  fontSize: "20px",
+                                  height: "20px"
+                                }} />
+                              } */}
+                            </div>
                           )}
                         </UL>
                       )
@@ -441,8 +470,8 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
                             className="sidebar-submenu custom-scrollbar simple-list"
                             style={{
                               display: `${data.title === sideMenu && !data.link
-                                  ? "block"
-                                  : "block"
+                                ? "block"
+                                : "block"
                                 }`,
                             }}
                           >
@@ -487,8 +516,8 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
                             className="sidebar-submenu custom-scrollbar simple-list"
                             style={{
                               display: `${data.title === sideMenu && !data.link
-                                  ? "block"
-                                  : "block"
+                                ? "block"
+                                : "block"
                                 }`,
                             }}
                           >
