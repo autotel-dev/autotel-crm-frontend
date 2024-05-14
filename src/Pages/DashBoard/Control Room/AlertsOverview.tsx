@@ -78,54 +78,26 @@ const AlertsOverview = () => {
               options={{
                 ...alertsChartData,
                 xaxis: {
-                  categories: [
-                    alertsOverview[0]?.dayOfWeek,
-                    alertsOverview[1]?.dayOfWeek,
-                    alertsOverview[2]?.dayOfWeek,
-                    alertsOverview[3]?.dayOfWeek,
-                    alertsOverview[4]?.dayOfWeek,
-                    alertsOverview[5]?.dayOfWeek,
-                    alertsOverview[6]?.dayOfWeek,
-                  ],
+                  categories: [...alertsOverview.dayOfWeek]
+                  ,
                 },
               }}
               // options={alertsChartData}
               series={[
                 {
                   name: "Total",
-                  data: [
-                    alertsOverview[0]?.totalAlerts,
-                    alertsOverview[1]?.totalAlerts,
-                    alertsOverview[2]?.totalAlerts,
-                    alertsOverview[3]?.totalAlerts,
-                    alertsOverview[4]?.totalAlerts,
-                    alertsOverview[5]?.totalAlerts,
-                    alertsOverview[6]?.totalAlerts,
-                  ],
+                  data: [...alertsOverview.
+                    totalAlerts],
                 },
                 {
                   name: "Assigned",
-                  data: [
-                    alertsOverview[0]?.totalAssigned,
-                    alertsOverview[1]?.totalAssigned,
-                    alertsOverview[2]?.totalAssigned,
-                    alertsOverview[3]?.totalAssigned,
-                    alertsOverview[4]?.totalAssigned,
-                    alertsOverview[5]?.totalAssigned,
-                    alertsOverview[6]?.totalAssigned,
-                  ],
+                  data: [...alertsOverview.totalAssigned]
+                  ,
                 },
                 {
                   name: "Completed",
-                  data: [
-                    alertsOverview[0]?.totalCompleted,
-                    alertsOverview[1]?.totalCompleted,
-                    alertsOverview[2]?.totalCompleted,
-                    alertsOverview[3]?.totalCompleted,
-                    alertsOverview[4]?.totalCompleted,
-                    alertsOverview[5]?.totalCompleted,
-                    alertsOverview[6]?.totalCompleted,
-                  ],
+                  data: [...alertsOverview.totalCompleted]
+                  ,
                 },
               ]}
               type="bar"

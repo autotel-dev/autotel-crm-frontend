@@ -7,6 +7,7 @@ import "./ComplainList.css";
 import Chart from "react-google-charts";
 import UserProfile from "../../../../assets/companyProfile.png";
 import { useEffect, useRef, useState } from "react";
+import { FaArrowLeft, FaArrowRight } from "react-icons/fa6";
 
 const ComplainList = () => {
   const saleRevenueData = [
@@ -443,7 +444,7 @@ const ComplainList = () => {
                       }}
                     >
                       <div className="sale">
-                        <H3>{data.key !== "InternalComplaints" ? data.key : "Total"}</H3>
+                        <H3>{data.key !== "InternalComplaints" ? (data.key == "InProgress" ? "In Progress" : data.key) : "Total"}</H3>
                         <h5
                           style={{
                             fontWeight: "bold",
@@ -492,10 +493,10 @@ const ComplainList = () => {
                               loader={<div>{"Loading Chart"}</div>}
                               data={[
                                 ["Complains", "Hours per Day"],
-                                ["Pending", complainCenterStatistics[0]?.value],
                                 ["New", complainCenterStatistics[1]?.value],
-                                ["Resolved", complainCenterStatistics[2]?.value],
-                                ["InProgress", complainCenterStatistics[3]?.value],
+                                ["In Progress", complainCenterStatistics[2]?.value],
+                                ["Pending", complainCenterStatistics[3]?.value],
+                                ["Resolved", complainCenterStatistics[4]?.value],
                               ]}
                               options={{
                                 backgroundColor: "transparent", // Set chart background color as transparent
@@ -544,14 +545,16 @@ const ComplainList = () => {
                           cursor: "pointer",
                           fontSize: "24px",
                           backgroundColor: "lightgray",
-                          padding: "10px 20px",
+                          padding: "16px 16px",
                           borderRadius: "50%",
+                          display: "flex",
+                          alignItems: "center",
                           marginRight: "10px", // Margin added
                           marginLeft: "10px",
                         }}
                         onClick={scrollLeft}
                       >
-                        &lt;
+                        <FaArrowLeft />
                       </div>
                     </div>
 
@@ -647,14 +650,16 @@ const ComplainList = () => {
                         cursor: "pointer",
                         fontSize: "24px",
                         backgroundColor: "lightgray",
-                        padding: "10px 20px",
+                        padding: "16px 16px",
                         borderRadius: "50%",
+                        display: "flex",
+                        alignItems: "center",
                         // marginRight: "10px", // Margin added
                         marginLeft: "5px",
                       }}
                       onClick={scrollRight}
                     >
-                      &gt;
+                      <FaArrowRight />
                     </div>
                   </div>
                 </Row>

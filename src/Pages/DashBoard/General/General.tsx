@@ -358,7 +358,6 @@ const General = () => {
   return (
     <Col xl="12" lg="12" md="12" sm="12" style={{
 
-
     }}>
       {generalloading == true ? (
         <div
@@ -389,7 +388,6 @@ const General = () => {
               marginBottom: "20px",
               marginRight: "20px",
             }}
-
           >
             <Col xl="12" lg="12" md="12" sm="12" className="skeleton2">
             </Col>

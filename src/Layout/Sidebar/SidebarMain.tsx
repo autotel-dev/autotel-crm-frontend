@@ -9,13 +9,16 @@ import {
   SidebarMenu,
   CompanySidebarMenu,
 } from "../../Data/Layout/Sidebar/Menu";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { SidebarMenuTypes } from "../../Data/Layout/Sidebar/SidebarTypes";
 import { useAppSelector } from "../../ReaduxToolkit/Hooks";
 import { useSelector } from "react-redux";
 import { jwtDecode } from "jwt-decode";
 import { getUserRole } from "../../Api/globals";
+import { IoMdArrowDropdown, IoMdArrowDropup } from "react-icons/io";
+
+
 export interface PropsTypes {
   setOpen: (item: boolean) => void;
   open?: boolean;
@@ -68,7 +71,7 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
         {
           svgIcon: "bonus-kit",
           title: "CRM Modules",
-          link: `${process.env.PUBLIC_URL}/super-admin/setup/crm_module`,
+          link: `${process.env.PUBLIC_URL}/super-admin/setup/crm-module`,
         },
         {
           svgIcon: "bonus-kit",
@@ -89,27 +92,27 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
         {
           svgIcon: "bonus-kit",
           title: "Server Details",
-          link: `${process.env.PUBLIC_URL}/super-admin/setup/server_details`,
+          link: `${process.env.PUBLIC_URL}/super-admin/setup/server-details`,
         },
         {
           svgIcon: "bonus-kit",
           title: "Server Management",
-          link: `${process.env.PUBLIC_URL}/super-admin/setup/server_management`,
-        },
-        {
-          svgIcon: "bonus-kit",
-          title: "SMS Gateway",
-          link: `${process.env.PUBLIC_URL}/dashboards/crmdashboard`,
-        },
-        {
-          svgIcon: "bonus-kit",
-          title: "WhatsApp Gateway",
-          link: `${process.env.PUBLIC_URL}/dashboards/crmdashboard`,
+          link: `${process.env.PUBLIC_URL}/super-admin/setup/server-management`,
         },
         {
           svgIcon: "bonus-kit",
           title: "Email Gateway",
-          link: `${process.env.PUBLIC_URL}/super-admin/setup/email_gateway`,
+          link: `${process.env.PUBLIC_URL}/super-admin/setup/email-gateway`,
+        },
+        // {
+        //   svgIcon: "bonus-kit",
+        //   title: "SMS Gateway",
+        //   link: `${process.env.PUBLIC_URL}/super-admin/setup/sms-gateway`,
+        // },
+        {
+          svgIcon: "bonus-kit",
+          title: "WhatsApp Gateway",
+          link: `${process.env.PUBLIC_URL}/super-admin/setup/whatsapp-gateway`,
         },
       ],
     },
@@ -170,7 +173,7 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
       subMenu: [
         {
           svgIcon: "bonus-kit",
-          title: "Roles",
+          title: "Departments",
           link: `${process.env.PUBLIC_URL}/company/setup/roles`,
         },
         {
@@ -302,6 +305,8 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
   const [isActive, setIsActive] = useState("");
   const [isClose, setIsClose] = useState(false);
   const { layout } = useAppSelector((state) => state.themeCustomizer);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const [showArrow, setShowArrow] = useState(false);
   const handleClick = (item: SidebarMenuTypes) => {
     if (layout === "material-icon") {
       let menu: string = sideMenu;
@@ -336,12 +341,11 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
         <div
           id="sidebar-menu"
           style={{
-            backgroundColor: `${
-              userPersonalizationData !== null &&
+            backgroundColor: `${userPersonalizationData !== null &&
               userPersonalizationData?.secondaryColor !== null
-                ? userPersonalizationData?.secondaryColor
-                : ""
-            }`,
+              ? userPersonalizationData?.secondaryColor
+              : ""
+              }`,
           }}
         >
           <UL className="sidebar-links simple-list" id="simple-bar">
@@ -349,61 +353,59 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
               <SidebarBack />
               {decodedToken.role === "SUPER_ADMIN"
                 ? SidebarMenuComponent.map((data, index) => (
-                    <LI className={`sidebar-list`} key={index}>
-                      <Link
-                        className={`sidebar-link sidebar-title ${
-                          sideMenu === data.title ? "active" : ""
+                  <LI className={`sidebar-list`} key={index}>
+                    <Link
+                      className={`sidebar-link sidebar-title ${sideMenu === data.title ? "active" : ""
                         }`}
-                        // style={{
-                        //   color: `${
-                        //     userPersonalizationData !== null &&
-                        //     userPersonalizationData?.buttonsAndBarsColor !== null &&
-                        //     sideMenu === data.title &&
-                        //     userPersonalizationData?.buttonsAndBarsColor
-                        //   }`,
-                        // }}
-                        to={data.link ? data.link : "#"}
-                        onClick={() => handleClick(data)}
-                      >
-                        <SVG
-                          className={`${sidebarIconType}-icon`}
-                          iconId={`${
-                            sidebarIconType === "fill" ? "fill-" : ""
+                      // style={{
+                      //   color: `${
+                      //     userPersonalizationData !== null &&
+                      //     userPersonalizationData?.buttonsAndBarsColor !== null &&
+                      //     sideMenu === data.title &&
+                      //     userPersonalizationData?.buttonsAndBarsColor
+                      //   }`,
+                      // }}
+                      to={data.link ? data.link : "#"}
+                      onClick={() => handleClick(data)}
+                    >
+                      <SVG
+                        className={`${sidebarIconType}-icon`}
+                        iconId={`${sidebarIconType === "fill" ? "fill-" : ""
                           }${data.svgIcon}`}
-                        />
-                        <span
+                      />
+                      <span
+                        style={{
+                          fontSize: "13px",
+                        }}
+                      >
+                        {t(data.title)}
+                      </span>
+                    </Link>
+                    {data.link ? (
+                      <div></div>
+                    ) : (
+                      !isClose && (
+                        <UL
+                          className="sidebar-submenu custom-scrollbar simple-list"
+                          // style={{
+                          //   display: `${
+                          //     layout === "material-icon"
+                          //       ? data.title === sideMenu && !data.link
+                          //         ? "none"
+                          //         : "none"
+                          //       : ""
+                          //   }`,
+                          // }}
+
                           style={{
-                            fontSize: "13px",
+                            display: `${data.title === sideMenu && !data.link
+                              ? "block"
+                              : "block"
+                              }`,
                           }}
                         >
-                          {t(data.title)}
-                        </span>
-                      </Link>
-                      {data.link ? (
-                        <div></div>
-                      ) : (
-                        !isClose && (
-                          <UL
-                            className="sidebar-submenu custom-scrollbar simple-list"
-                            // style={{
-                            //   display: `${
-                            //     layout === "material-icon"
-                            //       ? data.title === sideMenu && !data.link
-                            //         ? "none"
-                            //         : "none"
-                            //       : ""
-                            //   }`,
-                            // }}
-
-                            style={{
-                              display: `${
-                                data.title === sideMenu && !data.link
-                                  ? "block"
-                                  : "block"
-                              }`,
-                            }}
-                          >
-                            {!data.link && (
+                          {!data.link && (
+                            <div>
                               <MenuList
                                 subMenuData={data}
                                 isOpen={isOpen}
@@ -411,29 +413,50 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
                                 level={0}
                                 isClose={isClose}
                                 setIsClose={setIsClose}
+                                menuRef={menuRef}
+                                showArrow={showArrow}
+                                setShowArrow={setShowArrow}
                               />
-                            )}
-                          </UL>
-                        )
-                      )}
-                    </LI>
-                  ))
+                              {/* {
+                                (data.title == "Setup" && getUserRole() == "SUPER_ADMIN") && !showArrow ? <IoMdArrowDropdown style={{
+                                  marginBottom: "-8px",
+                                  marginTop: "5px",
+                                  display: "flex",
+                                  justifyContent: "center",
+                                  width: "100%",
+                                  fontSize: "20px",
+                                  height: "20px"
+                                }} /> : data.title == "Setup" && getUserRole() == "SUPER_ADMIN" && <IoMdArrowDropup style={{
+                                  marginBottom: "-8px",
+                                  marginTop: "5px",
+                                  display: "flex",
+                                  justifyContent: "center",
+                                  width: "100%",
+                                  fontSize: "20px",
+                                  height: "20px"
+                                }} />
+                              } */}
+                            </div>
+                          )}
+                        </UL>
+                      )
+                    )}
+                  </LI>
+                ))
                 : decodedToken.role === "OPERATOR"
-                ? filteredOperatorMenu !== undefined &&
+                  ? filteredOperatorMenu !== undefined &&
                   filteredOperatorMenu?.map((data: any, index: any) => (
                     <LI className={`sidebar-list`} key={index}>
                       <Link
-                        className={`sidebar-link sidebar-title ${
-                          sideMenu === data.title ? "active" : ""
-                        }`}
+                        className={`sidebar-link sidebar-title ${sideMenu === data.title ? "active" : ""
+                          }`}
                         to={data.link ? data.link : "#"}
                         onClick={() => handleClick(data)}
                       >
                         <SVG
                           className={`${sidebarIconType}-icon`}
-                          iconId={`${
-                            sidebarIconType === "fill" ? "fill-" : ""
-                          }${data.svgIcon}`}
+                          iconId={`${sidebarIconType === "fill" ? "fill-" : ""
+                            }${data.svgIcon}`}
                         />
                         <span style={{ fontSize: "13px" }}>
                           {t(data.title)}
@@ -446,11 +469,10 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
                           <UL
                             className="sidebar-submenu custom-scrollbar simple-list"
                             style={{
-                              display: `${
-                                data.title === sideMenu && !data.link
-                                  ? "block"
-                                  : "block"
-                              }`,
+                              display: `${data.title === sideMenu && !data.link
+                                ? "block"
+                                : "block"
+                                }`,
                             }}
                           >
                             {!data.link && (
@@ -468,21 +490,19 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
                       )}
                     </LI>
                   ))
-                : filteredCompanyMenu !== undefined &&
+                  : filteredCompanyMenu !== undefined &&
                   filteredCompanyMenu.map((data: any, index: any) => (
                     <LI className={`sidebar-list`} key={index}>
                       <Link
-                        className={`sidebar-link sidebar-title ${
-                          sideMenu === data.title ? "active" : ""
-                        }`}
+                        className={`sidebar-link sidebar-title ${sideMenu === data.title ? "active" : ""
+                          }`}
                         to={data.link ? data.link : "#"}
                         onClick={() => handleClick(data)}
                       >
                         <SVG
                           className={`${sidebarIconType}-icon`}
-                          iconId={`${
-                            sidebarIconType === "fill" ? "fill-" : ""
-                          }${data.svgIcon}`}
+                          iconId={`${sidebarIconType === "fill" ? "fill-" : ""
+                            }${data.svgIcon}`}
                         />
                         <span style={{ fontSize: "13px" }}>
                           {t(data.title)}
@@ -495,11 +515,10 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
                           <UL
                             className="sidebar-submenu custom-scrollbar simple-list"
                             style={{
-                              display: `${
-                                data.title === sideMenu && !data.link
-                                  ? "block"
-                                  : "block"
-                              }`,
+                              display: `${data.title === sideMenu && !data.link
+                                ? "block"
+                                : "block"
+                                }`,
                             }}
                           >
                             {!data.link && (

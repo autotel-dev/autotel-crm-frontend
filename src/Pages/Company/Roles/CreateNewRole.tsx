@@ -196,11 +196,11 @@ const CreateNewRole = () => {
           onClick={addToggle}
         >
           <PlusCircle />
-          Create New Role
+          Create New Department
         </button>
         <Modal isOpen={addModal} toggle={addToggle} size="lg" centered>
           <div className="modal-header">
-            <H3 className="modal-title">Add Role</H3>
+            <H3 className="modal-title">Add Department</H3>
             <Button
               color="transprant"
               className="btn-close"
@@ -214,7 +214,7 @@ const CreateNewRole = () => {
             >
               <Row>
                 <FormGroup className="col-md-12 create-group">
-                  <P>Role Name</P>
+                  <P>Department Name</P>
                   <input
                     className="form-control"
                     type="text"

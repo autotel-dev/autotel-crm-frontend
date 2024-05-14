@@ -39,4 +39,8 @@ export interface MenuListInterface {
   level: number;
   isClose: boolean;
   setIsClose: any;
+  menuRef?: any;
+  showArrow?: any;
+  setShowArrow?: any
+
 }
