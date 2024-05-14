@@ -100,14 +100,7 @@ const Dashboard = () => {
   }, [loginData]);
 
   // Simulating data fetching with a timeout
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setLoading(false); // Simulate completion of data fetching after 2 seconds
-    }, 3000);
 
-    return () => clearTimeout(timer); // Cleanup the timeout on component unmount
-  }, []);
-  // // console.log("Dashboard", dashboard);
 
   useEffect(() => {
     dispatch(setLiveAlerts([]));
@@ -163,13 +156,17 @@ const Dashboard = () => {
             // // console.log("length --- >", data.data);
             dispatch(setAlertsOverview(data.data.alertsOverview));
             dispatch(setAlertsPending(data.data.allPendingAlerts));
-            setAlertsOverviewLoading(false);
+            setTimeout(() => {
+              // setAlertsOverviewLoading(false);
+            }, 2000)
           }
           if (!data.success) {
             // // // console.log("length --- >", data.data);
             dispatch(setAlertsOverview(null));
             dispatch(setAlertsPending([]));
-            setAlertsOverviewLoading(false);
+            setTimeout(() => {
+              // setAlertsOverviewLoading(false);
+            }, 2000)
           }
         }
       });
@@ -182,10 +179,12 @@ const Dashboard = () => {
             if (data.success) {
               // // console.log("length --- >", data.data);
               dispatch(setKilledDevices(data.data));
+              // setLoading(false);
             }
             if (!data.success) {
               // // // console.log("length --- >", data.data);
               dispatch(setKilledDevices([]));
+              // setLoading(false);
             }
           }
         }
@@ -229,7 +228,7 @@ const Dashboard = () => {
 
             <Col xl="12" lg="12" md="12" sm="12">
               <Row>
-                {loading && alertsOverviewloading ? (
+                {loading == true && alertsOverviewloading == true ? (
                   <div
                     style={{
                       display: "flex",

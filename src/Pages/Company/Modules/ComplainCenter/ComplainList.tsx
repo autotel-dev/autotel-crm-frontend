@@ -443,7 +443,7 @@ const ComplainList = () => {
                       }}
                     >
                       <div className="sale">
-                        <H3>{data.key !== "InternalComplaints" ? data.key : "Total"}</H3>
+                        <H3>{data.key !== "InternalComplaints" ? (data.key == "InProgress" ? "In Progress" : data.key) : "Total"}</H3>
                         <h5
                           style={{
                             fontWeight: "bold",
@@ -492,10 +492,10 @@ const ComplainList = () => {
                               loader={<div>{"Loading Chart"}</div>}
                               data={[
                                 ["Complains", "Hours per Day"],
-                                ["Pending", complainCenterStatistics[0]?.value],
                                 ["New", complainCenterStatistics[1]?.value],
-                                ["Resolved", complainCenterStatistics[2]?.value],
-                                ["InProgress", complainCenterStatistics[3]?.value],
+                                ["In Progress", complainCenterStatistics[2]?.value],
+                                ["Pending", complainCenterStatistics[2]?.value],
+                                ["Resolved", complainCenterStatistics[4]?.value],
                               ]}
                               options={{
                                 backgroundColor: "transparent", // Set chart background color as transparent

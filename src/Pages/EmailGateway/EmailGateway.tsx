@@ -4,6 +4,7 @@ import { P } from "../../AbstractElements";
 import { Select } from "antd";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
+import TestEmailModal from "./modals/TestEmailModal";
 
 
 const EmailGateway = () => {
@@ -24,8 +25,7 @@ const EmailGateway = () => {
     { value: `SSL`, label: `SSL` }, { value: `TLS`, label: `TLS` }
     ];
 
-
-
+    const [isVisible, setIsVisible] = useState(false);
 
     return (
         <>
@@ -33,7 +33,7 @@ const EmailGateway = () => {
                 <Breadcrumbs title="Email Gateway" mainTitle="Email Gateway" parent="Setup" />
                 <Container fluid>
                     <Col md={12}>
-                        <Form className="card"
+                        <Form
                         // onSubmit={createPersonalization}
                         >
                             <Card>
@@ -258,7 +258,8 @@ const EmailGateway = () => {
                                                 color="primary"
                                                 type="submit"
                                                 onClick={(e) => {
-
+                                                    e.preventDefault();
+                                                    setIsVisible(true);
                                                 }}
                                                 style={{
                                                     marginRight: "10px",
@@ -289,6 +290,7 @@ const EmailGateway = () => {
                                             </Button>
                                         </CardFooter>
                                     </Row>
+                                    <TestEmailModal isVisible={isVisible} setIsVisible={setIsVisible} />
                                 </CardBody>
                             </Card>
                         </Form>
