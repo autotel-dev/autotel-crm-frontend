@@ -201,7 +201,7 @@ const RolesList = () => {
         <Col sm="12">
           <Card>
             <CardHeader className="pb-0">
-              <H4>All Roles</H4>
+              <H4>All Departments</H4>
             </CardHeader>
             <CardBody>
               <div className="table-responsive product-table">
