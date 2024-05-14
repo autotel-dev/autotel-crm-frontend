@@ -32,7 +32,7 @@ const MenuList = ({ subMenuData, setIsOpen, isOpen, level, isClose, setIsClose }
     if (bottomOffset < 10) {
       setShowArrow(true)
     }
-    else{
+    else {
       setShowArrow(false)
     }
   };
@@ -46,7 +46,7 @@ const MenuList = ({ subMenuData, setIsOpen, isOpen, level, isClose, setIsClose }
       }}
         ref={menuRef}
         onScroll={handleScroll}
-        >
+      >
         {subMenuData?.subMenu &&
           subMenuData?.subMenu?.map((item, index) => (
             <LI className={level === 0 ? "main-submenu" : ""} key={index} >
