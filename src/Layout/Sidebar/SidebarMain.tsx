@@ -170,7 +170,7 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
       subMenu: [
         {
           svgIcon: "bonus-kit",
-          title: "Roles",
+          title: "Departments",
           link: `${process.env.PUBLIC_URL}/company/setup/roles`,
         },
         {

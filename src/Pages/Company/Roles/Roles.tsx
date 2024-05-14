@@ -56,9 +56,9 @@ const Roles = () => {
       ) : (
         <div>
           <Breadcrumbs
-            mainTitle="Roles List"
+            mainTitle="Department List"
             parent={setup}
-            title="Roles List"
+            title="Department List"
           />
           <Container fluid>
             <Row className="project-card">
