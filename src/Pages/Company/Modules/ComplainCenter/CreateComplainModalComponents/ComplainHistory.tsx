@@ -13,11 +13,9 @@ const ComplainHistory = () => {
   const tableHeader = [
     "ID",
     "Device",
-    "Alert",
-    "Type",
-    "Message",
-    "Address",
-    "Response",
+    "Priority",
+    "Status",
+    "Description"
   ];
   const containerRef = useRef(null);
   const [pageNo, setPageNo] = useState(1);
@@ -77,7 +75,7 @@ const ComplainHistory = () => {
                 ) : (
                   dataList.map((data: any, index: any) => (
                     <tr style={{ cursor: "pointer" }} key={index}>
-                      <td>{data.eventId}</td>
+                      <td>{data.complaintId}</td>
                       <td>
                         <div className="d-flex">
                           <div className="flex-grow-1 ms-2">
@@ -91,10 +89,10 @@ const ComplainHistory = () => {
                         </div>
                       </td>
 
-                      <td className={`txt-primary`}>{data.message}</td>
-                      <td>{data.type}</td>
-                      <td>{data.message}</td>
-                      <td id="Popover" style={{ width: "20%" }}>
+                      <td className={`txt-primary`}>{data.priorty}</td>
+                      <td>{data.status}</td>
+                      <td>{data.description}</td>
+                      {/* <td id="Popover" style={{ width: "20%" }}>
                         {data.address == null
                           ? "N/A"
                           : data.address.length > 10
@@ -115,7 +113,7 @@ const ComplainHistory = () => {
                         {data.completionResponse === ""
                           ? "N/A"
                           : data.completionResponse}
-                      </td>
+                      </td> */}
                     </tr>
                   ))
                 )}

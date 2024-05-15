@@ -72,7 +72,7 @@ const ResponseForm: React.FC<PropsTypes> = ({
         deviceName: selectedItems[0].name,
         subRole: getUserRole() == "OPERATOR" ? getUserRoleID() : role,
         server: selectedItems[0].server._id,
-        status: priority == "GENERAL" ? "RESOLVED" : statuss,
+        status: priority == "GENERAL" ? "RESOLVED" : "NEW",
         deviceInfo: {
           customerName: selectedItems[0].customerInfo.name,
           mobileNo1: selectedItems[0].customerInfo.mobile_1,
@@ -176,8 +176,8 @@ const ResponseForm: React.FC<PropsTypes> = ({
 
   return (
     <Col md={12} style={{
-      overflow:"auto",
-      overflowX:"hidden"
+      overflow: "auto",
+      overflowX: "hidden"
     }}>
       <form
         className="form-bookmark needs-validation"

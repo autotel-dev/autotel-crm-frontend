@@ -19,6 +19,7 @@ import CustomerInfo from "./CreateComplainModalComponents/CustomerInfo";
 import VehicleInfo from "./CreateComplainModalComponents/VehicleInfo";
 import ComplainHistory from "./CreateComplainModalComponents/ComplainHistory";
 import ResponseForm from "./CreateComplainModalComponents/Response";
+import { H4 } from "../../../../AbstractElements";
 
 
 interface PropsTypes {
@@ -42,9 +43,6 @@ const CreateComplainModal: React.FC<PropsTypes> = ({
     const [loading, setLoading] = useState(false);
     const [basicTab, setBasicTab] = useState(tab);
     const { createComplainModalData } = useSelector((state: any) => state.complainCenter);
-
-
-
 
     const modalTabs = [
         {
@@ -96,6 +94,7 @@ const CreateComplainModal: React.FC<PropsTypes> = ({
             }}
         >
             <div className="modal-header">
+                <H4 className="modal-title">Device Name : {selectedItems[0].name}</H4>
                 <Button
                     color="transprant"
                     className="btn-close"
