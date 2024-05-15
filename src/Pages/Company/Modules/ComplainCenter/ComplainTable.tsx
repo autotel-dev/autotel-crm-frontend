@@ -15,47 +15,82 @@ import { setTableRow } from "../../../../ReaduxToolkit/Reducer/ComplainCenterSli
 const ComplainTable = () => {
   const dispatch = useDispatch();
   // Function to transform supportData into allBugReports format
-  const { allComplains } = useSelector((state: any) => state.complainCenter);
+  const { allComplains, filteredRole } = useSelector((state: any) => state.complainCenter);
   const { userPermissions } = useSelector(
     (state: any) => state.userPermissions
+  );
+  const { userPersonalizationData } = useSelector(
+    (state: any) => state.personalization
   );
 
   // console.log("support", support);
   const supportData = () => {
-    return allComplains
-      .filter(
-        (item: any) =>
-          item.complaintId.toLowerCase().split("-")[1].includes(searchValue) ||
-          item.description.toLowerCase().includes(searchValue) ||
-          item.deviceName.toLowerCase().includes(searchValue)
-      )
-      .map((item: any) => ({
-        complaint_id: item?._id,
-        id: item?.complaintId,
-        device_name: item?.deviceName,
-        user: item?.createdBy.fullName,
-        comment: item?.description,
-        department: item?.subRole.name,
-        server: item?.server.companyName,
-        status: item?.status,
-        priorty: item?.priorty == null ? "N/A" : item?.priorty,
-        date: `${item?.createdAt.toString().slice(0, 10)},  ${new Date(
-          item?.updatedAt
+    if (filteredRole == "All") {
+      return allComplains
+        .filter(
+          (item: any) =>
+            item.complaintId.toLowerCase().split("-")[1].includes(searchValue) ||
+            item.description.toLowerCase().includes(searchValue) ||
+            item.deviceName.toLowerCase().includes(searchValue)
         )
-          .toLocaleString("en-US", {
-            hour: "2-digit",
-            minute: "2-digit",
-            second: "2-digit",
-          })
-          .toString()}`,
-      }));
+        .map((item: any) => ({
+          complaint_id: item?._id,
+          id: item?.complaintId,
+          device_name: item?.deviceName,
+          user: item?.createdBy.fullName,
+          comment: item?.description,
+          department: item?.subRole.name,
+          server: item?.server.companyName,
+          status: item?.status,
+          priorty: item?.priorty == null ? "N/A" : item?.priorty,
+          date: `${item?.createdAt.toString().slice(0, 10)},  ${new Date(
+            item?.updatedAt
+          )
+            .toLocaleString("en-US", {
+              hour: "2-digit",
+              minute: "2-digit",
+              second: "2-digit",
+            })
+            .toString()}`,
+        }));
+    }
+    else {
+      return allComplains
+        .filter(
+          (item: any) =>
+            item.complaintId.toLowerCase().split("-")[1].includes(searchValue) ||
+            item.description.toLowerCase().includes(searchValue) ||
+            item.deviceName.toLowerCase().includes(searchValue)
+        ).filter((item: any) => item.subRole.name == filteredRole)
+        .map((item: any) => ({
+          complaint_id: item?._id,
+          id: item?.complaintId,
+          device_name: item?.deviceName,
+          user: item?.createdBy.fullName,
+          comment: item?.description,
+          department: item?.subRole.name,
+          server: item?.server.companyName,
+          status: item?.status,
+          priorty: item?.priorty == null ? "N/A" : item?.priorty,
+          date: `${item?.createdAt.toString().slice(0, 10)},  ${new Date(
+            item?.updatedAt
+          )
+            .toLocaleString("en-US", {
+              hour: "2-digit",
+              minute: "2-digit",
+              second: "2-digit",
+            })
+            .toString()}`,
+        }));
+    }
+
   };
 
   const [searchValue, setSearchValue] = useState("");
 
   useEffect(() => {
     setData(supportData());
-  }, [searchValue]);
+  }, [searchValue, filteredRole]);
 
   const handleSearch = (e: any) => {
     const searchKey = e.target.value.toLowerCase();
@@ -97,21 +132,46 @@ const ComplainTable = () => {
       setSelectedRows([]);
     }
   };
+  const [changeStatusValue, setChangeStatusValue] = useState(false)
 
   const handleRowClicked = (row: any) => {
-    // Here 'row' contains the data of the clicked row
-    // console.log("Clicked row data:", row);
+    // Set the state variable
 
-    // Navigate to the ticketDetails page with the row data
+
+    // // Store the state variable in sessionStorage
+    // sessionStorage.setItem('stateVariable', JSON.stringify(changeStatusValue));
+
+    // // Create a broadcast channel with a unique name
+    // const broadcastChannel = new BroadcastChannel('stateChannel');
+
+    // // Send the state variable through the broadcast channel
+    // broadcastChannel.postMessage(JSON.stringify(changeStatusValue));
+
+    // // Clean up by closing the broadcast channel
+    // broadcastChannel.close();
+
     dispatch(setTableRow(row));
-    if (getUserRole() == "COMPANY") {
-      navigate(
-        `${process.env.PUBLIC_URL}/company/modules/complain-center/complainDetails/${row.complaint_id}`
+    // if (getUserRole() == "COMPANY") {
+    //   navigate(
+    //     `${process.env.PUBLIC_URL}/company/modules/complain-center/complainDetails/${row.complaint_id}`
+    //   );
+    // }
+    // if (getUserRole() == "OPERATOR") {
+    //   navigate(
+    //     `${process.env.PUBLIC_URL}/operator/modules/complain-center/complainDetails/${row.complaint_id}`
+    //   );
+    // }
+    if (getUserRole() === "COMPANY") {
+      window.open(
+        `${process.env.PUBLIC_URL}/company/modules/complain-center/complainDetails/${row.complaint_id}`,
+        '_blank'
       );
     }
-    if (getUserRole() == "OPERATOR") {
-      navigate(
-        `${process.env.PUBLIC_URL}/operator/modules/complain-center/complainDetails/${row.complaint_id}`
+
+    if (getUserRole() === "OPERATOR") {
+      window.open(
+        `${process.env.PUBLIC_URL}/operator/modules/complain-center/complainDetails/${row.complaint_id}`,
+        '_blank'
       );
     }
 
@@ -180,9 +240,10 @@ const ComplainTable = () => {
       <DataTable
         columns={supportColumns}
         data={data}
-        striped={true}
+        // striped={true}
         pagination
         selectableRows
+
         // onSelectedRowsChange={handleRowSelected}
         onRowClicked={handleRowClicked} // Pass the event handler for row clicks
         clearSelectedRows={toggleDelete}
@@ -195,6 +256,10 @@ const ComplainTable = () => {
           rows: {
             style: {
               cursor: "pointer",
+              transition: "background-color 0.2s", // Smooth transition for background color change
+              "&:hover": { // Define hover style
+                backgroundColor: `${userPersonalizationData.buttonsAndBarsColor}`,
+              },
             },
           },
           head: {

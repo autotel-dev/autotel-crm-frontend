@@ -1,5 +1,5 @@
 import { Card, CardBody, Col, Progress, Row } from "reactstrap";
-import { H3, H5, H6, LI, P, UL, Image } from "../../../../AbstractElements";
+import { H3, H5, H6, LI, P, UL, Image, H4 } from "../../../../AbstractElements";
 import CountUp from "react-countup";
 import { useDispatch, useSelector } from "react-redux";
 import SVG from "../../../../utils/CommonSvgIcon/SVG";
@@ -8,6 +8,7 @@ import Chart from "react-google-charts";
 import UserProfile from "../../../../assets/companyProfile.png";
 import { useEffect, useRef, useState } from "react";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa6";
+import { setFilteredRole } from "../../../../ReaduxToolkit/Reducer/ComplainCenterSlice";
 
 const ComplainList = () => {
   const saleRevenueData = [
@@ -443,9 +444,19 @@ const ComplainList = () => {
                         marginBottom: "10px",
                       }}
                     >
-                      <div className="sale">
-                        <H3>{data.key !== "InternalComplaints" ? (data.key == "InProgress" ? "In Progress" : data.key) : "Total"}</H3>
-                        <h5
+                      <div className="sale" style={{
+                        backgroundColor:
+                          data.key === "New"
+                            ? "rgba(0, 0, 255, 0.3)"
+                            : data.key == "InProgress"
+                              ? "rgba(255, 165, 0, 0.3)"
+                              : data.key === "Pending"
+                                ? "rgba(255, 0, 0, 0.3)" :
+                                data.key === "Resolved"
+                                  ? "rgba(0, 255, 0, 0.3)" : "rgb(245, 246, 249)",
+                      }}>
+                        <H4>{data.key !== "InternalComplaints" ? (data.key == "InProgress" ? "In Progress" : data.key) : "Total"}</H4>
+                        {/* <h5
                           style={{
                             fontWeight: "bold",
                             fontSize: "24px",
@@ -454,7 +465,8 @@ const ComplainList = () => {
                           }}
                         >
                           {data.value}
-                        </h5>
+                        </h5> */}
+                        <H5>{data.value}</H5>
                         <P className="d-flex">
                           <span className={`bg-light-${data.color} me-2`}>
                             <SVG iconId={data.svgIcon} />
@@ -508,10 +520,10 @@ const ComplainList = () => {
                                 },
                                 pieSliceText: "value", // Display the exact values of each option
                                 colors: [
-                                  "#51bb25",
-                                  "#ff6150",
                                   "blue",
                                   "orange",
+                                  "#ff6150",
+                                  "#51bb25",
                                 ], // Custom colors for Active and Inactive options respectively
                                 is3D: true, // Set the chart type to 3D
                                 legend: { position: "none" }, // Remove legend
@@ -575,23 +587,94 @@ const ComplainList = () => {
                       }}
                     // onScroll={(e) => setScrollPosition(e.target.scrollLeft)}
                     >
+                      <li
+                        style={{
+                          backgroundColor: "#f5f6f9",
+                          borderRadius: "8px",
+                          padding: "10px 10px",
+                          marginRight: "8px",
+                          listStyle: "none",
+                          display: "flex",
+                          alignItems: "center",
+                          cursor: "pointer"
+                        }}
+
+                        onClick={() => {
+                          dispatch(setFilteredRole("All"))
+                        }}
+                      >
+                        <div
+                          style={{
+                            width: "30px",
+                            height: "30px",
+                            borderRadius: "100px",
+                          }}
+                        >
+                          <img
+                            height="100%"
+                            width="100%"
+                            src={UserProfile}
+                            alt="user"
+                            style={{
+                              borderRadius: "100px",
+                            }}
+                          />
+                        </div>
+                        <div
+                          className="Countries"
+                          style={{
+                            marginLeft: "10px",
+
+                            // width: "180px",
+                            display: "flex",
+                            justifyContent: "space-between",
+                            alignItems: "center"
+                          }}
+                        >
+                          <H5>All</H5>
+                          <div
+                            style={{
+                              padding: "6px",
+                              width: "30px",
+                              height: "30px",
+                              borderRadius: "100px",
+                              backgroundColor: "black",
+                              color: "white",
+                              display: "flex",
+                              justifyContent: "center",
+                              alignItems: "center",
+                              marginLeft: "20px",
+                              // fontFamily: "Sedan, serif",
+                              // fontWeight: "400",
+                              // fontStyle: "normal",
+                            }}
+                          >
+                            {complainCenterStatistics[0].value}
+                          </div>
+                          {/* <H6 className="mt-1 mb-0">{data.percentage}</H6> */}
+                        </div>
+                      </li>
                       {complainCenterRoles.map((data: any, index: any) => (
                         <li
                           style={{
                             backgroundColor: "#f5f6f9",
                             borderRadius: "8px",
-                            padding: "8px",
+                            padding: "10px 10px",
                             marginRight: "8px",
                             listStyle: "none",
                             display: "flex",
                             alignItems: "center",
+                            cursor: "pointer"
                           }}
                           key={index}
+                          onClick={() => {
+                            dispatch(setFilteredRole(data.name))
+                          }}
                         >
                           <div
                             style={{
-                              width: "35px",
-                              height: "35px",
+                              width: "30px",
+                              height: "30px",
                               borderRadius: "100px",
                             }}
                           >
@@ -609,9 +692,11 @@ const ComplainList = () => {
                             className="Countries"
                             style={{
                               marginLeft: "10px",
-                              width: "180px",
+
+                              // width: "180px",
                               display: "flex",
                               justifyContent: "space-between",
+                              alignItems: "center"
                             }}
                           >
                             <H5>{data.name}</H5>
@@ -626,6 +711,7 @@ const ComplainList = () => {
                                 display: "flex",
                                 justifyContent: "center",
                                 alignItems: "center",
+                                marginLeft: "20px",
                                 // fontFamily: "Sedan, serif",
                                 // fontWeight: "400",
                                 // fontStyle: "normal",
