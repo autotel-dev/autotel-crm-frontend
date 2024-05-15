@@ -4,7 +4,7 @@ import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Button, FormGroup, Label, Modal, ModalBody, Row } from "reactstrap";
 import { Cancel } from "../../utils/Constant";
-import { H3 } from "../../AbstractElements";
+import { H3, H4 } from "../../AbstractElements";
 import { PackageType } from "./PackageType/PackageType";
 import { create, getAll } from "../../Api";
 import {
@@ -177,7 +177,7 @@ const CreateNewPackage = () => {
         </button>
         <Modal isOpen={addModal} toggle={addToggle} size="lg">
           <div className="modal-header">
-            <H3 className="modal-title">Add Package</H3>
+            <H4 className="modal-title">Add Package</H4>
             <Button
               color="transprant"
               className="btn-close"

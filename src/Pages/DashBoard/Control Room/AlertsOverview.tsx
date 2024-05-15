@@ -1,7 +1,7 @@
 import { Card, CardBody, CardHeader, Col } from "reactstrap";
 import { BalanceOverviews } from "../../../utils/Constant";
 import ReactApexChart from "react-apexcharts";
-import { H3, H5 } from "../../../AbstractElements";
+import { H3, H4 } from "../../../AbstractElements";
 import { ApexOptions } from "apexcharts";
 import CommonHeader from "../../../Common/CommonHeader";
 import { useSelector } from "react-redux";
@@ -69,7 +69,7 @@ const AlertsOverview = () => {
       <Card>
         <CardHeader className="pb-0">
           <div className="header-top">
-            <H5 className="m-0">Alerts Overview</H5>
+            <H4 className="m-0">Alerts Overview</H4>
           </div>
         </CardHeader>
         <CardBody>

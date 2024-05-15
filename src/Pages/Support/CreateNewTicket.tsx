@@ -3,7 +3,7 @@ import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Button, FormGroup, Label, Modal, ModalBody, Row } from "reactstrap";
 import { Cancel } from "../../utils/Constant";
-import { H3, P } from "../../AbstractElements";
+import { H3, H4, P } from "../../AbstractElements";
 import { createCom, getAll } from "../../Api";
 import { useDispatch, useSelector } from "react-redux";
 import Swal from "sweetalert2";
@@ -255,7 +255,7 @@ const CreateNewTicket = () => {
       </button>
       <Modal isOpen={addModal} toggle={addToggle} size="lg" centered>
         <div className="modal-header">
-          <H3 className="modal-title">Create New Ticket</H3>
+          <H4 className="modal-title">Create New Ticket</H4>
           <Button
             color="transprant"
             className="btn-close"

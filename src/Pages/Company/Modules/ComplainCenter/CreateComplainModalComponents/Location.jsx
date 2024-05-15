@@ -82,10 +82,7 @@ const Location = (props) => {
         content: `<div>
         <h3>Device Info</h3>
         <br />
-        <p>
-          <span style={{ fontWeight: "bold" }}>Device ID: </span>
-          <span> ${createComplainModalData?.vehicleInfo?.deviceId}</span>
-        </p>
+       
         <p>
           <span style={{ fontWeight: "bold" }}>Device Name: </span>
           <span>${createComplainModalData?.vehicleInfo?.deviceName}</span>

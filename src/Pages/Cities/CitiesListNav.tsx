@@ -11,6 +11,7 @@ import {
   setCities,
   setInActiveActiveCities,
 } from "../../ReaduxToolkit/Reducer/CitiesSlice";
+import H7 from "../../CommonElements/Headings/H7Element";
 const CitiesListNav = () => {
   const { activeTab } = useAppSelector((state) => state.project);
   const dispatch = useAppDispatch();
@@ -53,7 +54,7 @@ const CitiesListNav = () => {
                     // console.log("isNotActive -- >", 1);
                   }
                 });
-                dispatch(setInActiveActiveCities("No Inactive Cities Found"));
+                dispatch(setInActiveActiveCities(<H7>No Inactive Cities Found</H7>));
                 dispatch(setCities(tempList));
                 tempList = [];
               }}

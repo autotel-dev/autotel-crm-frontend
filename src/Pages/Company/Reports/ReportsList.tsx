@@ -28,6 +28,7 @@ import { setReports } from "../../../ReaduxToolkit/Reducer/ReportsSlice";
 import { jsPDF } from "jspdf";
 import "jspdf-autotable";
 import { H4 } from "../../../AbstractElements";
+import H7 from "../../../CommonElements/Headings/H7Element";
 
 const ReportsList = () => {
   const { reports } = useSelector((state: any) => state.reports);
@@ -338,15 +339,16 @@ const ReportsList = () => {
                     </table>
                   </div>
                 ) : (
-                  <div
-                    style={{
-                      textAlign: "center",
-                      fontSize: "25px",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    No Reports Found
-                  </div>
+                  <H7>No Reports Found</H7>
+                  // <div
+                  //   style={{
+                  //     textAlign: "center",
+                  //     fontSize: "25px",
+                  //     fontWeight: "bold",
+                  //   }}
+                  // >
+                  //   No Reports Found
+                  // </div>
                 )}
 
                 {/* )} */}

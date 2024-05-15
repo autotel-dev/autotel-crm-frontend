@@ -46,9 +46,9 @@ const ComplainDetails = () => {
   const { tableRow, complainDetails } = useSelector(
     (state: any) => state.complainCenter
   );
-  const [changeStatus, setChangeStatus] = useState(tableRow?.status);
+  const [changeStatus, setChangeStatus] = useState("");
   const [changePriortyStatus, setChangePriortyStatus] = useState(
-    tableRow?.priorty
+    ""
   );
   // // console.log("tableRow", tableRow);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null); // Ref for the textarea element
@@ -90,79 +90,173 @@ const ComplainDetails = () => {
     setIndex(index);
   };
 
+  // useEffect(() => {
+  //   setLoading(true);
+  //   if (tableRow?.status === "NEW") {
+  //     // console.log("IF");
+  //     patch(
+  //       {
+  //         updatedStatus: "IN_PROGRESS",
+  //         updatedPriortyStatus: changePriortyStatus,
+  //         resolvingDate: null,
+  //       },
+  //       {
+  //         url: `complaint-center/update-internal-complaint/${complaintId}`,
+  //       }
+  //     ).then((data: any) => {
+  //       // console.log("api call --- >", data);
+  //       if (data !== undefined) {
+  //         if (data.success) {
+  //           getAll({
+  //             url: `complaint-center/get-internal-complaint/${complaintId}`,
+  //           }).then((data: any) => {
+  //             // console.log("api call --- >", data);
+  //             if (data !== undefined) {
+  //               if (data.success) {
+  //                 dispatch(setComplainDetails(data.data.internalComplaint));
+  //                 setLoading(false);
+  //               }
+  //             }
+  //           });
+  //         }
+  //       }
+  //     });
+  //   } else {
+  //     // console.log("Else");
+  //     getAll({
+  //       url: `complaint-center/get-internal-complaint/${complaintId}`,
+  //     }).then((data: any) => {
+  //       // console.log("api call --- >", data);
+  //       if (data !== undefined) {
+  //         if (data.success) {
+  //           dispatch(setComplainDetails(data.data.internalComplaint));
+  //           setChangeStatus(complainDetails?.status);
+  //           setChangePriortyStatus(complainDetails?.priorty);
+  //           setLoading(false);
+  //         }
+  //       }
+  //     });
+  //   }
+  // }, []);
+
   useEffect(() => {
     setLoading(true);
-    if (tableRow?.status === "NEW") {
-      // console.log("IF");
-      patch(
-        {
-          updatedStatus: "IN_PROGRESS",
-          updatedPriortyStatus: changePriortyStatus,
-          resolvingDate: null,
-        },
-        {
-          url: `complaint-center/update-internal-complaint/${complaintId}`,
-        }
-      ).then((data: any) => {
-        // console.log("api call --- >", data);
-        if (data !== undefined) {
-          if (data.success) {
-            getAll({
-              url: `complaint-center/get-internal-complaint/${complaintId}`,
-            }).then((data: any) => {
+    getAll({
+      url: `complaint-center/get-internal-complaint/${complaintId}`,
+    }).then((data: any) => {
+      // console.log("api call --- >", data);
+      if (data !== undefined) {
+        if (data.success) {
+          dispatch(setComplainDetails(data.data.internalComplaint));
+          setChangeStatus(data.data.internalComplaint.status);
+          setChangePriortyStatus(data.data.internalComplaint.priorty);
+          setLoading(false);
+          if (data.data.internalComplaint.status === "NEW") {
+            // console.log("IF");
+            patch(
+              {
+                updatedStatus: "IN_PROGRESS",
+                updatedPriortyStatus: changePriortyStatus,
+                resolvingDate: null,
+              },
+              {
+                url: `complaint-center/update-internal-complaint/${complaintId}`,
+              }
+            ).then((data: any) => {
+
               // console.log("api call --- >", data);
               if (data !== undefined) {
                 if (data.success) {
-                  dispatch(setComplainDetails(data.data.internalComplaint));
-                  setLoading(false);
+                  getAll({
+                    url: `complaint-center/get-internal-complaint/${complaintId}`,
+                  }).then((data: any) => {
+                    // console.log("api call --- >", data);
+                    if (data !== undefined) {
+                      if (data.success) {
+                        dispatch(setComplainDetails(data.data.internalComplaint));
+                        // setLoading(false);
+                      }
+                    }
+                  });
+
                 }
               }
             });
           }
         }
-      });
-    } else {
-      // console.log("Else");
-      getAll({
-        url: `complaint-center/get-internal-complaint/${complaintId}`,
-      }).then((data: any) => {
-        // console.log("api call --- >", data);
-        if (data !== undefined) {
-          if (data.success) {
-            dispatch(setComplainDetails(data.data.internalComplaint));
-            setChangeStatus(complainDetails?.status);
-            setChangePriortyStatus(complainDetails?.priorty);
-            setLoading(false);
-          }
-        }
-      });
-    }
+      }
+    });
+
+
   }, []);
 
-  const convertDateString = (dateString: string): string => {
-    // // console.log(dateString);
+  // useEffect(() => {
+  //   // Create a broadcast channel with the same name
+  //   const broadcastChannel = new BroadcastChannel('stateChannel');
 
-    var date = new Date(dateString);
-    // // console.log("date", date.toUTCString());
-    date = new Date(date.toUTCString());
+  //   // Define a function to handle messages
+  //   const handleMessage = (event: MessageEvent) => {
+  //     const newStateVariable = JSON.parse(event.data);
 
-    const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-    const day = days[date.getUTCDay()];
-    let hours = date.getHours();
-    const minutes = date.getMinutes();
-    const amOrPm = hours >= 12 ? "AM" : "PM";
+  //     console.log("newStateVariable", newStateVariable);
 
-    // Convert to 12-hour format
-    if (hours > 12) {
-      hours -= 12;
-    } else if (hours === 0) {
-      hours = 12;
-    }
 
-    return `${day}, ${hours}:${
-      minutes < 10 ? "0" + minutes : minutes
-    } ${amOrPm}`;
+  //     // Update the state variable in sessionStorage
+  //     sessionStorage.setItem('stateVariable', event.data);
+
+  //     // Handle the updated state variable, e.g., trigger a re-render
+  //     // Do whatever you want with the newStateVariable
+  //   };
+
+  //   // Add an event listener for messages on the channel
+  //   broadcastChannel.addEventListener('message', handleMessage);
+
+  //   // Clean up by removing the event listener and closing the channel when the component unmounts
+  //   return () => {
+  //     broadcastChannel.removeEventListener('message', handleMessage);
+  //     broadcastChannel.close();
+  //   };
+  // }, []);
+
+  const convertDateString = (dateString: string) => {
+    const currentTime = new Date(dateString);
+    // const options = { timeZone: timezone };
+    const formattedDate = new Intl.DateTimeFormat("en-US", {
+      weekday: "short",
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+    }).format(currentTime);
+
+    return formattedDate;
   };
+
+  // const convertDateString = (dateString: string): string => {
+  //   // // console.log(dateString);
+
+  //   var date = new Date(dateString);
+  //   // // console.log("date", date.toUTCString());
+  //   date = new Date(date.toUTCString());
+
+  //   const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  //   const day = days[date.getUTCDay()];
+  //   let hours = date.getHours();
+  //   const minutes = date.getMinutes();
+  //   const amOrPm = hours >= 12 ? "PM" : "AM";
+
+  //   // Convert to 12-hour format
+  //   if (hours > 12) {
+  //     hours -= 12;
+  //   } else if (hours === 0) {
+  //     hours = 12;
+  //   }
+
+  //   return `${day}, ${hours}:${minutes < 10 ? "0" + minutes : minutes
+  //     } ${amOrPm}`;
+  // };
   // const convertDateString = (dateString: string): string => {
   //   const date = new Date(dateString);
   //   const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -279,8 +373,8 @@ const ComplainDetails = () => {
       // console.log("function call");
       patch(
         {
-          updatedStatus: changeStatus,
-          updatedPriortyStatus: changePriortyStatus,
+          updatedStatus: changeStatus == "" ? complainDetails?.status : changeStatus,
+          updatedPriortyStatus: changePriortyStatus == "" ? complainDetails?.priorty : changePriortyStatus,
           resolvingDate: null,
         },
         {
@@ -324,7 +418,7 @@ const ComplainDetails = () => {
     patch(
       {
         updatedStatus: "RESOLVED",
-        updatedPriortyStatus: changePriortyStatus,
+        updatedPriortyStatus: changePriortyStatus == "" ? complainDetails?.priorty : changePriortyStatus,
         resolvingDate: new Date(),
       },
       {
@@ -376,6 +470,8 @@ const ComplainDetails = () => {
   const tempStatusesList: any = [];
 
   useEffect(() => {
+    console.log("called get-priorty-status-types");
+
     getAll({ url: "complaint-center/get-priorty-status-types" }).then(
       (data: any) => {
         // console.log("api call --- >", data);
@@ -387,7 +483,7 @@ const ComplainDetails = () => {
                 data.data.internalComplaintPriortyStatusTypes
               )
             );
-            complainPriorityTypes?.map((item: any, index: any) => {
+            data.data.internalComplaintPriortyStatusTypes?.map((item: any, index: any) => {
               tempPriorityStatusesList.push({
                 value: `${item.value}`,
                 label: `${item.title}`,
@@ -401,6 +497,7 @@ const ComplainDetails = () => {
   }, []);
 
   useEffect(() => {
+    console.log("called get-status-types");
     getAll({ url: "complaint-center/get-status-types" }).then((data: any) => {
       // console.log("api call --- >", data);
       if (data !== undefined) {
@@ -409,8 +506,8 @@ const ComplainDetails = () => {
           dispatch(
             setComplainStatusTypes(data.data.internalComplaintStatusTypes)
           );
-          complainStatusTypes?.forEach((item: any) => {
-            if (item.value !== "RESOLVED") {
+          data.data.internalComplaintStatusTypes?.forEach((item: any) => {
+            if (item.value !== "RESOLVED" && item.value !== "NEW") {
               tempStatusesList.push({
                 value: `${item.value}`,
                 label: `${item.title}`,
@@ -436,12 +533,28 @@ const ComplainDetails = () => {
             <Col sm={9} md={9} lg={9} xl={9} xxl={7}>
               <div
                 style={{
-                  padding: "0px 20px",
+                  padding: "20px 25px",
                 }}
               >
-                {!loading && (
-                  <CommonHeader title={`${complainDetails.deviceName}`} />
-                )}
+
+                <div
+                  style={{
+                    color: "black",
+                    fontWeight: "bold",
+                    fontSize: "24px",
+                  }}
+                >
+                  Device Name -&nbsp;
+                  <span style={{
+                    color: `${userPersonalizationData !== null &&
+                      userPersonalizationData?.buttonsAndBarsColor !== null
+                      ? userPersonalizationData?.buttonsAndBarsColor
+                      : "#35bfbf"
+                      }`,
+                  }}>
+                    {complainDetails?.deviceName}
+                  </span>
+                </div>
               </div>
             </Col>
           </Row>
@@ -467,12 +580,11 @@ const ComplainDetails = () => {
                     </div>
                     <div
                       style={{
-                        color: `${
-                          userPersonalizationData !== null &&
+                        color: `${userPersonalizationData !== null &&
                           userPersonalizationData?.buttonsAndBarsColor !== null
-                            ? userPersonalizationData?.buttonsAndBarsColor
-                            : "#35bfbf"
-                        }`,
+                          ? userPersonalizationData?.buttonsAndBarsColor
+                          : "#35bfbf"
+                          }`,
                         fontWeight: "normal",
                         fontSize: "16px",
                         marginBottom: "5px",
@@ -512,15 +624,14 @@ const ComplainDetails = () => {
                       <Col
                         md={3}
                         style={{
-                          color: `${
-                            userPersonalizationData !== null &&
+                          color: `${userPersonalizationData !== null &&
                             userPersonalizationData?.buttonsAndBarsColor !==
-                              null
-                              ? userPersonalizationData?.buttonsAndBarsColor
-                              : "#35bfbf"
-                          }`,
+                            null
+                            ? userPersonalizationData?.buttonsAndBarsColor
+                            : "#35bfbf"
+                            }`,
                           margin: "25px 0px",
-                          fontSize: "18px",
+                          fontSize: "15px",
                         }}
                       >
                         {convertDateString(complainDetails.createdAt)}
@@ -549,7 +660,7 @@ const ComplainDetails = () => {
                             <div
                               style={{
                                 fontSize: "18px",
-                                margin: "25px 0px",
+                                margin: "15px 0px",
                               }}
                             >
                               {
@@ -563,15 +674,14 @@ const ComplainDetails = () => {
                           <Col
                             md={3}
                             style={{
-                              color: `${
-                                userPersonalizationData !== null &&
+                              color: `${userPersonalizationData !== null &&
                                 userPersonalizationData?.buttonsAndBarsColor !==
-                                  null
-                                  ? userPersonalizationData?.buttonsAndBarsColor
-                                  : "#35bfbf"
-                              }`,
+                                null
+                                ? userPersonalizationData?.buttonsAndBarsColor
+                                : "#35bfbf"
+                                }`,
                               margin: "2px 0px",
-                              fontSize: "16px",
+                              fontSize: "12px",
                             }}
                           >
                             {convertDateString(
@@ -616,13 +726,12 @@ const ComplainDetails = () => {
                           <a
                             href="#"
                             style={{
-                              color: `${
-                                userPersonalizationData !== null &&
+                              color: `${userPersonalizationData !== null &&
                                 userPersonalizationData?.buttonsAndBarsColor !==
-                                  null
-                                  ? userPersonalizationData?.buttonsAndBarsColor
-                                  : "#35bfbf"
-                              }`,
+                                null
+                                ? userPersonalizationData?.buttonsAndBarsColor
+                                : "#35bfbf"
+                                }`,
                               fontSize: "16px",
                             }}
                           >
@@ -679,13 +788,12 @@ const ComplainDetails = () => {
                                       ? "0px"
                                       : "40%",
                                   borderRadius: "10px",
-                                  marginBottom: `${
-                                    index === 2 &&
+                                  marginBottom: `${index === 2 &&
                                     index ===
-                                      complainDetails.messages.length - 1
-                                      ? "50px"
-                                      : "20px"
-                                  }`,
+                                    complainDetails.messages.length - 1
+                                    ? "50px"
+                                    : "20px"
+                                    }`,
                                   marginTop: "10px",
                                 }}
                               >
@@ -773,7 +881,7 @@ const ComplainDetails = () => {
                                         <div
                                           style={{
                                             color: "black",
-                                            fontSize: "14px",
+                                            fontSize: "12px",
                                             width: "150px",
                                             display: "flex",
                                             justifyContent: "end",
@@ -809,107 +917,107 @@ const ComplainDetails = () => {
                                         : "40%",
                                     padding: "15px",
                                     borderRadius: "10px",
-                                    marginBottom: `${
-                                      index === 2 &&
+                                    marginBottom: `${index === 2 &&
                                       index ===
-                                        complainDetails.messages.length - 1
-                                        ? "50px"
-                                        : "20px"
-                                    }`,
+                                      complainDetails.messages.length - 1
+                                      ? "50px"
+                                      : "20px"
+                                      }`,
                                     marginTop: "10px",
                                   }}
                                 >
-                                  <Row>
-                                    <Col md={12}>
+                                  <div
+                                    style={{
+                                      fontSize: "18px",
+                                      margin: "10px 0px",
+                                    }}
+                                  >
+                                    <div
+                                      style={{
+                                        display: "flex",
+                                        width: "100%",
+                                        justifyContent: "space-between",
+                                      }}
+                                    >
                                       <div
                                         style={{
-                                          fontSize: "18px",
-                                          margin: "10px 0px",
+                                          display: "flex",
                                         }}
                                       >
                                         <div
                                           style={{
+                                            backgroundColor: "black",
+                                            color: "white",
+                                            minWidth: "40px",
+                                            height: "40px",
+                                            borderRadius: "50px",
+                                            textAlign: "center",
                                             display: "flex",
-                                            width: "100%",
-                                            justifyContent: "space-between",
+                                            alignItems: "center",
+                                            justifyContent: "center",
                                           }}
                                         >
+                                          {reply.user.fullName
+                                            .slice(0, 1)
+                                            .toUpperCase()}
+                                        </div>
+
+                                        <div
+                                          style={{
+                                            margin: "0px 10px",
+
+                                          }}
+                                        >
+                                          <div style={{
+                                            display: "flex",
+                                            justifyContent: "space-between",
+                                            width: "100%"
+                                          }}>
+                                            <div
+                                              style={{
+                                                color: "black",
+                                                fontWeight: "bold",
+                                                fontSize: "18px",
+                                                marginTop: "-3px",
+                                                width: "320px",
+                                              }}
+                                            >
+                                              {reply.user.fullName}
+                                            </div>
+                                            <div
+                                              style={{
+                                                color: "black",
+                                                fontSize: "12px",
+
+                                              }}
+                                            >
+                                              {convertDateString(reply.createdAt)}
+                                            </div>
+                                          </div>
                                           <div
                                             style={{
-                                              display: "flex",
+                                              color: "gray",
+                                              fontWeight: "normal",
+                                              fontSize: "12px",
+                                              marginTop: "-5px",
                                             }}
                                           >
-                                            <div
-                                              style={{
-                                                backgroundColor: "black",
-                                                color: "white",
-                                                minWidth: "40px",
-                                                height: "40px",
-                                                borderRadius: "50px",
-                                                textAlign: "center",
-                                                display: "flex",
-                                                alignItems: "center",
-                                                justifyContent: "center",
-                                              }}
-                                            >
-                                              {reply.user.fullName
-                                                .slice(0, 1)
-                                                .toUpperCase()}
-                                            </div>
-                                            <div
-                                              style={{
-                                                margin: "0px 10px",
-                                              }}
-                                            >
-                                              <div
-                                                style={{
-                                                  color: "black",
-                                                  fontWeight: "bold",
-                                                  fontSize: "18px",
-                                                  marginTop: "-3px",
-                                                }}
-                                              >
-                                                {reply.user.fullName}
-                                              </div>
-                                              <div
-                                                style={{
-                                                  color: "gray",
-                                                  fontWeight: "normal",
-                                                  fontSize: "12px",
-                                                  marginTop: "-5px",
-                                                }}
-                                              >
-                                                {reply.user.emailAddress}
-                                              </div>
-                                              <div
-                                                style={{
-                                                  color: "black",
-                                                  fontSize: "16px",
-                                                  marginTop: "5px",
-                                                }}
-                                              >
-                                                {reply.messageText}
-                                              </div>
-                                            </div>
+                                            {reply.user.emailAddress}
                                           </div>
                                           <div
                                             style={{
                                               color: "black",
-                                              fontSize: "14px",
-                                              width: "150px",
-                                              display: "flex",
-                                              justifyContent: "end",
-                                              // position: "relative",
-
-                                              // top:0,
+                                              fontSize: "16px",
+                                              marginTop: "5px",
                                             }}
                                           >
-                                            {convertDateString(reply.createdAt)}
+                                            {reply.messageText}
                                           </div>
                                         </div>
                                       </div>
-                                    </Col>
-                                  </Row>
+
+                                    </div>
+                                  </div>
                                 </div>
                               );
                             }
@@ -952,68 +1060,61 @@ const ComplainDetails = () => {
                       >
                         {formatUnderscoredString(complainDetails.status) !==
                           "Resolved" && (
-                          <div
-                            style={{
-                              border: "1px solid lightgray",
-                            }}
-                          >
-                            <textarea
-                              ref={textareaRef}
-                              onChange={handleChange}
-                              value={replyText}
-                              className="form-control replyText"
-                              placeholder="Reply Here..."
-                              rows={3} // Minimum number of visible lines
+                            <div
                               style={{
-                                maxHeight: "100px", // Maximum height for 5 lines of text
-                                resize: "vertical", // Allow vertical resizing within the specified range
-                                borderRadius: "0px",
-                                fontSize: "20px",
-                                overflowY: "auto",
-                                WebkitOverflowScrolling: "touch", // Enable momentum scrolling on iOS
-                                scrollbarWidth: "thin", // Specify scrollbar width
-                                WebkitBorderRadius: "5px !important", // For WebKit browsers (Chrome, Safari)
-                                MozBorderRadius: "5px !important", // For Mozilla Firefox
-                                scrollbarColor: "lightgray transparent", // Specify scrollbar color
-                                outline: "0px",
-                                border: "0px",
+                                border: "1px solid lightgray",
                               }}
-                            />
-                            <style>
-                              {`
+                            >
+                              <textarea
+                                ref={textareaRef}
+                                onChange={handleChange}
+                                value={replyText}
+                                className="form-control replyText"
+                                placeholder="Reply Here..."
+                                rows={3} // Minimum number of visible lines
+                                style={{
+                                  maxHeight: "100px", // Maximum height for 5 lines of text
+                                  resize: "vertical", // Allow vertical resizing within the specified range
+                                  borderRadius: "0px",
+                                  fontSize: "20px",
+                                  overflowY: "auto",
+                                  WebkitOverflowScrolling: "touch", // Enable momentum scrolling on iOS
+                                  scrollbarWidth: "thin", // Specify scrollbar width
+                                  WebkitBorderRadius: "5px !important", // For WebKit browsers (Chrome, Safari)
+                                  MozBorderRadius: "5px !important", // For Mozilla Firefox
+                                  scrollbarColor: "lightgray transparent", // Specify scrollbar color
+                                  outline: "0px",
+                                  border: "0px",
+                                }}
+                              />
+                              <style>
+                                {`
     .replyText::placeholder {
       font-size: 18px;
   }`}
-                            </style>
-                            <div
-                              style={{
-                                backgroundColor: "whitesmoke",
-                                padding: "20px",
-                                display: "flex",
-                                justifyContent: "space-between",
-                              }}
-                            >
-                              <div></div>
-                              <div style={{ display: "flex" }}>
-                                {getUserRole() === ROLES.SUPER_ADMIN && (
+                              </style>
+                              <div
+                                style={{
+                                  backgroundColor: "whitesmoke",
+                                  padding: "20px",
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                }}
+                              >
+                                <div></div>
+                                <div style={{ display: "flex" }}>
                                   <button
-                                    className={`btn ${
-                                      userPersonalizationData?.buttonsAndBarsColor ==
+                                    className={`btn ${userPersonalizationData?.buttonsAndBarsColor ==
                                       null
-                                        ? "btn-primary"
-                                        : ""
-                                    }`}
-                                    disabled={
-                                      formatUnderscoredString(
-                                        complainDetails.status
-                                      ) === "Resolved"
-                                    }
+                                      ? "btn-primary"
+                                      : ""
+                                      }`}
+                                    disabled={replyText.length == 0}
                                     style={{
                                       color: "white",
-                                      backgroundColor: `${
-                                        userPersonalizationData !== null &&
+                                      backgroundColor: `${userPersonalizationData !== null &&
                                         userPersonalizationData?.buttonsAndBarsColor
-                                      }`,
+                                        }`,
                                       display: "flex",
                                       alignItems: "center",
                                       justifyContent: "center",
@@ -1026,8 +1127,8 @@ const ComplainDetails = () => {
                                     }}
                                     onClick={() => {
                                       Swal.fire({
-                                        title: "Complete Alert",
-                                        text: "Are you sure , you want to complete this ticket",
+                                        title: "Complete Complain",
+                                        text: "Are you sure , you want to complete this complain",
                                         icon: "warning",
                                         showCancelButton: true,
                                       }).then(async (result) => {
@@ -1055,13 +1156,12 @@ const ComplainDetails = () => {
                                     }}
                                   >
                                     {formatUnderscoredString(
-                                      complainDetails.status
+                                      complainDetails?.status
                                     ) === "Resolved"
                                       ? "Completed"
                                       : "Complete"}
                                   </button>
-                                )}
-                                {/* <button
+                                  {/* <button
                                   className={`btn ${
                                     userPersonalizationData?.buttonsAndBarsColor ==
                                     null
@@ -1095,52 +1195,50 @@ const ComplainDetails = () => {
                                   </div>
                                   {sendMessageLoading ? "Loading.." : "Send"}
                                 </button> */}
-                                <button
-  className={`btn ${
-    userPersonalizationData?.buttonsAndBarsColor == null
-      ? "btn-primary"
-      : ""
-  }`}
-  style={{
-    color: "white",
-    backgroundColor: `${
-      userPersonalizationData !== null &&
-      userPersonalizationData?.buttonsAndBarsColor
-    }`,
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    padding: "5px 20px",
-    margin: "0px 15px",
-    height: "50px",
-    width: "auto",
-    fontSize: "18px",
-    fontWeight: "bold",
-  }}
-  onClick={() => {
-    setSendMessageLoading(true);
-    sendMessage();
-  }}
-  disabled={replyText.length == 0}
->
-  {sendMessageLoading ? (
-    <>
-      <Spinner color="light" size="sm" style={{ marginRight: "10px" }} />
-      Loading...
-    </>
-  ) : (
-    <>
-      <div style={{ marginRight: "10px" }}>
-        <IoSend color="white" />
-      </div>
-      Send
-    </>
-  )}
-</button>
+                                  <button
+                                    className={`btn ${userPersonalizationData?.buttonsAndBarsColor == null
+                                      ? "btn-primary"
+                                      : ""
+                                      }`}
+                                    style={{
+                                      color: "white",
+                                      backgroundColor: `${userPersonalizationData !== null &&
+                                        userPersonalizationData?.buttonsAndBarsColor
+                                        }`,
+                                      display: "flex",
+                                      alignItems: "center",
+                                      justifyContent: "center",
+                                      padding: "5px 20px",
+                                      margin: "0px 15px",
+                                      height: "50px",
+                                      width: "auto",
+                                      fontSize: "18px",
+                                      fontWeight: "bold",
+                                    }}
+                                    onClick={() => {
+                                      setSendMessageLoading(true);
+                                      sendMessage();
+                                    }}
+                                    disabled={replyText.length == 0}
+                                  >
+                                    {sendMessageLoading ? (
+                                      <>
+                                        <Spinner color="light" size="sm" style={{ marginRight: "10px" }} />
+                                        Loading...
+                                      </>
+                                    ) : (
+                                      <>
+                                        <div style={{ marginRight: "10px" }}>
+                                          <IoSend color="white" />
+                                        </div>
+                                        Send
+                                      </>
+                                    )}
+                                  </button>
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        )}
+                          )}
                       </Col>
                     </div>
                   </div>
@@ -1165,19 +1263,18 @@ const ComplainDetails = () => {
                     <div>
                       <div
                         style={{
-                          backgroundColor: `${
-                            userPersonalizationData !== null &&
+                          backgroundColor: `${userPersonalizationData !== null &&
                             userPersonalizationData?.buttonsAndBarsColor !==
-                              null
-                              ? userPersonalizationData?.buttonsAndBarsColor
-                              : "#35bfbf"
-                          }`,
+                            null
+                            ? userPersonalizationData?.buttonsAndBarsColor
+                            : "#35bfbf"
+                            }`,
                           color: "white",
                           fontWeight: "bold",
                           padding: "10px",
                           fontSize: "18px",
                         }}
-                        // className="btn-primary"
+                      // className="btn-primary"
                       >
                         Vehicle Info
                       </div>
@@ -1211,7 +1308,7 @@ const ComplainDetails = () => {
                               color: "black",
                             }}
                           >
-                            {complainDetails.deviceInfo.customerName }
+                            {complainDetails.deviceInfo.customerName == "" ? "N/A" : complainDetails.deviceInfo.customerName}
                           </div>
                         </div>
                         <div
@@ -1237,7 +1334,7 @@ const ComplainDetails = () => {
                               color: "black",
                             }}
                           >
-                            {complainDetails.deviceInfo.mobileNo1}
+                            {complainDetails.deviceInfo.mobileNo1 == "" ? "N/A" : complainDetails.deviceInfo.mobileNo1}
                           </div>
                         </div>
                         <div
@@ -1263,7 +1360,7 @@ const ComplainDetails = () => {
                               color: "black",
                             }}
                           >
-                            {complainDetails.deviceInfo.mobileNo2}
+                            {complainDetails.deviceInfo.mobileNo2 == "" ? "N/A" : complainDetails.deviceInfo.mobileNo2}
                           </div>
                         </div>
                         <div
@@ -1289,7 +1386,7 @@ const ComplainDetails = () => {
                               color: "black",
                             }}
                           >
-                            {complainDetails.deviceInfo.vehicleName}
+                            {complainDetails.deviceInfo.vehicleName == "" ? "N/A" : complainDetails.deviceInfo.vehicleName}
                           </div>
                         </div>
                         <div
@@ -1315,7 +1412,7 @@ const ComplainDetails = () => {
                               color: "black",
                             }}
                           >
-                            {complainDetails.deviceInfo.simNumber}
+                            {complainDetails.deviceInfo.simNumber == "" ? "N/A" : complainDetails.deviceInfo.simNumber}
                           </div>
                         </div>
 
@@ -1342,7 +1439,7 @@ const ComplainDetails = () => {
                               color: "black",
                             }}
                           >
-                            {complainDetails.deviceInfo.imei}
+                            {complainDetails.deviceInfo.imei == "" ? "N/A" : complainDetails.deviceInfo.imei}
                           </div>
                         </div>
                         <div
@@ -1368,7 +1465,7 @@ const ComplainDetails = () => {
                               color: "black",
                             }}
                           >
-                            {complainDetails.deviceInfo.deviceModel}
+                            {complainDetails.deviceInfo.deviceModel == "" ? "N/A" : complainDetails.deviceInfo.deviceModel}
                           </div>
                         </div>
                       </div>
@@ -1378,20 +1475,19 @@ const ComplainDetails = () => {
                     <div>
                       <div
                         style={{
-                          backgroundColor: `${
-                            userPersonalizationData !== null &&
+                          backgroundColor: `${userPersonalizationData !== null &&
                             userPersonalizationData?.buttonsAndBarsColor !==
-                              null
-                              ? userPersonalizationData?.buttonsAndBarsColor
-                              : "#35bfbf"
-                          }`,
+                            null
+                            ? userPersonalizationData?.buttonsAndBarsColor
+                            : "#35bfbf"
+                            }`,
                           color: "white",
                           fontWeight: "bold",
                           padding: "10px",
-                          marginTop:"10px",
+                          marginTop: "10px",
                           fontSize: "18px",
                         }}
-                        // className="btn-primary"
+                      // className="btn-primary"
                       >
                         Complain Info
                       </div>
@@ -1525,7 +1621,7 @@ const ComplainDetails = () => {
                           </div>
                           {isEdit ? (
                             <Select
-                              defaultValue={complainDetails.priorty}
+                              defaultValue={complainDetails?.priorty}
                               showSearch
                               style={{ width: 200, height: 36 }}
                               placeholder="Select Priority"
@@ -1554,8 +1650,8 @@ const ComplainDetails = () => {
                                   complainDetails.priorty === "LOW"
                                     ? "green"
                                     : complainDetails.priorty === "HIGH"
-                                    ? "red"
-                                    : "orange",
+                                      ? "red"
+                                      : "orange",
                                 fontWeight: "bold",
                               }}
                             >
@@ -1583,7 +1679,7 @@ const ComplainDetails = () => {
                           </div>
                           {isEdit ? (
                             <Select
-                              defaultValue={complainDetails.status}
+                              defaultValue={complainDetails?.status}
                               showSearch
                               style={{ width: 200, height: 36 }}
                               placeholder="Select Status"
@@ -1612,10 +1708,10 @@ const ComplainDetails = () => {
                                   complainDetails.status === "NEW"
                                     ? "blue"
                                     : complainDetails.status === "IN_PROGRESS"
-                                    ? "orange"
-                                    : complainDetails.status === "PENDING"
-                                    ? "red"
-                                    : "green",
+                                      ? "orange"
+                                      : complainDetails.status === "PENDING"
+                                        ? "red"
+                                        : "green",
                                 fontWeight: "bold",
                               }}
                             >
@@ -1679,10 +1775,10 @@ const ComplainDetails = () => {
                           >
                             {complainDetails.messages.length >= 1
                               ? calculateTimeAgo(
-                                  complainDetails.messages[
-                                    complainDetails.messages.length - 1
-                                  ].updatedAt
-                                )
+                                complainDetails.messages[
+                                  complainDetails.messages.length - 1
+                                ].updatedAt
+                              )
                               : "N/A"}
                           </div>
                         </div>
@@ -1696,64 +1792,60 @@ const ComplainDetails = () => {
                         >
                           {formatUnderscoredString(complainDetails.status) !==
                             "Resolved" && (
-                            <button
-                              className={`btn ${
-                                userPersonalizationData?.buttonsAndBarsColor ==
-                                null
+                              <button
+                                className={`btn ${userPersonalizationData?.buttonsAndBarsColor ==
+                                  null
                                   ? "btn-primary"
                                   : ""
-                              }`}
-                              style={{
-                                color: "white",
-                                backgroundColor: `${
-                                  userPersonalizationData !== null &&
-                                  userPersonalizationData?.buttonsAndBarsColor
-                                }`,
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                padding: "2px 0px",
-                                margin: "0px 0px",
-                                height: "50px",
-                                width: "130px",
-                                fontSize: "16px",
-                                fontWeight: "bold",
-                              }}
-                              onClick={handleGoToReply}
-                            >
-                              Go to Reply
-                            </button>
-                          )}
+                                  }`}
+                                style={{
+                                  color: "white",
+                                  backgroundColor: `${userPersonalizationData !== null &&
+                                    userPersonalizationData?.buttonsAndBarsColor
+                                    }`,
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                  padding: "2px 0px",
+                                  margin: "0px 0px",
+                                  height: "50px",
+                                  width: "130px",
+                                  fontSize: "16px",
+                                  fontWeight: "bold",
+                                }}
+                                onClick={handleGoToReply}
+                              >
+                                Go to Reply
+                              </button>
+                            )}
                           {formatUnderscoredString(complainDetails.status) !==
                             "Resolved" && (
-                            <button
-                              className={`btn ${
-                                userPersonalizationData?.buttonsAndBarsColor ==
-                                null
+                              <button
+                                className={`btn ${userPersonalizationData?.buttonsAndBarsColor ==
+                                  null
                                   ? "btn-primary"
                                   : ""
-                              }`}
-                              style={{
-                                color: "white",
-                                backgroundColor: `${
-                                  userPersonalizationData !== null &&
-                                  userPersonalizationData?.buttonsAndBarsColor
-                                }`,
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                padding: "2px 0px",
-                                margin: "0px 0px",
-                                height: "50px",
-                                width: "130px",
-                                fontSize: "16px",
-                                fontWeight: "bold",
-                              }}
-                              onClick={handleEdit}
-                            >
-                              {isEdit ? "Save" : "Edit"}
-                            </button>
-                          )}
+                                  }`}
+                                style={{
+                                  color: "white",
+                                  backgroundColor: `${userPersonalizationData !== null &&
+                                    userPersonalizationData?.buttonsAndBarsColor
+                                    }`,
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                  padding: "2px 0px",
+                                  margin: "0px 0px",
+                                  height: "50px",
+                                  width: "130px",
+                                  fontSize: "16px",
+                                  fontWeight: "bold",
+                                }}
+                                onClick={handleEdit}
+                              >
+                                {isEdit ? "Save" : "Edit"}
+                              </button>
+                            )}
                         </div>
                       </div>
                     </div>

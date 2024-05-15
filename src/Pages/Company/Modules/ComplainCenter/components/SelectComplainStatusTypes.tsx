@@ -24,8 +24,8 @@ const SelectComplainStatusTypes: React.FC<PropTypes> = ({ priority, status, setS
     }, []);
     return (
         <Select
-            value={priority == "GENERAL" ? "RESOLVED" : status}
-            disabled={priority == "GENERAL"}
+            value={priority == "GENERAL" ? "RESOLVED" : "NEW"}
+            disabled={true}
             showSearch
             style={{ width: "100%", height: 36 }}
             placeholder="Select Complain Status Type"

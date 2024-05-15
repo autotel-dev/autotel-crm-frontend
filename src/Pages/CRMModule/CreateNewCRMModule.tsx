@@ -4,7 +4,7 @@ import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Button, FormGroup, Modal, ModalBody, Row } from "reactstrap";
 import { Cancel } from "../../utils/Constant";
-import { H3, P } from "../../AbstractElements";
+import { H3, H4, P } from "../../AbstractElements";
 import { create, getAll } from "../../Api";
 import { useDispatch, useSelector } from "react-redux";
 import { Type } from "../Countries/CountryTypes/CountryTypes";
@@ -152,7 +152,7 @@ const CreateNewCRMModule = () => {
         </button>
         <Modal isOpen={addModal} toggle={addToggle} size="md" centered>
           <div className="modal-header">
-            <H3 className="modal-title">Add CRM Module</H3>
+            <H4 className="modal-title">Add CRM Module</H4>
             <Button
               color="transprant"
               className="btn-close"

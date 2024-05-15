@@ -24,6 +24,7 @@ import { setNoDataFound } from "../../ReaduxToolkit/Reducer/NoDataFoundSlice";
 import Loader from "../Loader/Loader";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
+import H7 from "../../CommonElements/Headings/H7Element";
 
 const PackageList = () => {
   const { packages, loading, error, id, activeInActivePackages } = useSelector(
@@ -260,17 +261,22 @@ const PackageList = () => {
                       </table>
                     </div>
                   ) : (
-                    <div
-                      style={{
-                        textAlign: "center",
-                        fontSize: "25px",
-                        fontWeight: "bold",
-                      }}
-                    >
-                      {activeInActivePackages !== "All"
+                    // <div
+                    //   style={{
+                    //     textAlign: "center",
+                    //     fontSize: "25px",
+                    //     fontWeight: "bold",
+                    //   }}
+                    // >
+                      // {activeInActivePackages !== "All"
+                      //   ? activeInActivePackages
+                      //   : "No Packages Found"}
+                    // </div>
+                    <H7>
+                        {activeInActivePackages !== "All"
                         ? activeInActivePackages
                         : "No Packages Found"}
-                    </div>
+                    </H7>
                   )}
                 </div>
                 <UpdatePackage

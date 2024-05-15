@@ -9,6 +9,7 @@ const initialState = {
     complainCenterStatistics: [],
     complainCenterRoles: [],
     tableRow: null,
+    filteredRole: null,
     complainDetails: null,
     createComplainModalData: null,
     loading: false,
@@ -41,6 +42,9 @@ const ComplainCenterSlice = createSlice({
         setTableRow: (state, action) => {
             state.tableRow = action.payload;
         },
+        setFilteredRole: (state, action) => {
+            state.filteredRole = action.payload;
+        },
         setComplainDetails: (state, action) => {
             state.complainDetails = action.payload;
         },
@@ -70,7 +74,7 @@ const ComplainCenterSlice = createSlice({
     },
 });
 export const {
-    setAllComplains, setComplainTypesList, setComplainStatusTypes, setComplainPriorityTypes, setTableRow, setComplainDetails, setComplainCenterStatistics, setComplainCenterRoles, setComplainRoleSelection, setComplainCenterStart, setComplainCenterEnd, setCreateComplainModalData, setNoComplainsFound, setIsConnected
+    setAllComplains, setComplainTypesList, setComplainStatusTypes, setComplainPriorityTypes, setTableRow, setFilteredRole, setComplainDetails, setComplainCenterStatistics, setComplainCenterRoles, setComplainRoleSelection, setComplainCenterStart, setComplainCenterEnd, setCreateComplainModalData, setNoComplainsFound, setIsConnected
 } = ComplainCenterSlice.actions;
 
 export default ComplainCenterSlice.reducer;

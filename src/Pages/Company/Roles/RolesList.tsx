@@ -28,7 +28,8 @@ import {
 import { setOperatorsEnd } from "../../../ReaduxToolkit/Reducer/OperatorSlice";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
-import { H4 } from "../../../AbstractElements";
+import { H4, H5 } from "../../../AbstractElements";
+import H7 from "../../../CommonElements/Headings/H7Element";
 
 const RolesList = () => {
   const { roles, activeInActiveRoles, loading } = useSelector(
@@ -222,17 +223,22 @@ const RolesList = () => {
                     </table>
                   </div>
                 ) : (
-                  <div
-                    style={{
-                      textAlign: "center",
-                      fontSize: "25px",
-                      fontWeight: "bold",
-                    }}
-                  >
+                  // <div
+                  //   style={{
+                  //     textAlign: "center",
+                  //     fontSize: "25px",
+                  //     fontWeight: "bold",
+                  //   }}
+                  // >
+                  // {activeInActiveRoles !== "All"
+                  //   ? activeInActiveRoles
+                  //   : "No Roles Found"}
+                  // </div>
+                  <H7>
                     {activeInActiveRoles !== "All"
                       ? activeInActiveRoles
                       : "No Roles Found"}
-                  </div>
+                  </H7>
                 )}
 
                 {/* )} */}

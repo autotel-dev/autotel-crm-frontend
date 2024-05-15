@@ -11,7 +11,7 @@ import {
   Row,
 } from "reactstrap";
 import SVG from "../../../utils/CommonSvgIcon/SVG";
-import { H3, H5, P, Image, LI, UL } from "../../../AbstractElements";
+import { H3, H4, P, Image, LI, UL } from "../../../AbstractElements";
 import { boxesData1, boxesData2, operatorPerformanceData } from "./GeneralData";
 
 import { Link } from "react-router-dom";
@@ -443,7 +443,7 @@ const General = () => {
                             justifyContent: "space-between",
                           }}
                         >
-                          <H5>Total Operators</H5>
+                          <H4>Total Operators</H4>
                           <div
                             style={{
                               padding: "6px",
@@ -543,7 +543,7 @@ const General = () => {
                             justifyContent: "space-between",
                           }}
                         >
-                          <H5>Total Servers</H5>
+                          <H4>Total Servers</H4>
                           <div
                             style={{
                               padding: "6px",
@@ -653,7 +653,7 @@ const General = () => {
                         justifyContent: "space-between",
                       }}
                     >
-                      <H5 className="m-0">Operator Performance</H5>
+                      <H4 className="m-0">Operator Performance</H4>
                       <div>
                         <div
                           style={{
@@ -1200,7 +1200,7 @@ const General = () => {
                                   alignItems: "center",
                                 }}
                               >
-                                <H5>
+                                <H4>
                                   {operatorPerformance?.totalAlertEventsOfCompany ==
                                     0
                                     ? 0
@@ -1210,7 +1210,7 @@ const General = () => {
                                       100
                                     ).toFixed(0)}
                                   %
-                                </H5>
+                                </H4>
                                 <Fragment key={index}>
                                   <Progress
                                     value={
@@ -1305,7 +1305,7 @@ const General = () => {
                             justifyContent: "space-between",
                           }}
                         >
-                          <H5>Package Expiry - Days</H5>
+                          <H4>Package Expiry - Days</H4>
                           <div
                             style={{
                               padding: "6px",
@@ -1393,7 +1393,7 @@ const General = () => {
                             justifyContent: "space-between",
                           }}
                         >
-                          <H5>Total Leads</H5>
+                          <H4>Total Leads</H4>
                           <div
                             style={{
                               padding: "6px",
@@ -1580,7 +1580,7 @@ export default General;
 //               /> */}
 //               <div style={{ display: "flex", flexDirection: "column" }}>
 //                 <Link className="ms-2" to={Href}>
-//                   <H5>{data.title}</H5>
+//                   <H4>{data.title}</H4>
 //                   <span>{data.subTitle}</span>
 //                 </Link>
 //               </div>
@@ -1608,7 +1608,7 @@ export default General;
 //                 alignItems: "center",
 //               }}
 //             >
-//               <H5>50%</H5>
+//               <H4>50%</H4>
 //               <Fragment>
 //                 <Progress
 //                   value={50}
@@ -1645,7 +1645,7 @@ export default General;
 //             <td>
 //               <div className="d-flex">
 //                 <div className="flex-grow-1">
-//                   <H5>Device Name</H5>
+//                   <H4>Device Name</H4>
 //                   <div style={{ fontSize: "10px" }}>Date</div>
 
 //                   <div style={{ fontSize: "10px" }}>Time</div>
