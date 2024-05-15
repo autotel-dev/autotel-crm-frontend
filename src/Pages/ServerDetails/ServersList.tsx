@@ -26,6 +26,7 @@ import ChangePasswordModal from "./components/ChangePasswordModal";
 import { header } from "../../Api/header";
 import axios from "axios";
 import Swal from "sweetalert2";
+import H7 from "../../CommonElements/Headings/H7Element";
 
 const ServersList = () => {
   const { servers, loading, error, id, activeInActiveServers } = useSelector(
@@ -277,17 +278,22 @@ const ServersList = () => {
                       </table>
                     </div>
                   ) : (
-                    <div
-                      style={{
-                        textAlign: "center",
-                        fontSize: "25px",
-                        fontWeight: "bold",
-                      }}
-                    >
-                      {activeInActiveServers !== "All"
+                    // <div
+                    //   style={{
+                    //     textAlign: "center",
+                    //     fontSize: "25px",
+                    //     fontWeight: "bold",
+                    //   }}
+                    // >
+                      // {activeInActiveServers !== "All"
+                      //   ? activeInActiveServers
+                      //   : "No Servers Found"}
+                    // </div>
+                    <H7>
+                         {activeInActiveServers !== "All"
                         ? activeInActiveServers
                         : "No Servers Found"}
-                    </div>
+                    </H7>
                   )}
                 </div>
 

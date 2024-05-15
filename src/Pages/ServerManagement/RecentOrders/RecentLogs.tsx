@@ -25,7 +25,7 @@ const RecentLogs = () => {
     <Card className="invoice-card">
       <CardHeader className="pb-0">
         <div style={{ display: "flex", justifyContent: "space-between" }}>
-          <H3>Recent logs</H3>
+          <H4>Recent logs</H4>
           <Link
             to={`${process.env.PUBLIC_URL}/super-admin/setup/server_management/AllLogs`}
           >

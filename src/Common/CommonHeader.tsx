@@ -20,7 +20,7 @@ const CommonHeader = ({
 }: PropsTypes) => {
   return (
     <CardHeader className={headClass}>
-      <H3 className="mb-0">{title}</H3>
+      <H4 className="mb-0">{title}</H4>
       {subTitle && (
         <P className="f-m-light mt-1">
           {subTitle.map((data, index) => (

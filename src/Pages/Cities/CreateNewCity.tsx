@@ -7,7 +7,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { Button, FormGroup, Label, Modal, ModalBody, Row } from "reactstrap";
 import { Cancel } from "../../utils/Constant";
 import { CheckCircle } from "react-feather";
-import { H3, P } from "../../AbstractElements";
+import { H3, H4, P } from "../../AbstractElements";
 import { CitiesType } from "./CityTypes/CityTypes";
 import { create, getAll } from "../../Api";
 import { useDispatch, useSelector } from "react-redux";
@@ -173,7 +173,7 @@ const CreateNewCity = () => {
         </button>
         <Modal isOpen={addModal} toggle={addToggle} size="md" centered>
           <div className="modal-header">
-            <H3 className="modal-title">Add City</H3>
+            <H4 className="modal-title">Add City</H4>
             <Button
               color="transprant"
               className="btn-close"
