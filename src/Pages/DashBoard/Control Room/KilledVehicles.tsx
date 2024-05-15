@@ -21,7 +21,7 @@ import {
 
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { H3, H4, H5, P } from "../../../AbstractElements";
+import { H3, H4, P } from "../../../AbstractElements";
 
 import { getAll } from "../../../Api";
 import { setKilledDevices } from "../../../ReaduxToolkit/Reducer/AlertsSlice";
@@ -230,9 +230,9 @@ const KilledVehicles: React.FC<PropsTypes> = ({ fromDate, toDate }) => {
                 }}
               >
                 <div className="header-top">
-                  <H5 className="m-0">
+                  <H4 className="m-0">
                     Killed Vehicles ({killedDevices.length})
-                  </H5>
+                  </H4>
                 </div>
               </CardHeader>
               <Row style={{ marginTop: "20px" }}>

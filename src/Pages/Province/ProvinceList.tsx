@@ -22,6 +22,7 @@ import { setNoDataFound } from "../../ReaduxToolkit/Reducer/NoDataFoundSlice";
 import Loader from "../Loader/Loader";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
+import H7 from "../../CommonElements/Headings/H7Element";
 
 const ProvinceList = () => {
   const { provinces, loading, error, id, value, activeInActiveProvinces } =
@@ -246,17 +247,23 @@ const ProvinceList = () => {
                       </table>
                     </div>
                   ) : (
-                    <div
-                      style={{
-                        textAlign: "center",
-                        fontSize: "25px",
-                        fontWeight: "bold",
-                      }}
-                    >
+                    // <div
+                    //   style={{
+                    //     textAlign: "center",
+                    //     fontSize: "25px",
+                    //     fontWeight: "bold",
+                    //   }}
+                    // >
+                    // {activeInActiveProvinces !== "All"
+                    //   ? activeInActiveProvinces
+                    //   : "No Provinces Found"}
+                    // </div>
+                    <H7>
+                      {" "}
                       {activeInActiveProvinces !== "All"
                         ? activeInActiveProvinces
                         : "No Provinces Found"}
-                    </div>
+                    </H7>
                   )}
                 </div>
                 <UpdateProvince

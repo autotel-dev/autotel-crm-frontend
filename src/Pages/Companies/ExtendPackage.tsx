@@ -10,7 +10,7 @@ import {
   Row,
 } from "reactstrap";
 import { Cancel } from "../../utils/Constant";
-import { H3 } from "../../AbstractElements";
+import { H3, H4 } from "../../AbstractElements";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { API_BASE_URL, getAll, update } from "../../Api";
@@ -202,7 +202,7 @@ const ExtendPackage: React.FC<PropsTypes> = ({
       }}
     >
       <div className="modal-header">
-        <H3 className="modal-title">Extend Package Days</H3>
+        <H4 className="modal-title">Extend Package Days</H4>
         <Button
           color="transprant"
           className="btn-close"

@@ -12,7 +12,7 @@ import {
 } from "reactstrap";
 import { BalanceOverviews } from "../../../utils/Constant";
 import ReactApexChart from "react-apexcharts";
-import { H3, H5, P } from "../../../AbstractElements";
+import { H3, H4, P } from "../../../AbstractElements";
 import { ApexOptions } from "apexcharts";
 import CommonHeader from "../../../Common/CommonHeader";
 import { useDispatch, useSelector } from "react-redux";
@@ -191,7 +191,7 @@ const AlertsPending = () => {
       <Card>
         <CardHeader className="pb-0">
           <div className="header-top">
-            <H5 className="m-0">Alerts Pending ({alertsPending.length})</H5>
+            <H4 className="m-0">Alerts Pending ({alertsPending.length})</H4>
           </div>
         </CardHeader>
         <CardBody>

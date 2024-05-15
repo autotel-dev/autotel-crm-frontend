@@ -21,6 +21,7 @@ import UpdateCountry from "./UpdateCountry";
 import Loader from "../Loader/Loader";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
+import H7 from "../../CommonElements/Headings/H7Element";
 
 const CountriesList = () => {
   const { countries, loading, id, activeInActiveCountries } = useSelector(
@@ -224,17 +225,23 @@ const CountriesList = () => {
                     </table>
                   </div>
                 ) : (
-                  <div
-                    style={{
-                      textAlign: "center",
-                      fontSize: "25px",
-                      fontWeight: "bold",
-                    }}
-                  >
+                  // <div
+                  //   style={{
+                  //     textAlign: "center",
+                  //     fontSize: "25px",
+                  //     fontWeight: "bold",
+                  //   }}
+                  // >
+                    // {activeInActiveCountries !== "All"
+                    //   ? activeInActiveCountries
+                    //   : "No Counties Found"}
+                  // </div>
+                  <H7>
                     {activeInActiveCountries !== "All"
                       ? activeInActiveCountries
                       : "No Counties Found"}
-                  </div>
+
+                  </H7>
                 )}
 
                 {/* )} */}

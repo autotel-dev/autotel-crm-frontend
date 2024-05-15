@@ -1,7 +1,7 @@
 import { Nav, NavItem, NavLink } from "reactstrap";
 import { BusinessFormCommonProps } from "../../../../Types/Forms/FormLayout/FormWizardTypes";
 import { customHorizontalWizardNavData } from "../../../../Data/Forms/FormsLayout/FormWizardData";
-import { H3 } from "../../../../AbstractElements";
+import { H3, H4 } from "../../../../AbstractElements";
 import { NavData } from "./NavData";
 import { useSelector } from "react-redux";
 
@@ -63,7 +63,7 @@ const NavComponent = ({
                 />
               </div>
               <div className="horizontal-wizard-content">
-                <H3>{data.tittle}</H3>
+                <H4>{data.tittle}</H4>
               </div>
             </div>
           </NavLink>

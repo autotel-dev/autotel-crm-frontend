@@ -10,7 +10,7 @@ import {
   Row,
 } from "reactstrap";
 import { Cancel } from "../../utils/Constant";
-import { H3, P } from "../../AbstractElements";
+import { H3, H4, P } from "../../AbstractElements";
 import { CitiesType } from "./CityTypes/CityTypes";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -183,7 +183,7 @@ const UpdateCity: React.FC<PropsTypes> = ({
       }}
     >
       <div className="modal-header">
-        <H3 className="modal-title">Update City</H3>
+        <H4 className="modal-title">Update City</H4>
         <Button
           color="transprant"
           className="btn-close"

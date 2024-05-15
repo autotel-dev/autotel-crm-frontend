@@ -24,6 +24,7 @@ import {
   setIsConnected,
   setComplainTypePriorities,
 } from "../../ReaduxToolkit/Reducer/ComplainsTypeSlice";
+import H7 from "../../CommonElements/Headings/H7Element";
 
 const ComplainTypeList = () => {
   const { complainTypes, loading, id, activeInActiveComplainTypes } =
@@ -233,17 +234,22 @@ const ComplainTypeList = () => {
                     </table>
                   </div>
                 ) : (
-                  <div
-                    style={{
-                      textAlign: "center",
-                      fontSize: "25px",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    {activeInActiveComplainTypes !== "All"
+                  // <div
+                  //   style={{
+                  //     textAlign: "center",
+                  //     fontSize: "25px",
+                  //     fontWeight: "bold",
+                  //   }}
+                  // >
+                    // {activeInActiveComplainTypes !== "All"
+                    //   ? activeInActiveComplainTypes
+                    //   : "No Complain Types Found"}
+                  // </div>
+                  <H7>
+                       {activeInActiveComplainTypes !== "All"
                       ? activeInActiveComplainTypes
                       : "No Complain Types Found"}
-                  </div>
+                  </H7>
                 )}
 
                 {/* )} */}

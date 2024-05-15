@@ -21,6 +21,7 @@ import UpdateCRMModule from "./UpdateCRMModule";
 import Loader from "../Loader/Loader";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
+import H7 from "../../CommonElements/Headings/H7Element";
 
 const CRMModuleList = () => {
   const { crmModules, loading, id, activeInActiveModules } = useSelector(
@@ -240,17 +241,22 @@ const CRMModuleList = () => {
                       </table>
                     </div>
                   ) : (
-                    <div
-                      style={{
-                        textAlign: "center",
-                        fontSize: "25px",
-                        fontWeight: "bold",
-                      }}
-                    >
+                    // <div
+                    //   style={{
+                    //     textAlign: "center",
+                    //     fontSize: "25px",
+                    //     fontWeight: "bold",
+                    //   }}
+                    // >
+                      // {activeInActiveModules !== "All"
+                      //   ? activeInActiveModules
+                      //   : "No Modules Found"}
+                    // </div>
+                    <H7>
                       {activeInActiveModules !== "All"
                         ? activeInActiveModules
                         : "No Modules Found"}
-                    </div>
+                    </H7>
                   )}
 
                   {/* )} */}

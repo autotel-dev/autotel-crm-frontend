@@ -1088,70 +1088,125 @@ const TicketDetails = () => {
                               <div></div>
                               <div style={{ display: "flex" }}>
                                 {getUserRole() === ROLES.SUPER_ADMIN && (
-                                  <button
-                                    className={`btn ${
-                                      userPersonalizationData?.buttonsAndBarsColor ==
-                                      null
-                                        ? "btn-primary"
-                                        : ""
-                                    }`}
-                                    disabled={
-                                      formatUnderscoredString(
-                                        ticketDetails.status
-                                      ) === "Resolved"
-                                    }
-                                    style={{
-                                      color: "white",
-                                      backgroundColor: `${
-                                        userPersonalizationData !== null &&
-                                        userPersonalizationData?.buttonsAndBarsColor
-                                      }`,
-                                      display: "flex",
-                                      alignItems: "center",
-                                      justifyContent: "center",
-                                      padding: "5px 20px",
-                                      margin: "0px 15px",
-                                      height: "50px",
-                                      width: "auto",
-                                      fontSize: "18px",
-                                      fontWeight: "bold",
-                                    }}
-                                    onClick={() => {
-                                      Swal.fire({
-                                        title: "Complete Alert",
-                                        text: "Are you sure , you want to complete this ticket",
-                                        icon: "warning",
-                                        showCancelButton: true,
-                                      }).then(async (result) => {
-                                        if (result.isConfirmed) {
-                                          try {
-                                            Swal.fire({
-                                              text: "Loading...",
-                                              icon: "info",
-                                              // timer: 2000,
-                                              showCancelButton: false,
-                                              showConfirmButton: false,
-                                            });
-                                            handleResolved();
-                                            // Handle successful post creation (e.g., show a success message, redirect, etc.)
-                                          } catch (error) {
-                                            // Handle error (e.g., show an error message)
-                                            // console.error(
-                                            //   "Error creating post:",
-                                            //   error
-                                            // );
-                                            // loading false
-                                          }
-                                        }
-                                      });
-                                    }}
-                                  >
-                                    {formatUnderscoredString(
-                                      ticketDetails.status
-                                    ) === "Resolved"
-                                      ? "Completed"
-                                      : "Complete"}
-                                  </button>
+                                 <button
+                                 className={`btn ${
+                                   userPersonalizationData?.buttonsAndBarsColor == null
+                                     ? "btn-primary"
+                                     : ""
+                                 }`}
+                                 disabled={
+                                   formatUnderscoredString(ticketDetails.status) === "Resolved" ||
+                                   replyText.length === 0 // Condition to disable when replyText is empty
+                                 }
+                                 style={{
+                                   color: "white",
+                                   backgroundColor: `${
+                                     userPersonalizationData !== null &&
+                                     userPersonalizationData?.buttonsAndBarsColor
+                                   }`,
+                                   display: "flex",
+                                   alignItems: "center",
+                                   justifyContent: "center",
+                                   padding: "5px 20px",
+                                   margin: "0px 15px",
+                                   height: "50px",
+                                   width: "auto",
+                                   fontSize: "18px",
+                                   fontWeight: "bold",
+                                 }}
+                                 onClick={() => {
+                                   Swal.fire({
+                                     title: "Complete Alert",
+                                     text: "Are you sure you want to complete this ticket?",
+                                     icon: "warning",
+                                     showCancelButton: true,
+                                   }).then(async (result) => {
+                                     if (result.isConfirmed) {
+                                       try {
+                                         Swal.fire({
+                                           text: "Loading...",
+                                           icon: "info",
+                                           showCancelButton: false,
+                                           showConfirmButton: false,
+                                         });
+                                         handleResolved();
+                                       } catch (error) {
+                                         // Handle error
+                                       }
+                                     }
+                                   });
+                                 }}
+                               >
+                                 {formatUnderscoredString(ticketDetails.status) === "Resolved"
+                                   ? "Completed"
+                                   : "Complete"}
+                               </button>
+                               
+                                 // <button
+                                  //   className={`btn ${
+                                  //     userPersonalizationData?.buttonsAndBarsColor ==
+                                  //     null
+                                  //       ? "btn-primary"
+                                  //       : ""
+                                  //   }`}
+                                  //   disabled={
+                                  //     formatUnderscoredString(
+                                  //       ticketDetails.status
+                                  //     ) === "Resolved"
+                                  //   }
+                                  //   style={{
+                                  //     color: "white",
+                                  //     backgroundColor: `${
+                                  //       userPersonalizationData !== null &&
+                                  //       userPersonalizationData?.buttonsAndBarsColor
+                                  //     }`,
+                                  //     display: "flex",
+                                  //     alignItems: "center",
+                                  //     justifyContent: "center",
+                                  //     padding: "5px 20px",
+                                  //     margin: "0px 15px",
+                                  //     height: "50px",
+                                  //     width: "auto",
+                                  //     fontSize: "18px",
+                                  //     fontWeight: "bold",
+                                  //   }}
+                                  //   onClick={() => {
+                                  //     Swal.fire({
+                                  //       title: "Complete Alert",
+                                  //       text: "Are you sure , you want to complete this ticket",
+                                  //       icon: "warning",
+                                  //       showCancelButton: true,
+                                  //     }).then(async (result) => {
+                                  //       if (result.isConfirmed) {
+                                  //         try {
+                                  //           Swal.fire({
+                                  //             text: "Loading...",
+                                  //             icon: "info",
+                                  //             // timer: 2000,
+                                  //             showCancelButton: false,
+                                  //             showConfirmButton: false,
+                                  //           });
+                                  //           handleResolved();
+                                  //           // Handle successful post creation (e.g., show a success message, redirect, etc.)
+                                  //         } catch (error) {
+                                  //           // Handle error (e.g., show an error message)
+                                  //           // console.error(
+                                  //           //   "Error creating post:",
+                                  //           //   error
+                                  //           // );
+                                  //           // loading false
+                                  //         }
+                                  //       }
+                                  //     });
+                                  //   }}
+                                    
+                                  // >
+                                  //   {formatUnderscoredString(
+                                  //     ticketDetails.status
+                                  //   ) === "Resolved"
+                                  //     ? "Completed"
+                                  //     : "Complete"}
+                                  // </button>
                                 )}
                                 {/* <button
                                   className={`btn ${
