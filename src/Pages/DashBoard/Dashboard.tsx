@@ -106,36 +106,38 @@ const Dashboard = () => {
     dispatch(setLiveAlerts([]));
     dispatch(setLiveAlertsData(null));
 
-    getAll({ url: "company/alert-events?pageNo=1" }).then((data: any) => {
-      if (data == undefined) {
-        dispatch(setLiveAlerts([]));
-        dispatch(setLiveAlertsData(null));
-      }
-      if (data !== undefined) {
-        if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
-          dispatch(setIsConnected(true));
-        }
-        if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
-          Swal.fire({
-            text: `${data.message}`,
-            icon: "error",
-            timer: 2000,
-            showConfirmButton: false,
-          });
-        }
-        if (data.success) {
-          // // console.log("length --- >", data.data.allAlertEvents.length);
-
-          dispatch(setLiveAlerts(data.data.allAlertEvents));
-          dispatch(setLiveAlertsData(data.data));
-        }
-        if (!data.success) {
-          // // console.log("length --- >", data.data.allAlertEvents.length);
+    if (getUserRole() == "COMPANY") {
+      getAll({ url: "company/alert-events?pageNo=1" }).then((data: any) => {
+        if (data == undefined) {
           dispatch(setLiveAlerts([]));
-          dispatch(setLiveAlertsData([]));
+          dispatch(setLiveAlertsData(null));
         }
-      }
-    });
+        if (data !== undefined) {
+          if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
+            dispatch(setIsConnected(true));
+          }
+          if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
+            Swal.fire({
+              text: `${data.message}`,
+              icon: "error",
+              timer: 2000,
+              showConfirmButton: false,
+            });
+          }
+          if (data.success) {
+            // // console.log("length --- >", data.data.allAlertEvents.length);
+
+            dispatch(setLiveAlerts(data.data.allAlertEvents));
+            dispatch(setLiveAlertsData(data.data));
+          }
+          if (!data.success) {
+            // // console.log("length --- >", data.data.allAlertEvents.length);
+            dispatch(setLiveAlerts([]));
+            dispatch(setLiveAlertsData([]));
+          }
+        }
+      });
+    }
 
     if (getUserRole() == ROLES.COMPANY) {
       getAll({ url: "company/dashboard/alerts-overview" }).then((data: any) => {
@@ -184,7 +186,7 @@ const Dashboard = () => {
             setTimeout(() => {
               dispatch(setAlertsOverview(alertsOverview));
             }, 500)
-            
+
             dispatch(setAlertsPending(data.data.allPendingAlerts));
             setTimeout(() => {
               setAlertsOverviewLoading(false);

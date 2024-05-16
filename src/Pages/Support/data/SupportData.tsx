@@ -115,20 +115,21 @@ export const supportColumns = [
           borderRadius: "5px",
           backgroundColor:
             row.status === "NEW"
-              ? "rgba(0, 0, 255, 0.1)"
+              ? "rgba(0, 0, 255, 0.3)"
               : row.status === "IN_PROGRESS"
-              ? "rgba(255, 165, 0, 0.1)"
-              : row.status === "PENDING"
-              ? "rgba(255, 0, 0, 0.1)"
-              : "rgba(0, 255, 0, 0.1)",
-          color:
-            row.status === "NEW"
-              ? "blue"
-              : row.status === "IN_PROGRESS"
-              ? "orange"
-              : row.status === "PENDING"
-              ? "red"
-              : "green",
+                ? "rgba(255, 165, 0, 0.3)"
+                : row.status === "PENDING"
+                  ? "rgba(255, 0, 0, 0.3)"
+                  : "rgba(0, 255, 0, 0.3)",
+          // color:
+          //   row.status === "NEW"
+          //     ? "blue"
+          //     : row.status === "IN_PROGRESS"
+          //     ? "orange"
+          //     : row.status === "PENDING"
+          //     ? "red"
+          //     : "green",
+          color: "black"
         }}
       >
         {formatUnderscoredString(row.status)}
@@ -150,16 +151,17 @@ export const supportColumns = [
           borderRadius: "5px",
           backgroundColor:
             row.priorty === "LOW"
-              ? "rgba(0, 255, 0, 0.1)"
+              ? "rgba(0, 255, 0, 0.3)"
               : row.priorty === "HIGH"
-              ? "rgba(255, 0, 0, 0.1)"
-              : "rgba(255, 200, 0, 0.1)",
-          color:
-            row.priorty === "LOW"
-              ? "green"
-              : row.priorty === "HIGH"
-              ? "red"
-              : "orange",
+                ? "rgba(255, 0, 0, 0.3)"
+                : "rgba(255, 200, 0, 0.3)",
+          // color:
+          //   row.priorty === "LOW"
+          //     ? "green"
+          //     : row.priorty === "HIGH"
+          //     ? "red"
+          //     : "orange",
+          color: "black"
         }}
       >
         {formatUnderscoredString(row.priorty)}
