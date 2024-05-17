@@ -8,6 +8,7 @@ import {
   Form,
   FormGroup,
   Input,
+  Label,
   Row,
 } from "reactstrap";
 import Breadcrumbs from "../../CommonElements/Breadcrumbs/Breadcrumbs";
@@ -16,7 +17,7 @@ import { Select } from "antd";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import TestEmailModal from "./modals/TestEmailModal";
-import { create, getAll, update } from "../../Api";
+import { create, getAll, patch, update } from "../../Api";
 import Swal from "sweetalert2";
 import {
   setEmailGatewayData,
@@ -40,7 +41,7 @@ const EmailGateway = () => {
   ];
 
   const SMTPSecurityList: any = [
-    { value: `No`, label: `No` },
+    { value: `NO`, label: `No` },
     { value: `SSL`, label: `SSL` },
     { value: `TLS`, label: `TLS` },
   ];
@@ -52,9 +53,12 @@ const EmailGateway = () => {
     useState<any>(false);
   const [undefinedData, setUndefinedData] = useState<any>(false);
   const [isEdit, setIsEdit] = useState(false);
-  const [fromName, setFromName] = useState<string>(
-    emailGatewayData !== null ? emailGatewayData.fromName : ""
-  );
+
+  useEffect(() => {
+    dispatch(setEmailGatewayData(null));
+    dispatch(setIsConnected(false));
+  }, []);
+  const [fromName, setFromName] = useState<string>();
   const [noReplyEmailAddress, setNoReplyEmailAddress] = useState<string>(
     emailGatewayData !== null ? emailGatewayData.noReplyEmailAddress : ""
   );
@@ -74,23 +78,47 @@ const EmailGateway = () => {
     emailGatewayData !== null ? emailGatewayData.useServerSmtp : true
   );
   const [smtpSecurity, setSmtpSecurity] = useState<string>(
-    emailGatewayData !== null ? emailGatewayData.smtpSecurity : ""
+    emailGatewayData !== null ? emailGatewayData.smtpSecurity : "NO"
   );
-  const [useSmtpAuthentication, setUseSmtpAuthentication] = useState<boolean>(
-    emailGatewayData !== null ? emailGatewayData.useSmtpAuthentication : true
-  );
+
   const [signature, setSignature] = useState<string>(
     emailGatewayData !== null ? emailGatewayData.signature : ""
   );
+  const [isActive, setisActive] = useState<boolean>(
+    emailGatewayData !== null ? emailGatewayData.isActive : false
+  );
 
   useEffect(() => {
-    dispatch(setIsConnected(false));
-  }, []);
+    setFromName(emailGatewayData !== null ? emailGatewayData.fromName : "");
+    setNoReplyEmailAddress(
+      emailGatewayData !== null ? emailGatewayData.noReplyEmailAddress : ""
+    );
+    setSmtpServerHost(
+      emailGatewayData !== null ? emailGatewayData.smtpServerHost : ""
+    );
+    setSmtpServerPort(
+      emailGatewayData !== null ? emailGatewayData.smtpServerPort : ""
+    );
+    setSmtpSecurity(
+      emailGatewayData !== null ? emailGatewayData.smtpSecurity : "NO"
+    );
+    setSmtpUsername(
+      emailGatewayData !== null ? emailGatewayData.smtpUsername : ""
+    );
+    setSmtpPassword(
+      emailGatewayData !== null ? emailGatewayData.smtpPassword : ""
+    );
+    setUseServerSmtp(
+      emailGatewayData !== null ? emailGatewayData.useServerSmtp : true
+    );
+    setSignature(emailGatewayData !== null ? emailGatewayData.signature : "");
+    setisActive(emailGatewayData !== null ? emailGatewayData.isActive : false);
+  }, [emailGatewayData]);
   useEffect(() => {
     getAll({
       url: "gateway/email-gateway/get-gateway",
     }).then((parentData: any) => {
-      console.log("api call --- >", parentData);
+      // console.log("api call --- >", parentData);
 
       if (parentData !== undefined) {
         if (
@@ -109,10 +137,12 @@ const EmailGateway = () => {
           setLoading(false);
           setUndefinedData(false);
           dispatch(setEmailGatewayData(null));
+         
         }
         if (parentData.success) {
           dispatch(setEmailGatewayData(parentData.data.emailGateway));
           setUndefinedData(false);
+
           setLoading(false);
         }
       }
@@ -131,7 +161,7 @@ const EmailGateway = () => {
       smtpPassword: smtpPassword,
       useServerSmtp: useServerSmtp,
       smtpSecurity: smtpSecurity,
-      useSmtpAuthentication: useSmtpAuthentication,
+      useSmtpAuthentication: true,
       signature: signature,
     };
 
@@ -167,7 +197,7 @@ const EmailGateway = () => {
                 showConfirmButton: false,
               });
               setEmailGatewayCreationloading(false);
-              setIsEdit(!isEdit);
+              // setIsEdit(!isEdit);
             }
             if (data.success) {
               getAll({
@@ -251,9 +281,9 @@ const EmailGateway = () => {
 
                 if (parentData !== undefined) {
                   if (parentData.success) {
-                    dispatch(setEmailGatewayData(parentData.data));
+                    dispatch(setEmailGatewayData(parentData.data.emailGateway));
                     setEmailGatewayCreationloading(false);
-                    setIsEdit(!isEdit);
+                    // setIsEdit(!isEdit);
                   }
                   if (!parentData.success) {
                     setEmailGatewayCreationloading(false);
@@ -300,6 +330,95 @@ const EmailGateway = () => {
                     </div>
                   ) : (
                     <Row>
+                      {emailGatewayData !== null && (
+                        <Col md={12}>
+                          <div
+                            className="d-flex"
+                            style={{ justifyContent: "end" }}
+                          >
+                            <div
+                              className={`text-end flex-shrink-0 icon-state 
+                            }`}
+                            >
+                              <Label className="switch mb-0">
+                                <Input
+                                  type="checkbox"
+                                  defaultChecked={
+                                    emailGatewayData.isActive
+                                  }
+                                  // value={
+                                  //   emailGatewayData.isActive == true
+                                  //     ? "on"
+                                  //     : "off"
+                                  // }
+                                  onChange={async (e: any) => {
+                                    //  --------------------------
+                                    const changeStatus = {
+                                      isActive: !isActive,
+                                    };
+
+                                    try {
+                                      await patch(changeStatus, {
+                                        url: `gateway/email-gateway/change-gateway-activation-status/${emailGatewayData._id}`,
+                                      }).then((data: any) => {
+                                        if (data.success) {
+                                          // // console.log(data);
+
+                                          getAll({
+                                            url: "gateway/email-gateway/get-gateway",
+                                          }).then((parentData: any) => {
+                                            // console.log("api call --- >", parentData);
+
+                                            if (parentData !== undefined) {
+                                              if (
+                                                !parentData.success &&
+                                                parentData.message ===
+                                                  "ERROR_INTERNET_DISCONNECTED"
+                                              ) {
+                                                dispatch(setIsConnected(true));
+                                              }
+                                              if (!parentData.success) {
+                                                Swal.fire({
+                                                  text: `${parentData.message}`,
+                                                  icon: "error",
+                                                  timer: 2000,
+                                                  showConfirmButton: false,
+                                                });
+
+                                                dispatch(
+                                                  setEmailGatewayData(null)
+                                                );
+                                              }
+                                              if (parentData.success) {
+                                                dispatch(
+                                                  setEmailGatewayData(
+                                                    parentData.data.emailGateway
+                                                  )
+                                                );
+
+                                                
+                                              }
+                                            }
+                                          });
+                                        }
+                                      });
+                                      // Handle successful post creation (e.g., show a success message, redirect, etc.)
+                                    } catch (error) {
+                                      // Handle error (e.g., show an error message)
+                                      // // console.error("Error creating post:", error);
+                                    }
+                                  }}
+                                />
+                                <span
+                                  className={`switch-state ${
+                                    isActive ? "bg-primary" : "bg-secondary"
+                                  }`}
+                                />
+                              </Label>
+                            </div>
+                          </div>
+                        </Col>
+                      )}
                       <Col md={6}>
                         <FormGroup>
                           <P>From Name</P>
@@ -314,66 +433,6 @@ const EmailGateway = () => {
                                 : false
                             }
                             onChange={(e) => setFromName(e.target.value)}
-                          />
-                        </FormGroup>
-                      </Col>
-                      <Col md={6}>
-                        <FormGroup>
-                          <P>Use SMTP Server</P>
-                          <Select
-                            defaultValue={
-                              emailGatewayData !== null
-                                ? useServerSmtp == false
-                                  ? "No"
-                                  : "Yes"
-                                : "Yes"
-                            }
-                            value={
-                              emailGatewayData !== null
-                                ? useServerSmtp == false
-                                  ? "No"
-                                  : "Yes"
-                                : "Yes"
-                            }
-                            showSearch
-                            style={{ width: "100%", height: 36 }}
-                            placeholder="Select Role"
-                            optionFilterProp="children"
-                            filterOption={(input: any, option: any) =>
-                              (option?.label ?? "").includes(input)
-                            }
-                            filterSort={(optionA: any, optionB: any) =>
-                              (optionA?.label ?? "")
-                                .toLowerCase()
-                                .localeCompare(
-                                  (optionB?.label ?? "").toLowerCase()
-                                )
-                            }
-                            onChange={(e, options) => {
-                              console.log(typeof e);
-
-                              setUseServerSmtp(e === "Yes"); // Convert string value to boolean
-                            }}
-                            options={SMTPServerList}
-                          />
-                        </FormGroup>
-                      </Col>
-                      <Col md={6}>
-                        <FormGroup>
-                          <P>No Reply Email Address</P>
-                          <Input
-                            type="text"
-                            placeholder="Enter Email Address here"
-                            defaultValue={noReplyEmailAddress}
-                            value={noReplyEmailAddress}
-                            disabled={
-                              emailGatewayData !== null && !isEdit
-                                ? true
-                                : false
-                            }
-                            onChange={(e) =>
-                              setNoReplyEmailAddress(e.target.value)
-                            }
                           />
                         </FormGroup>
                       </Col>
@@ -394,23 +453,72 @@ const EmailGateway = () => {
                           />
                         </FormGroup>
                       </Col>
-                      <Col md={6}>
-                        <FormGroup>
-                          <P>Signature</P>
-                          <Input
-                            type="text"
-                            placeholder="Enter Signature here"
-                            defaultValue={signature}
-                            value={signature}
+                      {/* <Col md={6}>
+                        <FormGroup> */}
+                      {/* <P>Use SMTP Server</P>
+                          <Select
+                            defaultValue={
+                              emailGatewayData !== null
+                                ? useServerSmtp == false
+                                  ? "No"
+                                  : "Yes"
+                                : "Yes"
+                            }
                             disabled={
                               emailGatewayData !== null && !isEdit
                                 ? true
                                 : false
                             }
-                            onChange={(e) => setSignature(e.target.value)}
+                            value={
+                              emailGatewayData !== null
+                                ? useServerSmtp == false
+                                  ? "No"
+                                  : "Yes"
+                                : "Yes"
+                            }
+                            showSearch
+                            style={{ width: "100%", height: 36}}
+                            placeholder="Select Role"
+                            optionFilterProp="children"
+                            filterOption={(input: any, option: any) =>
+                              (option?.label ?? "").includes(input)
+                            }
+                            filterSort={(optionA: any, optionB: any) =>
+                              (optionA?.label ?? "")
+                                .toLowerCase()
+                                .localeCompare(
+                                  (optionB?.label ?? "").toLowerCase()
+                                )
+                            }
+                            onChange={(e, options) => {
+                              console.log(typeof e);
+
+                              setUseServerSmtp(e === "Yes"); // Convert string value to boolean
+                            }}
+                            options={SMTPServerList}
+                          /> */}
+                      {/* </FormGroup>
+                      </Col> */}
+                      <Col md={6}>
+                        <FormGroup>
+                          <P>No Reply Email Address</P>
+                          <Input
+                            type="text"
+                            placeholder="Enter Email Address here"
+                            defaultValue={noReplyEmailAddress}
+                            value={noReplyEmailAddress}
+                            disabled={
+                              emailGatewayData !== null && !isEdit
+                                ? true
+                                : false
+                            }
+                            onChange={(e) =>
+                              setNoReplyEmailAddress(e.target.value)
+                            }
                           />
                         </FormGroup>
                       </Col>
+
                       <Col md={6}>
                         <FormGroup>
                           <P>SMTP Server Port</P>
@@ -429,8 +537,23 @@ const EmailGateway = () => {
                         </FormGroup>
                       </Col>
                       <Col md={6}>
-                        <FormGroup></FormGroup>
+                        <FormGroup>
+                          <P>Signature</P>
+                          <Input
+                            type="text"
+                            placeholder="Enter Signature here"
+                            defaultValue={signature}
+                            value={signature}
+                            disabled={
+                              emailGatewayData !== null && !isEdit
+                                ? true
+                                : false
+                            }
+                            onChange={(e) => setSignature(e.target.value)}
+                          />
+                        </FormGroup>
                       </Col>
+
                       <Col md={6}>
                         <FormGroup>
                           <P>SMTP Security</P>
@@ -443,7 +566,7 @@ const EmailGateway = () => {
                             }
                             showSearch
                             style={{ width: "100%", height: 36 }}
-                            placeholder="Select Role"
+                            placeholder="Select SMTP Security"
                             optionFilterProp="children"
                             filterOption={(input: any, option: any) =>
                               (option?.label ?? "").includes(input)
@@ -455,6 +578,11 @@ const EmailGateway = () => {
                                   (optionB?.label ?? "").toLowerCase()
                                 )
                             }
+                            disabled={
+                              emailGatewayData !== null && !isEdit
+                                ? true
+                                : false
+                            }
                             onChange={(e, options) => {
                               setSmtpSecurity(e);
                             }}
@@ -462,12 +590,15 @@ const EmailGateway = () => {
                           />
                         </FormGroup>
                       </Col>
-                      <Col md={6}>
+                      {/* <Col md={6}>
                         <FormGroup></FormGroup>
-                      </Col>
+                      </Col> */}
+                      {/* <Col md={6}>
+                        <FormGroup></FormGroup>
+                      </Col> */}
                       <Col md={6}>
                         <FormGroup>
-                          <P>SMTP Authentication</P>
+                          {/* <P>SMTP Authentication</P>
                           <Select
                             defaultValue={
                               emailGatewayData !== null
@@ -501,12 +632,12 @@ const EmailGateway = () => {
                               setUseSmtpAuthentication(e === "Yes");
                             }}
                             options={SMTPAuthenticationList}
-                          />
+                          /> */}
                         </FormGroup>
                       </Col>
-                      <Col md={6}>
+                      {/* <Col md={6}>
                         <FormGroup></FormGroup>
-                      </Col>
+                      </Col> */}
                       {
                         <Col md={6}>
                           <FormGroup>
@@ -516,7 +647,12 @@ const EmailGateway = () => {
                               placeholder="Enter Username here"
                               defaultValue={smtpUsername}
                               value={smtpUsername}
-                              disabled={authentication == "No"}
+                              // disabled={authentication == "No"}
+                              disabled={
+                                emailGatewayData !== null && !isEdit
+                                  ? true
+                                  : false
+                              }
                               onChange={(e) => setSmtpUsername(e.target.value)}
                             />
                           </FormGroup>
@@ -534,7 +670,12 @@ const EmailGateway = () => {
                               placeholder="Enter Password here"
                               defaultValue={smtpPassword}
                               value={smtpPassword}
-                              disabled={authentication == "No"}
+                              // disabled={authentication == "No"}
+                              disabled={
+                                emailGatewayData !== null && !isEdit
+                                  ? true
+                                  : false
+                              }
                               onChange={(e) => setSmtpPassword(e.target.value)}
                             />
                           </FormGroup>
@@ -576,25 +717,60 @@ const EmailGateway = () => {
                             Cancel
                           </Button>
                         )}
-                        <Button
-                          color="primary"
-                          type="submit"
-                          disabled={emailGatewayCreationloading}
-                          onClick={(e) => {
-                            if (isEdit === false && emailGatewayData !== null) {
-                              e.preventDefault();
-                              setIsEdit(true);
-                            }
-                          }}
-                        >
-                          {emailGatewayCreationloading
-                            ? "Loading..."
-                            : emailGatewayData == null
-                            ? "Create"
-                            : isEdit
-                            ? "Save"
-                            : "Edit"}
-                        </Button>
+                        {emailGatewayData == null ||
+                        (emailGatewayData !== null && isActive) ? (
+                          <Button
+                            color="primary"
+                            type="submit"
+                            disabled={emailGatewayCreationloading}
+                            onClick={(e) => {
+                              if (
+                                isEdit === false &&
+                                emailGatewayData !== null
+                              ) {
+                                e.preventDefault();
+                                setIsEdit(true);
+                              }
+                            }}
+                          >
+                            {emailGatewayCreationloading
+                              ? "Loading..."
+                              : emailGatewayData == null
+                              ? "Create"
+                              : isEdit
+                              ? "Save"
+                              : "Edit"}
+                          </Button>
+                        ) : (
+                          <></>
+                        )}
+                        {/* {emailGatewayData == null ||
+                          (emailGatewayData !== null &&
+                            emailGatewayData.isActive && (
+                              <Button
+                                color="primary"
+                                type="submit"
+                                disabled={emailGatewayCreationloading}
+                                onClick={(e) => {
+                                  if (!isEdit && emailGatewayData !== null) {
+                                    e.preventDefault();
+                                    setIsEdit(true);
+                                  }
+                                }}
+                              >
+                                {emailGatewayCreationloading
+                                  ? "Loading..."
+                                  : emailGatewayData == null
+                                  ? "Create"
+                                  : emailGatewayData.isActive
+                                  ? isEdit
+                                    ? "Save"
+                                    : "Edit"
+                                  : isEdit
+                                  ? "Save"
+                                  : "Edit"}
+                              </Button>
+                            ))} */}
                       </CardFooter>
                     </Row>
                   )}
