@@ -701,6 +701,13 @@ const routes = [
     permissionValue: "Roles",
   },
   {
+    path: `${process.env.PUBLIC_URL}/company/setup/email-gateway`,
+    Component: <EmailGateway />,
+    allowedUserRoles: [ROLES.COMPANY],
+    isProtected: true,
+    permissionValue: "EmailGateway",
+  },
+  {
     path: `${process.env.PUBLIC_URL}/company/setup/emailTemplates`,
     Component: <UnderProductionPage />,
     allowedUserRoles: [ROLES.COMPANY],

@@ -285,12 +285,12 @@ const CreateNewUser = () => {
 
                 <FormGroup className="col-md-12 create-group">
                   <div>
-                    <P>Select User Role </P>
+                    <P>Select User Department </P>
                   </div>
                   <Select
                     showSearch
                     style={{ width: 250, height: 36 }}
-                    placeholder="Select Role"
+                    placeholder="Select Department"
                     optionFilterProp="children"
                     filterOption={(input: any, option: any) =>
                       (option?.P ?? "").includes(input)

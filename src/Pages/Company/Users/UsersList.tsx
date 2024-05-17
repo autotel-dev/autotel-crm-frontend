@@ -268,7 +268,7 @@ const UsersList = () => {
                         <tr>
                           <th style={{ width: "10%" }}>ID</th>
                           <th style={{ width: "15%" }}>Name</th>
-                          <th style={{ width: "10%" }}>Role</th>
+                          <th style={{ width: "10%" }}>Department</th>
                           <th style={{ width: "15%" }}>Email Address</th>
                           <th style={{ width: "10%" }}>Account Status</th>
                           {(user?.edit || user?.delete) && <th>Actions</th>}

@@ -860,13 +860,15 @@ const ControlRoomAnalytics = () => {
                                   <div
                                     style={{
                                       display: "flex",
-                                      justifyContent: "start",
+                                      justifyContent: "space-between",
+                                      width:"100%",
                                     }}
                                   >
                                     <div
                                       style={{
                                         fontSize: "14px",
                                         fontWeight: "bold",
+                                        width:"65%",
                                       }}
                                     >
                                       {server?.server?.companyName.slice(0, 21)}
@@ -878,9 +880,10 @@ const ControlRoomAnalytics = () => {
 
                                     <div
                                       style={{
-                                        marginLeft: "5px",
+                                        // marginLeft: "90px",
                                         display: "flex",
                                         alignItems: "center",
+                                        width:"35%",
                                       }}
                                     >
                                       <div
