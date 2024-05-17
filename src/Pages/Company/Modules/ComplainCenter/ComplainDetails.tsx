@@ -17,6 +17,7 @@ import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { IMAGE_BASE_URL, getAll, getImage, patch } from "../../../../Api";
 import Loader from "../../../Loader/Loader";
+import './ComplainDetails.css'
 
 import { Select } from "antd";
 import {
@@ -139,6 +140,20 @@ const ComplainDetails = () => {
   //   }
   // }, []);
 
+  const [isUpdate, setIsUpdate] = useState("");
+  const [statusLoading, setStatusLoading] = useState(true);
+
+  useEffect(() => {
+    // Send the initial state to other tabs when UserDetail mounts
+    window.opener.postMessage(isUpdate, window.location.origin);
+  }, [isUpdate]);
+
+  const handleChangeUpdatedStatus = (newValue: any) => {
+    setIsUpdate(newValue);
+    // Send the updated state to other tabs
+    window.opener.postMessage(newValue, window.location.origin);
+  };
+
   useEffect(() => {
     setLoading(true);
     getAll({
@@ -151,72 +166,56 @@ const ComplainDetails = () => {
           setChangeStatus(data.data.internalComplaint.status);
           setChangePriortyStatus(data.data.internalComplaint.priorty);
           setLoading(false);
-          if (data.data.internalComplaint.status === "NEW") {
-            // console.log("IF");
-            patch(
-              {
-                updatedStatus: "IN_PROGRESS",
-                updatedPriortyStatus: changePriortyStatus,
-                resolvingDate: null,
-              },
-              {
-                url: `complaint-center/update-internal-complaint/${complaintId}`,
-              }
-            ).then((data: any) => {
+          // console.log("data.data.internalComplaint.status", data.data.internalComplaint.status);
 
-              // console.log("api call --- >", data);
-              if (data !== undefined) {
-                if (data.success) {
-                  getAll({
-                    url: `complaint-center/get-internal-complaint/${complaintId}`,
-                  }).then((data: any) => {
-                    // console.log("api call --- >", data);
-                    if (data !== undefined) {
-                      if (data.success) {
-                        dispatch(setComplainDetails(data.data.internalComplaint));
-                        // setLoading(false);
-                      }
-                    }
-                  });
-
-                }
-              }
-            });
-          }
         }
       }
     });
 
-
   }, []);
+  useEffect(() => {
+    if (complainDetails?.status == "NEW") {
+      // console.log("complainDetails?.status == NEW");
 
-  // useEffect(() => {
-  //   // Create a broadcast channel with the same name
-  //   const broadcastChannel = new BroadcastChannel('stateChannel');
+      // console.log("IF");
+      patch(
+        {
+          updatedStatus: "IN_PROGRESS",
+          updatedPriortyStatus: complainDetails?.priorty,
+          resolvingDate: null,
+        },
+        {
+          url: `complaint-center/update-internal-complaint/${complaintId}`,
+        }
+      ).then((data: any) => {
+        handleChangeUpdatedStatus("updated")
+        // console.log("api call --- >", data);
+        if (data !== undefined) {
+          if (data.success) {
+            getAll({
+              url: `complaint-center/get-internal-complaint/${complaintId}`,
+            }).then((data: any) => {
+              // console.log("api call --- >", data);
+              if (data !== undefined) {
+                if (data.success) {
+                  dispatch(setComplainDetails(data.data.internalComplaint));
+                  setChangeStatus(data.data.internalComplaint.status);
+                  setChangePriortyStatus(data.data.internalComplaint.priorty);
+                  setStatusLoading(false)
+                }
+              }
+            });
 
-  //   // Define a function to handle messages
-  //   const handleMessage = (event: MessageEvent) => {
-  //     const newStateVariable = JSON.parse(event.data);
+          }
+        }
+      });
+    }
+    else {
+      setStatusLoading(false)
+    }
+  }, [complainDetails])
 
-  //     console.log("newStateVariable", newStateVariable);
 
-
-  //     // Update the state variable in sessionStorage
-  //     sessionStorage.setItem('stateVariable', event.data);
-
-  //     // Handle the updated state variable, e.g., trigger a re-render
-  //     // Do whatever you want with the newStateVariable
-  //   };
-
-  //   // Add an event listener for messages on the channel
-  //   broadcastChannel.addEventListener('message', handleMessage);
-
-  //   // Clean up by removing the event listener and closing the channel when the component unmounts
-  //   return () => {
-  //     broadcastChannel.removeEventListener('message', handleMessage);
-  //     broadcastChannel.close();
-  //   };
-  // }, []);
 
   const convertDateString = (dateString: string) => {
     const currentTime = new Date(dateString);
@@ -226,6 +225,31 @@ const ComplainDetails = () => {
       day: "2-digit",
       month: "short",
       year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+    }).format(currentTime);
+
+    return formattedDate;
+  };
+
+  const convertDateForComplainInfo = (dateString: string) => {
+    const currentTime = new Date(dateString);
+    // const options = { timeZone: timezone };
+    const formattedDate = new Intl.DateTimeFormat("en-US", {
+      weekday: "short",
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+
+    }).format(currentTime);
+
+    return formattedDate;
+  };
+  const convertTimeForComplainInfo = (dateString: string) => {
+    const currentTime = new Date(dateString);
+    // const options = { timeZone: timezone };
+    const formattedDate = new Intl.DateTimeFormat("en-US", {
       hour: "2-digit",
       minute: "2-digit",
       second: "2-digit",
@@ -381,6 +405,7 @@ const ComplainDetails = () => {
           url: `complaint-center/update-internal-complaint/${complaintId}`,
         }
       ).then((data: any) => {
+        handleChangeUpdatedStatus("updated")
         // console.log("api call --- >", data);
         if (data !== undefined) {
           if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
@@ -425,6 +450,7 @@ const ComplainDetails = () => {
         url: `complaint-center/update-internal-complaint/${complaintId}`,
       }
     ).then((data: any) => {
+      handleChangeUpdatedStatus("updated")
       // console.log("api call --- >", data);
       if (data !== undefined) {
         if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
@@ -631,7 +657,7 @@ const ComplainDetails = () => {
                             : "#35bfbf"
                             }`,
                           margin: "25px 0px",
-                          fontSize: "15px",
+                          fontSize: "14px",
                         }}
                       >
                         {convertDateString(complainDetails.createdAt)}
@@ -797,105 +823,98 @@ const ComplainDetails = () => {
                                   marginTop: "10px",
                                 }}
                               >
-                                <Row>
-                                  <Col md={12}>
+                                <div
+                                  style={{
+                                    fontSize: "18px",
+                                    margin: "10px 0px",
+                                  }}
+                                >
+                                  <div
+                                    style={{
+                                      display: "flex",
+                                      width: "100%",
+                                      justifyContent: "space-between",
+                                    }}
+                                  >
                                     <div
                                       style={{
-                                        fontSize: "18px",
-                                        margin: "10px 0px",
+                                        display: "flex",
                                       }}
                                     >
                                       <div
                                         style={{
+                                          backgroundColor: "black",
+                                          color: "white",
+                                          minWidth: "40px",
+                                          height: "40px",
+                                          borderRadius: "50px",
+                                          textAlign: "center",
                                           display: "flex",
-                                          justifyContent: "space-between",
+                                          alignItems: "center",
+                                          justifyContent: "center",
                                         }}
                                       >
+                                        {reply.user.fullName
+                                          .slice(0, 1)
+                                          .toUpperCase()}
+                                      </div>
+
+                                      <div
+                                        style={{
+                                          margin: "0px 10px",
+
+                                        }}
+                                      >
+                                        <div style={{
+                                          display: "flex",
+                                          justifyContent: "space-between",
+                                          width: "100%"
+                                        }}>
+                                          <div
+                                            style={{
+                                              color: "black",
+                                              fontWeight: "bold",
+                                              fontSize: "18px",
+                                              marginTop: "-3px",
+                                              width: "320px",
+                                            }}
+                                          >
+                                            {reply.user.fullName}
+                                          </div>
+                                          <div
+                                            style={{
+                                              color: "black",
+                                              fontSize: "12px",
+
+                                            }}
+                                          >
+                                            {convertDateString(reply.createdAt)}
+                                          </div>
+                                        </div>
                                         <div
                                           style={{
-                                            display: "flex",
+                                            color: "gray",
+                                            fontWeight: "normal",
+                                            fontSize: "12px",
+                                            marginTop: "-5px",
                                           }}
                                         >
-                                          <div
-                                            style={{
-                                              backgroundColor: "black",
-                                              color: "white",
-                                              minWidth: "40px",
-                                              height: "40px",
-                                              borderRadius: "50px",
-                                              textAlign: "center",
-                                              display: "flex",
-                                              alignItems: "center",
-                                              justifyContent: "center",
-                                            }}
-                                          >
-                                            {reply.user.fullName
-                                              .slice(0, 1)
-                                              .toUpperCase()}
-                                          </div>
-                                          <div
-                                            style={{
-                                              margin: "0px 10px",
-                                            }}
-                                          >
-                                            <div
-                                              style={{
-                                                display: "flex",
-                                                width: "100%",
-                                                justifyContent: "space-between",
-                                              }}
-                                            >
-                                              <div
-                                                style={{
-                                                  color: "black",
-                                                  fontWeight: "bold",
-                                                  fontSize: "18px",
-                                                  marginTop: "-3px",
-                                                }}
-                                              >
-                                                {reply.user.fullName}
-                                              </div>
-                                            </div>
-
-                                            <div
-                                              style={{
-                                                color: "gray",
-                                                fontWeight: "normal",
-                                                fontSize: "12px",
-                                                marginTop: "-5px",
-                                              }}
-                                            >
-                                              {reply.user.emailAddress}
-                                            </div>
-                                            <div
-                                              style={{
-                                                color: "black",
-                                                fontSize: "16px",
-                                                marginTop: "5px",
-                                              }}
-                                            >
-                                              {reply.messageText}
-                                            </div>
-                                          </div>
+                                          {reply.user.emailAddress}
                                         </div>
                                         <div
                                           style={{
                                             color: "black",
-                                            fontSize: "12px",
-                                            width: "150px",
-                                            display: "flex",
-                                            justifyContent: "end",
-                                            // position: "relative",
-
-                                            // top:0,
+                                            fontSize: "16px",
+                                            marginTop: "5px",
                                           }}
                                         >
-                                          {convertDateString(reply.createdAt)}
+                                          {reply.messageText}
                                         </div>
                                       </div>
                                     </div>
-                                  </Col>
-                                </Row>
+
+                                  </div>
+                                </div>
                               </div>
                             );
                           } else {
@@ -1243,7 +1262,26 @@ const ComplainDetails = () => {
                     </div>
                   </div>
                 </Col>
-                <Col
+                {statusLoading ? <><Col sm={12}
+                  md={12}
+                  lg={12}
+                  xl={12}
+                  xxl={3}
+                  style={{
+                    marginBottom: "20px",
+                    // marginRight: "20px",
+                  }}
+                >
+                  <Col xl="12" lg="12" md="12" sm="12"
+                    style={{
+                      marginBottom: "20px",
+                    }}
+                    className="skeletons"
+                  >
+                  </Col>
+                  <Col xl="12" lg="12" md="12" sm="12" className="skeletons">
+                  </Col>
+                </Col></> : <> <Col
                   sm={12}
                   md={12}
                   lg={12}
@@ -1547,7 +1585,7 @@ const ComplainDetails = () => {
                               color: "black",
                             }}
                           >
-                            {convertDateString(complainDetails.createdAt)}
+                            {convertTimeForComplainInfo(complainDetails.createdAt)}
                           </div>
                         </div>
                         <div
@@ -1573,7 +1611,7 @@ const ComplainDetails = () => {
                               color: "black",
                             }}
                           >
-                            {complainDetails.createdAt.toString().slice(0, 10)}
+                            {convertDateForComplainInfo(complainDetails.createdAt)}
                           </div>
                         </div>
                         <div
@@ -1850,7 +1888,8 @@ const ComplainDetails = () => {
                       </div>
                     </div>
                   </div>
-                </Col>
+                </Col></>}
+
               </Row>
             </CardBody>
           ) : (

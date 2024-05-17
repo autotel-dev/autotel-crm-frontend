@@ -25,6 +25,7 @@ import {
   setComplainTypePriorities,
 } from "../../ReaduxToolkit/Reducer/ComplainsTypeSlice";
 import H7 from "../../CommonElements/Headings/H7Element";
+import { formatUnderscoredString } from "../../Api/globals";
 
 const ComplainTypeList = () => {
   const { complainTypes, loading, id, activeInActiveComplainTypes } =
@@ -82,14 +83,14 @@ const ComplainTypeList = () => {
       dispatch(setComplainsTypesEnd());
     });
   }, []);
- 
+
 
   const renderTableRows = () => {
     return complainTypes?.map((row: any) => (
       <tr key={row.id}>
         <td>{row._id}</td>
         <td>{row.title}</td>
-        <td>{row.priorty}</td>
+        <td>{formatUnderscoredString(row.priorty)}</td>
         <td>
           <div className="d-flex" style={{ justifyContent: "center" }}>
             <div
@@ -241,12 +242,12 @@ const ComplainTypeList = () => {
                   //     fontWeight: "bold",
                   //   }}
                   // >
-                    // {activeInActiveComplainTypes !== "All"
-                    //   ? activeInActiveComplainTypes
-                    //   : "No Complain Types Found"}
+                  // {activeInActiveComplainTypes !== "All"
+                  //   ? activeInActiveComplainTypes
+                  //   : "No Complain Types Found"}
                   // </div>
                   <H7>
-                       {activeInActiveComplainTypes !== "All"
+                    {activeInActiveComplainTypes !== "All"
                       ? activeInActiveComplainTypes
                       : "No Complain Types Found"}
                   </H7>

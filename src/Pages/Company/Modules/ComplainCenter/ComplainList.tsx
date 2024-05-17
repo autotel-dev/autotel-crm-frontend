@@ -551,13 +551,13 @@ const ComplainList = () => {
                         style={{
                           position: "absolute",
                           top: "50%",
-                          left: "20px",
+                          left: "15px",
                           transform: "translate(-50%, -50%)",
                           zIndex: "1",
                           cursor: "pointer",
-                          fontSize: "24px",
+                          fontSize: "17px",
                           backgroundColor: "lightgray",
-                          padding: "16px 16px",
+                          padding: "12px 12px",
                           borderRadius: "50%",
                           display: "flex",
                           alignItems: "center",
@@ -649,7 +649,7 @@ const ComplainList = () => {
                               // fontStyle: "normal",
                             }}
                           >
-                            {complainCenterStatistics[0].value}
+                            {complainCenterStatistics[0]?.value}
                           </div>
                           {/* <H6 className="mt-1 mb-0">{data.percentage}</H6> */}
                         </div>
@@ -659,16 +659,18 @@ const ComplainList = () => {
                           style={{
                             backgroundColor: "#f5f6f9",
                             borderRadius: "8px",
-                            padding: "10px 10px",
+                            padding: "2px 10px",
                             marginRight: "8px",
                             listStyle: "none",
                             display: "flex",
                             alignItems: "center",
-                            cursor: "pointer"
+                            cursor: "pointer",
+                            // width: "auto", // Remove or keep it as auto
+
                           }}
                           key={index}
                           onClick={() => {
-                            dispatch(setFilteredRole(data.name))
+                            dispatch(setFilteredRole(data.name));
                           }}
                         >
                           <div
@@ -676,6 +678,7 @@ const ComplainList = () => {
                               width: "30px",
                               height: "30px",
                               borderRadius: "100px",
+                              flexShrink: 0, // Prevent shrinking
                             }}
                           >
                             <img
@@ -692,14 +695,16 @@ const ComplainList = () => {
                             className="Countries"
                             style={{
                               marginLeft: "10px",
-
-                              // width: "180px",
                               display: "flex",
                               justifyContent: "space-between",
-                              alignItems: "center"
+                              alignItems: "center",
                             }}
                           >
-                            <H5>{data.name}</H5>
+                            {/* Remove or increase the maxWidth and minWidth properties */}
+                            <div style={{ minWidth: data.name.length < 10 ? "80px" : data.name.length < 10 ? "100px" : data.name.length < 14 ? "120px" : data.name.length < 20 ? "170px" : "180px", flexShrink: 0 }}>
+                              <H5>{data.name}</H5>
+                            </div>
+
                             <div
                               style={{
                                 padding: "6px",
@@ -712,9 +717,7 @@ const ComplainList = () => {
                                 justifyContent: "center",
                                 alignItems: "center",
                                 marginLeft: "20px",
-                                // fontFamily: "Sedan, serif",
-                                // fontWeight: "400",
-                                // fontStyle: "normal",
+                                flexShrink: 0, // Prevent shrinking
                               }}
                             >
                               {data.count}
@@ -723,6 +726,8 @@ const ComplainList = () => {
                           </div>
                         </li>
                       ))}
+
+
                     </div>
 
                     {/* Right angle bracket */}
@@ -730,13 +735,13 @@ const ComplainList = () => {
                       style={{
                         position: "absolute",
                         top: "50%",
-                        right: "-20px",
+                        right: "-15px",
                         transform: "translate(-50%, -50%)",
                         zIndex: "1",
                         cursor: "pointer",
-                        fontSize: "24px",
+                        fontSize: "17px",
                         backgroundColor: "lightgray",
-                        padding: "16px 16px",
+                        padding: "12px 12px",
                         borderRadius: "50%",
                         display: "flex",
                         alignItems: "center",

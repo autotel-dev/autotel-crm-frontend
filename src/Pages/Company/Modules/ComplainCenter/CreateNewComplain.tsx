@@ -65,33 +65,36 @@ const CreateNewComplain = () => {
 
   return (
     <div className="text-end">
-      <button
-        id="sendButtonWaitForDevices"
-        className={`btn ${userPersonalizationData?.buttonsAndBarsColor == null ? "btn-primary" : ""
-          }`}
-        style={{
-          color: "white",
-          backgroundColor: `${userPersonalizationData !== null &&
-            userPersonalizationData?.buttonsAndBarsColor
-            }`,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          padding: "5px 10px",
-          height: "40px",
-          width: "100%",
-        }}
-        onClick={addToggle}
-        disabled={devices.length == 0}
-      >
-        <div
-          style={{ marginRight: "2.5%", display: "flex", alignItems: "center" }}
+      <div id="sendButtonWaitForDevices">
+        <button
+
+          className={`btn ${userPersonalizationData?.buttonsAndBarsColor == null ? "btn-primary" : ""
+            }`}
+          style={{
+            color: "white",
+            backgroundColor: `${userPersonalizationData !== null &&
+              userPersonalizationData?.buttonsAndBarsColor
+              }`,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: "5px 10px",
+            height: "40px",
+            width: "100%",
+          }}
+          onClick={addToggle}
+          disabled={devices.length == 0}
         >
-          <PlusCircle />
-        </div>
-        <span style={{ fontSize: "0.8em" }}>Create New</span>
-      </button>
-      {devices.length == 0 && (
+          <div
+            style={{ marginRight: "2.5%", display: "flex", alignItems: "center" }}
+          >
+            <PlusCircle />
+          </div>
+          <span style={{ fontSize: "0.8em" }}>Create New</span>
+        </button>
+      </div>
+
+      {devices.length == 0 ? (
         <UncontrolledPopover
           placement="top"
           trigger="hover"
@@ -103,8 +106,7 @@ const CreateNewComplain = () => {
             loading in background
           </PopoverBody>
         </UncontrolledPopover>
-      )}
-
+      ) : <></>}
       <DeviceSelecetdForNewComplain
         addModal={isUpdateModalOpenForDeviceSelecetdForNewComplain}
         setAddModal={setIsUpdateModalOpenForDeviceSelecetdForNewComplain}
@@ -113,6 +115,7 @@ const CreateNewComplain = () => {
         serverID={serverID}
       />
     </div>
+
   );
 };
 

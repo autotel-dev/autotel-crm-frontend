@@ -13,7 +13,7 @@ import SelectComplainTypesList from "../components/SelectComplainTypesList";
 import SelectComplainStatusTypes from "../components/SelectComplainStatusTypes";
 import SelectComplainRole from "../components/SelectComplainRole";
 import { create, getAll } from "../../../../../Api";
-import { getUserRole, getUserRoleID } from "../../../../../Api/globals";
+import { formatUnderscoredString, getUserRole, getUserRoleID } from "../../../../../Api/globals";
 
 interface ResponseType {
   response?: string;
@@ -196,7 +196,7 @@ const ResponseForm: React.FC<PropsTypes> = ({
               <input
                 className="form-control"
                 type="text"
-                value={priority}
+                value={formatUnderscoredString(priority)}
                 disabled
               />
             </FormGroup>

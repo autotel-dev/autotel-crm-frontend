@@ -1,0 +1,32 @@
+.skeletons {
+    height: 350px;
+    width: 100%;
+    background-color: #f2f2f2;
+    /* Gray background color */
+    border-radius: 4px;
+    /* Optional: Add border radius for rounded corners */
+    animation: skeleton-animation 1.5s ease-in-out infinite alternate;
+    /* Animation */
+}
+.skeletons2 {
+    height: 400px;
+    width: 100%;
+    background-color: #f2f2f2;
+    /* Gray background color */
+    border-radius: 4px;
+    /* Optional: Add border radius for rounded corners */
+    animation: skeleton-animation 1.5s ease-in-out infinite alternate;
+    /* Animation */
+}
+
+@keyframes skeleton-animation {
+    0% {
+        background-color: #f2f2f2;
+        /* Initial gray color */
+    }
+
+    100% {
+        background-color: #e0e0e0;
+        /* Lighter gray color */
+    }
+}

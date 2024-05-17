@@ -9,7 +9,7 @@ const initialState = {
     complainCenterStatistics: [],
     complainCenterRoles: [],
     tableRow: null,
-    filteredRole: null,
+    filteredRole: "All",
     complainDetails: null,
     createComplainModalData: null,
     loading: false,
