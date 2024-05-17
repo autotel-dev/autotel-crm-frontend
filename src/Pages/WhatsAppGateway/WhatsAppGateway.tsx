@@ -1,11 +1,14 @@
-import { Button, Card, CardBody, CardFooter, Col, Container, Form, FormGroup, Input, Row } from "reactstrap";
+import { Button, Card, CardBody, CardFooter, Col, Container, Form, FormGroup, Row } from "reactstrap";
 import Breadcrumbs from "../../CommonElements/Breadcrumbs/Breadcrumbs";
 import { P } from "../../AbstractElements";
 import { Select } from "antd";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import TestWhatsAppMessageModal from "./modals/TestWhatsAppModal";
-
+import { setIsConnected, setWhatsAppGatewayDataData } from "../../ReaduxToolkit/Reducer/WhatsAppGatewaySlice";
+import { getAll } from "../../Api";
+import Swal from "sweetalert2";
+import BodyParamsObject from "./components/BodyParamsObject";
 
 const WhatsAppGateway = () => {
     const dispatch = useDispatch();
@@ -15,7 +18,7 @@ const WhatsAppGateway = () => {
 
     const [authentication, setAuthentication] = useState("Yes")
     const requestsMthodsList: any = [{ value: `GET`, label: `Get` },
-    { value: `POST`, label: `Post` }, { value: `SMS GATEWAY APP`, label: `SMS Gateway App` }, { value: `PILVO`, label: `Pilvo` }
+    { value: `POST`, label: `Post` }
     ];
 
     const encodingList: any = [{ value: `NO`, label: `No` },
@@ -25,23 +28,79 @@ const WhatsAppGateway = () => {
     const AuthenticationLIst: any = [{ value: `Yes`, label: `Yes` },
     { value: `No`, label: `No` },
     ];
-
     const [isVisible, setIsVisible] = useState(false);
+    const [loading, setLoading] = useState(true);
+    const [requestMethod, setRequestMethod] = useState("GET");
+    const [encoding, setEncoding] = useState("NO");
+
+    // State to manage list of body parameters
+    const [bodyParams, setBodyParams] = useState<{ key: string; value: string }[]>([]);
+
+    useEffect(() => {
+        dispatch(setIsConnected(false));
+    }, []);
+
+    useEffect(() => {
+        getAll({
+            url: "gateway/whatsapp-gateway/get-gateway",
+        }).then((parentData: any) => {
+            if (parentData == undefined) {
+                Swal.fire({
+                    text: "No WhatsApp Gateway found",
+                    icon: "error",
+                    timer: 2000,
+                    showConfirmButton: false,
+                });
+                setLoading(false);
+                dispatch(setWhatsAppGatewayDataData(null));
+            }
+
+            if (parentData !== undefined) {
+                if (!parentData.success && parentData.message === "ERROR_INTERNET_DISCONNECTED") {
+                    dispatch(setIsConnected(true));
+                }
+                if (!parentData.success) {
+                    Swal.fire({
+                        text: `${parentData.message}`,
+                        icon: "error",
+                        timer: 2000,
+                        showConfirmButton: false,
+                    });
+                    setLoading(false);
+                    dispatch(setWhatsAppGatewayDataData(null));
+                }
+                if (parentData.success) {
+                    dispatch(setWhatsAppGatewayDataData(parentData.data));
+                    setLoading(false);
+                }
+            }
+        });
+    }, []);
+
+    // Function to add a new body parameter
+    const addBodyParam = () => {
+        setBodyParams([...bodyParams, { key: "", value: "" }]);
+    };
+
+    // Function to delete a body parameter
+    const deleteBodyParam = (index: number) => {
+        const updatedParams = bodyParams.filter((_, i) => i !== index);
+        setBodyParams(updatedParams);
+    };
+
+    // Function to handle body parameter changes
+    const handleBodyParamChange = (index: number, newParam: { key: string; value: string }) => {
+        const updatedParams = bodyParams.map((param, i) => (i === index ? newParam : param));
+        setBodyParams(updatedParams);
+    };
+
     return (
         <>
             <div>
                 <Breadcrumbs title="WhatsApp Gateway" mainTitle="WhatsApp Gateway" parent="Setup" />
-                <Container fluid style={{
-                    backgroundColor: `${userPersonalizationData !== null &&
-                        userPersonalizationData?.backgroundColor !== null
-                        ? userPersonalizationData?.backgroundColor
-                        : ""
-                        }`,
-                }}>
+                <Container fluid>
                     <Col md={12}>
-                        <Form
-                        // onSubmit={createPersonalization}
-                        >
+                        <Form>
                             <Card>
                                 <CardBody>
                                     <Row>
@@ -49,7 +108,8 @@ const WhatsAppGateway = () => {
                                             <FormGroup>
                                                 <P>Request Method</P>
                                                 <Select
-                                                    defaultValue="Yes"
+                                                    defaultValue={requestMethod}
+                                                    value={requestMethod}
                                                     showSearch
                                                     style={{ width: "100%", height: 36 }}
                                                     placeholder="Select Role"
@@ -57,24 +117,19 @@ const WhatsAppGateway = () => {
                                                     filterOption={(input: any, option: any) =>
                                                         (option?.label ?? "").includes(input)
                                                     }
-                                                    // filterSort={(optionA: any, optionB: any) =>
-                                                    //     (optionA?.label ?? "")
-                                                    //         .toLowerCase()
-                                                    //         .localeCompare((optionB?.label ?? "").toLowerCase())
-                                                    // }
-                                                    onChange={(e, options) => {
-                                                        // setRole(e);
+                                                    onChange={(e) => {
+                                                        setRequestMethod(e);
                                                     }}
                                                     options={requestsMthodsList}
                                                 />
-
                                             </FormGroup>
                                         </Col>
                                         <Col md={12}>
                                             <FormGroup>
                                                 <P>Encoding</P>
                                                 <Select
-                                                    defaultValue="Yes"
+                                                    defaultValue={encoding}
+                                                    value={encoding}
                                                     showSearch
                                                     style={{ width: "100%", height: 36 }}
                                                     placeholder="Select Role"
@@ -82,42 +137,11 @@ const WhatsAppGateway = () => {
                                                     filterOption={(input: any, option: any) =>
                                                         (option?.label ?? "").includes(input)
                                                     }
-                                                    // filterSort={(optionA: any, optionB: any) =>
-                                                    //     (optionA?.label ?? "")
-                                                    //         .toLowerCase()
-                                                    //         .localeCompare((optionB?.label ?? "").toLowerCase())
-                                                    // }
-                                                    onChange={(e, options) => {
-                                                        // setRole(e);
+                                                    onChange={(e) => {
+                                                        setEncoding(e);
                                                     }}
                                                     options={encodingList}
                                                 />
-
-                                            </FormGroup>
-                                        </Col>
-                                        <Col md={12}>
-                                            <FormGroup>
-                                                <P>Authentication</P>
-                                                <Select
-                                                    defaultValue="Yes"
-                                                    showSearch
-                                                    style={{ width: "100%", height: 36 }}
-                                                    placeholder="Select Role"
-                                                    optionFilterProp="children"
-                                                    filterOption={(input: any, option: any) =>
-                                                        (option?.label ?? "").includes(input)
-                                                    }
-                                                    // filterSort={(optionA: any, optionB: any) =>
-                                                    //     (optionA?.label ?? "")
-                                                    //         .toLowerCase()
-                                                    //         .localeCompare((optionB?.label ?? "").toLowerCase())
-                                                    // }
-                                                    onChange={(e, options) => {
-                                                        // setRole(e);
-                                                    }}
-                                                    options={AuthenticationLIst}
-                                                />
-
                                             </FormGroup>
                                         </Col>
                                         <Col md={12}>
@@ -125,13 +149,12 @@ const WhatsAppGateway = () => {
                                                 <P>SMS Gateway Headers</P>
                                                 <textarea
                                                     className="form-control"
-                                                    rows={3} // Minimum number of visible lines
+                                                    rows={3}
                                                     style={{
-                                                        maxHeight: "100px", // Maximum height for 5 lines of text
-                                                        resize: "vertical", // Allow vertical resizing within the specified range
+                                                        maxHeight: "100px",
+                                                        resize: "vertical",
                                                         overflow: "auto"
                                                     }}
-                                                // {...register("response", { required: true })}
                                                 />
                                                 <p>(e.g. Accept: text/plain; Accept-Language: en-US;)</p>
                                             </FormGroup>
@@ -141,76 +164,50 @@ const WhatsAppGateway = () => {
                                                 <P>SMS Gateway URL</P>
                                                 <textarea
                                                     className="form-control"
-                                                    rows={3} // Minimum number of visible lines
+                                                    rows={3}
                                                     style={{
-                                                        maxHeight: "100px", // Maximum height for 5 lines of text
-                                                        resize: "vertical", // Allow vertical resizing within the specified range
+                                                        maxHeight: "100px",
+                                                        resize: "vertical",
                                                         overflow: "auto"
                                                     }}
-                                                    defaultValue="https://nusagateway.com/api/send-message.php?phone=%NUMBER%&type=text&message=%MESSAGE%&token=XxRSOwkK5XJBjwR9Mdnictjrh7hgQZkqAjKtReyElikoZyM9st"
-                                                // {...register("response", { required: true })}
+                                                    placeholder={`https://nusagateway.com/api/send-message.php${requestMethod === "GET" ? "?phone={{phoneNo}}&type=text&message={{message}}&token=XxRSOwkK5XJBjwR9Mdnictjrh7hgQZkqAjKtReyElikoZyM9st" : ""}`}
                                                 />
-
                                             </FormGroup>
                                         </Col>
-                                        <Col md={12}>
-                                            <div style={{
-                                                padding: "20px",
-                                                backgroundColor: "lightblue"
-                                            }}>
+                                        {requestMethod === "POST" && (
+                                            <Col md={12} style={{ marginBottom: "20px" }}>
+                                                <div style={{ display: "flex", justifyContent: "end", marginBottom: "10px" }}>
+                                                    <Button color="primary" type="button" onClick={addBodyParam}>
+                                                        Add
+                                                    </Button>
+                                                </div>
 
-                                                <p style={{
-                                                    margin: "5px 0px"
-                                                }}>SMS gateway, which can send messages via HTTP GET should be used.</p>
-                                                <p style={{
-                                                    margin: "5px 0px"
-                                                }}>Variables: %NUMBER%, %MESSAGE%.</p>
-                                                <p style={{
-                                                    margin: "5px 0px"
-                                                }}>SMS gateway URL example: http://SMS_GATEWAY/sendsms.php?username=USER&password=PASSWORD&number=%NUMBER%&message=%MESSAGE%</p>
+                                                <FormGroup>
+                                                    <P>Body</P>
+                                                    {bodyParams.map((param, index) => (
+                                                        <BodyParamsObject
+                                                            key={index}
+                                                            param={param}
+                                                            onChange={(newParam: any) => handleBodyParamChange(index, newParam)}
+                                                            onDelete={() => deleteBodyParam(index)}
+                                                        />
+                                                    ))}
+                                                </FormGroup>
+
+                                            </Col>
+                                        )}
+                                        {requestMethod === "POST" && <hr />}
+                                        <Col md={12}>
+                                            <div style={{ padding: "20px", marginTop: "20px", backgroundColor: "lightblue" }}>
+                                                <p style={{ margin: "5px 0px" }}>SMS gateway, which can send messages via HTTP GET/POST should be used.</p>
+                                                <p style={{ margin: "5px 0px" }}>Variables: {`{{phoneNo}}`}, {`{{message}}`}.</p>
                                             </div>
                                         </Col>
-
-
-
-                                        <CardFooter
-                                            style={{
-                                                display: "flex",
-                                                justifyContent: "end",
-                                            }}
-                                        >
-                                            <Button
-                                                color="primary"
-                                                type="submit"
-                                                onClick={(e) => {
-                                                    e.preventDefault();
-                                                    setIsVisible(true);
-                                                }}
-                                                style={{
-                                                    marginRight: "10px",
-                                                }}
-                                            >
-                                                Send Test WhatsApp
-                                            </Button>
-                                            <Button
-                                                color="secondary"
-                                                type="submit"
-                                                onClick={(e) => {
-
-                                                }}
-                                                style={{
-                                                    marginRight: "10px",
-                                                }}
-                                            >
+                                        <CardFooter style={{ display: "flex", justifyContent: "end" }}>
+                                            <Button color="secondary" type="button" style={{ marginRight: "10px" }}>
                                                 Cancel
                                             </Button>
-                                            <Button
-                                                color="primary"
-                                                type="submit"
-                                                onClick={(e) => {
-
-                                                }}
-                                            >
+                                            <Button color="primary" type="submit">
                                                 Save
                                             </Button>
                                         </CardFooter>
