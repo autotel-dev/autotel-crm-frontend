@@ -177,8 +177,9 @@ const LiveAlerts = () => {
           fontSize: "18px",
           padding: "10px",
           borderTopLeftRadius: "10px",
+          color:"white",
           borderTopRightRadius: "10px",
-          fontWeight: "bold",
+          // fontWeight: "bold",
         }}
       >
         <div>

@@ -1371,7 +1371,7 @@ const TicketDetails = () => {
                             fontWeight: "bold",
                           }}
                         >
-                          Time
+                          Date
                         </div>
                         <div
                           style={{
@@ -1379,7 +1379,7 @@ const TicketDetails = () => {
                             color: "black",
                           }}
                         >
-                          {convertTimeForTicketInfo(ticketDetails.createdAt)}
+                          {convertDateForTicketInfo(ticketDetails.createdAt)}
                         </div>
                       </div>
                       <div
@@ -1397,7 +1397,7 @@ const TicketDetails = () => {
                             fontWeight: "bold",
                           }}
                         >
-                          Date
+                          Time
                         </div>
                         <div
                           style={{
@@ -1405,7 +1405,7 @@ const TicketDetails = () => {
                             color: "black",
                           }}
                         >
-                          {convertDateForTicketInfo(ticketDetails.createdAt)}
+                          {convertTimeForTicketInfo(ticketDetails.createdAt)}
                         </div>
                       </div>
                       <div

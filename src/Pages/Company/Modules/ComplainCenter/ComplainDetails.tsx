@@ -151,6 +151,7 @@ const ComplainDetails = () => {
   const handleChangeUpdatedStatus = (newValue: any) => {
     setIsUpdate(newValue);
     // Send the updated state to other tabs
+    
     window.opener.postMessage(newValue, window.location.origin);
   };
 
@@ -1562,32 +1563,7 @@ const ComplainDetails = () => {
                             {complainDetails.complaintId}
                           </div>
                         </div>
-                        <div
-                          style={{
-                            borderBottom: "1px solid #e1e1e1",
-                            display: "flex",
-                            justifyContent: "space-between",
-                            padding: "8px 0px",
-                          }}
-                        >
-                          <div
-                            style={{
-                              fontSize: "16px",
-                              color: "gray",
-                              fontWeight: "bold",
-                            }}
-                          >
-                            Time
-                          </div>
-                          <div
-                            style={{
-                              fontSize: "16px",
-                              color: "black",
-                            }}
-                          >
-                            {convertTimeForComplainInfo(complainDetails.createdAt)}
-                          </div>
-                        </div>
+                       
                         <div
                           style={{
                             borderBottom: "1px solid #e1e1e1",
@@ -1612,6 +1588,32 @@ const ComplainDetails = () => {
                             }}
                           >
                             {convertDateForComplainInfo(complainDetails.createdAt)}
+                          </div>
+                        </div>
+                        <div
+                          style={{
+                            borderBottom: "1px solid #e1e1e1",
+                            display: "flex",
+                            justifyContent: "space-between",
+                            padding: "8px 0px",
+                          }}
+                        >
+                          <div
+                            style={{
+                              fontSize: "16px",
+                              color: "gray",
+                              fontWeight: "bold",
+                            }}
+                          >
+                            Time
+                          </div>
+                          <div
+                            style={{
+                              fontSize: "16px",
+                              color: "black",
+                            }}
+                          >
+                            {convertTimeForComplainInfo(complainDetails.createdAt)}
                           </div>
                         </div>
                         <div
