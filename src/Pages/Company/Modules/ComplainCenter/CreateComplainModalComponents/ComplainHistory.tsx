@@ -3,6 +3,7 @@ import { Card, CardBody, CardHeader, Col, PopoverBody, PopoverHeader, Table, Unc
 import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { H4 } from "../../../../../AbstractElements";
+import { formatUnderscoredString } from "../../../../../Api/globals";
 
 const ComplainHistory = () => {
   const { createComplainModalData } = useSelector((state: any) => state.complainCenter);
@@ -82,15 +83,15 @@ const ComplainHistory = () => {
                             <H4>{data.deviceName}</H4>
                             <span style={{ fontSize: "10px" }}>
                               {data.createdAt.toString().slice(0, 10) +
-                                " " +
+                                ", " +
                                 data.createdAt.toString().slice(11, 19)}
                             </span>
                           </div>
                         </div>
                       </td>
 
-                      <td className={`txt-primary`}>{data.priorty}</td>
-                      <td>{data.status}</td>
+                      <td className={`txt-primary`}>{formatUnderscoredString(data.priorty)}</td>
+                      <td>{formatUnderscoredString(data.status)}</td>
                       <td>{data.description}</td>
                       {/* <td id="Popover" style={{ width: "20%" }}>
                         {data.address == null

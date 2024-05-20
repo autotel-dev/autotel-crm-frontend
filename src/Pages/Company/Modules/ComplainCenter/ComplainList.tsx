@@ -6,6 +6,7 @@ import SVG from "../../../../utils/CommonSvgIcon/SVG";
 import "./ComplainList.css";
 import Chart from "react-google-charts";
 import UserProfile from "../../../../assets/companyProfile.png";
+import { MdFilterList } from "react-icons/md";
 import { useEffect, useRef, useState } from "react";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa6";
 import { setFilteredRole } from "../../../../ReaduxToolkit/Reducer/ComplainCenterSlice";
@@ -264,10 +265,15 @@ const ComplainList = () => {
         >
           <div
             style={{
-              padding: "10px",
+              // padding: "10px",
+              // height: "30px",
+              // display: "flex",
+              // justifyContent: "space-between",
+              // alignItems: "center",
+              width:"100%",
               height: "30px",
-              display: "flex",
-              justifyContent: "space-between",
+              display: "grid",
+              gridTemplateColumns:"35% 45% 20%",
               alignItems: "center",
             }}
           >
@@ -276,8 +282,10 @@ const ComplainList = () => {
               style={{
                 cursor: "pointer",
                 fontSize: "14px",
+                display:"grid",
+                gridAutoColumns:"max-content",
                 color: "white",
-                paddingRight: "10px",
+                paddingLeft: "15px",
                 borderRight:
                   containerWidth === "350px" ? "1px solid black" : "0px",
               }}
@@ -291,7 +299,7 @@ const ComplainList = () => {
                   cursor: "pointer",
                   fontSize: "14px",
                   color: "white",
-                  paddingRight: "45px",
+                  paddingLeft: "35px",
                   borderRight: "1px solid black",
                 }}
                 onClick={(e: any) => {
@@ -313,7 +321,7 @@ const ComplainList = () => {
               // onMouseOver={toggleDropdown}
               // onMouseOut={toggleDropdown}
               >
-                <div style={{ fontSize: "24px", color: "white" }}>&#9776;</div>
+                <div style={{ fontSize: "24px", color: "white" , display:"flex",justifyContent:"center" }}><MdFilterList /></div>
               </div>
             )}
           </div>

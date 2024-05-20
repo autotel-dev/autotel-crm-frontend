@@ -10,6 +10,7 @@ import {
 } from "reactstrap";
 import "./AnalyticsCss.css";
 import ReactApexChart from "react-apexcharts";
+import { MdFilterList } from "react-icons/md";
 
 import {
   SinceLastMonth,
@@ -533,10 +534,12 @@ const ControlRoomAnalytics = () => {
         >
           <div
             style={{
-              padding: "10px",
+              // padding: "10px",
+              width:"100%",
               height: "30px",
-              display: "flex",
-              justifyContent: "space-between",
+              display: "grid",
+              gridTemplateColumns:"35% 45% 20%",
+              // justifyContent: "space-between",
               alignItems: "center",
             }}
           >
@@ -546,7 +549,9 @@ const ControlRoomAnalytics = () => {
                 cursor: "pointer",
                 fontSize: "14px",
                 color: "white",
-                paddingRight: "10px",
+                display:"grid",
+                gridAutoColumns:"max-content",
+                paddingLeft: "15px",
                 borderRight:
                   containerWidth === "350px" ? "1px solid black" : "0px",
               }}
@@ -560,8 +565,9 @@ const ControlRoomAnalytics = () => {
                   cursor: "pointer",
                   fontSize: "14px",
                   color: "white",
-                  paddingRight: "45px",
+                  // paddingRight: "10px",
                   borderRight: "1px solid black",
+                  paddingLeft:"35px",
                 }}
                 onClick={(e: any) => {
                   toggleDropdown(e);
@@ -575,6 +581,7 @@ const ControlRoomAnalytics = () => {
               <div
                 style={{
                   cursor: "pointer",
+                  alignContent:"center"
                 }}
                 onClick={(e: any) => {
                   toggleDropdown(e);
@@ -582,7 +589,7 @@ const ControlRoomAnalytics = () => {
                 // onMouseOver={toggleDropdown}
                 // onMouseOut={toggleDropdown}
               >
-                <div style={{ fontSize: "24px", color: "white" }}>&#9776;</div>
+                <div style={{ fontSize: "24px", color: "white" , display:"flex",justifyContent:"center"}}><MdFilterList style={{width:"50%"}} /></div>
               </div>
             )}
           </div>
@@ -843,7 +850,7 @@ const ControlRoomAnalytics = () => {
                         <div
                           style={{
                             overflow: "auto",
-                            height: "75px",
+                            height: "55%",
                             scrollbarWidth: "none" /* Firefox */,
                           }}
                         >
@@ -927,7 +934,7 @@ const ControlRoomAnalytics = () => {
                                   <div
                                     style={{
                                       position: "relative",
-                                      display: "inline-block",
+                                      // display: "inline-block",
                                     }}
                                     id="threeDotsLoading"
                                   >
@@ -972,13 +979,13 @@ const ControlRoomAnalytics = () => {
                                             position: "absolute",
                                             top: "100%",
                                             right: 0,
-                                            zIndex: 1000,
+                                            // zIndex: 100,
                                           }}
                                         >
                                           <div className="conneceted-servers-dropdown-options-analytics">
                                             <div
                                               id="Popover1"
-                                              className="dropdown-item exclude-from-close"
+                                              className="connected-servers-dropdown-item exclude-from-close"
                                               onClick={(e) => {
                                                 toggleConnectedServersDropdown(
                                                   e
@@ -1001,7 +1008,7 @@ const ControlRoomAnalytics = () => {
                                               </PopoverBody>
                                             </UncontrolledPopover>
                                             <div
-                                              className="dropdown-item exclude-from-close"
+                                              className="connected-servers-dropdown-item exclude-from-close"
                                               onClick={(e) => {
                                                 e.stopPropagation();
                                                 setServerID(

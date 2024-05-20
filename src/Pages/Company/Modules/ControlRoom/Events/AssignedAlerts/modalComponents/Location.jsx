@@ -141,7 +141,13 @@ const Location = (props) => {
         </p>
         <p>
           <span style={{ fontWeight: "bold" }}>LatLng: </span>
-          <a href="https://www.google.com/maps/search/?api=1&query=${modalData.alertEvent.latitude},${modalData.alertEvent.longitude}" target="_blank">${modalData.alertEvent.latitude},${modalData.alertEvent.longitude}</a>
+          <a href="https://www.google.com/maps/search/?api=1&query=${
+            modalData.alertEvent.latitude
+          },${modalData.alertEvent.longitude}" target="_blank">${parseFloat(
+          modalData.alertEvent.latitude
+        ).toFixed(6)},${parseFloat(modalData.alertEvent.longitude).toFixed(
+          6
+        )}</a>
         </p>
       </div>`,
       });

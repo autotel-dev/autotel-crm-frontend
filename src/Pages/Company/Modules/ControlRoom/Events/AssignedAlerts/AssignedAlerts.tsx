@@ -139,13 +139,16 @@ const AssignedAlerts = () => {
                         }}
                         key={index}
                         onClick={async () => {
-
                           var checkServer =
                             liveAlertsData?.connectedServers?.find(
                               (item: any) => item.server._id === data.server
                             );
+                          // console.log(liveAlertsData?.connectedServers);
+
+                          console.log("server", data.server);
+
                           // console.log("server", checkServer);
-                          if (checkServer.isConnected) {
+                          if (checkServer && checkServer?.isConnected) {
                             const serverInfo = serverCredentials(data.server);
 
                             setBasicTab("1");
@@ -186,6 +189,14 @@ const AssignedAlerts = () => {
                               // Handle error (e.g., show an error message)
                               dispatch(setModalData(undefined));
                             }
+                          } else if (checkServer == undefined) {
+                            Swal.fire({
+                              title: `Server Not Connected Yet`,
+                              text: `You cannot get the info of this alert because its Server Credentials are wrong`,
+                              icon: "error",
+                              // timer: 2000,
+                              showConfirmButton: true,
+                            });
                           } else {
                             Swal.fire({
                               title: `${checkServer.server.companyName}`,
@@ -226,8 +237,8 @@ const AssignedAlerts = () => {
                           {data.address == null
                             ? "N/A"
                             : data.address.length > 10
-                              ? data.address.substring(0, 10) + "..."
-                              : data.address}
+                            ? data.address.substring(0, 10) + "..."
+                            : data.address}
                         </td>
                         {data.address != null && (
                           <UncontrolledPopover

@@ -26,8 +26,8 @@ const Roles = () => {
   const filterRoless = (e: any) => {
     const searchKey = e.target.value;
     setSearchValue(searchKey);
-    const filtered = filterRoles.filter((country: any, index: any) => {
-      return roles.name.toLowerCase().includes(searchKey.toLowerCase());
+    const filtered = filterRoles.filter((role: any, index: any) => {
+      return role.name.toLowerCase().includes(searchKey.toLowerCase());
       // ^ Add 'return' statement here
     });
 
@@ -76,7 +76,8 @@ const Roles = () => {
                       style={{
                         backgroundColor: "#f1f1f1",
                         borderRadius: "5px",
-                        padding: "15px",
+                        padding: "12px",
+                        height:"40px",
                         margin: "15px",
                         width: "calc(100% - 30px)", // Adjusting width to accommodate padding and margin
                         border: "none",

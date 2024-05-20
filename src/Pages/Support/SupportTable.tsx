@@ -120,6 +120,10 @@ const TicketTable = () => {
 
     // Navigate to the ticketDetails page with the row data
     dispatch(setTableRow(row));
+    // window.open(
+    //   `${process.env.PUBLIC_URL}/support/ticketDetails/${row.ticket_id}`,
+    //   '_blank'
+    // );
     navigate(
       `${process.env.PUBLIC_URL}/support/ticketDetails/${row.ticket_id}`
     );
@@ -161,7 +165,8 @@ const TicketTable = () => {
             style={{
               backgroundColor: "#f1f1f1",
               borderRadius: "5px",
-              padding: "15px",
+              height:"40px",
+              padding: "12px",
               margin: "20px 0px",
               width: "100%", // Adjusting width to accommodate padding and margin
               border: "none",
