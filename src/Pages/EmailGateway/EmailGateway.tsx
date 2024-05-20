@@ -46,12 +46,10 @@ const EmailGateway = () => {
     { value: `TLS`, label: `TLS` },
   ];
 
-  const [isVisible, setIsVisible] = useState(false);
-
   const [loading, setLoading] = useState<any>(true);
   const [emailGatewayCreationloading, setEmailGatewayCreationloading] =
     useState<any>(false);
-  const [undefinedData, setUndefinedData] = useState<any>(false);
+
   const [isEdit, setIsEdit] = useState(false);
 
   useEffect(() => {
@@ -135,13 +133,11 @@ const EmailGateway = () => {
             showConfirmButton: false,
           });
           setLoading(false);
-          setUndefinedData(false);
           dispatch(setEmailGatewayData(null));
-         
+
         }
         if (parentData.success) {
           dispatch(setEmailGatewayData(parentData.data.emailGateway));
-          setUndefinedData(false);
 
           setLoading(false);
         }
@@ -373,7 +369,7 @@ const EmailGateway = () => {
                                               if (
                                                 !parentData.success &&
                                                 parentData.message ===
-                                                  "ERROR_INTERNET_DISCONNECTED"
+                                                "ERROR_INTERNET_DISCONNECTED"
                                               ) {
                                                 dispatch(setIsConnected(true));
                                               }
@@ -396,7 +392,7 @@ const EmailGateway = () => {
                                                   )
                                                 );
 
-                                                
+
                                               }
                                             }
                                           });
@@ -410,9 +406,8 @@ const EmailGateway = () => {
                                   }}
                                 />
                                 <span
-                                  className={`switch-state ${
-                                    isActive ? "bg-primary" : "bg-secondary"
-                                  }`}
+                                  className={`switch-state ${isActive ? "bg-primary" : "bg-secondary"
+                                    }`}
                                 />
                               </Label>
                             </div>
@@ -718,7 +713,7 @@ const EmailGateway = () => {
                           </Button>
                         )}
                         {emailGatewayData == null ||
-                        (emailGatewayData !== null && isActive) ? (
+                          (emailGatewayData !== null && isActive) ? (
                           <Button
                             color="primary"
                             type="submit"
@@ -736,41 +731,15 @@ const EmailGateway = () => {
                             {emailGatewayCreationloading
                               ? "Loading..."
                               : emailGatewayData == null
-                              ? "Create"
-                              : isEdit
-                              ? "Save"
-                              : "Edit"}
+                                ? "Create"
+                                : isEdit
+                                  ? "Save"
+                                  : "Edit"}
                           </Button>
                         ) : (
                           <></>
                         )}
-                        {/* {emailGatewayData == null ||
-                          (emailGatewayData !== null &&
-                            emailGatewayData.isActive && (
-                              <Button
-                                color="primary"
-                                type="submit"
-                                disabled={emailGatewayCreationloading}
-                                onClick={(e) => {
-                                  if (!isEdit && emailGatewayData !== null) {
-                                    e.preventDefault();
-                                    setIsEdit(true);
-                                  }
-                                }}
-                              >
-                                {emailGatewayCreationloading
-                                  ? "Loading..."
-                                  : emailGatewayData == null
-                                  ? "Create"
-                                  : emailGatewayData.isActive
-                                  ? isEdit
-                                    ? "Save"
-                                    : "Edit"
-                                  : isEdit
-                                  ? "Save"
-                                  : "Edit"}
-                              </Button>
-                            ))} */}
+
                       </CardFooter>
                     </Row>
                   )}

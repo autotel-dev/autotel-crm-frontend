@@ -81,7 +81,7 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
         {
           svgIcon: "bonus-kit",
           title: "Email Templates",
-          link: `${process.env.PUBLIC_URL}/dashboards/crmdashboard`,
+          link: `${process.env.PUBLIC_URL}/super-admin/setup/email-template`,
         },
         {
           svgIcon: "bonus-kit",
@@ -182,13 +182,18 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
         },
         {
           svgIcon: "bonus-kit",
+          title: "WhatsApp Gateway",
+          link: `${process.env.PUBLIC_URL}/company/setup/whatsApp-gateway`,
+        },
+        {
+          svgIcon: "bonus-kit",
           title: "Email Templates",
-          link: `${process.env.PUBLIC_URL}/company/setup/emailTemplates`,
+          link: `${process.env.PUBLIC_URL}/company/setup/email-template`,
         },
         {
           svgIcon: "bonus-kit",
           title: "WhatsApp templates",
-          link: `${process.env.PUBLIC_URL}/company/setup/whatsappTemplates`,
+          link: `${process.env.PUBLIC_URL}/company/setup/whatsapp-template`,
         },
       ],
     },

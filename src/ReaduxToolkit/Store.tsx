@@ -33,6 +33,7 @@ import DashboardSlice from "./Reducer/DashboardSlice";
 import ComplainsTypeSlice from "./Reducer/ComplainsTypeSlice";
 import ComplainCenterSlice from "./Reducer/ComplainCenterSlice";
 import EmailGatewaySlice from "./Reducer/EmailGatewaySlice";
+import WhatsAppGatewaySlice from "./Reducer/WhatsAppGatewaySlice";
 
 const Store = configureStore({
   reducer: {
@@ -70,6 +71,7 @@ const Store = configureStore({
     complainTypes: ComplainsTypeSlice,
     complainCenter: ComplainCenterSlice,
     emailGateway: EmailGatewaySlice,
+    whatsAppGateway: WhatsAppGatewaySlice
   },
 });
 

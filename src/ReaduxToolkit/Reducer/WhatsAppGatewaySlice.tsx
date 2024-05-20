@@ -9,7 +9,7 @@ const WhatsAppGatewaySlice = createSlice({
     name: "WhatsAppGatewaySlice",
     initialState,
     reducers: {
-        setWhatsAppGatewayDataData: (state, action) => {
+        setWhatsAppGatewayData: (state, action) => {
             state.whatsAppGatewayData = action.payload;
         },
         setIsConnected: (state, action) => {
@@ -17,6 +17,6 @@ const WhatsAppGatewaySlice = createSlice({
         },
     },
 });
-export const { setWhatsAppGatewayDataData, setIsConnected } = WhatsAppGatewaySlice.actions;
+export const { setWhatsAppGatewayData, setIsConnected } = WhatsAppGatewaySlice.actions;
 
 export default WhatsAppGatewaySlice.reducer;

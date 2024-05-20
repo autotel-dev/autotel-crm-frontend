@@ -18,7 +18,7 @@ const Breadcrumbs = ({ mainTitle, parent, title }: propsTypes) => {
       width: "2px",
       backgroundColor:
         userPersonalizationData !== null &&
-        userPersonalizationData?.buttonsAndBarsColor !== ""
+          userPersonalizationData?.buttonsAndBarsColor !== ""
           ? userPersonalizationData?.buttonsAndBarsColor
           : "#33BFBF",
     };
@@ -34,28 +34,27 @@ const Breadcrumbs = ({ mainTitle, parent, title }: propsTypes) => {
           <Col sm="6" className="pe-0">
             <Breadcrumb>
               <BreadcrumbItem>
-                <Link to={`${process.env.PUBLIC_URL}/dashboards/shoppingplace`}>
+                {/* <Link to={`${process.env.PUBLIC_URL}/dashboards/shoppingplace`}> */}
+                <Link to="#">
                   <SVG
                     iconId="stroke-home"
                     className="personalization"
-                    color={`${
-                      userPersonalizationData !== null &&
-                      userPersonalizationData?.buttonsAndBarsColor !== ""
+                    color={`${userPersonalizationData !== null &&
+                        userPersonalizationData?.buttonsAndBarsColor !== ""
                         ? userPersonalizationData?.buttonsAndBarsColor
                         : "#35bfbf"
-                    }`}
+                      }`}
                   />
                 </Link>
               </BreadcrumbItem>
               <BreadcrumbItem
                 style={{
                   fontWeight: "500",
-                  color: `${
-                    userPersonalizationData !== null &&
-                    userPersonalizationData?.buttonsAndBarsColor !== null
+                  color: `${userPersonalizationData !== null &&
+                      userPersonalizationData?.buttonsAndBarsColor !== null
                       ? `${userPersonalizationData?.buttonsAndBarsColor}`
                       : "#33BFBF"
-                  }`,
+                    }`,
                 }}
               >
                 {/* Render the ::before pseudo-element inline */}
@@ -67,12 +66,11 @@ const Breadcrumbs = ({ mainTitle, parent, title }: propsTypes) => {
               <BreadcrumbItem
                 style={{
                   fontWeight: "normal",
-                  color: `${
-                    userPersonalizationData !== null &&
-                    userPersonalizationData?.buttonsAndBarsColor !== null
+                  color: `${userPersonalizationData !== null &&
+                      userPersonalizationData?.buttonsAndBarsColor !== null
                       ? `${userPersonalizationData?.buttonsAndBarsColor}`
                       : "#33BFBF"
-                  }`,
+                    }`,
                 }}
               >
                 {/* Render the ::before pseudo-element inline */}
