@@ -3,7 +3,7 @@ import { CheckCircle, Info, Target } from "react-feather";
 import { all, active, inactive } from "../../utils/Constant";
 import { useAppDispatch, useAppSelector } from "../../ReaduxToolkit/Hooks";
 import { setActiveTab } from "../../ReaduxToolkit/Reducer/ProjectSlice";
-import CreateNewCity from "./CreateNewCountry";
+import CreateNewCountry from "./CreateNewCountry";
 import {
   setCountries,
   setInActiveActiveCountries,
@@ -86,7 +86,7 @@ const CountriesListNav = () => {
           </NavItem>
         </Nav>
       </Col>
-      <CreateNewCity />
+      <CreateNewCountry />
     </Row>
   );
 };

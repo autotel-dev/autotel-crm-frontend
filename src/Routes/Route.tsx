@@ -118,6 +118,7 @@ import ComplainType from "../Pages/ComplainType/ComplainType";
 import EmailGateway from "../Pages/EmailGateway/EmailGateway";
 import SMSGateway from "../Pages/SMSGateway/SMSGateway";
 import WhatsAppGateway from "../Pages/WhatsAppGateway/WhatsAppGateway";
+import EmailTemplates from "../Pages/EmailTemplates/EmailTemplates";
 
 const routes = [
   // dashboard routes
@@ -608,7 +609,13 @@ const routes = [
     isProtected: true,
     permissionValue: "AllLogs",
   },
-
+  {
+    path: `${process.env.PUBLIC_URL}/super-admin/setup/email-template`,
+    Component: <EmailTemplates />,
+    allowedUserRoles: [ROLES.SUPER_ADMIN],
+    isProtected: true,
+    permissionValue: "EmailTemplates",
+  },
   {
     path: `${process.env.PUBLIC_URL}/super-admin/setup/email-gateway`,
     Component: <EmailGateway />,
@@ -624,7 +631,7 @@ const routes = [
     permissionValue: "SMSGateway",
   },
   {
-    path: `${process.env.PUBLIC_URL}/super-admin/setup/whatsapp-gateway`,
+    path: `${process.env.PUBLIC_URL}/super-admin/setup/whatsApp-gateway`,
     Component: <WhatsAppGateway />,
     allowedUserRoles: [ROLES.SUPER_ADMIN],
     isProtected: true,
@@ -708,14 +715,22 @@ const routes = [
     permissionValue: "EmailGateway",
   },
   {
-    path: `${process.env.PUBLIC_URL}/company/setup/emailTemplates`,
-    Component: <UnderProductionPage />,
+    path: `${process.env.PUBLIC_URL}/company/setup/whatsApp-gateway`,
+    Component: <WhatsAppGateway />,
+    allowedUserRoles: [ROLES.COMPANY],
+    isProtected: true,
+    permissionValue: "WhatsAppGateway",
+  },
+
+  {
+    path: `${process.env.PUBLIC_URL}/company/setup/email-template`,
+    Component: <EmailTemplates />,
     allowedUserRoles: [ROLES.COMPANY],
     isProtected: true,
     permissionValue: "EmailTemplates",
   },
   {
-    path: `${process.env.PUBLIC_URL}/company/setup/whatsappTemplates`,
+    path: `${process.env.PUBLIC_URL}/company/setup/whatsapp-templates`,
     Component: <UnderProductionPage />,
     allowedUserRoles: [ROLES.COMPANY],
     isProtected: true,
