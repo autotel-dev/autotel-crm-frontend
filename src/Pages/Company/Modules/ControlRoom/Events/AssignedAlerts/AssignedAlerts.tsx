@@ -137,7 +137,6 @@ const AssignedAlerts = () => {
                     <th>Message</th>
                     <th>Address</th>
                   </tr>
-<<<<<<< HEAD
                 </thead>
                 <tbody>
                   {dataList.length === 0 ? (
@@ -155,9 +154,7 @@ const AssignedAlerts = () => {
                       )
                       .map((data: any, index: any) => (
                         <tr
-                          style={{
-                            cursor: "pointer",
-                          }}
+                         
                           key={index}
                           onClick={async () => {
                             var checkServer =
@@ -165,43 +162,6 @@ const AssignedAlerts = () => {
                                 (item: any) => item.server._id === data.server
                               );
                             // console.log(liveAlertsData?.connectedServers);
-=======
-                ) : (
-                  dataList
-                    .filter((data: any) =>
-                      data.deviceName
-                        .toLowerCase()
-                        .includes(searchValue.toLowerCase())
-                    )
-                    .map((data: any, index: any) => (
-                      <tr
-
-                        // style={{
-                        //   cursor: "pointer",
-                        // }}
-                        key={index}
-                        onMouseEnter={() => {
-                          setIsHovered(true);
-                          setIdd(index);
-                        }}
-                        onMouseLeave={() => setIsHovered(false)}
-                        style={{
-                          backgroundColor:
-                            isHovered && idd == index
-                              ? userPersonalizationData == null
-                                ? "#D6EEEE"
-                                : `rgba(${rgbColor.r},${rgbColor.g},${rgbColor.b},0.2)`
-                              : "transparent",
-                          transition: "background-color 0.3s",
-                          cursor:"pointer",
-                        }}
-                        onClick={async () => {
-                          var checkServer =
-                            liveAlertsData?.connectedServers?.find(
-                              (item: any) => item.server._id === data.server
-                            );
-                          // console.log(liveAlertsData?.connectedServers);
->>>>>>> 99e5d2a835c62a2e961bdbbc1a027be48052767c
 
                             console.log("server", data.server);
 
@@ -264,6 +224,21 @@ const AssignedAlerts = () => {
                                 showConfirmButton: true,
                               });
                             }
+                          }}
+                          onMouseEnter={() => {
+                            setIsHovered(true);
+                            setIdd(index);
+                          }}
+                          onMouseLeave={() => setIsHovered(false)}
+                          style={{
+                            backgroundColor:
+                              isHovered && idd == index
+                                ? userPersonalizationData == null
+                                  ? "#D6EEEE"
+                                  : `rgba(${rgbColor.r},${rgbColor.g},${rgbColor.b},0.2)`
+                                : "transparent",
+                            transition: "background-color 0.3s",
+                            cursor:"pointer",
                           }}
                         >
                           {/* <td>{data.eventId}</td> */}

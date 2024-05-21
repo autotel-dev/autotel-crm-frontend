@@ -199,7 +199,6 @@ const LiveAlerts = () => {
             // fontWeight: "bold",
           }}
         >
-<<<<<<< HEAD
           <div>
             Live Alerts (
             {liveAlertsData == null
@@ -212,44 +211,6 @@ const LiveAlerts = () => {
             )
           </div>
         </div>
-=======
-          <Table className="display order-wrapper" id="recent-order">
-            <thead>
-              <tr>
-                {tableHeader.map((data, index) => (
-                  <th key={index} style={{ width: "20%" }}>
-                    {data}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {dataList.length > 0 ? (
-                dataList
-                  .filter((data: any) =>
-                    data?.deviceName
-                      .toLowerCase()
-                      .includes(searchValue.toLowerCase())
-                  )
-                  .map((data: any, index: any) => (
-                    <tr
-                      key={index}
-                      // style={{
-                      //   cursor: "pointer",
-                      // }}
-                      onClick={async () => {
-                        if (data.preInfo == null) {
-                          if (assignLoading) {
-                            Swal.fire({
-                              text: "Loading....",
-                              icon: "info",
-                              showConfirmButton: false,
-                              allowOutsideClick: false, // Prevent closing by clicking outside the modal
-                            });
-                          }
-                          const serverInfo = serverCredentials(data.server._id);
-                          // console.log("serverInfo", serverInfo);
->>>>>>> 99e5d2a835c62a2e961bdbbc1a027be48052767c
 
         <CardBody>
           <Row>
@@ -303,8 +264,20 @@ const LiveAlerts = () => {
                     .map((data: any, index: any) => (
                       <tr
                         key={index}
+                        onMouseEnter={() => {
+                          setIsHovered(true);
+                          setIdd(index);
+                        }}
+                        onMouseLeave={() => setIsHovered(false)}
                         style={{
-                          cursor: "pointer",
+                          backgroundColor:
+                            isHovered && idd == index
+                              ? userPersonalizationData == null
+                                ? "#D6EEEE"
+                                : `rgba(${rgbColor.r},${rgbColor.g},${rgbColor.b},0.2)`
+                              : "transparent",
+                          transition: "background-color 0.3s",
+                          cursor:"pointer",
                         }}
                         onClick={async () => {
                           if (data.preInfo == null) {
@@ -568,60 +541,6 @@ const LiveAlerts = () => {
                                         });
                                         setAssignLoading(false);
                                       }
-<<<<<<< HEAD
-=======
-                                    }
-                                  });
-                                  // Handle successful post creation (e.g., show a success message, redirect, etc.)
-                                } catch (error: any) {
-                                  // Handle error (e.g., show an error message)
-                                  // console.error("Error creating post:", error);
-                                }
-                              }
-                            });
-                          } else {
-                            Swal.fire({
-                              title: `${checkServer.server.companyName}`,
-                              text: `You cannot get the info of this alert because its Server Credentials are wrong`,
-                              icon: "error",
-                              // timer: 2000,
-                              showConfirmButton: true,
-                            });
-                          }
-                        }
-                      }}
-                      onMouseEnter={() => {
-                        setIsHovered(true);
-                        setIdd(index);
-                      }}
-                      onMouseLeave={() => setIsHovered(false)}
-                      style={{
-                        backgroundColor:
-                          isHovered && idd == index
-                            ? userPersonalizationData == null
-                              ? "#D6EEEE"
-                              : `rgba(${rgbColor.r},${rgbColor.g},${rgbColor.b},0.2)`
-                            : "transparent",
-                        transition: "background-color 0.3s",
-                        cursor:"pointer",
-                      }}
-                    >
-                      {/* <td>{data.id}</td> */}
-                      <td style={{ width: "20%" }}>
-                        <div className="d-flex">
-                          <div className="flex-grow-1">
-                            <h5
-                              style={{
-                                fontSize: "14px",
-                                fontWeight: "bold",
-                              }}
-                            >
-                              {data?.deviceName}
-                            </h5>
-                            <div style={{ fontSize: "10px" }}>
-                              {data.time.slice(0, 10)}
-                            </div>
->>>>>>> 99e5d2a835c62a2e961bdbbc1a027be48052767c
 
                                       if (dataa.success) {
                                         setAssignLoading(false);

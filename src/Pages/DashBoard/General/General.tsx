@@ -13,6 +13,7 @@ import {
 import SVG from "../../../utils/CommonSvgIcon/SVG";
 import { H3, H4, P, Image, LI, UL } from "../../../AbstractElements";
 import { boxesData1, boxesData2, operatorPerformanceData } from "./GeneralData";
+import { MdFilterList } from "react-icons/md";
 
 import { Link } from "react-router-dom";
 import { dynamicImage } from "../../../Service";
@@ -698,8 +699,8 @@ const General = () => {
                                 toggleDropdown(e);
                               }}
                             >
-                              <div style={{ fontSize: "24px", color: "white" }}>
-                                &#9776;
+                              <div style={{ fontSize: "30px", color: "white" }}>
+                              <MdFilterList style={{ marginTop: "12px",}} />
                               </div>
                             </div>
                           </div>

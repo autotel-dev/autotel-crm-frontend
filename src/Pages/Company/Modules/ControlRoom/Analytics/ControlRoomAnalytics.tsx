@@ -35,6 +35,7 @@ import { ApexOptions } from "apexcharts";
 import TotalPreInfoAlerts from "./components/TotalPreInfoAlerts";
 import DeviceSelecetdForAlerts from "./components/DeviceSelecetdForAlerts";
 import { VscKebabVertical } from "react-icons/vsc";
+import { relative } from "path";
 
 const ControlRoomAnalytics = () => {
   const { userPersonalizationData } = useSelector(
@@ -818,8 +819,8 @@ const ControlRoomAnalytics = () => {
               />
               {/*  */}
               <Col xl="3" lg="6" md="6" sm="12" className="box-col-3">
-                <Card className="total-earning">
-                  <CardBody style={{ maxHeight: "160px", padding: "1em" }}>
+                <Card className="total-earning" style={{position:"relative",}}>
+                  <CardBody style={{ maxHeight: "160px", padding: "1em", }}>
                     <Row style={{ height: "115px" }}>
                       <Col sm="12" className="box-col-7">
                         <div className="d-flex">
