@@ -15,7 +15,9 @@ const RolesListNav = () => {
   var tempList: any = [];
   const { roles, filterRoles } = useSelector((state: any) => state.roles);
   return (
-    <Row style={{ display: "flex", justifyContent: "end" }}>
+     <Row>  
+            {/* style={{ display: "flex", justifyContent: "end", }} */}
+    <Col md={6}>
       <Nav tabs className="border-tab">
         <NavItem style={{ cursor: "pointer" }}>
           <NavLink
@@ -81,6 +83,7 @@ const RolesListNav = () => {
           </NavLink>
         </NavItem>
       </Nav>
+    </Col>
       <CreateNewRole />
     </Row>
   );

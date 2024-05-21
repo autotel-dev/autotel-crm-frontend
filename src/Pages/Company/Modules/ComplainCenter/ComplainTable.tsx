@@ -10,7 +10,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { getUserRole } from "../../../../Api/globals";
 import { ROLES } from "../../../../constants/roles";
 import CreateNewComplain from "./CreateNewComplain";
-import { setTableRow } from "../../../../ReaduxToolkit/Reducer/ComplainCenterSlice";
+import { setAllComplains, setComplainCenterRoles, setComplainCenterStatistics, setTableRow } from "../../../../ReaduxToolkit/Reducer/ComplainCenterSlice";
+import { getAll } from "../../../../Api";
 
 const ComplainTable = () => {
   const dispatch = useDispatch();
@@ -22,6 +23,20 @@ const ComplainTable = () => {
   const { userPersonalizationData } = useSelector(
     (state: any) => state.personalization
   );
+  function hexToRgb(hex: any) {
+    // Remove the hash sign if present
+    hex = hex.replace(/^#/, '');
+    // Parse the hex values to RGB
+    const bigint = parseInt(hex, 16);
+    const r = (bigint >> 16) & 255;
+    const g = (bigint >> 8) & 255;
+    const b = bigint & 255;
+    return { r, g, b };
+  }
+
+  // Usage
+  const hexColor = "#ff0000"; // Example hex color
+  const rgbColor = hexToRgb(userPersonalizationData?.buttonsAndBarsColor); // Convert hex to RGB
 
   // console.log("support", support);
   const supportData = () => {
@@ -135,40 +150,17 @@ const ComplainTable = () => {
   const [changeStatusValue, setChangeStatusValue] = useState(false)
 
   const handleRowClicked = (row: any) => {
-    // Set the state variable
-
-
-    // // Store the state variable in sessionStorage
-    // sessionStorage.setItem('stateVariable', JSON.stringify(changeStatusValue));
-
-    // // Create a broadcast channel with a unique name
-    // const broadcastChannel = new BroadcastChannel('stateChannel');
-
-    // // Send the state variable through the broadcast channel
-    // broadcastChannel.postMessage(JSON.stringify(changeStatusValue));
-
-    // // Clean up by closing the broadcast channel
-    // broadcastChannel.close();
 
     dispatch(setTableRow(row));
-    // if (getUserRole() == "COMPANY") {
-    //   navigate(
-    //     `${process.env.PUBLIC_URL}/company/modules/complain-center/complainDetails/${row.complaint_id}`
-    //   );
-    // }
-    // if (getUserRole() == "OPERATOR") {
-    //   navigate(
-    //     `${process.env.PUBLIC_URL}/operator/modules/complain-center/complainDetails/${row.complaint_id}`
-    //   );
-    // }
-    if (getUserRole() === "COMPANY") {
+
+    if (getUserRole() === ROLES.COMPANY) {
       window.open(
         `${process.env.PUBLIC_URL}/company/modules/complain-center/complainDetails/${row.complaint_id}`,
         '_blank'
       );
     }
 
-    if (getUserRole() === "OPERATOR") {
+    if (getUserRole() === ROLES.OPERATOR) {
       window.open(
         `${process.env.PUBLIC_URL}/operator/modules/complain-center/complainDetails/${row.complaint_id}`,
         '_blank'
@@ -176,6 +168,71 @@ const ComplainTable = () => {
     }
 
   };
+
+  const [isUpdate, setIsUpdate] = useState("");
+
+
+  useEffect(() => {
+    // console.log("state1", isUpdate);
+  }, [isUpdate]);
+
+  useEffect(() => {
+    const listener = (event: any) => {
+      // Update state1 when a message is received from another tab
+      // console.log("event", event);
+      // if (isUpdate) {
+      // console.log(typeof (event.data));
+      if (typeof (event.data) == "string" && event.data == "updated") {
+        setIsUpdate(event.data.toString());
+        getAll({ url: "complaint-center/get-statistics" }).then((data: any) => {
+          // console.log("Data", data);
+
+          if (data !== undefined) {
+
+            if (data.success) {
+              dispatch(setComplainCenterRoles(data.data.InternalComplaintsStatistics.subRoleCounts))
+              const mappedArray = Object.entries(
+                data.data.InternalComplaintsStatistics
+              ).map(([key, value]) => {
+                // Remove "total" from the key and replace "Count" with "Tickets"
+                if (key !== "subRoleCounts") {
+                  const formattedKey = key
+                    .replace("total", "")
+                    .replace("Count", "");
+                  return { key: formattedKey, value: value };
+                }
+              });
+              mappedArray.pop()
+              // console.log(mappedArray);
+              dispatch(setComplainCenterStatistics(mappedArray));
+
+            }
+          }
+        });
+
+        getAll({
+          url: "complaint-center/get-all-internal-complaints",
+        }).then((data: any) => {
+          // console.log("api call --- >", data);
+
+          if (data !== undefined) {
+            if (data.success) {
+              // console.log("hhg");
+              dispatch(setAllComplains(data.data.allInternalComplaints));
+            }
+          }
+        });
+      }
+
+      // }
+
+    };
+    // Listen for messages from other tabs
+    window.addEventListener("message", listener);
+    return () => {
+      window.removeEventListener("message", listener);
+    };
+  }, []);
   return (
     <div className="table-responsive support-table">
       <Row style={{ display: "flex", alignItems: "center" }}>
@@ -258,7 +315,7 @@ const ComplainTable = () => {
               cursor: "pointer",
               transition: "background-color 0.2s", // Smooth transition for background color change
               "&:hover": { // Define hover style
-                backgroundColor: `${userPersonalizationData.buttonsAndBarsColor}`,
+                backgroundColor: `rgba(${rgbColor.r},${rgbColor.g},${rgbColor.b},0.2)`,
               },
             },
           },

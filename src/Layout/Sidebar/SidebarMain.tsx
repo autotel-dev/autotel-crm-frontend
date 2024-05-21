@@ -17,7 +17,7 @@ import { useSelector } from "react-redux";
 import { jwtDecode } from "jwt-decode";
 import { getUserRole } from "../../Api/globals";
 import { IoMdArrowDropdown, IoMdArrowDropup } from "react-icons/io";
-
+import { ROLES } from "../../constants/roles";
 
 export interface PropsTypes {
   setOpen: (item: boolean) => void;
@@ -82,7 +82,7 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
         {
           svgIcon: "bonus-kit",
           title: "Email Templates",
-          link: `${process.env.PUBLIC_URL}/dashboards/crmdashboard`,
+          link: `${process.env.PUBLIC_URL}/super-admin/setup/email-template`,
         },
         {
           svgIcon: "bonus-kit",
@@ -174,17 +174,27 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
         {
           svgIcon: "bonus-kit",
           title: "Departments",
-          link: `${process.env.PUBLIC_URL}/company/setup/roles`,
+          link: `${process.env.PUBLIC_URL}/company/setup/deparments`,
+        },
+        {
+          svgIcon: "bonus-kit",
+          title: "Email Gateway",
+          link: `${process.env.PUBLIC_URL}/company/setup/email-gateway`,
+        },
+        {
+          svgIcon: "bonus-kit",
+          title: "WhatsApp Gateway",
+          link: `${process.env.PUBLIC_URL}/company/setup/whatsApp-gateway`,
         },
         {
           svgIcon: "bonus-kit",
           title: "Email Templates",
-          link: `${process.env.PUBLIC_URL}/company/setup/emailTemplates`,
+          link: `${process.env.PUBLIC_URL}/company/setup/email-template`,
         },
         {
           svgIcon: "bonus-kit",
           title: "WhatsApp templates",
-          link: `${process.env.PUBLIC_URL}/company/setup/whatsappTemplates`,
+          link: `${process.env.PUBLIC_URL}/company/setup/whatsapp-template`,
         },
       ],
     },
@@ -342,9 +352,9 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
           id="sidebar-menu"
           style={{
             backgroundColor: `${userPersonalizationData !== null &&
-              userPersonalizationData?.secondaryColor !== null
-              ? userPersonalizationData?.secondaryColor
-              : ""
+                userPersonalizationData?.secondaryColor !== null
+                ? userPersonalizationData?.secondaryColor
+                : ""
               }`,
           }}
         >
@@ -399,8 +409,8 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
 
                           style={{
                             display: `${data.title === sideMenu && !data.link
-                              ? "block"
-                              : "block"
+                                ? "block"
+                                : "block"
                               }`,
                           }}
                         >
@@ -443,7 +453,7 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
                     )}
                   </LI>
                 ))
-                : decodedToken.role === "OPERATOR"
+                : decodedToken.role === ROLES.OPERATOR
                   ? filteredOperatorMenu !== undefined &&
                   filteredOperatorMenu?.map((data: any, index: any) => (
                     <LI className={`sidebar-list`} key={index}>
@@ -470,8 +480,8 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
                             className="sidebar-submenu custom-scrollbar simple-list"
                             style={{
                               display: `${data.title === sideMenu && !data.link
-                                ? "block"
-                                : "block"
+                                  ? "block"
+                                  : "block"
                                 }`,
                             }}
                           >
@@ -516,8 +526,8 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
                             className="sidebar-submenu custom-scrollbar simple-list"
                             style={{
                               display: `${data.title === sideMenu && !data.link
-                                ? "block"
-                                : "block"
+                                  ? "block"
+                                  : "block"
                                 }`,
                             }}
                           >

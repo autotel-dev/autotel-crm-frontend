@@ -22,6 +22,7 @@ import {
   setProvincesStart,
   setFilterProvinces,
   setInActiveActiveProvinces,
+  setCountryId,
 } from "../../ReaduxToolkit/Reducer/ProvinceSlice";
 import { setNoDataFound } from "../../ReaduxToolkit/Reducer/NoDataFoundSlice";
 import SelectCountryBox from "./components/SelectCountryBox";
@@ -39,7 +40,7 @@ interface PropsTypes {
 
 const UpdateProvince: React.FC<PropsTypes> = ({
   isVisible,
-  setIsVisible = () => {},
+  setIsVisible = () => { },
   id,
   value,
   isActive,
@@ -117,7 +118,7 @@ const UpdateProvince: React.FC<PropsTypes> = ({
               setLoading(false);
               setIsVisible(!isVisible);
 
-              dispatch(setId(null));
+              dispatch(setCountryId(null));
               // dispatch(setValue(""));
               dispatch(setProvincesStart());
               getAll({ url: "province/get-all-provinces" }).then(
@@ -245,9 +246,8 @@ const UpdateProvince: React.FC<PropsTypes> = ({
                       }}
                     />
                     <span
-                      className={`switch-state ${
-                        isActive ? "bg-primary" : "bg-secondary"
-                      }`}
+                      className={`switch-state ${isActive ? "bg-primary" : "bg-secondary"
+                        }`}
                     />
                   </Label>
                 </div>
@@ -255,20 +255,20 @@ const UpdateProvince: React.FC<PropsTypes> = ({
             </FormGroup>
           </Row>
           <Button color="primary" className="me-1">
-                {loading ? "Loading ..." : `Update`}
-              </Button>
-              &nbsp;&nbsp;
-              <Button
-                disabled={loading ? true : false}
-                color="secondary"
-                onClick={() => {
-                  // setValue("")
-                  setIsVisible(!isVisible);
-                  // console.log(value);
-                }}
-              >
-                {Cancel}
-              </Button>
+            {loading ? "Loading ..." : `Update`}
+          </Button>
+          &nbsp;&nbsp;
+          <Button
+            disabled={loading ? true : false}
+            color="secondary"
+            onClick={() => {
+              // setValue("")
+              setIsVisible(!isVisible);
+              // console.log(value);
+            }}
+          >
+            {Cancel}
+          </Button>
         </form>
       </ModalBody>
     </Modal>

@@ -25,6 +25,7 @@ import {
   setComplainTypePriorities,
 } from "../../ReaduxToolkit/Reducer/ComplainsTypeSlice";
 import H7 from "../../CommonElements/Headings/H7Element";
+import { formatUnderscoredString } from "../../Api/globals";
 
 const ComplainTypeList = () => {
   const { complainTypes, loading, id, activeInActiveComplainTypes } =
@@ -35,6 +36,23 @@ const ComplainTypeList = () => {
   const [complainTitle, setComplainTitle] = useState("");
   const [isActive, setIsActive] = useState(false);
   const navigate = useNavigate();
+  const { userPersonalizationData } = useSelector(
+    (state: any) => state.personalization
+  );
+  function hexToRgb(hex: any) {
+    // Remove the hash sign if present
+    hex = hex?.replace(/^#/, "");
+    // Parse the hex values to RGB
+    const bigint = parseInt(hex, 16);
+    const r = (bigint >> 16) & 255;
+    const g = (bigint >> 8) & 255;
+    const b = bigint & 255;
+    return { r, g, b };
+  }
+
+  // Usage
+  const hexColor = "#ff0000"; // Example hex color
+  const rgbColor = hexToRgb(userPersonalizationData?.buttonsAndBarsColor); // Convert hex to RGB
 
 
   useEffect(() => {
@@ -82,14 +100,31 @@ const ComplainTypeList = () => {
       dispatch(setComplainsTypesEnd());
     });
   }, []);
- 
+  const [isHovered, setIsHovered] = useState(false);
+  const [idd, setIdd] = useState("");
 
   const renderTableRows = () => {
     return complainTypes?.map((row: any) => (
-      <tr key={row.id}>
+      <tr
+      key={row._id}
+      onMouseEnter={() => {
+        setIsHovered(true);
+        setIdd(row._id);
+      }}
+      onMouseLeave={() => setIsHovered(false)}
+      style={{
+        backgroundColor:
+          isHovered && idd == row._id
+            ? userPersonalizationData == null
+              ? "#D6EEEE"
+              : `rgba(${rgbColor.r},${rgbColor.g},${rgbColor.b},0.2)`
+            : "transparent",
+        transition: "background-color 0.3s",
+      }}
+    >
         <td>{row._id}</td>
         <td>{row.title}</td>
-        <td>{row.priorty}</td>
+        <td>{formatUnderscoredString(row.priorty)}</td>
         <td>
           <div className="d-flex" style={{ justifyContent: "center" }}>
             <div
@@ -241,12 +276,12 @@ const ComplainTypeList = () => {
                   //     fontWeight: "bold",
                   //   }}
                   // >
-                    // {activeInActiveComplainTypes !== "All"
-                    //   ? activeInActiveComplainTypes
-                    //   : "No Complain Types Found"}
+                  // {activeInActiveComplainTypes !== "All"
+                  //   ? activeInActiveComplainTypes
+                  //   : "No Complain Types Found"}
                   // </div>
                   <H7>
-                       {activeInActiveComplainTypes !== "All"
+                    {activeInActiveComplainTypes !== "All"
                       ? activeInActiveComplainTypes
                       : "No Complain Types Found"}
                   </H7>

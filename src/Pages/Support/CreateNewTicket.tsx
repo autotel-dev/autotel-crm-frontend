@@ -241,7 +241,7 @@ const CreateNewTicket = () => {
           alignItems: "center",
           justifyContent: "center",
           padding: "5px 10px",
-          height: "50px",
+          height: "40px",
           width: "100%",
         }}
         onClick={addToggle}

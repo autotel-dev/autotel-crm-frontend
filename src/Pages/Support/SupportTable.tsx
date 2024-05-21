@@ -18,6 +18,23 @@ const TicketTable = () => {
   const { userPermissions } = useSelector(
     (state: any) => state.userPermissions
   );
+  const { userPersonalizationData } = useSelector(
+    (state: any) => state.personalization
+  );
+  function hexToRgb(hex: any) {
+    // Remove the hash sign if present
+    hex = hex.replace(/^#/, '');
+    // Parse the hex values to RGB
+    const bigint = parseInt(hex, 16);
+    const r = (bigint >> 16) & 255;
+    const g = (bigint >> 8) & 255;
+    const b = bigint & 255;
+    return { r, g, b };
+  }
+
+  // Usage
+  const hexColor = "#ff0000"; // Example hex color
+  const rgbColor = hexToRgb(userPersonalizationData?.buttonsAndBarsColor); // Convert hex to RGB
   var support = userPermissions.find((item: any) => item.title === "Support");
   // console.log("support", support);
   const supportData = () => {
@@ -103,6 +120,10 @@ const TicketTable = () => {
 
     // Navigate to the ticketDetails page with the row data
     dispatch(setTableRow(row));
+    // window.open(
+    //   `${process.env.PUBLIC_URL}/support/ticketDetails/${row.ticket_id}`,
+    //   '_blank'
+    // );
     navigate(
       `${process.env.PUBLIC_URL}/support/ticketDetails/${row.ticket_id}`
     );
@@ -116,22 +137,22 @@ const TicketTable = () => {
             support !== undefined && support?.create
               ? 10
               : getUserRole() === ROLES.SUPER_ADMIN
-              ? 12
-              : 12
+                ? 12
+                : 12
           }
           lg={
             support !== undefined && support?.create
               ? 10
               : getUserRole() === ROLES.SUPER_ADMIN
-              ? 10
-              : 12
+                ? 10
+                : 12
           }
           xl={
             support !== undefined && support?.create
               ? 10
               : getUserRole() === ROLES.SUPER_ADMIN
-              ? 10
-              : 12
+                ? 10
+                : 12
           }
         >
           <input
@@ -144,7 +165,8 @@ const TicketTable = () => {
             style={{
               backgroundColor: "#f1f1f1",
               borderRadius: "5px",
-              padding: "15px",
+              height: "40px",
+              padding: "12px",
               margin: "20px 0px",
               width: "100%", // Adjusting width to accommodate padding and margin
               border: "none",
@@ -162,7 +184,7 @@ const TicketTable = () => {
             <CreateNewTicket />
           </Col>
         ) : (getUserRole() === ROLES.COMPANY ||
-            getUserRole() === ROLES.OPERATOR) &&
+          getUserRole() === ROLES.OPERATOR) &&
           support !== undefined &&
           support?.create ? (
           <Col sm={12} md={12} lg={2} xl={2}>
@@ -170,7 +192,7 @@ const TicketTable = () => {
           </Col>
         ) : null}
       </Row>
-      {selectedRows.length !== 0 && (
+      {/* {selectedRows.length !== 0 && (
         <div
           className={`d-flex align-items-center justify-content-between bg-light-info p-2`}
         >
@@ -179,11 +201,11 @@ const TicketTable = () => {
             {Delete}
           </Button>
         </div>
-      )}
+      )} */}
       <DataTable
         columns={supportColumns}
         data={data}
-        striped={true}
+        // striped={true}
         pagination
         selectableRows
         onSelectedRowsChange={handleRowSelected}
@@ -198,6 +220,10 @@ const TicketTable = () => {
           rows: {
             style: {
               cursor: "pointer",
+              transition: "background-color 0.2s", // Smooth transition for background color change
+              "&:hover": { // Define hover style
+                backgroundColor: `rgba(${rgbColor.r},${rgbColor.g},${rgbColor.b},0.2)`,
+              },
             },
           },
           head: {

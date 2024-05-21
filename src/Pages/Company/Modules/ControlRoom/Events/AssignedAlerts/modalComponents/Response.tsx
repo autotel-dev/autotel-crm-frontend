@@ -130,7 +130,7 @@ const ResponseForm: React.FC<PropsTypes> = ({
   };
 
   return (
-    <Col md={12}>
+    <Col md={12} style={{padding:"10pxpx 20px",}}>
       <form
         className="form-bookmark needs-validation"
         onSubmit={handleSubmit(sendResponse)}
@@ -153,11 +153,7 @@ const ResponseForm: React.FC<PropsTypes> = ({
           </FormGroup>
         </Row>
         <div style={{ display: "flex", justifyContent: "end" }}>
-          <Button color="primary" className="me-1">
-            {loading ? "Loading ..." : `Complete`}
-          </Button>
-          &nbsp;&nbsp;
-          <Button
+        <Button
             disabled={loading ? true : false}
             color="secondary"
             onClick={() => {
@@ -168,6 +164,11 @@ const ResponseForm: React.FC<PropsTypes> = ({
           >
             Cancel
           </Button>
+          &nbsp;&nbsp;
+          <Button color="primary" className="me-1">
+            {loading ? "Loading ..." : `Complete`}
+          </Button>
+         
         </div>
       </form>
     </Col>

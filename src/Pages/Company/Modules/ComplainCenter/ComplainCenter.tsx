@@ -21,7 +21,7 @@ import NoInternetConnection from "../../../NoInternetConnection/NoInternetConnec
 import { ROLES } from "../../../../constants/roles";
 import ComplainList from "./ComplainList";
 import ComplainTable from "./ComplainTable";
-import { setAllComplains, setComplainCenterRoles, setComplainCenterStatistics, setComplainPriorityTypes, setComplainRoleSelection, setComplainStatusTypes, setComplainTypesList } from "../../../../ReaduxToolkit/Reducer/ComplainCenterSlice";
+import { setAllComplains, setComplainCenterRoles, setComplainCenterStatistics, setComplainPriorityTypes, setComplainRoleSelection, setComplainStatusTypes, setComplainTypesList, setFilteredRole } from "../../../../ReaduxToolkit/Reducer/ComplainCenterSlice";
 import { setDevices, setDevicesStatuses, setServerDevices } from "../../../../ReaduxToolkit/Reducer/MonitoringSlice";
 
 const ComplainCenter = () => {
@@ -33,6 +33,7 @@ const ComplainCenter = () => {
   const [complaintsLoading, setComplaintsLoading] = useState(true);
   useEffect(() => {
     dispatch(setIsConnected(false));
+    dispatch(setFilteredRole("All"));
   }, []);
   useEffect(() => {
     dispatch(setAllComplains([]));

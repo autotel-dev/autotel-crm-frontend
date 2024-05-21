@@ -47,6 +47,24 @@ const KilledVehicles: React.FC<PropsTypes> = ({ fromDate, toDate }) => {
   const { devices } = useSelector((state: any) => state.monitoring);
   const [isUpdateModalOpenForSendCommand, setIsUpdateModalOpenForSendCommand] =
     useState(false);
+    const { userPersonalizationData } = useSelector(
+      (state: any) => state.personalization
+    );
+    function hexToRgb(hex: any) {
+      // Remove the hash sign if present
+      hex = hex?.replace(/^#/, "");
+      // Parse the hex values to RGB
+      const bigint = parseInt(hex, 16);
+      const r = (bigint >> 16) & 255;
+      const g = (bigint >> 8) & 255;
+      const b = bigint & 255;
+      return { r, g, b };
+    }
+  
+    // Usage
+    const hexColor = "#ff0000"; // Example hex color
+    const rgbColor = hexToRgb(userPersonalizationData?.buttonsAndBarsColor); // Convert hex to RGB
+  
 
   const [dataList, setDataList]: any = useState([...killedDevices]);
   const [loading, setLoading] = useState(false); // State to manage loading
@@ -202,6 +220,8 @@ const KilledVehicles: React.FC<PropsTypes> = ({ fromDate, toDate }) => {
   const [basicTab, setBasicTab] = useState("1");
   const dispatch = useDispatch();
   const [searchValue, setSearchValue] = useState("");
+  const [isHovered, setIsHovered] = useState(false);
+  const [idd, setIdd] = useState("");
 
   return (
     <Col xl="12">
@@ -275,6 +295,7 @@ const KilledVehicles: React.FC<PropsTypes> = ({ fromDate, toDate }) => {
                                   ? "10%"
                                   : "8%",
                             }}
+                            
                           >
                             {data == "Count Down" ? (
                               <div
@@ -295,7 +316,7 @@ const KilledVehicles: React.FC<PropsTypes> = ({ fromDate, toDate }) => {
                     </thead>
                     <tbody>
                       {dataList.length === 0 ? (
-                        <tr>
+                        <tr >
                           <td colSpan={11} style={{ fontSize: "25px" }}>
                             No Devices Found
                           </td>
@@ -309,7 +330,23 @@ const KilledVehicles: React.FC<PropsTypes> = ({ fromDate, toDate }) => {
                           )
 
                           .map((data: any, index: any) => (
-                            <tr style={{ cursor: "pointer" }} key={index}>
+                            <tr  key={index}
+                            onMouseEnter={() => {
+                              setIsHovered(true);
+                              setIdd(index);
+                            }}
+                            onMouseLeave={() => setIsHovered(false)}
+                            style={{
+                              backgroundColor:
+                                isHovered && idd == index
+                                  ? userPersonalizationData == null
+                                    ? "#D6EEEE"
+                                    : `rgba(${rgbColor.r},${rgbColor.g},${rgbColor.b},0.2)`
+                                  : "transparent",
+                              transition: "background-color 0.3s",
+                              cursor: "pointer",
+                            }}
+                            >
                               <td style={{ width: "8%" }}>{data.deviceId}</td>
                               <td style={{ width: "8%" }}>{data.deviceName}</td>
 
@@ -350,11 +387,11 @@ const KilledVehicles: React.FC<PropsTypes> = ({ fromDate, toDate }) => {
                                   <div className="flex-grow-1 ms-2">
                                     <div style={{ fontSize: "10px" }}>
                                       {format(
+
                                         new Date(
-                                          new Date(
-                                            data?.lastPacketTimeStamp * 1000
-                                          ).toISOString()
-                                        ).toLocaleString(),
+                                          data?.lastPacketTimeStamp * 1000
+                                        ).toISOString()
+                                        ,
                                         "date"
                                       )}
                                     </div>
@@ -362,10 +399,8 @@ const KilledVehicles: React.FC<PropsTypes> = ({ fromDate, toDate }) => {
                                       {/* {data.updatedAt.toString().slice(11, 19)} */}
                                       {format(
                                         new Date(
-                                          new Date(
-                                            data?.lastPacketTimeStamp * 1000
-                                          ).toISOString()
-                                        ).toLocaleString(),
+                                          data?.lastPacketTimeStamp * 1000
+                                        ).toISOString(),
                                         "time"
                                       )}
                                     </div>
@@ -391,7 +426,7 @@ const KilledVehicles: React.FC<PropsTypes> = ({ fromDate, toDate }) => {
                                       {format(
                                         new Date(
                                           data?.createdAt
-                                        ).toLocaleString(),
+                                        ).toISOString(),
                                         "date"
                                       )}
                                     </div>
@@ -400,7 +435,7 @@ const KilledVehicles: React.FC<PropsTypes> = ({ fromDate, toDate }) => {
                                       {format(
                                         new Date(
                                           data?.createdAt
-                                        ).toLocaleString(),
+                                        ).toISOString(),
                                         "time"
                                       )}
                                     </div>

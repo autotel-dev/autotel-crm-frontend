@@ -13,7 +13,8 @@ import SelectComplainTypesList from "../components/SelectComplainTypesList";
 import SelectComplainStatusTypes from "../components/SelectComplainStatusTypes";
 import SelectComplainRole from "../components/SelectComplainRole";
 import { create, getAll } from "../../../../../Api";
-import { getUserRole, getUserRoleID } from "../../../../../Api/globals";
+import { formatUnderscoredString, getUserRole, getUserRoleID } from "../../../../../Api/globals";
+import { ROLES } from "../../../../../constants/roles";
 
 interface ResponseType {
   response?: string;
@@ -70,7 +71,7 @@ const ResponseForm: React.FC<PropsTypes> = ({
         internalComplaintType: type,
         deviceId: selectedItems[0].id,
         deviceName: selectedItems[0].name,
-        subRole: getUserRole() == "OPERATOR" ? getUserRoleID() : role,
+        subRole: getUserRole() == ROLES.OPERATOR ? getUserRoleID() : role,
         server: selectedItems[0].server._id,
         status: priority == "GENERAL" ? "RESOLVED" : "NEW",
         deviceInfo: {
@@ -196,7 +197,7 @@ const ResponseForm: React.FC<PropsTypes> = ({
               <input
                 className="form-control"
                 type="text"
-                value={priority}
+                value={formatUnderscoredString(priority)}
                 disabled
               />
             </FormGroup>

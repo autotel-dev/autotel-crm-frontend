@@ -25,7 +25,7 @@ interface PropsTypes {
 
 const SelfSendCommands: React.FC<PropsTypes> = ({
   isVisible,
-  setIsVisible = () => {},
+  setIsVisible = () => { },
 }) => {
   const { selfSendCommands } = useSelector((state: any) => state.alerts);
   const { devices } = useSelector((state: any) => state.monitoring);
@@ -72,8 +72,8 @@ const SelfSendCommands: React.FC<PropsTypes> = ({
           );
           const deviceData = matchedDevice
             ? matchedDevice.items.find(
-                (item: any) => item.id === device.deviceId
-              )
+              (item: any) => item.id === device.deviceId
+            )
             : null;
           return {
             ...device,
@@ -145,8 +145,8 @@ const SelfSendCommands: React.FC<PropsTypes> = ({
           );
           const deviceData = matchedDevice
             ? matchedDevice.items.find(
-                (item: any) => item.id === device.deviceId
-              )
+              (item: any) => item.id === device.deviceId
+            )
             : null;
           return {
             ...device,
@@ -366,28 +366,28 @@ const SelfSendCommands: React.FC<PropsTypes> = ({
                                         data.onlineStatus === "ack"
                                           ? "rgba(255, 0, 0, 0.1)"
                                           : data.onlineStatus === "engine"
-                                          ? "rgba(255, 165, 0, 0.1)"
-                                          : data.onlineStatus === "online"
-                                          ? "rgba(0, 255, 0, 0.1)"
-                                          : "rgba(0, 0, 0, 0.1)",
+                                            ? "rgba(255, 165, 0, 0.1)"
+                                            : data.onlineStatus === "online"
+                                              ? "rgba(0, 255, 0, 0.1)"
+                                              : "rgba(0, 0, 0, 0.1)",
                                       color:
                                         data.onlineStatus === "ack"
                                           ? "red"
                                           : data.onlineStatus === "engine"
-                                          ? "orange"
-                                          : data.onlineStatus === "online"
-                                          ? "green"
-                                          : "black",
+                                            ? "orange"
+                                            : data.onlineStatus === "online"
+                                              ? "green"
+                                              : "black",
                                       borderRadius: "5px",
                                     }}
                                   >
                                     {data.onlineStatus === "ack"
                                       ? "Stop"
                                       : data.onlineStatus === "engine"
-                                      ? "Idle"
-                                      : data.onlineStatus === "online"
-                                      ? "Moving"
-                                      : "Offline"}
+                                        ? "Idle"
+                                        : data.onlineStatus === "online"
+                                          ? "Moving"
+                                          : "Offline"}
                                   </div>
                                 </td>
                                 <td style={{ width: "10%" }}>
@@ -396,10 +396,8 @@ const SelfSendCommands: React.FC<PropsTypes> = ({
                                       <div style={{ fontSize: "10px" }}>
                                         {format(
                                           new Date(
-                                            new Date(
-                                              data?.lastPacketTimeStamp * 1000
-                                            ).toISOString()
-                                          ).toLocaleString(),
+                                            data?.lastPacketTimeStamp * 1000
+                                          ).toISOString(),
                                           "date"
                                         )}
                                       </div>
@@ -407,10 +405,8 @@ const SelfSendCommands: React.FC<PropsTypes> = ({
                                         {/* {data.updatedAt.toString().slice(11, 19)} */}
                                         {format(
                                           new Date(
-                                            new Date(
-                                              data?.lastPacketTimeStamp * 1000
-                                            ).toISOString()
-                                          ).toLocaleString(),
+                                            data?.lastPacketTimeStamp * 1000
+                                          ).toISOString(),
                                           "time"
                                         )}
                                       </div>
@@ -424,8 +420,8 @@ const SelfSendCommands: React.FC<PropsTypes> = ({
                                 </td>
                                 <td style={{ width: "8%" }}>
                                   {data.address == undefined ||
-                                  data.address === "" ||
-                                  data.address == null
+                                    data.address === "" ||
+                                    data.address == null
                                     ? "N/A"
                                     : data.address}
                                 </td>
@@ -439,7 +435,7 @@ const SelfSendCommands: React.FC<PropsTypes> = ({
                                         {format(
                                           new Date(
                                             data?.createdAt
-                                          ).toLocaleString(),
+                                          ).toISOString(),
                                           "date"
                                         )}
                                       </div>
@@ -448,7 +444,7 @@ const SelfSendCommands: React.FC<PropsTypes> = ({
                                         {format(
                                           new Date(
                                             data?.createdAt
-                                          ).toLocaleString(),
+                                          ).toISOString(),
                                           "time"
                                         )}
                                       </div>
@@ -464,7 +460,7 @@ const SelfSendCommands: React.FC<PropsTypes> = ({
                                 {/* <td style={{ width: "8%" }}>{data.remainingTime}</td> */}
                                 <td style={{ width: "11%" }}>
                                   {data.eMobilizerStatus !== null &&
-                                  data.eMobilizerStatus !== undefined ? (
+                                    data.eMobilizerStatus !== undefined ? (
                                     <div
                                       style={{
                                         padding: "5px",
@@ -515,7 +511,7 @@ const SelfSendCommands: React.FC<PropsTypes> = ({
                                             if (
                                               !data.success &&
                                               data.message ==
-                                                "ERROR_INTERNET_DISCONNECTED"
+                                              "ERROR_INTERNET_DISCONNECTED"
                                             ) {
                                             }
                                             if (!data.success) {
