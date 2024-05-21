@@ -29,6 +29,23 @@ const AssignedAlerts = () => {
     "Address",
     "Completion Response",
   ];
+  const { userPersonalizationData } = useSelector(
+    (state: any) => state.personalization
+  );
+  function hexToRgb(hex: any) {
+    // Remove the hash sign if present
+    hex = hex?.replace(/^#/, "");
+    // Parse the hex values to RGB
+    const bigint = parseInt(hex, 16);
+    const r = (bigint >> 16) & 255;
+    const g = (bigint >> 8) & 255;
+    const b = bigint & 255;
+    return { r, g, b };
+  }
+
+  // Usage
+  const hexColor = "#ff0000"; // Example hex color
+  const rgbColor = hexToRgb(userPersonalizationData?.buttonsAndBarsColor); // Convert hex to RGB
   const containerRef = useRef(null);
   const [pageNo, setPageNo] = useState(1);
   useEffect(() => {
@@ -55,6 +72,8 @@ const AssignedAlerts = () => {
   };
 
   const [searchValue, setSearchValue] = useState("");
+  const [isHovered, setIsHovered] = useState(false);
+  const [idd, setIdd] = useState("");
 
   return (
     <Card className="invoice-card">
@@ -98,6 +117,7 @@ const AssignedAlerts = () => {
                         width:
                           data === "Device" || data === "Type" ? "15%" : "20%",
                       }}
+                      
                     >
                       {data}
                     </th>
@@ -119,7 +139,24 @@ const AssignedAlerts = () => {
                         .includes(searchValue.toLowerCase())
                     )
                     .map((data: any, index: any) => (
-                      <tr style={{ cursor: "pointer" }} key={index}>
+                      <tr  key={index}
+                      onMouseEnter={() => {
+                        setIsHovered(true);
+                        setIdd(index);
+                      }}
+                      onMouseLeave={() => setIsHovered(false)}
+                      style={{
+                        backgroundColor:
+                          isHovered && idd == index
+                            ? userPersonalizationData == null
+                              ? "#D6EEEE"
+                              : `rgba(${rgbColor.r},${rgbColor.g},${rgbColor.b},0.2)`
+                            : "transparent",
+                        transition: "background-color 0.3s",
+                        cursor:"pointer",
+                      }}
+                      
+                      >
                         {/* <td>{data.eventId}</td> */}
                         <td style={{ width: "15%" }}>
                           <div className="d-flex">

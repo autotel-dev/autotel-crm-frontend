@@ -701,7 +701,7 @@ const routes = [
   // Setup
 
   {
-    path: `${process.env.PUBLIC_URL}/company/setup/roles`,
+    path: `${process.env.PUBLIC_URL}/company/setup/deparments`,
     Component: <Roles />,
     allowedUserRoles: [ROLES.COMPANY],
     isProtected: true,
