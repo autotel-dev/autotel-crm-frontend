@@ -11,9 +11,9 @@ td {
   border-bottom: 1px solid #ddd;
 }
 
-tr:hover {
+/* tr:hover {
   background-color: #d6eeee;
-}
+} */
 
 .dropdown-toggle-button {
   background-color: #ffffff;

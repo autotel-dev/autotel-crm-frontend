@@ -174,7 +174,7 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
         {
           svgIcon: "bonus-kit",
           title: "Departments",
-          link: `${process.env.PUBLIC_URL}/company/setup/roles`,
+          link: `${process.env.PUBLIC_URL}/company/setup/deparments`,
         },
         {
           svgIcon: "bonus-kit",

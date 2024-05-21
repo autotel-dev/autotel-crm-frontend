@@ -142,7 +142,8 @@ const CreateNewCRMModule = () => {
           style={{
             color: "white",
             backgroundColor: `${
-              userPersonalizationData !== null && userPersonalizationData.customColor2
+              userPersonalizationData !== null &&
+              userPersonalizationData?.buttonsAndBarsColor
             }`,
           }}
           onClick={addToggle}

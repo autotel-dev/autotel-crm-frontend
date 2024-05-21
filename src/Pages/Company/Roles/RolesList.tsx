@@ -38,6 +38,24 @@ const RolesList = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  const { userPersonalizationData } = useSelector(
+    (state: any) => state.personalization
+  );
+  function hexToRgb(hex: any) {
+    // Remove the hash sign if present
+    hex = hex?.replace(/^#/, "");
+    // Parse the hex values to RGB
+    const bigint = parseInt(hex, 16);
+    const r = (bigint >> 16) & 255;
+    const g = (bigint >> 8) & 255;
+    const b = bigint & 255;
+    return { r, g, b };
+  }
+
+  // Usage
+  const hexColor = "#ff0000"; // Example hex color
+  const rgbColor = hexToRgb(userPersonalizationData?.buttonsAndBarsColor); // Convert hex to RGB
+
   useEffect(() => {
     dispatch(setRoles([]));
     dispatch(setFilterRoles([]));
@@ -83,9 +101,25 @@ const RolesList = () => {
   }, []);
 
   // const [loading, setLoading] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
+  const [idd, setIdd] = useState("");
   const renderTableRows = () => {
     return roles?.map((row: any) => (
-      <tr key={row._id}>
+      <tr key={row._id}
+      onMouseEnter={() => {
+        setIsHovered(true);
+        setIdd(row._id);
+      }}
+      onMouseLeave={() => setIsHovered(false)}
+      style={{
+        backgroundColor:
+          isHovered && idd == row._id
+            ? userPersonalizationData == null
+              ? "#D6EEEE"
+              : `rgba(${rgbColor.r},${rgbColor.g},${rgbColor.b},0.2)`
+            : "transparent",
+        transition: "background-color 0.3s",
+      }}>
         <td>{row._id}</td>
         <td>{row.name}</td>
         <td>
