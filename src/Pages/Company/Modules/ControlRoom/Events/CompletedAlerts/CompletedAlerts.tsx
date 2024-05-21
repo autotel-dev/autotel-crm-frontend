@@ -92,7 +92,6 @@ const AssignedAlerts = () => {
             </FormGroup>
           </Row>
 
-<<<<<<< HEAD
           <div
             ref={containerRef}
             className="table-responsive theme-scrollbar recent-wrapper"
@@ -112,43 +111,6 @@ const AssignedAlerts = () => {
             <div className="table-responsive theme-scrollbar recent-wrapper">
               <Table className="display order-wrapper" id="recent-order">
                 <thead>
-=======
-        <div
-          ref={containerRef}
-          className="table-responsive theme-scrollbar recent-wrapper"
-          style={{
-            overflowY: "scroll",
-            maxHeight: "calc(66vh - 20px)", // Subtract scrollbar width from max height
-            WebkitOverflowScrolling: "touch", // Enable momentum scrolling on iOS
-            scrollbarWidth: "thin", // Specify scrollbar width
-            WebkitBorderRadius: "5px", // For WebKit browsers (Chrome, Safari)
-            MozBorderRadius: "5px", // For Mozilla Firefox
-            borderRadius: "5px", // For other browsers
-            scrollbarColor: "lightgray transparent", // Specify scrollbar color
-          }}
-          onScroll={handleScroll}
-        >
-          <div className="table-responsive theme-scrollbar recent-wrapper">
-            <Table className="display order-wrapper" id="recent-order">
-              <thead>
-                <tr>
-                  {tableHeader.map((data, index) => (
-                    <th
-                      key={index}
-                      style={{
-                        width:
-                          data === "Device" || data === "Type" ? "15%" : "20%",
-                      }}
-                      
-                    >
-                      {data}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {dataList.length === 0 ? (
->>>>>>> 99e5d2a835c62a2e961bdbbc1a027be48052767c
                   <tr>
                     {tableHeader.map((data, index) => (
                       <th
@@ -162,7 +124,6 @@ const AssignedAlerts = () => {
                       </th>
                     ))}
                   </tr>
-<<<<<<< HEAD
                 </thead>
                 <tbody>
                   {dataList.length === 0 ? (
@@ -179,7 +140,22 @@ const AssignedAlerts = () => {
                           .includes(searchValue.toLowerCase())
                       )
                       .map((data: any, index: any) => (
-                        <tr style={{ cursor: "pointer" }} key={index}>
+                        <tr  key={index}
+                        onMouseEnter={() => {
+                          setIsHovered(true);
+                          setIdd(index);
+                        }}
+                        onMouseLeave={() => setIsHovered(false)}
+                        style={{
+                          backgroundColor:
+                            isHovered && idd == index
+                              ? userPersonalizationData == null
+                                ? "#D6EEEE"
+                                : `rgba(${rgbColor.r},${rgbColor.g},${rgbColor.b},0.2)`
+                              : "transparent",
+                          transition: "background-color 0.3s",
+                          cursor:"pointer",
+                        }}>
                           {/* <td>{data.eventId}</td> */}
                           <td style={{ width: "15%" }}>
                             <div className="d-flex">
@@ -195,49 +171,6 @@ const AssignedAlerts = () => {
                                 <div style={{ fontSize: "10px" }}>
                                   {data.createdAt.slice(0, 10)}
                                 </div>
-=======
-                ) : (
-                  dataList
-                    .filter((data: any) =>
-                      data.deviceName
-                        .toLowerCase()
-                        .includes(searchValue.toLowerCase())
-                    )
-                    .map((data: any, index: any) => (
-                      <tr  key={index}
-                      onMouseEnter={() => {
-                        setIsHovered(true);
-                        setIdd(index);
-                      }}
-                      onMouseLeave={() => setIsHovered(false)}
-                      style={{
-                        backgroundColor:
-                          isHovered && idd == index
-                            ? userPersonalizationData == null
-                              ? "#D6EEEE"
-                              : `rgba(${rgbColor.r},${rgbColor.g},${rgbColor.b},0.2)`
-                            : "transparent",
-                        transition: "background-color 0.3s",
-                        cursor:"pointer",
-                      }}
-                      
-                      >
-                        {/* <td>{data.eventId}</td> */}
-                        <td style={{ width: "15%" }}>
-                          <div className="d-flex">
-                            <div className="flex-grow-1">
-                              <h5
-                                style={{
-                                  fontSize: "14px",
-                                  fontWeight: "bold",
-                                }}
-                              >
-                                {data.deviceName}
-                              </h5>
-                              <div style={{ fontSize: "10px" }}>
-                                {data.createdAt.slice(0, 10)}
-                              </div>
->>>>>>> 99e5d2a835c62a2e961bdbbc1a027be48052767c
 
                                 <div style={{ fontSize: "10px" }}>
                                   {data.createdAt.slice(11, 19)}
