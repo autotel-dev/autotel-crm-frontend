@@ -17,6 +17,7 @@ import { useSelector } from "react-redux";
 import { jwtDecode } from "jwt-decode";
 import { getUserRole } from "../../Api/globals";
 import { IoMdArrowDropdown, IoMdArrowDropup } from "react-icons/io";
+import { ROLES } from "../../constants/roles";
 
 export interface PropsTypes {
   setOpen: (item: boolean) => void;
@@ -350,12 +351,11 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
         <div
           id="sidebar-menu"
           style={{
-            backgroundColor: `${
-              userPersonalizationData !== null &&
-              userPersonalizationData?.secondaryColor !== null
+            backgroundColor: `${userPersonalizationData !== null &&
+                userPersonalizationData?.secondaryColor !== null
                 ? userPersonalizationData?.secondaryColor
                 : ""
-            }`,
+              }`,
           }}
         >
           <UL className="sidebar-links simple-list" id="simple-bar">
@@ -363,74 +363,71 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
               <SidebarBack />
               {decodedToken.role === "SUPER_ADMIN"
                 ? SidebarMenuComponent.map((data, index) => (
-                    <LI className={`sidebar-list`} key={index}>
-                      <Link
-                        className={`sidebar-link sidebar-title ${
-                          sideMenu === data.title ? "active" : ""
+                  <LI className={`sidebar-list`} key={index}>
+                    <Link
+                      className={`sidebar-link sidebar-title ${sideMenu === data.title ? "active" : ""
                         }`}
-                        // style={{
-                        //   color: `${
-                        //     userPersonalizationData !== null &&
-                        //     userPersonalizationData?.buttonsAndBarsColor !== null &&
-                        //     sideMenu === data.title &&
-                        //     userPersonalizationData?.buttonsAndBarsColor
-                        //   }`,
-                        // }}
-                        to={data.link ? data.link : "#"}
-                        onClick={() => handleClick(data)}
-                      >
-                        <SVG
-                          className={`${sidebarIconType}-icon`}
-                          iconId={`${
-                            sidebarIconType === "fill" ? "fill-" : ""
+                      // style={{
+                      //   color: `${
+                      //     userPersonalizationData !== null &&
+                      //     userPersonalizationData?.buttonsAndBarsColor !== null &&
+                      //     sideMenu === data.title &&
+                      //     userPersonalizationData?.buttonsAndBarsColor
+                      //   }`,
+                      // }}
+                      to={data.link ? data.link : "#"}
+                      onClick={() => handleClick(data)}
+                    >
+                      <SVG
+                        className={`${sidebarIconType}-icon`}
+                        iconId={`${sidebarIconType === "fill" ? "fill-" : ""
                           }${data.svgIcon}`}
-                        />
-                        <span
+                      />
+                      <span
+                        style={{
+                          fontSize: "13px",
+                        }}
+                      >
+                        {t(data.title)}
+                      </span>
+                    </Link>
+                    {data.link ? (
+                      <div></div>
+                    ) : (
+                      !isClose && (
+                        <UL
+                          className="sidebar-submenu custom-scrollbar simple-list"
+                          // style={{
+                          //   display: `${
+                          //     layout === "material-icon"
+                          //       ? data.title === sideMenu && !data.link
+                          //         ? "none"
+                          //         : "none"
+                          //       : ""
+                          //   }`,
+                          // }}
+
                           style={{
-                            fontSize: "13px",
+                            display: `${data.title === sideMenu && !data.link
+                                ? "block"
+                                : "block"
+                              }`,
                           }}
                         >
-                          {t(data.title)}
-                        </span>
-                      </Link>
-                      {data.link ? (
-                        <div></div>
-                      ) : (
-                        !isClose && (
-                          <UL
-                            className="sidebar-submenu custom-scrollbar simple-list"
-                            // style={{
-                            //   display: `${
-                            //     layout === "material-icon"
-                            //       ? data.title === sideMenu && !data.link
-                            //         ? "none"
-                            //         : "none"
-                            //       : ""
-                            //   }`,
-                            // }}
-
-                            style={{
-                              display: `${
-                                data.title === sideMenu && !data.link
-                                  ? "block"
-                                  : "block"
-                              }`,
-                            }}
-                          >
-                            {!data.link && (
-                              <div>
-                                <MenuList
-                                  subMenuData={data}
-                                  isOpen={isOpen}
-                                  setIsOpen={setIsOpen}
-                                  level={0}
-                                  isClose={isClose}
-                                  setIsClose={setIsClose}
-                                  menuRef={menuRef}
-                                  showArrow={showArrow}
-                                  setShowArrow={setShowArrow}
-                                />
-                                {/* {
+                          {!data.link && (
+                            <div>
+                              <MenuList
+                                subMenuData={data}
+                                isOpen={isOpen}
+                                setIsOpen={setIsOpen}
+                                level={0}
+                                isClose={isClose}
+                                setIsClose={setIsClose}
+                                menuRef={menuRef}
+                                showArrow={showArrow}
+                                setShowArrow={setShowArrow}
+                              />
+                              {/* {
                                 (data.title == "Setup" && getUserRole() == "SUPER_ADMIN") && !showArrow ? <IoMdArrowDropdown style={{
                                   marginBottom: "-8px",
                                   marginTop: "5px",
@@ -449,29 +446,27 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
                                   height: "20px"
                                 }} />
                               } */}
-                              </div>
-                            )}
-                          </UL>
-                        )
-                      )}
-                    </LI>
-                  ))
-                : decodedToken.role === "OPERATOR"
-                ? filteredOperatorMenu !== undefined &&
+                            </div>
+                          )}
+                        </UL>
+                      )
+                    )}
+                  </LI>
+                ))
+                : decodedToken.role === ROLES.OPERATOR
+                  ? filteredOperatorMenu !== undefined &&
                   filteredOperatorMenu?.map((data: any, index: any) => (
                     <LI className={`sidebar-list`} key={index}>
                       <Link
-                        className={`sidebar-link sidebar-title ${
-                          sideMenu === data.title ? "active" : ""
-                        }`}
+                        className={`sidebar-link sidebar-title ${sideMenu === data.title ? "active" : ""
+                          }`}
                         to={data.link ? data.link : "#"}
                         onClick={() => handleClick(data)}
                       >
                         <SVG
                           className={`${sidebarIconType}-icon`}
-                          iconId={`${
-                            sidebarIconType === "fill" ? "fill-" : ""
-                          }${data.svgIcon}`}
+                          iconId={`${sidebarIconType === "fill" ? "fill-" : ""
+                            }${data.svgIcon}`}
                         />
                         <span style={{ fontSize: "13px" }}>
                           {t(data.title)}
@@ -484,11 +479,10 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
                           <UL
                             className="sidebar-submenu custom-scrollbar simple-list"
                             style={{
-                              display: `${
-                                data.title === sideMenu && !data.link
+                              display: `${data.title === sideMenu && !data.link
                                   ? "block"
                                   : "block"
-                              }`,
+                                }`,
                             }}
                           >
                             {!data.link && (
@@ -506,21 +500,19 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
                       )}
                     </LI>
                   ))
-                : filteredCompanyMenu !== undefined &&
+                  : filteredCompanyMenu !== undefined &&
                   filteredCompanyMenu.map((data: any, index: any) => (
                     <LI className={`sidebar-list`} key={index}>
                       <Link
-                        className={`sidebar-link sidebar-title ${
-                          sideMenu === data.title ? "active" : ""
-                        }`}
+                        className={`sidebar-link sidebar-title ${sideMenu === data.title ? "active" : ""
+                          }`}
                         to={data.link ? data.link : "#"}
                         onClick={() => handleClick(data)}
                       >
                         <SVG
                           className={`${sidebarIconType}-icon`}
-                          iconId={`${
-                            sidebarIconType === "fill" ? "fill-" : ""
-                          }${data.svgIcon}`}
+                          iconId={`${sidebarIconType === "fill" ? "fill-" : ""
+                            }${data.svgIcon}`}
                         />
                         <span style={{ fontSize: "13px" }}>
                           {t(data.title)}
@@ -533,11 +525,10 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
                           <UL
                             className="sidebar-submenu custom-scrollbar simple-list"
                             style={{
-                              display: `${
-                                data.title === sideMenu && !data.link
+                              display: `${data.title === sideMenu && !data.link
                                   ? "block"
                                   : "block"
-                              }`,
+                                }`,
                             }}
                           >
                             {!data.link && (

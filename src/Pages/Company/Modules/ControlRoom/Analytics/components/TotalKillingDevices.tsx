@@ -515,7 +515,7 @@ const TotalKillingDevices: React.FC<PropsTypes> = ({
                                               {format(
                                                 new Date(
                                                   data?.createdAt
-                                                ).toLocaleString(),
+                                                ).toISOString(),
                                                 "date"
                                               )}
                                             </div>
@@ -524,7 +524,7 @@ const TotalKillingDevices: React.FC<PropsTypes> = ({
                                               {format(
                                                 new Date(
                                                   data?.createdAt
-                                                ).toLocaleString(),
+                                                ).toISOString(),
                                                 "time"
                                               )}
                                             </div>
@@ -731,10 +731,8 @@ const TotalKillingDevices: React.FC<PropsTypes> = ({
                                     <div style={{ fontSize: "10px" }}>
                                       {format(
                                         new Date(
-                                          new Date(
-                                            data?.lastPacketTimeStamp * 1000
-                                          ).toISOString()
-                                        ).toLocaleString(),
+                                          data?.lastPacketTimeStamp * 1000
+                                        ).toISOString(),
                                         "date"
                                       )}
                                     </div>
@@ -742,10 +740,8 @@ const TotalKillingDevices: React.FC<PropsTypes> = ({
                                       {/* {data.updatedAt.toString().slice(11, 19)} */}
                                       {format(
                                         new Date(
-                                          new Date(
-                                            data?.lastPacketTimeStamp * 1000
-                                          ).toISOString()
-                                        ).toLocaleString(),
+                                          data?.lastPacketTimeStamp * 1000
+                                        ).toISOString(),
                                         "time"
                                       )}
                                     </div>
@@ -771,7 +767,7 @@ const TotalKillingDevices: React.FC<PropsTypes> = ({
                                       {format(
                                         new Date(
                                           data?.createdAt
-                                        ).toLocaleString(),
+                                        ).toISOString(),
                                         "date"
                                       )}
                                     </div>
@@ -780,7 +776,7 @@ const TotalKillingDevices: React.FC<PropsTypes> = ({
                                       {format(
                                         new Date(
                                           data?.createdAt
-                                        ).toLocaleString(),
+                                        ).toISOString(),
                                         "time"
                                       )}
                                     </div>

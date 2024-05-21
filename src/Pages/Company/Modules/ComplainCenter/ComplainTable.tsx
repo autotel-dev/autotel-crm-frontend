@@ -153,14 +153,14 @@ const ComplainTable = () => {
 
     dispatch(setTableRow(row));
 
-    if (getUserRole() === "COMPANY") {
+    if (getUserRole() === ROLES.COMPANY) {
       window.open(
         `${process.env.PUBLIC_URL}/company/modules/complain-center/complainDetails/${row.complaint_id}`,
         '_blank'
       );
     }
 
-    if (getUserRole() === "OPERATOR") {
+    if (getUserRole() === ROLES.OPERATOR) {
       window.open(
         `${process.env.PUBLIC_URL}/operator/modules/complain-center/complainDetails/${row.complaint_id}`,
         '_blank'

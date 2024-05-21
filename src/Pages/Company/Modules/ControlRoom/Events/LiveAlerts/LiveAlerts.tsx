@@ -60,7 +60,6 @@ const LiveAlerts = () => {
   const [loading, setLoading] = useState(false); // State to manage loading
   const [assignLoading, setAssignLoading] = useState(true);
   const tableHeader = [
-    // "ID",
     "Device",
     "Alert",
     "Type",
@@ -182,64 +181,38 @@ const LiveAlerts = () => {
   const [idd, setIdd] = useState("");
 
   return (
-    <Card className="invoice-card">
-      <div
-        style={{
-          backgroundColor:
-            userPersonalizationData !== null &&
-            userPersonalizationData?.buttonsAndBarsColor !== null
-              ? userPersonalizationData?.buttonsAndBarsColor
-              : "#63d5be",
-          height: "40px",
-          fontSize: "18px",
-          padding: "10px",
-          borderTopLeftRadius: "10px",
-          color:"white",
-          borderTopRightRadius: "10px",
-          // fontWeight: "bold",
-        }}
-      >
-        <div>
-          Live Alerts (
-          {liveAlertsData == null
-            ? 0
-            : liveAlerts.length < 15
-            ? liveAlerts.length
-            : liveAlertsData.lastPage > 1
-            ? liveAlerts.length + (liveAlertsData.lastPage - 1) * 30
-            : liveAlerts.length}
-          )
-        </div>
-      </div>
-
-      <CardBody className="transaction-card">
-        <Row>
-          <FormGroup className="col-md-12 create-group">
-            <P>Search Vehicles</P>
-            <input
-              className="form-control"
-              value={searchValue}
-              onChange={(e) => setSearchValue(e.target.value)}
-              type="text"
-              placeholder="Search Vehicles"
-            />
-          </FormGroup>
-        </Row>
+    <Col xl="6" lg="6">
+      <Card>
         <div
-          ref={containerRef}
-          className="table-responsive theme-scrollbar recent-wrapper"
           style={{
-            overflowY: "scroll",
-            maxHeight: "calc(66vh - 20px)", // Subtract scrollbar width from max height
-            WebkitOverflowScrolling: "touch", // Enable momentum scrolling on iOS
-            scrollbarWidth: "thin", // Specify scrollbar width
-            WebkitBorderRadius: "5px !important", // For WebKit browsers (Chrome, Safari)
-            MozBorderRadius: "5px !important", // For Mozilla Firefox
-            borderRadius: "5px !important", // For other browsers
-            scrollbarColor: "lightgray transparent", // Specify scrollbar color
+            backgroundColor:
+              userPersonalizationData !== null &&
+                userPersonalizationData?.buttonsAndBarsColor !== null
+                ? userPersonalizationData?.buttonsAndBarsColor
+                : "#63d5be",
+            height: "40px",
+            fontSize: "18px",
+            padding: "10px",
+            borderTopLeftRadius: "10px",
+            color: "white",
+            borderTopRightRadius: "10px",
+            // fontWeight: "bold",
           }}
-          onScroll={handleScroll}
         >
+<<<<<<< HEAD
+          <div>
+            Live Alerts (
+            {liveAlertsData == null
+              ? 0
+              : liveAlerts.length < 15
+                ? liveAlerts.length
+                : liveAlertsData.lastPage > 1
+                  ? liveAlerts.length + (liveAlertsData.lastPage - 1) * 30
+                  : liveAlerts.length}
+            )
+          </div>
+        </div>
+=======
           <Table className="display order-wrapper" id="recent-order">
             <thead>
               <tr>
@@ -276,351 +249,327 @@ const LiveAlerts = () => {
                           }
                           const serverInfo = serverCredentials(data.server._id);
                           // console.log("serverInfo", serverInfo);
+>>>>>>> 99e5d2a835c62a2e961bdbbc1a027be48052767c
 
-                          const assignEvent = {
-                            eventId: data?.eventId,
-                            deviceId: data?.deviceId,
-                            deviceName: data?.deviceName,
-                            latitude: data.latitude,
-                            longitude: data.longitude,
-                            speed: data.speed,
-                            type: data.type,
-                            message: data.message,
-                            time: data.time,
-                            course: data.course,
-                            serverId: serverInfo?.serverId,
-                            serverHashKey: serverInfo?.serverHashKey,
-                          };
-                          // console.log(assignEvent);
-                          try {
-                            // console.log("liveAlerts[index]: ", liveAlerts[index]);
+        <CardBody>
+          <Row>
+            <FormGroup className="col-md-12 create-group">
+              <P>Search Vehicles</P>
+              <input
+                className="form-control"
+                value={searchValue}
+                onChange={(e) => setSearchValue(e.target.value)}
+                type="text"
+                placeholder="Search Vehicles"
+              />
+            </FormGroup>
+          </Row>
+          <div
+            ref={containerRef}
+            className="table-responsive theme-scrollbar recent-wrapper"
+            style={{
+              overflowY: "scroll",
+              overflowX: "auto",
+              maxHeight: "calc(66vh - 20px)", // Subtract scrollbar width from max height
+              WebkitOverflowScrolling: "touch", // Enable momentum scrolling on iOS
+              scrollbarWidth: "thin", // Specify scrollbar width
+              WebkitBorderRadius: "5px !important", // For WebKit browsers (Chrome, Safari)
+              MozBorderRadius: "5px !important", // For Mozilla Firefox
+              borderRadius: "5px !important", // For other browsers
+              scrollbarColor: "lightgray transparent", // Specify scrollbar color
+            }}
+            onScroll={handleScroll}
+          >
+            <Table className="display order-wrapper" id="recent-order">
+              <thead>
+                <tr>
 
-                            await create(assignEvent, {
-                              url: "company/assign-alert-event-to-me",
-                            }).then((dataa: any) => {
-                              if (
-                                !dataa.success &&
-                                dataa.message === "ERROR_INTERNET_DISCONNECTED"
-                              ) {
-                                setAssignLoading(false);
-                              }
-                              if (dataa.success == false) {
-                                Swal.fire({
-                                  text: `${dataa.message}`,
-                                  icon: "error",
-                                  timer: 2000,
-                                  showConfirmButton: false,
-                                });
-                                console.log("Failed");
-                                console.log("Data : ", dataa);
 
-                                setAssignLoading(false);
-                              }
+                  {tableHeader.map((data, index) => (
+                    <th key={index} style={{ width: "20%" }}>
+                      {data}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {dataList.length > 0 ? (
+                  dataList
+                    .filter((data: any) =>
+                      data?.deviceName
+                        .toLowerCase()
+                        .includes(searchValue.toLowerCase())
+                    )
+                    .map((data: any, index: any) => (
+                      <tr
+                        key={index}
+                        style={{
+                          cursor: "pointer",
+                        }}
+                        onClick={async () => {
+                          if (data.preInfo == null) {
+                            if (assignLoading) {
+                              Swal.fire({
+                                text: "Loading....",
+                                icon: "info",
+                                showConfirmButton: false,
+                                allowOutsideClick: false, // Prevent closing by clicking outside the modal
+                              });
+                            }
+                            const serverInfo = serverCredentials(data.server._id);
+                            // console.log("serverInfo", serverInfo);
 
-                              if (dataa.success) {
-                                setAssignLoading(false);
-                                var updatedAlerts = [...liveAlerts]; // Create a shallow copy of the liveAlerts array
-                                updatedAlerts.splice(index, 1); // Remove the item at the specified index
+                            const assignEvent = {
+                              eventId: data?.eventId,
+                              deviceId: data?.deviceId,
+                              deviceName: data?.deviceName,
+                              latitude: data.latitude,
+                              longitude: data.longitude,
+                              speed: data.speed,
+                              type: data.type,
+                              message: data.message,
+                              time: data.time,
+                              course: data.course,
+                              serverId: serverInfo?.serverId,
+                              serverHashKey: serverInfo?.serverHashKey,
+                            };
+                            // console.log(assignEvent);
+                            try {
+                              // console.log("liveAlerts[index]: ", liveAlerts[index]);
 
-                                setDataList(
-                                  updatedAlerts.slice(0, dataList.length)
-                                );
-                                // console.log("updatedAlerts", updatedAlerts);
-                                // console.log("dataList", dataList);
-                                dispatch(setLiveAlerts(updatedAlerts)); // Dispatch the action with the updated array
-                                // console.log(dataa);
-                                Swal.fire({
-                                  text: "Assigned Successfully",
-                                  icon: "success",
-                                  timer: 1000,
-                                  showConfirmButton: false,
-                                });
-                                getAll({
-                                  url: "company/get-all-assigned-events",
-                                }).then((data: any) => {
-                                  // console.log("assigned --- >", data);
-                                  // setLoading(false);
-                                  if (data != undefined) {
-                                    if (data.success) {
-                                      // console.log("length --- >", data.data.length);
-                                      dispatch(setAssignedAlerts(data.data));
-                                      setAssignLoading(true);
+                              await create(assignEvent, {
+                                url: "company/assign-alert-event-to-me",
+                              }).then((dataa: any) => {
+                                if (
+                                  !dataa.success &&
+                                  dataa.message === "ERROR_INTERNET_DISCONNECTED"
+                                ) {
+                                  setAssignLoading(false);
+                                }
+                                if (dataa.success == false) {
+                                  Swal.fire({
+                                    text: `${dataa.message}`,
+                                    icon: "error",
+                                    timer: 2000,
+                                    showConfirmButton: false,
+                                  });
+                                  console.log("Failed");
+                                  console.log("Data : ", dataa);
+
+                                  setAssignLoading(false);
+                                }
+
+                                if (dataa.success) {
+                                  setAssignLoading(false);
+                                  var updatedAlerts = [...liveAlerts]; // Create a shallow copy of the liveAlerts array
+                                  updatedAlerts.splice(index, 1); // Remove the item at the specified index
+
+                                  setDataList(
+                                    updatedAlerts.slice(0, dataList.length)
+                                  );
+                                  // console.log("updatedAlerts", updatedAlerts);
+                                  // console.log("dataList", dataList);
+                                  dispatch(setLiveAlerts(updatedAlerts)); // Dispatch the action with the updated array
+                                  // console.log(dataa);
+                                  Swal.fire({
+                                    text: "Assigned Successfully",
+                                    icon: "success",
+                                    timer: 1000,
+                                    showConfirmButton: false,
+                                  });
+                                  getAll({
+                                    url: "company/get-all-assigned-events",
+                                  }).then((data: any) => {
+                                    // console.log("assigned --- >", data);
+                                    // setLoading(false);
+                                    if (data != undefined) {
+                                      if (data.success) {
+                                        // console.log("length --- >", data.data.length);
+                                        dispatch(setAssignedAlerts(data.data));
+                                        setAssignLoading(true);
+                                      }
                                     }
-                                  }
-                                });
-                              }
-                            });
-                            // Handle successful post creation (e.g., show a success message, redirect, etc.)
-                          } catch (error: any) {
-                            // Handle error (e.g., show an error message)
-                            // console.error("Error creating post:", error);
-                          }
-                        } else {
-                          var checkServer =
-                            liveAlertsData?.connectedServers?.find(
-                              (item: any) => item.server._id === data.server._id
-                            );
-                          if (checkServer?.isConnected) {
-                            Swal.fire({
-                              title: "Pre Info is already added",
-                              icon: "warning",
-                              showCancelButton: false,
+                                  });
+                                }
+                              });
+                              // Handle successful post creation (e.g., show a success message, redirect, etc.)
+                            } catch (error: any) {
+                              // Handle error (e.g., show an error message)
+                              // console.error("Error creating post:", error);
+                            }
+                          } else {
+                            var checkServer =
+                              liveAlertsData?.connectedServers?.find(
+                                (item: any) => item.server._id === data.server._id
+                              );
+                            if (checkServer?.isConnected) {
+                              Swal.fire({
+                                title: "Pre Info is already added",
+                                icon: "warning",
+                                showCancelButton: false,
 
-                              html: `<div>User : <span style="font-weight:bold">
+                                html: `<div>User : <span style="font-weight:bold">
                             ${data.preInfo.addedByUser.fullName}
                             </span><br>
                             Message : <span style="font-weight:bold">
                             ${data.preInfo.preInfoMessage}
                             </span>
                             </div>`,
-                              showCloseButton: true,
-                              showConfirmButton: true,
-                              confirmButtonText: "Assign",
-                              showDenyButton: true,
-                              denyButtonText: "Complete",
-                            }).then(async (result) => {
-                              if (result.isConfirmed) {
-                                // Handle Assigned button click
-                                // Your code here
+                                showCloseButton: true,
+                                showConfirmButton: true,
+                                confirmButtonText: "Assign",
+                                showDenyButton: true,
+                                denyButtonText: "Complete",
+                              }).then(async (result) => {
+                                if (result.isConfirmed) {
+                                  // Handle Assigned button click
+                                  // Your code here
 
-                                if (assignLoading) {
+                                  if (assignLoading) {
+                                    Swal.fire({
+                                      text: "Loading....",
+                                      icon: "info",
+                                      showConfirmButton: false,
+                                      allowOutsideClick: false, // Prevent closing by clicking outside the modal
+                                    });
+                                  }
+                                  const serverInfo = serverCredentials(
+                                    data.server._id
+                                  );
+                                  // console.log("serverInfo", serverInfo);
+
+                                  const assignEvent = {
+                                    eventId: data?.eventId,
+                                    deviceId: data?.deviceId,
+                                    deviceName: data?.deviceName,
+                                    latitude: data.latitude,
+                                    longitude: data.longitude,
+                                    speed: data.speed,
+                                    type: data.type,
+                                    course: data.course,
+                                    message: data.message,
+                                    time: data.time,
+                                    serverId: serverInfo?.serverId,
+                                    serverHashKey: serverInfo?.serverHashKey,
+                                  };
+                                  console.log(assignEvent);
+                                  try {
+                                    // console.log("liveAlerts[index]: ", liveAlerts[index]);
+
+                                    await create(assignEvent, {
+                                      url: "company/assign-alert-event-to-me",
+                                    }).then((dataa: any) => {
+                                      if (
+                                        !dataa.success &&
+                                        dataa.message ==
+                                        "ERROR_INTERNET_DISCONNECTED"
+                                      ) {
+                                        setAssignLoading(false);
+                                      }
+                                      if (!dataa.success) {
+                                        Swal.fire({
+                                          text: `${dataa.message}`,
+                                          icon: "error",
+                                          timer: 2000,
+                                          showConfirmButton: false,
+                                        });
+                                        setAssignLoading(false);
+                                      }
+
+                                      if (dataa.success) {
+                                        setAssignLoading(false);
+                                        var updatedAlerts = [...liveAlerts]; // Create a shallow copy of the liveAlerts array
+                                        updatedAlerts.splice(index, 1); // Remove the item at the specified index
+
+                                        setDataList(
+                                          updatedAlerts.slice(0, dataList.length)
+                                        );
+                                        // console.log("updatedAlerts", updatedAlerts);
+                                        // console.log("dataList", dataList);
+                                        dispatch(setLiveAlerts(updatedAlerts)); // Dispatch the action with the updated array
+                                        // console.log(dataa);
+                                        Swal.fire({
+                                          text: "Assigned Successfully",
+                                          icon: "success",
+                                          timer: 1000,
+                                          showConfirmButton: false,
+                                        });
+                                        getAll({
+                                          url: "company/get-all-assigned-events",
+                                        }).then((data: any) => {
+                                          // console.log("assigned --- >", data);
+                                          // setLoading(false);
+                                          if (data != undefined) {
+                                            if (data.success) {
+                                              setAssignLoading(true);
+                                              // console.log("length --- >", data.data.length);
+                                              dispatch(
+                                                setAssignedAlerts(data.data)
+                                              );
+                                            }
+                                          }
+                                        });
+                                      }
+                                    });
+                                    // Handle successful post creation (e.g., show a success message, redirect, etc.)
+                                  } catch (error: any) {
+                                    // Handle error (e.g., show an error message)
+                                    // console.error("Error creating post:", error);
+                                  }
+                                } else if (result.isDenied) {
+                                  // Handle Completed button click
+                                  // Your code here
                                   Swal.fire({
                                     text: "Loading....",
                                     icon: "info",
                                     showConfirmButton: false,
                                     allowOutsideClick: false, // Prevent closing by clicking outside the modal
                                   });
-                                }
-                                const serverInfo = serverCredentials(
-                                  data.server._id
-                                );
-                                // console.log("serverInfo", serverInfo);
 
-                                const assignEvent = {
-                                  eventId: data?.eventId,
-                                  deviceId: data?.deviceId,
-                                  deviceName: data?.deviceName,
-                                  latitude: data.latitude,
-                                  longitude: data.longitude,
-                                  speed: data.speed,
-                                  type: data.type,
-                                  course: data.course,
-                                  message: data.message,
-                                  time: data.time,
-                                  serverId: serverInfo?.serverId,
-                                  serverHashKey: serverInfo?.serverHashKey,
-                                };
-                                console.log(assignEvent);
-                                try {
-                                  // console.log("liveAlerts[index]: ", liveAlerts[index]);
+                                  const serverInfo = serverCredentials(
+                                    data.server._id
+                                  );
+                                  // console.log("serverInfo", serverInfo);
 
-                                  await create(assignEvent, {
-                                    url: "company/assign-alert-event-to-me",
-                                  }).then((dataa: any) => {
-                                    if (
-                                      !dataa.success &&
-                                      dataa.message ==
+                                  const assignEvent = {
+                                    eventId: data?.eventId,
+                                    deviceId: data?.deviceId,
+                                    deviceName: data?.deviceName,
+                                    latitude: data.latitude,
+                                    longitude: data.longitude,
+                                    speed: data.speed,
+                                    type: data.type,
+                                    course: data.course,
+                                    message: data.message,
+                                    time: data.time,
+                                    serverId: serverInfo?.serverId,
+                                    serverHashKey: serverInfo?.serverHashKey,
+                                  };
+                                  // console.log(assignEvent);
+                                  try {
+                                    // console.log("liveAlerts[index]: ", liveAlerts[index]);
+
+                                    await create(assignEvent, {
+                                      url: "company/assign-alert-event-to-me",
+                                    }).then(async (dataa: any) => {
+                                      if (
+                                        !dataa.success &&
+                                        dataa.message ==
                                         "ERROR_INTERNET_DISCONNECTED"
-                                    ) {
-                                      setAssignLoading(false);
-                                    }
-                                    if (!dataa.success) {
-                                      Swal.fire({
-                                        text: `${dataa.message}`,
-                                        icon: "error",
-                                        timer: 2000,
-                                        showConfirmButton: false,
-                                      });
-                                      setAssignLoading(false);
-                                    }
-
-                                    if (dataa.success) {
-                                      setAssignLoading(false);
-                                      var updatedAlerts = [...liveAlerts]; // Create a shallow copy of the liveAlerts array
-                                      updatedAlerts.splice(index, 1); // Remove the item at the specified index
-
-                                      setDataList(
-                                        updatedAlerts.slice(0, dataList.length)
-                                      );
-                                      // console.log("updatedAlerts", updatedAlerts);
-                                      // console.log("dataList", dataList);
-                                      dispatch(setLiveAlerts(updatedAlerts)); // Dispatch the action with the updated array
-                                      // console.log(dataa);
-                                      Swal.fire({
-                                        text: "Assigned Successfully",
-                                        icon: "success",
-                                        timer: 1000,
-                                        showConfirmButton: false,
-                                      });
-                                      getAll({
-                                        url: "company/get-all-assigned-events",
-                                      }).then((data: any) => {
-                                        // console.log("assigned --- >", data);
-                                        // setLoading(false);
-                                        if (data != undefined) {
-                                          if (data.success) {
-                                            setAssignLoading(true);
-                                            // console.log("length --- >", data.data.length);
-                                            dispatch(
-                                              setAssignedAlerts(data.data)
-                                            );
-                                          }
-                                        }
-                                      });
-                                    }
-                                  });
-                                  // Handle successful post creation (e.g., show a success message, redirect, etc.)
-                                } catch (error: any) {
-                                  // Handle error (e.g., show an error message)
-                                  // console.error("Error creating post:", error);
-                                }
-                              } else if (result.isDenied) {
-                                // Handle Completed button click
-                                // Your code here
-                                Swal.fire({
-                                  text: "Loading....",
-                                  icon: "info",
-                                  showConfirmButton: false,
-                                  allowOutsideClick: false, // Prevent closing by clicking outside the modal
-                                });
-
-                                const serverInfo = serverCredentials(
-                                  data.server._id
-                                );
-                                // console.log("serverInfo", serverInfo);
-
-                                const assignEvent = {
-                                  eventId: data?.eventId,
-                                  deviceId: data?.deviceId,
-                                  deviceName: data?.deviceName,
-                                  latitude: data.latitude,
-                                  longitude: data.longitude,
-                                  speed: data.speed,
-                                  type: data.type,
-                                  course: data.course,
-                                  message: data.message,
-                                  time: data.time,
-                                  serverId: serverInfo?.serverId,
-                                  serverHashKey: serverInfo?.serverHashKey,
-                                };
-                                // console.log(assignEvent);
-                                try {
-                                  // console.log("liveAlerts[index]: ", liveAlerts[index]);
-
-                                  await create(assignEvent, {
-                                    url: "company/assign-alert-event-to-me",
-                                  }).then(async (dataa: any) => {
-                                    if (
-                                      !dataa.success &&
-                                      dataa.message ==
-                                        "ERROR_INTERNET_DISCONNECTED"
-                                    ) {
-                                      setAssignLoading(false);
-                                    }
-                                    if (!dataa.success) {
-                                      Swal.fire({
-                                        text: `${dataa.message}`,
-                                        icon: "error",
-                                        timer: 2000,
-                                        showConfirmButton: false,
-                                      });
-                                      setAssignLoading(false);
-                                    }
-
-                                    if (dataa.success) {
-                                      setAssignLoading(false);
-                                      var updatedAlerts = [...liveAlerts]; // Create a shallow copy of the liveAlerts array
-                                      updatedAlerts.splice(index, 1); // Remove the item at the specified index
-
-                                      setDataList(
-                                        updatedAlerts.slice(0, dataList.length)
-                                      );
-                                      // console.log("updatedAlerts", updatedAlerts);
-                                      // console.log("dataList", dataList);
-                                      dispatch(setLiveAlerts(updatedAlerts)); // Dispatch the action with the updated array
-                                      // console.log(dataa);
-
-                                      const completedResponse = {
-                                        alertEventId: dataa.data._id,
-                                        completionResponse:
-                                          data.preInfo.preInfoMessage,
-                                        alertEventCloseDate:
-                                          new Date().toISOString(),
-                                      };
-                                      // console.log(completedResponse);
-                                      try {
-                                        await create(completedResponse, {
-                                          url: "alert-events/complete-an-alert-event",
-                                        }).then((data: any) => {
-                                          if (
-                                            !data.success &&
-                                            data.message ==
-                                              "ERROR_INTERNET_DISCONNECTED"
-                                          ) {
-                                            setLoading(false);
-                                          }
-                                          if (!data.success) {
-                                            Swal.fire({
-                                              text: `${data.message}`,
-                                              icon: "error",
-                                              timer: 2000,
-                                              showConfirmButton: false,
-                                            });
-                                            setLoading(false);
-                                          }
-                                          if (data.success) {
-                                            // console.log(data);
-                                            setLoading(false);
-                                            Swal.fire({
-                                              text: "Alert Completed Successfully",
-                                              icon: "success",
-                                              timer: 1000,
-                                              showConfirmButton: false,
-                                            });
-
-                                            getAll({
-                                              url: "company/get-all-assigned-events",
-                                            }).then((data: any) => {
-                                              // console.log("assigned --- >", data);
-                                              // setLoading(false);
-                                              if (data !== undefined) {
-                                                if (data.success) {
-                                                  // console.log("length --- >", data.data.length);
-                                                  dispatch(
-                                                    setAssignedAlerts(data.data)
-                                                  );
-                                                }
-                                                if (data.statusCode === 404) {
-                                                  dispatch(
-                                                    setAssignedAlerts([])
-                                                  );
-                                                }
-                                              }
-                                            });
-                                            getAll({
-                                              url: "company/get-all-completed-events",
-                                            }).then((data: any) => {
-                                              // console.log("assigned --- >", data);
-                                              // setLoading(false);
-                                              if (data !== undefined) {
-                                                if (data.success) {
-                                                  // console.log("length --- >", data.data.length);
-                                                  dispatch(
-                                                    setCompletedAlerts(
-                                                      data.data
-                                                    )
-                                                  );
-                                                }
-                                              }
-                                            });
-                                          }
-                                        });
-                                        // Handle successful post creation (e.g., show a success message, redirect, etc.)
-                                      } catch (error: any) {
-                                        // Handle error (e.g., show an error message)
-                                        // console.error("Error creating post:", error);
-                                        setLoading(false);
+                                      ) {
+                                        setAssignLoading(false);
                                       }
+                                      if (!dataa.success) {
+                                        Swal.fire({
+                                          text: `${dataa.message}`,
+                                          icon: "error",
+                                          timer: 2000,
+                                          showConfirmButton: false,
+                                        });
+                                        setAssignLoading(false);
+                                      }
+<<<<<<< HEAD
+=======
                                     }
                                   });
                                   // Handle successful post creation (e.g., show a success message, redirect, etc.)
@@ -672,54 +621,187 @@ const LiveAlerts = () => {
                             <div style={{ fontSize: "10px" }}>
                               {data.time.slice(0, 10)}
                             </div>
+>>>>>>> 99e5d2a835c62a2e961bdbbc1a027be48052767c
 
-                            <div style={{ fontSize: "10px" }}>
-                              {data.time.slice(11)}
+                                      if (dataa.success) {
+                                        setAssignLoading(false);
+                                        var updatedAlerts = [...liveAlerts]; // Create a shallow copy of the liveAlerts array
+                                        updatedAlerts.splice(index, 1); // Remove the item at the specified index
+
+                                        setDataList(
+                                          updatedAlerts.slice(0, dataList.length)
+                                        );
+                                        // console.log("updatedAlerts", updatedAlerts);
+                                        // console.log("dataList", dataList);
+                                        dispatch(setLiveAlerts(updatedAlerts)); // Dispatch the action with the updated array
+                                        // console.log(dataa);
+
+                                        const completedResponse = {
+                                          alertEventId: dataa.data._id,
+                                          completionResponse:
+                                            data.preInfo.preInfoMessage,
+                                          alertEventCloseDate:
+                                            new Date().toISOString(),
+                                        };
+                                        // console.log(completedResponse);
+                                        try {
+                                          await create(completedResponse, {
+                                            url: "alert-events/complete-an-alert-event",
+                                          }).then((data: any) => {
+                                            if (
+                                              !data.success &&
+                                              data.message ==
+                                              "ERROR_INTERNET_DISCONNECTED"
+                                            ) {
+                                              setLoading(false);
+                                            }
+                                            if (!data.success) {
+                                              Swal.fire({
+                                                text: `${data.message}`,
+                                                icon: "error",
+                                                timer: 2000,
+                                                showConfirmButton: false,
+                                              });
+                                              setLoading(false);
+                                            }
+                                            if (data.success) {
+                                              // console.log(data);
+                                              setLoading(false);
+                                              Swal.fire({
+                                                text: "Alert Completed Successfully",
+                                                icon: "success",
+                                                timer: 1000,
+                                                showConfirmButton: false,
+                                              });
+
+                                              getAll({
+                                                url: "company/get-all-assigned-events",
+                                              }).then((data: any) => {
+                                                // console.log("assigned --- >", data);
+                                                // setLoading(false);
+                                                if (data !== undefined) {
+                                                  if (data.success) {
+                                                    // console.log("length --- >", data.data.length);
+                                                    dispatch(
+                                                      setAssignedAlerts(data.data)
+                                                    );
+                                                  }
+                                                  if (data.statusCode === 404) {
+                                                    dispatch(
+                                                      setAssignedAlerts([])
+                                                    );
+                                                  }
+                                                }
+                                              });
+                                              getAll({
+                                                url: "company/get-all-completed-events",
+                                              }).then((data: any) => {
+                                                // console.log("assigned --- >", data);
+                                                // setLoading(false);
+                                                if (data !== undefined) {
+                                                  if (data.success) {
+                                                    // console.log("length --- >", data.data.length);
+                                                    dispatch(
+                                                      setCompletedAlerts(
+                                                        data.data
+                                                      )
+                                                    );
+                                                  }
+                                                }
+                                              });
+                                            }
+                                          });
+                                          // Handle successful post creation (e.g., show a success message, redirect, etc.)
+                                        } catch (error: any) {
+                                          // Handle error (e.g., show an error message)
+                                          // console.error("Error creating post:", error);
+                                          setLoading(false);
+                                        }
+                                      }
+                                    });
+                                    // Handle successful post creation (e.g., show a success message, redirect, etc.)
+                                  } catch (error: any) {
+                                    // Handle error (e.g., show an error message)
+                                    // console.error("Error creating post:", error);
+                                  }
+                                }
+                              });
+                            } else {
+                              Swal.fire({
+                                title: `${checkServer.server.companyName}`,
+                                text: `You cannot get the info of this alert because its Server Credentials are wrong`,
+                                icon: "error",
+                                // timer: 2000,
+                                showConfirmButton: true,
+                              });
+                            }
+                          }
+                        }}
+                      >
+                        {/* <td>{data.id}</td> */}
+                        <td style={{ width: "20%" }}>
+                          <div className="d-flex">
+                            <div className="flex-grow-1">
+                              <h5
+                                style={{
+                                  fontSize: "14px",
+                                  fontWeight: "bold",
+                                }}
+                              >
+                                {data?.deviceName}
+                              </h5>
+                              <div style={{ fontSize: "10px" }}>
+                                {data.time.slice(0, 10)}
+                              </div>
+
+                              <div style={{ fontSize: "10px" }}>
+                                {data.time.slice(11)}
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      </td>
-                      <td className={`txt-primary`} style={{ width: "20%" }}>
-                        {data.name}
-                      </td>
-                      <td style={{ width: "20%" }}>{data.type}</td>
-                      <td style={{ width: "20%" }}>{data.message}</td>
-                      <td id="addressLiveAlerts" style={{ width: "20%" }}>
-                        {data.address == null
-                          ? "N/A"
-                          : data.address.length > 10
-                          ? data.address.substring(0, 10) + "..."
-                          : data.address}
-                      </td>
-                      {data.address != null && (
-                        <UncontrolledPopover
-                          placement="top"
-                          trigger="hover"
-                          target="addressLiveAlerts"
-                        >
-                          <PopoverHeader>Address</PopoverHeader>
-                          <PopoverBody>{data.address}</PopoverBody>
-                        </UncontrolledPopover>
-                      )}
-                    </tr>
-                  ))
-              ) : (
-                <tr>
-                  <td colSpan={6} style={{ fontSize: "25px" }}>
-                    No Live Alerts Found
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </Table>
-          {loading && (
-            <div style={{ textAlign: "center", padding: "30px" }}>
-              <Loader />
-            </div>
-          )}
-        </div>
-      </CardBody>
-    </Card>
+                        </td>
+                        <td className={`txt-primary`} style={{ width: "20%"}}>
+                          {data.name}
+                        </td>
+                        <td style={{ width: "20%"}}>{data.type}</td>
+                        <td style={{ width: "20%"}}>{data.message}</td>
+                        <td id="addressLiveAlerts" style={{ width: "20%"}}>
+                          {data.address == null
+                            ? "N/A"
+                            : data.address.length > 10
+                              ? data.address.substring(0, 10) + "..."
+                              : data.address}
+                        </td>
+                        {data.address != null && (
+                          <UncontrolledPopover
+                            placement="top"
+                            trigger="hover"
+                            target="addressLiveAlerts"
+                          >
+                            <PopoverHeader>Address</PopoverHeader>
+                            <PopoverBody>{data.address}</PopoverBody>
+                          </UncontrolledPopover>
+                        )}
+                      </tr>
+                    ))
+                ) : (
+                  <tr>
+                    <td colSpan={6} style={{ fontSize: "25px" }}>
+                      No Live Alerts Found
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </Table>
+            {loading && (
+              <div style={{ textAlign: "center", padding: "30px" }}>
+                <Loader />
+              </div>
+            )}
+          </div>
+        </CardBody>
+      </Card>
+    </Col>
   );
 };
 

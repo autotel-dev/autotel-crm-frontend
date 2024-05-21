@@ -714,7 +714,7 @@ const ControlRoomAnalytics = () => {
               <Col xl="3" lg="6" md="6" sm="12">
                 <Card className="total-earning">
                   <CardBody style={{ maxHeight: "160px", padding: "1em" }}>
-                    <Row style={{ height: "16vh" }}>
+                    <Row style={{ height: "115px" }}>
                       <Col
                         sm="7"
                         className="box-col-7"
@@ -820,7 +820,7 @@ const ControlRoomAnalytics = () => {
               <Col xl="3" lg="6" md="6" sm="12" className="box-col-3">
                 <Card className="total-earning">
                   <CardBody style={{ maxHeight: "160px", padding: "1em" }}>
-                    <Row style={{ height: "16vh" }}>
+                    <Row style={{ height: "115px" }}>
                       <Col sm="12" className="box-col-7">
                         <div className="d-flex">
                           <div
@@ -875,11 +875,11 @@ const ControlRoomAnalytics = () => {
                                       style={{
                                         fontSize: "14px",
                                         fontWeight: "bold",
-                                        width:"65%",
+                                        width:"55%",
                                       }}
                                     >
-                                      {server?.server?.companyName.slice(0, 21)}
-                                      {server?.server?.companyName.length > 20
+                                      {server?.server?.companyName.slice(0, 18)}
+                                      {server?.server?.companyName.length > 18
                                         ? "..."
                                         : ""}{" "}
                                       :
@@ -890,7 +890,7 @@ const ControlRoomAnalytics = () => {
                                         // marginLeft: "90px",
                                         display: "flex",
                                         alignItems: "center",
-                                        width:"35%",
+                                        width:"45%",
                                       }}
                                     >
                                       <div
@@ -1073,7 +1073,7 @@ const ControlRoomAnalytics = () => {
               <Col xl="3" lg="6" md="6" sm="12" className="box-col-3">
                 <Card className="total-earning">
                   <CardBody style={{ maxHeight: "160px", padding: "1em" }}>
-                    <Row style={{ height: "16vh" }}>
+                    <Row style={{ height: "115px" }}>
                       <Col
                         sm="7"
                         className="box-col-7"
@@ -1226,7 +1226,7 @@ const ControlRoomAnalytics = () => {
                       padding: "1em",
                     }}
                   >
-                    <Row style={{ height: "16vh" }}>
+                    <Row style={{ height: "115px" }}>
                       <Col
                         sm="7"
                         className="box-col-7"

@@ -20,7 +20,7 @@ interface PropsTypes {
 
 const TotalPreInfoAlerts: React.FC<PropsTypes> = ({
   isVisible,
-  setIsVisible = () => {},
+  setIsVisible = () => { },
 }) => {
   const { preInfos } = useSelector((state: any) => state.alerts);
 
@@ -196,14 +196,14 @@ const TotalPreInfoAlerts: React.FC<PropsTypes> = ({
                                 <div className="flex-grow-1 ms-2">
                                   <div style={{ fontSize: "10px" }}>
                                     {format(
-                                      new Date(data?.from).toLocaleString(),
+                                      new Date(data?.from).toISOString(),
                                       "date"
                                     )}
                                   </div>
                                   <div style={{ fontSize: "10px" }}>
                                     {/* {data.updatedAt.toString().slice(11, 19)} */}
                                     {format(
-                                      new Date(data?.from).toLocaleString(),
+                                      new Date(data?.from).toISOString(),
                                       "time"
                                     )}
                                   </div>
@@ -215,14 +215,14 @@ const TotalPreInfoAlerts: React.FC<PropsTypes> = ({
                                 <div className="flex-grow-1 ms-2">
                                   <div style={{ fontSize: "10px" }}>
                                     {format(
-                                      new Date(data?.to).toLocaleString(),
+                                      new Date(data?.to).toISOString(),
                                       "date"
                                     )}
                                   </div>
                                   <div style={{ fontSize: "10px" }}>
                                     {/* {data.updatedAt.toString().slice(11, 19)} */}
                                     {format(
-                                      new Date(data?.to).toLocaleString(),
+                                      new Date(data?.to).toISOString(),
                                       "time"
                                     )}
                                   </div>
