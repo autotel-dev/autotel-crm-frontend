@@ -165,7 +165,7 @@ const TicketTable = () => {
             style={{
               backgroundColor: "#f1f1f1",
               borderRadius: "5px",
-              height:"40px",
+              height: "40px",
               padding: "12px",
               margin: "20px 0px",
               width: "100%", // Adjusting width to accommodate padding and margin
@@ -192,7 +192,7 @@ const TicketTable = () => {
           </Col>
         ) : null}
       </Row>
-      {selectedRows.length !== 0 && (
+      {/* {selectedRows.length !== 0 && (
         <div
           className={`d-flex align-items-center justify-content-between bg-light-info p-2`}
         >
@@ -201,7 +201,7 @@ const TicketTable = () => {
             {Delete}
           </Button>
         </div>
-      )}
+      )} */}
       <DataTable
         columns={supportColumns}
         data={data}

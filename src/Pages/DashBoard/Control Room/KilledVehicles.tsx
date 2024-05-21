@@ -350,11 +350,11 @@ const KilledVehicles: React.FC<PropsTypes> = ({ fromDate, toDate }) => {
                                   <div className="flex-grow-1 ms-2">
                                     <div style={{ fontSize: "10px" }}>
                                       {format(
+
                                         new Date(
-                                          new Date(
-                                            data?.lastPacketTimeStamp * 1000
-                                          ).toISOString()
-                                        ).toLocaleString(),
+                                          data?.lastPacketTimeStamp * 1000
+                                        ).toISOString()
+                                        ,
                                         "date"
                                       )}
                                     </div>
@@ -362,10 +362,8 @@ const KilledVehicles: React.FC<PropsTypes> = ({ fromDate, toDate }) => {
                                       {/* {data.updatedAt.toString().slice(11, 19)} */}
                                       {format(
                                         new Date(
-                                          new Date(
-                                            data?.lastPacketTimeStamp * 1000
-                                          ).toISOString()
-                                        ).toLocaleString(),
+                                          data?.lastPacketTimeStamp * 1000
+                                        ).toISOString(),
                                         "time"
                                       )}
                                     </div>
@@ -391,7 +389,7 @@ const KilledVehicles: React.FC<PropsTypes> = ({ fromDate, toDate }) => {
                                       {format(
                                         new Date(
                                           data?.createdAt
-                                        ).toLocaleString(),
+                                        ).toISOString(),
                                         "date"
                                       )}
                                     </div>
@@ -400,7 +398,7 @@ const KilledVehicles: React.FC<PropsTypes> = ({ fromDate, toDate }) => {
                                       {format(
                                         new Date(
                                           data?.createdAt
-                                        ).toLocaleString(),
+                                        ).toISOString(),
                                         "time"
                                       )}
                                     </div>

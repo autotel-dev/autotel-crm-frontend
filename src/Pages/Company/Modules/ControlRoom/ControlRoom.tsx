@@ -491,21 +491,18 @@ const ControlRoom = () => {
                 <ControlRoomAnalytics />
               </Row>
               <Row>
-                <Col xl="6">
-                  <LiveAlerts />
-                </Col>
-                <Col xl="6">
+                <LiveAlerts />
+                <Col xl="6" lg="6">
                   <div style={{ backgroundColor: "white" }}>
                     <Nav
                       tabs
                       className="simple-wrapper"
                       style={{
-                        backgroundColor: `${
-                          userPersonalizationData !== null &&
-                          userPersonalizationData?.buttonsAndBarsColor !== null
+                        backgroundColor: `${userPersonalizationData !== null &&
+                            userPersonalizationData?.buttonsAndBarsColor !== null
                             ? userPersonalizationData?.buttonsAndBarsColor
                             : "#63d5be"
-                        }`,
+                          }`,
 
                         borderTopLeftRadius: "10px",
                         borderTopRightRadius: "10px",
@@ -523,14 +520,13 @@ const ControlRoom = () => {
                         <NavLink
                           className={` ${basicTab === "1" ? "active" : ""}`}
                           style={{
-                            color: `${
-                              basicTab === "1"
+                            color: `${basicTab === "1"
                                 ? userPersonalizationData !== null &&
                                   userPersonalizationData?.buttonsAndBarsColor !== null
                                   ? userPersonalizationData?.buttonsAndBarsColor
                                   : "#63d5be"
                                 : "white"
-                            }`,
+                              }`,
                           }}
                           onClick={() => setBasicTab("1")}
                         >
@@ -549,14 +545,13 @@ const ControlRoom = () => {
                         <NavLink
                           className={` ${basicTab === "2" ? "active" : ""}`}
                           style={{
-                            color: `${
-                              basicTab === "2"
+                            color: `${basicTab === "2"
                                 ? userPersonalizationData !== null &&
                                   userPersonalizationData?.buttonsAndBarsColor !== null
                                   ? userPersonalizationData?.buttonsAndBarsColor
                                   : "#63d5be"
                                 : "white"
-                            }`,
+                              }`,
                           }}
                           onClick={() => setBasicTab("2")}
                         >

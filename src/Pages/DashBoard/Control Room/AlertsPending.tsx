@@ -335,7 +335,7 @@ const AlertsPending = () => {
                                     : data.address}
                               </td>
                               <td style={{ width: "14%" }}>
-                                {data.assignedTo.fullName}
+                                {data?.assignedTo !== null ? data?.assignedTo?.fullName : "N/A"}
                               </td>
                               <td
                                 className="micro-5-charted-regular"
