@@ -220,7 +220,8 @@ const Companies = () => {
                     style={{
                       backgroundColor: "#f1f1f1",
                       borderRadius: "5px",
-                      padding: "15px",
+                      height:"40px",
+                      padding: "12px",
                       margin: "15px",
                       width: "calc(100% - 30px)", // Adjusting width to accommodate padding and margin
                       border: "none",

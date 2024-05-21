@@ -27,6 +27,23 @@ import H7 from "../../CommonElements/Headings/H7Element";
 const ProvinceList = () => {
   const { provinces, loading, error, id, value, activeInActiveProvinces } =
     useSelector((state: any) => state.provinces);
+  const { userPersonalizationData } = useSelector(
+    (state: any) => state.personalization
+  );
+  function hexToRgb(hex: any) {
+    // Remove the hash sign if present
+    hex = hex?.replace(/^#/, "");
+    // Parse the hex values to RGB
+    const bigint = parseInt(hex, 16);
+    const r = (bigint >> 16) & 255;
+    const g = (bigint >> 8) & 255;
+    const b = bigint & 255;
+    return { r, g, b };
+  }
+
+  // Usage
+  const hexColor = "#ff0000"; // Example hex color
+  const rgbColor = hexToRgb(userPersonalizationData?.buttonsAndBarsColor); // Convert hex to RGB
   const { noDataFound } = useSelector((state: any) => state.noDataFound);
   const dispatch = useDispatch();
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
@@ -85,9 +102,27 @@ const ProvinceList = () => {
       }
     });
   }, []);
+  const [isHovered, setIsHovered] = useState(false);
+  const [idd, setIdd] = useState("");
   const renderTableRows = () => {
     return provinces.map((row: any) => (
-      <tr key={row._id}>
+      <tr
+        key={row._id}
+        onMouseEnter={() => {
+          setIsHovered(true);
+          setIdd(row._id);
+        }}
+        onMouseLeave={() => setIsHovered(false)}
+        style={{
+          backgroundColor:
+            isHovered && idd == row._id
+              ? userPersonalizationData == null
+                ? "#D6EEEE"
+                : `rgba(${rgbColor.r},${rgbColor.g},${rgbColor.b},0.2)`
+              : "transparent",
+          transition: "background-color 0.3s",
+        }}
+      >
         <td>{row._id}</td>
         <td>{row.name}</td>
         <td>{row.country.name}</td>
@@ -103,49 +138,6 @@ const ProvinceList = () => {
                   defaultChecked={row.isActive}
                   value={row.isActive}
                   checked={row.isActive}
-                  // onChange={async (e: any) => {
-                  //   //  --------------------------
-
-                  //   const operator = {
-                  //     fullName: row.fullName,
-                  //     emailAddress: row.emailAddress,
-                  //     phoneNo: row.phoneNo,
-                  //     isActive: !row.isActive,
-                  //     company: decodedToken.userId,
-                  //   };
-                  //   // console.log(operator);
-                  //   setIsActive(!row.isActive);
-                  //   // setRowIndex(index);
-                  //   // console.log(e.target.value);
-                  //   try {
-                  //     await update(operator, {
-                  //       url: `operator/update-operator/${row._id}`,
-                  //     }).then((data: any) => {
-                  //       if (data.success) {
-                  //         // console.log(data);
-
-                  //         dispatch(setOperatorsStart());
-                  //         getAll({
-                  //           url: "operator/get-all-operators",
-                  //         }).then((data: any) => {
-                  //           // console.log("api call --- >", data);
-                  //           dispatch(setOperatorsEnd());
-                  //           if (data !== undefined) {
-                  //             if (data.success) {
-                  //               // console.log("hhg");
-                  //               dispatch(setOperators(data.data));
-                  //               dispatch(setFilterOperators(data.data));
-                  //             }
-                  //           }
-                  //         });
-                  //       }
-                  //     });
-                  //     // Handle successful post creation (e.g., show a success message, redirect, etc.)
-                  //   } catch (error) {
-                  //     // Handle error (e.g., show an error message)
-                  //     // console.error("Error creating post:", error);
-                  //   }
-                  // }}
                 />
                 <span
                   // className={`switch-state ${
