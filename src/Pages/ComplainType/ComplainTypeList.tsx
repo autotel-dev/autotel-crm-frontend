@@ -26,6 +26,8 @@ import {
 } from "../../ReaduxToolkit/Reducer/ComplainsTypeSlice";
 import H7 from "../../CommonElements/Headings/H7Element";
 import { formatUnderscoredString } from "../../Api/globals";
+import "../../CssConstaints/Style.css";
+
 
 const ComplainTypeList = () => {
   const { complainTypes, loading, id, activeInActiveComplainTypes } =
@@ -195,16 +197,17 @@ const ComplainTypeList = () => {
         <td>
           <div>
             <button
-              style={{
-                width: 60,
-                fontSize: 14,
-                padding: 3,
-                color: "white",
-                backgroundColor: "red",
-                borderRadius: "5px",
-                marginRight: "5px",
-                border: "none",
-              }}
+             className="global-table-delete-btn"
+              // style={{
+              //   width: 60,
+              //   fontSize: 14,
+              //   padding: 3,
+              //   color: "white",
+              //   backgroundColor: "red",
+              //   borderRadius: "5px",
+              //   marginRight: "5px",
+              //   border: "none",
+              // }}
               onClick={() => {
                 // console.log("345678");
                 var alertData = {
@@ -218,15 +221,16 @@ const ComplainTypeList = () => {
               Delete
             </button>
             <button
-              style={{
-                width: 60,
-                fontSize: 14,
-                padding: 3,
-                color: "white",
-                backgroundColor: "green",
-                borderRadius: "5px",
-                border: "none",
-              }}
+            className="global-table-edit-btn"
+              // style={{
+              //   width: 60,
+              //   fontSize: 14,
+              //   padding: 3,
+              //   color: "white",
+              //   backgroundColor: "green",
+              //   borderRadius: "5px",
+              //   border: "none",
+              // }}
               onClick={() => {
                 setIsUpdateModalOpen(true);
                 // console.log("isUpdateModalOpen: ", isUpdateModalOpen);

@@ -27,6 +27,8 @@ import { header } from "../../Api/header";
 import axios from "axios";
 import Swal from "sweetalert2";
 import H7 from "../../CommonElements/Headings/H7Element";
+import "../../CssConstaints/Style.css";
+
 
 const ServersList = () => {
   const { servers, loading, error, id, activeInActiveServers } = useSelector(
@@ -199,16 +201,17 @@ const ServersList = () => {
         <td>
           <div>
             <button
-              style={{
-                width: 60,
-                fontSize: 14,
-                padding: 3,
-                color: "white",
-                backgroundColor: "red",
-                borderRadius: "5px",
-                marginRight: "5px",
-                border: "none",
-              }}
+            className="global-table-delete-btn"
+              // style={{
+              //   width: 60,
+              //   fontSize: 14,
+              //   padding: 3,
+              //   color: "white",
+              //   backgroundColor: "red",
+              //   borderRadius: "5px",
+              //   marginRight: "5px",
+              //   border: "none",
+              // }}
               onClick={() => {
                 // console.log("345678");
                 var alertData = {
@@ -222,15 +225,16 @@ const ServersList = () => {
               Delete
             </button>
             <button
-              style={{
-                width: 60,
-                fontSize: 14,
-                padding: 3,
-                color: "white",
-                backgroundColor: "green",
-                borderRadius: "5px",
-                border: "none",
-              }}
+            className="global-table-edit-btn"
+              // style={{
+              //   width: 60,
+              //   fontSize: 14,
+              //   padding: 3,
+              //   color: "white",
+              //   backgroundColor: "green",
+              //   borderRadius: "5px",
+              //   border: "none",
+              // }}
               onClick={() => {
                 dispatch(setServer(row));
                 navigate(

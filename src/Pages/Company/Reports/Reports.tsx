@@ -8,12 +8,14 @@ import ReportsList from "./ReportsList";
 import ReportsListNav from "./ReportsListNav";
 import { getAll } from "../../../Api";
 import Swal from "sweetalert2";
+import "../../../CssConstaints/Style.css";
 import Loader from "../../Loader/Loader";
 import {
   setIsConnected,
   setReportstype,
 } from "../../../ReaduxToolkit/Reducer/ReportsSlice";
 import NoInternetConnection from "../../NoInternetConnection/NoInternetConnection";
+import { Flex } from "antd";
 
 const Reports = () => {
   const dispatch = useDispatch();
@@ -161,21 +163,22 @@ const Reports = () => {
                     <ReportsListNav dropDownDevices={dropDownDevices} />
                     <Col md={12}>
                       <input
+                      className="global-search-field"
                         type="text"
                         placeholder="Type to Search.."
                         value={searchValue}
                         onChange={(e) => {
                           // filterCountriess(e);
                         }}
-                        style={{
-                          backgroundColor: "#f1f1f1",
-                          borderRadius: "5px",
-                          padding: "15px",
-                          margin: "15px",
-                          width: "calc(100% - 30px)", // Adjusting width to accommodate padding and margin
-                          border: "none",
-                          outline: "none", // Removing default border outline
-                        }}
+                        // style={{
+                        //   backgroundColor: "#f1f1f1",
+                        //   borderRadius: "5px",
+                        //   padding: "15px",
+                        //   margin: "15px",
+                        //   width: "calc(100% - 30px)", // Adjusting width to accommodate padding and margin
+                        //   border: "none",
+                        //   outline: "none", // Removing default border outline
+                        // }}
                       />
                     </Col>
                   </Card>

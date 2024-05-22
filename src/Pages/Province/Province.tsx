@@ -5,6 +5,7 @@ import ProvinceListNav from "./ProvinceListNav";
 import ProvinceList from "./ProvinceList";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import "../../CssConstaints/Style.css";
 import {
   setIsConnected,
   setProvinces,
@@ -53,20 +54,21 @@ const Province = () => {
                     <input
                       type="text"
                       placeholder="Type to Search.."
+                      className="global-search-field"
                       value={searchValue}
                       onChange={(e) => {
                         filterProvincess(e);
                       }}
-                      style={{
-                        backgroundColor: "#f1f1f1",
-                        borderRadius: "5px",
-                        padding: "12px",
-                        height:"40px",
-                        margin: "15px",
-                        width: "calc(100% - 30px)", // Adjusting width to accommodate padding and margin
-                        border: "none",
-                        outline: "none", // Removing default border outline
-                      }}
+                      // style={{
+                      //   backgroundColor: "#f1f1f1",
+                      //   borderRadius: "5px",
+                      //   padding: "12px",
+                      //   height:"40px",
+                      //   margin: "15px",
+                      //   width: "calc(100% - 30px)", // Adjusting width to accommodate padding and margin
+                      //   border: "none",
+                      //   outline: "none", // Removing default border outline
+                      // }}
                     />
                   </Col>
                 </Card>
