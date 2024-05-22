@@ -7,6 +7,7 @@ import { getAll } from "../../Api";
 import { useDispatch, useSelector } from "react-redux";
 import "./tableStyle.css";
 import deleteAlert from "../Alerts/DeleteAlert";
+import "../../CssConstaints/Style.css";
 import {
   setCountries,
   setCountriesEnd,
@@ -186,16 +187,17 @@ const CountriesList = () => {
         <td>
           <div>
             <button
-              style={{
-                width: 60,
-                fontSize: 14,
-                padding: 3,
-                color: "white",
-                backgroundColor: "red",
-                borderRadius: "5px",
-                marginRight: "5px",
-                border: "none",
-              }}
+            className="global-table-delete-btn"
+              // style={{
+              //   width: 60,
+              //   fontSize: 14,
+              //   padding: 3,
+              //   color: "white",
+              //   backgroundColor: "red",
+              //   borderRadius: "5px",
+              //   marginRight: "5px",
+              //   border: "none",
+              // }}
               onClick={() => {
                 // console.log("345678");
                 var alertData = {
@@ -209,15 +211,16 @@ const CountriesList = () => {
               Delete
             </button>
             <button
-              style={{
-                width: 60,
-                fontSize: 14,
-                padding: 3,
-                color: "white",
-                backgroundColor: "green",
-                borderRadius: "5px",
-                border: "none",
-              }}
+            className="global-table-edit-btn"
+              // style={{
+              //   width: 60,
+              //   fontSize: 14,
+              //   padding: 3,
+              //   color: "white",
+              //   backgroundColor: "green",
+              //   borderRadius: "5px",
+              //   border: "none",
+              // }}
               onClick={() => {
                 setIsUpdateModalOpen(true);
                 // console.log("isUpdateModalOpen: ", isUpdateModalOpen);

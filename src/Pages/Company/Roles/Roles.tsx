@@ -6,6 +6,7 @@ import Breadcrumbs from "../../../CommonElements/Breadcrumbs/Breadcrumbs";
 import { setup } from "../../../utils/Constant";
 import RolesList from "./RolesList";
 import RolesListNav from "./RolesListNav";
+import "../../../CssConstaints/Style.css";
 import { getAll } from "../../../Api";
 import {
   setIsConnected,
@@ -67,22 +68,23 @@ const Roles = () => {
                   <RolesListNav />
                   <Col md={12}>
                     <input
+                    className="global-search-field"
                       type="text"
                       placeholder="Type to Search.."
                       value={searchValue}
                       onChange={(e) => {
                         filterRoless(e);
                       }}
-                      style={{
-                        backgroundColor: "#f1f1f1",
-                        borderRadius: "5px",
-                        padding: "12px",
-                        height:"40px",
-                        margin: "15px",
-                        width: "calc(100% - 30px)", // Adjusting width to accommodate padding and margin
-                        border: "none",
-                        outline: "none", // Removing default border outline
-                      }}
+                      // style={{
+                      //   backgroundColor: "#f1f1f1",
+                      //   borderRadius: "5px",
+                      //   padding: "12px",
+                      //   height:"40px",
+                      //   margin: "15px",
+                      //   width: "calc(100% - 30px)", // Adjusting width to accommodate padding and margin
+                      //   border: "none",
+                      //   outline: "none", // Removing default border outline
+                      // }}
                     />
                   </Col>
                 </Card>

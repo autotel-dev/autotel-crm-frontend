@@ -31,6 +31,8 @@ import { formatUnderscoredString, getUserRole } from "../../../Api/globals";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import { H4 } from "../../../AbstractElements";
+import "../../../CssConstaints/Style.css";
+
 
 const UsersList = () => {
   const { operators, loading, activeInActiveOperators } = useSelector(
@@ -227,16 +229,17 @@ const UsersList = () => {
             <div>
               {user?.delete && (
                 <button
-                  style={{
-                    width: 60,
-                    fontSize: 14,
-                    padding: 3,
-                    color: "white",
-                    backgroundColor: "red",
-                    borderRadius: "5px",
-                    marginRight: "5px",
-                    border: "none",
-                  }}
+                className="global-table-delete-btn"
+                  // style={{
+                  //   width: 60,
+                  //   fontSize: 14,
+                  //   padding: 3,
+                  //   color: "white",
+                  //   backgroundColor: "red",
+                  //   borderRadius: "5px",
+                  //   marginRight: "5px",
+                  //   border: "none",
+                  // }}
                   onClick={() => {
                     // console.log("345678");
                     var alertData = {
@@ -252,15 +255,16 @@ const UsersList = () => {
               )}
               {user?.edit && (
                 <button
-                  style={{
-                    width: 60,
-                    fontSize: 14,
-                    padding: 3,
-                    color: "white",
-                    backgroundColor: "green",
-                    borderRadius: "5px",
-                    border: "none",
-                  }}
+                className="global-table-edit-btn"
+                  // style={{
+                  //   width: 60,
+                  //   fontSize: 14,
+                  //   padding: 3,
+                  //   color: "white",
+                  //   backgroundColor: "green",
+                  //   borderRadius: "5px",
+                  //   border: "none",
+                  // }}
                   onClick={() => {
                     setIsUpdateModalOpen(true);
                     // console.log("isUpdateModalOpen: ", isUpdateModalOpen);

@@ -9,6 +9,7 @@ import CompaniesCardsFooter from "./CompaniesCardsFooter";
 import SocialMediaIcons from "./SocialMediaIcons";
 import { compainesCardData } from "./Data/CompaniesCardData";
 import CompaniesListNav from "./CompaniesListNav";
+import "../../CssConstaints/Style.css";
 import { useEffect, useState } from "react";
 import { getAll } from "../../Api";
 import {
@@ -211,22 +212,23 @@ const Companies = () => {
                 <CompaniesListNav />
                 <Col md={12}>
                   <input
+                  className="global-search-field"
                     type="text"
                     placeholder="Type to Search.."
                     value={searchValue}
                     onChange={(e) => {
                       filterCompaniess(e);
                     }}
-                    style={{
-                      backgroundColor: "#f1f1f1",
-                      borderRadius: "5px",
-                      height:"40px",
-                      padding: "12px",
-                      margin: "15px",
-                      width: "calc(100% - 30px)", // Adjusting width to accommodate padding and margin
-                      border: "none",
-                      outline: "none", // Removing default border outline
-                    }}
+                    // style={{
+                    //   backgroundColor: "#f1f1f1",
+                    //   borderRadius: "5px",
+                    //   height:"40px",
+                    //   padding: "12px",
+                    //   margin: "15px",
+                    //   width: "calc(100% - 30px)", // Adjusting width to accommodate padding and margin
+                    //   border: "none",
+                    //   outline: "none", // Removing default border outline
+                    // }}
                   />
                 </Col>
               </Card>

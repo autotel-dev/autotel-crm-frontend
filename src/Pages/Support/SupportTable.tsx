@@ -10,6 +10,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setTableRow } from "../../ReaduxToolkit/Reducer/SupportSlice";
 import { getUserRole } from "../../Api/globals";
 import { ROLES } from "../../constants/roles";
+import "../../CssConstaints/Style.css";
 
 const TicketTable = () => {
   const dispatch = useDispatch();
@@ -156,22 +157,23 @@ const TicketTable = () => {
           }
         >
           <input
+          className="global-search-field"
             type="text"
             placeholder="Type to Search.."
             value={searchValue}
             onChange={(e) => {
               handleSearch(e);
             }}
-            style={{
-              backgroundColor: "#f1f1f1",
-              borderRadius: "5px",
-              height: "40px",
-              padding: "12px",
-              margin: "20px 0px",
-              width: "100%", // Adjusting width to accommodate padding and margin
-              border: "none",
-              outline: "none", // Removing default border outline
-            }}
+            // style={{
+            //   backgroundColor: "#f1f1f1",
+            //   borderRadius: "5px",
+            //   height: "40px",
+            //   padding: "12px",
+            //   margin: "20px 0px",
+            //   width: "100%", // Adjusting width to accommodate padding and margin
+            //   border: "none",
+            //   outline: "none", // Removing default border outline
+            // }}
           />
         </Col>
         {getUserRole() === ROLES.SUPER_ADMIN ? (

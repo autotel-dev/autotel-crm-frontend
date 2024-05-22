@@ -12,6 +12,7 @@ import { ROLES } from "../../../../constants/roles";
 import CreateNewComplain from "./CreateNewComplain";
 import { setAllComplains, setComplainCenterRoles, setComplainCenterStatistics, setTableRow } from "../../../../ReaduxToolkit/Reducer/ComplainCenterSlice";
 import { getAll } from "../../../../Api";
+import "../../../../CssConstaints/Style.css";
 
 const ComplainTable = () => {
   const dispatch = useDispatch();
@@ -249,22 +250,23 @@ const ComplainTable = () => {
           }
         >
           <input
+          className="global-search-field"
             type="text"
             placeholder="Type to Search.."
             value={searchValue}
             onChange={(e) => {
               handleSearch(e);
             }}
-            style={{
-              backgroundColor: "#f1f1f1",
-              borderRadius: "5px",
-              padding: "12px",
-              height: "40px",
-              margin: "20px 0px",
-              width: "100%", // Adjusting width to accommodate padding and margin
-              border: "none",
-              outline: "none", // Removing default border outline
-            }}
+            // style={{
+            //   backgroundColor: "#f1f1f1",
+            //   borderRadius: "5px",
+            //   padding: "12px",
+            //   height: "40px",
+            //   margin: "20px 0px",
+            //   width: "100%", // Adjusting width to accommodate padding and margin
+            //   border: "none",
+            //   outline: "none", // Removing default border outline
+            // }}
           />
         </Col>
         {getUserRole() === ROLES.SUPER_ADMIN ? (

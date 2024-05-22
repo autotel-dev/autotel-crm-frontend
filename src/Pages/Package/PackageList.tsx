@@ -25,6 +25,7 @@ import Loader from "../Loader/Loader";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import H7 from "../../CommonElements/Headings/H7Element";
+import "../../CssConstaints/Style.css";
 
 const PackageList = () => {
   const { packages, loading, error, id, activeInActivePackages } = useSelector(
@@ -206,16 +207,17 @@ const PackageList = () => {
         <td>
           <div>
             <button
-              style={{
-                width: 60,
-                fontSize: 14,
-                padding: 3,
-                color: "white",
-                backgroundColor: "red",
-                borderRadius: "5px",
-                marginRight: "5px",
-                border: "none",
-              }}
+            className="global-table-delete-btn"
+              // style={{
+              //   width: 60,
+              //   fontSize: 14,
+              //   padding: 3,
+              //   color: "white",
+              //   backgroundColor: "red",
+              //   borderRadius: "5px",
+              //   marginRight: "5px",
+              //   border: "none",
+              // }}
               onClick={() => {
                 // console.log("345678");
                 var alertData = {
@@ -229,15 +231,16 @@ const PackageList = () => {
               Delete
             </button>
             <button
-              style={{
-                width: 60,
-                fontSize: 14,
-                padding: 3,
-                color: "white",
-                backgroundColor: "green",
-                borderRadius: "5px",
-                border: "none",
-              }}
+            className="global-table-edit-btn"
+              // style={{
+              //   width: 60,
+              //   fontSize: 14,
+              //   padding: 3,
+              //   color: "white",
+              //   backgroundColor: "green",
+              //   borderRadius: "5px",
+              //   border: "none",
+              // }}
               onClick={() => {
                 setIsUpdateModalOpen(true);
                 // console.log("isUpdateModalOpen: ", isUpdateModalOpen);
