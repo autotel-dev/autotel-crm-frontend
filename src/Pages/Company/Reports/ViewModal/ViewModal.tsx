@@ -13,6 +13,7 @@ import {
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { H3, H4 } from "../../../../AbstractElements";
+import { formatUnderscoredString } from "../../../../Api/globals";
 
 interface PropsTypes {
   isVisible: boolean; // Change 'boolean' to the actual type of isVisible
@@ -112,7 +113,7 @@ const ViewModal: React.FC<PropsTypes> = ({
                       <td style={{ width: "7%" }}>{row.type}</td>
                       <td style={{ width: "7%" }}>{row.speed}</td>
                       <td style={{ width: "7%" }}>{row.message}</td>
-                      <td style={{ width: "7%" }}>{row.userRole}</td>
+                      <td style={{ width: "7%" }}>{formatUnderscoredString(row.userRole)}</td>
                       <td id="Popover">
                         {row.address == null
                           ? "N/A"
@@ -133,16 +134,7 @@ const ViewModal: React.FC<PropsTypes> = ({
                       <td style={{ width: "7%" }}>{row.completionResponse}</td>
                       {row.alertEventCloseDate == "Not Completed" ? (
                         <td style={{ width: "10%" }}>
-                          <div className="d-flex">
-                            <div className="flex-grow-1 ms-2">
-                              <div style={{ fontSize: "10px" }}>
-                                {row.createdAt.slice(0, 10)}
-                              </div>
-                              <div style={{ fontSize: "10px" }}>
-                                {row.createdAt.slice(11, 19)}
-                              </div>
-                            </div>
-                          </div>
+                         Not Completed
                         </td>
                       ) : (
                         <td style={{ width: "10%" }}>

@@ -564,6 +564,7 @@ const TicketDetails = () => {
                             position: "relative",
                             marginRight: "20px",
                             marginBottom: "20px",
+                            cursor:"pointer"
                           }}
                           onMouseEnter={() => handleMouseEnter(imageIndex)}
                           onMouseLeave={() => handleMouseLeave(imageIndex)}

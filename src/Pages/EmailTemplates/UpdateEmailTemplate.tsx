@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import {
   Button,
+  Col,
   FormGroup,
   Input,
   Label,
@@ -15,33 +16,41 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getAll, update } from "../../Api";
 import { Type } from "./EmailTemplatesTypes/EmailTemplatesTypes";
-import {
-  setCountriesStart,
-  setCountriesEnd,
-  setCountries,
-  setId,
-  setFilterCountries,
-  setInActiveActiveCountries,
-} from "../../ReaduxToolkit/Reducer/CountrySlice";
-import { setNoDataFound } from "../../ReaduxToolkit/Reducer/NoDataFoundSlice";
+import { Select } from "antd";
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
+// import './tableStyle.css'
+import TurndownService from 'turndown';
+import { getUserRole } from "../../Api/globals";
+import { ROLES } from "../../constants/roles";
 import Swal from "sweetalert2";
+import { setEmailTemplates, setEmailTemplatesEnd, setEmailTemplatesStart, setFilterEmailTemplates } from '../../ReaduxToolkit/Reducer/EmailTemplateSlice';
+
 
 interface PropsTypes {
   isVisible: boolean; // Change 'boolean' to the actual type of isVisible
   setIsVisible: any;
   id: any;
-  value: any;
-  isActive: any;
-  setIsActive: any;
+  subject: any;
+  templateContent: any;
+  type: any;
+  shareOption: any;
+  setType: any;
+  setShareOption: any;
+  setTemplateContent: any;
 }
 
 const UpdateEmailTemplate: React.FC<PropsTypes> = ({
   isVisible,
   setIsVisible = () => { },
   id,
-  value,
-  isActive,
-  setIsActive,
+  subject,
+  templateContent,
+  type,
+  shareOption,
+  setType,
+  setShareOption,
+  setTemplateContent
 
   // setValue
 }) => {
@@ -60,106 +69,171 @@ const UpdateEmailTemplate: React.FC<PropsTypes> = ({
   } = useForm<Type>({
     defaultValues: {
       // Set the initial value from props
-      title: value,
-      isActive: isActive,
+      subject: subject,
+      templateContent: templateContent
     },
   });
   const [addModal, setAddModal] = useState(false);
   const addToggle = () => {
     if (!loading) {
       setIsVisible(!isVisible);
-      reset({
-        isActive: isActive,
-      });
     }
   };
-  // console.log(id);
-  // console.log(value);
-  // console.log("isActive -- >", isActive);
-  // dispatch(setValue(value));
-  // console.log("is: ", isVisible);
+  console.log(id);
+  console.log(subject);
+  console.log(templateContent);
 
-  // const updateCountry: SubmitHandler<Type> = async (data) => {
-  //   setLoading(true);
-  //   if (data.name !== "") {
-  //     const country = {
-  //       name: data.name,
-  //       isActive: isActive,
-  //     };
-  //     // console.log(country);
-  //     try {
-  //       await update(country, { url: `country/update-country/${id}` }).then(
-  //         (data: any) => {
-  //           if (
-  //             !data.success &&
-  //             data.message === "ERROR_INTERNET_DISCONNECTED"
-  //           ) {
-  //             setLoading(false);
-  //             setIsVisible(!isVisible);
-  //           }
-  //           if (!data.success) {
-  //             Swal.fire({
-  //               text: `${data.message}`,
-  //               icon: "error",
-  //               timer: 2000,
-  //               showConfirmButton: false,
-  //             });
-  //             setLoading(false);
-  //             setIsVisible(!isVisible);
-  //           }
-  //           if (data.success) {
-  //             // console.log(data);
-  //             setLoading(false);
-  //             setIsVisible(!isVisible);
 
-  //             dispatch(setId(null));
-  //             // dispatch(setValue(""));
-  //             dispatch(setCountriesStart());
-  //             getAll({ url: "country/get-all-countries" }).then((data: any) => {
-  //               // console.log("api call --- >", data);
-  //               if (data == undefined) {
-  //                 Swal.fire({
-  //                   text: "Failed to fetch due to connection refused",
-  //                   icon: "error",
-  //                   timer: 2000,
-  //                   showConfirmButton: false,
-  //                 });
-  //                 dispatch(setInActiveActiveCountries("All"));
-  //                 dispatch(setCountries([]));
-  //                 dispatch(setFilterCountries([]));
-  //                 dispatch(setCountriesEnd());
-  //                 return;
-  //               }
-  //               dispatch(setCountriesEnd());
-  //               if (data !== undefined) {
-  //                 dispatch(setNoDataFound(data.message));
-  //                 if (data.success) {
-  //                   // console.log("hhg");
-  //                   dispatch(setCountries(data.data));
-  //                   dispatch(setFilterCountries(data.data));
-  //                 }
-  //               }
-  //             });
-  //           }
-  //         }
-  //       );
-  //       // Handle successful post creation (e.g., show a success message, redirect, etc.)
-  //     } catch (error) {
-  //       // Handle error (e.g., show an error message)
-  //       // console.error("Error creating post:", error);
+  const updateEmailTemplate: SubmitHandler<Type> = async (data) => {
+    setLoading(true);
+    var emailTemplate;
+    if (getUserRole() == ROLES.SUPER_ADMIN) {
+      emailTemplate = {
+        subject: data.subject,
+        content: templateContent,
+        type: type,
+        isShared: shareOption
+      };
+    }
+    else {
+      emailTemplate = {
+        subject: data.subject,
+        content: templateContent,
+        type: type
+      };
+    }
 
-  //       setLoading(false);
-  //       setIsVisible(!isVisible);
-  //     }
-  //   }
-  // };
+    console.log(emailTemplate);
+    if (data.subject !== "" && templateContent !== "" && type !== "") {
+      try {
+        await update(emailTemplate, { url: `template/email-template/update-template/${id}` }).then(
+          (data: any) => {
+            if (
+              !data.success &&
+              data.message === "ERROR_INTERNET_DISCONNECTED"
+            ) {
+              setLoading(false);
+              setIsVisible(!isVisible);
+            }
+            if (!data.success) {
+              Swal.fire({
+                text: `${data.message}`,
+                icon: "error",
+                timer: 2000,
+                showConfirmButton: false,
+              });
+              setLoading(false);
+              setIsVisible(!isVisible);
+            }
+            if (data.success) {
+              Swal.fire({
+                text: data.message,
+                icon: "success",
+                timer: 2000,
+                showConfirmButton: false,
+              });
+              // console.log(data);
+              setLoading(false);
+              setIsVisible(!isVisible);
+
+              // setId("null");
+              // dispatch(setValue(""));
+              dispatch(setEmailTemplatesStart());
+              getAll({ url: "template/email-template/get-all-templates" }).then(
+                (data: any) => {
+                  // console.log("api call --- >", data);
+                  if (data == undefined) {
+                    Swal.fire({
+                      text: "Failed to fetch due to connection refused",
+                      icon: "error",
+                      timer: 2000,
+                      showConfirmButton: false,
+                    });
+                    dispatch(setEmailTemplates([]));
+                    dispatch(setFilterEmailTemplates([]));
+                    dispatch(setEmailTemplatesEnd());
+                    return;
+                  }
+                  dispatch(setEmailTemplatesEnd());
+                  if (data !== undefined) {
+                    if (data.success) {
+                      // console.log("hhg");
+                      dispatch(setEmailTemplates(data.data));
+                      dispatch(setFilterEmailTemplates(data.data));
+                    }
+                  }
+                }
+              );
+            }
+          }
+        );
+        // Handle successful post creation (e.g., show a success message, redirect, etc.)
+      } catch (error) {
+        // Handle error (e.g., show an error message)
+        // console.error("Error creating post:", error);
+        setLoading(false);
+        setIsVisible(!isVisible);
+      }
+    }
+  };
   useEffect(() => {
-    setValue("title", value);
-  }, [value, setValue]);
+    setValue("subject", subject);
+  }, [subject, setValue]);
 
   useEffect(() => {
-    setValue("isActive", isActive);
-  }, [isActive, setValue]);
+    setValue("templateContent", templateContent);
+  }, [templateContent, setValue]);
+
+
+  const modules = {
+    toolbar: [
+      // [{ 'font': [] }],
+      [{ 'header': [1, 2, 3, false] }],
+      ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+      [{ 'list': 'ordered' }, { 'list': 'bullet' }, { 'indent': '-1' }, { 'indent': '+1' }],
+      ['link', 'image', 'video'],
+      [{ 'align': [] }],
+      [{ 'color': [] }, { 'background': [] }],
+      // ['clean']
+    ],
+  };
+
+  const TEMPLATE_TYPES_ARRAY = [
+    {
+      label: "Account Created",
+      value: "ACCOUNT_CREATED",
+    },
+    {
+      label: "Password Updated",
+      value: "PASSWORD_UPDATED",
+    },
+    {
+      label: "Pre Package Expiration",
+      value: "PRE_PACKAGE_EXPIRATION",
+    },
+    {
+      label: "Post Package Expiration",
+      value: "POST_PACKAGE_EXPIRATION",
+    },
+    {
+      label: "Report",
+      value: "REPORT",
+    },
+  ];
+
+
+  // const [editorState, setEditorState] = useState('<p>Hello <strong>Sandesh</strong></p><p>We have created an account for you on <strong><em><u>Autotel CRM</u></em></strong></p><p>Here are the account credentials:</p><ul><li>Email: <strong>sandesh@sandesh.com</strong></li><li>Password: <strong><u>123456789</u></strong></li></ul><p>Regards,</p><p><strong>Autotel CRM Team</strong></p>');
+  // const [editorState, setEditorState] = useState("");
+  const turndownService = new TurndownService();
+
+
+  const onEditorChange = (value: string) => {
+    setTemplateContent(value);
+    const markdown = turndownService.turndown(value);
+    // console.log("Markdown", markdown);
+    console.log("Html", value);
+  };
+
 
   return (
     <Modal
@@ -171,7 +245,7 @@ const UpdateEmailTemplate: React.FC<PropsTypes> = ({
         //   setIsVisible(!isVisible);
         // }
       }
-      size="md"
+      size="lg"
       onClosed={() => {
         // setValue("")
         setIsVisible(false);
@@ -179,7 +253,7 @@ const UpdateEmailTemplate: React.FC<PropsTypes> = ({
       }}
     >
       <div className="modal-header">
-        <H4 className="modal-title">Update Country</H4>
+        <H4 className="modal-title">Update Email Templates</H4>
         <Button
           color="transprant"
           className="btn-close"
@@ -193,59 +267,135 @@ const UpdateEmailTemplate: React.FC<PropsTypes> = ({
       <ModalBody>
         <form
           className="form-bookmark needs-validation"
-        // onSubmit={handleSubmit(updateCountry)}
+          onSubmit={handleSubmit(updateEmailTemplate)}
         >
           <Row>
-            <FormGroup className="col-md-12 ">
-              <P>Title</P>
+            <div className="col-md-12 create-group">
+              <P>Subject</P>
               <input
                 className="form-control"
                 type="text"
-                // defaultValue={value}
-                autoComplete="off"
-                {...register("title", { required: true })}
+                {...register("subject", { required: true })}
+              // value={subject}
               />
               <span style={{ color: "red" }}>
-                {errors.title && "Template Title is required"}
+                {errors.subject && "Template Title is required"}
               </span>
-              {/* <div className="d-flex">
-                <div
-                  className={`text-end flex-shrink-0 icon-state 
-                            }`}
-                >
-                  <Label className="switch mb-0">
-                    <Input
-                      type="checkbox"
-                      defaultChecked={isActive}
-                      value={isActive ? "on" : "off"}
-                      onChange={(e) => {
-                        setIsActive(!isActive);
-                        // console.log(e.target.value);
-                      }}
-                    />
-                    <span
-                      className={`switch-state ${isActive ? "bg-primary" : "bg-secondary"
-                        }`}
-                    />
-                  </Label>
-                </div>
-              </div> */}
-            </FormGroup>
-            <FormGroup className="col-md-12 create-group">
+            </div>
+            <div className="col-md-12 create-group">
               <P>Content</P>
-              <textarea
-                className="form-control"
-                rows={5} // Minimum number of visible lines
+              <ReactQuill
+                value={templateContent}
+                defaultValue={templateContent}
+                onChange={onEditorChange}
+                className="form-control custom-editor-container"
                 style={{
-                  maxHeight: "500px", // Maximum height for 5 lines of text
-                  resize: "vertical", // Allow vertical resizing within the specified range
+                  height: "180px",
+                  marginBottom: "20px",
+                  paddingBottom: "30px",
+                  borderRadius: "10px",
+                  paddingLeft: "0px",
+                  paddingRight: "0px"
+
                 }}
-                {...register("templateContent", { required: true })}
+                modules={modules}
               />
               <span style={{ color: "red" }}>
                 {errors.templateContent && "Template Content is required"}
               </span>
-            </FormGroup>
+            </div>
+            <Col md={6}>
+              <FormGroup>
+                <P>Template Type</P>
+                <Select
+                  showSearch
+                  defaultValue={type}
+                  value={type}
+                  style={{ width: "100%", height: 36 }}
+                  placeholder="Select Template Type"
+                  optionFilterProp="children"
+                  filterOption={(input: any, option: any) =>
+                    (option?.label ?? "").includes(input)
+                  }
+                  filterSort={(optionA: any, optionB: any) =>
+                    (optionA?.label ?? "")
+                      .toLowerCase()
+                      .localeCompare(
+                        (optionB?.label ?? "").toLowerCase()
+                      )
+                  }
+
+                  onChange={(e, options) => {
+                    setType(e);
+                  }}
+                  options={TEMPLATE_TYPES_ARRAY}
+                />
+              </FormGroup>
+            </Col>
+            <Col md={6}></Col>
+
+            {getUserRole() == ROLES.SUPER_ADMIN && <Col md={6}>
+              <FormGroup>
+                <div style={{ display: "flex", justifyContent: "space-between" }}>
+                  <P>Share Option</P>
+                  <span
+                    style={{
+                      fontSize: "16px",
+                      margin: "5px 0px",
+                    }}
+                  >
+                    <label
+                      style={{
+                        display: "inline-block",
+                        position: "relative",
+                        cursor: "pointer",
+                        // marginRight: "25px",
+                        fontSize: "16px",
+                      }}
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <input
+                        type="checkbox"
+                        name="key"
+                        value={shareOption ? "on" : "off"}
+                        onChange={(e) => {
+                          console.log(e.target.checked);
+                          setShareOption(e.target.checked)
+                        }}
+                        checked={shareOption}
+                        style={{ display: "none" }} // Hide the default checkbox
+                      />
+                      <span
+                        onClick={(e) => e.stopPropagation()}
+                        className="green"
+                      ></span>
+                    </label>
+
+                  </span>
+                </div>
+              </FormGroup>
+            </Col>}
+            <div className="col-md-12 create-group">
+              <div style={{ padding: "10px 30px", marginBottom: "15px", backgroundColor: "lightblue", display: "flex", justifyContent: "space-between" }}>
+
+                <div style={{ display: "flex", flexDirection: "column", justifyContent: "start" }}>
+                  <p style={{ display: "flex", justifyContent: "start", marginBottom: "2px" }}>{`{{fullName}}`}</p>
+                  <p style={{ display: "flex", justifyContent: "start", marginBottom: "2px" }}>{`{{email}}`}</p>
+                </div>
+                <div style={{ display: "flex", flexDirection: "column", justifyContent: "start" }}>
+                  <p style={{ display: "flex", justifyContent: "start", marginBottom: "2px" }}>{`{{password}}`}</p>
+                  <p style={{ display: "flex", justifyContent: "start", marginBottom: "2px" }}>{`{{phoneNo}}`}</p>
+                </div>
+                <div style={{ display: "flex", flexDirection: "column", justifyContent: "start" }}>
+                  <p style={{ display: "flex", justifyContent: "start", marginBottom: "2px" }}>{`{{city}}`}</p>
+                  <p style={{ display: "flex", justifyContent: "start", marginBottom: "2px" }}>{`{{package}}`}</p>
+                </div>
+                <div style={{ display: "flex", flexDirection: "column", justifyContent: "start" }}>
+                  <p style={{ display: "flex", justifyContent: "start", marginBottom: "2px" }}>{`{{accountLogo}}`}</p>
+                  <p style={{ display: "flex", justifyContent: "start", marginBottom: "2px" }}>{`{{currentDate}}`}</p>
+                </div>
+              </div>
+            </div>
           </Row>
           <div style={{ marginLeft: "10px" }}>
             <Row>

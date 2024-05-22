@@ -7,173 +7,80 @@ import { getAll } from "../../Api";
 import { useDispatch, useSelector } from "react-redux";
 import "./tableStyle.css";
 import deleteAlert from "../Alerts/DeleteAlert";
-import {
-  setCountries,
-  setCountriesEnd,
-  setCountriesStart,
-  setFilterCountries,
-  setId,
-  setInActiveActiveCountries,
-  setIsConnected,
-} from "../../ReaduxToolkit/Reducer/CountrySlice";
+
 import { setNoDataFound } from "../../ReaduxToolkit/Reducer/NoDataFoundSlice";
 import UpdateCountry from "./UpdateEmailTemplate";
 import Loader from "../Loader/Loader";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import H7 from "../../CommonElements/Headings/H7Element";
+import { setEmailTemplates, setEmailTemplatesEnd, setEmailTemplatesStart, setFilterEmailTemplates, setIsConnected } from '../../ReaduxToolkit/Reducer/EmailTemplateSlice';
+import { formatUnderscoredString } from "../../Api/globals";
 
-const CountriesList = () => {
-  const { countries, loading, id, activeInActiveCountries } = useSelector(
-    (state: any) => state.countries
+const EmailTemplatesList = () => {
+  const { emailTemplates, loading } = useSelector(
+    (state: any) => state.emailTemplate
   );
   const { noDataFound } = useSelector((state: any) => state.noDataFound);
   const dispatch = useDispatch();
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
-  const [countryName, setCountryName] = useState("");
-  const [isActive, setIsActive] = useState(false);
   const navigate = useNavigate();
   useEffect(() => {
-    dispatch(setCountriesStart());
-    getAll({ url: "country/get-all-countries" }).then((data: any) => {
-      // console.log("api call --- >", data);
-      if (data == undefined) {
-        Swal.fire({
-          text: "No countries Found",
-          icon: "error",
-          timer: 2000,
-          showConfirmButton: false,
-        });
-        dispatch(setInActiveActiveCountries("All"));
-        dispatch(setCountries([]));
-        dispatch(setFilterCountries([]));
-        dispatch(setCountriesEnd());
-        return;
-      }
 
-      if (data !== undefined) {
-        // console.log("Data", data);
-
-        dispatch(setNoDataFound(data.message));
-        if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
-          dispatch(setIsConnected(true));
-        }
-        if (!data.success) {
+    dispatch(setEmailTemplatesStart());
+    getAll({ url: "template/email-template/get-all-templates" }).then(
+      (data: any) => {
+        // console.log("api call --- >", data);
+        if (data == undefined) {
           Swal.fire({
-            text: `${data.message}`,
+            text: "Failed to fetch due to connection refused",
             icon: "error",
             timer: 2000,
             showConfirmButton: false,
           });
+          dispatch(setEmailTemplates([]));
+          dispatch(setFilterEmailTemplates([]));
+          dispatch(setEmailTemplatesEnd());
+          return;
         }
-        if (data.success) {
-          // console.log("hhg");
-          setFilterCountries(data.data);
-          dispatch(setCountries(data.data));
-          dispatch(setFilterCountries(data.data));
+        dispatch(setEmailTemplatesEnd());
+        if (data !== undefined) {
+          if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
+            dispatch(setIsConnected(true));
+          }
+          if (!data.success) {
+            Swal.fire({
+              text: `${data.message}`,
+              icon: "error",
+              timer: 2000,
+              showConfirmButton: false,
+            });
+          }
+          if (data.success) {
+            // console.log("hhg");
+            dispatch(setEmailTemplates(data.data));
+            dispatch(setFilterEmailTemplates(data.data));
+          }
         }
       }
-      dispatch(setCountriesEnd());
-    });
+    );
   }, []);
 
+  const [id, setId] = useState("");
+  const [type, setType] = useState("")
+  const [shareOption, setShareOption] = useState(false);
+  const [subject, setSubject] = useState("");
+  const [templateContent, setTemplateContent] = useState("");
+
   const renderTableRows = () => {
-    return countries?.map((row: any) => (
+    return emailTemplates?.map((row: any) => (
       <tr key={row.id}>
         <td>{row._id}</td>
-        <td>{row.name}</td>
-        <td>
-          <div className="d-flex" style={{ justifyContent: "center" }}>
-            <div
-              className={`text-end flex-shrink-0 icon-state 
-                            }`}
-            >
-              <Label className="switch mb-0">
-                <Input
-                  type="checkbox"
-                  defaultChecked={row.isActive}
-                  value={row.isActive}
-                  checked={row.isActive}
-                  // onChange={async (e: any) => {
-                  //   //  --------------------------
-
-                  //   const operator = {
-                  //     fullName: row.fullName,
-                  //     emailAddress: row.emailAddress,
-                  //     phoneNo: row.phoneNo,
-                  //     isActive: !row.isActive,
-                  //     company: decodedToken.userId,
-                  //   };
-                  //   // console.log(operator);
-                  //   setIsActive(!row.isActive);
-                  //   // setRowIndex(index);
-                  //   // console.log(e.target.value);
-                  //   try {
-                  //     await update(operator, {
-                  //       url: `operator/update-operator/${row._id}`,
-                  //     }).then((data: any) => {
-                  //       if (data.success) {
-                  //         // console.log(data);
-
-                  //         dispatch(setOperatorsStart());
-                  //         getAll({
-                  //           url: "operator/get-all-operators",
-                  //         }).then((data: any) => {
-                  //           // console.log("api call --- >", data);
-                  //           dispatch(setOperatorsEnd());
-                  //           if (data !== undefined) {
-                  //             if (data.success) {
-                  //               // console.log("hhg");
-                  //               dispatch(setOperators(data.data));
-                  //               dispatch(setFilterOperators(data.data));
-                  //             }
-                  //           }
-                  //         });
-                  //       }
-                  //     });
-                  //     // Handle successful post creation (e.g., show a success message, redirect, etc.)
-                  //   } catch (error) {
-                  //     // Handle error (e.g., show an error message)
-                  //     // console.error("Error creating post:", error);
-                  //   }
-                  // }}
-                />
-                <span
-                  // className={`switch-state ${
-                  //   row.isActive ? "bg-primary" : "bg-secondary"
-                  // }`}
-                  className="switch-state"
-                  style={{ backgroundColor: row.isActive ? "green" : "red" }}
-                />
-              </Label>
-            </div>
-          </div>
-        </td>
+        <td>{row.subject}</td>
+        <td>{formatUnderscoredString(row.type)}</td>
         <td>
           <div>
-            <button
-              style={{
-                width: 60,
-                fontSize: 14,
-                padding: 3,
-                color: "white",
-                backgroundColor: "red",
-                borderRadius: "5px",
-                marginRight: "5px",
-                border: "none",
-              }}
-              onClick={() => {
-                // console.log("345678");
-                var alertData = {
-                  title: "Are you sure?",
-                  text: "Once deleted, you will not be able to recover this ",
-                };
-                const type = "countryType";
-                deleteAlert(alertData, row._id, type, dispatch);
-              }}
-            >
-              Delete
-            </button>
+
             <button
               style={{
                 width: 60,
@@ -186,10 +93,11 @@ const CountriesList = () => {
               }}
               onClick={() => {
                 setIsUpdateModalOpen(true);
-                // console.log("isUpdateModalOpen: ", isUpdateModalOpen);
-                dispatch(setId(row._id));
-                setCountryName(row.name);
-                setIsActive(row.isActive);
+                setId(row._id);
+                setType(row.type)
+                setShareOption(row.isShared)
+                setSubject(row.subject);
+                setTemplateContent(row.content);
               }}
             >
               Edit
@@ -210,14 +118,14 @@ const CountriesList = () => {
               <div className="table-responsive product-table">
                 {loading ? (
                   <Loader />
-                ) : countries?.length > 0 && loading === false ? (
+                ) : emailTemplates?.length > 0 && loading === false ? (
                   <div>
                     <table>
                       <thead>
                         <tr>
                           <th>ID</th>
-                          <th>Name</th>
-                          <th>Status</th>
+                          <th>Subject</th>
+                          <th>Type</th>
                           <th>Actions</th>
                         </tr>
                       </thead>
@@ -232,14 +140,12 @@ const CountriesList = () => {
                   //     fontWeight: "bold",
                   //   }}
                   // >
-                    // {activeInActiveCountries !== "All"
-                    //   ? activeInActiveCountries
-                    //   : "No Counties Found"}
+                  // {activeInActiveCountries !== "All"
+                  //   ? activeInActiveCountries
+                  //   : "No Counties Found"}
                   // </div>
                   <H7>
-                    {activeInActiveCountries !== "All"
-                      ? activeInActiveCountries
-                      : "No Counties Found"}
+                    {"No Templates Found"}
 
                   </H7>
                 )}
@@ -250,11 +156,15 @@ const CountriesList = () => {
                 isVisible={isUpdateModalOpen}
                 setIsVisible={setIsUpdateModalOpen}
                 id={id}
-                value={countryName}
-                isActive={isActive}
-                setIsActive={setIsActive}
+                subject={subject}
+                templateContent={templateContent}
+                type={type}
+                shareOption={shareOption}
+                setType={setType}
+                setShareOption={setShareOption}
+                setTemplateContent={setTemplateContent}
 
-                // setValue={setCityName}
+              // setValue={setCityName}
               />
             </CardBody>
           </Card>
@@ -264,4 +174,4 @@ const CountriesList = () => {
   );
 };
 
-export default CountriesList;
+export default EmailTemplatesList;

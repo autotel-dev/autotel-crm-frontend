@@ -1,7 +1,6 @@
 import { Col, Container, Row, Input, Form, Card } from "reactstrap";
 import Breadcrumbs from "../../CommonElements/Breadcrumbs/Breadcrumbs";
 import { setup } from "../../utils/Constant";
-import CountriesListNav from "./EmailTemplatesListNav";
 import CountriesList from "./EmailTemplatesList";
 
 import { useEffect, useState } from "react";
@@ -11,6 +10,8 @@ import {
   setIsConnected,
 } from "../../ReaduxToolkit/Reducer/CountrySlice";
 import NoInternetConnection from "../NoInternetConnection/NoInternetConnection";
+import EmailTemplatesListNav from "./EmailTemplatesListNav";
+import EmailTemplatesList from "./EmailTemplatesList";
 
 const EmailTemplates = () => {
   const dispatch = useDispatch();
@@ -52,7 +53,7 @@ const EmailTemplates = () => {
             <Row className="project-card">
               <Col md={12} className="project-list">
                 <Card>
-                  <CountriesListNav />
+                  <EmailTemplatesListNav />
                   <Col md={12}>
                     <input
                       type="text"
@@ -74,9 +75,9 @@ const EmailTemplates = () => {
                   </Col>
                 </Card>
               </Col>
-              {/* <Col sm={12}>
-                <CountriesList />
-              </Col> */}
+              <Col sm={12}>
+                <EmailTemplatesList />
+              </Col>
             </Row>
           </Container>
         </div>
