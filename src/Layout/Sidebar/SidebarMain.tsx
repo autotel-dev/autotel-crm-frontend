@@ -81,16 +81,6 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
 
         {
           svgIcon: "bonus-kit",
-          title: "Email Templates",
-          link: `${process.env.PUBLIC_URL}/super-admin/setup/email-template`,
-        },
-        {
-          svgIcon: "bonus-kit",
-          title: "WhatsApp templates",
-          link: `${process.env.PUBLIC_URL}/dashboards/crmdashboard`,
-        },
-        {
-          svgIcon: "bonus-kit",
           title: "Server Details",
           link: `${process.env.PUBLIC_URL}/super-admin/setup/server-details`,
         },
@@ -113,6 +103,16 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
           svgIcon: "bonus-kit",
           title: "WhatsApp Gateway",
           link: `${process.env.PUBLIC_URL}/super-admin/setup/whatsapp-gateway`,
+        },
+        {
+          svgIcon: "bonus-kit",
+          title: "Email Templates",
+          link: `${process.env.PUBLIC_URL}/super-admin/setup/email-template`,
+        },
+        {
+          svgIcon: "bonus-kit",
+          title: "WhatsApp Templates",
+          link: `${process.env.PUBLIC_URL}/super-admin/setup/whatsapp-template`,
         },
       ],
     },
@@ -193,7 +193,7 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
         },
         {
           svgIcon: "bonus-kit",
-          title: "WhatsApp templates",
+          title: "WhatsApp Templates",
           link: `${process.env.PUBLIC_URL}/company/setup/whatsapp-template`,
         },
       ],
@@ -352,9 +352,9 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
           id="sidebar-menu"
           style={{
             backgroundColor: `${userPersonalizationData !== null &&
-                userPersonalizationData?.secondaryColor !== null
-                ? userPersonalizationData?.secondaryColor
-                : ""
+              userPersonalizationData?.secondaryColor !== null
+              ? userPersonalizationData?.secondaryColor
+              : ""
               }`,
           }}
         >
@@ -409,8 +409,8 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
 
                           style={{
                             display: `${data.title === sideMenu && !data.link
-                                ? "block"
-                                : "block"
+                              ? "block"
+                              : "block"
                               }`,
                           }}
                         >
@@ -480,8 +480,8 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
                             className="sidebar-submenu custom-scrollbar simple-list"
                             style={{
                               display: `${data.title === sideMenu && !data.link
-                                  ? "block"
-                                  : "block"
+                                ? "block"
+                                : "block"
                                 }`,
                             }}
                           >
@@ -526,8 +526,8 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
                             className="sidebar-submenu custom-scrollbar simple-list"
                             style={{
                               display: `${data.title === sideMenu && !data.link
-                                  ? "block"
-                                  : "block"
+                                ? "block"
+                                : "block"
                                 }`,
                             }}
                           >

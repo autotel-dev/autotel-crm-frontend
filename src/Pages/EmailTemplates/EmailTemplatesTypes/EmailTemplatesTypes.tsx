@@ -1,5 +1,5 @@
 export interface Type {
-  title?: string;
+  subject?: string;
   isActive?: string;
   templateContent?: string;
 }

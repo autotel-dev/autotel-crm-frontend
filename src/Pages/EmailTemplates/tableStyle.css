@@ -11,9 +11,9 @@ td {
   border-bottom: 1px solid #DDD;
 }
 
-tr:hover {
+/* tr:hover {
   background-color: #D6EEEE;
-}
+} */
 
 .custom-toolbar {
   display: flex;

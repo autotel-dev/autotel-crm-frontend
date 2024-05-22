@@ -119,6 +119,7 @@ import EmailGateway from "../Pages/EmailGateway/EmailGateway";
 import SMSGateway from "../Pages/SMSGateway/SMSGateway";
 import WhatsAppGateway from "../Pages/WhatsAppGateway/WhatsAppGateway";
 import EmailTemplates from "../Pages/EmailTemplates/EmailTemplates";
+import WhatsAppTemplates from "../Pages/WhatsAppTemplates/WhatsAppTemplates";
 
 const routes = [
   // dashboard routes
@@ -617,6 +618,13 @@ const routes = [
     permissionValue: "EmailTemplates",
   },
   {
+    path: `${process.env.PUBLIC_URL}/super-admin/setup/whatsapp-template`,
+    Component: <WhatsAppTemplates />,
+    allowedUserRoles: [ROLES.SUPER_ADMIN],
+    isProtected: true,
+    permissionValue: "WhatsAppTemplates",
+  },
+  {
     path: `${process.env.PUBLIC_URL}/super-admin/setup/email-gateway`,
     Component: <EmailGateway />,
     allowedUserRoles: [ROLES.SUPER_ADMIN],
@@ -730,12 +738,13 @@ const routes = [
     permissionValue: "EmailTemplates",
   },
   {
-    path: `${process.env.PUBLIC_URL}/company/setup/whatsapp-templates`,
-    Component: <UnderProductionPage />,
+    path: `${process.env.PUBLIC_URL}/company/setup/whatsapp-template`,
+    Component: <WhatsAppTemplates />,
     allowedUserRoles: [ROLES.COMPANY],
     isProtected: true,
     permissionValue: "WhatsAppTemplates",
   },
+
 
   // Modules
 
