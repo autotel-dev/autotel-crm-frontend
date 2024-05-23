@@ -48,11 +48,15 @@ const CreateNewEmailTemplate = () => {
     toolbar: [
       // [{ 'font': [] }],
       [{ 'header': [1, 2, 3, false] }],
-      ['bold', 'italic', 'underline', 'strike', 'blockquote'],
-      [{ 'list': 'ordered' }, { 'list': 'bullet' }, { 'indent': '-1' }, { 'indent': '+1' }],
-      ['link', 'image', 'video'],
-      [{ 'align': [] }],
-      [{ 'color': [] }, { 'background': [] }],
+      ['bold', 'italic', 'underline',
+        // 'strike', 'blockquote'
+      ],
+      [{ 'list': 'ordered' }, { 'list': 'bullet' }
+        // , { 'indent': '-1' }, { 'indent': '+1' }
+      ],
+      // ['link', 'image', 'video'],
+      // [{ 'align': [] }],
+      // [{ 'color': [] }, { 'background': [] }],
       // ['clean']
     ],
   };
@@ -90,11 +94,25 @@ const CreateNewEmailTemplate = () => {
 
   const onEditorChange = (value: string) => {
     setEditorState(value);
-    const markdown = turndownService.turndown(value);
+    // const markdown = turndownService.turndown(value);
     // console.log("Markdown", markdown);
     console.log("Html", value);
-  };
+    const markdown = turndownService.turndown(value);
 
+    // Convert markdown to plain text with some formatting for WhatsApp
+    let plainText = markdown
+      .replace(/\*\*(.*?)\*\*/g, '*$1*')   // Convert bold (**) to single asterisk (*)
+      .replace(/__(.*?)__/g, '*$1*');      // Convert bold (__) to single asterisk (*)
+
+
+
+    console.log("Markdown", markdown);
+    console.log("Plain text for WhatsApp", plainText);
+    const valuee = plainText;
+    console.log("value",valuee);
+    
+
+  }
 
 
   const addEmailTemplate: SubmitHandler<Type> = async (data: any) => {

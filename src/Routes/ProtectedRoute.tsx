@@ -27,6 +27,9 @@ const ProtectedRoute: React.FC<PropTypes> = ({
   var user = userPermissions.find(
     (item: any) => item.title === permissionValue
   );
+  const { userPersonalizationData } = useSelector(
+    (state: any) => state.personalization
+  );
 
   // console.log("userPermissions:", userPermissions);
 
@@ -229,7 +232,15 @@ const ProtectedRoute: React.FC<PropTypes> = ({
   ) : isConnected ? (
     <NoInternetConnection />
   ) : hasPermission ? (
-    <Outlet />
+    <div style={{
+      height: "100vh", overflow: "auto", backgroundColor: `${userPersonalizationData !== null &&
+        userPersonalizationData?.backgroundColor !== null
+        ? userPersonalizationData?.backgroundColor
+        : ""
+        }`,
+    }}>
+      <Outlet />
+    </div>
   ) : (
     <Navigate to={`${process.env.PUBLIC_URL}/not-accessible`} />
   );

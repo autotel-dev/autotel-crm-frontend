@@ -14,6 +14,7 @@ import { getUserRole } from "../Api/globals";
 import Loader from "../Pages/Loader/Loader";
 import Loaderr, { LoaderForPermissions } from "./Loader/Loader";
 import { ROLES } from "../constants/roles";
+import RightHeader from "./Header/RightHeader/RightHeader";
 
 const Layout = () => {
   const { userPermissions } = useSelector(
@@ -63,7 +64,7 @@ const Layout = () => {
           <TapTop />
           {/* changing with belo line  */}
           {/* <div className={`page-wrapper ${layout} ${layout === "material-icon" ? `compact-sidebar compact-small` : "" } `}> */}
-          <div className={`page-wrapper horizontal-wrapper `}>
+          <div className={`page-wrapper horizontal-wrapper `} >
             {/* changing with belo line */}
             {/* <div
           className={`page-header ${open ? "" : ""} ${
@@ -74,27 +75,31 @@ const Layout = () => {
             <div
               className={`page-header d-block`}
               style={{
-                backgroundColor: `${
-                  userPersonalizationData !== null &&
+                backgroundColor: `${userPersonalizationData !== null &&
                   userPersonalizationData?.primaryColor !== null
-                    ? userPersonalizationData?.primaryColor
-                    : ""
-                }`,
+                  ? userPersonalizationData?.primaryColor
+                  : ""
+                  }`,
               }}
             >
-              <Header />
+              {/* <Header /> */}
             </div>
-            <div className="page-body-wrapper">
+            <div
+              className="page-body-wrapper"
+            >
               <Sidebar setOpen={setOpen} open={open} />
+
               <div
                 className="page-body"
                 style={{
-                  backgroundColor: `${
-                    userPersonalizationData !== null &&
+                  backgroundColor: `${userPersonalizationData !== null &&
                     userPersonalizationData?.backgroundColor !== null
-                      ? userPersonalizationData?.backgroundColor
-                      : ""
-                  }`,
+                    ? userPersonalizationData?.backgroundColor
+                    : ""
+                    }`,
+                  marginTop: "-25px",
+                  height:"auto",
+                  // maxHeight:"93.vh"
                 }}
               >
                 <Outlet />
