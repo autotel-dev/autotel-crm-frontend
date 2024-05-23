@@ -26,6 +26,7 @@ import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import H7 from "../../CommonElements/Headings/H7Element";
 import "../../CssConstaints/Style.css";
+import { formatUnderscoredString } from "../../Api/globals";
 
 const PackageList = () => {
   const { packages, loading, error, id, activeInActivePackages } = useSelector(
@@ -136,7 +137,7 @@ const PackageList = () => {
         <td style={{ width: "15%" }}>{row.title}</td>
         <td style={{ width: "15%" }}>{row.price}</td>
         <td style={{ width: "10%" }}>{row.days}</td>
-        <td style={{ width: "10%" }}>{row.duration}</td>
+        <td style={{ width: "10%" }}>{formatUnderscoredString(row.duration)}</td>
         <td>
           <div className="d-flex" style={{ justifyContent: "center" }}>
             <div
