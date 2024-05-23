@@ -11,6 +11,7 @@ import { useDispatch, useSelector } from "react-redux";
 import SVG from "../../../../../../utils/CommonSvgIcon/SVG";
 import {
   setDevices,
+  setDevicesDetailData,
   setExpandedDevice,
   setItem,
   setSelecetdDevices,
@@ -29,9 +30,8 @@ const DevicesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
   const svgRef = useRef(null);
 
   const [itemsLength, setItemsLength] = useState(6);
-  const { devices, selectedDevices, expandedDevice } = useSelector(
-    (state: any) => state.monitoring
-  );
+  const { devices, selectedDevices, expandedDevice, devicesDetailData } =
+    useSelector((state: any) => state.monitoring);
   const [searchValue, setSearchValue] = useState("");
   const [open, setOpen] = useState("");
   const [matchedGroups, setMatchedGroups] = useState(devices);
@@ -67,6 +67,24 @@ const DevicesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
           ...item,
           checked: !group.checked, // Set checked to the opposite of group.checked
         }));
+        var tempList: any = [...devicesDetailData];
+        updatedItems.map((deviceItem: any, index: any) => {
+          var deviceExists = devicesDetailData.find(
+            (device: any) => device.id === deviceItem.id
+          );
+          console.log("deviceItem", deviceItem);
+          console.log("deviceExists", deviceExists);
+
+          if (deviceExists) {
+            tempList = tempList.filter(
+              (device: any) => device.id !== deviceExists.id
+            );
+          } else {
+            tempList = [...tempList, deviceItem];
+            // dispatch(setDevicesDetailData([...devicesDetailData, deviceItem]));
+          }
+        });
+        dispatch(setDevicesDetailData([...tempList]));
         return { ...device, checked: !group.checked, items: updatedItems };
       }
       return device;
@@ -149,22 +167,6 @@ const DevicesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
       } else {
         allItemsChecked = false;
       }
-      // Create a new device object with the updated items array
-      // const updatedDevice = {
-      //   ...deviceToUpdate,
-      //   checked: allItemsChecked,
-      //   items: [
-      //     ...deviceToUpdate.items.slice(0, index),
-      //     {
-      //       ...deviceToUpdate.items[index],
-      //       checked: !selectedDevice.checked,
-      //     },
-      //     ...deviceToUpdate.items.slice(index + 1),
-      //   ],
-      // };
-      // const updatedDevices = devices.map((device: any) =>
-      //   device.title === group.title ? updatedDevice : device
-      // );
 
       const updatedDevice = {
         ...deviceToUpdate,
@@ -181,14 +183,54 @@ const DevicesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
                 setItem({ id: selectedDevice.id, title: selectedDevice.title })
               );
             }
+            // const deviceExists = devicesDetailData.some(
+            //   (device: any) => device.id == selectedDevice.id
+            // );
+            var deviceExists = devicesDetailData.find(
+              (device: any) => device.id === selectedDevice.id
+            );
+            // console.log("deviceExists", deviceExists);
+
+            if (deviceExists) {
+              const tempList = devicesDetailData.filter(
+                (device: any) => device.id !== deviceExists.id
+              );
+              // console.log("devicesDetailData by filter", devicesDetailData);
+
+              dispatch(setDevicesDetailData([...tempList]));
+            } else {
+              dispatch(
+                setDevicesDetailData([...devicesDetailData, selectedDevice])
+              );
+            }
+
+            // if(devicesDetailData.)
             // Update the checked property if the IDs match
             return {
               ...item,
               checked: !selectedDevice.checked,
             };
           }
+
           return item; // Return the item as it is if IDs don't match
         }),
+
+        // Create a new device object with the updated items array
+        // const updatedDevice = {
+        //   ...deviceToUpdate,
+        //   checked: allItemsChecked,
+        //   items: [
+        //     ...deviceToUpdate.items.slice(0, index),
+        //     {
+        //       ...deviceToUpdate.items[index],
+        //       checked: !selectedDevice.checked,
+        //     },
+        //     ...deviceToUpdate.items.slice(index + 1),
+        //   ],
+        // };
+        // const updatedDevices = devices.map((device: any) =>
+        //   device.title === group.title ? updatedDevice : device
+        // );
       };
 
       const updatedDevices = devices.map((device: any) =>
@@ -573,14 +615,15 @@ const DevicesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
                                   </div>
                                 </div>
 
-                                <div
+                                {/* <div
                                   style={{
                                     marginBottom: "-10px",
                                     marginRight: "20px",
                                     display: "flex",
                                   }}
                                 >
-                                  <svg
+                               
+                                   <svg
                                     ref={svgRef}
                                     xmlns="http://www.w3.org/2000/svg"
                                     viewBox="0 0 100 100" // Adjusted viewBox to minimize bottom height
@@ -626,17 +669,17 @@ A 40 40 0 0 1 90 50"
                                         );
                                       }
                                     )}
-                                    {/* Needle */}
+                                     Needle 
                                     <polygon
                                       points="50,42 55,22 50,12 45,22"
-                                      //  points="50,42 55,42 55,12 50,12 45"
+                                       points="50,42 55,42 55,12 50,12 45"
                                       fill={
                                         bodyItem.engine_status ? "green" : "red"
-                                      } // Needle color
-                                      // transform={`translate(0, 0) rotate(${bodyItem.speed}
-                                      // , 50, 50)`}
+                                      } Needle color
+                                       transform={`translate(0, 0) rotate(${bodyItem.speed}
+                                       , 50, 50)`}
                                     />
-                                    {/* Speed text */}
+                                     Speed text 
                                     <text
                                       x="50"
                                       y="53"
@@ -646,8 +689,10 @@ A 40 40 0 0 1 90 50"
                                     >
                                       {bodyItem.speed} kph
                                     </text>
-                                  </svg>
-                                  <div>
+                                  </svg>  *
+                                  
+
+                                   <div>
                                     <div
                                       style={{
                                         display: "inline-block",
@@ -686,8 +731,8 @@ A 40 40 0 0 1 90 50"
                                         width={23}
                                       />
                                     </div>
-                                  </div>
-                                </div>
+                                  </div> 
+                                </div> */}
                               </div>
                             </div>
                           );

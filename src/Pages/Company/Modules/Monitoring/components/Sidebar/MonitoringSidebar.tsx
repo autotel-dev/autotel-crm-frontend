@@ -37,7 +37,7 @@ const MonitoringSidebar = () => {
         <div
           onClick={() => {
             if (collapsedWidth === "0px") {
-              setCollapsedWidth("500px");
+              setCollapsedWidth("350px");
             } else {
               setCollapsedWidth("0px");
             }

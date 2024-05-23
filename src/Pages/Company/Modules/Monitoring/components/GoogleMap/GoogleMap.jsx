@@ -142,8 +142,15 @@ import { setItem } from "../../../../../../ReaduxToolkit/Reducer/MonitoringSlice
 
 const GoogleMap = (props) => {
   const dispatch = useDispatch();
-  const { serverDevices, selectedDevices, expandedDevice, devices, item } =
-    useSelector((state) => state.monitoring);
+  const {
+    serverDevices,
+    selectedDevices,
+    expandedDevice,
+    devices,
+    item,
+    devicesDetailData,
+  } = useSelector((state) => state.monitoring);
+
   const [rotation, setRotation] = useState(-270);
   const [zoom, setZoom] = useState(12); // State to manage zoom level
   const mapRef = useRef(null);
@@ -288,7 +295,7 @@ const GoogleMap = (props) => {
       disableDefaultUI={true} // Enable default UI controls
       ref={mapRef}
     >
-      {/* {expandedDevice !== null && (
+      {expandedDevice !== null && (
         <Polyline
           path={expandedDevice.tail.map(({ lat, lng }) => ({
             lat: parseFloat(lat),
@@ -300,7 +307,7 @@ const GoogleMap = (props) => {
             strokeWeight: 10,
           }}
         />
-      )} */}
+      )}
       {/* Custom Zoom Control */}
       <div className="custom-zoom-control">
         <button onClick={zoomIn} className="zoom-button">
