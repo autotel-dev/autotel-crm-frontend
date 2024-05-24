@@ -25,7 +25,7 @@ const MonitoringSidebar = () => {
     <div style={{ display: "flex" }}>
       <div
         style={{
-          height: "100vh",
+          height: "92.5vh",
           backgroundColor: "#1f2f3e",
           display: "flex",
           flexDirection: "column",
@@ -52,7 +52,7 @@ const MonitoringSidebar = () => {
             cursor: "pointer",
           }}
         >
-          {collapsedWidth === "500px" ? (
+          {collapsedWidth === "350px" ? (
             <ImArrowLeft style={{ color: "white", marginBottom: "5px" }} />
           ) : (
             <ImArrowRight style={{ color: "white", marginBottom: "5px" }} />
@@ -535,9 +535,10 @@ const MonitoringSidebar = () => {
           width: `${collapsedWidth}`,
           backgroundColor: "white",
           transition: "width 0.5s",
-          height: "85vh",
+          height: "92.5vh",
           overflow: "auto",
           paddingBottom: "40%",
+          scrollbarWidth:"none",
         }}
       >
         {/* <DevicesTreeViewAccordian /> */}
