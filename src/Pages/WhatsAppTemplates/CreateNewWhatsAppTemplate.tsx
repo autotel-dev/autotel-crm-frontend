@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { PlusCircle } from "react-feather";
 import { Col, Button, FormGroup, Label, Modal, ModalBody, Row } from "reactstrap";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, useForm, SubmitHandler } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { H3, H4, P } from "../../AbstractElements";
 import { create, getAll } from "../../Api";
@@ -13,6 +13,11 @@ import './tableStyle.css'
 import BorderBottom from '../BonusUi/CreativeCard/BorderBottom/BorderBottom';
 import TurndownService from 'turndown';
 import { Type } from './WhatsAppTemplatesTypes/WhatsAppTemplatesTypes';
+import Swal from 'sweetalert2';
+import { Select } from 'antd';
+import { getUserRole } from '../../Api/globals';
+import { ROLES } from '../../constants/roles';
+import { setFilterWhatsAppTemplates, setWhatsAppTemplates, setWhatsAppTemplatesEnd, setWhatsAppTemplatesStart } from '../../ReaduxToolkit/Reducer/WhatsAppTemplateSlice';
 
 const CreateNewWhatsAppTemplate = () => {
   const { userPersonalizationData } = useSelector(
@@ -43,40 +48,174 @@ const CreateNewWhatsAppTemplate = () => {
     toolbar: [
       // [{ 'font': [] }],
       [{ 'header': [1, 2, 3, false] }],
-      ['bold', 'italic', 'underline', 'strike', 'blockquote'],
-      [{ 'list': 'ordered' }, { 'list': 'bullet' }, { 'indent': '-1' }, { 'indent': '+1' }],
-      ['link', 'image', 'video'],
-      [{ 'align': [] }],
-      [{ 'color': [] }, { 'background': [] }],
+      ['bold', 'italic', 'underline'],
+      [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+      // ['link', 'image', 'video'],
+      // [{ 'align': [] }],
+      // [{ 'color': [] }, { 'background': [] }],
       // ['clean']
     ],
   };
 
-  // const [editorState, setEditorState] = useState('<p>Hello <strong>Sandesh</strong></p><p>We have created an account for you on <strong><em><u>Autotel CRM</u></em></strong></p><p>Here are the account credentials:</p><ul><li>Email: <strong>sandesh@sandesh.com</strong></li><li>Password: <strong><u>123456789</u></strong></li></ul><p>Regards,</p><p><strong>Autotel CRM Team</strong></p>');
   const [editorState, setEditorState] = useState('');
   const turndownService = new TurndownService();
 
-  // const onEditorChange = (value: string) => {
-  //   setEditorState(value);
-  //   console.log("value", value);
-  // };
+
   const onEditorChange = (value: string) => {
     setEditorState(value);
-    const markdown = turndownService.turndown(value);
-    // console.log("Markdown", markdown);
-    // console.log("Html", value);
+    console.log("Html", value);
   };
 
-  const onSubmit = (data: any) => {
-    // Extracting plain text or HTML content from the editorState
-    const templateContent = editorState;
-    const formData = {
-      ...data,
-      templateContent
-    };
-    // Handle the form submission
-    // console.log('Form Data:', formData);
+  const TEMPLATE_TYPES_ARRAY = [
+    {
+      label: "Account Created",
+      value: "ACCOUNT_CREATED",
+    },
+    {
+      label: "Password Updated",
+      value: "PASSWORD_UPDATED",
+    },
+    {
+      label: "Pre Package Expiration",
+      value: "PRE_PACKAGE_EXPIRATION",
+    },
+    {
+      label: "Post Package Expiration",
+      value: "POST_PACKAGE_EXPIRATION",
+    },
+    {
+      label: "Report",
+      value: "REPORT",
+    },
+  ];
+
+  const [type, setType] = useState("")
+  const [shareOption, setShareOption] = useState(false)
+
+  const addWhatsAppTemplate: SubmitHandler<Type> = async (data: any) => {
+    setLoading(true);
+    const markdown = turndownService.turndown(editorState);
+
+    // Convert markdown to plain text with some formatting for WhatsApp
+    let plainText = markdown
+      .replace(/\*\*(.*?)\*\*/g, '*$1*')   // Convert bold (**) to single asterisk (*)
+      .replace(/__(.*?)__/g, '*$1*');      // Convert bold (__) to single asterisk (*)
+
+    // console.log("Markdown", markdown);
+    // console.log("Plain text for WhatsApp", plainText);
+
+    var whatsappTemplate;
+    if (getUserRole() == ROLES.SUPER_ADMIN) {
+      whatsappTemplate = {
+        content: plainText,
+        type: type,
+        isShared: shareOption
+      };
+    }
+    else {
+      whatsappTemplate = {
+        content: plainText,
+        type: type
+      };
+    }
+    // console.log(emailTemplate);
+    if (editorState !== "" && type !== "") {
+      try {
+        await create(whatsappTemplate, { url: "template/whatsapp-template/create-template" }).then(
+          (data: any) => {
+            if (data !== undefined) {
+              if (
+                !data.success &&
+                data.message === "ERROR_INTERNET_DISCONNECTED"
+              ) {
+                setLoading(false);
+                setAddModal(false);
+                reset({
+
+                  templateContent: ""
+                });
+              }
+              if (!data.success) {
+                Swal.fire({
+                  text: `${data.message}`,
+                  icon: "error",
+                  timer: 2000,
+                  showConfirmButton: false,
+                });
+                setLoading(false);
+                setAddModal(false);
+                reset({
+                  templateContent: ""
+                });
+              }
+              if (data.success) {
+                Swal.fire({
+                  text: data.message,
+                  icon: "success",
+                  timer: 2000,
+                  showConfirmButton: false,
+                });
+                // console.log(data);
+                setLoading(false);
+                setAddModal(false);
+                reset({
+
+                  templateContent: ""
+                });
+                dispatch(setWhatsAppTemplatesStart());
+                getAll({ url: "template/whatsapp-template/get-all-templates" }).then(
+                  (data: any) => {
+                    // console.log("api call --- >", data);
+                    if (data == undefined) {
+                      Swal.fire({
+                        text: "Failed to fetch due to connection refused",
+                        icon: "error",
+                        timer: 2000,
+                        showConfirmButton: false,
+                      });
+                      dispatch(setWhatsAppTemplates([]));
+                      dispatch(setFilterWhatsAppTemplates([]));
+                      dispatch(setWhatsAppTemplatesEnd());
+                      return;
+                    }
+                    dispatch(setWhatsAppTemplatesEnd());
+                    if (data !== undefined) {
+                      if (data.success) {
+                        // console.log("hhg");
+                        dispatch(setWhatsAppTemplates(data.data));
+                        dispatch(setFilterWhatsAppTemplates(data.data));
+                      }
+                    }
+                  }
+                );
+              }
+            }
+          }
+        );
+        // Handle successful post creation (e.g., show a success message, redirect, etc.)
+      } catch (error: any) {
+        // Handle error (e.g., show an error message)
+        // console.error("Error creating post:", error);
+        setLoading(false);
+        setAddModal(false);
+        reset({
+
+          templateContent: ""
+        });
+      }
+    } else {
+      Swal.fire({
+        text: "Please Select all the fields",
+        icon: "info",
+        timer: 2000,
+        showCancelButton: false,
+        showConfirmButton: true,
+      });
+      setLoading(false);
+    }
   };
+
+
 
   return (
     <Col md={6}>
@@ -106,7 +245,7 @@ const CreateNewWhatsAppTemplate = () => {
           <ModalBody>
             <form
               className="form-bookmark needs-validation"
-              onSubmit={handleSubmit(onSubmit)}
+              onSubmit={handleSubmit(addWhatsAppTemplate)}
             >
               <Row>
                 <div className="col-md-12 create-group">
@@ -131,6 +270,75 @@ const CreateNewWhatsAppTemplate = () => {
                     {errors.templateContent && "Template Content is required"}
                   </span>
                 </div>
+                <Col md={6}>
+                  <FormGroup>
+                    <P>Template Type</P>
+                    <Select
+                      showSearch
+                      style={{ width: "100%", height: 36 }}
+                      placeholder="Select Template Type"
+                      optionFilterProp="children"
+                      filterOption={(input: any, option: any) =>
+                        (option?.label ?? "").includes(input)
+                      }
+                      filterSort={(optionA: any, optionB: any) =>
+                        (optionA?.label ?? "")
+                          .toLowerCase()
+                          .localeCompare(
+                            (optionB?.label ?? "").toLowerCase()
+                          )
+                      }
+
+                      onChange={(e, options) => {
+                        setType(e);
+                      }}
+                      options={TEMPLATE_TYPES_ARRAY}
+                    />
+                  </FormGroup>
+                </Col>
+                <Col md={6}></Col>
+
+                {getUserRole() == ROLES.SUPER_ADMIN && <Col md={6}>
+                  <FormGroup>
+                    <div style={{ display: "flex", justifyContent: "space-between" }}>
+                      <P>Is Shareable</P>
+                      <span
+                        style={{
+                          fontSize: "16px",
+                          margin: "5px 0px",
+                        }}
+                      >
+                        <label
+                          style={{
+                            display: "inline-block",
+                            position: "relative",
+                            cursor: "pointer",
+                            // marginRight: "25px",
+                            fontSize: "16px",
+                          }}
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <input
+                            type="checkbox"
+                            name="key"
+                            value={shareOption ? "on" : "off"}
+                            onChange={(e) => {
+                              console.log(e.target.checked);
+                              setShareOption(e.target.checked)
+                            }}
+                            checked={shareOption}
+                            style={{ display: "none" }} // Hide the default checkbox
+                          />
+                          <span
+                            onClick={(e) => e.stopPropagation()}
+                            className="green"
+                          ></span>
+                        </label>
+
+                      </span>
+                    </div>
+                  </FormGroup>
+                </Col>}
                 <div className="col-md-12 create-group">
                   <div style={{ padding: "10px 30px", marginBottom: "15px", backgroundColor: "lightblue", display: "flex", justifyContent: "space-between" }}>
 
@@ -147,8 +355,8 @@ const CreateNewWhatsAppTemplate = () => {
                       <p style={{ display: "flex", justifyContent: "start", marginBottom: "2px" }}>{`{{package}}`}</p>
                     </div>
                     <div style={{ display: "flex", flexDirection: "column", justifyContent: "start" }}>
-                      <p style={{ display: "flex", justifyContent: "start", marginBottom: "2px" }}>{`{{accountLogo}}`}</p>
                       <p style={{ display: "flex", justifyContent: "start", marginBottom: "2px" }}>{`{{currentDate}}`}</p>
+                      {/* <p style={{ display: "flex", justifyContent: "start", marginBottom: "2px" }}>{`{{currentDate}}`}</p> */}
                     </div>
                   </div>
                 </div>

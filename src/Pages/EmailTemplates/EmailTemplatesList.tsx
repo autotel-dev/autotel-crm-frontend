@@ -9,7 +9,7 @@ import "./tableStyle.css";
 import deleteAlert from "../Alerts/DeleteAlert";
 
 import { setNoDataFound } from "../../ReaduxToolkit/Reducer/NoDataFoundSlice";
-import UpdateCountry from "./UpdateEmailTemplate";
+import UpdateEmailTemplate from "./UpdateEmailTemplate";
 import Loader from "../Loader/Loader";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
@@ -26,7 +26,8 @@ const EmailTemplatesList = () => {
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const navigate = useNavigate();
   useEffect(() => {
-
+    dispatch(setEmailTemplates([]));
+    dispatch(setFilterEmailTemplates([]));
     dispatch(setEmailTemplatesStart());
     getAll({ url: "template/email-template/get-all-templates" }).then(
       (data: any) => {
@@ -113,7 +114,7 @@ const EmailTemplatesList = () => {
       <Container fluid>
         <Col sm="12">
           <Card>
-            <CommonHeader title="All Countries" />
+            <CommonHeader title="All Templates" />
             <CardBody>
               <div className="table-responsive product-table">
                 {loading ? (
@@ -145,14 +146,14 @@ const EmailTemplatesList = () => {
                   //   : "No Counties Found"}
                   // </div>
                   <H7>
-                    {"No Templates Found"}
+                    No Templates Found
 
                   </H7>
                 )}
 
                 {/* )} */}
               </div>
-              <UpdateCountry
+              <UpdateEmailTemplate
                 isVisible={isUpdateModalOpen}
                 setIsVisible={setIsUpdateModalOpen}
                 id={id}

@@ -86,22 +86,11 @@ const UpdateEmailTemplate: React.FC<PropsTypes> = ({
 
   const updateEmailTemplate: SubmitHandler<Type> = async (data) => {
     setLoading(true);
-    var emailTemplate;
-    if (getUserRole() == ROLES.SUPER_ADMIN) {
-      emailTemplate = {
-        subject: data.subject,
-        content: templateContent,
-        type: type,
-        isShared: shareOption
-      };
-    }
-    else {
-      emailTemplate = {
-        subject: data.subject,
-        content: templateContent,
-        type: type
-      };
-    }
+    var emailTemplate = {
+      subject: data.subject,
+      content: templateContent,
+      type: type
+    };
 
     console.log(emailTemplate);
     if (data.subject !== "" && templateContent !== "" && type !== "") {
@@ -358,10 +347,11 @@ const UpdateEmailTemplate: React.FC<PropsTypes> = ({
                         type="checkbox"
                         name="key"
                         value={shareOption ? "on" : "off"}
-                        onChange={(e) => {
-                          console.log(e.target.checked);
-                          setShareOption(e.target.checked)
-                        }}
+                        // onChange={(e) => {
+                        //   console.log(e.target.checked);
+                        //   setShareOption(e.target.checked)
+                        // }}
+                        disabled
                         checked={shareOption}
                         style={{ display: "none" }} // Hide the default checkbox
                       />
@@ -391,8 +381,8 @@ const UpdateEmailTemplate: React.FC<PropsTypes> = ({
                   <p style={{ display: "flex", justifyContent: "start", marginBottom: "2px" }}>{`{{package}}`}</p>
                 </div>
                 <div style={{ display: "flex", flexDirection: "column", justifyContent: "start" }}>
-                  <p style={{ display: "flex", justifyContent: "start", marginBottom: "2px" }}>{`{{accountLogo}}`}</p>
                   <p style={{ display: "flex", justifyContent: "start", marginBottom: "2px" }}>{`{{currentDate}}`}</p>
+                  {/* <p style={{ display: "flex", justifyContent: "start", marginBottom: "2px" }}>{`{{currentDate}}`}</p> */}
                 </div>
               </div>
             </div>
