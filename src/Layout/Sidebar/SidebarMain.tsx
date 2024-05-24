@@ -311,7 +311,7 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
       }
     }
   );
-  const { sidebarIconType } = useAppSelector((state) => state.themeCustomizer);
+  const { sidebarIconType } = useSelector((state: any) => state.themeCustomizer);
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState<string[]>([]);
   const [sideMenu, setSideMenu] = useState("");
@@ -363,9 +363,9 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
         >
           <UL className="sidebar-links simple-list" id="simple-bar">
             <SimpleBar className="w-100 simplebar-scrollable-y h-100" style={{ display: "flex", justifyContent: "space-between" }}>
-              
+
               <>
-              <SidebarBack />
+                <SidebarBack />
                 {decodedToken.role === "SUPER_ADMIN"
                   ? SidebarMenuComponent.map((data, index) => (
                     <LI className={`sidebar-list`} key={index}>
@@ -384,9 +384,10 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
                         onClick={() => handleClick(data)}
                       >
                         <SVG
-                          className={`${sidebarIconType}-icon`}
-                          iconId={`${sidebarIconType === "fill" ? "fill-" : ""
-                            }${data.svgIcon}`}
+                          className={`${sidebarIconType}-icon`} iconId={`${sidebarIconType === "fill" ? "fill-" : ""}${data.svgIcon}`}
+                        // className={`${sidebarIconType}-icon`}
+                        // iconId={`${sidebarIconType === "fill" ? "fill-" : ""
+                        //   }${data.svgIcon}`}
                         />
                         <span
                           style={{
@@ -564,7 +565,7 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
                   width: "45%",
                   // display:"flex",
                   // justifyContent:"flex-end",
-                  right:"0"
+                  right: "0"
                 }}
               >
                 <Header />

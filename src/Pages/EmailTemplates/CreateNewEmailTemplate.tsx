@@ -94,35 +94,27 @@ const CreateNewEmailTemplate = () => {
 
   const onEditorChange = (value: string) => {
     setEditorState(value);
-    // const markdown = turndownService.turndown(value);
-    // console.log("Markdown", markdown);
-    console.log("Html", value);
-    const markdown = turndownService.turndown(value);
-
-    // Convert markdown to plain text with some formatting for WhatsApp
-    let plainText = markdown
-      .replace(/\*\*(.*?)\*\*/g, '*$1*')   // Convert bold (**) to single asterisk (*)
-      .replace(/__(.*?)__/g, '*$1*');      // Convert bold (__) to single asterisk (*)
-
-
-
-    console.log("Markdown", markdown);
-    console.log("Plain text for WhatsApp", plainText);
-    const valuee = plainText;
-    console.log("value",valuee);
-    
-
   }
 
 
   const addEmailTemplate: SubmitHandler<Type> = async (data: any) => {
     setLoading(true);
-    const emailTemplate = {
-      subject: data.subject,
-      content: editorState,
-      type: type,
-      isShared: shareOption
-    };
+    var emailTemplate;
+    if (getUserRole() == ROLES.SUPER_ADMIN) {
+      emailTemplate = {
+        subject: data.subject,
+        content: editorState,
+        type: type,
+        isShared: shareOption
+      };
+    }
+    else {
+      emailTemplate = {
+        subject: data.subject,
+        content: editorState,
+        type: type
+      };
+    }
     // console.log(emailTemplate);
     if (data.subject !== "" && editorState !== "" && type !== "") {
       try {
@@ -316,7 +308,7 @@ const CreateNewEmailTemplate = () => {
                 {getUserRole() == ROLES.SUPER_ADMIN && <Col md={6}>
                   <FormGroup>
                     <div style={{ display: "flex", justifyContent: "space-between" }}>
-                      <P>Share Option</P>
+                      <P>Is Shareable</P>
                       <span
                         style={{
                           fontSize: "16px",
@@ -370,8 +362,8 @@ const CreateNewEmailTemplate = () => {
                       <p style={{ display: "flex", justifyContent: "start", marginBottom: "2px" }}>{`{{package}}`}</p>
                     </div>
                     <div style={{ display: "flex", flexDirection: "column", justifyContent: "start" }}>
-                      <p style={{ display: "flex", justifyContent: "start", marginBottom: "2px" }}>{`{{accountLogo}}`}</p>
                       <p style={{ display: "flex", justifyContent: "start", marginBottom: "2px" }}>{`{{currentDate}}`}</p>
+                      {/* <p style={{ display: "flex", justifyContent: "start", marginBottom: "2px" }}>{`{{currentDate}}`}</p> */}
                     </div>
                   </div>
                 </div>

@@ -5,22 +5,23 @@ import CountriesList from "./EmailTemplatesList";
 
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  setCountries,
-  setIsConnected,
-} from "../../ReaduxToolkit/Reducer/CountrySlice";
 import NoInternetConnection from "../NoInternetConnection/NoInternetConnection";
 import EmailTemplatesListNav from "./EmailTemplatesListNav";
 import EmailTemplatesList from "./EmailTemplatesList";
+import { setEmailTemplates, setFilterEmailTemplates, setIsConnected } from "../../ReaduxToolkit/Reducer/EmailTemplateSlice";
+import "../../CssConstaints/Style.css";
 
 const EmailTemplates = () => {
   const dispatch = useDispatch();
   const [searchValue, setSearchValue] = useState("");
-  const { countries, filterCountries, isConnected } = useSelector(
-    (state: any) => state.countries
+  const { isConnected } = useSelector(
+    (state: any) => state.emailTemplate
   );
+
   // const [filteredCountries, setFilteredCountries]: any = useState([]);
   useEffect(() => {
+    // dispatch(setEmailTemplates([]));
+    // dispatch(setFilterEmailTemplates([]));
     dispatch(setIsConnected(false));
   }, []);
   // const filterCountriess = (e: any) => {
@@ -56,21 +57,22 @@ const EmailTemplates = () => {
                   <EmailTemplatesListNav />
                   <Col md={12}>
                     <input
+                      className="global-search-field"
                       type="text"
                       placeholder="Type to Search.."
                       value={searchValue}
                       onChange={(e) => {
                         // filterCountriess(e);
                       }}
-                      style={{
-                        backgroundColor: "#f1f1f1",
-                        borderRadius: "5px",
-                        padding: "15px",
-                        margin: "15px",
-                        width: "calc(100% - 30px)", // Adjusting width to accommodate padding and margin
-                        border: "none",
-                        outline: "none", // Removing default border outline
-                      }}
+                    // style={{
+                    //   backgroundColor: "#f1f1f1",
+                    //   borderRadius: "5px",
+                    //   padding: "15px",
+                    //   margin: "15px",
+                    //   width: "calc(100% - 30px)", // Adjusting width to accommodate padding and margin
+                    //   border: "none",
+                    //   outline: "none", // Removing default border outline
+                    // }}
                     />
                   </Col>
                 </Card>

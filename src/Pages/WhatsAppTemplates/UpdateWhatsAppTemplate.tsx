@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import {
   Button,
+  Col,
   FormGroup,
   Input,
   Label,
@@ -14,34 +15,40 @@ import { H3, H4, P } from "../../AbstractElements";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getAll, update } from "../../Api";
-import {
-  setCountriesStart,
-  setCountriesEnd,
-  setCountries,
-  setId,
-  setFilterCountries,
-  setInActiveActiveCountries,
-} from "../../ReaduxToolkit/Reducer/CountrySlice";
-import { setNoDataFound } from "../../ReaduxToolkit/Reducer/NoDataFoundSlice";
+import { Select } from "antd";
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
+// import './tableStyle.css'
+import TurndownService from 'turndown';
+import { getUserRole } from "../../Api/globals";
+import { ROLES } from "../../constants/roles";
 import Swal from "sweetalert2";
+import { setFilterWhatsAppTemplates, setWhatsAppTemplates, setWhatsAppTemplatesEnd, setWhatsAppTemplatesStart } from '../../ReaduxToolkit/Reducer/WhatsAppTemplateSlice';
 import { Type } from "./WhatsAppTemplatesTypes/WhatsAppTemplatesTypes";
+
 
 interface PropsTypes {
   isVisible: boolean; // Change 'boolean' to the actual type of isVisible
   setIsVisible: any;
   id: any;
-  value: any;
-  isActive: any;
-  setIsActive: any;
+  templateContent: any;
+  type: any;
+  shareOption: any;
+  setType: any;
+  setShareOption: any;
+  setTemplateContent: any;
 }
 
 const UpdateWhatsAppTemplate: React.FC<PropsTypes> = ({
   isVisible,
   setIsVisible = () => { },
   id,
-  value,
-  isActive,
-  setIsActive,
+  templateContent,
+  type,
+  shareOption,
+  setType,
+  setShareOption,
+  setTemplateContent
 
   // setValue
 }) => {
@@ -61,103 +68,182 @@ const UpdateWhatsAppTemplate: React.FC<PropsTypes> = ({
     defaultValues: {
       // Set the initial value from props
 
-      isActive: isActive,
+      templateContent: templateContent
     },
   });
   const [addModal, setAddModal] = useState(false);
   const addToggle = () => {
     if (!loading) {
       setIsVisible(!isVisible);
-      reset({
-        isActive: isActive,
-      });
+      // setTemplateContent(templateContent)
     }
   };
-  // console.log(id);
-  // console.log(value);
-  // console.log("isActive -- >", isActive);
-  // dispatch(setValue(value));
-  // console.log("is: ", isVisible);
+  // console.log("template", templateContent);
 
-  // const updateCountry: SubmitHandler<Type> = async (data) => {
-  //   setLoading(true);
-  //   if (data.name !== "") {
-  //     const country = {
-  //       name: data.name,
-  //       isActive: isActive,
-  //     };
-  //     // console.log(country);
-  //     try {
-  //       await update(country, { url: `country/update-country/${id}` }).then(
-  //         (data: any) => {
-  //           if (
-  //             !data.success &&
-  //             data.message === "ERROR_INTERNET_DISCONNECTED"
-  //           ) {
-  //             setLoading(false);
-  //             setIsVisible(!isVisible);
-  //           }
-  //           if (!data.success) {
-  //             Swal.fire({
-  //               text: `${data.message}`,
-  //               icon: "error",
-  //               timer: 2000,
-  //               showConfirmButton: false,
-  //             });
-  //             setLoading(false);
-  //             setIsVisible(!isVisible);
-  //           }
-  //           if (data.success) {
-  //             // console.log(data);
-  //             setLoading(false);
-  //             setIsVisible(!isVisible);
 
-  //             dispatch(setId(null));
-  //             // dispatch(setValue(""));
-  //             dispatch(setCountriesStart());
-  //             getAll({ url: "country/get-all-countries" }).then((data: any) => {
-  //               // console.log("api call --- >", data);
-  //               if (data == undefined) {
-  //                 Swal.fire({
-  //                   text: "Failed to fetch due to connection refused",
-  //                   icon: "error",
-  //                   timer: 2000,
-  //                   showConfirmButton: false,
-  //                 });
-  //                 dispatch(setInActiveActiveCountries("All"));
-  //                 dispatch(setCountries([]));
-  //                 dispatch(setFilterCountries([]));
-  //                 dispatch(setCountriesEnd());
-  //                 return;
-  //               }
-  //               dispatch(setCountriesEnd());
-  //               if (data !== undefined) {
-  //                 dispatch(setNoDataFound(data.message));
-  //                 if (data.success) {
-  //                   // console.log("hhg");
-  //                   dispatch(setCountries(data.data));
-  //                   dispatch(setFilterCountries(data.data));
-  //                 }
-  //               }
-  //             });
-  //           }
-  //         }
-  //       );
-  //       // Handle successful post creation (e.g., show a success message, redirect, etc.)
-  //     } catch (error) {
-  //       // Handle error (e.g., show an error message)
-  //       // console.error("Error creating post:", error);
+  const turndownService = new TurndownService();
+  const updateEmailTemplate: SubmitHandler<Type> = async (data) => {
+    setLoading(true);
+    const markdown = turndownService.turndown(templateContent);
 
-  //       setLoading(false);
-  //       setIsVisible(!isVisible);
-  //     }
-  //   }
-  // };
+    // Convert markdown to plain text with some formatting for WhatsApp
+    let plainText = markdown
+      .replace(/\*\*(.*?)\*\*/g, '*$1*')   // Convert bold (**) to single asterisk (*)
+      .replace(/__(.*?)__/g, '*$1*');      // Convert bold (__) to single asterisk (*)
+    var emailTemplate = {
+      content: plainText,
+      type: type
+    };
+
+    console.log(emailTemplate);
+    if (templateContent !== "" && type !== "") {
+      try {
+        await update(emailTemplate, { url: `template/whatsapp-template/update-template/${id}` }).then(
+          (data: any) => {
+            if (
+              !data.success &&
+              data.message === "ERROR_INTERNET_DISCONNECTED"
+            ) {
+              setLoading(false);
+              setIsVisible(!isVisible);
+            }
+            if (!data.success) {
+              Swal.fire({
+                text: `${data.message}`,
+                icon: "error",
+                timer: 2000,
+                showConfirmButton: false,
+              });
+              setLoading(false);
+              setIsVisible(!isVisible);
+            }
+            if (data.success) {
+              Swal.fire({
+                text: data.message,
+                icon: "success",
+                timer: 2000,
+                showConfirmButton: false,
+              });
+              // console.log(data);
+              setLoading(false);
+              setIsVisible(!isVisible);
+              // setId("null");
+
+              dispatch(setWhatsAppTemplatesStart());
+              getAll({ url: "template/whatsapp-template/get-all-templates" }).then(
+                (data: any) => {
+                  // console.log("api call --- >", data);
+                  if (data == undefined) {
+                    Swal.fire({
+                      text: "Failed to fetch due to connection refused",
+                      icon: "error",
+                      timer: 2000,
+                      showConfirmButton: false,
+                    });
+                    dispatch(setWhatsAppTemplates([]));
+                    dispatch(setFilterWhatsAppTemplates([]));
+                    dispatch(setWhatsAppTemplatesEnd());
+                    return;
+                  }
+                  dispatch(setWhatsAppTemplatesEnd());
+                  if (data !== undefined) {
+                    if (data.success) {
+                      // console.log("hhg");
+                      dispatch(setWhatsAppTemplates(data.data));
+                      dispatch(setFilterWhatsAppTemplates(data.data));
+                    }
+                  }
+                }
+              );
+            }
+          }
+        );
+        // Handle successful post creation (e.g., show a success message, redirect, etc.)
+      } catch (error) {
+        // Handle error (e.g., show an error message)
+        // console.error("Error creating post:", error);
+        setLoading(false);
+        setIsVisible(!isVisible);
+      }
+    }
+  };
+
+
+
+
+
+  const modules = {
+    toolbar: [
+      // [{ 'font': [] }],
+      [{ 'header': [1, 2, 3, false] }],
+      ['bold', 'italic', 'underline'
+        // , 'strike', 'blockquote'
+      ],
+      [{ 'list': 'ordered' }, { 'list': 'bullet' }
+        // , { 'indent': '-1' }, { 'indent': '+1' }
+      ],
+      // ['link', 'image', 'video'],
+      // [{ 'align': [] }],
+      // [{ 'color': [] }, { 'background': [] }],
+      // ['clean']
+    ],
+  };
+
+  const TEMPLATE_TYPES_ARRAY = [
+    {
+      label: "Account Created",
+      value: "ACCOUNT_CREATED",
+    },
+    {
+      label: "Password Updated",
+      value: "PASSWORD_UPDATED",
+    },
+    {
+      label: "Pre Package Expiration",
+      value: "PRE_PACKAGE_EXPIRATION",
+    },
+    {
+      label: "Post Package Expiration",
+      value: "POST_PACKAGE_EXPIRATION",
+    },
+    {
+      label: "Report",
+      value: "REPORT",
+    },
+  ];
+
 
 
   useEffect(() => {
-    setValue("isActive", isActive);
-  }, [isActive, setValue]);
+    setValue("templateContent", templateContent);
+  }, [templateContent, setValue]);
+
+  const onEditorChange = (value: string) => {
+    setTemplateContent(value);
+    // console.log("Html", value);
+  };
+
+  // function markdownToHtml(text: any) {
+  //   // Split the text by \n\n to handle paragraphs
+  //   const paragraphs = text.split('\n\n');
+  //   console.log(paragraphs);
+
+
+  //   // Process each paragraph to replace markdown-like syntax with HTML tags
+  //   const processedParagraphs = paragraphs.map((paragraph: any) => {
+  //     return paragraph
+  //       .replace(/\*\{\{(.*?)\}\}\*/g, '<strong>{{$1}}</strong>') // Replace *{{var}}* with <strong>{{var}}</strong>
+  //       .replace(/\*\_(.*?)\_\*/g, '<strong><em>$1</em></strong>'); // Replace *_var_* with <strong><em>var</em></strong>
+  //   });
+  //   console.log(processedParagraphs);
+  //   // Join the processed paragraphs with <p> tags
+  //   const html = processedParagraphs.map((p: any) => `<p>${p}</p>`).join('');
+
+  //   return html;
+  // }
+
+
+
 
   return (
     <Modal
@@ -165,19 +251,14 @@ const UpdateWhatsAppTemplate: React.FC<PropsTypes> = ({
       isOpen={isVisible}
       toggle={
         addToggle
-        //   () => {
-        //   setIsVisible(!isVisible);
-        // }
       }
-      size="md"
+      size="lg"
       onClosed={() => {
-        // setValue("")
         setIsVisible(false);
-        // console.log(value);
       }}
     >
       <div className="modal-header">
-        <H4 className="modal-title">Update Country</H4>
+        <H4 className="modal-title">Update WhatsApp Templates</H4>
         <Button
           color="transprant"
           className="btn-close"
@@ -191,40 +272,127 @@ const UpdateWhatsAppTemplate: React.FC<PropsTypes> = ({
       <ModalBody>
         <form
           className="form-bookmark needs-validation"
-        // onSubmit={handleSubmit(updateCountry)}
+          onSubmit={handleSubmit(updateEmailTemplate)}
         >
           <Row>
-
-            <FormGroup className="col-md-12 create-group">
+            <div className="col-md-12 create-group">
               <P>Content</P>
-              <textarea
-                className="form-control"
-                rows={5} // Minimum number of visible lines
+              <ReactQuill
+                value={templateContent}
+                onChange={onEditorChange}
+                className="form-control custom-editor-container"
                 style={{
-                  maxHeight: "500px", // Maximum height for 5 lines of text
-                  resize: "vertical", // Allow vertical resizing within the specified range
+                  height: "180px",
+                  marginBottom: "20px",
+                  paddingBottom: "30px",
+                  borderRadius: "10px",
+                  paddingLeft: "0px",
+                  paddingRight: "0px"
+
                 }}
-                {...register("templateContent", { required: true })}
+                modules={modules}
               />
               <span style={{ color: "red" }}>
                 {errors.templateContent && "Template Content is required"}
               </span>
-            </FormGroup>
+            </div>
+            <Col md={6}>
+              <FormGroup>
+                <P>Template Type</P>
+                <Select
+                  showSearch
+                  defaultValue={type}
+                  value={type}
+                  style={{ width: "100%", height: 36 }}
+                  placeholder="Select Template Type"
+                  optionFilterProp="children"
+                  filterOption={(input: any, option: any) =>
+                    (option?.label ?? "").includes(input)
+                  }
+                  filterSort={(optionA: any, optionB: any) =>
+                    (optionA?.label ?? "")
+                      .toLowerCase()
+                      .localeCompare(
+                        (optionB?.label ?? "").toLowerCase()
+                      )
+                  }
+
+                  onChange={(e, options) => {
+                    setType(e);
+                  }}
+                  options={TEMPLATE_TYPES_ARRAY}
+                />
+              </FormGroup>
+            </Col>
+            <Col md={6}></Col>
+
+            {getUserRole() == ROLES.SUPER_ADMIN && <Col md={6}>
+              <FormGroup>
+                <div style={{ display: "flex", justifyContent: "space-between" }}>
+                  <P>Is Shareable</P>
+                  <span
+                    style={{
+                      fontSize: "16px",
+                      margin: "5px 0px",
+                    }}
+                  >
+                    <label
+                      style={{
+                        display: "inline-block",
+                        position: "relative",
+                        cursor: "pointer",
+                        // marginRight: "25px",
+                        fontSize: "16px",
+                      }}
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <input
+                        type="checkbox"
+                        name="key"
+                        value={shareOption ? "on" : "off"}
+                        // onChange={(e) => {
+                        //   console.log(e.target.checked);
+                        //   setShareOption(e.target.checked)
+                        // }}
+                        checked={shareOption}
+                        disabled
+                        style={{ display: "none" }} // Hide the default checkbox
+                      />
+                      <span
+                        onClick={(e) => e.stopPropagation()}
+                        className="green"
+                      ></span>
+                    </label>
+
+                  </span>
+                </div>
+              </FormGroup>
+            </Col>}
+            <div className="col-md-12 create-group">
+              <div style={{ padding: "10px 30px", marginBottom: "15px", backgroundColor: "lightblue", display: "flex", justifyContent: "space-between" }}>
+
+                <div style={{ display: "flex", flexDirection: "column", justifyContent: "start" }}>
+                  <p style={{ display: "flex", justifyContent: "start", marginBottom: "2px" }}>{`{{fullName}}`}</p>
+                  <p style={{ display: "flex", justifyContent: "start", marginBottom: "2px" }}>{`{{email}}`}</p>
+                </div>
+                <div style={{ display: "flex", flexDirection: "column", justifyContent: "start" }}>
+                  <p style={{ display: "flex", justifyContent: "start", marginBottom: "2px" }}>{`{{password}}`}</p>
+                  <p style={{ display: "flex", justifyContent: "start", marginBottom: "2px" }}>{`{{phoneNo}}`}</p>
+                </div>
+                <div style={{ display: "flex", flexDirection: "column", justifyContent: "start" }}>
+                  <p style={{ display: "flex", justifyContent: "start", marginBottom: "2px" }}>{`{{city}}`}</p>
+                  <p style={{ display: "flex", justifyContent: "start", marginBottom: "2px" }}>{`{{package}}`}</p>
+                </div>
+                <div style={{ display: "flex", flexDirection: "column", justifyContent: "start" }}>
+                  <p style={{ display: "flex", justifyContent: "start", marginBottom: "2px" }}>{`{{currentDate}}`}</p>
+                  {/* <p style={{ display: "flex", justifyContent: "start", marginBottom: "2px" }}>{`{{currentDate}}`}</p> */}
+                </div>
+              </div>
+            </div>
           </Row>
           <div style={{ marginLeft: "10px" }}>
             <Row>
-              {/* <FormGroup check switch inline className="col-md-12 create-group">
-                <Input
-                  type="checkbox"
-                  role="switch"
-                  defaultChecked={isActive}
-                  value={isActive ? "on" : "off"}
-                  onChange={(e) => {
-                    setIsActive(!isActive);
-                    // console.log(e.target.value);
-                  }}
-                />
-              </FormGroup> */}
+
             </Row>
           </div>
           <Button color="primary" className="me-1">

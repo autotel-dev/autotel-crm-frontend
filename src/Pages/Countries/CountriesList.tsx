@@ -23,6 +23,7 @@ import Loader from "../Loader/Loader";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import H7 from "../../CommonElements/Headings/H7Element";
+import Skeleton from "../Skeleton/Skeleton";
 
 const CountriesList = () => {
   const { countries, loading, id, activeInActiveCountries } = useSelector(
@@ -86,7 +87,7 @@ const CountriesList = () => {
         }
         if (data.success) {
           // console.log("hhg");
-          setFilterCountries(data.data);
+
           dispatch(setCountries(data.data));
           dispatch(setFilterCountries(data.data));
         }
@@ -100,21 +101,21 @@ const CountriesList = () => {
     return countries?.map((row: any) => (
       // <tr key={row.id}>
       <tr
-      key={row._id}
-      onMouseEnter={() => {
-        setIsHovered(true);
-        setIdd(row._id);
-      }}
-      onMouseLeave={() => setIsHovered(false)}
-      style={{
-        backgroundColor:
-          isHovered && idd == row._id
-            ? userPersonalizationData == null
-              ? "#D6EEEE"
-              : `rgba(${rgbColor.r},${rgbColor.g},${rgbColor.b},0.2)`
-            : "transparent",
-        transition: "background-color 0.3s",
-      }}>
+        key={row._id}
+        onMouseEnter={() => {
+          setIsHovered(true);
+          setIdd(row._id);
+        }}
+        onMouseLeave={() => setIsHovered(false)}
+        style={{
+          backgroundColor:
+            isHovered && idd == row._id
+              ? userPersonalizationData == null
+                ? "#D6EEEE"
+                : `rgba(${rgbColor.r},${rgbColor.g},${rgbColor.b},0.2)`
+              : "transparent",
+          transition: "background-color 0.3s",
+        }}>
         <td>{row._id}</td>
         <td>{row.name}</td>
         <td>
@@ -129,49 +130,49 @@ const CountriesList = () => {
                   defaultChecked={row.isActive}
                   value={row.isActive}
                   checked={row.isActive}
-                  // onChange={async (e: any) => {
-                  //   //  --------------------------
+                // onChange={async (e: any) => {
+                //   //  --------------------------
 
-                  //   const operator = {
-                  //     fullName: row.fullName,
-                  //     emailAddress: row.emailAddress,
-                  //     phoneNo: row.phoneNo,
-                  //     isActive: !row.isActive,
-                  //     company: decodedToken.userId,
-                  //   };
-                  //   // console.log(operator);
-                  //   setIsActive(!row.isActive);
-                  //   // setRowIndex(index);
-                  //   // console.log(e.target.value);
-                  //   try {
-                  //     await update(operator, {
-                  //       url: `operator/update-operator/${row._id}`,
-                  //     }).then((data: any) => {
-                  //       if (data.success) {
-                  //         // console.log(data);
+                //   const operator = {
+                //     fullName: row.fullName,
+                //     emailAddress: row.emailAddress,
+                //     phoneNo: row.phoneNo,
+                //     isActive: !row.isActive,
+                //     company: decodedToken.userId,
+                //   };
+                //   // console.log(operator);
+                //   setIsActive(!row.isActive);
+                //   // setRowIndex(index);
+                //   // console.log(e.target.value);
+                //   try {
+                //     await update(operator, {
+                //       url: `operator/update-operator/${row._id}`,
+                //     }).then((data: any) => {
+                //       if (data.success) {
+                //         // console.log(data);
 
-                  //         dispatch(setOperatorsStart());
-                  //         getAll({
-                  //           url: "operator/get-all-operators",
-                  //         }).then((data: any) => {
-                  //           // console.log("api call --- >", data);
-                  //           dispatch(setOperatorsEnd());
-                  //           if (data !== undefined) {
-                  //             if (data.success) {
-                  //               // console.log("hhg");
-                  //               dispatch(setOperators(data.data));
-                  //               dispatch(setFilterOperators(data.data));
-                  //             }
-                  //           }
-                  //         });
-                  //       }
-                  //     });
-                  //     // Handle successful post creation (e.g., show a success message, redirect, etc.)
-                  //   } catch (error) {
-                  //     // Handle error (e.g., show an error message)
-                  //     // console.error("Error creating post:", error);
-                  //   }
-                  // }}
+                //         dispatch(setOperatorsStart());
+                //         getAll({
+                //           url: "operator/get-all-operators",
+                //         }).then((data: any) => {
+                //           // console.log("api call --- >", data);
+                //           dispatch(setOperatorsEnd());
+                //           if (data !== undefined) {
+                //             if (data.success) {
+                //               // console.log("hhg");
+                //               dispatch(setOperators(data.data));
+                //               dispatch(setFilterOperators(data.data));
+                //             }
+                //           }
+                //         });
+                //       }
+                //     });
+                //     // Handle successful post creation (e.g., show a success message, redirect, etc.)
+                //   } catch (error) {
+                //     // Handle error (e.g., show an error message)
+                //     // console.error("Error creating post:", error);
+                //   }
+                // }}
                 />
                 <span
                   // className={`switch-state ${
@@ -187,7 +188,7 @@ const CountriesList = () => {
         <td>
           <div>
             <button
-            className="global-table-delete-btn"
+              className="global-table-delete-btn"
               // style={{
               //   width: 60,
               //   fontSize: 14,
@@ -211,7 +212,7 @@ const CountriesList = () => {
               Delete
             </button>
             <button
-            className="global-table-edit-btn"
+              className="global-table-edit-btn"
               // style={{
               //   width: 60,
               //   fontSize: 14,
@@ -246,7 +247,14 @@ const CountriesList = () => {
             <CardBody>
               <div className="table-responsive product-table">
                 {loading ? (
-                  <Loader />
+                  // <Loader />
+                  <>
+                    <Skeleton height="100px" width="100%" marginBottom="10" borderRadius="10px" />
+                    <Skeleton height="40px" width="100%" marginTop="10px" marginBottom="10" borderRadius="10px" />
+                    <Skeleton height="40px" width="100%" marginTop="10px" marginBottom="10" borderRadius="10px" />
+                    <Skeleton height="40px" width="100%" marginTop="10px" marginBottom="10" borderRadius="10px" />
+                    <Skeleton height="40px" width="100%" marginTop="10px" marginBottom="10" borderRadius="10px" />
+                  </>
                 ) : countries?.length > 0 && loading === false ? (
                   <div>
                     <table>
@@ -269,9 +277,9 @@ const CountriesList = () => {
                   //     fontWeight: "bold",
                   //   }}
                   // >
-                    // {activeInActiveCountries !== "All"
-                    //   ? activeInActiveCountries
-                    //   : "No Counties Found"}
+                  // {activeInActiveCountries !== "All"
+                  //   ? activeInActiveCountries
+                  //   : "No Counties Found"}
                   // </div>
                   <H7>
                     {activeInActiveCountries !== "All"
@@ -291,7 +299,7 @@ const CountriesList = () => {
                 isActive={isActive}
                 setIsActive={setIsActive}
 
-                // setValue={setCityName}
+              // setValue={setCityName}
               />
             </CardBody>
           </Card>

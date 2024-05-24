@@ -483,8 +483,9 @@ const UpdateCompanyForm = () => {
         <div
           style={{
             display: "flex",
+            marginTop: "130px",
             justifyContent: "center",
-            height: "80vh",
+            height: "90vh",
             backgroundColor: "white",
             alignItems: "center",
           }}
@@ -776,92 +777,94 @@ const UpdateCompanyForm = () => {
                         </Row>
 
                         <H4>Server Credentials</H4>
-                        <Select
-                          defaultValue={formData?.serverCredentials.map(
-                            (server: any) => server?.server?.companyName
-                          )}
-                          value={formData?.serverCredentials?.map(
-                            (server: any) => server?.server?._id
-                          )}
-                          showSearch
-                          mode="multiple"
-                          style={{ width: 500, height: 36 }}
-                          placeholder="Add Servers"
-                          optionFilterProp="children"
-                          filterOption={(input: any, option: any) =>
-                            (option?.label ?? "").includes(input)
-                          }
-                          filterSort={(optionA: any, optionB: any) =>
-                            (optionA?.label ?? "")
-                              .toLowerCase()
-                              .localeCompare(
-                                (optionB?.label ?? "").toLowerCase()
-                              )
-                          }
-                          onChange={(selectedValues, selectedOptions) => {
-                            // const newlySelectedServers = selectedOptions.filter(
-                            //   (option: any) =>
-                            //     !formData.serverCredentials.some(
-                            //       (server: any) => server.label === option.label
-                            //     )
-                            // );
-                            const newlySelectedServers = selectedOptions.filter(
-                              (option: any) =>
-                                !formData.serverCredentials.some(
-                                  (server: any) =>
-                                    server?.server?._id === option.server
+                        <Col md={6}>
+                          <Select
+                            defaultValue={formData?.serverCredentials.map(
+                              (server: any) => server?.server?.companyName
+                            )}
+                            value={formData?.serverCredentials?.map(
+                              (server: any) => server?.server?._id
+                            )}
+                            showSearch
+                            mode="multiple"
+                            style={{ width: "100%", height: 36 }}
+                            placeholder="Add Servers"
+                            optionFilterProp="children"
+                            filterOption={(input: any, option: any) =>
+                              (option?.label ?? "").includes(input)
+                            }
+                            filterSort={(optionA: any, optionB: any) =>
+                              (optionA?.label ?? "")
+                                .toLowerCase()
+                                .localeCompare(
+                                  (optionB?.label ?? "").toLowerCase()
                                 )
-                            );
-                            // console.log("selectedValues", selectedValues);
+                            }
+                            onChange={(selectedValues, selectedOptions) => {
+                              // const newlySelectedServers = selectedOptions.filter(
+                              //   (option: any) =>
+                              //     !formData.serverCredentials.some(
+                              //       (server: any) => server.label === option.label
+                              //     )
+                              // );
+                              const newlySelectedServers = selectedOptions.filter(
+                                (option: any) =>
+                                  !formData.serverCredentials.some(
+                                    (server: any) =>
+                                      server?.server?._id === option.server
+                                  )
+                              );
+                              // console.log("selectedValues", selectedValues);
 
-                            // console.log(
-                            //   "newlySelectedServers",
-                            //   newlySelectedServers
-                            // );
+                              // console.log(
+                              //   "newlySelectedServers",
+                              //   newlySelectedServers
+                              // );
 
-                            const newServers = newlySelectedServers.map(
-                              (option: any) => ({
-                                label: option.label,
-                                emailAddress: "",
-                                password: "",
-                                server: {
-                                  _id: option.server,
-                                  companyName: option.label,
-                                },
-                                hostUrl: option.hostUrl,
-                              })
-                            );
+                              const newServers = newlySelectedServers.map(
+                                (option: any) => ({
+                                  label: option.label,
+                                  emailAddress: "",
+                                  password: "",
+                                  server: {
+                                    _id: option.server,
+                                    companyName: option.label,
+                                  },
+                                  hostUrl: option.hostUrl,
+                                })
+                              );
 
-                            const updatedCredentials = [
-                              ...formData.serverCredentials,
-                              ...newServers,
-                            ];
+                              const updatedCredentials = [
+                                ...formData.serverCredentials,
+                                ...newServers,
+                              ];
 
-                            setFormData((prevState: any) => ({
-                              ...prevState,
-                              serverCredentials: updatedCredentials,
-                            }));
+                              setFormData((prevState: any) => ({
+                                ...prevState,
+                                serverCredentials: updatedCredentials,
+                              }));
 
-                            // console.log("reduxServerAdItemsList -- >", serversAddItemsList);
-                          }}
-                          // Custom rendering for options
-                          dropdownRender={(menu) => (
-                            <div>
-                              {menu}
-                              {formData?.serverCredentials?.map((server: any) => (
-                                <Option
-                                  key={server?.server?._id}
-                                  value={server?.server?._id}
-                                  disabled
-                                >
-                                  {server?.server?.companyName}
-                                </Option>
-                              ))}
-                            </div>
-                          )}
-                          options={serverList}
-                          onDeselect={handleDeselect}
-                        />
+                              // console.log("reduxServerAdItemsList -- >", serversAddItemsList);
+                            }}
+                            // Custom rendering for options
+                            dropdownRender={(menu) => (
+                              <div>
+                                {menu}
+                                {formData?.serverCredentials?.map((server: any) => (
+                                  <Option
+                                    key={server?.server?._id}
+                                    value={server?.server?._id}
+                                    disabled
+                                  >
+                                    {server?.server?.companyName}
+                                  </Option>
+                                ))}
+                              </div>
+                            )}
+                            options={serverList}
+                            onDeselect={handleDeselect}
+                          />
+                        </Col>
                         <Form
                           style={{ marginBottom: "65px", marginTop: "20px" }}
                         >
@@ -995,11 +998,10 @@ const UpdateCompanyForm = () => {
                                             }
                                           />
                                           <span
-                                            className={`switch-state ${
-                                              item.checked
+                                            className={`switch-state ${item.checked
                                                 ? `bg-primary`
                                                 : `bg-secondary`
-                                            }`}
+                                              }`}
                                           />
                                         </Label>
                                       </div>
@@ -1243,20 +1245,20 @@ const UpdateCompanyForm = () => {
                         {/* Row commented if below will uncomment */}
                       </Form>
                       <Row>
-                          <Col
-                            xs={12}
-                            className="text-end d-flex justify-content-end gap-2 align-center"
+                        <Col
+                          xs={12}
+                          className="text-end d-flex justify-content-end gap-2 align-center"
+                        >
+                          {/* <Button color="primary">Print</Button> */}
+                          <Button
+                            color="primary"
+                            onClick={(e) => {
+                              updateCompanySubmitted(e);
+                            }}
                           >
-                            {/* <Button color="primary">Print</Button> */}
-                            <Button
-                              color="primary"
-                              onClick={(e) => {
-                                updateCompanySubmitted(e);
-                              }}
-                            >
-                              {loading ? "Loading..." : "Submit"}
-                            </Button>
-                          </Col>
+                            {loading ? "Loading..." : "Submit"}
+                          </Button>
+                        </Col>
                       </Row>
                     </div>
                   </CardBody>
@@ -1276,12 +1278,12 @@ const UpdateCompanyForm = () => {
                                   {data.key === "cnicFront"
                                     ? "CNIC Front"
                                     : data.key === "cnicBack"
-                                    ? "CNIC Back"
-                                    : data.key === "ptaCertificate"
-                                    ? "PTA Certificate"
-                                    : data.key === "ntnCertificate"
-                                    ? "NTN Certificate"
-                                    : "Other Attachment"}
+                                      ? "CNIC Back"
+                                      : data.key === "ptaCertificate"
+                                        ? "PTA Certificate"
+                                        : data.key === "ntnCertificate"
+                                          ? "NTN Certificate"
+                                          : "Other Attachment"}
                                 </H5>
                                 <div
                                   style={{
@@ -1324,12 +1326,12 @@ const UpdateCompanyForm = () => {
                                     {data.key === "cnicFront"
                                       ? "CNIC Front"
                                       : data.key === "cnicBack"
-                                      ? "CNIC Back"
-                                      : data.key === "ptaCertificate"
-                                      ? "PTA Certificate"
-                                      : data.key === "ntnCertificate"
-                                      ? "NTN Certificate"
-                                      : "Other Attachment"}
+                                        ? "CNIC Back"
+                                        : data.key === "ptaCertificate"
+                                          ? "PTA Certificate"
+                                          : data.key === "ntnCertificate"
+                                            ? "NTN Certificate"
+                                            : "Other Attachment"}
                                   </div>
                                 </div>
                               </div>
