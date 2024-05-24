@@ -29,13 +29,13 @@ const DeviceDetailsBar: React.FC = () => {
         color: "black",
         padding: "10px",
         borderRadius: "8px",
-        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+        // boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
         overflowY: "auto",
-        maxHeight: "85vh", // Adjust this value based on your layout requirements
+        maxHeight: "92.5vh", // Adjust this value based on your layout requirements
       }}
     >
       {devicesDetailData
-        .slice(0, showAll ? devicesDetailData.length : 5)
+        .slice(0, showAll ? devicesDetailData.length : 15)
         .map((device: any, index: number) => (
           <div
             key={index}
@@ -55,32 +55,32 @@ const DeviceDetailsBar: React.FC = () => {
             <div>IMEI : {device.imei}</div>
           </div>
         ))}
-      {!showAll && devicesDetailData.length > 3 ? (
+      {!showAll && devicesDetailData.length > 15 ? (
         <button
           onClick={handleShowMore}
           style={{
             display: "block",
             margin: "20px auto",
             padding: "10px 20px",
-            backgroundColor: "#007bff",
+            backgroundColor: "#1f2f3e",
             color: "white",
             border: "none",
             borderRadius: "4px",
             cursor: "pointer",
-            left:"0px",
+            
           }}
         >
           Show More
         </button>
       ) : (
-        devicesDetailData.length > 3 && (
+        devicesDetailData.length > 15 && (
           <button
             onClick={handleShowLess}
             style={{
               display: "block",
               margin: "20px auto",
               padding: "10px 20px",
-              backgroundColor: "#007bff",
+              backgroundColor: "#1f2f3e",
               color: "white",
               border: "none",
               borderRadius: "4px",

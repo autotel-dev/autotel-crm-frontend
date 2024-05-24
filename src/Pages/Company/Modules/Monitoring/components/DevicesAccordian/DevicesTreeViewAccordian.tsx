@@ -29,7 +29,7 @@ interface PropTypes {
 const DevicesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
   const svgRef = useRef(null);
 
-  const [itemsLength, setItemsLength] = useState(6);
+  const [itemsLength, setItemsLength] = useState(15);
   const { devices, selectedDevices, expandedDevice, devicesDetailData } =
     useSelector((state: any) => state.monitoring);
   const [searchValue, setSearchValue] = useState("");
@@ -54,7 +54,7 @@ const DevicesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
 
   const toggle = (id: string) => {
     open == id ? setOpen("") : setOpen(id);
-    setItemsLength(6);
+    setItemsLength(15);
   };
   const handleCheckboxClick = (e: any, group: any) => {
     // Prevent the click event from propagating to the accordion
@@ -348,9 +348,10 @@ const DevicesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
         onChange={(e: any) => handleSearch(e)}
         style={{
           width: "95%",
+          height: "40px",
           padding: "15px 15px",
           boxShadow: "0px 5px 18px lightgray",
-          borderRadius: "15px",
+          borderRadius: "10px",
           margin: "10px",
           marginBottom: "20px",
           border: "0px",
@@ -366,12 +367,12 @@ const DevicesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
           }}
           style={{
             width: "45%",
-            padding: "10px 15px",
+            padding: "8px 10px",
             // boxShadow: "0px 5px 18px lightgray",
-            borderRadius: "10px",
-            backgroundColor: "gray",
+            borderRadius: "8px",
+            backgroundColor: "#1f2f3e",
             color: "white",
-            margin: "10px",
+            margin: "8px",
             marginBottom: "10px",
             marginTop: "0px",
             border: "0px",
@@ -389,12 +390,12 @@ const DevicesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
           }}
           style={{
             width: "45%",
-            padding: "10px 15px",
+            padding: "8px 10px",
             // boxShadow: "0px 5px 18px lightgray",
-            borderRadius: "10px",
-            backgroundColor: "gray",
+            borderRadius: "8px",
+            backgroundColor: "#1f2f3e",
             color: "white",
-            margin: "10px",
+            margin: "8px",
             marginBottom: "10px",
             marginTop: "0px",
             border: "0px",
@@ -447,8 +448,8 @@ const DevicesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
                           type="checkbox"
                           style={{
                             marginRight: "10px",
-                            height: "22px",
-                            width: "22px",
+                            height: "17",
+                            width: "17px",
                           }}
                           checked={item.checked}
                           onClick={(e) => handleCheckboxClick(e, item)}
@@ -518,11 +519,24 @@ const DevicesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
                             <div
                               key={bodyItem.id}
                               style={{
-                                padding: "10px 12px",
-                                boxShadow: "0px 5px 18px lightgray",
-                                borderRadius: "15px",
+                                padding: "8px 10px",
+                                boxShadow: "5px 5px 15px lightgray",
+                                borderRadius: "12px",
                                 margin: "10px -10px",
                                 cursor: "pointer",
+                                backgroundColor: `${
+                                  bodyItem.icon_color === "green"
+                                    ? "rgba(0,255,0,0.2)"
+                                    : bodyItem.icon_color === "yellow"
+                                    ? "rgb(255,255,0,0.1)"
+                                    : bodyItem.time === "Expired"
+                                    ? "lightGray"
+                                    : (bodyItem.icon_color === "blue" ||
+                                        bodyItem.icon_color === "black") &&
+                                      bodyItem.time !== "Expired"
+                                    ? "rgba(0,0,0,0.2)"
+                                    : "rgba(255,0,0,0.2)"
+                                }`,
                               }}
                               onClick={(e) => {
                                 dispatch(
@@ -554,6 +568,7 @@ const DevicesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
                                       display: "inline-block",
                                       position: "relative",
                                       cursor: "pointer",
+                                      paddingTop: "2px",
                                     }}
                                     onClick={(e) => e.stopPropagation()}
                                   >
@@ -581,12 +596,17 @@ const DevicesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
                                       className={
                                         bodyItem.icon_color === "green"
                                           ? "onlineDevice"
+                                          : bodyItem.icon_color === "yellow"
+                                          ? "engine"
                                           : bodyItem.time === "Expired"
                                           ? "expired"
-                                          : bodyItem.icon_color === "blue" &&
+                                          : (bodyItem.icon_color === "blue" ||
+                                              bodyItem.icon_color ===
+                                                "black") &&
                                             bodyItem.time !== "Expired"
-                                          ? "black"
-                                          : bodyItem.online
+                                          ? "black" 
+                                          : bodyItem.icon_color === "red"
+                                          ? "ack" : bodyItem.online
                                       }
                                     ></span>
                                   </label>
@@ -600,14 +620,14 @@ const DevicesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
                                     <span
                                       style={{
                                         fontWeight: "bold",
-                                        fontSize: "16px",
+                                        fontSize: "13px",
                                       }}
                                     >
                                       {bodyItem.name.length > 26
                                         ? `${bodyItem.name.slice(0, 26)}...`
                                         : bodyItem.name}
                                     </span>
-                                    <span style={{ fontSize: "12px" }}>
+                                    <span style={{ fontSize: "11px" }}>
                                       {/* {formattedDate(bodyItem.timestamp)} */}
                                       {bodyItem.time.slice(0, 10)} ,{" "}
                                       {bodyItem.time.slice(11)}
@@ -616,123 +636,123 @@ const DevicesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
                                 </div>
 
                                 {/* <div
-                                  style={{
-                                    marginBottom: "-10px",
-                                    marginRight: "20px",
-                                    display: "flex",
-                                  }}
-                                >
-                               
-                                   <svg
-                                    ref={svgRef}
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    viewBox="0 0 100 100" // Adjusted viewBox to minimize bottom height
-                                    width="58" // You may need to adjust the width accordingly
-                                    height="58" // Adjusted height
-                                  >
-                                    <path
-                                      d="M 10 50
+                             style={{
+                               marginBottom: "-10px",
+                               marginRight: "20px",
+                               display: "flex",
+                             }}
+                           >
+                          
+                              <svg
+                               ref={svgRef}
+                               xmlns="http://www.w3.org/2000/svg"
+                               viewBox="0 0 100 100" // Adjusted viewBox to minimize bottom height
+                               width="58" // You may need to adjust the width accordingly
+                               height="58" // Adjusted height
+                             >
+                               <path
+                                 d="M 10 50
 A 40 40 0 0 1 90 50"
-                                      fill="none"
-                                      stroke="url(#gradient)" // Use a gradient for multicolor stroke
-                                      strokeWidth="10" // Increase stroke width for a thicker stroke
-                                    />
+                                 fill="none"
+                                 stroke="url(#gradient)" // Use a gradient for multicolor stroke
+                                 strokeWidth="10" // Increase stroke width for a thicker stroke
+                               />
 
-                                    <defs>
-                                      <linearGradient
-                                        id={`gradient${index}`} // Use unique gradient ID for each item
-                                        x1="0%"
-                                        y1="0%"
-                                        x2="100%"
-                                        y2="0%"
-                                      >
-                                        <stop offset="0%" stopColor="red" />
-                                        <stop offset="33%" stopColor="yellow" />
-                                        <stop offset="66%" stopColor="green" />
-                                      </linearGradient>
-                                    </defs>
+                               <defs>
+                                 <linearGradient
+                                   id={`gradient${index}`} // Use unique gradient ID for each item
+                                   x1="0%"
+                                   y1="0%"
+                                   x2="100%"
+                                   y2="0%"
+                                 >
+                                   <stop offset="0%" stopColor="red" />
+                                   <stop offset="33%" stopColor="yellow" />
+                                   <stop offset="66%" stopColor="green" />
+                                 </linearGradient>
+                               </defs>
 
-                                    {Array.from(Array(20).keys()).map(
-                                      (_, index) => {
-                                        const angle =
-                                          Math.PI / 1 - (index * Math.PI) / 15;
-                                        const x = 50 + Math.cos(angle) * 40;
-                                        const y = 50 - Math.sin(angle) * 40;
-                                        return (
-                                          <circle
-                                            key={index}
-                                            cx={x}
-                                            cy={y}
-                                            r="2"
-                                            fill="black"
-                                          />
-                                        );
-                                      }
-                                    )}
-                                     Needle 
-                                    <polygon
-                                      points="50,42 55,22 50,12 45,22"
-                                       points="50,42 55,42 55,12 50,12 45"
-                                      fill={
-                                        bodyItem.engine_status ? "green" : "red"
-                                      } Needle color
-                                       transform={`translate(0, 0) rotate(${bodyItem.speed}
-                                       , 50, 50)`}
-                                    />
-                                     Speed text 
-                                    <text
-                                      x="50"
-                                      y="53"
-                                      textAnchor="middle"
-                                      dominantBaseline="middle"
-                                      fontSize="20"
-                                    >
-                                      {bodyItem.speed} kph
-                                    </text>
-                                  </svg>  *
-                                  
+                               {Array.from(Array(20).keys()).map(
+                                 (_, index) => {
+                                   const angle =
+                                     Math.PI / 1 - (index * Math.PI) / 15;
+                                   const x = 50 + Math.cos(angle) * 40;
+                                   const y = 50 - Math.sin(angle) * 40;
+                                   return (
+                                     <circle
+                                       key={index}
+                                       cx={x}
+                                       cy={y}
+                                       r="2"
+                                       fill="black"
+                                     />
+                                   );
+                                 }
+                               )}
+                                Needle 
+                               <polygon
+                                 points="50,42 55,22 50,12 45,22"
+                                  points="50,42 55,42 55,12 50,12 45"
+                                 fill={
+                                   bodyItem.engine_status ? "green" : "red"
+                                 } Needle color
+                                  transform={`translate(0, 0) rotate(${bodyItem.speed}
+                                  , 50, 50)`}
+                               />
+                                Speed text 
+                               <text
+                                 x="50"
+                                 y="53"
+                                 textAnchor="middle"
+                                 dominantBaseline="middle"
+                                 fontSize="20"
+                               >
+                                 {bodyItem.speed} kph
+                               </text>
+                             </svg>  *
+                             
 
-                                   <div>
-                                    <div
-                                      style={{
-                                        display: "inline-block",
-                                        height: "32px",
-                                        width: "22px",
-                                        verticalAlign: "middle",
-                                        marginTop: "9px",
-                                        marginLeft: "15px",
-                                      }}
-                                    >
-                                      <img
-                                        src={
-                                          bodyItem.engine_status
-                                            ? greenKey
-                                            : redKey
-                                        }
-                                        alt=""
-                                        height={26}
-                                        width={23}
-                                      />
-                                    </div>
-                                    <div
-                                      style={{
-                                        display: "inline-block",
-                                        height: "32px",
-                                        width: "22px",
-                                        verticalAlign: "middle",
-                                        marginTop: "6px",
-                                        marginLeft: "15px",
-                                      }}
-                                    >
-                                      <img
-                                        src={greenSatellite}
-                                        alt=""
-                                        height={26}
-                                        width={23}
-                                      />
-                                    </div>
-                                  </div> 
-                                </div> */}
+                              <div>
+                               <div
+                                 style={{
+                                   display: "inline-block",
+                                   height: "32px",
+                                   width: "22px",
+                                   verticalAlign: "middle",
+                                   marginTop: "9px",
+                                   marginLeft: "15px",
+                                 }}
+                               >
+                                 <img
+                                   src={
+                                     bodyItem.engine_status
+                                       ? greenKey
+                                       : redKey
+                                   }
+                                   alt=""
+                                   height={26}
+                                   width={23}
+                                 />
+                               </div>
+                               <div
+                                 style={{
+                                   display: "inline-block",
+                                   height: "32px",
+                                   width: "22px",
+                                   verticalAlign: "middle",
+                                   marginTop: "6px",
+                                   marginLeft: "15px",
+                                 }}
+                               >
+                                 <img
+                                   src={greenSatellite}
+                                   alt=""
+                                   height={26}
+                                   width={23}
+                                 />
+                               </div>
+                             </div> 
+                           </div> */}
                               </div>
                             </div>
                           );
@@ -756,25 +776,25 @@ A 40 40 0 0 1 90 50"
                               .includes(searchValue.toLowerCase()) ||
                             bodyItem.imei.includes(searchValue) ||
                             bodyItem.id == searchValue
-                        ).length >= 6 && (
+                        ).length >= 15 && (
                         <div
                           style={{
                             display: "flex",
-                            color: "blue",
+                            color: "#1f2f3e",
                             fontSize: "16px",
                             justifyContent: "end",
                             cursor: "pointer",
                           }}
                           onClick={() => {
                             if (
-                              item.items.length >= 6 &&
+                              item.items.length >= 15 &&
                               itemsLength < item.items.length
                             ) {
-                              setItemsLength(itemsLength + 5);
+                              setItemsLength(itemsLength + 14);
                             }
                           }}
                         >
-                          {item.items.length >= 6 &&
+                          {item.items.length >= 15 &&
                             itemsLength < item.items.length &&
                             "Show More"}
                         </div>

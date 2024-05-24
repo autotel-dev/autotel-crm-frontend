@@ -467,12 +467,13 @@ const Monitoring = () => {
         devices.length > 0 && (
           <div
             style={{
-              margin: "-35px",
+              marginLeft: "-35px",
               marginTop: "80px",
               // marginTop: "130px",
-              height: "100vh",
+              height: "92.5vh",
               display: "flex",
               overflow: "unset",
+              scrollbarWidth:"none",
             }}
           >
             <GoogleMap />
@@ -503,7 +504,8 @@ const Monitoring = () => {
           style={{
             display: "flex",
             justifyContent: "center",
-            height: "85vh",
+            marginTop: "80px",
+            height: "92.5vh",
             backgroundColor: "white",
             alignItems: "center",
           }}
