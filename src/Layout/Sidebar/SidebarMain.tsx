@@ -5,6 +5,31 @@ import SidebarBack from "./SidebarBack";
 import MenuList from "./MenuList";
 import { Link } from "react-router-dom";
 import SVG from "../../utils/CommonSvgIcon/SVG";
+import DashboardIcon from "../../assets/dashboard (1).png";
+import SetupIcon from "../../assets/management-service.png";
+import ModuleIcon from "../../assets/cube.png";
+import CompaniesIcon from "../../assets/enterprise.png";
+import SupportIcon from "../../assets/headphones.png";
+import CountryIcon from "../../assets/countries.png";
+import ProvinceIcon from "../../assets/map.png";
+import CityIcon from "../../assets/cityscape.png";
+import PackageIcon from "../../assets/box.png";
+import CrmmoduleIcon from "../../assets/crm.png";
+import ServerdetailsIcon from "../../assets/database-storage.png";
+import ServermangementIcon from "../../assets/cloud-computing.png";
+import EmailgatewayIcon from "../../assets/inbox.png";
+import WhatsappGatewayIcon from "../../assets/whatsapp.png";
+import EmailtemplateIcon from "../../assets/email.png";
+import WhatsapptemplateIcon from "../../assets/message.png";
+import ComplaintypeIcon from "../../assets/compliance.png";
+import ComplaincenterIcon from "../../assets/center.png";
+import UserIcon from "../../assets/user.png";
+import ReportsIcon from "../../assets/report.png";
+import DepartmentIcon from "../../assets/department.png";
+import MonitorIcon from "../../assets/gps.png";
+import ControlroomIcon from "../../assets/security-room.png";
+import GeofenceIcon from "../../assets/route.png";
+
 import {
   SidebarMenu,
   CompanySidebarMenu,
@@ -44,56 +69,67 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
   const SidebarMenuComponent: SidebarMenuTypes[] = [
     {
       title: "Dashboard",
-      svgIcon: "home",
+      // svgIcon: "home",
+      svgIcon: `${DashboardIcon}`,
       link: `${process.env.PUBLIC_URL}/dashboard`,
     },
     {
       title: "Setup",
-      svgIcon: "home",
+      // svgIcon: "home",
+      svgIcon: `${SetupIcon}`,
       subMenu: [
         {
-          svgIcon: "bonus-kit",
+          // svgIcon: "bonus-kit",
+          svgIcon: `${CountryIcon}`,
           title: "Country",
           link: `${process.env.PUBLIC_URL}/super-admin/setup/countries`,
         },
         {
-          svgIcon: "bonus-kit",
+          // svgIcon: "bonus-kit",
+          svgIcon: `${ProvinceIcon}`,
           title: "Province",
           link: `${process.env.PUBLIC_URL}/super-admin/setup/province`,
         },
         {
-          svgIcon: "bonus-kit",
+          // svgIcon: "bonus-kit",
+          svgIcon: `${CityIcon}`,
           title: "City",
           link: `${process.env.PUBLIC_URL}/super-admin/setup/cities`,
         },
         {
-          svgIcon: "bonus-kit",
+          // svgIcon: "bonus-kit",
+          svgIcon: `${PackageIcon}`,
           title: "Package",
           link: `${process.env.PUBLIC_URL}/super-admin/setup/package`,
         },
         {
-          svgIcon: "bonus-kit",
+          // svgIcon: "bonus-kit",
+          svgIcon: `${CrmmoduleIcon}`,
           title: "CRM Modules",
           link: `${process.env.PUBLIC_URL}/super-admin/setup/crm-module`,
         },
         {
-          svgIcon: "bonus-kit",
+          // svgIcon: "bonus-kit",
+          svgIcon: `${ComplaintypeIcon}`,
           title: "Complain types",
           link: `${process.env.PUBLIC_URL}/super-admin/setup/complain-types`,
         },
 
         {
-          svgIcon: "bonus-kit",
+          // svgIcon: "bonus-kit",
+          svgIcon: `${ServerdetailsIcon}`,
           title: "Server Details",
           link: `${process.env.PUBLIC_URL}/super-admin/setup/server-details`,
         },
         {
-          svgIcon: "bonus-kit",
+          // svgIcon: "bonus-kit",
+          svgIcon: `${ServermangementIcon}`,
           title: "Server Management",
           link: `${process.env.PUBLIC_URL}/super-admin/setup/server-management`,
         },
         {
-          svgIcon: "bonus-kit",
+          // svgIcon: "bonus-kit",
+          svgIcon: `${EmailgatewayIcon}`,
           title: "Email Gateway",
           link: `${process.env.PUBLIC_URL}/super-admin/setup/email-gateway`,
         },
@@ -103,20 +139,28 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
         //   link: `${process.env.PUBLIC_URL}/super-admin/setup/sms-gateway`,
         // },
         {
-          svgIcon: "bonus-kit",
+          // svgIcon: "bonus-kit",
+          svgIcon: `${WhatsappGatewayIcon}`,
           title: "WhatsApp Gateway",
           link: `${process.env.PUBLIC_URL}/super-admin/setup/whatsapp-gateway`,
         },
         {
-          svgIcon: "bonus-kit",
+          // svgIcon: "bonus-kit",
+          svgIcon: `${EmailtemplateIcon}`,
           title: "Email Templates",
           link: `${process.env.PUBLIC_URL}/super-admin/setup/email-template`,
         },
         {
-          svgIcon: "bonus-kit",
+          // svgIcon: "bonus-kit",
+          svgIcon: `${WhatsapptemplateIcon}`,
           title: "WhatsApp Templates",
           link: `${process.env.PUBLIC_URL}/super-admin/setup/whatsapp-template`,
         },
+        {
+          svgIcon:`${GeofenceIcon}`,
+          title:"Geofence",
+          link: `${process.env.PUBLIC_URL}/super-admin/setup/geofence`,
+        }
       ],
     },
     // {
@@ -137,10 +181,19 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
     // },
     {
       title: "Modules",
-      svgIcon: "home",
+      // svgIcon: "home",
+      svgIcon: `${ModuleIcon}`,
+
       subMenu: crmActiveModules.map((item: any, index: any) => {
         return {
-          svgIcon: "bonus-kit",
+          // svgIcon: "bonus-kit",
+          svgIcon: `${
+            item.route === "/control-room"
+              ? ControlroomIcon
+              : item.route === "/monitoring"
+              ? MonitorIcon
+              : item.route === "/complaint-center" && ComplaincenterIcon
+          }`, // Replace DefaultIcon with the default icon you want to use
           title: `${item.name}`,
           link: `${process.env.PUBLIC_URL}/dashboard`,
         };
@@ -149,12 +202,14 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
 
     {
       title: "Companies",
-      svgIcon: "home",
+      // svgIcon: "home",
+      svgIcon: `${CompaniesIcon}`,
       link: `${process.env.PUBLIC_URL}/super-admin/companies`,
     },
     {
       title: "Support",
-      svgIcon: "home",
+      // svgIcon: "home",
+      svgIcon: `${SupportIcon}`,
       link: `${process.env.PUBLIC_URL}/support`,
     },
     // {
@@ -167,35 +222,42 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
   const CompanySidebarMenuComponent: SidebarMenuTypes[] = [
     {
       title: "Dashboard",
-      svgIcon: "home",
+      // svgIcon: "home",
+      svgIcon: `${DashboardIcon}`,
       link: `${process.env.PUBLIC_URL}/dashboard`,
     },
     {
       title: "Setup",
-      svgIcon: "home",
+      // svgIcon: "home",
+      svgIcon: `${SetupIcon}`,
       subMenu: [
         {
-          svgIcon: "bonus-kit",
+          // svgIcon: "bonus-kit",
+          svgIcon: `${DepartmentIcon}`,
           title: "Departments",
           link: `${process.env.PUBLIC_URL}/company/setup/deparments`,
         },
         {
-          svgIcon: "bonus-kit",
+          // svgIcon: "bonus-kit",
           title: "Email Gateway",
+          svgIcon: `${EmailgatewayIcon}`,
           link: `${process.env.PUBLIC_URL}/company/setup/email-gateway`,
         },
         {
-          svgIcon: "bonus-kit",
+          // svgIcon: "bonus-kit",
+          svgIcon: `${WhatsappGatewayIcon}`,
           title: "WhatsApp Gateway",
           link: `${process.env.PUBLIC_URL}/company/setup/whatsApp-gateway`,
         },
         {
-          svgIcon: "bonus-kit",
+          // svgIcon: "bonus-kit",
+          svgIcon: `${EmailtemplateIcon}`,
           title: "Email Templates",
           link: `${process.env.PUBLIC_URL}/company/setup/email-template`,
         },
         {
-          svgIcon: "bonus-kit",
+          // svgIcon: "bonus-kit",
+          svgIcon: `${WhatsapptemplateIcon}`,
           title: "WhatsApp Templates",
           link: `${process.env.PUBLIC_URL}/company/setup/whatsapp-template`,
         },
@@ -220,10 +282,23 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
 
     {
       title: "Modules",
-      svgIcon: "home",
+      // svgIcon: "home",
+      svgIcon: `${ModuleIcon}`,
       subMenu: crmActiveModules.map((item: any, index: any) => {
+        // return {
+        //   // svgIcon: "bonus-kit",
+        //   svgIcon: `${ControlroomIcon}`,
+        //   title: `${item.name}`,
+        //   link: `${process.env.PUBLIC_URL}/company/modules${item.route}`,
+        // };
         return {
-          svgIcon: "bonus-kit",
+          svgIcon: `${
+            item.route === "/control-room"
+              ? ControlroomIcon
+              : item.route === "/monitoring"
+              ? MonitorIcon
+              : item.route === "/complaint-center" && ComplaincenterIcon
+          }`, // Replace DefaultIcon with the default icon you want to use
           title: `${item.name}`,
           link: `${process.env.PUBLIC_URL}/company/modules${item.route}`,
         };
@@ -232,12 +307,14 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
 
     {
       title: "User",
-      svgIcon: "home",
+      svgIcon: `${UserIcon}`,
+      // svgIcon: "home",
       link: `${process.env.PUBLIC_URL}/company/users`,
     },
     {
       title: "Support",
-      svgIcon: "home",
+      // svgIcon: "home",
+      svgIcon: `${SupportIcon}`,
       link: `${process.env.PUBLIC_URL}/support`,
     },
     // {
@@ -247,7 +324,8 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
     // },
     {
       title: "Reports",
-      svgIcon: "home",
+      // svgIcon: "home",
+      svgIcon: `${ReportsIcon}`,
       link: `${process.env.PUBLIC_URL}/company/reports`,
     },
   ];
@@ -255,7 +333,7 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
   const OperatorSidebarMenuComponent: SidebarMenuTypes[] = [
     {
       title: "Dashboard",
-      svgIcon: "home",
+      svgIcon: `${DashboardIcon}`,
       link: `${process.env.PUBLIC_URL}/dashboard`,
     },
 
@@ -264,7 +342,14 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
       svgIcon: "home",
       subMenu: crmActiveModules.map((item: any, index: any) => {
         return {
-          svgIcon: "bonus-kit",
+          // svgIcon: "bonus-kit",
+          svgIcon: `${
+            item.route === "/control-room"
+              ? ControlroomIcon
+              : item.route === "/monitoring"
+              ? MonitorIcon
+              : item.route === "/complaint-center" && ComplaincenterIcon
+          }`, // Replace DefaultIcon with the default icon you want to use
           title: `${item.name}`,
           link: `${process.env.PUBLIC_URL}/operator/modules${item.route}`,
         };
@@ -278,7 +363,7 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
     // },
     {
       title: "Support",
-      svgIcon: "home",
+      svgIcon: `${SupportIcon}`,
       link: `${process.env.PUBLIC_URL}/support`,
     },
   ];
@@ -311,7 +396,9 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
       }
     }
   );
-  const { sidebarIconType } = useSelector((state: any) => state.themeCustomizer);
+  const { sidebarIconType } = useSelector(
+    (state: any) => state.themeCustomizer
+  );
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState<string[]>([]);
   const [sideMenu, setSideMenu] = useState("");
@@ -354,87 +441,106 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
         <div
           id="sidebar-menu"
           style={{
-            backgroundColor: `${userPersonalizationData !== null &&
+            backgroundColor: `${
+              userPersonalizationData !== null &&
               userPersonalizationData?.secondaryColor !== null
-              ? userPersonalizationData?.secondaryColor
-              : ""
-              }`,
+                ? userPersonalizationData?.secondaryColor
+                : ""
+            }`,
           }}
         >
           <UL className="sidebar-links simple-list" id="simple-bar">
-            <SimpleBar className="w-100 simplebar-scrollable-y h-100" style={{ display: "flex", justifyContent: "space-between" }}>
-
+            <SimpleBar
+              className="w-100 simplebar-scrollable-y h-100"
+              style={{ display: "flex", justifyContent: "space-between" }}
+            >
               <>
                 <SidebarBack />
                 {decodedToken.role === "SUPER_ADMIN"
                   ? SidebarMenuComponent.map((data, index) => (
-                    <LI className={`sidebar-list`} key={index}>
-                      <Link
-                        className={`sidebar-link sidebar-title ${sideMenu === data.title ? "active" : ""
+                      <LI className={`sidebar-list`} key={index}>
+                        <Link
+                          className={`sidebar-link sidebar-title ${
+                            sideMenu === data.title ? "active" : ""
                           }`}
-                        // style={{
-                        //   color: `${
-                        //     userPersonalizationData !== null &&
-                        //     userPersonalizationData?.buttonsAndBarsColor !== null &&
-                        //     sideMenu === data.title &&
-                        //     userPersonalizationData?.buttonsAndBarsColor
-                        //   }`,
-                        // }}
-                        to={data.link ? data.link : "#"}
-                        onClick={() => handleClick(data)}
-                      >
-                        <SVG
-                          className={`${sidebarIconType}-icon`} iconId={`${sidebarIconType === "fill" ? "fill-" : ""}${data.svgIcon}`}
-                        // className={`${sidebarIconType}-icon`}
-                        // iconId={`${sidebarIconType === "fill" ? "fill-" : ""
-                        //   }${data.svgIcon}`}
-                        />
-                        <span
-                          style={{
-                            fontSize: "13px",
-                          }}
+                          // style={{
+                          //   color: `${
+                          //     userPersonalizationData !== null &&
+                          //     userPersonalizationData?.buttonsAndBarsColor !== null &&
+                          //     sideMenu === data.title &&
+                          //     userPersonalizationData?.buttonsAndBarsColor
+                          //   }`,
+                          // }}
+                          to={data.link ? data.link : "#"}
+                          onClick={() => handleClick(data)}
                         >
-                          {t(data.title)}
-                        </span>
-                      </Link>
-                      {data.link ? (
-                        <div></div>
-                      ) : (
-                        !isClose && (
-                          <UL
-                            className="sidebar-submenu custom-scrollbar simple-list"
-                            // style={{
-                            //   display: `${
-                            //     layout === "material-icon"
-                            //       ? data.title === sideMenu && !data.link
-                            //         ? "none"
-                            //         : "none"
-                            //       : ""
-                            //   }`,
-                            // }}
-
+                          {/* <SVG
+                          className={`${sidebarIconType}-icon`} iconId={`${sidebarIconType === "fill" ? "fill-" : ""}${data.svgIcon}`}
+                       
+                        /> */}
+                          <span
                             style={{
-                              display: `${data.title === sideMenu && !data.link
-                                ? "block"
-                                : "block"
-                                }`,
-                              marginTop: "-70px"
+                              height: "20px",
+                              width: "20px",
+                              marginRight: "8px",
                             }}
                           >
-                            {!data.link && (
-                              <div>
-                                <MenuList
-                                  subMenuData={data}
-                                  isOpen={isOpen}
-                                  setIsOpen={setIsOpen}
-                                  level={0}
-                                  isClose={isClose}
-                                  setIsClose={setIsClose}
-                                  menuRef={menuRef}
-                                  showArrow={showArrow}
-                                  setShowArrow={setShowArrow}
-                                />
-                                {/* {
+                            <img
+                              src={data.svgIcon}
+                              style={{
+                                height: "100%",
+                                width: "100%",
+                              }}
+                              alt=""
+                            />
+                          </span>
+                          <span
+                            style={{
+                              fontSize: "13px",
+                            }}
+                          >
+                            {t(data.title)}
+                          </span>
+                        </Link>
+                        {data.link ? (
+                          <div></div>
+                        ) : (
+                          !isClose && (
+                            <UL
+                              className="sidebar-submenu custom-scrollbar simple-list"
+                              // style={{
+                              //   display: `${
+                              //     layout === "material-icon"
+                              //       ? data.title === sideMenu && !data.link
+                              //         ? "none"
+                              //         : "none"
+                              //       : ""
+                              //   }`,
+                              // }}
+
+                              style={{
+                                display: `${
+                                  data.title === sideMenu && !data.link
+                                    ? "block"
+                                    : "block"
+                                }`,
+                                marginTop: "-70px",
+                              }}
+                            >
+                              {!data.link && (
+                                <div>
+                                  <MenuList
+                                    subMenuData={data}
+                                    isOpen={isOpen}
+                                    setIsOpen={setIsOpen}
+                                    level={0}
+                                    isClose={isClose}
+                                    setIsClose={setIsClose}
+                                    menuRef={menuRef}
+                                    showArrow={showArrow}
+                                    setShowArrow={setShowArrow}
+                                  />
+                                  {/* {
                                 (data.title == "Setup" && getUserRole() == "SUPER_ADMIN") && !showArrow ? <IoMdArrowDropdown style={{
                                   marginBottom: "-8px",
                                   marginTop: "5px",
@@ -453,28 +559,46 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
                                   height: "20px"
                                 }} />
                               } */}
-                              </div>
-                            )}
-                          </UL>
-                        )
-                      )}
-                    </LI>
-                  ))
+                                </div>
+                              )}
+                            </UL>
+                          )
+                        )}
+                      </LI>
+                    ))
                   : decodedToken.role === ROLES.OPERATOR
-                    ? filteredOperatorMenu !== undefined &&
+                  ? filteredOperatorMenu !== undefined &&
                     filteredOperatorMenu?.map((data: any, index: any) => (
                       <LI className={`sidebar-list`} key={index}>
                         <Link
-                          className={`sidebar-link sidebar-title ${sideMenu === data.title ? "active" : ""
-                            }`}
+                          className={`sidebar-link sidebar-title ${
+                            sideMenu === data.title ? "active" : ""
+                          }`}
                           to={data.link ? data.link : "#"}
                           onClick={() => handleClick(data)}
                         >
-                          <SVG
+                          {/* <SVG
                             className={`${sidebarIconType}-icon`}
-                            iconId={`${sidebarIconType === "fill" ? "fill-" : ""
-                              }${data.svgIcon}`}
-                          />
+                            iconId={`${
+                              sidebarIconType === "fill" ? "fill-" : ""
+                            }${data.svgIcon}`}
+                          /> */}
+                          <span
+                            style={{
+                              height: "20px",
+                              width: "20px",
+                              marginRight: "8px",
+                            }}
+                          >
+                            <img
+                              src={data.svgIcon}
+                              style={{
+                                height: "100%",
+                                width: "100%",
+                              }}
+                              alt=""
+                            />
+                          </span>
                           <span style={{ fontSize: "13px" }}>
                             {t(data.title)}
                           </span>
@@ -486,11 +610,12 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
                             <UL
                               className="sidebar-submenu custom-scrollbar simple-list"
                               style={{
-                                display: `${data.title === sideMenu && !data.link
-                                  ? "block"
-                                  : "block"
-                                  }`,
-                                marginTop: "-70px"
+                                display: `${
+                                  data.title === sideMenu && !data.link
+                                    ? "block"
+                                    : "block"
+                                }`,
+                                marginTop: "-70px",
                               }}
                             >
                               {!data.link && (
@@ -508,20 +633,38 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
                         )}
                       </LI>
                     ))
-                    : filteredCompanyMenu !== undefined &&
+                  : filteredCompanyMenu !== undefined &&
                     filteredCompanyMenu.map((data: any, index: any) => (
                       <LI className={`sidebar-list`} key={index}>
                         <Link
-                          className={`sidebar-link sidebar-title ${sideMenu === data.title ? "active" : ""
-                            }`}
+                          className={`sidebar-link sidebar-title ${
+                            sideMenu === data.title ? "active" : ""
+                          }`}
                           to={data.link ? data.link : "#"}
                           onClick={() => handleClick(data)}
                         >
-                          <SVG
+                          {/* <SVG
                             className={`${sidebarIconType}-icon`}
-                            iconId={`${sidebarIconType === "fill" ? "fill-" : ""
-                              }${data.svgIcon}`}
-                          />
+                            iconId={`${
+                              sidebarIconType === "fill" ? "fill-" : ""
+                            }${data.svgIcon}`}
+                          /> */}
+                          <span
+                            style={{
+                              height: "20px",
+                              width: "20px",
+                              marginRight: "8px",
+                            }}
+                          >
+                            <img
+                              src={data.svgIcon}
+                              style={{
+                                height: "100%",
+                                width: "100%",
+                              }}
+                              alt=""
+                            />
+                          </span>
                           <span style={{ fontSize: "13px" }}>
                             {t(data.title)}
                           </span>
@@ -533,11 +676,12 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
                             <UL
                               className="sidebar-submenu custom-scrollbar simple-list"
                               style={{
-                                display: `${data.title === sideMenu && !data.link
-                                  ? "block"
-                                  : "block"
-                                  }`,
-                                marginTop: "-70px"
+                                display: `${
+                                  data.title === sideMenu && !data.link
+                                    ? "block"
+                                    : "block"
+                                }`,
+                                marginTop: "-70px",
                               }}
                             >
                               {!data.link && (
@@ -557,7 +701,6 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
                     ))}
               </>
 
-
               <div
                 className={`page-header d-block`}
                 style={{
@@ -565,13 +708,11 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
                   width: "45%",
                   // display:"flex",
                   // justifyContent:"flex-end",
-                  right: "0"
+                  right: "0",
                 }}
               >
                 <Header />
               </div>
-
-
             </SimpleBar>
           </UL>
         </div>
