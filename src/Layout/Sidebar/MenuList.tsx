@@ -56,7 +56,23 @@ const MenuList = ({ subMenuData, setIsOpen, isOpen, level, isClose, setIsClose }
                 onClick={() => handleClick(item.title)}
               >
                 {item.svgIcon && (
-                  <SVG className={`${sidebarIconType}-icon`} iconId={item.svgIcon === "home" ? item.svgIcon : `${sidebarIconType}-${item.svgIcon}`} />
+                   <span
+                   style={{
+                     height: "20px",
+                     width: "20px",
+                     marginRight: "8px",
+                   }}
+                 >
+                   <img
+                     src={item.svgIcon}
+                     style={{
+                       height: "100%",
+                       width: "100%",
+                     }}
+                     alt=""
+                   />
+                 </span>
+                  // <SVG className={`${sidebarIconType}-icon`} iconId={item.svgIcon === "home" ? item.svgIcon : `${sidebarIconType}-${item.svgIcon}`} />
                 )}
                 {t(item.title)}
 
