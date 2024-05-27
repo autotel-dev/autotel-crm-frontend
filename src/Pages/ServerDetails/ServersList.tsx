@@ -5,6 +5,7 @@ import DataTable from "react-data-table-component";
 import { useEffect, useState } from "react";
 import { API_BASE_URL, create, getAll } from "../../Api";
 import { useDispatch, useSelector } from "react-redux";
+import Skeleton from "../Skeleton/Skeleton";
 import "./tableStyle.css";
 import deleteAlert from "../Alerts/DeleteAlert";
 import {
@@ -298,7 +299,14 @@ const ServersList = () => {
               <CardBody>
                 <div className="table-responsive product-table">
                   {loading ? (
-                    <Loader />
+                    // <Loader />
+                    <>
+                    <Skeleton height="100px" width="100%" borderRadius="10px" />
+                    <Skeleton height="80px" width="100%" marginTop="10px" marginBottom="10" borderRadius="10px" />
+                    <Skeleton height="80px" width="100%" marginTop="10px" marginBottom="10" borderRadius="10px" />
+                    <Skeleton height="80px" width="100%" marginTop="10px" marginBottom="10" borderRadius="10px" />
+                    <Skeleton height="80px" width="100%" marginTop="10px" marginBottom="10" borderRadius="10px" />
+                  </>
                   ) : servers?.length > 0 && loading === false ? (
                     <div>
                       <table>

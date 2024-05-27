@@ -16,6 +16,7 @@ import { P } from "../../AbstractElements";
 import { Select } from "antd";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import Skeleton from "../Skeleton/Skeleton";
 import TestEmailModal from "./modals/TestEmailModal";
 import { create, getAll, patch, update } from "../../Api";
 import Swal from "sweetalert2";
@@ -134,7 +135,6 @@ const EmailGateway = () => {
           });
           setLoading(false);
           dispatch(setEmailGatewayData(null));
-
         }
         if (parentData.success) {
           dispatch(setEmailGatewayData(parentData.data.emailGateway));
@@ -283,7 +283,7 @@ const EmailGateway = () => {
                   }
                   if (!parentData.success) {
                     setEmailGatewayCreationloading(false);
-                    dispatch(setEmailGatewayData(null));
+                    // dispatch(setEmailGatewayData(null));
                   }
                 }
               });
@@ -312,16 +312,113 @@ const EmailGateway = () => {
                 <CardBody>
                   {loading ? (
                     <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "center",
-                        height: "80vh",
-                        backgroundColor: "white",
-                        alignItems: "center",
-                      }}
+                    // style={{
+                    //   display: "flex",
+                    //   justifyContent: "center",
+                    //   height: "80vh",
+                    //   backgroundColor: "white",
+                    //   alignItems: "center",
+                    // }}
                     >
-                      <div style={{ textAlign: "center" }}>
-                        <Loader />
+                      <div
+                        style={{
+                          textAlign: "center",
+                          display: "flex",
+                          height: "75vh",
+                          // alignItems: "center",
+                        }}
+                      >
+                        {/* <Loader /> */}
+
+                        <div
+                          style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            width:"50%"
+                          }}
+                        >
+                          <Skeleton
+                            height="40px"
+                            width="100%"
+                            marginTop="10px"
+                            marginBottom="20px"
+                            borderRadius="10px"
+                            // marginRight="20px"
+                          />
+                          <Skeleton
+                            height="40px"
+                            width="100%"
+                            marginTop="10px"
+                            marginBottom="20px"
+                            borderRadius="10px"
+                            // marginRight="20px"
+                          />
+                          <Skeleton
+                            height="40px"
+                            width="100%"
+                            marginTop="10px"
+                            marginBottom="20px"
+                            borderRadius="10px"
+                            // marginRight="20px"
+                          />
+                        </div>
+                        <div
+                          style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            width:"50%",
+                            marginLeft:"20px"
+                          }}
+                        >
+                          <Skeleton
+                            height="40px"
+                            width="100%"
+                            marginTop="10px"
+                            marginBottom="20px"
+                            borderRadius="10px"
+                            // marginRight="20px"
+                          />
+                          <Skeleton
+                            height="40px"
+                            width="100%"
+                            marginTop="10px"
+                            marginBottom="20px"
+                            borderRadius="10px"
+                            // marginRight="20px"
+                          />
+                          <Skeleton
+                            height="40px"
+                            width="100%"
+                            marginTop="10px"
+                            marginBottom="20px"
+                            borderRadius="10px"
+                            // marginRight="20px"
+                          />
+                           <Skeleton
+                            height="40px"
+                            width="100%"
+                            marginTop="10px"
+                            marginBottom="20px"
+                            borderRadius="10px"
+                            // marginRight="20px"
+                          />
+                          <Skeleton
+                            height="40px"
+                            width="100%"
+                            marginTop="10px"
+                            marginBottom="20px"
+                            borderRadius="10px"
+                            // marginRight="20px"
+                          />
+                          <Skeleton
+                            height="40px"
+                            width="100%"
+                            marginTop="10px"
+                            marginBottom="20px"
+                            borderRadius="10px"
+                            // marginRight="20px"
+                          />
+                        </div>
                       </div>
                     </div>
                   ) : (
@@ -339,9 +436,7 @@ const EmailGateway = () => {
                               <Label className="switch mb-0">
                                 <Input
                                   type="checkbox"
-                                  defaultChecked={
-                                    emailGatewayData.isActive
-                                  }
+                                  defaultChecked={emailGatewayData.isActive}
                                   // value={
                                   //   emailGatewayData.isActive == true
                                   //     ? "on"
@@ -369,7 +464,7 @@ const EmailGateway = () => {
                                               if (
                                                 !parentData.success &&
                                                 parentData.message ===
-                                                "ERROR_INTERNET_DISCONNECTED"
+                                                  "ERROR_INTERNET_DISCONNECTED"
                                               ) {
                                                 dispatch(setIsConnected(true));
                                               }
@@ -391,8 +486,6 @@ const EmailGateway = () => {
                                                     parentData.data.emailGateway
                                                   )
                                                 );
-
-
                                               }
                                             }
                                           });
@@ -406,8 +499,9 @@ const EmailGateway = () => {
                                   }}
                                 />
                                 <span
-                                  className={`switch-state ${isActive ? "bg-primary" : "bg-secondary"
-                                    }`}
+                                  className={`switch-state ${
+                                    isActive ? "bg-primary" : "bg-secondary"
+                                  }`}
                                 />
                               </Label>
                             </div>
@@ -713,7 +807,7 @@ const EmailGateway = () => {
                           </Button>
                         )}
                         {emailGatewayData == null ||
-                          (emailGatewayData !== null && isActive) ? (
+                        (emailGatewayData !== null && isActive) ? (
                           <Button
                             color="primary"
                             type="submit"
@@ -731,15 +825,14 @@ const EmailGateway = () => {
                             {emailGatewayCreationloading
                               ? "Loading..."
                               : emailGatewayData == null
-                                ? "Create"
-                                : isEdit
-                                  ? "Save"
-                                  : "Edit"}
+                              ? "Create"
+                              : isEdit
+                              ? "Save"
+                              : "Edit"}
                           </Button>
                         ) : (
                           <></>
                         )}
-
                       </CardFooter>
                     </Row>
                   )}

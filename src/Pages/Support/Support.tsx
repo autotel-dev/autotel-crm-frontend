@@ -6,6 +6,8 @@ import SupportList from "./SupportList";
 import SupportTable from "./SupportTable";
 import { useEffect, useState } from "react";
 import { getAll } from "../../Api";
+import Skeleton from "../Skeleton/Skeleton";
+
 import {
   setBugReports,
   setIsConnected,
@@ -86,7 +88,7 @@ const Support = () => {
             });
             // console.log(mappedArray);
             dispatch(setSupportStatistics(mappedArray));
-            setStatisticsLoading(false);
+            // setStatisticsLoading(false);
           }
         }
       });
@@ -212,18 +214,41 @@ const Support = () => {
                     </CardBody>
                   ) : (
                     <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "center",
-                        height: "80vh",
-                        backgroundColor: "white",
-                        alignItems: "center",
-                      }}
+                      // style={{
+                      //   display: "flex",
+                      //   justifyContent: "center",
+                      //   height: "80vh",
+                      //   backgroundColor: "white",
+                      //   alignItems: "center",
+                      // }}
                     >
                       <div style={{ textAlign: "center" }}>
-                        <Loader />
-                      </div>
-                    </div>
+                        {/* <Loader /> */}
+                        
+              <div style={{
+                display: "flex",
+                justifyContent: "center",
+                padding:"10px 0px",
+                
+                
+              }}>
+                
+                  <Skeleton height="140px" width="23%" borderRadius="10px"  />
+                  <Skeleton height="140px" width="23%" borderRadius="10px" marginLeft="10px" />
+                  <Skeleton height="140px" width="23%" borderRadius="10px"  marginLeft="10px" />
+                  <Skeleton height="140px" width="23%" borderRadius="10px"  marginLeft="10px" />
+                  </div>
+                  <div style={{margin:"10px 10px",}}>
+                  <Skeleton height="100px" width="100%" marginTop="10px" marginBottom="10" borderRadius="10px" />
+                  <Skeleton height="40px" width="100%" marginTop="10px" marginBottom="10" borderRadius="10px" />
+                  <Skeleton height="40px" width="100%" marginTop="10px" marginBottom="10" borderRadius="10px" />
+                  <Skeleton height="40px" width="100%" marginTop="10px" marginBottom="10" borderRadius="10px" />
+                  <Skeleton height="40px" width="100%" marginTop="10px" marginBottom="10" borderRadius="10px" />
+                  </div>
+                
+                      
+              </div>
+              </div>
                   )}
                 </Card>
               </Col>

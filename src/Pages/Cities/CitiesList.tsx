@@ -7,6 +7,7 @@ import { Label } from "reactstrap";
 import UpdateCity from "./UpdateCity";
 import { getAll } from "../../Api";
 import { useDispatch, useSelector } from "react-redux";
+import Skeleton from "../Skeleton/Skeleton";
 import "../../CssConstaints/Style.css";
 import {
   setCities,
@@ -280,7 +281,15 @@ const CitiesList = () => {
                    /> */}
 
                   {loading ? (
-                    <Loader />
+                    // <Loader />
+                    <>
+                    <Skeleton height="100px" width="100%" borderRadius="10px" />
+                    <Skeleton height="40px" width="100%" marginTop="10px" marginBottom="10" borderRadius="10px" />
+                    <Skeleton height="40px" width="100%" marginTop="10px" marginBottom="10" borderRadius="10px" />
+                    <Skeleton height="40px" width="100%" marginTop="10px" marginBottom="10" borderRadius="10px" />
+                    <Skeleton height="40px" width="100%" marginTop="10px" marginBottom="10" borderRadius="10px" />
+                  </>
+                    
                   ) : cities?.length > 0 && loading === false ? (
                     <div>
                       <table>
