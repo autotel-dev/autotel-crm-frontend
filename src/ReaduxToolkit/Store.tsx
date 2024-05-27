@@ -36,6 +36,7 @@ import EmailGatewaySlice from "./Reducer/EmailGatewaySlice";
 import WhatsAppGatewaySlice from "./Reducer/WhatsAppGatewaySlice";
 import EmailTemplateSlice from "./Reducer/EmailTemplateSlice";
 import WhatsAppTemplateSlice from "./Reducer/WhatsAppTemplateSlice";
+import GeofenceSlice from "./Reducer/GeofenceSlice";
 
 const Store = configureStore({
   reducer: {
@@ -75,7 +76,8 @@ const Store = configureStore({
     emailGateway: EmailGatewaySlice,
     whatsAppGateway: WhatsAppGatewaySlice,
     emailTemplate: EmailTemplateSlice,
-    whatsAppTemplate: WhatsAppTemplateSlice
+    whatsAppTemplate: WhatsAppTemplateSlice,
+    geofence: GeofenceSlice
   },
 });
 
