@@ -24,6 +24,7 @@ import redSatellite from "../../../../../../assets/satellite-green.png";
 import { P } from "../../../../AbstractElements";
 import { Select } from "antd";
 import { setGeofences, setType } from "../../../../ReaduxToolkit/Reducer/GeofenceSlice";
+import AddGroupModal from "../modals/AddGroupModal";
 
 interface PropTypes {
   statusDevices: String;
@@ -281,9 +282,9 @@ const GeofencesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
   const [isNewGroup, setIsNewGroup] = useState(false);
 
   const typeList = [
-    { label: "Circle", value: "CIRCLE" },
-    { label: "Rectangle", value: "RECTANGLE" },
-    { label: "Polygon", value: "POLYGON" }
+    { label: "Circle", value: "circle" },
+    { label: "Rectangle", value: "rectangle" },
+    { label: "Polygon", value: "polygon" }
   ]
 
   const groupList = [
@@ -297,14 +298,14 @@ const GeofencesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
     { label: "DHA", value: "DHA" },
     { label: "Korangi", value: "KORANGI" },
     { label: "Bahadurabad", value: "BAHADURABAD" }
-  ]
+  ];
+  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
 
   const { geofences, type, circle, rectangle, polygon } = useSelector((state: any) => state.geofence);
 
 
   const [formData, setFormData] = useState({
     title: "",
-    city: "",
   });
 
 
@@ -314,23 +315,26 @@ const GeofencesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
     setFormData({ ...formData, [name]: value });
   };
 
+  const [group, setGroup] = useState("");
+  const [geofenceType, setGeofenceType] = useState("");
+
   const createGeofence = () => {
     if (
       formData.title !== "" &&
-      formData.city !== "" &&
       type !== ""
 
     ) {
 
       // setFormData({ ...formData, type: type, bounds: type == "CIRCLE" ? circle : type == "RECTANGLE" ? rectangle : polygon });
-      const tempList = [...geofences, { ...formData, type: type, bounds: type == "CIRCLE" ? circle : type == "RECTANGLE" ? rectangle : polygon }];
+      const tempList = [...geofences, { ...formData, group: group, type: geofenceType, bounds: geofenceType == "circle" ? circle : geofenceType == "rectangle" ? rectangle : geofenceType == "polygon" && polygon }];
       dispatch(setGeofences([...tempList]))
       dispatch(setType(""))
-      console.log(geofences);
+
+      console.log(tempList);
       setIsNewGeofence(false);
       setFormData({
         title: "",
-        city: "",
+
       })
     } else {
       // ShowError();
@@ -501,6 +505,7 @@ const GeofencesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
           <Select
             showSearch
             style={{ width: "100%", height: 36, marginBottom: "15px", }}
+            value={type == null ? "Select Type" : type}
             placeholder="Select type"
             optionFilterProp="children"
             filterOption={(input: any, option: any) =>
@@ -514,6 +519,7 @@ const GeofencesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
             onChange={(e) => {
               // console.log(e);
               dispatch(setType(e))
+              setGeofenceType(e);
               // dispatch(setCountryId(e));
             }}
             options={typeList}
@@ -543,7 +549,7 @@ const GeofencesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
             }
             onChange={(e) => {
               // console.log(e);
-              dispatch(setType(e))
+              setGroup(e);
               // dispatch(setCountryId(e));
             }}
             options={groupList}
@@ -601,107 +607,15 @@ const GeofencesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
       }
 
 
-      {isNewGroup && <form>
+      {isNewGroup &&
 
-        <div style={
-          {
-            // paddingBottom: "-10px",
-            margin: "0px 10px",
-          }
-        }>
-          <P>Title</P>
-          <input
-            className="form-control"
-            type="text"
-            placeholder="Enter Title"
-            name="title"
-            onChange={onChangeHandler}
-          // {...register("name", { required: true })}
-          />
-          <span style={{ color: "red" }}>
-            {/* {errors.name && "Country name is required"} */}
-          </span>
+        <AddGroupModal
+          isVisible={isNewGroup}
+          setIsVisible={setIsNewGroup}
 
 
-        </div>
-        <div style={
-          {
-            // marginBottom: "10px",
-            margin: "0px 10px",
-          }
-        }>
-          <P>Ungrouped Geofences</P>
-          <Select
-            showSearch
-            style={{ width: "100%", height: 36, marginBottom: "15px", }}
-            placeholder="Select type"
-            optionFilterProp="children"
-            filterOption={(input: any, option: any) =>
-              (option?.label ?? "").includes(input)
-            }
-            filterSort={(optionA: any, optionB: any) =>
-              (optionA?.label ?? "")
-                .toLowerCase()
-                .localeCompare((optionB?.label ?? "").toLowerCase())
-            }
-            onChange={(e) => {
-              // console.log(e);
-              dispatch(setType(e))
-              // dispatch(setCountryId(e));
-            }}
-            options={geofencesList}
-          />
-
-
-        </div>
-
-
-        <div style={{ display: "flex" }}>
-          <button
-            onClick={(e: any) => {
-              e.preventDefault(); // Add this line
-              e.stopPropagation();
-              setIsNewGroup(false)
-            }}
-            style={{
-              width: "50%",
-              padding: "7px 10px",
-              borderRadius: "8px",
-              backgroundColor: "green",
-              color: "white",
-              margin: "8px",
-              border: "0px",
-              outline: "none",
-              textAlign: "center",
-            }}
-          >
-            Cancel
-          </button>
-          <button
-            onClick={(e: any) => {
-              e.preventDefault(); // Add this line
-              e.stopPropagation();
-              setIsNewGroup(false)
-            }}
-            style={{
-              width: "50%",
-              padding: "7px 10px",
-              borderRadius: "8px",
-              backgroundColor: "green",
-              color: "white",
-              margin: "8px",
-              border: "0px",
-              outline: "none",
-              textAlign: "center",
-            }}
-          >
-            Add
-          </button>
-
-        </div>
-      </form>
-
-
+        // setValue={setCityName}
+        />
 
       }
 

@@ -1,25 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-    circle: {
-        center: { lat: 24.8607, lng: 67.0011 },
-        radius: 1000, // Initial radius in meters
-    },
-    rectangle: {
-        bounds: {
-            north: 24.8707,
-            south: 24.8507,
-            east: 67.0211,
-            west: 67.0011,
-        },
-    },
-    polygon: [
-        { lat: 24.8607, lng: 67.0011 },
-        { lat: 24.8617, lng: 67.0021 },
-        { lat: 24.8627, lng: 67.0031 },
-        { lat: 24.8637, lng: 67.0041 },
-    ],
-    type: "",
+    circle: null,
+    rectangle: null,
+    polygon: [],
+    type: null,
     geofences: [],
     loading: false,
     error: null,
@@ -47,7 +32,7 @@ const GeofenceSlice = createSlice({
             state.rectangle = action.payload;
         },
         setPolygon: (state, action) => {
-            state.circle = action.payload;
+            state.polygon = action.payload;
         },
         setType: (state, action) => {
             state.type = action.payload
