@@ -5,6 +5,7 @@ import DataTable from "react-data-table-component";
 import { useEffect, useState } from "react";
 import { getAll } from "../../Api";
 import { useDispatch, useSelector } from "react-redux";
+import Skeleton from "../Skeleton/Skeleton";
 import "./tableStyle.css";
 import deleteAlert from "../Alerts/DeleteAlert";
 
@@ -118,7 +119,14 @@ const EmailTemplatesList = () => {
             <CardBody>
               <div className="table-responsive product-table">
                 {loading ? (
-                  <Loader />
+                  // <Loader />
+                  <>
+                  <Skeleton height="100px" width="100%" borderRadius="10px" />
+                  <Skeleton height="40px" width="100%" marginTop="10px" marginBottom="10" borderRadius="10px" />
+                  <Skeleton height="40px" width="100%" marginTop="10px" marginBottom="10" borderRadius="10px" />
+                  <Skeleton height="40px" width="100%" marginTop="10px" marginBottom="10" borderRadius="10px" />
+                  <Skeleton height="40px" width="100%" marginTop="10px" marginBottom="10" borderRadius="10px" />
+                </>
                 ) : emailTemplates?.length > 0 && loading === false ? (
                   <div>
                     <table>

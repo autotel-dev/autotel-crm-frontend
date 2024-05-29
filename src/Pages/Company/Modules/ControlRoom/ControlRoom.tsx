@@ -8,6 +8,8 @@ import {
   TabContent,
   TabPane,
 } from "reactstrap";
+import Skeleton from "../../../Skeleton/Skeleton";
+
 import Breadcrumbs from "../../../../CommonElements/Breadcrumbs/Breadcrumbs";
 import LiveAlerts from "./Events/LiveAlerts/LiveAlerts";
 import AssignedAlerts from "./Events/AssignedAlerts/AssignedAlerts";
@@ -16,6 +18,7 @@ import { useEffect, useState } from "react";
 import { getAll } from "../../../../Api";
 import Loader from "../../../Loader/Loader";
 import { useDispatch, useSelector } from "react-redux";
+
 import {
   setLiveAlerts,
   setAssignedAlerts,
@@ -580,17 +583,180 @@ const ControlRoom = () => {
             </Row>
           ) : (
             <div
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                height: "100vh",
-                backgroundColor: "white",
-                alignItems: "center",
-              }}
+            // style={{
+            //   display: "flex",
+            //   justifyContent: "center",
+            //   height: "80vh",
+            //   backgroundColor: "white",
+            //   alignItems: "center",
+            // }}
             >
-              <div style={{ textAlign: "center" }}>
-                <Loader />
+              <div
+                style={{
+                  textAlign: "center",
+                  // display: "flex",
+                  height: "75vh",
+                  // alignItems: "center",
+                }}
+              >
+                {/* <Loader /> */}
+
+                <div
+                  style={{
+                    display: "flex",
+                    // flexDirection: "column",
+                    width:"100%"
+                  }}
+                >
+                  <Skeleton
+                    height="140px"
+                    width="100%"
+                    marginTop="30px"
+                    marginBottom="20px"
+                    borderRadius="10px"
+                    marginRight="20px"
+                  />
+                  <Skeleton
+                    height="140px"
+                    width="100%"
+                    marginTop="30px"
+                    marginBottom="20px"
+                    borderRadius="10px"
+                    marginRight="20px"
+                  />
+                  <Skeleton
+                    height="140px"
+                    width="100%"
+                    marginTop="30px"
+                    marginBottom="20px"
+                    borderRadius="10px"
+                    marginRight="20px"
+                  />
+                  <Skeleton
+                    height="140px"
+                    width="100%"
+                    marginTop="30px"
+                    marginBottom="20px"
+                    borderRadius="10px"
+                    marginRight="20px"
+                  />
+                </div>
+                <div
+                  style={{
+                    display: "flex",
+                    // flexDirection: "column",
+                    width:"100%",
+                    // marginLeft:"20px",
+                    marginTop:"20px",
+                  }}
+                >
+                  <div
+                   style={{
+                    // display: "flex",
+                    // flexDirection: "column",
+                    width:"50%",
+                    // marginLeft:"20px"
+                    paddingRight:"10px",
+                  }}
+                  >
+                  <Skeleton
+                    height="100px"
+                    width="100%"
+                    marginTop="10px"
+                    marginBottom="20px"
+                    borderRadius="10px"
+                    // marginRight="20px"
+                  />
+                  <Skeleton
+                    height="40px"
+                    width="100%"
+                    marginTop="10px"
+                    marginBottom="20px"
+                    borderRadius="10px"
+                    // marginRight="20px"
+                  />
+                  <Skeleton
+                    height="40px"
+                    width="100%"
+                    marginTop="10px"
+                    marginBottom="20px"
+                    borderRadius="10px"
+                    // marginRight="20px"
+                  />
+                   <Skeleton
+                    height="40px"
+                    width="100%"
+                    marginTop="10px"
+                    marginBottom="20px"
+                    borderRadius="10px"
+                    // marginRight="20px"
+                  />
+                  <Skeleton
+                    height="40px"
+                    width="100%"
+                    marginTop="10px"
+                    marginBottom="20px"
+                    borderRadius="10px"
+                    // marginRight="20px"
+                  />
+
+
+                  </div>
+                  <div
+                   style={{
+                    // display: "flex",
+                    // flexDirection: "column",
+                    width:"50%",
+                    marginRight:"20px",
+                    paddingLeft:"10px"
+                  }}
+                  >
+                  <Skeleton
+                    height="100px"
+                    width="100%"
+                    marginTop="10px"
+                    marginBottom="20px"
+                    borderRadius="10px"
+                    // marginRight="20px"
+                  />
+                  <Skeleton
+                    height="40px"
+                    width="100%"
+                    marginTop="10px"
+                    marginBottom="20px"
+                    borderRadius="10px"
+                    // marginRight="20px"
+                  />
+                  <Skeleton
+                    height="40px"
+                    width="100%"
+                    marginTop="10px"
+                    marginBottom="20px"
+                    borderRadius="10px"
+                    // marginRight="20px"
+                  />
+                   <Skeleton
+                    height="40px"
+                    width="100%"
+                    marginTop="10px"
+                    marginBottom="20px"
+                    borderRadius="10px"
+                    // marginRight="20px"
+                  />
+                  <Skeleton
+                    height="40px"
+                    width="100%"
+                    marginTop="10px"
+                    marginBottom="20px"
+                    borderRadius="10px"
+                    // marginRight="20px"
+                  />
+
+
+                  </div>
+                  
               </div>
+            </div>
             </div>
           )}
         </Container>

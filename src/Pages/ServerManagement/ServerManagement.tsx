@@ -7,6 +7,7 @@ import {
 import NewProduct from "./NewProduct/NewProduct";
 import Breadcrumbs from "../../CommonElements/Breadcrumbs/Breadcrumbs";
 import ServerHealthStatistics from "./ServerHealthStatistics/ServerHealthStatistics";
+import Skeleton from "../Skeleton/Skeleton";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getAll } from "../../Api";
@@ -77,15 +78,35 @@ const ServerManagement = () => {
           {loading ? (
             <div
               style={{
-                display: "flex",
-                justifyContent: "center",
-                height: "80vh",
-                backgroundColor: "white",
-                alignItems: "center",
+                // display: "flex",
+                // justifyContent: "center",
+                // height: "80vh",
+                // backgroundColor: "white",
+                // alignItems: "center",
+                // margin:"20px 0px",
               }}
             >
-              <div style={{ textAlign: "center" }}>
-                <Loader />
+              <div
+               style={{ textAlign: "center",paddingTop:"80px", }}
+               >
+                {/* <Loader /> */}
+                <>
+                <div style={{
+                display: "flex",
+                justifyContent: "center",
+                paddingBottom:"35px",
+                
+              }}>
+                  <Skeleton height="140px" width="32%" borderRadius="10px"  />
+                  <Skeleton height="140px" width="32%" borderRadius="10px" marginLeft="20px" />
+                  <Skeleton height="140px" width="32%" borderRadius="10px"  marginLeft="20px" />
+                  </div>
+                  <Skeleton height="100px" width="100%" marginTop="10px" marginBottom="10" borderRadius="10px" />
+                  <Skeleton height="40px" width="100%" marginTop="10px" marginBottom="10" borderRadius="10px" />
+                  <Skeleton height="40px" width="100%" marginTop="10px" marginBottom="10" borderRadius="10px" />
+                  <Skeleton height="40px" width="100%" marginTop="10px" marginBottom="10" borderRadius="10px" />
+                  <Skeleton height="40px" width="100%" marginTop="10px" marginBottom="10" borderRadius="10px" />
+                </>
               </div>
             </div>
           ) : (

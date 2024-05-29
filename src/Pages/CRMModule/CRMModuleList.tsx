@@ -3,6 +3,7 @@ import CommonHeader from "../../Common/CommonHeader";
 import { useEffect, useState } from "react";
 import { getAll } from "../../Api";
 import { useDispatch, useSelector } from "react-redux";
+import Skeleton from "../Skeleton/Skeleton";
 import "./tableStyle.css";
 import "../../CssConstaints/Style.css";
 import deleteAlert from "../Alerts/DeleteAlert";
@@ -261,7 +262,14 @@ const CRMModuleList = () => {
                     //   Loading....
                     // </div>
 
-                    <Loader />
+                    // <Loader />
+                    <>
+                    <Skeleton height="100px" width="100%" borderRadius="10px" />
+                    <Skeleton height="40px" width="100%" marginTop="10px" marginBottom="10" borderRadius="10px" />
+                    <Skeleton height="40px" width="100%" marginTop="10px" marginBottom="10" borderRadius="10px" />
+                    <Skeleton height="40px" width="100%" marginTop="10px" marginBottom="10" borderRadius="10px" />
+                    <Skeleton height="40px" width="100%" marginTop="10px" marginBottom="10" borderRadius="10px" />
+                  </>
                   ) : // <Loader />
                   crmModules?.length > 0 && loading === false ? (
                     <div>
