@@ -8,6 +8,7 @@ import "./tableStyle.css";
 import deleteAlert from "../Alerts/DeleteAlert";
 import UpdateProvince from "./UpdateProvince";
 import "../../CssConstaints/Style.css";
+import Skeleton from "../Skeleton/Skeleton";
 import {
   setCountries,
   setId,
@@ -224,7 +225,14 @@ const ProvinceList = () => {
                     // >
                     //   Loading....
                     // </div>
-                    <Loader />
+                    // <Loader />
+                    <>
+                    <Skeleton height="100px" width="100%" borderRadius="10px" />
+                    <Skeleton height="40px" width="100%" marginTop="10px" marginBottom="10" borderRadius="10px" />
+                    <Skeleton height="40px" width="100%" marginTop="10px" marginBottom="10" borderRadius="10px" />
+                    <Skeleton height="40px" width="100%" marginTop="10px" marginBottom="10" borderRadius="10px" />
+                    <Skeleton height="40px" width="100%" marginTop="10px" marginBottom="10" borderRadius="10px" />
+                  </>
                   ) : // <Loader />
                   provinces?.length > 0 && loading === false ? (
                     <div>

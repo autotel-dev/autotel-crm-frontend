@@ -249,7 +249,7 @@ const CountriesList = () => {
                 {loading ? (
                   // <Loader />
                   <>
-                    <Skeleton height="100px" width="100%" marginBottom="10" borderRadius="10px" />
+                    <Skeleton height="100px" width="100%" borderRadius="10px" />
                     <Skeleton height="40px" width="100%" marginTop="10px" marginBottom="10" borderRadius="10px" />
                     <Skeleton height="40px" width="100%" marginTop="10px" marginBottom="10" borderRadius="10px" />
                     <Skeleton height="40px" width="100%" marginTop="10px" marginBottom="10" borderRadius="10px" />

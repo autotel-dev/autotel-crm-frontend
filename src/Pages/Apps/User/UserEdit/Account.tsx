@@ -9,6 +9,7 @@ import ServerPermissions from "./ServerPermissions.tsx/ServerPermissions";
 import { useEffect, useRef, useState } from "react";
 import { IMAGE_BASE_URL, getAll, getImage } from "../../../../Api";
 import { useDispatch, useSelector } from "react-redux";
+import Skeleton from "../../../Skeleton/Skeleton";
 import {
   setServerPermissions,
   setUserData,
@@ -267,16 +268,147 @@ const Account = () => {
                 </Row>
               ) : (
                 <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    height: "80vh",
-                    backgroundColor: "white",
-                    alignItems: "center",
-                  }}
+                // style={{
+                //   display: "flex",
+                //   justifyContent: "center",
+                //   height: "80vh",
+                //   backgroundColor: "white",
+                //   alignItems: "center",
+                // }}
                 >
-                  <div style={{ textAlign: "center" }}>
-                    <Loader />
+                  <div
+                    style={{
+                      textAlign: "center",
+                      display: "flex",
+                      height: "75vh",
+                      // alignItems: "center",
+                    }}
+                  >
+                    {/* <Loader /> */}
+
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        width: "35%",
+                        backgroundColor: "white",
+                        marginRight: "20px",
+                        borderRadius: "10px",
+                        padding: "0px 20px",
+                      }}
+                    >
+                      <Skeleton
+                        height="130px"
+                        width="100%"
+                        marginTop="30px"
+                        marginBottom="20px"
+                        borderRadius="10px"
+                        marginRight="20px"
+                      />
+                      <Skeleton
+                        height="30px"
+                        width="50%"
+                        marginTop="10px"
+                        marginBottom="10px"
+                        borderRadius="10px"
+                        marginRight="20px"
+                      />
+                      <Skeleton
+                        height="40px"
+                        width="50%"
+                        marginTop="10px"
+                        marginBottom="10px"
+                        borderRadius="10px"
+                        marginRight="20px"
+                      />
+                      <Skeleton
+                        height="30px"
+                        width="50%"
+                        marginTop="10px"
+                        marginBottom="10px"
+                        borderRadius="10px"
+                        marginRight="20px"
+                      />
+                      <Skeleton
+                        height="40px"
+                        width="50%"
+                        marginTop="10px"
+                        marginBottom="10px"
+                        borderRadius="10px"
+                        marginRight="20px"
+                      />
+                      <Skeleton
+                        height="30px"
+                        width="50%"
+                        marginTop="10px"
+                        marginBottom="10px"
+                        borderRadius="10px"
+                        marginRight="20px"
+                      />
+                      <Skeleton
+                        height="40px"
+                        width="50%"
+                        marginTop="10px"
+                        marginBottom="10px"
+                        borderRadius="10px"
+                        marginRight="20px"
+                      />
+                    </div>
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        width: "65%",
+                        backgroundColor: "white",
+                        borderRadius: "10px",
+                        height: "55vh",
+                        padding: "20px 20px",
+                      }}
+                    >
+                      <Skeleton
+                        height="75px"
+                        width="100%"
+                        marginBottom="20px"
+                        borderRadius="10px"
+                        marginRight="20px"
+                      />
+                      <Skeleton
+                        height="30px"
+                        width="100%"
+                        marginBottom="20px"
+                        borderRadius="10px"
+                        marginRight="20px"
+                      />
+                      <Skeleton
+                        height="40px"
+                        width="100%"
+                        marginBottom="20px"
+                        borderRadius="10px"
+                        marginRight="20px"
+                      />
+                      <Skeleton
+                        height="30px"
+                        width="100%"
+                        marginBottom="20px"
+                        borderRadius="10px"
+                        marginRight="20px"
+                      />
+                      <Skeleton
+                        height="40px"
+                        width="100%"
+                        marginBottom="20px"
+                        borderRadius="10px"
+                        marginRight="20px"
+                      />
+                       <Skeleton
+                        height="40px"
+                        width="10%"
+                        marginBottom="20px"
+                        borderRadius="10px"
+                        marginLeft="90%"
+                        
+                      />
+                    </div>
                   </div>
                 </div>
               )}

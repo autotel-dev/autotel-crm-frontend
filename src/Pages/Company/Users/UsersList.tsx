@@ -31,6 +31,7 @@ import { formatUnderscoredString, getUserRole } from "../../../Api/globals";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import { H4 } from "../../../AbstractElements";
+import Skeleton from "../../Skeleton/Skeleton";
 import "../../../CssConstaints/Style.css";
 
 
@@ -298,7 +299,14 @@ const UsersList = () => {
             <CardBody>
               <div className="table-responsive product-table">
                 {loading ? (
-                  <Loader />
+                  // <Loader />
+                  <>
+                  <Skeleton height="100px" width="100%" borderRadius="10px" />
+                  <Skeleton height="40px" width="100%" marginTop="10px" marginBottom="10" borderRadius="10px" />
+                  <Skeleton height="40px" width="100%" marginTop="10px" marginBottom="10" borderRadius="10px" />
+                  <Skeleton height="40px" width="100%" marginTop="10px" marginBottom="10" borderRadius="10px" />
+                  <Skeleton height="40px" width="100%" marginTop="10px" marginBottom="10" borderRadius="10px" />
+                </>
                 ) : operators?.length > 0 && loading === false ? (
                   <div>
                     <table>

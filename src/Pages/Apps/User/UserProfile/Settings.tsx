@@ -5,6 +5,7 @@ import { UserEdits, Users } from "../../../../utils/Constant";
 import { useEffect, useState } from "react";
 import { getAll, getImage } from "../../../../Api";
 import { useDispatch, useSelector } from "react-redux";
+import Skeleton from "../../../Skeleton/Skeleton";
 import {
   setServerPermissions,
   setUserData,
@@ -135,16 +136,181 @@ const Settings = () => {
                 )
               ) : (
                 <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    height: "80vh",
-                    backgroundColor: "white",
-                    alignItems: "center",
-                  }}
+                // style={{
+                //   display: "flex",
+                //   justifyContent: "center",
+                //   height: "80vh",
+                //   backgroundColor: "white",
+                //   alignItems: "center",
+                // }}
                 >
-                  <div style={{ textAlign: "center" }}>
-                    <Loader />
+                  <div
+                    style={{
+                      textAlign: "center",
+                      height: "75vh",
+                      // alignItems: "center",
+                    }}
+                  >
+                    {/* <Loader /> */}
+
+                    <div
+                      style={{
+                        display: "flex",
+                        // flexDirection: "column",
+                        width: "100%",
+                        backgroundColor: "white",
+                        marginTop: "40px",
+                        padding: "20px 20px",
+                      }}
+                    >
+                    
+                      <Skeleton
+                        height="40px"
+                        width="100%"
+                        marginTop="10px"
+                        marginBottom="10px"
+                        marginRight="20px"
+                        borderRadius="5px"
+                      />
+                       <Skeleton
+                        height="40px"
+                        width="100%"
+                        marginTop="10px"
+                        marginBottom="10px"
+                        marginRight="20px"
+                        borderRadius="5px"
+                      />
+                      
+                      <Skeleton
+                        height="40px"
+                        width="100%"
+                        marginTop="10px"
+                        marginBottom="10px"
+                        marginRight="20px"
+                        borderRadius="5px"
+                      />
+                      <Skeleton
+                        height="40px"
+                        width="100%"
+                        marginTop="10px"
+                        marginBottom="10px"
+                        marginRight="20px"
+                        borderRadius="5px"
+                      />
+                     
+                    </div>
+                    <div style={{backgroundColor:"white"}}>
+                    <Skeleton
+                        height="30px"
+                        width="20%"
+                        marginLeft="20px"
+                        marginRight="20px"
+                        borderRadius="5px"
+                      />
+                    </div>
+                  
+                    <div
+                      style={{
+                        display: "flex",
+                        // flexDirection: "column",
+                        width: "100%",
+                        backgroundColor: "white",
+                        padding: "20px 20px",
+                      }}
+                    >
+                    
+                      <Skeleton
+                        height="40px"
+                        width="50%"
+                        marginTop="10px"
+                        marginBottom="10px"
+                        marginRight="20px"
+                        borderRadius="5px"
+                      />
+                       <Skeleton
+                        height="40px"
+                        width="50%"
+                        marginTop="10px"
+                        marginBottom="10px"
+                        marginRight="20px"
+                        borderRadius="5px"
+                      />
+                     
+                     
+                    </div>
+                    <div
+                      style={{
+                        display: "flex",
+                        // flexDirection: "column",
+                        width: "100%",
+                        backgroundColor: "white",
+                        padding: "20px 20px",
+                      }}
+                    >
+                    
+                      <Skeleton
+                        height="50px"
+                        width="50%"
+                        marginTop="10px"
+                        marginBottom="10px"
+                        marginRight="20px"
+                        borderRadius="5px"
+                      />
+                       <Skeleton
+                        height="50px"
+                        width="50%"
+                        marginTop="10px"
+                        marginBottom="10px"
+                        marginRight="20px"
+                        borderRadius="5px"
+                      />
+                      <Skeleton
+                        height="50px"
+                        width="50%"
+                        marginTop="10px"
+                        marginBottom="10px"
+                        marginRight="20px"
+                        borderRadius="5px"
+                      />
+                     
+                     
+                    </div>
+                    <div
+                      style={{
+                        display: "flex",
+                        // flexDirection: "column",
+                        width: "100%",
+                        backgroundColor: "white",
+                        padding: "20px 20px",
+                      }}
+                    >
+                    
+                      <Skeleton
+                        height="50px"
+                        width="50%"
+                        marginTop="10px"
+                        marginBottom="10px"
+                        marginRight="20px"
+                      />
+                       <Skeleton
+                        height="50px"
+                        width="50%"
+                        marginTop="10px"
+                        marginBottom="10px"
+                        marginRight="20px"
+                      />
+                      <Skeleton
+                        height="50px"
+                        width="50%"
+                        marginTop="10px"
+                        marginBottom="10px"
+                        marginRight="20px"
+                      />
+                     
+                     
+                    </div>
+                    
+                    
                   </div>
                 </div>
               )}
