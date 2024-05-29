@@ -120,6 +120,7 @@ import SMSGateway from "../Pages/SMSGateway/SMSGateway";
 import WhatsAppGateway from "../Pages/WhatsAppGateway/WhatsAppGateway";
 import EmailTemplates from "../Pages/EmailTemplates/EmailTemplates";
 import WhatsAppTemplates from "../Pages/WhatsAppTemplates/WhatsAppTemplates";
+import Geofence from "../Pages/Geofence/Geofence";
 
 const routes = [
   // dashboard routes
@@ -644,6 +645,13 @@ const routes = [
     allowedUserRoles: [ROLES.SUPER_ADMIN],
     isProtected: true,
     permissionValue: "WhatsAppGateway",
+  },
+  {
+    path: `${process.env.PUBLIC_URL}/super-admin/setup/geofence`,
+    Component: <Geofence />,
+    allowedUserRoles: [ROLES.SUPER_ADMIN],
+    isProtected: true,
+    permissionValue: "Geofence",
   },
 
 

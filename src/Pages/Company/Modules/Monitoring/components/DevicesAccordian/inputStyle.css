@@ -1,6 +1,6 @@
 /* ---------------------- ack --------------- */
 
-label > input[type="checkbox"] + .ack::before {
+label>input[type="checkbox"]+.ack::before {
   content: "";
   display: inline-block;
   vertical-align: bottom;
@@ -14,7 +14,7 @@ label > input[type="checkbox"] + .ack::before {
   box-shadow: 0 0 5px red;
 }
 
-label > input[type="checkbox"]:checked + .ack::before {
+label>input[type="checkbox"]:checked+.ack::before {
   content: "✓";
   font-weight: bold;
   font-size: 12.5px !important;
@@ -30,12 +30,12 @@ label > input[type="checkbox"]:checked + .ack::before {
   justify-content: center;
 }
 
-label > input[type="checkbox"]:checked + .ack {
+label>input[type="checkbox"]:checked+.ack {
   color: red;
 }
 
 /* ---------------------- online --------------- */
-label > input[type="checkbox"] + .onlineDevice::before {
+label>input[type="checkbox"]+.onlineDevice::before {
   content: "";
   display: inline-block;
   vertical-align: bottom;
@@ -49,7 +49,7 @@ label > input[type="checkbox"] + .onlineDevice::before {
   box-shadow: 0 0 5px green;
 }
 
-label > input[type="checkbox"]:checked + .onlineDevice::before {
+label>input[type="checkbox"]:checked+.onlineDevice::before {
   /* content: "✓";
   font-weight: bold;
   font-size: 14px !important;
@@ -74,12 +74,12 @@ label > input[type="checkbox"]:checked + .onlineDevice::before {
   justify-content: center;
 }
 
-label > input[type="checkbox"]:checked + .onlineDevice {
+label>input[type="checkbox"]:checked+.onlineDevice {
   color: green;
 }
 
 /* ---------------------- engine --------------- */
-label > input[type="checkbox"] + .engine::before {
+label>input[type="checkbox"]+.engine::before {
   content: "";
   display: inline-block;
   vertical-align: bottom;
@@ -93,7 +93,7 @@ label > input[type="checkbox"] + .engine::before {
   box-shadow: 0 0 5px yellow;
 }
 
-label > input[type="checkbox"]:checked + .engine::before {
+label>input[type="checkbox"]:checked+.engine::before {
   /* content: "✓";
   font-weight: bold;
   transform: scale(1.1);
@@ -117,12 +117,12 @@ label > input[type="checkbox"]:checked + .engine::before {
   justify-content: center;
 }
 
-label > input[type="checkbox"]:checked + .engine {
+label>input[type="checkbox"]:checked+.engine {
   color: yellow;
 }
 
 /* ---------------------- offline --------------- */
-label > input[type="checkbox"] + .black::before {
+label>input[type="checkbox"]+.black::before {
   content: "";
   display: inline-block;
   vertical-align: bottom;
@@ -136,7 +136,7 @@ label > input[type="checkbox"] + .black::before {
   box-shadow: 0 0 5px black;
 }
 
-label > input[type="checkbox"]:checked + .black::before {
+label>input[type="checkbox"]:checked+.black::before {
   /* content: "✓";
   font-weight: bold;
   transform: scale(1.1);
@@ -160,12 +160,12 @@ label > input[type="checkbox"]:checked + .black::before {
   justify-content: center;
 }
 
-label > input[type="checkbox"]:checked + .black {
+label>input[type="checkbox"]:checked+.black {
   color: black;
 }
 
 /* ---------------------- Expired --------------- */
-label > input[type="checkbox"] + .expired::before {
+label>input[type="checkbox"]+.expired::before {
   content: "";
   display: inline-block;
   vertical-align: bottom;
@@ -179,7 +179,7 @@ label > input[type="checkbox"] + .expired::before {
   box-shadow: 0 0 5px gray;
 }
 
-label > input[type="checkbox"]:checked + .expired::before {
+label>input[type="checkbox"]:checked+.expired::before {
   /* content: "✓";
   font-weight: bold;
   transform: scale(1.1);
@@ -203,6 +203,20 @@ label > input[type="checkbox"]:checked + .expired::before {
   justify-content: center;
 }
 
-label > input[type="checkbox"]:checked + .expired {
+label>input[type="checkbox"]:checked+.expired {
   color: gray;
+}
+
+
+
+.custom-accordion-header {
+  /* margin: -25px 0px !important; */
+  /* Ensure padding is applied */
+  background-color: gray !important;
+  /* font-weight: bold !important; */
+  height: 40px;
+  display: flex;
+  /* align-items: center; */
+  /* Ensure font weight is bold */
+  /* border-bottom: 1px solid black */
 }

@@ -76,9 +76,11 @@ const DevicesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
           console.log("deviceExists", deviceExists);
 
           if (deviceExists) {
-            tempList = tempList.filter(
-              (device: any) => device.id !== deviceExists.id
-            );
+            if (group.checked) {
+              tempList = tempList.filter(
+                (device: any) => device.id !== deviceExists.id
+              );
+            }
           } else {
             tempList = [...tempList, deviceItem];
             // dispatch(setDevicesDetailData([...devicesDetailData, deviceItem]));
@@ -301,6 +303,26 @@ const DevicesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
         ...item,
         checked: true, // Set checked to the opposite of group.checked
       }));
+      var tempList: any = [...devicesDetailData];
+      devices.map((device: any, index: any) => {
+        device.items.map((item: any) => {
+          var deviceExists = devicesDetailData.find(
+            (device: any) => device.id === item.id
+          );
+
+          if (deviceExists == undefined) {
+            tempList = [...tempList, item];
+            // tempList = tempList.filter(
+            //   (device: any) => device.id !== deviceExists.id
+            // );
+          }
+        })
+        if (index == devices.length - 1) {
+          dispatch(setDevicesDetailData([...tempList]));
+        }
+      });
+
+
       return { ...device, checked: true, items: updatedItems };
     });
 
@@ -312,6 +334,24 @@ const DevicesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
         ...item,
         checked: false, // Set checked to the opposite of group.checked
       }));
+      var tempList: any = [...devicesDetailData];
+      devices.map((device: any, index: any) => {
+        device.items.map((item: any) => {
+          var deviceExists = devicesDetailData.find(
+            (device: any) => device.id === item.id
+          );
+
+          if (deviceExists) {
+            // tempList = [...tempList, item];
+            tempList = tempList.filter(
+              (device: any) => device.id !== deviceExists.id
+            );
+          }
+        })
+        if (index == devices.length - 1) {
+          dispatch(setDevicesDetailData([...tempList]));
+        }
+      });
       return { ...device, checked: false, items: updatedItems };
     });
 
@@ -348,7 +388,7 @@ const DevicesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
         onChange={(e: any) => handleSearch(e)}
         style={{
           width: "95%",
-          height: "40px",
+          height: "36px",
           padding: "15px 15px",
           boxShadow: "0px 5px 18px lightgray",
           borderRadius: "10px",
@@ -367,7 +407,7 @@ const DevicesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
           }}
           style={{
             width: "45%",
-            padding: "8px 10px",
+            padding: "7px 10px",
             // boxShadow: "0px 5px 18px lightgray",
             borderRadius: "8px",
             backgroundColor: "#1f2f3e",
@@ -390,7 +430,7 @@ const DevicesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
           }}
           style={{
             width: "45%",
-            padding: "8px 10px",
+            padding: "7px 10px",
             // boxShadow: "0px 5px 18px lightgray",
             borderRadius: "8px",
             backgroundColor: "#1f2f3e",
@@ -414,12 +454,12 @@ const DevicesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
                 statusDevices === "Expired"
                   ? bodyItem.time === statusDevices
                   : statusDevices === "Not Connecetd"
-                  ? bodyItem.time == null ||
+                    ? bodyItem.time == null ||
                     bodyItem.time === "" ||
                     bodyItem.time == undefined
-                  : statusDevices === ""
-                  ? bodyItem.online === bodyItem.online
-                  : bodyItem.online === statusDevices
+                    : statusDevices === ""
+                      ? bodyItem.online === bodyItem.online
+                      : bodyItem.online === statusDevices
               )
             )
             .filter((item: any) =>
@@ -435,14 +475,14 @@ const DevicesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
             .map((item: any, index: any) => {
               const gradientId = `gradient-${index}`; // Generate a unique gradient ID for each item
               return (
-                <AccordionItem key={index}>
+                <AccordionItem key={index}  >
                   {item.items.length > 0 && (
                     <div
-                      style={{ backgroundColor: "gray", fontWeight: "bold" }}
                     >
                       <AccordionHeader
                         targetId={`${searchValue.length >= 1 ? "all" : index}`}
-                        className="bg-light-primary"
+                        className=" custom-accordion-header"
+
                       >
                         <input
                           type="checkbox"
@@ -454,7 +494,7 @@ const DevicesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
                           checked={item.checked}
                           onClick={(e) => handleCheckboxClick(e, item)}
                         />
-                        <span style={{ fontWeight: "bold" }}>
+                        <span style={{ fontWeight: "bold", fontSize: "13px" }}>
                           {item.title} &nbsp; (
                           {
                             item.items
@@ -462,12 +502,12 @@ const DevicesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
                                 statusDevices === "Expired"
                                   ? bodyItem.time === statusDevices
                                   : statusDevices === "Not Connecetd"
-                                  ? bodyItem.time == null ||
+                                    ? bodyItem.time == null ||
                                     bodyItem.time === "" ||
                                     bodyItem.time == undefined
-                                  : statusDevices === ""
-                                  ? bodyItem.online === bodyItem.online
-                                  : bodyItem.online === statusDevices
+                                    : statusDevices === ""
+                                      ? bodyItem.online === bodyItem.online
+                                      : bodyItem.online === statusDevices
                               )
                               .filter(
                                 (bodyItem: any) =>
@@ -480,13 +520,18 @@ const DevicesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
                           }
                           )
                         </span>
+                        {/* <div style={{position:"absolute",marginTop:"35px",borderBottom:"1px solid lightGray",width:"90%"}}></div> */}
                         <FeatherIcons
                           iconName={
                             open === `${index}` ? "ChevronUp" : "ChevronDown"
                           }
                           className="svg-color"
                         />
+
                       </AccordionHeader>
+
+
+
                     </div>
                   )}
                   {item.items.length > 0 && (
@@ -498,12 +543,12 @@ const DevicesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
                           statusDevices === "Expired"
                             ? bodyItem.time === statusDevices
                             : statusDevices === "Not Connecetd"
-                            ? bodyItem.time == null ||
+                              ? bodyItem.time == null ||
                               bodyItem.time === "" ||
                               bodyItem.time == undefined
-                            : statusDevices === ""
-                            ? bodyItem.online === bodyItem.online
-                            : bodyItem.online === statusDevices
+                              : statusDevices === ""
+                                ? bodyItem.online === bodyItem.online
+                                : bodyItem.online === statusDevices
                         )
                         .filter(
                           (bodyItem: any) =>
@@ -524,19 +569,18 @@ const DevicesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
                                 borderRadius: "12px",
                                 margin: "10px -10px",
                                 cursor: "pointer",
-                                backgroundColor: `${
-                                  bodyItem.icon_color === "green"
-                                    ? "rgba(0,255,0,0.2)"
-                                    : bodyItem.icon_color === "yellow"
+                                backgroundColor: `${bodyItem.icon_color === "green"
+                                  ? "rgba(0,255,0,0.2)"
+                                  : bodyItem.icon_color === "yellow"
                                     ? "rgb(255,255,0,0.1)"
                                     : bodyItem.time === "Expired"
-                                    ? "lightGray"
-                                    : (bodyItem.icon_color === "blue" ||
+                                      ? "lightGray"
+                                      : (bodyItem.icon_color === "blue" ||
                                         bodyItem.icon_color === "black") &&
-                                      bodyItem.time !== "Expired"
-                                    ? "rgba(0,0,0,0.2)"
-                                    : "rgba(255,0,0,0.2)"
-                                }`,
+                                        bodyItem.time !== "Expired"
+                                        ? "rgba(0,0,0,0.2)"
+                                        : "rgba(255,0,0,0.2)"
+                                  }`,
                               }}
                               onClick={(e) => {
                                 dispatch(
@@ -597,16 +641,16 @@ const DevicesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
                                         bodyItem.icon_color === "green"
                                           ? "onlineDevice"
                                           : bodyItem.icon_color === "yellow"
-                                          ? "engine"
-                                          : bodyItem.time === "Expired"
-                                          ? "expired"
-                                          : (bodyItem.icon_color === "blue" ||
-                                              bodyItem.icon_color ===
+                                            ? "engine"
+                                            : bodyItem.time === "Expired"
+                                              ? "expired"
+                                              : (bodyItem.icon_color === "blue" ||
+                                                bodyItem.icon_color ===
                                                 "black") &&
-                                            bodyItem.time !== "Expired"
-                                          ? "black" 
-                                          : bodyItem.icon_color === "red"
-                                          ? "ack" : bodyItem.online
+                                                bodyItem.time !== "Expired"
+                                                ? "black"
+                                                : bodyItem.icon_color === "red"
+                                                  ? "ack" : bodyItem.online
                                       }
                                     ></span>
                                   </label>
@@ -762,12 +806,12 @@ A 40 40 0 0 1 90 50"
                           statusDevices === "Expired"
                             ? bodyItem.time === statusDevices
                             : statusDevices === "Not Connecetd"
-                            ? bodyItem.time == null ||
+                              ? bodyItem.time == null ||
                               bodyItem.time === "" ||
                               bodyItem.time == undefined
-                            : statusDevices === ""
-                            ? bodyItem.online === bodyItem.online
-                            : bodyItem.online === statusDevices
+                              : statusDevices === ""
+                                ? bodyItem.online === bodyItem.online
+                                : bodyItem.online === statusDevices
                         )
                         .filter(
                           (bodyItem: any) =>
@@ -777,28 +821,28 @@ A 40 40 0 0 1 90 50"
                             bodyItem.imei.includes(searchValue) ||
                             bodyItem.id == searchValue
                         ).length >= 15 && (
-                        <div
-                          style={{
-                            display: "flex",
-                            color: "#1f2f3e",
-                            fontSize: "16px",
-                            justifyContent: "end",
-                            cursor: "pointer",
-                          }}
-                          onClick={() => {
-                            if (
-                              item.items.length >= 15 &&
-                              itemsLength < item.items.length
-                            ) {
-                              setItemsLength(itemsLength + 14);
-                            }
-                          }}
-                        >
-                          {item.items.length >= 15 &&
-                            itemsLength < item.items.length &&
-                            "Show More"}
-                        </div>
-                      )}
+                          <div
+                            style={{
+                              display: "flex",
+                              color: "#1f2f3e",
+                              fontSize: "16px",
+                              justifyContent: "end",
+                              cursor: "pointer",
+                            }}
+                            onClick={() => {
+                              if (
+                                item.items.length >= 15 &&
+                                itemsLength < item.items.length
+                              ) {
+                                setItemsLength(itemsLength + 14);
+                              }
+                            }}
+                          >
+                            {item.items.length >= 15 &&
+                              itemsLength < item.items.length &&
+                              "Show More"}
+                          </div>
+                        )}
                     </AccordionBody>
                   )}
                 </AccordionItem>

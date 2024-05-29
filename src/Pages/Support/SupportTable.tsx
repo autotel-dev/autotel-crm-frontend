@@ -24,7 +24,7 @@ const TicketTable = () => {
   );
   function hexToRgb(hex: any) {
     // Remove the hash sign if present
-    hex = hex.replace(/^#/, '');
+    hex = hex?.replace(/^#/, '');
     // Parse the hex values to RGB
     const bigint = parseInt(hex, 16);
     const r = (bigint >> 16) & 255;
@@ -130,7 +130,7 @@ const TicketTable = () => {
     );
   };
   return (
-    <div className="table-responsive support-table">
+    <div className="table-responsive support-table" style={{ overflow: "auto", scrollbarWidth: "none" }}>
       <Row style={{ display: "flex", alignItems: "center" }}>
         <Col
           sm={support !== undefined && support?.create ? 12 : 12}
@@ -157,23 +157,23 @@ const TicketTable = () => {
           }
         >
           <input
-          className="global-search-field"
+            className="global-search-field"
             type="text"
             placeholder="Type to Search.."
             value={searchValue}
             onChange={(e) => {
               handleSearch(e);
             }}
-            // style={{
-            //   backgroundColor: "#f1f1f1",
-            //   borderRadius: "5px",
-            //   height: "40px",
-            //   padding: "12px",
-            //   margin: "20px 0px",
-            //   width: "100%", // Adjusting width to accommodate padding and margin
-            //   border: "none",
-            //   outline: "none", // Removing default border outline
-            // }}
+          // style={{
+          //   backgroundColor: "#f1f1f1",
+          //   borderRadius: "5px",
+          //   height: "40px",
+          //   padding: "12px",
+          //   margin: "20px 0px",
+          //   width: "100%", // Adjusting width to accommodate padding and margin
+          //   border: "none",
+          //   outline: "none", // Removing default border outline
+          // }}
           />
         </Col>
         {getUserRole() === ROLES.SUPER_ADMIN ? (
