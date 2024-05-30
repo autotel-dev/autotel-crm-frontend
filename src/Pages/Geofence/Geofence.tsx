@@ -457,16 +457,18 @@ const Geofence = () => {
           // marginTop: "130px",
           height: "92.5vh",
           display: "flex",
-          overflow: "unset",
+          overflow: "hidden",
           scrollbarWidth: "none",
+          marginRight: "-35px",
+          // paddingLeft:"50px",
         }}
       >
+
         <GoogleMap />
 
         <div
           style={{
             position: "absolute",
-            // marginTop:"15px"
           }}
         >
           <GeofencesSidebar />

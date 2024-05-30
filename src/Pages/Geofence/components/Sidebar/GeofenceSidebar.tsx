@@ -33,6 +33,7 @@ const GeofencesSidebar = () => {
           alignItems: "center",
           overflow: "scrollY",
           width: "40px",
+
         }}
       >
         <div

@@ -32,6 +32,15 @@ const AddGroupModal: React.FC<PropsTypes> = ({
     const geofencesList = [
         { label: "DHA", value: "DHA" },
         { label: "Korangi", value: "KORANGI" },
+        { label: "Bahadurabad", value: "BAHADURABAD" },
+        { label: "DHA", value: "DHA" },
+        { label: "Korangi", value: "KORANGI" },
+        { label: "Bahadurabad", value: "BAHADURABAD" },
+        { label: "DHA", value: "DHA" },
+        { label: "Korangi", value: "KORANGI" },
+        { label: "Bahadurabad", value: "BAHADURABAD" },
+        { label: "DHA", value: "DHA" },
+        { label: "Korangi", value: "KORANGI" },
         { label: "Bahadurabad", value: "BAHADURABAD" }
     ]
 
@@ -175,7 +184,7 @@ const AddGroupModal: React.FC<PropsTypes> = ({
 
                 <Modal isOpen={isVisible} toggle={addToggle} size="lg" centered>
                     <div className="modal-header">
-                        <H4 className="modal-title">Create Email Template</H4>
+                        <H4 className="modal-title">Add Group</H4>
                         <Button
                             color="transprant"
                             className="btn-close"
@@ -213,6 +222,50 @@ const AddGroupModal: React.FC<PropsTypes> = ({
                                 }
                             }>
                                 <P>Ungrouped Geofences</P>
+                                <div style={{ display: "flex" }}>
+                                <button
+                                    onClick={(e: any) => {
+                                        e.preventDefault(); // Add this line
+                                        e.stopPropagation();
+                                        // addToggle()
+                                    }}
+                                    style={{
+                                        width: "50%",
+                                        padding: "7px 10px",
+                                        borderRadius: "8px",
+                                        backgroundColor: "gray",
+                                        color: "white",
+                                        margin: "8px 0px",
+                                        marginRight:"8px",
+                                        border: "0px",
+                                        outline: "none",
+                                        textAlign: "center",
+                                    }}
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    onClick={(e: any) => {
+                                        e.preventDefault(); // Add this line
+                                        e.stopPropagation();
+                                        // addToggle()
+                                    }}
+                                    style={{
+                                        width: "50%",
+                                        padding: "7px 10px",
+                                        borderRadius: "8px",
+                                        backgroundColor: "gray",
+                                        color: "white",
+                                        margin: "8px 0px",
+                                        border: "0px",
+                                        outline: "none",
+                                        textAlign: "center",
+                                    }}
+                                >
+                                    Add
+                                </button>
+
+                            </div>
                                 <Select
                                     showSearch
                                     style={{ width: "100%", height: 36, marginBottom: "15px", }}

@@ -328,7 +328,7 @@ const GeofencesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
       // setFormData({ ...formData, type: type, bounds: type == "CIRCLE" ? circle : type == "RECTANGLE" ? rectangle : polygon });
       const tempList = [...geofences, { ...formData, group: group, type: geofenceType, bounds: geofenceType == "circle" ? circle : geofenceType == "rectangle" ? rectangle : geofenceType == "polygon" && polygon }];
       dispatch(setGeofences([...tempList]))
-      dispatch(setType(""))
+      dispatch(setType(null))
 
       console.log(tempList);
       setIsNewGeofence(false);
