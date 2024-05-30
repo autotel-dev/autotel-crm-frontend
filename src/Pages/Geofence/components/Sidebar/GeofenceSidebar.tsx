@@ -7,7 +7,7 @@ import { setDevices } from "../../../../ReaduxToolkit/Reducer/MonitoringSlice";
 import GeofencesTreeViewAccordian from "../GeofencesAccordian/GeofencesTreeViewAccordian";
 
 const GeofencesSidebar = () => {
-  const [collapsedWidth, setCollapsedWidth] = useState("0px");
+  const [collapsedWidth, setCollapsedWidth] = useState("350px");
   const dispatch = useDispatch();
   // ---------------------------------------------------
   const groups: any = [];

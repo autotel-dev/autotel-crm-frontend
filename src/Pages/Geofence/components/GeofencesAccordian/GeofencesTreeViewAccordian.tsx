@@ -23,7 +23,10 @@ import greenSatellite from "../../../../../../assets/satellite-green.png";
 import redSatellite from "../../../../../../assets/satellite-green.png";
 import { P } from "../../../../AbstractElements";
 import { Select } from "antd";
-import { setGeofences, setType } from "../../../../ReaduxToolkit/Reducer/GeofenceSlice";
+import {
+  setGeofences,
+  setType,
+} from "../../../../ReaduxToolkit/Reducer/GeofenceSlice";
 import AddGroupModal from "../modals/AddGroupModal";
 
 interface PropTypes {
@@ -32,6 +35,40 @@ interface PropTypes {
 
 const GeofencesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
   const svgRef = useRef(null);
+
+  const [geofencesList, setGeofencesList] = useState([
+    { label: "DHA", value: "DHA", checked: false },
+    { label: "Korangi", value: "KORANGI", checked: false },
+    { label: "Bahadurabad", value: "BAHADURABAD", checked: false },
+    { label: "Gulshan", value: "GULSHAN", checked: false },
+    { label: "Orangi", value: "ORANGI", checked: false },
+    { label: "DHA", value: "DHA", checked: false },
+    { label: "Korangi", value: "KORANGI", checked: false },
+    { label: "Bahadurabad", value: "BAHADURABAD", checked: false },
+    { label: "Gulshan", value: "GULSHAN", checked: false },
+    { label: "Orangi", value: "ORANGI", checked: false },
+    { label: "DHA", value: "DHA", checked: false },
+    { label: "Korangi", value: "KORANGI", checked: false },
+    { label: "Bahadurabad", value: "BAHADURABAD", checked: false },
+    { label: "Gulshan", value: "GULSHAN", checked: false },
+    { label: "Orangi", value: "ORANGI", checked: false },
+    { label: "DHA", value: "DHA", checked: false },
+    { label: "Bahadurabad", value: "BAHADURABAD", checked: false },
+    { label: "Korangi", value: "KORANGI", checked: false },
+    { label: "Bahadurabad", value: "BAHADURABAD", checked: false },
+    { label: "Gulshan", value: "GULSHAN", checked: false },
+    { label: "Orangi", value: "ORANGI", checked: false },
+    { label: "DHA", value: "DHA", checked: false },
+    { label: "Korangi", value: "KORANGI", checked: false },
+    { label: "Bahadurabad", value: "BAHADURABAD", checked: false },
+    { label: "Gulshan", value: "GULSHAN", checked: false },
+    { label: "Orangi", value: "ORANGI", checked: false },
+    { label: "DHA", value: "DHA", checked: false },
+    { label: "Korangi", value: "KORANGI", checked: false },
+    { label: "Bahadurabad", value: "BAHADURABAD", checked: false },
+    { label: "Gulshan", value: "GULSHAN", checked: false },
+    { label: "Orangi", value: "ORANGI", checked: false },
+  ]);
 
   const [itemsLength, setItemsLength] = useState(15);
   const { devices, selectedDevices, expandedDevice, devicesDetailData } =
@@ -97,15 +134,11 @@ const GeofencesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
     });
 
     dispatch(setDevices(updatedDevices));
-
-
   };
 
   const handleSearch = (e: any) => {
     const searchKey = e.target.value.toLowerCase();
     setSearchValue(searchKey);
-
-
   };
 
   const handleSelecetdDevices = (
@@ -184,8 +217,6 @@ const GeofencesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
 
           return item; // Return the item as it is if IDs don't match
         }),
-
-
       };
 
       const updatedDevices = devices.map((device: any) =>
@@ -195,8 +226,6 @@ const GeofencesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
       dispatch(setDevices(updatedDevices));
     }
   };
-
-
 
   const handleSelectAll = () => {
     const updatedDevices = devices.map((device: any) => {
@@ -217,12 +246,11 @@ const GeofencesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
             //   (device: any) => device.id !== deviceExists.id
             // );
           }
-        })
+        });
         if (index == devices.length - 1) {
           dispatch(setDevicesDetailData([...tempList]));
         }
       });
-
 
       return { ...device, checked: true, items: updatedItems };
     });
@@ -248,7 +276,7 @@ const GeofencesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
               (device: any) => device.id !== deviceExists.id
             );
           }
-        })
+        });
         if (index == devices.length - 1) {
           dispatch(setDevicesDetailData([...tempList]));
         }
@@ -284,30 +312,30 @@ const GeofencesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
   const typeList = [
     { label: "Circle", value: "circle" },
     { label: "Rectangle", value: "rectangle" },
-    { label: "Polygon", value: "polygon" }
-  ]
+    { label: "Polygon", value: "polygon" },
+  ];
 
   const groupList = [
     { label: "Ungrouped", value: "UNGROUPED" },
     { label: "Ungrouped2", value: "UNGROUPED2" },
     { label: "Ungrouped3", value: "UNGROUPED3" },
     { label: "Ungrouped4", value: "UNGROUPED4" },
-  ]
-
-  const geofencesList = [
-    { label: "DHA", value: "DHA" },
-    { label: "Korangi", value: "KORANGI" },
-    { label: "Bahadurabad", value: "BAHADURABAD" }
   ];
+
+  // const geofencesList = [
+  //   { label: "DHA", value: "DHA" },
+  //   { label: "Korangi", value: "KORANGI" },
+  //   { label: "Bahadurabad", value: "BAHADURABAD" }
+  // ];
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
 
-  const { geofences, type, circle, rectangle, polygon } = useSelector((state: any) => state.geofence);
-
+  const { geofences, type, circle, rectangle, polygon } = useSelector(
+    (state: any) => state.geofence
+  );
 
   const [formData, setFormData] = useState({
     title: "",
   });
-
 
   const onChangeHandler = (event: any) => {
     let name = event.target.name;
@@ -319,23 +347,30 @@ const GeofencesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
   const [geofenceType, setGeofenceType] = useState("");
 
   const createGeofence = () => {
-    if (
-      formData.title !== "" &&
-      type !== ""
-
-    ) {
-
+    if (formData.title !== "" && type !== "") {
       // setFormData({ ...formData, type: type, bounds: type == "CIRCLE" ? circle : type == "RECTANGLE" ? rectangle : polygon });
-      const tempList = [...geofences, { ...formData, group: group, type: geofenceType, bounds: geofenceType == "circle" ? circle : geofenceType == "rectangle" ? rectangle : geofenceType == "polygon" && polygon }];
-      dispatch(setGeofences([...tempList]))
-      dispatch(setType(null))
+      const tempList = [
+        ...geofences,
+        {
+          ...formData,
+          group: group,
+          type: geofenceType,
+          bounds:
+            geofenceType == "circle"
+              ? circle
+              : geofenceType == "rectangle"
+              ? rectangle
+              : geofenceType == "polygon" && polygon,
+        },
+      ];
+      dispatch(setGeofences([...tempList]));
+      dispatch(setType(null));
 
       console.log(tempList);
       setIsNewGeofence(false);
       setFormData({
         title: "",
-
-      })
+      });
     } else {
       // ShowError();
     }
@@ -344,6 +379,203 @@ const GeofencesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
   return (
     //@ts-ignore
     <>
+      {/* ------------------------------------- */}
+
+      {!isNewGeofence && !isNewGroup && (
+        <div style={{ display: "flex", paddingTop: "20px" }}>
+          <button
+            onClick={(e: any) => {
+              e.preventDefault(); // Add this line
+              e.stopPropagation();
+              setIsNewGroup(true);
+            }}
+            style={{
+              width: "50%",
+              padding: "7px 10px",
+              // boxShadow: "0px 5px 18px lightgray",
+              borderRadius: "8px",
+              backgroundColor: "green",
+              color: "white",
+              margin: "8px",
+              marginBottom: "10px",
+              marginTop: "0px",
+              border: "0px",
+              outline: "none",
+              textAlign: "center",
+            }}
+          >
+            Add Group
+          </button>
+          <button
+            onClick={(e: any) => {
+              e.preventDefault(); // Add this line
+              e.stopPropagation();
+              dispatch(setType(""));
+              setIsNewGeofence(true);
+            }}
+            style={{
+              width: "50%",
+              padding: "7px 10px",
+              // boxShadow: "0px 5px 18px lightgray",
+              borderRadius: "8px",
+              backgroundColor: "green",
+              color: "white",
+              margin: "8px",
+              marginBottom: "10px",
+              marginTop: "0px",
+              border: "0px",
+              outline: "none",
+              textAlign: "center",
+            }}
+          >
+            Add Geofence
+          </button>
+        </div>
+      )}
+
+      {isNewGeofence && (
+        <form>
+          <div
+            style={{
+              // paddingBottom: "-10px",
+              margin: "0px 10px",
+              marginTop:"10px",
+            }}
+          >
+            <P>Title</P>
+            <input
+              className="form-control"
+              type="text"
+              placeholder="Enter Title"
+              name="title"
+              onChange={onChangeHandler}
+              // {...register("name", { required: true })}
+            />
+            <span style={{ color: "red" }}>
+              {/* {errors.name && "Country name is required"} */}
+            </span>
+          </div>
+          <div
+            style={{
+              // marginBottom: "10px",
+              margin: "0px 10px",
+            }}
+          >
+            <P>Type</P>
+            <Select
+              showSearch
+              style={{ width: "100%", height: 36, marginBottom: "15px" }}
+              value={type == null ? "Select Type" : type}
+              placeholder="Select type"
+              optionFilterProp="children"
+              filterOption={(input: any, option: any) =>
+                (option?.label ?? "").includes(input)
+              }
+              filterSort={(optionA: any, optionB: any) =>
+                (optionA?.label ?? "")
+                  .toLowerCase()
+                  .localeCompare((optionB?.label ?? "").toLowerCase())
+              }
+              onChange={(e) => {
+                // console.log(e);
+                dispatch(setType(e));
+                setGeofenceType(e);
+                // dispatch(setCountryId(e));
+              }}
+              options={typeList}
+            />
+          </div>
+          <div
+            style={{
+              // marginTop: "15px",
+              margin: "0px 10px",
+            }}
+          >
+            <P>Group</P>
+            <Select
+              showSearch
+              style={{ width: "100%", height: 36, marginBottom: "15px" }}
+              placeholder="Select type"
+              optionFilterProp="children"
+              filterOption={(input: any, option: any) =>
+                (option?.label ?? "").includes(input)
+              }
+              filterSort={(optionA: any, optionB: any) =>
+                (optionA?.label ?? "")
+                  .toLowerCase()
+                  .localeCompare((optionB?.label ?? "").toLowerCase())
+              }
+              onChange={(e) => {
+                // console.log(e);
+                setGroup(e);
+                // dispatch(setCountryId(e));
+              }}
+              options={groupList}
+            />
+          </div>
+
+          <div style={{ display: "flex" }}>
+            <button
+              onClick={(e: any) => {
+                e.preventDefault(); // Add this line
+                e.stopPropagation();
+                setIsNewGeofence(false);
+              }}
+              style={{
+                width: "50%",
+                padding: "7px 10px",
+                borderRadius: "8px",
+                backgroundColor: "green",
+                color: "white",
+                margin: "8px",
+                border: "0px",
+                outline: "none",
+                textAlign: "center",
+              }}
+            >
+              Cancel
+            </button>
+            <button
+              onClick={(e: any) => {
+                e.preventDefault(); // Add this line
+                e.stopPropagation();
+                createGeofence();
+              }}
+              style={{
+                width: "50%",
+                padding: "7px 10px",
+                borderRadius: "8px",
+                backgroundColor: "green",
+                color: "white",
+                margin: "8px",
+                border: "0px",
+                outline: "none",
+                textAlign: "center",
+              }}
+            >
+              Add
+            </button>
+          </div>
+        </form>
+      )}
+
+      {isNewGroup && (
+        <AddGroupModal
+          isVisible={isNewGroup}
+          setIsVisible={setIsNewGroup}
+          geofencesList={geofencesList}
+          setGeofencesList={setGeofencesList}
+
+          // setValue={setCityName}
+        />
+      )}
+      <div
+        style={{
+          padding: "0px 10px",
+        }}
+      >
+        <hr />
+      </div>
       <input
         className=""
         type="text"
@@ -362,280 +594,70 @@ const GeofencesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
           outline: "none",
         }}
       />
-      <div style={{ display: "flex" }}>
-        <button
-          onClick={(e: any) => {
-            e.preventDefault(); // Add this line
-            e.stopPropagation();
-            handleSelectAll();
-          }}
-          style={{
-            width: "45%",
-            padding: "7px 10px",
-            // boxShadow: "0px 5px 18px lightgray",
-            borderRadius: "8px",
-            backgroundColor: "#1f2f3e",
-            color: "white",
-            margin: "8px",
-            marginBottom: "5px",
-            marginTop: "0px",
-            border: "0px",
-            outline: "none",
-            textAlign: "center",
-          }}
-        >
-          Select All
-        </button>
-        <button
-          onClick={(e: any) => {
-            e.preventDefault(); // Add this line
-            e.stopPropagation();
-            handleDeselectAll();
-          }}
-          style={{
-            width: "45%",
-            padding: "7px 10px",
-            // boxShadow: "0px 5px 18px lightgray",
-            borderRadius: "8px",
-            backgroundColor: "#1f2f3e",
-            color: "white",
-            margin: "8px",
-            marginBottom: "5px",
-            marginTop: "0px",
-            border: "0px",
-            outline: "none",
-            textAlign: "center",
-          }}
-        >
-          Deselect All
-        </button>
-      </div>
-
-      <div style={{
-        padding: "0px 10px"
-      }}>
-        <hr />
-      </div>
-      {/* ------------------------------------- */}
-
-      {(!isNewGeofence && !isNewGroup) && <div style={{ display: "flex" }}>
-        <button
-          onClick={(e: any) => {
-            e.preventDefault(); // Add this line
-            e.stopPropagation();
-            setIsNewGroup(true);
-
-          }}
-          style={{
-            width: "50%",
-            padding: "7px 10px",
-            // boxShadow: "0px 5px 18px lightgray",
-            borderRadius: "8px",
-            backgroundColor: "green",
-            color: "white",
-            margin: "8px",
-            marginBottom: "10px",
-            marginTop: "0px",
-            border: "0px",
-            outline: "none",
-            textAlign: "center",
-          }}
-        >
-          Add Group
-        </button>
-        <button
-          onClick={(e: any) => {
-            e.preventDefault(); // Add this line
-            e.stopPropagation();
-            dispatch(setType(""))
-            setIsNewGeofence(true);
-
-          }}
-          style={{
-            width: "50%",
-            padding: "7px 10px",
-            // boxShadow: "0px 5px 18px lightgray",
-            borderRadius: "8px",
-            backgroundColor: "green",
-            color: "white",
-            margin: "8px",
-            marginBottom: "10px",
-            marginTop: "0px",
-            border: "0px",
-            outline: "none",
-            textAlign: "center",
-          }}
-        >
-          Add Geofence
-        </button>
-
-      </div>}
-
-
-
-      {isNewGeofence && <form>
-        <div style={
-          {
-            // paddingBottom: "-10px",
-            margin: "0px 10px",
-          }
-        }>
-          <P>Title</P>
-          <input
-            className="form-control"
-            type="text"
-            placeholder="Enter Title"
-            name="title"
-            onChange={onChangeHandler}
-          // {...register("name", { required: true })}
-          />
-          <span style={{ color: "red" }}>
-            {/* {errors.name && "Country name is required"} */}
-          </span>
-
-
-        </div>
-        <div style={
-          {
-            // marginBottom: "10px",
-            margin: "0px 10px",
-          }
-        }>
-          <P>Type</P>
-          <Select
-            showSearch
-            style={{ width: "100%", height: 36, marginBottom: "15px", }}
-            value={type == null ? "Select Type" : type}
-            placeholder="Select type"
-            optionFilterProp="children"
-            filterOption={(input: any, option: any) =>
-              (option?.label ?? "").includes(input)
-            }
-            filterSort={(optionA: any, optionB: any) =>
-              (optionA?.label ?? "")
-                .toLowerCase()
-                .localeCompare((optionB?.label ?? "").toLowerCase())
-            }
-            onChange={(e) => {
-              // console.log(e);
-              dispatch(setType(e))
-              setGeofenceType(e);
-              // dispatch(setCountryId(e));
-            }}
-            options={typeList}
-          />
-
-
-        </div>
-        <div style={
-          {
-            // marginTop: "15px",
-            margin: "0px 10px",
-          }
-        }>
-          <P>Group</P>
-          <Select
-            showSearch
-            style={{ width: "100%", height: 36, marginBottom: "15px", }}
-            placeholder="Select type"
-            optionFilterProp="children"
-            filterOption={(input: any, option: any) =>
-              (option?.label ?? "").includes(input)
-            }
-            filterSort={(optionA: any, optionB: any) =>
-              (optionA?.label ?? "")
-                .toLowerCase()
-                .localeCompare((optionB?.label ?? "").toLowerCase())
-            }
-            onChange={(e) => {
-              // console.log(e);
-              setGroup(e);
-              // dispatch(setCountryId(e));
-            }}
-            options={groupList}
-          />
-
-
-        </div>
-
-
-        <div style={{ display: "flex" }}>
-          <button
-            onClick={(e: any) => {
-              e.preventDefault(); // Add this line
-              e.stopPropagation();
-              setIsNewGeofence(false)
-            }}
-            style={{
-              width: "50%",
-              padding: "7px 10px",
-              borderRadius: "8px",
-              backgroundColor: "green",
-              color: "white",
-              margin: "8px",
-              border: "0px",
-              outline: "none",
-              textAlign: "center",
-            }}
-          >
-            Cancel
-          </button>
-          <button
-            onClick={(e: any) => {
-              e.preventDefault(); // Add this line
-              e.stopPropagation();
-              createGeofence();
-            }}
-            style={{
-              width: "50%",
-              padding: "7px 10px",
-              borderRadius: "8px",
-              backgroundColor: "green",
-              color: "white",
-              margin: "8px",
-              border: "0px",
-              outline: "none",
-              textAlign: "center",
-            }}
-          >
-            Add
-          </button>
-
-        </div>
-      </form>
-
-      }
-
-
-      {isNewGroup &&
-
-        <AddGroupModal
-          isVisible={isNewGroup}
-          setIsVisible={setIsNewGroup}
-
-
-        // setValue={setCityName}
-        />
-
-      }
-
+      <button
+        onClick={(e: any) => {
+          e.preventDefault(); // Add this line
+          e.stopPropagation();
+          handleSelectAll();
+        }}
+        style={{
+          width: "45%",
+          padding: "7px 10px",
+          // boxShadow: "0px 5px 18px lightgray",
+          borderRadius: "8px",
+          backgroundColor: "#1f2f3e",
+          color: "white",
+          margin: "8px",
+          marginBottom: "5px",
+          marginTop: "0px",
+          border: "0px",
+          outline: "none",
+          textAlign: "center",
+        }}
+      >
+        Select All
+      </button>
+      <button
+        onClick={(e: any) => {
+          e.preventDefault(); // Add this line
+          e.stopPropagation();
+          handleDeselectAll();
+        }}
+        style={{
+          width: "45%",
+          padding: "7px 10px",
+          // boxShadow: "0px 5px 18px lightgray",
+          borderRadius: "8px",
+          backgroundColor: "#1f2f3e",
+          color: "white",
+          margin: "8px",
+          marginBottom: "5px",
+          marginTop: "0px",
+          border: "0px",
+          outline: "none",
+          textAlign: "center",
+        }}
+      >
+        Deselect All
+      </button>
 
       {/* ----------------------------------- */}
       {matchedGroups?.length > 0 && (
         <Accordion open={open} toggle={toggle} className="dark-accordion">
-          {matchedGroups?.filter((item: any) =>
-            item.items.some((bodyItem: any) =>
-              statusDevices === "Expired"
-                ? bodyItem.time === statusDevices
-                : statusDevices === "Not Connecetd"
+          {matchedGroups
+            ?.filter((item: any) =>
+              item.items.some((bodyItem: any) =>
+                statusDevices === "Expired"
+                  ? bodyItem.time === statusDevices
+                  : statusDevices === "Not Connecetd"
                   ? bodyItem.time == null ||
-                  bodyItem.time === "" ||
-                  bodyItem.time == undefined
+                    bodyItem.time === "" ||
+                    bodyItem.time == undefined
                   : statusDevices === ""
-                    ? bodyItem.online === bodyItem.online
-                    : bodyItem.online === statusDevices
+                  ? bodyItem.online === bodyItem.online
+                  : bodyItem.online === statusDevices
+              )
             )
-          )
             .filter((item: any) =>
               item.items.some(
                 (bodyItem: any) =>
@@ -649,14 +671,12 @@ const GeofencesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
             .map((item: any, index: any) => {
               const gradientId = `gradient-${index}`; // Generate a unique gradient ID for each item
               return (
-                <AccordionItem key={index}  >
+                <AccordionItem key={index}>
                   {item.items.length > 0 && (
-                    <div
-                    >
+                    <div>
                       <AccordionHeader
                         targetId={`${searchValue.length >= 1 ? "all" : index}`}
                         className=" custom-accordion-header"
-
                       >
                         <input
                           type="checkbox"
@@ -676,12 +696,12 @@ const GeofencesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
                                 statusDevices === "Expired"
                                   ? bodyItem.time === statusDevices
                                   : statusDevices === "Not Connecetd"
-                                    ? bodyItem.time == null ||
+                                  ? bodyItem.time == null ||
                                     bodyItem.time === "" ||
                                     bodyItem.time == undefined
-                                    : statusDevices === ""
-                                      ? bodyItem.online === bodyItem.online
-                                      : bodyItem.online === statusDevices
+                                  : statusDevices === ""
+                                  ? bodyItem.online === bodyItem.online
+                                  : bodyItem.online === statusDevices
                               )
                               .filter(
                                 (bodyItem: any) =>
@@ -701,11 +721,7 @@ const GeofencesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
                           }
                           className="svg-color"
                         />
-
                       </AccordionHeader>
-
-
-
                     </div>
                   )}
                   {item.items.length > 0 && (
@@ -717,12 +733,12 @@ const GeofencesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
                           statusDevices === "Expired"
                             ? bodyItem.time === statusDevices
                             : statusDevices === "Not Connecetd"
-                              ? bodyItem.time == null ||
+                            ? bodyItem.time == null ||
                               bodyItem.time === "" ||
                               bodyItem.time == undefined
-                              : statusDevices === ""
-                                ? bodyItem.online === bodyItem.online
-                                : bodyItem.online === statusDevices
+                            : statusDevices === ""
+                            ? bodyItem.online === bodyItem.online
+                            : bodyItem.online === statusDevices
                         )
                         .filter(
                           (bodyItem: any) =>
@@ -743,18 +759,19 @@ const GeofencesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
                                 borderRadius: "12px",
                                 margin: "10px -10px",
                                 cursor: "pointer",
-                                backgroundColor: `${bodyItem.icon_color === "green"
-                                  ? "rgba(0,255,0,0.2)"
-                                  : bodyItem.icon_color === "yellow"
+                                backgroundColor: `${
+                                  bodyItem.icon_color === "green"
+                                    ? "rgba(0,255,0,0.2)"
+                                    : bodyItem.icon_color === "yellow"
                                     ? "rgb(255,255,0,0.1)"
                                     : bodyItem.time === "Expired"
-                                      ? "lightGray"
-                                      : (bodyItem.icon_color === "blue" ||
+                                    ? "lightGray"
+                                    : (bodyItem.icon_color === "blue" ||
                                         bodyItem.icon_color === "black") &&
-                                        bodyItem.time !== "Expired"
-                                        ? "rgba(0,0,0,0.2)"
-                                        : "rgba(255,0,0,0.2)"
-                                  }`,
+                                      bodyItem.time !== "Expired"
+                                    ? "rgba(0,0,0,0.2)"
+                                    : "rgba(255,0,0,0.2)"
+                                }`,
                               }}
                               onClick={(e) => {
                                 dispatch(
@@ -815,16 +832,17 @@ const GeofencesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
                                         bodyItem.icon_color === "green"
                                           ? "onlineDevice"
                                           : bodyItem.icon_color === "yellow"
-                                            ? "engine"
-                                            : bodyItem.time === "Expired"
-                                              ? "expired"
-                                              : (bodyItem.icon_color === "blue" ||
-                                                bodyItem.icon_color ===
+                                          ? "engine"
+                                          : bodyItem.time === "Expired"
+                                          ? "expired"
+                                          : (bodyItem.icon_color === "blue" ||
+                                              bodyItem.icon_color ===
                                                 "black") &&
-                                                bodyItem.time !== "Expired"
-                                                ? "black"
-                                                : bodyItem.icon_color === "red"
-                                                  ? "ack" : bodyItem.online
+                                            bodyItem.time !== "Expired"
+                                          ? "black"
+                                          : bodyItem.icon_color === "red"
+                                          ? "ack"
+                                          : bodyItem.online
                                       }
                                     ></span>
                                   </label>
@@ -852,8 +870,6 @@ const GeofencesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
                                     </span>
                                   </div>
                                 </div>
-
-
                               </div>
                             </div>
                           );
@@ -863,12 +879,12 @@ const GeofencesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
                           statusDevices === "Expired"
                             ? bodyItem.time === statusDevices
                             : statusDevices === "Not Connecetd"
-                              ? bodyItem.time == null ||
+                            ? bodyItem.time == null ||
                               bodyItem.time === "" ||
                               bodyItem.time == undefined
-                              : statusDevices === ""
-                                ? bodyItem.online === bodyItem.online
-                                : bodyItem.online === statusDevices
+                            : statusDevices === ""
+                            ? bodyItem.online === bodyItem.online
+                            : bodyItem.online === statusDevices
                         )
                         .filter(
                           (bodyItem: any) =>
@@ -878,28 +894,28 @@ const GeofencesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
                             bodyItem.imei.includes(searchValue) ||
                             bodyItem.id == searchValue
                         ).length >= 15 && (
-                          <div
-                            style={{
-                              display: "flex",
-                              color: "#1f2f3e",
-                              fontSize: "16px",
-                              justifyContent: "end",
-                              cursor: "pointer",
-                            }}
-                            onClick={() => {
-                              if (
-                                item.items.length >= 15 &&
-                                itemsLength < item.items.length
-                              ) {
-                                setItemsLength(itemsLength + 14);
-                              }
-                            }}
-                          >
-                            {item.items.length >= 15 &&
-                              itemsLength < item.items.length &&
-                              "Show More"}
-                          </div>
-                        )}
+                        <div
+                          style={{
+                            display: "flex",
+                            color: "#1f2f3e",
+                            fontSize: "16px",
+                            justifyContent: "end",
+                            cursor: "pointer",
+                          }}
+                          onClick={() => {
+                            if (
+                              item.items.length >= 15 &&
+                              itemsLength < item.items.length
+                            ) {
+                              setItemsLength(itemsLength + 14);
+                            }
+                          }}
+                        >
+                          {item.items.length >= 15 &&
+                            itemsLength < item.items.length &&
+                            "Show More"}
+                        </div>
+                      )}
                     </AccordionBody>
                   )}
                 </AccordionItem>
