@@ -8,15 +8,15 @@ import {
   TabContent,
   TabPane,
 } from "reactstrap";
-import Skeleton from "../../../Skeleton/Skeleton";
+import Skeleton from "../../../Utilities/Skeleton/Skeleton";
 
 import Breadcrumbs from "../../../../CommonElements/Breadcrumbs/Breadcrumbs";
 import LiveAlerts from "./Events/LiveAlerts/LiveAlerts";
 import AssignedAlerts from "./Events/AssignedAlerts/AssignedAlerts";
 import CompletedAlerts from "./Events/CompletedAlerts/CompletedAlerts";
 import { useEffect, useState } from "react";
-import { getAll } from "../../../../Api";
-import Loader from "../../../Loader/Loader";
+import { getAll } from "../../../../Utilities/api";
+import Loader from "../../../Utilities/Loader/Loader";
 import { useDispatch, useSelector } from "react-redux";
 
 import {
@@ -39,8 +39,8 @@ import {
   setServerDevices,
 } from "../../../../ReaduxToolkit/Reducer/MonitoringSlice";
 import { useNavigate } from "react-router-dom";
-import NoInternetConnection from "../../../NoInternetConnection/NoInternetConnection";
-import { getUserRole } from "../../../../Api/globals";
+import NoInternetConnection from "../../../Utilities/NoInternetConnection/NoInternetConnection";
+import { getUserRole } from "../../../../Utilities/globals/globals";
 import { ROLES } from "../../../../constants/roles";
 import { setErrorData } from "../../../../ReaduxToolkit/Reducer/UserSlice";
 

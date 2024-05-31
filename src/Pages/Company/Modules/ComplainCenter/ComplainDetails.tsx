@@ -15,8 +15,8 @@ import ticketImage from "../../assets/ticketImage.png";
 import { IoSend } from "react-icons/io5";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { IMAGE_BASE_URL, getAll, getImage, patch } from "../../../../Api";
-import Loader from "../../../Loader/Loader";
+import { IMAGE_BASE_URL, getAll, getImage, patch } from "../../../../Utilities/api";
+import Loader from "../../../Utilities/Loader/Loader";
 import './ComplainDetails.css'
 
 import { Select } from "antd";
@@ -24,7 +24,7 @@ import {
   formatUnderscoredString,
   getUserId,
   getUserRole,
-} from "../../../../Api/globals";
+} from "../../../../Utilities/globals/globals";
 import { useParams } from "react-router-dom";
 import Swal from "sweetalert2";
 import { ROLES } from "../../../../constants/roles";

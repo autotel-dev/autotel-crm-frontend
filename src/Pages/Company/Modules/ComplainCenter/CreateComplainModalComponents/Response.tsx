@@ -12,8 +12,8 @@ import { setAllComplains, setComplainCenterRoles, setComplainCenterStatistics, s
 import SelectComplainTypesList from "../components/SelectComplainTypesList";
 import SelectComplainStatusTypes from "../components/SelectComplainStatusTypes";
 import SelectComplainRole from "../components/SelectComplainRole";
-import { create, getAll } from "../../../../../Api";
-import { formatUnderscoredString, getUserRole, getUserRoleID } from "../../../../../Api/globals";
+import { create, getAll } from "../../../../../Utilities/api";
+import { formatUnderscoredString, getUserRole, getUserRoleID } from "../../../../../Utilities/globals/globals";
 import { ROLES } from "../../../../../constants/roles";
 
 interface ResponseType {

@@ -28,7 +28,7 @@ import "react-loading-skeleton/dist/skeleton.css";
 import type { CollapseProps } from "antd";
 import { Collapse } from "antd";
 import Chart from "react-google-charts";
-import { getAll } from "../../../Api";
+import { getAll } from "../../../Utilities/api";
 import {
   setAlertsOverview,
   setGeneralData,
@@ -36,7 +36,7 @@ import {
 } from "../../../ReaduxToolkit/Reducer/DashboardSlice";
 import { useDispatch, useSelector } from "react-redux";
 import OperatorAlerts from "./components/OperatorAlerts";
-import { getUserRole } from "../../../Api/globals";
+import { getUserRole } from "../../../Utilities/globals/globals";
 import { ROLES } from "../../../constants/roles";
 
 import {

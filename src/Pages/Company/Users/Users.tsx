@@ -10,15 +10,15 @@ import {
   setIsConnected,
   setOperators,
 } from "../../../ReaduxToolkit/Reducer/OperatorSlice";
-import { getAll } from "../../../Api";
+import { getAll } from "../../../Utilities/api";
 import {
   setFilterRoles,
   setRoles,
 } from "../../../ReaduxToolkit/Reducer/RolesSlice";
-import NoInternetConnection from "../../NoInternetConnection/NoInternetConnection";
+import NoInternetConnection from "../../Utilities/NoInternetConnection/NoInternetConnection";
 import "../../../CssConstaints/Style.css";
 
-const Countries = () => {
+const Users = () => {
   const dispatch = useDispatch();
   const [searchValue, setSearchValue] = useState("");
   const { filterOperators, isConnected } = useSelector(
@@ -107,4 +107,4 @@ const Countries = () => {
   );
 };
 
-export default Countries;
+export default Users;

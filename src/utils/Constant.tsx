@@ -1,7 +1,7 @@
 import { Badge } from "reactstrap";
 import { H3, Image, P } from "../AbstractElements";
 import { Carousel } from "react-responsive-carousel";
-import { dynamicImage } from "../Service";
+import { dynamicImage } from "../Service/index";
 
 export const Href = "#javascript";
 

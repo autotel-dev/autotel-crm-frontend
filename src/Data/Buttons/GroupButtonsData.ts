@@ -1,8 +1,8 @@
-import { groupButton, radioBtnDataItem } from "../../Pages/Buttons/ButtonGroup/ButtonsType";
+
 import { CheckBoxButtonGroup, RadioButtonGroup } from "../../utils/Constant";
 
 
-export const groupButtonData:groupButton[] = [
+export const groupButtonData:any[] = [
   {
     title: "Basic Button Group",
     color: [
@@ -644,7 +644,7 @@ export const groupButtonData:groupButton[] = [
 
 
 
-export const radioBtnData:radioBtnDataItem[] = [
+export const radioBtnData:any[] = [
   {
     title: RadioButtonGroup,
     span: `Add <code>.active</code> for active state and<code>.disabled</code> class or <code>disabled="disabled"</code> attribute`,

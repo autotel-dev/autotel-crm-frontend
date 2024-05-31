@@ -2,7 +2,7 @@ import { useDispatch, useSelector } from "react-redux";
 import GoogleMap from "./components/GoogleMap/GoogleMap";
 import MonitoringSidebar from "./components/Sidebar/MonitoringSidebar";
 import { useEffect, useState } from "react";
-import { getAll } from "../../../../Api";
+import { getAll } from "../../../../Utilities/api";
 import {
   setDevices,
   setServerDevices,
@@ -10,10 +10,10 @@ import {
   setExpandedDevice,
   setIsConnected,
 } from "../../../../ReaduxToolkit/Reducer/MonitoringSlice";
-import Loader from "../../../Loader/Loader";
+import Loader from "../../../Utilities/Loader/Loader";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
-import NoInternetConnection from "../../../NoInternetConnection/NoInternetConnection";
+import NoInternetConnection from "../../../Utilities/NoInternetConnection/NoInternetConnection";
 import { setErrorData } from "../../../../ReaduxToolkit/Reducer/UserSlice";
 import DeviceDetailsBar from "./components/RIghtSidebar/DeviceDetailsBar";
 

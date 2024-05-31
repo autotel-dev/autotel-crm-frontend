@@ -7,11 +7,11 @@ import { H4 } from "../../../../AbstractElements";
 import { useNavigate } from "react-router-dom";
 import CreateNewTicket from "./CreateNewComplain";
 import { useDispatch, useSelector } from "react-redux";
-import { getUserRole } from "../../../../Api/globals";
+import { getUserRole } from "../../../../Utilities/globals/globals";
 import { ROLES } from "../../../../constants/roles";
 import CreateNewComplain from "./CreateNewComplain";
 import { setAllComplains, setComplainCenterRoles, setComplainCenterStatistics, setTableRow } from "../../../../ReaduxToolkit/Reducer/ComplainCenterSlice";
-import { getAll } from "../../../../Api";
+import { getAll } from "../../../../Utilities/api";
 import "../../../../CssConstaints/Style.css";
 
 const ComplainTable = () => {

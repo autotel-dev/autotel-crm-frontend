@@ -11,10 +11,9 @@ import {
 import CommonHeader from "../../../Common/CommonHeader";
 import DataTable from "react-data-table-component";
 import { useEffect, useState } from "react";
-import { getAll, update } from "../../../Api";
+import { getAll, update } from "../../../Utilities/api";
 import { useDispatch, useSelector } from "react-redux";
 import "./usersStyle.css";
-import deleteAlert from "../../Alerts/DeleteAlert";
 import {
   setFilterOperators,
   setInActiveActiveUsers,
@@ -24,15 +23,16 @@ import {
   setOperatorsStart,
 } from "../../../ReaduxToolkit/Reducer/OperatorSlice";
 import { setNoDataFound } from "../../../ReaduxToolkit/Reducer/NoDataFoundSlice";
-import Loader from "../../Loader/Loader";
+import Loader from "../../Utilities/Loader/Loader";
 import UpdateUser from "./UpdateUser";
 import { jwtDecode } from "jwt-decode";
-import { formatUnderscoredString, getUserRole } from "../../../Api/globals";
+import { formatUnderscoredString, getUserRole } from "../../../Utilities/globals/globals";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import { H4 } from "../../../AbstractElements";
-import Skeleton from "../../Skeleton/Skeleton";
+import Skeleton from "../../Utilities/Skeleton/Skeleton";
 import "../../../CssConstaints/Style.css";
+import deleteAlert from "../../../Utilities/alerts/DeleteAlert";
 
 
 const UsersList = () => {

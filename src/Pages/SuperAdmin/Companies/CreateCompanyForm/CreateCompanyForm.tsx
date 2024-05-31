@@ -1,0 +1,153 @@
+import { Container, Row } from "reactstrap";
+import Breadcrumbs from "../../../../CommonElements/Breadcrumbs/Breadcrumbs";
+import {
+  Businesshorizontalwizard,
+  Businessverticalwizard,
+  Customhorizontalwizard,
+  Customverticalwizard,
+  FormLayouts,
+  FormWizard2Heading,
+} from "../../../../utils/Constant";
+import CustomHorizontalWizard from "./CustomHorizontalWizard";
+import { useEffect } from "react";
+import { getAll } from "../../../../Utilities/api";
+import { useDispatch } from "react-redux";
+
+import {
+  setServers,
+  setTimeZones,
+  setCRMModules,
+  setCities,
+  setPackages,
+  setCompaniesStart,
+  setCompaniesEnd,
+  setCompanies,
+  setFilterCompanies,
+  setPermissions,
+  setIsConnected,
+} from "../../../../ReaduxToolkit/Reducer/CompanySlice";
+// import BusinessVerticalWizard from "./BusinessVerticalWizard/BusinessVerticalWizard";
+
+const CreateCompanyForm = () => {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    getAll({ url: "timezone/get-all-timezones" }).then((data: any) => {
+      // console.log("api call --- >", data);
+      if (data !== undefined) {
+        if (data.success) {
+          // console.log("hhg");
+          dispatch(setTimeZones(data.data));
+        }
+        if (!data.success) {
+          // console.log("hhg");
+          dispatch(setTimeZones([]));
+        }
+      }
+    });
+  }, []);
+  useEffect(() => {
+    getAll({ url: "permissions/get-all-permissions" }).then((data: any) => {
+      // console.log("api call --- >", data);
+      if (data !== undefined) {
+        if (data.success) {
+          // console.log("hhg");
+          dispatch(setPermissions(data.data));
+        }
+        if (!data.success) {
+          // console.log("hhg");
+          dispatch(setPermissions([]));
+        }
+      }
+    });
+  }, []);
+
+  useEffect(() => {
+    getAll({ url: "server-management/get-all-active-servers" }).then(
+      (data: any) => {
+        // console.log("api call --- >", data);
+        if (data !== undefined) {
+          if (data.success) {
+            // console.log("hhg");
+            dispatch(setServers(data.data.activeServers));
+          }
+          if (!data.success) {
+            // console.log("hhg");
+            dispatch(setServers([]));
+          }
+        }
+      }
+    );
+  }, []);
+  useEffect(() => {
+    getAll({ url: "crm-module/get-all-active-modules" }).then((data: any) => {
+      // console.log("api call --- >", data);
+      if (data !== undefined) {
+        if (data.success) {
+          // console.log("hhg");
+          dispatch(setCRMModules(data.data));
+        }
+        if (!data.success) {
+          // console.log("hhg");
+          dispatch(setCRMModules([]));
+        }
+      }
+    });
+  }, []);
+
+  useEffect(() => {
+    getAll({ url: "city/get-all-active-cities" }).then((data: any) => {
+      // console.log("api call --- >", data);
+      if (data !== undefined) {
+        if (data.success) {
+          // console.log("hhg");
+          dispatch(setCities(data.data));
+        }
+        if (!data.success) {
+          // console.log("hhg");
+          dispatch(setCities([]));
+        }
+      }
+    });
+  }, []);
+  useEffect(() => {
+    getAll({ url: "package/get-all-active-packages" }).then((data: any) => {
+      // console.log("api call --- >", data);
+      if (data !== undefined) {
+        if (data.success) {
+          // console.log("hhg");
+          dispatch(setPackages(data.data));
+        }
+        if (!data.success) {
+          // console.log("hhg");
+          dispatch(setPackages([]));
+        }
+      }
+    });
+  }, []);
+
+  return (
+    <>
+      <Breadcrumbs
+        mainTitle="Create Comapany"
+        parent="Company"
+        title="Create Comapany"
+      />
+      <Container fluid>
+        <Row>
+          <CustomHorizontalWizard heading="" xs={12} />
+
+          {/* <CustomHorizontalWizard
+            heading={Customverticalwizard}
+            horizontalWizardWrapperClassName="vertical-options vertical-variations"
+            firstXl={3}
+            secondXl={9}
+          /> */}
+          {/* <BusinessVerticalWizard heading={Businesshorizontalwizard} xs={12} /> */}
+        </Row>
+      </Container>
+    </>
+  );
+};
+
+export default CreateCompanyForm;
