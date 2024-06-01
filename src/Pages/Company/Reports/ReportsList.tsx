@@ -19,7 +19,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import "./reportsStyle.css";
 import CommonHeader from "../../../Common/CommonHeader";
-import Loader from "../../Loader/Loader";
+import Loader from "../../Utilities/Loader/Loader";
 import xlsx from "json-as-xlsx";
 import ViewModal from "./ViewModal/ViewModal";
 import { Menu, Dropdown, Button, message, Space, Tooltip } from "antd";

@@ -14,7 +14,7 @@ import { CheckCircle } from "react-feather";
 import { useDispatch, useSelector } from "react-redux";
 import { H3, P } from "../../../AbstractElements";
 import { UserType } from "./UserTypes/UserTypes";
-import { create, getAll } from "../../../Api";
+import { create, getAll } from "../../../Utilities/api";
 import {
   setFilterOperators,
   setInActiveActiveUsers,

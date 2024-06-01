@@ -10,8 +10,8 @@ import { H3 } from "../../../../AbstractElements";
 import { SendCommandType } from "../ControlRoom/Analytics/components/Type/SendCommandType";
 import DevicesDropdown from "../ControlRoom/Analytics/components/DevicesDropdown/DevicesDropdown";
 import CreateComplainModal from "./CreateComplainModal";
-import { serverCredentials } from "../../../../Api/header";
-import { create } from "../../../../Api";
+import { serverCredentials } from "../../../../Utilities/headers/header";
+import { create } from "../../../../Utilities/api";
 import { setCreateComplainModalData } from "../../../../ReaduxToolkit/Reducer/ComplainCenterSlice";
 // import TotalAlertsForSpecificDevices from "./TotalAlertsForSpecificDevices";
 

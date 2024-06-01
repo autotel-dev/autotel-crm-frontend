@@ -12,7 +12,7 @@ import Swal from "sweetalert2";
 import { AddPreInfoAlertType, SendCommandType } from "./Type/SendCommandType";
 import { H3 } from "../../../../../../AbstractElements";
 import DevicesDropdown from "./DevicesDropdown/DevicesDropdown";
-import { create, getAll } from "../../../../../../Api";
+import { create, getAll } from "../../../../../../Utilities/api";
 import {
   setDashboardStatistics,
   setPreInfoAlerts,

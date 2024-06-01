@@ -5,8 +5,8 @@ import CommonHeader from "../../../../Common/CommonHeader";
 import SupportList from "./ComplainList";
 import SupportTable from "./ComplainTable";
 import { useEffect, useState } from "react";
-import Skeleton from "../../../Skeleton/Skeleton";
-import { getAll } from "../../../../Api";
+import Skeleton from "../../../Utilities/Skeleton/Skeleton";
+import { getAll } from "../../../../Utilities/api";
 import {
   setBugReports,
   setIsConnected,
@@ -15,10 +15,10 @@ import {
   setSupportStatistics,
 } from "../../../../ReaduxToolkit/Reducer/SupportSlice";
 import { useDispatch, useSelector } from "react-redux";
-import Loader from "../../../Loader/Loader";
-import { getUserRole } from "../../../../Api/globals";
+import Loader from "../../../Utilities/Loader/Loader";
+import { getUserRole } from "../../../../Utilities/globals/globals";
 import Swal from "sweetalert2";
-import NoInternetConnection from "../../../NoInternetConnection/NoInternetConnection";
+import NoInternetConnection from "../../../Utilities/NoInternetConnection/NoInternetConnection";
 import { ROLES } from "../../../../constants/roles";
 import ComplainList from "./ComplainList";
 import ComplainTable from "./ComplainTable";

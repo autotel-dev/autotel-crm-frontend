@@ -6,15 +6,15 @@ import Breadcrumbs from "../../../CommonElements/Breadcrumbs/Breadcrumbs";
 import { setup } from "../../../utils/Constant";
 import ReportsList from "./ReportsList";
 import ReportsListNav from "./ReportsListNav";
-import { getAll } from "../../../Api";
+import { getAll } from "../../../Utilities/api";
 import Swal from "sweetalert2";
 import "../../../CssConstaints/Style.css";
-import Loader from "../../Loader/Loader";
+import Loader from "../../Utilities/Loader/Loader";
 import {
   setIsConnected,
   setReportstype,
 } from "../../../ReaduxToolkit/Reducer/ReportsSlice";
-import NoInternetConnection from "../../NoInternetConnection/NoInternetConnection";
+import NoInternetConnection from "../../Utilities/NoInternetConnection/NoInternetConnection";
 import { Flex } from "antd";
 
 const Reports = () => {

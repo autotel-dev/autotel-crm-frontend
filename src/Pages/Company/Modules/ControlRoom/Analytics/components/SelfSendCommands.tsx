@@ -13,9 +13,9 @@ import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { H3, H4, H5, P } from "../../../../../../AbstractElements";
 import SendCommand from "./SendCommand";
-import { create } from "../../../../../../Api";
+import { create } from "../../../../../../Utilities/api";
 import Swal from "sweetalert2";
-import { serverCredentials } from "../../../../../../Api/header";
+import { serverCredentials } from "../../../../../../Utilities/headers/header";
 import { Select } from "antd";
 
 interface PropsTypes {

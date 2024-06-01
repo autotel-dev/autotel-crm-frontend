@@ -13,7 +13,7 @@ import {
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { H3, H4 } from "../../../../AbstractElements";
-import { formatUnderscoredString } from "../../../../Api/globals";
+import { formatUnderscoredString } from "../../../../Utilities/globals/globals";
 
 interface PropsTypes {
   isVisible: boolean; // Change 'boolean' to the actual type of isVisible

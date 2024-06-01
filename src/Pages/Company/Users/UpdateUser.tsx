@@ -14,7 +14,7 @@ import { Cancel } from "../../../utils/Constant";
 import { H3, P } from "../../../AbstractElements";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getAll, update } from "../../../Api";
+import { getAll, update } from "../../../Utilities/api";
 import { UserType } from "./UserTypes/UserTypes";
 import { jwtDecode } from "jwt-decode";
 import {

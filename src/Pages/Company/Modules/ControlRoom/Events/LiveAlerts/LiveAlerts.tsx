@@ -12,7 +12,7 @@ import {
 } from "reactstrap";
 import { H3, H4, H5, P } from "../../../../../../AbstractElements";
 import { useEffect, useRef, useState } from "react";
-import { create, getAll } from "../../../../../../Api";
+import { create, getAll } from "../../../../../../Utilities/api";
 import { useDispatch, useSelector } from "react-redux";
 import {
   setAssignedAlerts,
@@ -21,9 +21,9 @@ import {
   setLiveAlertsData,
 } from "../../../../../../ReaduxToolkit/Reducer/AlertsSlice";
 import Swal from "sweetalert2";
-import Loader from "../../../../../Loader/Loader";
-import { serverCredentials } from "../../../../../../Api/header";
-import { getUserRole } from "../../../../../../Api/globals";
+import Loader from "../../../../../Utilities/Loader/Loader";
+import { serverCredentials } from "../../../../../../Utilities/headers/header";
+import { getUserRole } from "../../../../../../Utilities/globals/globals";
 
 const LiveAlerts = () => {
   const { userPersonalizationData } = useSelector(

@@ -1,6 +1,6 @@
 import { Col, Container, Row } from "reactstrap";
 import { useDispatch, useSelector } from "react-redux";
-import { getUserRole } from "../../Api/globals";
+import { getUserRole } from "../../Utilities/globals/globals";
 import { ROLES } from "../../constants/roles";
 import Breadcrumbs from "../../CommonElements/Breadcrumbs/Breadcrumbs";
 import General from "./General/General";
@@ -19,7 +19,7 @@ import KilledVehicles from "./Control Room/KilledVehicles";
 import { useEffect, useState } from "react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
-import { getAll } from "../../Api";
+import { getAll } from "../../Utilities/api";
 import {
   setAssignedAlerts,
   setIsConnected,

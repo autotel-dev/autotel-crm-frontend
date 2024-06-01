@@ -15,8 +15,8 @@ import {
   setSelfSendCommands,
   setSendCommandsType,
 } from "../../../../../../ReaduxToolkit/Reducer/AlertsSlice";
-import { create, getAll } from "../../../../../../Api";
-import { serverCredentials } from "../../../../../../Api/header";
+import { create, getAll } from "../../../../../../Utilities/api";
+import { serverCredentials } from "../../../../../../Utilities/headers/header";
 import TotalAlertsForSpecificDevices from "./TotalAlertsForSpecificDevices";
 
 interface PropsTypes {

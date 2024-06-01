@@ -29,7 +29,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { ImArrowUp, ImArrowDown } from "react-icons/im";
 import SelfSendCommands from "./components/SelfSendCommands";
-import { getAll } from "../../../../../Api";
+import { getAll } from "../../../../../Utilities/api";
 import { setDashboardStatistics } from "../../../../../ReaduxToolkit/Reducer/AlertsSlice";
 import { ApexOptions } from "apexcharts";
 import TotalPreInfoAlerts from "./components/TotalPreInfoAlerts";

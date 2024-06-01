@@ -5,7 +5,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { Button, FormGroup, Label, Modal, ModalBody, Row } from "reactstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { H3, P } from "../../../../../../../AbstractElements";
-import { create, getAll } from "../../../../../../../Api";
+import { create, getAll } from "../../../../../../../Utilities/api";
 import {
   setAssignedAlerts,
   setCompletedAlerts,

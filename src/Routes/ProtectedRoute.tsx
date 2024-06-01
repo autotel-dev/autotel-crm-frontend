@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Navigate, Outlet } from "react-router-dom";
-import Loader from "../Pages/Loader/Loader";
-import { getUserRole } from "../Api/globals";
-import { getAll } from "../Api";
+import Loader from "../Pages/Utilities/Loader/Loader";
+import { getUserRole } from "../Utilities/globals/globals";
+import { getAll } from "../Utilities/api";
 import { PERMISSION_VALUES } from "../constants/permissions";
 import { ROLES } from "../constants/roles";
 import Swal from "sweetalert2";
-import NoInternetConnection from "../Pages/NoInternetConnection/NoInternetConnection";
+import NoInternetConnection from "../Pages/Utilities/NoInternetConnection/NoInternetConnection";
 
 interface PropTypes {
   allowedUserRoles: any;

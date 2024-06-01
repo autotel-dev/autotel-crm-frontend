@@ -40,7 +40,7 @@ import { SidebarMenuTypes } from "../../Data/Layout/Sidebar/SidebarTypes";
 import { useAppSelector } from "../../ReaduxToolkit/Hooks";
 import { useSelector } from "react-redux";
 import { jwtDecode } from "jwt-decode";
-import { getUserRole } from "../../Api/globals";
+import { getUserRole } from "../../Utilities/globals/globals";
 import { IoMdArrowDropdown, IoMdArrowDropup } from "react-icons/io";
 import { ROLES } from "../../constants/roles";
 import RightHeader from "../Header/RightHeader/RightHeader";

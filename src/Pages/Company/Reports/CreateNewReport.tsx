@@ -6,7 +6,7 @@ import { Button, FormGroup, Label, Modal, ModalBody, Row } from "reactstrap";
 import { CheckCircle } from "react-feather";
 import { useDispatch, useSelector } from "react-redux";
 import { H3, P } from "../../../AbstractElements";
-import { create, getAll } from "../../../Api";
+import { create, getAll } from "../../../Utilities/api";
 
 import { jwtDecode } from "jwt-decode";
 import { Select } from "antd";

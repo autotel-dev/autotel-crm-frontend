@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import { Href } from "../../utils/Constant";
 import { useAppSelector } from "../../ReaduxToolkit/Hooks";
 import { MenuListInterface } from "./SideBarTypes";
-import { getUserRole } from "../../Api/globals";
+import { getUserRole } from "../../Utilities/globals/globals";
 import { IoMdArrowDropdown, IoMdArrowDropup } from "react-icons/io";
 
 
