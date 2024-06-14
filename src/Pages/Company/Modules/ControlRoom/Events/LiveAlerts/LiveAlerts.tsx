@@ -225,7 +225,21 @@ const LiveAlerts = () => {
               />
             </FormGroup>
           </Row>
-          <div
+          
+            <Table className="display order-wrapper" id="recent-order">
+              <thead>
+                <tr>
+
+
+                  {tableHeader.map((data, index) => (
+                    <th key={index} style={{ width: "20%" }}>
+                      {data}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              </ Table>
+              <div
             ref={containerRef}
             className="table-responsive theme-scrollbar recent-wrapper"
             style={{
@@ -241,18 +255,8 @@ const LiveAlerts = () => {
             }}
             onScroll={handleScroll}
           >
-            <Table className="display order-wrapper" id="recent-order">
-              <thead>
-                <tr>
 
-
-                  {tableHeader.map((data, index) => (
-                    <th key={index} style={{ width: "20%" }}>
-                      {data}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
+              <Table className="display order-wrapper" id="recent-order">
               <tbody>
                 {dataList.length > 0 ? (
                   dataList
