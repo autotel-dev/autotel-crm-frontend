@@ -77,8 +77,8 @@ const AssignedAlerts = () => {
 
   return (
     <Col xl="12" lg="12">
-      <Card >
-        <CardBody >
+      <Card>
+        <CardBody>
           <Row>
             <FormGroup className="col-md-12 create-group">
               <P>Search Vehicles</P>
@@ -92,39 +92,41 @@ const AssignedAlerts = () => {
             </FormGroup>
           </Row>
 
-          <div
-            ref={containerRef}
-            className="table-responsive theme-scrollbar recent-wrapper"
-            style={{
-              overflowY: "scroll",
-              overflowX: "auto",
-              maxHeight: "calc(66vh - 20px)", // Subtract scrollbar width from max height
-              WebkitOverflowScrolling: "touch", // Enable momentum scrolling on iOS
-              scrollbarWidth: "thin", // Specify scrollbar width
-              WebkitBorderRadius: "5px", // For WebKit browsers (Chrome, Safari)
-              MozBorderRadius: "5px", // For Mozilla Firefox
-              borderRadius: "5px", // For other browsers
-              scrollbarColor: "lightgray transparent", // Specify scrollbar color
-            }}
-            onScroll={handleScroll}
-          >
-            <div className="table-responsive theme-scrollbar recent-wrapper">
+          <div className="table-responsive theme-scrollbar recent-wrapper">
+            <Table className="display order-wrapper" id="recent-order">
+              <thead>
+                <tr>
+                  {tableHeader.map((data, index) => (
+                    <th
+                      key={index}
+                      style={{
+                        width:
+                          data === "Device" || data === "Type" ? "15%" : "20%",
+                      }}
+                    >
+                      {data}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+            </Table>
+            <div
+              ref={containerRef}
+              className="table-responsive theme-scrollbar recent-wrapper"
+              style={{
+                overflowY: "scroll",
+                overflowX: "auto",
+                maxHeight: "calc(66vh - 20px)", // Subtract scrollbar width from max height
+                WebkitOverflowScrolling: "touch", // Enable momentum scrolling on iOS
+                scrollbarWidth: "thin", // Specify scrollbar width
+                WebkitBorderRadius: "5px", // For WebKit browsers (Chrome, Safari)
+                MozBorderRadius: "5px", // For Mozilla Firefox
+                borderRadius: "5px", // For other browsers
+                scrollbarColor: "lightgray transparent", // Specify scrollbar color
+              }}
+              onScroll={handleScroll}
+            >
               <Table className="display order-wrapper" id="recent-order">
-                <thead>
-                  <tr>
-                    {tableHeader.map((data, index) => (
-                      <th
-                        key={index}
-                        style={{
-                          width:
-                            data === "Device" || data === "Type" ? "15%" : "20%",
-                        }}
-                      >
-                        {data}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
                 <tbody>
                   {dataList.length === 0 ? (
                     <tr>
@@ -140,22 +142,24 @@ const AssignedAlerts = () => {
                           .includes(searchValue.toLowerCase())
                       )
                       .map((data: any, index: any) => (
-                        <tr  key={index}
-                        onMouseEnter={() => {
-                          setIsHovered(true);
-                          setIdd(index);
-                        }}
-                        onMouseLeave={() => setIsHovered(false)}
-                        style={{
-                          backgroundColor:
-                            isHovered && idd == index
-                              ? userPersonalizationData == null
-                                ? "#D6EEEE"
-                                : `rgba(${rgbColor.r},${rgbColor.g},${rgbColor.b},0.2)`
-                              : "transparent",
-                          transition: "background-color 0.3s",
-                          cursor:"pointer",
-                        }}>
+                        <tr
+                          key={index}
+                          onMouseEnter={() => {
+                            setIsHovered(true);
+                            setIdd(index);
+                          }}
+                          onMouseLeave={() => setIsHovered(false)}
+                          style={{
+                            backgroundColor:
+                              isHovered && idd == index
+                                ? userPersonalizationData == null
+                                  ? "#D6EEEE"
+                                  : `rgba(${rgbColor.r},${rgbColor.g},${rgbColor.b},0.2)`
+                                : "transparent",
+                            transition: "background-color 0.3s",
+                            cursor: "pointer",
+                          }}
+                        >
                           {/* <td>{data.eventId}</td> */}
                           <td style={{ width: "15%" }}>
                             <div className="d-flex">
@@ -178,7 +182,10 @@ const AssignedAlerts = () => {
                               </div>
                             </div>
                           </td>
-                          <td className={`txt-primary`} style={{ width: "20%" }}>
+                          <td
+                            className={`txt-primary`}
+                            style={{ width: "20%" }}
+                          >
                             {data.message}
                           </td>
                           <td style={{ width: "15%" }}>{data.type}</td>
@@ -190,8 +197,8 @@ const AssignedAlerts = () => {
                             {data.address == null
                               ? "N/A"
                               : data.address.length > 10
-                                ? data.address.substring(0, 10) + "..."
-                                : data.address}
+                              ? data.address.substring(0, 10) + "..."
+                              : data.address}
                           </td>
                           {data.address != null && (
                             <UncontrolledPopover

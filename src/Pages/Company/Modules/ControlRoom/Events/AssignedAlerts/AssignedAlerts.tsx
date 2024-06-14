@@ -113,7 +113,20 @@ const AssignedAlerts = () => {
             </FormGroup>
           </Row>
 
-          <div
+          
+            <div className="table-responsive theme-scrollbar recent-wrapper">
+              <Table className="display order-wrapper" id="recent-order">
+                <thead>
+                  <tr>
+                    <th>Device</th>
+                    <th>Alert</th>
+                    <th>Type</th>
+                    <th>Message</th>
+                    <th>Address</th>
+                  </tr>
+                </thead>
+                </Table>
+                <div
             ref={containerRef}
             className="table-responsive theme-scrollbar recent-wrapper"
             style={{
@@ -129,17 +142,7 @@ const AssignedAlerts = () => {
             }}
             onScroll={handleScroll}
           >
-            <div className="table-responsive theme-scrollbar recent-wrapper">
-              <Table className="display order-wrapper" id="recent-order">
-                <thead>
-                  <tr>
-                    <th>Device</th>
-                    <th>Alert</th>
-                    <th>Type</th>
-                    <th>Message</th>
-                    <th>Address</th>
-                  </tr>
-                </thead>
+                <Table className="display order-wrapper" id="recent-order">
                 <tbody>
                   {dataList.length === 0 ? (
                     <tr>

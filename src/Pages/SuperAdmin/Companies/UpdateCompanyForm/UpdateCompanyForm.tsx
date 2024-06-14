@@ -1,5 +1,6 @@
 import { H4, H5, P } from "../../../../AbstractElements";
 import Breadcrumbs from "../../../../CommonElements/Breadcrumbs/Breadcrumbs";
+import Skeleton from "../../../Utilities/Skeleton/Skeleton";
 import {
   Button,
   Card,
@@ -19,7 +20,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 
 import { setNoDataFound } from "../../../../ReaduxToolkit/Reducer/NoDataFoundSlice";
-import { IMAGE_BASE_URL, create, getAll, getImage, update } from "../../../../Utilities/api";
+import {
+  IMAGE_BASE_URL,
+  create,
+  getAll,
+  getImage,
+  update,
+} from "../../../../Utilities/api";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -221,7 +228,7 @@ const UpdateCompanyForm = () => {
             });
 
             // if (attachementImages.length === 5) {
-            //   setLoading(false);
+              setLoading(false);
             // }
           }
         }
@@ -482,20 +489,243 @@ const UpdateCompanyForm = () => {
   return (
     <>
       {loading ? (
-        <div
-          style={{
-            display: "flex",
-            marginTop: "130px",
-            justifyContent: "center",
-            height: "90vh",
-            backgroundColor: "white",
-            alignItems: "center",
-          }}
-        >
+        // <div
+        //   style={{
+        //     display: "flex",
+        //     marginTop: "130px",
+        //     justifyContent: "center",
+        //     height: "90vh",
+        //     backgroundColor: "white",
+        //     alignItems: "center",
+        //   }}
+        // >
           <div style={{ textAlign: "center" }}>
-            <Loader />
+            {/* <Loader /> */}
+
+            <>
+              <div
+                style={{
+                  display: "flex",
+                  width :"100%",
+                  justifyContent: "space-between",
+                   marginLeft:"20px",
+                  //  marginRight:"50px",
+                   marginTop:"200px",
+                }}
+              >
+                <div style={{width:"33%", }}>
+                <Skeleton
+                  height="20px"
+                  width="45%"
+                  borderRadius="10px"
+                  marginBottom="5px"
+                />
+                <Skeleton
+                  height="40px"
+                  width="100%"
+                  marginBottom="10"
+                  borderRadius="10px"
+                />
+                </div>
+                <div style={{width:"30%"}}>
+                <Skeleton
+                  height="20px"
+                  width="45%"
+                  borderRadius="10px"
+                  marginBottom="5px"
+                />
+                <Skeleton
+                  height="40px"
+                  width="100%"
+                  marginBottom="10"
+                  borderRadius="10px"
+                />
+                </div>
+                <div style={{width:"30%" ,  marginRight:"50px"}}>
+                <Skeleton
+                  height="20px"
+                  width="45%"
+                  borderRadius="10px"
+                  marginBottom="5px"
+                />
+                <Skeleton
+                  height="40px"
+                  width="100%"
+                  marginBottom="10"
+                  borderRadius="10px"
+                />
+                </div>
+                
+               
+              </div>
+              <div
+                style={{
+                  display: "flex",
+                  width :"100%",
+                  justifyContent: "space-between",
+                   marginLeft:"20px",
+                  //  marginRight:"50px",
+                   marginTop:"60px",
+                }}
+              >
+                <div style={{width:"33%", }}>
+                <Skeleton
+                  height="20px"
+                  width="45%"
+                  borderRadius="10px"
+                  marginBottom="5px"
+                />
+                <Skeleton
+                  height="40px"
+                  width="100%"
+                  marginBottom="10"
+                  borderRadius="10px"
+                />
+                </div>
+                <div style={{width:"30%"}}>
+                <Skeleton
+                  height="20px"
+                  width="45%"
+                  borderRadius="10px"
+                  marginBottom="5px"
+                />
+                <Skeleton
+                  height="40px"
+                  width="100%"
+                  marginBottom="10"
+                  borderRadius="10px"
+                />
+                </div>
+                <div style={{width:"30%" ,  marginRight:"50px"}}>
+                <Skeleton
+                  height="20px"
+                  width="45%"
+                  borderRadius="10px"
+                  marginBottom="5px"
+                />
+                <Skeleton
+                  height="40px"
+                  width="100%"
+                  marginBottom="10"
+                  borderRadius="10px"
+                />
+                </div>
+                
+               
+              </div>
+              <div
+                style={{
+                  display: "flex",
+                  width :"100%",
+                  justifyContent: "space-between",
+                   marginLeft:"20px",
+                  //  marginRight:"50px",
+                   marginTop:"60px",
+                }}
+              >
+                <div style={{width:"33%", }}>
+                <Skeleton
+                  height="20px"
+                  width="45%"
+                  borderRadius="10px"
+                  marginBottom="5px"
+                />
+                <Skeleton
+                  height="40px"
+                  width="100%"
+                  marginBottom="10"
+                  borderRadius="10px"
+                />
+                </div>
+                <div style={{width:"30%"}}>
+                <Skeleton
+                  height="20px"
+                  width="45%"
+                  borderRadius="10px"
+                  marginBottom="5px"
+                />
+                <Skeleton
+                  height="40px"
+                  width="100%"
+                  marginBottom="10"
+                  borderRadius="10px"
+                />
+                </div>
+                <div style={{width:"30%" ,  marginRight:"50px"}}>
+                <Skeleton
+                  height="20px"
+                  width="45%"
+                  borderRadius="10px"
+                  marginBottom="5px"
+                />
+                <Skeleton
+                  height="40px"
+                  width="100%"
+                  marginBottom="10"
+                  borderRadius="10px"
+                />
+                </div>
+                
+               
+              </div>
+              <div
+                style={{
+                  display: "flex",
+                  width :"100%",
+                  justifyContent: "space-between",
+                   marginLeft:"20px",
+                  //  marginRight:"50px",
+                   marginTop:"60px",
+                }}
+              >
+                <div style={{width:"33%", }}>
+                <Skeleton
+                  height="20px"
+                  width="45%"
+                  borderRadius="10px"
+                  marginBottom="5px"
+                />
+                <Skeleton
+                  height="40px"
+                  width="100%"
+                  marginBottom="10"
+                  borderRadius="10px"
+                />
+                </div>
+                <div style={{width:"30%"}}>
+                <Skeleton
+                  height="20px"
+                  width="45%"
+                  borderRadius="10px"
+                  marginBottom="5px"
+                />
+                <Skeleton
+                  height="40px"
+                  width="100%"
+                  marginBottom="10"
+                  borderRadius="10px"
+                />
+                </div>
+                <div style={{width:"30%" ,  marginRight:"50px"}}>
+                <Skeleton
+                  height="20px"
+                  width="45%"
+                  borderRadius="10px"
+                  marginBottom="5px"
+                />
+                <Skeleton
+                  height="40px"
+                  width="100%"
+                  marginBottom="10"
+                  borderRadius="10px"
+                />
+                </div>
+                
+               
+              </div>
+            </>
           </div>
-        </div>
+        
       ) : (
         <div>
           <Breadcrumbs
@@ -809,13 +1039,14 @@ const UpdateCompanyForm = () => {
                               //       (server: any) => server.label === option.label
                               //     )
                               // );
-                              const newlySelectedServers = selectedOptions.filter(
-                                (option: any) =>
-                                  !formData.serverCredentials.some(
-                                    (server: any) =>
-                                      server?.server?._id === option.server
-                                  )
-                              );
+                              const newlySelectedServers =
+                                selectedOptions.filter(
+                                  (option: any) =>
+                                    !formData.serverCredentials.some(
+                                      (server: any) =>
+                                        server?.server?._id === option.server
+                                    )
+                                );
                               // console.log("selectedValues", selectedValues);
 
                               // console.log(
@@ -852,15 +1083,17 @@ const UpdateCompanyForm = () => {
                             dropdownRender={(menu) => (
                               <div>
                                 {menu}
-                                {formData?.serverCredentials?.map((server: any) => (
-                                  <Option
-                                    key={server?.server?._id}
-                                    value={server?.server?._id}
-                                    disabled
-                                  >
-                                    {server?.server?.companyName}
-                                  </Option>
-                                ))}
+                                {formData?.serverCredentials?.map(
+                                  (server: any) => (
+                                    <Option
+                                      key={server?.server?._id}
+                                      value={server?.server?._id}
+                                      disabled
+                                    >
+                                      {server?.server?.companyName}
+                                    </Option>
+                                  )
+                                )}
                               </div>
                             )}
                             options={serverList}
@@ -1000,10 +1233,11 @@ const UpdateCompanyForm = () => {
                                             }
                                           />
                                           <span
-                                            className={`switch-state ${item.checked
-                                              ? `bg-primary`
-                                              : `bg-secondary`
-                                              }`}
+                                            className={`switch-state ${
+                                              item.checked
+                                                ? `bg-primary`
+                                                : `bg-secondary`
+                                            }`}
                                           />
                                         </Label>
                                       </div>
@@ -1280,12 +1514,12 @@ const UpdateCompanyForm = () => {
                                   {data.key === "cnicFront"
                                     ? "CNIC Front"
                                     : data.key === "cnicBack"
-                                      ? "CNIC Back"
-                                      : data.key === "ptaCertificate"
-                                        ? "PTA Certificate"
-                                        : data.key === "ntnCertificate"
-                                          ? "NTN Certificate"
-                                          : "Other Attachment"}
+                                    ? "CNIC Back"
+                                    : data.key === "ptaCertificate"
+                                    ? "PTA Certificate"
+                                    : data.key === "ntnCertificate"
+                                    ? "NTN Certificate"
+                                    : "Other Attachment"}
                                 </H5>
                                 <div
                                   style={{
@@ -1328,12 +1562,12 @@ const UpdateCompanyForm = () => {
                                     {data.key === "cnicFront"
                                       ? "CNIC Front"
                                       : data.key === "cnicBack"
-                                        ? "CNIC Back"
-                                        : data.key === "ptaCertificate"
-                                          ? "PTA Certificate"
-                                          : data.key === "ntnCertificate"
-                                            ? "NTN Certificate"
-                                            : "Other Attachment"}
+                                      ? "CNIC Back"
+                                      : data.key === "ptaCertificate"
+                                      ? "PTA Certificate"
+                                      : data.key === "ntnCertificate"
+                                      ? "NTN Certificate"
+                                      : "Other Attachment"}
                                   </div>
                                 </div>
                               </div>

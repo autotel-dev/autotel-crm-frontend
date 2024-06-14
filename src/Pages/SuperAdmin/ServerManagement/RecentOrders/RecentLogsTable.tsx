@@ -40,10 +40,10 @@ const RecentLogsTable = () => {
   return (
     <div className="">
       <Table className="display order-wrapper" id="recent-order">
-        <thead>
-          <tr>
+        <thead >
+          <tr >
             {recentLogsHeader.map((data, index) => (
-              <th key={index} style={{ width: data == "Activity" ? "15%" : "10%", fontWeight: "bold" }}>
+              <th key={index} style={{ width: data == "Activity" ? "15%" : "10%", fontWeight: "bold", }}>
                 {data}
               </th>
             ))}
