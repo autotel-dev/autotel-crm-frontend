@@ -46,12 +46,12 @@ const TestWhatsAppMessageModal: React.FC<PropTypes> = ({
     //         };
     //         // console.log(city);
     //         try {
-    //             await create(city, { url: "country/create-country" }).then(
+    //             await create(city, { url: CREATE_COUNTRY }).then(
     //                 (data: any) => {
     //                     if (data !== undefined) {
     //                         if (
     //                             !data.success &&
-    //                             data.message === "ERROR_INTERNET_DISCONNECTED"
+    //                             data.message === ERROR_MESSAGE
     //                         ) {
     //                             setLoading(false);
     //                             setAddModal(false);
@@ -80,7 +80,7 @@ const TestWhatsAppMessageModal: React.FC<PropTypes> = ({
     //                                 name: "",
     //                             });
     //                             dispatch(setCountriesStart());
-    //                             getAll({ url: "country/get-all-countries" }).then(
+    //                             getAll({ url: GET_ALL_COUNTRIES }).then(
     //                                 (data: any) => {
     //                                     // console.log("api call --- >", data);
     //                                     if (data == undefined) {

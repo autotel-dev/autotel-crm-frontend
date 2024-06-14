@@ -28,6 +28,8 @@ import { API_BASE_URL, getAll } from "../../../Utilities/api";
 import deleteAlert from "../../../Utilities/alerts/DeleteAlert";
 import { header } from "../../../Utilities/headers/header";
 import Skeleton from "../../Utilities/Skeleton/Skeleton";
+import { GET_ALL_SERVERS, SEND_OTP_FOR_CHANGE_SERVER_PASSWORD } from "../../../Utilities/api/apiEndpoints";
+import { ERROR_MESSAGE } from "../../../Utilities/constants/constants";
 
 
 const ServersList = () => {
@@ -67,7 +69,7 @@ const ServersList = () => {
 
   useEffect(() => {
     dispatch(setServersStart());
-    getAll({ url: "server-management/get-all-servers" }).then((data: any) => {
+    getAll({ url: GET_ALL_SERVERS }).then((data: any) => {
       // console.log("api call --- >", data);
       // if (data == undefined) {
       //   Swal.fire({
@@ -85,7 +87,7 @@ const ServersList = () => {
 
       if (data !== undefined) {
         dispatch(setNoDataFound(data.message));
-        if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
+        if (!data.success && data.message === ERROR_MESSAGE) {
           dispatch(setIsConnected(true));
         }
         if (!data.success) {
@@ -159,14 +161,14 @@ const ServersList = () => {
                 //   // console.log(e.target.value);
                 //   try {
                 //     await update(operator, {
-                //       url: `operator/update-operator/${row._id}`,
+                //       url: `${UPDATE_OPERATOR}/${row._id}`,
                 //     }).then((data: any) => {
                 //       if (data.success) {
                 //         // console.log(data);
 
                 //         dispatch(setOperatorsStart());
                 //         getAll({
-                //           url: "operator/get-all-operators",
+                //           url: GET_ALL_OPERATORS,
                 //         }).then((data: any) => {
                 //           // console.log("api call --- >", data);
                 //           dispatch(setOperatorsEnd());
@@ -260,7 +262,7 @@ const ServersList = () => {
                 toggle();
                 try {
                   const response = await fetch(
-                    `${API_BASE_URL}/server-management/send-otp`,
+                    `${SEND_OTP_FOR_CHANGE_SERVER_PASSWORD}`,
                     {
                       method: "POST",
                       headers: header(),

@@ -30,6 +30,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import Swal from "sweetalert2";
 import { getAll, update } from "../../../../Utilities/api";
+import { GET_ALL_SERVERS, UPDATE_SERVER } from "../../../../Utilities/api/apiEndpoints";
+import { ERROR_MESSAGE } from "../../../../Utilities/constants/constants";
 
 interface PropsTypes {
   location: any;
@@ -111,7 +113,7 @@ const UpdateServerForm = () => {
 
     try {
       await update(formData, {
-        url: `server-management/update-server/${server._id}`,
+        url: `${UPDATE_SERVER}/${server._id}`,
       }).then((data: any) => {
         // console.log("update Server form updated");
 
@@ -121,7 +123,7 @@ const UpdateServerForm = () => {
           // console.log(data);
           setLoading(false);
           dispatch(setServersStart());
-          getAll({ url: "server-management/get-all-servers" }).then(
+          getAll({ url: GET_ALL_SERVERS }).then(
             (data: any) => {
               // console.log("api call --- >", data);
               // if (data == undefined) {
@@ -143,7 +145,7 @@ const UpdateServerForm = () => {
                 dispatch(setNoDataFound(data.message));
                 if (
                   !data.success &&
-                  data.message === "ERROR_INTERNET_DISCONNECTED"
+                  data.message === ERROR_MESSAGE
                 ) {
                   setLoading(false);
                 }

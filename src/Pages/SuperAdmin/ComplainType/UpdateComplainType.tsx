@@ -32,6 +32,8 @@ import {
   setFilterComplainsTypes,
   setInActiveComplainsTypes,
 } from "../../../ReaduxToolkit/Reducer/ComplainsTypeSlice";
+import { GET_ALL_TYPES, UPDATE_TYPE } from "../../../Utilities/api/apiEndpoints";
+import { ERROR_MESSAGE } from "../../../Utilities/constants/constants";
 
 interface PropsTypes {
   isVisible: boolean; // Change 'boolean' to the actual type of isVisible
@@ -40,16 +42,17 @@ interface PropsTypes {
   value: any;
   isActive: any;
   setIsActive: any;
+  priorty: any;
 }
 
 const UpdateComplainType: React.FC<PropsTypes> = ({
   isVisible,
-  setIsVisible = () => {},
+  setIsVisible = () => { },
   id,
   value,
   isActive,
   setIsActive,
-
+  priorty
   // setValue
 }) => {
   const { userPersonalizationData } = useSelector(
@@ -86,14 +89,15 @@ const UpdateComplainType: React.FC<PropsTypes> = ({
     if (data.title !== "") {
       const complain = {
         title: data.title,
+        priorty: priorty,
         isActive: isActive,
       };
       // console.log(country);
       try {
         await update(complain, {
-          url: `complaint-center/internal-complaint-type/update-type/${id}`,
+          url: `${UPDATE_TYPE}/${id}`,
         }).then((data: any) => {
-          if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
+          if (!data.success && data.message === ERROR_MESSAGE) {
             setLoading(false);
             setIsVisible(!isVisible);
           }
@@ -115,7 +119,7 @@ const UpdateComplainType: React.FC<PropsTypes> = ({
             dispatch(setId(null));
             // dispatch(setValue(""));
             dispatch(setComplainsTypesStart());
-            getAll({ url: "complaint-center/internal-complaint-type/get-all-types" }).then((data: any) => {
+            getAll({ url: GET_ALL_TYPES }).then((data: any) => {
               // console.log("api call --- >", data);
               if (data == undefined) {
                 Swal.fire({
@@ -223,9 +227,8 @@ const UpdateComplainType: React.FC<PropsTypes> = ({
                       }}
                     />
                     <span
-                      className={`switch-state ${
-                        isActive ? "bg-primary" : "bg-secondary"
-                      }`}
+                      className={`switch-state ${isActive ? "bg-primary" : "bg-secondary"
+                        }`}
                     />
                   </Label>
                 </div>

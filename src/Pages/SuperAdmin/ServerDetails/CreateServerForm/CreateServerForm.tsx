@@ -10,12 +10,13 @@ import {
   setCRMModules,
 } from "../../../../ReaduxToolkit/Reducer/CompanySlice";
 import { getAll } from "../../../../Utilities/api";
+import { GET_ALL_ACTIVE_CRM_MODULES, GET_ALL_ACTIVE_SERVERS } from "../../../../Utilities/api/apiEndpoints";
 // import BusinessVerticalWizard from "./BusinessVerticalWizard/BusinessVerticalWizard";
 
 const CreateServerForm = () => {
   const dispatch = useDispatch();
   useEffect(() => {
-    getAll({ url: "server-management/get-all-active-servers" }).then(
+    getAll({ url: GET_ALL_ACTIVE_SERVERS }).then(
       (data: any) => {
         // console.log("api call --- >", data);
         if (data !== undefined) {
@@ -28,7 +29,7 @@ const CreateServerForm = () => {
     );
   }, []);
   useEffect(() => {
-    getAll({ url: "crm-module/get-all-active-modules" }).then((data: any) => {
+    getAll({ url: GET_ALL_ACTIVE_CRM_MODULES }).then((data: any) => {
       // console.log("api call --- >", data);
       if (data !== undefined) {
         if (data.success) {

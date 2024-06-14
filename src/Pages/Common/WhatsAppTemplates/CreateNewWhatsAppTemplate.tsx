@@ -17,6 +17,8 @@ import { Select } from 'antd';
 import { getUserRole } from '../../../Utilities/globals/globals';
 import { ROLES } from '../../../constants/roles';
 import { setFilterWhatsAppTemplates, setWhatsAppTemplates, setWhatsAppTemplatesEnd, setWhatsAppTemplatesStart } from '../../../ReaduxToolkit/Reducer/WhatsAppTemplateSlice';
+import { CREATE_WHATSAPP_TEMPLATE, GET_WHATSAPP_TEMPLATES } from '../../../Utilities/api/apiEndpoints';
+import { ERROR_MESSAGE } from '../../../Utilities/constants/constants';
 
 const CreateNewWhatsAppTemplate = () => {
   const { userPersonalizationData } = useSelector(
@@ -120,12 +122,12 @@ const CreateNewWhatsAppTemplate = () => {
     // console.log(emailTemplate);
     if (editorState !== "" && type !== "") {
       try {
-        await create(whatsappTemplate, { url: "template/whatsapp-template/create-template" }).then(
+        await create(whatsappTemplate, { url: CREATE_WHATSAPP_TEMPLATE }).then(
           (data: any) => {
             if (data !== undefined) {
               if (
                 !data.success &&
-                data.message === "ERROR_INTERNET_DISCONNECTED"
+                data.message === ERROR_MESSAGE
               ) {
                 setLoading(false);
                 setAddModal(false);
@@ -162,7 +164,7 @@ const CreateNewWhatsAppTemplate = () => {
                   templateContent: ""
                 });
                 dispatch(setWhatsAppTemplatesStart());
-                getAll({ url: "template/whatsapp-template/get-all-templates" }).then(
+                getAll({ url: GET_WHATSAPP_TEMPLATES }).then(
                   (data: any) => {
                     // console.log("api call --- >", data);
                     if (data == undefined) {

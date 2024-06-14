@@ -31,6 +31,8 @@ import {
 import { useParams } from "react-router-dom";
 import Swal from "sweetalert2";
 import { ROLES } from "../../../constants/roles";
+import { GET_BUG_REPORT_BY_ID, SEND_BUG_REPORT_MESSAGE, UPDATE_PRIORITY_STATUS, UPDATE_STATUS } from "../../../Utilities/api/apiEndpoints";
+import { ERROR_MESSAGE } from "../../../Utilities/constants/constants";
 
 const TicketDetails = () => {
   const { userPersonalizationData } = useSelector(
@@ -93,14 +95,14 @@ const TicketDetails = () => {
       patch(
         { updatedStatus: "IN_PROGRESS", resolvingDate: null },
         {
-          url: `support/bug-report/update-status/${ticketId}`,
+          url: `${UPDATE_STATUS}/${ticketId}`,
         }
       ).then((data: any) => {
         // console.log("api call --- >", data);
         if (data !== undefined) {
           if (data.success) {
             getAll({
-              url: `support/bug-report/get-bug-report/${ticketId}`,
+              url: `${GET_BUG_REPORT_BY_ID}/${ticketId}`,
             }).then((data: any) => {
               // console.log("api call --- >", data);
               if (data !== undefined) {
@@ -135,7 +137,7 @@ const TicketDetails = () => {
     } else {
       // console.log("Else");
       getAll({
-        url: `support/bug-report/get-bug-report/${ticketId}`,
+        url: `${GET_BUG_REPORT_BY_ID}/${ticketId}`,
       }).then((data: any) => {
         // console.log("api call --- >", data);
         if (data !== undefined) {
@@ -239,7 +241,7 @@ const TicketDetails = () => {
       patch(
         { message: replyText },
         {
-          url: `support/bug-report/${ticketId}/send-message`,
+          url: `${SEND_BUG_REPORT_MESSAGE}/${ticketId}/send-message`,
         }
       ).then((data: any) => {
         // setSendMessageLoading(false);
@@ -251,7 +253,7 @@ const TicketDetails = () => {
               setSendMessageLoading(false);
             }, 1000);
             getAll({
-              url: `support/bug-report/get-bug-report/${ticketId}`,
+              url: `${GET_BUG_REPORT_BY_ID}/${ticketId}`,
             }).then((data: any) => {
               // console.log("api call --- >", data);
               if (data !== undefined) {
@@ -319,12 +321,12 @@ const TicketDetails = () => {
       patch(
         { updatedStatus: changeStatus, resolvingDate: null },
         {
-          url: `support/bug-report/update-status/${ticketId}`,
+          url: `${UPDATE_STATUS}/${ticketId}`,
         }
       ).then((data: any) => {
         // console.log("api call --- >", data);
         if (data !== undefined) {
-          if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
+          if (!data.success && data.message === ERROR_MESSAGE) {
             setEdit(false);
           }
           if (!data.success) {
@@ -340,14 +342,14 @@ const TicketDetails = () => {
             patch(
               { updatedPriortyStatus: changePriortyStatus },
               {
-                url: `support/bug-report/update-priorty-status/${ticketId}`,
+                url: `${UPDATE_PRIORITY_STATUS}/${ticketId}`,
               }
             ).then((data: any) => {
               // console.log("api call --- >", data);
               if (data !== undefined) {
                 if (data.success) {
                   getAll({
-                    url: `support/bug-report/get-bug-report/${ticketId}`,
+                    url: `${GET_BUG_REPORT_BY_ID}/${ticketId}`,
                   }).then((data: any) => {
                     // console.log("api call --- >", data);
                     if (data !== undefined) {
@@ -371,12 +373,12 @@ const TicketDetails = () => {
     patch(
       { updatedStatus: "RESOLVED", resolvingDate: new Date() },
       {
-        url: `support/bug-report/update-status/${ticketId}`,
+        url: `${UPDATE_STATUS}/${ticketId}`,
       }
     ).then((data: any) => {
       // console.log("api call --- >", data);
       if (data !== undefined) {
-        if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
+        if (!data.success && data.message === ERROR_MESSAGE) {
         }
         if (!data.success) {
           Swal.fire({
@@ -395,7 +397,7 @@ const TicketDetails = () => {
             });
           }, 2000);
           getAll({
-            url: `support/bug-report/get-bug-report/${ticketId}`,
+            url: `${GET_BUG_REPORT_BY_ID}/${ticketId}`,
           }).then((data: any) => {
             // console.log("api call --- >", data);
             if (data !== undefined) {

@@ -31,6 +31,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import Swal from "sweetalert2";
 import { create, getAll } from "../../../../Utilities/api";
+import { CREATE_SERVER, GET_ALL_SERVERS } from "../../../../Utilities/api/apiEndpoints";
+import { ERROR_MESSAGE } from "../../../../Utilities/constants/constants";
 
 const SuccessfullyFormSubmitted = ({
   callbackActive,
@@ -69,10 +71,10 @@ const SuccessfullyFormSubmitted = ({
 
     try {
       await create(createServer, {
-        url: "server-management/create-server",
+        url: CREATE_SERVER,
       }).then((data: any) => {
         if (data !== undefined) {
-          if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
+          if (!data.success && data.message === ERROR_MESSAGE) {
             setLoading(false);
           }
           if (!data.success) {
@@ -89,7 +91,7 @@ const SuccessfullyFormSubmitted = ({
             // console.log(data);
             setLoading(false);
             dispatch(setServersStart());
-            getAll({ url: "server-management/get-all-servers" }).then(
+            getAll({ url: GET_ALL_SERVERS }).then(
               (data: any) => {
                 // console.log("api call --- >", data);
                 if (data == undefined) {

@@ -46,6 +46,7 @@ import {
 } from "../../../ReaduxToolkit/Reducer/MonitoringSlice";
 import Swal from "sweetalert2";
 import './general.css'
+import { GET_DEVICES, GET_GENERAL_DASHBOARD_STATISTICS, GET_OPERATOR_PERFORMANCE } from "../../../Utilities/api/apiEndpoints";
 
 interface DraggableBoxProps {
   initialPosition: { x: number; y: number };
@@ -119,7 +120,7 @@ const General = () => {
 
   useEffect(() => {
     if (getUserRole() == ROLES.COMPANY) {
-      getAll({ url: "company/dashboard/general" }).then((data: any) => {
+      getAll({ url: GET_GENERAL_DASHBOARD_STATISTICS }).then((data: any) => {
         // console.log("api call --- >", data);
         if (data !== undefined) {
           if (data.success) {
@@ -146,7 +147,7 @@ const General = () => {
       });
 
       getAll({
-        url: `company/dashboard/operators-performance?fromDate=${fromDate}&toDate=${toDate}`,
+        url: `${GET_OPERATOR_PERFORMANCE}?fromDate=${fromDate}&toDate=${toDate}`,
       }).then((data: any) => {
         // console.log("api call --- >", data);
         if (data !== undefined) {
@@ -231,9 +232,9 @@ const General = () => {
 
   useEffect(() => {
     if (devices.length === 0 && getUserRole() == ROLES.COMPANY) {
-      getAll({ url: "company/devices" }).then((data: any) => {
+      getAll({ url: GET_DEVICES }).then((data: any) => {
         if (data !== undefined) {
-          // if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
+          // if (!data.success && data.message === ERROR_MESSAGE) {
           //   dispatch(setIsConnected(true));
           // }
           if (!data.success) {
@@ -755,7 +756,7 @@ const General = () => {
                                       setToDate(endDate);
 
                                       getAll({
-                                        url: `company/dashboard/operators-performance?fromDate=${startDate}&toDate=${endDate}`,
+                                        url: `${GET_OPERATOR_PERFORMANCE}?fromDate=${startDate}&toDate=${endDate}`,
                                       }).then((data: any) => {
                                         toggleDropdown(e);
                                         // console.log("api call --- >", data);
@@ -798,7 +799,7 @@ const General = () => {
                                       setToDate(endDate);
 
                                       getAll({
-                                        url: `company/dashboard/operators-performance?fromDate=${startDate}&toDate=${endDate}`,
+                                        url: `${GET_OPERATOR_PERFORMANCE}?fromDate=${startDate}&toDate=${endDate}`,
                                       }).then((data: any) => {
                                         toggleDropdown(e);
                                         // console.log("api call --- >", data);
@@ -839,7 +840,7 @@ const General = () => {
                                       setToDate(endDate);
 
                                       getAll({
-                                        url: `company/dashboard/operators-performance?fromDate=${startDate}&toDate=${endDate}`,
+                                        url: `${GET_OPERATOR_PERFORMANCE}?fromDate=${startDate}&toDate=${endDate}`,
                                       }).then((data: any) => {
                                         toggleDropdown(e);
                                         // console.log("api call --- >", data);
@@ -880,7 +881,7 @@ const General = () => {
                                       setToDate(endDate);
 
                                       getAll({
-                                        url: `company/dashboard/operators-performance?fromDate=${startDate}&toDate=${endDate}`,
+                                        url: `${GET_OPERATOR_PERFORMANCE}?fromDate=${startDate}&toDate=${endDate}`,
                                       }).then((data: any) => {
                                         toggleDropdown(e);
                                         // console.log("api call --- >", data);
@@ -1014,7 +1015,7 @@ const General = () => {
                                               e.preventDefault();
                                               setGeneralLoading(true);
                                               getAll({
-                                                url: `company/dashboard/operators-performance?fromDate=${fromDate}&toDate=${toDate}`,
+                                                url: `${GET_OPERATOR_PERFORMANCE}?fromDate=${fromDate}&toDate=${toDate}`,
                                               }).then((data: any) => {
                                                 toggleDropdown(e);
                                                 // console.log("api call --- >", data);

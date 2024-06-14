@@ -27,6 +27,8 @@ import { setNoDataFound } from "../../../ReaduxToolkit/Reducer/NoDataFoundSlice"
 import SelectCountryBox from "./components/SelectCountryBox";
 import Swal from "sweetalert2";
 import { getAll, update } from "../../../Utilities/api";
+import { GET_ALL_PROVINCES, UPDATE_PROVINCE } from "../../../Utilities/api/apiEndpoints";
+import { ERROR_MESSAGE } from "../../../Utilities/constants/constants";
 
 interface PropsTypes {
   isVisible: boolean; // Change 'boolean' to the actual type of isVisible
@@ -90,15 +92,15 @@ const UpdateProvince: React.FC<PropsTypes> = ({
       const province = {
         name: data.name,
         isActive: isActive,
-        countryId: countryId,
+        countryId: id,
       };
       // console.log(province);
       try {
-        await update(province, { url: `province/update-province/${id}` }).then(
+        await update(province, { url: `${UPDATE_PROVINCE}/${id}` }).then(
           (data: any) => {
             if (
               !data.success &&
-              data.message === "ERROR_INTERNET_DISCONNECTED"
+              data.message === ERROR_MESSAGE
             ) {
               setLoading(false);
               setIsVisible(!isVisible);
@@ -121,7 +123,7 @@ const UpdateProvince: React.FC<PropsTypes> = ({
               dispatch(setCountryId(null));
               // dispatch(setValue(""));
               dispatch(setProvincesStart());
-              getAll({ url: "province/get-all-provinces" }).then(
+              getAll({ url: GET_ALL_PROVINCES }).then(
                 (data: any) => {
                   // console.log("api call --- >", data);
                   if (data == undefined) {

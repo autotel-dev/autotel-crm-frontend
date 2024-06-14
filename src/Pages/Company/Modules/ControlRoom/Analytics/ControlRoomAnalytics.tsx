@@ -36,6 +36,7 @@ import TotalPreInfoAlerts from "./components/TotalPreInfoAlerts";
 import DeviceSelecetdForAlerts from "./components/DeviceSelecetdForAlerts";
 import { VscKebabVertical } from "react-icons/vsc";
 import { relative } from "path";
+import { CONTROLROOM_DASHBOARD_STATISTICS } from "../../../../../Utilities/api/apiEndpoints";
 
 const ControlRoomAnalytics = () => {
   const { userPersonalizationData } = useSelector(
@@ -620,7 +621,7 @@ const ControlRoomAnalytics = () => {
                       setToDate(endDate);
 
                       getAll({
-                        url: `control-room/dashboard/statistics?fromDate=${startDate}&toDate=${endDate}`,
+                        url: `${CONTROLROOM_DASHBOARD_STATISTICS}?fromDate=${startDate}&toDate=${endDate}`,
                       }).then((data: any) => {
                         // // // console.log("api call --- >", data);
 
@@ -648,7 +649,7 @@ const ControlRoomAnalytics = () => {
                       setToDate(endDate);
 
                       getAll({
-                        url: `control-room/dashboard/statistics?fromDate=${startDate}&toDate=${endDate}`,
+                        url: `${CONTROLROOM_DASHBOARD_STATISTICS}?fromDate=${startDate}&toDate=${endDate}`,
                       }).then((data: any) => {
                         // // // console.log("api call --- >", data);
 
@@ -677,7 +678,7 @@ const ControlRoomAnalytics = () => {
                       setToDate(endDate);
 
                       getAll({
-                        url: `control-room/dashboard/statistics?fromDate=${startDate}&toDate=${endDate}`,
+                        url: `${CONTROLROOM_DASHBOARD_STATISTICS}?fromDate=${startDate}&toDate=${endDate}`,
                       }).then((data: any) => {
                         // // // console.log("api call --- >", data);
 

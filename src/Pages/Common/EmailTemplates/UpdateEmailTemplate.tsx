@@ -25,6 +25,8 @@ import { getUserRole } from "../../../Utilities/globals/globals";
 import { ROLES } from "../../../constants/roles";
 import Swal from "sweetalert2";
 import { setEmailTemplates, setEmailTemplatesEnd, setEmailTemplatesStart, setFilterEmailTemplates } from '../../../ReaduxToolkit/Reducer/EmailTemplateSlice';
+import { GET_EMAIL_TEMPLATES, UPDATE_EMAIL_TEMPLATE } from "../../../Utilities/api/apiEndpoints";
+import { ERROR_MESSAGE } from "../../../Utilities/constants/constants";
 
 
 interface PropsTypes {
@@ -95,11 +97,11 @@ const UpdateEmailTemplate: React.FC<PropsTypes> = ({
     console.log(emailTemplate);
     if (data.subject !== "" && templateContent !== "" && type !== "") {
       try {
-        await update(emailTemplate, { url: `template/email-template/update-template/${id}` }).then(
+        await update(emailTemplate, { url: `${UPDATE_EMAIL_TEMPLATE}/${id}` }).then(
           (data: any) => {
             if (
               !data.success &&
-              data.message === "ERROR_INTERNET_DISCONNECTED"
+              data.message === ERROR_MESSAGE
             ) {
               setLoading(false);
               setIsVisible(!isVisible);
@@ -128,7 +130,7 @@ const UpdateEmailTemplate: React.FC<PropsTypes> = ({
               // setId("null");
               // dispatch(setValue(""));
               dispatch(setEmailTemplatesStart());
-              getAll({ url: "template/email-template/get-all-templates" }).then(
+              getAll({ url: GET_EMAIL_TEMPLATES }).then(
                 (data: any) => {
                   // console.log("api call --- >", data);
                   if (data == undefined) {

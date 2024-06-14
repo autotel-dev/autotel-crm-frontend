@@ -33,6 +33,8 @@ import { H4 } from "../../../AbstractElements";
 import Skeleton from "../../Utilities/Skeleton/Skeleton";
 import "../../../CssConstaints/Style.css";
 import deleteAlert from "../../../Utilities/alerts/DeleteAlert";
+import { GET_ALL_OPERATORS, UPDATE_OPERATOR } from "../../../Utilities/api/apiEndpoints";
+import { ERROR_MESSAGE } from "../../../Utilities/constants/constants";
 
 
 const UsersList = () => {
@@ -91,7 +93,7 @@ const UsersList = () => {
     dispatch(setOperators([]));
     dispatch(setFilterOperators([]));
     dispatch(setOperatorsStart());
-    getAll({ url: "operator/get-all-operators" }).then((data: any) => {
+    getAll({ url: GET_ALL_OPERATORS }).then((data: any) => {
       // console.log("api call --- >", data);
       // if (data == undefined) {
       //   Swal.fire({
@@ -109,7 +111,7 @@ const UsersList = () => {
 
       if (data !== undefined) {
         dispatch(setNoDataFound(data.message));
-        if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
+        if (!data.success && data.message === ERROR_MESSAGE) {
           dispatch(setIsConnected(true));
         }
         if (!data.success) {
@@ -186,14 +188,14 @@ const UsersList = () => {
                     // console.log(e.target.value);
                     try {
                       await update(operator, {
-                        url: `operator/update-operator/${row._id}`,
+                        url: `${UPDATE_OPERATOR}/${row._id}`,
                       }).then((data: any) => {
                         if (data.success) {
                           // console.log(data);
 
                           dispatch(setOperatorsStart());
                           getAll({
-                            url: "operator/get-all-operators",
+                            url: GET_ALL_OPERATORS,
                           }).then((data: any) => {
                             // console.log("api call --- >", data);
                             dispatch(setOperatorsEnd());

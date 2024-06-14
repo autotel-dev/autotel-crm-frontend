@@ -46,6 +46,8 @@ import CommonHeader from "../../../../Common/CommonHeader";
 import { Select } from "antd";
 import { Document, Page, pdfjs } from "react-pdf";
 import Loader from "../../../Utilities/Loader/Loader";
+import { GET_ALL_COMPANIES, GET_COMPANY_BY_ID, UPDATE_COMPANY } from "../../../../Utilities/api/apiEndpoints";
+import { ERROR_MESSAGE } from "../../../../Utilities/constants/constants";
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
 
@@ -90,13 +92,13 @@ const UpdateCompanyForm = () => {
     setServerList(tempList);
   }, [servers]);
   useEffect(() => {
-    getAll({ url: `super-admin/get-company/${companyId}` }).then(
+    getAll({ url: `${GET_COMPANY_BY_ID}/${companyId}` }).then(
       (data: any) => {
         // console.log("api call --- >", data);
 
         if (data !== undefined) {
           dispatch(setNoDataFound(data.message));
-          if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
+          if (!data.success && data.message === ERROR_MESSAGE) {
             dispatch(setIsConnected(true));
             setLoading(false);
           }
@@ -340,7 +342,7 @@ const UpdateCompanyForm = () => {
 
     try {
       await update(updatedFormData, {
-        url: `super-admin/update-company/${companyId}`,
+        url: `${UPDATE_COMPANY}/${companyId}`,
       }).then((data: any) => {
         // console.log("update Server form updated");
 
@@ -359,12 +361,12 @@ const UpdateCompanyForm = () => {
           // console.log(data);
           setLoading(false);
           dispatch(setCompaniesStart());
-          getAll({ url: "super-admin/get-all-companies" }).then((data: any) => {
+          getAll({ url: GET_ALL_COMPANIES }).then((data: any) => {
             if (data !== undefined) {
               dispatch(setNoDataFound(data.message));
               if (
                 !data.success &&
-                data.message === "ERROR_INTERNET_DISCONNECTED"
+                data.message === ERROR_MESSAGE
               ) {
                 setLoading(false);
               }

@@ -40,6 +40,8 @@ import {
 } from "../../../../ReaduxToolkit/Reducer/CompanySlice";
 import PDFViewer from "./PDFViewer";
 import Swal from "sweetalert2";
+import { CREATE_COMPANY, GET_ALL_COMPANIES } from "../../../../Utilities/api/apiEndpoints";
+import { ERROR_MESSAGE } from "../../../../Utilities/constants/constants";
 // import pdfFile from "../../../assets/";
 // pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
@@ -195,9 +197,9 @@ const SuccessfullyFormSubmitted = ({
     try {
       setLoading(true);
       await createCom(formData, {
-        url: "super-admin/create-company",
+        url: CREATE_COMPANY,
       }).then((data: any) => {
-        if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
+        if (!data.success && data.message === ERROR_MESSAGE) {
           setLoading(false);
         }
         if (!data.success) {
@@ -214,7 +216,7 @@ const SuccessfullyFormSubmitted = ({
           // console.log(data);
           setLoading(false);
           dispatch(setCompaniesStart());
-          getAll({ url: "super-admin/get-all-companies" }).then((data: any) => {
+          getAll({ url: GET_ALL_COMPANIES }).then((data: any) => {
             // console.log("api call --- >", data);
             if (data == undefined) {
               Swal.fire({

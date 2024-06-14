@@ -15,6 +15,8 @@ import SelectComplainRole from "../components/SelectComplainRole";
 import { create, getAll } from "../../../../../Utilities/api";
 import { formatUnderscoredString, getUserRole, getUserRoleID } from "../../../../../Utilities/globals/globals";
 import { ROLES } from "../../../../../constants/roles";
+import { CREATE_NEW_INTERNAL_COMPLAINT, GET_ALL_INTERNAL_COMPLAINT, GET_COMPLAINT_CENTER_STATISTICS } from "../../../../../Utilities/api/apiEndpoints";
+import { ERROR_MESSAGE } from "../../../../../Utilities/constants/constants";
 
 interface ResponseType {
   response?: string;
@@ -89,9 +91,9 @@ const ResponseForm: React.FC<PropsTypes> = ({
       // // console.log(completedResponse);
       try {
         await create(complainData, {
-          url: "complaint-center/create-new-internal-complaint",
+          url: CREATE_NEW_INTERNAL_COMPLAINT,
         }).then((data: any) => {
-          if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
+          if (!data.success && data.message === ERROR_MESSAGE) {
             setLoading(false);
             setIsVisible(!isVisible);
             setIsDeviceSelectedModalVisible(!isDeviceSelectedModalVisible)
@@ -118,7 +120,7 @@ const ResponseForm: React.FC<PropsTypes> = ({
             dispatch(setCreateComplainModalData(null));
             setBasicTab("1");
             getAll({
-              url: "complaint-center/get-all-internal-complaints",
+              url: GET_ALL_INTERNAL_COMPLAINT,
             }).then((data: any) => {
               // // console.log("assigned --- >", data);
               // setLoading(false);
@@ -131,7 +133,7 @@ const ResponseForm: React.FC<PropsTypes> = ({
                   dispatch(setAllComplains([]));
                 }
 
-                getAll({ url: "complaint-center/get-statistics" }).then((data: any) => {
+                getAll({ url: GET_COMPLAINT_CENTER_STATISTICS }).then((data: any) => {
                   // console.log("Data", data);
 
                   if (data !== undefined) {

@@ -22,6 +22,8 @@ import AllowedModules from "./AllowedModules/AllowedModules";
 import NoInternetConnection from "../../../Utilities/NoInternetConnection/NoInternetConnection";
 import { ROLES } from "../../../../constants/roles";
 import ServerCredentials from "./ServerCredentials/ServerCredentials";
+import { GET_COMPANY_GIVEN_PERMISSION, GET_USER_BY_ID } from "../../../../Utilities/api/apiEndpoints";
+import { ERROR_MESSAGE } from "../../../../Utilities/constants/constants";
 
 const Account = () => {
   const { userPermissions } = useSelector(
@@ -65,7 +67,7 @@ const Account = () => {
     setServerPermissionsLoading(true);
 
     if (getUserRole() === ROLES.COMPANY) {
-      getAll({ url: "company/permissions" }).then((data: any) => {
+      getAll({ url: GET_COMPANY_GIVEN_PERMISSION }).then((data: any) => {
         const serverIDs = data.data?.serverErrors?.map(
           (item: any, index: any) => {
             return item.server._id;
@@ -88,11 +90,11 @@ const Account = () => {
       });
     }
 
-    getAll({ url: "user/get-user" }).then((parentData: any) => {
+    getAll({ url: GET_USER_BY_ID }).then((parentData: any) => {
       if (parentData !== undefined) {
         if (
           !parentData.success &&
-          parentData.message === "ERROR_INTERNET_DISCONNECTED"
+          parentData.message === ERROR_MESSAGE
         ) {
           setIsConnected(true);
         }

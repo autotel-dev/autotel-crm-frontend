@@ -22,6 +22,8 @@ import {
 } from "../../../ReaduxToolkit/Reducer/ProvinceSlice";
 import SelectCountryBox from "./components/SelectCountryBox";
 import Swal from "sweetalert2";
+import { CREATE_PROVINCE, GET_ALL_PROVINCES } from "../../../Utilities/api/apiEndpoints";
+import { ERROR_MESSAGE } from "../../../Utilities/constants/constants";
 
 const CreateNewProvince = () => {
   const { userPersonalizationData } = useSelector(
@@ -57,12 +59,12 @@ const CreateNewProvince = () => {
       };
       // console.log(province);
       try {
-        await create(province, { url: "province/create-province" }).then(
+        await create(province, { url: CREATE_PROVINCE }).then(
           (data: any) => {
             if (data !== undefined) {
               if (
                 !data.success &&
-                data.message === "ERROR_INTERNET_DISCONNECTED"
+                data.message === ERROR_MESSAGE
               ) {
                 setLoading(false);
                 setAddModal(false);
@@ -96,7 +98,7 @@ const CreateNewProvince = () => {
                 });
                 dispatch(setCountryId(null));
                 dispatch(setProvincesStart());
-                getAll({ url: "province/get-all-provinces" }).then(
+                getAll({ url: GET_ALL_PROVINCES }).then(
                   (data: any) => {
                     // console.log("api call --- >", data);
                     if (data == undefined) {
@@ -153,15 +155,13 @@ const CreateNewProvince = () => {
     <Col md={6}>
       <div className="text-end">
         <button
-          className={`btn ${
-            userPersonalizationData?.buttonsAndBarsColor == null ? "btn-primary" : ""
-          }`}
+          className={`btn ${userPersonalizationData?.buttonsAndBarsColor == null ? "btn-primary" : ""
+            }`}
           style={{
             color: "white",
-            backgroundColor: `${
-              userPersonalizationData !== null &&
+            backgroundColor: `${userPersonalizationData !== null &&
               userPersonalizationData?.buttonsAndBarsColor
-            }`,
+              }`,
           }}
           onClick={addToggle}
         >

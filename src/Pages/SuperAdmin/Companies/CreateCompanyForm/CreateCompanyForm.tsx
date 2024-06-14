@@ -26,13 +26,14 @@ import {
   setPermissions,
   setIsConnected,
 } from "../../../../ReaduxToolkit/Reducer/CompanySlice";
+import { GET_ALL_ACTIVE_CITIES, GET_ALL_ACTIVE_CRM_MODULES, GET_ALL_ACTIVE_PACKAGES, GET_ALL_ACTIVE_SERVERS, GET_ALL_PERMISSIONS, GET_ALL_TIMEZONES } from "../../../../Utilities/api/apiEndpoints";
 // import BusinessVerticalWizard from "./BusinessVerticalWizard/BusinessVerticalWizard";
 
 const CreateCompanyForm = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    getAll({ url: "timezone/get-all-timezones" }).then((data: any) => {
+    getAll({ url: GET_ALL_TIMEZONES }).then((data: any) => {
       // console.log("api call --- >", data);
       if (data !== undefined) {
         if (data.success) {
@@ -47,7 +48,7 @@ const CreateCompanyForm = () => {
     });
   }, []);
   useEffect(() => {
-    getAll({ url: "permissions/get-all-permissions" }).then((data: any) => {
+    getAll({ url: GET_ALL_PERMISSIONS }).then((data: any) => {
       // console.log("api call --- >", data);
       if (data !== undefined) {
         if (data.success) {
@@ -63,7 +64,7 @@ const CreateCompanyForm = () => {
   }, []);
 
   useEffect(() => {
-    getAll({ url: "server-management/get-all-active-servers" }).then(
+    getAll({ url: GET_ALL_ACTIVE_SERVERS }).then(
       (data: any) => {
         // console.log("api call --- >", data);
         if (data !== undefined) {
@@ -80,7 +81,7 @@ const CreateCompanyForm = () => {
     );
   }, []);
   useEffect(() => {
-    getAll({ url: "crm-module/get-all-active-modules" }).then((data: any) => {
+    getAll({ url: GET_ALL_ACTIVE_CRM_MODULES }).then((data: any) => {
       // console.log("api call --- >", data);
       if (data !== undefined) {
         if (data.success) {
@@ -96,7 +97,7 @@ const CreateCompanyForm = () => {
   }, []);
 
   useEffect(() => {
-    getAll({ url: "city/get-all-active-cities" }).then((data: any) => {
+    getAll({ url: GET_ALL_ACTIVE_CITIES }).then((data: any) => {
       // console.log("api call --- >", data);
       if (data !== undefined) {
         if (data.success) {
@@ -111,7 +112,7 @@ const CreateCompanyForm = () => {
     });
   }, []);
   useEffect(() => {
-    getAll({ url: "package/get-all-active-packages" }).then((data: any) => {
+    getAll({ url: GET_ALL_ACTIVE_PACKAGES }).then((data: any) => {
       // console.log("api call --- >", data);
       if (data !== undefined) {
         if (data.success) {

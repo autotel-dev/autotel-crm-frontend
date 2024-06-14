@@ -28,6 +28,8 @@ import { setNoDataFound } from "../../../ReaduxToolkit/Reducer/NoDataFoundSlice"
 import SelectCountryBox from "./components/SelectCountryBox";
 import SelectProvinceBox from "./components/SelectProvinceBox";
 import Swal from "sweetalert2";
+import { GET_ALL_CITIES, UPDATE_CITY } from "../../../Utilities/api/apiEndpoints";
+import { ERROR_MESSAGE } from "../../../Utilities/constants/constants";
 
 interface PropsTypes {
   isVisible: boolean; // Change 'boolean' to the actual type of isVisible
@@ -91,11 +93,11 @@ const UpdateCity: React.FC<PropsTypes> = ({
       };
       // console.log(city);
       try {
-        await update(city, { url: `city/update-city/${id}` }).then(
+        await update(city, { url: `${UPDATE_CITY}/${id}` }).then(
           (data: any) => {
             if (
               !data.success &&
-              data.message === "ERROR_INTERNET_DISCONNECTED"
+              data.message === ERROR_MESSAGE
             ) {
               setLoading(false);
               setIsVisible(!isVisible);
@@ -119,7 +121,7 @@ const UpdateCity: React.FC<PropsTypes> = ({
               dispatch(setId(null));
               // dispatch(setValue(""));
               dispatch(setCitiesStart());
-              getAll({ url: "city/get-all-cities" }).then((data: any) => {
+              getAll({ url: GET_ALL_CITIES }).then((data: any) => {
                 // console.log("api call --- >", data);
                 if (data == undefined) {
                   Swal.fire({

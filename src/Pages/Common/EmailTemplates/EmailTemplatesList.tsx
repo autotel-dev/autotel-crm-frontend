@@ -16,6 +16,8 @@ import { useNavigate } from "react-router-dom";
 import H7 from "../../../CommonElements/Headings/H7Element";
 import { setEmailTemplates, setEmailTemplatesEnd, setEmailTemplatesStart, setFilterEmailTemplates, setIsConnected } from '../../../ReaduxToolkit/Reducer/EmailTemplateSlice';
 import { formatUnderscoredString } from "../../../Utilities/globals/globals";
+import { GET_EMAIL_TEMPLATES } from "../../../Utilities/api/apiEndpoints";
+import { ERROR_MESSAGE } from "../../../Utilities/constants/constants";
 
 const EmailTemplatesList = () => {
   const { emailTemplates, loading } = useSelector(
@@ -29,7 +31,7 @@ const EmailTemplatesList = () => {
     dispatch(setEmailTemplates([]));
     dispatch(setFilterEmailTemplates([]));
     dispatch(setEmailTemplatesStart());
-    getAll({ url: "template/email-template/get-all-templates" }).then(
+    getAll({ url: GET_EMAIL_TEMPLATES }).then(
       (data: any) => {
         // console.log("api call --- >", data);
         if (data == undefined) {
@@ -46,7 +48,7 @@ const EmailTemplatesList = () => {
         }
         dispatch(setEmailTemplatesEnd());
         if (data !== undefined) {
-          if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
+          if (!data.success && data.message === ERROR_MESSAGE) {
             dispatch(setIsConnected(true));
           }
           if (!data.success) {

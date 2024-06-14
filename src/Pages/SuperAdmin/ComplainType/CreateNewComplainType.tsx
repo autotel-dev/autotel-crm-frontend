@@ -19,6 +19,8 @@ import {
   setInActiveComplainsTypes,
 } from "../../../ReaduxToolkit/Reducer/ComplainsTypeSlice";
 import SelectPriorityBox from "./components/SelectPriorityBox";
+import { CREATE_TYPE, GET_ALL_TYPES } from "../../../Utilities/api/apiEndpoints";
+import { ERROR_MESSAGE } from "../../../Utilities/constants/constants";
 
 const CreateNewComplainType = () => {
   const { userPersonalizationData } = useSelector(
@@ -54,12 +56,12 @@ const CreateNewComplainType = () => {
       // console.log(city);
       try {
         await create(complainType, {
-          url: "complaint-center/internal-complaint-type/create-type",
+          url: CREATE_TYPE,
         }).then((data: any) => {
           if (data !== undefined) {
             if (
               !data.success &&
-              data.message === "ERROR_INTERNET_DISCONNECTED"
+              data.message === ERROR_MESSAGE
             ) {
               setLoading(false);
               setAddModal(false);
@@ -89,7 +91,7 @@ const CreateNewComplainType = () => {
               });
               dispatch(setComplainsTypesStart());
               getAll({
-                url: "complaint-center/internal-complaint-type/get-all-types",
+                url: GET_ALL_TYPES,
               }).then((data: any) => {
                 // console.log("api call --- >", data);
                 if (data == undefined) {

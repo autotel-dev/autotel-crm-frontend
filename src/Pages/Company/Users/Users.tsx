@@ -17,6 +17,7 @@ import {
 } from "../../../ReaduxToolkit/Reducer/RolesSlice";
 import NoInternetConnection from "../../Utilities/NoInternetConnection/NoInternetConnection";
 import "../../../CssConstaints/Style.css";
+import { GET_ALL_ACTIVE_SUB_ROLES } from "../../../Utilities/api/apiEndpoints";
 
 const Users = () => {
   const dispatch = useDispatch();
@@ -43,7 +44,7 @@ const Users = () => {
   };
 
   useEffect(() => {
-    getAll({ url: "sub-role/get-all-active-sub-roles" }).then((data: any) => {
+    getAll({ url: GET_ALL_ACTIVE_SUB_ROLES }).then((data: any) => {
       // console.log("api call --- >", data);
       if (data !== undefined) {
         if (data.success) {

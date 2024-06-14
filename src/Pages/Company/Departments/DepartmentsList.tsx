@@ -31,6 +31,8 @@ import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import { H4, H5 } from "../../../AbstractElements";
 import H7 from "../../../CommonElements/Headings/H7Element";
+import { CHANGE_SUB_ROLE_ACTIVATION_STATUS, GET_ALL_SUB_ROLES } from "../../../Utilities/api/apiEndpoints";
+import { ERROR_MESSAGE } from "../../../Utilities/constants/constants";
 
 const DepartmentsList = () => {
   const { roles, activeInActiveRoles, loading } = useSelector(
@@ -61,7 +63,7 @@ const DepartmentsList = () => {
     dispatch(setRoles([]));
     dispatch(setFilterRoles([]));
     dispatch(setRolesStart());
-    getAll({ url: "sub-role/get-all-sub-roles" }).then((data: any) => {
+    getAll({ url: GET_ALL_SUB_ROLES }).then((data: any) => {
       // // console.log("api call --- >", data);
       // if (data == undefined) {
       //   Swal.fire({
@@ -80,7 +82,7 @@ const DepartmentsList = () => {
 
       if (data !== undefined) {
         dispatch(setNoDataFound(data.message));
-        if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
+        if (!data.success && data.message === ERROR_MESSAGE) {
           dispatch(setIsConnected(true));
         }
         if (!data.success) {
@@ -142,12 +144,12 @@ const DepartmentsList = () => {
 
                     try {
                       await patch(changeStatus, {
-                        url: `sub-role/change-activation-status/${row._id}`,
+                        url: `${CHANGE_SUB_ROLE_ACTIVATION_STATUS}/${row._id}`,
                       }).then((data: any) => {
                         if (data.success) {
                           // // console.log(data);
                           dispatch(setRolesStart());
-                          getAll({ url: "sub-role/get-all-sub-roles" }).then(
+                          getAll({ url: GET_ALL_SUB_ROLES }).then(
                             (data: any) => {
                               // // console.log("api call --- >", data);
                               dispatch(setRolesEnd());

@@ -25,6 +25,8 @@ import {
 } from "../../../../ReaduxToolkit/Reducer/PersonalizationSlice";
 import NoInternetConnection from "../../../Utilities/NoInternetConnection/NoInternetConnection";
 import { ROLES } from "../../../../constants/roles";
+import { GET_COMPANY_PERSONALIZATION, GET_SUPERADMIN_PERSONALIZATION } from "../../../../Utilities/api/apiEndpoints";
+import { ERROR_MESSAGE } from "../../../../Utilities/constants/constants";
 
 const Settings = () => {
   const { userPersonalizationData, isConnected } = useSelector(
@@ -48,10 +50,10 @@ const Settings = () => {
     getAll({
       url:
         getUserRole() === ROLES.COMPANY
-          ? `company/get-personalization/${getUserId()}`
+          ? `${GET_COMPANY_PERSONALIZATION}/${getUserId()}`
           : getUserRole() === ROLES.OPERATOR
-          ? `company/get-personalization/${getOperatorCompanyUserId()}`
-          : "super-admin/get-personalization",
+          ? `${GET_COMPANY_PERSONALIZATION}/${getOperatorCompanyUserId()}`
+          : GET_SUPERADMIN_PERSONALIZATION,
     }).then((parentData: any) => {
       // console.log("api call --- >", parentData);
       if (parentData == undefined) {
@@ -69,7 +71,7 @@ const Settings = () => {
       if (parentData !== undefined) {
         if (
           !parentData.success &&
-          parentData.message === "ERROR_INTERNET_DISCONNECTED"
+          parentData.message === ERROR_MESSAGE
         ) {
           dispatch(setIsConnected(true));
         }

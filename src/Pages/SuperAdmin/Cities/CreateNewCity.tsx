@@ -23,6 +23,8 @@ import {
 import SelectProvinceBox from "./components/SelectProvinceBox";
 import SelectCountryBox from "./components/SelectCountryBox";
 import Swal from "sweetalert2";
+import { CREATE_CITY, GET_ALL_CITIES } from "../../../Utilities/api/apiEndpoints";
+import { ERROR_MESSAGE } from "../../../Utilities/constants/constants";
 
 const CreateNewCity = () => {
   const { userPersonalizationData } = useSelector(
@@ -62,11 +64,11 @@ const CreateNewCity = () => {
       };
       // console.log(city);
       try {
-        await create(city, { url: "city/create-city" }).then((data: any) => {
+        await create(city, { url: CREATE_CITY }).then((data: any) => {
           if (data !== undefined) {
             if (
               !data.success &&
-              data.message === "ERROR_INTERNET_DISCONNECTED"
+              data.message === ERROR_MESSAGE
             ) {
               setLoading(false);
               setAddModal(false);
@@ -103,7 +105,7 @@ const CreateNewCity = () => {
               dispatch(setCountryId(null));
               dispatch(setProvinceId(null));
               dispatch(setCitiesStart());
-              getAll({ url: "city/get-all-cities" }).then((data: any) => {
+              getAll({ url: GET_ALL_CITIES }).then((data: any) => {
                 // console.log("api call --- >", data);
                 if (data == undefined) {
                   Swal.fire({

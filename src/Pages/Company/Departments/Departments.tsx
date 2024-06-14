@@ -39,7 +39,7 @@ const Departments = () => {
   useEffect(() => {
     dispatch(setIsConnected(false));
   }, []);
-  // getAll({ url: "user/get-user" }).then((parentData: any) => {
+  // getAll({ url: GET_USER_BY_ID }).then((parentData: any) => {
   //   // console.log("api call --- >", parentData);
   //   if (parentData == undefined) {
   //   }

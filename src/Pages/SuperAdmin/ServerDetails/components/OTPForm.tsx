@@ -9,6 +9,7 @@ import Swal from "sweetalert2";
 import ChangePasswordForm from "./ChangePasswordForm";
 import { API_BASE_URL } from "../../../../Utilities/api";
 import { header } from "../../../../Utilities/headers/header";
+import { SEND_OTP_FOR_CHANGE_SERVER_PASSWORD, VERIFY_OTP_FOR_CHANGE_SERVER_PASSWORD } from "../../../../Utilities/api/apiEndpoints";
 // import OTPInput, { ResendOTP } from "otp-input-react";
 
 type propsType = {
@@ -65,7 +66,7 @@ const OTPForm = ({ toggle }: propsType) => {
 
       try {
         const response = await axios.post(
-          `${API_BASE_URL}/server-management/verify-otp`,
+          `${VERIFY_OTP_FOR_CHANGE_SERVER_PASSWORD}`,
           otpData,
           {
             headers: header(),
@@ -94,7 +95,7 @@ const OTPForm = ({ toggle }: propsType) => {
   const resendOTPCode = async () => {
     try {
       const response = await fetch(
-        `${API_BASE_URL}/server-management/send-otp`,
+        `${SEND_OTP_FOR_CHANGE_SERVER_PASSWORD}`,
         {
           method: "POST",
           headers: header(),

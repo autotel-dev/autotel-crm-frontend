@@ -43,6 +43,8 @@ import NoInternetConnection from "../../../Utilities/NoInternetConnection/NoInte
 import { getUserRole } from "../../../../Utilities/globals/globals";
 import { ROLES } from "../../../../constants/roles";
 import { setErrorData } from "../../../../ReaduxToolkit/Reducer/UserSlice";
+import { CONTROLROOM_DASHBOARD_STATISTICS, GET_ALL_ASSIGNED_ALERT_EVENTS, GET_ALL_COMMANDED_DEVICES, GET_ALL_COMPLETED_ALERT_EVENTS, GET_ALL_KILLED_DEVICES, GET_ALL_VALID_PRE_INFOS, GET_DEVICES, VERIFY_AND_UPDATE_ALL_VEHICLE_BLOCK_STATUS } from "../../../../Utilities/api/apiEndpoints";
+import { ERROR_MESSAGE } from "../../../../Utilities/constants/constants";
 
 const ControlRoom = () => {
   const { userPersonalizationData } = useSelector(
@@ -74,7 +76,7 @@ const ControlRoom = () => {
     dispatch(setLiveAlerts([]));
     dispatch(setLiveAlertsData(null));
     dispatch(setCompletedAlerts([]));
-    getAll({ url: "company/alert-events?pageNo=1" }).then((data: any) => {
+    getAll({ url: "${company/alert-events}?pageNo=1" }).then((data: any) => {
       // // console.log("api call --- >", data);
       // // console.log("data,data");
 
@@ -83,10 +85,10 @@ const ControlRoom = () => {
         dispatch(setLiveAlertsData(null));
       }
       if (data !== undefined) {
-        if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
+        if (!data.success && data.message === ERROR_MESSAGE) {
           dispatch(setIsConnected(true));
         }
-        if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
+        if (!data.success && data.message === ERROR_MESSAGE) {
           Swal.fire({
             text: `${data.message}`,
             icon: "error",
@@ -113,18 +115,18 @@ const ControlRoom = () => {
         setDevicesLoading(false);
       }
     });
-    getAll({ url: "company/get-all-assigned-events" }).then((data: any) => {
+    getAll({ url: GET_ALL_ASSIGNED_ALERT_EVENTS }).then((data: any) => {
       // // console.log("assigned --- >", data);
       // setLoading(false);
       if (data == undefined) {
         dispatch(setAssignedAlerts([]));
       }
       if (data !== undefined) {
-        if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
+        if (!data.success && data.message === ERROR_MESSAGE) {
           dispatch(setIsConnected(true));
           setLoading(false);
         }
-        if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
+        if (!data.success && data.message === ERROR_MESSAGE) {
           Swal.fire({
             text: `${data.message}`,
             icon: "error",
@@ -143,17 +145,17 @@ const ControlRoom = () => {
         }
       }
     });
-    getAll({ url: "company/get-all-completed-events" }).then((data: any) => {
+    getAll({ url: GET_ALL_COMPLETED_ALERT_EVENTS }).then((data: any) => {
       // // console.log("completed --- >", data);
       // setLoading(false);
       if (data == undefined) {
         dispatch(setCompletedAlerts([]));
       }
       if (data !== undefined) {
-        if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
+        if (!data.success && data.message === ERROR_MESSAGE) {
           dispatch(setIsConnected(true));
         }
-        if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
+        if (!data.success && data.message === ERROR_MESSAGE) {
           Swal.fire({
             text: `${data.message}`,
             icon: "error",
@@ -173,7 +175,7 @@ const ControlRoom = () => {
     });
   }, []);
   useEffect(() => {
-    getAll({ url: "control-room/get-all-killed-devices?type=self" }).then(
+    getAll({ url: GET_ALL_KILLED_DEVICES }).then(
       (data: any) => {
         // // console.log("api call --- >", data);
 
@@ -197,7 +199,7 @@ const ControlRoom = () => {
     const endDate = new Date().toISOString();
 
     getAll({
-      url: `control-room/dashboard/statistics?fromDate=${startDate}&toDate=${endDate}`,
+      url: `${CONTROLROOM_DASHBOARD_STATISTICS}?fromDate=${startDate}&toDate=${endDate}`,
     }).then((data: any) => {
       // // console.log("api call --- >", data);
 
@@ -210,7 +212,7 @@ const ControlRoom = () => {
     });
   }, []);
   useEffect(() => {
-    getAll({ url: "control-room/get-all-commanded-devices" }).then(
+    getAll({ url: GET_ALL_COMMANDED_DEVICES }).then(
       (data: any) => {
         // // console.log("api call --- >", data);
 
@@ -228,7 +230,7 @@ const ControlRoom = () => {
     );
   }, []);
   useEffect(() => {
-    getAll({ url: "control-room/get-all-pre-infos" }).then((data: any) => {
+    getAll({ url: GET_ALL_VALID_PRE_INFOS }).then((data: any) => {
       // // console.log("api call --- >", data);
 
       if (data !== undefined) {
@@ -249,7 +251,7 @@ const ControlRoom = () => {
 
     // Function to fetch data and dispatch actions
     const VerifyAndUpdateAllBlockStatus = () => {
-      getAll({ url: "control-room/verify-and-update-all-block-status" }).then(
+      getAll({ url: VERIFY_AND_UPDATE_ALL_VEHICLE_BLOCK_STATUS }).then(
         (data: any) => {
           // // console.log("api call --- >", data);
 
@@ -285,7 +287,7 @@ const ControlRoom = () => {
 
   useEffect(() => {
     if (devices.length === 0) {
-      getAll({ url: "company/devices" }).then((data: any) => {
+      getAll({ url: GET_DEVICES }).then((data: any) => {
         // // console.log("data", data);
         // if (data == undefined) {
         //   setDevicesLoading(false);
@@ -297,7 +299,7 @@ const ControlRoom = () => {
         //   });
         // }
         if (data !== undefined) {
-          if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
+          if (!data.success && data.message === ERROR_MESSAGE) {
             dispatch(setIsConnected(true));
           }
           if (!data.success) {

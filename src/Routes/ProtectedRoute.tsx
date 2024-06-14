@@ -8,6 +8,8 @@ import { PERMISSION_VALUES } from "../constants/permissions";
 import { ROLES } from "../constants/roles";
 import Swal from "sweetalert2";
 import NoInternetConnection from "../Pages/Utilities/NoInternetConnection/NoInternetConnection";
+import { GET_ALLOWED_MODULES, GET_ALLOWED_PERMISSIONS } from "../Utilities/api/apiEndpoints";
+import { ERROR_MESSAGE } from "../Utilities/constants/constants";
 
 interface PropTypes {
   allowedUserRoles: any;
@@ -74,14 +76,14 @@ const ProtectedRoute: React.FC<PropTypes> = ({
           if (userRole === "COMPANY" || userRole === "OPERATOR") {
             // console.log("company or operator check");
             getAll({
-              url: "user/get-allowed-modules",
+              url: GET_ALLOWED_MODULES,
             }).then((data: any) => {
               // console.log("active Modules --- >", data);
 
               if (data !== undefined) {
                 if (
                   !data.success &&
-                  data.message === "ERROR_INTERNET_DISCONNECTED"
+                  data.message === ERROR_MESSAGE
                 ) {
                   setIsConnected(true);
                 }
@@ -138,14 +140,14 @@ const ProtectedRoute: React.FC<PropTypes> = ({
             // console.log("permissionValue inside if", permissionValue);
 
             getAll({
-              url: "user/get-permissions",
+              url: GET_ALLOWED_PERMISSIONS,
             }).then((data: any) => {
               // console.log("user permissions --- >", data);
 
               if (data !== undefined) {
                 if (
                   !data.success &&
-                  data.message === "ERROR_INTERNET_DISCONNECTED"
+                  data.message === ERROR_MESSAGE
                 ) {
                   setIsConnected(true);
                 }

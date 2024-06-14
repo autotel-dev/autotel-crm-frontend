@@ -16,6 +16,8 @@ import { useNavigate } from "react-router-dom";
 import NoInternetConnection from "../../../Utilities/NoInternetConnection/NoInternetConnection";
 import { setErrorData } from "../../../../ReaduxToolkit/Reducer/UserSlice";
 import DeviceDetailsBar from "./components/RIghtSidebar/DeviceDetailsBar";
+import { GET_DEVICES } from "../../../../Utilities/api/apiEndpoints";
+import { ERROR_MESSAGE } from "../../../../Utilities/constants/constants";
 
 const Monitoring = () => {
   const apiKey = "AIzaSyDI3fB-ItM1LpMOyMg_P8UxTUuxHCyQS34"; // Replace with your actual API key
@@ -47,7 +49,7 @@ const Monitoring = () => {
 
     // Function to fetch data and dispatch actions
     const fetchDataAndDispatch = () => {
-      getAll({ url: "company/devices" }).then((data: any) => {
+      getAll({ url: GET_DEVICES }).then((data: any) => {
         // console.log("data", data);
         // if (data == undefined) {
         //   setUndefinedData(true);
@@ -60,7 +62,7 @@ const Monitoring = () => {
         //   });
         // }
         if (data !== undefined) {
-          if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
+          if (!data.success && data.message === ERROR_MESSAGE) {
             dispatch(setIsConnected(true));
           }
           if (!data.success) {
@@ -289,9 +291,9 @@ const Monitoring = () => {
   const navigate = useNavigate();
   const getData = () => {
     setLoading(true);
-    getAll({ url: "company/devices" }).then((data: any) => {
+    getAll({ url: GET_DEVICES }).then((data: any) => {
       if (data !== undefined) {
-        if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
+        if (!data.success && data.message === ERROR_MESSAGE) {
           dispatch(setIsConnected(true));
         }
         if (!data.success) {

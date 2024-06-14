@@ -19,6 +19,8 @@ import { serverCredentials } from "../../../../../../Utilities/headers/header";
 import { setModalData } from "../../../../../../ReaduxToolkit/Reducer/AlertsSlice";
 import { AnimatePresence, motion } from "framer-motion";
 import Swal from "sweetalert2";
+import { GET_ALERT_EVENT_BY_ID } from "../../../../../../Utilities/api/apiEndpoints";
+import { ERROR_MESSAGE } from "../../../../../../Utilities/constants/constants";
 
 const AssignedAlerts = () => {
   const dispatch = useDispatch();
@@ -184,12 +186,12 @@ const AssignedAlerts = () => {
 
                               try {
                                 await create(sendData, {
-                                  url: "alert-events/get-alert-event-by-id",
+                                  url: GET_ALERT_EVENT_BY_ID,
                                 }).then((data: any) => {
                                   // // console.log(data);
                                   if (
                                     !data.success &&
-                                    data.message === "ERROR_INTERNET_DISCONNECTED"
+                                    data.message === ERROR_MESSAGE
                                   ) {
                                   }
                                   if (!data.success) {

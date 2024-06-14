@@ -20,6 +20,7 @@ import Swal from "sweetalert2";
 import { setUserData } from "../../../../../ReaduxToolkit/Reducer/UserSlice";
 import { Select } from "antd";
 import { useNavigate } from "react-router-dom";
+import { TEST_SERVER_CONNECTION, UPDATE_SERVER_CREDENTIALS } from "../../../../../Utilities/api/apiEndpoints";
 
 const ServerCredentials = (notConnectedServers: any) => {
   // console.log("notConnectedServers", notConnectedServers);
@@ -74,7 +75,7 @@ const ServerCredentials = (notConnectedServers: any) => {
     setLoading(true);
     try {
       await patch(formData, {
-        url: "company/update-server-credentials",
+        url: UPDATE_SERVER_CREDENTIALS,
       }).then((data: any) => {
         setLoading(false);
         setIsEdit(!isEdit);
@@ -228,7 +229,7 @@ const ServerCredentials = (notConnectedServers: any) => {
                               setTestConnectionLoading(true);
                               try {
                                 await create(updatedCredentials, {
-                                  url: "company/server-credentials/test-connection",
+                                  url: TEST_SERVER_CONNECTION,
                                 }).then((data: any) => {
                                   if (data.success) {
                                     setTestConnectionLoading(false);

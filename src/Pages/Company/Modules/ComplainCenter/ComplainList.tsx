@@ -351,7 +351,7 @@ const ComplainList = () => {
                   //   setToDate(endDate);
 
                   //   getAll({
-                  //     url: `control-room/dashboard/statistics?fromDate=${startDate}&toDate=${endDate}`,
+                  //     url: `${CONTROLROOM_DASHBOARD_STATISTICS}?fromDate=${startDate}&toDate=${endDate}`,
                   //   }).then((data: any) => {
                   //     // // // console.log("api call --- >", data);
 
@@ -379,7 +379,7 @@ const ComplainList = () => {
                   //   setToDate(endDate);
 
                   //   getAll({
-                  //     url: `control-room/dashboard/statistics?fromDate=${startDate}&toDate=${endDate}`,
+                  //     url: `${CONTROLROOM_DASHBOARD_STATISTICS}?fromDate=${startDate}&toDate=${endDate}`,
                   //   }).then((data: any) => {
                   //     // // // console.log("api call --- >", data);
 
@@ -408,7 +408,7 @@ const ComplainList = () => {
                   //   setToDate(endDate);
 
                   //   getAll({
-                  //     url: `control-room/dashboard/statistics?fromDate=${startDate}&toDate=${endDate}`,
+                  //     url: `${CONTROLROOM_DASHBOARD_STATISTICS}?fromDate=${startDate}&toDate=${endDate}`,
                   //   }).then((data: any) => {
                   //     // // // console.log("api call --- >", data);
 

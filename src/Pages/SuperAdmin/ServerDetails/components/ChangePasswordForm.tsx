@@ -17,6 +17,7 @@ import { setNoDataFound } from "../../../../ReaduxToolkit/Reducer/NoDataFoundSli
 import { useNavigate } from "react-router-dom";
 import { API_BASE_URL, getAll } from "../../../../Utilities/api";
 import { header } from "../../../../Utilities/headers/header";
+import { CHANGE_SERVER_PASSWORD, GET_ALL_SERVERS } from "../../../../Utilities/api/apiEndpoints";
 type propsType = {
   toggle: () => void;
 };
@@ -67,7 +68,7 @@ const ChangePasswordForm = ({ toggle }: propsType) => {
     setLoading(true);
     try {
       const response = await axios.patch(
-        `${API_BASE_URL}/server-management/change-server-password/${id}`,
+        `${CHANGE_SERVER_PASSWORD}/${id}`,
         {
           updatedPassword: password,
         },
@@ -80,7 +81,7 @@ const ChangePasswordForm = ({ toggle }: propsType) => {
       // console.log("Response data of change password:", response.data);
       dispatch(setId(null));
       dispatch(setServersStart());
-      getAll({ url: "server-management/get-all-servers" }).then((data: any) => {
+      getAll({ url: GET_ALL_SERVERS }).then((data: any) => {
         // console.log("api call --- >", data);
         setLoading(false);
         // ----------------------
