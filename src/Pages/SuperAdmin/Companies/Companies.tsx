@@ -11,6 +11,7 @@ import { compainesCardData } from "./Data/CompaniesCardData";
 import CompaniesListNav from "./CompaniesListNav";
 import "../../../CssConstaints/Style.css";
 import { useEffect, useState } from "react";
+import Skeleton from "../../Utilities/Skeleton/Skeleton";
 import { getAll } from "../../../Utilities/api";
 import {
   setServers,
@@ -234,19 +235,26 @@ const Companies = () => {
               </Card>
             </Col>
             {loading ? (
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  height: "80vh",
-                  backgroundColor: "white",
-                  alignItems: "center",
-                }}
-              >
+              // <div
+              //   style={{
+              //     display: "flex",
+              //     justifyContent: "center",
+              //     height: "80vh",
+              //     backgroundColor: "white",
+              //     alignItems: "center",
+              //   }}
+              // >
                 <div style={{ textAlign: "center" }}>
-                  <Loader />
+                <>
+                     <div style={{display:"flex", marginTop:"50px" , justifyContent:"space-between"}}>
+                      <Skeleton height="330px" width="32%"  marginBottom="10" borderRadius="10px" />
+                      <Skeleton height="330px" width="32%"  marginBottom="10" borderRadius="10px" />
+                      <Skeleton height="330px" width="32%"  marginBottom="10" borderRadius="10px" />
+                      </div>
+                    </>
+
                 </div>
-              </div>
+              
             ) : companies.length > 0 ? (
               <Row className="user-cards-items user-card-wrapper">
                 {companies.map((item: any, index: any) => (
