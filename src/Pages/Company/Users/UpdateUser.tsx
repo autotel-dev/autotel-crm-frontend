@@ -27,6 +27,8 @@ import {
 import Swal from "sweetalert2";
 import { Select } from "antd";
 import "./permissionsStyle.css";
+import { GET_ALL_OPERATORS, UPDATE_OPERATOR } from "../../../Utilities/api/apiEndpoints";
+import { ERROR_MESSAGE } from "../../../Utilities/constants/constants";
 // import { setNoDataFound } from "../../ReaduxToolkit/Reducer/NoDataFoundSlice";
 
 interface PropsTypes {
@@ -127,11 +129,11 @@ const UpdateUser: React.FC<PropsTypes> = ({
       };
       // // console.log(operator);
       try {
-        await update(operator, { url: `operator/update-operator/${id}` }).then(
+        await update(operator, { url: `${UPDATE_OPERATOR}/${id}` }).then(
           (data: any) => {
             if (
               !data.success &&
-              data.message === "ERROR_INTERNET_DISCONNECTED"
+              data.message === ERROR_MESSAGE
             ) {
               setLoading(false);
               setIsVisible(!isVisible);
@@ -152,7 +154,7 @@ const UpdateUser: React.FC<PropsTypes> = ({
               setIsVisible(!isVisible);
 
               dispatch(setOperatorsStart());
-              getAll({ url: "operator/get-all-operators" }).then(
+              getAll({ url: GET_ALL_OPERATORS }).then(
                 (data: any) => {
                   // // console.log("api call --- >", data);
                   if (data == undefined) {

@@ -17,6 +17,8 @@ import {
 } from "../../../../../../ReaduxToolkit/Reducer/AlertsSlice";
 import { create, getAll } from "../../../../../../Utilities/api";
 import { serverCredentials } from "../../../../../../Utilities/headers/header";
+import { CONTROLROOM_DASHBOARD_STATISTICS, GET_ALL_COMMANDED_DEVICES, GET_ALL_KILLED_DEVICES, GET_DEVICE_COMMANDS, SEND_COMMAND_TO_DEVICE, VERIFY_VEHICLE_BLOCK_STATUS } from "../../../../../../Utilities/api/apiEndpoints";
+import { ERROR_MESSAGE } from "../../../../../../Utilities/constants/constants";
 
 interface PropsTypes {
   addModal: boolean; // Change 'boolean' to the actual type of isVisible
@@ -29,7 +31,7 @@ interface PropsTypes {
 
 const SendCommand: React.FC<PropsTypes> = ({
   addModal,
-  setAddModal = () => {},
+  setAddModal = () => { },
   dropDownDevices,
   prevItem,
   fromDate,
@@ -92,7 +94,7 @@ const SendCommand: React.FC<PropsTypes> = ({
           serverId: serverInfo?.serverId,
           serverHashKey: serverInfo?.serverHashKey,
         },
-        { url: "control-room/get-device-commands" }
+        { url: GET_DEVICE_COMMANDS }
       ).then((data: any) => {
         // // console.log("api call --- >", data);
 
@@ -134,12 +136,12 @@ const SendCommand: React.FC<PropsTypes> = ({
 
       try {
         await create(commandData, {
-          url: `control-room/send-command-to-device`,
+          url: SEND_COMMAND_TO_DEVICE,
         }).then(async (data: any) => {
           // console.log("data send command", data);
 
           setLoading(false);
-          if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
+          if (!data.success && data.message === ERROR_MESSAGE) {
             setLoading(false);
             addToggle();
           }
@@ -182,13 +184,13 @@ const SendCommand: React.FC<PropsTypes> = ({
                 };
 
                 await create(verifyData, {
-                  url: `control-room/verify-vehicle-block-status`,
+                  url: VERIFY_VEHICLE_BLOCK_STATUS,
                 }).then((data: any) => {
                   // // console.log("data", data);
                   setLoading(false);
                   if (
                     !data.success &&
-                    data.message === "ERROR_INTERNET_DISCONNECTED"
+                    data.message === ERROR_MESSAGE
                   ) {
                     setLoading(false);
                     addToggle();
@@ -217,7 +219,7 @@ const SendCommand: React.FC<PropsTypes> = ({
                 timer: 1000,
                 showConfirmButton: false,
               });
-              getAll({ url: "control-room/get-all-commanded-devices" }).then(
+              getAll({ url: GET_ALL_COMMANDED_DEVICES }).then(
                 (data: any) => {
                   // // console.log("api call --- >", data);
 
@@ -237,7 +239,7 @@ const SendCommand: React.FC<PropsTypes> = ({
               toDateUpdated.setSeconds(new Date().getSeconds() + 10);
 
               getAll({
-                url: `control-room/dashboard/statistics?fromDate=${fromDateUpdated}&toDate=${toDateUpdated}`,
+                url: `${CONTROLROOM_DASHBOARD_STATISTICS}?fromDate=${fromDateUpdated}&toDate=${toDateUpdated}`,
               }).then((data: any) => {
                 // // console.log("api call --- >", data);
 
@@ -249,7 +251,7 @@ const SendCommand: React.FC<PropsTypes> = ({
                 }
               });
               getAll({
-                url: "control-room/get-all-killed-devices?type=self",
+                url: GET_ALL_KILLED_DEVICES,
               }).then((data: any) => {
                 // // console.log("api call --- >", data);
 

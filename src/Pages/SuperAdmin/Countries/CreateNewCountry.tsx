@@ -17,6 +17,8 @@ import {
   setInActiveActiveCountries,
 } from "../../../ReaduxToolkit/Reducer/CountrySlice";
 import Swal from "sweetalert2";
+import { CREATE_COUNTRY, GET_ALL_COUNTRIES } from "../../../Utilities/api/apiEndpoints";
+import { ERROR_MESSAGE } from "../../../Utilities/constants/constants";
 
 const CreateNewCountry = () => {
   const { userPersonalizationData } = useSelector(
@@ -49,12 +51,12 @@ const CreateNewCountry = () => {
       };
       // console.log(city);
       try {
-        await create(city, { url: "country/create-country" }).then(
+        await create(city, { url: CREATE_COUNTRY }).then(
           (data: any) => {
             if (data !== undefined) {
               if (
                 !data.success &&
-                data.message === "ERROR_INTERNET_DISCONNECTED"
+                data.message === ERROR_MESSAGE
               ) {
                 setLoading(false);
                 setAddModal(false);
@@ -83,7 +85,7 @@ const CreateNewCountry = () => {
                   name: "",
                 });
                 dispatch(setCountriesStart());
-                getAll({ url: "country/get-all-countries" }).then(
+                getAll({ url: GET_ALL_COUNTRIES }).then(
                   (data: any) => {
                     // console.log("api call --- >", data);
                     if (data == undefined) {

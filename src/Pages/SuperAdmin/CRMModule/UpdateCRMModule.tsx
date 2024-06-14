@@ -24,6 +24,8 @@ import {
 import { setNoDataFound } from "../../../ReaduxToolkit/Reducer/NoDataFoundSlice";
 import { Type } from "../Countries/CountryTypes/CountryTypes";
 import Swal from "sweetalert2";
+import { GET_ALL_CRM_MODULES, UPDATE_CRM_MODULE } from "../../../Utilities/api/apiEndpoints";
+import { ERROR_MESSAGE } from "../../../Utilities/constants/constants";
 
 interface PropsTypes {
   isVisible: boolean; // Change 'boolean' to the actual type of isVisible
@@ -37,7 +39,7 @@ interface PropsTypes {
 
 const UpdateCRMModule: React.FC<PropsTypes> = ({
   isVisible,
-  setIsVisible = () => {},
+  setIsVisible = () => { },
   id,
   value,
   icon,
@@ -91,11 +93,11 @@ const UpdateCRMModule: React.FC<PropsTypes> = ({
       };
       // // console.log(module);
       try {
-        await update(module, { url: `crm-module/update-module/${id}` }).then(
+        await update(module, { url: `${UPDATE_CRM_MODULE}/${id}` }).then(
           (data: any) => {
             if (
               !data.success &&
-              data.message === "ERROR_INTERNET_DISCONNECTED"
+              data.message === ERROR_MESSAGE
             ) {
               setLoading(false);
               setIsVisible(!isVisible);
@@ -117,7 +119,7 @@ const UpdateCRMModule: React.FC<PropsTypes> = ({
 
               // dispatch(setValue(""));
               dispatch(setCRMModulesStart());
-              getAll({ url: "crm-module/get-all-modules" }).then(
+              getAll({ url: GET_ALL_CRM_MODULES }).then(
                 (data: any) => {
                   // // console.log("api call --- >", data);
                   if (data == undefined) {
@@ -247,9 +249,8 @@ const UpdateCRMModule: React.FC<PropsTypes> = ({
                       }}
                     />
                     <span
-                      className={`switch-state ${
-                        isActive ? "bg-primary" : "bg-secondary"
-                      }`}
+                      className={`switch-state ${isActive ? "bg-primary" : "bg-secondary"
+                        }`}
                     />
                   </Label>
                 </div>
@@ -273,20 +274,20 @@ const UpdateCRMModule: React.FC<PropsTypes> = ({
             </Row>
           </div> */}
           <Button color="primary" className="me-1">
-                {loading ? "Loading ..." : `Update`}
-              </Button>
-              &nbsp;&nbsp;
-              <Button
-                disabled={loading ? true : false}
-                color="secondary"
-                onClick={() => {
-                  // setValue("")
-                  setIsVisible(!isVisible);
-                  // console.log(value);
-                }}
-              >
-                {Cancel}
-              </Button>
+            {loading ? "Loading ..." : `Update`}
+          </Button>
+          &nbsp;&nbsp;
+          <Button
+            disabled={loading ? true : false}
+            color="secondary"
+            onClick={() => {
+              // setValue("")
+              setIsVisible(!isVisible);
+              // console.log(value);
+            }}
+          >
+            {Cancel}
+          </Button>
         </form>
       </ModalBody>
     </Modal>

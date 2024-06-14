@@ -31,6 +31,8 @@ import { setNoDataFound } from "../../../ReaduxToolkit/Reducer/NoDataFoundSlice"
 import SelectPackageBox from "./components/SelectPackageBox";
 import { setProvincesEnd } from "../../../ReaduxToolkit/Reducer/ProvinceSlice";
 import Swal from "sweetalert2";
+import { GET_ALL_PACKAGES, UPDATE_PACKAGE } from "../../../Utilities/api/apiEndpoints";
+import { ERROR_MESSAGE } from "../../../Utilities/constants/constants";
 
 interface PropsTypes {
   isVisible: boolean; // Change 'boolean' to the actual type of isVisible
@@ -109,11 +111,11 @@ const UpdatePackage: React.FC<PropsTypes> = ({
       };
       // console.log(packag);
       try {
-        await update(packag, { url: `package/update-package/${id}` }).then(
+        await update(packag, { url: `${UPDATE_PACKAGE}/${id}` }).then(
           (data: any) => {
             if (
               !data.success &&
-              data.message === "ERROR_INTERNET_DISCONNECTED"
+              data.message === ERROR_MESSAGE
             ) {
               setLoading(false);
               setIsVisible(!isVisible);
@@ -136,7 +138,7 @@ const UpdatePackage: React.FC<PropsTypes> = ({
               dispatch(setPackageDuration(null));
               dispatch(setPackageDays(null));
               dispatch(setPackagesStart());
-              getAll({ url: "package/get-all-packages" }).then((data: any) => {
+              getAll({ url: GET_ALL_PACKAGES }).then((data: any) => {
                 // console.log("api call --- >", data);
                 if (data == undefined) {
                   Swal.fire({

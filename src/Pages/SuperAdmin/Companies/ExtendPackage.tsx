@@ -26,6 +26,7 @@ import {
 import Swal from "sweetalert2";
 import { header } from "../../../Utilities/headers/header";
 import axios from "axios";
+import { EXTEND_COMPANY_PACKAGE, GET_ALL_COMPANIES } from "../../../Utilities/api/apiEndpoints";
 
 interface PropsTypes {
   isVisible: boolean; // Change 'boolean' to the actual type of isVisible
@@ -127,7 +128,7 @@ const ExtendPackage: React.FC<PropsTypes> = ({
         };
 
         response = await axios.patch(
-          `${API_BASE_URL}/super-admin/extend-company-package/${companyId}`,
+          `${EXTEND_COMPANY_PACKAGE}/${companyId}`,
           extendedDays,
           {
             headers: header(),
@@ -139,7 +140,7 @@ const ExtendPackage: React.FC<PropsTypes> = ({
         };
 
         response = await axios.patch(
-          `${API_BASE_URL}/super-admin/extend-company-package/${companyId}`,
+          `${EXTEND_COMPANY_PACKAGE}/${companyId}`,
           extendedDays,
           {
             headers: header(),
@@ -158,7 +159,7 @@ const ExtendPackage: React.FC<PropsTypes> = ({
         }
         // dispatch(setValue(""));
         dispatch(setCompaniesStart());
-        getAll({ url: "super-admin/get-all-companies" }).then((data: any) => {
+        getAll({ url: GET_ALL_COMPANIES }).then((data: any) => {
           // console.log("api call --- >", data);
           dispatch(setCompaniesEnd());
           if (data !== undefined) {

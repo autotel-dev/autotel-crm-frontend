@@ -21,6 +21,8 @@ import { getUserRole } from "../../../Utilities/globals/globals";
 import Swal from "sweetalert2";
 import NoInternetConnection from "../../Utilities/NoInternetConnection/NoInternetConnection";
 import { ROLES } from "../../../constants/roles";
+import { GET_ALL_BUG_REPORTS, GET_ALL_COMPANY_BUG_REPORTS, GET_ALL_OPERATOR_BUG_REPORTS, GET_BUG_REPORT_PRIORITY_STATUS_TYPES, GET_BUG_REPORT_STATISTICS, GET_BUG_REPORT_STATUS_TYPES } from "../../../Utilities/api/apiEndpoints";
+import { ERROR_MESSAGE } from "../../../Utilities/constants/constants";
 
 const Support = () => {
   const { supportStatistics, isConnected } = useSelector(
@@ -39,7 +41,7 @@ const Support = () => {
     setReportsLoading(true);
 
     if (getUserRole() === ROLES.SUPER_ADMIN) {
-      getAll({ url: "support/bug-report/get-statistics" }).then((data: any) => {
+      getAll({ url: GET_BUG_REPORT_STATISTICS }).then((data: any) => {
         // console.log("api call --- >", data);
         // if (data == undefined) {
         //   Swal.fire({
@@ -53,7 +55,7 @@ const Support = () => {
         //   return;
         // }
         if (data !== undefined) {
-          if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
+          if (!data.success && data.message === ERROR_MESSAGE) {
             dispatch(setIsConnected(true));
           }
           if (!data.success) {
@@ -97,10 +99,10 @@ const Support = () => {
     getAll({
       url:
         getUserRole() === ROLES.COMPANY
-          ? "company/get-all-bug-reports"
+          ? GET_ALL_COMPANY_BUG_REPORTS
           : getUserRole() === ROLES.OPERATOR
-          ? "operator/get-all-bug-reports"
-          : "support/bug-report/get-all-bug-reports",
+          ? GET_ALL_OPERATOR_BUG_REPORTS
+          : GET_ALL_BUG_REPORTS,
     }).then((data: any) => {
       // console.log("api call --- >", data);
 
@@ -118,7 +120,7 @@ const Support = () => {
       }
 
       if (data !== undefined) {
-        if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
+        if (!data.success && data.message === ERROR_MESSAGE) {
           dispatch(setIsConnected(true));
         }
         if (!data.success) {
@@ -142,7 +144,7 @@ const Support = () => {
       }
     });
 
-    getAll({ url: "support/bug-report/get-priorty-status-types" }).then(
+    getAll({ url: GET_BUG_REPORT_PRIORITY_STATUS_TYPES }).then(
       (data: any) => {
         // console.log("api call --- >", data);
         if (data !== undefined) {
@@ -156,7 +158,7 @@ const Support = () => {
       }
     );
 
-    getAll({ url: "support/bug-report/get-status-types" }).then((data: any) => {
+    getAll({ url: GET_BUG_REPORT_STATUS_TYPES }).then((data: any) => {
       // console.log("api call --- >", data);
       if (data !== undefined) {
         if (data.success) {

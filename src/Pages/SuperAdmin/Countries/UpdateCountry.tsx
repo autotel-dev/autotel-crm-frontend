@@ -25,6 +25,8 @@ import {
 } from "../../../ReaduxToolkit/Reducer/CountrySlice";
 import { setNoDataFound } from "../../../ReaduxToolkit/Reducer/NoDataFoundSlice";
 import Swal from "sweetalert2";
+import { GET_ALL_COUNTRIES, UPDATE_COUNTRY } from "../../../Utilities/api/apiEndpoints";
+import { ERROR_MESSAGE } from "../../../Utilities/constants/constants";
 
 interface PropsTypes {
   isVisible: boolean; // Change 'boolean' to the actual type of isVisible
@@ -37,7 +39,7 @@ interface PropsTypes {
 
 const UpdateCountry: React.FC<PropsTypes> = ({
   isVisible,
-  setIsVisible = () => {},
+  setIsVisible = () => { },
   id,
   value,
   isActive,
@@ -88,11 +90,11 @@ const UpdateCountry: React.FC<PropsTypes> = ({
       };
       // console.log(country);
       try {
-        await update(country, { url: `country/update-country/${id}` }).then(
+        await update(country, { url: `${UPDATE_COUNTRY}/${id}` }).then(
           (data: any) => {
             if (
               !data.success &&
-              data.message === "ERROR_INTERNET_DISCONNECTED"
+              data.message === ERROR_MESSAGE
             ) {
               setLoading(false);
               setIsVisible(!isVisible);
@@ -115,7 +117,7 @@ const UpdateCountry: React.FC<PropsTypes> = ({
               dispatch(setId(null));
               // dispatch(setValue(""));
               dispatch(setCountriesStart());
-              getAll({ url: "country/get-all-countries" }).then((data: any) => {
+              getAll({ url: GET_ALL_COUNTRIES }).then((data: any) => {
                 // console.log("api call --- >", data);
                 if (data == undefined) {
                   Swal.fire({
@@ -224,9 +226,8 @@ const UpdateCountry: React.FC<PropsTypes> = ({
                       }}
                     />
                     <span
-                      className={`switch-state ${
-                        isActive ? "bg-primary" : "bg-secondary"
-                      }`}
+                      className={`switch-state ${isActive ? "bg-primary" : "bg-secondary"
+                        }`}
                     />
                   </Label>
                 </div>
@@ -250,20 +251,20 @@ const UpdateCountry: React.FC<PropsTypes> = ({
             </Row>
           </div>
           <Button color="primary" className="me-1">
-                {loading ? "Loading ..." : `Update`}
-              </Button>
-              &nbsp;&nbsp;
-              <Button
-                disabled={loading ? true : false}
-                color="secondary"
-                onClick={() => {
-                  // setValue("")
-                  setIsVisible(!isVisible);
-                  // console.log(value);
-                }}
-              >
-                {Cancel}
-              </Button>
+            {loading ? "Loading ..." : `Update`}
+          </Button>
+          &nbsp;&nbsp;
+          <Button
+            disabled={loading ? true : false}
+            color="secondary"
+            onClick={() => {
+              // setValue("")
+              setIsVisible(!isVisible);
+              // console.log(value);
+            }}
+          >
+            {Cancel}
+          </Button>
         </form>
       </ModalBody>
     </Modal>

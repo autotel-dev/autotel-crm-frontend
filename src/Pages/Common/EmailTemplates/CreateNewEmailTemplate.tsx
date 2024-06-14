@@ -17,6 +17,8 @@ import { setEmailTemplates, setEmailTemplatesEnd, setEmailTemplatesStart, setFil
 import { Select } from 'antd';
 import { getUserRole } from '../../../Utilities/globals/globals';
 import { ROLES } from '../../../constants/roles';
+import { CREATE_EMAIL_TEMPLATE, GET_EMAIL_TEMPLATES } from '../../../Utilities/api/apiEndpoints';
+import { ERROR_MESSAGE } from '../../../Utilities/constants/constants';
 
 const CreateNewEmailTemplate = () => {
   const { userPersonalizationData } = useSelector(
@@ -118,12 +120,12 @@ const CreateNewEmailTemplate = () => {
     // console.log(emailTemplate);
     if (data.subject !== "" && editorState !== "" && type !== "") {
       try {
-        await create(emailTemplate, { url: "template/email-template/create-template" }).then(
+        await create(emailTemplate, { url: CREATE_EMAIL_TEMPLATE }).then(
           (data: any) => {
             if (data !== undefined) {
               if (
                 !data.success &&
-                data.message === "ERROR_INTERNET_DISCONNECTED"
+                data.message === ERROR_MESSAGE
               ) {
                 setLoading(false);
                 setAddModal(false);
@@ -161,7 +163,7 @@ const CreateNewEmailTemplate = () => {
                   templateContent: ""
                 });
                 dispatch(setEmailTemplatesStart());
-                getAll({ url: "template/email-template/get-all-templates" }).then(
+                getAll({ url: GET_EMAIL_TEMPLATES }).then(
                   (data: any) => {
                     // console.log("api call --- >", data);
                     if (data == undefined) {

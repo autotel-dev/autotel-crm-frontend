@@ -13,6 +13,8 @@ import CreateComplainModal from "./CreateComplainModal";
 import { serverCredentials } from "../../../../Utilities/headers/header";
 import { create } from "../../../../Utilities/api";
 import { setCreateComplainModalData } from "../../../../ReaduxToolkit/Reducer/ComplainCenterSlice";
+import { GET_DEVICE_DATA } from "../../../../Utilities/api/apiEndpoints";
+import { ERROR_MESSAGE } from "../../../../Utilities/constants/constants";
 // import TotalAlertsForSpecificDevices from "./TotalAlertsForSpecificDevices";
 
 interface PropsTypes {
@@ -145,14 +147,14 @@ const DeviceSelecetdForNewComplain: React.FC<PropsTypes> = ({
 
                 try {
                   await create(sendData, {
-                    url: "complaint-center/get-device-data",
+                    url: GET_DEVICE_DATA,
                   }).then((data: any) => {
                     // dispatch(setCreateComplainModalData(data.data));
                     // console.log(data);
 
                     if (
                       !data.success &&
-                      data.message === "ERROR_INTERNET_DISCONNECTED"
+                      data.message === ERROR_MESSAGE
                     ) {
                     }
                     if (!data.success) {
@@ -225,11 +227,11 @@ export default DeviceSelecetdForNewComplain;
 
 //       try {
 //         await create(deviceData, {
-//           url: `control-room/get-all-merged-alert-events-of-device`,
+//           url: GET_ALL_MERGED_ALERT_EVENTS,
 //         }).then(async (data: any) => {
 //           setIsUpdateModalOpenForSelecteddeviceAlerts(true);
 //           // console.log("data send command", data);
-//           if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
+//           if (!data.success && data.message === ERROR_MESSAGE) {
 //             setLoading(false);
 //             addToggle();
 //           }

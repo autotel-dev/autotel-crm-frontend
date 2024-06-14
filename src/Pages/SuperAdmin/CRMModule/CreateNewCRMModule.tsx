@@ -16,6 +16,8 @@ import {
   setInActiveActiveModules,
 } from "../../../ReaduxToolkit/Reducer/CRMModuleSlice";
 import Swal from "sweetalert2";
+import { CREATE_CRM_MODULE, GET_ALL_CRM_MODULES } from "../../../Utilities/api/apiEndpoints";
+import { ERROR_MESSAGE } from "../../../Utilities/constants/constants";
 
 const CreateNewCRMModule = () => {
   const { userPersonalizationData } = useSelector(
@@ -50,12 +52,12 @@ const CreateNewCRMModule = () => {
       };
       // console.log(crmModule);
       try {
-        await create(crmModule, { url: "crm-module/create-module" }).then(
+        await create(crmModule, { url: CREATE_CRM_MODULE }).then(
           (data: any) => {
             if (data !== undefined) {
               if (
                 !data.success &&
-                data.message === "ERROR_INTERNET_DISCONNECTED"
+                data.message === ERROR_MESSAGE
               ) {
                 setLoading(false);
                 setAddModal(false);
@@ -87,7 +89,7 @@ const CreateNewCRMModule = () => {
                   icon: "",
                 });
                 dispatch(setCRMModulesStart());
-                getAll({ url: "crm-module/get-all-modules" }).then(
+                getAll({ url: GET_ALL_CRM_MODULES }).then(
                   (data: any) => {
                     // console.log("api call --- >", data);
                     if (data == undefined) {

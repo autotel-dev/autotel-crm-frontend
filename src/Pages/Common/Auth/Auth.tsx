@@ -7,6 +7,7 @@ import Swal from "sweetalert2";
 import { IMAGE_BASE_URL, getAll } from "../../../Utilities/api";
 import Loader from "../../Utilities/Loader/Loader";
 import { setUserPersonalizationData } from "../../../ReaduxToolkit/Reducer/PersonalizationSlice";
+import { GET_COMPANY_PERSONALIZATION, GET_SUPERADMIN_PERSONALIZATION } from "../../../Utilities/api/apiEndpoints";
 const LoginForm = () => {
   const [loading, setLoading] = useState<any>(true);
   const { userPersonalizationData } = useSelector(
@@ -23,10 +24,10 @@ const LoginForm = () => {
     getAll({
       url:
         userId == null && userId == undefined
-          ? "super-admin/get-personalization"
-          : `company/get-personalization/${userId}`,
+          ? GET_SUPERADMIN_PERSONALIZATION
+          : `${GET_COMPANY_PERSONALIZATION}/${userId}`,
 
-      // url: "super-admin/get-personalization",
+      // url: GET_SUPERADMIN_PERSONALIZATION,
     })
       .then((parentData: any) => {
         // console.log("api call --- >", parentData);

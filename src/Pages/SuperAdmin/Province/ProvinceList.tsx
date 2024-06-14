@@ -24,6 +24,8 @@ import H7 from "../../../CommonElements/Headings/H7Element";
 import { getAll } from "../../../Utilities/api";
 import deleteAlert from "../../../Utilities/alerts/DeleteAlert";
 import Skeleton from "../../Utilities/Skeleton/Skeleton";
+import { GET_ALL_ACTIVE_COUNTRIES, GET_ALL_PROVINCES } from "../../../Utilities/api/apiEndpoints";
+import { ERROR_MESSAGE } from "../../../Utilities/constants/constants";
 
 const ProvinceList = () => {
   const { provinces, loading, error, id, value, activeInActiveProvinces } =
@@ -54,7 +56,7 @@ const ProvinceList = () => {
 
   useEffect(() => {
     dispatch(setProvincesStart());
-    getAll({ url: "province/get-all-provinces" }).then((data: any) => {
+    getAll({ url: GET_ALL_PROVINCES }).then((data: any) => {
       // console.log("api call --- >", data);
       if (data == undefined) {
         Swal.fire({
@@ -67,12 +69,13 @@ const ProvinceList = () => {
         dispatch(setProvincesEnd());
         dispatch(setProvinces([]));
         dispatch(setFilterProvinces([]));
+
         return;
       }
 
       if (data !== undefined) {
         dispatch(setNoDataFound(data.message));
-        if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
+        if (!data.success && data.message === ERROR_MESSAGE) {
           dispatch(setIsConnected(true));
         }
         if (!data.success) {
@@ -93,7 +96,7 @@ const ProvinceList = () => {
     });
   }, []);
   useEffect(() => {
-    getAll({ url: "country/get-all-active-countries" }).then((data: any) => {
+    getAll({ url: GET_ALL_ACTIVE_COUNTRIES }).then((data: any) => {
       // console.log("api call --- >", data);
       if (data !== undefined) {
         if (data.success) {
@@ -125,8 +128,8 @@ const ProvinceList = () => {
         }}
       >
         <td>{row._id}</td>
-        <td>{row.name}</td>
-        <td>{row.country.name}</td>
+        <td>{row?.name}</td>
+        <td>{row?.country?.name}</td>
         <td>
           <div className="d-flex" style={{ justifyContent: "center" }}>
             <div

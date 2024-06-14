@@ -35,7 +35,7 @@ const Geofence = () => {
 
   //   // Function to fetch data and dispatch actions
   //   const fetchDataAndDispatch = () => {
-  //     getAll({ url: "company/devices" }).then((data: any) => {
+  //     getAll({ url: GET_DEVICES }).then((data: any) => {
   //       // console.log("data", data);
   //       // if (data == undefined) {
   //       //   setUndefinedData(true);
@@ -48,7 +48,7 @@ const Geofence = () => {
   //       //   });
   //       // }
   //       if (data !== undefined) {
-  //         if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
+  //         if (!data.success && data.message === ERROR_MESSAGE) {
   //           dispatch(setIsConnected(true));
   //         }
   //         if (!data.success) {
@@ -277,9 +277,9 @@ const Geofence = () => {
   const navigate = useNavigate();
   // const getData = () => {
   //   setLoading(true);
-  //   getAll({ url: "company/devices" }).then((data: any) => {
+  //   getAll({ url: GET_DEVICES }).then((data: any) => {
   //     if (data !== undefined) {
-  //       if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
+  //       if (!data.success && data.message === ERROR_MESSAGE) {
   //         dispatch(setIsConnected(true));
   //       }
   //       if (!data.success) {

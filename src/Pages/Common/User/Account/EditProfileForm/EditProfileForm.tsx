@@ -19,6 +19,8 @@ import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import { setUserData } from "../../../../../ReaduxToolkit/Reducer/UserSlice";
 import { ROLES } from "../../../../../constants/roles";
+import { GET_USER_BY_ID, UPDATE_COMPANY_BY_OWN, UPDATE_SUPERADMIN_BY_OWN } from "../../../../../Utilities/api/apiEndpoints";
+import { ERROR_MESSAGE } from "../../../../../Utilities/constants/constants";
 
 // interface PropTypes {
 //   isEdit: boolean;
@@ -60,15 +62,15 @@ const EditProfileForm = () => {
       update(formData, {
         url:
           getUserRole() === ROLES.COMPANY
-            ? "company/update-company"
-            : "super-admin/update-super-admin",
+            ? UPDATE_COMPANY_BY_OWN
+            : UPDATE_SUPERADMIN_BY_OWN,
       })
         .then((data: any) => {
           // // console.log("api call --- >", data);
           if (data !== undefined) {
             if (
               !data.success &&
-              data.message === "ERROR_INTERNET_DISCONNECTED"
+              data.message === ERROR_MESSAGE
             ) {
               setLoading(false);
               setIsEdit(!isEdit);
@@ -84,7 +86,7 @@ const EditProfileForm = () => {
               setIsEdit(!isEdit);
             }
             if (data.success) {
-              getAll({ url: "user/get-user" }).then((parentData: any) => {
+              getAll({ url: GET_USER_BY_ID }).then((parentData: any) => {
                 // // console.log("api call --- >", parentData);
                 if (parentData == undefined) {
                   Swal.fire({

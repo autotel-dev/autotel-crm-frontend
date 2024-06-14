@@ -27,6 +27,8 @@ import H7 from "../../../CommonElements/Headings/H7Element";
 import "../../../CssConstaints/Style.css";
 import { formatUnderscoredString } from "../../../Utilities/globals/globals";
 import Skeleton from "../../Utilities/Skeleton/Skeleton";
+import { GET_ALL_PACKAGES, GET_ALL_PACKAGE_DURATION_TYPES } from "../../../Utilities/api/apiEndpoints";
+import { ERROR_MESSAGE } from "../../../Utilities/constants/constants";
 
 const PackageList = () => {
   const { packages, loading, error, id, activeInActivePackages } = useSelector(
@@ -61,7 +63,7 @@ const PackageList = () => {
 
   useEffect(() => {
     dispatch(setPackagesStart());
-    getAll({ url: "package/get-all-packages" }).then((data: any) => {
+    getAll({ url: GET_ALL_PACKAGES }).then((data: any) => {
       // console.log("api call --- >", data);
       if (data == undefined) {
         Swal.fire({
@@ -79,7 +81,7 @@ const PackageList = () => {
 
       if (data !== undefined) {
         dispatch(setNoDataFound(data.message));
-        if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
+        if (!data.success && data.message === ERROR_MESSAGE) {
           dispatch(setIsConnected(true));
         }
         if (!data.success) {
@@ -102,7 +104,7 @@ const PackageList = () => {
     });
   }, []);
   useEffect(() => {
-    getAll({ url: "package/get-package-duration-types" }).then((data: any) => {
+    getAll({ url: GET_ALL_PACKAGE_DURATION_TYPES }).then((data: any) => {
       // console.log("api call package duartion --- >", data);
       if (data !== undefined) {
         if (data.success) {
@@ -166,14 +168,14 @@ const PackageList = () => {
                   //   // console.log(e.target.value);
                   //   try {
                   //     await update(operator, {
-                  //       url: `operator/update-operator/${row._id}`,
+                  //       url: `${UPDATE_OPERATOR}/${row._id}`,
                   //     }).then((data: any) => {
                   //       if (data.success) {
                   //         // console.log(data);
 
                   //         dispatch(setOperatorsStart());
                   //         getAll({
-                  //           url: "operator/get-all-operators",
+                  //           url: GET_ALL_OPERATORS,
                   //         }).then((data: any) => {
                   //           // console.log("api call --- >", data);
                   //           dispatch(setOperatorsEnd());

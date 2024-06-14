@@ -25,6 +25,8 @@ import { ROLES } from "../../../constants/roles";
 import Swal from "sweetalert2";
 import { setFilterWhatsAppTemplates, setWhatsAppTemplates, setWhatsAppTemplatesEnd, setWhatsAppTemplatesStart } from '../../../ReaduxToolkit/Reducer/WhatsAppTemplateSlice';
 import { Type } from "./WhatsAppTemplatesTypes/WhatsAppTemplatesTypes";
+import { GET_WHATSAPP_TEMPLATES, UPDATE_WHATSAPP_TEMPLATE } from "../../../Utilities/api/apiEndpoints";
+import { ERROR_MESSAGE } from "../../../Utilities/constants/constants";
 
 
 interface PropsTypes {
@@ -98,11 +100,11 @@ const UpdateWhatsAppTemplate: React.FC<PropsTypes> = ({
     console.log(emailTemplate);
     if (templateContent !== "" && type !== "") {
       try {
-        await update(emailTemplate, { url: `template/whatsapp-template/update-template/${id}` }).then(
+        await update(emailTemplate, { url: `${UPDATE_WHATSAPP_TEMPLATE}/${id}` }).then(
           (data: any) => {
             if (
               !data.success &&
-              data.message === "ERROR_INTERNET_DISCONNECTED"
+              data.message === ERROR_MESSAGE
             ) {
               setLoading(false);
               setIsVisible(!isVisible);
@@ -130,7 +132,7 @@ const UpdateWhatsAppTemplate: React.FC<PropsTypes> = ({
               // setId("null");
 
               dispatch(setWhatsAppTemplatesStart());
-              getAll({ url: "template/whatsapp-template/get-all-templates" }).then(
+              getAll({ url: GET_WHATSAPP_TEMPLATES }).then(
                 (data: any) => {
                   // console.log("api call --- >", data);
                   if (data == undefined) {

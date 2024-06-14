@@ -25,6 +25,8 @@ import {
   setIsConnected,
 } from "../../../ReaduxToolkit/Reducer/EmailGatewaySlice";
 import Loader from "../../Utilities/Loader/Loader";
+import { CREATE_EMAIL_GATEWAY, GET_EMAIL_GATEWAY, TEST_SMTP_EMAIL_GATEWAY_CREDENTIALS, UPDATE_EMAIL_GATEWAY, UPDATE_EMAIL_GATEWAY_ACTIVATION_STATUS } from "../../../Utilities/api/apiEndpoints";
+import { ERROR_MESSAGE } from "../../../Utilities/constants/constants";
 
 const EmailGateway = () => {
   const { emailGatewayData } = useSelector((state: any) => state.emailGateway);
@@ -43,6 +45,7 @@ const EmailGateway = () => {
     useState<any>(false);
 
   const [isEdit, setIsEdit] = useState(false);
+  const [isTested, setIsTested] = useState(false);
 
   useEffect(() => {
     dispatch(setEmailGatewayData(null));
@@ -106,14 +109,14 @@ const EmailGateway = () => {
   }, [emailGatewayData]);
   useEffect(() => {
     getAll({
-      url: "gateway/email-gateway/get-gateway",
+      url: GET_EMAIL_GATEWAY,
     }).then((parentData: any) => {
       // console.log("api call --- >", parentData);
 
       if (parentData !== undefined) {
         if (
           !parentData.success &&
-          parentData.message === "ERROR_INTERNET_DISCONNECTED"
+          parentData.message === ERROR_MESSAGE
         ) {
           dispatch(setIsConnected(true));
         }
@@ -154,7 +157,7 @@ const EmailGateway = () => {
 
     if (isEdit && emailGatewayData !== null) {
       update(emailGatewayFormData, {
-        url: `gateway/email-gateway/update-gateway/${emailGatewayData._id}`,
+        url: `${UPDATE_EMAIL_GATEWAY}/${emailGatewayData._id}`,
       })
         .then((data: any) => {
           // console.log("api call --- >", data);
@@ -171,7 +174,7 @@ const EmailGateway = () => {
           if (data !== undefined) {
             if (
               !data.success &&
-              data.message === "ERROR_INTERNET_DISCONNECTED"
+              data.message === ERROR_MESSAGE
             ) {
               setEmailGatewayCreationloading(false);
               setIsEdit(!isEdit);
@@ -187,8 +190,9 @@ const EmailGateway = () => {
               // setIsEdit(!isEdit);
             }
             if (data.success) {
+              setIsTested(false)
               getAll({
-                url: "gateway/email-gateway/get-gateway",
+                url: GET_EMAIL_GATEWAY,
               }).then((parentData: any) => {
                 // console.log("api call --- >", parentData);
                 if (parentData == undefined) {
@@ -225,7 +229,7 @@ const EmailGateway = () => {
         });
     } else {
       create(emailGatewayFormData, {
-        url: `gateway/email-gateway/create-gateway`,
+        url: CREATE_EMAIL_GATEWAY,
       })
         .then((data: any) => {
           // console.log("api call --- >", data);
@@ -251,8 +255,9 @@ const EmailGateway = () => {
               //   setIsEdit(!isEdit);
             }
             if (data.success) {
+              setIsTested(false)
               getAll({
-                url: "gateway/email-gateway/get-gateway",
+                url: GET_EMAIL_GATEWAY,
               }).then((parentData: any) => {
                 // console.log("api call --- >", parentData);
                 if (parentData == undefined) {
@@ -286,6 +291,77 @@ const EmailGateway = () => {
           setEmailGatewayCreationloading(false);
         });
     }
+  };
+
+  const testEmailGateway = (e: any) => {
+    e.preventDefault();
+    setEmailGatewayCreationloading(true);
+
+
+    const testEmailGatewayData = {
+      smtpServerHost: smtpServerHost,
+      smtpServerPort: Number(smtpServerPort),
+      smtpUsername: smtpUsername,
+      smtpPassword: smtpPassword,
+    }
+
+    create(testEmailGatewayData, {
+      url: TEST_SMTP_EMAIL_GATEWAY_CREDENTIALS,
+    })
+      .then((data: any) => {
+        // console.log("api call --- >", data);
+        if (data == undefined) {
+          Swal.fire({
+            text: `${data.message}`,
+            icon: "error",
+            timer: 2000,
+            showConfirmButton: false,
+          });
+          setEmailGatewayCreationloading(false);
+          setIsTested(false)
+          // setIsEdit(!isEdit);
+        }
+        if (data !== undefined) {
+          if (!data.success) {
+            Swal.fire({
+              text: `${data.message}`,
+              icon: "error",
+              timer: 2000,
+              showConfirmButton: false,
+            });
+            setEmailGatewayCreationloading(false);
+            if (emailGatewayData == null) {
+              setIsTested(false)
+            }
+            else {
+              setIsTested(true)
+            }
+
+            //   setIsEdit(!isEdit);
+          }
+          if (data.success) {
+            setEmailGatewayCreationloading(false);
+            if (emailGatewayData == null) {
+              setIsTested(true)
+            }
+            else {
+              setIsTested(false)
+            }
+            Swal.fire({
+              text: `${data.message}`,
+              icon: "success",
+              timer: 1000,
+              showConfirmButton: false,
+            });
+          }
+        }
+      })
+      .catch((err: any) => {
+        // console.log("catch data", err);
+        setEmailGatewayCreationloading(false);
+        setIsTested(false)
+      });
+
   };
 
   return (
@@ -434,13 +510,13 @@ const EmailGateway = () => {
 
                                     try {
                                       await patch(changeStatus, {
-                                        url: `gateway/email-gateway/change-gateway-activation-status/${emailGatewayData._id}`,
+                                        url: `${UPDATE_EMAIL_GATEWAY_ACTIVATION_STATUS}/${emailGatewayData._id}`,
                                       }).then((data: any) => {
                                         if (data.success) {
                                           // // console.log(data);
 
                                           getAll({
-                                            url: "gateway/email-gateway/get-gateway",
+                                            url: GET_EMAIL_GATEWAY,
                                           }).then((parentData: any) => {
                                             // console.log("api call --- >", parentData);
 
@@ -448,7 +524,7 @@ const EmailGateway = () => {
                                               if (
                                                 !parentData.success &&
                                                 parentData.message ===
-                                                "ERROR_INTERNET_DISCONNECTED"
+                                                ERROR_MESSAGE
                                               ) {
                                                 dispatch(setIsConnected(true));
                                               }
@@ -776,13 +852,15 @@ const EmailGateway = () => {
                                             >
                                                 Test Email
                                             </Button> */}
-                        {isEdit && (
+
+                        {isEdit && isActive && (
                           <Button
                             color="primary"
                             type="submit"
                             onClick={(e) => {
                               e.preventDefault();
                               setIsEdit(!isEdit);
+                              setIsTested(false)
                             }}
                             style={{
                               marginRight: "10px",
@@ -791,8 +869,8 @@ const EmailGateway = () => {
                             Cancel
                           </Button>
                         )}
-                        {emailGatewayData == null ||
-                          (emailGatewayData !== null && isActive) ? (
+                        {(emailGatewayData == null && isTested) ||
+                          (emailGatewayData !== null && isActive && !isTested) ? (
                           <Button
                             color="primary"
                             type="submit"
@@ -804,6 +882,7 @@ const EmailGateway = () => {
                               ) {
                                 e.preventDefault();
                                 setIsEdit(true);
+                                setIsTested(true)
                               }
                             }}
                           >
@@ -816,7 +895,26 @@ const EmailGateway = () => {
                                   : "Edit"}
                           </Button>
                         ) : (
-                          <></>
+                          <>
+                            {isActive && <Button
+                              color="primary"
+                              type="submit"
+                              disabled={emailGatewayCreationloading}
+                              onClick={(e) => {
+                                e.preventDefault();
+                                setIsTested(false)
+                                testEmailGateway(e)
+                              }}
+                              style={{
+                                marginRight: "10px",
+                              }}
+                            >
+                              {emailGatewayCreationloading
+                                ? "Loading..."
+                                : "Test Connection"}
+                            </Button>}
+
+                          </>
                         )}
                       </CardFooter>
                     </Row>

@@ -37,6 +37,8 @@ import {
   setDevicesStatuses,
   setServerDevices,
 } from "../../../../ReaduxToolkit/Reducer/MonitoringSlice";
+import { GET_ALL_ACTIVE_SUB_ROLES, GET_ALL_ACTIVE_TYPES, GET_ALL_INTERNAL_COMPLAINT, GET_COMPLAINT_CENTER_PRIORITY_STATUS, GET_COMPLAINT_CENTER_STATISTICS, GET_COMPLAINT_CENTER_STATUS_TYPES, GET_DEVICES } from "../../../../Utilities/api/apiEndpoints";
+import { ERROR_MESSAGE } from "../../../../Utilities/constants/constants";
 
 const ComplainCenter = () => {
   const { supportStatistics, isConnected } = useSelector(
@@ -55,11 +57,11 @@ const ComplainCenter = () => {
     setStatisticsLoading(true);
     setComplaintsLoading(true);
 
-    getAll({ url: "complaint-center/get-statistics" }).then((data: any) => {
+    getAll({ url: GET_COMPLAINT_CENTER_STATISTICS }).then((data: any) => {
       // console.log("Data", data);
 
       if (data !== undefined) {
-        if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
+        if (!data.success && data.message === ERROR_MESSAGE) {
           dispatch(setIsConnected(true));
         }
         if (!data.success) {
@@ -98,7 +100,7 @@ const ComplainCenter = () => {
     });
 
     getAll({
-      url: "complaint-center/get-all-internal-complaints",
+      url: GET_ALL_INTERNAL_COMPLAINT,
     }).then((data: any) => {
       // console.log("api call --- >", data);
       if (data == undefined) {
@@ -115,7 +117,7 @@ const ComplainCenter = () => {
       }
 
       if (data !== undefined) {
-        if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
+        if (!data.success && data.message === ERROR_MESSAGE) {
           dispatch(setIsConnected(true));
         }
         if (!data.success) {
@@ -142,7 +144,7 @@ const ComplainCenter = () => {
 
   useEffect(() => {
     getAll({
-      url: "complaint-center/internal-complaint-type/get-all-active-types",
+      url: GET_ALL_ACTIVE_TYPES,
     }).then((data: any) => {
       // console.log("api call --- >", data);
       if (data !== undefined) {
@@ -152,7 +154,7 @@ const ComplainCenter = () => {
         }
       }
     });
-    getAll({ url: "complaint-center/get-status-types" }).then((data: any) => {
+    getAll({ url: GET_COMPLAINT_CENTER_STATUS_TYPES }).then((data: any) => {
       // console.log("api call --- >", data);
       if (data !== undefined) {
         if (data.success) {
@@ -164,7 +166,7 @@ const ComplainCenter = () => {
       }
     });
 
-    getAll({ url: "complaint-center/get-priorty-status-types" }).then(
+    getAll({ url: GET_COMPLAINT_CENTER_PRIORITY_STATUS }).then(
       (data: any) => {
         // console.log("api call --- >", data);
         if (data !== undefined) {
@@ -180,7 +182,7 @@ const ComplainCenter = () => {
       }
     );
 
-    getAll({ url: "sub-role/get-all-active-sub-roles" }).then((data: any) => {
+    getAll({ url: GET_ALL_ACTIVE_SUB_ROLES }).then((data: any) => {
       // console.log("api call --- >", data);
       if (data !== undefined) {
         if (data.success) {
@@ -205,7 +207,7 @@ const ComplainCenter = () => {
 
   useEffect(() => {
     if (devices.length === 0) {
-      getAll({ url: "company/devices" }).then((data: any) => {
+      getAll({ url: GET_DEVICES }).then((data: any) => {
         // // console.log("data", data);
         // if (data == undefined) {
         //   setDevicesLoading(false);
@@ -217,7 +219,7 @@ const ComplainCenter = () => {
         //   });
         // }
         if (data !== undefined) {
-          if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
+          if (!data.success && data.message === ERROR_MESSAGE) {
             dispatch(setIsConnected(true));
           }
           if (!data.success) {

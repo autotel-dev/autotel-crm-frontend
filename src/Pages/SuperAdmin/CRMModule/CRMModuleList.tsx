@@ -23,6 +23,8 @@ import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import H7 from "../../../CommonElements/Headings/H7Element";
 import Skeleton from "../../Utilities/Skeleton/Skeleton";
+import { GET_ALL_CRM_MODULES } from "../../../Utilities/api/apiEndpoints";
+import { ERROR_MESSAGE } from "../../../Utilities/constants/constants";
 
 const CRMModuleList = () => {
   const { crmModules, loading, id, activeInActiveModules } = useSelector(
@@ -53,7 +55,7 @@ const CRMModuleList = () => {
 
   useEffect(() => {
     dispatch(setCRMModulesStart());
-    getAll({ url: "crm-module/get-all-modules" }).then((data: any) => {
+    getAll({ url: GET_ALL_CRM_MODULES }).then((data: any) => {
       // console.log("api call --- >", data);
       if (data == undefined) {
         Swal.fire({
@@ -71,7 +73,7 @@ const CRMModuleList = () => {
 
       if (data !== undefined) {
         dispatch(setNoDataFound(data.message));
-        if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
+        if (!data.success && data.message === ERROR_MESSAGE) {
           dispatch(setIsConnected(true));
         }
         if (!data.success) {
@@ -148,14 +150,14 @@ const CRMModuleList = () => {
                 //   // console.log(e.target.value);
                 //   try {
                 //     await update(operator, {
-                //       url: `operator/update-operator/${row._id}`,
+                //       url: `${UPDATE_OPERATOR}/${row._id}`,
                 //     }).then((data: any) => {
                 //       if (data.success) {
                 //         // console.log(data);
 
                 //         dispatch(setOperatorsStart());
                 //         getAll({
-                //           url: "operator/get-all-operators",
+                //           url: GET_ALL_OPERATORS,
                 //         }).then((data: any) => {
                 //           // console.log("api call --- >", data);
                 //           dispatch(setOperatorsEnd());

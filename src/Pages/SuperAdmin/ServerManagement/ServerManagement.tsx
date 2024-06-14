@@ -23,6 +23,8 @@ import Swal from "sweetalert2";
 import { getAll } from "../../../Utilities/api";
 import NoInternetConnection from "../../Utilities/NoInternetConnection/NoInternetConnection";
 import Skeleton from "../../Utilities/Skeleton/Skeleton";
+import { GET_ALL_SYSTEM_LOG, GET_SERVER_HEALTH_STATISTICS } from "../../../Utilities/api/apiEndpoints";
+import { ERROR_MESSAGE } from "../../../Utilities/constants/constants";
 
 const ServerManagement = () => {
   const { isConnected, } = useSelector((state: any) => state.serverManagement);
@@ -37,7 +39,7 @@ const ServerManagement = () => {
     setLoading(true);
     dispatch(setServerManagementStart());
     const startTime = new Date().getTime();
-    getAll({ url: "server-management/get-server-health-statistics" }).then(
+    getAll({ url: GET_SERVER_HEALTH_STATISTICS }).then(
       (data: any) => {
         const options = { year: "numeric", month: "2-digit", day: "2-digit" };
         const startTime = new Date().toISOString();
@@ -47,7 +49,7 @@ const ServerManagement = () => {
 
         if (data !== undefined) {
           dispatch(setNoDataFound(data.message));
-          if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
+          if (!data.success && data.message === ERROR_MESSAGE) {
             dispatch(setIsConnected(true));
             setLoading(false);
           }
@@ -72,7 +74,7 @@ const ServerManagement = () => {
   }, []);
 
   useEffect(() => {
-    getAll({ url: "system-logs/get-all-system-logs" }).then((data: any) => {
+    getAll({ url: GET_ALL_SYSTEM_LOG }).then((data: any) => {
       // console.log("api call --- >", data);
       if (data !== undefined) {
         if (data.success) {

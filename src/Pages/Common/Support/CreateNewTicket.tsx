@@ -18,6 +18,8 @@ import {
 import { setNoDataFound } from "../../../ReaduxToolkit/Reducer/NoDataFoundSlice";
 import { getUserRole } from "../../../Utilities/globals/globals";
 import { ROLES } from "../../../constants/roles";
+import { GET_ALL_BUG_REPORTS, GET_ALL_COMPANY_BUG_REPORTS, GET_BUG_REPORT_STATISTICS, REPORT_NEW_BUG } from "../../../Utilities/api/apiEndpoints";
+import { ERROR_MESSAGE } from "../../../Utilities/constants/constants";
 
 interface TicketType {
   name: string;
@@ -89,9 +91,9 @@ const CreateNewTicket = () => {
           // console.log(`Key 1: ${key}, Value 1: ${value}`);
         }
         await createCom(formData, {
-          url: "support/bug-report/report-new-bug",
+          url: REPORT_NEW_BUG,
         }).then((data: any) => {
-          if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
+          if (!data.success && data.message === ERROR_MESSAGE) {
             setSelectedFiles([]);
             setSelectedImages([]);
             setLoading(false);
@@ -134,8 +136,8 @@ const CreateNewTicket = () => {
             getAll({
               url:
                 getUserRole() === ROLES.COMPANY
-                  ? "company/get-all-bug-reports"
-                  : "support/bug-report/get-all-bug-reports",
+                  ? GET_ALL_COMPANY_BUG_REPORTS
+                  : GET_ALL_BUG_REPORTS,
             }).then((data: any) => {
               // console.log("api call --- >", data);
               dispatch(setReportsEnd());
@@ -149,7 +151,7 @@ const CreateNewTicket = () => {
             });
 
             if (getUserRole() === ROLES.SUPER_ADMIN) {
-              getAll({ url: "support/bug-report/get-statistics" }).then(
+              getAll({ url: GET_BUG_REPORT_STATISTICS }).then(
                 (data: any) => {
                   // console.log("api call --- >", data);
                   if (data !== undefined) {

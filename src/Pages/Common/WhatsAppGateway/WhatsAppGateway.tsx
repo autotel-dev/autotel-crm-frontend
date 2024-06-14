@@ -26,6 +26,8 @@ import { create, getAll, patch, update } from "../../../Utilities/api";
 import Swal from "sweetalert2";
 import BodyParamsObject from "./components/BodyParamsObject";
 import Loader from "../../Utilities/Loader/Loader";
+import { CREATE_WHATSAPP_GATEWAY, GET_WHATSAPP_GATEWAY, UPDATE_WHATSAPP_GATEWAY, UPDATE_WHATSAPP_GATEWAY_ACTIVATION_STATUS } from "../../../Utilities/api/apiEndpoints";
+import { ERROR_MESSAGE } from "../../../Utilities/constants/constants";
 
 const WhatsAppGateway = () => {
   const dispatch = useDispatch();
@@ -119,7 +121,7 @@ const WhatsAppGateway = () => {
   }, [whatsAppGatewayData]);
   useEffect(() => {
     getAll({
-      url: "gateway/whatsapp-gateway/get-gateway",
+      url: GET_WHATSAPP_GATEWAY,
     }).then((parentData: any) => {
       if (parentData == undefined) {
         Swal.fire({
@@ -135,7 +137,7 @@ const WhatsAppGateway = () => {
       if (parentData !== undefined) {
         if (
           !parentData.success &&
-          parentData.message === "ERROR_INTERNET_DISCONNECTED"
+          parentData.message === ERROR_MESSAGE
         ) {
           dispatch(setIsConnected(true));
         }
@@ -186,7 +188,7 @@ const WhatsAppGateway = () => {
 
     if (isEdit && whatsAppGatewayData !== null) {
       update(whatsAppGatewayFormData, {
-        url: `gateway/whatsapp-gateway/update-gateway/${whatsAppGatewayData._id}`,
+        url: `${UPDATE_WHATSAPP_GATEWAY}/${whatsAppGatewayData._id}`,
       })
         .then((data: any) => {
           // console.log("api call --- >", data);
@@ -203,7 +205,7 @@ const WhatsAppGateway = () => {
           if (data !== undefined) {
             if (
               !data.success &&
-              data.message === "ERROR_INTERNET_DISCONNECTED"
+              data.message === ERROR_MESSAGE
             ) {
               setWhatsAppGatewayCreationloading(false);
               setIsEdit(!isEdit);
@@ -220,7 +222,7 @@ const WhatsAppGateway = () => {
             }
             if (data.success) {
               getAll({
-                url: "gateway/whatsapp-gateway/get-gateway",
+                url: GET_WHATSAPP_GATEWAY,
               }).then((parentData: any) => {
                 // console.log("api call --- >", parentData);
                 if (parentData == undefined) {
@@ -259,7 +261,7 @@ const WhatsAppGateway = () => {
         });
     } else {
       create(whatsAppGatewayFormData, {
-        url: `gateway/whatsapp-gateway/create-gateway`,
+        url: CREATE_WHATSAPP_GATEWAY,
       })
         .then((data: any) => {
           // console.log("api call --- >", data);
@@ -286,7 +288,7 @@ const WhatsAppGateway = () => {
             }
             if (data.success) {
               getAll({
-                url: "gateway/whatsapp-gateway/get-gateway",
+                url: GET_WHATSAPP_GATEWAY,
               }).then((parentData: any) => {
                 // console.log("api call --- >", parentData);
                 if (parentData == undefined) {
@@ -413,13 +415,13 @@ const WhatsAppGateway = () => {
 
                                     try {
                                       await patch(changeStatus, {
-                                        url: `gateway/whatsapp-gateway/change-gateway-activation-status/${whatsAppGatewayData._id}`,
+                                        url: `${UPDATE_WHATSAPP_GATEWAY_ACTIVATION_STATUS}/${whatsAppGatewayData._id}`,
                                       }).then((data: any) => {
                                         if (data.success) {
                                           // // console.log(data);
 
                                           getAll({
-                                            url: "gateway/whatsapp-gateway/get-gateway",
+                                            url: GET_WHATSAPP_GATEWAY,
                                           }).then((parentData: any) => {
                                             // console.log("api call --- >", parentData);
 
@@ -427,7 +429,7 @@ const WhatsAppGateway = () => {
                                               if (
                                                 !parentData.success &&
                                                 parentData.message ===
-                                                  "ERROR_INTERNET_DISCONNECTED"
+                                                  ERROR_MESSAGE
                                               ) {
                                                 dispatch(setIsConnected(true));
                                               }

@@ -11,6 +11,7 @@ import ComplainTypeList from "./ComplainTypeList";
 import { setComplainTypePriorities, setComplainsTypes, setIsConnected } from "../../../ReaduxToolkit/Reducer/ComplainsTypeSlice";
 import { getAll } from "../../../Utilities/api";
 import NoInternetConnection from "../../Utilities/NoInternetConnection/NoInternetConnection";
+import { GET_COMPLAINT_CENTER_PRIORITY_STATUS } from "../../../Utilities/api/apiEndpoints";
 
 const ComplainType = () => {
   const dispatch = useDispatch();
@@ -36,7 +37,7 @@ const ComplainType = () => {
   };
 
   useEffect(() => {
-    getAll({ url: "complaint-center/get-priorty-status-types" }).then((data: any) => {
+    getAll({ url: GET_COMPLAINT_CENTER_PRIORITY_STATUS }).then((data: any) => {
       // console.log("api call --- >", data);
       if (data !== undefined) {
         if (data.success) {

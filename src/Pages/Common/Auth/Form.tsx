@@ -19,6 +19,7 @@ import {
 import { setDevices } from "../../../ReaduxToolkit/Reducer/MonitoringSlice";
 import { getAll, login } from "../../../Utilities/api";
 import { getOperatorCompanyUserId, getUserRole } from "../../../Utilities/globals/globals";
+import { GET_ALLOWED_MODULES, GET_ALLOWED_PERMISSIONS, GET_ALL_ACTIVE_CRM_MODULES, GET_COMPANY_PERSONALIZATION, GET_SUPERADMIN_PERSONALIZATION, GET_USER_BY_ID } from "../../../Utilities/api/apiEndpoints";
 
 interface loginTypes {
   emailAddress: string; // Change 'boolean' to the actual type of isVisible
@@ -127,8 +128,8 @@ const CommonForm = ({ alignLogo }: CommonFormPropsType) => {
               url:
                 getUserRole() === ROLES.COMPANY ||
                   getUserRole() === ROLES.OPERATOR
-                  ? "user/get-allowed-modules"
-                  : "crm-module/get-all-active-modules",
+                  ? GET_ALLOWED_MODULES
+                  : GET_ALL_ACTIVE_CRM_MODULES,
             }).then((data: any) => {
               // console.log("active Modules --- >", data);
 
@@ -148,10 +149,10 @@ const CommonForm = ({ alignLogo }: CommonFormPropsType) => {
             getAll({
               url:
                 userId == null && userId == undefined
-                  ? "super-admin/get-personalization"
-                  : `company/get-personalization/${userId}`,
+                  ? GET_SUPERADMIN_PERSONALIZATION
+                  : `${GET_COMPANY_PERSONALIZATION}/${userId}`,
 
-              // url: "super-admin/get-personalization",
+              // url: GET_SUPERADMIN_PERSONALIZATION,
             }).then((parentData: any) => {
               // console.log("api call --- >", parentData);
               if (parentData == undefined) {
@@ -176,7 +177,7 @@ const CommonForm = ({ alignLogo }: CommonFormPropsType) => {
               }
             });
             dispatch(setUserData(null));
-            getAll({ url: "user/get-user" }).then((parentData: any) => {
+            getAll({ url: GET_USER_BY_ID }).then((parentData: any) => {
               if (parentData !== undefined) {
                 if (parentData.success) {
                   dispatch(setUserData(parentData.data.user));
@@ -188,7 +189,7 @@ const CommonForm = ({ alignLogo }: CommonFormPropsType) => {
               getUserRole() === ROLES.COMPANY ||
               getUserRole() === ROLES.OPERATOR
             ) {
-              getAll({ url: "user/get-permissions" })
+              getAll({ url: GET_ALLOWED_PERMISSIONS })
                 .then((data: any) => {
                   // console.log("api call --- >", data);
                   if (data !== undefined) {

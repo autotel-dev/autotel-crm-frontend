@@ -16,6 +16,8 @@ import {
 } from "../../../ReaduxToolkit/Reducer/ReportsSlice";
 import NoInternetConnection from "../../Utilities/NoInternetConnection/NoInternetConnection";
 import { Flex } from "antd";
+import { GET_ALL_REPORT_TYPES, GET_DEVICES } from "../../../Utilities/api/apiEndpoints";
+import { ERROR_MESSAGE } from "../../../Utilities/constants/constants";
 
 const Reports = () => {
   const dispatch = useDispatch();
@@ -34,7 +36,7 @@ const Reports = () => {
   }, []);
   const getData = () => {
     setLoading(true);
-    getAll({ url: "company/devices" }).then((data: any) => {
+    getAll({ url: GET_DEVICES }).then((data: any) => {
       // console.log("data", data);
       if (data == undefined) {
         setUndefinedData(true);
@@ -98,7 +100,7 @@ const Reports = () => {
   };
   useEffect(() => {
     getData();
-    getAll({ url: "reports/get-all-report-types" }).then((data: any) => {
+    getAll({ url: GET_ALL_REPORT_TYPES }).then((data: any) => {
       // console.log("data", data);
       // if (data == undefined) {
       //   Swal.fire({
@@ -110,7 +112,7 @@ const Reports = () => {
       //   return;
       // }
       if (data !== undefined) {
-        if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
+        if (!data.success && data.message === ERROR_MESSAGE) {
           dispatch(setIsConnected(true));
         }
         if (!data.success) {

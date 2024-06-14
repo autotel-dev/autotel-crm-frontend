@@ -41,6 +41,8 @@ import {
 } from "../../ReaduxToolkit/Reducer/MonitoringSlice";
 import { useNavigate } from "react-router-dom";
 import { setErrorData } from "../../ReaduxToolkit/Reducer/UserSlice";
+import { GET_COMPANY_ALERTS_OVERVIEW } from "../../Utilities/api/apiEndpoints";
+import { ERROR_MESSAGE } from "../../Utilities/constants/constants";
 
 const Dashboard = () => {
   const dispatch = useDispatch();
@@ -107,16 +109,16 @@ const Dashboard = () => {
     dispatch(setLiveAlertsData(null));
 
     if (getUserRole() == "COMPANY") {
-      getAll({ url: "company/alert-events?pageNo=1" }).then((data: any) => {
+      getAll({ url: "${company/alert-events}?pageNo=1" }).then((data: any) => {
         if (data == undefined) {
           dispatch(setLiveAlerts([]));
           dispatch(setLiveAlertsData(null));
         }
         if (data !== undefined) {
-          if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
+          if (!data.success && data.message === ERROR_MESSAGE) {
             dispatch(setIsConnected(true));
           }
-          if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
+          if (!data.success && data.message === ERROR_MESSAGE) {
             Swal.fire({
               text: `${data.message}`,
               icon: "error",
@@ -140,13 +142,13 @@ const Dashboard = () => {
     }
 
     if (getUserRole() == ROLES.COMPANY) {
-      getAll({ url: "company/dashboard/alerts-overview" }).then((data: any) => {
+      getAll({ url: GET_COMPANY_ALERTS_OVERVIEW }).then((data: any) => {
         // console.log("api call --- >", data);
         if (data !== undefined) {
-          if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
+          if (!data.success && data.message === ERROR_MESSAGE) {
             dispatch(setIsConnected(true));
           }
-          if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
+          if (!data.success && data.message === ERROR_MESSAGE) {
             Swal.fire({
               text: `${data.message}`,
               icon: "error",

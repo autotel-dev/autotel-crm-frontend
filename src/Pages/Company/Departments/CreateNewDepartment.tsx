@@ -25,6 +25,8 @@ import Swal from "sweetalert2";
 //   setFilterCountries,
 // } from "../../ReaduxToolkit/Reducer/CountrySlice";
 import "./permissionsStyle.css";
+import { CREATE_SUB_ROLE, GET_ALL_SUB_ROLES } from "../../../Utilities/api/apiEndpoints";
+import { ERROR_MESSAGE } from "../../../Utilities/constants/constants";
 
 const CreateNewDepartment = () => {
   const { userPersonalizationData } = useSelector(
@@ -106,11 +108,11 @@ const CreateNewDepartment = () => {
 
       // console.log(role);
       try {
-        await create(role, { url: "sub-role/create-sub-role" }).then(
+        await create(role, { url: CREATE_SUB_ROLE }).then(
           (data: any) => {
             if (
               !data.success &&
-              data.message === "ERROR_INTERNET_DISCONNECTED"
+              data.message === ERROR_MESSAGE
             ) {
               setLoading(false);
               setAddModal(false);
@@ -150,7 +152,7 @@ const CreateNewDepartment = () => {
                 }))
               );
               dispatch(setRolesStart());
-              getAll({ url: "sub-role/get-all-sub-roles" }).then(
+              getAll({ url: GET_ALL_SUB_ROLES }).then(
                 (data: any) => {
                   // console.log("api call --- >", data);
                   dispatch(setRolesEnd());

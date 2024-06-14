@@ -16,6 +16,7 @@ import { getAll, otpEnabled } from "../../../../../Utilities/api";
 import { useDispatch, useSelector } from "react-redux";
 import Swal from "sweetalert2";
 import { setUserData } from "../../../../../ReaduxToolkit/Reducer/UserSlice";
+import { CHANGE_LOGIN_STATUS, GET_USER_BY_ID } from "../../../../../Utilities/api/apiEndpoints";
 
 const SecuritySettings = () => {
   const { userData } = useSelector((state: any) => state.user);
@@ -27,12 +28,12 @@ const SecuritySettings = () => {
     setLoading(true);
     try {
       await otpEnabled(isEnabled, {
-        url: "user/security/change-login-security-status",
+        url: CHANGE_LOGIN_STATUS,
       }).then((data: any) => {
         setLoading(false);
         if (data.success) {
           // console.log(data);
-          getAll({ url: "user/get-user" }).then((parentData: any) => {
+          getAll({ url: GET_USER_BY_ID }).then((parentData: any) => {
             // console.log("api call --- >", parentData);
             if (parentData == undefined) {
               setLoading(false);

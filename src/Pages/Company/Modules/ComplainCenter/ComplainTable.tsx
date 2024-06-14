@@ -13,6 +13,7 @@ import CreateNewComplain from "./CreateNewComplain";
 import { setAllComplains, setComplainCenterRoles, setComplainCenterStatistics, setTableRow } from "../../../../ReaduxToolkit/Reducer/ComplainCenterSlice";
 import { getAll } from "../../../../Utilities/api";
 import "../../../../CssConstaints/Style.css";
+import { GET_ALL_INTERNAL_COMPLAINT, GET_COMPLAINT_CENTER_STATISTICS } from "../../../../Utilities/api/apiEndpoints";
 
 const ComplainTable = () => {
   const dispatch = useDispatch();
@@ -185,7 +186,7 @@ const ComplainTable = () => {
       // console.log(typeof (event.data));
       if (typeof (event.data) == "string" && event.data == "updated") {
         setIsUpdate(event.data.toString());
-        getAll({ url: "complaint-center/get-statistics" }).then((data: any) => {
+        getAll({ url: GET_COMPLAINT_CENTER_STATISTICS }).then((data: any) => {
           // console.log("Data", data);
 
           if (data !== undefined) {
@@ -212,7 +213,7 @@ const ComplainTable = () => {
         });
 
         getAll({
-          url: "complaint-center/get-all-internal-complaints",
+          url: GET_ALL_INTERNAL_COMPLAINT,
         }).then((data: any) => {
           // console.log("api call --- >", data);
 

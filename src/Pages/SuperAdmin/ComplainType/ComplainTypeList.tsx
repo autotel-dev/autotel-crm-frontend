@@ -25,6 +25,8 @@ import H7 from "../../../CommonElements/Headings/H7Element";
 import { formatUnderscoredString } from "../../../Utilities/globals/globals";
 import "../../../CssConstaints/Style.css";
 import Skeleton from "../../Utilities/Skeleton/Skeleton";
+import { GET_ALL_TYPES } from "../../../Utilities/api/apiEndpoints";
+import { ERROR_MESSAGE } from "../../../Utilities/constants/constants";
 
 
 const ComplainTypeList = () => {
@@ -35,6 +37,7 @@ const ComplainTypeList = () => {
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [complainTitle, setComplainTitle] = useState("");
   const [isActive, setIsActive] = useState(false);
+  const [priorty, setPriorty] = useState("");
   const navigate = useNavigate();
   const { userPersonalizationData } = useSelector(
     (state: any) => state.personalization
@@ -58,7 +61,7 @@ const ComplainTypeList = () => {
   useEffect(() => {
     dispatch(setComplainsTypesStart());
     getAll({
-      url: "complaint-center/internal-complaint-type/get-all-types",
+      url: GET_ALL_TYPES,
     }).then((data: any) => {
       // console.log("api call --- >", data);
       if (data == undefined) {
@@ -79,7 +82,7 @@ const ComplainTypeList = () => {
         // console.log("Data", data);
 
         dispatch(setNoDataFound(data.message));
-        if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
+        if (!data.success && data.message === ERROR_MESSAGE) {
           dispatch(setIsConnected(true));
         }
         if (!data.success) {
@@ -153,14 +156,14 @@ const ComplainTypeList = () => {
                 //   // console.log(e.target.value);
                 //   try {
                 //     await update(operator, {
-                //       url: `operator/update-operator/${row._id}`,
+                //       url: `${UPDATE_OPERATOR}/${row._id}`,
                 //     }).then((data: any) => {
                 //       if (data.success) {
                 //         // console.log(data);
 
                 //         dispatch(setOperatorsStart());
                 //         getAll({
-                //           url: "operator/get-all-operators",
+                //           url: GET_ALL_OPERATORS,
                 //         }).then((data: any) => {
                 //           // console.log("api call --- >", data);
                 //           dispatch(setOperatorsEnd());
@@ -235,6 +238,7 @@ const ComplainTypeList = () => {
                 dispatch(setId(row._id));
                 setComplainTitle(row.title);
                 setIsActive(row.isActive);
+                setPriorty(row.priorty)
               }}
             >
               Edit
@@ -305,7 +309,7 @@ const ComplainTypeList = () => {
                 value={complainTitle}
                 isActive={isActive}
                 setIsActive={setIsActive}
-
+                priorty={priorty}
               // setValue={setCityName}
               />
             </CardBody>

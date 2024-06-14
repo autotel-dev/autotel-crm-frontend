@@ -18,6 +18,8 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import Swal from "sweetalert2";
 import SelectPackageBox from "./components/SelectPackageBox";
+import { CREATE_PACKAGE, GET_ALL_PACKAGES } from "../../../Utilities/api/apiEndpoints";
+import { ERROR_MESSAGE } from "../../../Utilities/constants/constants";
 
 const CreateNewPackage = () => {
   const { userPersonalizationData } = useSelector(
@@ -63,12 +65,12 @@ const CreateNewPackage = () => {
 
       // console.log(packag);
       try {
-        await create(packag, { url: "package/create-package" }).then(
+        await create(packag, { url: CREATE_PACKAGE }).then(
           (data: any) => {
             if (data !== undefined) {
               if (
                 !data.success &&
-                data.message === "ERROR_INTERNET_DISCONNECTED"
+                data.message === ERROR_MESSAGE
               ) {
                 setLoading(false);
                 setAddModal(false);
@@ -102,7 +104,7 @@ const CreateNewPackage = () => {
                   title: "",
                   price: Number(""),
                 });
-                getAll({ url: "package/get-all-packages" }).then(
+                getAll({ url: GET_ALL_PACKAGES }).then(
                   (data: any) => {
                     // console.log("api call --- >", data);
                     if (data == undefined) {

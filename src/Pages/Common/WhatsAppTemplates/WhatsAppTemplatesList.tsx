@@ -15,6 +15,8 @@ import H7 from "../../../CommonElements/Headings/H7Element";
 import UpdateWhatsAppTemplate from "./UpdateWhatsAppTemplate";
 import { formatUnderscoredString } from "../../../Utilities/globals/globals";
 import { setFilterWhatsAppTemplates, setIsConnected, setWhatsAppTemplates, setWhatsAppTemplatesEnd, setWhatsAppTemplatesStart } from '../../../ReaduxToolkit/Reducer/WhatsAppTemplateSlice';
+import { GET_WHATSAPP_TEMPLATES } from "../../../Utilities/api/apiEndpoints";
+import { ERROR_MESSAGE } from "../../../Utilities/constants/constants";
 
 const EmailTemplatesList = () => {
   const { whatsAppTemplates, loading } = useSelector(
@@ -52,7 +54,7 @@ const EmailTemplatesList = () => {
     dispatch(setWhatsAppTemplates([]));
     dispatch(setFilterWhatsAppTemplates([]));
     dispatch(setWhatsAppTemplatesStart());
-    getAll({ url: "template/whatsapp-template/get-all-templates" }).then(
+    getAll({ url: GET_WHATSAPP_TEMPLATES }).then(
       (data: any) => {
         // console.log("api call --- >", data);
         if (data == undefined) {
@@ -69,7 +71,7 @@ const EmailTemplatesList = () => {
         }
         dispatch(setWhatsAppTemplatesEnd());
         if (data !== undefined) {
-          if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
+          if (!data.success && data.message === ERROR_MESSAGE) {
             dispatch(setIsConnected(true));
           }
           if (!data.success) {

@@ -24,6 +24,8 @@ import "./tableStyle.css";
 import Swal from "sweetalert2";
 import Skeleton from "../../Utilities/Skeleton/Skeleton";
 import deleteAlert from "../../../Utilities/alerts/DeleteAlert";
+import { GET_ALL_ACTIVE_COUNTRIES, GET_ALL_ACTIVE_PROVINCES, GET_ALL_CITIES } from "../../../Utilities/api/apiEndpoints";
+import { ERROR_MESSAGE } from "../../../Utilities/constants/constants";
 
 
 const CitiesList = () => {
@@ -56,7 +58,7 @@ const CitiesList = () => {
   useEffect(() => {
     dispatch(setCitiesStart());
     // setLoad(true);
-    getAll({ url: "city/get-all-cities" }).then((data: any) => {
+    getAll({ url: GET_ALL_CITIES }).then((data: any) => {
       // console.log("api call --- >", data);
       if (data == undefined) {
         Swal.fire({
@@ -74,7 +76,7 @@ const CitiesList = () => {
 
       if (data !== undefined) {
         dispatch(setNoCityFound(data.message));
-        if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
+        if (!data.success && data.message === ERROR_MESSAGE) {
           dispatch(setIsConnected(true));
         }
         if (!data.success) {
@@ -96,7 +98,7 @@ const CitiesList = () => {
   }, []);
 
   useEffect(() => {
-    getAll({ url: "country/get-all-active-countries" }).then((data: any) => {
+    getAll({ url: GET_ALL_ACTIVE_COUNTRIES }).then((data: any) => {
       // console.log("api call --- >", data);
       if (data !== undefined) {
         if (data.success) {
@@ -105,7 +107,7 @@ const CitiesList = () => {
         }
       }
     });
-    getAll({ url: "province/get-all-active-provinces" }).then((data: any) => {
+    getAll({ url: GET_ALL_ACTIVE_PROVINCES }).then((data: any) => {
       // console.log("api call --- >", data);
       if (data !== undefined) {
         if (data.success) {
@@ -168,14 +170,14 @@ const CitiesList = () => {
                 //   // console.log(e.target.value);
                 //   try {
                 //     await update(operator, {
-                //       url: `operator/update-operator/${row._id}`,
+                //       url: `${UPDATE_OPERATOR}/${row._id}`,
                 //     }).then((data: any) => {
                 //       if (data.success) {
                 //         // console.log(data);
 
                 //         dispatch(setOperatorsStart());
                 //         getAll({
-                //           url: "operator/get-all-operators",
+                //           url: GET_ALL_OPERATORS,
                 //         }).then((data: any) => {
                 //           // console.log("api call --- >", data);
                 //           dispatch(setOperatorsEnd());

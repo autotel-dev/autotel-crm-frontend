@@ -30,6 +30,8 @@ import { getUserId, getUserRole } from "../../../../../Utilities/globals/globals
 import { setUserPersonalizationData } from "../../../../../ReaduxToolkit/Reducer/PersonalizationSlice";
 import { ROLES } from "../../../../../constants/roles";
 import { Select } from "antd";
+import { CREATE_PERSONALIZATION, GET_COMPANY_PERSONALIZATION, GET_SUPERADMIN_PERSONALIZATION, UPDATE_PERSONALIZATION } from "../../../../../Utilities/api/apiEndpoints";
+import { ERROR_MESSAGE } from "../../../../../Utilities/constants/constants";
 
 const Personalization = () => {
   const { userData } = useSelector((state: any) => state.user);
@@ -242,7 +244,7 @@ const Personalization = () => {
     }
     if (isEdit && userPersonalizationData !== null) {
       updateWithMultipart(formData, {
-        url: `personalization/update-personalization/${userPersonalizationData._id}`,
+        url: `${UPDATE_PERSONALIZATION}/${userPersonalizationData._id}`,
       })
         .then((data: any) => {
           // console.log("api call --- >", data);
@@ -259,7 +261,7 @@ const Personalization = () => {
           if (data !== undefined) {
             if (
               !data.success &&
-              data.message === "ERROR_INTERNET_DISCONNECTED"
+              data.message === ERROR_MESSAGE
             ) {
               setLoading(false);
               setIsEdit(!isEdit);
@@ -280,8 +282,8 @@ const Personalization = () => {
               getAll({
                 url:
                   getUserRole() === ROLES.COMPANY
-                    ? `company/get-personalization/${getUserId()}`
-                    : "super-admin/get-personalization",
+                    ? `${GET_COMPANY_PERSONALIZATION}/${getUserId()}`
+                    : GET_SUPERADMIN_PERSONALIZATION,
               }).then((parentData: any) => {
                 // console.log("api call --- >", parentData);
                 if (parentData == undefined) {
@@ -318,7 +320,7 @@ const Personalization = () => {
         });
     } else {
       createWithMultipart(formData, {
-        url: `personalization/create-personalization`,
+        url: CREATE_PERSONALIZATION,
       })
         .then((data: any) => {
           // console.log("api call --- >", data);
@@ -347,8 +349,8 @@ const Personalization = () => {
               getAll({
                 url:
                   getUserRole() === ROLES.COMPANY
-                    ? `company/get-personalization/${getUserId()}`
-                    : "super-admin/get-personalization",
+                    ? `${GET_COMPANY_PERSONALIZATION}/${getUserId()}`
+                    : GET_SUPERADMIN_PERSONALIZATION,
               }).then((parentData: any) => {
                 // console.log("api call --- >", parentData);
                 if (parentData == undefined) {

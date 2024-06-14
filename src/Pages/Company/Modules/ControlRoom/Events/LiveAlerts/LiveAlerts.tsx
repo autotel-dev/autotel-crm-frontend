@@ -24,6 +24,8 @@ import Swal from "sweetalert2";
 import Loader from "../../../../../Utilities/Loader/Loader";
 import { serverCredentials } from "../../../../../../Utilities/headers/header";
 import { getUserRole } from "../../../../../../Utilities/globals/globals";
+import { ASSIGN_ALERT_EVENT_TO_ME, COMPLETE_AN_ALERT_EVENT, GET_ALERT_EVENTS, GET_ALL_ASSIGNED_ALERT_EVENTS, GET_ALL_COMPLETED_ALERT_EVENTS } from "../../../../../../Utilities/api/apiEndpoints";
+import { ERROR_MESSAGE } from "../../../../../../Utilities/constants/constants";
 
 const LiveAlerts = () => {
   const { userPersonalizationData } = useSelector(
@@ -91,7 +93,7 @@ const LiveAlerts = () => {
       liveAlertsData.lastPage > 1
     ) {
       setLoading(true); // Set loading to true before making API call
-      const url = `company/alert-events?pageNo=${pageNo + 1}`;
+      const url = `${GET_ALERT_EVENTS}?pageNo=${pageNo + 1}`;
       getAll({ url: url }).then((data: any) => {
         // Set loading to false when API call completes
         // console.log("api call --- >", data);
@@ -138,7 +140,7 @@ const LiveAlerts = () => {
 
     // Function to fetch data and dispatch actions
     const fetchDataAndDispatch = () => {
-      getAll({ url: "company/alert-events?pageNo=1" }).then((data: any) => {
+      getAll({ url: "${company/alert-events}?pageNo=1" }).then((data: any) => {
         // console.log("api call --- >", data);
 
         if (data == undefined) {
@@ -311,11 +313,11 @@ const LiveAlerts = () => {
                               // console.log("liveAlerts[index]: ", liveAlerts[index]);
 
                               await create(assignEvent, {
-                                url: "company/assign-alert-event-to-me",
+                                url: ASSIGN_ALERT_EVENT_TO_ME,
                               }).then((dataa: any) => {
                                 if (
                                   !dataa.success &&
-                                  dataa.message === "ERROR_INTERNET_DISCONNECTED"
+                                  dataa.message === ERROR_MESSAGE
                                 ) {
                                   setAssignLoading(false);
                                 }
@@ -351,7 +353,7 @@ const LiveAlerts = () => {
                                     showConfirmButton: false,
                                   });
                                   getAll({
-                                    url: "company/get-all-assigned-events",
+                                    url: GET_ALL_ASSIGNED_ALERT_EVENTS,
                                   }).then((data: any) => {
                                     // console.log("assigned --- >", data);
                                     // setLoading(false);
@@ -430,12 +432,12 @@ const LiveAlerts = () => {
                                     // console.log("liveAlerts[index]: ", liveAlerts[index]);
 
                                     await create(assignEvent, {
-                                      url: "company/assign-alert-event-to-me",
+                                      url: ASSIGN_ALERT_EVENT_TO_ME,
                                     }).then((dataa: any) => {
                                       if (
                                         !dataa.success &&
                                         dataa.message ==
-                                        "ERROR_INTERNET_DISCONNECTED"
+                                        ERROR_MESSAGE
                                       ) {
                                         setAssignLoading(false);
                                       }
@@ -468,7 +470,7 @@ const LiveAlerts = () => {
                                           showConfirmButton: false,
                                         });
                                         getAll({
-                                          url: "company/get-all-assigned-events",
+                                          url: GET_ALL_ASSIGNED_ALERT_EVENTS,
                                         }).then((data: any) => {
                                           // console.log("assigned --- >", data);
                                           // setLoading(false);
@@ -523,12 +525,12 @@ const LiveAlerts = () => {
                                     // console.log("liveAlerts[index]: ", liveAlerts[index]);
 
                                     await create(assignEvent, {
-                                      url: "company/assign-alert-event-to-me",
+                                      url: ASSIGN_ALERT_EVENT_TO_ME,
                                     }).then(async (dataa: any) => {
                                       if (
                                         !dataa.success &&
                                         dataa.message ==
-                                        "ERROR_INTERNET_DISCONNECTED"
+                                        ERROR_MESSAGE
                                       ) {
                                         setAssignLoading(false);
                                       }
@@ -565,12 +567,12 @@ const LiveAlerts = () => {
                                         // console.log(completedResponse);
                                         try {
                                           await create(completedResponse, {
-                                            url: "alert-events/complete-an-alert-event",
+                                            url: COMPLETE_AN_ALERT_EVENT,
                                           }).then((data: any) => {
                                             if (
                                               !data.success &&
                                               data.message ==
-                                              "ERROR_INTERNET_DISCONNECTED"
+                                              ERROR_MESSAGE
                                             ) {
                                               setLoading(false);
                                             }
@@ -594,7 +596,7 @@ const LiveAlerts = () => {
                                               });
 
                                               getAll({
-                                                url: "company/get-all-assigned-events",
+                                                url: GET_ALL_ASSIGNED_ALERT_EVENTS,
                                               }).then((data: any) => {
                                                 // console.log("assigned --- >", data);
                                                 // setLoading(false);
@@ -613,7 +615,7 @@ const LiveAlerts = () => {
                                                 }
                                               });
                                               getAll({
-                                                url: "company/get-all-completed-events",
+                                                url: GET_ALL_COMPLETED_ALERT_EVENTS,
                                               }).then((data: any) => {
                                                 // console.log("assigned --- >", data);
                                                 // setLoading(false);

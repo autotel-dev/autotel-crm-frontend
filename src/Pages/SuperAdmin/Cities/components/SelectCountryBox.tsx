@@ -23,7 +23,7 @@ const SelectCountryBox: React.FC<propTypes> = ({ placeholder }) => {
     // // console.log("provinces 22: ", provinces.length);
     // if (provinces.length <= 0) {
     //   // console.log("4323");
-    //   getAll({ url: "province/get-all-active-provinces" }).then((data: any) => {
+    //   getAll({ url: GET_ALL_ACTIVE_PROVINCES }).then((data: any) => {
     //     // console.log("api call --- >", data);
     //     if (data !== undefined) {
     //       if (data.success) {

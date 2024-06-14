@@ -17,6 +17,8 @@ import { create } from "../../../../../../Utilities/api";
 import Swal from "sweetalert2";
 import { serverCredentials } from "../../../../../../Utilities/headers/header";
 import { Select } from "antd";
+import { VERIFY_VEHICLE_BLOCK_STATUS } from "../../../../../../Utilities/api/apiEndpoints";
+import { ERROR_MESSAGE } from "../../../../../../Utilities/constants/constants";
 
 interface PropsTypes {
   isVisible: boolean; // Change 'boolean' to the actual type of isVisible
@@ -504,14 +506,14 @@ const SelfSendCommands: React.FC<PropsTypes> = ({
                                           // addToggle();
                                           // console.log(verifyData);
                                           await create(verifyData, {
-                                            url: `control-room/verify-vehicle-block-status`,
+                                            url: VERIFY_VEHICLE_BLOCK_STATUS,
                                           }).then((data: any) => {
                                             // console.log("data", data);
                                             setLoading(false);
                                             if (
                                               !data.success &&
                                               data.message ==
-                                              "ERROR_INTERNET_DISCONNECTED"
+                                              ERROR_MESSAGE
                                             ) {
                                             }
                                             if (!data.success) {

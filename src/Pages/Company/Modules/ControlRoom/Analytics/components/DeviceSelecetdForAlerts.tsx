@@ -18,6 +18,8 @@ import {
 import { create, getAll } from "../../../../../../Utilities/api";
 import { serverCredentials } from "../../../../../../Utilities/headers/header";
 import TotalAlertsForSpecificDevices from "./TotalAlertsForSpecificDevices";
+import { GET_ALL_MERGED_ALERT_EVENTS } from "../../../../../../Utilities/api/apiEndpoints";
+import { ERROR_MESSAGE } from "../../../../../../Utilities/constants/constants";
 
 interface PropsTypes {
   addModal: boolean; // Change 'boolean' to the actual type of isVisible
@@ -75,11 +77,11 @@ const DeviceSelecetdForAlerts: React.FC<PropsTypes> = ({
 
       try {
         await create(deviceData, {
-          url: `control-room/get-all-merged-alert-events-of-device`,
+          url: GET_ALL_MERGED_ALERT_EVENTS,
         }).then(async (data: any) => {
           setIsUpdateModalOpenForSelecteddeviceAlerts(true);
           // console.log("data send command", data);
-          if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
+          if (!data.success && data.message === ERROR_MESSAGE) {
             setLoading(false);
             addToggle();
           }
