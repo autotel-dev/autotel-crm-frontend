@@ -1,4 +1,4 @@
-import { Col, Container, Row } from "reactstrap";
+import { Card, CardBody, CardHeader, Col, Container, Row } from "reactstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { getUserRole } from "../../Utilities/globals/globals";
 import { ROLES } from "../../constants/roles";
@@ -17,7 +17,6 @@ import Invoice from "./ShoppingPlace/Invoice/Invoice";
 import ProductSales from "./ShoppingPlace/ProductSales/ProductSales";
 import KilledVehicles from "./Control Room/KilledVehicles";
 import { useEffect, useState } from "react";
-import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import { getAll } from "../../Utilities/api";
 import {
@@ -41,8 +40,15 @@ import {
 } from "../../ReaduxToolkit/Reducer/MonitoringSlice";
 import { useNavigate } from "react-router-dom";
 import { setErrorData } from "../../ReaduxToolkit/Reducer/UserSlice";
-import { GET_COMPANY_ALERTS_OVERVIEW } from "../../Utilities/api/apiEndpoints";
+import { GET_COMPANY_ALERTS_OVERVIEW, GET_COMPLAINT_CENTER_STATISTICS } from "../../Utilities/api/apiEndpoints";
 import { ERROR_MESSAGE } from "../../Utilities/constants/constants";
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import Chart from "react-google-charts";
+import { H4, H5, P } from "../../AbstractElements";
+import SVG from "../../utils/CommonSvgIcon/SVG";
+import { setComplainCenterRoles, setComplainCenterStatistics } from "../../ReaduxToolkit/Reducer/ComplainCenterSlice";
+import Skeleton from "../Utilities/Skeleton/Skeleton";
+import StickyBar from "./StickyBar/StickyBar";
 
 const Dashboard = () => {
   const dispatch = useDispatch();
@@ -102,6 +108,54 @@ const Dashboard = () => {
   }, [loginData]);
 
   // Simulating data fetching with a timeout
+
+  const [statisticsloading, setStatisticsLoading] = useState(true);
+  const { complainCenterStatistics, complainCenterRoles } = useSelector((state: any) => state.complainCenter);
+
+
+  useEffect(() => {
+    getAll({ url: GET_COMPLAINT_CENTER_STATISTICS }).then((data: any) => {
+      // console.log("Data", data);
+
+      if (data !== undefined) {
+        if (!data.success && data.message === ERROR_MESSAGE) {
+          dispatch(setIsConnected(true));
+        }
+        if (!data.success) {
+          Swal.fire({
+            text: `${data.message}`,
+            icon: "error",
+            timer: 2000,
+            showConfirmButton: false,
+          });
+          setStatisticsLoading(false);
+        }
+
+        if (data.success) {
+          dispatch(
+            setComplainCenterRoles(
+              data.data.InternalComplaintsStatistics.subRoleCounts
+            )
+          );
+          const mappedArray = Object.entries(
+            data.data.InternalComplaintsStatistics
+          ).map(([key, value]) => {
+            // Remove "total" from the key and replace "Count" with "Tickets"
+            if (key !== "subRoleCounts") {
+              const formattedKey = key
+                .replace("total", "")
+                .replace("Count", "");
+              return { key: formattedKey, value: value };
+            }
+          });
+          mappedArray.pop();
+          // console.log(mappedArray);
+          dispatch(setComplainCenterStatistics(mappedArray));
+          setStatisticsLoading(false);
+        }
+      }
+    });
+  }, [])
 
 
   useEffect(() => {
@@ -232,10 +286,305 @@ const Dashboard = () => {
   const [fromDate, setFromDate] = useState(startDate);
   const [toDate, setToDate] = useState(endDate);
 
+
+  // Visibility state
+  const [visibleSections, setVisibleSections]: any = useState({
+    "general": true,
+    "control-room": true,
+    "killed-vehicles": true,
+    "complaint-center": true,
+  });
+
+
+
+  useEffect(() => {
+    const storedVisibility = localStorage.getItem("visibilityState");
+    if (storedVisibility !== null) {
+      const parsedVisibility = JSON.parse(storedVisibility);
+      setVisibleSections(parsedVisibility);
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("visibilityState", JSON.stringify(visibleSections));
+  }, [visibleSections]);
+
+  type SectionKey = keyof typeof visibleSections;
+
+  const toggleSection = (section: SectionKey) => {
+    console.log(section);
+
+    setVisibleSections((prevState: any) => ({
+      ...prevState,
+      [section]: !prevState[section],
+    }));
+    console.log(visibleSections);
+
+  };
+
+
+  const componentMap: { [key: string]: JSX.Element } = {
+    general: <General />,
+    "control-room": (
+      <Col xl="12" lg="12" md="12" sm="12">
+        <Row>
+          {alertsOverviewloading ? (
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <div style={{ marginBottom: "20px", marginRight: "20px" }}>
+                <Skeleton height="450px"
+                  width="700px" />
+              </div>
+              <div style={{ marginBottom: "20px", marginRight: "20px" }}>
+                <Skeleton height="450px"
+                  width="700px" />
+              </div>
+            </div>
+          ) : (
+            <Row
+              id="control-room"
+              style={{ display: "flex", paddingRight: "0px", marginRight: "0px" }}
+            >
+              <AlertsOverview />
+              <AlertsPending />
+            </Row>
+          )}
+        </Row>
+      </Col>
+    ),
+    "killed-vehicles": (
+      <>
+        {
+          !alertsOverviewloading && (
+            <Row>
+              <Col xl="12">
+                <div id="killed-vehicles">
+                  <KilledVehicles fromDate={fromDate} toDate={toDate} />
+                </div>
+              </Col>
+            </Row>
+          )
+        }
+      </>
+    ),
+    "complaint-center": (
+      statisticsloading ? <div
+        style={{
+          display: "flex",
+          // flexDirection: "column",
+          width: "100%",
+        }}
+      >
+        <Skeleton
+          height="140px"
+          width="100%"
+          marginTop="10px"
+          marginBottom="30px"
+        />
+        <Skeleton
+          height="140px"
+          width="100%"
+          marginTop="10px"
+          marginBottom="30px"
+          marginLeft="30px"
+        />
+        <Skeleton
+          height="140px"
+          width="100%"
+          marginTop="10px"
+          marginBottom="20px"
+          marginLeft="30px"
+        />
+        <Skeleton
+          height="140px"
+          width="100%"
+          marginTop="10px"
+          marginBottom="20px"
+          marginLeft="30px"
+        />
+        <Skeleton
+          height="140px"
+          width="100%"
+          marginTop="10px"
+          marginBottom="20px"
+          marginLeft="30px"
+        />
+        <Skeleton
+          height="140px"
+          width="100%"
+          marginTop="10px"
+          marginBottom="20px"
+          marginLeft="30px"
+        />
+      </div> : <Card
+        style={{
+          height: "280px",
+          overflow: "hidden",
+          transition: "height 0.5s",
+          marginTop: "15px",
+        }}
+      >
+        <CardBody>
+          <div>
+            <Col xl="12" className="widget-sell">
+              <CardHeader
+                className="pb-0"
+                style={{
+                  padding: "0px",
+
+                }}
+              >
+                <div className="header-top">
+                  <H4 className="m-0">
+                    Complaint Center
+                  </H4>
+                </div>
+              </CardHeader>
+              <div style={{
+                marginBottom: "15px"
+              }}>
+
+              </div>
+              <Row>
+                {complainCenterStatistics.map((data: any, index: any) => (
+                  <Col
+                    xl="2"
+                    lg="2"
+                    md="4"
+                    sm="12"
+                    key={index}
+                    style={{
+                      marginBottom: "10px",
+                    }}
+                  >
+                    <div className="sale" style={{
+                      backgroundColor:
+                        data.key === "New"
+                          ? "rgba(0, 0, 255, 0.3)"
+                          : data.key == "InProgress"
+                            ? "rgba(255, 165, 0, 0.3)"
+                            : data.key === "Pending"
+                              ? "rgba(255, 0, 0, 0.3)" :
+                              data.key === "Resolved"
+                                ? "rgba(0, 255, 0, 0.3)" : "rgb(245, 246, 249)",
+                      height: "140px"
+                    }}>
+                      <H4>{data.key !== "InternalComplaints" ? (data.key == "InProgress" ? "In Progress" : data.key) : "Total"}</H4>
+
+                      <H5>{data.value}</H5>
+                      <P className="d-flex">
+                        <span className={`bg-light-${data.color} me-2`}>
+                          <SVG iconId={data.svgIcon} />
+                        </span>
+                        <span className={`font-${data.color}`}>
+                          {data.percentage}
+                        </span>
+                      </P>
+                      <span className="sale-title">{data.time}</span>
+                    </div>
+                  </Col>
+                ))}
+                <Col xl="2" lg="2" md="4" sm="12">
+                  <div className="sale"
+                  style={{
+                    backgroundColor: "white", // Remove the background color
+                    paddingTop:"0px"
+                  }}
+                  >
+                    <div>
+                      <div
+                        style={{
+                          display: "flex",
+                          flexDirection: "row",
+                          width: "100%", // Set the width of the outer container
+                          height: "200px", // Set the height of the outer container
+                          backgroundColor: "white", // Remove the background color
+                          
+                        }}
+                      >
+                        <div
+                          style={{
+                            flex: "1",
+                            marginRight: "0px",
+                            // backgroundColor: "white",
+                          }}
+                        >
+                          <Chart
+                            width={"100%"}
+                            height={"100%"} // Set the height of the chart to fill the outer container
+                            chartType={"PieChart"}
+                            loader={<div>{"Loading Chart"}</div>}
+                            data={[
+                              ["Complains", "Hours per Day"],
+                              ["New", complainCenterStatistics[1]?.value],
+                              ["In Progress", complainCenterStatistics[2]?.value],
+                              ["Pending", complainCenterStatistics[3]?.value],
+                              ["Resolved", complainCenterStatistics[4]?.value],
+                            ]}
+                            options={{
+                              backgroundColor: "transparent", // Set chart background color as transparent
+                              chartArea: {
+                                backgroundColor: "transparent", // Set chart area background color as transparent
+                                top: "5%", // Set padding of the top of chart area to 0
+                                left: "3%", // Set padding of the left of chart area to 0
+                                right: 0,
+                              },
+                              pieSliceText: "value", // Display the exact values of each option
+                              colors: [
+                                "blue",
+                                "orange",
+                                "#ff6150",
+                                "#51bb25",
+                              ], // Custom colors for Active and Inactive options respectively
+                              is3D: true, // Set the chart type to 3D
+                              legend: { position: "none" }, // Remove legend
+                            }}
+                            rootProps={{
+                              "data-testid": "2",
+                            }}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </Col>
+              </Row>
+
+
+            </Col>
+          </div>
+        </CardBody>
+      </Card>
+    )
+  };
+
+  const initialOrder: string[] = ["general", "control-room", "killed-vehicles", "complaint-center"];
+
+  const [componentOrder, setComponentOrder] = useState<string[]>(initialOrder);
+
+  useEffect(() => {
+    const storedOrder = localStorage.getItem("dashboardOrder");
+    if (storedOrder) {
+      setComponentOrder(JSON.parse(storedOrder));
+    } else {
+      setComponentOrder(initialOrder);
+    }
+  }, [alertsOverviewloading, statisticsloading]);
+
+  const onDragEnd = (result: any) => {
+    if (!result.destination) return;
+
+    const newOrder = Array.from(componentOrder);
+    const [movedItem] = newOrder.splice(result.source.index, 1);
+    newOrder.splice(result.destination.index, 0, movedItem);
+
+    setComponentOrder(newOrder);
+    localStorage.setItem("dashboardOrder", JSON.stringify(newOrder));
+  };
   // ----------------------------------
 
   return (
     <>
+      <StickyBar toggleSection={toggleSection} visibleSections={visibleSections} />
       <Breadcrumbs mainTitle="Dashboard" parent="Dashboard" title="Dashboard" />
       {getUserRole() === ROLES.SUPER_ADMIN ? (
         <Container fluid className="dashboard_default">
@@ -255,48 +604,38 @@ const Dashboard = () => {
       ) : dashboard !== undefined &&
         dashboard?.read &&
         getUserRole() === ROLES.COMPANY ? (
-        <Container fluid className="crm_dashboard">
-          <Row className="widget-grid">
-            {/* Skeleton loading effect */}
-            <General />
 
-            <Col xl="12" lg="12" md="12" sm="12">
-              <Row>
-                {alertsOverviewloading == true ? (
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                    }}
-                  >
-                    <div
-                      style={{
-                        marginBottom: "20px",
-                        marginRight: "20px",
-                      }}
-                    >
-                      <Skeleton width={700} height={450} />
-                    </div>
-                    <div
-                      style={{
-                        marginBottom: "20px",
-                        marginRight: "20px",
-                      }}
-                    >
-                      <Skeleton width={700} height={440} />
-                    </div>
+        <Container fluid className="crm_dashboard">
+
+          <Row className="widget-grid">
+
+            <DragDropContext onDragEnd={onDragEnd}>
+              <Droppable droppableId="dashboard">
+                {(provided) => (
+                  <div {...provided.droppableProps} ref={provided.innerRef}>
+                    {componentOrder.map((id: any, index) => (
+                      <Draggable key={id} draggableId={id} index={index}>
+                        {(provided) => (
+                          <div
+                            ref={provided.innerRef}
+                            {...provided.draggableProps}
+                            {...provided.dragHandleProps}
+                          >
+                            {/* {componentMap[id]} */}
+                            {visibleSections[id] && componentMap[id]}
+                          </div>
+                        )}
+                      </Draggable>
+                    ))}
+                    {provided.placeholder}
                   </div>
-                ) : (
-                  <>
-                    <AlertsOverview />
-                    <AlertsPending />
-                    <KilledVehicles fromDate={fromDate} toDate={toDate} />
-                  </>
                 )}
-              </Row>
-            </Col>
+              </Droppable>
+            </DragDropContext>
+
           </Row>
         </Container>
+
       ) : (
         <div
           style={{
@@ -317,3 +656,249 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+
+
+
+
+
+
+
+
+
+
+// const [items, setItems] = useState([
+//   {
+//     id: "general", content: <div>
+//       <General />
+//     </div>
+//   },
+//   {
+//     id: "control-room",
+//     content: (
+//       <>
+//         {/* <AlertsOverview />
+//         <AlertsPending /> */}
+//         <Col xl="12" lg="12" md="12" sm="12">
+//           <Row>
+//             {alertsOverviewloading == true ? (
+//               <div
+//                 style={{
+//                   display: "flex",
+//                   justifyContent: "space-between",
+//                 }}
+//               >
+//                 <div
+//                   style={{
+//                     marginBottom: "20px",
+//                     marginRight: "20px",
+//                   }}
+//                 >
+//                   <Skeleton width={700} height={450} />
+//                 </div>
+//                 <div
+//                   style={{
+//                     marginBottom: "20px",
+//                     marginRight: "20px",
+//                   }}
+//                 >
+//                   <Skeleton width={700} height={440} />
+//                 </div>
+//               </div>
+//             ) : (
+//               <>
+
+//                 <Row id="control-room" style={{
+//                   display: "flex",
+//                   paddingRight: "0px",
+//                   marginRight: "0px"
+
+//                 }}>
+//                   <AlertsOverview />
+//                   <AlertsPending />
+//                 </Row>
+
+//                 {/* <div id="killed-vehicles">
+//                     <KilledVehicles fromDate={fromDate} toDate={toDate} />
+//                   </div> */}
+
+//               </>
+//             )}
+//           </Row>
+//         </Col>
+//       </>
+//     ),
+//   },
+//   {
+//     id: "killed-vehicles",
+//     content: (
+//       <>
+//         {!alertsOverviewloading && <Row>
+//           <Col xl="12">
+//             <div id="killed-vehicles">
+//               <KilledVehicles fromDate={fromDate} toDate={toDate} />
+//             </div>
+//           </Col>
+//         </Row>}
+//       </>
+//     )
+//     // <KilledVehicles fromDate={fromDate} toDate={toDate} />,
+//   },
+// ]);
+
+// useEffect(() => {
+//   setItems([
+//     {
+//       id: "general", content: <div>
+//         <General />
+//       </div>
+//     },
+//     {
+//       id: "control-room",
+//       content: (
+//         <>
+//           {/* <AlertsOverview />
+//       <AlertsPending /> */}
+//           <Col xl="12" lg="12" md="12" sm="12">
+//             <Row>
+//               {alertsOverviewloading == true ? (
+//                 <div
+//                   style={{
+//                     display: "flex",
+//                     justifyContent: "space-between",
+//                   }}
+//                 >
+//                   <div
+//                     style={{
+//                       marginBottom: "20px",
+//                       marginRight: "20px",
+//                     }}
+//                   >
+//                     <Skeleton width={700} height={450} />
+//                   </div>
+//                   <div
+//                     style={{
+//                       marginBottom: "20px",
+//                       marginRight: "20px",
+//                     }}
+//                   >
+//                     <Skeleton width={700} height={440} />
+//                   </div>
+//                 </div>
+//               ) : (
+//                 <>
+
+//                   <Row id="control-room" style={{
+//                     display: "flex",
+//                     paddingRight: "0px",
+//                     marginRight: "0px"
+
+//                   }}>
+//                     <AlertsOverview />
+//                     <AlertsPending />
+//                   </Row>
+
+
+
+//                 </>
+//               )}
+//             </Row>
+//           </Col>
+//         </>
+//       ),
+//     },
+//     {
+//       id: "killed-vehicles",
+//       content: (
+//         <>
+//           {!alertsOverviewloading && <Row>
+//             <Col xl="12">
+//               <div id="killed-vehicles">
+//                 <KilledVehicles fromDate={fromDate} toDate={toDate} />
+//               </div>
+//             </Col>
+//           </Row>}
+//         </>
+//       )
+
+//     },
+//   ])
+// }, [alertsOverviewloading])
+
+// const onDragEnd = (result: any) => {
+//   if (!result.destination) {
+//     return;
+//   }
+
+//   const reorderedItems = Array.from(items);
+//   const [removed] = reorderedItems.splice(result.source.index, 1);
+//   reorderedItems.splice(result.destination.index, 0, removed);
+
+//   setItems(reorderedItems);
+// };
+
+
+
+
+// <Container fluid className="crm_dashboard">
+//   <Row className="widget-grid">
+//     {/* Skegeneralleton loading effect */}
+//     <div id="genearl">
+//       <General />
+//     </div>
+
+//     <Col xl="12" lg="12" md="12" sm="12">
+//       <Row>
+//         {alertsOverviewloading == true ? (
+//           <div
+//             style={{
+//               display: "flex",
+//               justifyContent: "space-between",
+//             }}
+//           >
+//             <div
+//               style={{
+//                 marginBottom: "20px",
+//                 marginRight: "20px",
+//               }}
+//             >
+//               <Skeleton width={700} height={450} />
+//             </div>
+//             <div
+//               style={{
+//                 marginBottom: "20px",
+//                 marginRight: "20px",
+//               }}
+//             >
+//               <Skeleton width={700} height={440} />
+//             </div>
+//           </div>
+//         ) : (
+//           <>
+
+//             <Row id="control-room" style={{
+//               display: "flex",
+//               paddingRight: "0px",
+//               marginRight: "0px"
+
+//             }}>
+//               <AlertsOverview />
+//               <AlertsPending />
+//             </Row>
+
+//             {/* <div id="killed-vehicles">
+//               <KilledVehicles fromDate={fromDate} toDate={toDate} />
+//             </div> */}
+
+//           </>
+//         )}
+//       </Row>
+//     </Col>
+//     {!alertsOverviewloading && <Row>
+//       <Col xl="12">
+//         <div id="killed-vehicles">
+//           <KilledVehicles fromDate={fromDate} toDate={toDate} />
+//         </div>
+//       </Col>
+//     </Row>}
+//   </Row>
+// </Container>

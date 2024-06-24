@@ -382,9 +382,9 @@ const ComplainCenter = () => {
                           </div>
                         </div>
                       ) : (
-                        getUserRole() === ROLES.SUPER_ADMIN && <ComplainList />
+                        getUserRole() !== ROLES.SUPER_ADMIN && <ComplainList />
                       )}
-                      {getUserRole() !== ROLES.SUPER_ADMIN && <ComplainList />}
+                      {/* {getUserRole() !== ROLES.SUPER_ADMIN && <ComplainList />} */}
 
                       <Card>
                         <CardBody>
