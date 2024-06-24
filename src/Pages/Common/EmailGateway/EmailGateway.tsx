@@ -32,6 +32,8 @@ const EmailGateway = () => {
   const { emailGatewayData } = useSelector((state: any) => state.emailGateway);
   const dispatch = useDispatch();
 
+
+  const [isVisible, setIsVisible] = useState(false)
   const [authentication, setAuthentication] = useState("Yes");
 
   const SMTPSecurityList: any = [
@@ -141,6 +143,7 @@ const EmailGateway = () => {
 
   const createAndUpdateEmailGateway = (e: any) => {
     e.preventDefault();
+    e.stopPropagation();
     setEmailGatewayCreationloading(true);
     const emailGatewayFormData = {
       fromName: fromName,
@@ -180,12 +183,12 @@ const EmailGateway = () => {
               setIsEdit(!isEdit);
             }
             if (!data.success) {
-              Swal.fire({
-                text: `${data.message}`,
-                icon: "error",
-                timer: 2000,
-                showConfirmButton: false,
-              });
+              // Swal.fire({
+              //   text: `${data.message}`,
+              //   icon: "error",
+              //   timer: 2000,
+              //   showConfirmButton: false,
+              // });
               setEmailGatewayCreationloading(false);
               // setIsEdit(!isEdit);
             }
@@ -835,23 +838,22 @@ const EmailGateway = () => {
                       <CardFooter
                         style={{
                           display: "flex",
-
                           justifyContent: "end",
                         }}
                       >
-                        {/* <Button
-                                                color="primary"
-                                                type="submit"
-                                                onClick={(e) => {
-                                                    e.preventDefault();
-                                                    setIsVisible(true);
-                                                }}
-                                                style={{
-                                                    marginRight: "10px",
-                                                }}
-                                            >
-                                                Test Email
-                                            </Button> */}
+                        <Button
+                          color="primary"
+                          type="submit"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setIsVisible(true);
+                          }}
+                          style={{
+                            marginRight: "10px",
+                          }}
+                        >
+                          Test Email
+                        </Button>
 
                         {isEdit && isActive && (
                           <Button
@@ -920,10 +922,10 @@ const EmailGateway = () => {
                     </Row>
                   )}
 
-                  {/* <TestEmailModal isVisible={isVisible} setIsVisible={setIsVisible} /> */}
                 </CardBody>
               </Card>
             </Form>
+            <TestEmailModal isVisible={isVisible} setIsVisible={setIsVisible} />
           </Col>
         </Container>
       </div>

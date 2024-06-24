@@ -43,6 +43,7 @@ import Item from "antd/es/list/Item";
 import { Id } from "../../../../../utils/Constant";
 import { px } from "framer-motion";
 import AddSubGroupModal from "../modals/AddSubGroupModal";
+import { CREATE_GEOFENCE, GET_ALL_GEOFENCES, UPDATE_GEOFENCE } from "../../../../../Utilities/api/apiEndpoints";
 
 interface PropTypes {
   statusDevices: String;
@@ -379,16 +380,16 @@ const GeofencesTreeViewAccordian = ({
         geofence.group === group.group
           ? updatedGeofence
           : {
-              ...geofence,
-              checked: false,
-              items: geofence.items.map((item: any) => {
-                return {
-                  ...item,
-                  checked: false,
-                  isEdit: false,
-                };
-              }),
-            }
+            ...geofence,
+            checked: false,
+            items: geofence.items.map((item: any) => {
+              return {
+                ...item,
+                checked: false,
+                isEdit: false,
+              };
+            }),
+          }
       );
       // Create a new array of devices with the updated device object at the same index
       dispatch(setGeofences(updatedGeofences));
@@ -442,38 +443,38 @@ const GeofencesTreeViewAccordian = ({
     if (formData.title !== "" && type !== "") {
       const url = isEditGeofence
         ? update(
-            {
-              ...formData,
-              geofenceGroup: group == "" ? null : group,
-              type: geofenceType,
-              geofencePositions:
-                geofenceType == "circle"
-                  ? circle
-                  : geofenceType == "rectangle"
+          {
+            ...formData,
+            geofenceGroup: group == "" ? null : group,
+            type: geofenceType,
+            geofencePositions:
+              geofenceType == "circle"
+                ? circle
+                : geofenceType == "rectangle"
                   ? rectangle
                   : geofenceType == "polygon" && { bounds: polygon },
-            },
-            {
-              url: `monitoring/geofence/update-geofence/${editedItem._id}`,
-            }
-          )
+          },
+          {
+            url: `${UPDATE_GEOFENCE}/${editedItem._id}`,
+          }
+        )
         : create(
-            {
-              ...formData,
-              geofenceGroup: group == "" ? null : group,
-              type: geofenceType,
-              isActive: true,
-              geofencePositions:
-                geofenceType == "circle"
-                  ? circle
-                  : geofenceType == "rectangle"
+          {
+            ...formData,
+            geofenceGroup: group == "" ? null : group,
+            type: geofenceType,
+            isActive: true,
+            geofencePositions:
+              geofenceType == "circle"
+                ? circle
+                : geofenceType == "rectangle"
                   ? rectangle
                   : geofenceType == "polygon" && { bounds: polygon },
-            },
-            {
-              url: "monitoring/geofence/create-geofence",
-            }
-          );
+          },
+          {
+            url: CREATE_GEOFENCE,
+          }
+        );
       try {
         await url.then((data: any) => {
           if (data !== undefined) {
@@ -504,7 +505,7 @@ const GeofencesTreeViewAccordian = ({
               setLoading(false);
 
               // dispatch(setCountriesStart());
-              getAll({ url: "monitoring/geofence/get-all-geofences" }).then(
+              getAll({ url: GET_ALL_GEOFENCES }).then(
                 (data: any) => {
                   // console.log("api call --- >", data);
                   if (data == undefined) {
@@ -738,23 +739,23 @@ const GeofencesTreeViewAccordian = ({
               // paddingBottom: "-10px",
               margin: "0px 10px",
               marginTop: "10px",
-            
+
             }}
           >
             <P>Title</P>
             <textarea name="" id=""
-            ref={textareaRef}
-            style={{display:"none"}}
+              ref={textareaRef}
+              style={{ display: "none" }}
             ></textarea>
             <input
-              
+
               className="form-control"
               type="text"
               placeholder="Enter Title"
               name="title"
               value={formData.title}
               onChange={onChangeHandler}
-              // {...register("name", { required: true })}
+            // {...register("name", { required: true })}
             />
             <span style={{ color: "red" }}>
               {/* {errors.name && "Country name is required"} */}
@@ -1094,7 +1095,7 @@ const GeofencesTreeViewAccordian = ({
                                 cursor: "pointer",
                                 backgroundColor: `white`,
                               }}
-                              onClick={(e) => {}}
+                              onClick={(e) => { }}
                             >
                               <div
                                 style={{
@@ -1231,28 +1232,28 @@ const GeofencesTreeViewAccordian = ({
                           .toLowerCase()
                           .includes(searchValue.toLowerCase())
                       ).length >= 15 && (
-                        <div
-                          style={{
-                            display: "flex",
-                            color: "#1f2f3e",
-                            fontSize: "16px",
-                            justifyContent: "end",
-                            cursor: "pointer",
-                          }}
-                          onClick={() => {
-                            if (
-                              item.items.length >= 15 &&
-                              itemsLength < item.items.length
-                            ) {
-                              setItemsLength(itemsLength + 14);
-                            }
-                          }}
-                        >
-                          {item.items.length >= 15 &&
-                            itemsLength < item.items.length &&
-                            "Show More"}
-                        </div>
-                      )}
+                          <div
+                            style={{
+                              display: "flex",
+                              color: "#1f2f3e",
+                              fontSize: "16px",
+                              justifyContent: "end",
+                              cursor: "pointer",
+                            }}
+                            onClick={() => {
+                              if (
+                                item.items.length >= 15 &&
+                                itemsLength < item.items.length
+                              ) {
+                                setItemsLength(itemsLength + 14);
+                              }
+                            }}
+                          >
+                            {item.items.length >= 15 &&
+                              itemsLength < item.items.length &&
+                              "Show More"}
+                          </div>
+                        )}
                     </AccordionBody>
                   )}
                 </AccordionItem>

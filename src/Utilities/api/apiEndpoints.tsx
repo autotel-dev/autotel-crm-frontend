@@ -25,9 +25,11 @@ export const UPDATE_EMAIL_GATEWAY = `${API_BASE_URL}/gateway/email-gateway/updat
 export const GET_EMAIL_GATEWAY = `${API_BASE_URL}/gateway/email-gateway/get-gateway`;
 export const UPDATE_EMAIL_GATEWAY_ACTIVATION_STATUS = `${API_BASE_URL}/gateway/email-gateway/change-gateway-activation-status`;
 export const TEST_SMTP_EMAIL_GATEWAY_CREDENTIALS = `${API_BASE_URL}/gateway/email-gateway/verify-gateway`;
+export const SEND_TEST_EMAIL = `${API_BASE_URL}/gateway/email-gateway/send-test-email`;
 
 // Common - WhatsApp Gateway
 export const CREATE_WHATSAPP_GATEWAY = `${API_BASE_URL}/gateway/whatsapp-gateway/create-gateway`;
+export const SEND_TEST_WHATSAPP_MESSAGE = `${API_BASE_URL}/gateway/whatsapp-gateway/send-test-whatsapp-message`;
 export const UPDATE_WHATSAPP_GATEWAY = `${API_BASE_URL}/gateway/whatsapp-gateway/update-gateway`;
 export const GET_WHATSAPP_GATEWAY = `${API_BASE_URL}/gateway/whatsapp-gateway/get-gateway`;
 export const UPDATE_WHATSAPP_GATEWAY_ACTIVATION_STATUS = `${API_BASE_URL}/gateway/whatsapp-gateway/change-gateway-activation-status`;
@@ -150,7 +152,7 @@ export const UPDATE_GEOFENCE = `${API_BASE_URL}/monitoring/geofence/update-geofe
 export const UPDATE_GEOFENCE_ACTIVATION_STATUS = `${API_BASE_URL}/monitoring/geofence/update-geofence-activation-status`;
 export const CREATE_GROUP = `${API_BASE_URL}/monitoring/geofence-group/create-group`;
 export const GET_ALL_GROUPS = `${API_BASE_URL}/monitoring/geofence-group/get-all-groups`;
-export const UPDATE_GROUP = `${API_BASE_URL}/monitoring/geofence-group/update-group `;
+export const UPDATE_GROUP = `${API_BASE_URL}/monitoring/geofence-group/update-group`;
 export const UPDATE_GROUP_ACTIVATION_STATUS = `${API_BASE_URL}/monitoring/geofence-group/update-group-activation-status`;
 
 

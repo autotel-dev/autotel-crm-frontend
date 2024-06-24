@@ -474,12 +474,10 @@ export const getAll = async (url: URLTypes): Promise<void> => {
       headers: header(),
     });
     const result = response.data;
-    // console.log("Response data:", response.data);
-    // console.log("result", result);
+
     return result;
   } catch (error: any) {
-    // console.error("Error get-all:", error.message);
-    // console.log("error", error);
+
     if (error.response.data.statusCode == 401) {
       Swal.fire({
         text: `${error.response.data.message}`,

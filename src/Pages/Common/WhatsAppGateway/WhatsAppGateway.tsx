@@ -340,15 +340,15 @@ const WhatsAppGateway = () => {
               <Card>
                 {loading ? (
                   <div
-                    // style={{
-                    //   display: "flex",
-                    //   justifyContent: "center",
-                    //   height: "80vh",
-                    //   backgroundColor: "white",
-                    //   alignItems: "center",
-                    // }}
+                  // style={{
+                  //   display: "flex",
+                  //   justifyContent: "center",
+                  //   height: "80vh",
+                  //   backgroundColor: "white",
+                  //   alignItems: "center",
+                  // }}
                   >
-                    <div style={{ textAlign: "center", margin:"20px" }}>
+                    <div style={{ textAlign: "center", margin: "20px" }}>
                       {/* <Loader /> */}
                       <>
                         <Skeleton
@@ -356,7 +356,7 @@ const WhatsAppGateway = () => {
                           width="100%"
                           borderRadius="10px"
                           marginBottom="20px"
-                         
+
                         />
                         <Skeleton
                           height="50px"
@@ -364,7 +364,7 @@ const WhatsAppGateway = () => {
                           marginTop="10px"
                           marginBottom="20px"
                           borderRadius="10px"
-                          
+
                         />
                         <Skeleton
                           height="100px"
@@ -372,7 +372,7 @@ const WhatsAppGateway = () => {
                           marginTop="10px"
                           marginBottom="30px"
                           borderRadius="10px"
-                          
+
                         />
                         <Skeleton
                           height="100px"
@@ -381,7 +381,7 @@ const WhatsAppGateway = () => {
                           marginBottom="30px"
                           borderRadius="10px"
                         />
-                     
+
                       </>
                     </div>
                   </div>
@@ -429,7 +429,7 @@ const WhatsAppGateway = () => {
                                               if (
                                                 !parentData.success &&
                                                 parentData.message ===
-                                                  ERROR_MESSAGE
+                                                ERROR_MESSAGE
                                               ) {
                                                 dispatch(setIsConnected(true));
                                               }
@@ -465,9 +465,8 @@ const WhatsAppGateway = () => {
                                   }}
                                 />
                                 <span
-                                  className={`switch-state ${
-                                    isActive ? "bg-primary" : "bg-secondary"
-                                  }`}
+                                  className={`switch-state ${isActive ? "bg-primary" : "bg-secondary"
+                                    }`}
                                 />
                               </Label>
                             </div>
@@ -564,11 +563,10 @@ const WhatsAppGateway = () => {
                             }
                             value={baseUrl}
                             onChange={(e) => setBaseUrl(e.target.value)}
-                            placeholder={`https://nusagateway.com/api/send-message.php?${
-                              requestMethod === "GET"
-                                ? "phone={{phoneNo}}&type=text&message={{message}}&token=XxRSOwkK5XJBjwR9Mdnictjrh7hgQZkqAjKtReyElikoZyM9st"
-                                : ""
-                            }`}
+                            placeholder={`https://nusagateway.com/api/send-message.php?${requestMethod === "GET"
+                              ? "phone={{phoneNo}}&type=text&message={{message}}&token=XxRSOwkK5XJBjwR9Mdnictjrh7hgQZkqAjKtReyElikoZyM9st"
+                              : ""
+                              }`}
                           />
                         </FormGroup>
                       </Col>
@@ -587,8 +585,8 @@ const WhatsAppGateway = () => {
                               onClick={addBodyParam}
                               disabled={
                                 whatsAppGatewayData !== null &&
-                                !isEdit &&
-                                !isActive
+                                  !isEdit &&
+                                  !isActive
                                   ? true
                                   : false
                               }
@@ -636,7 +634,20 @@ const WhatsAppGateway = () => {
                       <CardFooter
                         style={{ display: "flex", justifyContent: "end" }}
                       >
-                        {isEdit && (
+                        <Button
+                          color="primary"
+                          type="submit"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setIsVisible(true);
+                          }}
+                          style={{
+                            marginRight: "10px",
+                          }}
+                        >
+                          Test WhatsApp
+                        </Button>
+                        {isEdit && isActive && (
                           <Button
                             color="primary"
                             type="submit"
@@ -651,8 +662,9 @@ const WhatsAppGateway = () => {
                             Cancel
                           </Button>
                         )}
+                        
                         {whatsAppGatewayData == null ||
-                        (whatsAppGatewayData !== null && isActive) ? (
+                          (whatsAppGatewayData !== null && isActive) ? (
                           <Button
                             color="primary"
                             type="submit"
@@ -670,21 +682,22 @@ const WhatsAppGateway = () => {
                             {whatsAppGatewayCreationloading
                               ? "Loading..."
                               : whatsAppGatewayData == null
-                              ? "Create"
-                              : isEdit
-                              ? "Save"
-                              : "Edit"}
+                                ? "Create"
+                                : isEdit
+                                  ? "Save"
+                                  : "Edit"}
                           </Button>
                         ) : (
                           <></>
                         )}
                       </CardFooter>
                     </Row>
-                    {/* <TestWhatsAppMessageModal isVisible={isVisible} setIsVisible={setIsVisible} /> */}
+
                   </CardBody>
                 )}
               </Card>
             </Form>
+            <TestWhatsAppMessageModal isVisible={isVisible} setIsVisible={setIsVisible} />
           </Col>
         </Container>
       </div>

@@ -42,18 +42,7 @@ const Support = () => {
 
     if (getUserRole() === ROLES.SUPER_ADMIN) {
       getAll({ url: GET_BUG_REPORT_STATISTICS }).then((data: any) => {
-        // console.log("api call --- >", data);
-        // if (data == undefined) {
-        //   Swal.fire({
-        //     text: "F",
-        //     icon: "error",
-        //     timer: 2000,
-        //     showConfirmButton: false,
-        //   });
-        //   setReportsLoading(false);
-        //   setStatisticsLoading(false);
-        //   return;
-        // }
+
         if (data !== undefined) {
           if (!data.success && data.message === ERROR_MESSAGE) {
             dispatch(setIsConnected(true));
@@ -101,8 +90,8 @@ const Support = () => {
         getUserRole() === ROLES.COMPANY
           ? GET_ALL_COMPANY_BUG_REPORTS
           : getUserRole() === ROLES.OPERATOR
-          ? GET_ALL_OPERATOR_BUG_REPORTS
-          : GET_ALL_BUG_REPORTS,
+            ? GET_ALL_OPERATOR_BUG_REPORTS
+            : GET_ALL_BUG_REPORTS,
     }).then((data: any) => {
       // console.log("api call --- >", data);
 
@@ -189,7 +178,7 @@ const Support = () => {
                   {!statisticsloading && !reportsLoading ? (
                     <CardBody>
                       {supportStatistics == null &&
-                      getUserRole() === ROLES.SUPER_ADMIN ? (
+                        getUserRole() === ROLES.SUPER_ADMIN ? (
                         <div
                           style={{
                             display: "flex",
@@ -216,41 +205,41 @@ const Support = () => {
                     </CardBody>
                   ) : (
                     <div
-                      // style={{
-                      //   display: "flex",
-                      //   justifyContent: "center",
-                      //   height: "80vh",
-                      //   backgroundColor: "white",
-                      //   alignItems: "center",
-                      // }}
+                    // style={{
+                    //   display: "flex",
+                    //   justifyContent: "center",
+                    //   height: "80vh",
+                    //   backgroundColor: "white",
+                    //   alignItems: "center",
+                    // }}
                     >
                       <div style={{ textAlign: "center" }}>
                         {/* <Loader /> */}
-                        
-              <div style={{
-                display: "flex",
-                justifyContent: "center",
-                padding:"10px 0px",
-                
-                
-              }}>
-                
-                  <Skeleton height="140px" width="23%" borderRadius="10px"  />
-                  <Skeleton height="140px" width="23%" borderRadius="10px" marginLeft="10px" />
-                  <Skeleton height="140px" width="23%" borderRadius="10px"  marginLeft="10px" />
-                  <Skeleton height="140px" width="23%" borderRadius="10px"  marginLeft="10px" />
-                  </div>
-                  <div style={{margin:"10px 10px",}}>
-                  <Skeleton height="100px" width="100%" marginTop="10px" marginBottom="10" borderRadius="10px" />
-                  <Skeleton height="40px" width="100%" marginTop="10px" marginBottom="10" borderRadius="10px" />
-                  <Skeleton height="40px" width="100%" marginTop="10px" marginBottom="10" borderRadius="10px" />
-                  <Skeleton height="40px" width="100%" marginTop="10px" marginBottom="10" borderRadius="10px" />
-                  <Skeleton height="40px" width="100%" marginTop="10px" marginBottom="10" borderRadius="10px" />
-                  </div>
-                
-                      
-              </div>
-              </div>
+
+                        <div style={{
+                          display: "flex",
+                          justifyContent: "center",
+                          padding: "10px 0px",
+
+
+                        }}>
+
+                          <Skeleton height="140px" width="23%" borderRadius="10px" />
+                          <Skeleton height="140px" width="23%" borderRadius="10px" marginLeft="10px" />
+                          <Skeleton height="140px" width="23%" borderRadius="10px" marginLeft="10px" />
+                          <Skeleton height="140px" width="23%" borderRadius="10px" marginLeft="10px" />
+                        </div>
+                        <div style={{ margin: "10px 10px", }}>
+                          <Skeleton height="100px" width="100%" marginTop="10px" marginBottom="10" borderRadius="10px" />
+                          <Skeleton height="40px" width="100%" marginTop="10px" marginBottom="10" borderRadius="10px" />
+                          <Skeleton height="40px" width="100%" marginTop="10px" marginBottom="10" borderRadius="10px" />
+                          <Skeleton height="40px" width="100%" marginTop="10px" marginBottom="10" borderRadius="10px" />
+                          <Skeleton height="40px" width="100%" marginTop="10px" marginBottom="10" borderRadius="10px" />
+                        </div>
+
+
+                      </div>
+                    </div>
                   )}
                 </Card>
               </Col>

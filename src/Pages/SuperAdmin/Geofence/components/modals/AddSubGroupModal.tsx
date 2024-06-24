@@ -9,6 +9,7 @@ import {
   setGeofences,
   setGeofencesGroup,
 } from "../../../../../ReaduxToolkit/Reducer/GeofenceSlice";
+import { CREATE_GROUP, GET_ALL_GEOFENCES, GET_ALL_GROUPS } from "../../../../../Utilities/api/apiEndpoints";
 
 interface PropsTypes {
   isVisible: boolean;
@@ -18,7 +19,7 @@ interface PropsTypes {
 
 const AddSubGroupModal: React.FC<PropsTypes> = ({
   isVisible,
-  setIsVisible = () => {},
+  setIsVisible = () => { },
   geofences,
 }) => {
   const { userPersonalizationData } = useSelector(
@@ -92,7 +93,7 @@ const AddSubGroupModal: React.FC<PropsTypes> = ({
       try {
         const response: any = await create(
           { ...formData, geofences: allcheckedGeofences },
-          { url: "monitoring/geofence-group/create-group" }
+          { url: CREATE_GROUP }
         );
 
         if (response.success) {
@@ -104,14 +105,14 @@ const AddSubGroupModal: React.FC<PropsTypes> = ({
           });
 
           const groupsData: any = await getAll({
-            url: "monitoring/geofence-group/get-all-groups",
+            url: GET_ALL_GROUPS,
           });
           if (groupsData.success) {
             dispatch(setGeofencesGroup(groupsData.data));
           }
 
           const geofencesData: any = await getAll({
-            url: "monitoring/geofence/get-all-geofences",
+            url: GET_ALL_GEOFENCES,
           });
           if (geofencesData.success) {
             const groups: any[] = [];
@@ -240,13 +241,13 @@ const AddSubGroupModal: React.FC<PropsTypes> = ({
                 />
                 {group && filteredGeofences.length > 0 && (
                   <>
-                   <input
-                          className="form-control"
-                          type="text"
-                          placeholder="Search geofences..."
-                          value={searchValue}
-                          onChange={handleSearchChange}
-                        />
+                    <input
+                      className="form-control"
+                      type="text"
+                      placeholder="Search geofences..."
+                      value={searchValue}
+                      onChange={handleSearchChange}
+                    />
                     <div
                       style={{
                         display: "flex",
@@ -254,7 +255,7 @@ const AddSubGroupModal: React.FC<PropsTypes> = ({
                         margin: "15px 0px 0px 0px",
                       }}
                     >
-                      
+
                       <label
                         style={{
                           display: "flex",
@@ -262,7 +263,7 @@ const AddSubGroupModal: React.FC<PropsTypes> = ({
                           fontWeight: "700",
                         }}
                       >
-                       
+
                         <input
                           type="checkbox"
                           checked={selectAll}
