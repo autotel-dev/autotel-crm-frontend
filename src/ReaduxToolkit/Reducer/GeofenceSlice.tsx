@@ -7,6 +7,7 @@ const initialState = {
   type: null,
   geofences: [],
   geofencesGroup: [],
+  geofencesSubGroup:[],
   geofencesDetailData: [],
   loading: false,
   error: null,
@@ -28,6 +29,11 @@ const GeofenceSlice = createSlice({
     },
     setGeofencesGroup: (state, action) => {
       state.geofencesGroup = action.payload;
+      state.error = null;
+      state.loading = false;
+    },
+    setGeofencesSubGroup: (state, action) => {
+      state.geofencesSubGroup = action.payload;
       state.error = null;
       state.loading = false;
     },
@@ -61,6 +67,7 @@ const GeofenceSlice = createSlice({
 export const {
   setGeofences,
   setGeofencesGroup,
+  setGeofencesSubGroup,
   setGeofencesDetailData,
   setGeofencesStart,
   setGeofencesEnd,

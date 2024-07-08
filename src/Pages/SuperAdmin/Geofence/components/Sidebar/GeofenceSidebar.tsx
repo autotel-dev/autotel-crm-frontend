@@ -15,12 +15,15 @@ import GroupSvg from "../../../../../../src/assets/people (1).png";
 import SubGroupSvg from "../../../../../../src/assets/group.png";
 import GeofenceSvg from "../../../../../../src/assets/placeholder.png";
 import { setType } from "../../../../../ReaduxToolkit/Reducer/GeofenceSlice";
-import AddGroupModal from "../modals/AddGroupModal";
-import AddSubGroupModal from "../modals/AddSubGroupModal";
+import AddGroupModal from "../modals/GroupModal/AddGroupModal";
+import AddSubGroupModal from "../modals/SubGroupModal/AddSubGroupModal";
+import GroupListModal from "../modals/GroupModal/GroupListModal";
+import SubGroupListModal from "../modals/SubGroupModal/SubGroupListModal";
 
 interface PropTypes {
   isEditGeofence: boolean;
   setIsEditGeofence: any;
+  
 }
 
 const GeofencesSidebar = ({ isEditGeofence, setIsEditGeofence }: PropTypes) => {
@@ -111,15 +114,8 @@ const GeofencesSidebar = ({ isEditGeofence, setIsEditGeofence }: PropTypes) => {
           <img src={GroupSvg} alt="" height={18} width={24} id="Tooltip" />
         </div>
         {isNewGroup && (
-        <AddGroupModal
-          isVisible={isNewGroup}
-          setIsVisible={setIsNewGroup}
-          geofences={geofences}
-
-          // setValue={setCityName}
-        />
-      )}
-      
+          <GroupListModal isVisible={isNewGroup} setIsVisible={setIsNewGroup} />
+        )}
 
         <div
           title="Sub Group"
@@ -142,14 +138,14 @@ const GeofencesSidebar = ({ isEditGeofence, setIsEditGeofence }: PropTypes) => {
           <img src={SubGroupSvg} alt="" height={18} width={24} />
         </div>
         {isNewSubGroup && (
-        <AddSubGroupModal
-          isVisible={isNewSubGroup}
-          setIsVisible={setIsNewSubGroup}
-          geofences={geofences}
+          <SubGroupListModal
+            isVisible={isNewSubGroup}
+            setIsVisible={setIsNewSubGroup}
+            
 
-          // setValue={setCityName}
-        />
-      )}
+            // setValue={setCityName}
+          />
+        )}
         <div
           title="Geofence"
           style={{
@@ -221,7 +217,6 @@ const GeofencesSidebar = ({ isEditGeofence, setIsEditGeofence }: PropTypes) => {
           />
         )}
       </div>
-     
     </div>
   );
 };

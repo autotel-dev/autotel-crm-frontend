@@ -2165,6 +2165,8 @@ export const crMmoduleList = "CRM Module List";
 export const crmModuleListHeading = "All CRM Modules";
 export const packageList = "Package List";
 export const packageListHeading = "All Packages";
+export const vehicleModelList = "Vehicle Model List";
+export const vehicleModelListHeading = "All Vehicles Model";
 
 // List definitions
 export const all = "All";

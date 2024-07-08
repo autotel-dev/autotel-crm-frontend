@@ -1,9 +1,7 @@
-
 export const API_BASE_URL = "http://124.29.238.127:8080/api/v1";
 export const IMAGE_BASE_URL = "http://124.29.238.127:8080";
 // export const API_BASE_URL = "https://crmapi.autotel.pk/api/v1";
 // export const IMAGE_BASE_URL = "https://crmapi.autotel.pk";
-
 
 // Miscellaneous
 export const TEST_SERVER_CONNECTION = `${API_BASE_URL}/company/server-credentials/test-connection`;
@@ -44,9 +42,6 @@ export const CREATE_WHATSAPP_TEMPLATE = `${API_BASE_URL}/template/whatsapp-templ
 export const UPDATE_WHATSAPP_TEMPLATE = `${API_BASE_URL}/template/whatsapp-template/update-template`;
 export const GET_WHATSAPP_TEMPLATES = `${API_BASE_URL}/template/whatsapp-template/get-all-templates`;
 
-
-
-
 // Support
 export const REPORT_NEW_BUG = `${API_BASE_URL}/support/bug-report/report-new-bug`;
 export const UPDATE_STATUS = `${API_BASE_URL}/support/bug-report/update-status`;
@@ -59,7 +54,6 @@ export const SEND_BUG_REPORT_MESSAGE = `${API_BASE_URL}/support/bug-report`;
 export const GET_BUG_REPORT_STATUS_TYPES = `${API_BASE_URL}/support/bug-report/get-status-types`;
 export const GET_BUG_REPORT_PRIORITY_STATUS_TYPES = `${API_BASE_URL}/support/bug-report/get-priorty-status-types`;
 export const GET_BUG_REPORT_BY_ID = `${API_BASE_URL}/support/bug-report/get-bug-report`;
-
 
 // Account -> User
 export const GET_USER_BY_ID = `${API_BASE_URL}/user/get-user`;
@@ -77,14 +71,12 @@ export const UPDATE_PERSONALIZATION = `${API_BASE_URL}/personalization/update-pe
 export const GET_SUPERADMIN_PERSONALIZATION = `${API_BASE_URL}/super-admin/get-personalization`;
 export const GET_COMPANY_PERSONALIZATION = `${API_BASE_URL}/company/get-personalization`;
 
-
 // SuperAdmin -> City..
 export const CREATE_CITY = `${API_BASE_URL}/city/create-city`;
 export const GET_ALL_CITIES = `${API_BASE_URL}/city/get-all-cities`;
 export const GET_ALL_ACTIVE_CITIES = `${API_BASE_URL}/city/get-all-active-cities`;
 export const UPDATE_CITY = `${API_BASE_URL}/city/update-city`;
 export const DELETE_CITY = `${API_BASE_URL}/city/delete-city`;
-
 
 // SuperAdmin -> Country..
 export const CREATE_COUNTRY = `${API_BASE_URL}/country/create-country`;
@@ -122,6 +114,52 @@ export const GET_ALL_ACTIVE_CRM_MODULES = `${API_BASE_URL}/crm-module/get-all-ac
 export const UPDATE_CRM_MODULE = `${API_BASE_URL}/crm-module/update-module`;
 export const DELETE_CRM_MODULE = `${API_BASE_URL}/crm-module/delete-module`;
 
+// SuperAdmin -> Banks..
+export const CREATE_BANK = `${API_BASE_URL}/setup/bank/create-bank`;
+export const GET_ALL_BANKS = `${API_BASE_URL}/setup/bank/get-all-banks`;
+export const UPDATE_BANK = `${API_BASE_URL}/setup/bank/update-bank`;
+export const DELETE_BANK = `${API_BASE_URL}/setup/bank/delete-bank`;
+
+// SuperAdmin -> Currencies..
+export const CREATE_CURRENCY = `${API_BASE_URL}/setup/currency/create-currency`;
+export const GET_ALL_CURRENCIES = `${API_BASE_URL}/setup/currency/get-all-currencies`;
+export const GET_ALL_ACTIVE_CURRENCIES = `${API_BASE_URL}/setup/currency/get-all-active-currencies`;
+export const CHANGE_CURRENCY_ACTIVATION_STATUS = `${API_BASE_URL}/setup/currency/change-activation-status`;
+export const UPDATE_CURRENCY = `${API_BASE_URL}/setup/currency/update-currency`;
+export const DELETE_CURRENCY = `${API_BASE_URL}/setup/currency/delete-currency`;
+
+// SuperAdmin -> Languages..
+export const CREATE_LANGUAGE = `${API_BASE_URL}/setup/language/create-language`;
+export const GET_ALL_LANGUAGES = `${API_BASE_URL}/setup/language/get-all-languages`;
+export const GET_ALL_ACTIVE_LANGUAGES = `${API_BASE_URL}/setup/language/get-all-active-languages`;
+export const CHANGE_LANGUAGE_ACTIVATION_STATUS = `${API_BASE_URL}/setup/language/change-activation-status`;
+export const UPDATE_LANGUAGE = `${API_BASE_URL}/setup/language/update-language`;
+export const DELETE_LANGUAGE = `${API_BASE_URL}/setup/language/delete-language`;
+
+// SuperAdmin -> Insurance..
+export const CREATE_INSURANCE = `${API_BASE_URL}/setup/insurance/create-insurance`;
+export const GET_ALL_INSURANCES = `${API_BASE_URL}/setup/insurance/get-all-insurance`;
+export const UPDATE_INSURANCE = `${API_BASE_URL}/setup/insurance/update-insurance`;
+export const DELETE_INSURANCE = `${API_BASE_URL}/setup/insurance/delete-insurance`;
+
+// SuperAdmin -> Vehicle Make..
+export const CREATE_VEHICLE_MAKE = `${API_BASE_URL}/setup/vehicle-make/create-vehicle-make`;
+export const GET_ALL_VEHICLES_MAKE = `${API_BASE_URL}/setup/vehicle-make/get-all-vehicle-make`;
+export const UPDATE_VEHICLE_MAKE = `${API_BASE_URL}/setup/vehicle-make/update-vehicle-make`;
+export const DELETE_VEHICLE_MAKE = `${API_BASE_URL}/setup/vehicle-make/delete-vehicle-make`;
+
+// SuperAdmin -> Vehicle Model..
+export const CREATE_VEHICLE_MODEL = `${API_BASE_URL}/setup/vehicle-model/create-vehicle-model`;
+export const GET_ALL_VEHICLES_MODEL = `${API_BASE_URL}/setup/vehicle-model/get-all-vehicle-models`;
+export const UPDATE_VEHICLE_MODEL = `${API_BASE_URL}/setup/vehicle-model/update-vehicle-model`;
+export const DELETE_VEHICLE_MODEL = `${API_BASE_URL}/setup/vehicle-model/delete-vehicle-model`;
+
+// SuperAdmin -> Network Provider..
+export const CREATE_NETWORK_PROVIDER = `${API_BASE_URL}/setup/network-provider/create-network-provider`;
+export const GET_ALL_NETWORK_PROVIDERS = `${API_BASE_URL}/setup/network-provider/get-all-network-provider`;
+export const UPDATE_NETWORK_PROVIDER = `${API_BASE_URL}/setup/network-provider/update-network-provider`;
+export const DELETE_NETWORK_PROVIDER = `${API_BASE_URL}/setup/network-provider/delete-network-provider`;
+
 // SuperAdmin -> Server Details..
 export const CREATE_SERVER = `${API_BASE_URL}/server-management/create-server`;
 export const GET_ALL_SERVERS = `${API_BASE_URL}/server-management/get-all-servers`;
@@ -154,13 +192,46 @@ export const CREATE_GROUP = `${API_BASE_URL}/monitoring/geofence-group/create-gr
 export const GET_ALL_GROUPS = `${API_BASE_URL}/monitoring/geofence-group/get-all-groups`;
 export const UPDATE_GROUP = `${API_BASE_URL}/monitoring/geofence-group/update-group`;
 export const UPDATE_GROUP_ACTIVATION_STATUS = `${API_BASE_URL}/monitoring/geofence-group/update-group-activation-status`;
-
+export const GET_ALL_SUBGROUPS = `${API_BASE_URL}/monitoring/geofence-sub-group/get-all-geofence-subgroup`;
+export const CREATE_SUBGROUP = `${API_BASE_URL}/monitoring/geofence-sub-group/create-geofence-sub-group`;
+export const GET_ALL_SUBGROUPS_BY_GROUP_ID = `${API_BASE_URL}/monitoring/geofence-sub-group/get-all-subgroups-by-group`;
+export const GET_ALL_GEOFENCES_BY_GROUP_ID = `${API_BASE_URL}/monitoring/geofence/get-all-geofences-by-group`;
+export const UPDATE_SUBGROUP = `${API_BASE_URL}/monitoring/geofence-sub-group/update-subgroup`;
+export const GET_ALL_GEOFENCES_BY_SUBGROUP = `${API_BASE_URL}/monitoring/geofence-sub-group/get-all-geofences-by-subgroup`;
+export const DELETE_SUBGROUP = `${API_BASE_URL}/monitoring/geofence-sub-group/delete-geofence-subgroup`;
+export const DELETE_GROUP = `${API_BASE_URL}/monitoring/geofence-group/delete-group`;
+export const TRANSFER_SUBGROUP = `${API_BASE_URL}/monitoring/geofence-sub-group/transfer-geofence-subgroup`;
+export const IMPORT_GEOFENCE = `${API_BASE_URL}/monitoring/geofence/import-geofences`;
 
 // Company -> Departments
 export const CREATE_SUB_ROLE = `${API_BASE_URL}/sub-role/create-sub-role`;
 export const GET_ALL_SUB_ROLES = `${API_BASE_URL}/sub-role/get-all-sub-roles`;
 export const GET_ALL_ACTIVE_SUB_ROLES = `${API_BASE_URL}/sub-role/get-all-active-sub-roles`;
 export const CHANGE_SUB_ROLE_ACTIVATION_STATUS = `${API_BASE_URL}/sub-role/change-activation-status`;
+
+// Company -> Warehouses
+export const CREATE_WAREHOUSE = `${API_BASE_URL}/setup/warehouse/create-warehouse`;
+export const GET_ALL_WAREHOUSES = `${API_BASE_URL}/setup/warehouse/get-all-warehouses`;
+export const GET_ALL_ACTIVE_WAREHOUSES = `${API_BASE_URL}/setup/warehouse/get-all-active-warehouses`;
+export const CHANGE_WAREHOUSE_ACTIVATION_STATUS = `${API_BASE_URL}/setup/warehouse/change-activation-status`;
+export const DELETE_WAREHOUSE = `${API_BASE_URL}/setup/warehouse/delete-warehouse`;
+export const UPDATE_WAREHOUSE = `${API_BASE_URL}/setup/warehouse/update-warehouse`;
+
+// Company -> groups
+export const CREATE_SALE_GROUP = `${API_BASE_URL}/setup/group/create-group`;
+export const GET_ALL_SALE_GROUPS = `${API_BASE_URL}/setup/group/get-all-groups`;
+export const GET_ALL_ACTIVE_SALE_GROUPS = `${API_BASE_URL}/setup/group/get-all-active-groups`;
+export const CHANGE_SALE_GROUP_ACTIVATION_STATUS = `${API_BASE_URL}/setup/group/change-activation-status`;
+export const DELETE_SALE_GROUP = `${API_BASE_URL}/setup/group/delete-group`;
+export const UPDATE_SALE_GROUP = `${API_BASE_URL}/setup/group/update-group`;
+
+// Company -> branches
+export const CREATE_BRANCH = `${API_BASE_URL}/setup/branch/create-branch`;
+export const GET_ALL_BRANCHES = `${API_BASE_URL}/setup/branch/get-all-branches`;
+export const GET_ALL_ACTIVE_BRANCHES = `${API_BASE_URL}/setup/branch/get-all-active-branches`;
+export const CHANGE_BRANCHES_ACTIVATION_STATUS = `${API_BASE_URL}/setup/branch/change-activation-status`;
+export const DELETE_BRANCH = `${API_BASE_URL}/setup/branch/delete-branch`;
+export const UPDATE_BRANCH = `${API_BASE_URL}/setup/branch/update-branch`;
 
 // Company -> Modules - ComplaintCenter
 export const GET_DEVICE_DATA = `${API_BASE_URL}/complaint-center/get-device-data`;

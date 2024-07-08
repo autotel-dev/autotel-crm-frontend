@@ -42,7 +42,22 @@ import Companies from "../Pages/SuperAdmin/Companies/Companies";
 import UpdateCompanyForm from "../Pages/SuperAdmin/Companies/UpdateCompanyForm/UpdateCompanyForm";
 import CreateCompanyForm from "../Pages/SuperAdmin/Companies/CreateCompanyForm/CreateCompanyForm";
 import Departments from "../Pages/Company/Departments/Departments";
+<<<<<<< HEAD
 import SAIOCentral from "../Pages/Company/Modules/SAIOCentral/SAIOCentral";
+=======
+import Banks from "../Pages/SuperAdmin/Banks/Banks";
+import Insurances from "../Pages/SuperAdmin/Insurances/Insurance";
+import VehiclesMake from "../Pages/SuperAdmin/VehicleMake/VehiclesMake";
+import VehiclesModel from "../Pages/SuperAdmin/VehicleModel/VehiclesModel";
+import NetworkProviders from "../Pages/SuperAdmin/NetworkProvider/NetworkProviders";
+import Packages from "../Pages/Company/Packages/Packages";
+import Groups from "../Pages/Company/Groups/Groups";
+import Warehouses from "../Pages/Company/Warehouses/Warehouses";
+import Branches from "../Pages/Company/Branches/Branches";
+import { Currency } from "../utils/Constant";
+import Currencies from "../Pages/SuperAdmin/Currencies/Currencies";
+import Languages from "../Pages/SuperAdmin/Languages/Languages";
+>>>>>>> 0e26ca58da45a813da8f71f8436c1f2b92af4441
 
 const routes = [
   // dashboard routes
@@ -54,7 +69,6 @@ const routes = [
     path: `${process.env.PUBLIC_URL}/dashboards/crmdashboard`,
     Component: <CRMDashboard />,
   },
-
 
   // --------------------------------------------------
 
@@ -138,6 +152,55 @@ const routes = [
     allowedUserRoles: [ROLES.SUPER_ADMIN],
     isProtected: true,
     permissionValue: "CRMModules",
+  },
+  {
+    path: `${process.env.PUBLIC_URL}/super-admin/setup/banks`,
+    Component: <Banks />,
+    allowedUserRoles: [ROLES.SUPER_ADMIN],
+    isProtected: true,
+    permissionValue: "Banks",
+  },
+  {
+    path: `${process.env.PUBLIC_URL}/super-admin/setup/currencies`,
+    Component: <Currencies />,
+    allowedUserRoles: [ROLES.SUPER_ADMIN],
+    isProtected: true,
+    permissionValue: "currencies",
+  },
+  {
+    path: `${process.env.PUBLIC_URL}/super-admin/setup/languages`,
+    Component: <Languages />,
+    allowedUserRoles: [ROLES.SUPER_ADMIN],
+    isProtected: true,
+    permissionValue: "languages",
+  },
+  {
+    path: `${process.env.PUBLIC_URL}/super-admin/setup/insurance`,
+    Component: <Insurances />,
+    allowedUserRoles: [ROLES.SUPER_ADMIN],
+    isProtected: true,
+    permissionValue: "Insurances",
+  },
+  {
+    path: `${process.env.PUBLIC_URL}/super-admin/setup/vehicle-make`,
+    Component: <VehiclesMake />,
+    allowedUserRoles: [ROLES.SUPER_ADMIN],
+    isProtected: true,
+    permissionValue: "VehiclesMake",
+  },
+  {
+    path: `${process.env.PUBLIC_URL}/super-admin/setup/vehicle-model`,
+    Component: <VehiclesModel />,
+    allowedUserRoles: [ROLES.SUPER_ADMIN],
+    isProtected: true,
+    permissionValue: "VehiclesModel",
+  },
+  {
+    path: `${process.env.PUBLIC_URL}/super-admin/setup/network-provider`,
+    Component: <NetworkProviders />,
+    allowedUserRoles: [ROLES.SUPER_ADMIN],
+    isProtected: true,
+    permissionValue: "NetworkProviders",
   },
   {
     path: `${process.env.PUBLIC_URL}/super-admin/setup/complain-types`,
@@ -224,7 +287,6 @@ const routes = [
     permissionValue: "Geofence",
   },
 
-
   // Support
   {
     path: `${process.env.PUBLIC_URL}/support`,
@@ -244,8 +306,6 @@ const routes = [
   //   allowedUserRoles: [ROLES.SUPER_ADMIN],
   //   isProtected: true,
   //   permissionValue: "Tasks",
-
-
 
   // },
   // Companies
@@ -297,6 +357,34 @@ const routes = [
     permissionValue: "Roles",
   },
   {
+    path: `${process.env.PUBLIC_URL}/company/setup/packages`,
+    Component: <Packages />,
+    allowedUserRoles: [ROLES.COMPANY],
+    isProtected: true,
+    permissionValue: "Packages",
+  },
+  {
+    path: `${process.env.PUBLIC_URL}/company/setup/groups`,
+    Component: <Groups />,
+    allowedUserRoles: [ROLES.COMPANY],
+    isProtected: true,
+    permissionValue: "Groups",
+  },
+  {
+    path: `${process.env.PUBLIC_URL}/company/setup/warehouses`,
+    Component: <Warehouses />,
+    allowedUserRoles: [ROLES.COMPANY],
+    isProtected: true,
+    permissionValue: "Warehouses",
+  },
+  {
+    path: `${process.env.PUBLIC_URL}/company/setup/branches`,
+    Component: <Branches />,
+    allowedUserRoles: [ROLES.COMPANY],
+    isProtected: true,
+    permissionValue: "Branches",
+  },
+  {
     path: `${process.env.PUBLIC_URL}/company/setup/email-gateway`,
     Component: <EmailGateway />,
     allowedUserRoles: [ROLES.COMPANY],
@@ -325,7 +413,13 @@ const routes = [
     isProtected: true,
     permissionValue: "WhatsAppTemplates",
   },
-
+  {
+    path: `${process.env.PUBLIC_URL}/company/setup/geofence`,
+    Component: <Geofence />,
+    allowedUserRoles: [ROLES.COMPANY],
+    isProtected: true,
+    permissionValue: "Geofence",
+  },
 
   // Modules
 

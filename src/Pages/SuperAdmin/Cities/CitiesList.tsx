@@ -142,7 +142,7 @@ const CitiesList = () => {
         <td style={{ width: "15%" }}>{row.name}</td>
         <td style={{ width: "15%" }}>{row.province?.name}</td>
         <td style={{ width: "15%" }}>{row.country?.name}</td>
-        <td style={{ width: "15%" }}>
+        {/* <td style={{ width: "15%" }}>
           <div className="d-flex" style={{ justifyContent: "center" }}>
             <div
               className={`text-end flex-shrink-0 icon-state 
@@ -208,7 +208,7 @@ const CitiesList = () => {
               </Label>
             </div>
           </div>
-        </td>
+        </td> */}
         <td>
           <div>
             <button
@@ -301,7 +301,7 @@ const CitiesList = () => {
                             <th style={{ width: "15%" }}>Name</th>
                             <th style={{ width: "15%" }}>Province</th>
                             <th style={{ width: "15%" }}>Country</th>
-                            <th style={{ width: "15%" }}>Status</th>
+                            {/* <th style={{ width: "15%" }}>Status</th> */}
                             <th>Actions</th>
                           </tr>
                         </thead>
