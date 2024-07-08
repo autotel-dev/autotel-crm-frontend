@@ -31,19 +31,7 @@ export const ticketData = [
   },
 ];
 
-// export const supportData = [
-//   {
-//     id: "123456",
-//     username: "john_doe",
-//     email: "john@example.com",
-//     ticket_name: "Sample Ticket",
-//     description: "This is a sample description.",
-//     isActive: "true",
-//     status: "Open",
-//     priority: "High",
-//     date: "2024-02-19",
-//   },
-// ];
+
 
 export interface SupportDataType {
   id: string;

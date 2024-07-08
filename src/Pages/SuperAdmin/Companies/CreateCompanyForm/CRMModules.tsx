@@ -31,12 +31,12 @@ const CRMModules = ({ callbackActive }: BusinessFormCommonProps) => {
   const [givenPermissions, setGivenPermissions] = useState(
     createCompany.permissions !== undefined
       ? createCompany.permissions.map((permission: any) => ({
-          ...permission,
-        }))
+        ...permission,
+      }))
       : permissions.map((permission: any) => ({
-          ...permission,
-          checked: false,
-        }))
+        ...permission,
+        checked: false,
+      }))
   );
 
   const [switches, setSwitches] = useState("off");
@@ -49,24 +49,7 @@ const CRMModules = ({ callbackActive }: BusinessFormCommonProps) => {
     }
   }, [permissions]);
 
-  // const handleCheckboxChange = (index: any,) => {
-  //   setGivenPermissions((prevPermissions: any) => {
-  //     const updatedPermissions = [...prevPermissions];
-  //     updatedPermissions[index] = {
-  //       ...updatedPermissions[index],
-  //       checked: !updatedPermissions[index].checked,
-  //     };
-  //     return updatedPermissions;
-  //   });
-  // };
 
-  // const handleCheckboxChange = (index: any, key: any) => {
-  //   setGivenPermissions((prevPermissions: any) => {
-  //     const updatedPermissions = [...prevPermissions];
-  //     updatedPermissions[index][key] = !updatedPermissions[index][key];
-  //     return updatedPermissions;
-  //   });
-  // };
 
   const handleCheckboxChange = (index: any, key: any) => {
     setGivenPermissions((prevPermissions: any) => {
@@ -83,10 +66,7 @@ const CRMModules = ({ callbackActive }: BusinessFormCommonProps) => {
   };
 
   const handleNextButton = () => {
-    // Filter out only the permissions that are checked
-    // const checkedPermissions = givenPermissions.filter(
-    //   (permission: any) => permission.checked
-    // );
+
 
     dispatch(
       setCreateCompany({
@@ -183,11 +163,10 @@ const CRMModules = ({ callbackActive }: BusinessFormCommonProps) => {
                                 }}
                               />
                               <span
-                                className={`switch-state ${
-                                  allowedModules.includes(item._id)
-                                    ? "bg-primary"
-                                    : "bg-secondary"
-                                }`}
+                                className={`switch-state ${allowedModules.includes(item._id)
+                                  ? "bg-primary"
+                                  : "bg-secondary"
+                                  }`}
                               />
                             </Label>
                           </div>
@@ -406,15 +385,15 @@ const CRMModules = ({ callbackActive }: BusinessFormCommonProps) => {
             </Col>
           </Row>
         </Col>
-            <Col
-              xs={12}
-              className="text-end d-flex justify-content-end gap-2 align-center"
-            >
+        <Col
+          xs={12}
+          className="text-end d-flex justify-content-end gap-2 align-center"
+        >
           <Button color="primary">{Previous}</Button>
-              <Button color="primary" onClick={handleNextButton}>
-                {Continue}
-              </Button>
-            </Col>
+          <Button color="primary" onClick={handleNextButton}>
+            {Continue}
+          </Button>
+        </Col>
       </Row>
     </Form>
   );
