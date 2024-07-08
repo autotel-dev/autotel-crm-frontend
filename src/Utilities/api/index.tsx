@@ -104,17 +104,14 @@ export const otpVerification = async (
       };
       return error;
     }
-    const response = await fetch(
-      OTP_VERIFICATION,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          // Add any other headers as needed (e.g., authorization token)
-        },
-        body: JSON.stringify(verifyData),
-      }
-    );
+    const response = await fetch(OTP_VERIFICATION, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        // Add any other headers as needed (e.g., authorization token)
+      },
+      body: JSON.stringify(verifyData),
+    });
     const result = await response.json();
     // console.log(result);
 
@@ -449,6 +446,40 @@ export const deleteSingle = async (url: URLTypes): Promise<void> => {
   }
 };
 
+export const deleteMultiple = async (
+  url: URLTypes,
+  body: any
+): Promise<void> => {
+  if (!navigator.onLine) {
+    Swal.fire({
+      text: ERROR_TEXT,
+      icon: "error",
+      timer: 2000,
+      showCancelButton: false,
+    });
+    // throw new Error(ERROR_TEXT);
+    const error: any = {
+      success: false,
+      message: ERROR_MESSAGE,
+      statusCode: 401,
+    };
+    return error;
+  }
+
+  try {
+    const response = await axios.delete(url.url, {
+      headers: header(),
+      data: body,
+    });
+    const result = response.data;
+    // console.log("Response data:", response.data);
+    return result;
+  } catch (error: any) {
+    // console.error("Error deleting:", error.message);
+    return error.response.data;
+  }
+};
+
 export const getAll = async (url: URLTypes): Promise<void> => {
   if (!navigator.onLine) {
     // Swal.fire({
@@ -477,7 +508,6 @@ export const getAll = async (url: URLTypes): Promise<void> => {
 
     return result;
   } catch (error: any) {
-
     if (error.response.data.statusCode == 401) {
       Swal.fire({
         text: `${error.response.data.message}`,

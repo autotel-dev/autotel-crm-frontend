@@ -1,15 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { Col, Button, Modal, ModalBody } from "reactstrap";
 import { useDispatch, useSelector } from "react-redux";
-import { H4, P } from "../../../../../AbstractElements";
+import { H4, P } from "../../../../../../AbstractElements";
 import { Select } from "antd";
-import { create, getAll } from "../../../../../Utilities/api";
+import { create, getAll } from "../../../../../../Utilities/api";
 import Swal from "sweetalert2";
 import {
   setGeofences,
   setGeofencesGroup,
-} from "../../../../../ReaduxToolkit/Reducer/GeofenceSlice";
-import { CREATE_GROUP, GET_ALL_GEOFENCES, GET_ALL_GROUPS } from "../../../../../Utilities/api/apiEndpoints";
+  setGeofencesSubGroup,
+} from "../../../../../../ReaduxToolkit/Reducer/GeofenceSlice";
+import {
+  CREATE_SUBGROUP,
+  GET_ALL_GEOFENCES,
+  GET_ALL_GEOFENCES_BY_GROUP_ID,
+  GET_ALL_SUBGROUPS,
+} from "../../../../../../Utilities/api/apiEndpoints";
 
 interface PropsTypes {
   isVisible: boolean;
@@ -19,46 +25,30 @@ interface PropsTypes {
 
 const AddSubGroupModal: React.FC<PropsTypes> = ({
   isVisible,
-  setIsVisible = () => { },
+  setIsVisible = () => {},
   geofences,
 }) => {
-  const { userPersonalizationData } = useSelector(
-    (state: any) => state.personalization
-  );
   const { geofencesGroup } = useSelector((state: any) => state.geofence);
   const dispatch = useDispatch();
 
   const [group, setGroup] = useState<any>(null);
-  const [groupList, setGroupList] = useState();
-  const [geofencesList, setGeofencesList] = useState<any>([]);
+  const [groupList, setGroupList] = useState<any[]>([]);
+  const [geofencesList, setGeofencesList] = useState<any[]>([]);
   const [selectAll, setSelectAll] = useState(false);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({ title: "" });
   const [searchValue, setSearchValue] = useState("");
 
   useEffect(() => {
-    setGroupList(() =>
-      geofencesGroup.map((item: any) => ({
+    const updatedGroupList = [
+      { label: "None", value: "none" },
+      ...geofencesGroup.map((item: any) => ({
         label: item?.title,
         value: item?._id,
-      }))
-    );
+      })),
+    ];
+    setGroupList(updatedGroupList);
   }, [geofencesGroup]);
-
-  useEffect(() => {
-    const ungroupedGeofence = geofences.find(
-      (geofence) => geofence.group === "Ungrouped"
-    );
-    if (ungroupedGeofence) {
-      setGeofencesList(
-        ungroupedGeofence.items.map((item: any) => ({
-          label: item?.title,
-          value: item?._id,
-          checked: false,
-        }))
-      );
-    }
-  }, [geofences]);
 
   useEffect(() => {
     const allChecked = geofencesList.every((item: any) => item.checked);
@@ -84,7 +74,7 @@ const AddSubGroupModal: React.FC<PropsTypes> = ({
     setSelectAll(allChecked);
   };
 
-  const createGroup = async () => {
+  const createSubGroup = async () => {
     const allcheckedGeofences = geofencesList
       .filter((item: any) => item.checked)
       .map((item: any) => item.value);
@@ -92,8 +82,8 @@ const AddSubGroupModal: React.FC<PropsTypes> = ({
     if (formData.title !== "") {
       try {
         const response: any = await create(
-          { ...formData, geofences: allcheckedGeofences },
-          { url: CREATE_GROUP }
+          { ...formData, geofenceGroup: group, geofences: allcheckedGeofences },
+          { url: CREATE_SUBGROUP }
         );
 
         if (response.success) {
@@ -104,11 +94,11 @@ const AddSubGroupModal: React.FC<PropsTypes> = ({
             showConfirmButton: false,
           });
 
-          const groupsData: any = await getAll({
-            url: GET_ALL_GROUPS,
+          const subGroupsData: any = await getAll({
+            url: GET_ALL_SUBGROUPS,
           });
-          if (groupsData.success) {
-            dispatch(setGeofencesGroup(groupsData.data));
+          if (subGroupsData.success) {
+            dispatch(setGeofencesSubGroup(subGroupsData.data));
           }
 
           const geofencesData: any = await getAll({
@@ -116,7 +106,11 @@ const AddSubGroupModal: React.FC<PropsTypes> = ({
           });
           if (geofencesData.success) {
             const groups: any[] = [];
-            const groupDevicesObj: any = {};
+            const groupGeofencesObj: any = {};
+            let subGroups: any = [];
+            let subGroupsGeofencesObj: any = {};
+            let initialSubGroupsGeofences: any = [];
+
             geofencesData.data.forEach((item: any) => {
               const group = item.geofenceGroup
                 ? item.geofenceGroup.title
@@ -124,21 +118,73 @@ const AddSubGroupModal: React.FC<PropsTypes> = ({
               if (!groups.includes(group)) {
                 groups.push(group);
               }
-              if (!groupDevicesObj[group]) {
-                groupDevicesObj[group] = [];
+              if (!groupGeofencesObj[group]) {
+                groupGeofencesObj[group] = [];
               }
-              groupDevicesObj[group].push({ ...item, checked: false });
+              groupGeofencesObj[group].push({ ...item, checked: false });
             });
 
-            const initialGroupDevices = Object.keys(groupDevicesObj).map(
+            const initialGroupGeofences = Object.keys(groupGeofencesObj).map(
               (group) => ({
                 group,
                 checked: false,
-                items: groupDevicesObj[group],
+                items: groupGeofencesObj[group],
+                subgroups: [],
               })
             );
 
-            dispatch(setGeofences(initialGroupDevices));
+            for (let i = 0; i < initialGroupGeofences.length; i++) {
+              for (let j = 0; j < initialGroupGeofences[i].items.length; j++) {
+                var element = "";
+                if (
+                  initialGroupGeofences[i].items[j].geofenceSubGroup !== null
+                ) {
+                  element =
+                    initialGroupGeofences[i].items[j].geofenceSubGroup.title;
+                }
+                if (!subGroups.includes(element)) {
+                  if (element !== "") {
+                    subGroups.push(element);
+                  }
+                }
+              }
+
+              subGroups.forEach((geofenceSubGroup: any) => {
+                subGroupsGeofencesObj[geofenceSubGroup] = initialGroupGeofences[
+                  i
+                ].items
+                  .filter((obj: any) => {
+                    if (!obj.geofenceSubGroup || !obj.geofenceSubGroup.title) {
+                      return;
+                    } else {
+                      return obj.geofenceSubGroup.title === geofenceSubGroup;
+                    }
+                  })
+                  .map((item: any) => ({
+                    ...item,
+                    checked: false,
+                    edited: false,
+                  }));
+              });
+
+              Object.keys(subGroupsGeofencesObj).forEach((group: any) => {
+                initialSubGroupsGeofences.push({
+                  subgroup: group,
+                  checked: false,
+                  items: subGroupsGeofencesObj[group],
+                });
+              });
+
+              initialGroupGeofences[i] = {
+                ...initialGroupGeofences[i],
+                subgroups: initialSubGroupsGeofences,
+              };
+
+              subGroups = [];
+              subGroupsGeofencesObj = {};
+              initialSubGroupsGeofences = [];
+            }
+            dispatch(setGeofences(initialGroupGeofences));
           }
 
           addToggle();
@@ -174,6 +220,8 @@ const AddSubGroupModal: React.FC<PropsTypes> = ({
   const addToggle = () => {
     if (!loading) {
       setIsVisible(!isVisible);
+      setGroup("");
+      setGeofencesList([]);
     }
   };
 
@@ -233,13 +281,29 @@ const AddSubGroupModal: React.FC<PropsTypes> = ({
                       .toLowerCase()
                       .localeCompare((optionB?.label ?? "").toLowerCase())
                   }
-                  onChange={(e: any) => {
+                  onChange={async (e: any) => {
                     setGroup(e);
+                    if (e === "none") {
+                      setGeofencesList([]);
+                      return;
+                    }
+                    const geofencesData: any = await getAll({
+                      url: `${GET_ALL_GEOFENCES_BY_GROUP_ID}/${e}`,
+                    });
+                    if (geofencesData.success) {
+                      setGeofencesList(
+                        geofencesData.data.map((item: any) => ({
+                          label: item?.title,
+                          value: item?._id,
+                          checked: false,
+                        }))
+                      );
+                    }
                   }}
                   options={groupList}
                   value={group || ""}
                 />
-                {group && filteredGeofences.length > 0 && (
+                {group && group !== "none" && filteredGeofences.length > 0 && (
                   <>
                     <input
                       className="form-control"
@@ -255,7 +319,6 @@ const AddSubGroupModal: React.FC<PropsTypes> = ({
                         margin: "15px 0px 0px 0px",
                       }}
                     >
-
                       <label
                         style={{
                           display: "flex",
@@ -263,7 +326,6 @@ const AddSubGroupModal: React.FC<PropsTypes> = ({
                           fontWeight: "700",
                         }}
                       >
-
                         <input
                           type="checkbox"
                           checked={selectAll}
@@ -332,7 +394,7 @@ const AddSubGroupModal: React.FC<PropsTypes> = ({
                     e.preventDefault();
                     e.stopPropagation();
                     setLoading(true);
-                    createGroup();
+                    createSubGroup();
                   }}
                   style={{
                     width: "50%",
@@ -346,7 +408,7 @@ const AddSubGroupModal: React.FC<PropsTypes> = ({
                     textAlign: "center",
                   }}
                 >
-                  {loading ? "Loading..." : "Save"}
+                  {loading ? "Loading..." : "Create"}
                 </button>
               </div>
             </form>

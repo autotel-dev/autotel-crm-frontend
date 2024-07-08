@@ -29,6 +29,17 @@ import DepartmentIcon from "../../assets/department.png";
 import MonitorIcon from "../../assets/gps.png";
 import ControlroomIcon from "../../assets/security-room.png";
 import GeofenceIcon from "../../assets/route.png";
+import BankIcon from "../../assets/bank.png";
+import InsuranceIcon from "../../assets/insurance.png";
+import VehicleMakeIcon from "../../assets/car.png";
+import VehicleModelIcon from "../../assets/vehicle-inspection.png";
+import NetworkProviderIcon from "../../assets/cloud.png";
+import PackIcon from "../../assets/boxes.png";
+import GrouppIcon from "../../assets/group (2).png";
+import WarehouseIcon from "../../assets/warehouse.png";
+import BranchIcon from "../../assets/network.png";
+import CurrencyIcon from "../../assets/cash.png";
+import LanguageIcon from "../../assets/language.png";
 
 import {
   SidebarMenu,
@@ -46,6 +57,7 @@ import { ROLES } from "../../constants/roles";
 import RightHeader from "../Header/RightHeader/RightHeader";
 import { Row } from "reactstrap";
 import Header from "../Header";
+import { Flex } from "antd";
 
 export interface PropsTypes {
   setOpen: (item: boolean) => void;
@@ -110,6 +122,49 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
         },
         {
           // svgIcon: "bonus-kit",
+          svgIcon: `${BankIcon}`,
+          title: "Banks",
+          link: `${process.env.PUBLIC_URL}/super-admin/setup/banks`,
+        },
+        {
+          // svgIcon: "bonus-kit",
+          svgIcon: `${CurrencyIcon}`,
+          title: "Currencies",
+          link: `${process.env.PUBLIC_URL}/super-admin/setup/currencies`,
+        },
+        {
+          // svgIcon: "bonus-kit",
+          svgIcon: `${LanguageIcon}`,
+          title: "Languages",
+          link: `${process.env.PUBLIC_URL}/super-admin/setup/languages`,
+        },
+        {
+          // svgIcon: "bonus-kit",
+          svgIcon: `${InsuranceIcon}`,
+          title: "Insurance",
+          link: `${process.env.PUBLIC_URL}/super-admin/setup/insurance`,
+        },
+        {
+          // svgIcon: "bonus-kit",
+          svgIcon: `${VehicleMakeIcon}`,
+          title: "Vehicle Make",
+          link: `${process.env.PUBLIC_URL}/super-admin/setup/vehicle-make`,
+        },
+        {
+          // svgIcon: "bonus-kit",
+          svgIcon: `${VehicleModelIcon}`,
+          title: "Vehicle Model",
+          link: `${process.env.PUBLIC_URL}/super-admin/setup/vehicle-model`,
+        },
+        {
+          // svgIcon: "bonus-kit",
+          svgIcon: `${NetworkProviderIcon}`,
+          title: "Network Provider",
+          link: `${process.env.PUBLIC_URL}/super-admin/setup/network-provider`,
+        },
+
+        {
+          // svgIcon: "bonus-kit",
           svgIcon: `${ComplaintypeIcon}`,
           title: "Complain types",
           link: `${process.env.PUBLIC_URL}/super-admin/setup/complain-types`,
@@ -157,10 +212,10 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
           link: `${process.env.PUBLIC_URL}/super-admin/setup/whatsapp-template`,
         },
         {
-          svgIcon:`${GeofenceIcon}`,
-          title:"Geofence",
+          svgIcon: `${GeofenceIcon}`,
+          title: "Geofence",
           link: `${process.env.PUBLIC_URL}/super-admin/setup/geofence`,
-        }
+        },
       ],
     },
     // {
@@ -239,6 +294,30 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
         },
         {
           // svgIcon: "bonus-kit",
+          svgIcon: `${PackIcon}`,
+          title: "Packages",
+          link: `${process.env.PUBLIC_URL}/company/setup/packages`,
+        },
+        {
+          // svgIcon: "bonus-kit",
+          svgIcon: `${GrouppIcon}`,
+          title: "Groups",
+          link: `${process.env.PUBLIC_URL}/company/setup/groups`,
+        },
+        {
+          // svgIcon: "bonus-kit",
+          svgIcon: `${WarehouseIcon}`,
+          title: "Warehouses",
+          link: `${process.env.PUBLIC_URL}/company/setup/warehouses`,
+        },
+        {
+          // svgIcon: "bonus-kit",
+          svgIcon: `${BranchIcon}`,
+          title: "Branches",
+          link: `${process.env.PUBLIC_URL}/company/setup/branches`,
+        },
+        {
+          // svgIcon: "bonus-kit",
           title: "Email Gateway",
           svgIcon: `${EmailgatewayIcon}`,
           link: `${process.env.PUBLIC_URL}/company/setup/email-gateway`,
@@ -260,6 +339,11 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
           svgIcon: `${WhatsapptemplateIcon}`,
           title: "WhatsApp Templates",
           link: `${process.env.PUBLIC_URL}/company/setup/whatsapp-template`,
+        },
+        {
+          svgIcon: `${GeofenceIcon}`,
+          title: "Geofence",
+          link: `${process.env.PUBLIC_URL}/company/setup/geofence`,
         },
       ],
     },
@@ -576,13 +660,9 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
                           }`}
                           to={data.link ? data.link : "#"}
                           onClick={() => handleClick(data)}
+                          
                         >
-                          {/* <SVG
-                            className={`${sidebarIconType}-icon`}
-                            iconId={`${
-                              sidebarIconType === "fill" ? "fill-" : ""
-                            }${data.svgIcon}`}
-                          /> */}
+                         <div>
                           <span
                             style={{
                               height: "20px",
@@ -602,6 +682,7 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
                           <span style={{ fontSize: "13px" }}>
                             {t(data.title)}
                           </span>
+                          </div>
                         </Link>
                         {data.link ? (
                           <div></div>

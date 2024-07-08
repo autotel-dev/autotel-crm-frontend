@@ -34,16 +34,15 @@ import {
   setType,
   setEditedItem,
 } from "../../../../../ReaduxToolkit/Reducer/GeofenceSlice";
-import AddGroupModal from "../modals/AddGroupModal";
-import Geofence from "../../Geofence";
 import { create, getAll, update } from "../../../../../Utilities/api";
 import Swal from "sweetalert2";
-import { title } from "process";
-import Item from "antd/es/list/Item";
-import { Id } from "../../../../../utils/Constant";
-import { px } from "framer-motion";
-import AddSubGroupModal from "../modals/AddSubGroupModal";
-import { CREATE_GEOFENCE, GET_ALL_GEOFENCES, UPDATE_GEOFENCE } from "../../../../../Utilities/api/apiEndpoints";
+import {
+  CREATE_GEOFENCE,
+  GET_ALL_GEOFENCES,
+  GET_ALL_SUBGROUPS_BY_GROUP_ID,
+  IMPORT_GEOFENCE,
+  UPDATE_GEOFENCE,
+} from "../../../../../Utilities/api/apiEndpoints";
 
 interface PropTypes {
   statusDevices: String;
@@ -78,8 +77,9 @@ const GeofencesTreeViewAccordian = ({
   const svgRef = useRef(null);
 
   const [itemsLength, setItemsLength] = useState(15);
-  const { devices, selectedDevices, expandedDevice, devicesDetailData } =
-    useSelector((state: any) => state.monitoring);
+  const [subGroup, setSubGroup] = useState("");
+  const [subGroupList, setSubGroupList] = useState([]);
+
   const {
     geofences,
     type,
@@ -91,6 +91,7 @@ const GeofencesTreeViewAccordian = ({
     editedItem,
   } = useSelector((state: any) => state.geofence);
   const [searchValue, setSearchValue] = useState("");
+  const [searchSubGroupValue, setSearchSubGroupValue] = useState("");
   const [open, setOpen] = useState("");
   const [matchedGroups, setMatchedGroups] = useState(geofences);
   const [Devicess, setDevicess]: any = useState([]);
@@ -102,8 +103,10 @@ const GeofencesTreeViewAccordian = ({
   useEffect(() => {
     if (searchValue.length >= 1) {
       setOpen("all");
+      setInnerOpen("all");
     } else {
       setOpen("");
+      setInnerOpen("");
     }
   }, [searchValue]);
 
@@ -115,6 +118,7 @@ const GeofencesTreeViewAccordian = ({
     open == id ? setOpen("") : setOpen(id);
     setItemsLength(15);
   };
+
   const handleCheckboxClick = (e: any, group: any) => {
     // Prevent the click event from propagating to the accordion
 
@@ -126,27 +130,92 @@ const GeofencesTreeViewAccordian = ({
           ...item,
           checked: !group.checked, // Set checked to the opposite of group.checked
         }));
-        var tempList: any = [...geofencesDetailData];
-        updatedItems.map((geofenceItem: any, index: any) => {
-          var geofenceExists = geofencesDetailData.find(
-            (geofence: any) => geofence._id === geofenceItem._id
-          );
-          console.log("deviceItem", geofenceItem);
-          console.log("deviceExists", geofenceExists);
 
-          if (geofenceExists) {
-            if (group.checked) {
-              tempList = tempList.filter(
-                (geofence: any) => geofence._id !== geofenceExists._id
-              );
-            }
+        var updatedSubGroups: any = [];
+        geofence.subgroups.map((subgroup: any) => {
+          var updatedSubGroupsItems = subgroup.items.map((item: any) => ({
+            ...item,
+            checked: !group.checked, // Set checked to the opposite of group.checked
+          }));
+          updatedSubGroups.push({
+            ...subgroup,
+            checked: !group.checked,
+            items: updatedSubGroupsItems,
+          });
+        });
+
+        return {
+          ...geofence,
+          checked: !group.checked,
+          items: updatedItems,
+          subgroups: updatedSubGroups,
+        };
+      }
+      return geofence;
+    });
+
+    dispatch(setGeofences(updatedGeofences));
+  };
+
+  const handleSubGroupCheckboxClick = (e: any, group: any, subGroup: any) => {
+    console.log("group", group);
+    console.log("subGroup", subGroup);
+
+    const updatedGeofences = geofences.map((geofence: any) => {
+      if (geofence.group === group.group) {
+        const updatedItems = geofence.items.map((itemm: any) => ({
+          ...itemm,
+          checked:
+            itemm?.geofenceSubGroup?.title == subGroup.subgroup
+              ? !itemm.checked
+              : itemm.checked, // Set checked to the opposite of group.checked
+        }));
+
+        // const checkedAllSubGroups = geofence?.subgroups?.every(
+        //   (subgroup: any) => subgroup.checked
+        // );
+
+        var subGroupToUpdate = geofence?.subgroups?.find(
+          (subgroup: any) => subGroup.subgroup == subgroup.subgroup
+        );
+
+        console.log("subGroupToUpdate", subGroupToUpdate);
+
+        var updatedSubGroupGeofences = subGroupToUpdate.items.map(
+          (itemm: any) => ({
+            ...itemm,
+            checked: !subGroup.checked, // Set checked to the opposite of group.checked
+          })
+        );
+        var updatedSubGroups = geofence?.subgroups?.map((subgroup: any) => {
+          if (subgroup.subgroup == subGroup.subgroup) {
+            return {
+              ...subGroupToUpdate,
+              checked: !subGroup.checked,
+              items: updatedSubGroupGeofences,
+            };
           } else {
-            tempList = [...tempList, geofenceItem];
-            // dispatch(setDevicesDetailData([...devicesDetailData, deviceItem]));
+            return {
+              ...subgroup,
+            };
           }
         });
-        dispatch(setGeofencesDetailData([...tempList]));
-        return { ...geofence, checked: !group.checked, items: updatedItems };
+        console.log("geofence.items", geofence.items);
+
+        return {
+          ...geofence,
+          checked: updatedItems.every((item: any) => item.checked),
+          items: updatedItems,
+          subgroups: updatedSubGroups,
+          // subgroups: [
+          //   ...geofence.subgroups,
+          //   {
+          //     ...subGroupToUpdate,
+          //     checked: !subGroup.checked,
+          //     items: updatedSubGroupGeofences,
+          //   },
+          // ],
+        };
       }
       return geofence;
     });
@@ -198,29 +267,8 @@ const GeofencesTreeViewAccordian = ({
         checked: allItemsChecked,
         items: geofenceToUpdate.items.map((item: any) => {
           if (selectedGeofence._id === item._id) {
-            var geofenceExists = geofencesDetailData.find(
-              (geofence: any) => geofence._id === selectedGeofence._id
-            );
-            // console.log("deviceExists", deviceExists);
+            // commenetd code is below the function
 
-            if (geofenceExists) {
-              const tempList = geofencesDetailData.filter(
-                (geofence: any) => geofence._id !== geofenceExists._id
-              );
-              // console.log("devicesDetailData by filter", devicesDetailData);
-
-              dispatch(setGeofencesDetailData([...tempList]));
-            } else {
-              dispatch(
-                setGeofencesDetailData([
-                  ...geofencesDetailData,
-                  selectedGeofence,
-                ])
-              );
-            }
-
-            // if(devicesDetailData.)
-            // Update the checked property if the IDs match
             return {
               ...item,
               checked: !selectedGeofence.checked,
@@ -241,9 +289,145 @@ const GeofencesTreeViewAccordian = ({
     }
   };
 
+  const handleSelecetdSubGroupDevices = (
+    e: any,
+    group: any,
+    subGroup: any,
+    selectedGeofence: any,
+    index: any
+  ) => {
+    // Prevent the click event from propagating to the accordion
+    e.stopPropagation();
+    console.log(e, group, subGroup, selectedGeofence, index);
+
+    var geofenceToUpdate = geofences.find(
+      (geofence: any) => geofence.group === group.group
+    );
+    console.log(geofenceToUpdate);
+
+    if (geofenceToUpdate && geofenceToUpdate.items[index]) {
+      const lastIndex = geofenceToUpdate.items.length;
+      var allItemsChecked = geofenceToUpdate.items
+        .slice(0, index)
+        .concat(geofenceToUpdate.items.slice(index + 1, lastIndex))
+        .every((item: any) => item.checked === true);
+      if (
+        allItemsChecked &&
+        selectedGeofence._id === geofenceToUpdate.items[index]._id &&
+        !geofenceToUpdate.checked
+      ) {
+        allItemsChecked = true;
+      } else {
+        allItemsChecked = false;
+      }
+
+      const updatedGeofence = {
+        ...geofenceToUpdate,
+        checked: allItemsChecked,
+        items: geofenceToUpdate.items.map((item: any) => {
+          if (selectedGeofence._id === item._id) {
+            return {
+              ...item,
+              checked: !selectedGeofence.checked,
+              // isEdit: false,
+            };
+          }
+          return item; // Return the item as it is if IDs don't match
+        }),
+      };
+
+      // --------------------------------------------------------
+
+      var subGroupGeofenceToUpdate = geofenceToUpdate.subgroups.find(
+        (subgroup: any) => subgroup.subgroup === subGroup.subgroup
+      );
+      console.log(subGroupGeofenceToUpdate);
+
+      if (subGroupGeofenceToUpdate && subGroupGeofenceToUpdate.items[index]) {
+        const lastIndex = subGroupGeofenceToUpdate.items.length;
+        var allItemsChecked = subGroupGeofenceToUpdate.items
+          .slice(0, index)
+          .concat(subGroupGeofenceToUpdate.items.slice(index + 1, lastIndex))
+          .every((item: any) => item.checked === true);
+        if (
+          allItemsChecked &&
+          selectedGeofence._id === subGroupGeofenceToUpdate.items[index]._id &&
+          !subGroupGeofenceToUpdate.checked
+        ) {
+          allItemsChecked = true;
+        } else {
+          allItemsChecked = false;
+        }
+
+        const updatedSubgroupedGeofence = {
+          ...subGroupGeofenceToUpdate,
+          checked: allItemsChecked,
+          items: subGroupGeofenceToUpdate.items.map((item: any) => {
+            if (selectedGeofence._id === item._id) {
+              return {
+                ...item,
+                checked: !selectedGeofence.checked,
+                // isEdit: false,
+              };
+            }
+            return item; // Return the item as it is if IDs don't match
+          }),
+        };
+
+        const updatedSubGroupGeofences = geofenceToUpdate.subgroups.map(
+          (subgroup: any) =>
+            subgroup.subgroup === subGroup.subgroup
+              ? updatedSubgroupedGeofence
+              : subgroup
+        );
+        const updatedGeofences = geofences.map((geofence: any) =>
+          geofence.group === group.group
+            ? { ...updatedGeofence, subgroups: updatedSubGroupGeofences }
+            : geofence
+        );
+        // Create a new array of devices with the updated device object at the same index
+        dispatch(setGeofences(updatedGeofences));
+        console.log(updatedGeofences);
+      } else {
+        const updatedGeofences = geofences.map((geofence: any) =>
+          geofence.group === group.group ? updatedGeofence : geofence
+        );
+        // Create a new array of devices with the updated device object at the same index
+        dispatch(setGeofences(updatedGeofences));
+        console.log(updatedGeofences);
+      }
+    }
+  };
+
+  // var geofenceExists = geofencesDetailData.find(
+  //   (geofence: any) => geofence._id === selectedGeofence._id
+  // );
+  // console.log("deviceExists", deviceExists);
+
+  // if (geofenceExists) {
+  //   const tempList = geofencesDetailData.filter(
+  //     (geofence: any) => geofence._id !== geofenceExists._id
+  //   );
+  //   // console.log("devicesDetailData by filter", devicesDetailData);
+
+  //   dispatch(setGeofencesDetailData([...tempList]));
+  // } else {
+  //   dispatch(
+  //     setGeofencesDetailData([
+  //       ...geofencesDetailData,
+  //       selectedGeofence,
+  //     ])
+  //   );
+  // }
+
   const handleSelectAll = () => {
+    var updatedSubGroups: any = [];
+    var subGroups: any = [];
+    var finalGeofences: any = [];
     const updatedGeofences = geofences.map((geofence: any) => {
-      const updatedItems = geofence.items.map((item: any) => ({
+      updatedSubGroups = [];
+      subGroups = [];
+      var updatedItems = geofence.items.map((item: any) => ({
         ...item,
         checked: true,
         edited: false,
@@ -261,34 +445,138 @@ const GeofencesTreeViewAccordian = ({
           );
         }
       });
+      // console.log(updatedGeofences);
 
-      return { ...geofence, checked: true, items: updatedItems };
+      var updatedSubGroupItems;
+
+      geofence.subgroups.map((subGroup: any) => {
+        console.log("subGroup", subGroup);
+
+        updatedSubGroupItems = subGroup.items.map((item: any) => ({
+          ...item,
+          checked: true,
+        }));
+        // console.log("updatedSubGroupItems",updatedSubGroupItems);
+
+        var subGroup = {
+          ...subGroup,
+          checked: true,
+          items: updatedSubGroupItems,
+        };
+        updatedSubGroups.push(subGroup);
+        subGroups.push(subGroup);
+
+        // if (geofence.subgroups.length > 0) {
+        //   return {
+        //     ...geofence,
+        //     checked: true,
+        //     items: updatedItems,
+        //     subgroups: subGroups,
+        //   };
+        // } else {
+        //   return {
+        //     ...geofence,
+        //     checked: true,
+        //     items: updatedItems,
+        //   };
+        // }
+      });
+      console.log("subGroups", subGroups);
+      if (geofence.subgroups.length > 0) {
+        finalGeofences.push({
+          ...geofence,
+          checked: true,
+          items: updatedItems,
+          subgroups: subGroups,
+        });
+      } else {
+        finalGeofences.push({
+          ...geofence,
+          checked: true,
+          items: updatedItems,
+        });
+      }
     });
+
     console.log(updatedGeofences);
-
-    // Dispatch the action to set all geofences as checked
-    dispatch(setGeofences(updatedGeofences));
-
-    // Log the updated geofences detail data
-    console.log("Updated Geofences Detail Data:", updatedGeofences);
+    console.log(finalGeofences);
+    dispatch(setGeofences(finalGeofences));
   };
 
   const handleDeselectAll = () => {
+    var updatedSubGroups: any = [];
+    var subGroups: any = [];
+    var finalGeofences: any = [];
     const updatedGeofences = geofences.map((geofence: any) => {
-      const updatedItems = geofence.items.map((item: any) => ({
+      updatedSubGroups = [];
+      subGroups = [];
+      var updatedItems = geofence.items.map((item: any) => ({
         ...item,
         checked: false,
         edited: false,
       }));
-      return { ...geofence, checked: false, items: updatedItems };
-    });
 
-    // Dispatch the action to clear geofences detail data
+      // Update geofences detail data for each item in the geofence group
+      updatedItems.forEach((selectedGeofence: any) => {
+        const geofenceExists = geofencesDetailData.find(
+          (geofence: any) => geofence._id === selectedGeofence._id
+        );
+      });
+
+      var updatedSubGroupItems;
+
+      geofence.subgroups.map((subGroup: any) => {
+        console.log("subGroup", subGroup);
+
+        updatedSubGroupItems = subGroup.items.map((item: any) => ({
+          ...item,
+          checked: false,
+        }));
+        // console.log("updatedSubGroupItems",updatedSubGroupItems);
+
+        var subGroup = {
+          ...subGroup,
+          checked: false,
+          items: updatedSubGroupItems,
+        };
+        updatedSubGroups.push(subGroup);
+        subGroups.push(subGroup);
+
+        // if (geofence.subgroups.length > 0) {
+        //   return {
+        //     ...geofence,
+        //     checked: false,
+        //     items: updatedItems,
+        //     subgroups: subGroups,
+        //   };
+        // } else {
+        //   return {
+        //     ...geofence,
+        //     checked: false,
+        //     items: updatedItems,
+        //   };
+        // }
+      });
+      console.log("subGroups", subGroups);
+      if (geofence.subgroups.length > 0) {
+        finalGeofences.push({
+          ...geofence,
+          checked: false,
+          items: updatedItems,
+          subgroups: subGroups,
+        });
+      } else {
+        finalGeofences.push({
+          ...geofence,
+          checked: false,
+          items: updatedItems,
+        });
+      }
+    });
     dispatch(setGeofencesDetailData([]));
     console.log(updatedGeofences);
-
-    // Dispatch the action to set all geofences as unchecked
-    dispatch(setGeofences(updatedGeofences));
+    console.log(finalGeofences);
+    dispatch(setGeofences(finalGeofences));
   };
 
   const handleEditGeofence = (
@@ -333,26 +621,7 @@ const GeofencesTreeViewAccordian = ({
             var geofenceExists = geofencesDetailData.find(
               (geofence: any) => geofence._id === selectedGeofence._id
             );
-            // console.log("deviceExists", deviceExists);
 
-            if (geofenceExists) {
-              const tempList = geofencesDetailData.filter(
-                (geofence: any) => geofence._id !== geofenceExists._id
-              );
-              // console.log("devicesDetailData by filter", devicesDetailData);
-
-              dispatch(setGeofencesDetailData([...tempList]));
-            } else {
-              dispatch(
-                setGeofencesDetailData([
-                  ...geofencesDetailData,
-                  selectedGeofence,
-                ])
-              );
-            }
-
-            // if(devicesDetailData.)
-            // Update the checked property if the IDs match
             if (selectedGeofence.edited) {
               dispatch(setType(null));
             }
@@ -372,7 +641,7 @@ const GeofencesTreeViewAccordian = ({
             };
           }
 
-          return item; // Return the item as it is if IDs don't match
+          // return item; // Return the item as it is if IDs don't match
         }),
       };
 
@@ -380,16 +649,16 @@ const GeofencesTreeViewAccordian = ({
         geofence.group === group.group
           ? updatedGeofence
           : {
-            ...geofence,
-            checked: false,
-            items: geofence.items.map((item: any) => {
-              return {
-                ...item,
-                checked: false,
-                isEdit: false,
-              };
-            }),
-          }
+              ...geofence,
+              checked: false,
+              items: geofence.items.map((item: any) => {
+                return {
+                  ...item,
+                  checked: false,
+                  isEdit: false,
+                };
+              }),
+            }
       );
       // Create a new array of devices with the updated device object at the same index
       dispatch(setGeofences(updatedGeofences));
@@ -443,38 +712,40 @@ const GeofencesTreeViewAccordian = ({
     if (formData.title !== "" && type !== "") {
       const url = isEditGeofence
         ? update(
-          {
-            ...formData,
-            geofenceGroup: group == "" ? null : group,
-            type: geofenceType,
-            geofencePositions:
-              geofenceType == "circle"
-                ? circle
-                : geofenceType == "rectangle"
+            {
+              ...formData,
+              geofenceGroup: group == "" ? null : group,
+              type: geofenceType,
+              geofenceSubGroup: subGroup == "" ? null : subGroup,
+              geofencePositions:
+                geofenceType == "circle"
+                  ? circle
+                  : geofenceType == "rectangle"
                   ? rectangle
                   : geofenceType == "polygon" && { bounds: polygon },
-          },
-          {
-            url: `${UPDATE_GEOFENCE}/${editedItem._id}`,
-          }
-        )
+            },
+            {
+              url: `${UPDATE_GEOFENCE}/${editedItem._id}`,
+            }
+          )
         : create(
-          {
-            ...formData,
-            geofenceGroup: group == "" ? null : group,
-            type: geofenceType,
-            isActive: true,
-            geofencePositions:
-              geofenceType == "circle"
-                ? circle
-                : geofenceType == "rectangle"
+            {
+              ...formData,
+              geofenceGroup: group == "" ? null : group,
+              type: geofenceType,
+              isActive: true,
+              geofenceSubGroup: subGroup == "" ? null : subGroup,
+              geofencePositions:
+                geofenceType == "circle"
+                  ? circle
+                  : geofenceType == "rectangle"
                   ? rectangle
                   : geofenceType == "polygon" && { bounds: polygon },
-          },
-          {
-            url: CREATE_GEOFENCE,
-          }
-        );
+            },
+            {
+              url: CREATE_GEOFENCE,
+            }
+          );
       try {
         await url.then((data: any) => {
           if (data !== undefined) {
@@ -505,81 +776,148 @@ const GeofencesTreeViewAccordian = ({
               setLoading(false);
 
               // dispatch(setCountriesStart());
-              getAll({ url: GET_ALL_GEOFENCES }).then(
-                (data: any) => {
-                  // console.log("api call --- >", data);
-                  if (data == undefined) {
-                    Swal.fire({
-                      text: "Failed to fetch due to connection refused",
-                      icon: "error",
-                      timer: 2000,
-                      showConfirmButton: false,
+              getAll({ url: GET_ALL_GEOFENCES }).then((data: any) => {
+                // console.log("api call --- >", data);
+                if (data == undefined) {
+                  Swal.fire({
+                    text: "Failed to fetch due to connection refused",
+                    icon: "error",
+                    timer: 2000,
+                    showConfirmButton: false,
+                  });
+
+                  dispatch(setGeofences([]));
+                  setSubGroupList([]);
+                  setSubGroup("");
+                  dispatch(setType(null));
+                  setIsNewGeofence(false);
+                  setIsEditGeofence(false);
+                  setFormData({
+                    title: "",
+                  });
+                  return;
+                }
+                // dispatch(setCountriesEnd());
+                if (data !== undefined) {
+                  dispatch(setType(null));
+                  setSubGroupList([]);
+                  setSubGroup("");
+                  setIsNewGeofence(false);
+                  setIsEditGeofence(false);
+                  setFormData({
+                    title: "",
+                  });
+                  if (data.success) {
+                    const groups: any[] = [];
+                    const groupGeofencesObj: any = {};
+
+                    let subGroups: any = [];
+                    let subGroupsGeofencesObj: any = {};
+                    let initialSubGroupsGeofences: any = [];
+
+                    data.data.forEach((item: any) => {
+                      const group = item.geofenceGroup
+                        ? item.geofenceGroup.title
+                        : "Ungrouped";
+                      if (!groups.includes(group)) {
+                        groups.push(group);
+                      }
+                      if (!groupGeofencesObj[group]) {
+                        groupGeofencesObj[group] = [];
+                      }
+                      groupGeofencesObj[group].push({
+                        ...item,
+                        checked: false,
+                      });
                     });
 
-                    dispatch(setGeofences([]));
-                    dispatch(setType(null));
-                    setIsNewGeofence(false);
-                    setIsEditGeofence(false);
-                    setFormData({
-                      title: "",
-                    });
-                    return;
-                  }
-                  // dispatch(setCountriesEnd());
-                  if (data !== undefined) {
-                    if (data.success) {
-                      // console.log("api call --- >", data);
-                      // console.log("length --- >", data.data.length);
-                      for (let i = 0; i < data.data.length; i++) {
+                    const initialGroupGeofences = Object.keys(
+                      groupGeofencesObj
+                    ).map((group) => ({
+                      group,
+                      checked: false,
+                      items: groupGeofencesObj[group],
+                      subgroups: [],
+                    }));
+
+                    for (let i = 0; i < initialGroupGeofences.length; i++) {
+                      // console.log("item.group -- >", initialGroupGeofences[i].group);
+                      for (
+                        let j = 0;
+                        j < initialGroupGeofences[i].items.length;
+                        j++
+                      ) {
                         var element = "";
-                        if (data.data[i].geofenceGroup == null) {
-                          element = "Ungrouped";
-                        } else {
-                          element = data.data[i].geofenceGroup.title;
+                        if (
+                          initialGroupGeofences[i].items[j].geofenceSubGroup !==
+                          null
+                        ) {
+                          element =
+                            initialGroupGeofences[i].items[j].geofenceSubGroup
+                              .title;
                         }
                         // const element = data.data[i].geofenceGroup.title;
-                        if (!groups.includes(element)) {
-                          groups.push(element);
+                        if (!subGroups.includes(element)) {
+                          if (element !== "") {
+                            subGroups.push(element);
+                          }
                         }
                       }
-                      console.log(groups);
+                      console.log("subGroups", subGroups);
 
-                      groups.forEach((geofenceGroup: any) => {
-                        groupDevicesObj[geofenceGroup] = data.data
-                          .filter((obj: any) => {
-                            if (
-                              !obj.geofenceGroup ||
-                              !obj.geofenceGroup.title
-                            ) {
-                              return geofenceGroup === "Ungrouped";
-                            } else {
-                              return obj.geofenceGroup.title === geofenceGroup;
-                            }
-                          })
-                          .map((item: any) => ({
-                            ...item,
-                            checked: false,
-                            edited: false,
-                          }));
+                      subGroups.forEach((geofenceSubGroup: any) => {
+                        subGroupsGeofencesObj[geofenceSubGroup] =
+                          initialGroupGeofences[i].items
+                            .filter((obj: any) => {
+                              if (
+                                !obj.geofenceSubGroup ||
+                                !obj.geofenceSubGroup.title
+                              ) {
+                                return;
+                              } else {
+                                return (
+                                  obj.geofenceSubGroup.title ===
+                                  geofenceSubGroup
+                                );
+                              }
+                            })
+                            .map((item: any) => ({
+                              ...item,
+                              checked: false,
+                              edited: false,
+                            }));
                       });
+
+                      // console.log(groups);
+                      console.log(
+                        "subGroupsGeofencesObj",
+                        subGroupsGeofencesObj
+                      );
 
                       // Convert groupDevicesObj to initialGroupDevices array format
-                      Object.keys(groupDevicesObj).forEach((group: any) => {
-                        initialGroupDevices.push({
-                          group: group,
-                          checked: false,
-                          items: groupDevicesObj[group],
-                        });
-                      });
-                      console.log("initialGroupDevices", initialGroupDevices);
-                      dispatch(setType(null));
+                      Object.keys(subGroupsGeofencesObj).forEach(
+                        (group: any) => {
+                          initialSubGroupsGeofences.push({
+                            subgroup: group,
+                            checked: false,
+                            items: subGroupsGeofencesObj[group],
+                          });
+                        }
+                      );
 
-                      dispatch(setGeofences(initialGroupDevices));
-                      setLoading(false);
+                      initialGroupGeofences[i] = {
+                        ...initialGroupGeofences[i],
+                        subgroups: initialSubGroupsGeofences,
+                      };
+
+                      subGroups = [];
+                      subGroupsGeofencesObj = {};
+                      initialSubGroupsGeofences = [];
                     }
+                    dispatch(setGeofences(initialGroupGeofences));
                   }
                 }
-              );
+              });
             }
           }
         });
@@ -624,281 +962,428 @@ const GeofencesTreeViewAccordian = ({
     }
   };
 
-  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+  const inputareaRef = useRef<HTMLInputElement | null>(null);
 
   const handleGoToReply = () => {
-    if (!textareaRef.current) return; // Ensure textareaRef.current exists
+    if (!inputareaRef.current) return; // Ensure textareaRef.current exists
     // Scroll to the textarea
-    (textareaRef.current as HTMLTextAreaElement).scrollIntoView({
+    (inputareaRef.current as HTMLInputElement).scrollIntoView({
       behavior: "smooth",
       block: "center", // Scroll to the center of the viewport
       inline: "nearest", // Scroll to the nearest edge of the viewport
     });
     // Focus on the textarea
-    (textareaRef.current as HTMLTextAreaElement).focus();
+    (inputareaRef.current as HTMLInputElement).focus();
   };
 
+  const sortedGroupList = [
+    { label: "None", value: "none" },
+    ...groupList.sort((a: any, b: any) => a.label.localeCompare(b.label)), // Sorting groups alphabetically
+  ];
   // Recalculate when itemGroups chan
+
+  const [innerOpen, setInnerOpen] = useState(""); // State for inner accordion
+
+  const toggleInner = (id: any) => {
+    setInnerOpen(innerOpen === id ? null : id);
+  };
+
+  useEffect(() => {
+    if (subGroup !== "") {
+      getAll({
+        url: `${GET_ALL_SUBGROUPS_BY_GROUP_ID}/${group}`,
+      })
+        .then((data: any) => {
+          if (data.success) {
+            setSubGroupList(() =>
+              data.data.map((item: any) => {
+                return { label: item?.title, value: item?._id };
+              })
+            );
+          } else {
+            setSubGroupList([]);
+          }
+        })
+        .catch((error) => {
+          setSubGroupList([]);
+        });
+    }
+  }, [subGroup]);
 
   return (
     //@ts-ignore
     <>
-      {/* ------------------------------------- */}
-
-      {/* {!isEditGeofence && !isNewGeofence && !isNewGroup && (
-        <div style={{ display: "flex", paddingTop: "20px" }}>
-          <button
-            onClick={(e: any) => {
-              e.preventDefault(); // Add this line
-              e.stopPropagation();
-              setIsNewGroup(true);
-            }}
-            title="Add Group"
-            style={{
-              width: "30%",
-              // padding: "7px 10px",
-              // boxShadow: "0px 5px 18px lightgray",
-              borderRadius: "8px",
-              // backgroundColor: "green",
-              color: "white",
-              margin: "8px",
-              marginBottom: "10px",
-              marginTop: "0px",
-              border: "0px",
-              outline: "none",
-              textAlign: "center",
-            }}
-          >
-            <img src={GroupSvg} alt="" height={18} width={25} />
-          </button>
-          <button
-            onClick={(e: any) => {
-              e.preventDefault(); // Add this line
-              e.stopPropagation();
-              setIsNewGroup(true);
-            }}
-            title="Add Sub Group"
-            style={{
-              width: "30%",
-              // padding: "7px 10px",
-              // boxShadow: "0px 5px 18px lightgray",
-              borderRadius: "8px",
-              // backgroundColor: "green",
-              color: "white",
-              margin: "8px",
-              marginBottom: "10px",
-              marginTop: "0px",
-              border: "0px",
-              outline: "none",
-              textAlign: "center",
-            }}
-          >
-            <img src={SubGroupSvg} alt="" height={18} width={25} />
-          </button>
-          <button
-            onClick={(e: any) => {
-              e.preventDefault(); // Add this line
-              e.stopPropagation();
-              dispatch(setType(""));
-              setIsNewGeofence(true);
-              setGeofenceType("Select Type");
-              setGroup("Select Group");
-              const updateFormData = {
-                ...formData,
-                title: "",
-              };
-              setFormData(updateFormData);
-
-              // dispatch(setType(bodyItem.type));
-            }}
-            title="Add Geofence"
-            style={{
-              width: "30%",
-              // padding: "5px 0px",
-              // boxShadow: "0px 5px 18px lightgray",
-              borderRadius: "8px",
-              // backgroundColor: "green",
-              color: "white",
-              margin: "8px",
-              marginBottom: "10px",
-              marginTop: "0px",
-              border: "0px",
-              outline: "none",
-              textAlign: "center",
-            }}
-          >
-            <img src={GeofenceSvg} alt="" height={16} width={22} />
-          </button>
-        </div>
-      )} */}
-
       {(isNewGeofence || isEditGeofence) && (
-        <form>
-          <div
-            style={{
-              // paddingBottom: "-10px",
-              margin: "0px 10px",
-              marginTop: "10px",
-
-            }}
-          >
-            <P>Title</P>
-            <textarea name="" id=""
-              ref={textareaRef}
-              style={{ display: "none" }}
-            ></textarea>
-            <input
-
-              className="form-control"
-              type="text"
-              placeholder="Enter Title"
-              name="title"
-              value={formData.title}
-              onChange={onChangeHandler}
-            // {...register("name", { required: true })}
-            />
-            <span style={{ color: "red" }}>
-              {/* {errors.name && "Country name is required"} */}
-            </span>
-          </div>
-          <div
-            style={{
-              // marginBottom: "10px",
-              margin: "0px 10px",
-            }}
-          >
-            <P>Type</P>
-            <Select
-              showSearch
-              style={{ width: "100%", height: 36, marginBottom: "15px" }}
-              value={
-                type == null && geofenceType == ""
-                  ? "Select Type"
-                  : geofenceType
-              }
-              placeholder="Select type"
-              optionFilterProp="children"
-              filterOption={(input: any, option: any) =>
-                (option?.label ?? "").includes(input)
-              }
-              filterSort={(optionA: any, optionB: any) =>
-                (optionA?.label ?? "")
-                  .toLowerCase()
-                  .localeCompare((optionB?.label ?? "").toLowerCase())
-              }
-              onChange={(e) => {
-                // console.log(e);
-                dispatch(setType(e));
-                setGeofenceType(e);
-                // dispatch(setCountryId(e));
-              }}
-              options={typeList}
-            />
-          </div>
-          <div
-            style={{
-              // marginTop: "15px",
-              margin: "0px 10px",
-            }}
-          >
-            <P>Group</P>
-            <Select
-              showSearch
-              style={{ width: "100%", height: 36, marginBottom: "15px" }}
-              placeholder="Select group"
-              optionFilterProp="children"
-              filterOption={(input: any, option: any) =>
-                (option?.label ?? "").includes(input)
-              }
-              filterSort={(optionA: any, optionB: any) =>
-                (optionA?.label ?? "")
-                  .toLowerCase()
-                  .localeCompare((optionB?.label ?? "").toLowerCase())
-              }
-              onChange={(e) => {
-                // console.log(e);
-                setGroup(e);
-                // dispatch(setCountryId(e));
-              }}
-              options={groupList}
-              value={group == "" ? "" : group}
-            />
-          </div>
-
-          <div style={{ display: "flex" }}>
-            <button
-              onClick={(e: any) => {
-                e.preventDefault(); // Add this line
-                e.stopPropagation();
-                setIsNewGeofence(false);
-                setIsEditGeofence(false);
-                dispatch(setType(null));
-                handleDeselectAll();
-                dispatch(setEditedItem(""));
-              }}
+        <div>
+          <textarea name="" id="" style={{ display: "none" }}></textarea>
+          <form>
+            <div
               style={{
-                width: "50%",
-                padding: "7px 10px",
-                borderRadius: "8px",
-                backgroundColor: "green",
-                color: "white",
-                margin: "8px",
-                border: "0px",
-                outline: "none",
-                textAlign: "center",
+                // paddingBottom: "-10px",
+                margin: "0px 10px",
+                marginTop: "10px",
               }}
             >
-              Cancel
-            </button>
-            <button
-              onClick={(e: any) => {
-                e.preventDefault(); // Add this line
-                e.stopPropagation();
-                createGeofence();
-              }}
+              <P>Title</P>
+
+              <input
+                className="form-control"
+                ref={inputareaRef}
+                type="text"
+                placeholder="Enter Title"
+                name="title"
+                value={formData.title}
+                onChange={onChangeHandler}
+                // {...register("name", { required: true })}
+              />
+              <span style={{ color: "red" }}>
+                {/* {errors.name && "Country name is required"} */}
+              </span>
+            </div>
+            <div
               style={{
-                width: "50%",
-                padding: "7px 10px",
-                borderRadius: "8px",
-                backgroundColor: "green",
-                color: "white",
-                margin: "8px",
-                border: "0px",
-                outline: "none",
-                textAlign: "center",
+                // marginBottom: "10px",
+                margin: "0px 10px",
               }}
             >
-              {isEditGeofence ? " Update" : "Add"}
-            </button>
-          </div>
-          <div
-            style={{
-              padding: "0px 10px",
-            }}
-          >
-            <hr />
-          </div>
-        </form>
+              <P>Type</P>
+              <Select
+                showSearch
+                style={{ width: "100%", height: 36, marginBottom: "15px" }}
+                value={
+                  type == null && geofenceType == ""
+                    ? "Select Type"
+                    : geofenceType
+                }
+                placeholder="Select type"
+                optionFilterProp="children"
+                filterOption={(input: any, option: any) =>
+                  (option?.label ?? "").includes(input)
+                }
+                filterSort={(optionA: any, optionB: any) =>
+                  (optionA?.label ?? "")
+                    .toLowerCase()
+                    .localeCompare((optionB?.label ?? "").toLowerCase())
+                }
+                onChange={(e) => {
+                  // console.log(e);
+                  dispatch(setType(e));
+                  setGeofenceType(e);
+                  // dispatch(setCountryId(e));
+                }}
+                options={typeList}
+              />
+            </div>
+
+            <div style={{ margin: "0px 10px" }}>
+              <p>Group</p>
+              <Select
+                showSearch
+                style={{ width: "100%", height: 36, marginBottom: "15px" }}
+                placeholder="Select group"
+                optionFilterProp="children"
+                filterOption={(input, option) =>
+                  (option?.label ?? "")
+                    .toLowerCase()
+                    .includes(input.toLowerCase())
+                }
+                onChange={async (value) => {
+                  setGroup(value === "none" ? null : value);
+                  const subGroupData: any = await getAll({
+                    url: `${GET_ALL_SUBGROUPS_BY_GROUP_ID}/${value}`,
+                  });
+                  if (subGroupData.success) {
+                    setSubGroupList(() =>
+                      subGroupData.data.map((item: any) => {
+                        return { label: item?.title, value: item?._id };
+                      })
+                    );
+                  } else {
+                    setSubGroupList([]);
+                  }
+                }}
+                options={sortedGroupList}
+                value={group || undefined}
+              />
+            </div>
+            {subGroupList.length > 0 && (
+              <div style={{ margin: "0px 10px" }}>
+                <P>Sub Group</P>
+                <Select
+                  showSearch
+                  style={{ width: "100%", height: 33, marginBottom: "15px" }}
+                  placeholder="Select group"
+                  optionFilterProp="children"
+                  filterOption={(input, option) =>
+                    (option?.label ?? "")
+                      .toLowerCase()
+                      .includes(input.toLowerCase())
+                  }
+                  filterSort={(optionA: any, optionB: any) =>
+                    (optionA?.label ?? "")
+                      .toLowerCase()
+                      .localeCompare((optionB?.label ?? "").toLowerCase())
+                  }
+                  onChange={(e) => {
+                    setSubGroup(e);
+                  }}
+                  options={subGroupList}
+                  value={subGroup == "" ? null : subGroup}
+                />
+              </div>
+            )}
+
+            <div style={{ display: "flex" }}>
+              <button
+                onClick={(e: any) => {
+                  e.preventDefault(); // Add this line
+                  e.stopPropagation();
+                  setIsNewGeofence(false);
+                  setIsEditGeofence(false);
+                  dispatch(setType(null));
+                  setSubGroupList([]);
+                  setGroup("");
+                  setSubGroup("");
+                  handleDeselectAll();
+                  dispatch(setEditedItem(""));
+                }}
+                style={{
+                  width: "50%",
+                  padding: "7px 10px",
+                  borderRadius: "8px",
+                  backgroundColor: "green",
+                  color: "white",
+                  margin: "8px",
+                  border: "0px",
+                  outline: "none",
+                  textAlign: "center",
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={(e: any) => {
+                  e.preventDefault(); // Add this line
+                  e.stopPropagation();
+                  createGeofence();
+                }}
+                style={{
+                  width: "50%",
+                  padding: "7px 10px",
+                  borderRadius: "8px",
+                  backgroundColor: "green",
+                  color: "white",
+                  margin: "8px",
+                  border: "0px",
+                  outline: "none",
+                  textAlign: "center",
+                }}
+              >
+                {isEditGeofence ? " Update" : "Add"}
+              </button>
+            </div>
+            <div
+              style={{
+                padding: "0px 10px",
+              }}
+            >
+              <hr />
+            </div>
+          </form>
+        </div>
       )}
 
-      {/* {isNewGroup && (
-        <AddGroupModal
-          isVisible={isNewGroup}
-          setIsVisible={setIsNewGroup}
-          geofences={geofences}
+      {/* ---------------------------------------- */}
+      <div
+        className="d-flex"
+        style={{
+          justifyContent: "end",
+          marginRight: "10px",
+          marginTop: "10px",
+        }}
+      >
+        <div
+          className={`text-end flex-shrink-0 icon-state 
+                            }`}
+        >
+          <Label className="switch mb-0">
+            <Input
+              type="checkbox"
+              // defaultChecked={row.isActive}
+              // value={row.isActive}
+              onChange={async (e: any) => {
+                //  --------------------------
+                // const changeStatus = {
+                //   isActive: !row.isActive,
+                // };
 
-          // setValue={setCityName}
-        />
-      )} */}
-      {/* {isNewSubGroup && (
-        <AddSubGroupModal
-          isVisible={isNewSubGroup}
-          setIsVisible={setIsNewSubGroup}
-          geofences={geofences}
+                try {
+                  await create(
+                    {},
+                    {
+                      url: `${IMPORT_GEOFENCE}`,
+                    }
+                  ).then((data: any) => {
+                    if (data.success) {
+                      // // console.log(data);
+                      getAll({ url: GET_ALL_GEOFENCES }).then((data: any) => {
+                        // console.log("api call --- >", data);
+                        if (data == undefined) {
+                          Swal.fire({
+                            text: "Failed to fetch due to connection refused",
+                            icon: "error",
+                            timer: 2000,
+                            showConfirmButton: false,
+                          });
+                        }
+                        // dispatch(setCountriesEnd());
+                        if (data !== undefined) {
+                          if (data.success) {
+                            const groups: any[] = [];
+                            const groupGeofencesObj: any = {};
 
-          // setValue={setCityName}
-        />
-      )} */}
+                            let subGroups: any = [];
+                            let subGroupsGeofencesObj: any = {};
+                            let initialSubGroupsGeofences: any = [];
+
+                            
+                            data.data.forEach((item: any) => {
+                              const group = item.geofenceGroup
+                                ? item.geofenceGroup.title
+                                : "Ungrouped";
+                              if (!groups.includes(group)) {
+                                groups.push(group);
+                              }
+                              if (!groupGeofencesObj[group]) {
+                                groupGeofencesObj[group] = [];
+                              }
+                              groupGeofencesObj[group].push({
+                                ...item,
+                                checked: false,
+                              });
+                            });
+
+                            const initialGroupGeofences = Object.keys(
+                              groupGeofencesObj
+                            ).map((group) => ({
+                              group,
+                              checked: false,
+                              items: groupGeofencesObj[group],
+                              subgroups: [],
+                            }));
+
+                            for (
+                              let i = 0;
+                              i < initialGroupGeofences.length;
+                              i++
+                            ) {
+                              // console.log("item.group -- >", initialGroupGeofences[i].group);
+                              for (
+                                let j = 0;
+                                j < initialGroupGeofences[i].items.length;
+                                j++
+                              ) {
+                                var element = "";
+                                if (
+                                  initialGroupGeofences[i].items[j]
+                                    .geofenceSubGroup !== null
+                                ) {
+                                  element =
+                                    initialGroupGeofences[i].items[j]
+                                      .geofenceSubGroup.title;
+                                }
+                                // const element = data.data[i].geofenceGroup.title;
+                                if (!subGroups.includes(element)) {
+                                  if (element !== "") {
+                                    subGroups.push(element);
+                                  }
+                                }
+                              }
+                              console.log("subGroups", subGroups);
+
+                              subGroups.forEach((geofenceSubGroup: any) => {
+                                subGroupsGeofencesObj[geofenceSubGroup] =
+                                  initialGroupGeofences[i].items
+                                    .filter((obj: any) => {
+                                      if (
+                                        !obj.geofenceSubGroup ||
+                                        !obj.geofenceSubGroup.title
+                                      ) {
+                                        return;
+                                      } else {
+                                        return (
+                                          obj.geofenceSubGroup.title ===
+                                          geofenceSubGroup
+                                        );
+                                      }
+                                    })
+                                    .map((item: any) => ({
+                                      ...item,
+                                      checked: false,
+                                      edited: false,
+                                    }));
+                              });
+
+                              // console.log(groups);
+                              console.log(
+                                "subGroupsGeofencesObj",
+                                subGroupsGeofencesObj
+                              );
+
+                              // Convert groupDevicesObj to initialGroupDevices array format
+                              Object.keys(subGroupsGeofencesObj).forEach(
+                                (group: any) => {
+                                  initialSubGroupsGeofences.push({
+                                    subgroup: group,
+                                    checked: false,
+                                    items: subGroupsGeofencesObj[group],
+                                  });
+                                }
+                              );
+
+                              initialGroupGeofences[i] = {
+                                ...initialGroupGeofences[i],
+                                subgroups: initialSubGroupsGeofences,
+                              };
+
+                              subGroups = [];
+                              subGroupsGeofencesObj = {};
+                              initialSubGroupsGeofences = [];
+                            }
+                            dispatch(setGeofences(initialGroupGeofences));
+                          }
+                        }
+                      });
+                    } else {
+                      Swal.fire({
+                        text: `${data.message}`,
+                        icon: "error",
+                        timer: 2000,
+                        showConfirmButton: false,
+                      });
+                    }
+                  });
+                  // Handle successful post creation (e.g., show a success message, redirect, etc.)
+                } catch (error: any) {
+                  Swal.fire({
+                    text: `${error.message}`,
+                    icon: "error",
+                    timer: 2000,
+                    showConfirmButton: false,
+                  });
+                }
+              }}
+            />
+            <span
+              // className={`switch-state ${
+              //   row.isActive ? "bg-primary" : "bg-secondary"
+              // }`}
+              className="switch-state bg-primary"
+              // style={{ backgroundColor: row.isActive ? "green" : "red" }}
+            />
+          </Label>
+        </div>
+      </div>
 
       <input
         className=""
@@ -918,52 +1403,7 @@ const GeofencesTreeViewAccordian = ({
           outline: "none",
         }}
       />
-      {/* <button
-        onClick={(e: any) => {
-          e.preventDefault(); // Add this line
-          e.stopPropagation();
-          handleSelectAll();
-        }}
-        style={{
-          width: "45%",
-          padding: "7px 10px",
-          // boxShadow: "0px 5px 18px lightgray",
-          borderRadius: "8px",
-          backgroundColor: "#1f2f3e",
-          color: "white",
-          margin: "8px",
-          marginBottom: "5px",
-          marginTop: "0px",
-          border: "0px",
-          outline: "none",
-          textAlign: "center",
-        }}
-      >
-        Select All
-      </button>
-      <button
-        onClick={(e: any) => {
-          e.preventDefault(); // Add this line
-          e.stopPropagation();
-          handleDeselectAll();
-        }}
-        style={{
-          width: "45%",
-          padding: "7px 10px",
-          // boxShadow: "0px 5px 18px lightgray",
-          borderRadius: "8px",
-          backgroundColor: "#1f2f3e",
-          color: "white",
-          margin: "8px",
-          marginBottom: "5px",
-          marginTop: "0px",
-          border: "0px",
-          outline: "none",
-          textAlign: "center",
-        }}
-      >
-        Deselect All
-      </button> */}
+
       <div
       // style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}
       >
@@ -1039,7 +1479,7 @@ const GeofencesTreeViewAccordian = ({
                   {item.items.length > 0 && (
                     <div>
                       <AccordionHeader
-                        targetId={`${searchValue.length >= 1 ? "all" : index}`}
+                        targetId={`${searchValue?.length >= 1 ? "all" : index}`}
                         className="custom-accordion-header"
                       >
                         <input
@@ -1074,8 +1514,356 @@ const GeofencesTreeViewAccordian = ({
                   )}
                   {item.items.length > 0 && (
                     <AccordionBody
-                      accordionId={`${searchValue.length >= 1 ? "all" : index}`}
+                      accordionId={`${
+                        searchValue && searchValue?.length >= 1 ? "all" : index
+                      }`}
                     >
+                      {item.subgroups.length > 0 &&
+                        item.subgroups
+                          ?.filter((item: any) =>
+                            item.items.some((bodyItem: any) =>
+                              bodyItem.title
+                                .toLowerCase()
+                                .includes(searchValue.toLowerCase())
+                            )
+                          )
+                          .map((itemm: any, indexx: any) => {
+                            const gradientId = `gradient-${indexx}`; // Generate a unique gradient ID for each item
+                            return (
+                              <div
+                                style={{
+                                  margin: "0px -10px 0px -10px",
+                                }}
+                              >
+                                <Accordion
+                                  open={innerOpen}
+                                  toggle={toggleInner}
+                                  className="dark-accordion"
+                                >
+                                  <AccordionItem key={indexx}>
+                                    {itemm.items.length > 0 && (
+                                      <AccordionHeader
+                                        targetId={`${
+                                          searchValue?.length >= 1
+                                            ? "all"
+                                            : indexx
+                                        }`}
+                                        className="custom-accordion-header"
+                                        onClick={() => toggleInner(`${indexx}`)}
+                                      >
+                                        <input
+                                          type="checkbox"
+                                          style={{
+                                            marginRight: "10px",
+                                            height: "17px",
+                                            width: "17px",
+                                          }}
+                                          checked={itemm.checked}
+                                          onClick={(e) =>
+                                            handleSubGroupCheckboxClick(
+                                              e,
+                                              item,
+                                              itemm
+                                            )
+                                          }
+                                        />
+                                        <span
+                                          style={{
+                                            fontWeight: "bold",
+                                            fontSize: "13px",
+                                          }}
+                                        >
+                                          {itemm.subgroup} &nbsp; (
+                                          {
+                                            itemm.items.filter(
+                                              (bodyItem: any) =>
+                                                bodyItem.title
+                                                  .toLowerCase()
+                                                  .includes(
+                                                    searchValue.toLowerCase()
+                                                  )
+                                            ).length
+                                          }
+                                          )
+                                        </span>
+                                        <FeatherIcons
+                                          iconName={
+                                            innerOpen === `${indexx}`
+                                              ? "ChevronUp"
+                                              : "ChevronDown"
+                                          }
+                                          className="svg-color"
+                                        />
+                                      </AccordionHeader>
+                                    )}
+                                    <div>
+                                      <AccordionBody
+                                        accordionId={`${
+                                          searchValue?.length >= 1
+                                            ? "all"
+                                            : indexx
+                                        }`}
+                                      >
+                                        {itemm.items
+                                          .filter((bodyItemm: any) =>
+                                            bodyItemm.title
+                                              .toLowerCase()
+                                              .includes(
+                                                searchValue.toLowerCase()
+                                              )
+                                          )
+                                          .slice(0, itemsLength)
+                                          .map(
+                                            (
+                                              bodyItemm: any,
+                                              bodyindex: any
+                                            ) => {
+                                              return (
+                                                <div
+                                                  key={bodyItemm._id}
+                                                  style={{
+                                                    padding: "8px 10px",
+                                                    boxShadow:
+                                                      "5px 5px 15px lightgray",
+                                                    borderRadius: "12px",
+                                                    margin: "7px -10px",
+                                                    cursor: "pointer",
+                                                    backgroundColor: `white`,
+                                                  }}
+                                                  onClick={(e) => {}}
+                                                >
+                                                  <div
+                                                    style={{
+                                                      display: "flex",
+                                                      justifyContent:
+                                                        "space-between",
+                                                    }}
+                                                  >
+                                                    <div
+                                                      style={{
+                                                        display: "flex",
+                                                        alignItems: "center",
+                                                      }}
+                                                    >
+                                                      <label
+                                                        style={{
+                                                          display: "contents",
+                                                          cursor: "pointer",
+                                                          paddingTop: "0px",
+                                                          paddingRight: "7px",
+                                                          alignContent:
+                                                            "center",
+                                                        }}
+                                                        onClick={(e) =>
+                                                          e.stopPropagation()
+                                                        }
+                                                      >
+                                                        <input
+                                                          type="checkbox"
+                                                          name="key"
+                                                          value="value"
+                                                          style={{
+                                                            marginRight: "10px",
+                                                            color:
+                                                              bodyItemm.checked
+                                                                ? "green"
+                                                                : "inherit",
+                                                          }}
+                                                          checked={
+                                                            bodyItemm.checked
+                                                          }
+                                                          onChange={(e) => {
+                                                            e.stopPropagation();
+                                                            handleSelecetdSubGroupDevices(
+                                                              e,
+                                                              item,
+                                                              itemm,
+                                                              bodyItemm,
+                                                              bodyindex
+                                                            );
+                                                          }}
+                                                        />
+                                                        <span
+                                                          onClick={(e) =>
+                                                            e.stopPropagation()
+                                                          }
+                                                        ></span>
+                                                      </label>
+                                                      <div
+                                                        style={{
+                                                          display: "flex",
+                                                          flexDirection:
+                                                            "column",
+                                                        }}
+                                                      >
+                                                        <span
+                                                          style={{
+                                                            fontWeight: "bold",
+                                                            fontSize: "13px",
+                                                          }}
+                                                        >
+                                                          {bodyItemm.title
+                                                            .length > 26
+                                                            ? `${bodyItemm.title.slice(
+                                                                0,
+                                                                26
+                                                              )}...`
+                                                            : bodyItemm.title}
+                                                        </span>
+                                                      </div>
+                                                    </div>
+                                                    {
+                                                      <button
+                                                        style={{
+                                                          border: "none",
+                                                          backgroundColor:
+                                                            // isHovered &&
+                                                            // hoveredButtonId == bodyItem._id
+                                                            bodyItemm.edited
+                                                              ? "green"
+                                                              : "white",
+                                                          borderRadius: "5px",
+                                                          cursor: "pointer",
+                                                          transition:
+                                                            "background-color 0.3s ease",
+                                                        }}
+                                                        onMouseEnter={() => {
+                                                          handleMouseEnter(
+                                                            bodyItemm._id
+                                                          );
+                                                          setIsHovered(true);
+                                                        }}
+                                                        onMouseLeave={() => {
+                                                          handleMouseLeave("");
+                                                          setIsHovered(false);
+                                                        }}
+                                                        onClick={(e: any) => {
+                                                          e.preventDefault();
+                                                          e.stopPropagation();
+                                                          // setSubGroupList([]);
+                                                          // setSubGroup("");
+                                                          handleGoToReply();
+                                                          const updateFormData =
+                                                            {
+                                                              ...formData,
+                                                              title:
+                                                                bodyItemm.title,
+                                                            };
+                                                          setGeofenceType(
+                                                            bodyItemm.type
+                                                          );
+                                                          dispatch(
+                                                            setEditedItem(
+                                                              bodyItemm
+                                                            )
+                                                          );
+                                                          dispatch(
+                                                            setCircle(
+                                                              bodyItemm.geofencePositions
+                                                            )
+                                                          );
+                                                          dispatch(
+                                                            setRectangle(
+                                                              bodyItemm.geofencePositions
+                                                            )
+                                                          );
+                                                          dispatch(
+                                                            setPolygon(
+                                                              bodyItemm
+                                                                .geofencePositions
+                                                                .bounds
+                                                            )
+                                                          );
+                                                          setGroup(
+                                                            bodyItemm
+                                                              ?.geofenceGroup
+                                                              ?._id
+                                                          );
+
+                                                          if (
+                                                            bodyItemm.geofenceSubGroup !==
+                                                            null
+                                                          ) {
+                                                            setSubGroup(
+                                                              bodyItemm
+                                                                ?.geofenceSubGroup
+                                                                ?._id
+                                                            );
+                                                          }
+
+                                                          setFormData(
+                                                            updateFormData
+                                                          );
+                                                          if (
+                                                            bodyItemm.edited ==
+                                                            false
+                                                          ) {
+                                                            setIsEditGeofence(
+                                                              true
+                                                            );
+                                                            setIsNewGeofence(
+                                                              false
+                                                            );
+                                                          } else {
+                                                            setIsEditGeofence(
+                                                              false
+                                                            );
+                                                            setIsNewGeofence(
+                                                              false
+                                                            );
+                                                          }
+                                                          handleEditGeofence(
+                                                            e,
+                                                            item,
+                                                            bodyItemm,
+                                                            bodyindex
+                                                          );
+                                                        }}
+                                                      >
+                                                        <FaRegEdit />
+                                                      </button>
+                                                    }
+                                                  </div>
+                                                </div>
+                                              );
+                                            }
+                                          )}
+                                        {item.items.filter((bodyItem: any) =>
+                                          bodyItem.title
+                                            .toLowerCase()
+                                            .includes(searchValue.toLowerCase())
+                                        ).length >= 15 && (
+                                          <div
+                                            style={{
+                                              display: "flex",
+                                              color: "#1f2f3e",
+                                              fontSize: "16px",
+                                              justifyContent: "end",
+                                              cursor: "pointer",
+                                            }}
+                                            onClick={() => {
+                                              if (
+                                                item.items.length >= 15 &&
+                                                itemsLength < item.items.length
+                                              ) {
+                                                setItemsLength(
+                                                  itemsLength + 14
+                                                );
+                                              }
+                                            }}
+                                          >
+                                            {item.items.length >= 15 &&
+                                              itemsLength < item.items.length &&
+                                              "Show More"}
+                                          </div>
+                                        )}
+                                      </AccordionBody>
+                                    </div>
+                                  </AccordionItem>
+                                </Accordion>
+                              </div>
+                            );
+                          })}
                       {item.items
                         .filter((bodyItem: any) =>
                           bodyItem.title
@@ -1085,146 +1873,154 @@ const GeofencesTreeViewAccordian = ({
                         .slice(0, itemsLength)
                         .map((bodyItem: any, bodyindex: any) => {
                           return (
-                            <div
-                              key={bodyItem._id}
-                              style={{
-                                padding: "8px 10px",
-                                boxShadow: "5px 5px 15px lightgray",
-                                borderRadius: "12px",
-                                margin: "7px -10px",
-                                cursor: "pointer",
-                                backgroundColor: `white`,
-                              }}
-                              onClick={(e) => { }}
-                            >
+                            bodyItem.geofenceSubGroup == null && (
                               <div
+                                key={bodyItem._id}
                                 style={{
-                                  display: "flex",
-                                  justifyContent: "space-between",
+                                  padding: "8px 10px",
+                                  boxShadow: "5px 5px 15px lightgray",
+                                  borderRadius: "12px",
+                                  margin: "7px -10px",
+                                  cursor: "pointer",
+                                  backgroundColor: `white`,
                                 }}
+                                onClick={(e) => {}}
                               >
                                 <div
                                   style={{
                                     display: "flex",
-                                    alignItems: "center",
+                                    justifyContent: "space-between",
                                   }}
                                 >
-                                  <label
+                                  <div
                                     style={{
-                                      display: "contents",
-                                      cursor: "pointer",
-                                      paddingTop: "0px",
-                                      paddingRight: "7px",
-                                      alignContent: "center",
+                                      display: "flex",
+                                      alignItems: "center",
                                     }}
-                                    onClick={(e) => e.stopPropagation()}
                                   >
-                                    <input
-                                      type="checkbox"
-                                      name="key"
-                                      value="value"
+                                    <label
                                       style={{
-                                        marginRight: "10px",
-                                        color: bodyItem.checked
-                                          ? "green"
-                                          : "inherit",
+                                        display: "contents",
+                                        cursor: "pointer",
+                                        paddingTop: "0px",
+                                        paddingRight: "7px",
+                                        alignContent: "center",
                                       }}
-                                      checked={bodyItem.checked}
-                                      onChange={(e) => {
+                                      onClick={(e) => e.stopPropagation()}
+                                    >
+                                      <input
+                                        type="checkbox"
+                                        name="key"
+                                        value="value"
+                                        style={{
+                                          marginRight: "10px",
+                                          color: bodyItem.checked
+                                            ? "green"
+                                            : "inherit",
+                                        }}
+                                        checked={bodyItem.checked}
+                                        onChange={(e) => {
+                                          e.stopPropagation();
+                                          handleSelecetdDevices(
+                                            e,
+                                            item,
+                                            bodyItem,
+                                            bodyindex
+                                          );
+                                        }}
+                                      />
+                                      <span
+                                        onClick={(e) => e.stopPropagation()}
+                                      ></span>
+                                    </label>
+                                    <div
+                                      style={{
+                                        display: "flex",
+                                        flexDirection: "column",
+                                      }}
+                                    >
+                                      <span
+                                        style={{
+                                          fontWeight: "bold",
+                                          fontSize: "13px",
+                                        }}
+                                      >
+                                        {bodyItem.title.length > 26
+                                          ? `${bodyItem.title.slice(0, 26)}...`
+                                          : bodyItem.title}
+                                      </span>
+                                    </div>
+                                  </div>
+                                  {
+                                    <button
+                                      style={{
+                                        border: "none",
+                                        backgroundColor:
+                                          // isHovered &&
+                                          // hoveredButtonId == bodyItem._id
+                                          bodyItem.edited ? "green" : "white",
+                                        borderRadius: "5px",
+                                        cursor: "pointer",
+                                        transition:
+                                          "background-color 0.3s ease",
+                                      }}
+                                      onMouseEnter={() => {
+                                        handleMouseEnter(bodyItem._id);
+                                        setIsHovered(true);
+                                      }}
+                                      onMouseLeave={() => {
+                                        handleMouseLeave("");
+                                        setIsHovered(false);
+                                      }}
+                                      onClick={(e: any) => {
+                                        e.preventDefault();
                                         e.stopPropagation();
-                                        handleSelecetdDevices(
+                                        setSubGroupList([]);
+                                        setSubGroup("");
+                                        handleGoToReply();
+                                        const updateFormData = {
+                                          ...formData,
+                                          title: bodyItem.title,
+                                        };
+                                        setGeofenceType(bodyItem.type);
+                                        dispatch(setEditedItem(bodyItem));
+                                        dispatch(
+                                          setCircle(bodyItem.geofencePositions)
+                                        );
+                                        dispatch(
+                                          setRectangle(
+                                            bodyItem.geofencePositions
+                                          )
+                                        );
+                                        dispatch(
+                                          setPolygon(
+                                            bodyItem.geofencePositions.bounds
+                                          )
+                                        );
+                                        setGroup(bodyItem?.geofenceGroup?._id);
+
+                                        setFormData(updateFormData);
+                                        if (bodyItem.edited == false) {
+                                          setIsEditGeofence(true);
+                                          setIsNewGeofence(false);
+                                        } else {
+                                          setIsEditGeofence(false);
+                                          setIsNewGeofence(false);
+                                        }
+                                        handleEditGeofence(
                                           e,
                                           item,
                                           bodyItem,
                                           bodyindex
                                         );
                                       }}
-                                    />
-                                    <span
-                                      onClick={(e) => e.stopPropagation()}
-                                    ></span>
-                                  </label>
-                                  <div
-                                    style={{
-                                      display: "flex",
-                                      flexDirection: "column",
-                                    }}
-                                  >
-                                    <span
-                                      style={{
-                                        fontWeight: "bold",
-                                        fontSize: "13px",
-                                      }}
                                     >
-                                      {bodyItem.title.length > 26
-                                        ? `${bodyItem.title.slice(0, 26)}...`
-                                        : bodyItem.title}
-                                    </span>
-                                  </div>
+                                      <FaRegEdit />
+                                    </button>
+                                  }
                                 </div>
-                                {
-                                  <button
-                                    style={{
-                                      border: "none",
-                                      backgroundColor:
-                                        // isHovered &&
-                                        // hoveredButtonId == bodyItem._id
-                                        bodyItem.edited ? "green" : "white",
-                                      borderRadius: "5px",
-                                      cursor: "pointer",
-                                      transition: "background-color 0.3s ease",
-                                    }}
-                                    onMouseEnter={() => {
-                                      handleMouseEnter(bodyItem._id);
-                                      setIsHovered(true);
-                                    }}
-                                    onMouseLeave={() => {
-                                      handleMouseLeave("");
-                                      setIsHovered(false);
-                                    }}
-                                    onClick={(e: any) => {
-                                      e.preventDefault();
-                                      e.stopPropagation();
-                                      handleGoToReply();
-                                      const updateFormData = {
-                                        ...formData,
-                                        title: bodyItem.title,
-                                      };
-                                      setGeofenceType(bodyItem.type);
-                                      dispatch(setEditedItem(bodyItem));
-                                      dispatch(
-                                        setCircle(bodyItem.geofencePositions)
-                                      );
-                                      dispatch(
-                                        setRectangle(bodyItem.geofencePositions)
-                                      );
-                                      dispatch(
-                                        setPolygon(
-                                          bodyItem.geofencePositions.bounds
-                                        )
-                                      );
-                                      setGroup(bodyItem?.geofenceGroup?._id);
-                                      setFormData(updateFormData);
-                                      if (bodyItem.edited == false) {
-                                        setIsEditGeofence(true);
-                                        setIsNewGeofence(false);
-                                      } else {
-                                        setIsEditGeofence(false);
-                                        setIsNewGeofence(false);
-                                      }
-                                      handleEditGeofence(
-                                        e,
-                                        item,
-                                        bodyItem,
-                                        bodyindex
-                                      );
-                                    }}
-                                  >
-                                    <FaRegEdit />
-                                  </button>
-                                }
                               </div>
-                            </div>
+                            )
                           );
                         })}
                       {item.items.filter((bodyItem: any) =>
@@ -1232,28 +2028,28 @@ const GeofencesTreeViewAccordian = ({
                           .toLowerCase()
                           .includes(searchValue.toLowerCase())
                       ).length >= 15 && (
-                          <div
-                            style={{
-                              display: "flex",
-                              color: "#1f2f3e",
-                              fontSize: "16px",
-                              justifyContent: "end",
-                              cursor: "pointer",
-                            }}
-                            onClick={() => {
-                              if (
-                                item.items.length >= 15 &&
-                                itemsLength < item.items.length
-                              ) {
-                                setItemsLength(itemsLength + 14);
-                              }
-                            }}
-                          >
-                            {item.items.length >= 15 &&
-                              itemsLength < item.items.length &&
-                              "Show More"}
-                          </div>
-                        )}
+                        <div
+                          style={{
+                            display: "flex",
+                            color: "#1f2f3e",
+                            fontSize: "16px",
+                            justifyContent: "end",
+                            cursor: "pointer",
+                          }}
+                          onClick={() => {
+                            if (
+                              item.items.length >= 15 &&
+                              itemsLength < item.items.length
+                            ) {
+                              setItemsLength(itemsLength + 14);
+                            }
+                          }}
+                        >
+                          {item.items.length >= 15 &&
+                            itemsLength < item.items.length &&
+                            "Show More"}
+                        </div>
+                      )}
                     </AccordionBody>
                   )}
                 </AccordionItem>

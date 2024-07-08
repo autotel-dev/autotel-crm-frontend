@@ -130,7 +130,7 @@ const ProvinceList = () => {
         <td>{row._id}</td>
         <td>{row?.name}</td>
         <td>{row?.country?.name}</td>
-        <td>
+        {/* <td>
           <div className="d-flex" style={{ justifyContent: "center" }}>
             <div
               className={`text-end flex-shrink-0 icon-state 
@@ -153,7 +153,7 @@ const ProvinceList = () => {
               </Label>
             </div>
           </div>
-        </td>
+        </td> */}
         <td>
           <div>
             <button
@@ -244,7 +244,7 @@ const ProvinceList = () => {
                               <th>ID</th>
                               <th>Name</th>
                               <th>Country</th>
-                              <th>Status</th>
+                              {/* <th>Status</th> */}
                               <th>Actions</th>
                             </tr>
                           </thead>
