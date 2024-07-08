@@ -31,7 +31,10 @@ import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import { H4, H5 } from "../../../AbstractElements";
 import H7 from "../../../CommonElements/Headings/H7Element";
-import { CHANGE_SUB_ROLE_ACTIVATION_STATUS, GET_ALL_SUB_ROLES } from "../../../Utilities/api/apiEndpoints";
+import {
+  CHANGE_SUB_ROLE_ACTIVATION_STATUS,
+  GET_ALL_SUB_ROLES,
+} from "../../../Utilities/api/apiEndpoints";
 import { ERROR_MESSAGE } from "../../../Utilities/constants/constants";
 
 const DepartmentsList = () => {
@@ -108,21 +111,23 @@ const DepartmentsList = () => {
   const [idd, setIdd] = useState("");
   const renderTableRows = () => {
     return roles?.map((row: any) => (
-      <tr key={row._id}
-      onMouseEnter={() => {
-        setIsHovered(true);
-        setIdd(row._id);
-      }}
-      onMouseLeave={() => setIsHovered(false)}
-      style={{
-        backgroundColor:
-          isHovered && idd == row._id
-            ? userPersonalizationData == null
-              ? "#D6EEEE"
-              : `rgba(${rgbColor.r},${rgbColor.g},${rgbColor.b},0.2)`
-            : "transparent",
-        transition: "background-color 0.3s",
-      }}>
+      <tr
+        key={row._id}
+        onMouseEnter={() => {
+          setIsHovered(true);
+          setIdd(row._id);
+        }}
+        onMouseLeave={() => setIsHovered(false)}
+        style={{
+          backgroundColor:
+            isHovered && idd == row._id
+              ? userPersonalizationData == null
+                ? "#D6EEEE"
+                : `rgba(${rgbColor.r},${rgbColor.g},${rgbColor.b},0.2)`
+              : "transparent",
+          transition: "background-color 0.3s",
+        }}
+      >
         <td>{row._id}</td>
         <td>{row.name}</td>
         <td>
@@ -162,12 +167,23 @@ const DepartmentsList = () => {
                               }
                             }
                           );
+                        } else {
+                          Swal.fire({
+                            text: `${data.message}`,
+                            icon: "error",
+                            timer: 2000,
+                            showConfirmButton: false,
+                          });
                         }
                       });
                       // Handle successful post creation (e.g., show a success message, redirect, etc.)
-                    } catch (error) {
-                      // Handle error (e.g., show an error message)
-                      // // console.error("Error creating post:", error);
+                    } catch (error: any) {
+                      Swal.fire({
+                        text: `${error.message}`,
+                        icon: "error",
+                        timer: 2000,
+                        showConfirmButton: false,
+                      });
                     }
                   }}
                 />
@@ -246,12 +262,36 @@ const DepartmentsList = () => {
                 {loading ? (
                   // <Loader />
                   <>
-                  <Skeleton height="100px" width="100%" borderRadius="10px" />
-                  <Skeleton height="40px" width="100%" marginTop="10px" marginBottom="10" borderRadius="10px" />
-                  <Skeleton height="40px" width="100%" marginTop="10px" marginBottom="10" borderRadius="10px" />
-                  <Skeleton height="40px" width="100%" marginTop="10px" marginBottom="10" borderRadius="10px" />
-                  <Skeleton height="40px" width="100%" marginTop="10px" marginBottom="10" borderRadius="10px" />
-                </>
+                    <Skeleton height="100px" width="100%" borderRadius="10px" />
+                    <Skeleton
+                      height="40px"
+                      width="100%"
+                      marginTop="10px"
+                      marginBottom="10"
+                      borderRadius="10px"
+                    />
+                    <Skeleton
+                      height="40px"
+                      width="100%"
+                      marginTop="10px"
+                      marginBottom="10"
+                      borderRadius="10px"
+                    />
+                    <Skeleton
+                      height="40px"
+                      width="100%"
+                      marginTop="10px"
+                      marginBottom="10"
+                      borderRadius="10px"
+                    />
+                    <Skeleton
+                      height="40px"
+                      width="100%"
+                      marginTop="10px"
+                      marginBottom="10"
+                      borderRadius="10px"
+                    />
+                  </>
                 ) : roles?.length > 0 && loading === false ? (
                   <div>
                     <table>

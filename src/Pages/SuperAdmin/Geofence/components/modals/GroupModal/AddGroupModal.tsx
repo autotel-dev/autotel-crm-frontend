@@ -1,18 +1,19 @@
-
-
-
 import React, { useState, useEffect } from "react";
 import { Col, Button, Modal, ModalBody } from "reactstrap";
 import { useDispatch, useSelector } from "react-redux";
-import { H4, P } from "../../../../../AbstractElements";
-import { create, getAll } from "../../../../../Utilities/api";
+import { H4, P } from "../../../../../../AbstractElements";
+import { create, getAll } from "../../../../../../Utilities/api";
 import Swal from "sweetalert2";
 import {
   setGeofences,
   setGeofencesGroup,
-} from "../../../../../ReaduxToolkit/Reducer/GeofenceSlice";
+} from "../../../../../../ReaduxToolkit/Reducer/GeofenceSlice";
 import { log } from "console";
-import { CREATE_GROUP, GET_ALL_GEOFENCES, GET_ALL_GROUPS } from "../../../../../Utilities/api/apiEndpoints";
+import {
+  CREATE_GROUP,
+  GET_ALL_GEOFENCES,
+  GET_ALL_GROUPS,
+} from "../../../../../../Utilities/api/apiEndpoints";
 
 interface PropsTypes {
   isVisible: boolean;
@@ -30,21 +31,40 @@ const AddGroupModal: React.FC<PropsTypes> = ({
   );
   const dispatch = useDispatch();
 
-  const [geofencesList, setGeofencesList] = useState(() => {
-    const ungroupedGeofence = geofences.find(
-      (geofence) => geofence.group === "Ungrouped"
-    );
+  const [geofencesList, setGeofencesList]: any = useState([]);
+  // const [geofencesList, setGeofencesList] = useState(() => {
+  //   const ungroupedGeofence = geofences.find(
+  //     (geofence) => geofence.group === "Ungrouped"
+  //   );
 
-    if (ungroupedGeofence) {
-      return ungroupedGeofence.items.map((item: any) => ({
-        label: item?.title,
-        value: item?._id,
-        checked: false,
-      }));
-    }
+  //   if (ungroupedGeofence) {
+  //     return ungroupedGeofence.items.map((item: any) => ({
+  //       label: item?.title,
+  //       value: item?._id,
+  //       checked: false,
+  //     }));
+  //   }
 
-    return [];
-  });
+  //   return [];
+  // });
+
+  useEffect(() => {
+    setGeofencesList(() => {
+      const ungroupedGeofence = geofences.find(
+        (geofence) => geofence.group === "Ungrouped"
+      );
+
+      if (ungroupedGeofence) {
+        return ungroupedGeofence.items.map((item: any) => ({
+          label: item?.title,
+          value: item?._id,
+          checked: false,
+        }));
+      }
+
+      return [];
+    });
+  }, [geofences]);
 
   const [selectAll, setSelectAll] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -52,14 +72,14 @@ const AddGroupModal: React.FC<PropsTypes> = ({
   const [searchValue, setSearchValue] = useState("");
 
   useEffect(() => {
-    const allChecked = geofencesList.every((item : any) => item.checked);
+    const allChecked = geofencesList.every((item: any) => item.checked);
     setSelectAll(allChecked);
   }, [geofencesList]);
 
   const handleSelectAllChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const checked = e.target.checked;
     setSelectAll(checked);
-    const updatedList = geofencesList.map((geofence : any) => ({
+    const updatedList = geofencesList.map((geofence: any) => ({
       ...geofence,
       checked: checked,
     }));
@@ -77,8 +97,8 @@ const AddGroupModal: React.FC<PropsTypes> = ({
 
   const createGroup = async () => {
     const allcheckedGeofences = geofencesList
-      .filter((item : any) => item.checked)
-      .map((item : any) => item.value);
+      .filter((item: any) => item.checked)
+      .map((item: any) => item.value);
 
     if (formData.title !== "") {
       try {
@@ -88,7 +108,7 @@ const AddGroupModal: React.FC<PropsTypes> = ({
             geofences: allcheckedGeofences,
           },
           { url: CREATE_GROUP }
-        ).then((data: any) => {
+        ).then(async (data: any) => {
           if (data.success) {
             Swal.fire({
               text: "Group created successfully",
@@ -97,44 +117,113 @@ const AddGroupModal: React.FC<PropsTypes> = ({
               showConfirmButton: false,
             });
 
-            getAll({ url: GET_ALL_GROUPS }).then(
-              (data: any) => {
-                if (data.success) {
-                  dispatch(setGeofencesGroup(data.data));
-                }
+            getAll({ url: GET_ALL_GROUPS }).then((data: any) => {
+              if (data.success) {
+                dispatch(setGeofencesGroup(data.data));
               }
-            );
+            });
 
-            getAll({ url: GET_ALL_GEOFENCES }).then(
-              (data: any) => {
-                if (data.success) {
-                  const groups: any = [];
-                  const groupDevicesObj: any = {};
-                  data.data.forEach((item: any) => {
-                    const group = item.geofenceGroup
-                      ? item.geofenceGroup.title
-                      : "Ungrouped";
-                    if (!groups.includes(group)) {
-                      groups.push(group);
+            const geofencesData: any = await getAll({
+              url: GET_ALL_GEOFENCES,
+            });
+            if (geofencesData.success) {
+              const groups: any[] = [];
+              const groupGeofencesObj: any = {};
+
+              let subGroups: any = [];
+              let subGroupsGeofencesObj: any = {};
+              let initialSubGroupsGeofences: any = [];
+
+              geofencesData.data.forEach((item: any) => {
+                const group = item.geofenceGroup
+                  ? item.geofenceGroup.title
+                  : "Ungrouped";
+                if (!groups.includes(group)) {
+                  groups.push(group);
+                }
+                if (!groupGeofencesObj[group]) {
+                  groupGeofencesObj[group] = [];
+                }
+                groupGeofencesObj[group].push({ ...item, checked: false });
+              });
+
+              const initialGroupGeofences = Object.keys(groupGeofencesObj).map(
+                (group) => ({
+                  group,
+                  checked: false,
+                  items: groupGeofencesObj[group],
+                  subgroups: [],
+                })
+              );
+
+              for (let i = 0; i < initialGroupGeofences.length; i++) {
+                // console.log("item.group -- >", initialGroupGeofences[i].group);
+                for (
+                  let j = 0;
+                  j < initialGroupGeofences[i].items.length;
+                  j++
+                ) {
+                  var element = "";
+                  if (
+                    initialGroupGeofences[i].items[j].geofenceSubGroup !== null
+                  ) {
+                    element =
+                      initialGroupGeofences[i].items[j].geofenceSubGroup.title;
+                  }
+                  // const element = data.data[i].geofenceGroup.title;
+                  if (!subGroups.includes(element)) {
+                    if (element !== "") {
+                      subGroups.push(element);
                     }
-                    if (!groupDevicesObj[group]) {
-                      groupDevicesObj[group] = [];
-                    }
-                    groupDevicesObj[group].push({ ...item, checked: false });
+                  }
+                }
+                console.log("subGroups", subGroups);
+
+                subGroups.forEach((geofenceSubGroup: any) => {
+                  subGroupsGeofencesObj[geofenceSubGroup] =
+                    initialGroupGeofences[i].items
+                      .filter((obj: any) => {
+                        if (
+                          !obj.geofenceSubGroup ||
+                          !obj.geofenceSubGroup.title
+                        ) {
+                          return;
+                        } else {
+                          return (
+                            obj.geofenceSubGroup.title === geofenceSubGroup
+                          );
+                        }
+                      })
+                      .map((item: any) => ({
+                        ...item,
+                        checked: false,
+                        edited: false,
+                      }));
+                });
+
+                // console.log(groups);
+                console.log("subGroupsGeofencesObj", subGroupsGeofencesObj);
+
+                // Convert groupDevicesObj to initialGroupDevices array format
+                Object.keys(subGroupsGeofencesObj).forEach((group: any) => {
+                  initialSubGroupsGeofences.push({
+                    subgroup: group,
+                    checked: false,
+                    items: subGroupsGeofencesObj[group],
                   });
+                });
 
-                  const initialGroupDevices = Object.keys(groupDevicesObj).map(
-                    (group) => ({
-                      group,
-                      checked: false,
-                      items: groupDevicesObj[group],
-                    })
-                  );
+                initialGroupGeofences[i] = {
+                  ...initialGroupGeofences[i],
+                  subgroups: initialSubGroupsGeofences,
+                };
 
-                  dispatch(setGeofences(initialGroupDevices));
-                }
+                subGroups = [];
+                subGroupsGeofencesObj = {};
+                initialSubGroupsGeofences = [];
               }
-            );
+              dispatch(setGeofences(initialGroupGeofences));
+            }
 
             addToggle();
           } else {
@@ -183,14 +272,11 @@ const AddGroupModal: React.FC<PropsTypes> = ({
   };
 
   // Filter geofences based on search query
-  const filteredGeofences = geofencesList.filter((geofence : any) =>
+  const filteredGeofences = geofencesList.filter((geofence: any) =>
     geofence.label.toLowerCase().includes(searchValue.toLowerCase())
   );
   console.log("checking data arry");
   console.log(filteredGeofences);
-  
-  
-  
 
   return (
     <Col md={6}>
@@ -207,7 +293,9 @@ const AddGroupModal: React.FC<PropsTypes> = ({
           <ModalBody>
             <form>
               <div style={{ margin: "0px 10px" }}>
-                <P><span style={{fontWeight:"700",}}>Title</span></P>
+                <P>
+                  <span style={{ fontWeight: "700" }}>Title</span>
+                </P>
                 <input
                   className="form-control"
                   type="text"
@@ -217,7 +305,11 @@ const AddGroupModal: React.FC<PropsTypes> = ({
                 />
               </div>
               <div style={{ margin: "0px 10px" }}>
-                <P><span style={{fontWeight:"700", marginTop:"10px"}}>Ungrouped Geofences</span></P>
+                <P>
+                  <span style={{ fontWeight: "700", marginTop: "10px" }}>
+                    Ungrouped Geofences
+                  </span>
+                </P>
                 <input
                   className="form-control"
                   type="text"
@@ -226,8 +318,20 @@ const AddGroupModal: React.FC<PropsTypes> = ({
                   onChange={handleSearchChange}
                 />
                 {filteredGeofences.length > 0 && (
-                  <div style={{ display: "flex", alignItems: "center", margin:"15px 0px 0px 0px" }}>
-                    <label style={{ display: "flex", alignItems: "center" , fontWeight:"700"}}>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      margin: "15px 0px 0px 0px",
+                    }}
+                  >
+                    <label
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        fontWeight: "700",
+                      }}
+                    >
                       <input
                         type="checkbox"
                         checked={selectAll}
@@ -246,7 +350,7 @@ const AddGroupModal: React.FC<PropsTypes> = ({
                     margin: "0px 0px",
                   }}
                 >
-                  {filteredGeofences.map((geofence : any, index : any) => (
+                  {filteredGeofences.map((geofence: any, index: any) => (
                     <label
                       key={index}
                       style={{
@@ -270,7 +374,7 @@ const AddGroupModal: React.FC<PropsTypes> = ({
                   ))}
                 </div>
               </div>
-              <div style={{ display: "flex" , marginTop:"15px",}}>
+              <div style={{ display: "flex", marginTop: "15px" }}>
                 <button
                   onClick={(e) => {
                     e.preventDefault();
@@ -310,7 +414,7 @@ const AddGroupModal: React.FC<PropsTypes> = ({
                     textAlign: "center",
                   }}
                 >
-                  {loading ? "Loading..." : "Save"}
+                  {loading ? "Loading..." : "Create"}
                 </button>
               </div>
             </form>
@@ -322,6 +426,3 @@ const AddGroupModal: React.FC<PropsTypes> = ({
 };
 
 export default AddGroupModal;
-
-
-

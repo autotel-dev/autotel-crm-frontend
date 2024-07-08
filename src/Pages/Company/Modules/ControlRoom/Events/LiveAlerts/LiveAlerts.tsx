@@ -140,7 +140,7 @@ const LiveAlerts = () => {
 
     // Function to fetch data and dispatch actions
     const fetchDataAndDispatch = () => {
-      getAll({ url: "${company/alert-events}?pageNo=1" }).then((data: any) => {
+      getAll({ url: `${GET_ALERT_EVENTS}?pageNo=1` }).then((data: any) => {
         // console.log("api call --- >", data);
 
         if (data == undefined) {

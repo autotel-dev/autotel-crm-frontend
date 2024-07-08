@@ -119,7 +119,7 @@ const CountriesList = () => {
         }}>
         <td>{row._id}</td>
         <td>{row.name}</td>
-        <td>
+        {/* <td>
           <div className="d-flex" style={{ justifyContent: "center" }}>
             <div
               className={`text-end flex-shrink-0 icon-state 
@@ -185,7 +185,7 @@ const CountriesList = () => {
               </Label>
             </div>
           </div>
-        </td>
+        </td> */}
         <td>
           <div>
             <button
@@ -209,6 +209,7 @@ const CountriesList = () => {
                 const type = "countryType";
                 deleteAlert(alertData, row._id, type, dispatch);
               }}
+              
             >
               Delete
             </button>
@@ -263,7 +264,7 @@ const CountriesList = () => {
                         <tr>
                           <th>ID</th>
                           <th>Name</th>
-                          <th>Status</th>
+                          {/* <th>Status</th> */}
                           <th>Actions</th>
                         </tr>
                       </thead>
@@ -271,17 +272,6 @@ const CountriesList = () => {
                     </table>
                   </div>
                 ) : (
-                  // <div
-                  //   style={{
-                  //     textAlign: "center",
-                  //     fontSize: "25px",
-                  //     fontWeight: "bold",
-                  //   }}
-                  // >
-                  // {activeInActiveCountries !== "All"
-                  //   ? activeInActiveCountries
-                  //   : "No Counties Found"}
-                  // </div>
                   <H7>
                     {activeInActiveCountries !== "All"
                       ? activeInActiveCountries

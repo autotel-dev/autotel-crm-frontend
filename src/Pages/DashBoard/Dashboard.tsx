@@ -584,7 +584,7 @@ const Dashboard = () => {
 
   return (
     <>
-      <StickyBar toggleSection={toggleSection} visibleSections={visibleSections} />
+      {getUserRole() === ROLES.COMPANY && <StickyBar toggleSection={toggleSection} visibleSections={visibleSections} />}
       <Breadcrumbs mainTitle="Dashboard" parent="Dashboard" title="Dashboard" />
       {getUserRole() === ROLES.SUPER_ADMIN ? (
         <Container fluid className="dashboard_default">
