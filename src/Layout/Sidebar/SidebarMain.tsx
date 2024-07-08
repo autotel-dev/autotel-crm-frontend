@@ -29,6 +29,7 @@ import DepartmentIcon from "../../assets/department.png";
 import MonitorIcon from "../../assets/gps.png";
 import ControlroomIcon from "../../assets/security-room.png";
 import GeofenceIcon from "../../assets/route.png";
+import SalesIcon from "../../assets/sales.png";
 
 import {
   SidebarMenu,
@@ -192,7 +193,7 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
               ? ControlroomIcon
               : item.route === "/monitoring"
               ? MonitorIcon
-              : item.route === "/complaint-center" && ComplaincenterIcon
+              : item.route === "/complaint-center" ? ComplaincenterIcon : SalesIcon
           }`, // Replace DefaultIcon with the default icon you want to use
           title: `${item.name}`,
           link: `${process.env.PUBLIC_URL}/dashboard`,
@@ -297,7 +298,7 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
               ? ControlroomIcon
               : item.route === "/monitoring"
               ? MonitorIcon
-              : item.route === "/complaint-center" && ComplaincenterIcon
+              : item.route === "/complaint-center" ? ComplaincenterIcon : SalesIcon
           }`, // Replace DefaultIcon with the default icon you want to use
           title: `${item.name}`,
           link: `${process.env.PUBLIC_URL}/company/modules${item.route}`,

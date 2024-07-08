@@ -42,6 +42,7 @@ import Companies from "../Pages/SuperAdmin/Companies/Companies";
 import UpdateCompanyForm from "../Pages/SuperAdmin/Companies/UpdateCompanyForm/UpdateCompanyForm";
 import CreateCompanyForm from "../Pages/SuperAdmin/Companies/CreateCompanyForm/CreateCompanyForm";
 import Departments from "../Pages/Company/Departments/Departments";
+import SAIOCentral from "../Pages/Company/Modules/SAIOCentral/SAIOCentral";
 
 const routes = [
   // dashboard routes
@@ -353,6 +354,14 @@ const routes = [
   {
     path: `${process.env.PUBLIC_URL}/company/modules/complain-center/complainDetails/:complaintId`,
     Component: <ComplainDetails />,
+  },
+
+  {
+    path: `${process.env.PUBLIC_URL}/company/modules/saio-central`,
+    Component: <SAIOCentral />,
+    isProtected: true,
+    allowedUserRoles: [ROLES.COMPANY],
+    permissionValue: "SAIO Central",
   },
 
   // Users
