@@ -42,9 +42,7 @@ import Companies from "../Pages/SuperAdmin/Companies/Companies";
 import UpdateCompanyForm from "../Pages/SuperAdmin/Companies/UpdateCompanyForm/UpdateCompanyForm";
 import CreateCompanyForm from "../Pages/SuperAdmin/Companies/CreateCompanyForm/CreateCompanyForm";
 import Departments from "../Pages/Company/Departments/Departments";
-<<<<<<< HEAD
 import SAIOCentral from "../Pages/Company/Modules/SAIOCentral/SAIOCentral";
-=======
 import Banks from "../Pages/SuperAdmin/Banks/Banks";
 import Insurances from "../Pages/SuperAdmin/Insurances/Insurance";
 import VehiclesMake from "../Pages/SuperAdmin/VehicleMake/VehiclesMake";
@@ -57,7 +55,6 @@ import Branches from "../Pages/Company/Branches/Branches";
 import { Currency } from "../utils/Constant";
 import Currencies from "../Pages/SuperAdmin/Currencies/Currencies";
 import Languages from "../Pages/SuperAdmin/Languages/Languages";
->>>>>>> 0e26ca58da45a813da8f71f8436c1f2b92af4441
 
 const routes = [
   // dashboard routes

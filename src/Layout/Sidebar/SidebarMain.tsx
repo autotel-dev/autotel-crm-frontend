@@ -29,9 +29,7 @@ import DepartmentIcon from "../../assets/department.png";
 import MonitorIcon from "../../assets/gps.png";
 import ControlroomIcon from "../../assets/security-room.png";
 import GeofenceIcon from "../../assets/route.png";
-<<<<<<< HEAD
 import SalesIcon from "../../assets/sales.png";
-=======
 import BankIcon from "../../assets/bank.png";
 import InsuranceIcon from "../../assets/insurance.png";
 import VehicleMakeIcon from "../../assets/car.png";
@@ -43,7 +41,6 @@ import WarehouseIcon from "../../assets/warehouse.png";
 import BranchIcon from "../../assets/network.png";
 import CurrencyIcon from "../../assets/cash.png";
 import LanguageIcon from "../../assets/language.png";
->>>>>>> 0e26ca58da45a813da8f71f8436c1f2b92af4441
 
 import {
   SidebarMenu,

@@ -4,7 +4,6 @@ import Sales from "./components/Sales/Sales";
 import Accounts from "./components/Accounts/Accounts";
 import Inventory from "./components/Inventory/Inventory";
 import Operations from "./components/Operations/Operations";
-import Customers from "./components/Customers/Customers";
 
 const SAIOCentral = () => {
 
@@ -40,7 +39,7 @@ const SAIOCentral = () => {
                     position: "fixed"
                 }}
             >
-                <Sidebar setSales={setSales} setAccounts={setAccounts} setInventory={setInventory} setOperations={setOperations} setCustomers={setCustomers} sales={sales} accounts={accounts} inventory={inventory} operations={operations} customers={customers}
+                <Sidebar setSales={setSales} setAccounts={setAccounts} setInventory={setInventory} setOperations={setOperations} sales={sales} accounts={accounts} inventory={inventory} operations={operations}
                 />
             </div>
             <div
@@ -57,7 +56,7 @@ const SAIOCentral = () => {
                 }}
             >
 
-                {sales ? <Sales /> : accounts ? <Accounts /> : inventory ? <Inventory /> : operations ? <Operations /> : <Customers />}
+                {sales ? <Sales /> : accounts ? <Accounts /> : inventory ? <Inventory /> : operations && <Operations /> }
             </div>
         </div>
     );
