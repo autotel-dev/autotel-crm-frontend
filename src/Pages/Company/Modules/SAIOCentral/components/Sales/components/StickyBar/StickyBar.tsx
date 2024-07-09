@@ -19,17 +19,17 @@ const StickyBar: React.FC<StickyBarProps> = ({
         icon: <GrOrganization size={18} />
     },
     {
-        label: "New Lead",
+        label: "Invoices",
         icon: <MdOutlineCrisisAlert size={18} />
     },
-        // {
-        //     label: "killed-vehicles",
-        //     icon: <BiSolidCarCrash size={18} />
-        // },
-        // {
-        //     label: "complaint-center",
-        //     icon: <MdContactSupport size={18} />
-        // }
+    {
+        label: "Receive Money",
+        icon: <BiSolidCarCrash size={18} />
+    },
+    {
+        label: "Customers",
+        icon: <MdContactSupport size={18} />
+    }
 
     ]
     return (
@@ -42,29 +42,31 @@ const StickyBar: React.FC<StickyBarProps> = ({
                         key={option.label}
                         className={`sticky-label ${component == option.label ? "active" : ""}`}
                         onClick={() => {
-                            if (option.label == "New Lead") {
-                                Swal.fire({
-                                    title: "Please Select",
-                                    icon: "success",
-                                    showCancelButton: false,
-                                    showCloseButton: true,
-                                    showConfirmButton: true,
-                                    confirmButtonText: "New",
-                                    showDenyButton: true,
-                                    denyButtonText: "Existing",
-                                }).then(async (result: any) => {
-                                    if (result.isConfirmed) {
-                                        setComponent(option.label)
 
-                                    } else if (result.isDenied) {
-                                        setComponent(option.label)
+                            setComponent(option.label)
+                            // if (option.label == "New Lead") {
+                            //     Swal.fire({
+                            //         title: "Please Select",
+                            //         icon: "success",
+                            //         showCancelButton: false,
+                            //         showCloseButton: true,
+                            //         showConfirmButton: true,
+                            //         confirmButtonText: "New",
+                            //         showDenyButton: true,
+                            //         denyButtonText: "Existing",
+                            //     }).then(async (result: any) => {
+                            //         if (result.isConfirmed) {
+                            //             setComponent(option.label)
 
-                                    }
-                                });
-                            }
-                            else {
-                                setComponent(option.label)
-                            }
+                            //         } else if (result.isDenied) {
+                            //             setComponent(option.label)
+
+                            //         }
+                            //     });
+                            // }
+                            // else {
+                            //     setComponent(option.label)
+                            // }
                         }}
                     >
                         {option.icon}

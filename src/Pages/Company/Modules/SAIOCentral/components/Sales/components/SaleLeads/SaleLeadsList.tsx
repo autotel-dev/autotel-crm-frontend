@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import "../../../../../../../../CssConstaints/Style.css";
 import { SaleLeadsDataType, supportColumns } from "./Type/Type";
+import { PlusCircle } from "react-feather";
 
 const SaleLeadsTable = () => {
     const dispatch = useDispatch();
@@ -35,11 +36,11 @@ const SaleLeadsTable = () => {
     // console.log("support", support);
     const supportData = () => {
         return bugReports?.filter(
-                (item: any) =>
-                    item?.ticketId.toLowerCase().split("-")[1].includes(searchValue) ||
-                    item?.name.toLowerCase().includes(searchValue) ||
-                    item?.user.emailAddress.toLowerCase().includes(searchValue)
-            )
+            (item: any) =>
+                item?.ticketId.toLowerCase().split("-")[1].includes(searchValue) ||
+                item?.name.toLowerCase().includes(searchValue) ||
+                item?.user.emailAddress.toLowerCase().includes(searchValue)
+        )
             .map((item: any) => ({
                 ticket_id: item?._id,
                 id: item?.ticketId,
@@ -116,6 +117,36 @@ const SaleLeadsTable = () => {
     };
     return (
         <div className="table-responsive support-table" style={{ overflow: "auto", scrollbarWidth: "none" }}>
+
+            <Row>
+                <div style={{
+                    display: "flex",
+                    justifyContent: "end",
+                    paddingRight: "25px"
+                }}>
+                    <button
+                        className={`btn ${userPersonalizationData?.buttonsAndBarsColor == null ? "btn-primary" : ""
+                            }`}
+                        style={{
+                            color: "white",
+                            backgroundColor: `${userPersonalizationData !== null &&
+                                userPersonalizationData?.buttonsAndBarsColor
+                                }`,
+                            display: "flex",
+                            alignItems: "center",
+
+                        }}
+                        // onClick={() => {
+                        //     setComponent("New Lead")
+                        // }}
+                    >
+                        <PlusCircle size={18} style={{
+                            marginRight: "5px"
+                        }} />
+                        Create New Lead
+                    </button>
+                </div>
+            </Row>
             <Row style={{ display: "flex", alignItems: "center" }}>
                 <Col
                     sm={12}

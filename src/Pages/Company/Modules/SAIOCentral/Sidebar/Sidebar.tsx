@@ -19,12 +19,12 @@ interface SidebarProps {
     setAccounts: any;
     setInventory: any;
     setOperations: any;
-    setCustomers: any;
+    // setCustomers: any;
     sales: any,
     accounts: any;
     inventory: any;
     operations: any;
-    customers: any
+    // customers: any
 }
 
 
@@ -33,12 +33,12 @@ const Sidebar: React.FC<SidebarProps> = ({
     setAccounts,
     setInventory,
     setOperations,
-    setCustomers,
+    // setCustomers,
     sales,
     accounts,
     inventory,
     operations,
-    customers,
+    // customers,
 }) => {
     const { userPersonalizationData } = useSelector(
         (state: any) => state.personalization
@@ -78,7 +78,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                         setAccounts(false);
                         setInventory(false);
                         setOperations(false);
-                        setCustomers(false);
+                        // setCustomers(false);
                     }}
                 >
                     <img src={GroupSvg} alt="" height={24} width={28} id="Tooltip" />
@@ -109,7 +109,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                         setAccounts(true);
                         setInventory(false);
                         setOperations(false);
-                        setCustomers(false);
+                        // setCustomers(false);
                     }}
                 >
                     <img src={GroupSvg} alt="" height={24} width={28} id="Tooltip" />
@@ -139,7 +139,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                         setAccounts(false);
                         setInventory(true);
                         setOperations(false);
-                        setCustomers(false);
+                        // setCustomers(false);
                     }}
                 >
                     <img src={GroupSvg} alt="" height={24} width={28} id="Tooltip" />
@@ -168,7 +168,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                         setAccounts(false);
                         setInventory(false);
                         setOperations(true);
-                        setCustomers(false);
+                        // setCustomers(false);
                     }}
                 >
                     <img src={GroupSvg} alt="" height={24} width={28} id="Tooltip" />
@@ -179,7 +179,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                         Operation
                     </div>
                 </div>
-                <div
+                {/* <div
                     title="Customers"
                     style={{
                         width: "100%",
@@ -207,7 +207,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                     }}>
                         Customers
                     </div>
-                </div>
+                </div> */}
             </div>
 
 
