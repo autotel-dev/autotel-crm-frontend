@@ -5,7 +5,7 @@ interface propTypes {
   placeholder: any;
 }
 
-const SelectCitiesBox: React.FC<propTypes> = ({ placeholder }) => {
+const SelectSensorsBox: React.FC<propTypes> = ({ placeholder }) => {
   const { cities, createCompany } = useSelector(
     (state: any) => state.companies
   );
@@ -46,9 +46,9 @@ const SelectCitiesBox: React.FC<propTypes> = ({ placeholder }) => {
         // );
         // dispatch(setCountryId(e));
       }}
-      options={cityList}
+    //   options={cityList}
     />
   );
 };
 
-export default SelectCitiesBox;
+export default SelectSensorsBox;

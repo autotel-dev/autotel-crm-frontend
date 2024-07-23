@@ -6,13 +6,22 @@ import { MdContactSupport } from "react-icons/md";
 import "./StickyBar.css"
 import Swal from "sweetalert2";
 interface StickyBarProps {
-    component: any;
+    component: string;
     setComponent: any;
+    setIscreateNewSaleLead: any;
+    setIscreateNewCustomer: any;
+    setIscreateNewInvoice: any;
+    setIscreateNewReceiveMoney: any;
+
 }
 
 const StickyBar: React.FC<StickyBarProps> = ({
     component,
-    setComponent
+    setComponent,
+    setIscreateNewSaleLead,
+    setIscreateNewCustomer,
+    setIscreateNewInvoice,
+    setIscreateNewReceiveMoney,
 }) => {
     const stcickyBarOptions = [{
         label: "Sale Leads",
@@ -42,31 +51,11 @@ const StickyBar: React.FC<StickyBarProps> = ({
                         key={option.label}
                         className={`sticky-label ${component == option.label ? "active" : ""}`}
                         onClick={() => {
-
+                            setIscreateNewSaleLead(false)
+                            setIscreateNewCustomer(false)
+                            setIscreateNewInvoice(false)
+                            setIscreateNewReceiveMoney(false)
                             setComponent(option.label)
-                            // if (option.label == "New Lead") {
-                            //     Swal.fire({
-                            //         title: "Please Select",
-                            //         icon: "success",
-                            //         showCancelButton: false,
-                            //         showCloseButton: true,
-                            //         showConfirmButton: true,
-                            //         confirmButtonText: "New",
-                            //         showDenyButton: true,
-                            //         denyButtonText: "Existing",
-                            //     }).then(async (result: any) => {
-                            //         if (result.isConfirmed) {
-                            //             setComponent(option.label)
-
-                            //         } else if (result.isDenied) {
-                            //             setComponent(option.label)
-
-                            //         }
-                            //     });
-                            // }
-                            // else {
-                            //     setComponent(option.label)
-                            // }
                         }}
                     >
                         {option.icon}

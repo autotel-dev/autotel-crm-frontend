@@ -26,7 +26,7 @@ const Layout = () => {
   // console.log("userPermissions---> ", userPermissions);
 
   const [open, setOpen] = useState<boolean>(false);
-  const { toggleSidebar, scroll } = useAppSelector((state) => state.layout);
+  // const { toggleSidebar, scroll } = useAppSelector((state) => state.layout);
   const { layout } = useAppSelector((state) => state.themeCustomizer);
   const dispatch = useAppDispatch();
   const compactSidebar = () => {

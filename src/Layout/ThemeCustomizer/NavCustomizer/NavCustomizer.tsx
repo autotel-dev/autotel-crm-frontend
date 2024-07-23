@@ -8,9 +8,11 @@ const NavCustomizer = ({ callbackNav, selected }: NavcustomizerType) => {
   return (
     <Nav className="flex-column nac-pills">
       <Link
-        className={`${selected === "sidebar-type" ? "active" : ""} nav-link` }
-        onClick={() => callbackNav("sidebar-type", true)}
-        to={Href}
+        className={`${selected === "sidebar-type" ? "active" : ""} nav-link`}
+        // onClick={() => callbackNav("sidebar-type", true)}
+        // to={Href}
+        to="#"
+
       >
         <div className="settings">
           <i className="icon-palette"></i>

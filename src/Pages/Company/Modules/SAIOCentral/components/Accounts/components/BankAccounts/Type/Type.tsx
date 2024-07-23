@@ -1,132 +1,63 @@
 import { formatUnderscoredString } from "../../../../../../../../../Utilities/globals/globals";
 
 
-export interface SaleLeadsDataType {
+export interface BankAccountsDataType {
     id: string;
-    username: string;
-    email: string;
-    ticket_name: string;
-    description: string;
+    name: string;
     isActive: string;
-    status: string;
-    priorty: string;
+    user: string;
+    iban: string;
+    accountType: string;
     date: string;
 }
 
-export const supportColumns = [
+export const bankAccountsColumns = [
     {
-        name: "id",
-        selector: (row: SaleLeadsDataType) => row["id"],
+        name: "ID",
+        selector: (row: BankAccountsDataType) => row["id"],
         sortable: true,
-        center: false,
-        width: "120px", // Set the width for this column
+        center: true,
+        width: "300px", // Set the width for this column
     },
     {
-        name: "Username",
-        selector: (row: SaleLeadsDataType) => row["username"],
+        name: "Name",
+        selector: (row: BankAccountsDataType) => row["name"],
         sortable: true,
-        center: false,
+        center: true,
         width: "150px", // Set the width for this column
     },
     {
-        name: "Email",
-        selector: (row: SaleLeadsDataType) => row["email"],
+        name: "User",
+        selector: (row: BankAccountsDataType) => row["user"],
         sortable: true,
         center: true,
-        width: "200px",
+        width: "250px", // Set the width for this column
     },
     {
-        name: "Ticket Name",
-        selector: (row: SaleLeadsDataType) => row["ticket_name"],
+        name: "IBAN Number",
+        selector: (row: BankAccountsDataType) => row["iban"],
         sortable: true,
         center: true,
         width: "200px", // Set the width for this column
     },
     {
-        name: "Description",
-        selector: (row: SaleLeadsDataType) => row["description"],
-        sortable: true,
-        center: true,
-        width: "230px", // Set the width for this column
-    },
-    {
-        name: "IsActive",
-        selector: (row: SaleLeadsDataType) => row["isActive"],
-        sortable: true,
-        center: true,
-        width: "100px", // Set the width for this column
-    },
-    {
-        name: "Status",
-        selector: (row: SaleLeadsDataType) => row["status"],
+        name: "Account Type",
+        selector: (row: BankAccountsDataType) => row["accountType"],
         sortable: true,
         center: true,
         width: "150px", // Set the width for this column
-        cell: (row: SaleLeadsDataType) => (
-            <div
-                style={{
-                    width: "120px",
-                    textAlign: "center",
-                    padding: "5px",
-                    borderRadius: "5px",
-                    backgroundColor:
-                        row.status === "NEW"
-                            ? "rgba(0, 0, 255, 0.3)"
-                            : row.status === "IN_PROGRESS"
-                                ? "rgba(255, 165, 0, 0.3)"
-                                : row.status === "PENDING"
-                                    ? "rgba(255, 0, 0, 0.3)"
-                                    : "rgba(0, 255, 0, 0.3)",
-                    // color:
-                    //   row.status === "NEW"
-                    //     ? "blue"
-                    //     : row.status === "IN_PROGRESS"
-                    //     ? "orange"
-                    //     : row.status === "PENDING"
-                    //     ? "red"
-                    //     : "green",
-                    color: "black"
-                }}
-            >
-                {formatUnderscoredString(row.status)}
-            </div>
-        ),
     },
+
     {
-        name: "Priority",
-        selector: (row: SaleLeadsDataType) => row["priorty"],
+        name: "IsActive",
+        selector: (row: BankAccountsDataType) => row["isActive"],
         sortable: true,
         center: true,
-        width: "100px", // Set the width for this column
-        cell: (row: SaleLeadsDataType) => (
-            <div
-                style={{
-                    width: "90px",
-                    textAlign: "center",
-                    padding: "5px",
-                    borderRadius: "5px",
-                    backgroundColor:
-                        row.priorty === "LOW"
-                            ? "rgba(0, 255, 0, 0.3)"
-                            : row.priorty === "HIGH"
-                                ? "rgba(255, 0, 0, 0.3)"
-                                : "rgba(255, 200, 0, 0.3)",
-                    // color:
-                    //   row.priorty === "LOW"
-                    //     ? "green"
-                    //     : row.priorty === "HIGH"
-                    //     ? "red"
-                    //     : "orange",
-                    color: "black"
-                }}
-            >
-                {formatUnderscoredString(row.priorty)}
-            </div>
-        ),
+        width: "130px", // Set the width for this column
     },
     {
         name: "Date",
-        selector: (row: SaleLeadsDataType) => row["date"],
+        selector: (row: BankAccountsDataType) => row["date"],
         sortable: true,
         center: true,
         width: "200px", // Set the width for this column

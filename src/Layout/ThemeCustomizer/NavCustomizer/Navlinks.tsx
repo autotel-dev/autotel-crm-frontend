@@ -9,8 +9,9 @@ const Navlinks = () => {
           <Link
             key={index}
             className="nav-link"
-            to={item.path}
-            target="_blank"
+            // to={item.path}
+            to="#"
+            // target="_blank"
             rel="noopener noreferrer"
           >
             <div>

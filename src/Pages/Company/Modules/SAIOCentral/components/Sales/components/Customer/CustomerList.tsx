@@ -4,13 +4,23 @@ import DataTable from "react-data-table-component";
 
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import "../../../../../../../../../CssConstaints/Style.css";
-import { SaleLeadsDataType, supportColumns } from "./Type/Type";
+import "../../../../../../../../CssConstaints/Style.css";
+import { CustomersDataType, supportColumns } from "./Type/Type";
+import { PlusCircle } from "react-feather";
+import { setCustomer } from "../../../../../../../../ReaduxToolkit/Reducer/SalesSlice";
 
-const CustomerList = () => {
+interface CustomerTableProps {
+    iscreateNewCustomer: boolean;
+    setIscreateNewCustomer: any
+}
+
+const CustomerTable: React.FC<CustomerTableProps> = ({
+    iscreateNewCustomer,
+    setIscreateNewCustomer,
+}) => {
     const dispatch = useDispatch();
     // Function to transform supportData into allBugReports format
-    const { bugReports } = useSelector((state: any) => state.support);
+    const { customers } = useSelector((state: any) => state.sales);
     const { userPermissions } = useSelector(
         (state: any) => state.userPermissions
     );
@@ -33,23 +43,20 @@ const CustomerList = () => {
     const rgbColor = hexToRgb(userPersonalizationData?.buttonsAndBarsColor); // Convert hex to RGB
     var support = userPermissions.find((item: any) => item.title === "Support");
     // console.log("support", support);
-    const supportData = () => {
-        return bugReports?.filter(
-                (item: any) =>
-                    item?.ticketId.toLowerCase().split("-")[1].includes(searchValue) ||
-                    item?.name.toLowerCase().includes(searchValue) ||
-                    item?.user.emailAddress.toLowerCase().includes(searchValue)
-            )
+    const customersData = () => {
+        return customers?.filter(
+            (item: any) =>
+                item?._id.toLowerCase().includes(searchValue) ||
+                item?.fullName.toLowerCase().includes(searchValue) ||
+                item?.emailAddress.toLowerCase().includes(searchValue)
+        )
             .map((item: any) => ({
-                ticket_id: item?._id,
-                id: item?.ticketId,
-                username: item?.user?.fullName,
-                email: item?.user?.emailAddress,
-                ticket_name: item?.name,
-                description: item?.description,
+                id: item?._id,
+                fullName: item?.fullName,
+                emailAddress: item?.emailAddress,
+                phoneNo: item?.phoneNo,
+                city: item?.city?.name,
                 isActive: item?.isActive ? "true" : "false",
-                status: item?.status,
-                priorty: item?.priorty == null ? "N/A" : item?.priorty,
                 date: `${item?.updatedAt.toString().slice(0, 10)},  ${new Date(
                     item?.updatedAt
                 )
@@ -65,7 +72,7 @@ const CustomerList = () => {
     const [searchValue, setSearchValue] = useState("");
 
     useEffect(() => {
-        setData(supportData());
+        setData(customersData());
     }, [searchValue]);
 
     const handleSearch = (e: any) => {
@@ -75,47 +82,77 @@ const CustomerList = () => {
 
     // console.log("allBugReports", supportData());
     useEffect(() => {
-        setData(supportData());
-    }, [bugReports]);
+        setData(customersData());
+    }, [customers]);
 
     const navigate = useNavigate();
     // const history = useHistory();
     const [selectedRows, setSelectedRows] = useState([]);
     const [toggleDelete, setToggleDelete] = useState(false);
-    const [data, setData] = useState(supportData());
+    const [data, setData] = useState(customersData());
 
-    const handleRowSelected = useCallback((state: any) => {
-        setSelectedRows(state.selectedRows);
-    }, []);
+    // const handleRowSelected = useCallback((state: any) => {
+    //     setSelectedRows(state.selectedRows);
+    // }, []);
 
-    const handleDelete = () => {
-        if (
-            window.confirm(
-                `Are you sure you want to delete:\r ${selectedRows.map(
-                    (r: SaleLeadsDataType) => r.id
-                )}?`
-            )
-        ) {
-            setToggleDelete(!toggleDelete);
-            setData(
-                data.filter((item: any) =>
-                    selectedRows.filter((elem: SaleLeadsDataType) => elem.id === item.id)
-                        .length > 0
-                        ? false
-                        : true
-                )
-            );
-            setSelectedRows([]);
-        }
-    };
+    // const handleDelete = () => {
+    //     if (
+    //         window.confirm(
+    //             `Are you sure you want to delete:\r ${selectedRows.map(
+    //                 (r: SaleLeadsDataType) => r.id
+    //             )}?`
+    //         )
+    //     ) {
+    //         setToggleDelete(!toggleDelete);
+    //         setData(
+    //             data.filter((item: any) =>
+    //                 selectedRows.filter((elem: SaleLeadsDataType) => elem.id === item.id)
+    //                     .length > 0
+    //                     ? false
+    //                     : true
+    //             )
+    //         );
+    //         setSelectedRows([]);
+    //     }
+    // };
 
     const handleRowClicked = (row: any) => {
-        navigate(
-            `${process.env.PUBLIC_URL}/support/ticketDetails/${row.ticket_id}`
-        );
+        dispatch(setCustomer(row));
+        setIscreateNewCustomer(true)
+
     };
     return (
         <div className="table-responsive support-table" style={{ overflow: "auto", scrollbarWidth: "none" }}>
+            <Row>
+                <div style={{
+                    display: "flex",
+                    justifyContent: "end",
+                    paddingRight: "25px"
+                }}>
+                    <button
+                        className={`btn ${userPersonalizationData?.buttonsAndBarsColor == null ? "btn-primary" : ""
+                            }`}
+                        style={{
+                            color: "white",
+                            backgroundColor: `${userPersonalizationData !== null &&
+                                userPersonalizationData?.buttonsAndBarsColor
+                                }`,
+                            display: "flex",
+                            alignItems: "center",
+
+                        }}
+                        onClick={() => {
+                            dispatch(setCustomer(null));
+                            setIscreateNewCustomer(true)
+                        }}
+                    >
+                        <PlusCircle size={18} style={{
+                            marginRight: "5px"
+                        }} />
+                        Create New Customer
+                    </button>
+                </div>
+            </Row>
             <Row style={{ display: "flex", alignItems: "center" }}>
                 <Col
                     sm={12}
@@ -150,7 +187,7 @@ const CustomerList = () => {
                 pagination
                 selectableRows
                 // onSelectedRowsChange={handleRowSelected}
-                // onRowClicked={handleRowClicked} // Pass the event handler for row clicks
+                onRowClicked={handleRowClicked} // Pass the event handler for row clicks
                 clearSelectedRows={toggleDelete}
                 style={{
                     cursor: "pointer",
@@ -186,4 +223,4 @@ const CustomerList = () => {
     );
 };
 
-export default CustomerList;
+export default CustomerTable;

@@ -23,24 +23,42 @@ import SelectVehicleModelBox from "./components/SelectVehicleModelBox";
 import SelectVehicleYearBox from "./components/SelectVehicleYearBox";
 import SelectTransmissionBox from "./components/SelectTransmissionBox";
 import SelectFuelTypeBox from "./components/SelectFuelTypeBox";
+import { setCustomer, setSaleLead, setSaleLeadId, setSaleLeads } from "../../../../../../../../../../../ReaduxToolkit/Reducer/SalesSlice";
+import { create, getAll } from "../../../../../../../../../../../Utilities/api";
+import Swal from "sweetalert2";
+import { CREATE_NEW_SALELEAD_VEHICLE, GET_ALL_SALELEADS } from "../../../../../../../../../../../Utilities/api/apiEndpoints";
+import { ERROR_MESSAGE } from "../../../../../../../../../../../Utilities/constants/constants";
 
-const VehicleDetails = ({ callbackActive }: BusinessFormCommonProps) => {
+interface VehicleDetailsProps {
+  callbackActive: (val: number | undefined) => void;
+  iscreateNewSaleLead: boolean;
+  setIscreateNewSaleLead: any;
+
+}
+
+const VehicleDetails = ({ callbackActive, iscreateNewSaleLead, setIscreateNewSaleLead }: VehicleDetailsProps) => {
   const { userPersonalizationData } = useSelector(
     (state: any) => state.personalization
   );
-  const { createCompany, imageBackground, companyLogo } = useSelector(
-    (state: any) => state.companies
-  );
+  const { saleLead } = useSelector((state: any) => state.sales);
+  console.log("saleLead", saleLead);
   const dispatch = useDispatch();
   const [vehicleDetailsForm, setVehicleDetailsForm] = useState({
-    vehicleRegistrationNo: "",
-    vehicleColor: "",
+    registrationNo: "",
+    color: "",
     engineNo: "",
     chasisNo: "",
     instructions: "",
     remarks: "",
-
   });
+  const [bank, setBank] = useState("");
+  const [insurance, setInsurance] = useState("");
+  const [group, setGroup] = useState("");
+  const [vehicleMake, setVehicleMake] = useState("");
+  const [vehicleModel, setVehicleModel] = useState("");
+  const [vehicleYear, setVehicleYear] = useState("");
+  const [transmission, setTransmission] = useState("");
+  const [fuelType, setFuelType] = useState("");
 
   const [showPassword, setShowPassword] = useState(false);
 
@@ -50,43 +68,97 @@ const VehicleDetails = ({ callbackActive }: BusinessFormCommonProps) => {
   };
   const [formData, setFormData] = useState({});
   const {
-    vehicleRegistrationNo,
-    vehicleColor,
+    registrationNo,
+    color,
     engineNo,
     chasisNo,
     instructions,
     remarks,
 
   } = vehicleDetailsForm;
-  const getUserData = (event: ChangeEvent<HTMLInputElement>) => {
+  const getUserData = (event: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLTextAreaElement>) => {
     let name = event.target.name;
     let value =
-      name === "rememberNextTime" ? event.target.checked : event.target.value;
+      event.target.value;
     setVehicleDetailsForm({ ...vehicleDetailsForm, [name]: value });
   };
 
-  const handleNextButton = () => {
-    if (
-      vehicleRegistrationNo !== "" &&
-      vehicleColor !== "" &&
-      engineNo !== "" &&
-      chasisNo !== "" &&
-      instructions !== "" &&
-      remarks !== ""
+  const [loading, setLoading] = useState(false)
 
+  const createVehicle = async () => {
+    setLoading(true);
+    if (
+      registrationNo !== "" &&
+      color !== "" &&
+      engineNo !== "" &&
+      // province !== "" &&
+      chasisNo !== "" && instructions !== "" && remarks !== ""
     ) {
-      // dispatch(setServersAddItemsList([]));
-      // dispatch(
-      //   setCreateCompany({
-      //     ...createCompany,
-      //     ...accountCredentialsForm,
-      //   })
-      // );
-      // console.log("formData -->", accountCredentialsForm);
-      // console.log("createCompany--- >", createCompany);
-      callbackActive(3);
+      const body = {
+        ...vehicleDetailsForm,
+        bank: bank,
+        insurance: insurance,
+        vehicleMake: vehicleMake,
+        vehicleModel: vehicleModel,
+        year: Number(vehicleYear),
+        fuelType: fuelType,
+        transmissionType: transmission,
+        saleLeadId: saleLead.id,
+        group: group
+      }
+
+      try {
+        await create(body, { url: CREATE_NEW_SALELEAD_VEHICLE }).then((data: any) => {
+          if (data !== undefined) {
+            if (
+              !data.success &&
+              data.message === ERROR_MESSAGE
+            ) {
+              setLoading(false);
+              console.log("data.message", data.message);
+
+            }
+            if (!data.success) {
+              Swal.fire({
+                text: `${data.message}`,
+                icon: "error",
+                timer: 2000,
+                showConfirmButton: false,
+              });
+              setLoading(false);
+
+            }
+            if (data.success) {
+              getAll({ url: GET_ALL_SALELEADS }).then((data: any) => {
+                if (data !== undefined) {
+                  if (!data.success) {
+                    // setIscreateNewSaleLead(false)
+                  }
+                  if (data.success) {
+                    dispatch(setSaleLeads(data.data));
+                   
+
+                    // setIscreateNewSaleLead(false)
+                    // // console.log("hhg");
+                   
+                  }
+                }
+              });
+              callbackActive(4);
+              setLoading(false);
+            }
+          }
+        });
+        // Handle successful post creation (e.g., show a success message, redirect, etc.)
+      } catch (error: any) {
+        // Handle error (e.g., show an error message)
+        // console.error("Error creating post:", error);
+        setLoading(false);
+      }
+
     } else {
       ShowError();
+      setLoading(false);
     }
   };
   return (
@@ -103,7 +175,7 @@ const VehicleDetails = ({ callbackActive }: BusinessFormCommonProps) => {
               <span className="txt-danger">*</span>
             </P>
           </div>
-          <SelectBanksBox placeholder="Select Bank" />
+          <SelectBanksBox placeholder="Select Bank" bank={bank} setBank={setBank} />
         </Col>
         <Col xl={4} xs={12}>
           <div>
@@ -112,7 +184,7 @@ const VehicleDetails = ({ callbackActive }: BusinessFormCommonProps) => {
               <span className="txt-danger">*</span>
             </P>
           </div>
-          <SelectInsuranceBox placeholder="Select Insurance" />
+          <SelectInsuranceBox placeholder="Select Insurance" insurance={insurance} setInsurance={setInsurance} />
         </Col>
         <Col xl={4} xs={12}>
           <div>
@@ -121,7 +193,7 @@ const VehicleDetails = ({ callbackActive }: BusinessFormCommonProps) => {
               <span className="txt-danger">*</span>
             </P>
           </div>
-          <SelectGroupsBox placeholder="Select Group" />
+          <SelectGroupsBox placeholder="Select Group" group={group} setGroup={setGroup} />
         </Col>
         <Col xl={4} xs={12}>
           <div>
@@ -130,7 +202,7 @@ const VehicleDetails = ({ callbackActive }: BusinessFormCommonProps) => {
               <span className="txt-danger">*</span>
             </P>
           </div>
-          <SelectVehicleMakeBox placeholder="Select Vehicle Make" />
+          <SelectVehicleMakeBox placeholder="Select Vehicle Make" vehicleMake={vehicleMake} setVehicleMake={setVehicleMake} />
         </Col>
         <Col xl={4} xs={12}>
           <div>
@@ -139,7 +211,7 @@ const VehicleDetails = ({ callbackActive }: BusinessFormCommonProps) => {
               <span className="txt-danger">*</span>
             </P>
           </div>
-          <SelectVehicleModelBox placeholder="Select Vehicle Model" />
+          <SelectVehicleModelBox placeholder="Select Vehicle Model" vehicleModel={vehicleModel} setVehicleModel={setVehicleModel} />
         </Col>
         <Col xl={4} xs={12}>
           <div>
@@ -148,7 +220,7 @@ const VehicleDetails = ({ callbackActive }: BusinessFormCommonProps) => {
               <span className="txt-danger">*</span>
             </P>
           </div>
-          <SelectVehicleYearBox placeholder="Select Vehicle Year" />
+          <SelectVehicleYearBox placeholder="Select Vehicle Year" vehicleYear={vehicleYear} setVehicleYear={setVehicleYear} />
         </Col>
         <Col xl={4} xs={12}>
           <div>
@@ -157,7 +229,7 @@ const VehicleDetails = ({ callbackActive }: BusinessFormCommonProps) => {
               <span className="txt-danger">*</span>
             </P>
           </div>
-          <SelectFuelTypeBox placeholder="Select Fuel Type" />
+          <SelectFuelTypeBox placeholder="Select Fuel Type" fuelType={fuelType} setFuelType={setFuelType} />
         </Col>
         <Col xl={4} xs={12}>
           <div>
@@ -166,7 +238,7 @@ const VehicleDetails = ({ callbackActive }: BusinessFormCommonProps) => {
               <span className="txt-danger">*</span>
             </P>
           </div>
-          <SelectTransmissionBox placeholder="Select Transmission" />
+          <SelectTransmissionBox placeholder="Select Transmission" transmission={transmission} setTransmission={setTransmission} />
         </Col>
         <Col xl={4} xs={12}>
           <P>
@@ -176,11 +248,12 @@ const VehicleDetails = ({ callbackActive }: BusinessFormCommonProps) => {
           <Input
             type="text"
             placeholder="Enter Vehicle Registration No"
-            value={vehicleRegistrationNo}
-            name="vehicleRegistrationNo"
+            value={registrationNo}
+            name="registrationNo"
             onChange={getUserData}
           />
-        </Col> <Col xl={4} xs={12}>
+        </Col>
+        <Col xl={4} xs={12}>
           <P>
             Vehicle Color
             <span className="txt-danger">*</span>
@@ -188,11 +261,12 @@ const VehicleDetails = ({ callbackActive }: BusinessFormCommonProps) => {
           <Input
             type="text"
             placeholder="Enter Vehicle Color"
-            value={vehicleColor}
-            name="vehicleColor"
+            value={color}
+            name="color"
             onChange={getUserData}
           />
-        </Col> <Col xl={4} xs={12}>
+        </Col>
+        <Col xl={4} xs={12}>
           <P>
 
             Chasis No
@@ -206,7 +280,8 @@ const VehicleDetails = ({ callbackActive }: BusinessFormCommonProps) => {
             name="chasisNo"
             onChange={getUserData}
           />
-        </Col> <Col xl={4} xs={12}>
+        </Col>
+        <Col xl={4} xs={12}>
           <P>
 
             Engine No
@@ -235,6 +310,7 @@ const VehicleDetails = ({ callbackActive }: BusinessFormCommonProps) => {
             }}
             value={instructions}
             name="instructions"
+            onChange={getUserData}
           // {...register("description", { required: true })}
           />
         </Col>
@@ -253,6 +329,7 @@ const VehicleDetails = ({ callbackActive }: BusinessFormCommonProps) => {
             }}
             value={remarks}
             name="remarks"
+            onChange={getUserData}
           // {...register("description", { required: true })}
           />
         </Col>
@@ -261,11 +338,14 @@ const VehicleDetails = ({ callbackActive }: BusinessFormCommonProps) => {
           xs={12}
           className="text-end d-flex justify-content-end gap-2 align-center"
         >
-          <Button color="primary" onClick={() => callbackActive(1)}>
-            Previous
+          <Button color="secondary" onClick={() => { dispatch(setSaleLead(null)); dispatch(setCustomer(null)); dispatch(setSaleLeadId("")); setIscreateNewSaleLead(false) }}>
+            Cancel
           </Button>
-          <Button color="primary" onClick={handleNextButton}>
-            Continue
+          {/* <Button color="primary" onClick={() => callbackActive(1)}>
+            Previous
+          </Button> */}
+          <Button color="primary" onClick={createVehicle}>
+            {loading ? "Loading..." : "Create"}
           </Button>
         </Col>
       </Row>

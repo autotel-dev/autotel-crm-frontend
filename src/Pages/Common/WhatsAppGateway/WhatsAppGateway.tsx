@@ -25,7 +25,6 @@ import Skeleton from "../../Utilities/Skeleton/Skeleton";
 import { create, getAll, patch, update } from "../../../Utilities/api";
 import Swal from "sweetalert2";
 import BodyParamsObject from "./components/BodyParamsObject";
-import Loader from "../../Utilities/Loader/Loader";
 import { CREATE_WHATSAPP_GATEWAY, GET_WHATSAPP_GATEWAY, UPDATE_WHATSAPP_GATEWAY, UPDATE_WHATSAPP_GATEWAY_ACTIVATION_STATUS } from "../../../Utilities/api/apiEndpoints";
 import { ERROR_MESSAGE } from "../../../Utilities/constants/constants";
 
@@ -662,7 +661,7 @@ const WhatsAppGateway = () => {
                             Cancel
                           </Button>
                         )}
-                        
+
                         {whatsAppGatewayData == null ||
                           (whatsAppGatewayData !== null && isActive) ? (
                           <Button

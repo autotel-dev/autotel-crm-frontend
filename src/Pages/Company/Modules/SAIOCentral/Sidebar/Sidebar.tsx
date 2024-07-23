@@ -179,35 +179,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                         Operation
                     </div>
                 </div>
-                {/* <div
-                    title="Customers"
-                    style={{
-                        width: "100%",
-                        display: "flex",
-                        flexDirection: "column",
-                        justifyContent: "center",
-                        height: "100px",
-                        alignItems: "center",
-                        opacity: `${customers ? "0.6" : "1"}`,
-                        cursor: "pointer",
-                        borderBottom: "0.1px solid gray",
-                    }}
-                    onClick={() => {
-                        setSales(false)
-                        setAccounts(false);
-                        setInventory(false);
-                        setOperations(false);
-                        setCustomers(true);
-                    }}
-                >
-                    <img src={GroupSvg} alt="" height={24} width={28} id="Tooltip" />
-                    <div style={{
-                        color: "white",
-                        marginTop: "5px"
-                    }}>
-                        Customers
-                    </div>
-                </div> */}
+
             </div>
 
 

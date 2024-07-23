@@ -4,24 +4,26 @@ import { useDispatch, useSelector } from "react-redux";
 
 interface propTypes {
   placeholder: any;
+  vehicleModel: string;
+  setVehicleModel: any;
 }
 
-const SelectVehicleModelBox: React.FC<propTypes> = ({ placeholder }) => {
-  const { packages, createCompany } = useSelector(
-    (state: any) => state.companies
+const SelectVehicleModelBox: React.FC<propTypes> = ({ placeholder, vehicleModel, setVehicleModel }) => {
+  const { vehicleModels } = useSelector(
+    (state: any) => state.sales
   );
   // console.log(packages);
   const [packageId, setPackageId] = useState("");
-  const [packageList, setPackageList] = useState([]);
+  const [vehicleModelsList, setVehicleModelsList] = useState([]);
   const dispatch = useDispatch();
 
   const tempList: any = [];
   useEffect(() => {
-    packages?.map((item: any, index: any) => {
-      tempList.push({ value: `${item?._id}`, label: `${item?.title}` });
+    vehicleModels?.map((item: any, index: any) => {
+      tempList.push({ value: `${item?._id}`, label: `${item?.name}` });
     });
-    setPackageList(tempList);
-  }, [packages]);
+    setVehicleModelsList(tempList);
+  }, [vehicleModels]);
   return (
     <Select
       showSearch
@@ -37,17 +39,9 @@ const SelectVehicleModelBox: React.FC<propTypes> = ({ placeholder }) => {
           .localeCompare((optionB?.label ?? "").toLowerCase())
       }
       onChange={(e) => {
-        // console.log(e);
-        setPackageId(e);
-        // dispatch(
-        //   setCreateCompany({
-        //     ...createCompany,
-        //     package: e,
-        //   })
-        // );
-        // dispatch(setCountryId(e));
+        setVehicleModel(e)
       }}
-      options={packageList}
+      options={vehicleModelsList}
     />
   );
 };

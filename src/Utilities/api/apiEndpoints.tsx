@@ -262,6 +262,42 @@ export const ADD_PRE_INFO_FOR_DEVICE = `${API_BASE_URL}/control-room/add-pre-inf
 export const GET_ALL_VALID_PRE_INFOS = `${API_BASE_URL}/control-room/get-all-pre-infos`;
 export const GET_ALL_MERGED_ALERT_EVENTS = `${API_BASE_URL}/control-room/get-all-merged-alert-events-of-device`;
 
+
+// Company -> Modules - SAIO-Central - Customer
+
+export const CREATE_NEW_CUSTOMER = `${API_BASE_URL}/customer/create-customer`;
+export const GET_ALL_CUSTOMERS = `${API_BASE_URL}/customer/get-all-customers`;
+export const GET_SINGLE_CUSTOMERS = `${API_BASE_URL}/customer/get-customer`;
+
+
+
+// Company -> Modules - SIAO-Central - SaleLeads
+
+export const CREATE_NEW_LEAD = `${API_BASE_URL}/sale-lead/create-new-lead`;
+export const GET_ALL_SALELEADS = `${API_BASE_URL}/sale-lead/get-all-leads`;
+export const GET_SINGLE_SALELEAD = `${API_BASE_URL}/sale-lead/get-sale-lead`;
+export const CONFIRM_OR_REJECT_SALELEAD = `${API_BASE_URL}/sale-lead/confirm-or-reject-lead`;
+export const CREATE_NEW_SALELEAD_VEHICLE = `${API_BASE_URL}/vehicle/create-vehicle`;
+
+// Company -> Modules - SAIO-Central -Accounts - Expense Accounts
+
+export const CREATE_NEW_EXPENSE_ACCOUNT = `${API_BASE_URL}/accounts/expense-account/create-expense-account`;
+export const GET_ALL_EXPENSE_ACCOUNTS = `${API_BASE_URL}/accounts/expense-account/get-all-expense-accounts`;
+export const GET_ALL_ACTIVE_EXPENSE_ACCOUNTS = `${API_BASE_URL}/accounts/expense-account/get-all-active-expense-accounts`;
+export const CHANGE_EXPENSE_ACCOUNT_ACTIVATION_STATUS = `${API_BASE_URL}/accounts/expense-account/change-expense-account-activation`;
+export const UPDATE_EXPENSE_ACCOUNT = `${API_BASE_URL}/accounts/expense-account/update-expense-account`;
+export const DELETE_EXPENSE_ACCOUNT = `${API_BASE_URL}/accounts/expense-account/delete-expense-account`;
+
+
+// Company -> Modules - SAIO-Central -Accounts - Bank Accounts
+
+export const CREATE_NEW_BANK_ACCOUNT = `${API_BASE_URL}/accounts/bank-account/create-bank-account`;
+export const GET_ALL_BANK_ACCOUNTS = `${API_BASE_URL}/accounts/bank-account/get-all-bank-accounts`;
+export const UPDATE_BANK_ACCOUNT = `${API_BASE_URL}/accounts/bank-account/update-bank-account`;
+export const DELETE_BANK_ACCOUNT = `${API_BASE_URL}/accounts/bank-account/delete-bank-account`;
+export const GET_ALL_ACCOUNT_TYPES = `${API_BASE_URL}/accounts/bank-account/get-all-account-types`;
+
+
 // Company -> Modules - Monitoring
 export const GET_DEVICES = `${API_BASE_URL}/company/devices`;
 

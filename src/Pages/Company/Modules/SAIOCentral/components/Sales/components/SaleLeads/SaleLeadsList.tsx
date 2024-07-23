@@ -7,11 +7,24 @@ import { useDispatch, useSelector } from "react-redux";
 import "../../../../../../../../CssConstaints/Style.css";
 import { SaleLeadsDataType, supportColumns } from "./Type/Type";
 import { PlusCircle } from "react-feather";
+import CreateNewSaleLead from "./CreateNewSaleLead/CreateNewSaleLead";
+import Swal from "sweetalert2";
+import { Select } from "antd";
+import ReactDOM from "react-dom";
+import { setCustomer, setSaleLead } from "../../../../../../../../ReaduxToolkit/Reducer/SalesSlice";
 
-const SaleLeadsTable = () => {
+interface SaleLeadsTableProps {
+    iscreateNewSaleLead: boolean;
+    setIscreateNewSaleLead: any
+}
+
+const SaleLeadsTable: React.FC<SaleLeadsTableProps> = ({
+    iscreateNewSaleLead,
+    setIscreateNewSaleLead,
+}) => {
     const dispatch = useDispatch();
-    // Function to transform supportData into allBugReports format
-    const { bugReports } = useSelector((state: any) => state.support);
+
+    const { customers, saleLeads } = useSelector((state: any) => state.sales);
     const { userPermissions } = useSelector(
         (state: any) => state.userPermissions
     );
@@ -32,25 +45,26 @@ const SaleLeadsTable = () => {
     // Usage
     const hexColor = "#ff0000"; // Example hex color
     const rgbColor = hexToRgb(userPersonalizationData?.buttonsAndBarsColor); // Convert hex to RGB
-    var support = userPermissions.find((item: any) => item.title === "Support");
     // console.log("support", support);
-    const supportData = () => {
-        return bugReports?.filter(
+    const saleLeadsData = () => {
+        return saleLeads?.filter(
             (item: any) =>
-                item?.ticketId.toLowerCase().split("-")[1].includes(searchValue) ||
-                item?.name.toLowerCase().includes(searchValue) ||
-                item?.user.emailAddress.toLowerCase().includes(searchValue)
+                item?._id.includes(searchValue) ||
+                item?.user?.fullName.toLowerCase().includes(searchValue) ||
+                item?.user?.emailAddress.toLowerCase().includes(searchValue)
         )
             .map((item: any) => ({
-                ticket_id: item?._id,
-                id: item?.ticketId,
+                id: item?._id,
                 username: item?.user?.fullName,
                 email: item?.user?.emailAddress,
-                ticket_name: item?.name,
-                description: item?.description,
-                isActive: item?.isActive ? "true" : "false",
+                customer_name: item?.customerName,
+                customer_contact_no: item?.customerContactNo,
+                package: item?.package.title,
                 status: item?.status,
-                priorty: item?.priorty == null ? "N/A" : item?.priorty,
+                customer:item?.customer,
+                service_charges: item?.serviceCharges,
+                discounted_service_charges: item?.discountedServiceCharges,
+                isActive: item?.isActive ? "true" : "false",
                 date: `${item?.updatedAt.toString().slice(0, 10)},  ${new Date(
                     item?.updatedAt
                 )
@@ -66,7 +80,7 @@ const SaleLeadsTable = () => {
     const [searchValue, setSearchValue] = useState("");
 
     useEffect(() => {
-        setData(supportData());
+        setData(saleLeadsData());
     }, [searchValue]);
 
     const handleSearch = (e: any) => {
@@ -76,45 +90,137 @@ const SaleLeadsTable = () => {
 
     // console.log("allBugReports", supportData());
     useEffect(() => {
-        setData(supportData());
-    }, [bugReports]);
+        setData(saleLeadsData());
+    }, [saleLeads]);
 
     const navigate = useNavigate();
     // const history = useHistory();
     const [selectedRows, setSelectedRows] = useState([]);
     const [toggleDelete, setToggleDelete] = useState(false);
-    const [data, setData] = useState(supportData());
+    const [data, setData] = useState(saleLeadsData());
 
-    const handleRowSelected = useCallback((state: any) => {
-        setSelectedRows(state.selectedRows);
-    }, []);
 
-    const handleDelete = () => {
-        if (
-            window.confirm(
-                `Are you sure you want to delete:\r ${selectedRows.map(
-                    (r: SaleLeadsDataType) => r.id
-                )}?`
-            )
-        ) {
-            setToggleDelete(!toggleDelete);
-            setData(
-                data.filter((item: any) =>
-                    selectedRows.filter((elem: SaleLeadsDataType) => elem.id === item.id)
-                        .length > 0
-                        ? false
-                        : true
-                )
-            );
-            setSelectedRows([]);
-        }
-    };
+    // const handleRowSelected = useCallback((state: any) => {
+    //     setSelectedRows(state.selectedRows);
+    // }, []);
+
+    // const handleDelete = () => {
+    //     if (
+    //         window.confirm(
+    //             `Are you sure you want to delete:\r ${selectedRows.map(
+    //                 (r: SaleLeadsDataType) => r.id
+    //             )}?`
+    //         )
+    //     ) {
+    //         setToggleDelete(!toggleDelete);
+    //         setData(
+    //             data.filter((item: any) =>
+    //                 selectedRows.filter((elem: SaleLeadsDataType) => elem.id === item.id)
+    //                     .length > 0
+    //                     ? false
+    //                     : true
+    //             )
+    //         );
+    //         setSelectedRows([]);
+    //     }
+    // };
 
     const handleRowClicked = (row: any) => {
-        navigate(
-            `${process.env.PUBLIC_URL}/support/ticketDetails/${row.ticket_id}`
-        );
+        console.log("row",row);
+        
+        dispatch(setSaleLead(row));
+        dispatch(setCustomer(null))
+        setIscreateNewSaleLead(true)
     };
+
+    const [customerId, setCustomerId] = useState("");
+    const [customerList, setCustomerList] = useState([]);
+    // const dispatch = useDispatch();
+
+    const tempList: any = [];
+    useEffect(() => {
+        customers?.map((item: any, index: any) => {
+            tempList.push({ value: `${item?._id}`, label: `${item?.fullName}`, phoneNo: `${item?.phoneNo}` });
+        });
+        setCustomerList(tempList);
+    }, [customers]);
+
+    const handleSelectChange = (e: any) => {
+        setCustomerId(e);
+        dispatch(setCustomer(e))
+        // setIscreateNewSaleLead(true);
+    };
+
+
+    const handleButtonClick = () => {
+        Swal.fire({
+            title: "Please Select Customer",
+            showCancelButton: false,
+            showCloseButton: true,
+            showConfirmButton: true,
+            confirmButtonText: "New",
+            showDenyButton: true,
+            denyButtonText: "Existing",
+        }).then((result) => {
+            if (result.isConfirmed) {
+                dispatch(setCustomer(null))
+                setIscreateNewSaleLead(true);
+            } else if (result.isDenied) {
+                Swal.fire({
+                    title: 'Select Customer',
+                    html: `
+                        <div id="select-customer" style="width: 100%; height: 36px; z-index: 9999;">
+                            <div id="select-box"></div>
+                        </div>`,
+                    showConfirmButton: true,
+                    confirmButtonText: "OK",
+                    showCloseButton: true,
+                    showDenyButton: true,
+                    denyButtonText: "Cancel",
+                    didOpen: () => {
+                        const container = document.getElementById('select-box');
+                        const selectElement = (
+                            <Select
+                                showSearch
+                                style={{ width: "100%", height: 36 }}
+                                dropdownStyle={{ zIndex: 9999 }} // Ensure the dropdown has a high z-index
+                                placeholder="Select a customer"
+                                optionFilterProp="children"
+                                filterOption={(input: any, option: any) =>
+                                    (option?.label.toLowerCase() ?? "").includes(input.toLowerCase()) || (option?.value.toLowerCase() ?? "").includes(input.toLowerCase()) || (option?.phoneNo ?? "").includes(input)
+                                }
+                                filterSort={(optionA: any, optionB: any) =>
+                                    (optionA?.label ?? "")
+                                        .toLowerCase()
+                                        .localeCompare((optionB?.label ?? "").toLowerCase())
+                                }
+                                onChange={handleSelectChange}
+                                options={customerList}
+                            />
+                        );
+                        if (container) {
+                            ReactDOM.render(selectElement, container);
+                        }
+                    },
+                    customClass: {
+                        popup: 'swal-custom-class' // Add a custom class to the popup
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        setIscreateNewSaleLead(true);
+                            setCustomerId("")
+                      
+                    }
+                    else if(result.isDenied){
+                        setIscreateNewSaleLead(false);
+                        setCustomerId("")
+                    }
+                });
+            }
+        });
+    };
+
+
     return (
         <div className="table-responsive support-table" style={{ overflow: "auto", scrollbarWidth: "none" }}>
 
@@ -136,9 +242,7 @@ const SaleLeadsTable = () => {
                             alignItems: "center",
 
                         }}
-                        // onClick={() => {
-                        //     setComponent("New Lead")
-                        // }}
+                        onClick={handleButtonClick}
                     >
                         <PlusCircle size={18} style={{
                             marginRight: "5px"
@@ -180,7 +284,7 @@ const SaleLeadsTable = () => {
                 // striped={true}
                 pagination
                 selectableRows
-                onSelectedRowsChange={handleRowSelected}
+                // onSelectedRowsChange={handleRowSelected}
                 onRowClicked={handleRowClicked} // Pass the event handler for row clicks
                 clearSelectedRows={toggleDelete}
                 style={{
@@ -214,7 +318,41 @@ const SaleLeadsTable = () => {
       `}
             </style>
         </div>
+
     );
 };
 
 export default SaleLeadsTable;
+
+
+
+    // const handleButtonClick = () => {
+    //     Swal.fire({
+    //         title: "Please Select Customer",
+    //         // icon: "success",
+    //         showCancelButton: false,
+    //         showCloseButton: true,
+    //         showConfirmButton: true,
+    //         confirmButtonText: "New",
+    //         showDenyButton: true,
+    //         denyButtonText: "Existing",
+    //     }).then((result) => {
+    //         if (result.isConfirmed) {
+    //             setIscreateNewSaleLead(true);
+    //         } else if (result.isDenied) {
+    //             Swal.fire({
+    //                 title: 'Select Customer',
+    //                 html: `
+    //                     <div id="select-customer">
+    //                         <select id="customer-select" style="width: 100%; height: 36px;">
+    //                             ${customers.map((customer: any) => `<option value="${customer._id}">${customer.fullName}</option>`).join('')}
+    //                         </select> 
+    //                     </div>`,
+    //                 showConfirmButton: true,
+    //                 confirmButtonText: "OK",
+    //                 showCloseButton: true,
+
+    //             });
+    //         }
+    //     });
+    // };

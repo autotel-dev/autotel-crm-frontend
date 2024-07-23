@@ -3,24 +3,26 @@ import { Select } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 interface propTypes {
   placeholder: any;
+  bank: string;
+  setBank: any;
 }
 
-const SelectBanksBox: React.FC<propTypes> = ({ placeholder }) => {
-  const { cities, createCompany } = useSelector(
-    (state: any) => state.companies
+const SelectBanksBox: React.FC<propTypes> = ({ placeholder, bank, setBank }) => {
+  const { banks } = useSelector(
+    (state: any) => state.sales
   );
   // console.log(cities);
   const [cityId, setCityId] = useState("");
-  const [cityList, setCityList] = useState([]);
+  const [banksList, setBanksList] = useState([]);
   const dispatch = useDispatch();
 
   const tempList: any = [];
   useEffect(() => {
-    cities?.map((item: any, index: any) => {
+    banks?.map((item: any, index: any) => {
       tempList.push({ value: `${item?._id}`, label: `${item?.name}` });
     });
-    setCityList(tempList);
-  }, [cities]);
+    setBanksList(tempList);
+  }, [banks]);
   return (
     <Select
       showSearch
@@ -36,17 +38,9 @@ const SelectBanksBox: React.FC<propTypes> = ({ placeholder }) => {
           .localeCompare((optionB?.label ?? "").toLowerCase())
       }
       onChange={(e) => {
-        // console.log(e);
-        setCityId(e);
-        // dispatch(
-        //   setCreateCompany({
-        //     ...createCompany,
-        //     city: e,
-        //   })
-        // );
-        // dispatch(setCountryId(e));
+        setBank(e)
       }}
-      options={cityList}
+      options={banksList}
     />
   );
 };

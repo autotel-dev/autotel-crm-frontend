@@ -45,12 +45,14 @@ import {
 } from "../../ReaduxToolkit/Reducer/ComplainsTypeSlice";
 import {
   DELETE_BANK,
+  DELETE_BANK_ACCOUNT,
   DELETE_BRANCH,
   DELETE_CITY,
   DELETE_COMPANY,
   DELETE_COUNTRY,
   DELETE_CRM_MODULE,
   DELETE_CURRENCY,
+  DELETE_EXPENSE_ACCOUNT,
   DELETE_GROUP,
   DELETE_INSURANCE,
   DELETE_LANGUAGE,
@@ -65,6 +67,7 @@ import {
   DELETE_VEHICLE_MAKE,
   DELETE_VEHICLE_MODEL,
   DELETE_WAREHOUSE,
+  GET_ALL_BANK_ACCOUNTS,
   GET_ALL_BANKS,
   GET_ALL_BRANCHES,
   GET_ALL_CITIES,
@@ -72,6 +75,7 @@ import {
   GET_ALL_COUNTRIES,
   GET_ALL_CRM_MODULES,
   GET_ALL_CURRENCIES,
+  GET_ALL_EXPENSE_ACCOUNTS,
   GET_ALL_GEOFENCES,
   GET_ALL_GROUPS,
   GET_ALL_INSURANCES,
@@ -101,6 +105,8 @@ import { setFilterVehiclesMake, setVehicleMake } from "../../ReaduxToolkit/Reduc
 import { setFilterVehiclesModel, setVehicleModel } from "../../ReaduxToolkit/Reducer/VehicleModelSlice";
 import { setCurrencies, setFilterCurrencies } from "../../ReaduxToolkit/Reducer/CurrencySlice";
 import { setFilterLanguages, setLanguages } from "../../ReaduxToolkit/Reducer/LanguageSlice";
+import { setBankAccounts } from "../../ReaduxToolkit/Reducer/BankAccountSlice";
+import { setExpenseAccounts } from "../../ReaduxToolkit/Reducer/ExpenseAccountsSlice";
 
 const deleteAlert = (
   alertData: alertTypes,
@@ -108,6 +114,7 @@ const deleteAlert = (
   type: any,
   dispatch: any
 ) => {
+  var check = false;
   return Swal.fire({
     title: alertData.title,
     text: alertData.text,
@@ -141,25 +148,31 @@ const deleteAlert = (
         uri = `${DELETE_GROUP}`;
       } else if (type === "bankType") {
         uri = `${DELETE_BANK}`;
-      }else if (type === "insuranceType") {
+      } else if (type === "insuranceType") {
         uri = `${DELETE_INSURANCE}`;
-      }else if (type === "networkProviderType") {
+      } else if (type === "networkProviderType") {
         uri = `${DELETE_NETWORK_PROVIDER}`;
-      }else if (type === "warehouseType") {
+      } else if (type === "warehouseType") {
         uri = `${DELETE_WAREHOUSE}`;
-      }else if (type === "saleGroupType") {
+      } else if (type === "saleGroupType") {
         uri = `${DELETE_SALE_GROUP}`;
-      }else if (type === "branchType") {
+      } else if (type === "branchType") {
         uri = `${DELETE_BRANCH}`;
-      }else if (type === "vehicleMakeType") {
+      } else if (type === "vehicleMakeType") {
         uri = `${DELETE_VEHICLE_MAKE}`;
-      }else if (type === "vehicleModelType") {
+      } else if (type === "vehicleModelType") {
         uri = `${DELETE_VEHICLE_MODEL}`;
-      }else if (type === "currencyType") {
+      } else if (type === "currencyType") {
         uri = `${DELETE_CURRENCY}`;
-      }else if (type === "languageType") {
+      } else if (type === "languageType") {
         uri = `${DELETE_LANGUAGE}`;
+      } else if (type === "expenseAccountsType") {
+        uri = `${DELETE_EXPENSE_ACCOUNT}`;
+      } else if (type === "bankAccountsType") {
+        uri = `${DELETE_BANK_ACCOUNT}`;
       }
+
+
 
       try {
         Swal.fire({
@@ -210,8 +223,56 @@ const deleteAlert = (
             }
 
 
-             // ------------
-              // ------------
+
+            if (type === "bankAccountsType") {
+              getAll({ url: GET_ALL_BANK_ACCOUNTS }).then((data: any) => {
+                // console.log("api call --- >", data);
+                if (data == undefined) {
+                  dispatch(setBankAccounts([]));
+                }
+                if (data !== undefined) {
+                  if (data.success) {
+                    // console.log("hhg");
+                    dispatch(setBankAccounts(data.data.bankAccounts));
+
+                  }
+                  if (!data.success) {
+                    dispatch(setBankAccounts([]));
+                  }
+                } else {
+                  // console.log("ier67i");
+                }
+              });
+            }
+
+
+            // -----------
+            // -----------
+
+
+            if (type === "expenseAccountsType") {
+              getAll({ url: GET_ALL_EXPENSE_ACCOUNTS }).then((data: any) => {
+                // console.log("api call --- >", data);
+                if (data == undefined) {
+                  dispatch(setExpenseAccounts([]));
+                }
+                if (data !== undefined) {
+                  if (data.success) {
+                    // console.log("hhg");
+                    dispatch(setExpenseAccounts(data.data));
+                  }
+                  if (!data.success) {
+                    dispatch(setExpenseAccounts([]));
+                  }
+                } else {
+                  // console.log("ier67i");
+                }
+              });
+            }
+
+
+            // ------------
+            // ------------
 
             if (type === "currencyType") {
               getAll({ url: GET_ALL_CURRENCIES }).then((data: any) => {
@@ -239,8 +300,8 @@ const deleteAlert = (
             }
 
 
-             // ------------
-              // ------------
+            // ------------
+            // ------------
 
             if (type === "languageType") {
               getAll({ url: GET_ALL_LANGUAGES }).then((data: any) => {
@@ -267,8 +328,8 @@ const deleteAlert = (
             }
 
 
-             // ------------
-              // ------------
+            // ------------
+            // ------------
 
             if (type === "insuranceType") {
               getAll({ url: GET_ALL_INSURANCES }).then((data: any) => {
@@ -296,8 +357,8 @@ const deleteAlert = (
             }
 
 
-             // ------------
-             // ------------
+            // ------------
+            // ------------
 
             if (type === "vehicleMakeType") {
               getAll({ url: GET_ALL_VEHICLES_MAKE }).then((data: any) => {
@@ -351,8 +412,8 @@ const deleteAlert = (
             }
 
 
-             // ------------
-              // ------------
+            // ------------
+            // ------------
 
             if (type === "networkProviderType") {
               getAll({ url: GET_ALL_NETWORK_PROVIDERS }).then((data: any) => {
@@ -380,9 +441,9 @@ const deleteAlert = (
             }
 
 
-             // ------------
+            // ------------
 
-              // ------------
+            // ------------
 
             if (type === "warehouseType") {
               getAll({ url: GET_ALL_WAREHOUSES }).then((data: any) => {
@@ -410,8 +471,8 @@ const deleteAlert = (
             }
 
 
-             // ------------
-             // ------------
+            // ------------
+            // ------------
 
             if (type === "branchType") {
               getAll({ url: GET_ALL_BRANCHES }).then((data: any) => {
@@ -437,7 +498,7 @@ const deleteAlert = (
                 }
               });
             }
-              // ------------
+            // ------------
 
             if (type === "saleGroupType") {
               getAll({ url: GET_ALL_SALE_GROUPS }).then((data: any) => {
@@ -465,7 +526,7 @@ const deleteAlert = (
             }
 
 
-             // ------------
+            // ------------
 
             if (type === "complainType") {
               getAll({
@@ -897,8 +958,11 @@ const deleteAlert = (
         // Handle error (e.g., show an error message)
         // console.error("Error creating post:", error);
         // loading false
+
       }
     }
+    if (result.isDismissed && (type == "expenseAccountsType" || type == "bankAccountsType"))
+      return !check;
   });
 };
 
