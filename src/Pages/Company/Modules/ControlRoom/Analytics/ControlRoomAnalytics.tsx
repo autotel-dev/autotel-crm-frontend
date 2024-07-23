@@ -29,12 +29,14 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { ImArrowUp, ImArrowDown } from "react-icons/im";
 import SelfSendCommands from "./components/SelfSendCommands";
-import { getAll } from "../../../../../Api";
+import { getAll } from "../../../../../Utilities/api";
 import { setDashboardStatistics } from "../../../../../ReaduxToolkit/Reducer/AlertsSlice";
 import { ApexOptions } from "apexcharts";
 import TotalPreInfoAlerts from "./components/TotalPreInfoAlerts";
 import DeviceSelecetdForAlerts from "./components/DeviceSelecetdForAlerts";
 import { VscKebabVertical } from "react-icons/vsc";
+import { relative } from "path";
+import { CONTROLROOM_DASHBOARD_STATISTICS } from "../../../../../Utilities/api/apiEndpoints";
 
 const ControlRoomAnalytics = () => {
   const { userPersonalizationData } = useSelector(
@@ -619,7 +621,7 @@ const ControlRoomAnalytics = () => {
                       setToDate(endDate);
 
                       getAll({
-                        url: `control-room/dashboard/statistics?fromDate=${startDate}&toDate=${endDate}`,
+                        url: `${CONTROLROOM_DASHBOARD_STATISTICS}?fromDate=${startDate}&toDate=${endDate}`,
                       }).then((data: any) => {
                         // // // console.log("api call --- >", data);
 
@@ -647,7 +649,7 @@ const ControlRoomAnalytics = () => {
                       setToDate(endDate);
 
                       getAll({
-                        url: `control-room/dashboard/statistics?fromDate=${startDate}&toDate=${endDate}`,
+                        url: `${CONTROLROOM_DASHBOARD_STATISTICS}?fromDate=${startDate}&toDate=${endDate}`,
                       }).then((data: any) => {
                         // // // console.log("api call --- >", data);
 
@@ -676,7 +678,7 @@ const ControlRoomAnalytics = () => {
                       setToDate(endDate);
 
                       getAll({
-                        url: `control-room/dashboard/statistics?fromDate=${startDate}&toDate=${endDate}`,
+                        url: `${CONTROLROOM_DASHBOARD_STATISTICS}?fromDate=${startDate}&toDate=${endDate}`,
                       }).then((data: any) => {
                         // // // console.log("api call --- >", data);
 
@@ -818,8 +820,8 @@ const ControlRoomAnalytics = () => {
               />
               {/*  */}
               <Col xl="3" lg="6" md="6" sm="12" className="box-col-3">
-                <Card className="total-earning">
-                  <CardBody style={{ maxHeight: "160px", padding: "1em" }}>
+                <Card className="total-earning" style={{position:"relative",}}>
+                  <CardBody style={{ maxHeight: "160px", padding: "1em", }}>
                     <Row style={{ height: "115px" }}>
                       <Col sm="12" className="box-col-7">
                         <div className="d-flex">

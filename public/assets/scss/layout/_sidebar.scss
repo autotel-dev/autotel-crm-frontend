@@ -940,7 +940,7 @@
   &.horizontal-wrapper {
     .page-header {
       .header-wrapper {
-        border-bottom: 1px solid $light-gray;
+        // border-bottom: 1px solid $light-gray;
         .logo-wrapper {
           display: contents;
           a {
@@ -979,7 +979,7 @@
                       opacity: 0;
                       visibility: hidden;
                       border-radius: 5px;
-                      transition: all 0.5s ease;
+                      // transition: all 0.001s ease;
                       a {
                         .sub-arrow {
                           position: absolute;
@@ -1119,7 +1119,8 @@
           }
           .main-submenu{
             >a.sidebar-menu {
-              padding: 4px 0px !important;
+              // padding: 4px 0px !important;
+              padding: 0px 0px !important;
             }
             .submenu-wrapper{
               > a{

@@ -6,14 +6,18 @@ import Breadcrumbs from "../../../CommonElements/Breadcrumbs/Breadcrumbs";
 import { setup } from "../../../utils/Constant";
 import ReportsList from "./ReportsList";
 import ReportsListNav from "./ReportsListNav";
-import { getAll } from "../../../Api";
+import { getAll } from "../../../Utilities/api";
 import Swal from "sweetalert2";
-import Loader from "../../Loader/Loader";
+import "../../../CssConstaints/Style.css";
+import Loader from "../../Utilities/Loader/Loader";
 import {
   setIsConnected,
   setReportstype,
 } from "../../../ReaduxToolkit/Reducer/ReportsSlice";
-import NoInternetConnection from "../../NoInternetConnection/NoInternetConnection";
+import NoInternetConnection from "../../Utilities/NoInternetConnection/NoInternetConnection";
+import { Flex } from "antd";
+import { GET_ALL_REPORT_TYPES, GET_DEVICES } from "../../../Utilities/api/apiEndpoints";
+import { ERROR_MESSAGE } from "../../../Utilities/constants/constants";
 
 const Reports = () => {
   const dispatch = useDispatch();
@@ -32,7 +36,7 @@ const Reports = () => {
   }, []);
   const getData = () => {
     setLoading(true);
-    getAll({ url: "company/devices" }).then((data: any) => {
+    getAll({ url: GET_DEVICES }).then((data: any) => {
       // console.log("data", data);
       if (data == undefined) {
         setUndefinedData(true);
@@ -96,7 +100,7 @@ const Reports = () => {
   };
   useEffect(() => {
     getData();
-    getAll({ url: "reports/get-all-report-types" }).then((data: any) => {
+    getAll({ url: GET_ALL_REPORT_TYPES }).then((data: any) => {
       // console.log("data", data);
       // if (data == undefined) {
       //   Swal.fire({
@@ -108,7 +112,7 @@ const Reports = () => {
       //   return;
       // }
       if (data !== undefined) {
-        if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
+        if (!data.success && data.message === ERROR_MESSAGE) {
           dispatch(setIsConnected(true));
         }
         if (!data.success) {
@@ -161,21 +165,22 @@ const Reports = () => {
                     <ReportsListNav dropDownDevices={dropDownDevices} />
                     <Col md={12}>
                       <input
+                      className="global-search-field"
                         type="text"
                         placeholder="Type to Search.."
                         value={searchValue}
                         onChange={(e) => {
                           // filterCountriess(e);
                         }}
-                        style={{
-                          backgroundColor: "#f1f1f1",
-                          borderRadius: "5px",
-                          padding: "15px",
-                          margin: "15px",
-                          width: "calc(100% - 30px)", // Adjusting width to accommodate padding and margin
-                          border: "none",
-                          outline: "none", // Removing default border outline
-                        }}
+                        // style={{
+                        //   backgroundColor: "#f1f1f1",
+                        //   borderRadius: "5px",
+                        //   padding: "15px",
+                        //   margin: "15px",
+                        //   width: "calc(100% - 30px)", // Adjusting width to accommodate padding and margin
+                        //   border: "none",
+                        //   outline: "none", // Removing default border outline
+                        // }}
                       />
                     </Col>
                   </Card>

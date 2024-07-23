@@ -7,10 +7,11 @@ import {
 } from "react-router-dom";
 import PrivateRoute from "./PrivateRoute";
 import LayoutRoutes from "./LayoutRoutes";
-import { authRoutes } from "./AuthRoutes";
-import LoginForm from "../Pages/Auth/Auth";
-import VerifyOTP from "../Pages/VerifyOTP/VerifyOTP";
+// import { authRoutes } from "./AuthRoutes";
+
+import VerifyOTP from "../Pages/Common/VerifyOTP/VerifyOTP";
 import { useEffect } from "react";
+import LoginForm from "../Pages/Common/Auth/Auth";
 
 const Routers = () => {
   useEffect(() => {
@@ -46,9 +47,9 @@ const Routers = () => {
         <Route path={"/"} element={<PrivateRoute />}>
           <Route path={`/*`} element={<LayoutRoutes />} />
         </Route>
-        {authRoutes.map(({ path, Component }, i) => (
+        {/* {authRoutes.map(({ path, Component }, i) => (
           <Route path={path} element={Component} key={i} />
-        ))}
+        ))} */}
         {/* <Route
           path={`${process.env.PUBLIC_URL}login/:userId`}
           element={<LoginForm />}

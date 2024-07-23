@@ -16,7 +16,7 @@ import Location from "./modalComponents/Location";
 import PreviousAlerts from "./modalComponents/PreviousAlerts";
 import ResponseForm from "./modalComponents/Response";
 import CustomerInfo from "./modalComponents/CustomerInfo";
-import Loader from "../../../../../Loader/Loader";
+import Loader from "../../../../../Utilities/Loader/Loader";
 import { setModalData } from "../../../../../../ReaduxToolkit/Reducer/AlertsSlice";
 import VehicleInfo from "./modalComponents/VehicleInfo";
 

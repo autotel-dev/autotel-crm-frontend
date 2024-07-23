@@ -1,0 +1,222 @@
+/* ---------------------- ack --------------- */
+
+label>input[type="checkbox"]+.ack::before {
+  content: "";
+  display: inline-block;
+  vertical-align: bottom;
+  width: 17px;
+  height: 17px;
+  border-radius: 10%;
+  border-style: solid;
+  border-width: 0.13rem;
+  border-color: red;
+  margin-right: 15px;
+  box-shadow: 0 0 5px red;
+}
+
+label>input[type="checkbox"]:checked+.ack::before {
+  content: "✓";
+  font-weight: bold;
+  font-size: 12.5px !important;
+  text-align: center;
+  transform: scale(1.05);
+  color: red;
+  text-align: center;
+  background: white;
+  border-color: red;
+  margin-right: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+label>input[type="checkbox"]:checked+.ack {
+  color: red;
+}
+
+/* ---------------------- online --------------- */
+label>input[type="checkbox"]+.onlineDevice::before {
+  content: "";
+  display: inline-block;
+  vertical-align: bottom;
+  width: 17px;
+  height: 17px;
+  border-radius: 10%;
+  border-style: solid;
+  border-width: 0.13rem;
+  border-color: green;
+  margin-right: 15px;
+  box-shadow: 0 0 5px green;
+}
+
+label>input[type="checkbox"]:checked+.onlineDevice::before {
+  /* content: "✓";
+  font-weight: bold;
+  font-size: 14px !important;
+  transform: scale(1.1);
+  color: green;
+  text-align: center;
+  background: white;
+  border-color: green;
+  margin-right: 15px; */
+  content: "✓";
+  font-weight: bold;
+  font-size: 12.5px !important;
+  text-align: center;
+  transform: scale(1.05);
+  color: green;
+  text-align: center;
+  background: white;
+  border-color: green;
+  margin-right: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+label>input[type="checkbox"]:checked+.onlineDevice {
+  color: green;
+}
+
+/* ---------------------- engine --------------- */
+label>input[type="checkbox"]+.engine::before {
+  content: "";
+  display: inline-block;
+  vertical-align: bottom;
+  width: 17px;
+  height: 17px;
+  border-radius: 10%;
+  border-style: solid;
+  border-width: 0.13rem;
+  border-color: yellow;
+  margin-right: 15px;
+  box-shadow: 0 0 5px yellow;
+}
+
+label>input[type="checkbox"]:checked+.engine::before {
+  /* content: "✓";
+  font-weight: bold;
+  transform: scale(1.1);
+  color: yellow;
+  text-align: center;
+  background: white;
+  border-color: yellow;
+  margin-right: 15px; */
+  content: "✓";
+  font-weight: bold;
+  font-size: 12.5px !important;
+  text-align: center;
+  transform: scale(1.05);
+  color: yellow;
+  text-align: center;
+  background: white;
+  border-color: yellow;
+  margin-right: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+label>input[type="checkbox"]:checked+.engine {
+  color: yellow;
+}
+
+/* ---------------------- offline --------------- */
+label>input[type="checkbox"]+.black::before {
+  content: "";
+  display: inline-block;
+  vertical-align: bottom;
+  width: 17px;
+  height: 17px;
+  border-radius: 10%;
+  border-style: solid;
+  border-width: 0.13rem;
+  border-color: black;
+  margin-right: 15px;
+  box-shadow: 0 0 5px black;
+}
+
+label>input[type="checkbox"]:checked+.black::before {
+  /* content: "✓";
+  font-weight: bold;
+  transform: scale(1.1);
+  color: black;
+  text-align: center;
+  background: white;
+  border-color: black;
+  margin-right: 15px; */
+  content: "✓";
+  font-weight: bold;
+  font-size: 12.5px !important;
+  text-align: center;
+  transform: scale(1.05);
+  color: black;
+  text-align: center;
+  background: white;
+  border-color: black;
+  margin-right: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+label>input[type="checkbox"]:checked+.black {
+  color: black;
+}
+
+/* ---------------------- Expired --------------- */
+label>input[type="checkbox"]+.expired::before {
+  content: "";
+  display: inline-block;
+  vertical-align: bottom;
+  width: 17px;
+  height: 17px;
+  border-radius: 10%;
+  border-style: solid;
+  border-width: 0.13rem;
+  border-color: gray;
+  margin-right: 15px;
+  box-shadow: 0 0 5px gray;
+}
+
+label>input[type="checkbox"]:checked+.expired::before {
+  /* content: "✓";
+  font-weight: bold;
+  transform: scale(1.1);
+  color: gray;
+  text-align: center;
+  background: white;
+  border-color: gray;
+  margin-right: 15px; */
+  content: "✓";
+  font-weight: bold;
+  font-size: 12.5px !important;
+  text-align: center;
+  transform: scale(1.05);
+  color: gray;
+  text-align: center;
+  background: white;
+  border-color: gray;
+  margin-right: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+label>input[type="checkbox"]:checked+.expired {
+  color: gray;
+}
+
+
+
+.custom-accordion-header {
+  /* margin: -25px 0px !important; */
+  /* Ensure padding is applied */
+  background-color: gray !important;
+  /* font-weight: bold !important; */
+  height: 40px;
+  display: flex;
+  /* align-items: center; */
+  /* Ensure font weight is bold */
+  /* border-bottom: 1px solid black */
+}

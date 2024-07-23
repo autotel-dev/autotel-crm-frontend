@@ -11,10 +11,9 @@ import {
 import CommonHeader from "../../../Common/CommonHeader";
 import DataTable from "react-data-table-component";
 import { useEffect, useState } from "react";
-import { getAll, update } from "../../../Api";
+import { getAll, update } from "../../../Utilities/api";
 import { useDispatch, useSelector } from "react-redux";
 import "./usersStyle.css";
-import deleteAlert from "../../Alerts/DeleteAlert";
 import {
   setFilterOperators,
   setInActiveActiveUsers,
@@ -24,13 +23,19 @@ import {
   setOperatorsStart,
 } from "../../../ReaduxToolkit/Reducer/OperatorSlice";
 import { setNoDataFound } from "../../../ReaduxToolkit/Reducer/NoDataFoundSlice";
-import Loader from "../../Loader/Loader";
+import Loader from "../../Utilities/Loader/Loader";
 import UpdateUser from "./UpdateUser";
 import { jwtDecode } from "jwt-decode";
-import { formatUnderscoredString, getUserRole } from "../../../Api/globals";
+import { formatUnderscoredString, getUserRole } from "../../../Utilities/globals/globals";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import { H4 } from "../../../AbstractElements";
+import Skeleton from "../../Utilities/Skeleton/Skeleton";
+import "../../../CssConstaints/Style.css";
+import deleteAlert from "../../../Utilities/alerts/DeleteAlert";
+import { GET_ALL_OPERATORS, UPDATE_OPERATOR } from "../../../Utilities/api/apiEndpoints";
+import { ERROR_MESSAGE } from "../../../Utilities/constants/constants";
+
 
 const UsersList = () => {
   const { operators, loading, activeInActiveOperators } = useSelector(
@@ -88,7 +93,7 @@ const UsersList = () => {
     dispatch(setOperators([]));
     dispatch(setFilterOperators([]));
     dispatch(setOperatorsStart());
-    getAll({ url: "operator/get-all-operators" }).then((data: any) => {
+    getAll({ url: GET_ALL_OPERATORS }).then((data: any) => {
       // console.log("api call --- >", data);
       // if (data == undefined) {
       //   Swal.fire({
@@ -106,7 +111,7 @@ const UsersList = () => {
 
       if (data !== undefined) {
         dispatch(setNoDataFound(data.message));
-        if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
+        if (!data.success && data.message === ERROR_MESSAGE) {
           dispatch(setIsConnected(true));
         }
         if (!data.success) {
@@ -183,14 +188,14 @@ const UsersList = () => {
                     // console.log(e.target.value);
                     try {
                       await update(operator, {
-                        url: `operator/update-operator/${row._id}`,
+                        url: `${UPDATE_OPERATOR}/${row._id}`,
                       }).then((data: any) => {
                         if (data.success) {
                           // console.log(data);
 
                           dispatch(setOperatorsStart());
                           getAll({
-                            url: "operator/get-all-operators",
+                            url: GET_ALL_OPERATORS,
                           }).then((data: any) => {
                             // console.log("api call --- >", data);
                             dispatch(setOperatorsEnd());
@@ -227,16 +232,17 @@ const UsersList = () => {
             <div>
               {user?.delete && (
                 <button
-                  style={{
-                    width: 60,
-                    fontSize: 14,
-                    padding: 3,
-                    color: "white",
-                    backgroundColor: "red",
-                    borderRadius: "5px",
-                    marginRight: "5px",
-                    border: "none",
-                  }}
+                className="global-table-delete-btn"
+                  // style={{
+                  //   width: 60,
+                  //   fontSize: 14,
+                  //   padding: 3,
+                  //   color: "white",
+                  //   backgroundColor: "red",
+                  //   borderRadius: "5px",
+                  //   marginRight: "5px",
+                  //   border: "none",
+                  // }}
                   onClick={() => {
                     // console.log("345678");
                     var alertData = {
@@ -252,15 +258,16 @@ const UsersList = () => {
               )}
               {user?.edit && (
                 <button
-                  style={{
-                    width: 60,
-                    fontSize: 14,
-                    padding: 3,
-                    color: "white",
-                    backgroundColor: "green",
-                    borderRadius: "5px",
-                    border: "none",
-                  }}
+                className="global-table-edit-btn"
+                  // style={{
+                  //   width: 60,
+                  //   fontSize: 14,
+                  //   padding: 3,
+                  //   color: "white",
+                  //   backgroundColor: "green",
+                  //   borderRadius: "5px",
+                  //   border: "none",
+                  // }}
                   onClick={() => {
                     setIsUpdateModalOpen(true);
                     // console.log("isUpdateModalOpen: ", isUpdateModalOpen);
@@ -294,7 +301,14 @@ const UsersList = () => {
             <CardBody>
               <div className="table-responsive product-table">
                 {loading ? (
-                  <Loader />
+                  // <Loader />
+                  <>
+                  <Skeleton height="100px" width="100%" borderRadius="10px" />
+                  <Skeleton height="40px" width="100%" marginTop="10px" marginBottom="10" borderRadius="10px" />
+                  <Skeleton height="40px" width="100%" marginTop="10px" marginBottom="10" borderRadius="10px" />
+                  <Skeleton height="40px" width="100%" marginTop="10px" marginBottom="10" borderRadius="10px" />
+                  <Skeleton height="40px" width="100%" marginTop="10px" marginBottom="10" borderRadius="10px" />
+                </>
                 ) : operators?.length > 0 && loading === false ? (
                   <div>
                     <table>

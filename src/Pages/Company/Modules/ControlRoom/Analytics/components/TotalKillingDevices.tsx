@@ -18,10 +18,11 @@ import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { H3, H4, P } from "../../../../../../AbstractElements";
 import SendCommand from "./SendCommand";
-import { getAll } from "../../../../../../Api";
+import { getAll } from "../../../../../../Utilities/api";
 import { setKilledDevices } from "../../../../../../ReaduxToolkit/Reducer/AlertsSlice";
-import Loader from "../../../../../Loader/Loader";
+import Loader from "../../../../../Utilities/Loader/Loader";
 import Swal from "sweetalert2";
+import { GET_ALL_KILLED_DEVICES } from "../../../../../../Utilities/api/apiEndpoints";
 
 interface PropsTypes {
   isVisible: boolean; // Change 'boolean' to the actual type of isVisible
@@ -275,7 +276,7 @@ const TotalKillingDevices: React.FC<PropsTypes> = ({
                         setBasicTab("1");
                         setLoading(true);
                         getAll({
-                          url: "control-room/get-all-killed-devices?type=self",
+                          url: GET_ALL_KILLED_DEVICES,
                         }).then((data: any) => {
                           // // // console.log("api call --- >", data);
 
@@ -315,7 +316,7 @@ const TotalKillingDevices: React.FC<PropsTypes> = ({
                         setBasicTab("2");
                         setLoading(true);
                         getAll({
-                          url: "control-room/get-all-killed-devices?type=self",
+                          url: GET_ALL_KILLED_DEVICES,
                         }).then((data: any) => {
                           // // // console.log("api call --- >", data);
 

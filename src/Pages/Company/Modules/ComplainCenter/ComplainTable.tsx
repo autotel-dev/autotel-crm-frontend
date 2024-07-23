@@ -7,11 +7,13 @@ import { H4 } from "../../../../AbstractElements";
 import { useNavigate } from "react-router-dom";
 import CreateNewTicket from "./CreateNewComplain";
 import { useDispatch, useSelector } from "react-redux";
-import { getUserRole } from "../../../../Api/globals";
+import { getUserRole } from "../../../../Utilities/globals/globals";
 import { ROLES } from "../../../../constants/roles";
 import CreateNewComplain from "./CreateNewComplain";
 import { setAllComplains, setComplainCenterRoles, setComplainCenterStatistics, setTableRow } from "../../../../ReaduxToolkit/Reducer/ComplainCenterSlice";
-import { getAll } from "../../../../Api";
+import { getAll } from "../../../../Utilities/api";
+import "../../../../CssConstaints/Style.css";
+import { GET_ALL_INTERNAL_COMPLAINT, GET_COMPLAINT_CENTER_STATISTICS } from "../../../../Utilities/api/apiEndpoints";
 
 const ComplainTable = () => {
   const dispatch = useDispatch();
@@ -25,7 +27,7 @@ const ComplainTable = () => {
   );
   function hexToRgb(hex: any) {
     // Remove the hash sign if present
-    hex = hex.replace(/^#/, '');
+    hex = hex?.replace(/^#/, '');
     // Parse the hex values to RGB
     const bigint = parseInt(hex, 16);
     const r = (bigint >> 16) & 255;
@@ -184,7 +186,7 @@ const ComplainTable = () => {
       // console.log(typeof (event.data));
       if (typeof (event.data) == "string" && event.data == "updated") {
         setIsUpdate(event.data.toString());
-        getAll({ url: "complaint-center/get-statistics" }).then((data: any) => {
+        getAll({ url: GET_COMPLAINT_CENTER_STATISTICS }).then((data: any) => {
           // console.log("Data", data);
 
           if (data !== undefined) {
@@ -211,7 +213,7 @@ const ComplainTable = () => {
         });
 
         getAll({
-          url: "complaint-center/get-all-internal-complaints",
+          url: GET_ALL_INTERNAL_COMPLAINT,
         }).then((data: any) => {
           // console.log("api call --- >", data);
 
@@ -234,7 +236,7 @@ const ComplainTable = () => {
     };
   }, []);
   return (
-    <div className="table-responsive support-table">
+    <div className="table-responsive support-table" style={{ overflow: "auto", scrollbarWidth: "none" }}>
       <Row style={{ display: "flex", alignItems: "center" }}>
         <Col
           sm={12}
@@ -249,22 +251,23 @@ const ComplainTable = () => {
           }
         >
           <input
+            className="global-search-field"
             type="text"
             placeholder="Type to Search.."
             value={searchValue}
             onChange={(e) => {
               handleSearch(e);
             }}
-            style={{
-              backgroundColor: "#f1f1f1",
-              borderRadius: "5px",
-              padding: "12px",
-              height: "40px",
-              margin: "20px 0px",
-              width: "100%", // Adjusting width to accommodate padding and margin
-              border: "none",
-              outline: "none", // Removing default border outline
-            }}
+          // style={{
+          //   backgroundColor: "#f1f1f1",
+          //   borderRadius: "5px",
+          //   padding: "12px",
+          //   height: "40px",
+          //   margin: "20px 0px",
+          //   width: "100%", // Adjusting width to accommodate padding and margin
+          //   border: "none",
+          //   outline: "none", // Removing default border outline
+          // }}
           />
         </Col>
         {getUserRole() === ROLES.SUPER_ADMIN ? (

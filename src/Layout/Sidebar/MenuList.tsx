@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import { Href } from "../../utils/Constant";
 import { useAppSelector } from "../../ReaduxToolkit/Hooks";
 import { MenuListInterface } from "./SideBarTypes";
-import { getUserRole } from "../../Api/globals";
+import { getUserRole } from "../../Utilities/globals/globals";
 import { IoMdArrowDropdown, IoMdArrowDropup } from "react-icons/io";
 
 
@@ -56,7 +56,23 @@ const MenuList = ({ subMenuData, setIsOpen, isOpen, level, isClose, setIsClose }
                 onClick={() => handleClick(item.title)}
               >
                 {item.svgIcon && (
-                  <SVG className={`${sidebarIconType}-icon`} iconId={item.svgIcon === "home" ? item.svgIcon : `${sidebarIconType}-${item.svgIcon}`} />
+                   <span
+                   style={{
+                     height: "20px",
+                     width: "20px",
+                     marginRight: "8px",
+                   }}
+                 >
+                   <img
+                     src={item.svgIcon}
+                     style={{
+                       height: "100%",
+                       width: "100%",
+                     }}
+                     alt=""
+                   />
+                 </span>
+                  // <SVG className={`${sidebarIconType}-icon`} iconId={item.svgIcon === "home" ? item.svgIcon : `${sidebarIconType}-${item.svgIcon}`} />
                 )}
                 {t(item.title)}
 

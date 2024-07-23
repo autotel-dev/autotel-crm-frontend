@@ -12,7 +12,7 @@ import {
 } from "reactstrap";
 import { H3, H4, H5, P } from "../../../../../../AbstractElements";
 import { useEffect, useRef, useState } from "react";
-import { create, getAll } from "../../../../../../Api";
+import { create, getAll } from "../../../../../../Utilities/api";
 import { useDispatch, useSelector } from "react-redux";
 import {
   setAssignedAlerts,
@@ -21,9 +21,11 @@ import {
   setLiveAlertsData,
 } from "../../../../../../ReaduxToolkit/Reducer/AlertsSlice";
 import Swal from "sweetalert2";
-import Loader from "../../../../../Loader/Loader";
-import { serverCredentials } from "../../../../../../Api/header";
-import { getUserRole } from "../../../../../../Api/globals";
+import Loader from "../../../../../Utilities/Loader/Loader";
+import { serverCredentials } from "../../../../../../Utilities/headers/header";
+import { getUserRole } from "../../../../../../Utilities/globals/globals";
+import { ASSIGN_ALERT_EVENT_TO_ME, COMPLETE_AN_ALERT_EVENT, GET_ALERT_EVENTS, GET_ALL_ASSIGNED_ALERT_EVENTS, GET_ALL_COMPLETED_ALERT_EVENTS } from "../../../../../../Utilities/api/apiEndpoints";
+import { ERROR_MESSAGE } from "../../../../../../Utilities/constants/constants";
 
 const LiveAlerts = () => {
   const { userPersonalizationData } = useSelector(
@@ -91,7 +93,7 @@ const LiveAlerts = () => {
       liveAlertsData.lastPage > 1
     ) {
       setLoading(true); // Set loading to true before making API call
-      const url = `company/alert-events?pageNo=${pageNo + 1}`;
+      const url = `${GET_ALERT_EVENTS}?pageNo=${pageNo + 1}`;
       getAll({ url: url }).then((data: any) => {
         // Set loading to false when API call completes
         // console.log("api call --- >", data);
@@ -138,7 +140,7 @@ const LiveAlerts = () => {
 
     // Function to fetch data and dispatch actions
     const fetchDataAndDispatch = () => {
-      getAll({ url: "company/alert-events?pageNo=1" }).then((data: any) => {
+      getAll({ url: `${GET_ALERT_EVENTS}?pageNo=1` }).then((data: any) => {
         // console.log("api call --- >", data);
 
         if (data == undefined) {
@@ -199,7 +201,6 @@ const LiveAlerts = () => {
             // fontWeight: "bold",
           }}
         >
-<<<<<<< HEAD
           <div>
             Live Alerts (
             {liveAlertsData == null
@@ -212,44 +213,6 @@ const LiveAlerts = () => {
             )
           </div>
         </div>
-=======
-          <Table className="display order-wrapper" id="recent-order">
-            <thead>
-              <tr>
-                {tableHeader.map((data, index) => (
-                  <th key={index} style={{ width: "20%" }}>
-                    {data}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {dataList.length > 0 ? (
-                dataList
-                  .filter((data: any) =>
-                    data?.deviceName
-                      .toLowerCase()
-                      .includes(searchValue.toLowerCase())
-                  )
-                  .map((data: any, index: any) => (
-                    <tr
-                      key={index}
-                      // style={{
-                      //   cursor: "pointer",
-                      // }}
-                      onClick={async () => {
-                        if (data.preInfo == null) {
-                          if (assignLoading) {
-                            Swal.fire({
-                              text: "Loading....",
-                              icon: "info",
-                              showConfirmButton: false,
-                              allowOutsideClick: false, // Prevent closing by clicking outside the modal
-                            });
-                          }
-                          const serverInfo = serverCredentials(data.server._id);
-                          // console.log("serverInfo", serverInfo);
->>>>>>> 99e5d2a835c62a2e961bdbbc1a027be48052767c
 
         <CardBody>
           <Row>
@@ -264,7 +227,21 @@ const LiveAlerts = () => {
               />
             </FormGroup>
           </Row>
-          <div
+          
+            <Table className="display order-wrapper" id="recent-order">
+              <thead>
+                <tr>
+
+
+                  {tableHeader.map((data, index) => (
+                    <th key={index} style={{ width: "20%" }}>
+                      {data}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              </ Table>
+              <div
             ref={containerRef}
             className="table-responsive theme-scrollbar recent-wrapper"
             style={{
@@ -280,18 +257,8 @@ const LiveAlerts = () => {
             }}
             onScroll={handleScroll}
           >
-            <Table className="display order-wrapper" id="recent-order">
-              <thead>
-                <tr>
 
-
-                  {tableHeader.map((data, index) => (
-                    <th key={index} style={{ width: "20%" }}>
-                      {data}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
+              <Table className="display order-wrapper" id="recent-order">
               <tbody>
                 {dataList.length > 0 ? (
                   dataList
@@ -303,8 +270,20 @@ const LiveAlerts = () => {
                     .map((data: any, index: any) => (
                       <tr
                         key={index}
+                        onMouseEnter={() => {
+                          setIsHovered(true);
+                          setIdd(index);
+                        }}
+                        onMouseLeave={() => setIsHovered(false)}
                         style={{
-                          cursor: "pointer",
+                          backgroundColor:
+                            isHovered && idd == index
+                              ? userPersonalizationData == null
+                                ? "#D6EEEE"
+                                : `rgba(${rgbColor.r},${rgbColor.g},${rgbColor.b},0.2)`
+                              : "transparent",
+                          transition: "background-color 0.3s",
+                          cursor:"pointer",
                         }}
                         onClick={async () => {
                           if (data.preInfo == null) {
@@ -338,11 +317,11 @@ const LiveAlerts = () => {
                               // console.log("liveAlerts[index]: ", liveAlerts[index]);
 
                               await create(assignEvent, {
-                                url: "company/assign-alert-event-to-me",
+                                url: ASSIGN_ALERT_EVENT_TO_ME,
                               }).then((dataa: any) => {
                                 if (
                                   !dataa.success &&
-                                  dataa.message === "ERROR_INTERNET_DISCONNECTED"
+                                  dataa.message === ERROR_MESSAGE
                                 ) {
                                   setAssignLoading(false);
                                 }
@@ -378,7 +357,7 @@ const LiveAlerts = () => {
                                     showConfirmButton: false,
                                   });
                                   getAll({
-                                    url: "company/get-all-assigned-events",
+                                    url: GET_ALL_ASSIGNED_ALERT_EVENTS,
                                   }).then((data: any) => {
                                     // console.log("assigned --- >", data);
                                     // setLoading(false);
@@ -457,12 +436,12 @@ const LiveAlerts = () => {
                                     // console.log("liveAlerts[index]: ", liveAlerts[index]);
 
                                     await create(assignEvent, {
-                                      url: "company/assign-alert-event-to-me",
+                                      url: ASSIGN_ALERT_EVENT_TO_ME,
                                     }).then((dataa: any) => {
                                       if (
                                         !dataa.success &&
                                         dataa.message ==
-                                        "ERROR_INTERNET_DISCONNECTED"
+                                        ERROR_MESSAGE
                                       ) {
                                         setAssignLoading(false);
                                       }
@@ -495,7 +474,7 @@ const LiveAlerts = () => {
                                           showConfirmButton: false,
                                         });
                                         getAll({
-                                          url: "company/get-all-assigned-events",
+                                          url: GET_ALL_ASSIGNED_ALERT_EVENTS,
                                         }).then((data: any) => {
                                           // console.log("assigned --- >", data);
                                           // setLoading(false);
@@ -550,12 +529,12 @@ const LiveAlerts = () => {
                                     // console.log("liveAlerts[index]: ", liveAlerts[index]);
 
                                     await create(assignEvent, {
-                                      url: "company/assign-alert-event-to-me",
+                                      url: ASSIGN_ALERT_EVENT_TO_ME,
                                     }).then(async (dataa: any) => {
                                       if (
                                         !dataa.success &&
                                         dataa.message ==
-                                        "ERROR_INTERNET_DISCONNECTED"
+                                        ERROR_MESSAGE
                                       ) {
                                         setAssignLoading(false);
                                       }
@@ -568,60 +547,6 @@ const LiveAlerts = () => {
                                         });
                                         setAssignLoading(false);
                                       }
-<<<<<<< HEAD
-=======
-                                    }
-                                  });
-                                  // Handle successful post creation (e.g., show a success message, redirect, etc.)
-                                } catch (error: any) {
-                                  // Handle error (e.g., show an error message)
-                                  // console.error("Error creating post:", error);
-                                }
-                              }
-                            });
-                          } else {
-                            Swal.fire({
-                              title: `${checkServer.server.companyName}`,
-                              text: `You cannot get the info of this alert because its Server Credentials are wrong`,
-                              icon: "error",
-                              // timer: 2000,
-                              showConfirmButton: true,
-                            });
-                          }
-                        }
-                      }}
-                      onMouseEnter={() => {
-                        setIsHovered(true);
-                        setIdd(index);
-                      }}
-                      onMouseLeave={() => setIsHovered(false)}
-                      style={{
-                        backgroundColor:
-                          isHovered && idd == index
-                            ? userPersonalizationData == null
-                              ? "#D6EEEE"
-                              : `rgba(${rgbColor.r},${rgbColor.g},${rgbColor.b},0.2)`
-                            : "transparent",
-                        transition: "background-color 0.3s",
-                        cursor:"pointer",
-                      }}
-                    >
-                      {/* <td>{data.id}</td> */}
-                      <td style={{ width: "20%" }}>
-                        <div className="d-flex">
-                          <div className="flex-grow-1">
-                            <h5
-                              style={{
-                                fontSize: "14px",
-                                fontWeight: "bold",
-                              }}
-                            >
-                              {data?.deviceName}
-                            </h5>
-                            <div style={{ fontSize: "10px" }}>
-                              {data.time.slice(0, 10)}
-                            </div>
->>>>>>> 99e5d2a835c62a2e961bdbbc1a027be48052767c
 
                                       if (dataa.success) {
                                         setAssignLoading(false);
@@ -646,12 +571,12 @@ const LiveAlerts = () => {
                                         // console.log(completedResponse);
                                         try {
                                           await create(completedResponse, {
-                                            url: "alert-events/complete-an-alert-event",
+                                            url: COMPLETE_AN_ALERT_EVENT,
                                           }).then((data: any) => {
                                             if (
                                               !data.success &&
                                               data.message ==
-                                              "ERROR_INTERNET_DISCONNECTED"
+                                              ERROR_MESSAGE
                                             ) {
                                               setLoading(false);
                                             }
@@ -675,7 +600,7 @@ const LiveAlerts = () => {
                                               });
 
                                               getAll({
-                                                url: "company/get-all-assigned-events",
+                                                url: GET_ALL_ASSIGNED_ALERT_EVENTS,
                                               }).then((data: any) => {
                                                 // console.log("assigned --- >", data);
                                                 // setLoading(false);
@@ -694,7 +619,7 @@ const LiveAlerts = () => {
                                                 }
                                               });
                                               getAll({
-                                                url: "company/get-all-completed-events",
+                                                url: GET_ALL_COMPLETED_ALERT_EVENTS,
                                               }).then((data: any) => {
                                                 // console.log("assigned --- >", data);
                                                 // setLoading(false);

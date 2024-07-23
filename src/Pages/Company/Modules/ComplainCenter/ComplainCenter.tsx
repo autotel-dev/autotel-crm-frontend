@@ -5,7 +5,8 @@ import CommonHeader from "../../../../Common/CommonHeader";
 import SupportList from "./ComplainList";
 import SupportTable from "./ComplainTable";
 import { useEffect, useState } from "react";
-import { getAll } from "../../../../Api";
+import Skeleton from "../../../Utilities/Skeleton/Skeleton";
+import { getAll } from "../../../../Utilities/api";
 import {
   setBugReports,
   setIsConnected,
@@ -14,15 +15,30 @@ import {
   setSupportStatistics,
 } from "../../../../ReaduxToolkit/Reducer/SupportSlice";
 import { useDispatch, useSelector } from "react-redux";
-import Loader from "../../../Loader/Loader";
-import { getUserRole } from "../../../../Api/globals";
+import Loader from "../../../Utilities/Loader/Loader";
+import { getUserRole } from "../../../../Utilities/globals/globals";
 import Swal from "sweetalert2";
-import NoInternetConnection from "../../../NoInternetConnection/NoInternetConnection";
+import NoInternetConnection from "../../../Utilities/NoInternetConnection/NoInternetConnection";
 import { ROLES } from "../../../../constants/roles";
 import ComplainList from "./ComplainList";
 import ComplainTable from "./ComplainTable";
-import { setAllComplains, setComplainCenterRoles, setComplainCenterStatistics, setComplainPriorityTypes, setComplainRoleSelection, setComplainStatusTypes, setComplainTypesList, setFilteredRole } from "../../../../ReaduxToolkit/Reducer/ComplainCenterSlice";
-import { setDevices, setDevicesStatuses, setServerDevices } from "../../../../ReaduxToolkit/Reducer/MonitoringSlice";
+import {
+  setAllComplains,
+  setComplainCenterRoles,
+  setComplainCenterStatistics,
+  setComplainPriorityTypes,
+  setComplainRoleSelection,
+  setComplainStatusTypes,
+  setComplainTypesList,
+  setFilteredRole,
+} from "../../../../ReaduxToolkit/Reducer/ComplainCenterSlice";
+import {
+  setDevices,
+  setDevicesStatuses,
+  setServerDevices,
+} from "../../../../ReaduxToolkit/Reducer/MonitoringSlice";
+import { GET_ALL_ACTIVE_SUB_ROLES, GET_ALL_ACTIVE_TYPES, GET_ALL_INTERNAL_COMPLAINT, GET_COMPLAINT_CENTER_PRIORITY_STATUS, GET_COMPLAINT_CENTER_STATISTICS, GET_COMPLAINT_CENTER_STATUS_TYPES, GET_DEVICES } from "../../../../Utilities/api/apiEndpoints";
+import { ERROR_MESSAGE } from "../../../../Utilities/constants/constants";
 
 const ComplainCenter = () => {
   const { supportStatistics, isConnected } = useSelector(
@@ -41,11 +57,11 @@ const ComplainCenter = () => {
     setStatisticsLoading(true);
     setComplaintsLoading(true);
 
-    getAll({ url: "complaint-center/get-statistics" }).then((data: any) => {
+    getAll({ url: GET_COMPLAINT_CENTER_STATISTICS }).then((data: any) => {
       // console.log("Data", data);
 
       if (data !== undefined) {
-        if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
+        if (!data.success && data.message === ERROR_MESSAGE) {
           dispatch(setIsConnected(true));
         }
         if (!data.success) {
@@ -59,7 +75,11 @@ const ComplainCenter = () => {
         }
 
         if (data.success) {
-          dispatch(setComplainCenterRoles(data.data.InternalComplaintsStatistics.subRoleCounts))
+          dispatch(
+            setComplainCenterRoles(
+              data.data.InternalComplaintsStatistics.subRoleCounts
+            )
+          );
           const mappedArray = Object.entries(
             data.data.InternalComplaintsStatistics
           ).map(([key, value]) => {
@@ -71,7 +91,7 @@ const ComplainCenter = () => {
               return { key: formattedKey, value: value };
             }
           });
-          mappedArray.pop()
+          mappedArray.pop();
           // console.log(mappedArray);
           dispatch(setComplainCenterStatistics(mappedArray));
           setStatisticsLoading(false);
@@ -80,7 +100,7 @@ const ComplainCenter = () => {
     });
 
     getAll({
-      url: "complaint-center/get-all-internal-complaints",
+      url: GET_ALL_INTERNAL_COMPLAINT,
     }).then((data: any) => {
       // console.log("api call --- >", data);
       if (data == undefined) {
@@ -97,7 +117,7 @@ const ComplainCenter = () => {
       }
 
       if (data !== undefined) {
-        if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
+        if (!data.success && data.message === ERROR_MESSAGE) {
           dispatch(setIsConnected(true));
         }
         if (!data.success) {
@@ -120,12 +140,12 @@ const ComplainCenter = () => {
         }
       }
     });
-
-
   }, []);
 
   useEffect(() => {
-    getAll({ url: "complaint-center/internal-complaint-type/get-all-active-types" }).then((data: any) => {
+    getAll({
+      url: GET_ALL_ACTIVE_TYPES,
+    }).then((data: any) => {
       // console.log("api call --- >", data);
       if (data !== undefined) {
         if (data.success) {
@@ -134,27 +154,35 @@ const ComplainCenter = () => {
         }
       }
     });
-    getAll({ url: "complaint-center/get-status-types" }).then((data: any) => {
+    getAll({ url: GET_COMPLAINT_CENTER_STATUS_TYPES }).then((data: any) => {
       // console.log("api call --- >", data);
       if (data !== undefined) {
         if (data.success) {
           // console.log("hhg");
-          dispatch(setComplainStatusTypes(data.data.internalComplaintStatusTypes));
+          dispatch(
+            setComplainStatusTypes(data.data.internalComplaintStatusTypes)
+          );
         }
       }
     });
 
-    getAll({ url: "complaint-center/get-priorty-status-types" }).then((data: any) => {
-      // console.log("api call --- >", data);
-      if (data !== undefined) {
-        if (data.success) {
-          // console.log("hhg");
-          dispatch(setComplainPriorityTypes(data.data.internalComplaintPriortyStatusTypes));
+    getAll({ url: GET_COMPLAINT_CENTER_PRIORITY_STATUS }).then(
+      (data: any) => {
+        // console.log("api call --- >", data);
+        if (data !== undefined) {
+          if (data.success) {
+            // console.log("hhg");
+            dispatch(
+              setComplainPriorityTypes(
+                data.data.internalComplaintPriortyStatusTypes
+              )
+            );
+          }
         }
       }
-    });
+    );
 
-    getAll({ url: "sub-role/get-all-active-sub-roles" }).then((data: any) => {
+    getAll({ url: GET_ALL_ACTIVE_SUB_ROLES }).then((data: any) => {
       // console.log("api call --- >", data);
       if (data !== undefined) {
         if (data.success) {
@@ -163,8 +191,7 @@ const ComplainCenter = () => {
         }
       }
     });
-
-  }, [])
+  }, []);
   const { devices } = useSelector((state: any) => state.monitoring);
 
   const groups: any = [];
@@ -180,7 +207,7 @@ const ComplainCenter = () => {
 
   useEffect(() => {
     if (devices.length === 0) {
-      getAll({ url: "company/devices" }).then((data: any) => {
+      getAll({ url: GET_DEVICES }).then((data: any) => {
         // // console.log("data", data);
         // if (data == undefined) {
         //   setDevicesLoading(false);
@@ -192,7 +219,7 @@ const ComplainCenter = () => {
         //   });
         // }
         if (data !== undefined) {
-          if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
+          if (!data.success && data.message === ERROR_MESSAGE) {
             dispatch(setIsConnected(true));
           }
           if (!data.success) {
@@ -334,7 +361,7 @@ const ComplainCenter = () => {
                   {!statisticsloading && !complaintsLoading ? (
                     <>
                       {supportStatistics == null &&
-                        getUserRole() === ROLES.SUPER_ADMIN ? (
+                      getUserRole() === ROLES.SUPER_ADMIN ? (
                         <div
                           style={{
                             display: "flex",
@@ -355,9 +382,9 @@ const ComplainCenter = () => {
                           </div>
                         </div>
                       ) : (
-                        getUserRole() === ROLES.SUPER_ADMIN && <ComplainList />
+                        getUserRole() !== ROLES.SUPER_ADMIN && <ComplainList />
                       )}
-                      {getUserRole() !== ROLES.SUPER_ADMIN && <ComplainList />}
+                      {/* {getUserRole() !== ROLES.SUPER_ADMIN && <ComplainList />} */}
 
                       <Card>
                         <CardBody>
@@ -369,16 +396,155 @@ const ComplainCenter = () => {
                     <Card>
                       <CardBody>
                         <div
-                          style={{
-                            display: "flex",
-                            justifyContent: "center",
-                            height: "60vh",
-                            backgroundColor: "white",
-                            alignItems: "center",
-                          }}
+                        // style={{
+                        //   display: "flex",
+                        //   justifyContent: "center",
+                        //   height: "80vh",
+                        //   backgroundColor: "white",
+                        //   alignItems: "center",
+                        // }}
                         >
-                          <div style={{ textAlign: "center" }}>
-                            <Loader />
+                          <div
+                            style={{
+                              textAlign: "center",
+                              // display: "flex",
+                              height: "75vh",
+                              // alignItems: "center",
+                            }}
+                          >
+                            {/* <Loader /> */}
+
+                            <div
+                              style={{
+                                display: "flex",
+                                // flexDirection: "column",
+                                width: "100%",
+                              }}
+                            >
+                              <Skeleton
+                                height="140px"
+                                width="100%"
+                                marginTop="10px"
+                                marginBottom="30px"
+                              />
+                              <Skeleton
+                                height="140px"
+                                width="100%"
+                                marginTop="10px"
+                                marginBottom="30px"
+                                marginLeft="30px"
+                              />
+                              <Skeleton
+                                height="140px"
+                                width="100%"
+                                marginTop="10px"
+                                marginBottom="20px"
+                                marginLeft="30px"
+                              />
+                              <Skeleton
+                                height="140px"
+                                width="100%"
+                                marginTop="10px"
+                                marginBottom="20px"
+                                marginLeft="30px"
+                              />
+                              <Skeleton
+                                height="140px"
+                                width="100%"
+                                marginTop="10px"
+                                marginBottom="20px"
+                                marginLeft="30px"
+                              />
+                              <Skeleton
+                                height="140px"
+                                width="100%"
+                                marginTop="10px"
+                                marginBottom="20px"
+                                marginLeft="30px"
+                              />
+                            </div>
+                            <div
+                              style={{
+                                display: "flex",
+                                width: "100%",
+                                marginLeft: "20px",
+                              }}
+                            >
+                              <Skeleton
+                                height="40px"
+                                width="100%"
+                                marginTop="10px"
+                                marginBottom="20px"
+                                borderRadius="10px"
+                                marginRight="20px"
+                              />
+                              <Skeleton
+                                height="40px"
+                                width="100%"
+                                marginTop="10px"
+                                marginBottom="20px"
+                                borderRadius="10px"
+                                marginRight="20px"
+                              />
+                              <Skeleton
+                                height="40px"
+                                width="100%"
+                                marginTop="10px"
+                                marginBottom="20px"
+                                borderRadius="10px"
+                                marginRight="20px"
+                              />
+                              <Skeleton
+                                height="40px"
+                                width="100%"
+                                marginTop="10px"
+                                marginBottom="20px"
+                                borderRadius="10px"
+                                marginRight="20px"
+                              />
+                              <Skeleton
+                                height="40px"
+                                width="100%"
+                                marginTop="10px"
+                                marginBottom="20px"
+                                borderRadius="10px"
+                                marginRight="40px"
+                              />
+                            </div>
+                            <Skeleton
+                              height="75px"
+                              width="100%"
+                              borderRadius="10px"
+                              marginTop="20px"
+                            />
+                            <Skeleton
+                              height="40px"
+                              width="100%"
+                              marginTop="10px"
+                              marginBottom="10"
+                              borderRadius="10px"
+                            />
+                            <Skeleton
+                              height="40px"
+                              width="100%"
+                              marginTop="10px"
+                              marginBottom="10"
+                              borderRadius="10px"
+                            />
+                            <Skeleton
+                              height="40px"
+                              width="100%"
+                              marginTop="10px"
+                              marginBottom="10"
+                              borderRadius="10px"
+                            />
+                            <Skeleton
+                              height="40px"
+                              width="100%"
+                              marginTop="10px"
+                              marginBottom="10"
+                              borderRadius="10px"
+                            />
                           </div>
                         </div>
                       </CardBody>

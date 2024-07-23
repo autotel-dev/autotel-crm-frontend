@@ -15,8 +15,8 @@ import ticketImage from "../../assets/ticketImage.png";
 import { IoSend } from "react-icons/io5";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { IMAGE_BASE_URL, getAll, getImage, patch } from "../../../../Api";
-import Loader from "../../../Loader/Loader";
+import { IMAGE_BASE_URL, getAll, getImage, patch } from "../../../../Utilities/api";
+import Loader from "../../../Utilities/Loader/Loader";
 import './ComplainDetails.css'
 
 import { Select } from "antd";
@@ -24,7 +24,7 @@ import {
   formatUnderscoredString,
   getUserId,
   getUserRole,
-} from "../../../../Api/globals";
+} from "../../../../Utilities/globals/globals";
 import { useParams } from "react-router-dom";
 import Swal from "sweetalert2";
 import { ROLES } from "../../../../constants/roles";
@@ -34,6 +34,8 @@ import {
   setComplainPriorityTypes,
   setComplainStatusTypes,
 } from "../../../../ReaduxToolkit/Reducer/ComplainCenterSlice";
+import { GET_COMPLAINT_CENTER_PRIORITY_STATUS, GET_COMPLAINT_CENTER_STATUS_TYPES, GET_INTERNAL_COMPLAIN_BY_ID, SEND_INTERNAL_COMPLAINT_MESSAGE, UPDATE_INTERNAL_COMPLAINT } from "../../../../Utilities/api/apiEndpoints";
+import { ERROR_MESSAGE } from "../../../../Utilities/constants/constants";
 
 const ComplainDetails = () => {
   const { userPersonalizationData } = useSelector(
@@ -102,14 +104,14 @@ const ComplainDetails = () => {
   //         resolvingDate: null,
   //       },
   //       {
-  //         url: `complaint-center/update-internal-complaint/${complaintId}`,
+  //         url: `${UPDATE_INTERNAL_COMPLAINT}/${complaintId}`,
   //       }
   //     ).then((data: any) => {
   //       // console.log("api call --- >", data);
   //       if (data !== undefined) {
   //         if (data.success) {
   //           getAll({
-  //             url: `complaint-center/get-internal-complaint/${complaintId}`,
+  //             url: `${GET_INTERNAL_COMPLAIN_BY_ID}/${complaintId}`,
   //           }).then((data: any) => {
   //             // console.log("api call --- >", data);
   //             if (data !== undefined) {
@@ -125,7 +127,7 @@ const ComplainDetails = () => {
   //   } else {
   //     // console.log("Else");
   //     getAll({
-  //       url: `complaint-center/get-internal-complaint/${complaintId}`,
+  //       url: `${GET_INTERNAL_COMPLAIN_BY_ID}/${complaintId}`,
   //     }).then((data: any) => {
   //       // console.log("api call --- >", data);
   //       if (data !== undefined) {
@@ -151,14 +153,14 @@ const ComplainDetails = () => {
   const handleChangeUpdatedStatus = (newValue: any) => {
     setIsUpdate(newValue);
     // Send the updated state to other tabs
-    
+
     window.opener.postMessage(newValue, window.location.origin);
   };
 
   useEffect(() => {
     setLoading(true);
     getAll({
-      url: `complaint-center/get-internal-complaint/${complaintId}`,
+      url: `${GET_INTERNAL_COMPLAIN_BY_ID}/${complaintId}`,
     }).then((data: any) => {
       // console.log("api call --- >", data);
       if (data !== undefined) {
@@ -186,7 +188,7 @@ const ComplainDetails = () => {
           resolvingDate: null,
         },
         {
-          url: `complaint-center/update-internal-complaint/${complaintId}`,
+          url: `${UPDATE_INTERNAL_COMPLAINT}/${complaintId}`,
         }
       ).then((data: any) => {
         handleChangeUpdatedStatus("updated")
@@ -194,7 +196,7 @@ const ComplainDetails = () => {
         if (data !== undefined) {
           if (data.success) {
             getAll({
-              url: `complaint-center/get-internal-complaint/${complaintId}`,
+              url: `${GET_INTERNAL_COMPLAIN_BY_ID}/${complaintId}`,
             }).then((data: any) => {
               // console.log("api call --- >", data);
               if (data !== undefined) {
@@ -324,7 +326,7 @@ const ComplainDetails = () => {
       patch(
         { message: replyText },
         {
-          url: `complaint-center/internal-complaint/${complaintId}/send-message`,
+          url: `${SEND_INTERNAL_COMPLAINT_MESSAGE}/${complaintId}/send-message`,
         }
       ).then((data: any) => {
         // setSendMessageLoading(false);
@@ -336,7 +338,7 @@ const ComplainDetails = () => {
               setSendMessageLoading(false);
             }, 1000);
             getAll({
-              url: `complaint-center/get-internal-complaint/${complaintId}`,
+              url: `${GET_INTERNAL_COMPLAIN_BY_ID}/${complaintId}`,
             }).then((data: any) => {
               // console.log("api call --- >", data);
               if (data !== undefined) {
@@ -403,13 +405,13 @@ const ComplainDetails = () => {
           resolvingDate: null,
         },
         {
-          url: `complaint-center/update-internal-complaint/${complaintId}`,
+          url: `${UPDATE_INTERNAL_COMPLAINT}/${complaintId}`,
         }
       ).then((data: any) => {
         handleChangeUpdatedStatus("updated")
         // console.log("api call --- >", data);
         if (data !== undefined) {
-          if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
+          if (!data.success && data.message === ERROR_MESSAGE) {
             setEdit(false);
           }
           if (!data.success) {
@@ -423,7 +425,7 @@ const ComplainDetails = () => {
           }
           if (data.success) {
             getAll({
-              url: `complaint-center/get-internal-complaint/${complaintId}`,
+              url: `${GET_INTERNAL_COMPLAIN_BY_ID}/${complaintId}`,
             }).then((data: any) => {
               // console.log("api call --- >", data);
               if (data !== undefined) {
@@ -448,13 +450,13 @@ const ComplainDetails = () => {
         resolvingDate: new Date(),
       },
       {
-        url: `complaint-center/update-internal-complaint/${complaintId}`,
+        url: `${UPDATE_INTERNAL_COMPLAINT}/${complaintId}`,
       }
     ).then((data: any) => {
       handleChangeUpdatedStatus("updated")
       // console.log("api call --- >", data);
       if (data !== undefined) {
-        if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
+        if (!data.success && data.message === ERROR_MESSAGE) {
         }
         if (!data.success) {
           Swal.fire({
@@ -473,7 +475,7 @@ const ComplainDetails = () => {
             });
           }, 2000);
           getAll({
-            url: `complaint-center/get-internal-complaint/${complaintId}`,
+            url: `${GET_INTERNAL_COMPLAIN_BY_ID}/${complaintId}`,
           }).then((data: any) => {
             // console.log("api call --- >", data);
             if (data !== undefined) {
@@ -497,9 +499,9 @@ const ComplainDetails = () => {
   const tempStatusesList: any = [];
 
   useEffect(() => {
-    console.log("called get-priorty-status-types");
+    // console.log("called get-priorty-status-types");
 
-    getAll({ url: "complaint-center/get-priorty-status-types" }).then(
+    getAll({ url: GET_COMPLAINT_CENTER_PRIORITY_STATUS }).then(
       (data: any) => {
         // console.log("api call --- >", data);
         if (data !== undefined) {
@@ -524,8 +526,8 @@ const ComplainDetails = () => {
   }, []);
 
   useEffect(() => {
-    console.log("called get-status-types");
-    getAll({ url: "complaint-center/get-status-types" }).then((data: any) => {
+    // console.log("called get-status-types");
+    getAll({ url: GET_COMPLAINT_CENTER_STATUS_TYPES }).then((data: any) => {
       // console.log("api call --- >", data);
       if (data !== undefined) {
         if (data.success) {
@@ -1563,7 +1565,7 @@ const ComplainDetails = () => {
                             {complainDetails.complaintId}
                           </div>
                         </div>
-                       
+
                         <div
                           style={{
                             borderBottom: "1px solid #e1e1e1",
