@@ -2,7 +2,7 @@ import { useDispatch, useSelector } from "react-redux";
 import GoogleMap from "./components/GoogleMap/GoogleMap";
 import MonitoringSidebar from "./components/Sidebar/MonitoringSidebar";
 import { useEffect, useState } from "react";
-import { getAll } from "../../../../Utilities/api";
+import { getAll } from "../../../../Api";
 import {
   setDevices,
   setServerDevices,
@@ -10,21 +10,19 @@ import {
   setExpandedDevice,
   setIsConnected,
 } from "../../../../ReaduxToolkit/Reducer/MonitoringSlice";
-import Loader from "../../../Utilities/Loader/Loader";
+import Loader from "../../../Loader/Loader";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
-import NoInternetConnection from "../../../Utilities/NoInternetConnection/NoInternetConnection";
+import NoInternetConnection from "../../../NoInternetConnection/NoInternetConnection";
 import { setErrorData } from "../../../../ReaduxToolkit/Reducer/UserSlice";
-import DeviceDetailsBar from "./components/RIghtSidebar/DeviceDetailsBar";
-import { GET_DEVICES } from "../../../../Utilities/api/apiEndpoints";
-import { ERROR_MESSAGE } from "../../../../Utilities/constants/constants";
 
 const Monitoring = () => {
   const apiKey = "AIzaSyDI3fB-ItM1LpMOyMg_P8UxTUuxHCyQS34"; // Replace with your actual API key
 
   const dispatch = useDispatch();
-  const { devices, isConnected, expandedDevice, devicesDetailData } =
-    useSelector((state: any) => state.monitoring);
+  const { devices, isConnected, expandedDevice } = useSelector(
+    (state: any) => state.monitoring
+  );
   // console.log("devices", devices);
 
   const groups: any = [];
@@ -49,7 +47,7 @@ const Monitoring = () => {
 
     // Function to fetch data and dispatch actions
     const fetchDataAndDispatch = () => {
-      getAll({ url: GET_DEVICES }).then((data: any) => {
+      getAll({ url: "company/devices" }).then((data: any) => {
         // console.log("data", data);
         // if (data == undefined) {
         //   setUndefinedData(true);
@@ -62,7 +60,7 @@ const Monitoring = () => {
         //   });
         // }
         if (data !== undefined) {
-          if (!data.success && data.message === ERROR_MESSAGE) {
+          if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
             dispatch(setIsConnected(true));
           }
           if (!data.success) {
@@ -291,9 +289,9 @@ const Monitoring = () => {
   const navigate = useNavigate();
   const getData = () => {
     setLoading(true);
-    getAll({ url: GET_DEVICES }).then((data: any) => {
+    getAll({ url: "company/devices" }).then((data: any) => {
       if (data !== undefined) {
-        if (!data.success && data.message === ERROR_MESSAGE) {
+        if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
           dispatch(setIsConnected(true));
         }
         if (!data.success) {
@@ -469,13 +467,11 @@ const Monitoring = () => {
         devices.length > 0 && (
           <div
             style={{
-              marginLeft: "-35px",
-              marginTop: "80px",
-              // marginTop: "130px",
-              height: "92.5vh",
+              margin: "-35px",
+              marginTop: "130px",
+              height: "100vh",
               display: "flex",
               overflow: "unset",
-              scrollbarWidth:"none",
             }}
           >
             <GoogleMap />
@@ -488,17 +484,6 @@ const Monitoring = () => {
             >
               <MonitoringSidebar />
             </div>
-
-            {devicesDetailData.length > 0 && (
-              <div
-                style={{
-                  position: "absolute",
-                  right: 0,
-                }}
-              >
-                <DeviceDetailsBar />
-              </div>
-            )}
           </div>
         )
       ) : (
@@ -506,8 +491,7 @@ const Monitoring = () => {
           style={{
             display: "flex",
             justifyContent: "center",
-            marginTop: "80px",
-            height: "92.5vh",
+            height: "85vh",
             backgroundColor: "white",
             alignItems: "center",
           }}

@@ -12,13 +12,11 @@ import Swal from "sweetalert2";
 import { AddPreInfoAlertType, SendCommandType } from "./Type/SendCommandType";
 import { H3 } from "../../../../../../AbstractElements";
 import DevicesDropdown from "./DevicesDropdown/DevicesDropdown";
-import { create, getAll } from "../../../../../../Utilities/api";
+import { create, getAll } from "../../../../../../Api";
 import {
   setDashboardStatistics,
   setPreInfoAlerts,
 } from "../../../../../../ReaduxToolkit/Reducer/AlertsSlice";
-import { ADD_PRE_INFO_FOR_DEVICE, CONTROLROOM_DASHBOARD_STATISTICS, GET_ALL_VALID_PRE_INFOS } from "../../../../../../Utilities/api/apiEndpoints";
-import { ERROR_MESSAGE } from "../../../../../../Utilities/constants/constants";
 
 interface PropsTypes {
   addModal: boolean; // Change 'boolean' to the actual type of isVisible
@@ -137,12 +135,12 @@ const AddPreAlertInfo: React.FC<PropsTypes> = ({
 
       try {
         await create(addPreInfoData, {
-          url: ADD_PRE_INFO_FOR_DEVICE,
+          url: `control-room/add-pre-info`,
         }).then(async (data: any) => {
           // // console.log("data", data);
 
           setLoading(false);
-          if (!data.success && data.message === ERROR_MESSAGE) {
+          if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
             setLoading(false);
             addToggle();
           }
@@ -159,7 +157,7 @@ const AddPreAlertInfo: React.FC<PropsTypes> = ({
           if (data.success) {
             // // console.log(data);
 
-            getAll({ url: GET_ALL_VALID_PRE_INFOS }).then(
+            getAll({ url: "control-room/get-all-pre-infos" }).then(
               (data: any) => {
                 // // console.log("api call --- >", data);
 
@@ -179,7 +177,7 @@ const AddPreAlertInfo: React.FC<PropsTypes> = ({
             toDateUpdated.setSeconds(new Date().getSeconds() + 10);
 
             getAll({
-              url: `${CONTROLROOM_DASHBOARD_STATISTICS}?fromDate=${fromDateUpdated}&toDate=${toDateUpdated}`,
+              url: `control-room/dashboard/statistics?fromDate=${fromDateUpdated}&toDate=${toDateUpdated}`,
             }).then((data: any) => {
               // // console.log("api call --- >", data);
 

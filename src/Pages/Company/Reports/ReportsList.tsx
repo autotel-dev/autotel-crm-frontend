@@ -19,7 +19,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import "./reportsStyle.css";
 import CommonHeader from "../../../Common/CommonHeader";
-import Loader from "../../Utilities/Loader/Loader";
+import Loader from "../../Loader/Loader";
 import xlsx from "json-as-xlsx";
 import ViewModal from "./ViewModal/ViewModal";
 import { Menu, Dropdown, Button, message, Space, Tooltip } from "antd";
@@ -148,22 +148,22 @@ const ReportsList = () => {
         <thead>
           <tr>
             ${pdfData.reportTableHeaders
-        .map((header) => `<th>${header}</th>`)
-        .join("")}
+              .map((header) => `<th>${header}</th>`)
+              .join("")}
           </tr>
         </thead>
         <tbody>
           ${pdfData.reportData
-        .map(
-          (row) => `
+            .map(
+              (row) => `
             <tr>
               ${Object.values(row)
-              .map((cell) => `<td>${cell}</td>`)
-              .join("")}
+                .map((cell) => `<td>${cell}</td>`)
+                .join("")}
             </tr>
           `
-        )
-        .join("")}
+            )
+            .join("")}
         </tbody>
       </table>
     `;
@@ -218,11 +218,6 @@ const ReportsList = () => {
                     writeOptions: {}, // Style options from https://docs.sheetjs.com/docs/api/write-options
                     RTL: false, // Display the columns from right-to-left (the default value is false)
                   };
-                  const rowData = row.data.reportData.map((item: any, index: any) => {
-                    return {
-                      ...item, createdAt: `${item?.createdAt.slice(0, 10)}, ${item?.createdAt.slice(11, 19)}`
-                    }
-                  })
                   let data = [
                     {
                       sheet: "Sheet 1",
@@ -239,16 +234,16 @@ const ReportsList = () => {
                         { label: "Message", value: "message" },
                         { label: "User Role", value: "userRole" },
                         {
-                          label: "Completion Response",
+                          label: "completionResponse",
                           value: "completionResponse",
                         },
                         {
-                          label: "Alert Event Close Date",
+                          label: "alertEventCloseDate",
                           value: "alertEventCloseDate",
                         },
-                        { label: "Created At", value: "createdAt" },
+                        { label: "createdAt", value: "createdAt" },
                       ],
-                      content: rowData,
+                      content: row.data.reportData,
                     },
                   ];
                   handleButtonClick(e, settings, data, index);

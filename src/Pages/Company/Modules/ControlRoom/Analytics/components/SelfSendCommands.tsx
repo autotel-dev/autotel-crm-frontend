@@ -13,12 +13,10 @@ import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { H3, H4, H5, P } from "../../../../../../AbstractElements";
 import SendCommand from "./SendCommand";
-import { create } from "../../../../../../Utilities/api";
+import { create } from "../../../../../../Api";
 import Swal from "sweetalert2";
-import { serverCredentials } from "../../../../../../Utilities/headers/header";
+import { serverCredentials } from "../../../../../../Api/header";
 import { Select } from "antd";
-import { VERIFY_VEHICLE_BLOCK_STATUS } from "../../../../../../Utilities/api/apiEndpoints";
-import { ERROR_MESSAGE } from "../../../../../../Utilities/constants/constants";
 
 interface PropsTypes {
   isVisible: boolean; // Change 'boolean' to the actual type of isVisible
@@ -506,14 +504,14 @@ const SelfSendCommands: React.FC<PropsTypes> = ({
                                           // addToggle();
                                           // console.log(verifyData);
                                           await create(verifyData, {
-                                            url: VERIFY_VEHICLE_BLOCK_STATUS,
+                                            url: `control-room/verify-vehicle-block-status`,
                                           }).then((data: any) => {
                                             // console.log("data", data);
                                             setLoading(false);
                                             if (
                                               !data.success &&
                                               data.message ==
-                                              ERROR_MESSAGE
+                                              "ERROR_INTERNET_DISCONNECTED"
                                             ) {
                                             }
                                             if (!data.success) {

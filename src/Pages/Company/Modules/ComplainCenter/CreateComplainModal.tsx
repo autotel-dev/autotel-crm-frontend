@@ -13,7 +13,7 @@ import {
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setCreateComplainModalData } from "../../../../ReaduxToolkit/Reducer/ComplainCenterSlice";
-import Loader from "../../../Utilities/Loader/Loader";
+import Loader from "../../../Loader/Loader";
 import Location from "./CreateComplainModalComponents/Location";
 import CustomerInfo from "./CreateComplainModalComponents/CustomerInfo";
 import VehicleInfo from "./CreateComplainModalComponents/VehicleInfo";

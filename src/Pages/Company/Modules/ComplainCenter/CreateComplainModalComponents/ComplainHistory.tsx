@@ -3,7 +3,7 @@ import { Card, CardBody, CardHeader, Col, PopoverBody, PopoverHeader, Table, Unc
 import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { H4 } from "../../../../../AbstractElements";
-import { formatUnderscoredString } from "../../../../../Utilities/globals/globals";
+import { formatUnderscoredString } from "../../../../../Api/globals";
 
 const ComplainHistory = () => {
   const { createComplainModalData } = useSelector((state: any) => state.complainCenter);

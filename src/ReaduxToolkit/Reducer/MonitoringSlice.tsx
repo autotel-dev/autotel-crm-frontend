@@ -5,7 +5,6 @@ const initialState = {
   serverDevices: [],
   selectedDevices: [],
   devicesStatuses: [],
-  devicesDetailData: [],
   noDevicesFound: "",
   loading: false,
   error: null,
@@ -15,7 +14,7 @@ const initialState = {
 };
 
 const MonitoringSlice = createSlice({
-  name: "MonitoringSlice",
+  name: "CitiesSlice",
   initialState,
   reducers: {
     setDevicesStart: (state) => {
@@ -41,9 +40,6 @@ const MonitoringSlice = createSlice({
       state.devicesStatuses = action.payload;
       state.error = null;
       state.loading = false;
-    },
-    setDevicesDetailData: (state, action) => {
-      state.devicesDetailData = action.payload;
     },
     setExpandedDevice: (state, action) => {
       state.expandedDevice = action.payload;
@@ -72,7 +68,6 @@ export const {
   setServerDevices,
   setSelecetdDevices,
   setDevicesStatuses,
-  setDevicesDetailData,
   setExpandedDevice,
   setItem,
   setIsConnected,

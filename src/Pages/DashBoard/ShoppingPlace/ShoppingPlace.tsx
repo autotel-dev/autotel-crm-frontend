@@ -16,7 +16,7 @@ import Invoice from "../ShoppingPlace/Invoice/Invoice";
 import ProductSales from "../ShoppingPlace/ProductSales/ProductSales";
 import Breadcrumbs from "../../../CommonElements/Breadcrumbs/Breadcrumbs";
 import { useSelector } from "react-redux";
-import { getUserRole } from "../../../Utilities/globals/globals";
+import { getUserRole } from "../../../Api/globals";
 import { ROLES } from "../../../constants/roles";
 
 const ShoppingPlace = () => {

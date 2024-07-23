@@ -14,7 +14,7 @@ import { CheckCircle } from "react-feather";
 import { useDispatch, useSelector } from "react-redux";
 import { H3, P } from "../../../AbstractElements";
 import { UserType } from "./UserTypes/UserTypes";
-import { create, getAll } from "../../../Utilities/api";
+import { create, getAll } from "../../../Api";
 import {
   setFilterOperators,
   setInActiveActiveUsers,
@@ -26,8 +26,6 @@ import { jwtDecode } from "jwt-decode";
 import { Select } from "antd";
 import Swal from "sweetalert2";
 import "./permissionsStyle.css";
-import { CREATE_OPERATOR, GET_ALL_OPERATORS } from "../../../Utilities/api/apiEndpoints";
-import { ERROR_MESSAGE } from "../../../Utilities/constants/constants";
 
 const CreateNewUser = () => {
   const { userPersonalizationData } = useSelector(
@@ -84,11 +82,11 @@ const CreateNewUser = () => {
       };
       // console.log(operator);
       try {
-        await create(operator, { url: CREATE_OPERATOR }).then(
+        await create(operator, { url: "operator/create-operator" }).then(
           (data: any) => {
             if (
               !data.success &&
-              data.message === ERROR_MESSAGE
+              data.message === "ERROR_INTERNET_DISCONNECTED"
             ) {
               setLoading(false);
               setAddModal(false);
@@ -129,7 +127,7 @@ const CreateNewUser = () => {
               });
               setRole("");
               dispatch(setOperatorsStart());
-              getAll({ url: GET_ALL_OPERATORS }).then(
+              getAll({ url: "operator/get-all-operators" }).then(
                 (data: any) => {
                   // console.log("api call --- >", data);
                   if (data == undefined) {
