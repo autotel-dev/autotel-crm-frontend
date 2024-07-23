@@ -7,7 +7,7 @@ const Sidebar = ({ setOpen, open }: PropsTypes) => {
   const { toggleSidebar } = useAppSelector((state) => state.layout);
   return (
     // changing with belo line
-    <div className={`sidebar-wrapper ${open ? "" : ""} ${toggleSidebar ? "close_icon" : ""}`} style={{position:"fixed",top:"0"}}>
+    <div className={`sidebar-wrapper ${open ? "" : ""} ${toggleSidebar ? "close_icon" : ""}`} >
     {/* <div
       className={`sidebar-wrapper ${open ? "sidebar-default" : ""} ${
         toggleSidebar ? "close_icon" : ""

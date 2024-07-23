@@ -14,13 +14,11 @@ import { H3, H4, H5, P } from "../../../../../../AbstractElements";
 import { useEffect, useRef, useState } from "react";
 import AssignedAlertModal from "./AssignedAlertModal";
 import { useDispatch, useSelector } from "react-redux";
-import { create } from "../../../../../../Utilities/api";
-import { serverCredentials } from "../../../../../../Utilities/headers/header";
+import { create } from "../../../../../../Api";
+import { serverCredentials } from "../../../../../../Api/header";
 import { setModalData } from "../../../../../../ReaduxToolkit/Reducer/AlertsSlice";
 import { AnimatePresence, motion } from "framer-motion";
 import Swal from "sweetalert2";
-import { GET_ALERT_EVENT_BY_ID } from "../../../../../../Utilities/api/apiEndpoints";
-import { ERROR_MESSAGE } from "../../../../../../Utilities/constants/constants";
 
 const AssignedAlerts = () => {
   const dispatch = useDispatch();
@@ -113,20 +111,7 @@ const AssignedAlerts = () => {
             </FormGroup>
           </Row>
 
-          
-            <div className="table-responsive theme-scrollbar recent-wrapper">
-              <Table className="display order-wrapper" id="recent-order">
-                <thead>
-                  <tr>
-                    <th>Device</th>
-                    <th>Alert</th>
-                    <th>Type</th>
-                    <th>Message</th>
-                    <th>Address</th>
-                  </tr>
-                </thead>
-                </Table>
-                <div
+          <div
             ref={containerRef}
             className="table-responsive theme-scrollbar recent-wrapper"
             style={{
@@ -142,7 +127,18 @@ const AssignedAlerts = () => {
             }}
             onScroll={handleScroll}
           >
-                <Table className="display order-wrapper" id="recent-order">
+            <div className="table-responsive theme-scrollbar recent-wrapper">
+              <Table className="display order-wrapper" id="recent-order">
+                <thead>
+                  <tr>
+                    <th>Device</th>
+                    <th>Alert</th>
+                    <th>Type</th>
+                    <th>Message</th>
+                    <th>Address</th>
+                  </tr>
+<<<<<<< HEAD
+                </thead>
                 <tbody>
                   {dataList.length === 0 ? (
                     <tr>
@@ -159,7 +155,9 @@ const AssignedAlerts = () => {
                       )
                       .map((data: any, index: any) => (
                         <tr
-                         
+                          style={{
+                            cursor: "pointer",
+                          }}
                           key={index}
                           onClick={async () => {
                             var checkServer =
@@ -167,6 +165,43 @@ const AssignedAlerts = () => {
                                 (item: any) => item.server._id === data.server
                               );
                             // console.log(liveAlertsData?.connectedServers);
+=======
+                ) : (
+                  dataList
+                    .filter((data: any) =>
+                      data.deviceName
+                        .toLowerCase()
+                        .includes(searchValue.toLowerCase())
+                    )
+                    .map((data: any, index: any) => (
+                      <tr
+
+                        // style={{
+                        //   cursor: "pointer",
+                        // }}
+                        key={index}
+                        onMouseEnter={() => {
+                          setIsHovered(true);
+                          setIdd(index);
+                        }}
+                        onMouseLeave={() => setIsHovered(false)}
+                        style={{
+                          backgroundColor:
+                            isHovered && idd == index
+                              ? userPersonalizationData == null
+                                ? "#D6EEEE"
+                                : `rgba(${rgbColor.r},${rgbColor.g},${rgbColor.b},0.2)`
+                              : "transparent",
+                          transition: "background-color 0.3s",
+                          cursor:"pointer",
+                        }}
+                        onClick={async () => {
+                          var checkServer =
+                            liveAlertsData?.connectedServers?.find(
+                              (item: any) => item.server._id === data.server
+                            );
+                          // console.log(liveAlertsData?.connectedServers);
+>>>>>>> 99e5d2a835c62a2e961bdbbc1a027be48052767c
 
                             console.log("server", data.server);
 
@@ -186,12 +221,12 @@ const AssignedAlerts = () => {
 
                               try {
                                 await create(sendData, {
-                                  url: GET_ALERT_EVENT_BY_ID,
+                                  url: "alert-events/get-alert-event-by-id",
                                 }).then((data: any) => {
                                   // // console.log(data);
                                   if (
                                     !data.success &&
-                                    data.message === ERROR_MESSAGE
+                                    data.message === "ERROR_INTERNET_DISCONNECTED"
                                   ) {
                                   }
                                   if (!data.success) {
@@ -229,21 +264,6 @@ const AssignedAlerts = () => {
                                 showConfirmButton: true,
                               });
                             }
-                          }}
-                          onMouseEnter={() => {
-                            setIsHovered(true);
-                            setIdd(index);
-                          }}
-                          onMouseLeave={() => setIsHovered(false)}
-                          style={{
-                            backgroundColor:
-                              isHovered && idd == index
-                                ? userPersonalizationData == null
-                                  ? "#D6EEEE"
-                                  : `rgba(${rgbColor.r},${rgbColor.g},${rgbColor.b},0.2)`
-                                : "transparent",
-                            transition: "background-color 0.3s",
-                            cursor:"pointer",
                           }}
                         >
                           {/* <td>{data.eventId}</td> */}

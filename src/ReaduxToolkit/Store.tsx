@@ -34,19 +34,6 @@ import ComplainsTypeSlice from "./Reducer/ComplainsTypeSlice";
 import ComplainCenterSlice from "./Reducer/ComplainCenterSlice";
 import EmailGatewaySlice from "./Reducer/EmailGatewaySlice";
 import WhatsAppGatewaySlice from "./Reducer/WhatsAppGatewaySlice";
-import EmailTemplateSlice from "./Reducer/EmailTemplateSlice";
-import WhatsAppTemplateSlice from "./Reducer/WhatsAppTemplateSlice";
-import GeofenceSlice from "./Reducer/GeofenceSlice";
-import BankSlice from "./Reducer/BankSlice";
-import InsuranceSlice from "./Reducer/InsuranceSlice";
-import NetworkProviderSlice from "./Reducer/NetworkProviderSlice";
-import WarehouseSlice from "./Reducer/WarehouseSlice";
-import GroupSlice from "./Reducer/GroupSlice";
-import BranchSlice from "./Reducer/BranchSlice";
-import VehicleMakeSlice from "./Reducer/VehicleMakeSlice";
-import VehicleModelSlice from "./Reducer/VehicleModelSlice";
-import CurrencySlice from "./Reducer/CurrencySlice";
-import LanguageSlice from "./Reducer/LanguageSlice";
 
 const Store = configureStore({
   reducer: {
@@ -84,21 +71,7 @@ const Store = configureStore({
     complainTypes: ComplainsTypeSlice,
     complainCenter: ComplainCenterSlice,
     emailGateway: EmailGatewaySlice,
-    whatsAppGateway: WhatsAppGatewaySlice,
-    emailTemplate: EmailTemplateSlice,
-    whatsAppTemplate: WhatsAppTemplateSlice,
-    geofence: GeofenceSlice,
-    banks:BankSlice,
-    insurance:InsuranceSlice,
-    networkProvider:NetworkProviderSlice,
-    warehouse : WarehouseSlice,
-    group : GroupSlice,
-    branch : BranchSlice,
-    vehicleMake : VehicleMakeSlice,
-    vehicleModel : VehicleModelSlice,
-    currencies : CurrencySlice,
-    languages : LanguageSlice
-
+    whatsAppGateway: WhatsAppGatewaySlice
   },
 });
 

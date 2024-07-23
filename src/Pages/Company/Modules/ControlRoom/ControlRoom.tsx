@@ -8,17 +8,14 @@ import {
   TabContent,
   TabPane,
 } from "reactstrap";
-import Skeleton from "../../../Utilities/Skeleton/Skeleton";
-
 import Breadcrumbs from "../../../../CommonElements/Breadcrumbs/Breadcrumbs";
 import LiveAlerts from "./Events/LiveAlerts/LiveAlerts";
 import AssignedAlerts from "./Events/AssignedAlerts/AssignedAlerts";
 import CompletedAlerts from "./Events/CompletedAlerts/CompletedAlerts";
 import { useEffect, useState } from "react";
-import { getAll } from "../../../../Utilities/api";
-import Loader from "../../../Utilities/Loader/Loader";
+import { getAll } from "../../../../Api";
+import Loader from "../../../Loader/Loader";
 import { useDispatch, useSelector } from "react-redux";
-
 import {
   setLiveAlerts,
   setAssignedAlerts,
@@ -39,12 +36,10 @@ import {
   setServerDevices,
 } from "../../../../ReaduxToolkit/Reducer/MonitoringSlice";
 import { useNavigate } from "react-router-dom";
-import NoInternetConnection from "../../../Utilities/NoInternetConnection/NoInternetConnection";
-import { getUserRole } from "../../../../Utilities/globals/globals";
+import NoInternetConnection from "../../../NoInternetConnection/NoInternetConnection";
+import { getUserRole } from "../../../../Api/globals";
 import { ROLES } from "../../../../constants/roles";
 import { setErrorData } from "../../../../ReaduxToolkit/Reducer/UserSlice";
-import { CONTROLROOM_DASHBOARD_STATISTICS, GET_ALERT_EVENTS, GET_ALL_ASSIGNED_ALERT_EVENTS, GET_ALL_COMMANDED_DEVICES, GET_ALL_COMPLETED_ALERT_EVENTS, GET_ALL_KILLED_DEVICES, GET_ALL_VALID_PRE_INFOS, GET_DEVICES, VERIFY_AND_UPDATE_ALL_VEHICLE_BLOCK_STATUS } from "../../../../Utilities/api/apiEndpoints";
-import { ERROR_MESSAGE } from "../../../../Utilities/constants/constants";
 
 const ControlRoom = () => {
   const { userPersonalizationData } = useSelector(
@@ -76,7 +71,7 @@ const ControlRoom = () => {
     dispatch(setLiveAlerts([]));
     dispatch(setLiveAlertsData(null));
     dispatch(setCompletedAlerts([]));
-    getAll({ url: `${GET_ALERT_EVENTS}?pageNo=1` }).then((data: any) => {
+    getAll({ url: "company/alert-events?pageNo=1" }).then((data: any) => {
       // // console.log("api call --- >", data);
       // // console.log("data,data");
 
@@ -85,10 +80,10 @@ const ControlRoom = () => {
         dispatch(setLiveAlertsData(null));
       }
       if (data !== undefined) {
-        if (!data.success && data.message === ERROR_MESSAGE) {
+        if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
           dispatch(setIsConnected(true));
         }
-        if (!data.success && data.message === ERROR_MESSAGE) {
+        if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
           Swal.fire({
             text: `${data.message}`,
             icon: "error",
@@ -115,18 +110,18 @@ const ControlRoom = () => {
         setDevicesLoading(false);
       }
     });
-    getAll({ url: GET_ALL_ASSIGNED_ALERT_EVENTS }).then((data: any) => {
+    getAll({ url: "company/get-all-assigned-events" }).then((data: any) => {
       // // console.log("assigned --- >", data);
       // setLoading(false);
       if (data == undefined) {
         dispatch(setAssignedAlerts([]));
       }
       if (data !== undefined) {
-        if (!data.success && data.message === ERROR_MESSAGE) {
+        if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
           dispatch(setIsConnected(true));
           setLoading(false);
         }
-        if (!data.success && data.message === ERROR_MESSAGE) {
+        if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
           Swal.fire({
             text: `${data.message}`,
             icon: "error",
@@ -145,17 +140,17 @@ const ControlRoom = () => {
         }
       }
     });
-    getAll({ url: GET_ALL_COMPLETED_ALERT_EVENTS }).then((data: any) => {
+    getAll({ url: "company/get-all-completed-events" }).then((data: any) => {
       // // console.log("completed --- >", data);
       // setLoading(false);
       if (data == undefined) {
         dispatch(setCompletedAlerts([]));
       }
       if (data !== undefined) {
-        if (!data.success && data.message === ERROR_MESSAGE) {
+        if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
           dispatch(setIsConnected(true));
         }
-        if (!data.success && data.message === ERROR_MESSAGE) {
+        if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
           Swal.fire({
             text: `${data.message}`,
             icon: "error",
@@ -175,7 +170,7 @@ const ControlRoom = () => {
     });
   }, []);
   useEffect(() => {
-    getAll({ url: GET_ALL_KILLED_DEVICES }).then(
+    getAll({ url: "control-room/get-all-killed-devices?type=self" }).then(
       (data: any) => {
         // // console.log("api call --- >", data);
 
@@ -199,7 +194,7 @@ const ControlRoom = () => {
     const endDate = new Date().toISOString();
 
     getAll({
-      url: `${CONTROLROOM_DASHBOARD_STATISTICS}?fromDate=${startDate}&toDate=${endDate}`,
+      url: `control-room/dashboard/statistics?fromDate=${startDate}&toDate=${endDate}`,
     }).then((data: any) => {
       // // console.log("api call --- >", data);
 
@@ -212,7 +207,7 @@ const ControlRoom = () => {
     });
   }, []);
   useEffect(() => {
-    getAll({ url: GET_ALL_COMMANDED_DEVICES }).then(
+    getAll({ url: "control-room/get-all-commanded-devices" }).then(
       (data: any) => {
         // // console.log("api call --- >", data);
 
@@ -230,7 +225,7 @@ const ControlRoom = () => {
     );
   }, []);
   useEffect(() => {
-    getAll({ url: GET_ALL_VALID_PRE_INFOS }).then((data: any) => {
+    getAll({ url: "control-room/get-all-pre-infos" }).then((data: any) => {
       // // console.log("api call --- >", data);
 
       if (data !== undefined) {
@@ -251,7 +246,7 @@ const ControlRoom = () => {
 
     // Function to fetch data and dispatch actions
     const VerifyAndUpdateAllBlockStatus = () => {
-      getAll({ url: VERIFY_AND_UPDATE_ALL_VEHICLE_BLOCK_STATUS }).then(
+      getAll({ url: "control-room/verify-and-update-all-block-status" }).then(
         (data: any) => {
           // // console.log("api call --- >", data);
 
@@ -287,7 +282,7 @@ const ControlRoom = () => {
 
   useEffect(() => {
     if (devices.length === 0) {
-      getAll({ url: GET_DEVICES }).then((data: any) => {
+      getAll({ url: "company/devices" }).then((data: any) => {
         // // console.log("data", data);
         // if (data == undefined) {
         //   setDevicesLoading(false);
@@ -299,7 +294,7 @@ const ControlRoom = () => {
         //   });
         // }
         if (data !== undefined) {
-          if (!data.success && data.message === ERROR_MESSAGE) {
+          if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
             dispatch(setIsConnected(true));
           }
           if (!data.success) {
@@ -585,180 +580,17 @@ const ControlRoom = () => {
             </Row>
           ) : (
             <div
-            // style={{
-            //   display: "flex",
-            //   justifyContent: "center",
-            //   height: "80vh",
-            //   backgroundColor: "white",
-            //   alignItems: "center",
-            // }}
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                height: "100vh",
+                backgroundColor: "white",
+                alignItems: "center",
+              }}
             >
-              <div
-                style={{
-                  textAlign: "center",
-                  // display: "flex",
-                  height: "75vh",
-                  // alignItems: "center",
-                }}
-              >
-                {/* <Loader /> */}
-
-                <div
-                  style={{
-                    display: "flex",
-                    // flexDirection: "column",
-                    width:"100%"
-                  }}
-                >
-                  <Skeleton
-                    height="140px"
-                    width="100%"
-                    marginTop="30px"
-                    marginBottom="20px"
-                    borderRadius="10px"
-                    marginRight="20px"
-                  />
-                  <Skeleton
-                    height="140px"
-                    width="100%"
-                    marginTop="30px"
-                    marginBottom="20px"
-                    borderRadius="10px"
-                    marginRight="20px"
-                  />
-                  <Skeleton
-                    height="140px"
-                    width="100%"
-                    marginTop="30px"
-                    marginBottom="20px"
-                    borderRadius="10px"
-                    marginRight="20px"
-                  />
-                  <Skeleton
-                    height="140px"
-                    width="100%"
-                    marginTop="30px"
-                    marginBottom="20px"
-                    borderRadius="10px"
-                    marginRight="20px"
-                  />
-                </div>
-                <div
-                  style={{
-                    display: "flex",
-                    // flexDirection: "column",
-                    width:"100%",
-                    // marginLeft:"20px",
-                    marginTop:"20px",
-                  }}
-                >
-                  <div
-                   style={{
-                    // display: "flex",
-                    // flexDirection: "column",
-                    width:"50%",
-                    // marginLeft:"20px"
-                    paddingRight:"10px",
-                  }}
-                  >
-                  <Skeleton
-                    height="100px"
-                    width="100%"
-                    marginTop="10px"
-                    marginBottom="20px"
-                    borderRadius="10px"
-                    // marginRight="20px"
-                  />
-                  <Skeleton
-                    height="40px"
-                    width="100%"
-                    marginTop="10px"
-                    marginBottom="20px"
-                    borderRadius="10px"
-                    // marginRight="20px"
-                  />
-                  <Skeleton
-                    height="40px"
-                    width="100%"
-                    marginTop="10px"
-                    marginBottom="20px"
-                    borderRadius="10px"
-                    // marginRight="20px"
-                  />
-                   <Skeleton
-                    height="40px"
-                    width="100%"
-                    marginTop="10px"
-                    marginBottom="20px"
-                    borderRadius="10px"
-                    // marginRight="20px"
-                  />
-                  <Skeleton
-                    height="40px"
-                    width="100%"
-                    marginTop="10px"
-                    marginBottom="20px"
-                    borderRadius="10px"
-                    // marginRight="20px"
-                  />
-
-
-                  </div>
-                  <div
-                   style={{
-                    // display: "flex",
-                    // flexDirection: "column",
-                    width:"50%",
-                    marginRight:"20px",
-                    paddingLeft:"10px"
-                  }}
-                  >
-                  <Skeleton
-                    height="100px"
-                    width="100%"
-                    marginTop="10px"
-                    marginBottom="20px"
-                    borderRadius="10px"
-                    // marginRight="20px"
-                  />
-                  <Skeleton
-                    height="40px"
-                    width="100%"
-                    marginTop="10px"
-                    marginBottom="20px"
-                    borderRadius="10px"
-                    // marginRight="20px"
-                  />
-                  <Skeleton
-                    height="40px"
-                    width="100%"
-                    marginTop="10px"
-                    marginBottom="20px"
-                    borderRadius="10px"
-                    // marginRight="20px"
-                  />
-                   <Skeleton
-                    height="40px"
-                    width="100%"
-                    marginTop="10px"
-                    marginBottom="20px"
-                    borderRadius="10px"
-                    // marginRight="20px"
-                  />
-                  <Skeleton
-                    height="40px"
-                    width="100%"
-                    marginTop="10px"
-                    marginBottom="20px"
-                    borderRadius="10px"
-                    // marginRight="20px"
-                  />
-
-
-                  </div>
-                  
+              <div style={{ textAlign: "center" }}>
+                <Loader />
               </div>
-            </div>
             </div>
           )}
         </Container>

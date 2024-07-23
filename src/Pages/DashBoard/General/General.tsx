@@ -13,7 +13,6 @@ import {
 import SVG from "../../../utils/CommonSvgIcon/SVG";
 import { H3, H4, P, Image, LI, UL } from "../../../AbstractElements";
 import { boxesData1, boxesData2, operatorPerformanceData } from "./GeneralData";
-import { MdFilterList } from "react-icons/md";
 
 import { Link } from "react-router-dom";
 import { dynamicImage } from "../../../Service";
@@ -28,7 +27,7 @@ import "react-loading-skeleton/dist/skeleton.css";
 import type { CollapseProps } from "antd";
 import { Collapse } from "antd";
 import Chart from "react-google-charts";
-import { getAll } from "../../../Utilities/api";
+import { getAll } from "../../../Api";
 import {
   setAlertsOverview,
   setGeneralData,
@@ -36,7 +35,7 @@ import {
 } from "../../../ReaduxToolkit/Reducer/DashboardSlice";
 import { useDispatch, useSelector } from "react-redux";
 import OperatorAlerts from "./components/OperatorAlerts";
-import { getUserRole } from "../../../Utilities/globals/globals";
+import { getUserRole } from "../../../Api/globals";
 import { ROLES } from "../../../constants/roles";
 
 import {
@@ -46,7 +45,6 @@ import {
 } from "../../../ReaduxToolkit/Reducer/MonitoringSlice";
 import Swal from "sweetalert2";
 import './general.css'
-import { GET_DEVICES, GET_GENERAL_DASHBOARD_STATISTICS, GET_OPERATOR_PERFORMANCE } from "../../../Utilities/api/apiEndpoints";
 
 interface DraggableBoxProps {
   initialPosition: { x: number; y: number };
@@ -120,7 +118,7 @@ const General = () => {
 
   useEffect(() => {
     if (getUserRole() == ROLES.COMPANY) {
-      getAll({ url: GET_GENERAL_DASHBOARD_STATISTICS }).then((data: any) => {
+      getAll({ url: "company/dashboard/general" }).then((data: any) => {
         // console.log("api call --- >", data);
         if (data !== undefined) {
           if (data.success) {
@@ -147,7 +145,7 @@ const General = () => {
       });
 
       getAll({
-        url: `${GET_OPERATOR_PERFORMANCE}?fromDate=${fromDate}&toDate=${toDate}`,
+        url: `company/dashboard/operators-performance?fromDate=${fromDate}&toDate=${toDate}`,
       }).then((data: any) => {
         // console.log("api call --- >", data);
         if (data !== undefined) {
@@ -232,9 +230,9 @@ const General = () => {
 
   useEffect(() => {
     if (devices.length === 0 && getUserRole() == ROLES.COMPANY) {
-      getAll({ url: GET_DEVICES }).then((data: any) => {
+      getAll({ url: "company/devices" }).then((data: any) => {
         if (data !== undefined) {
-          // if (!data.success && data.message === ERROR_MESSAGE) {
+          // if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
           //   dispatch(setIsConnected(true));
           // }
           if (!data.success) {
@@ -700,8 +698,8 @@ const General = () => {
                                 toggleDropdown(e);
                               }}
                             >
-                              <div style={{ fontSize: "30px", color: "white" }}>
-                              <MdFilterList style={{ marginTop: "12px",}} />
+                              <div style={{ fontSize: "24px", color: "white" }}>
+                                &#9776;
                               </div>
                             </div>
                           </div>
@@ -756,7 +754,7 @@ const General = () => {
                                       setToDate(endDate);
 
                                       getAll({
-                                        url: `${GET_OPERATOR_PERFORMANCE}?fromDate=${startDate}&toDate=${endDate}`,
+                                        url: `company/dashboard/operators-performance?fromDate=${startDate}&toDate=${endDate}`,
                                       }).then((data: any) => {
                                         toggleDropdown(e);
                                         // console.log("api call --- >", data);
@@ -799,7 +797,7 @@ const General = () => {
                                       setToDate(endDate);
 
                                       getAll({
-                                        url: `${GET_OPERATOR_PERFORMANCE}?fromDate=${startDate}&toDate=${endDate}`,
+                                        url: `company/dashboard/operators-performance?fromDate=${startDate}&toDate=${endDate}`,
                                       }).then((data: any) => {
                                         toggleDropdown(e);
                                         // console.log("api call --- >", data);
@@ -840,7 +838,7 @@ const General = () => {
                                       setToDate(endDate);
 
                                       getAll({
-                                        url: `${GET_OPERATOR_PERFORMANCE}?fromDate=${startDate}&toDate=${endDate}`,
+                                        url: `company/dashboard/operators-performance?fromDate=${startDate}&toDate=${endDate}`,
                                       }).then((data: any) => {
                                         toggleDropdown(e);
                                         // console.log("api call --- >", data);
@@ -881,7 +879,7 @@ const General = () => {
                                       setToDate(endDate);
 
                                       getAll({
-                                        url: `${GET_OPERATOR_PERFORMANCE}?fromDate=${startDate}&toDate=${endDate}`,
+                                        url: `company/dashboard/operators-performance?fromDate=${startDate}&toDate=${endDate}`,
                                       }).then((data: any) => {
                                         toggleDropdown(e);
                                         // console.log("api call --- >", data);
@@ -1015,7 +1013,7 @@ const General = () => {
                                               e.preventDefault();
                                               setGeneralLoading(true);
                                               getAll({
-                                                url: `${GET_OPERATOR_PERFORMANCE}?fromDate=${fromDate}&toDate=${toDate}`,
+                                                url: `company/dashboard/operators-performance?fromDate=${fromDate}&toDate=${toDate}`,
                                               }).then((data: any) => {
                                                 toggleDropdown(e);
                                                 // console.log("api call --- >", data);

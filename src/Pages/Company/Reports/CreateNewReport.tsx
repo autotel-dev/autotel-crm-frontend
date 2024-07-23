@@ -6,7 +6,7 @@ import { Button, FormGroup, Label, Modal, ModalBody, Row } from "reactstrap";
 import { CheckCircle } from "react-feather";
 import { useDispatch, useSelector } from "react-redux";
 import { H3, P } from "../../../AbstractElements";
-import { create, getAll } from "../../../Utilities/api";
+import { create, getAll } from "../../../Api";
 
 import { jwtDecode } from "jwt-decode";
 import { Select } from "antd";
@@ -14,8 +14,6 @@ import Swal from "sweetalert2";
 import { ReportsType } from "./ReportsType/ReportsTypes";
 import { setReports } from "../../../ReaduxToolkit/Reducer/ReportsSlice";
 import CustomDropdown from "./CustomDropdown";
-import { GET_ALL_ALERT_EVENTS_REPORTS } from "../../../Utilities/api/apiEndpoints";
-import { ERROR_MESSAGE } from "../../../Utilities/constants/constants";
 
 const CreateNewReport = ({ dropDownDevices }: any) => {
   const { userPersonalizationData } = useSelector(
@@ -150,12 +148,12 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
             deviceIds: deviceIds,
           },
           {
-            url: GET_ALL_ALERT_EVENTS_REPORTS,
+            url: `reports${type}`,
           }
         ).then((data: any) => {
           // console.log("data", data);
 
-          if (!data.success && data.message === ERROR_MESSAGE) {
+          if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
             setLoading(false);
             setSelectedItems([]);
             const yesterday = new Date();
@@ -317,15 +315,17 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
     <Col md={6}>
       <div className="text-end">
         <button
-          className={`btn ${userPersonalizationData?.buttonsAndBarsColor == null
+          className={`btn ${
+            userPersonalizationData?.buttonsAndBarsColor == null
               ? "btn-primary"
               : ""
-            }`}
+          }`}
           style={{
             color: "white",
-            backgroundColor: `${userPersonalizationData !== null &&
+            backgroundColor: `${
+              userPersonalizationData !== null &&
               userPersonalizationData?.buttonsAndBarsColor
-              }`,
+            }`,
           }}
           onClick={addToggle}
         >

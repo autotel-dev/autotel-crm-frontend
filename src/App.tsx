@@ -4,15 +4,14 @@ import Store from "./ReaduxToolkit/Store";
 import { ToastContainer } from "react-toastify";
 import Swal from "sweetalert2";
 import { useEffect } from "react";
-import { getAll } from "./Utilities/api";
+import { getAll } from "./Api";
 import { setUserPersonalizationData } from "./ReaduxToolkit/Reducer/PersonalizationSlice";
 import { setActiveCRMModules } from "./ReaduxToolkit/Reducer/CRMModuleSlice";
-import { getUserRole } from "./Utilities/globals/globals";
+import { getUserRole } from "./Api/globals";
 import { setPermissions } from "./ReaduxToolkit/Reducer/CompanySlice";
 import { setUserPermissions } from "./ReaduxToolkit/Reducer/PermissionSlice";
 import { setUserData } from "./ReaduxToolkit/Reducer/UserSlice";
 import { ROLES } from "./constants/roles";
-import { GET_ALLOWED_MODULES, GET_ALLOWED_PERMISSIONS, GET_ALL_ACTIVE_CRM_MODULES, GET_ALL_PERMISSIONS, GET_COMPANY_PERSONALIZATION, GET_SUPERADMIN_PERSONALIZATION, GET_USER_BY_ID } from "./Utilities/api/apiEndpoints";
 const App = () => {
   const { userPermissions } = useSelector(
     (state: any) => state.userPermissions
@@ -26,10 +25,10 @@ const App = () => {
       getAll({
         url:
           userId == null && userId == undefined
-            ? GET_SUPERADMIN_PERSONALIZATION
-            : `${GET_COMPANY_PERSONALIZATION}/${userId}`,
+            ? "super-admin/get-personalization"
+            : `company/get-personalization/${userId}`,
 
-        // url: GET_SUPERADMIN_PERSONALIZATION,
+        // url: "super-admin/get-personalization",
       })
         .then((parentData: any) => {
           // console.log("api call --- >", parentData);
@@ -61,8 +60,8 @@ const App = () => {
       getAll({
         url:
           getUserRole() === ROLES.COMPANY || getUserRole() === ROLES.OPERATOR
-            ? GET_ALLOWED_MODULES
-            : GET_ALL_ACTIVE_CRM_MODULES,
+            ? "user/get-allowed-modules"
+            : "crm-module/get-all-active-modules",
       }).then((data: any) => {
         // console.log("active Modules --- >", data);
 
@@ -77,7 +76,7 @@ const App = () => {
       });
 
       if (getUserRole() == ROLES.COMPANY || getUserRole() == ROLES.OPERATOR) {
-        getAll({ url: GET_ALLOWED_PERMISSIONS }).then((data: any) => {
+        getAll({ url: "user/get-permissions" }).then((data: any) => {
           // console.log("api call --- >", data);
           if (data !== undefined) {
             if (data.success) {
@@ -88,7 +87,7 @@ const App = () => {
         });
       }
       dispatch(setUserData(null));
-      getAll({ url: GET_USER_BY_ID }).then((parentData: any) => {
+      getAll({ url: "user/get-user" }).then((parentData: any) => {
         if (parentData !== undefined) {
           if (parentData.success) {
             dispatch(setUserData(parentData.data.user));
@@ -96,7 +95,7 @@ const App = () => {
         }
       });
       if (getUserRole() === ROLES.SUPER_ADMIN) {
-        getAll({ url: GET_ALL_PERMISSIONS }).then((data: any) => {
+        getAll({ url: "permissions/get-all-permissions" }).then((data: any) => {
           // console.log("api call --- >", data);
           if (data !== undefined) {
             if (data.success) {

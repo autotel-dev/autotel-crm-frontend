@@ -6,7 +6,7 @@ import { useAppDispatch, useAppSelector } from "../../../ReaduxToolkit/Hooks";
 import { setToggleSidebar } from "../../../ReaduxToolkit/Reducer/LayoutSlice";
 import Logo from "../../../assets/Logo.png";
 import { useSelector } from "react-redux";
-import { IMAGE_BASE_URL } from "../../../Utilities/api";
+import { IMAGE_BASE_URL } from "../../../Api";
 
 const HeaderLogo = () => {
   const dispatch = useAppDispatch();

@@ -23,9 +23,9 @@ import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { H3, H4, P } from "../../../AbstractElements";
 
-import { getAll } from "../../../Utilities/api";
+import { getAll } from "../../../Api";
 import { setKilledDevices } from "../../../ReaduxToolkit/Reducer/AlertsSlice";
-import Loader from "../../Utilities/Loader/Loader";
+import Loader from "../../Loader/Loader";
 import SendCommand from "../../Company/Modules/ControlRoom/Analytics/components/SendCommand";
 import Swal from "sweetalert2";
 

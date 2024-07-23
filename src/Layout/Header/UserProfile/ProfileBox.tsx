@@ -2,7 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { LI, UL } from "../../../AbstractElements";
 import { profilesMessage } from "../../../Data/Layout/Header/ProfilesData";
 import FeatherIcons from "../../../utils/CommonSvgIcon/FeatherIcons";
-import { getUserId, getUserRole } from "../../../Utilities/globals/globals";
+import { getUserId, getUserRole } from "../../../Api/globals";
 import { useDispatch, useSelector } from "react-redux";
 import { ROLES } from "../../../constants/roles";
 import { setErrorData } from "../../../ReaduxToolkit/Reducer/UserSlice";

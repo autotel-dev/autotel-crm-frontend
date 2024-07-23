@@ -1,15 +1,13 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Navigate, Outlet } from "react-router-dom";
-import Loader from "../Pages/Utilities/Loader/Loader";
-import { getUserRole } from "../Utilities/globals/globals";
-import { getAll } from "../Utilities/api";
+import Loader from "../Pages/Loader/Loader";
+import { getUserRole } from "../Api/globals";
+import { getAll } from "../Api";
 import { PERMISSION_VALUES } from "../constants/permissions";
 import { ROLES } from "../constants/roles";
 import Swal from "sweetalert2";
-import NoInternetConnection from "../Pages/Utilities/NoInternetConnection/NoInternetConnection";
-import { GET_ALLOWED_MODULES, GET_ALLOWED_PERMISSIONS } from "../Utilities/api/apiEndpoints";
-import { ERROR_MESSAGE } from "../Utilities/constants/constants";
+import NoInternetConnection from "../Pages/NoInternetConnection/NoInternetConnection";
 
 interface PropTypes {
   allowedUserRoles: any;
@@ -28,9 +26,6 @@ const ProtectedRoute: React.FC<PropTypes> = ({
   );
   var user = userPermissions.find(
     (item: any) => item.title === permissionValue
-  );
-  const { userPersonalizationData } = useSelector(
-    (state: any) => state.personalization
   );
 
   // console.log("userPermissions:", userPermissions);
@@ -76,14 +71,14 @@ const ProtectedRoute: React.FC<PropTypes> = ({
           if (userRole === "COMPANY" || userRole === "OPERATOR") {
             // console.log("company or operator check");
             getAll({
-              url: GET_ALLOWED_MODULES,
+              url: "user/get-allowed-modules",
             }).then((data: any) => {
               // console.log("active Modules --- >", data);
 
               if (data !== undefined) {
                 if (
                   !data.success &&
-                  data.message === ERROR_MESSAGE
+                  data.message === "ERROR_INTERNET_DISCONNECTED"
                 ) {
                   setIsConnected(true);
                 }
@@ -140,14 +135,14 @@ const ProtectedRoute: React.FC<PropTypes> = ({
             // console.log("permissionValue inside if", permissionValue);
 
             getAll({
-              url: GET_ALLOWED_PERMISSIONS,
+              url: "user/get-permissions",
             }).then((data: any) => {
               // console.log("user permissions --- >", data);
 
               if (data !== undefined) {
                 if (
                   !data.success &&
-                  data.message === ERROR_MESSAGE
+                  data.message === "ERROR_INTERNET_DISCONNECTED"
                 ) {
                   setIsConnected(true);
                 }
@@ -234,15 +229,7 @@ const ProtectedRoute: React.FC<PropTypes> = ({
   ) : isConnected ? (
     <NoInternetConnection />
   ) : hasPermission ? (
-    <div style={{
-      height: "100vh", overflow: "auto", backgroundColor: `${userPersonalizationData !== null &&
-        userPersonalizationData?.backgroundColor !== null
-        ? userPersonalizationData?.backgroundColor
-        : ""
-        }`,
-    }}>
-      <Outlet />
-    </div>
+    <Outlet />
   ) : (
     <Navigate to={`${process.env.PUBLIC_URL}/not-accessible`} />
   );

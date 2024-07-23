@@ -21,7 +21,7 @@ export const SidebarMenu: SidebarMenuTypes[] = [
   },
   {
     title: "Setup",
-    svgIcon: "layout",
+    svgIcon: "home",
     subMenu: [
       {
         svgIcon: "bonus-kit",

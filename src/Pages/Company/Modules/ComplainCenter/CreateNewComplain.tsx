@@ -4,7 +4,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { Button, FormGroup, Label, Modal, ModalBody, PopoverBody, PopoverHeader, Row, UncontrolledPopover } from "reactstrap";
 import { Cancel } from "../../../../utils/Constant";
 import { H3, P } from "../../../../AbstractElements";
-import { createCom, getAll } from "../../../../Utilities/api";
+import { createCom, getAll } from "../../../../Api";
 import { useDispatch, useSelector } from "react-redux";
 import Swal from "sweetalert2";
 import SelectPriorityStatusesTypes from "./components/SelectPriorityStatusesTypes";
@@ -16,7 +16,7 @@ import {
   setSupportStatistics,
 } from "../../../../ReaduxToolkit/Reducer/SupportSlice";
 import { setNoDataFound } from "../../../../ReaduxToolkit/Reducer/NoDataFoundSlice";
-import { getUserRole } from "../../../../Utilities/globals/globals";
+import { getUserRole } from "../../../../Api/globals";
 import { ROLES } from "../../../../constants/roles";
 import DeviceSelecetdForNewComplain from "./DeviceSelectedForNewComplainModel";
 

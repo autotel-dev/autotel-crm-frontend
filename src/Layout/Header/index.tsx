@@ -5,13 +5,11 @@ import RightHeader from './RightHeader/RightHeader';
 
 const index = () => {
   return (
-    <>
-      <Row className="header-wrapper m-0" style={{ padding: "5px 30px" }}>
-        {/* <HeaderLogo /> */}
-        {/* <SearchBar /> */}
-        <RightHeader />
-      </Row>
-    </>
+    <Row className="header-wrapper m-0">
+      <HeaderLogo />
+      {/* <SearchBar /> */}
+      <RightHeader />
+    </Row>
   )
 }
 

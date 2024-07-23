@@ -5,15 +5,13 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { Button, FormGroup, Label, Modal, ModalBody, Row } from "reactstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { H3, P } from "../../../../../../../AbstractElements";
-import { create, getAll } from "../../../../../../../Utilities/api";
+import { create, getAll } from "../../../../../../../Api";
 import {
   setAssignedAlerts,
   setCompletedAlerts,
   setModalData,
 } from "../../../../../../../ReaduxToolkit/Reducer/AlertsSlice";
 import Swal from "sweetalert2";
-import { COMPLETE_AN_ALERT_EVENT, GET_ALL_ASSIGNED_ALERT_EVENTS, GET_ALL_COMPLETED_ALERT_EVENTS } from "../../../../../../../Utilities/api/apiEndpoints";
-import { ERROR_MESSAGE } from "../../../../../../../Utilities/constants/constants";
 
 interface ResponseType {
   response?: string;
@@ -60,9 +58,9 @@ const ResponseForm: React.FC<PropsTypes> = ({
       // // console.log(completedResponse);
       try {
         await create(completedResponse, {
-          url: COMPLETE_AN_ALERT_EVENT,
+          url: "alert-events/complete-an-alert-event",
         }).then((data: any) => {
-          if (!data.success && data.message === ERROR_MESSAGE) {
+          if (!data.success && data.message === "ERROR_INTERNET_DISCONNECTED") {
             setLoading(false);
             setIsVisible(!isVisible);
           }
@@ -86,7 +84,7 @@ const ResponseForm: React.FC<PropsTypes> = ({
             dispatch(setModalData(null));
             setBasicTab("1");
             getAll({
-              url: GET_ALL_ASSIGNED_ALERT_EVENTS,
+              url: "company/get-all-assigned-events",
             }).then((data: any) => {
               // // console.log("assigned --- >", data);
               // setLoading(false);
@@ -101,7 +99,7 @@ const ResponseForm: React.FC<PropsTypes> = ({
               }
             });
             getAll({
-              url: GET_ALL_COMPLETED_ALERT_EVENTS,
+              url: "company/get-all-completed-events",
             }).then((data: any) => {
               // // console.log("assigned --- >", data);
               // setLoading(false);

@@ -1,6 +1,6 @@
 
 import Store from "../../../../../ReaduxToolkit/Store";
-import { formatUnderscoredString } from "../../../../../Utilities/globals/globals";
+import { formatUnderscoredString } from "../../../../../Api/globals";
 
 // const state = Store.getState();
 

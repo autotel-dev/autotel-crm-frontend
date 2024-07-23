@@ -270,10 +270,10 @@ const ComplainList = () => {
               // display: "flex",
               // justifyContent: "space-between",
               // alignItems: "center",
-              width: "100%",
+              width:"100%",
               height: "30px",
               display: "grid",
-              gridTemplateColumns: "35% 45% 20%",
+              gridTemplateColumns:"35% 45% 20%",
               alignItems: "center",
             }}
           >
@@ -282,8 +282,8 @@ const ComplainList = () => {
               style={{
                 cursor: "pointer",
                 fontSize: "14px",
-                display: "grid",
-                gridAutoColumns: "max-content",
+                display:"grid",
+                gridAutoColumns:"max-content",
                 color: "white",
                 paddingLeft: "15px",
                 borderRight:
@@ -321,7 +321,7 @@ const ComplainList = () => {
               // onMouseOver={toggleDropdown}
               // onMouseOut={toggleDropdown}
               >
-                <div style={{ fontSize: "24px", color: "white", display: "flex", justifyContent: "center" }}><MdFilterList /></div>
+                <div style={{ fontSize: "24px", color: "white" , display:"flex",justifyContent:"center" }}><MdFilterList /></div>
               </div>
             )}
           </div>
@@ -351,7 +351,7 @@ const ComplainList = () => {
                   //   setToDate(endDate);
 
                   //   getAll({
-                  //     url: `${CONTROLROOM_DASHBOARD_STATISTICS}?fromDate=${startDate}&toDate=${endDate}`,
+                  //     url: `control-room/dashboard/statistics?fromDate=${startDate}&toDate=${endDate}`,
                   //   }).then((data: any) => {
                   //     // // // console.log("api call --- >", data);
 
@@ -379,7 +379,7 @@ const ComplainList = () => {
                   //   setToDate(endDate);
 
                   //   getAll({
-                  //     url: `${CONTROLROOM_DASHBOARD_STATISTICS}?fromDate=${startDate}&toDate=${endDate}`,
+                  //     url: `control-room/dashboard/statistics?fromDate=${startDate}&toDate=${endDate}`,
                   //   }).then((data: any) => {
                   //     // // // console.log("api call --- >", data);
 
@@ -408,7 +408,7 @@ const ComplainList = () => {
                   //   setToDate(endDate);
 
                   //   getAll({
-                  //     url: `${CONTROLROOM_DASHBOARD_STATISTICS}?fromDate=${startDate}&toDate=${endDate}`,
+                  //     url: `control-room/dashboard/statistics?fromDate=${startDate}&toDate=${endDate}`,
                   //   }).then((data: any) => {
                   //     // // // console.log("api call --- >", data);
 
@@ -462,7 +462,6 @@ const ComplainList = () => {
                                 ? "rgba(255, 0, 0, 0.3)" :
                                 data.key === "Resolved"
                                   ? "rgba(0, 255, 0, 0.3)" : "rgb(245, 246, 249)",
-                        height: "140px"
                       }}>
                         <H4>{data.key !== "InternalComplaints" ? (data.key == "InProgress" ? "In Progress" : data.key) : "Total"}</H4>
                         {/* <h5
@@ -489,20 +488,15 @@ const ComplainList = () => {
                     </Col>
                   ))}
                   <Col xl="2" lg="2" md="4" sm="12">
-                    <div className="sale"
-
-                      style={{
-                        backgroundColor: "white", // Remove the background color
-                        paddingTop: "0px"
-                      }}>
+                    <div className="sale">
                       <div>
                         <div
                           style={{
                             display: "flex",
                             flexDirection: "row",
                             width: "100%", // Set the width of the outer container
-                            height: "180px", // Set the height of the outer container
-                            backgroundColor: "white", // Remove the background color
+                            height: "200px", // Set the height of the outer container
+                            // backgroundColor: "gray", // Remove the background color
                           }}
                         >
                           <div

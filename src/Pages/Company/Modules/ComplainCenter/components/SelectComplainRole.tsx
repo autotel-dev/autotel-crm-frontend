@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Select } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { setPriorityStatus } from "../../../../../ReaduxToolkit/Reducer/SupportSlice";
-import { getUserRole, getUserRoleID } from "../../../../../Utilities/globals/globals";
+import { getUserRole, getUserRoleID } from "../../../../../Api/globals";
 import { ROLES } from "../../../../../constants/roles";
 interface PropTypes {
     priority: any,
