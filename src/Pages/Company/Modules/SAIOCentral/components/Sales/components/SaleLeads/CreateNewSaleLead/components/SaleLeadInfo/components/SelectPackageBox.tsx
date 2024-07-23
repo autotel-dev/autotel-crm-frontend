@@ -4,14 +4,15 @@ import { useDispatch, useSelector } from "react-redux";
 
 interface propTypes {
   placeholder: any;
+  setPackage: any;
+  packagee: string;
 }
 
-const SelectPackageBox: React.FC<propTypes> = ({ placeholder }) => {
-  const { packages, createCompany } = useSelector(
-    (state: any) => state.companies
+const SelectPackageBox: React.FC<propTypes> = ({ placeholder, setPackage, packagee }) => {
+  const { packages } = useSelector(
+    (state: any) => state.sales
   );
-  // console.log(packages);
-  const [packageId, setPackageId] = useState("");
+
   const [packageList, setPackageList] = useState([]);
   const dispatch = useDispatch();
 
@@ -25,6 +26,7 @@ const SelectPackageBox: React.FC<propTypes> = ({ placeholder }) => {
   return (
     <Select
       showSearch
+      value={packagee !== "" ? packagee : null}
       style={{ width: "100%", height: 36 }}
       placeholder={placeholder}
       optionFilterProp="children"
@@ -38,14 +40,8 @@ const SelectPackageBox: React.FC<propTypes> = ({ placeholder }) => {
       }
       onChange={(e) => {
         // console.log(e);
-        setPackageId(e);
-        // dispatch(
-        //   setCreateCompany({
-        //     ...createCompany,
-        //     package: e,
-        //   })
-        // );
-        // dispatch(setCountryId(e));
+        setPackage(e);
+
       }}
       options={packageList}
     />

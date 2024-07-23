@@ -67,28 +67,29 @@ const ServicesDetails = ({ callbackActive }: BusinessFormCommonProps) => {
     };
 
     const handleNextButton = () => {
-        if (
-            vehicleRegistrationNo !== "" &&
-            vehicleColor !== "" &&
-            engineNo !== "" &&
-            chasisNo !== "" &&
-            instructions !== "" &&
-            remarks !== ""
+        callbackActive(5);
+        // if (
+        //     vehicleRegistrationNo !== "" &&
+        //     vehicleColor !== "" &&
+        //     engineNo !== "" &&
+        //     chasisNo !== "" &&
+        //     instructions !== "" &&
+        //     remarks !== ""
 
-        ) {
-            // dispatch(setServersAddItemsList([]));
-            // dispatch(
-            //   setCreateCompany({
-            //     ...createCompany,
-            //     ...accountCredentialsForm,
-            //   })
-            // );
-            // console.log("formData -->", accountCredentialsForm);
-            // console.log("createCompany--- >", createCompany);
-            callbackActive(3);
-        } else {
-            ShowError();
-        }
+        // ) {
+        //     // dispatch(setServersAddItemsList([]));
+        //     // dispatch(
+        //     //   setCreateCompany({
+        //     //     ...createCompany,
+        //     //     ...accountCredentialsForm,
+        //     //   })
+        //     // );
+        //     // console.log("formData -->", accountCredentialsForm);
+        //     // console.log("createCompany--- >", createCompany);
+        //     callbackActive(5);
+        // } else {
+        //     ShowError();
+        // }
     };
 
     const crmModules = ["Geofence", "Cut Off", "Panic", "Microphone", "Ignition ON/OFF Alerts", "Web Access", "Mobile App Access", "Over Speed Alerts", "One Way Communication", "2 way Communication", "WhatsApp Alerts", "SMS Alerts"]
@@ -141,9 +142,9 @@ const ServicesDetails = ({ callbackActive }: BusinessFormCommonProps) => {
                     xs={12}
                     className="text-end d-flex justify-content-end gap-2 align-center"
                 >
-                    <Button color="primary" onClick={() => callbackActive(1)}>
+                    {/* <Button color="primary" onClick={() => callbackActive(3)}>
                         Previous
-                    </Button>
+                    </Button> */}
                     <Button color="primary" onClick={handleNextButton}>
                         Continue
                     </Button>

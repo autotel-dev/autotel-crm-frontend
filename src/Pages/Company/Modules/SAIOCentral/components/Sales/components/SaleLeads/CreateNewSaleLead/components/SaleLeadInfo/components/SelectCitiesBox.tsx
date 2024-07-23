@@ -3,11 +3,13 @@ import { Select } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 interface propTypes {
   placeholder: any;
+  setCity: any;
+  city: string;
 }
 
-const SelectCitiesBox: React.FC<propTypes> = ({ placeholder }) => {
-  const { cities, createCompany } = useSelector(
-    (state: any) => state.companies
+const SelectCitiesBox: React.FC<propTypes> = ({ placeholder, setCity, city }) => {
+  const { cities } = useSelector(
+    (state: any) => state.sales
   );
   // console.log(cities);
   const [cityId, setCityId] = useState("");
@@ -24,6 +26,7 @@ const SelectCitiesBox: React.FC<propTypes> = ({ placeholder }) => {
   return (
     <Select
       showSearch
+      value={city !== "" ? city : null}
       style={{ width: "100%", height: 36 }}
       placeholder={placeholder}
       optionFilterProp="children"
@@ -37,14 +40,8 @@ const SelectCitiesBox: React.FC<propTypes> = ({ placeholder }) => {
       }
       onChange={(e) => {
         // console.log(e);
-        setCityId(e);
-        // dispatch(
-        //   setCreateCompany({
-        //     ...createCompany,
-        //     city: e,
-        //   })
-        // );
-        // dispatch(setCountryId(e));
+        setCity(e);
+
       }}
       options={cityList}
     />

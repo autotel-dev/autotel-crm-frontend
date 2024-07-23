@@ -3,24 +3,25 @@ import { Select } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 interface propTypes {
   placeholder: any;
+  group: string;
+  setGroup: any;
 }
 
-const SelectGroupsBox: React.FC<propTypes> = ({ placeholder }) => {
-  const { provinces, createCompany } = useSelector(
-    (state: any) => state.companies
+const SelectGroupsBox: React.FC<propTypes> = ({ placeholder, group, setGroup }) => {
+  const { groups } = useSelector(
+    (state: any) => state.sales
   );
-  // console.log(cities);
-  const [cityId, setCityId] = useState("");
-  const [cityList, setCityList] = useState([]);
+
+  const [groupsList, setGroupsList] = useState([]);
   const dispatch = useDispatch();
 
   const tempList: any = [];
   useEffect(() => {
-    provinces?.map((item: any, index: any) => {
+    groups?.map((item: any, index: any) => {
       tempList.push({ value: `${item?._id}`, label: `${item?.name}` });
     });
-    setCityList(tempList);
-  }, [provinces]);
+    setGroupsList(tempList);
+  }, [groups]);
   return (
     <Select
       showSearch
@@ -36,17 +37,9 @@ const SelectGroupsBox: React.FC<propTypes> = ({ placeholder }) => {
           .localeCompare((optionB?.label ?? "").toLowerCase())
       }
       onChange={(e) => {
-        // console.log(e);
-        setCityId(e);
-        // dispatch(
-        //   setCreateCompany({
-        //     ...createCompany,
-        //     city: e,
-        //   })
-        // );
-        // dispatch(setCountryId(e));
+        setGroup(e)
       }}
-      options={cityList}
+      options={groupsList}
     />
   );
 };

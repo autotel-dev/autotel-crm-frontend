@@ -45,12 +45,14 @@ import {
 } from "../../ReaduxToolkit/Reducer/ComplainsTypeSlice";
 import {
   DELETE_BANK,
+  DELETE_BANK_ACCOUNT,
   DELETE_BRANCH,
   DELETE_CITY,
   DELETE_COMPANY,
   DELETE_COUNTRY,
   DELETE_CRM_MODULE,
   DELETE_CURRENCY,
+  DELETE_EXPENSE_ACCOUNT,
   DELETE_GROUP,
   DELETE_INSURANCE,
   DELETE_LANGUAGE,
@@ -67,6 +69,7 @@ import {
   DELETE_VEHICLE_MODEL,
   DELETE_VENDOR,
   DELETE_WAREHOUSE,
+  GET_ALL_BANK_ACCOUNTS,
   GET_ALL_BANKS,
   GET_ALL_BRANCHES,
   GET_ALL_CITIES,
@@ -74,6 +77,7 @@ import {
   GET_ALL_COUNTRIES,
   GET_ALL_CRM_MODULES,
   GET_ALL_CURRENCIES,
+  GET_ALL_EXPENSE_ACCOUNTS,
   GET_ALL_GEOFENCES,
   GET_ALL_GROUPS,
   GET_ALL_INSURANCES,
@@ -143,6 +147,8 @@ import {
   setFilterProduct,
   setProduct,
 } from "../../ReaduxToolkit/Reducer/InventoryProductSlice";
+import { setBankAccounts } from "../../ReaduxToolkit/Reducer/BankAccountSlice";
+import { setExpenseAccounts } from "../../ReaduxToolkit/Reducer/ExpenseAccountsSlice";
 
 const deleteAlert = (
   alertData: alertTypes,
@@ -150,6 +156,7 @@ const deleteAlert = (
   type: any,
   dispatch: any
 ) => {
+  var check = false;
   return Swal.fire({
     title: alertData.title,
     text: alertData.text,
@@ -201,11 +208,17 @@ const deleteAlert = (
         uri = `${DELETE_CURRENCY}`;
       } else if (type === "languageType") {
         uri = `${DELETE_LANGUAGE}`;
+      } else if (type === "expenseAccountsType") {
+        uri = `${DELETE_EXPENSE_ACCOUNT}`;
+      } else if (type === "bankAccountsType") {
+        uri = `${DELETE_BANK_ACCOUNT}`;
       } else if (type === "vendorType") {
         uri = `${DELETE_VENDOR}`;
       } else if (type === "productType") {
         uri = `${DELETE_PRODUCT}`;
       }
+
+
 
       try {
         Swal.fire({
@@ -254,6 +267,53 @@ const deleteAlert = (
                 }
               });
             }
+
+            if (type === "bankAccountsType") {
+              getAll({ url: GET_ALL_BANK_ACCOUNTS }).then((data: any) => {
+                // console.log("api call --- >", data);
+                if (data == undefined) {
+                  dispatch(setBankAccounts([]));
+                }
+                if (data !== undefined) {
+                  if (data.success) {
+                    // console.log("hhg");
+                    dispatch(setBankAccounts(data.data.bankAccounts));
+
+                  }
+                  if (!data.success) {
+                    dispatch(setBankAccounts([]));
+                  }
+                } else {
+                  // console.log("ier67i");
+                }
+              });
+            }
+
+
+            // -----------
+            // -----------
+
+
+            if (type === "expenseAccountsType") {
+              getAll({ url: GET_ALL_EXPENSE_ACCOUNTS }).then((data: any) => {
+                // console.log("api call --- >", data);
+                if (data == undefined) {
+                  dispatch(setExpenseAccounts([]));
+                }
+                if (data !== undefined) {
+                  if (data.success) {
+                    // console.log("hhg");
+                    dispatch(setExpenseAccounts(data.data));
+                  }
+                  if (!data.success) {
+                    dispatch(setExpenseAccounts([]));
+                  }
+                } else {
+                  // console.log("ier67i");
+                }
+              });
+            }
+
 
             // ------------
             // ------------
@@ -986,8 +1046,11 @@ const deleteAlert = (
         // Handle error (e.g., show an error message)
         // console.error("Error creating post:", error);
         // loading false
+
       }
     }
+    if (result.isDismissed && (type == "expenseAccountsType" || type == "bankAccountsType"))
+      return !check;
   });
 };
 

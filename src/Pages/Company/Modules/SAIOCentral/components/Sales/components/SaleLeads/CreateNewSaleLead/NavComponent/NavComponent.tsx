@@ -19,20 +19,20 @@ const NavComponent = ({
   return (
     <Nav className="nav-pills horizontal-options shipping-options">
       {NavData.map((data, index) => (
-        <NavItem key={index}>
+        activeTab !== undefined && activeTab >= data.activeTab && <NavItem key={index}>
           <NavLink
             style={{
               color: "white",
               backgroundColor: `${userPersonalizationData && activeTab === index + 1
-                  ? userPersonalizationData?.buttonsAndBarsColor
-                  : "white"
+                ? userPersonalizationData?.buttonsAndBarsColor
+                : "white"
                 }`,
             }}
             className={`b-r-0 ${activeTab === index + 1
-                ? userPersonalizationData &&
-                userPersonalizationData?.buttonsAndBarsColor == null &&
-                "active"
-                : ""
+              ? userPersonalizationData &&
+              userPersonalizationData?.buttonsAndBarsColor == null &&
+              "active"
+              : ""
               }`}
             onClick={() => handleTab(data.activeTab)}
           >
@@ -40,8 +40,8 @@ const NavComponent = ({
               className="horizontal-wizard"
               style={{
                 color: `${userPersonalizationData !== null && activeTab === index + 1
-                    ? "white"
-                    : "black"
+                  ? "white"
+                  : "black"
                   }`,
               }}
             >
@@ -50,9 +50,9 @@ const NavComponent = ({
                   className={`fa ${data.iconName}`}
                   style={{
                     color: `${userPersonalizationData !== null &&
-                        activeTab === index + 1
-                        ? "white"
-                        : "black"
+                      activeTab === index + 1
+                      ? "white"
+                      : "black"
                       }`,
                   }}
                 />

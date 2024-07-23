@@ -1,16 +1,21 @@
 import { Container, Row } from "reactstrap";
 import CustomHorizontalWizard from "./CustomHorizontalWizard";
-import { useEffect } from "react";
-import { useDispatch } from "react-redux";
 
-const CreateNewSaleLead = () => {
-  const dispatch = useDispatch();
+interface CreateNewSaleLeadProps {
+  iscreateNewSaleLead: boolean;
+  setIscreateNewSaleLead: any
+}
+
+const CreateNewSaleLead: React.FC<CreateNewSaleLeadProps> = ({
+  iscreateNewSaleLead,
+  setIscreateNewSaleLead,
+}) => {
 
   return (
     <>
       <Container fluid>
         <Row>
-          <CustomHorizontalWizard heading="" xs={12} />
+          <CustomHorizontalWizard heading="" xs={12} iscreateNewSaleLead={iscreateNewSaleLead} setIscreateNewSaleLead={setIscreateNewSaleLead} />
         </Row>
       </Container>
     </>

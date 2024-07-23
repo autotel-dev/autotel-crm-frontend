@@ -3,24 +3,24 @@ import { Select } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 interface propTypes {
   placeholder: any;
+  vehicleMake: string;
+  setVehicleMake: any;
 }
 
-const SelectVehicleMakeBox: React.FC<propTypes> = ({ placeholder }) => {
-  const { provinces, createCompany } = useSelector(
-    (state: any) => state.companies
+const SelectVehicleMakeBox: React.FC<propTypes> = ({ placeholder, vehicleMake, setVehicleMake }) => {
+  const { vehicleMakes } = useSelector(
+    (state: any) => state.sales
   );
-  // console.log(cities);
-  const [cityId, setCityId] = useState("");
-  const [cityList, setCityList] = useState([]);
+  const [vehicleMakesList, setVehicleMakesList] = useState([]);
   const dispatch = useDispatch();
 
   const tempList: any = [];
   useEffect(() => {
-    provinces?.map((item: any, index: any) => {
+    vehicleMakes?.map((item: any, index: any) => {
       tempList.push({ value: `${item?._id}`, label: `${item?.name}` });
     });
-    setCityList(tempList);
-  }, [provinces]);
+    setVehicleMakesList(tempList);
+  }, [vehicleMakes]);
   return (
     <Select
       showSearch
@@ -36,17 +36,9 @@ const SelectVehicleMakeBox: React.FC<propTypes> = ({ placeholder }) => {
           .localeCompare((optionB?.label ?? "").toLowerCase())
       }
       onChange={(e) => {
-        // console.log(e);
-        setCityId(e);
-        // dispatch(
-        //   setCreateCompany({
-        //     ...createCompany,
-        //     city: e,
-        //   })
-        // );
-        // dispatch(setCountryId(e));
+        setVehicleMake(e)
       }}
-      options={cityList}
+      options={vehicleMakesList}
     />
   );
 };

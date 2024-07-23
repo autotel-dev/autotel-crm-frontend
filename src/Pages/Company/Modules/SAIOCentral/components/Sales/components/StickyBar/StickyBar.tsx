@@ -8,11 +8,23 @@ import "./StickyBar.css";
 import Swal from "sweetalert2";
 
 interface StickyBarProps {
-  component: any;
+  component: string;
   setComponent: any;
+  setIscreateNewSaleLead: any;
+  setIscreateNewCustomer: any;
+  setIscreateNewInvoice: any;
+  setIscreateNewReceiveMoney: any;
+
 }
 
-const StickyBar: React.FC<StickyBarProps> = ({ component, setComponent }) => {
+const StickyBar: React.FC<StickyBarProps> = ({
+  component,
+  setComponent,
+  setIscreateNewSaleLead,
+  setIscreateNewCustomer,
+  setIscreateNewInvoice,
+  setIscreateNewReceiveMoney,
+}) => {
   const stcickyBarOptions = [
     {
       label: "Sale Leads",
@@ -34,21 +46,24 @@ const StickyBar: React.FC<StickyBarProps> = ({ component, setComponent }) => {
 
   return (
     <div className="sticky-bar">
-      {stcickyBarOptions.map((option) => (
-        <div
-          key={option.label}
-          className={`sticky-label ${
-            component === option.label ? "active" : ""
-          }`}
-          onClick={() => {
-            setComponent(option.label);
-          }}
-        >
-          {option.icon}
-          <span className="tooltip">{option.label}</span>
-        </div>
-      ))}
-    </div>
+      {
+        stcickyBarOptions.map((option) => (
+          <div
+            key={option.label}
+            className={`sticky-label ${component == option.label ? "active" : ""}`}
+            onClick={() => {
+              setIscreateNewSaleLead(false)
+              setIscreateNewCustomer(false)
+              setIscreateNewInvoice(false)
+              setIscreateNewReceiveMoney(false)
+              setComponent(option.label)
+            }}
+          >
+            {option.icon}
+          </div>
+        ))
+      }
+    </div >
   );
 };
 

@@ -47,6 +47,11 @@ import VehicleMakeSlice from "./Reducer/VehicleMakeSlice";
 import VehicleModelSlice from "./Reducer/VehicleModelSlice";
 import CurrencySlice from "./Reducer/CurrencySlice";
 import LanguageSlice from "./Reducer/LanguageSlice";
+import SalesSlice from "./Reducer/SalesSlice";
+import PurchaseInvoiceSlice from "./Reducer/PurchaseInvoiceSlice";
+import ExpenseAccountsSlice from "./Reducer/ExpenseAccountsSlice";
+import BankAccountSlice from "./Reducer/BankAccountSlice";
+import ExpensesSlice from "./Reducer/ExpensesSlice";
 import InventoryProductSlice from "./Reducer/InventoryProductSlice";
 import VendorSlice from "./Reducer/VendorSlice";
 
@@ -90,18 +95,23 @@ const Store = configureStore({
     emailTemplate: EmailTemplateSlice,
     whatsAppTemplate: WhatsAppTemplateSlice,
     geofence: GeofenceSlice,
-    banks:BankSlice,
-    insurance:InsuranceSlice,
-    networkProvider:NetworkProviderSlice,
-    warehouse : WarehouseSlice,
-    group : GroupSlice,
-    branch : BranchSlice,
-    vehicleMake : VehicleMakeSlice,
-    vehicleModel : VehicleModelSlice,
-    currencies : CurrencySlice,
-    languages : LanguageSlice,
-    inventoryProduct : InventoryProductSlice,
-    vendor : VendorSlice
+    banks: BankSlice,
+    insurance: InsuranceSlice,
+    networkProvider: NetworkProviderSlice,
+    warehouse: WarehouseSlice,
+    group: GroupSlice,
+    branch: BranchSlice,
+    vehicleMake: VehicleMakeSlice,
+    vehicleModel: VehicleModelSlice,
+    currencies: CurrencySlice,
+    languages: LanguageSlice,
+    sales: SalesSlice,
+    purchaseInvoice: PurchaseInvoiceSlice,
+    expenseAccounts: ExpenseAccountsSlice,
+    bankAccounts: BankAccountSlice,
+    expenses: ExpensesSlice,
+    inventoryProduct: InventoryProductSlice,
+    vendor: VendorSlice
 
   },
 });

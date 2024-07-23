@@ -8,7 +8,15 @@ import "../../../../../../../../CssConstaints/Style.css";
 import { SaleLeadsDataType, supportColumns } from "./Type/Type";
 import { PlusCircle } from "react-feather";
 
-const ExpensesTable = () => {
+interface ExpensesTableProps {
+    iscreateNewExpenses: boolean;
+    setIscreateNewExpenses: any
+}
+
+const ExpensesTable: React.FC<ExpensesTableProps> = ({
+    iscreateNewExpenses,
+    setIscreateNewExpenses,
+}) => {
     const dispatch = useDispatch();
     // Function to transform supportData into allBugReports format
     const { bugReports } = useSelector((state: any) => state.support);
@@ -136,9 +144,9 @@ const ExpensesTable = () => {
                             alignItems: "center",
 
                         }}
-                    // onClick={() => {
-                    //     setComponent("New Lead")
-                    // }}
+                        onClick={() => {
+                            setIscreateNewExpenses(true)
+                        }}
                     >
                         <PlusCircle size={18} style={{
                             marginRight: "5px"

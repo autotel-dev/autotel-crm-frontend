@@ -4,24 +4,25 @@ import { useDispatch, useSelector } from "react-redux";
 
 interface propTypes {
   placeholder: any;
+  insurance: string;
+  setInsurance: any;
 }
 
-const SelectInsuranceBox: React.FC<propTypes> = ({ placeholder }) => {
-  const { packages, createCompany } = useSelector(
-    (state: any) => state.companies
+const SelectInsuranceBox: React.FC<propTypes> = ({ placeholder, insurance, setInsurance }) => {
+  const { insurances } = useSelector(
+    (state: any) => state.sales
   );
-  // console.log(packages);
-  const [packageId, setPackageId] = useState("");
-  const [packageList, setPackageList] = useState([]);
+
+  const [insurancesList, setInsurancesList] = useState([]);
   const dispatch = useDispatch();
 
   const tempList: any = [];
   useEffect(() => {
-    packages?.map((item: any, index: any) => {
-      tempList.push({ value: `${item?._id}`, label: `${item?.title}` });
+    insurances?.map((item: any, index: any) => {
+      tempList.push({ value: `${item?._id}`, label: `${item?.name}` });
     });
-    setPackageList(tempList);
-  }, [packages]);
+    setInsurancesList(tempList);
+  }, [insurances]);
   return (
     <Select
       showSearch
@@ -37,17 +38,9 @@ const SelectInsuranceBox: React.FC<propTypes> = ({ placeholder }) => {
           .localeCompare((optionB?.label ?? "").toLowerCase())
       }
       onChange={(e) => {
-        // console.log(e);
-        setPackageId(e);
-        // dispatch(
-        //   setCreateCompany({
-        //     ...createCompany,
-        //     package: e,
-        //   })
-        // );
-        // dispatch(setCountryId(e));
+        setInsurance(e)
       }}
-      options={packageList}
+      options={insurancesList}
     />
   );
 };

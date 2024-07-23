@@ -5,7 +5,19 @@ import CustomFormTabContent from './CustomFormTabContent';
 import CommonHeader from '../../../../../../../../../Common/CommonHeader';
 import { CustomWizardFormPropsType } from '../../../../../../../../../Types/Forms/FormLayout/FormWizardTypes';
 
-const CustomHorizontalWizard = ({heading,horizontalWizardWrapperClassName,xs,firstXl,secondXl,}: CustomWizardFormPropsType) => {
+interface CustomHorizontalWizardProps {
+  heading: string
+  horizontalWizardWrapperClassName?: string
+  xs?: number
+  firstXl?: number
+  secondXl?: number,
+  iscreateNewSaleLead: boolean;
+  setIscreateNewSaleLead: any
+
+}
+
+const CustomHorizontalWizard = ({ heading, horizontalWizardWrapperClassName, xs, firstXl, secondXl, iscreateNewSaleLead,
+  setIscreateNewSaleLead }: CustomHorizontalWizardProps) => {
   const [activeTab, setActiveTab] = useState<number | undefined>(1);
   const callback = useCallback((tab: number | undefined) => {
     setActiveTab(tab);
@@ -13,7 +25,7 @@ const CustomHorizontalWizard = ({heading,horizontalWizardWrapperClassName,xs,fir
   return (
     <Col sm={12}>
       <Card>
-        <CommonHeader title={heading} headClass='pb-0' />        
+        <CommonHeader title={heading} headClass='pb-0' />
         <CardBody>
           <div className={`horizontal-wizard-wrapper ${horizontalWizardWrapperClassName}`}>
             <Row className="g-3">
@@ -21,7 +33,7 @@ const CustomHorizontalWizard = ({heading,horizontalWizardWrapperClassName,xs,fir
                 <NavComponent callbackActive={callback} activeTab={activeTab} />
               </Col>
               <Col xl={secondXl} xs={xs}>
-                <CustomFormTabContent activeTab={activeTab} callbackActive={callback}/>
+                <CustomFormTabContent activeTab={activeTab} callbackActive={callback} iscreateNewSaleLead={iscreateNewSaleLead} setIscreateNewSaleLead={setIscreateNewSaleLead} />
               </Col>
             </Row>
           </div>

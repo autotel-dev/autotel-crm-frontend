@@ -3,24 +3,25 @@ import { Select } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 interface propTypes {
   placeholder: any;
+  transmission: string;
+  setTransmission: any;
 }
 
-const SelectTransmissionBox: React.FC<propTypes> = ({ placeholder }) => {
-  const { provinces, createCompany } = useSelector(
-    (state: any) => state.companies
+const SelectTransmissionBox: React.FC<propTypes> = ({ placeholder, transmission, setTransmission }) => {
+  const { transmissions } = useSelector(
+    (state: any) => state.sales
   );
-  // console.log(cities);
-  const [cityId, setCityId] = useState("");
-  const [cityList, setCityList] = useState([]);
+
+  const [transmissionsList, setTransmissionsList] = useState([]);
   const dispatch = useDispatch();
 
   const tempList: any = [];
   useEffect(() => {
-    provinces?.map((item: any, index: any) => {
-      tempList.push({ value: `${item?._id}`, label: `${item?.name}` });
+    transmissions?.map((item: any, index: any) => {
+      tempList.push({ value: `${item?.value}`, label: `${item?.title}` });
     });
-    setCityList(tempList);
-  }, [provinces]);
+    setTransmissionsList(tempList);
+  }, [transmissions]);
   return (
     <Select
       showSearch
@@ -36,17 +37,9 @@ const SelectTransmissionBox: React.FC<propTypes> = ({ placeholder }) => {
           .localeCompare((optionB?.label ?? "").toLowerCase())
       }
       onChange={(e) => {
-        // console.log(e);
-        setCityId(e);
-        // dispatch(
-        //   setCreateCompany({
-        //     ...createCompany,
-        //     city: e,
-        //   })
-        // );
-        // dispatch(setCountryId(e));
+        setTransmission(e)
       }}
-      options={cityList}
+      options={transmissionsList}
     />
   );
 };
