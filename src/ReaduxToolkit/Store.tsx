@@ -47,6 +47,8 @@ import VehicleMakeSlice from "./Reducer/VehicleMakeSlice";
 import VehicleModelSlice from "./Reducer/VehicleModelSlice";
 import CurrencySlice from "./Reducer/CurrencySlice";
 import LanguageSlice from "./Reducer/LanguageSlice";
+import InventoryProductSlice from "./Reducer/InventoryProductSlice";
+import VendorSlice from "./Reducer/VendorSlice";
 
 const Store = configureStore({
   reducer: {
@@ -97,7 +99,9 @@ const Store = configureStore({
     vehicleMake : VehicleMakeSlice,
     vehicleModel : VehicleModelSlice,
     currencies : CurrencySlice,
-    languages : LanguageSlice
+    languages : LanguageSlice,
+    inventoryProduct : InventoryProductSlice,
+    vendor : VendorSlice
 
   },
 });

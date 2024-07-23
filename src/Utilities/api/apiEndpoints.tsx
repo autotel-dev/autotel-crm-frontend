@@ -265,6 +265,23 @@ export const GET_ALL_MERGED_ALERT_EVENTS = `${API_BASE_URL}/control-room/get-all
 // Company -> Modules - Monitoring
 export const GET_DEVICES = `${API_BASE_URL}/company/devices`;
 
+// Company -> Modules- SAIO - inventory
+export const CREATE_PRODUCT = `${API_BASE_URL}/product/create-product`;
+export const GET_ALL_PRODUCTS = `${API_BASE_URL}/product/get-all-products`;
+export const DELETE_PRODUCT = `${API_BASE_URL}/product/delete-product`;
+export const UPDATE_PRODUCT = `${API_BASE_URL}/product/update-product`;
+export const GET_ALL_PRODUCT_TYPES = `${API_BASE_URL}/product/get-all-product-types`;
+export const GET_ALL_UNITS = `${API_BASE_URL}/product/get-all-units`;
+
+// Company -> Modules- SAIO - accounts
+export const CREATE_VENDOR = `${API_BASE_URL}/setup/vendor/create-vendor`;
+export const GET_ALL_VENDORS = `${API_BASE_URL}/setup/vendor/get-all-vendors`;
+export const DELETE_VENDOR = `${API_BASE_URL}/setup/vendor/delete-vendor`;
+export const UPDATE_VENDOR = `${API_BASE_URL}/setup/vendor/update-vendor`;
+export const GET_VENDOR_BY_ID = `${API_BASE_URL}/setup/vendor/get-vendor-by-id`;
+
+
+
 // Company -> Operators
 export const CREATE_OPERATOR = `${API_BASE_URL}/operator/create-operator`;
 export const GET_ALL_OPERATORS = `${API_BASE_URL}/operator/get-all-operators`;

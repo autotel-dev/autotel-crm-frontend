@@ -116,15 +116,9 @@ const TicketTable = () => {
   };
 
   const handleRowClicked = (row: any) => {
-    // Here 'row' contains the data of the clicked row
-    // console.log("Clicked row data:", row);
-
-    // Navigate to the ticketDetails page with the row data
+   
     dispatch(setTableRow(row));
-    // window.open(
-    //   `${process.env.PUBLIC_URL}/support/ticketDetails/${row.ticket_id}`,
-    //   '_blank'
-    // );
+  
     navigate(
       `${process.env.PUBLIC_URL}/support/ticketDetails/${row.ticket_id}`
     );
@@ -164,16 +158,7 @@ const TicketTable = () => {
             onChange={(e) => {
               handleSearch(e);
             }}
-          // style={{
-          //   backgroundColor: "#f1f1f1",
-          //   borderRadius: "5px",
-          //   height: "40px",
-          //   padding: "12px",
-          //   margin: "20px 0px",
-          //   width: "100%", // Adjusting width to accommodate padding and margin
-          //   border: "none",
-          //   outline: "none", // Removing default border outline
-          // }}
+          
           />
         </Col>
         {getUserRole() === ROLES.SUPER_ADMIN ? (
@@ -194,16 +179,7 @@ const TicketTable = () => {
           </Col>
         ) : null}
       </Row>
-      {/* {selectedRows.length !== 0 && (
-        <div
-          className={`d-flex align-items-center justify-content-between bg-light-info p-2`}
-        >
-          <H4 className="text-muted m-0">{DeleteData}</H4>
-          <Button color="danger" onClick={() => handleDelete()}>
-            {Delete}
-          </Button>
-        </div>
-      )} */}
+     
       <DataTable
         columns={supportColumns}
         data={data}

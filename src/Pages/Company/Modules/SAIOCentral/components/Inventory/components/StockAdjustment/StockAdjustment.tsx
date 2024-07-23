@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import "../../../../../../../../CssConstaints/Style.css";
 import { SaleLeadsDataType, supportColumns } from "./Type/Type";
 import { PlusCircle } from "react-feather";
+import CreateNewStockAdjustmentModal from "./CreateNewStockAdjustmentModal";
 
 const StockAdjustmentTable = () => {
     const dispatch = useDispatch();
@@ -124,27 +125,7 @@ const StockAdjustmentTable = () => {
                     justifyContent: "end",
                     paddingRight: "25px"
                 }}>
-                    <button
-                        className={`btn ${userPersonalizationData?.buttonsAndBarsColor == null ? "btn-primary" : ""
-                            }`}
-                        style={{
-                            color: "white",
-                            backgroundColor: `${userPersonalizationData !== null &&
-                                userPersonalizationData?.buttonsAndBarsColor
-                                }`,
-                            display: "flex",
-                            alignItems: "center",
-
-                        }}
-                    // onClick={() => {
-                    //     setComponent("New Lead")
-                    // }}
-                    >
-                        <PlusCircle size={18} style={{
-                            marginRight: "5px"
-                        }} />
-                        Create Stock Adjustment
-                    </button>
+                    <CreateNewStockAdjustmentModal/>
                 </div>
             </Row>
             <Row style={{ display: "flex", alignItems: "center" }}>

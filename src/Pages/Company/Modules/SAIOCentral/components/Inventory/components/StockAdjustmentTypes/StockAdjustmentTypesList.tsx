@@ -7,8 +7,9 @@ import { useDispatch, useSelector } from "react-redux";
 import "../../../../../../../../CssConstaints/Style.css";
 import { SaleLeadsDataType, supportColumns } from "./Type/Type";
 import { PlusCircle } from "react-feather";
+import CreateNewStockAdjustment from "./CreateNewStockAdjustmentType";
 
-const ProductTypesTable = () => {
+const StockAdjustmentTypesTable = () => {
     const dispatch = useDispatch();
     // Function to transform supportData into allBugReports format
     const { bugReports } = useSelector((state: any) => state.support);
@@ -124,7 +125,7 @@ const ProductTypesTable = () => {
                     justifyContent: "end",
                     paddingRight: "25px"
                 }}>
-                    <button
+                    {/* <button
                         className={`btn ${userPersonalizationData?.buttonsAndBarsColor == null ? "btn-primary" : ""
                             }`}
                         style={{
@@ -144,7 +145,9 @@ const ProductTypesTable = () => {
                             marginRight: "5px"
                         }} />
                         Create Product Type
-                    </button>
+                    </button> */}
+                    <CreateNewStockAdjustment/>
+                    
                 </div>
             </Row>
             <Row style={{ display: "flex", alignItems: "center" }}>
@@ -217,4 +220,4 @@ const ProductTypesTable = () => {
     );
 };
 
-export default ProductTypesTable;
+export default StockAdjustmentTypesTable;
