@@ -59,6 +59,7 @@ import {
   DELETE_NETWORK_PROVIDER,
   DELETE_OPERATOR,
   DELETE_PACKAGE,
+  DELETE_PRODUCT,
   DELETE_PROVINCE,
   DELETE_SALE_GROUP,
   DELETE_SERVER,
@@ -66,6 +67,7 @@ import {
   DELETE_TYPE,
   DELETE_VEHICLE_MAKE,
   DELETE_VEHICLE_MODEL,
+  DELETE_VENDOR,
   DELETE_WAREHOUSE,
   GET_ALL_BANK_ACCOUNTS,
   GET_ALL_BANKS,
@@ -83,28 +85,68 @@ import {
   GET_ALL_NETWORK_PROVIDERS,
   GET_ALL_OPERATORS,
   GET_ALL_PACKAGES,
+  GET_ALL_PRODUCTS,
   GET_ALL_PROVINCES,
   GET_ALL_SALE_GROUPS,
   GET_ALL_SERVERS,
   GET_ALL_TYPES,
   GET_ALL_VEHICLES_MAKE,
   GET_ALL_VEHICLES_MODEL,
+  GET_ALL_VENDORS,
   GET_ALL_WAREHOUSES,
 } from "../api/apiEndpoints";
 import {
   setGeofences,
   setGeofencesGroup,
 } from "../../ReaduxToolkit/Reducer/GeofenceSlice";
-import { setBanks, setFilterBanks } from "../../ReaduxToolkit/Reducer/BankSlice";
-import { setFilterInsurances, setInsurance } from "../../ReaduxToolkit/Reducer/InsuranceSlice";
-import { setFilterNetworkProvider, setNetworkProvider } from "../../ReaduxToolkit/Reducer/NetworkProviderSlice";
-import { setFilterWarehouses, setWarehouse } from "../../ReaduxToolkit/Reducer/WarehouseSlice";
-import { setFilterGroups, setGroup } from "../../ReaduxToolkit/Reducer/GroupSlice";
-import { setBranch, setFilterBranches } from "../../ReaduxToolkit/Reducer/BranchSlice";
-import { setFilterVehiclesMake, setVehicleMake } from "../../ReaduxToolkit/Reducer/VehicleMakeSlice";
-import { setFilterVehiclesModel, setVehicleModel } from "../../ReaduxToolkit/Reducer/VehicleModelSlice";
-import { setCurrencies, setFilterCurrencies } from "../../ReaduxToolkit/Reducer/CurrencySlice";
-import { setFilterLanguages, setLanguages } from "../../ReaduxToolkit/Reducer/LanguageSlice";
+import {
+  setBanks,
+  setFilterBanks,
+} from "../../ReaduxToolkit/Reducer/BankSlice";
+import {
+  setFilterInsurances,
+  setInsurance,
+} from "../../ReaduxToolkit/Reducer/InsuranceSlice";
+import {
+  setFilterNetworkProvider,
+  setNetworkProvider,
+} from "../../ReaduxToolkit/Reducer/NetworkProviderSlice";
+import {
+  setFilterWarehouses,
+  setWarehouse,
+} from "../../ReaduxToolkit/Reducer/WarehouseSlice";
+import {
+  setFilterGroups,
+  setGroup,
+} from "../../ReaduxToolkit/Reducer/GroupSlice";
+import {
+  setBranch,
+  setFilterBranches,
+} from "../../ReaduxToolkit/Reducer/BranchSlice";
+import {
+  setFilterVehiclesMake,
+  setVehicleMake,
+} from "../../ReaduxToolkit/Reducer/VehicleMakeSlice";
+import {
+  setFilterVehiclesModel,
+  setVehicleModel,
+} from "../../ReaduxToolkit/Reducer/VehicleModelSlice";
+import {
+  setCurrencies,
+  setFilterCurrencies,
+} from "../../ReaduxToolkit/Reducer/CurrencySlice";
+import {
+  setFilterLanguages,
+  setLanguages,
+} from "../../ReaduxToolkit/Reducer/LanguageSlice";
+import {
+  setFilterVendor,
+  setVendor,
+} from "../../ReaduxToolkit/Reducer/VendorSlice";
+import {
+  setFilterProduct,
+  setProduct,
+} from "../../ReaduxToolkit/Reducer/InventoryProductSlice";
 import { setBankAccounts } from "../../ReaduxToolkit/Reducer/BankAccountSlice";
 import { setExpenseAccounts } from "../../ReaduxToolkit/Reducer/ExpenseAccountsSlice";
 
@@ -170,6 +212,10 @@ const deleteAlert = (
         uri = `${DELETE_EXPENSE_ACCOUNT}`;
       } else if (type === "bankAccountsType") {
         uri = `${DELETE_BANK_ACCOUNT}`;
+      } else if (type === "vendorType") {
+        uri = `${DELETE_VENDOR}`;
+      } else if (type === "productType") {
+        uri = `${DELETE_PRODUCT}`;
       }
 
 
@@ -221,8 +267,6 @@ const deleteAlert = (
                 }
               });
             }
-
-
 
             if (type === "bankAccountsType") {
               getAll({ url: GET_ALL_BANK_ACCOUNTS }).then((data: any) => {
@@ -299,7 +343,6 @@ const deleteAlert = (
               });
             }
 
-
             // ------------
             // ------------
 
@@ -326,7 +369,6 @@ const deleteAlert = (
                 }
               });
             }
-
 
             // ------------
             // ------------
@@ -356,7 +398,6 @@ const deleteAlert = (
               });
             }
 
-
             // ------------
             // ------------
 
@@ -385,7 +426,6 @@ const deleteAlert = (
               });
             }
 
-
             if (type === "vehicleModelType") {
               getAll({ url: GET_ALL_VEHICLES_MODEL }).then((data: any) => {
                 // console.log("api call --- >", data);
@@ -410,7 +450,6 @@ const deleteAlert = (
                 }
               });
             }
-
 
             // ------------
             // ------------
@@ -439,7 +478,6 @@ const deleteAlert = (
                 }
               });
             }
-
 
             // ------------
 
@@ -470,7 +508,6 @@ const deleteAlert = (
               });
             }
 
-
             // ------------
             // ------------
 
@@ -492,6 +529,58 @@ const deleteAlert = (
                   if (!data.success) {
                     dispatch(setBranch([]));
                     dispatch(setFilterBranches([]));
+                  }
+                } else {
+                  // console.log("ier67i");
+                }
+              });
+            }
+            // ------------
+            // ------------
+
+            if (type === "vendorType") {
+              getAll({ url: GET_ALL_VENDORS }).then((data: any) => {
+                // console.log("api call --- >", data);
+                if (data == undefined) {
+                  dispatch(setVendor([]));
+                  dispatch(setFilterVendor([]));
+                }
+
+                if (data !== undefined) {
+                  dispatch(setNoDataFound(data.message));
+                  if (data.success) {
+                    // console.log("hhg");
+                    dispatch(setVendor(data.data));
+                    dispatch(setFilterVendor(data.data));
+                  }
+                  if (!data.success) {
+                    dispatch(setVendor([]));
+                    dispatch(setFilterVendor([]));
+                  }
+                } else {
+                  // console.log("ier67i");
+                }
+              });
+            }
+            // ------------
+            // ------------
+
+            if (type === "productType") {
+              getAll({ url: GET_ALL_PRODUCTS }).then((data: any) => {
+                // console.log("api call --- >", data);
+                if (data == undefined) {
+                  dispatch(setProduct([]));
+                  dispatch(setFilterProduct([]));
+                }
+
+                if (data !== undefined) {
+                  dispatch(setNoDataFound(data.message));
+                  if (data.success) {
+                    // console.log("hhg");
+                    dispatch(setProduct(data.data.products));
+                  }
+                  if (!data.success) {
+                    dispatch(setProduct([]));
                   }
                 } else {
                   // console.log("ier67i");
@@ -524,7 +613,6 @@ const deleteAlert = (
                 }
               });
             }
-
 
             // ------------
 

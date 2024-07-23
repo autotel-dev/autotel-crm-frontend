@@ -52,6 +52,8 @@ import PurchaseInvoiceSlice from "./Reducer/PurchaseInvoiceSlice";
 import ExpenseAccountsSlice from "./Reducer/ExpenseAccountsSlice";
 import BankAccountSlice from "./Reducer/BankAccountSlice";
 import ExpensesSlice from "./Reducer/ExpensesSlice";
+import InventoryProductSlice from "./Reducer/InventoryProductSlice";
+import VendorSlice from "./Reducer/VendorSlice";
 
 const Store = configureStore({
   reducer: {
@@ -107,7 +109,10 @@ const Store = configureStore({
     purchaseInvoice: PurchaseInvoiceSlice,
     expenseAccounts: ExpenseAccountsSlice,
     bankAccounts: BankAccountSlice,
-    expenses: ExpensesSlice
+    expenses: ExpensesSlice,
+    inventoryProduct: InventoryProductSlice,
+    vendor: VendorSlice
+
   },
 });
 

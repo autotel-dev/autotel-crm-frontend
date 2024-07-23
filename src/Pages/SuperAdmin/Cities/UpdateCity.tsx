@@ -38,6 +38,7 @@ interface PropsTypes {
   value: any;
   isActive: any;
   setIsActive: any;
+  
   // setValue:any,
 }
 
