@@ -1,5 +1,5 @@
-export const API_BASE_URL = "http://124.29.238.127:8080/api/v1";
-export const IMAGE_BASE_URL = "http://124.29.238.127:8080";
+export const API_BASE_URL = "http://192.168.18.122:81/api/v1";
+export const IMAGE_BASE_URL = "http://192.168.18.122:81";
 // export const API_BASE_URL = "https://crmapi.autotel.pk/api/v1";
 // export const IMAGE_BASE_URL = "https://crmapi.autotel.pk";
 
@@ -24,6 +24,7 @@ export const GET_EMAIL_GATEWAY = `${API_BASE_URL}/gateway/email-gateway/get-gate
 export const UPDATE_EMAIL_GATEWAY_ACTIVATION_STATUS = `${API_BASE_URL}/gateway/email-gateway/change-gateway-activation-status`;
 export const TEST_SMTP_EMAIL_GATEWAY_CREDENTIALS = `${API_BASE_URL}/gateway/email-gateway/verify-gateway`;
 export const SEND_TEST_EMAIL = `${API_BASE_URL}/gateway/email-gateway/send-test-email`;
+
 
 // Common - WhatsApp Gateway
 export const CREATE_WHATSAPP_GATEWAY = `${API_BASE_URL}/gateway/whatsapp-gateway/create-gateway`;
@@ -278,6 +279,20 @@ export const GET_ALL_SALELEADS = `${API_BASE_URL}/sale-lead/get-all-leads`;
 export const GET_SINGLE_SALELEAD = `${API_BASE_URL}/sale-lead/get-sale-lead`;
 export const CONFIRM_OR_REJECT_SALELEAD = `${API_BASE_URL}/sale-lead/confirm-or-reject-lead`;
 export const CREATE_NEW_SALELEAD_VEHICLE = `${API_BASE_URL}/vehicle/create-vehicle`;
+export const GET_ALL_SERVICES = `${API_BASE_URL}/sale-lead/get-all-services`;
+export const ATTACH_SERVICESTO_VEHICLES = `${API_BASE_URL}/vehicle/attach-services`;
+export const GET_ALL_PRODUCTS_BY_TYPE = `${API_BASE_URL}/product/get-all-products-by-type`;
+export const GET_ALL_INVENTORY_ITEMS = `${API_BASE_URL}/inventory/search-inventory-items`;
+export const GET_ALL_SINGLE_INVENTORY_ITEM = `${API_BASE_URL}/inventory/get-inventory-item`;
+export const GET_ALL_COMPANY_INSTALLERS = `${API_BASE_URL}/vehicle/get-all-installers`;
+export const ATTACH_INSTALLER_TO_VEHICLE = `${API_BASE_URL}/vehicle/add-installer`;
+export const ATTACH_INVENTORY_TO_VEHICLE = `${API_BASE_URL}/vehicle/attach-inventory`;
+export const COMPLETE_VEHICLE_INSTALLATION = `${API_BASE_URL}/vehicle/complete-installation`;
+export const ATTACH_SECURITY_BRIEFING = `${API_BASE_URL}/vehicle/bulk-attach-security-briefings`;
+export const COMPLETE_SALE_LEAD = `${API_BASE_URL}/sale-lead/complete-lead`;
+export const OLDEST_INVENTORY_ITEM = `${API_BASE_URL}/inventory/get-oldest=inventory-item`;
+
+
 
 // Company -> Modules - SAIO-Central -Accounts - Expense Accounts
 
@@ -296,6 +311,25 @@ export const GET_ALL_BANK_ACCOUNTS = `${API_BASE_URL}/accounts/bank-account/get-
 export const UPDATE_BANK_ACCOUNT = `${API_BASE_URL}/accounts/bank-account/update-bank-account`;
 export const DELETE_BANK_ACCOUNT = `${API_BASE_URL}/accounts/bank-account/delete-bank-account`;
 export const GET_ALL_ACCOUNT_TYPES = `${API_BASE_URL}/accounts/bank-account/get-all-account-types`;
+
+// Company -> Modules - SAIO-Central -Accounts - Expenses
+
+export const CREATE_NEW_EXPENSE = `${API_BASE_URL}/accounts/expense/create-expense`;
+export const GET_ALL_EXPENSES = `${API_BASE_URL}/accounts/expense/get-all-expenses`;
+export const UPDATE_EXPENSES = `${API_BASE_URL}/accounts/expense/update-expense`;
+export const DELETE_EXPENSES = `${API_BASE_URL}/accounts/expense/delete-expense`;
+
+
+// Company -> Modules - SAIO-Central -Accounts - PurchaseInvoice
+
+export const CREATE_NEW_PURCHASE_INVOICE = `${API_BASE_URL}/purchase-invoice/create-purchase-invoice`;
+export const GET_ALL_PURCHASE_INVOICES = `${API_BASE_URL}/purchase-invoice/get-all-purchase-invoice`;
+export const VALIDATE_SERIALS = `${API_BASE_URL}/purchase-invoice/bulk-validate-serials`;
+// export const UPDATE_EXPENSES = `${API_BASE_URL}/accounts/expense/update-expense`;
+// export const DELETE_EXPENSES = `${API_BASE_URL}/accounts/expense/delete-expense`;
+
+
+
 
 
 // Company -> Modules - Monitoring

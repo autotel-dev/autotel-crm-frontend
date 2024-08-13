@@ -143,10 +143,10 @@ const CreateNewVendorModal = () => {
   };
 
   const { countries, cities } = useSelector((state: any) => state.vendor);
-  
+
   const [countriesList, setCountriesList] = useState<any[]>([]);
   const [citiesList, setCitiesList] = useState<any[]>([]);
-  
+
   useEffect(() => {
     const countriesOptions = countries.map((item: any) => ({
       value: item._id,
@@ -169,11 +169,10 @@ const CreateNewVendorModal = () => {
     <Col md={6}>
       <div className="text-end">
         <button
-          className={`btn ${
-            userPersonalizationData?.buttonsAndBarsColor == null
+          className={`btn ${userPersonalizationData?.buttonsAndBarsColor == null
               ? "btn-primary"
               : ""
-          }`}
+            }`}
           style={{
             color: "white",
             backgroundColor: userPersonalizationData?.buttonsAndBarsColor || "",
@@ -318,7 +317,7 @@ const CreateNewVendorModal = () => {
                     <P>City</P>
                     <Select
                       showSearch
-                      
+
                       style={{ width: "100%", height: 36 }}
                       placeholder="Select City"
                       optionFilterProp="children"
@@ -350,40 +349,17 @@ const CreateNewVendorModal = () => {
                   </FormGroup>
                 </Col>
               </Row>
-              <div className="text-end">
-                <button
-                  type="button"
-                  className={`btn ${
-                    userPersonalizationData?.buttonsAndBarsColor == null
-                      ? "btn-secondary"
-                      : ""
-                  }`}
-                  style={{
-                    color: "white",
-                    backgroundColor:
-                      userPersonalizationData?.buttonsAndBarsColor || "",
-                  }}
-                  onClick={addToggle}
-                >
-                  {Cancel}
-                </button>
-                <button
-                  type="submit"
-                  className={`btn ${
-                    userPersonalizationData?.buttonsAndBarsColor == null
-                      ? "btn-primary"
-                      : ""
-                  }`}
-                  style={{
-                    color: "white",
-                    backgroundColor:
-                      userPersonalizationData?.buttonsAndBarsColor || "",
-                    marginLeft: "5px",
-                  }}
-                >
-                  {loading ? "Loading..." : "Save"}
-                </button>
-              </div>
+              <Button color="primary" className="me-1">
+                {loading ? "Loading ..." : `Create`}
+              </Button>
+              &nbsp;&nbsp;
+              <Button
+                disabled={loading ? true : false}
+                color="secondary"
+                onClick={addToggle}
+              >
+                {Cancel}
+              </Button>
             </form>
           </ModalBody>
         </Modal>

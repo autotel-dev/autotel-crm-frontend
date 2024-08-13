@@ -10,16 +10,18 @@ import ExpenseAccountsTable from './components/ExpenseAccounts/ExpenseAccountsLi
 import BankAccountsTable from './components/BankAccounts/BankAccountsList'
 import MakePaymentTable from './components/MakePayment/MakePaymentList'
 import ExpensesTable from './components/Expenses/ExpensesList'
-import PurchaseInvoiceTable from './components/PurchaseInvoice/PurchaseInvoiceList'
-import CreateNewPurchaseInvoice from './components/PurchaseInvoice/CreateNewCustomer/CreateNewPurchaseInvoice'
 import { useDispatch } from 'react-redux'
 import { setExpenseAccounts, setIsConnected } from '../../../../../../ReaduxToolkit/Reducer/ExpenseAccountsSlice'
 import Swal from 'sweetalert2'
-import { getAll } from '../../../../../../Utilities/api'
-import { GET_ALL_BANK_ACCOUNTS, GET_ALL_EXPENSE_ACCOUNTS } from '../../../../../../Utilities/api/apiEndpoints'
+import { create, getAll } from '../../../../../../Utilities/api'
+import { GET_ALL_BANK_ACCOUNTS, GET_ALL_EXPENSE_ACCOUNTS, GET_ALL_EXPENSES, GET_ALL_PURCHASE_INVOICES } from '../../../../../../Utilities/api/apiEndpoints'
 import { ERROR_MESSAGE } from '../../../../../../Utilities/constants/constants'
 import { setBankAccounts } from '../../../../../../ReaduxToolkit/Reducer/BankAccountSlice'
 import CreateNewExpenses from './components/Expenses/CreateNewExpenses/CreateNewExpenses'
+import CreateNewPurchaseInvoice from './components/PurchaseInvoice/CreateNewPurchaseInvoice/CreateNewPurchaseInvoice'
+import PurchaseInvoiceTable from './components/PurchaseInvoice/PurchaseInvoicelist'
+import { setExpenses } from '../../../../../../ReaduxToolkit/Reducer/ExpensesSlice'
+import { setPurchaseInvoices } from '../../../../../../ReaduxToolkit/Reducer/PurchaseInvoiceSlice'
 
 
 const Accounts = () => {
@@ -40,12 +42,12 @@ const Accounts = () => {
                     dispatch(setIsConnected(true));
                 }
                 if (!data.success) {
-                    Swal.fire({
-                        text: `${data.message}`,
-                        icon: "error",
-                        timer: 2000,
-                        showConfirmButton: false,
-                    });
+                    // Swal.fire({
+                    //     text: `${data.message}`,
+                    //     icon: "error",
+                    //     timer: 2000,
+                    //     showConfirmButton: false,
+                    // });
                 }
                 if (data.success) {
                     // // console.log("hhg");
@@ -61,16 +63,57 @@ const Accounts = () => {
 
             if (data !== undefined) {
                 if (!data.success) {
-                    Swal.fire({
-                        text: `${data.message}`,
-                        icon: "error",
-                        timer: 2000,
-                        showConfirmButton: false,
-                    });
+                    // Swal.fire({
+                    //     text: `${data.message}`,
+                    //     icon: "error",
+                    //     timer: 2000,
+                    //     showConfirmButton: false,
+                    // });
                 }
                 if (data.success) {
                     // // console.log("hhg");
-                    dispatch(setBankAccounts(data.data.bankAccounts));
+                    dispatch(setBankAccounts(data.data));
+                }
+            }
+        });
+    }, []);
+
+    useEffect(() => {
+        dispatch(setExpenses([]));
+        getAll({ url: GET_ALL_EXPENSES }).then((data: any) => {
+
+            if (data !== undefined) {
+                if (!data.success) {
+                    // Swal.fire({
+                    //     text: `${data.message}`,
+                    //     icon: "error",
+                    //     timer: 2000,
+                    //     showConfirmButton: false,
+                    // });
+                }
+                if (data.success) {
+                    // // console.log("hhg");
+                    dispatch(setExpenses(data.data));
+                }
+            }
+        });
+    }, []);
+    useEffect(() => {
+        dispatch(setPurchaseInvoices([]));
+        getAll({ url: GET_ALL_PURCHASE_INVOICES }).then((data: any) => {
+
+            if (data !== undefined) {
+                if (!data.success) {
+                    // Swal.fire({
+                    //     text: `${data.message}`,
+                    //     icon: "error",
+                    //     timer: 2000,
+                    //     showConfirmButton: false,
+                    // });
+                }
+                if (data.success) {
+                    // // console.log("hhg");
+                    dispatch(setPurchaseInvoices(data.data));
                 }
             }
         });

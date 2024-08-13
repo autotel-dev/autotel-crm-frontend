@@ -717,166 +717,166 @@ export default GoogleApiWrapper({
 
 // --------------------------------Strret Map -----------------------------
 
-// import React, { useEffect, useRef, useState } from "react";
-// import { MapContainer, TileLayer } from "react-leaflet";
-// import "leaflet/dist/leaflet.css";
-// import "leaflet-draw/dist/leaflet.draw.css";
-// import L from "leaflet";
-// import "leaflet-draw";
+// // import React, { useEffect, useRef, useState } from "react";
+// // import { MapContainer, TileLayer } from "react-leaflet";
+// // import "leaflet/dist/leaflet.css";
+// // import "leaflet-draw/dist/leaflet.draw.css";
+// // import L from "leaflet";
+// // import "leaflet-draw";
 
-// const OSMMap = () => {
-//   const [display, setDisplay] = useState(false);
-//   const mapRef = useRef(null);
+// // const OSMMap = () => {
+// //   const [display, setDisplay] = useState(false);
+// //   const mapRef = useRef(null);
 
-//   useEffect(() => {
-//     setDisplay(true);
-//   }, []);
+// //   useEffect(() => {
+// //     setDisplay(true);
+// //   }, []);
 
-//   useEffect(() => {
-//     if (display && mapRef.current) {
-//       const map = mapRef.current;
-//       const drawnItems = new L.FeatureGroup();
-//       map.addLayer(drawnItems);
+// //   useEffect(() => {
+// //     if (display && mapRef.current) {
+// //       const map = mapRef.current;
+// //       const drawnItems = new L.FeatureGroup();
+// //       map.addLayer(drawnItems);
 
-//       const drawControl = new L.Control.Draw({
-//         edit: {
-//           featureGroup: drawnItems,
-//         },
-//         draw: {
-//           polygon: {
-//             allowIntersection: false, // Restricts shapes to simple polygons
-//             showArea: true, // Show area in the tooltip
-//             shapeOptions: {
-//               color: "#bada55"
-//             }
-//           },
-//           circle: {
-//             shapeOptions: {
-//               color: "#662d91"
-//             }
-//           },
-//           rectangle: {
-//             shapeOptions: {
-//               color: "#f06eaa"
-//             }
-//           },
-//           marker: false, // Disable marker drawing
-//           polyline: false // Disable polyline drawing
-//         },
-//       });
+// //       const drawControl = new L.Control.Draw({
+// //         edit: {
+// //           featureGroup: drawnItems,
+// //         },
+// //         draw: {
+// //           polygon: {
+// //             allowIntersection: false, // Restricts shapes to simple polygons
+// //             showArea: true, // Show area in the tooltip
+// //             shapeOptions: {
+// //               color: "#bada55"
+// //             }
+// //           },
+// //           circle: {
+// //             shapeOptions: {
+// //               color: "#662d91"
+// //             }
+// //           },
+// //           rectangle: {
+// //             shapeOptions: {
+// //               color: "#f06eaa"
+// //             }
+// //           },
+// //           marker: false, // Disable marker drawing
+// //           polyline: false // Disable polyline drawing
+// //         },
+// //       });
 
-//       map.addControl(drawControl);
+// //       map.addControl(drawControl);
 
-//       map.on(L.Draw.Event.CREATED, (e) => {
-//         const layer = e.layer;
-//         drawnItems.addLayer(layer);
-//         console.log("Geofence created:", layer.toGeoJSON());
-//       });
+// //       map.on(L.Draw.Event.CREATED, (e) => {
+// //         const layer = e.layer;
+// //         drawnItems.addLayer(layer);
+// //         console.log("Geofence created:", layer.toGeoJSON());
+// //       });
 
-//       map.on(L.Draw.Event.EDITED, (e) => {
-//         const layers = e.layers;
-//         layers.eachLayer((layer) => {
-//           console.log("Geofence edited:", layer.toGeoJSON());
-//         });
-//       });
+// //       map.on(L.Draw.Event.EDITED, (e) => {
+// //         const layers = e.layers;
+// //         layers.eachLayer((layer) => {
+// //           console.log("Geofence edited:", layer.toGeoJSON());
+// //         });
+// //       });
 
-//       map.on(L.Draw.Event.DELETED, (e) => {
-//         const layers = e.layers;
-//         layers.eachLayer((layer) => {
-//           console.log("Geofence deleted:", layer.toGeoJSON());
-//         });
-//       });
-//     }
-//   }, [display]);
+// //       map.on(L.Draw.Event.DELETED, (e) => {
+// //         const layers = e.layers;
+// //         layers.eachLayer((layer) => {
+// //           console.log("Geofence deleted:", layer.toGeoJSON());
+// //         });
+// //       });
+// //     }
+// //   }, [display]);
 
-//   return (
-//     <>
-//       {display && (
-//         <MapContainer
-//           style={{ height: "92.5vh", width: "100%", marginLeft: "40px" }}
-//           center={[24.8607, 67.0011]}
-//           zoom={13}
-//           scrollWheelZoom={true}
-//           ref={mapRef}
-//           whenCreated={(mapInstance) => {
-//             mapRef.current = mapInstance;
-//           }}
-//         >
-//           <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-//         </MapContainer>
-//       )}
-//     </>
-//   );
-// };
+// //   return (
+// //     <>
+// //       {display && (
+// //         <MapContainer
+// //           style={{ height: "92.5vh", width: "100%", marginLeft: "40px" }}
+// //           center={[24.8607, 67.0011]}
+// //           zoom={13}
+// //           scrollWheelZoom={true}
+// //           ref={mapRef}
+// //           whenCreated={(mapInstance) => {
+// //             mapRef.current = mapInstance;
+// //           }}
+// //         >
+// //           <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+// //         </MapContainer>
+// //       )}
+// //     </>
+// //   );
+// // };
 
-// export default OSMMap;
+// // export default OSMMap;
 
-{
-  /* <Circle
-ref={circleRef}
-center={{ lat: 24.8960, lng: 67.0311 }}
-radius={2000}
-editable={false}
-draggable={false}
-onCenterChanged={handleCircleChanged}
-onRadiusChanged={handleCircleChanged}
-// onClick={handleCircleChanged}
-options={{
-  strokeColor: "black",
-  strokeOpacity: 0.8,
-  strokeWeight: 2,
-  fillColor: "black",
-  fillOpacity: 0.35,
-}}
-/>
-<Circle
-ref={circleRef}
-center={{ lat: 24.8660, lng: 67.2311 }}
-radius={2550}
-editable={false}
-draggable={false}
-onCenterChanged={handleCircleChanged}
-onRadiusChanged={handleCircleChanged}
-// onClick={handleCircleChanged}
-options={{
-  strokeColor: "black",
-  strokeOpacity: 0.8,
-  strokeWeight: 2,
-  fillColor: "black",
-  fillOpacity: 0.35,
-}}
-/> */
-}
+// {
+//   /* <Circle
+// ref={circleRef}
+// center={{ lat: 24.8960, lng: 67.0311 }}
+// radius={2000}
+// editable={false}
+// draggable={false}
+// onCenterChanged={handleCircleChanged}
+// onRadiusChanged={handleCircleChanged}
+// // onClick={handleCircleChanged}
+// options={{
+//   strokeColor: "black",
+//   strokeOpacity: 0.8,
+//   strokeWeight: 2,
+//   fillColor: "black",
+//   fillOpacity: 0.35,
+// }}
+// />
+// <Circle
+// ref={circleRef}
+// center={{ lat: 24.8660, lng: 67.2311 }}
+// radius={2550}
+// editable={false}
+// draggable={false}
+// onCenterChanged={handleCircleChanged}
+// onRadiusChanged={handleCircleChanged}
+// // onClick={handleCircleChanged}
+// options={{
+//   strokeColor: "black",
+//   strokeOpacity: 0.8,
+//   strokeWeight: 2,
+//   fillColor: "black",
+//   fillOpacity: 0.35,
+// }}
+// /> */
+// }
 
-{
-  /* <Rectangle
-ref={rectangleRef}
-bounds={{ south: 24.931049412292783, west: 67.12572615966798, north: 24.962241966819292, east: 67.20855422363283 }}
-editable={false}
-draggable={false}
-onBoundsChanged={handleRectangleChanged}
-// onClick={handleRectangleChanged}
-options={{
-  strokeColor: "red",
-  strokeOpacity: 0.8,
-  strokeWeight: 2,
-  fillColor: "red",
-  fillOpacity: 0.35,
-}}
-/>
-<Rectangle
-ref={rectangleRef}
-bounds={{ south: 24.79180623822459, west: 66.96402114257813, north: 24.845778870388713, east: 67.05646224365236 }}
-editable={false}
-draggable={false}
-onBoundsChanged={handleRectangleChanged}
-// onClick={handleRectangleChanged}
-options={{
-  strokeColor: "red",
-  strokeOpacity: 0.8,
-  strokeWeight: 2,
-  fillColor: "red",
-  fillOpacity: 0.35,
-}}
-/> */
-}
+// {
+//   /* <Rectangle
+// ref={rectangleRef}
+// bounds={{ south: 24.931049412292783, west: 67.12572615966798, north: 24.962241966819292, east: 67.20855422363283 }}
+// editable={false}
+// draggable={false}
+// onBoundsChanged={handleRectangleChanged}
+// // onClick={handleRectangleChanged}
+// options={{
+//   strokeColor: "red",
+//   strokeOpacity: 0.8,
+//   strokeWeight: 2,
+//   fillColor: "red",
+//   fillOpacity: 0.35,
+// }}
+// />
+// <Rectangle
+// ref={rectangleRef}
+// bounds={{ south: 24.79180623822459, west: 66.96402114257813, north: 24.845778870388713, east: 67.05646224365236 }}
+// editable={false}
+// draggable={false}
+// onBoundsChanged={handleRectangleChanged}
+// // onClick={handleRectangleChanged}
+// options={{
+//   strokeColor: "red",
+//   strokeOpacity: 0.8,
+//   strokeWeight: 2,
+//   fillColor: "red",
+//   fillOpacity: 0.35,
+// }}
+// /> */
+// }

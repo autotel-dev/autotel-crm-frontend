@@ -475,7 +475,7 @@ const Monitoring = () => {
               height: "92.5vh",
               display: "flex",
               overflow: "unset",
-              scrollbarWidth:"none",
+              scrollbarWidth: "none",
             }}
           >
             <GoogleMap />
@@ -483,6 +483,7 @@ const Monitoring = () => {
             <div
               style={{
                 position: "absolute",
+                // zIndex: "1000" when lraflet
                 // marginTop:"15px"
               }}
             >
@@ -494,6 +495,7 @@ const Monitoring = () => {
                 style={{
                   position: "absolute",
                   right: 0,
+                  // zIndex: "1000" when lraflet
                 }}
               >
                 <DeviceDetailsBar />

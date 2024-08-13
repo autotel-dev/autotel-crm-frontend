@@ -12,87 +12,36 @@ import {
     Row,
 } from "reactstrap";
 import { useDispatch, useSelector } from "react-redux";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
-import { P } from "../../../../../../../../../../../AbstractElements";
 import { BusinessFormCommonProps } from "../../../../../../../../../../../Types/Forms/FormLayout/FormWizardTypes";
-import SelectBanksBox from "../VehicleDetails/components/SelectBanksBox";
-import SelectInsuranceBox from "../VehicleDetails/components/SelectInsuranceBox";
-import SelectGroupsBox from "../VehicleDetails/components/SelectGroupsBox";
-import SelectVehicleMakeBox from "../VehicleDetails/components/SelectVehicleMakeBox";
-import SelectVehicleModelBox from "../VehicleDetails/components/SelectVehicleModelBox";
-import SelectVehicleYearBox from "../VehicleDetails/components/SelectVehicleYearBox";
-import SelectTransmissionBox from "../VehicleDetails/components/SelectTransmissionBox";
-import SelectFuelTypeBox from "../VehicleDetails/components/SelectFuelTypeBox";
+import { H4 } from "../../../../../../../../../../../AbstractElements";
+
 
 const ServicesDetails = ({ callbackActive }: BusinessFormCommonProps) => {
     const { userPersonalizationData } = useSelector(
         (state: any) => state.personalization
     );
-    const { createCompany, imageBackground, companyLogo } = useSelector(
-        (state: any) => state.companies
-    );
+    const { services } = useSelector((state: any) => state.sales);
     const dispatch = useDispatch();
-    const [vehicleDetailsForm, setVehicleDetailsForm] = useState({
-        vehicleRegistrationNo: "",
-        vehicleColor: "",
-        engineNo: "",
-        chasisNo: "",
-        instructions: "",
-        remarks: "",
 
-    });
+    const [vehicleServicesOptional, setVehicleServicesOptional] = useState(services.map((item: any) => ({
+        ...item,
+        checked: false
+    })))
+    // const [vehicleServicesDefault, setVehicleServicesDefault] = useState([{ title: "Self", value: "SELF", checked: true }, { title: "Control Room", value: "CONTROL ROOM", checked: false }])
 
-    const [showPassword, setShowPassword] = useState(false);
-
-    const togglePasswordVisibility = (e: any) => {
-        e.preventDefault();
-        setShowPassword(!showPassword);
-    };
-    const [formData, setFormData] = useState({});
-    const {
-        vehicleRegistrationNo,
-        vehicleColor,
-        engineNo,
-        chasisNo,
-        instructions,
-        remarks,
-
-    } = vehicleDetailsForm;
-    const getUserData = (event: ChangeEvent<HTMLInputElement>) => {
-        let name = event.target.name;
-        let value =
-            name === "rememberNextTime" ? event.target.checked : event.target.value;
-        setVehicleDetailsForm({ ...vehicleDetailsForm, [name]: value });
+    const handleCheckboxChange = (index: number) => {
+        const updatedServices = vehicleServicesOptional.map((service: any, i: number) =>
+            i === index ? { ...service, checked: !service.checked } : service
+        );
+        setVehicleServicesOptional(updatedServices);
     };
 
-    const handleNextButton = () => {
-        callbackActive(5);
-        // if (
-        //     vehicleRegistrationNo !== "" &&
-        //     vehicleColor !== "" &&
-        //     engineNo !== "" &&
-        //     chasisNo !== "" &&
-        //     instructions !== "" &&
-        //     remarks !== ""
+    const [selection, setSelection] = useState("Self"); // Added state for selection
 
-        // ) {
-        //     // dispatch(setServersAddItemsList([]));
-        //     // dispatch(
-        //     //   setCreateCompany({
-        //     //     ...createCompany,
-        //     //     ...accountCredentialsForm,
-        //     //   })
-        //     // );
-        //     // console.log("formData -->", accountCredentialsForm);
-        //     // console.log("createCompany--- >", createCompany);
-        //     callbackActive(5);
-        // } else {
-        //     ShowError();
-        // }
+    const handleSelectionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setSelection(e.target.value);
     };
 
-    const crmModules = ["Geofence", "Cut Off", "Panic", "Microphone", "Ignition ON/OFF Alerts", "Web Access", "Mobile App Access", "Over Speed Alerts", "One Way Communication", "2 way Communication", "WhatsApp Alerts", "SMS Alerts"]
     return (
         <Form
             onSubmit={(event) => event.preventDefault()}
@@ -101,7 +50,119 @@ const ServicesDetails = ({ callbackActive }: BusinessFormCommonProps) => {
         >
             <Row className="g-3">
                 <Row style={{ display: "flex", flexWrap: "wrap" }}>
-                    {crmModules?.map((item: any, index: any) => {
+                    <H4>Default</H4>
+                    <div style={{
+                        height: "20px"
+                    }}>  </div>
+                    <Row>
+                        <div style={{ display: "flex", justifyContent: "start", alignItems: "center", marginBottom: "25px" }}>
+                            <Input
+                                type="radio"
+                                name="selection"
+                                value="Self"
+                                checked={selection === "Self"}
+                                onChange={handleSelectionChange}
+                                style={{ display: 'none' }}
+                                id="Self"
+                            />
+                            <label
+                                htmlFor="Self"
+                                style={{
+                                    position: 'relative',
+                                    paddingLeft: '25px',
+                                    marginRight: '50px',
+                                    cursor: 'pointer',
+                                    fontSize: '16px',
+                                    color: '#333'
+                                }}
+                            >
+                                Self
+                                <span
+                                    style={{
+                                        content: '',
+                                        position: 'absolute',
+                                        left: 0,
+                                        top: 0,
+                                        width: '18px',
+                                        height: '18px',
+                                        border: '2px solid black',
+                                        borderRadius: '50%',
+                                        background: 'white'
+                                    }}
+                                />
+                                {selection === 'Self' && (
+                                    <span
+                                        style={{
+                                            content: '',
+                                            position: 'absolute',
+                                            left: '5px',
+                                            top: '5px',
+                                            width: '8px',
+                                            height: '8px',
+                                            borderRadius: '50%',
+                                            background: 'green'
+                                        }}
+                                    />
+                                )}
+                            </label>
+                            <Input
+                                type="radio"
+                                name="selection"
+                                value="Control Room"
+                                checked={selection === "Control Room"}
+                                onChange={handleSelectionChange}
+                                style={{ display: 'none' }}
+                                id="Control Room"
+                            />
+                            <label
+                                htmlFor="Control Room"
+                                style={{
+                                    position: 'relative',
+                                    paddingLeft: '25px',
+                                    marginRight: '20px',
+                                    cursor: 'pointer',
+                                    fontSize: '16px',
+                                    color: '#333'
+                                }}
+                            >
+                                Control Room
+                                <span
+                                    style={{
+                                        content: '',
+                                        position: 'absolute',
+                                        left: 0,
+                                        top: 0,
+                                        width: '18px',
+                                        height: '18px',
+                                        border: '2px solid black',
+                                        borderRadius: '50%',
+                                        background: 'white'
+                                    }}
+                                />
+                                {selection === 'Control Room' && (
+                                    <span
+                                        style={{
+                                            content: '',
+                                            position: 'absolute',
+                                            left: '5px',
+                                            top: '5px',
+                                            width: '8px',
+                                            height: '8px',
+                                            borderRadius: '50%',
+                                            background: 'green'
+                                        }}
+                                    />
+                                )}
+                            </label>
+                        </div>
+                    </Row>
+                    <H4>Optional</H4>
+                    <div style={{
+                        height: "20px"
+                    }}>
+
+                    </div>
+                    {services?.map((item: any, index: any) => {
                         return (
                             <>
                                 <Col sm={3}>
@@ -120,18 +181,17 @@ const ServicesDetails = ({ callbackActive }: BusinessFormCommonProps) => {
                                         <input
                                             type="checkbox"
                                             name="key"
-                                            value="value"
-                                            // checked={permission.read}
-                                            // onChange={() => {
-                                            //     handleCheckboxChange(index, "read");
-                                            // }}
-                                            style={{ display: "none" }} // Hide the default checkbox
+                                            value={item.value}
+                                            checked={item.checked}
+                                            onChange={() => handleCheckboxChange(index)}
+                                            style={{ display: "none" }}
+
                                         />
                                         <span
                                             onClick={(e) => e.stopPropagation()}
                                             className="green"
                                         ></span>
-                                        <span style={{ marginTop: "5px" }}>{item}</span>
+                                        <span style={{ marginTop: "5px" }}>{item.title}</span>
                                     </label></Col>
                             </>
                         );
@@ -142,10 +202,10 @@ const ServicesDetails = ({ callbackActive }: BusinessFormCommonProps) => {
                     xs={12}
                     className="text-end d-flex justify-content-end gap-2 align-center"
                 >
-                    {/* <Button color="primary" onClick={() => callbackActive(3)}>
+                    <Button color="primary" onClick={() => callbackActive(3)}>
                         Previous
-                    </Button> */}
-                    <Button color="primary" onClick={handleNextButton}>
+                    </Button>
+                    <Button color="primary" onClick={() => callbackActive(5)}>
                         Continue
                     </Button>
                 </Col>
@@ -156,25 +216,6 @@ const ServicesDetails = ({ callbackActive }: BusinessFormCommonProps) => {
 };
 
 export default ServicesDetails;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

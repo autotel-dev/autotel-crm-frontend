@@ -3,57 +3,58 @@ import { formatUnderscoredString } from "../../../../../../../../../Utilities/gl
 
 export interface CustomersDataType {
     id: string;
-    fullName: string;
-    emailAddress: string;
-    phoneNo: string;
-    isActive: string;
-    city: string;
-    date: string;
+    comments: string;
+    vendor: string;
+    reference: string;
+    productsDetails: any[];
+    shippingCharges: number,
+    netAmount: number,
+    purchaseInvoiceId: string,
+    company: string,
+    branch: string,
+    warehouse: string,
+    invoiceDate: string,
+    invoiceDueDate: string,
+    status: string,
 }
 
 export const supportColumns = [
     {
-        name: "id",
-        selector: (row: CustomersDataType) => row["id"],
+        name: "Invoice Id",
+        selector: (row: CustomersDataType) => row["purchaseInvoiceId"],
         sortable: true,
-        center: false,
+        center: true,
         width: "250px", // Set the width for this column
     },
     {
-        name: "Full Name",
-        selector: (row: CustomersDataType) => row["fullName"],
+        name: "Vendor",
+        selector: (row: CustomersDataType) => row["vendor"],
+        sortable: true,
+        center: true,
+        width: "250px", // Set the width for this column
+    },
+    {
+        name: "User",
+        selector: (row: CustomersDataType) => row["company"],
+        sortable: true,
+        center: true,
+        width: "250px",
+    },
+    {
+        name: "Amount",
+        selector: (row: CustomersDataType) => row["netAmount"],
+        sortable: true,
+        center: true,
+        width: "150px", // Set the width for this column
+    },
+    {
+        name: "Status",
+        selector: (row: CustomersDataType) => row["status"],
         sortable: true,
         center: false,
-        width: "150px", // Set the width for this column
-    },
-    {
-        name: "Email",
-        selector: (row: CustomersDataType) => row["emailAddress"],
-        sortable: true,
-        center: true,
-        width: "200px",
-    },
-    {
-        name: "Phone Number",
-        selector: (row: CustomersDataType) => row["phoneNo"],
-        sortable: true,
-        center: true,
-        width: "150px", // Set the width for this column
-    },
-    {
-        name: "City",
-        selector: (row: CustomersDataType) => row["city"],
-        sortable: true,
-        center: true,
         width: "100px", // Set the width for this column
     },
-    {
-        name: "IsActive",
-        selector: (row: CustomersDataType) => row["isActive"],
-        sortable: true,
-        center: true,
-        width: "150px", // Set the width for this column
-    },
+
     // {
     //     name: "Status",
     //     selector: (row: CustomersDataType) => row["status"],
@@ -124,7 +125,15 @@ export const supportColumns = [
     // },
     {
         name: "Date",
-        selector: (row: CustomersDataType) => row["date"],
+        selector: (row: CustomersDataType) => row["invoiceDate"],
+        sortable: true,
+        center: true,
+        width: "250px", // Set the width for this column
+    },
+
+    {
+        name: "Due Date",
+        selector: (row: CustomersDataType) => row["invoiceDueDate"],
         sortable: true,
         center: true,
         width: "250px", // Set the width for this column

@@ -3,27 +3,28 @@ import { Select } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 interface propTypes {
     placeholder: any;
-    setSerialNumber: any;
-    serialNumber: string;
+    deviceId: string;
+    setDeviceId: any;
+    disabled: boolean;
 }
 
-const SelectSerialNumberBox: React.FC<propTypes> = ({ placeholder, setSerialNumber, serialNumber }) => {
-    const { serialNumbers } = useSelector(
-        (state: any) => state.purchaseInvoice
+const SelectDeviceIdBox: React.FC<propTypes> = ({ placeholder, deviceId, setDeviceId, disabled }) => {
+    const { banks } = useSelector(
+        (state: any) => state.sales
     );
-    const [serialNumberList, setSerialNumberList] = useState([]);
+    const [banksList, setBanksList] = useState([]);
     const dispatch = useDispatch();
 
     const tempList: any = [];
     useEffect(() => {
-        serialNumbers?.map((item: any, index: any) => {
-            tempList.push({ value: `${item?._id}`, label: `${item?.value}` });
+        banks?.map((item: any, index: any) => {
+            tempList.push({ value: `${item?._id}`, label: `${item?.name}` });
         });
-        setSerialNumberList(tempList);
-    }, [serialNumbers]);
+        setBanksList(tempList);
+    }, [banks]);
     return (
         <Select
-            value={serialNumber !== "" ? serialNumber : null}
+            value={deviceId !== "" ? deviceId : null}
             showSearch
             style={{ width: "100%", height: 36 }}
             placeholder={placeholder}
@@ -37,13 +38,12 @@ const SelectSerialNumberBox: React.FC<propTypes> = ({ placeholder, setSerialNumb
                     .localeCompare((optionB?.label ?? "").toLowerCase())
             }
             onChange={(e) => {
-                // console.log(e);
-                setSerialNumber(e);
-
+                setDeviceId(e)
             }}
-            options={serialNumberList}
+            options={banksList}
+            disabled={disabled}
         />
     );
 };
 
-export default SelectSerialNumberBox;
+export default SelectDeviceIdBox;

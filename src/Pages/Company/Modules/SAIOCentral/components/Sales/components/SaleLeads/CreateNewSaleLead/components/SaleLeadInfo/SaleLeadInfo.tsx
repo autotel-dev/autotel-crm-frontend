@@ -35,12 +35,14 @@ const SaleLeadInfo = ({ callbackActive, iscreateNewSaleLead, setIscreateNewSaleL
     customerContactNo: "",
     discountedServiceCharges: "",
     requirements: "",
+    totalNoOfVehicles: ""
   });
   const {
     customerName,
     customerContactNo,
     discountedServiceCharges,
     requirements,
+    totalNoOfVehicles
   } = saleLeadInfoForm;
 
   const [city, setCity] = useState("");
@@ -69,7 +71,8 @@ const SaleLeadInfo = ({ callbackActive, iscreateNewSaleLead, setIscreateNewSaleL
         city: city,
         package: packagee,
         isExistingCustomer: customer !== null ? true : false,
-        customer: customer !== null && customer
+        customer: customer !== null && customer,
+
       }
 
       try {
@@ -312,10 +315,12 @@ const SaleLeadInfo = ({ callbackActive, iscreateNewSaleLead, setIscreateNewSaleL
   useEffect(() => {
     if (saleLead !== null) {
       if (saleLead.status == "CONFIRMED") {
-        if (saleLead.customer !== null && saleLead.vehicle !== null) {
+        // console.log(saleLead.customer, saleLead.vehicle);
+
+        if (saleLead.customer !== null && saleLead.vehicles.length == saleLead?.totalNoOfVehicles) {
           callbackActive(4)
         }
-        else if (saleLead.customer !== null) {
+        else if (saleLead.customer !== null && saleLead.vehicles?.length < saleLead?.totalNoOfVehicles) {
           callbackActive(3)
         }
         else {
@@ -324,12 +329,12 @@ const SaleLeadInfo = ({ callbackActive, iscreateNewSaleLead, setIscreateNewSaleL
       }
 
     }
-  },[])
+  }, [])
 
   useEffect(() => {
     if (saleLead !== null) {
 
-      if (saleLead.status == "NEW" || saleLead.status == "REJECTED") {
+      if (saleLead.status == "NEW" || saleLead.status == "REJECTED" || saleLead.status == "IN_PROGRESS" || saleLead.status == "CONFIRMED" || saleLead.status == "COMPLETED") {
         getAll({ url: `${GET_SINGLE_SALELEAD}/${saleLead.id}` }).then((data: any) => {
 
           if (data !== undefined) {
@@ -352,12 +357,21 @@ const SaleLeadInfo = ({ callbackActive, iscreateNewSaleLead, setIscreateNewSaleL
                 customerName: data.data !== null ? data.data.customerName : "",
                 customerContactNo: data.data !== null ? data.data.customerContactNo : "",
                 discountedServiceCharges: data.data !== null ? data.data.discountedServiceCharges : "",
+                totalNoOfVehicles: data.data !== null ? data.data?.totalNoOfVehicles : "",
                 requirements: data.data !== null ? data.data.requirements : "",
               })
               setCity(data.data !== null ? data.data.city._id : city);
               setPackage(data.data !== null ? data.data.package._id : packagee);
               dispatch(setSaleLead(data.data));
+              getAll({ url: GET_ALL_SALELEADS }).then((data: any) => {
 
+                if (data !== undefined) {
+                  if (data.success) {
+                    // // console.log("hhg");
+                    dispatch(setSaleLeads(data.data));
+                  }
+                }
+              });
               setCustomerLoading(false)
             }
           }
@@ -441,6 +455,20 @@ const SaleLeadInfo = ({ callbackActive, iscreateNewSaleLead, setIscreateNewSaleL
             placeholder="Enter Discounted Service Charges"
             value={discountedServiceCharges}
             name="discountedServiceCharges"
+            onChange={getUserData}
+          />
+        </Col>
+
+        <Col xl={4} xs={12}>
+          <P>
+            Number Of Vehicles
+            <span className="txt-danger">*</span>
+          </P>
+          <Input
+            type="text"
+            placeholder="Enter Discounted Service Charges"
+            value={totalNoOfVehicles}
+            name="totalNoOfVehicles"
             onChange={getUserData}
           />
         </Col>

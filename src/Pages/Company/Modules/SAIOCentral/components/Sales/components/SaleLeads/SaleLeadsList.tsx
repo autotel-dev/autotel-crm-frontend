@@ -61,8 +61,11 @@ const SaleLeadsTable: React.FC<SaleLeadsTableProps> = ({
                 customer_contact_no: item?.customerContactNo,
                 package: item?.package.title,
                 status: item?.status,
-                customer:item?.customer,
+                customer: item?.customer,
+                vehicles: item?.vehicles,
                 service_charges: item?.serviceCharges,
+                openedBy: item?.openedBy,
+                totalNoOfVehicles: item?.totalNoOfVehicles,
                 discounted_service_charges: item?.discountedServiceCharges,
                 isActive: item?.isActive ? "true" : "false",
                 date: `${item?.updatedAt.toString().slice(0, 10)},  ${new Date(
@@ -126,8 +129,8 @@ const SaleLeadsTable: React.FC<SaleLeadsTableProps> = ({
     // };
 
     const handleRowClicked = (row: any) => {
-        console.log("row",row);
-        
+        console.log("row", row);
+
         dispatch(setSaleLead(row));
         dispatch(setCustomer(null))
         setIscreateNewSaleLead(true)
@@ -164,6 +167,7 @@ const SaleLeadsTable: React.FC<SaleLeadsTableProps> = ({
         }).then((result) => {
             if (result.isConfirmed) {
                 dispatch(setCustomer(null))
+                dispatch(setSaleLead(null));
                 setIscreateNewSaleLead(true);
             } else if (result.isDenied) {
                 Swal.fire({
@@ -208,12 +212,13 @@ const SaleLeadsTable: React.FC<SaleLeadsTableProps> = ({
                 }).then((result) => {
                     if (result.isConfirmed) {
                         setIscreateNewSaleLead(true);
-                            setCustomerId("")
-                      
+                        setCustomerId("")
+                        dispatch(setSaleLead(null));
                     }
-                    else if(result.isDenied){
+                    else if (result.isDenied) {
                         setIscreateNewSaleLead(false);
                         setCustomerId("")
+                        dispatch(setSaleLead(null));
                     }
                 });
             }
@@ -326,33 +331,3 @@ export default SaleLeadsTable;
 
 
 
-    // const handleButtonClick = () => {
-    //     Swal.fire({
-    //         title: "Please Select Customer",
-    //         // icon: "success",
-    //         showCancelButton: false,
-    //         showCloseButton: true,
-    //         showConfirmButton: true,
-    //         confirmButtonText: "New",
-    //         showDenyButton: true,
-    //         denyButtonText: "Existing",
-    //     }).then((result) => {
-    //         if (result.isConfirmed) {
-    //             setIscreateNewSaleLead(true);
-    //         } else if (result.isDenied) {
-    //             Swal.fire({
-    //                 title: 'Select Customer',
-    //                 html: `
-    //                     <div id="select-customer">
-    //                         <select id="customer-select" style="width: 100%; height: 36px;">
-    //                             ${customers.map((customer: any) => `<option value="${customer._id}">${customer.fullName}</option>`).join('')}
-    //                         </select> 
-    //                     </div>`,
-    //                 showConfirmButton: true,
-    //                 confirmButtonText: "OK",
-    //                 showCloseButton: true,
-
-    //             });
-    //         }
-    //     });
-    // };

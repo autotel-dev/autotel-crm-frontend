@@ -53,6 +53,7 @@ import {
   DELETE_CRM_MODULE,
   DELETE_CURRENCY,
   DELETE_EXPENSE_ACCOUNT,
+  DELETE_EXPENSES,
   DELETE_GROUP,
   DELETE_INSURANCE,
   DELETE_LANGUAGE,
@@ -78,6 +79,7 @@ import {
   GET_ALL_CRM_MODULES,
   GET_ALL_CURRENCIES,
   GET_ALL_EXPENSE_ACCOUNTS,
+  GET_ALL_EXPENSES,
   GET_ALL_GEOFENCES,
   GET_ALL_GROUPS,
   GET_ALL_INSURANCES,
@@ -149,6 +151,7 @@ import {
 } from "../../ReaduxToolkit/Reducer/InventoryProductSlice";
 import { setBankAccounts } from "../../ReaduxToolkit/Reducer/BankAccountSlice";
 import { setExpenseAccounts } from "../../ReaduxToolkit/Reducer/ExpenseAccountsSlice";
+import { setExpenses } from "../../ReaduxToolkit/Reducer/ExpensesSlice";
 
 const deleteAlert = (
   alertData: alertTypes,
@@ -212,6 +215,8 @@ const deleteAlert = (
         uri = `${DELETE_EXPENSE_ACCOUNT}`;
       } else if (type === "bankAccountsType") {
         uri = `${DELETE_BANK_ACCOUNT}`;
+      } else if (type === "expensesType") {
+        uri = `${DELETE_EXPENSES}`;
       } else if (type === "vendorType") {
         uri = `${DELETE_VENDOR}`;
       } else if (type === "productType") {
@@ -277,11 +282,32 @@ const deleteAlert = (
                 if (data !== undefined) {
                   if (data.success) {
                     // console.log("hhg");
-                    dispatch(setBankAccounts(data.data.bankAccounts));
+                    dispatch(setBankAccounts(data.data));
 
                   }
                   if (!data.success) {
                     dispatch(setBankAccounts([]));
+                  }
+                } else {
+                  // console.log("ier67i");
+                }
+              });
+            }
+
+            if (type === "expensesType") {
+              getAll({ url: GET_ALL_EXPENSES }).then((data: any) => {
+                // console.log("api call --- >", data);
+                if (data == undefined) {
+                  dispatch(setExpenses([]));
+                }
+                if (data !== undefined) {
+                  if (data.success) {
+                    // console.log("hhg");
+                    dispatch(setExpenses(data.data));
+
+                  }
+                  if (!data.success) {
+                    dispatch(setExpenses([]));
                   }
                 } else {
                   // console.log("ier67i");
@@ -577,7 +603,7 @@ const deleteAlert = (
                   dispatch(setNoDataFound(data.message));
                   if (data.success) {
                     // console.log("hhg");
-                    dispatch(setProduct(data.data.products));
+                    dispatch(setProduct(data.data));
                   }
                   if (!data.success) {
                     dispatch(setProduct([]));
@@ -1049,7 +1075,7 @@ const deleteAlert = (
 
       }
     }
-    if (result.isDismissed && (type == "expenseAccountsType" || type == "bankAccountsType"))
+    if (result.isDismissed && (type == "expenseAccountsType" || type == "bankAccountsType" || type == "expensesType"))
       return !check;
   });
 };

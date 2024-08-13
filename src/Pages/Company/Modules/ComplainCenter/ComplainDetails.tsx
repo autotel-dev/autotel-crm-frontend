@@ -15,7 +15,7 @@ import ticketImage from "../../assets/ticketImage.png";
 import { IoSend } from "react-icons/io5";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { IMAGE_BASE_URL, getAll, getImage, patch } from "../../../../Utilities/api";
+import {  getAll, getImage, patch } from "../../../../Utilities/api";
 import Loader from "../../../Utilities/Loader/Loader";
 import './ComplainDetails.css'
 

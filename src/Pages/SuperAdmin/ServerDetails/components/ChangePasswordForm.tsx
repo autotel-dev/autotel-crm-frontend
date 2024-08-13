@@ -15,7 +15,7 @@ import {
 import { setNoDataFound } from "../../../../ReaduxToolkit/Reducer/NoDataFoundSlice";
 
 import { useNavigate } from "react-router-dom";
-import { API_BASE_URL, getAll } from "../../../../Utilities/api";
+import { getAll } from "../../../../Utilities/api";
 import { header } from "../../../../Utilities/headers/header";
 import { CHANGE_SERVER_PASSWORD, GET_ALL_SERVERS } from "../../../../Utilities/api/apiEndpoints";
 type propsType = {

@@ -234,13 +234,13 @@ const VendorsTable = () => {
           },
           {
             name: "Country",
-            selector: (row: any) => row.country,
+            selector: (row: any) => row.country.name,
             sortable: true,
           },
-          { name: "City", selector: (row: any) => row.city, sortable: true },
+          { name: "City", selector: (row: any) => row.city.name, sortable: true },
           {
             name: "Company",
-            selector: (row: any) => row.company,
+            selector: (row: any) => row.company.fullName,
             sortable: true,
           },
           {
@@ -259,7 +259,7 @@ const VendorsTable = () => {
         className="custom-data-table"
         customStyles={{
           rows: {
-            style:{
+            style: {
               cursor: "pointer",
               transition: "background-color 0.2s", // Smooth transition for background color change
               "&:hover": { // Define hover style

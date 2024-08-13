@@ -5,9 +5,10 @@ interface propTypes {
   placeholder: any;
   group: string;
   setGroup: any;
+  disabled: boolean;
 }
 
-const SelectGroupsBox: React.FC<propTypes> = ({ placeholder, group, setGroup }) => {
+const SelectGroupsBox: React.FC<propTypes> = ({ placeholder, group, setGroup,disabled }) => {
   const { groups } = useSelector(
     (state: any) => state.sales
   );
@@ -24,6 +25,7 @@ const SelectGroupsBox: React.FC<propTypes> = ({ placeholder, group, setGroup }) 
   }, [groups]);
   return (
     <Select
+    value={group !== "" ? group : null}
       showSearch
       style={{ width: "100%", height: 36 }}
       placeholder={placeholder}
@@ -40,6 +42,7 @@ const SelectGroupsBox: React.FC<propTypes> = ({ placeholder, group, setGroup }) 
         setGroup(e)
       }}
       options={groupsList}
+      disabled={disabled}
     />
   );
 };

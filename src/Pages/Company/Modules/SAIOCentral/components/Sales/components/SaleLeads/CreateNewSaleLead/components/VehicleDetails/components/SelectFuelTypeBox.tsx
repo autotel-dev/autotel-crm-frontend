@@ -5,9 +5,10 @@ interface propTypes {
   placeholder: any;
   fuelType: string;
   setFuelType: any;
+  disabled: boolean;
 }
 
-const SelectFuelTypeBox: React.FC<propTypes> = ({ placeholder, fuelType, setFuelType }) => {
+const SelectFuelTypeBox: React.FC<propTypes> = ({ placeholder, fuelType, setFuelType, disabled }) => {
   const { fuelTypes } = useSelector(
     (state: any) => state.sales
   );
@@ -24,6 +25,7 @@ const SelectFuelTypeBox: React.FC<propTypes> = ({ placeholder, fuelType, setFuel
   }, [fuelTypes]);
   return (
     <Select
+      value={fuelType !== "" ? fuelType : null}
       showSearch
       style={{ width: "100%", height: 36 }}
       placeholder={placeholder}
@@ -40,6 +42,7 @@ const SelectFuelTypeBox: React.FC<propTypes> = ({ placeholder, fuelType, setFuel
         setFuelType(e)
       }}
       options={fuelTypesList}
+      disabled={disabled}
     />
   );
 };

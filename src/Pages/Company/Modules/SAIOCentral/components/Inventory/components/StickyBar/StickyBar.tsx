@@ -35,7 +35,7 @@ const StickyBar: React.FC<StickyBarProps> = ({
 
     ]
     return (
-        <div className="sticky-bar">
+        <div className="sticky-bar-inventory">
           {stcickyBarOptions.map((option) => (
             <div
               key={option.label}

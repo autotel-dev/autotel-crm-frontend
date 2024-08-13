@@ -11,9 +11,9 @@ import InvoicesTable from './components/Invoices/InvoicesList'
 import ReceiveMoneyTable from './components/ReceiveMoney/ReceiveMoneyList'
 import CustomerTable from './components/Customer/CustomerList'
 import CreateNewCustomer from './components/Customer/CreateNewCustomer/CreateNewCustomer'
-import { GET_ALL_ACTIVE_CITIES, GET_ALL_ACTIVE_PACKAGES, GET_ALL_BANKS, GET_ALL_CUSTOMERS, GET_ALL_INSURANCES, GET_ALL_SALE_GROUPS, GET_ALL_SALELEADS, GET_ALL_VEHICLES_MAKE, GET_ALL_VEHICLES_MODEL } from '../../../../../../Utilities/api/apiEndpoints'
+import { GET_ALL_ACTIVE_CITIES, GET_ALL_ACTIVE_PACKAGES, GET_ALL_ACTIVE_SERVERS, GET_ALL_BANKS, GET_ALL_COMPANY_INSTALLERS, GET_ALL_CUSTOMERS, GET_ALL_INSURANCES, GET_ALL_OPERATORS, GET_ALL_SALE_GROUPS, GET_ALL_SALELEADS, GET_ALL_SERVICES, GET_ALL_VEHICLES_MAKE, GET_ALL_VEHICLES_MODEL, GET_USER_BY_ID } from '../../../../../../Utilities/api/apiEndpoints'
 import { getAll } from '../../../../../../Utilities/api'
-import { setCities, setCustomers, setPackages, setIsConnected, setSaleLeads, setBanks, setInsurances, setGroups, setVehicleMakes, setVehicleModels } from '../../../../../../ReaduxToolkit/Reducer/SalesSlice'
+import { setCities, setCustomers, setPackages, setIsConnected, setSaleLeads, setBanks, setInsurances, setGroups, setVehicleMakes, setVehicleModels, setServices, setInstalledUser, setServers } from '../../../../../../ReaduxToolkit/Reducer/SalesSlice'
 import { useDispatch } from 'react-redux'
 import { ERROR_MESSAGE } from '../../../../../../Utilities/constants/constants'
 import Swal from 'sweetalert2'
@@ -186,6 +186,42 @@ const Sales = () => {
                 if (data.success) {
                     // // console.log("hhg");
                     dispatch(setSaleLeads(data.data));
+                }
+            }
+        });
+    }, []);
+
+    useEffect(() => {
+        dispatch(setServices([]));
+        getAll({ url: GET_ALL_SERVICES }).then((data: any) => {
+            if (data !== undefined) {
+                if (data.success) {
+                    // // console.log("hhg");
+                    dispatch(setServices(data.data));
+                }
+            }
+        });
+    }, []);
+
+
+    useEffect(() => {
+        dispatch(setInstalledUser([]));
+        getAll({ url: GET_ALL_COMPANY_INSTALLERS }).then((data: any) => {
+            if (data !== undefined) {
+                if (data.success) {
+                    dispatch(setInstalledUser(data.data));
+                }
+            }
+        });
+    }, []);
+
+
+    useEffect(() => {
+        dispatch(setServers([]));
+        getAll({ url: GET_USER_BY_ID }).then((data: any) => {
+            if (data !== undefined) {
+                if (data.success) {
+                    dispatch(setServers(data.data.user.serverCredentials));
                 }
             }
         });

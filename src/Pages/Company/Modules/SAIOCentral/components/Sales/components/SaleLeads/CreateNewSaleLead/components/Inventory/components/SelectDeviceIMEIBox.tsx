@@ -1,52 +1,79 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useCallback } from "react";
 import { Select } from "antd";
-import { useDispatch, useSelector } from "react-redux";
+import { getAll } from "../../../../../../../../../../../../Utilities/api";
+import { GET_ALL_INVENTORY_ITEMS, GET_ALL_SINGLE_INVENTORY_ITEM } from "../../../../../../../../../../../../Utilities/api/apiEndpoints";
+import debounce from "lodash.debounce";
+
 interface propTypes {
   placeholder: any;
+  deviceIMEI: any;
+  setDeviceIMEI: any;
+  isAddedInventory: any;
+  productId: string;
 }
 
-const SelectDeviceIMEIBox: React.FC<propTypes> = ({ placeholder }) => {
-  const { cities, createCompany } = useSelector(
-    (state: any) => state.companies
-  );
-  // console.log(cities);
-  const [cityId, setCityId] = useState("");
-  const [cityList, setCityList] = useState([]);
-  const dispatch = useDispatch();
+const SelectDeviceIMEIBox: React.FC<propTypes> = ({
+  placeholder,
+  deviceIMEI,
+  setDeviceIMEI,
+  productId,
+  isAddedInventory
+}) => {
+  const [inventoryList, setInventoryList] = useState([]);
 
-  const tempList: any = [];
-  useEffect(() => {
-    cities?.map((item: any, index: any) => {
-      tempList.push({ value: `${item?._id}`, label: `${item?.name}` });
+  const fetchInventoryitems = async (searchString: string) => {
+    const allInventoryitemsData: any = await getAll({
+      url: `${GET_ALL_INVENTORY_ITEMS}?serialNo=${searchString}&productId=${productId}`,
     });
-    setCityList(tempList);
-  }, [cities]);
+
+    if (allInventoryitemsData?.success) {
+      setInventoryList(
+        allInventoryitemsData?.data?.inventoryItems.map((item: any) => ({
+          value: item?._id,
+          label: item?.serialNumber, // Use label for displaying the text in the dropdown
+          id: item._id,
+        }))
+      );
+    }
+    else {
+      setInventoryList(
+        []
+      );
+    }
+  };
+
+  const debouncedFetchInventoryItems = useCallback(
+    debounce((searchString: string) => {
+      fetchInventoryitems(searchString);
+    }, 200), // Debounce delay (300ms)
+    []
+  );
+
   return (
     <Select
+      value={deviceIMEI !== "" ? deviceIMEI : null}
       showSearch
+      onSearch={(value) => {
+        debouncedFetchInventoryItems(value);
+      }}
       style={{ width: "100%", height: 36 }}
       placeholder={placeholder}
-      optionFilterProp="children"
+      optionFilterProp="label"
       filterOption={(input: any, option: any) =>
-        (option?.label ?? "").includes(input)
+        (option?.label ?? "").toLowerCase().includes(input.toLowerCase())
       }
-      filterSort={(optionA: any, optionB: any) =>
-        (optionA?.label ?? "")
-          .toLowerCase()
-          .localeCompare((optionB?.label ?? "").toLowerCase())
-      }
-      onChange={(e) => {
-        // console.log(e);
-        setCityId(e);
-        // dispatch(
-        //   setCreateCompany({
-        //     ...createCompany,
-        //     city: e,
-        //   })
-        // );
-        // dispatch(setCountryId(e));
+      onChange={async (e) => {
+        const singleInventoryitemData: any = await getAll({
+          url: `${GET_ALL_SINGLE_INVENTORY_ITEM}/${e}`,
+        });
+
+        if (singleInventoryitemData?.success) {
+          setDeviceIMEI(singleInventoryitemData?.data);
+        }
+
       }}
-      options={cityList}
+      options={inventoryList}
+      disabled={isAddedInventory}
     />
   );
 };

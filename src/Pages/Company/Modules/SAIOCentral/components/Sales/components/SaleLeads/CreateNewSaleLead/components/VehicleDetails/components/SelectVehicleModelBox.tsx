@@ -6,9 +6,10 @@ interface propTypes {
   placeholder: any;
   vehicleModel: string;
   setVehicleModel: any;
+  disabled: boolean;
 }
 
-const SelectVehicleModelBox: React.FC<propTypes> = ({ placeholder, vehicleModel, setVehicleModel }) => {
+const SelectVehicleModelBox: React.FC<propTypes> = ({ placeholder, vehicleModel, setVehicleModel,disabled }) => {
   const { vehicleModels } = useSelector(
     (state: any) => state.sales
   );
@@ -26,6 +27,7 @@ const SelectVehicleModelBox: React.FC<propTypes> = ({ placeholder, vehicleModel,
   }, [vehicleModels]);
   return (
     <Select
+      value={vehicleModel !== "" ? vehicleModel : null}
       showSearch
       style={{ width: "100%", height: 36 }}
       placeholder={placeholder}
@@ -42,6 +44,7 @@ const SelectVehicleModelBox: React.FC<propTypes> = ({ placeholder, vehicleModel,
         setVehicleModel(e)
       }}
       options={vehicleModelsList}
+      disabled={disabled}
     />
   );
 };

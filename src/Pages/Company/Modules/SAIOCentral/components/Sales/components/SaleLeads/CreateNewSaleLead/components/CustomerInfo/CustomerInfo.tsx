@@ -19,7 +19,7 @@ import { create, getAll } from "../../../../../../../../../../../Utilities/api";
 import { CREATE_NEW_CUSTOMER, GET_ALL_SALELEADS } from "../../../../../../../../../../../Utilities/api/apiEndpoints";
 import { ERROR_MESSAGE } from "../../../../../../../../../../../Utilities/constants/constants";
 import Swal from "sweetalert2";
-import { setCustomer, setSaleLeadId, setSaleLeads } from "../../../../../../../../../../../ReaduxToolkit/Reducer/SalesSlice";
+import { setCustomer, setSaleLead, setSaleLeadId, setSaleLeads } from "../../../../../../../../../../../ReaduxToolkit/Reducer/SalesSlice";
 
 interface CustomerInfoProps {
   callbackActive: (val: number | undefined) => void;
@@ -94,7 +94,7 @@ const CustomerInfo = ({ callbackActive, iscreateNewSaleLead, setIscreateNewSaleL
     ) {
 
       try {
-        await create({ ...personalDetailsForm, saleLeadId: saleLeadId !== "" ? saleLeadId : saleLead.id }, { url: CREATE_NEW_CUSTOMER }).then((data: any) => {
+        await create({ ...personalDetailsForm, saleLeadId: saleLead._id }, { url: CREATE_NEW_CUSTOMER }).then((data: any) => {
           if (data !== undefined) {
             if (
               !data.success &&
@@ -274,7 +274,7 @@ const CustomerInfo = ({ callbackActive, iscreateNewSaleLead, setIscreateNewSaleL
             xs={12}
             className="text-end d-flex justify-content-end gap-2 align-center"
           >
-            <Button color="secondary" onClick={() => { dispatch(setCustomer(null)); dispatch(setSaleLeadId("")); setIscreateNewSaleLead(false) }}>
+            <Button color="secondary" onClick={() => { dispatch(setCustomer(null)); dispatch(setSaleLeadId("")); dispatch(setSaleLead(null)); setIscreateNewSaleLead(false) }}>
               Cancel
             </Button>
             <Button color="primary" onClick={() => setIscreateNewSaleLead(false)}>
@@ -285,7 +285,7 @@ const CustomerInfo = ({ callbackActive, iscreateNewSaleLead, setIscreateNewSaleL
             className="text-end d-flex justify-content-end gap-2 align-center"
           >
             {/* {customer !== null &&  */}
-            <Button color="secondary" onClick={() => { dispatch(setCustomer(null)); dispatch(setSaleLeadId("")); setIscreateNewSaleLead(false) }}>
+            <Button color="secondary" onClick={() => { dispatch(setCustomer(null)); dispatch(setSaleLeadId("")); dispatch(setSaleLead(null)); setIscreateNewSaleLead(false) }}>
               Cancel
             </Button>
 

@@ -6,9 +6,10 @@ interface propTypes {
   placeholder: any;
   insurance: string;
   setInsurance: any;
+  disabled: boolean;
 }
 
-const SelectInsuranceBox: React.FC<propTypes> = ({ placeholder, insurance, setInsurance }) => {
+const SelectInsuranceBox: React.FC<propTypes> = ({ placeholder, insurance, setInsurance ,disabled}) => {
   const { insurances } = useSelector(
     (state: any) => state.sales
   );
@@ -25,6 +26,7 @@ const SelectInsuranceBox: React.FC<propTypes> = ({ placeholder, insurance, setIn
   }, [insurances]);
   return (
     <Select
+    value={insurance !== "" ? insurance : null}
       showSearch
       style={{ width: "100%", height: 36 }}
       placeholder={placeholder}
@@ -41,6 +43,7 @@ const SelectInsuranceBox: React.FC<propTypes> = ({ placeholder, insurance, setIn
         setInsurance(e)
       }}
       options={insurancesList}
+      disabled={disabled}
     />
   );
 };

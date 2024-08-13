@@ -15,7 +15,7 @@ import ticketImage from "../../assets/ticketImage.png";
 import { IoSend } from "react-icons/io5";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { IMAGE_BASE_URL, getAll, getImage, patch } from "../../../Utilities/api";
+import {  getAll, getImage, patch } from "../../../Utilities/api";
 import Loader from "../../Utilities/Loader/Loader";
 import {
   setPriorityStatuses,
@@ -31,7 +31,7 @@ import {
 import { useParams } from "react-router-dom";
 import Swal from "sweetalert2";
 import { ROLES } from "../../../constants/roles";
-import { GET_BUG_REPORT_BY_ID, SEND_BUG_REPORT_MESSAGE, UPDATE_PRIORITY_STATUS, UPDATE_STATUS } from "../../../Utilities/api/apiEndpoints";
+import { GET_BUG_REPORT_BY_ID, IMAGE_BASE_URL, SEND_BUG_REPORT_MESSAGE, UPDATE_PRIORITY_STATUS, UPDATE_STATUS } from "../../../Utilities/api/apiEndpoints";
 import { ERROR_MESSAGE } from "../../../Utilities/constants/constants";
 
 const TicketDetails = () => {

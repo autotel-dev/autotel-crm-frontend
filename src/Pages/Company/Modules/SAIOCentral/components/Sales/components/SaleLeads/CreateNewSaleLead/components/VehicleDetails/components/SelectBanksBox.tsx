@@ -5,9 +5,10 @@ interface propTypes {
   placeholder: any;
   bank: string;
   setBank: any;
+  disabled: boolean;
 }
 
-const SelectBanksBox: React.FC<propTypes> = ({ placeholder, bank, setBank }) => {
+const SelectBanksBox: React.FC<propTypes> = ({ placeholder, bank, setBank, disabled }) => {
   const { banks } = useSelector(
     (state: any) => state.sales
   );
@@ -25,6 +26,7 @@ const SelectBanksBox: React.FC<propTypes> = ({ placeholder, bank, setBank }) => 
   }, [banks]);
   return (
     <Select
+      value={bank !== "" ? bank : null}
       showSearch
       style={{ width: "100%", height: 36 }}
       placeholder={placeholder}
@@ -41,6 +43,7 @@ const SelectBanksBox: React.FC<propTypes> = ({ placeholder, bank, setBank }) => 
         setBank(e)
       }}
       options={banksList}
+      disabled={disabled}
     />
   );
 };

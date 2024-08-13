@@ -7,7 +7,6 @@ import { H1, H4 } from "../../../../AbstractElements";
 import axios from "axios";
 import Swal from "sweetalert2";
 import ChangePasswordForm from "./ChangePasswordForm";
-import { API_BASE_URL } from "../../../../Utilities/api";
 import { header } from "../../../../Utilities/headers/header";
 import { SEND_OTP_FOR_CHANGE_SERVER_PASSWORD, VERIFY_OTP_FOR_CHANGE_SERVER_PASSWORD } from "../../../../Utilities/api/apiEndpoints";
 // import OTPInput, { ResendOTP } from "otp-input-react";

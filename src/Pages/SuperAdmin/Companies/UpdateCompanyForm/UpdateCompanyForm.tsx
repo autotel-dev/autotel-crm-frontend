@@ -21,7 +21,6 @@ import { useEffect, useState } from "react";
 
 import { setNoDataFound } from "../../../../ReaduxToolkit/Reducer/NoDataFoundSlice";
 import {
-  IMAGE_BASE_URL,
   create,
   getAll,
   getImage,
@@ -46,7 +45,7 @@ import CommonHeader from "../../../../Common/CommonHeader";
 import { Select } from "antd";
 import { Document, Page, pdfjs } from "react-pdf";
 import Loader from "../../../Utilities/Loader/Loader";
-import { GET_ALL_COMPANIES, GET_COMPANY_BY_ID, UPDATE_COMPANY } from "../../../../Utilities/api/apiEndpoints";
+import { GET_ALL_COMPANIES, GET_COMPANY_BY_ID, IMAGE_BASE_URL, UPDATE_COMPANY } from "../../../../Utilities/api/apiEndpoints";
 import { ERROR_MESSAGE } from "../../../../Utilities/constants/constants";
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;

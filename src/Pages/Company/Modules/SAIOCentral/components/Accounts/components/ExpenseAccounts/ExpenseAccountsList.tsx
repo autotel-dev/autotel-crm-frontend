@@ -52,7 +52,7 @@ const ExpenseAccountsTable = () => {
         )
             .map((item: any) => ({
                 id: item?._id,
-                user: item?.company,
+                user: item?.company.fullName,
                 name: item?.name,
                 isActive: item?.isActive ? "true" : "false",
                 date: `${item?.updatedAt.toString().slice(0, 10)},  ${new Date(
@@ -214,10 +214,7 @@ const ExpenseAccountsTable = () => {
                                 dispatch
                             ).then((data) => {
                                 console.log("data", data);
-                                if (!data) {
-                                    console.log("empty");
-                                    setSelectedRows([]);
-                                }
+                                setSelectedRows([]);
 
                             }).catch((dataa) => {
                                 console.log("data", dataa);

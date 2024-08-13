@@ -6,9 +6,10 @@ interface propTypes {
   placeholder: any;
   vehicleYear: string;
   setVehicleYear: any;
+  disabled: boolean;
 }
 
-const SelectVehicleYearBox: React.FC<propTypes> = ({ placeholder, vehicleYear, setVehicleYear }) => {
+const SelectVehicleYearBox: React.FC<propTypes> = ({ placeholder, vehicleYear, setVehicleYear, disabled }) => {
   const { vehicleYears } = useSelector(
     (state: any) => state.sales
   );
@@ -25,6 +26,7 @@ const SelectVehicleYearBox: React.FC<propTypes> = ({ placeholder, vehicleYear, s
   }, []);
   return (
     <Select
+      value={vehicleYear !== "" ? vehicleYear : null}
       showSearch
       style={{ width: "100%", height: 36 }}
       placeholder={placeholder}
@@ -41,6 +43,7 @@ const SelectVehicleYearBox: React.FC<propTypes> = ({ placeholder, vehicleYear, s
         setVehicleYear(e)
       }}
       options={vehicleYearsList}
+      disabled={disabled}
     />
   );
 };

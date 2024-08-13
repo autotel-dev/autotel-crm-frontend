@@ -13,6 +13,13 @@ const initialState = {
     groups: [],
     vehicleMakes: [],
     vehicleModels: [],
+    services: [],
+    devices: [],
+    sims: [],
+    sensors: [],
+    accessories: [],
+    installedUsers: [],
+    servers: [],
     vehicleYears: [
         {
             title: "2011",
@@ -160,6 +167,15 @@ const SalesSlice = createSlice({
         setVehicleModels: (state, action) => {
             state.vehicleModels = action.payload;
         },
+        setServices: (state, action) => {
+            state.services = action.payload;
+        },
+        setInstalledUser: (state, action) => {
+            state.installedUsers = action.payload;
+        },
+        setServers: (state, action) => {
+            state.servers = action.payload;
+        },
         setIsConnected: (state, action) => {
             state.isConnected = action.payload;
         },
@@ -178,6 +194,9 @@ export const {
     setGroups,
     setVehicleMakes,
     setVehicleModels,
+    setServices,
+    setInstalledUser,
+    setServers,
     setSaleLeadId,
     setIsConnected,
 } = SalesSlice.actions;

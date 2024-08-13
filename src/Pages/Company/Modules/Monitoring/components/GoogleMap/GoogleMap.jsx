@@ -1,18 +1,21 @@
 // import React, { useEffect, useRef, useState } from "react";
-// import { GoogleMap, useJsApiLoader, Marker } from "@react-google-maps/api";
-// import { useSelector } from "react-redux";
+// import {
+//   GoogleMap,
+//   LoadScript,
+//   Marker,
+//   Polyline,
+// } from "@react-google-maps/api";
+// import { useDispatch, useSelector } from "react-redux";
 // import "./googleMap.css";
 
-// const MapContainer = () => {
-//   const { isLoaded } = useJsApiLoader({
-//     id: "google-map-script",
-//     googleMapsApiKey: "AIzaSyDI3fB-ItM1LpMOyMg_P8UxTUuxHCyQS34",
-//   });
+// const GoogleMapComponent = () => {
+//   const dispatch = useDispatch();
+//   const {
+//     expandedDevice,
+//     devices,
+//   } = useSelector((state) => state.monitoring);
 
-//   const { serverDevices, selectedDevices, expandedDevice } = useSelector(
-//     (state) => state.monitoring
-//   );
-//   const [markerRotations, setMarkerRotations] = useState([]);
+//   const [zoom, setZoom] = useState(12);
 //   const mapRef = useRef(null);
 
 //   const zoomToMarker = (latLng) => {
@@ -20,135 +23,278 @@
 //       const map = mapRef.current;
 //       map.setZoom(16);
 //       map.panTo(latLng);
-//       map.setZoom(16);
 //       map.setCenter(latLng);
 //     }
 //   };
 
-//   const calculateBearing = (pointA, pointB) => {
-//     const lat1 = parseFloat(pointA.lat);
-//     const lon1 = parseFloat(pointA.lng);
-//     const lat2 = parseFloat(pointB.lat);
-//     const lon2 = parseFloat(pointB.lng);
+//   const zoomIn = () => {
+//     if (mapRef.current) {
+//       setZoom(zoom + 1);
+//     }
+//   };
 
-//     const y = Math.sin(lon2 - lon1) * Math.cos(lat2);
-//     const x =
-//       Math.cos(lat1) * Math.sin(lat2) -
-//       Math.sin(lat1) * Math.cos(lat2) * Math.cos(lon2 - lon1);
-//     let brng = Math.atan2(y, x);
-//     brng = (brng * 180) / Math.PI;
-//     brng = (brng + 360) % 360;
-
-//     return brng;
+//   const zoomOut = () => {
+//     if (mapRef.current) {
+//       setZoom(zoom - 1);
+//     }
 //   };
 
 //   useEffect(() => {
-//     // console.log("UseEffect Called");
-//     // console.log("ExpandedDevice", expandedDevice);
 //     if (expandedDevice !== null) {
-//       zoomToMarker(expandedDevice);
-//       // console.log("ExpandedDevice", expandedDevice);
+//       zoomToMarker(expandedDevice.position);
 //     }
 //   }, [expandedDevice]);
 
-//   useEffect(() => {
-//     // Calculate and store rotation for each selected device
-//     const rotations = selectedDevices.map((marker) => {
-//       const tail = marker.tail;
-//       if (tail.length < 2) return 0; // Skip if there are less than 2 points
+//   const rotateImage = (url, rotation, callback) => {
+//     const img = new Image();
+//     img.crossOrigin = "Anonymous";
+//     img.src = url;
+//     img.onload = () => {
+//       const canvas = document.createElement("canvas");
+//       const context = canvas.getContext("2d");
+//       const size = Math.max(img.width, img.height);
+//       canvas.width = size;
+//       canvas.height = size;
+//       context.translate(size / 2, size / 2);
+//       context.rotate((rotation * Math.PI) / 180);
+//       context.drawImage(img, -img.width / 2, -img.height / 2);
+//       callback(canvas.toDataURL());
+//     };
+//   };
 
-//       const start = tail[tail.length - 2]; // Second-to-last point
-//       const end = tail[tail.length - 1]; // Last point
-//       return calculateBearing(start, end) || 0;
-//     });
-//     setMarkerRotations(rotations);
-//     // console.log("markerRotations", markerRotations);
-//   }, [selectedDevices]);
+//   const containerStyle = {
+//     width: '100%',
+//     height: '100%'
+//   };
 
-//   if (!isLoaded) {
-//     return <div>Error: Google Maps API failed to load.</div>;
-//   }
+//   const center = {
+//     lat: 24.8607,
+//     lng: 67.0011
+//   };
 
 //   return (
-//     <GoogleMap
-//       id="map"
-//       mapContainerStyle={{
-//         width: "100%",
-//         height: "100%",
-//       }}
-//       zoom={12}
-//       center={{ lat: 24.8607, lng: 67.0011 }}
-//       onLoad={(map) => (mapRef.current = map)}
-//       options={{ disableDefaultUI: true }}
-//     >
-//       {selectedDevices.map((marker, index) => {
-//         const tail = marker.tail;
-//         if (tail.length < 2) return null; // Skip if there are less than 2 points
-//         const rotation =
-//           (markerRotations[index] >= 0
-//             ? markerRotations[index]
-//             : 360 + markerRotations[index]) % 360;
-//         const icon = {
-//           url: `${marker.server.url}/${marker.icon.path}`,
-//           scaledSize: new window.google.maps.Size(22, 40),
-//           rotation: rotation,
-//         };
-//         return (
-//           <Marker
-//             key={marker.id}
-//             title={marker.title}
-//             position={{
-//               lat: parseFloat(marker.lat),
-//               lng: parseFloat(marker.lng),
-//             }}
-//             icon={icon}
-//           />
-//         );
-//       })}
+//     <LoadScript googleMapsApiKey="AIzaSyDI3fB-ItM1LpMOyMg_P8UxTUuxHCyQS34">
+//       <GoogleMap
+//         mapContainerStyle={containerStyle}
+//         center={center}
+//         zoom={zoom}
+//         onLoad={map => mapRef.current = map}
+//         options={{ disableDefaultUI: true }}
+//       >
 
-//       {/* Custom Zoom Control */}
-//       <div className="custom-zoom-control">
-//         <button
-//           onClick={() => mapRef.current.setZoom(mapRef.current.getZoom() + 1)}
-//           className="zoom-button"
-//         >
-//           +
-//         </button>
-//         <button
-//           onClick={() => mapRef.current.setZoom(mapRef.current.getZoom() - 1)}
-//           className="zoom-button"
-//         >
-//           -
-//         </button>
-//       </div>
-//     </GoogleMap>
+
+//         {devices.map((marker) =>
+//           marker.items
+//             .filter((item) => item.checked) // Filter items where checked is true
+//             .map((item) => {
+//               // console.log("item", item);
+//               const icon = {
+//                 url: `${item.server.url}/${item.icon.path}`,
+//                 scaledSize: new window.google.maps.Size(22, 40),
+
+//               };
+
+//               return (
+//                 <div key={item.id} style={{ position: "relative" }}>
+//                   <Marker
+//                     name={item.title}
+//                     position={{
+//                       lat: parseFloat(item.lat),
+//                       lng: parseFloat(item.lng),
+//                     }}
+//                     icon={icon}
+//                   />
+//                 </div>
+//               );
+//             })
+//         )}
+
+//         {expandedDevice !== null && (
+//           <Polyline
+//             path={expandedDevice.tail.map(({ lat, lng }) => ({
+//               lat: parseFloat(lat),
+//               lng: parseFloat(lng),
+//             }))}
+//             options={{
+//               strokeColor: "blue",
+//               strokeOpacity: 1.0,
+//               strokeWeight: 10,
+//             }}
+//           />
+//         )}
+
+//         <div className="custom-zoom-control">
+//           <button onClick={zoomIn} className="zoom-button">+</button>
+//           <button onClick={zoomOut} className="zoom-button">-</button>
+//         </div>
+//       </GoogleMap>
+//     </LoadScript>
 //   );
 // };
 
-// export default MapContainer;
+// export default GoogleMapComponent;
+
+
+
+
+// ----------------------------------------------------
+
+
+
+
+
+
+// Leaflet Maps-------------------------------
+
+
+// import React, { useEffect, useRef, useState } from "react";
+// import { MapContainer, TileLayer, Marker, Polyline, useMap } from "react-leaflet";
+// import "leaflet/dist/leaflet.css";
+// import "leaflet-draw/dist/leaflet.draw.css";
+// import L from "leaflet";
+// import { useDispatch, useSelector } from "react-redux";
+
+// // Utility function to create a rotated icon
+// const createRotatedIcon = (url, rotation) => {
+//   const icon = L.icon({
+//     iconUrl: url,
+//     iconSize: [25, 35],
+//     className: "rotated-icon",
+//     rotation: rotation
+//   });
+
+//   const rotatedIcon = L.divIcon({
+//     html: `<div style="transform: rotate(${rotation}deg);">${icon.createIcon().outerHTML}</div>`,
+//     className: "leaflet-marker-icon",
+//     iconSize: icon.options.iconSize,
+//   });
+
+//   return rotatedIcon;
+// };
+
+// const ZoomToMarker = ({ position }) => {
+//   const map = useMap();
+//   useEffect(() => {
+//     if (position) {
+//       map.setView(position, 12);
+//     }
+//   }, [position, map]);
+//   return null;
+// };
+
+// const LeafletMapComponent = () => {
+//   const dispatch = useDispatch();
+//   const { expandedDevice, devices } = useSelector((state) => state.monitoring);
+
+//   const [zoom, setZoom] = useState(12);
+//   const mapRef = useRef(null);
+
+//   const zoomToMarker = (latLng) => {
+//     if (mapRef.current) {
+//       const map = mapRef.current;
+//       map.setView(latLng, 16);
+//     }
+//   };
+
+//   const zoomIn = () => {
+//     if (mapRef.current) {
+//       mapRef.current.setZoom(mapRef.current.getZoom() + 1);
+//     }
+//   };
+
+//   const zoomOut = () => {
+//     if (mapRef.current) {
+//       mapRef.current.setZoom(mapRef.current.getZoom() - 1);
+//     }
+//   };
+
+//   useEffect(() => {
+//     if (expandedDevice !== null) {
+//       zoomToMarker(expandedDevice.position);
+//     }
+//   }, [expandedDevice]);
+
+//   const center = [24.8607, 67.0011];
+
+//   return (
+
+//     <MapContainer
+//       style={{ height: "92.5vh", width: "100%", marginLeft: "40px" }}
+//       center={[24.8607, 67.0011]}
+//       zoom={13}
+//       scrollWheelZoom={true}
+//       ref={mapRef}
+//       whenCreated={(mapInstance) => {
+//         mapRef.current = mapInstance;
+//       }}
+//     >
+//       <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+//       {devices.map((marker) =>
+//         marker.items
+//           .filter((item) => item.checked) // Filter items where checked is true
+//           .map((item) => {
+//             const icon = createRotatedIcon(`${item.server.url}/${item.icon.path}`, item.course || 0);
+//             return (
+//               <Marker
+//                 key={item.id}
+//                 position={[parseFloat(item.lat), parseFloat(item.lng)]}
+//                 icon={icon}
+//               />
+//             );
+//           })
+//       )}
+//     </MapContainer>
+
+//   );
+// };
+
+// export default LeafletMapComponent;
+
+
+
+
+
+
+
+
+
+
+
+
+
+// ---------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 import { useEffect, useRef, useState } from "react";
 import {
   Map,
   Marker,
   GoogleApiWrapper,
-  Circle,
   Polyline,
 } from "google-maps-react";
 import { useDispatch, useSelector } from "react-redux";
 import "./googleMap.css";
-import { itemsName } from "../../../../../../Data/Forms/FormsLayout/FormWizardData";
-import { setItem } from "../../../../../../ReaduxToolkit/Reducer/MonitoringSlice";
+
+
 
 const GoogleMap = (props) => {
   const dispatch = useDispatch();
   const {
-    serverDevices,
-    selectedDevices,
     expandedDevice,
     devices,
-    item,
-    devicesDetailData,
   } = useSelector((state) => state.monitoring);
 
   const [rotation, setRotation] = useState(-270);
@@ -283,6 +429,11 @@ const GoogleMap = (props) => {
     };
   }, [props.google, devices]);
 
+
+
+
+
+
   if (!props.google) {
     return <div>Error: Google Maps API failed to load.</div>;
   }
@@ -295,6 +446,7 @@ const GoogleMap = (props) => {
       disableDefaultUI={true} // Enable default UI controls
       ref={mapRef}
     >
+
       {expandedDevice !== null && (
         <Polyline
           path={expandedDevice.tail.map(({ lat, lng }) => ({
@@ -308,7 +460,8 @@ const GoogleMap = (props) => {
           }}
         />
       )}
-      {/* Custom Zoom Control */}
+
+
       <div className="custom-zoom-control">
         <button onClick={zoomIn} className="zoom-button">
           +
@@ -326,6 +479,213 @@ const GoogleMap = (props) => {
 export default GoogleApiWrapper({
   apiKey: "AIzaSyDI3fB-ItM1LpMOyMg_P8UxTUuxHCyQS34",
 })(GoogleMap);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // ------------------------------------------------------------
 
@@ -639,3 +999,4 @@ export default GoogleApiWrapper({
 //     }
 //   }
 // }, [expandedDevice]);
+

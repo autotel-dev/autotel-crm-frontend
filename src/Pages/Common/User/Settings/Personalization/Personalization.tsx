@@ -21,7 +21,7 @@ import { Document, Page, pdfjs } from "react-pdf";
 import Dropzone from "react-dropzone-uploader";
 import Swal from "sweetalert2";
 import {
-  IMAGE_BASE_URL,
+  // IMAGE_BASE_URL,
   createWithMultipart,
   getAll,
   updateWithMultipart,
@@ -30,7 +30,7 @@ import { getUserId, getUserRole } from "../../../../../Utilities/globals/globals
 import { setUserPersonalizationData } from "../../../../../ReaduxToolkit/Reducer/PersonalizationSlice";
 import { ROLES } from "../../../../../constants/roles";
 import { Select } from "antd";
-import { CREATE_PERSONALIZATION, GET_COMPANY_PERSONALIZATION, GET_SUPERADMIN_PERSONALIZATION, UPDATE_PERSONALIZATION } from "../../../../../Utilities/api/apiEndpoints";
+import { CREATE_PERSONALIZATION, GET_COMPANY_PERSONALIZATION, GET_SUPERADMIN_PERSONALIZATION, IMAGE_BASE_URL, UPDATE_PERSONALIZATION } from "../../../../../Utilities/api/apiEndpoints";
 import { ERROR_MESSAGE } from "../../../../../Utilities/constants/constants";
 
 const Personalization = () => {

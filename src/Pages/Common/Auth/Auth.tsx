@@ -4,10 +4,10 @@ import BcakgroundImage from "../../../assets/Background Image.png";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Swal from "sweetalert2";
-import { IMAGE_BASE_URL, getAll } from "../../../Utilities/api";
+import { getAll } from "../../../Utilities/api";
 import Loader from "../../Utilities/Loader/Loader";
 import { setUserPersonalizationData } from "../../../ReaduxToolkit/Reducer/PersonalizationSlice";
-import { GET_COMPANY_PERSONALIZATION, GET_SUPERADMIN_PERSONALIZATION } from "../../../Utilities/api/apiEndpoints";
+import { GET_COMPANY_PERSONALIZATION, GET_SUPERADMIN_PERSONALIZATION, IMAGE_BASE_URL } from "../../../Utilities/api/apiEndpoints";
 const LoginForm = () => {
   const [loading, setLoading] = useState<any>(true);
   const { userPersonalizationData } = useSelector(
