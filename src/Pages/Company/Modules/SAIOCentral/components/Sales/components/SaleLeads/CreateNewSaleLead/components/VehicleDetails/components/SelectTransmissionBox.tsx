@@ -19,7 +19,7 @@ const SelectTransmissionBox: React.FC<propTypes> = ({ placeholder, transmission,
   const tempList: any = [];
   useEffect(() => {
     transmissions?.map((item: any, index: any) => {
-      tempList.push({ value: `${item?.value}`, label: `${item?.title}` });
+      tempList.push({ value: `${item?.value}`, label: `${item?.label}` });
     });
     setTransmissionsList(tempList);
   }, [transmissions]);

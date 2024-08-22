@@ -152,7 +152,7 @@ const CompleteSaleLead = ({ callbackActive, iscreateNewSaleLead, setIscreateNewS
 
     return (
         <Container>
-            <Row style={{ display: "flex", flexWrap: "wrap", marginTop: "30px", marginBottom: "30px" }}>
+            <Row style={{ display: "flex", flexWrap: "wrap", marginTop: "10px", marginBottom: "20px" }}>
                 <H4>Select Vehicle</H4>
                 <div style={{ height: "20px" }}></div>
                 <label
@@ -177,7 +177,7 @@ const CompleteSaleLead = ({ callbackActive, iscreateNewSaleLead, setIscreateNewS
                     <span onClick={(e) => e.stopPropagation()} className="green"></span>
                     <span style={{ marginTop: "5px" }}>Select All</span>
                 </label>
-                <div style={{ height: "20px" }}></div>
+                <div style={{ height: "5px" }}></div>
 
                 {selectedVehicles.map((item, index) =>
                     <Col sm={3} key={index}>
@@ -211,12 +211,12 @@ const CompleteSaleLead = ({ callbackActive, iscreateNewSaleLead, setIscreateNewS
             {installedVehicleForms.map((formData, index) => (
                 <React.Fragment key={index}>
                     <div style={{ display: "flex", justifyContent: "space-between" }}>
-                        <H3>Registration Number : {formData.vehicleValue}</H3>
-                        <H3>{formData.vehicleData.installationStatus}</H3>
+                        <H4>Registration Number : {formData.vehicleValue}</H4>
+                        <H4>{formData.vehicleData.installationStatus}</H4>
                     </div>
-                    <div style={{ height: "20px" }}></div>
+                    <div style={{ height: "5px" }}></div>
 
-                    <div style={{ padding: "25px 0px 35px 0px" }}>
+                    <div style={{ padding: "15px 0px 25px 0px" }}>
                         <div style={{ margin: "0px 0px", height: "8px", borderBottom: "2px solid gray", borderTop: "2px solid gray" }}></div>
                     </div>
                 </React.Fragment>

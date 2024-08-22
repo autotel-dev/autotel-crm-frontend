@@ -158,7 +158,7 @@ const SelectProductModel: React.FC<PropsTypes> = ({
 
                                         if (singleInventoryitemData?.success) {
                                             console.log("OA ->", singleInventoryitemData?.data);
-                                            handleAddAccessory({ id: singleInventoryitemData?.data._id, serialNumber: singleInventoryitemData?.data.serialNumber, sku: singleInventoryitemData?.data.sku })
+                                            handleAddAccessory({ id: singleInventoryitemData?.data._id, serialNumber: singleInventoryitemData?.data.serialNumber, sku: singleInventoryitemData?.data.sku, name: singleInventoryitemData?.data.productName })
                                             addToggle()
                                         }
 

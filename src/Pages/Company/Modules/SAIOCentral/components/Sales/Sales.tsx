@@ -17,6 +17,7 @@ import { setCities, setCustomers, setPackages, setIsConnected, setSaleLeads, set
 import { useDispatch } from 'react-redux'
 import { ERROR_MESSAGE } from '../../../../../../Utilities/constants/constants'
 import Swal from 'sweetalert2'
+import CreateNewSaleInvoice from './components/Invoices/CreateNewPurchaseInvoice/CreateNewSaleInvoice'
 
 const Sales = () => {
     const { userPersonalizationData } = useSelector(
@@ -241,19 +242,19 @@ const Sales = () => {
                     <Col sm={12}>
                         <Card>
                             <CardBody>
-                                <SaleLeadsTable iscreateNewSaleLead={iscreateNewSaleLead} setIscreateNewSaleLead={setIscreateNewSaleLead} />
+                                <SaleLeadsTable iscreateNewSaleLead={iscreateNewSaleLead} setIscreateNewSaleLead={setIscreateNewSaleLead} iscreateNewInvoice={iscreateNewInvoice} setIscreateNewInvoice={setIscreateNewInvoice} setComponent={setComponent} />
                             </CardBody>
                         </Card>
                     </Col>
                 </Row>
-            </Container> : component == "Invoices" ? <Container fluid>
+            </Container> : component == "Invoices" ? iscreateNewInvoice ? <CreateNewSaleInvoice iscreateNewInvoice={iscreateNewInvoice} setIscreateNewInvoice={setIscreateNewInvoice} /> : <Container fluid>
                 <Row style={{
                     width: "100%",
                 }}>
                     <Col sm={12}>
                         <Card>
                             <CardBody>
-                                <InvoicesTable />
+                                <InvoicesTable iscreateNewInvoice={iscreateNewInvoice} setIscreateNewInvoice={setIscreateNewInvoice} />
                             </CardBody>
                         </Card>
                     </Col>

@@ -19,7 +19,7 @@ const SelectFuelTypeBox: React.FC<propTypes> = ({ placeholder, fuelType, setFuel
   const tempList: any = [];
   useEffect(() => {
     fuelTypes?.map((item: any, index: any) => {
-      tempList.push({ value: `${item?.value}`, label: `${item?.title}` });
+      tempList.push({ value: `${item?.value}`, label: `${item?.label}` });
     });
     setfuelTypesList(tempList);
   }, [fuelTypes]);

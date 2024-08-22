@@ -5,22 +5,32 @@ import DataTable from "react-data-table-component";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import "../../../../../../../../CssConstaints/Style.css";
-import { SaleLeadsDataType, supportColumns } from "./Type/Type";
+import { SaleLeadsDataType } from "./Type/Type";
 import { PlusCircle } from "react-feather";
 import CreateNewSaleLead from "./CreateNewSaleLead/CreateNewSaleLead";
 import Swal from "sweetalert2";
 import { Select } from "antd";
 import ReactDOM from "react-dom";
 import { setCustomer, setSaleLead } from "../../../../../../../../ReaduxToolkit/Reducer/SalesSlice";
+import { PopoverBody, PopoverHeader, UncontrolledPopover } from "reactstrap";
+import { formatUnderscoredString } from "../../../../../../../../Utilities/globals/globals";
+import { TbFileInvoice } from "react-icons/tb";
+import '../StickyBar/StickyBar.css'
 
 interface SaleLeadsTableProps {
     iscreateNewSaleLead: boolean;
-    setIscreateNewSaleLead: any
+    setIscreateNewSaleLead: any;
+    iscreateNewInvoice: boolean;
+    setIscreateNewInvoice: any;
+    setComponent: any;
 }
 
 const SaleLeadsTable: React.FC<SaleLeadsTableProps> = ({
     iscreateNewSaleLead,
     setIscreateNewSaleLead,
+    iscreateNewInvoice,
+    setIscreateNewInvoice,
+    setComponent
 }) => {
     const dispatch = useDispatch();
 
@@ -103,30 +113,6 @@ const SaleLeadsTable: React.FC<SaleLeadsTableProps> = ({
     const [data, setData] = useState(saleLeadsData());
 
 
-    // const handleRowSelected = useCallback((state: any) => {
-    //     setSelectedRows(state.selectedRows);
-    // }, []);
-
-    // const handleDelete = () => {
-    //     if (
-    //         window.confirm(
-    //             `Are you sure you want to delete:\r ${selectedRows.map(
-    //                 (r: SaleLeadsDataType) => r.id
-    //             )}?`
-    //         )
-    //     ) {
-    //         setToggleDelete(!toggleDelete);
-    //         setData(
-    //             data.filter((item: any) =>
-    //                 selectedRows.filter((elem: SaleLeadsDataType) => elem.id === item.id)
-    //                     .length > 0
-    //                     ? false
-    //                     : true
-    //             )
-    //         );
-    //         setSelectedRows([]);
-    //     }
-    // };
 
     const handleRowClicked = (row: any) => {
         console.log("row", row);
@@ -225,6 +211,174 @@ const SaleLeadsTable: React.FC<SaleLeadsTableProps> = ({
         });
     };
 
+    const saleLeadColumns = [
+
+        {
+            name: "User",
+            selector: (row: SaleLeadsDataType) => row["username"],
+            sortable: true,
+            center: false,
+            width: "200px", // Set the width for this column
+        },
+
+        {
+            name: "Customer Name",
+            selector: (row: SaleLeadsDataType) => row["customer_name"],
+            sortable: true,
+            center: true,
+            width: "200px", // Set the width for this column
+        },
+        {
+            name: "Customer Contact No",
+            selector: (row: SaleLeadsDataType) => row["customer_contact_no"],
+            sortable: true,
+            center: true,
+            width: "200px", // Set the width for this column
+        },
+        {
+            name: "Vehicles",
+            selector: (row: SaleLeadsDataType) => row["vehicles"],
+            sortable: true,
+            center: true,
+            width: "150px", // Set the width for this column
+            cell: (row: SaleLeadsDataType) => (
+                <div
+                    style={{
+                        width: "150px",
+                        textAlign: "center",
+                        marginTop: "-10px",
+                        marginBottom: "-10px",
+                        borderRadius: "5px",
+                        color: "black",
+                        display: "flex",
+                        flexDirection: "column"
+
+                    }}
+                    onClick={(e) => {
+                        e.stopPropagation(); // Prevent the click from propagating up
+                        handleRowClicked(row); // Manually trigger the row click handler
+                    }}
+
+                    id={`PopoverForSaleLead-${row.status == "IN_PROGRESS" ? row.openedBy?._id : ""}`} // Unique ID for each row
+                >
+                    <div style={{ display: "flex", justifyContent: "space-between" }}>
+                        <span style={{ fontWeight: "bold" }}>Total: </span>{row.totalNoOfVehicles}
+                    </div>
+                    <div style={{ display: "flex", justifyContent: "space-between" }}>
+                        <span style={{ fontWeight: "bold" }}>Installed: </span>{row?.vehicles?.filter((item: any) => item?.installationStatus == "INSTALLED").length}
+                    </div>
+                    <div style={{ display: "flex", justifyContent: "space-between" }}>
+                        <span style={{ fontWeight: "bold" }}>Pending: </span>{row?.vehicles?.filter((item: any) => item?.installationStatus == "IN_PROGRESS").length}
+                    </div >
+
+                </div>
+
+
+            ),
+        },
+        {
+            name: "Status",
+            selector: (row: SaleLeadsDataType) => row["status"],
+            sortable: true,
+            center: true,
+            width: "130px", // Set the width for this column
+            cell: (row: SaleLeadsDataType) => (
+                <div
+                    style={{
+                        width: "130px",
+                        textAlign: "center",
+                        padding: "5px",
+                        borderRadius: "5px",
+
+                        color: "black"
+
+                    }}
+                    onClick={(e) => {
+                        e.stopPropagation(); // Prevent the click from propagating up
+                        handleRowClicked(row); // Manually trigger the row click handler
+                    }}
+
+                    id={`PopoverForSaleLead-${row.status == "IN_PROGRESS" ? row.openedBy?._id : ""}`} // Unique ID for each row
+                >
+                    {formatUnderscoredString(row.status)}
+                    {
+                        row.openedBy !== null && row.status == "IN_PROGRESS" ? (
+                            <UncontrolledPopover
+                                placement="top"
+                                trigger="hover"
+                                target={`PopoverForSaleLead-${row.openedBy?._id}`}
+                            >
+                                <PopoverHeader>Opened By</PopoverHeader>
+                                <PopoverBody>{row.openedBy?.fullName}</PopoverBody>
+                            </UncontrolledPopover>
+                        ) : <></>
+                    }
+
+                </div>
+
+
+            ),
+        },
+        {
+            name: "Date",
+            selector: (row: SaleLeadsDataType) => row["date"],
+            sortable: true,
+            center: true,
+            width: "200px", // Set the width for this column
+        },
+        {
+            name: "Actions",
+            selector: (row: SaleLeadsDataType) => row["actions"],
+            sortable: true,
+            center: true,
+            width: "100px", // Set the width for this column
+            cell: (row: SaleLeadsDataType) => (
+                <div
+                    style={{
+                        width: "100px",
+                        textAlign: "center",
+                        padding: "5px",
+                        borderRadius: "5px",
+                        color: "black",
+
+                    }}
+
+                >
+                    <div onClick={() => { setComponent("Invoices"); setIscreateNewInvoice(true) }}>
+                        <TbFileInvoice size={18} />
+                        <span className="tooltip">Sale Invoice</span>
+                    </div>
+                    <style>
+                        {`
+       .tooltip {
+  visibility: hidden;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  border-radius: 5px;
+  padding: 5px;
+  position: absolute;
+  z-index: 1;
+  right:30px ; /* Position the tooltip to the left of the text */
+  transform: translateY(-95%);
+  opacity: 0;
+  transition: opacity 0.3s;
+  white-space: nowrap; /* Ensure the tooltip text doesn't wrap */
+}
+
+ .tooltip:hover {
+  visibility: visible;
+  opacity: 1;
+}
+      `}
+                    </style>
+                </div>
+
+
+            ),
+        },
+    ];
+
 
     return (
         <div className="table-responsive support-table" style={{ overflow: "auto", scrollbarWidth: "none" }}>
@@ -284,7 +438,7 @@ const SaleLeadsTable: React.FC<SaleLeadsTableProps> = ({
             </Row>
 
             <DataTable
-                columns={supportColumns}
+                columns={saleLeadColumns}
                 data={data}
                 // striped={true}
                 pagination

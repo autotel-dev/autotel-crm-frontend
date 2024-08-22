@@ -119,15 +119,15 @@ const LoginForm = () => {
         <Row
           style={{
             backgroundColor: `${userPersonalizationData !== null &&
-              userPersonalizationData.loginPageBackgroundType == "SOLID" &&
+              userPersonalizationData?.loginPageBackgroundType == "SOLID" &&
               userPersonalizationData &&
-              userPersonalizationData.backgroundColor
+              userPersonalizationData?.backgroundColor
               }`,
             backgroundImage: `${userPersonalizationData !== null &&
-              userPersonalizationData.loginPageBackgroundType == "GRADIENT" &&
-              `linear-gradient(to ${JSON.parse(userPersonalizationData.gradient).direction
-              }, ${JSON.parse(userPersonalizationData.gradient).color1
-              }, ${JSON.parse(userPersonalizationData.gradient).color2
+              userPersonalizationData?.loginPageBackgroundType == "GRADIENT" &&
+              `linear-gradient(to ${userPersonalizationData?.gradient?.direction
+              }, ${userPersonalizationData?.gradient.color1
+              }, ${userPersonalizationData?.gradient.color2
               })`
               }`,
           }}
@@ -160,7 +160,7 @@ const LoginForm = () => {
                 textAlign: "center",
                 color:
                   userPersonalizationData !== null
-                    ? `${userPersonalizationData.loginPageTextColor1}`
+                    ? `${userPersonalizationData?.loginPageTextColor1}`
                     : "black",
               }}
               className="lilita-one-regular"
@@ -178,7 +178,7 @@ const LoginForm = () => {
                 marginBottom: "60px",
                 color:
                   userPersonalizationData !== null
-                    ? `${userPersonalizationData.loginPageTextColor2}`
+                    ? `${userPersonalizationData?.loginPageTextColor2}`
                     : "black",
               }}
               className="pacifico-regular"
@@ -193,8 +193,8 @@ const LoginForm = () => {
 
             <img
               src={
-                userPersonalizationData !== null && userPersonalizationData.loginPageLogo.url !== ""
-                  ? `${IMAGE_BASE_URL}/${userPersonalizationData.loginPageLogo.url}`
+                userPersonalizationData !== null && userPersonalizationData?.loginPageLogo.url !== ""
+                  ? `${IMAGE_BASE_URL}/${userPersonalizationData?.loginPageLogo.url}`
                   : BcakgroundImage
               }
               alt=""

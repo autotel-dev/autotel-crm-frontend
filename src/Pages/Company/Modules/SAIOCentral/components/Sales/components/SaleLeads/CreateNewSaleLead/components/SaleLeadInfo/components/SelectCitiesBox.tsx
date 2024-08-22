@@ -5,9 +5,10 @@ interface propTypes {
   placeholder: any;
   setCity: any;
   city: string;
+  disabled: boolean;
 }
 
-const SelectCitiesBox: React.FC<propTypes> = ({ placeholder, setCity, city }) => {
+const SelectCitiesBox: React.FC<propTypes> = ({ placeholder, setCity, city, disabled }) => {
   const { cities } = useSelector(
     (state: any) => state.sales
   );
@@ -44,6 +45,7 @@ const SelectCitiesBox: React.FC<propTypes> = ({ placeholder, setCity, city }) =>
 
       }}
       options={cityList}
+      disabled={disabled}
     />
   );
 };

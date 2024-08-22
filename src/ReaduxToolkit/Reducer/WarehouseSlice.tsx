@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   warehouse: [],
+  branches: [],
   filterWarehouses: [],
   userPermissions: [],
   activeInActiveWarehouses: "All",
@@ -22,6 +23,11 @@ const WarehouseSlice = createSlice({
     },
     setWarehouse: (state, action) => {
       state.warehouse = action.payload;
+      state.error = null;
+      state.loading = false;
+    },
+    setBranches: (state, action) => {
+      state.branches = action.payload;
       state.error = null;
       state.loading = false;
     },
@@ -57,6 +63,7 @@ const WarehouseSlice = createSlice({
 });
 export const {
   setWarehouse,
+  setBranches,
   setFilterWarehouses,
   setInActiveActiveWarehouses,
   setWarehouseStart,

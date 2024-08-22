@@ -27,6 +27,7 @@ import { setNoDataFound } from "../../../ReaduxToolkit/Reducer/NoDataFoundSlice"
 import Swal from "sweetalert2";
 import { GET_ALL_WAREHOUSES, UPDATE_WAREHOUSE } from "../../../Utilities/api/apiEndpoints";
 import { ERROR_MESSAGE } from "../../../Utilities/constants/constants";
+import { Select } from "antd";
 
 interface PropsTypes {
   isVisible: boolean; // Change 'boolean' to the actual type of isVisible
@@ -50,6 +51,10 @@ const UpdateWarehouse: React.FC<PropsTypes> = ({
   const { userPersonalizationData } = useSelector(
     (state: any) => state.personalization
   );
+  const { branches } = useSelector(
+    (state: any) => state.warehouse
+  );
+  const [branch, setBranch] = useState("")
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
 
@@ -210,29 +215,60 @@ const UpdateWarehouse: React.FC<PropsTypes> = ({
               <span style={{ color: "red" }}>
                 {errors.name && "Warehouse name is required"}
               </span>
-              <div className="d-flex">
-                <div
-                  className={`text-end flex-shrink-0 icon-state 
-                            }`}
-                >
-                  <Label className="switch mb-0">
-                    <Input
-                      type="checkbox"
-                      defaultChecked={isActive}
-                      value={isActive ? "on" : "off"}
-                      onChange={(e) => {
-                        setIsActive(!isActive);
-                        // console.log(e.target.value);
-                      }}
-                    />
-                    <span
-                      className={`switch-state ${isActive ? "bg-primary" : "bg-secondary"
-                        }`}
-                    />
-                  </Label>
-                </div>
-              </div>
             </FormGroup>
+            <FormGroup className="col-md-12 create-group">
+              <P>Select Branch</P>
+              <Select
+                value={branch !== "" ? branch : null}
+                showSearch
+                style={{ width: "100%", height: 36 }}
+                placeholder="Select Branch"
+                optionFilterProp="children"
+                filterOption={(input: any, option: any) =>
+                  (option?.label ?? "").includes(input)
+                }
+                filterSort={(optionA: any, optionB: any) =>
+                  (optionA?.label ?? "")
+                    .toLowerCase()
+                    .localeCompare((optionB?.label ?? "").toLowerCase())
+                }
+                onChange={(e) => {
+                  setBranch(e);
+
+                }}
+                options={[...branches.map((item: any, index: any) => {
+                  return {
+                    value: item?._id,
+                    label: item?.name
+                  }
+                })]}
+              />
+
+
+
+            </FormGroup>
+            <div className="d-flex">
+              <div
+                className={`text-end flex-shrink-0 icon-state 
+                            }`}
+              >
+                <Label className="switch mb-0">
+                  <Input
+                    type="checkbox"
+                    defaultChecked={isActive}
+                    value={isActive ? "on" : "off"}
+                    onChange={(e) => {
+                      setIsActive(!isActive);
+                      // console.log(e.target.value);
+                    }}
+                  />
+                  <span
+                    className={`switch-state ${isActive ? "bg-primary" : "bg-secondary"
+                      }`}
+                  />
+                </Label>
+              </div>
+            </div>
           </Row>
           <div style={{ marginLeft: "10px" }}>
             <Row>

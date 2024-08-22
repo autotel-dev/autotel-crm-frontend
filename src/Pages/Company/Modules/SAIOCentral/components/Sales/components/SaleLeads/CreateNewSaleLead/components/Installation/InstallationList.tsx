@@ -16,6 +16,8 @@ const InstallationList = ({ callbackActive, iscreateNewSaleLead, setIscreateNewS
     const [installationForms, setInstallationForms] = useState<any[]>([]);
     const [selectedVehicles, setSelectedVehicles] = useState<any[]>([]);
     const dispatch = useDispatch();
+    console.log("instalationdata",);
+    
 
     useEffect(() => {
         if (saleLead) {
@@ -32,10 +34,11 @@ const InstallationList = ({ callbackActive, iscreateNewSaleLead, setIscreateNewS
             const initializedForms = vehicleOptions
                 .filter((vehicle: any) => vehicle.checked)
                 .map((vehicle: any) => ({
-                    vehicleFront: vehicle.vehicleData.vehicleFront.url !== "" ? vehicle.vehicleData.vehicleFront.url : null,
-                    vehicleBack: vehicle.vehicleData.vehicleBack.url !== "" ? vehicle.vehicleData.vehicleBack.url : null,
-                    trackerLocation: vehicle.vehicleData.trackerLocation.url !== "" ? vehicle.vehicleData.trackerLocation.url : null,
-                    otherEvidence: vehicle.vehicleData.otherEvidence.url !== "" ? vehicle.vehicleData.otherEvidence.url : null,
+                    vehicleFront: vehicle?.vehicleData?.vehicleFront?.url !== "" ? vehicle?.vehicleData?.vehicleFront?.url : "",
+                    vehicleBack: vehicle?.vehicleData?.vehicleBack?.url !== "" ? vehicle?.vehicleData?.vehicleBack?.url : "",
+                    trackerLocation: vehicle?.vehicleData?.trackerLocation?.url !== "" ? vehicle?.vehicleData?.trackerLocation?.url : "",
+                    otherEvidence: vehicle?.vehicleData?.otherEvidence?.url !== "" ? vehicle?.vehicleData?.otherEvidence?.url : "",
+                    installationRemarks: vehicle.vehicleData?.installationRemarks !== "" ? vehicle.vehicleData?.installationRemarks : "",
                     vehicleValue: vehicle.value,
                     vehicleId: vehicle.id,
                     installationStatus: vehicle.vehicleData.installationStatus
@@ -56,10 +59,11 @@ const InstallationList = ({ callbackActive, iscreateNewSaleLead, setIscreateNewS
         const newForms = selectedVehicles
             .filter(vehicle => vehicle.checked && !installationForms.some(form => form.vehicleValue === vehicle.value))
             .map(vehicle => ({
-                vehicleFront: null,
-                vehicleBack: null,
-                trackerLocation: null,
-                otherEvidence: null,
+                vehicleFront: "",
+                vehicleBack: "",
+                trackerLocation: "",
+                otherEvidence: "",
+                installationRemarks: "",
                 vehicleValue: vehicle.value,
                 vehicleId: vehicle.id
             }));
@@ -82,9 +86,9 @@ const InstallationList = ({ callbackActive, iscreateNewSaleLead, setIscreateNewS
 
     return (
         <Container>
-            <Row style={{ display: "flex", flexWrap: "wrap", marginTop: "30px", marginBottom: "30px" }}>
+            <Row style={{ display: "flex", flexWrap: "wrap", marginTop: "10px", marginBottom: "20px" }}>
                 <H4>Select Vehicle</H4>
-                <div style={{ height: "20px" }}></div>
+                <div style={{ height: "10px" }}></div>
                 {selectedVehicles.map((item, index) => (
                     <Col sm={3} key={index}>
                         <label
@@ -116,8 +120,8 @@ const InstallationList = ({ callbackActive, iscreateNewSaleLead, setIscreateNewS
             </Row>
             {installationForms.map((formData, index) => (
                 <React.Fragment key={index}>
-                    <H3>Registration Number : {formData.vehicleValue}</H3>
-                    <div style={{ marginBottom: "25px" }}></div>
+                    <H4>Registration Number : {formData.vehicleValue}</H4>
+                    <div style={{ marginBottom: "15px" }}></div>
                     <InstallationForm
                         index={index}
                         installationData={formData}

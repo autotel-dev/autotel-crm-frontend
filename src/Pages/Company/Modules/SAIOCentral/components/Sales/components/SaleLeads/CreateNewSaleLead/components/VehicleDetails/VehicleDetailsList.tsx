@@ -41,7 +41,8 @@ const VehicleFormsManager = ({ callbackActive, iscreateNewSaleLead, setIscreateN
                             additionalServices: [...services?.map((service: any, i: number) => { return { title: service.title, value: service.value, checked: item?.additionalServices?.includes(service.value) } })],
                             defaultService: item?.defaultService,
                             deviceId: item?.deviceId !== null ? item?.deviceId : null,
-                            server: item?.server !== null ? item?.server : null
+                            server: item?.server !== null ? item?.server : null,
+                            vehicleData: item
                         }
                     })), {
                         registrationNo: "",
@@ -61,7 +62,8 @@ const VehicleFormsManager = ({ callbackActive, iscreateNewSaleLead, setIscreateN
                         additionalServices: [...services?.map((service: any, i: number) => { return { title: service.title, value: service.value, checked: false } })],
                         defaultService: "Self",
                         deviceId: "",
-                        server: ""
+                        server: "",
+                        vehicleData: ""
                     }])
             }
             else {
@@ -85,7 +87,8 @@ const VehicleFormsManager = ({ callbackActive, iscreateNewSaleLead, setIscreateN
                             additionalServices: [...services?.map((service: any, i: number) => { return { title: service.title, value: service.value, checked: item?.additionalServices?.includes(service.value) } })],
                             defaultService: item?.defaultService,
                             deviceId: item?.deviceId !== null ? item?.deviceId : null,
-                            server: item?.server !== null ? item?.server : null
+                            server: item?.server !== null ? item?.server : null,
+                            vehicleData: item !== null ? item : null
                         }
                     }))])
             }
@@ -114,7 +117,8 @@ const VehicleFormsManager = ({ callbackActive, iscreateNewSaleLead, setIscreateN
             additionalServices: [...services?.map((service: any, i: number) => { return { title: service.title, value: service.value, checked: false } })],
             defaultService: "Self",
             deviceId: "",
-            server: ""
+            server: "",
+            vehicleData: ""
         }]);
     };
 

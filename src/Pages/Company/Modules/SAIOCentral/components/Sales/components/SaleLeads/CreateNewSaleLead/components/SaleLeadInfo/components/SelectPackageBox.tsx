@@ -6,9 +6,10 @@ interface propTypes {
   placeholder: any;
   setPackage: any;
   packagee: string;
+  disabled: boolean;
 }
 
-const SelectPackageBox: React.FC<propTypes> = ({ placeholder, setPackage, packagee }) => {
+const SelectPackageBox: React.FC<propTypes> = ({ placeholder, setPackage, packagee, disabled }) => {
   const { packages } = useSelector(
     (state: any) => state.sales
   );
@@ -44,6 +45,7 @@ const SelectPackageBox: React.FC<propTypes> = ({ placeholder, setPackage, packag
 
       }}
       options={packageList}
+      disabled={disabled}
     />
   );
 };

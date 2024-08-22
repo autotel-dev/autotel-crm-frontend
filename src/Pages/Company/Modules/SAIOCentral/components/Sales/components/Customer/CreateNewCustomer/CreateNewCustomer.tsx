@@ -41,8 +41,8 @@ import { useEffect, useState, ChangeEvent } from "react";
 import { useDispatch } from "react-redux";
 import { P } from "../../../../../../../../../AbstractElements";
 import { useSelector } from "react-redux";
-import { create, getAll } from "../../../../../../../../../Utilities/api";
-import { CREATE_NEW_CUSTOMER, GET_ALL_CUSTOMERS, GET_SINGLE_CUSTOMERS } from "../../../../../../../../../Utilities/api/apiEndpoints";
+import { create, getAll, update } from "../../../../../../../../../Utilities/api";
+import { CREATE_NEW_CUSTOMER, GET_ALL_CUSTOMERS, GET_SINGLE_CUSTOMERS, UPDATE_CUSTOMER } from "../../../../../../../../../Utilities/api/apiEndpoints";
 import { ERROR_MESSAGE } from "../../../../../../../../../Utilities/constants/constants";
 import Swal from "sweetalert2";
 import ShowError from "./ShowError";
@@ -74,6 +74,7 @@ const CreateNewCustomer: React.FC<CreateNewCustomerProps> = ({
 
   const [city, setCity] = useState("");
   const [loading, setLoading] = useState(false);
+  const [isEdit, setIsEdit] = useState(customer !== null ? true : false);
 
   const [customerInfoForm, setCustomerInfoForm] = useState({
     customerName: "",
@@ -104,8 +105,6 @@ const CreateNewCustomer: React.FC<CreateNewCustomerProps> = ({
       name === "rememberNextTime" ? event.target.checked : event.target.value;
     setCustomerInfoForm({ ...customerInfoForm, [name]: value });
   };
-
-
 
   const createCustomer = async () => {
     setLoading(true)
@@ -159,10 +158,86 @@ const CreateNewCustomer: React.FC<CreateNewCustomerProps> = ({
                     setIscreateNewCustomer(false)
                   }
                   if (data.success) {
+                    dispatch(setCustomers(data.data));
                     setIscreateNewCustomer(false);
                     dispatch(setCustomer(null));
                     // // console.log("hhg");
+
+                  }
+                }
+              });
+            }
+          }
+        });
+        // Handle successful post creation (e.g., show a success message, redirect, etc.)
+      } catch (error: any) {
+        // Handle error (e.g., show an error message)
+        // console.error("Error creating post:", error);
+        setLoading(false);
+      }
+    } else {
+      ShowError();
+      setLoading(false);
+    }
+  };
+
+
+
+  const editCustomer = async () => {
+    setLoading(true)
+    if (
+      customerName !== "" && customerContactNo !== "" && cnic !== "" &&
+      dob !== "" &&
+      additionalContactNo !== "" &&
+      officeNo !== "" &&
+      emailAddress !== "" &&
+      residentialNo !== "" &&
+      homeAddress
+
+    ) {
+
+      try {
+        await update({ ...customerInfoForm, city: city, saleLeadId: null }, { url: `${UPDATE_CUSTOMER}/${customer.id}` }).then((data: any) => {
+          if (data !== undefined) {
+            if (
+              !data.success &&
+              data.message === ERROR_MESSAGE
+            ) {
+              setLoading(false);
+              console.log("data.message", data.message);
+
+            }
+            if (!data.success) {
+              Swal.fire({
+                text: `${data.message}`,
+                icon: "error",
+                timer: 2000,
+                showConfirmButton: false,
+              });
+              setLoading(false);
+
+            }
+            if (data.success) {
+              setLoading(false);
+              getAll({ url: GET_ALL_CUSTOMERS }).then((data: any) => {
+
+                if (data !== undefined) {
+                  if (!data.success && data.message === ERROR_MESSAGE) {
+                    dispatch(setIsConnected(true));
+                  }
+                  if (!data.success) {
+                    Swal.fire({
+                      text: `${data.message}`,
+                      icon: "error",
+                      timer: 2000,
+                      showConfirmButton: false,
+                    });
+                    // setIscreateNewCustomer(false)
+                  }
+                  if (data.success) {
                     dispatch(setCustomers(data.data));
+                    setIsEdit(!isEdit)
+
                   }
                 }
               });
@@ -242,6 +317,7 @@ const CreateNewCustomer: React.FC<CreateNewCustomerProps> = ({
                         marginLeft: "20px",
                         //  marginRight:"50px",
                         marginTop: "20px",
+
                       }}
                     >
                       <div style={{ width: "33%", }}>
@@ -474,6 +550,7 @@ const CreateNewCustomer: React.FC<CreateNewCustomerProps> = ({
                         value={customerName}
                         name="customerName"
                         onChange={getUserData}
+                        disabled={isEdit}
                       />
                     </Col>
                     <Col xl={4} xs={12}>
@@ -487,6 +564,7 @@ const CreateNewCustomer: React.FC<CreateNewCustomerProps> = ({
                         value={customerContactNo}
                         name="customerContactNo"
                         onChange={getUserData}
+                        disabled={isEdit}
                       />
                     </Col>
 
@@ -510,6 +588,7 @@ const CreateNewCustomer: React.FC<CreateNewCustomerProps> = ({
                         value={cnic}
                         name="cnic"
                         onChange={getUserData}
+                        disabled={isEdit}
                       />
                     </Col>
                     <Col xl={4} xs={12}>
@@ -523,6 +602,7 @@ const CreateNewCustomer: React.FC<CreateNewCustomerProps> = ({
                         value={dob}
                         name="dob"
                         onChange={getUserData}
+                        disabled={isEdit}
                       />
                     </Col> <Col xl={4} xs={12}>
                       <P>
@@ -535,6 +615,7 @@ const CreateNewCustomer: React.FC<CreateNewCustomerProps> = ({
                         value={additionalContactNo}
                         name="additionalContactNo"
                         onChange={getUserData}
+                        disabled={isEdit}
                       />
                     </Col>
                     <Col xl={4} xs={12}>
@@ -548,6 +629,7 @@ const CreateNewCustomer: React.FC<CreateNewCustomerProps> = ({
                         value={officeNo}
                         name="officeNo"
                         onChange={getUserData}
+                        disabled={isEdit}
                       />
                     </Col> <Col xl={4} xs={12}>
                       <P>
@@ -560,6 +642,7 @@ const CreateNewCustomer: React.FC<CreateNewCustomerProps> = ({
                         value={emailAddress}
                         name="emailAddress"
                         onChange={getUserData}
+                        disabled={isEdit}
                       />
                     </Col> <Col xl={4} xs={12}>
                       <P>
@@ -574,6 +657,7 @@ const CreateNewCustomer: React.FC<CreateNewCustomerProps> = ({
                           residentialNo}
                         name="residentialNo"
                         onChange={getUserData}
+                        disabled={isEdit}
                       />
                     </Col> <Col xl={4} xs={12}>
                       <P>
@@ -587,6 +671,7 @@ const CreateNewCustomer: React.FC<CreateNewCustomerProps> = ({
                         value={homeAddress}
                         name="homeAddress"
                         onChange={getUserData}
+                        disabled={isEdit}
                       />
                     </Col>
 
@@ -598,9 +683,14 @@ const CreateNewCustomer: React.FC<CreateNewCustomerProps> = ({
                       <Button color="primary" onClick={() => setIscreateNewCustomer(false)}>
                         Cancel
                       </Button>
-                      <Button color="primary" onClick={createCustomer}>
-                        {loading ? "Loading..." : customer !== null ? "Update" : "Create Customer"}
-                      </Button>
+                      {
+                        customer == null ? <Button color="primary" onClick={createCustomer}>
+                          Create Customer
+                        </Button> : <Button color="primary" onClick={() => !isEdit ? editCustomer() : setIsEdit(!isEdit)}>
+                          {loading ? "Loading..." : !isEdit ? "Update" : "Edit"}
+                        </Button>
+                      }
+
                     </Col>
                   </Row>
                 </Form>

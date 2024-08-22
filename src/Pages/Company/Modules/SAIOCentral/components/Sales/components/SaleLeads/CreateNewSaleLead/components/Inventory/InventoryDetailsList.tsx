@@ -29,9 +29,6 @@ const InventoryDetailsList = ({ callbackActive, iscreateNewSaleLead, setIscreate
                 vehicleData: vehicle
             }));
             setSelectedVehicles(vehicleOptions);
-
-
-
             // Initialize inventory forms with the already selected vehicles
             const initializedForms = vehicleOptions
                 .filter((vehicle: any) => vehicle.checked)
@@ -43,8 +40,9 @@ const InventoryDetailsList = ({ callbackActive, iscreateNewSaleLead, setIscreate
                     deviceID: vehicle?.inventory?.find((item: any) => item.productType == "DEVICES") ? vehicle?.inventory?.find((item: any) => item.productType == "DEVICES").sku : "",
                     sims: vehicle?.inventory?.find((item: any) => item.productType == "SIM") ? [...vehicle?.inventory?.filter((item: any) => item.productType == "SIM").map((item: any) => { return { id: item._id, simNumber: item.serialNumber, iccid: item.sku, network: item.productName } })] : [],
                     sensors: vehicle?.inventory?.find((item: any) => item.productType == "SENSORS") ? [...vehicle?.inventory?.filter((item: any) => item.productType == "SENSORS").map((item: any) => { return { id: item._id, serialNumber: item.serialNumber, sku: item.sku, type: item.productType } })] : [],
-                    accessories: vehicle?.inventory?.find((item: any) => item.productType == "ACCESSORIES") ? [...vehicle?.inventory?.filter((item: any) => item.productType == "ACCESSORIES").map((item: any) => { return { id: item._id, serialNumber: item.serialNumber, sku: item.sku, type: item.productType } })] : [],
+                    accessories: vehicle?.inventory?.find((item: any) => item.productType == "ACCESSORIES") ? [...vehicle?.inventory?.filter((item: any) => item.productType == "ACCESSORIES").map((item: any) => { return { id: item._id, serialNumber: item.serialNumber, sku: item.sku, type: item.productType, name: item.productName } })] : [],
                     vehicleValue: vehicle.value,
+                    inventory: vehicle?.inventory,
                     vehicleId: vehicle.id,
                     vehicleData: vehicle.vehicleData
                 }));
@@ -76,6 +74,7 @@ const InventoryDetailsList = ({ callbackActive, iscreateNewSaleLead, setIscreate
                 sensors: [],
                 accessories: [],
                 vehicleValue: vehicle.value,
+                inventory: [],
                 vehicleId: vehicle.id,
                 vehicleData: vehicle.vehicleData
             }));
@@ -105,9 +104,9 @@ const InventoryDetailsList = ({ callbackActive, iscreateNewSaleLead, setIscreate
 
     return (
         <Container>
-            <Row style={{ display: "flex", flexWrap: "wrap", marginTop: "30px", marginBottom: "30px" }}>
+            <Row style={{ display: "flex", flexWrap: "wrap", marginTop: "0px", marginBottom: "20px" }}>
                 <H4>Select Vehicle</H4>
-                <div style={{ height: "20px" }}></div>
+                <div style={{ height: "10px" }}></div>
                 {selectedVehicles.map((item, index) =>
                     <Col sm={3} key={index}>
                         <label
@@ -139,8 +138,8 @@ const InventoryDetailsList = ({ callbackActive, iscreateNewSaleLead, setIscreate
             </Row>
             {inventoryForms.map((formData, index) => (
                 <React.Fragment key={index}>
-                    <H3>Registration Number : {formData.vehicleValue}</H3>
-                    <div style={{ marginBottom: "25px" }}></div>
+                    <H4>Registration Number : {formData.vehicleValue}</H4>
+                    <div style={{ marginBottom: "15px" }}></div>
                     <InventoryDetails
                         index={index}
                         inventoryData={formData}

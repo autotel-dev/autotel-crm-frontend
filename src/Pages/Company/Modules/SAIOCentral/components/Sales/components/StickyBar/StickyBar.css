@@ -27,6 +27,11 @@
   /* background: white; */
 }
 
+.sticky-label:hover {
+  color: #007bff;
+  /* background: white; */
+}
+
 .sticky-label .tooltip {
   visibility: hidden;
   background-color: black;
@@ -36,18 +41,16 @@
   padding: 5px;
   position: absolute;
   z-index: 1;
-  right:30px ; /* Position the tooltip to the left of the text */
+  right: 30px;
+  /* Position the tooltip to the left of the text */
   transform: translateY(-95%);
   opacity: 0;
   transition: opacity 0.3s;
-  white-space: nowrap; /* Ensure the tooltip text doesn't wrap */
+  white-space: nowrap;
+  /* Ensure the tooltip text doesn't wrap */
 }
 
 .sticky-label:hover .tooltip {
   visibility: visible;
   opacity: 1;
-}
-.sticky-label:hover {
-  color: #007bff;
-  /* background: white; */
 }

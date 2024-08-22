@@ -308,7 +308,7 @@ const SecurityBriefingDetailsList = ({ callbackActive, iscreateNewSaleLead, setI
                 {saleLead?.vehicles?.every((item: any) => (item?.securityBriefing?.authenticationCredentials?.username !== "") && (item?.securityBriefing?.authenticationCredentials?.password !== "")) ? <Button color="primary" onClick={() => callbackActive(7)}>
                     Next
                 </Button> : <Button color="primary" onClick={attachSecurityBreifing}>
-                    Attach Security Briefing
+                    {loading ? "Loading..." : "Attach Security Briefing"}
                 </Button>}
             </Col>
         </Container>

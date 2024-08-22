@@ -572,8 +572,8 @@ import SelectVehicleYearBox from "./components/SelectVehicleYearBox";
 import SelectTransmissionBox from "./components/SelectTransmissionBox";
 import SelectFuelTypeBox from "./components/SelectFuelTypeBox";
 import Swal from 'sweetalert2';
-import { create, getAll } from '../../../../../../../../../../../Utilities/api';
-import { CREATE_NEW_SALELEAD_VEHICLE, GET_ALL_SALELEADS, GET_SINGLE_SALELEAD } from '../../../../../../../../../../../Utilities/api/apiEndpoints';
+import { create, deleteSingle, getAll, update } from '../../../../../../../../../../../Utilities/api';
+import { CREATE_NEW_SALELEAD_VEHICLE, DELETE_VEHICLE, GET_ALL_SALELEADS, GET_SINGLE_SALELEAD, UPDATE_VEHICLE } from '../../../../../../../../../../../Utilities/api/apiEndpoints';
 import { ERROR_MESSAGE } from '../../../../../../../../../../../Utilities/constants/constants';
 import { useDispatch } from 'react-redux';
 import { setSaleLead, setSaleLeads } from '../../../../../../../../../../../ReaduxToolkit/Reducer/SalesSlice';
@@ -581,6 +581,8 @@ import ShowError from '../../ShowError';
 import { useSelector } from 'react-redux';
 import { H4, P } from '../../../../../../../../../../../AbstractElements';
 import SelectServersBox from './components/SelectServerBox';
+import { Select } from 'antd';
+import { formatUnderscoredString } from '../../../../../../../../../../../Utilities/globals/globals';
 
 
 
@@ -616,10 +618,6 @@ const VehicleForm = ({ onRemove, index, vehicleData, onChange, callbackActive, i
     const updatedFormData = { ...formData, defautService: value };
     setFormData(updatedFormData);
     onChange(index, updatedFormData);
-
-    console.log("i", index);
-    console.log("defautService", na);
-    console.log("value", value);
 
   }
   const [loading, setLoading] = useState(false)
@@ -703,8 +701,8 @@ const VehicleForm = ({ onRemove, index, vehicleData, onChange, callbackActive, i
                         if (data.success) {
                           dispatch(setSaleLead(data.data));
                           if (data.data.vehicles.length == data.data.totalNoOfVehicles) {
-                            setIscreateNewSaleLead(false)
-
+                            setIsCreated(true);
+                            callbackActive(4)
                           } else {
                             setIsCreated(true);
                           }
@@ -730,6 +728,183 @@ const VehicleForm = ({ onRemove, index, vehicleData, onChange, callbackActive, i
       ShowError();
       setLoading(false);
     }
+  };
+
+
+
+  const updateVehicle = async () => {
+    setLoading(true);
+    if (
+      formData.registrationNo !== "" &&
+      formData.color !== "" &&
+      formData.engineNo !== "" &&
+      formData.chasisNo !== "" &&
+      formData.instructions !== "" &&
+      formData.remarks !== "" &&
+      formData.bank !== "" &&
+      formData.insurance !== "" &&
+      formData.group !== "" &&
+      formData.vehicleMake !== "" &&
+      formData.vehicleModel !== "" &&
+      formData.year !== "" &&
+      formData.transmission !== "" &&
+      formData.fuelType !== ""
+    ) {
+      const body = {
+        ...formData,
+        additionalServices: [...formData.additionalServices
+          .filter((service: any) => service.checked)
+          .map((service: any) => service.value)],
+        saleLeadId: saleLead._id,
+        customer: saleLead.customer._id,
+      }
+
+      try {
+        await update(body, { url: `${UPDATE_VEHICLE}/${formData.vehicleData._id}` }).then((data: any) => {
+          if (data !== undefined) {
+            if (
+              !data.success &&
+              data.message === ERROR_MESSAGE
+            ) {
+              setLoading(false);
+              console.log("data.message", data.message);
+
+            }
+            if (!data.success) {
+              Swal.fire({
+                text: `${data.message}`,
+                icon: "error",
+                timer: 2000,
+                showConfirmButton: false,
+              });
+              setLoading(false);
+
+            }
+            if (data.success) {
+              getAll({ url: GET_ALL_SALELEADS }).then((data: any) => {
+                if (data !== undefined) {
+                  if (!data.success) {
+                    // setIscreateNewSaleLead(false)
+                  }
+                  if (data.success) {
+                    setLoading(false);
+                    dispatch(setSaleLeads(data.data));
+
+                    getAll({ url: `${GET_SINGLE_SALELEAD}/${saleLead._id}` }).then((data: any) => {
+                      if (data !== undefined) {
+                        if (data.success) {
+                          dispatch(setSaleLead(data.data));
+                          setIsCreated(true);
+                        }
+                      }
+                    });
+                  }
+                }
+              });
+
+              setLoading(false);
+            }
+          }
+        });
+        // Handle successful post creation (e.g., show a success message, redirect, etc.)
+      } catch (error: any) {
+        // Handle error (e.g., show an error message)
+        // console.error("Error creating post:", error);
+        setLoading(false);
+      }
+
+    } else {
+      ShowError();
+      setLoading(false);
+    }
+  };
+
+  const removeVehicle = async () => {
+    if (formData.vehicleData.inventory.length > 0) {
+      Swal.fire({
+        title: "Alert",
+        text: "Please remove the inventory of this vehicle before you delete this",
+        icon: "warning",
+        showCancelButton: true,
+      })
+    }
+    else {
+      setLoading(true);
+      Swal.fire({
+        title: "Remove Vehicle",
+        text: "Are you sure You want to remove this vehicle",
+        icon: "warning",
+        showCancelButton: true,
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          Swal.fire({
+            text: `Deleting...`,
+            icon: "info",
+            showConfirmButton: false,
+          });
+          try {
+            await create({ saleLeadId: saleLead?._id }, { url: `${DELETE_VEHICLE}/${formData.vehicleData._id}` }).then((data: any) => {
+              if (data !== undefined) {
+                if (
+                  !data.success &&
+                  data.message === ERROR_MESSAGE
+                ) {
+                  setLoading(false);
+                  console.log("data.message", data.message);
+
+                }
+                if (!data.success) {
+                  Swal.fire({
+                    text: `${data.message}`,
+                    icon: "error",
+                    timer: 2000,
+                    showConfirmButton: false,
+                  });
+                  setLoading(false);
+
+                }
+                if (data.success) {
+                  setLoading(false);
+                  Swal.fire({
+                    text: `${data.message}`,
+                    icon: "success",
+                    timer: 2500,
+                    showConfirmButton: false,
+                  });
+                  getAll({ url: `${GET_SINGLE_SALELEAD}/${saleLead._id}` }).then((data: any) => {
+                    if (data !== undefined) {
+                      if (data.success) {
+                        dispatch(setSaleLead(data.data));
+                        onRemove(index)
+                        setIsCreated(false);
+                      }
+                    }
+                  });
+                  getAll({ url: GET_ALL_SALELEADS }).then((data: any) => {
+                    if (data !== undefined) {
+                      if (!data.success) {
+                        // setIscreateNewSaleLead(false)
+                      }
+                      if (data.success) {
+                        dispatch(setSaleLeads(data.data));
+                      }
+                    }
+                  });
+
+                  setLoading(false);
+                }
+              }
+            });
+            // Handle successful post creation (e.g., show a success message, redirect, etc.)
+          } catch (error: any) {
+            // Handle error (e.g., show an error message)
+            // console.error("Error creating post:", error);
+            setLoading(false);
+          }
+        }
+      });
+    }
+
   };
 
   return (
@@ -863,7 +1038,7 @@ const VehicleForm = ({ onRemove, index, vehicleData, onChange, callbackActive, i
             disabled={isCreated}
           />
         </Col>
-        <Col xl={4} xs={12}>
+        {/* <Col xl={4} xs={12}>
           <div>
             <P>
               Select Vehicle Color
@@ -877,6 +1052,35 @@ const VehicleForm = ({ onRemove, index, vehicleData, onChange, callbackActive, i
             name="color"
             onChange={handleInputChange}
             disabled={isCreated}
+          />
+        </Col> */}
+
+        <Col xl={4} xs={12}>
+          <div>
+            <P>
+              Select Vehicle Color
+              <span className="txt-danger">*</span>
+            </P>
+          </div>
+          <Select
+            showSearch
+            value={formData.color !== "" ? formData.color : null}
+            style={{ width: "100%", height: 36 }}
+            placeholder="Select Vehicle Color"
+            optionFilterProp="children"
+            filterOption={(input: any, option: any) =>
+              (option?.label ?? "").includes(input)
+            }
+            onChange={(e) => {
+              setFormData({ ...formData, color: e });
+              onChange(index, { ...formData, color: e });
+            }}
+            disabled={isCreated}
+            options={[
+              { value: "Black", label: "Black" }, { value: "Blue", label: "Blue" },
+              { value: "White", label: "White" }, { value: "Gray", label: "Gray" },
+              { value: "Green", label: "Green" }, { value: "Red", label: "Red" },
+            ]}
           />
         </Col>
         <Col xl={4} xs={12}>
@@ -1144,31 +1348,45 @@ const VehicleForm = ({ onRemove, index, vehicleData, onChange, callbackActive, i
             />
           </Col>
         </Row>
-        <Col
-          xs={12}
-          className="text-end d-flex justify-content-end gap-2 align-center"
-        >
-          {
-            saleLead.vehicles.find((item: any, i: number) => formData.registrationNo == item.registrationNo) ? <>
+        {
+          saleLead?.status == "INSTALLED" || formData?.vehicleData?.installationStatus == "INSTALLED" ? <Col
+            xs={12}
+            className="text-end d-flex justify-content-end gap-2 align-center"
+          >
+            <Button color="primary" disabled>
+              {formData?.vehicleData?.installationStatus == "INSTALLED" && formatUnderscoredString("INSTALLED")}
+            </Button>
+          </Col> : <Col
+            xs={12}
+            className="text-end d-flex justify-content-end gap-2 align-center"
+          >
+            {
+              saleLead.vehicles.find((item: any, i: number) => formData.registrationNo == item.registrationNo) ? <>
 
-              {!isCreated && <Button color="secondary" onClick={() => setIsCreated(!isCreated)}>
-                Cancel
-              </Button>}
+                {!isCreated && <Button color="secondary" onClick={() => setIsCreated(!isCreated)}>
+                  Cancel
+                </Button>}
+                <Button color="primary" onClick={() => removeVehicle()} disabled={loading}>
+                  {loading ? "Deleting..." : "Delete"}
+                </Button>
+                <Button color="primary" onClick={() => !isCreated ? updateVehicle() : setIsCreated(!isCreated)}>
+                  {isCreated ? "Edit" : "Save"}
+                </Button>
 
-              <Button color="primary" onClick={() => setIsCreated(!isCreated)}>
-                {isCreated ? "Edit" : "Save"}
-              </Button></> : <>
-              <Button color="primary" disabled={isCreated} onClick={() => !isCreated ? createVehicle() : null}>
-                {isCreated ? "Created" : loading ? "Loading..." : "Save"}
-              </Button>
+              </>
+                : <>
+                  <Button color="primary" onClick={() => createVehicle()}>
+                    {loading ? "Loading..." : "Save"}
+                  </Button>
 
-              {!isCreated && < Button color="danger" onClick={() => onRemove(index)}>
-                Remove
-              </Button>}
-            </>
-          }
+                  {!isCreated && < Button color="danger" onClick={() => onRemove(index)}>
+                    Remove
+                  </Button>}
+                </>
+            }
 
-        </Col>
+          </Col>
+        }
 
       </Row>
     </Form >

@@ -5,10 +5,21 @@ import DataTable from "react-data-table-component";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import "../../../../../../../../CssConstaints/Style.css";
-import { SaleLeadsDataType, supportColumns } from "./Type/Type";
+import { supportColumns } from "./Type/Type";
 import { PlusCircle } from "react-feather";
 
-const InvoicesTable = () => {
+
+interface InvoicesTableProps {
+
+    iscreateNewInvoice: boolean;
+    setIscreateNewInvoice: any;
+}
+
+const InvoicesTable: React.FC<InvoicesTableProps> = ({
+
+    iscreateNewInvoice,
+    setIscreateNewInvoice,
+}) => {
     const dispatch = useDispatch();
     // Function to transform supportData into allBugReports format
     const { bugReports } = useSelector((state: any) => state.support);
@@ -89,26 +100,26 @@ const InvoicesTable = () => {
         setSelectedRows(state.selectedRows);
     }, []);
 
-    const handleDelete = () => {
-        if (
-            window.confirm(
-                `Are you sure you want to delete:\r ${selectedRows.map(
-                    (r: SaleLeadsDataType) => r.id
-                )}?`
-            )
-        ) {
-            setToggleDelete(!toggleDelete);
-            setData(
-                data.filter((item: any) =>
-                    selectedRows.filter((elem: SaleLeadsDataType) => elem.id === item.id)
-                        .length > 0
-                        ? false
-                        : true
-                )
-            );
-            setSelectedRows([]);
-        }
-    };
+    // const handleDelete = () => {
+    //     if (
+    //         window.confirm(
+    //             `Are you sure you want to delete:\r ${selectedRows.map(
+    //                 (r: SaleLeadsDataType) => r.id
+    //             )}?`
+    //         )
+    //     ) {
+    //         setToggleDelete(!toggleDelete);
+    //         setData(
+    //             data.filter((item: any) =>
+    //                 selectedRows.filter((elem: SaleLeadsDataType) => elem.id === item.id)
+    //                     .length > 0
+    //                     ? false
+    //                     : true
+    //             )
+    //         );
+    //         setSelectedRows([]);
+    //     }
+    // };
 
     const handleRowClicked = (row: any) => {
         navigate(

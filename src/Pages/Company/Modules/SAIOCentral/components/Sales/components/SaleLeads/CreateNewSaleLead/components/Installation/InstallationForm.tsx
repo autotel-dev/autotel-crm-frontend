@@ -32,9 +32,10 @@ const InstallationForm = ({ onRemove, index, installationData, onChange, callbac
         (state: any) => state.sales
     );
     const dispatch = useDispatch();
+    console.log("instalationdata", installationData);
 
     const [formData, setFormData] = useState(installationData);
-    const [isAddedInstallationImages, setIsAddedInstallationImages] = useState(formData.installationStatus == "INSTALLED" ? true : false)
+    const [isAddedInstallationImages, setIsAddedInstallationImages] = useState(false)
     const [loading, setLoading] = useState(false);
 
     const [addModal, setAddModal] = useState(false);
@@ -45,6 +46,7 @@ const InstallationForm = ({ onRemove, index, installationData, onChange, callbac
 
     useEffect(() => {
         setFormData(installationData);
+        setIsAddedInstallationImages(installationData.installationStatus == "INSTALLED")
     }, [installationData]);
 
     console.log("formData in iD", formData);
@@ -103,6 +105,8 @@ const InstallationForm = ({ onRemove, index, installationData, onChange, callbac
             bodyData.append("vehicleBack", formData.vehicleBack)
             bodyData.append("trackerLocation", formData.trackerLocation)
             bodyData.append("otherEvidence", formData.otherEvidence)
+            bodyData.append("installationRemarks", formData.installationRemarks)
+            bodyData.append("saleLeadId", saleLead._id)
             console.log("bodyData", bodyData);
 
             try {
@@ -136,19 +140,20 @@ const InstallationForm = ({ onRemove, index, installationData, onChange, callbac
                                         setLoading(false);
                                         dispatch(setSaleLeads(data.data));
 
-                                        getAll({ url: `${GET_SINGLE_SALELEAD}/${saleLead._id}` }).then((data: any) => {
-                                            if (data !== undefined) {
-                                                if (data.success) {
-                                                    dispatch(setSaleLead(data.data));
-                                                    if (data.data.vehicles.length == data.data.totalNoOfVehicles) {
-                                                        setIscreateNewSaleLead(false)
 
-                                                    } else {
-                                                        setIsAddedInstallationImages(true);
-                                                    }
-                                                }
-                                            }
-                                        });
+                                    }
+                                }
+                            });
+                            getAll({ url: `${GET_SINGLE_SALELEAD}/${saleLead._id}` }).then((data: any) => {
+                                if (data !== undefined) {
+                                    if (data.success) {
+                                        dispatch(setSaleLead(data.data));
+                                        if (data.data.vehicles.every((item: any) => item.installationStatus == "INSTALLED")) {
+                                            callbackActive(6)
+
+                                        } else {
+                                            setIsAddedInstallationImages(true);
+                                        }
                                     }
                                 }
                             });
@@ -444,6 +449,24 @@ const InstallationForm = ({ onRemove, index, installationData, onChange, callbac
                     handleChange={handleSelectChange}
                 />}
 
+                <Col xl={12} xs={12} style={{ marginTop: "10px" }}>
+                    <div>
+                        <P>
+                            Enter Remarks
+
+                        </P>
+                    </div>
+                    <textarea
+                        className="form-control"
+                        placeholder="Enter Remarks"
+                        rows={2}
+                        value={formData.installationRemarks}
+                        name="installationRemarks"
+                        onChange={(e) => handleSelectChange("installationRemarks", e.target.value)}
+                        disabled={isAddedInstallationImages}
+                    />
+                </Col>
+
 
                 <Modal
                     isOpen={addModal}
@@ -470,13 +493,8 @@ const InstallationForm = ({ onRemove, index, installationData, onChange, callbac
                     className="text-end d-flex justify-content-end gap-2 align-center"
                 >
                     {
-                        !isAddedInstallationImages && formData.installationStatus == "INSTALLED" && < Button color="primary" onClick={() => setIsAddedInstallationImages(!isAddedInstallationImages)}>
-                            Cancel
-                        </Button>
-                    }
-                    {
-                        <Button color="primary" onClick={() => !isAddedInstallationImages ? addInstallationImageToAVehicle() : setIsAddedInstallationImages(!isAddedInstallationImages)}>
-                            {formData.installationStatus == "INSTALLED" ? "Edit" : loading ? "Loading..." : "Installed"}
+                        <Button disabled={isAddedInstallationImages} color="primary" onClick={() => !isAddedInstallationImages ? addInstallationImageToAVehicle() : null}>
+                            {loading ? "Loading..." : "Installed"}
                         </Button>
                     }
 

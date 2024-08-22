@@ -46,25 +46,19 @@ const InventoryDetails = ({ onRemove, index, inventoryData, onChange, callbackAc
     const [accessories, setAccessories] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [modalType, setModalType] = useState("");
-    const [isAddedInventory, setIsAddedInventory] = useState(false)
+    const [isAddedInventory, setIsAddedInventory] = useState(inventoryData?.inventory?.length > 0)
     const [loading, setLoading] = useState(false)
 
     useEffect(() => {
         setFormData(inventoryData);
         if (inventoryData.deviceIMEI !== "") {
             console.log("check", inventoryData);
-
             setDeviceProduct({
                 deviceIMEI: inventoryData?.deviceIMEI,
                 deviceType: inventoryData?.deviceType,
                 deviceID: inventoryData?.deviceID,
                 deviceId: inventoryData?.deviceId
             })
-        }
-
-        if (inventoryData?.vehicleData?.inventory?.length > 0) {
-            console.log("inventoryData in inventory", inventoryData);
-            setIsAddedInventory(true)
         }
     }, [inventoryData]);
 
@@ -76,8 +70,13 @@ const InventoryDetails = ({ onRemove, index, inventoryData, onChange, callbackAc
         setFormData(updatedFormData);
         onChange(index, updatedFormData);
         console.log("FormData", formData);
-
     };
+
+    useEffect(() => {
+        if (saleLead?.vehicles.find((item: any) => item?._id == inventoryData.vehicleId)?.inventory?.length > 0) {
+            setIsAddedInventory(true)
+        }
+    }, [saleLead]);
 
     const addInventoryToAVehicle = async () => {
         setLoading(true);
@@ -86,7 +85,7 @@ const InventoryDetails = ({ onRemove, index, inventoryData, onChange, callbackAc
             formData.deviceId !== ""
         ) {
             const body = {
-                inventoryItems: [formData.deviceId, ...formData.sims.map((item: any) => item.id), ...formData.sensors.map((item: any) => item.id),...formData.accessories.map((item: any) => item.id)],
+                inventoryItems: [formData.deviceId, ...formData.sims.map((item: any) => item.id), ...formData.sensors.map((item: any) => item.id), ...formData.accessories.map((item: any) => item.id)],
                 saleLeadId: saleLead._id,
             }
             console.log("body", body);
@@ -113,6 +112,7 @@ const InventoryDetails = ({ onRemove, index, inventoryData, onChange, callbackAc
 
                         }
                         if (data.success) {
+                            setIsAddedInventory(true);
                             getAll({ url: GET_ALL_SALELEADS }).then((data: any) => {
                                 if (data !== undefined) {
                                     if (!data.success) {
@@ -122,19 +122,20 @@ const InventoryDetails = ({ onRemove, index, inventoryData, onChange, callbackAc
                                         setLoading(false);
                                         dispatch(setSaleLeads(data.data));
 
-                                        getAll({ url: `${GET_SINGLE_SALELEAD}/${saleLead._id}` }).then((data: any) => {
-                                            if (data !== undefined) {
-                                                if (data.success) {
-                                                    dispatch(setSaleLead(data.data));
-                                                    if (data.data.vehicles.every((item: any) => item.installationStatus == "IN_PROGRESS")) {
-                                                        setIscreateNewSaleLead(false)
-                                                        // dispatch(setSaleLead(null));
-                                                    } else {
-                                                        setIsAddedInventory(true);
-                                                    }
-                                                }
-                                            }
-                                        });
+                                    }
+                                }
+                            });
+                            getAll({ url: `${GET_SINGLE_SALELEAD}/${saleLead._id}` }).then((data: any) => {
+                                if (data !== undefined) {
+                                    if (data.success) {
+                                        dispatch(setSaleLead(data.data));
+                                        if (data.data.vehicles.every((item: any) => item.installationStatus == "INSTALLATION")) {
+                                            // setIscreateNewSaleLead(false)
+                                            callbackActive(5)
+                                            // dispatch(setSaleLead(null));
+                                        } else {
+                                            setIsAddedInventory(true);
+                                        }
                                     }
                                 }
                             });
@@ -155,6 +156,88 @@ const InventoryDetails = ({ onRemove, index, inventoryData, onChange, callbackAc
             setLoading(false);
         }
     };
+
+    const removeInventoryToAVehicle = async () => {
+        Swal.fire({
+            title: "Remove Inventory",
+            text: "Are you sure You want to remove the inventory",
+            icon: "warning",
+            showCancelButton: true,
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                Swal.fire({
+                    text: `Removing...`,
+                    icon: "info",
+                    showConfirmButton: false,
+                });
+                try {
+                    const body = {
+                        inventoryItems: [],
+                        saleLeadId: saleLead._id,
+                    }
+                    await patch(body, { url: `${ATTACH_INVENTORY_TO_VEHICLE}/${formData.vehicleId}` }).then((data: any) => {
+                        if (data !== undefined) {
+                            if (
+                                !data.success &&
+                                data.message === ERROR_MESSAGE
+                            ) {
+                                setLoading(false);
+                                console.log("data.message", data.message);
+
+                            }
+                            if (!data.success) {
+                                Swal.fire({
+                                    text: `${data.message}`,
+                                    icon: "error",
+                                    timer: 2000,
+                                    showConfirmButton: false,
+                                });
+                                setLoading(false);
+
+                            }
+                            if (data.success) {
+                                Swal.fire({
+                                    text: `Inventory has been Removed`,
+                                    icon: "success",
+                                    showConfirmButton: false,
+                                    timer: 1000,
+                                });
+                                getAll({ url: GET_ALL_SALELEADS }).then((data: any) => {
+                                    if (data !== undefined) {
+                                        if (!data.success) {
+                                            // setIscreateNewSaleLead(false)
+                                        }
+                                        if (data.success) {
+                                            // setLoading(false);
+                                            dispatch(setSaleLeads(data.data));
+
+                                        }
+                                    }
+                                });
+                                getAll({ url: `${GET_SINGLE_SALELEAD}/${saleLead._id}` }).then((data: any) => {
+                                    if (data !== undefined) {
+                                        if (data.success) {
+                                            dispatch(setSaleLead(data.data));
+                                            setLoading(false);
+                                        }
+                                    }
+                                });
+
+                            }
+                        }
+                    });
+                    // Handle successful post creation (e.g., show a success message, redirect, etc.)
+                } catch (error: any) {
+                    // Handle error (e.g., show an error message)
+                    // console.error("Error creating post:", error);
+                    setLoading(false);
+                }
+            }
+        });
+    };
+
+
+
 
     const handleAddSim = (sim: any) => {
 
@@ -205,6 +288,7 @@ const InventoryDetails = ({ onRemove, index, inventoryData, onChange, callbackAc
     useEffect(() => {
         console.log("deviceProduct", deviceProduct);
     }, [deviceProduct])
+
 
     return (
         <Form
@@ -324,7 +408,7 @@ const InventoryDetails = ({ onRemove, index, inventoryData, onChange, callbackAc
                         </H4>
                         {formData.sims.map((sim: any, i: number) => (
                             <div style={{ width: "100%", display: "flex" }} key={i}>
-                                <Row style={{ marginTop: "15px", width: "98%" }}>
+                                <Row style={{ marginTop: "0px", width: "98%" }}>
                                     <Col xl={4} xs={12}>
                                         <div>
                                             <P>
@@ -343,7 +427,7 @@ const InventoryDetails = ({ onRemove, index, inventoryData, onChange, callbackAc
                                     <Col xl={4} xs={12}>
                                         <P>
                                             ICCID
-                                            <span className="txt-danger">*</span>
+
                                         </P>
                                         <Input
                                             type="text"
@@ -357,7 +441,7 @@ const InventoryDetails = ({ onRemove, index, inventoryData, onChange, callbackAc
                                     <Col xl={4} xs={12}>
                                         <P>
                                             Network
-                                            <span className="txt-danger">*</span>
+
                                         </P>
                                         <Input
                                             type="text"
@@ -379,7 +463,7 @@ const InventoryDetails = ({ onRemove, index, inventoryData, onChange, callbackAc
             </Row>
 
             {deviceProduct !== null && formData.sims.length !== 0 && <Row className="g-3" style={{
-                padding: "20px 0px 20px 0px"
+                padding: "10px 0px 10px 0px"
             }}>
                 <Col md="2">
                     <Button color={userPersonalizationData?.buttonsAndBarsColor == "" || userPersonalizationData === null ? "primary" : ""} style={{
@@ -423,7 +507,7 @@ const InventoryDetails = ({ onRemove, index, inventoryData, onChange, callbackAc
                                     <Col xl={4} xs={12}>
                                         <P>
                                             Serial Number
-                                            <span className="txt-danger">*</span>
+
                                         </P>
                                         <Input
                                             type="text"
@@ -437,7 +521,7 @@ const InventoryDetails = ({ onRemove, index, inventoryData, onChange, callbackAc
                                     <Col xl={4} xs={12}>
                                         <P>
                                             Sensor Type
-                                            <span className="txt-danger">*</span>
+
                                         </P>
                                         <Input
                                             type="text"
@@ -470,14 +554,13 @@ const InventoryDetails = ({ onRemove, index, inventoryData, onChange, callbackAc
                                     <Col xl={4} xs={12}>
                                         <div>
                                             <P>
-                                                Accessory {i}
-                                                <span className="txt-danger">*</span>
+                                                Accessory {i + 1}
                                             </P>
                                         </div>
                                         <Input
                                             type="text"
-                                            placeholder="Enter Sku"
-                                            value={accessory.serialNumber}
+                                            placeholder="Enter Accessory"
+                                            value={accessory.name}
                                             disabled
                                             onChange={(e) => handleSelectChange('accessories', [...formData.accessories.slice(0, i), { ...accessory, serialNumber: e.target.value }, ...formData.accessories.slice(i + 1)])}
                                         />
@@ -500,12 +583,18 @@ const InventoryDetails = ({ onRemove, index, inventoryData, onChange, callbackAc
                     className="text-end d-flex justify-content-end gap-2 align-center"
                 >
                     {
-                        !isAddedInventory && < Button color="secondary" onClick={() => setIsAddedInventory(!isAddedInventory)}>
-                            Cancel
+                        saleLead?.vehicles.find((item: any) => item?._id == inventoryData.vehicleId)?.inventory?.length > 0 && saleLead?.vehicles.find((item: any) => item?._id == inventoryData.vehicleId)?.installationStatus !== "INSTALLED" && < Button color="secondary" onClick={() => removeInventoryToAVehicle()}>
+                            Remove Inventory
                         </Button>
                     }
                     {
-                        <Button color="primary" onClick={() => !isAddedInventory ? addInventoryToAVehicle() : setIsAddedInventory(!isAddedInventory)}>
+                        saleLead?.vehicles.find((item: any) => item?._id == inventoryData.vehicleId)?.inventory?.length > 0 && !isAddedInventory && < Button color="secondary" onClick={() => setIsAddedInventory(!isAddedInventory)}>
+                            Cancel
+                        </Button>
+                    }
+
+                    {
+                        <Button disabled={saleLead?.vehicles.find((item: any) => item?._id == inventoryData.vehicleId)?.installationStatus == "INSTALLED"} color="primary" onClick={() => !isAddedInventory ? addInventoryToAVehicle() : setIsAddedInventory(!isAddedInventory)}>
                             {isAddedInventory ? "Edit" : loading ? "Loading..." : "Save"}
                         </Button>
                     }
