@@ -55,7 +55,7 @@ const BankAccountsTable = () => {
         )
             .map((item: any) => ({
                 id: item?._id,
-                user: item?.company,
+                user: item?.company.fullName,
                 name: item?.name,
                 iban: item?.iban,
                 accountType: item?.accountType,
@@ -237,10 +237,7 @@ const BankAccountsTable = () => {
                                 dispatch
                             ).then((data) => {
                                 console.log("data", data);
-                                if (!data) {
-                                    console.log("empty");
-                                    setSelectedRows([]);
-                                }
+                                setSelectedRows([]);
                             }).catch((dataa) => {
                                 console.log("data", dataa);
                             });

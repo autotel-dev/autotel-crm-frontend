@@ -55,6 +55,7 @@ import Branches from "../Pages/Company/Branches/Branches";
 import { Currency } from "../utils/Constant";
 import Currencies from "../Pages/SuperAdmin/Currencies/Currencies";
 import Languages from "../Pages/SuperAdmin/Languages/Languages";
+import SAIOCentralLayout from "../Pages/Company/Modules/SAIO/SAIOCentralLayout";
 
 const routes = [
   // dashboard routes
@@ -449,10 +450,12 @@ const routes = [
 
   {
     path: `${process.env.PUBLIC_URL}/company/modules/saio-central`,
-    Component: <SAIOCentral />,
+    // Component: <SAIOCentral />,
+    Component: <SAIOCentralLayout />,
     isProtected: true,
     allowedUserRoles: [ROLES.COMPANY],
     permissionValue: "SAIO Central",
+    isLayout: true
   },
 
   // Users

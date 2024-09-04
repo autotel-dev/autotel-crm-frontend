@@ -17,13 +17,18 @@ import {
   setInActiveActiveWarehouses,
 } from "../../../ReaduxToolkit/Reducer/WarehouseSlice";
 import Swal from "sweetalert2";
-import { CREATE_WAREHOUSE,  GET_ALL_WAREHOUSES} from "../../../Utilities/api/apiEndpoints";
+import { CREATE_WAREHOUSE, GET_ALL_WAREHOUSES } from "../../../Utilities/api/apiEndpoints";
 import { ERROR_MESSAGE } from "../../../Utilities/constants/constants";
+import { Select } from "antd";
 
 const CreateNewWarehouse = () => {
   const { userPersonalizationData } = useSelector(
     (state: any) => state.personalization
   );
+  const { branches } = useSelector(
+    (state: any) => state.warehouse
+  );
+  const [branch, setBranch] = useState("")
   const dispatch = useDispatch();
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -45,9 +50,10 @@ const CreateNewWarehouse = () => {
 
   const addWarehouse: SubmitHandler<Type> = async (data: any) => {
     setLoading(true);
-    if (data.name !== "") {
+    if (data.name !== "" && branch !== "") {
       const warehouse = {
         name: data.name,
+        branch: branch
       };
       // console.log(city);
       try {
@@ -63,6 +69,7 @@ const CreateNewWarehouse = () => {
                 reset({
                   name: "",
                 });
+                setBranch("")
               }
               if (!data.success) {
                 Swal.fire({
@@ -76,6 +83,7 @@ const CreateNewWarehouse = () => {
                 reset({
                   name: "",
                 });
+                setBranch("")
               }
               if (data.success) {
                 // console.log(data);
@@ -84,6 +92,7 @@ const CreateNewWarehouse = () => {
                 reset({
                   name: "",
                 });
+                setBranch("")
                 dispatch(setWarehouseStart());
                 getAll({ url: GET_ALL_WAREHOUSES }).then(
                   (data: any) => {
@@ -141,15 +150,13 @@ const CreateNewWarehouse = () => {
     <Col md={6}>
       <div className="text-end">
         <button
-          className={`btn ${
-            userPersonalizationData?.buttonsAndBarsColor == null ? "btn-primary" : ""
-          }`}
+          className={`btn ${userPersonalizationData?.buttonsAndBarsColor == null ? "btn-primary" : ""
+            }`}
           style={{
             color: "white",
-            backgroundColor: `${
-              userPersonalizationData !== null &&
+            backgroundColor: `${userPersonalizationData !== null &&
               userPersonalizationData?.buttonsAndBarsColor
-            }`,
+              }`,
           }}
           onClick={addToggle}
         >
@@ -182,6 +189,37 @@ const CreateNewWarehouse = () => {
                     {errors.name && "Warehouse name is required"}
                   </span>
                 </FormGroup>
+
+                <FormGroup className="col-md-12 create-group">
+                  <P>Select Branch</P>
+                  <Select
+                    value={branch !== "" ? branch : null}
+                    showSearch
+                    style={{ width: "100%", height: 36 }}
+                    placeholder="Select Branch"
+                    optionFilterProp="children"
+                    filterOption={(input: any, option: any) =>
+                      (option?.label ?? "").includes(input)
+                    }
+                    filterSort={(optionA: any, optionB: any) =>
+                      (optionA?.label ?? "")
+                        .toLowerCase()
+                        .localeCompare((optionB?.label ?? "").toLowerCase())
+                    }
+                    onChange={(e) => {
+                      setBranch(e);
+
+                    }}
+                    options={[...branches.map((item: any, index: any) => {
+                      return {
+                        value: item?._id,
+                        label: item?.name
+                      }
+                    })]}
+                  />
+                </FormGroup>
+
+
               </Row>
               <Button color="primary" className="me-1">
                 {loading ? "Loading ..." : `Add`}

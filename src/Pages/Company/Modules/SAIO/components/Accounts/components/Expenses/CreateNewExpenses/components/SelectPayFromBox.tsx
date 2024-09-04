@@ -3,26 +3,27 @@ import { Select } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 interface propTypes {
   placeholder: any;
+  setBankAccount: any;
+  bankAccount: string;
 }
 
-const SelectSimProviderBox: React.FC<propTypes> = ({ placeholder }) => {
-  const { cities, createCompany } = useSelector(
-    (state: any) => state.companies
+const SelectPayFromBox: React.FC<propTypes> = ({ placeholder, setBankAccount, bankAccount }) => {
+  const { bankAccounts } = useSelector(
+    (state: any) => state.expenses
   );
-  // console.log(cities);
-  const [cityId, setCityId] = useState("");
-  const [cityList, setCityList] = useState([]);
+  const [bankAccountsList, setBankAccountsList] = useState([]);
   const dispatch = useDispatch();
 
   const tempList: any = [];
   useEffect(() => {
-    cities?.map((item: any, index: any) => {
+    bankAccounts?.map((item: any, index: any) => {
       tempList.push({ value: `${item?._id}`, label: `${item?.name}` });
     });
-    setCityList(tempList);
-  }, [cities]);
+    setBankAccountsList(tempList);
+  }, [bankAccounts]);
   return (
     <Select
+      value={bankAccount !== "" ? bankAccount : null}
       showSearch
       style={{ width: "100%", height: 36 }}
       placeholder={placeholder}
@@ -37,18 +38,12 @@ const SelectSimProviderBox: React.FC<propTypes> = ({ placeholder }) => {
       }
       onChange={(e) => {
         // console.log(e);
-        setCityId(e);
-        // dispatch(
-        //   setCreateCompany({
-        //     ...createCompany,
-        //     city: e,
-        //   })
-        // );
-        // dispatch(setCountryId(e));
+        setBankAccount(e);
+
       }}
-      options={cityList}
+      options={bankAccountsList}
     />
   );
 };
 
-export default SelectSimProviderBox;
+export default SelectPayFromBox;

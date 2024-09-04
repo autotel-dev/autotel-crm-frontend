@@ -75,7 +75,8 @@ const UsersList = () => {
   const [emailAdress, setEmailAddress] = useState("");
   const [phoneNo, setPhoneNo] = useState(false);
   const [allowedModules, setAllowedModules] = useState(false);
-  const [subRole, setSubRole] = useState(false);
+  const [subRole, setSubRole] = useState("");
+  const [userBranch, setUserBranch] = useState("");
   const navigate = useNavigate();
 
   // -----------------------------------
@@ -138,24 +139,25 @@ const UsersList = () => {
     return operators?.map((row: any, index: any) => (
       // setIsActive(row.isActive);
       <tr key={row.id}
-      onMouseEnter={() => {
-        setIsHovered(true);
-        setIdd(row._id);
-      }}
-      onMouseLeave={() => setIsHovered(false)}
-      style={{
-        backgroundColor:
-          isHovered && idd == row._id
-            ? userPersonalizationData == null
-              ? "#D6EEEE"
-              : `rgba(${rgbColor.r},${rgbColor.g},${rgbColor.b},0.2)`
-            : "transparent",
-        transition: "background-color 0.3s",
-      }}
+        onMouseEnter={() => {
+          setIsHovered(true);
+          setIdd(row._id);
+        }}
+        onMouseLeave={() => setIsHovered(false)}
+        style={{
+          backgroundColor:
+            isHovered && idd == row._id
+              ? userPersonalizationData == null
+                ? "#D6EEEE"
+                : `rgba(${rgbColor.r},${rgbColor.g},${rgbColor.b},0.2)`
+              : "transparent",
+          transition: "background-color 0.3s",
+        }}
       >
         <td style={{ width: "10%" }}>{row._id}</td>
         <td style={{ width: "15%" }}>{row.fullName}</td>
-        <td style={{ width: "10%" }}>{formatUnderscoredString(row.role)}</td>
+        <td style={{ width: "10%" }}>{formatUnderscoredString(row.subRole.name)}</td>
+        <td style={{ width: "10%" }}>{formatUnderscoredString(row.branch.name)}</td>
         <td style={{ width: "15%" }}>{row.emailAddress}</td>
         <td style={{ width: "10%" }}>
           <div className="d-flex" style={{ justifyContent: "center" }}>
@@ -232,7 +234,7 @@ const UsersList = () => {
             <div>
               {user?.delete && (
                 <button
-                className="global-table-delete-btn"
+                  className="global-table-delete-btn"
                   // style={{
                   //   width: 60,
                   //   fontSize: 14,
@@ -258,7 +260,7 @@ const UsersList = () => {
               )}
               {user?.edit && (
                 <button
-                className="global-table-edit-btn"
+                  className="global-table-edit-btn"
                   // style={{
                   //   width: 60,
                   //   fontSize: 14,
@@ -278,6 +280,7 @@ const UsersList = () => {
                     setIsActive(row.isActive);
                     setAllowedModules(row.allowedModules);
                     setSubRole(row.subRole);
+                    setUserBranch(row?.branch);
                   }}
                 >
                   Edit
@@ -292,7 +295,7 @@ const UsersList = () => {
 
   return (
     <>
-      <Container fluid> 
+      <Container fluid>
         <Col sm="12">
           <Card>
             <CardHeader className="pb-0">
@@ -303,12 +306,12 @@ const UsersList = () => {
                 {loading ? (
                   // <Loader />
                   <>
-                  <Skeleton height="100px" width="100%" borderRadius="10px" />
-                  <Skeleton height="40px" width="100%" marginTop="10px" marginBottom="10" borderRadius="10px" />
-                  <Skeleton height="40px" width="100%" marginTop="10px" marginBottom="10" borderRadius="10px" />
-                  <Skeleton height="40px" width="100%" marginTop="10px" marginBottom="10" borderRadius="10px" />
-                  <Skeleton height="40px" width="100%" marginTop="10px" marginBottom="10" borderRadius="10px" />
-                </>
+                    <Skeleton height="100px" width="100%" borderRadius="10px" />
+                    <Skeleton height="40px" width="100%" marginTop="10px" marginBottom="10" borderRadius="10px" />
+                    <Skeleton height="40px" width="100%" marginTop="10px" marginBottom="10" borderRadius="10px" />
+                    <Skeleton height="40px" width="100%" marginTop="10px" marginBottom="10" borderRadius="10px" />
+                    <Skeleton height="40px" width="100%" marginTop="10px" marginBottom="10" borderRadius="10px" />
+                  </>
                 ) : operators?.length > 0 && loading === false ? (
                   <div>
                     <table>
@@ -317,6 +320,7 @@ const UsersList = () => {
                           <th style={{ width: "10%" }}>ID</th>
                           <th style={{ width: "15%" }}>Name</th>
                           <th style={{ width: "10%" }}>Department</th>
+                          <th style={{ width: "10%" }}>Branch</th>
                           <th style={{ width: "15%" }}>Email Address</th>
                           <th style={{ width: "10%" }}>Account Status</th>
                           {(user?.edit || user?.delete) && <th>Actions</th>}
@@ -353,6 +357,7 @@ const UsersList = () => {
                 allowedModules={allowedModules}
                 setAllowedModules={setAllowedModules}
                 subRole={subRole}
+                userBranch={userBranch}
               />
             </CardBody>
           </Card>

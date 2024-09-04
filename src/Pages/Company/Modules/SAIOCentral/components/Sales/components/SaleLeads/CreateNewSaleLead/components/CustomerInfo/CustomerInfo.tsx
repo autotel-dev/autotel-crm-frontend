@@ -15,11 +15,11 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { P } from "../../../../../../../../../../../AbstractElements";
 import { BusinessFormCommonProps } from "../../../../../../../../../../../Types/Forms/FormLayout/FormWizardTypes";
-import { create, getAll } from "../../../../../../../../../../../Utilities/api";
-import { CREATE_NEW_CUSTOMER, GET_ALL_SALELEADS } from "../../../../../../../../../../../Utilities/api/apiEndpoints";
+import { create, getAll, update } from "../../../../../../../../../../../Utilities/api";
+import { CREATE_NEW_CUSTOMER, GET_ALL_SALELEADS, GET_SINGLE_SALELEAD, UPDATE_CUSTOMER } from "../../../../../../../../../../../Utilities/api/apiEndpoints";
 import { ERROR_MESSAGE } from "../../../../../../../../../../../Utilities/constants/constants";
 import Swal from "sweetalert2";
-import { setCustomer, setSaleLeadId, setSaleLeads } from "../../../../../../../../../../../ReaduxToolkit/Reducer/SalesSlice";
+import { setCustomer, setSaleLead, setSaleLeadId, setSaleLeads } from "../../../../../../../../../../../ReaduxToolkit/Reducer/SalesSlice";
 
 interface CustomerInfoProps {
   callbackActive: (val: number | undefined) => void;
@@ -75,11 +75,10 @@ const CustomerInfo = ({ callbackActive, iscreateNewSaleLead, setIscreateNewSaleL
   const [loading, setLoading] = useState(false);
   console.log("saleLeadId", saleLeadId);
 
+  const [isEditCustomerInfo, setIsEditCustomerInfo] = useState(saleLead?.customer !== null ? true : false)
+
 
   const createCustomer = async () => {
-    console.log("personalDetailsForm", personalDetailsForm);
-    console.log("saleLeadId", saleLeadId);
-    console.log("saleLead", saleLead);
 
     setLoading(true);
     if (
@@ -92,9 +91,8 @@ const CustomerInfo = ({ callbackActive, iscreateNewSaleLead, setIscreateNewSaleL
       homeAddress
 
     ) {
-
       try {
-        await create({ ...personalDetailsForm, saleLeadId: saleLeadId !== "" ? saleLeadId : saleLead.id }, { url: CREATE_NEW_CUSTOMER }).then((data: any) => {
+        await create({ ...personalDetailsForm, saleLeadId: saleLead._id }, { url: CREATE_NEW_CUSTOMER }).then((data: any) => {
           if (data !== undefined) {
             if (
               !data.success &&
@@ -128,21 +126,118 @@ const CustomerInfo = ({ callbackActive, iscreateNewSaleLead, setIscreateNewSaleL
                       timer: 2000,
                       showConfirmButton: false,
                     });
-                    setIscreateNewSaleLead(false)
+                    // setIscreateNewSaleLead(false)
                     dispatch(setSaleLeadId(""));
                     dispatch(setCustomer(null));
+
                   }
                   if (data.success) {
-                    setIscreateNewSaleLead(false)
+                    // setIscreateNewSaleLead(false)
                     dispatch(setSaleLeadId(""));
                     dispatch(setCustomer(null));
                     // // console.log("hhg");
                     dispatch(setSaleLeads(data.data));
+                    getAll({ url: `${GET_SINGLE_SALELEAD}/${saleLead._id}` }).then((data: any) => {
+                      if (data !== undefined) {
+                        if (data.success) {
+                          dispatch(setSaleLead(data.data));
+                          callbackActive(3);
+                        }
+                      }
+                    });
+
+                    // setIscreateNewSaleLead(false)
+
                   }
                 }
               });
 
               setLoading(false);
+            }
+          }
+        });
+        // Handle successful post creation (e.g., show a success message, redirect, etc.)
+      } catch (error: any) {
+        // Handle error (e.g., show an error message)
+        // console.error("Error creating post:", error);
+        setLoading(false);
+      }
+    } else {
+      ShowError();
+      setLoading(false);
+    }
+  };
+
+  const updateCustomer = async () => {
+
+    setLoading(true);
+    if (
+      cnic !== "" &&
+      dob !== "" &&
+      additionalContactNo !== "" &&
+      officeNo !== "" &&
+      emailAddress !== "" &&
+      residentialNo !== "" &&
+      homeAddress
+
+    ) {
+      try {
+        await update({
+          ...personalDetailsForm,
+          customerName: saleLead?.customerName,
+          customerContactNo: saleLead?.customerContactNo,
+          city: saleLead?.city._id, saleLeadId: saleLead._id
+        }, { url: `${UPDATE_CUSTOMER}/${saleLead?.customer?._id}` }).then((data: any) => {
+          if (data !== undefined) {
+            if (
+              !data.success &&
+              data.message === ERROR_MESSAGE
+            ) {
+              setLoading(false);
+              console.log("data.message", data.message);
+
+            }
+            if (!data.success) {
+              Swal.fire({
+                text: `${data.message}`,
+                icon: "error",
+                timer: 2000,
+                showConfirmButton: false,
+              });
+              setLoading(false);
+              setIsEditCustomerInfo(true)
+
+            }
+            if (data.success) {
+              setLoading(false);
+              setIsEditCustomerInfo(true)
+              getAll({ url: GET_ALL_SALELEADS }).then((data: any) => {
+
+                if (data !== undefined) {
+                  if (!data.success) {
+                    Swal.fire({
+                      text: `${data.message}`,
+                      icon: "error",
+                      timer: 2000,
+                      showConfirmButton: false,
+                    });
+                  }
+                  if (data.success) {
+                    // // console.log("hhg");
+                    dispatch(setSaleLeads(data.data));
+                    setIsEditCustomerInfo(true)
+                    getAll({ url: `${GET_SINGLE_SALELEAD}/${saleLead._id}` }).then((data: any) => {
+                      if (data !== undefined) {
+                        if (data.success) {
+                          dispatch(setSaleLead(data.data));
+                        }
+                      }
+                    });
+                  }
+                }
+              });
+
+
             }
           }
         });
@@ -170,7 +265,23 @@ const CustomerInfo = ({ callbackActive, iscreateNewSaleLead, setIscreateNewSaleL
         homeAddress: customer !== null ? customer?.homeAddress : "",
       })
     }
+
+
   }, [customer])
+
+  useEffect(() => {
+    if (saleLead?.customer !== null) {
+      setPersonalDetailsForm({
+        cnic: saleLead?.customer !== null ? saleLead?.customer?.cnic : "",
+        dob: saleLead?.customer !== null ? saleLead?.customer?.dob?.slice(0, 10) : "",
+        additionalContactNo: saleLead?.customer !== null ? saleLead?.customer?.additionalContactNo : "",
+        officeNo: saleLead?.customer !== null ? saleLead?.customer?.officeNo : "",
+        emailAddress: saleLead?.customer !== null ? saleLead?.customer?.emailAddress : "",
+        residentialNo: saleLead?.customer !== null ? saleLead?.customer?.residentialNo : "",
+        homeAddress: saleLead?.customer !== null ? saleLead?.customer?.homeAddress : "",
+      })
+    }
+  }, [saleLead])
 
   return (
     <Form
@@ -179,6 +290,20 @@ const CustomerInfo = ({ callbackActive, iscreateNewSaleLead, setIscreateNewSaleL
       noValidate
     >
       <Row className="g-3">
+        <Col xl={4} xs={12}>
+          <P>
+            Company Name
+            <span className="txt-danger">*</span>
+          </P>
+          <Input
+            type="text"
+            placeholder="Enter Company Name"
+            // value={cnic}
+            name="companyName"
+            onChange={getUserData}
+            disabled={isEditCustomerInfo}
+          />
+        </Col>
         <Col xl={4} xs={12}>
           <P>
             CNIC No
@@ -190,6 +315,7 @@ const CustomerInfo = ({ callbackActive, iscreateNewSaleLead, setIscreateNewSaleL
             value={cnic}
             name="cnic"
             onChange={getUserData}
+            disabled={isEditCustomerInfo}
           />
         </Col>
         <Col xl={4} xs={12}>
@@ -203,8 +329,10 @@ const CustomerInfo = ({ callbackActive, iscreateNewSaleLead, setIscreateNewSaleL
             value={dob}
             name="dob"
             onChange={getUserData}
+            disabled={isEditCustomerInfo}
           />
-        </Col> <Col xl={4} xs={12}>
+        </Col>
+        <Col xl={4} xs={12}>
           <P>
             Additional Contact No
             <span className="txt-danger">*</span>
@@ -215,8 +343,10 @@ const CustomerInfo = ({ callbackActive, iscreateNewSaleLead, setIscreateNewSaleL
             value={additionalContactNo}
             name="additionalContactNo"
             onChange={getUserData}
+            disabled={isEditCustomerInfo}
           />
-        </Col> <Col xl={4} xs={12}>
+        </Col>
+        <Col xl={4} xs={12}>
           <P>
             Office No
             <span className="txt-danger">*</span>
@@ -227,8 +357,10 @@ const CustomerInfo = ({ callbackActive, iscreateNewSaleLead, setIscreateNewSaleL
             value={officeNo}
             name="officeNo"
             onChange={getUserData}
+            disabled={isEditCustomerInfo}
           />
-        </Col> <Col xl={4} xs={12}>
+        </Col>
+        <Col xl={4} xs={12}>
           <P>
             Email Address
             <span className="txt-danger">*</span>
@@ -239,66 +371,99 @@ const CustomerInfo = ({ callbackActive, iscreateNewSaleLead, setIscreateNewSaleL
             value={emailAddress}
             name="emailAddress"
             onChange={getUserData}
+            disabled={isEditCustomerInfo}
           />
-        </Col> <Col xl={4} xs={12}>
+        </Col>
+        <Col xl={4} xs={12}>
           <P>
 
-            Residential No
+            Phone No
             <span className="txt-danger">*</span>
           </P>
           <Input
             type="text"
-            placeholder="Enter Residential No"
+            placeholder="Enter Phone No"
             value={
               residentialNo}
             name="residentialNo"
             onChange={getUserData}
+            disabled={isEditCustomerInfo}
           />
-        </Col> <Col xl={4} xs={12}>
+        </Col>
+        <Col xl={4} xs={12}>
           <P>
-
-            Home Address
+            Address
             <span className="txt-danger">*</span>
           </P>
           <Input
             type="text"
-            placeholder="Enter Home Address"
+            placeholder="Enter Address"
             value={homeAddress}
             name="homeAddress"
             onChange={getUserData}
+            disabled={isEditCustomerInfo}
           />
         </Col>
 
         {
-          customer !== null ? <Col
-            xs={12}
-            className="text-end d-flex justify-content-end gap-2 align-center"
-          >
-            <Button color="secondary" onClick={() => { dispatch(setCustomer(null)); dispatch(setSaleLeadId("")); setIscreateNewSaleLead(false) }}>
-              Cancel
-            </Button>
-            <Button color="primary" onClick={() => setIscreateNewSaleLead(false)}>
-              OK
-            </Button>
-          </Col> : <Col
-            xs={12}
-            className="text-end d-flex justify-content-end gap-2 align-center"
-          >
-            {/* {customer !== null &&  */}
-            <Button color="secondary" onClick={() => { dispatch(setCustomer(null)); dispatch(setSaleLeadId("")); setIscreateNewSaleLead(false) }}>
-              Cancel
-            </Button>
+          saleLead?.status == "INSTALLED" ? <>
+            <Col
+              xs={12}
+              className="text-end d-flex justify-content-end gap-2 align-center"
+            >
+              <Button color="secondary" onClick={() => { dispatch(setCustomer(null)); dispatch(setSaleLeadId("")); dispatch(setSaleLead(null)); setIscreateNewSaleLead(false) }}>
+                Cancel
+              </Button>
+              <Button color="primary" onClick={() => callbackActive(3)}>
+                Next
+              </Button>
+            </Col>
+          </> : <>
+            {
+              customer !== null ? <Col
+                xs={12}
+                className="text-end d-flex justify-content-end gap-2 align-center"
+              >
+                <Button color="secondary" onClick={() => { dispatch(setCustomer(null)); dispatch(setSaleLeadId("")); dispatch(setSaleLead(null)); setIscreateNewSaleLead(false) }}>
+                  Cancel
+                </Button>
+                <Button color="primary" onClick={() => callbackActive(3)}>
+                  OK
+                </Button>
+              </Col> :
+                saleLead?.customer !== null ? <Col
+                  xs={12}
+                  className="text-end d-flex justify-content-end gap-2 align-center"
+                >
+                  {/* {customer !== null &&  */}
+                  <Button color="secondary" onClick={() => { dispatch(setCustomer(null)); dispatch(setSaleLeadId("")); dispatch(setSaleLead(null)); setIscreateNewSaleLead(false) }}>
+                    Cancel
+                  </Button>
 
-            {/* } */}
-            <Button color="primary" onClick={createCustomer}>
-              {loading ? "Loading..." : "Create Customer"}
-            </Button>
+                  <Button color="primary" onClick={() => !isEditCustomerInfo ? updateCustomer() : setIsEditCustomerInfo(!isEditCustomerInfo)}>
+                    {loading ? "Loading..." : !isEditCustomerInfo ? "Save" : "Edit"}
+                  </Button>
 
-          </Col>
+                </Col> :
+                  <Col
+                    xs={12}
+                    className="text-end d-flex justify-content-end gap-2 align-center"
+                  >
+                    {/* {customer !== null &&  */}
+                    <Button color="secondary" onClick={() => { dispatch(setCustomer(null)); dispatch(setSaleLeadId("")); dispatch(setSaleLead(null)); setIscreateNewSaleLead(false) }}>
+                      Cancel
+                    </Button>
+                    <Button color="primary" onClick={() => createCustomer()}>
+                      {loading ? "Loading..." : "Create Customer"}
+                    </Button>
+
+                  </Col>
+            }
+          </>
         }
 
       </Row>
-    </Form>
+    </Form >
   );
 };
 

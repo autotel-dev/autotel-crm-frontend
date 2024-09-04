@@ -61,3 +61,10 @@ export const serverCredentials = (serverID) => {
     }
   }
 };
+
+
+export const getAllServerCredential = () => {
+  const authToken = localStorage.getItem("token");
+  const decodedToken = jwtDecode(authToken);
+  return decodedToken.serverCredentials
+};

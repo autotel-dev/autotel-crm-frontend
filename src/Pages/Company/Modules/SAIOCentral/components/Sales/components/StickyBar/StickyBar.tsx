@@ -60,6 +60,7 @@ const StickyBar: React.FC<StickyBarProps> = ({
             }}
           >
             {option.icon}
+            <span className="tooltip">{option.label}</span>
           </div>
         ))
       }

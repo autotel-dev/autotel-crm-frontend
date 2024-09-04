@@ -13,8 +13,8 @@ export const ChatApi = `${api}/chats.json`;
 
 // // api.ts
 
-export const API_BASE_URL = "http://124.29.238.127:8080/api/v1";
-export const IMAGE_BASE_URL = "http://124.29.238.127:8080";
+// export const API_BASE_URL = "http://124.29.238.127:8080/api/v1";
+// export const IMAGE_BASE_URL = "http://124.29.238.127:8080";
 // export const API_BASE_URL = "http://103.31.81.221:8080/api/v1";
 // export const IMAGE_BASE_URL = "http://103.31.81.221:8080";
 // export const API_BASE_URL = "https://crmapi.autotel.pk/api/v1";
@@ -370,6 +370,41 @@ export const createWithMultipart = async (
   // -----------------------
   try {
     const response = await axios.post(url.url, postData, {
+      headers: multipartHeader(),
+    });
+
+    const result = response.data;
+    // console.log("Response data:", response.data);
+    return result;
+  } catch (error: any) {
+    // console.error("Error creatingMultipart:", error.response.data);
+    return error.response.data;
+  }
+};
+
+
+export const patchWithMultipart = async (
+  postData: any,
+  url: URLTypes
+): Promise<void> => {
+  if (!navigator.onLine) {
+    Swal.fire({
+      text: ERROR_TEXT,
+      icon: "error",
+      timer: 2000,
+      showCancelButton: false,
+    });
+    // throw new Error(ERROR_TEXT);
+    const error: any = {
+      success: false,
+      message: ERROR_MESSAGE,
+      statusCode: 401,
+    };
+    return error;
+  }
+  // -----------------------
+  try {
+    const response = await axios.patch(url.url, postData, {
       headers: multipartHeader(),
     });
 

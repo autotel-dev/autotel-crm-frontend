@@ -16,6 +16,7 @@ import {
   setId,
   setInActiveActiveWarehouses,
   setIsConnected,
+  setBranches,
 } from "../../../ReaduxToolkit/Reducer/WarehouseSlice";
 import { setNoDataFound } from "../../../ReaduxToolkit/Reducer/NoDataFoundSlice";
 import UpdateWarehouse from "./UpdateWarehouse";
@@ -25,6 +26,8 @@ import H7 from "../../../CommonElements/Headings/H7Element";
 import Skeleton from "../../Utilities/Skeleton/Skeleton";
 import {
   CHANGE_WAREHOUSE_ACTIVATION_STATUS,
+  GET_ALL_ACTIVE_BRANCHES,
+  GET_ALL_BRANCHES,
   GET_ALL_WAREHOUSES,
 } from "../../../Utilities/api/apiEndpoints";
 import { ERROR_MESSAGE } from "../../../Utilities/constants/constants";
@@ -99,6 +102,20 @@ const WarehousesList = () => {
       dispatch(setWarehouseEnd());
     });
   }, []);
+
+  useEffect(() => {
+    getAll({ url: GET_ALL_ACTIVE_BRANCHES }).then((data: any) => {
+
+      if (data !== undefined) {
+        if (data.success) {
+          // // console.log("hhg");
+          dispatch(setBranches(data.data));
+        }
+      }
+    });
+  }, []);
+
+
   const [isHovered, setIsHovered] = useState(false);
   const [idd, setIdd] = useState("");
   const renderTableRows = () => {
@@ -317,7 +334,7 @@ const WarehousesList = () => {
                 isActive={isActive}
                 setIsActive={setIsActive}
 
-                // setValue={setCityName}
+              // setValue={setCityName}
               />
             </CardBody>
           </Card>

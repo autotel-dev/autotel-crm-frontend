@@ -43,11 +43,12 @@ interface PropsTypes {
   allowedModules: any;
   setAllowedModules: React.Dispatch<React.SetStateAction<any>>;
   subRole: any;
+  userBranch: string;
 }
 
 const UpdateUser: React.FC<PropsTypes> = ({
   isVisible,
-  setIsVisible = () => {},
+  setIsVisible = () => { },
   id,
   name,
   emailAddress,
@@ -57,6 +58,7 @@ const UpdateUser: React.FC<PropsTypes> = ({
   allowedModules,
   setAllowedModules,
   subRole,
+  userBranch
 
   // setValue
 }) => {
@@ -99,6 +101,7 @@ const UpdateUser: React.FC<PropsTypes> = ({
     }
   };
   const { roles } = useSelector((state: any) => state.roles);
+  const { branches } = useSelector((state: any) => state.operators);
   const { crmActiveModules } = useSelector((state: any) => state.crmModules);
   const [rolesList, setRolesList] = useState([]);
   const [role, setRole] = useState("");
@@ -114,6 +117,21 @@ const UpdateUser: React.FC<PropsTypes> = ({
     });
     setRolesList(tempRolesList);
   }, []);
+
+  const [branchesList, setBranchesList] = useState([]);
+  const [branch, setBranch] = useState("");
+  // console.log("Roles", roles);
+
+  const tempBranchesList: any = [];
+  useEffect(() => {
+    branches.map((item: any, index: any) => {
+      tempBranchesList.push({
+        value: `${item._id}`,
+        label: `${item.name}`,
+      });
+    });
+    setBranchesList(tempBranchesList);
+  }, [branches]);
 
   const updateUser: SubmitHandler<UserType> = async (data) => {
     setLoading(true);
@@ -209,6 +227,9 @@ const UpdateUser: React.FC<PropsTypes> = ({
   useEffect(() => {
     setValue("subRole", subRole);
   }, [subRole, setValue]);
+  useEffect(() => {
+    setValue("userBranch", userBranch);
+  }, [userBranch, setValue]);
 
   const handleModuleClick = (moduleId: any) => {
     const index = allowedModules.findIndex(
@@ -292,34 +313,68 @@ const UpdateUser: React.FC<PropsTypes> = ({
                 {errors.phoneNo && "Phone Number is required"}
               </span>
             </FormGroup>
+
             <FormGroup className="col-md-12 create-group">
-              <div>
-                <P>Select User Role </P>
-              </div>
-              <Select
-                defaultValue={
-                  roles &&
-                  roles.find((role: any) => role?._id === subRole)?.name
-                }
-                showSearch
-                style={{ width: 250, height: 36 }}
-                placeholder="Select Role"
-                optionFilterProp="children"
-                filterOption={(input: any, option: any) =>
-                  (option?.label ?? "").includes(input)
-                }
-                filterSort={(optionA: any, optionB: any) =>
-                  (optionA?.label ?? "")
-                    .toLowerCase()
-                    .localeCompare((optionB?.label ?? "").toLowerCase())
-                }
-                onChange={(e: any) => {
-                  // // console.log(e);
-                  setRole(e);
-                }}
-                options={rolesList}
-              />
+              <Row>
+                <Col md="6">
+                  <div>
+                    <P>Select User Department </P>
+                  </div>
+                  <Select
+                    value={
+                      roles &&
+                      roles.find((role: any) => role?._id === subRole)?.name
+                    }
+                    showSearch
+                    style={{ width: "100%", height: 36 }}
+                    placeholder="Select Department"
+                    optionFilterProp="children"
+                    filterOption={(input: any, option: any) =>
+                      (option?.P ?? "").includes(input)
+                    }
+                    filterSort={(optionA: any, optionB: any) =>
+                      (optionA?.P ?? "")
+                        .toLowerCase()
+                        .localeCompare((optionB?.P ?? "").toLowerCase())
+                    }
+                    onChange={(e: any) => {
+                      // console.log(e);
+                      setRole(e);
+                    }}
+                    options={rolesList}
+                  />
+                </Col>
+                <Col md="6">
+                  <div>
+                    <P>Select User Branch </P>
+                  </div>
+                  <Select
+                    value={
+                      branches &&
+                      branches.find((b: any) => b?._id === userBranch)?.name
+                    }
+                    showSearch
+                    style={{ width: "100%", height: 36 }}
+                    placeholder="Select Branch"
+                    optionFilterProp="children"
+                    filterOption={(input: any, option: any) =>
+                      (option?.P ?? "").includes(input)
+                    }
+                    filterSort={(optionA: any, optionB: any) =>
+                      (optionA?.P ?? "")
+                        .toLowerCase()
+                        .localeCompare((optionB?.P ?? "").toLowerCase())
+                    }
+                    onChange={(e: any) => {
+                      // console.log(e);
+                      setBranch(e);
+                    }}
+                    options={branchesList}
+                  />
+                </Col>
+              </Row>
             </FormGroup>
+
 
             {role !== "" && <P>Given Permissions : </P>}
             <FormGroup
@@ -384,7 +439,7 @@ const UpdateUser: React.FC<PropsTypes> = ({
                                     value="value"
                                     disabled={true}
                                     checked={permission.read}
-                                    onChange={() => {}}
+                                    onChange={() => { }}
                                     style={{ display: "none" }} // Hide the default checkbox
                                   />
                                   <span
@@ -412,7 +467,7 @@ const UpdateUser: React.FC<PropsTypes> = ({
                                     value="value"
                                     disabled={true}
                                     checked={permission.create}
-                                    onChange={() => {}}
+                                    onChange={() => { }}
                                     style={{ display: "none" }} // Hide the default checkbox
                                   />
                                   <span
@@ -440,7 +495,7 @@ const UpdateUser: React.FC<PropsTypes> = ({
                                     value="value"
                                     disabled={true}
                                     checked={permission.edit}
-                                    onChange={() => {}}
+                                    onChange={() => { }}
                                     style={{ display: "none" }} // Hide the default checkbox
                                   />
                                   <span
@@ -468,7 +523,7 @@ const UpdateUser: React.FC<PropsTypes> = ({
                                     value="value"
                                     disabled={true}
                                     checked={permission.delete}
-                                    onChange={() => {}}
+                                    onChange={() => { }}
                                     style={{ display: "none" }} // Hide the default checkbox
                                   />
                                   <span
@@ -576,9 +631,8 @@ const UpdateUser: React.FC<PropsTypes> = ({
                       }}
                     />
                     <span
-                      className={`switch-state ${
-                        isActive ? "bg-primary" : "bg-secondary"
-                      }`}
+                      className={`switch-state ${isActive ? "bg-primary" : "bg-secondary"
+                        }`}
                     />
                   </Label>
                 </div>

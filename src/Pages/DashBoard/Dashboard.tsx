@@ -375,34 +375,34 @@ const Dashboard = () => {
         }}
       >
         <Skeleton
-          height="140px"
+          height="90px"
           width="100%"
           marginTop="10px"
           marginBottom="30px"
         />
         <Skeleton
-          height="140px"
+          height="90px"
           width="100%"
           marginTop="10px"
           marginBottom="30px"
           marginLeft="30px"
         />
         <Skeleton
-          height="140px"
+          height="90px"
           width="100%"
           marginTop="10px"
           marginBottom="20px"
           marginLeft="30px"
         />
         <Skeleton
-          height="140px"
+          height="90px"
           width="100%"
           marginTop="10px"
           marginBottom="20px"
           marginLeft="30px"
         />
         <Skeleton
-          height="140px"
+          height="90px"
           width="100%"
           marginTop="10px"
           marginBottom="20px"
@@ -417,7 +417,8 @@ const Dashboard = () => {
         />
       </div> : <Card
         style={{
-          height: "280px",
+          height: "200px",
+          paddingBottom: "-20px",
           overflow: "hidden",
           transition: "height 0.5s",
           marginTop: "15px",
@@ -447,65 +448,115 @@ const Dashboard = () => {
               <Row>
                 {complainCenterStatistics.map((data: any, index: any) => (
                   <Col
-                    xl="2"
-                    lg="2"
+                    xl={2}
+                    lg={2}
                     md="4"
                     sm="12"
                     key={index}
                     style={{
-                      marginBottom: "10px",
+                      marginTop: "15px",
+                      // height: "80px",
+                      position: "relative",
                     }}
                   >
                     <div className="sale" style={{
-                      backgroundColor:
-                        data.key === "New"
-                          ? "rgba(0, 0, 255, 0.3)"
-                          : data.key == "InProgress"
-                            ? "rgba(255, 165, 0, 0.3)"
-                            : data.key === "Pending"
-                              ? "rgba(255, 0, 0, 0.3)" :
-                              data.key === "Resolved"
-                                ? "rgba(0, 255, 0, 0.3)" : "rgb(245, 246, 249)",
-                      height: "140px"
+                      display: "flex",
+                      alignItems: "center",
+                      textAlign: "center",
+                      padding: "0px 15px",
+                      backgroundColor: "white",
+                      //   data.key === "New"
+                      //     ? "rgba(0, 0, 255, 0.3)"
+                      //     : data.key == "InProgress"
+                      //       ? "rgba(255, 165, 0, 0.3)"
+                      //       : data.key === "Pending"
+                      //         ? "rgba(255, 0, 0, 0.3)" :
+                      //         data.key === "Resolved"
+                      //           ? "rgba(0, 255, 0, 0.3)" : "rgb(245, 246, 249)",
+                      boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)", // Example box shadow
+                      height: "60px",
+                      width: "92%"
                     }}>
                       <H4>{data.key !== "InternalComplaints" ? (data.key == "InProgress" ? "In Progress" : data.key) : "Total"}</H4>
 
-                      <H5>{data.value}</H5>
-                      <P className="d-flex">
-                        <span className={`bg-light-${data.color} me-2`}>
-                          <SVG iconId={data.svgIcon} />
-                        </span>
-                        <span className={`font-${data.color}`}>
-                          {data.percentage}
-                        </span>
-                      </P>
-                      <span className="sale-title">{data.time}</span>
+                      {/* <H6>{data.value}</H6> */}
+                      {/* <P className="d-flex">
+                          <span className={`bg-light-${data.color} me-2`}>
+                            <SVG iconId={data.svgIcon} />
+                          </span>
+                          <span className={`font-${data.color}`}>
+                            {data.percentage}
+                          </span>
+                        </P>
+                        <span className="sale-title">{data.time}</span> */}
+                    </div>
+                    <div style={{
+                      backgroundColor: "white",
+                      border: `4px solid ${data.key === "New"
+                        ? "rgba(0, 0, 255, 0.3)"
+                        : data.key == "InProgress"
+                          ? "rgba(255, 165, 0, 0.3)"
+                          : data.key === "Pending"
+                            ? "rgba(255, 0, 0, 0.3)" :
+                            data.key === "Resolved"
+                              ? "rgba(0, 255, 0, 0.3)" : "rgb(245, 246, 249)"}`,
+                      height: '45px',
+                      width: "45px",
+                      borderRadius: "100px",
+                      position: "absolute",
+                      top: "0",
+                      right: "0",
+                      marginTop: "8px",
+                      marginRight: "5px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      textAlign: "center"
+                    }}>
+                      <div style={{
+                        backgroundColor: "white",
+                        border: `3px solid lightgray`,
+                        height: '34px',
+                        width: "34px",
+                        borderRadius: "100px",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        textAlign: "center"
+                      }}>
+                        <H5>{data.value}</H5>
+                      </div>
                     </div>
                   </Col>
                 ))}
-                <Col xl="2" lg="2" md="4" sm="12">
+                <Col xl="2" lg="2" md="4" sm="12" style={{
+                  // display:"flex",
+                  // alignItems:"center"
+                  // marginTop: "15px"
+                }}>
                   <div className="sale"
-                  style={{
-                    backgroundColor: "white", // Remove the background color
-                    paddingTop:"0px"
-                  }}
-                  >
+
+                    style={{
+                      backgroundColor: "white", // Remove the background color
+                      paddingTop: "0px"
+                    }}>
                     <div>
                       <div
                         style={{
                           display: "flex",
                           flexDirection: "row",
                           width: "100%", // Set the width of the outer container
-                          height: "200px", // Set the height of the outer container
+                          height: "170px", // Set the height of the outer container
                           backgroundColor: "white", // Remove the background color
-                          
+                          // marginTop: "15px",
+                          // marginBottom: "-100px"
                         }}
                       >
                         <div
                           style={{
                             flex: "1",
                             marginRight: "0px",
-                            // backgroundColor: "white",
+                            // backgroundColor: "gray",
                           }}
                         >
                           <Chart

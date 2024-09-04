@@ -54,6 +54,10 @@ import BankAccountSlice from "./Reducer/BankAccountSlice";
 import ExpensesSlice from "./Reducer/ExpensesSlice";
 import InventoryProductSlice from "./Reducer/InventoryProductSlice";
 import VendorSlice from "./Reducer/VendorSlice";
+import TaxSlice from "./Reducer/TaxSlice";
+import StockAdjustmentTypeSlice from "./Reducer/StockAdjustmentTypeSlice";
+import StockMovementSlice from "./Reducer/StockMovementSlice";
+import StockAdjustementSlice from "./Reducer/StockAdjustementSlice";
 
 const Store = configureStore({
   reducer: {
@@ -111,8 +115,11 @@ const Store = configureStore({
     bankAccounts: BankAccountSlice,
     expenses: ExpensesSlice,
     inventoryProduct: InventoryProductSlice,
-    vendor: VendorSlice
-
+    vendor: VendorSlice,
+    taxes: TaxSlice,
+    stockAdjustmentTypes: StockAdjustmentTypeSlice,
+    stockMovement: StockMovementSlice,
+    stockAdjustment: StockAdjustementSlice
   },
 });
 

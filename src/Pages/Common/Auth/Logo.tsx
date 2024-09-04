@@ -4,7 +4,7 @@ import { Image } from "../../../AbstractElements";
 import { dynamicImage } from "../../../Service/index";
 import Logoo from "../../assets/Logo.png";
 import { useSelector } from "react-redux";
-import { IMAGE_BASE_URL } from "../../../Utilities/api";
+import { IMAGE_BASE_URL } from "../../../Utilities/api/apiEndpoints";
 
 interface PropsType {
   alignLogo?: string;

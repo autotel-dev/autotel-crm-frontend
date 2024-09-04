@@ -5,8 +5,14 @@ import DataTable from "react-data-table-component";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import "../../../../../../../../CssConstaints/Style.css";
-import { SaleLeadsDataType, supportColumns } from "./Type/Type";
+import { ExpensesDataType, expensesColumns } from "./Type/Type";
 import { PlusCircle } from "react-feather";
+import { getAll } from "../../../../../../../../Utilities/api";
+import { GET_ALL_BANK_ACCOUNTS, GET_ALL_EXPENSE_ACCOUNTS } from "../../../../../../../../Utilities/api/apiEndpoints";
+import { setBankAccounts, setExpense, setExpenseAccounts } from "../../../../../../../../ReaduxToolkit/Reducer/ExpensesSlice";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrashAlt } from "@fortawesome/free-solid-svg-icons";
+import deleteAlert from "../../../../../../../../Utilities/alerts/DeleteAlert";
 
 interface ExpensesTableProps {
     iscreateNewExpenses: boolean;
@@ -18,11 +24,9 @@ const ExpensesTable: React.FC<ExpensesTableProps> = ({
     setIscreateNewExpenses,
 }) => {
     const dispatch = useDispatch();
-    // Function to transform supportData into allBugReports format
-    const { bugReports } = useSelector((state: any) => state.support);
-    const { userPermissions } = useSelector(
-        (state: any) => state.userPermissions
-    );
+    // Function to transform expensesData into allBugReports format
+    const { expenses } = useSelector((state: any) => state.expenses);
+
     const { userPersonalizationData } = useSelector(
         (state: any) => state.personalization
     );
@@ -40,25 +44,22 @@ const ExpensesTable: React.FC<ExpensesTableProps> = ({
     // Usage
     const hexColor = "#ff0000"; // Example hex color
     const rgbColor = hexToRgb(userPersonalizationData?.buttonsAndBarsColor); // Convert hex to RGB
-    var support = userPermissions.find((item: any) => item.title === "Support");
     // console.log("support", support);
-    const supportData = () => {
-        return bugReports?.filter(
+    const expensesData = () => {
+        return expenses?.filter(
             (item: any) =>
-                item?.ticketId.toLowerCase().split("-")[1].includes(searchValue) ||
-                item?.name.toLowerCase().includes(searchValue) ||
-                item?.user.emailAddress.toLowerCase().includes(searchValue)
+                item?.expenseNumber.toLowerCase().split("-")[1].includes(searchValue) ||
+                item?.company.toLowerCase().includes(searchValue)
         )
             .map((item: any) => ({
-                ticket_id: item?._id,
-                id: item?.ticketId,
-                username: item?.user?.fullName,
-                email: item?.user?.emailAddress,
-                ticket_name: item?.name,
-                description: item?.description,
-                isActive: item?.isActive ? "true" : "false",
-                status: item?.status,
-                priorty: item?.priorty == null ? "N/A" : item?.priorty,
+                id: item?._id,
+                expenseNumber: item?.expenseNumber,
+                payFrom: item?.payFrom?.name,
+                user: item?.company?.fullName,
+                reference: item?.reference,
+                totalAmount: item?.totalAmount,
+                attachement: item?.attachement,
+                expenseItems: item?.expenseItems,
                 date: `${item?.updatedAt.toString().slice(0, 10)},  ${new Date(
                     item?.updatedAt
                 )
@@ -74,7 +75,7 @@ const ExpensesTable: React.FC<ExpensesTableProps> = ({
     const [searchValue, setSearchValue] = useState("");
 
     useEffect(() => {
-        setData(supportData());
+        setData(expensesData());
     }, [searchValue]);
 
     const handleSearch = (e: any) => {
@@ -82,47 +83,64 @@ const ExpensesTable: React.FC<ExpensesTableProps> = ({
         setSearchValue(searchKey);
     };
 
-    // console.log("allBugReports", supportData());
+    // console.log("allBugReports", expensesData());
     useEffect(() => {
-        setData(supportData());
-    }, [bugReports]);
+        setData(expensesData());
+    }, [expenses]);
 
-    const navigate = useNavigate();
-    // const history = useHistory();
-    const [selectedRows, setSelectedRows] = useState([]);
+    const [selectedRows, setSelectedRows] = useState<any[]>([]);
     const [toggleDelete, setToggleDelete] = useState(false);
-    const [data, setData] = useState(supportData());
+    const [data, setData] = useState(expensesData());
 
-    const handleRowSelected = useCallback((state: any) => {
+    const handleRowSelected = (state: any) => {
         setSelectedRows(state.selectedRows);
-    }, []);
-
-    const handleDelete = () => {
-        if (
-            window.confirm(
-                `Are you sure you want to delete:\r ${selectedRows.map(
-                    (r: SaleLeadsDataType) => r.id
-                )}?`
-            )
-        ) {
-            setToggleDelete(!toggleDelete);
-            setData(
-                data.filter((item: any) =>
-                    selectedRows.filter((elem: SaleLeadsDataType) => elem.id === item.id)
-                        .length > 0
-                        ? false
-                        : true
-                )
-            );
-            setSelectedRows([]);
-        }
+        console.log(state.selectedRows);
     };
+
+    // const handleDelete = () => {
+    //     if (
+    //         window.confirm(
+    //             `Are you sure you want to delete:\r ${selectedRows.map(
+    //                 (r: SaleLeadsDataType) => r.id
+    //             )}?`
+    //         )
+    //     ) {
+    //         setToggleDelete(!toggleDelete);
+    //         setData(
+    //             data.filter((item: any) =>
+    //                 selectedRows.filter((elem: SaleLeadsDataType) => elem.id === item.id)
+    //                     .length > 0
+    //                     ? false
+    //                     : true
+    //             )
+    //         );
+    //         setSelectedRows([]);
+    //     }
+    // };
 
     const handleRowClicked = (row: any) => {
-        navigate(
-            `${process.env.PUBLIC_URL}/support/ticketDetails/${row.ticket_id}`
-        );
+        dispatch(setExpense(row))
+        setIscreateNewExpenses(true)
+
     };
+
+
+    useEffect(() => {
+        // Fetch countries and cities from API
+        getAll({ url: GET_ALL_BANK_ACCOUNTS }).then((data: any) => {
+            if (data?.success) {
+                dispatch(setBankAccounts(data.data));
+            }
+        });
+
+        getAll({ url: GET_ALL_EXPENSE_ACCOUNTS }).then((data: any) => {
+            if (data?.success) {
+                dispatch(setExpenseAccounts(data.data));
+            }
+        });
+    }, []);
+
+
     return (
         <div className="table-responsive support-table" style={{ overflow: "auto", scrollbarWidth: "none" }}>
 
@@ -145,6 +163,7 @@ const ExpensesTable: React.FC<ExpensesTableProps> = ({
 
                         }}
                         onClick={() => {
+                            dispatch(setExpense(null))
                             setIscreateNewExpenses(true)
                         }}
                     >
@@ -183,11 +202,11 @@ const ExpensesTable: React.FC<ExpensesTableProps> = ({
             </Row>
 
             <DataTable
-                columns={supportColumns}
+                columns={expensesColumns}
                 data={data}
                 // striped={true}
                 pagination
-                selectableRows
+                selectableRows={selectedRows.length >= 0}
                 onSelectedRowsChange={handleRowSelected}
                 onRowClicked={handleRowClicked} // Pass the event handler for row clicks
                 clearSelectedRows={toggleDelete}
@@ -221,6 +240,39 @@ const ExpensesTable: React.FC<ExpensesTableProps> = ({
       }
       `}
             </style>
+
+            {selectedRows.length > 0 &&
+                <FontAwesomeIcon
+                    icon={faTrashAlt}
+                    // onClick={handleDelete}
+                    onClick={() => {
+                        // console.log("345678");
+                        var alertData = {
+                            title: "Are you sure?",
+                            text: "Once deleted, you will not be able to recover this ",
+                        };
+                        const type = "expensesType";
+                        deleteAlert(
+                            alertData,
+                            selectedRows[0].id,
+                            type,
+                            dispatch
+                        ).then((data) => {
+                            console.log("data", data);
+                            setSelectedRows([]);
+                        }).catch((dataa) => {
+                            console.log("data", dataa);
+                        });
+                    }}
+                    style={{
+                        cursor: "pointer",
+                        color: "red",
+                        position: "absolute",
+                        left: "65px",
+                        top: "140px"
+                    }}
+                />
+            }
         </div>
     );
 };

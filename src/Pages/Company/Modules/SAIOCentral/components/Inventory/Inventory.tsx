@@ -42,7 +42,7 @@ const Inventory = () => {
         }
         if (data.success) {
           // // console.log("hhg");
-          dispatch(setProduct(data.data.products));
+          dispatch(setProduct(data.data));
         }
       }
     });

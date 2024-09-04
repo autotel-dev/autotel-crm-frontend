@@ -24,7 +24,7 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import H7 from "../../../CommonElements/Headings/H7Element";
 import "../../../CssConstaints/Style.css";
-import { API_BASE_URL, getAll } from "../../../Utilities/api";
+import { getAll } from "../../../Utilities/api";
 import deleteAlert from "../../../Utilities/alerts/DeleteAlert";
 import { header } from "../../../Utilities/headers/header";
 import Skeleton from "../../Utilities/Skeleton/Skeleton";

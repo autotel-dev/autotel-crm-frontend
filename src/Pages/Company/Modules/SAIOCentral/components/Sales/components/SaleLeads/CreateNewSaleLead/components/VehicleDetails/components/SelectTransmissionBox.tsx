@@ -5,9 +5,10 @@ interface propTypes {
   placeholder: any;
   transmission: string;
   setTransmission: any;
+  disabled: boolean;
 }
 
-const SelectTransmissionBox: React.FC<propTypes> = ({ placeholder, transmission, setTransmission }) => {
+const SelectTransmissionBox: React.FC<propTypes> = ({ placeholder, transmission, setTransmission,disabled }) => {
   const { transmissions } = useSelector(
     (state: any) => state.sales
   );
@@ -18,12 +19,13 @@ const SelectTransmissionBox: React.FC<propTypes> = ({ placeholder, transmission,
   const tempList: any = [];
   useEffect(() => {
     transmissions?.map((item: any, index: any) => {
-      tempList.push({ value: `${item?.value}`, label: `${item?.title}` });
+      tempList.push({ value: `${item?.value}`, label: `${item?.label}` });
     });
     setTransmissionsList(tempList);
   }, [transmissions]);
   return (
     <Select
+    value={transmission !== "" ? transmission : null}
       showSearch
       style={{ width: "100%", height: 36 }}
       placeholder={placeholder}
@@ -40,6 +42,7 @@ const SelectTransmissionBox: React.FC<propTypes> = ({ placeholder, transmission,
         setTransmission(e)
       }}
       options={transmissionsList}
+      disabled={disabled}
     />
   );
 };

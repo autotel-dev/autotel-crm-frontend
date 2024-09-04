@@ -344,40 +344,18 @@ const UpdateVendor: React.FC<PropsTypes> = ({
                 </FormGroup>
               </Col>
             </Row>
-            <div className="text-end">
-              <button
-                type="button"
-                className={`btn ${
-                  userPersonalizationData?.buttonsAndBarsColor == null
-                    ? "btn-secondary"
-                    : ""
-                }`}
-                style={{
-                  color: "white",
-                  backgroundColor:
-                    userPersonalizationData?.buttonsAndBarsColor || "",
-                }}
-                onClick={() => setIsVisible(false)}
-              >
-                {Cancel}
-              </button>
-              <button
-                type="submit"
-                className={`btn ${
-                  userPersonalizationData?.buttonsAndBarsColor == null
-                    ? "btn-primary"
-                    : ""
-                }`}
-                style={{
-                  color: "white",
-                  backgroundColor:
-                    userPersonalizationData?.buttonsAndBarsColor || "",
-                  marginLeft: "5px",
-                }}
-              >
-                {loading ? "Loading..." : "Save"}
-              </button>
-            </div>
+            <Button color="primary" className="me-1">
+              {loading ? "Loading ..." : `Save`}
+            </Button>
+            &nbsp;&nbsp;
+            <Button
+              disabled={loading ? true : false}
+              color="secondary"
+              onClick={() => setIsVisible(false)}
+            >
+              {Cancel}
+            </Button>
+
           </form>
         </ModalBody>
       </Modal>

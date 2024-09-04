@@ -5,7 +5,8 @@ export interface UserType {
   isActive?: boolean;
   phoneNo?: string;
   company?: string;
-  subRole?:string;
+  subRole?: string;
+  userBranch?: string;
 }
 export interface CountriesDataTableType {
   id: string;

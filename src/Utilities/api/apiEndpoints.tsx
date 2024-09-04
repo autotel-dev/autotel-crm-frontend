@@ -1,5 +1,5 @@
-export const API_BASE_URL = "http://124.29.238.127:8080/api/v1";
-export const IMAGE_BASE_URL = "http://124.29.238.127:8080";
+export const API_BASE_URL = "http://192.168.18.122:81/api/v1";
+export const IMAGE_BASE_URL = "http://192.168.18.122:81";
 // export const API_BASE_URL = "https://crmapi.autotel.pk/api/v1";
 // export const IMAGE_BASE_URL = "https://crmapi.autotel.pk";
 
@@ -24,6 +24,7 @@ export const GET_EMAIL_GATEWAY = `${API_BASE_URL}/gateway/email-gateway/get-gate
 export const UPDATE_EMAIL_GATEWAY_ACTIVATION_STATUS = `${API_BASE_URL}/gateway/email-gateway/change-gateway-activation-status`;
 export const TEST_SMTP_EMAIL_GATEWAY_CREDENTIALS = `${API_BASE_URL}/gateway/email-gateway/verify-gateway`;
 export const SEND_TEST_EMAIL = `${API_BASE_URL}/gateway/email-gateway/send-test-email`;
+
 
 // Common - WhatsApp Gateway
 export const CREATE_WHATSAPP_GATEWAY = `${API_BASE_URL}/gateway/whatsapp-gateway/create-gateway`;
@@ -278,6 +279,39 @@ export const GET_ALL_SALELEADS = `${API_BASE_URL}/sale-lead/get-all-leads`;
 export const GET_SINGLE_SALELEAD = `${API_BASE_URL}/sale-lead/get-sale-lead`;
 export const CONFIRM_OR_REJECT_SALELEAD = `${API_BASE_URL}/sale-lead/confirm-or-reject-lead`;
 export const CREATE_NEW_SALELEAD_VEHICLE = `${API_BASE_URL}/vehicle/create-vehicle`;
+export const GET_ALL_SERVICES = `${API_BASE_URL}/sale-lead/get-all-services`;
+export const ATTACH_SERVICESTO_VEHICLES = `${API_BASE_URL}/vehicle/attach-services`;
+export const GET_ALL_PRODUCTS_BY_TYPE = `${API_BASE_URL}/product/get-all-products-by-type`;
+export const GET_ALL_INVENTORY_ITEMS = `${API_BASE_URL}/inventory/search-inventory-items`;
+export const GET_ALL_SINGLE_INVENTORY_ITEM = `${API_BASE_URL}/inventory/get-inventory-item`;
+export const GET_ALL_COMPANY_INSTALLERS = `${API_BASE_URL}/vehicle/get-all-installers`;
+export const ATTACH_INSTALLER_TO_VEHICLE = `${API_BASE_URL}/vehicle/add-installer`;
+export const ATTACH_INVENTORY_TO_VEHICLE = `${API_BASE_URL}/vehicle/attach-inventory`;
+export const COMPLETE_VEHICLE_INSTALLATION = `${API_BASE_URL}/vehicle/complete-installation`;
+export const ATTACH_SECURITY_BRIEFING = `${API_BASE_URL}/vehicle/bulk-attach-security-briefings`;
+export const COMPLETE_SALE_LEAD = `${API_BASE_URL}/sale-lead/complete-lead`;
+export const OLDEST_INVENTORY_ITEM = `${API_BASE_URL}/inventory/get-oldest=inventory-item`;
+
+
+export const UPDATE_SALE_LEAD = `${API_BASE_URL}/sale-lead/update-lead`;
+export const UPDATE_CUSTOMER = `${API_BASE_URL}/customer/update-customer`;
+export const UPDATE_VEHICLE = `${API_BASE_URL}/vehicle/update-vehicle`;
+export const DELETE_VEHICLE = `${API_BASE_URL}/vehicle/delete-vehicle`;
+
+// Company -> Modules - SIAO-Central - Sale Invoice
+
+export const CREATE_SALE_INVOICE = `${API_BASE_URL}/sale-invoice/create-sale-invoice`;
+export const GET_ALL_SALE_INVOICES = `${API_BASE_URL}/sale-invoice/get-all-sale-invoices`;
+
+
+// Company -> Modules- SAIO - accounts
+export const CREATE_VENDOR = `${API_BASE_URL}/setup/vendor/create-vendor`;
+export const GET_ALL_VENDORS = `${API_BASE_URL}/setup/vendor/get-all-vendors`;
+export const DELETE_VENDOR = `${API_BASE_URL}/setup/vendor/delete-vendor`;
+export const UPDATE_VENDOR = `${API_BASE_URL}/setup/vendor/update-vendor`;
+export const GET_VENDOR_BY_ID = `${API_BASE_URL}/setup/vendor/get-vendor-by-id`;
+
+
 
 // Company -> Modules - SAIO-Central -Accounts - Expense Accounts
 
@@ -297,11 +331,34 @@ export const UPDATE_BANK_ACCOUNT = `${API_BASE_URL}/accounts/bank-account/update
 export const DELETE_BANK_ACCOUNT = `${API_BASE_URL}/accounts/bank-account/delete-bank-account`;
 export const GET_ALL_ACCOUNT_TYPES = `${API_BASE_URL}/accounts/bank-account/get-all-account-types`;
 
+// Company -> Modules - SAIO-Central -Accounts - Expenses
 
-// Company -> Modules - Monitoring
-export const GET_DEVICES = `${API_BASE_URL}/company/devices`;
+export const CREATE_NEW_EXPENSE = `${API_BASE_URL}/accounts/expense/create-expense`;
+export const GET_ALL_EXPENSES = `${API_BASE_URL}/accounts/expense/get-all-expenses`;
+export const UPDATE_EXPENSES = `${API_BASE_URL}/accounts/expense/update-expense`;
+export const DELETE_EXPENSES = `${API_BASE_URL}/accounts/expense/delete-expense`;
 
-// Company -> Modules- SAIO - inventory
+
+// Company -> Modules - SAIO-Central -Accounts - PurchaseInvoice
+
+export const CREATE_NEW_PURCHASE_INVOICE = `${API_BASE_URL}/purchase-invoice/create-purchase-invoice`;
+export const GET_ALL_PURCHASE_INVOICES = `${API_BASE_URL}/purchase-invoice/get-all-purchase-invoice`;
+export const VALIDATE_SERIALS = `${API_BASE_URL}/purchase-invoice/bulk-validate-serials`;
+
+
+// Company -> Modules - SAIO-Central -Accounts - Tax
+
+export const CREATE_NEW_TAX = `${API_BASE_URL}/accounts/tax/create-tax`;
+export const GET_ALL_TAXES = `${API_BASE_URL}/accounts/tax/get-all-taxes`;
+export const UPDATE_TAX = `${API_BASE_URL}/accounts/tax/update-tax`;
+export const DELETE_TAX = `${API_BASE_URL}/accounts/tax/delete-tax`;
+
+
+
+
+
+
+// Company -> Modules- SAIO - inventory - Products
 export const CREATE_PRODUCT = `${API_BASE_URL}/product/create-product`;
 export const GET_ALL_PRODUCTS = `${API_BASE_URL}/product/get-all-products`;
 export const DELETE_PRODUCT = `${API_BASE_URL}/product/delete-product`;
@@ -309,14 +366,31 @@ export const UPDATE_PRODUCT = `${API_BASE_URL}/product/update-product`;
 export const GET_ALL_PRODUCT_TYPES = `${API_BASE_URL}/product/get-all-product-types`;
 export const GET_ALL_UNITS = `${API_BASE_URL}/product/get-all-units`;
 
-// Company -> Modules- SAIO - accounts
-export const CREATE_VENDOR = `${API_BASE_URL}/setup/vendor/create-vendor`;
-export const GET_ALL_VENDORS = `${API_BASE_URL}/setup/vendor/get-all-vendors`;
-export const DELETE_VENDOR = `${API_BASE_URL}/setup/vendor/delete-vendor`;
-export const UPDATE_VENDOR = `${API_BASE_URL}/setup/vendor/update-vendor`;
-export const GET_VENDOR_BY_ID = `${API_BASE_URL}/setup/vendor/get-vendor-by-id`;
+// Company -> Modules- SAIO - inventory - Stock Adjustment Types
+
+export const CREATE_NEW_STOCK_ADJUSTMENT_TYPE = `${API_BASE_URL}/stock-adjustment-types/create-stock-adjustment-type`;
+export const GET_ALL_STOCK_ADJUSTMENT_TYPES = `${API_BASE_URL}/stock-adjustment-types/get-all-stock-adjustment-type `;
+export const DELETE_STOCK_ADJUSTMENT_TYPE = `${API_BASE_URL}/stock-adjustment-types/delete-stock-adjustment-type`;
+export const UPDATE_STOCK_ADJUSTMENT_TYPE = `${API_BASE_URL}/stock-adjustment-types/update-stock-adjustment-type`;
 
 
+// Company -> Modules- SAIO - inventory - Stock Adjustment
+
+export const CREATE_NEW_STOCK_ADJUSTMENT = `${API_BASE_URL}/stock-adjustment/create-stock-adjustment`;
+export const GET_ALL_STOCK_ADJUSTMENT = `${API_BASE_URL}/stock-adjustment/get-all-stock-adjustment`;
+export const UPDATE_STOCK_ADJUSTMENT = `${API_BASE_URL}/stock-adjustment/update-stock-adjustment`;
+
+
+// Company -> Modules- SAIO - inventory - Stock Movement
+
+export const CREATE_NEW_STOCK_MOVEMENT = `${API_BASE_URL}/stock-movement/create-stock-movement`;
+export const GET_ALL_STOCK_MOVEMENT = `${API_BASE_URL}/stock-movement/get-all-stock-movement`;
+export const GET_STOCK_MOVEMENT_BY_ID = `${API_BASE_URL}/stock-movement/get-all-stock-movement`;
+
+
+
+// Company -> Modules - Monitoring
+export const GET_DEVICES = `${API_BASE_URL}/company/devices`;
 
 // Company -> Operators
 export const CREATE_OPERATOR = `${API_BASE_URL}/operator/create-operator`;

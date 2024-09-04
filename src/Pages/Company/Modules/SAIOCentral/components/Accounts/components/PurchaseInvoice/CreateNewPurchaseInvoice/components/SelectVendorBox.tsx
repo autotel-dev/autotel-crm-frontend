@@ -17,7 +17,7 @@ const SelectVendorBox: React.FC<propTypes> = ({ placeholder, setVendor, vendor }
   const tempList: any = [];
   useEffect(() => {
     vendors?.map((item: any, index: any) => {
-      tempList.push({ value: `${item?._id}`, label: `${item?.name}` });
+      tempList.push({ value: `${item?._id}`, label: `${item?.vendorName}` });
     });
     setVendorsList(tempList);
   }, [vendors]);

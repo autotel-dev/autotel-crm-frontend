@@ -13,7 +13,7 @@ import { Cancel } from "../../../utils/Constant";
 import { H3, H4 } from "../../../AbstractElements";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { API_BASE_URL, getAll, update } from "../../../Utilities/api";
+import { getAll, update } from "../../../Utilities/api";
 
 import { setNoDataFound } from "../../../ReaduxToolkit/Reducer/NoDataFoundSlice";
 import { ProvinceType } from "../Province/ProvinceTypes/ProvinceTypes";

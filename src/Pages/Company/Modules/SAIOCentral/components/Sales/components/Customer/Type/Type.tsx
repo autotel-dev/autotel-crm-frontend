@@ -60,35 +60,35 @@ export const supportColumns = [
     //     sortable: true,
     //     center: true,
     //     width: "150px", // Set the width for this column
-    //     cell: (row: CustomersDataType) => (
-    //         <div
-    //             style={{
-    //                 width: "120px",
-    //                 textAlign: "center",
-    //                 padding: "5px",
-    //                 borderRadius: "5px",
-    //                 backgroundColor:
-    //                     row.status === "NEW"
-    //                         ? "rgba(0, 0, 255, 0.3)"
-    //                         : row.status === "IN_PROGRESS"
-    //                             ? "rgba(255, 165, 0, 0.3)"
-    //                             : row.status === "PENDING"
-    //                                 ? "rgba(255, 0, 0, 0.3)"
-    //                                 : "rgba(0, 255, 0, 0.3)",
-    //                 // color:
-    //                 //   row.status === "NEW"
-    //                 //     ? "blue"
-    //                 //     : row.status === "IN_PROGRESS"
-    //                 //     ? "orange"
-    //                 //     : row.status === "PENDING"
-    //                 //     ? "red"
-    //                 //     : "green",
-    //                 color: "black"
-    //             }}
-    //         >
-    //             {formatUnderscoredString(row.status)}
-    //         </div>
-    //     ),
+        // cell: (row: CustomersDataType) => (
+        //     <div
+        //         style={{
+        //             width: "120px",
+        //             textAlign: "center",
+        //             padding: "5px",
+        //             borderRadius: "5px",
+                    // backgroundColor:
+                    //     row.status === "NEW"
+                    //         ? "rgba(0, 0, 255, 0.3)"
+                    //         : row.status === "IN_PROGRESS"
+                    //             ? "rgba(255, 165, 0, 0.3)"
+                    //             : row.status === "PENDING"
+                    //                 ? "rgba(255, 0, 0, 0.3)"
+                    //                 : "rgba(0, 255, 0, 0.3)",
+                    // // color:
+                    // //   row.status === "NEW"
+                    // //     ? "blue"
+                    // //     : row.status === "IN_PROGRESS"
+                    // //     ? "orange"
+                    // //     : row.status === "PENDING"
+                    // //     ? "red"
+                    // //     : "green",
+                    // color: "black"
+        //         }}
+        //     >
+        //         {formatUnderscoredString(row.status)}
+        //     </div>
+        // ),
     // },
     // {
     //     name: "Priority",

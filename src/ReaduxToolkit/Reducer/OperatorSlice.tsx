@@ -5,6 +5,7 @@ const initialState = {
   operators: [],
   filterOperators: [],
   activeInActiveOperators: "All",
+  branches: [],
   loading: false,
   error: null,
   id: null,
@@ -36,6 +37,10 @@ const OpearatorSlice = createSlice({
     setOperatorsEnd: (state) => {
       state.loading = false;
     },
+    setBranches: (state, action) => {
+      state.branches = action.payload;
+
+    },
     setId: (state, action) => {
       state.id = action.payload;
     },
@@ -56,6 +61,7 @@ export const {
   setInActiveActiveUsers,
   setOperatorsStart,
   setOperatorsEnd,
+  setBranches,
   setId,
   setValue,
   setNoCountryFound,

@@ -11,8 +11,8 @@ const H7 = (props: propsTypes) => {
       {...props}
       style={{
         textAlign: "center",
-        fontSize: "12px",
-        fontWeight: "bold",
+        fontSize: "11px",
+        fontWeight: "700",
       }}
     >
       {props.children}

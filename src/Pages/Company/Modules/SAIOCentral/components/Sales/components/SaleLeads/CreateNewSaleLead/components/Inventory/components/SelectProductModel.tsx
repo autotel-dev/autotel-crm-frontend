@@ -3,17 +3,43 @@ import { Col, Button, Modal, ModalBody } from "reactstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { Select } from "antd";
 import { H4 } from "../../../../../../../../../../../../AbstractElements";
+import { getAll } from "../../../../../../../../../../../../Utilities/api";
+import { GET_ALL_PRODUCTS_BY_TYPE, OLDEST_INVENTORY_ITEM } from "../../../../../../../../../../../../Utilities/api/apiEndpoints";
 
 interface PropsTypes {
     isVisible: boolean;
     setIsVisible: any;
     type: string;
+    deviceProduct?: any;
+    setDeviceProduct?: any;
+    simProduct?: any;
+    setSimProduct?: any;
+    sensorProduct?: any;
+    setSensorProduct?: any;
+    accessories?: any;
+    setAccessories?: any;
+    onAddSim?: any;
+    onAddSensor?: any;
+    onAddAccessory?: any
+
 }
 
 const SelectProductModel: React.FC<PropsTypes> = ({
     isVisible,
     setIsVisible = () => { },
-    type
+    type,
+    deviceProduct,
+    setDeviceProduct,
+    simProduct,
+    setSimProduct,
+    sensorProduct,
+    setSensorProduct,
+    accessories,
+    setAccessories,
+    onAddSim,
+    onAddSensor,
+    onAddAccessory
+
 }) => {
     const { userPersonalizationData } = useSelector(
         (state: any) => state.personalization
@@ -21,12 +47,11 @@ const SelectProductModel: React.FC<PropsTypes> = ({
     const { geofences, geofencesGroup } = useSelector(
         (state: any) => state.geofence
     );
+    const [listProducts, setListProducts] = useState([]);
 
     const dispatch = useDispatch();
     const [loading, setLoading] = useState(false);
     const [searchValue, setSearchValue] = useState("");
-  
-
     const addToggle = () => {
         setIsVisible(!isVisible);
     };
@@ -36,48 +61,59 @@ const SelectProductModel: React.FC<PropsTypes> = ({
     };
 
 
-    // const fetchSubGroups = async (groupId: string) => {
+    const handleAddSim = (sim: any) => {
+        onAddSim(sim);
+        addToggle()
+    };
 
-    //     const subGroupData: any = await getAll({
-    //         url: `${GET_ALL_SUBGROUPS_BY_GROUP_ID}/${groupId}`,
-    //     });
+    const handleAddSensor = (sensor: any) => {
+        onAddSensor(sensor);
+        addToggle()
+    };
 
-    //     if (subGroupData.success) {
-    //         const initialCheckedState = subGroupData.data.map((subGroup: any) => ({
-    //             ...subGroup,
-    //             checked: false,
-    //         }));
-    //         setSubGroupList(initialCheckedState);
-    //         setCheckedSubGroups(initialCheckedState);
-    //         setLoading(false);
-    //     } else {
-    //         setSubGroupList([]);
-    //         setCheckedSubGroups([]);
-    //         setLoading(false);
-    //     }
-    // };
+    const handleAddAccessory = (accessory: any) => {
+        onAddAccessory(accessory);
+        addToggle()
+    };
 
-    // useEffect(() => {
-    //     if (group !== "") {
-    //         fetchSubGroups(group);
-    //     }
-    // }, [isAddGroupModalVisible, isEditGroupModalVisible]);
+    const fetchProductsByType = async (productType: string) => {
+
+        const allProductsByTypeData: any = await getAll({
+            url: `${GET_ALL_PRODUCTS_BY_TYPE}?productType=${productType}`,
+        });
+
+        if (allProductsByTypeData.success) {
+            // console.log("allProductsByTypeData.data", allProductsByTypeData.data);
+            const tempList: any = [];
+            allProductsByTypeData.data.map((item: any, index: any) => {
+                tempList.push({ value: `${item?._id}`, label: `${item?.name}`, productType: `${item.productType}`, });
+            });
+            setListProducts(tempList);
+            setLoading(false);
+        } else {
+            setListProducts([]);
+            setLoading(false);
+        }
+    };
 
 
+    useEffect(() => {
+        fetchProductsByType(type);
+    }, []);
 
     return (
         <Col md={6}>
             <div className="text-end">
                 <Modal isOpen={isVisible} toggle={addToggle} size="lg" centered >
                     <div className="modal-header">
-                        <H4 className="modal-title">Select {type}</H4>
+                        <H4 className="modal-title">Select {type.toLowerCase()}</H4>
                         <Button
                             color="transprant"
                             className="btn-close"
                             onClick={addToggle}
                         ></Button>
                     </div>
-                    <ModalBody style={{ overflow: "hidden",height:"450px" }}>
+                    <ModalBody style={{ overflow: "hidden", height: "450px" }}>
 
                         <div style={{ margin: "0px 10px" }}>
                             <p
@@ -88,34 +124,53 @@ const SelectProductModel: React.FC<PropsTypes> = ({
                                     margin: "0px",
                                 }}
                             >
-                                Search {type}
+                                Search {type.toLowerCase()}
                             </p>
                             <Select
                                 showSearch
                                 style={{ width: "100%", height: 36, marginBottom: "10px" }}
-                                placeholder="Select group"
+                                placeholder={`Select ${type.toLowerCase()}`}
                                 optionFilterProp="children"
-                                // filterOption={(input, option) =>
-                                //     (option?.label ?? "")
-                                //         .toLowerCase()
-                                //         .includes(input.toLowerCase())
-                                // }
-                                // onChange={async (value: any, options: any) => {
-                                //     setGroup(value === "none" ? null : value);
-                                //     console.log("options", options);
+                                filterOption={(input, option) =>
+                                    (option?.label ?? "")
+                                        .toLowerCase()
+                                        .includes(input.toLowerCase())
+                                }
+                                onChange={async (value: any, options: any) => {
+                                    if (type == "SIM") {
+                                        handleAddSim({ id: value, simNumber: "", iccid: "", network: "" })
+                                    }
+                                    else if (type == "DEVICES") {
+                                        console.log("value", value);
 
-                                //     setSelectedGroup(options);
-                                //     setLoading(true);
-                                //     await fetchSubGroups(value);
-                                // }}
-                                // options={[
-                                //     { label: "None", value: "none" },
-                                //     ...geofencesGroup.map((group: any) => ({
-                                //         label: group?.title,
-                                //         value: group?._id,
-                                //     })),
-                                // ]}
-                                // value={group || undefined}
+                                        setDeviceProduct({
+                                            id: value,
+                                            deviceIMEI: "",
+                                            deviceType: "",
+                                            deviceID: "",
+                                            deviceId: "",
+                                        })
+                                        addToggle()
+                                    } else if (type == "ACCESSORIES") {
+                                        const singleInventoryitemData: any = await getAll({
+                                            url: `${OLDEST_INVENTORY_ITEM}/${value}`,
+                                        });
+
+                                        if (singleInventoryitemData?.success) {
+                                            console.log("OA ->", singleInventoryitemData?.data);
+                                            handleAddAccessory({ id: singleInventoryitemData?.data._id, serialNumber: singleInventoryitemData?.data.serialNumber, sku: singleInventoryitemData?.data.sku, name: singleInventoryitemData?.data.productName })
+                                            addToggle()
+                                        }
+
+                                    }
+                                    else {
+                                        handleAddSensor({ id: value, serialNumber: "", sku: "", type: "" })
+                                    }
+                                    // setDeviceProduct(value);
+                                    // addToggle();
+                                }}
+                                options={listProducts}
+                            // value={deviceProduct}
                             />
                         </div>
 

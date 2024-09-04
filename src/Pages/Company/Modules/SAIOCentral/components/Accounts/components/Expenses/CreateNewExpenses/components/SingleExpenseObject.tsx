@@ -7,7 +7,7 @@ import SelectExpenseAccountBox from "./SelectExpenseAccountBox";
 
 interface PropTypes {
     param: {
-        expense: string
+        expenseAccount: string
         amount: string;
         description: string;
     };
@@ -49,8 +49,8 @@ const SingleExpenseObject: React.FC<PropTypes> = ({
                         <Col xs={12}>
                             <SelectExpenseAccountBox
                                 placeholder="Select Expense Account"
-                                setExpenseAccount={(expense: any) => onChange({ ...param, expense })} // Update the product object in param
-                                expenseAccount={param.expense}
+                                setExpenseAccount={(expenseAccount: any) => onChange({ ...param, expenseAccount })} // Update the product object in param
+                                expenseAccount={param.expenseAccount}
                             />
                         </Col>
 
@@ -72,7 +72,7 @@ const SingleExpenseObject: React.FC<PropTypes> = ({
                     <td style={{ width: "25%", alignItems: "start", borderRight: "1px solid lightgray" }}>
                         <Col xs={12}>
                             <Input
-                                type="text"
+                                type="number"
                                 placeholder="Enter Amount"
                                 value={param.amount} // Calculate amount based on inputs
                                 name="amount"

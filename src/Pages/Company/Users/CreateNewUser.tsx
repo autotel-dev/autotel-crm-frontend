@@ -80,6 +80,7 @@ const CreateNewUser = () => {
         isActive: true,
         company: decodedToken.userId,
         subRole: role,
+        branch:branch,
         allowedModules: allowedModules,
       };
       // console.log(operator);
@@ -177,6 +178,7 @@ const CreateNewUser = () => {
   };
 
   const { roles } = useSelector((state: any) => state.roles);
+  const { branches } = useSelector((state: any) => state.operators);
   const [rolesList, setRolesList] = useState([]);
   const [role, setRole] = useState("");
   // console.log("Roles", roles);
@@ -191,6 +193,21 @@ const CreateNewUser = () => {
     });
     setRolesList(tempRolesList);
   }, [roles]);
+
+  const [branchesList, setBranchesList] = useState([]);
+  const [branch, setBranch] = useState("");
+  // console.log("Roles", roles);
+
+  const tempBranchesList: any = [];
+  useEffect(() => {
+    branches.map((item: any, index: any) => {
+      tempBranchesList.push({
+        value: `${item._id}`,
+        label: `${item.name}`,
+      });
+    });
+    setBranchesList(tempBranchesList);
+  }, [branches]);
 
   const handleModuleClick = (moduleId: any) => {
     const index = allowedModules.findIndex(
@@ -210,15 +227,13 @@ const CreateNewUser = () => {
     <Col md={6}>
       <div className="text-end">
         <button
-          className={`btn ${
-            userPersonalizationData?.buttonsAndBarsColor == null ? "btn-primary" : ""
-          }`}
+          className={`btn ${userPersonalizationData?.buttonsAndBarsColor == null ? "btn-primary" : ""
+            }`}
           style={{
             color: "white",
-            backgroundColor: `${
-              userPersonalizationData !== null &&
+            backgroundColor: `${userPersonalizationData !== null &&
               userPersonalizationData?.buttonsAndBarsColor
-            }`,
+              }`,
           }}
           onClick={addToggle}
         >
@@ -286,28 +301,56 @@ const CreateNewUser = () => {
                 </FormGroup>
 
                 <FormGroup className="col-md-12 create-group">
-                  <div>
-                    <P>Select User Department </P>
-                  </div>
-                  <Select
-                    showSearch
-                    style={{ width: 250, height: 36 }}
-                    placeholder="Select Department"
-                    optionFilterProp="children"
-                    filterOption={(input: any, option: any) =>
-                      (option?.P ?? "").includes(input)
-                    }
-                    filterSort={(optionA: any, optionB: any) =>
-                      (optionA?.P ?? "")
-                        .toLowerCase()
-                        .localeCompare((optionB?.P ?? "").toLowerCase())
-                    }
-                    onChange={(e: any) => {
-                      // console.log(e);
-                      setRole(e);
-                    }}
-                    options={rolesList}
-                  />
+                  <Row>
+                    <Col md="6">
+                      <div>
+                        <P>Select User Department </P>
+                      </div>
+                      <Select
+                        showSearch
+                        style={{ width: "100%", height: 36 }}
+                        placeholder="Select Department"
+                        optionFilterProp="children"
+                        filterOption={(input: any, option: any) =>
+                          (option?.P ?? "").includes(input)
+                        }
+                        filterSort={(optionA: any, optionB: any) =>
+                          (optionA?.P ?? "")
+                            .toLowerCase()
+                            .localeCompare((optionB?.P ?? "").toLowerCase())
+                        }
+                        onChange={(e: any) => {
+                          // console.log(e);
+                          setRole(e);
+                        }}
+                        options={rolesList}
+                      />
+                    </Col>
+                    <Col md="6">
+                      <div>
+                        <P>Select User Branch </P>
+                      </div>
+                      <Select
+                        showSearch
+                        style={{ width: "100%", height: 36 }}
+                        placeholder="Select Branch"
+                        optionFilterProp="children"
+                        filterOption={(input: any, option: any) =>
+                          (option?.P ?? "").includes(input)
+                        }
+                        filterSort={(optionA: any, optionB: any) =>
+                          (optionA?.P ?? "")
+                            .toLowerCase()
+                            .localeCompare((optionB?.P ?? "").toLowerCase())
+                        }
+                        onChange={(e: any) => {
+                          // console.log(e);
+                          setBranch(e);
+                        }}
+                        options={branchesList}
+                      />
+                    </Col>
+                  </Row>
                 </FormGroup>
 
                 {role !== "" && <P>Given Permissions : </P>}
@@ -365,7 +408,7 @@ const CreateNewUser = () => {
                                         value="value"
                                         disabled={true}
                                         checked={permission.read}
-                                        onChange={() => {}}
+                                        onChange={() => { }}
                                         style={{ display: "none" }} // Hide the default checkbox
                                       />
                                       <span
@@ -393,7 +436,7 @@ const CreateNewUser = () => {
                                         value="value"
                                         disabled={true}
                                         checked={permission.create}
-                                        onChange={() => {}}
+                                        onChange={() => { }}
                                         style={{ display: "none" }} // Hide the default checkbox
                                       />
                                       <span
@@ -421,7 +464,7 @@ const CreateNewUser = () => {
                                         value="value"
                                         disabled={true}
                                         checked={permission.edit}
-                                        onChange={() => {}}
+                                        onChange={() => { }}
                                         style={{ display: "none" }} // Hide the default checkbox
                                       />
                                       <span
@@ -450,7 +493,7 @@ const CreateNewUser = () => {
                                         value="value"
                                         disabled={true}
                                         checked={permission.delete}
-                                        onChange={() => {}}
+                                        onChange={() => { }}
                                         style={{ display: "none" }} // Hide the default checkbox
                                       />
                                       <span

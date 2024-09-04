@@ -4,7 +4,7 @@ import { dynamicImage } from "../../../Service/index";
 import OTPForm from "./OTPForm";
 import { useSelector } from "react-redux";
 import BcakgroundImage from "../../../assets/Background Image.png";
-import { IMAGE_BASE_URL } from "../../../Utilities/api";
+import { IMAGE_BASE_URL } from "../../../Utilities/api/apiEndpoints";
 
 const VerifyOTP = () => {
   const { userPersonalizationData } = useSelector(

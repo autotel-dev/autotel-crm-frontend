@@ -9,6 +9,7 @@ import UsersList from "./UsersList";
 import {
   setIsConnected,
   setOperators,
+  setBranches
 } from "../../../ReaduxToolkit/Reducer/OperatorSlice";
 import { getAll } from "../../../Utilities/api";
 import {
@@ -17,7 +18,7 @@ import {
 } from "../../../ReaduxToolkit/Reducer/RolesSlice";
 import NoInternetConnection from "../../Utilities/NoInternetConnection/NoInternetConnection";
 import "../../../CssConstaints/Style.css";
-import { GET_ALL_ACTIVE_SUB_ROLES } from "../../../Utilities/api/apiEndpoints";
+import { GET_ALL_ACTIVE_SUB_ROLES, GET_ALL_BRANCHES } from "../../../Utilities/api/apiEndpoints";
 
 const Users = () => {
   const dispatch = useDispatch();
@@ -56,8 +57,21 @@ const Users = () => {
           // console.log("hhg");
           dispatch(setRoles([]));
           dispatch(setFilterRoles([]));
-          
+
         }
+      }
+    });
+  }, []);
+
+  useEffect(() => {
+    getAll({ url: GET_ALL_BRANCHES }).then((data: any) => {
+      // console.log("api call --- >", data);
+      if (data !== undefined) {
+        if (data.success) {
+          // console.log("hhg");
+          dispatch(setBranches(data.data));
+        }
+
       }
     });
   }, []);
@@ -76,23 +90,23 @@ const Users = () => {
                   <UsersListNav />
                   <Col md={12}>
                     <input
-                    className="global-search-field"
+                      className="global-search-field"
                       type="text"
                       placeholder="Type to Search.."
                       value={searchValue}
                       onChange={(e) => {
                         filterOperatorss(e);
                       }}
-                      // style={{
-                      //   backgroundColor: "#f1f1f1",
-                      //   borderRadius: "5px",
-                      //   padding: "12px",
-                      //   height:"40px",
-                      //   margin: "15px",
-                      //   width: "calc(100% - 30px)", // Adjusting width to accommodate padding and margin
-                      //   border: "none",
-                      //   outline: "none", // Removing default border outline
-                      // }}
+                    // style={{
+                    //   backgroundColor: "#f1f1f1",
+                    //   borderRadius: "5px",
+                    //   padding: "12px",
+                    //   height:"40px",
+                    //   margin: "15px",
+                    //   width: "calc(100% - 30px)", // Adjusting width to accommodate padding and margin
+                    //   border: "none",
+                    //   outline: "none", // Removing default border outline
+                    // }}
                     />
                   </Col>
                 </Card>

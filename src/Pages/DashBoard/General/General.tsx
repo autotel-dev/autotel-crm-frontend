@@ -11,7 +11,7 @@ import {
   Row,
 } from "reactstrap";
 import SVG from "../../../utils/CommonSvgIcon/SVG";
-import { H3, H4, P, Image, LI, UL } from "../../../AbstractElements";
+import { H4, P, Image, LI, UL, H5 } from "../../../AbstractElements";
 import { boxesData1, boxesData2, operatorPerformanceData } from "./GeneralData";
 import { MdFilterList } from "react-icons/md";
 
@@ -47,6 +47,9 @@ import {
 import Swal from "sweetalert2";
 import './general.css'
 import { GET_DEVICES, GET_GENERAL_DASHBOARD_STATISTICS, GET_OPERATOR_PERFORMANCE } from "../../../Utilities/api/apiEndpoints";
+import P1 from "../../../CommonElements/Paragraph/P1Element";
+import { color } from "framer-motion";
+import P3 from "../../../CommonElements/Paragraph/P3Element";
 
 interface DraggableBoxProps {
   initialPosition: { x: number; y: number };
@@ -701,7 +704,7 @@ const General = () => {
                               }}
                             >
                               <div style={{ fontSize: "30px", color: "white" }}>
-                              <MdFilterList style={{ marginTop: "12px",}} />
+                                <MdFilterList style={{ marginTop: "12px", }} />
                               </div>
                             </div>
                           </div>
@@ -927,9 +930,9 @@ const General = () => {
                                     centered
                                   >
                                     <div className="modal-header">
-                                      <H3 className="modal-title">
+                                      <H4 className="modal-title">
                                         Custom Filter Date
-                                      </H3>
+                                      </H4>
                                       <Button
                                         color="transprant"
                                         className="btn-close"
@@ -1176,21 +1179,18 @@ const General = () => {
                                   }}
                                 >
                                   <Link className="ms-2" to={Href}>
-                                    <h5
-                                      style={{
-                                        fontSize: "16px",
-                                        fontWeight: "bold",
-                                      }}
+                                    <H5
                                     >
                                       {data.operator.fullName}
-                                    </h5>
-                                    <span
+                                    </H5>
+                                    <P3
                                       style={{
-                                        fontSize: "13px",
+                                        // fontSize: "12px",
+                                        color: "black"
                                       }}
                                     >
                                       {data.operator.emailAddress}
-                                    </span>
+                                    </P3>
                                   </Link>
                                 </div>
                               </div>

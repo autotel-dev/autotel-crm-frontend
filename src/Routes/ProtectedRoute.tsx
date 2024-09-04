@@ -42,12 +42,7 @@ const ProtectedRoute: React.FC<PropTypes> = ({
 
   useEffect(() => {
 
-    //   // console.log(
-    //     "protected route path here crmActiveModules: ",
-    //     crmActiveModules
-    //   );
 
-    // console.log("protected route path here 2: ", window.location.pathname);
     const getLastEndpoint = (pathname: any) => {
       // Split the pathname by '/'
       var pathSegments = pathname.split("/");
@@ -59,20 +54,15 @@ const ProtectedRoute: React.FC<PropTypes> = ({
 
 
       const userRole = getUserRole(); // Assuming getUserRole() returns the user's role
-      // console.log("userRole", userRole);
-      // console.log("allowedUserRoles", allowedUserRoles);
 
       if (allowedUserRoles.includes(userRole)) {
-        // console.log("permissionValue outside if dash dash 3", permissionValue);
-        // console.log("userRole check");
+
 
         const pathname = window.location.pathname;
         const lastEndpoint = getLastEndpoint(pathname);
 
         if (pathname.includes("modules")) {
-          // console.log("module keywork check");
-          // console.log("In modules condition: pathname:", pathname);
-          // console.log("Last Endpoint:", lastEndpoint);
+
           if (userRole === "COMPANY" || userRole === "OPERATOR") {
             // console.log("company or operator check");
             getAll({
@@ -105,13 +95,23 @@ const ProtectedRoute: React.FC<PropTypes> = ({
                       .substring(1)
                       .toLowerCase();
                     // console.log("extractedChars", extractedChars);
-
-                    if (extractedChars === lastEndpoint.toLowerCase()) {
+                    if (extractedChars == "saio-central") {
                       setLoading(false);
                       setIsConnected(false);
                       setHasPermission(true);
                       return;
                     }
+                    else {
+                      if (extractedChars === lastEndpoint.toLowerCase()) {
+                        setLoading(false);
+                        setIsConnected(false);
+                        setHasPermission(true);
+                        return;
+                      }
+                    }
+
+
+
                   }
                   setLoading(false);
                   setIsConnected(false);

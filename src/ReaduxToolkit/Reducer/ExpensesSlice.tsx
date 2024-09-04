@@ -5,6 +5,7 @@ const initialState = {
     bankAccounts: [],
     expenseAccounts: [],
     expenseNumbers: [],
+    expense: null,
     loading: false,
     error: null,
     isConnected: true,
@@ -30,6 +31,9 @@ const ExpenseSlice = createSlice({
             state.expenseAccounts = action.payload;
         },
 
+        setExpense: (state, action) => {
+            state.expense = action.payload
+        },
         setExpenseNumbers: (state, action) => {
             state.expenseNumbers = action.payload;
         },
@@ -48,6 +52,7 @@ export const {
     setExpenses,
     setBankAccounts,
     setExpenseAccounts,
+    setExpense,
     setExpenseNumbers,
     setExpenseStart,
     setExpenseEnd,
