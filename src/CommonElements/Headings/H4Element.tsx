@@ -8,7 +8,7 @@ interface propsTypes {
 const H4 = (props: propsTypes) => {
   const { children = "" } = props;
   return (
-    <h3 {...props} style={{ fontSize: "18px", fontWeight: "bold" }}>
+    <h3 {...props} style={{ fontSize: "16px", fontWeight: "bold" }}>
       {children}
     </h3>
   );

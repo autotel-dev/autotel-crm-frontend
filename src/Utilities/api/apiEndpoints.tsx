@@ -298,9 +298,10 @@ export const UPDATE_CUSTOMER = `${API_BASE_URL}/customer/update-customer`;
 export const UPDATE_VEHICLE = `${API_BASE_URL}/vehicle/update-vehicle`;
 export const DELETE_VEHICLE = `${API_BASE_URL}/vehicle/delete-vehicle`;
 
+// Company -> Modules - SIAO-Central - Sale Invoice
 
-
-
+export const CREATE_SALE_INVOICE = `${API_BASE_URL}/sale-invoice/create-sale-invoice`;
+export const GET_ALL_SALE_INVOICES = `${API_BASE_URL}/sale-invoice/get-all-sale-invoices`;
 
 
 // Company -> Modules- SAIO - accounts

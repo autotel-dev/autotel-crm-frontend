@@ -11,7 +11,7 @@ import CreateNewSaleLead from "./CreateNewSaleLead/CreateNewSaleLead";
 import Swal from "sweetalert2";
 import { Select } from "antd";
 import ReactDOM from "react-dom";
-import { setCustomer, setSaleLead } from "../../../../../../../../ReaduxToolkit/Reducer/SalesSlice";
+import { setCustomer, setInvoiceData, setSaleLead } from "../../../../../../../../ReaduxToolkit/Reducer/SalesSlice";
 import { PopoverBody, PopoverHeader, UncontrolledPopover } from "reactstrap";
 import { formatUnderscoredString } from "../../../../../../../../Utilities/globals/globals";
 import { TbFileInvoice } from "react-icons/tb";
@@ -70,6 +70,9 @@ const SaleLeadsTable: React.FC<SaleLeadsTableProps> = ({
                 customer_name: item?.customerName,
                 customer_contact_no: item?.customerContactNo,
                 package: item?.package.title,
+                packagePrice: item?.package.price,
+                serviceCharges: item?.serviceCharges,
+                discountedServiceCharges: item?.discountedServiceCharges,
                 status: item?.status,
                 customer: item?.customer,
                 vehicles: item?.vehicles,
@@ -261,13 +264,13 @@ const SaleLeadsTable: React.FC<SaleLeadsTableProps> = ({
 
                     id={`PopoverForSaleLead-${row.status == "IN_PROGRESS" ? row.openedBy?._id : ""}`} // Unique ID for each row
                 >
-                    <div style={{ display: "flex", justifyContent: "space-between" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", color: "green" }}>
                         <span style={{ fontWeight: "bold" }}>Total: </span>{row.totalNoOfVehicles}
                     </div>
-                    <div style={{ display: "flex", justifyContent: "space-between" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", color: "orange" }}>
                         <span style={{ fontWeight: "bold" }}>Installed: </span>{row?.vehicles?.filter((item: any) => item?.installationStatus == "INSTALLED").length}
                     </div>
-                    <div style={{ display: "flex", justifyContent: "space-between" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", color: "red" }}>
                         <span style={{ fontWeight: "bold" }}>Pending: </span>{row?.vehicles?.filter((item: any) => item?.installationStatus == "IN_PROGRESS").length}
                     </div >
 
@@ -289,8 +292,15 @@ const SaleLeadsTable: React.FC<SaleLeadsTableProps> = ({
                         textAlign: "center",
                         padding: "5px",
                         borderRadius: "5px",
+                        color: "black", backgroundColor:
+                            row.status === "NEW"
+                                ? "rgba(0, 0, 255, 0.3)"
+                                : row.status === "IN_PROGRESS"
+                                    ? "rgba(255, 200, 0, 0.3)"
+                                    : row.status === "REJECTED"
+                                        ? "rgba(255, 0, 0, 0.3)"
+                                        : "rgba(0, 255, 0, 0.3)",
 
-                        color: "black"
 
                     }}
                     onClick={(e) => {
@@ -344,7 +354,7 @@ const SaleLeadsTable: React.FC<SaleLeadsTableProps> = ({
                     }}
 
                 >
-                    <div onClick={() => { setComponent("Invoices"); setIscreateNewInvoice(true) }}>
+                    <div onClick={() => { setComponent("Invoices"); dispatch(setInvoiceData(row)); setIscreateNewInvoice(true) }}>
                         <TbFileInvoice size={18} />
                         <span className="tooltip">Sale Invoice</span>
                     </div>

@@ -1,19 +1,4 @@
 
-
-
-
-
-
-
-// import { Document, Page, Text, View, StyleSheet, PDFDownloadLink } from '@react-pdf/renderer';
-
-
-
-
-
-
-
-
 import React, { useEffect, useState, ChangeEvent, useRef } from "react";
 import {
   Button,
@@ -25,41 +10,38 @@ import {
   Card,
   CardBody,
   Modal,
-  ModalHeader,
   ModalBody,
-  ModalFooter
+
 } from "reactstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { P } from "../../../../../../../../../AbstractElements";
+import { SubmitHandler } from "react-hook-form";
 
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
-import { MdDelete } from "react-icons/md";
+import BcakgroundImage from "../../../../../../../../../assets/Background Image.png";
 
-import { SubmitHandler } from "react-hook-form";
-import { create, getAll } from "../../../../../../../../../Utilities/api";
-import { CREATE_NEW_PURCHASE_INVOICE, GET_ALL_PURCHASE_INVOICES } from "../../../../../../../../../Utilities/api/apiEndpoints";
-import Swal from "sweetalert2";
+
 import { setPurchaseInvoice, setPurchaseInvoices } from "../../../../../../../../../ReaduxToolkit/Reducer/PurchaseInvoiceSlice";
-
+import { Select } from "antd";
+import { create, getAll } from "../../../../../../../../../Utilities/api";
+import { CREATE_SALE_INVOICE, GET_ALL_SALE_INVOICES } from "../../../../../../../../../Utilities/api/apiEndpoints";
+import Swal from "sweetalert2";
+import {
+  StyleSheet,
+  Document,
+  Page,
+  Text,
+  View,
+  pdf,
+  Image,
+  PDFViewer,
+  Font,
+  BlobProvider
+} from "@react-pdf/renderer";
 import { IoClose } from "react-icons/io5";
 import { IoMdDownload, IoMdPrint } from "react-icons/io";
-import html2canvas from 'html2canvas';
-
-
-
-
-
-
-
-
-
-
-declare module 'jspdf' {
-  interface jsPDF {
-    autoTable: (options: any) => jsPDF;
-  }
-}
+import ViewPDFModal from "../../../../../../SAIO/components/ViewPDFModal";
 
 interface CreateNewSaleInvoiceProps {
   iscreateNewInvoice: boolean;
@@ -70,353 +52,118 @@ const CreateNewSaleInvoice: React.FC<CreateNewSaleInvoiceProps> = ({
   iscreateNewInvoice,
   setIscreateNewInvoice,
 }) => {
-  const { products, purchaseInvoice } = useSelector((state: any) => state.purchaseInvoice);
-  const { userPersonalizationData } = useSelector(
-    (state: any) => state.personalization
-  );
-
   const dispatch = useDispatch();
-
-  const [customerLoading, setCustomerLoading] = useState(false);
-  const [vendor, setVendor] = useState(purchaseInvoice !== null ? purchaseInvoice.vendor : "");
-  const [branch, setBranch] = useState(purchaseInvoice !== null ? purchaseInvoice.branch : "");
-  const [warehouse, setWarehouse] = useState(purchaseInvoice !== null ? purchaseInvoice.warehouse : "");
   const [loading, setLoading] = useState(false);
   const [modal, setModal] = useState(false);
+  const [selectedTax, setSelectedTax] = useState("");
 
-  const [purchaseInvoiceForm, setPurchaseInvoiceForm] = useState({
-    date: purchaseInvoice !== null ? purchaseInvoice?.invoiceDate.slice(0, 10) : new Date().toISOString().slice(0, 10),
-    dueDate: purchaseInvoice !== null ? purchaseInvoice?.invoiceDueDate.slice(0, 10) : new Date().toISOString().slice(0, 10),
-    reference: purchaseInvoice !== null ? purchaseInvoice?.reference : "",
-    comments: purchaseInvoice !== null ? purchaseInvoice?.comments : "",
-    shippingCharges: purchaseInvoice !== null ? purchaseInvoice?.shippingCharges : "",
-    netAmount: purchaseInvoice !== null ? purchaseInvoice?.netAmount : ""
+  const { invoiceData } = useSelector((state: any) => state.sales);
+  const { taxes } = useSelector((state: any) => state.taxes);
+  console.log("invoiceData", invoiceData);
+  const [saleInvoiceForm, setSaleInvoiceForm] = useState({
+    invoiceDate: "",
+    invoiceDueDate: "",
+    reference: "",
+    comments: "",
+    additionalCharges: "",
+    withHoldingCharges: "",
+    discount: invoiceData !== null ? invoiceData?.discounted_service_charges * invoiceData?.vehicles.length : "",
+    netAmount: invoiceData !== null ? invoiceData?.service_charges * invoiceData?.vehicles.length : "",
+    grossAmount: invoiceData !== null ? invoiceData?.discounted_service_charges * invoiceData?.vehicles.length : "",
+    customer: invoiceData !== null ? invoiceData?.customer?._id : "",
+    customerName: invoiceData !== null ? invoiceData?.customer?.fullName : "",
+    companyName: invoiceData !== null ? invoiceData?.customer?.fullName : "",
+    address: "",
+    packagePrice: invoiceData !== null ? invoiceData?.service_charges : "",
+    discountedPackagePrice: invoiceData !== null ? invoiceData?.discounted_service_charges : ""
   });
 
   const {
-    date,
-    dueDate,
+    invoiceDate,
+    invoiceDueDate,
     reference,
     comments,
-    shippingCharges,
-    netAmount
-  } = purchaseInvoiceForm;
+    additionalCharges,
+    withHoldingCharges,
+    discount,
+    netAmount,
+    grossAmount,
+    customer,
+    customerName,
+    companyName,
+    address,
+    packagePrice,
+    discountedPackagePrice
+  } = saleInvoiceForm;
 
   const getUserData = (event: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLTextAreaElement>) => {
     let name = event.target.name;
     let value = event.target.value;
-    setPurchaseInvoiceForm({ ...purchaseInvoiceForm, [name]: value });
+    setSaleInvoiceForm({ ...saleInvoiceForm, [name]: value });
   };
 
-  const data = [
-    { "name": "John Doe", "age": 30, "position": "Developer" },
-    { "name": "Jane Smith", "age": 25, "position": "Designer" },
-    { "name": "John Doe1", "age": 30, "position": "Developer" },
-    { "name": "Jane Smith1", "age": 25, "position": "Designer" },
-    { "name": "John Doe2", "age": 30, "position": "Developer" },
-    { "name": "Jane Smith2", "age": 25, "position": "Designer" },
-    { "name": "John Doe3", "age": 30, "position": "Developer" },
-    { "name": "Jane Smith3", "age": 25, "position": "Designer" },
-    { "name": "John Doe4", "age": 30, "position": "Developer" },
-    { "name": "Jane Smith4", "age": 25, "position": "Designer" },
-    { "name": "John Doe5", "age": 30, "position": "Developer" },
-    { "name": "Jane Smith5", "age": 25, "position": "Designer" },
-    { "name": "John Doe", "age": 30, "position": "Developer" },
-    { "name": "Jane Smith", "age": 25, "position": "Designer" },
-    { "name": "John Doe1", "age": 30, "position": "Developer" },
-    { "name": "Jane Smith1", "age": 25, "position": "Designer" },
-    { "name": "John Doe2", "age": 30, "position": "Developer" },
-    { "name": "Jane Smith2", "age": 25, "position": "Designer" },
-    { "name": "John Doe3", "age": 30, "position": "Developer" },
-    { "name": "Jane Smith3", "age": 25, "position": "Designer" },
-    { "name": "John Doe4", "age": 30, "position": "Developer" },
-    { "name": "Jane Smith4", "age": 25, "position": "Designer" },
-    { "name": "John Doe5", "age": 30, "position": "Developer" },
-    { "name": "Jane Smith5", "age": 25, "position": "Designer" },
-    { "name": "John Doe", "age": 30, "position": "Developer" },
-    { "name": "Jane Smith", "age": 25, "position": "Designer" },
-    { "name": "John Doe1", "age": 30, "position": "Developer" },
-    { "name": "Jane Smith1", "age": 25, "position": "Designer" },
-    { "name": "John Doe2", "age": 30, "position": "Developer" },
-    { "name": "Jane Smith2", "age": 25, "position": "Designer" },
-    { "name": "John Doe3", "age": 30, "position": "Developer" },
-    { "name": "Jane Smith3", "age": 25, "position": "Designer" },
-    { "name": "John Doe4", "age": 30, "position": "Developer" },
-    { "name": "Jane Smith4", "age": 25, "position": "Designer" },
-    { "name": "John Doe5", "age": 30, "position": "Developer" },
-    { "name": "Jane Smith5", "age": 25, "position": "Designer" },
-  ];
-
-  // const generatePDF = () => {
-  //   const doc = new jsPDF();
-  //   doc.setFontSize(20);
-  //   doc.text('Employee List', 14, 22);
-
-  //   const columns = ["Name", "Age", "Position"];
-  //   const rows = data.map(item => [item.name, item.age, item.position]);
-
-  //   doc.autoTable({
-  //     head: [columns],
-  //     body: rows,
-  //     startY: 30,
-  //     theme: 'striped',
-  //     headStyles: { fillColor: [22, 160, 133] },
-  //   });
-
-  //   doc.save('table.pdf');
-  // };
-
-
-  const generatePDF = () => {
-    const doc = new jsPDF();
-    doc.setFontSize(20);
-    doc.text('Employee List', 14, 22);
-
-    const columns = ["Name", "Age", "Position"];
-    const rows = data.map(item => [item.name, item.age, item.position]);
-
-    doc.autoTable({
-      head: [columns],
-      body: rows,
-      startY: 30,
-      theme: 'striped',
-      headStyles: { fillColor: [22, 160, 133] },
-    });
-
-    doc.save('table.pdf');
-  };
-
-  const printPDF = () => {
-    const doc = new jsPDF();
-    doc.setFontSize(20);
-    doc.text('Employee List', 14, 22);
-
-    const columns = ["Name", "Age", "Position"];
-    const rows = data.map(item => [item.name, item.age, item.position]);
-
-    doc.autoTable({
-      head: [columns],
-      body: rows,
-      startY: 30,
-      theme: 'striped',
-      headStyles: { fillColor: [22, 160, 133] },
-    });
-
-    window.open(doc.output('bloburl'), '_blank');
-  };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  // ---------------------------------------------------------------
-
-
-  const pdfRef = useRef<HTMLDivElement | null>(null);
-
-
-  const handleGeneratePdf = () => {
-    if (pdfRef.current) {
-      const input = pdfRef.current;
-      html2canvas(input)
-        .then((canvas) => {
-          const imgData = canvas.toDataURL('image/png');
-          const pdf = new jsPDF('p', 'mm', 'a4');
-          const imgProps = pdf.getImageProperties(imgData);
-          const pdfWidth = pdf.internal.pageSize.getWidth();
-          const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-
-          // Define padding
-          const padding = 10; // Padding in mm
-
-          // Calculate new dimensions and coordinates
-          const imgWidth = pdfWidth - 2 * padding;
-          const imgHeight = (imgProps.height * imgWidth) / imgProps.width;
-          const yOffset = padding;
-
-          pdf.addImage(imgData, 'PNG', padding, yOffset, imgWidth, imgHeight);
-          pdf.save('download.pdf');
-        })
-        .catch((err) => console.log(err));
-    } else {
-      console.error('Ref is null');
+  useEffect(() => {
+    var grossAmount = Number(discount);
+    if (additionalCharges !== "") {
+      grossAmount =
+        Number(discount) +
+        Number(additionalCharges)
     }
-  };
-
-
-
-
-  // --------------------------------------------------------------
-
-
-  const [productObjects, setProductObjects] = useState<
-    {
-      product: string,
-      type: string,
-      quantity: number,
-      price: string,
-      discount: number,
-      totalAmount: string,
-      description: string,
-      serialsOrSkus: [];
-    }[]
-  >(purchaseInvoice !== null ? purchaseInvoice.productsDetails : []);
-
-  // Function to add a new body parameter
-  const addProductObject = () => {
-    console.log("productObjects", productObjects);
-
-    setProductObjects([...productObjects, {
-      product: "",
-      type: "",
-      quantity: Number(""),
-      price: "",
-      discount: Number(""),
-      totalAmount: "",
-      description: "",
-      serialsOrSkus: []
-    }]);
-  };
-
-  // Function to delete a body parameter
-  const deleteProductObject = (index: number) => {
-    const updatedParams = productObjects.filter((_, i) => i !== index);
-    setProductObjects(updatedParams);
-  };
-
-  // Function to handle body parameter changes
-  const handleProductObjectChange = (
-    index: number,
-    newParam: {
-      product: string,
-      type: string,
-      quantity: number,
-      price: string,
-      discount: number,
-      totalAmount: string,
-      description: string,
-      serialsOrSkus: [];
+    if (additionalCharges !== "" && withHoldingCharges !== "") {
+      grossAmount =
+        Number(discount) +
+        Number(additionalCharges) +
+        Number(withHoldingCharges);
     }
-  ) => {
-    console.log("productObjects", productObjects);
-
-    const updatedProductObject = productObjects.map((param, i) =>
-      i === index ? {
-        ...newParam,
-        totalAmount: newParam.discount == 0 ? calculateAmount(newParam.quantity, newParam.price, 0) : calculateAmount(newParam.quantity, newParam.price, newParam.discount)
-      } : param
-    );
-
-
-    setProductObjects(updatedProductObject);
-    const totalAmount = updatedProductObject.reduce((sum, param) => {
-      return sum + parseFloat(param.totalAmount);
-    }, 0);
-    console.log("total", totalAmount);
-
-
-    setPurchaseInvoiceForm({ ...purchaseInvoiceForm, netAmount: totalAmount });
-  };
-
-  // Function to calculate amount based on quantity, price, and discount
-  const calculateAmount = (quantity: number, price: string, discount: number) => {
-    console.log(quantity, price, discount);
-
-    const parsedQuantity = quantity;
-    const parsedPrice = parseFloat(price);
-    const parsedDiscount = discount;
-
-    if (parsedQuantity && parsedPrice) {
-      if (parsedDiscount > 0) {
-        return ((parsedQuantity * parsedPrice) * ((100 - parsedDiscount) / 100)).toFixed(2);
-      } else {
-        return (parsedQuantity * parsedPrice).toFixed(2);
-      }
-    } else {
-      return "";
+    if (additionalCharges !== "" && withHoldingCharges !== "" && selectedTax !== "") {
+      grossAmount =
+        Number(discount) +
+        Number(additionalCharges) +
+        Number(withHoldingCharges) +
+        (Number(discount) * (100 / Number(selectedTax)));
     }
-  };
+
+    setSaleInvoiceForm({ ...saleInvoiceForm, grossAmount: grossAmount });
+  }, [discount, additionalCharges, withHoldingCharges, selectedTax]);
 
 
-  const addAndUpdatePurchaseInvoice: SubmitHandler<any> = async (data) => {
+
+  const addAndUpdateSaleInvoice: SubmitHandler<any> = async (data) => {
     setLoading(true);
     if (
-      date !== "" && vendor !== "" && dueDate !== "" && productObjects.length > 0 && netAmount > 0 && shippingCharges > 0
+      invoiceDate !== "" && invoiceDueDate !== "" && grossAmount !== ""
     ) {
-      let isValid = true;
-      productObjects.forEach((item) => {
-        if (item.quantity == 0) {
-          Swal.fire({
-            text: `Quantity of ${products.find((i: any) => i._id == item.product).name} of type ${item.type} is ${item.quantity}`,
-            icon: "error",
-            timer: 2000,
-            showConfirmButton: false,
-          });
-          isValid = false;
-          setLoading(false);
-          return;
-        }
-        if ((item.type === "SIM" || item.type === "DEVICES") && Number(item.quantity) !== item.serialsOrSkus.length) {
-          Swal.fire({
-            text: `Quantity for ${products.find((i: any) => i._id == item.product).name} of type ${item.type} does not match the number of ${item.type == "SIM" ? "Sim numbers" : item.type == "DEVICES" ? "IMEIS" : "serial numbers"}`,
-            icon: "error",
-            timer: 2000,
-            showConfirmButton: false,
-          });
-          isValid = false;
-          setLoading(false);
-          return;
-        }
-      });
 
-      if (!isValid) {
-        return;
-      }
 
-      const purchaseInvoiceData = {
-        vendor: vendor,
-        branch: branch,
-        warehouse: warehouse,
-        invoiceDate: date,
-        invoiceDueDate: dueDate,
-        reference: reference,
-        comments: comments,
-        netAmount: Number(netAmount) + Number(shippingCharges),
-        shippingCharges: Number(shippingCharges),
-        productsDetails: productObjects.map(({ type, quantity, serialsOrSkus = [], ...rest }) => {
-          const updatedSerialsOrSku = serialsOrSkus.length > 0
-            ? serialsOrSkus
-            : Array.from({ length: quantity }, () => ({ serialNumber: null, sku: null }));
+      const saleInvoiceData = {
+        invoiceDate,
+        invoiceDueDate,
+        reference,
+        comments,
+        additionalCharges,
+        withHoldingCharges,
+        discount,
+        netAmount,
+        grossAmount,
+        customer,
+        customerName,
+        companyName,
+        address,
+        packagePrice,
+        discountedPackagePrice,
+        tax: selectedTax,
+        vehicles: [...invoiceData.vehicles?.map((item: any) => item._id)]
 
-          return {
-            ...rest,
-            quantity,
-            serialsOrSkus: updatedSerialsOrSku,
-          };
-        })
+
       };
 
       try {
-        const response: any = await create(purchaseInvoiceData, { url: CREATE_NEW_PURCHASE_INVOICE });
+        const response: any = await create(saleInvoiceData, { url: CREATE_SALE_INVOICE });
         if (response.success) {
           setLoading(false);
-          const purchaseInvoicesResponse: any = await getAll({ url: GET_ALL_PURCHASE_INVOICES });
-          if (purchaseInvoicesResponse.success) {
-            dispatch(setPurchaseInvoices(purchaseInvoicesResponse.data));
+          const saleInvoicesResponse: any = await getAll({ url: GET_ALL_SALE_INVOICES });
+          if (saleInvoicesResponse.success) {
+            dispatch(setPurchaseInvoices(saleInvoicesResponse.data));
             setIscreateNewInvoice(false);
           }
         } else {
@@ -430,7 +177,7 @@ const CreateNewSaleInvoice: React.FC<CreateNewSaleInvoiceProps> = ({
         }
       } catch (error: any) {
         Swal.fire({
-          text: error.message || "Error creating Expense",
+          text: error.message || "Error creating Sale Invoice",
           icon: "error",
           timer: 2000,
           showConfirmButton: false,
@@ -449,15 +196,303 @@ const CreateNewSaleInvoice: React.FC<CreateNewSaleInvoiceProps> = ({
     }
   };
 
-  const rowsPerPage = 20;
-  const pages = [];
-  for (let i = 0; i < data.length; i += rowsPerPage) {
-    pages.push(data.slice(i, i + rowsPerPage));
-  }
 
+  const styles2 = StyleSheet.create({
+    page: { padding: 20 },
+    section: { marginBottom: 10 },
+    text: {
+      // fontWeight: 'bold', // Use the bold variant of the font
+      fontSize: 8,
+    },
+    textNormal: {
+      // fontWeight: 'normal', // Set to extrabold
+      fontSize: 8,
+    },
+    ultraboldText: {
+      // fontWeight: 'ultrabold', // Set to extrabold
+      fontSize: 8,
+    },
+    heavyText: {
+      fontFamily: "Helvetica-Bold",
+      // fontWeight: 'heavy', // Set to extrabold
+      fontSize: 8,
+    },
+    heavyUnderlineText: {
+      // fontWeight: 'heavy', // Set to extrabold
+      fontSize: 8,
+      textDecoration: "underline"
+    },
+    textRow: { flexDirection: 'row', marginBottom: 2 },
+    image: {
+      width: '160px', height: '120px',
+    },
+    centerText: {
+      flexDirection: 'row',
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginVertical: 10,
+    },
+    titleText: {
+      fontSize: 16,
+      fontWeight: 'extrabold', // Set to extrabold
+    },
+    tableContainer: {
+      width: '28%',
+      height: "auto",
+      border: '1px solid black',
+      position: "absolute",
+      right: "20",
+      top: "20%"
+    },
+    tableRow: {
+      flexDirection: 'row',
+    },
+    tableCell: {
+      flex: 1,
+      border: '1px solid black',
+      padding: 3,
+      fontSize: "9px",
+      margin: -1,
+      fontWeight: 'extrabold', // Set to extrabold
+    },
+    tableCell1: {
+      flex: 1,
+      border: '1px solid black',
+      padding: 4,
+      fontSize: "9px",
+      margin: -1,
+      fontWeight: 'extrabold', // Set to extrabold
+    },
+    tableCell2: {
+      flex: 2,
+      border: '1px solid black',
+      padding: 4,
+      fontSize: "9px",
+      margin: -1,
+      fontWeight: 'extrabold', // Set to extrabold
+    },
+    tableCell3: {
+      flex: 7,
+      border: '1px solid black',
+      padding: 4,
+      fontSize: "9px",
+      margin: -1,
+      fontWeight: 'extrabold', // Set to extrabold
+    },
+    headerCell1: {
+      flex: 1,
+      border: '1px solid black',
+      padding: 4,
+      margin: -1,
+      fontFamily: 'Helvetica-Bold', // Replace with your bold font family
+      fontSize: 9,
+    },
+    headerCell2: {
+      flex: 2,
+      border: '1px solid black',
+      padding: 4,
+      margin: -1,
+      fontFamily: 'Helvetica-Bold', // Replace with your bold font family
+      fontSize: 9,
+    },
+    headerCell3: {
+      flex: 7,
+      border: '1px solid black',
+      padding: 4,
+      margin: -1,
+      fontFamily: 'Helvetica-Bold', // Replace with your bold font family
+      fontSize: 9,
+    },
+  });
+
+
+  const downloadSaleInvoicePDF = () => (
+    <Document>
+      <Page style={styles2.page}>
+        <View style={styles2.section}>
+
+          <View style={{ marginBottom: "10px" }}>
+            <Image
+              src={BcakgroundImage} // Replace with your image URL or path
+              style={styles2.image}
+            />
+          </View>
+          <View >
+            <Text style={styles2.text}></Text>
+          </View>
+          <br />
+          <View>
+            <View style={styles2.textRow}>
+              <Text style={styles2.heavyText}>Address: </Text>
+              <Text style={styles2.text}>abc</Text>
+            </View>
+
+          </View>
+          <br></br>
+
+          <View >
+            <View style={styles2.textRow}>
+              <Text style={styles2.heavyText}>Mail: </Text>
+              <Text style={styles2.text}>mail@gmail.com</Text>
+            </View>
+          </View>
+          <br></br>
+
+          <View >
+            <View style={styles2.textRow}>
+              <Text style={styles2.heavyText}>GST No.: </Text>
+              <Text style={styles2.text}>GST No</Text>
+            </View>
+          </View>
+          <br></br>
+
+          <View style={{ marginBottom: 10 }}>
+            <View style={styles2.textRow}>
+              <Text style={styles2.heavyText}>Sst No.: </Text>
+              <Text style={styles2.text}>SST No</Text>
+            </View>
+          </View>
+          <br></br>
+
+
+          <View style={styles2.textRow}>
+            <View style={styles2.heavyText}>
+              <Text style={styles2.heavyText}>To,</Text>
+            </View>
+
+          </View>
+          <br />
+          <View >
+            <View style={styles2.heavyText}>
+              <Text style={styles2.heavyText}>{companyName}</Text>
+            </View>
+          </View>
+          <br />
+        </View>
+        <View style={styles2.centerText}>
+          <Text style={styles2.titleText}>Sale Invoice</Text>
+        </View>
+
+
+        <View style={styles2.tableContainer}>
+          <View style={styles2.tableRow}>
+            <Text style={styles2.tableCell}>Number</Text>
+            <Text style={styles2.tableCell2}>SI-0000</Text>
+          </View>
+          <View style={styles2.tableRow}>
+            <Text style={styles2.tableCell}>Date</Text>
+            <Text style={styles2.tableCell2}>{invoiceDate}</Text>
+          </View>
+          <View style={styles2.tableRow}>
+            <Text style={styles2.tableCell}>Due Date</Text>
+            <Text style={styles2.tableCell2}>{invoiceDueDate}</Text>
+          </View>
+          <View style={styles2.tableRow}>
+            <Text style={styles2.tableCell}>Reference</Text>
+            <Text style={styles2.tableCell2}>{reference}</Text>
+          </View>
+
+
+        </View>
+
+        <View >
+          <View style={{ ...styles2.textRow, marginBottom: "10px" }}>
+            <Text style={styles2.text}>Registration No: </Text>
+            <Text style={styles2.heavyUnderlineText}>Reg No.</Text>
+          </View>
+        </View>
+        <br></br>
+        <View>
+          <View style={styles2.tableRow}>
+            <Text style={styles2.headerCell1}>S.No.</Text>
+            <Text style={styles2.headerCell3}>Description</Text>
+            <Text style={styles2.headerCell1}>Quantity</Text>
+            <Text style={styles2.headerCell2}>Price</Text>
+            <Text style={styles2.headerCell2}>Discounted Price</Text>
+            <Text style={styles2.headerCell2}>Amount</Text>
+          </View>
+
+        </View>
+        {invoiceData?.vehicles?.map((product: any, index: any) => (
+          <View style={styles2.tableRow}>
+            <Text style={styles2.tableCell1}>{index + 1}</Text>
+
+            <Text style={styles2.tableCell3}>P-000119 - ATL06
+              356220380158323 | 356220380092183 | 356220380092654 </Text>
+            <Text style={styles2.tableCell1}>1</Text>
+            <Text style={styles2.tableCell2}>{invoiceData?.packagePrice}</Text>
+            <Text style={styles2.tableCell2}>{invoiceData?.discounted_service_charges}</Text>
+            <Text style={styles2.tableCell2}>{invoiceData?.netAmount}</Text>
+          </View>
+        ))}
+
+        <View style={{ marginTop: "25px", width: "100%", position: "relative", right: 0, display: "flex", justifyContent: "flex-end" }}>
+          <View style={{ width: "30%", ...styles2.textRow, justifyContent: "flex-end", marginLeft: "70%", marginBottom: "4px", borderBottom: "2px solid black", paddingVertical: "5px" }}>
+            <Text style={{ ...styles2.text, flex: 1 }}>Net Amount: </Text>
+            <Text style={styles2.heavyText}>{netAmount}</Text>
+          </View>
+          <br />
+          <View style={{ width: "30%", ...styles2.textRow, justifyContent: "flex-end", marginLeft: "70%", marginBottom: "4px", borderBottom: "2px solid black", paddingVertical: "3.5px" }}>
+            <Text style={{ ...styles2.text, flex: 1 }}>Discounted Amount: </Text>
+            <Text style={styles2.heavyText}>{discountedPackagePrice * invoiceData?.vehicles.length}</Text>
+          </View>
+          <br />
+          <View style={{ width: "30%", ...styles2.textRow, justifyContent: "flex-end", marginLeft: "70%", marginBottom: "4px", borderBottom: "2px solid black", paddingVertical: "3.5px" }}>
+            <Text style={{ ...styles2.text, flex: 1 }}>With Holding Charges: </Text>
+            <Text style={styles2.heavyText}>{withHoldingCharges}</Text>
+          </View>
+          <br />
+          <View style={{ width: "30%", ...styles2.textRow, justifyContent: "flex-end", marginLeft: "70%", marginBottom: "4px", borderBottom: "2px solid black", paddingVertical: "3.5px" }}>
+            <Text style={{ ...styles2.text, flex: 1 }}>Additional Charges: </Text>
+            <Text style={styles2.heavyText}>{additionalCharges}</Text>
+          </View>
+          <View style={{ width: "30%", ...styles2.textRow, justifyContent: "flex-end", marginLeft: "70%", marginBottom: "4px", borderBottom: "2px solid black", paddingVertical: "3.5px" }}>
+            <Text style={{ ...styles2.text, flex: 1 }}>Tax: </Text>
+            <Text style={styles2.heavyText}>{selectedTax}</Text>
+          </View>
+          <br />
+          <View style={{ width: "30%", ...styles2.textRow, justifyContent: "flex-end", marginLeft: "70%", marginBottom: "4px", borderBottom: "2px solid black", paddingVertical: "3.5px" }}>
+            <Text style={{ ...styles2.text, flex: 1 }}>Gross Amount: </Text>
+            <Text style={styles2.heavyText}>{grossAmount}</Text>
+          </View>
+
+
+
+        </View>
+
+        <View style={{ marginTop: "22px", marginBottom: "5px" }}>
+          <Text style={styles2.titleText}>Comments</Text>
+        </View>
+
+        <View style={{ marginVertical: "3px" }}>
+          <Text style={styles2.text}>i) Autotel warrants to the original purchaser that tracker shall be free from defects in material and workmanship for a period of 12 months from date of activation. If a
+            defect covered by this warranty occurs during the warranty period, Autoel will repair or replace your tracker free of charge.</Text>
+        </View>
+        <View style={{ marginVertical: "3px" }}>
+          <Text style={styles2.text}>ii) Autotel warrants  from defects in material and workmanship for a period of 12 months from date of activation. If a
+            defect covered by this warranty occurs during the warranty period, Autoel will repair or replace your tracker free of charge.</Text>
+        </View>
+        <View style={{ marginVertical: "3px" }}>
+          <Text style={styles2.text}>iii) Autotel warrants to the original purchaser that tracker shall be free from defects in material and workmanship for a period of 12 months from date of activation. If a
+            defect  during the warranty period, Autoel will repair or replace your tracker free of charge.</Text>
+        </View>
+
+      </Page>
+    </Document >
+  );
+
+
+  const downloadPDF = async () => {
+    const blob = await pdf(downloadSaleInvoicePDF()).toBlob();
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'sale_invoice.pdf';
+    link.click();
+    URL.revokeObjectURL(url);
+  };
 
   const toggleModal = () => setModal(!modal);
-
   return (
     <>
       <Container fluid>
@@ -469,101 +504,102 @@ const CreateNewSaleInvoice: React.FC<CreateNewSaleInvoiceProps> = ({
                 className="needs-validation"
                 noValidate
               >
-                <div ref={pdfRef}>
-                  <Row className="g-3" >
-                    <Col lg={3} xs={12}>
+                <Row className="g-3" >
+                  <Col lg={3} xs={12}>
+                    <P>
+                      Customer Name
+                    </P>
+                    <Input
+                      type="text"
+                      placeholder="Enter Customer Name"
+                      value={customerName}
+                      name="customerName"
+                      disabled
+                      onChange={getUserData}
+                    />
+                  </Col>
+                  <Col lg={3} xs={12}>
+                    <P>
+                      Company Name
+                    </P>
+                    <Input
+                      type="text"
+                      placeholder="Enter Company Name"
+                      value={companyName}
+                      name="companyName"
+                      onChange={getUserData}
+                      disabled
+                    />
+                  </Col>
+                  <Col lg={3} xs={12}>
+                    <P>
+                      Address
+                    </P>
+                    <Input
+                      type="text"
+                      placeholder="Enter Address"
+                      value={address}
+                      name="address"
+                      onChange={getUserData}
+                    />
+                  </Col>
+                  <Col lg={2} xs={12}>
+                    <div>
                       <P>
-                        Customer Name
-                      </P>
-                      <Input
-                        type="text"
-                        placeholder="Enter Reference"
-                        value={reference}
-                        name="reference"
-                        onChange={getUserData}
-                      />
-                    </Col>
-                    <Col lg={3} xs={12}>
-                      <P>
-                        Company Name
-                      </P>
-                      <Input
-                        type="text"
-                        placeholder="Enter Reference"
-                        value={reference}
-                        name="reference"
-                        onChange={getUserData}
-                      />
-                    </Col>
-                    <Col lg={3} xs={12}>
-                      <P>
-                        Address
-                      </P>
-                      <Input
-                        type="text"
-                        placeholder="Enter Reference"
-                        value={reference}
-                        name="reference"
-                        onChange={getUserData}
-                      />
-                    </Col>
-                    <Col lg={2} xs={12}>
-                      <div>
-                        <P>
-                          Invoice Number
-                          <span className="txt-danger">*</span>
-                        </P>
-                      </div>
-                      <Input
-                        type="text"
-                        placeholder="Enter Invoice Number"
-                        value={purchaseInvoice !== null ? purchaseInvoice.purchaseInvoiceId : "PI-000"}
-                        // name="dueDate"
-                        // onChange={getUserData}
-                        disabled
-                      />
-                    </Col>
-                    <Col lg={2} xs={12}>
-                      <P>
-                        Date
+                        Invoice Number
                         <span className="txt-danger">*</span>
                       </P>
-                      <Input
-                        type="date"
-                        placeholder="Enter Date "
-                        value={date}
-                        name="date"
-                        onChange={getUserData}
-                      />
-                    </Col>
-                    <Col lg={2} xs={12}>
-                      <P>
-                        Due Date
-                        <span className="txt-danger">*</span>
-                      </P>
-                      <Input
-                        type="date"
-                        placeholder="Enter Due Date"
-                        value={dueDate}
-                        name="dueDate"
-                        onChange={getUserData}
-                      />
-                    </Col>
-                    <Col lg={3} xs={12}>
-                      <P>
-                        Reference
-                      </P>
-                      <Input
-                        type="text"
-                        placeholder="Enter Reference"
-                        value={reference}
-                        name="reference"
-                        onChange={getUserData}
-                      />
-                    </Col>
+                    </div>
+                    <Input
+                      type="text"
+                      placeholder="Enter Invoice Number"
+                      value={"SI-000"}
+                      // name="dueDate"
+                      // onChange={getUserData}
+                      disabled
+                    />
+                  </Col>
+                  <Col lg={2} xs={12}>
+                    <P>
+                      Date
+                      <span className="txt-danger">*</span>
+                    </P>
+                    <Input
+                      type="date"
+                      placeholder="Enter Date "
+                      value={invoiceDate}
+                      name="invoiceDate"
+                      onChange={getUserData}
+                    />
+                  </Col>
+                  <Col lg={2} xs={12}>
+                    <P>
+                      Due Date
+                      <span className="txt-danger">*</span>
+                    </P>
+                    <Input
+                      type="date"
+                      placeholder="Enter Due Date"
+                      value={invoiceDueDate}
+                      name="invoiceDueDate"
+                      onChange={getUserData}
+                    />
+                  </Col>
+                  <Col lg={3} xs={12}>
+                    <P>
+                      Reference
+                    </P>
+                    <Input
+                      type="text"
+                      placeholder="Enter Reference"
+                      value={reference}
+                      name="reference"
+                      onChange={getUserData}
+                    />
+                  </Col>
 
-                    {/* <Row className="g-3" style={{ marginTop: "35px" }}>
-                      <div style={{ display: "flex", justifyContent: "end" }}>
+                  <Row className="g-3" style={{ marginTop: "35px" }}>
+                    {/* <div style={{ display: "flex", justifyContent: "end" }}>
                         {
                           userPersonalizationData !== null ? (
                             <Button
@@ -582,220 +618,242 @@ const CreateNewSaleInvoice: React.FC<CreateNewSaleInvoiceProps> = ({
                               Add Product
                             </Button>
                           )
-                        }
-                      </div>
-                      {productObjects.length > 0 && <table style={{ border: "1px solid lightgray", width: "100%" }}>
-                        <thead>
-                          <tr>
-                            <th style={{ width: "23%", borderRight: "1px solid lightgray" }}>
-                              Product
-                            </th>
-                            <th style={{ width: "17%", borderRight: "1px solid lightgray" }}>
-                              Quantity
-                            </th>
-                            <th style={{ width: "17%", borderRight: "1px solid lightgray" }}>
-                              Price
-                            </th>
-                            <th style={{ width: "17%", borderRight: "1px solid lightgray" }}>
-                              Discount
-                            </th>
-                            <th style={{ width: "17%", borderRight: "1px solid lightgray" }}>
-                              Amount
-                            </th>
-                            <th style={{ width: "10%", borderRight: "1px solid lightgray" }}>Actions</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {productObjects.map((param, index) => (
-                            <SingleProductObject
-                              key={index}
-                              param={param}
-                              onChange={(newParam: any) =>
-                                handleProductObjectChange(index, newParam)
-                              }
-                              onDelete={() => deleteProductObject(index)}
-                            />
-                          ))}
-                        </tbody>
-                      </table>}
+                        } */}
+                    {/* </div> */}
+                    {invoiceData.vehicles?.length > 0 && <table style={{ border: "1px solid lightgray", width: "100%" }}>
+                      <thead>
+                        <tr>
+                          <th style={{ width: "23%", borderRight: "1px solid lightgray" }}>
+                            S.No.
+                          </th>
+                          <th style={{ width: "17%", borderRight: "1px solid lightgray" }}>
+                            Vehicle
+                          </th>
+                          <th style={{ width: "17%", borderRight: "1px solid lightgray" }}>
+                            Price
+                          </th>
+                          <th style={{ width: "17%", borderRight: "1px solid lightgray" }}>
+                            Discount
+                          </th>
+                          <th style={{ width: "17%", borderRight: "1px solid lightgray" }}>
+                            Net Amount
+                          </th>
+
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {invoiceData.vehicles?.map((item: any, index: any) => (
+                          <>
+                            <div style={{
+                              height: "10px"
+                            }}> </div>
+                            <tr style={{ backgroundColor: "#f6f6f6", borderTop: "1px solid lightgray" }}>
+                              <td style={{ width: "10%", textAlign: "start", borderRight: "1px solid lightgray" }}>
+                                <Col xs={12}>
+                                  <Input
+                                    type="number"
+                                    placeholder="Enter Price"
+                                    value={index + 1}
+                                    name="price"
+                                    disabled
+                                  />
+
+                                </Col>
+
+                              </td>
+                              <td style={{ width: "30%", alignItems: "start", borderRight: "1px solid lightgray" }}>
+                                <Col xs={12}>
+                                  <Input
+                                    type="number"
+                                    placeholder="Enter Price"
+                                    value={index + 1}
+                                    name="price"
+                                    disabled
+                                  />
+
+                                </Col>
+                              </td>
+                              <td style={{ width: "17%", alignItems: "start", borderRight: "1px solid lightgray" }}>
+                                <Col xs={12}>
+                                  <Input
+                                    type="number"
+                                    placeholder="Enter Price"
+                                    value={invoiceData.service_charges}
+                                    // name="price"
+                                    disabled
+                                  />
+                                </Col>
+                              </td>
+                              <td style={{ width: "17%", alignItems: "start", borderRight: "1px solid lightgray" }}>
+                                <Col xs={12}>
+                                  <Input
+                                    type="number"
+                                    placeholder="Enter Discounted Price"
+                                    value={invoiceData.discounted_service_charges}
+                                    // name="price"
+                                    disabled
+                                  />
+                                </Col>
+                              </td>
+                              <td style={{ width: "17%", alignItems: "start", borderRight: "1px solid lightgray" }}>
+                                <Col xs={12}>
+                                  <Input
+                                    type="number"
+                                    placeholder="Enter Discounted Price"
+                                    value={invoiceData.discounted_service_charges}
+                                    // name="price"
+                                    disabled
+                                  />
+                                </Col>
+                              </td>
+
+                            </tr>
+                          </>
+                        ))}
+                      </tbody>
+                    </table>}
 
 
-                    </Row> */}
-                    <Row className="g-3" style={{ marginTop: "15px" }}>
-                      <Col lg={6} xs={12}>
-                        <P>
-                          Comments
-                        </P>
-                        <textarea
-                          className="form-control"
-                          placeholder="Enter Comments"
-                          rows={4.5}
-                          style={{
-                            maxHeight: "200px",
-                            resize: "vertical",
-                          }}
-                          value={comments}
-                          name="comments"
-                          onChange={getUserData}
-                        />
-                      </Col>
-                      <Col lg={6} xs={12}>
-                        <Row className="g-3">
-                          <Col lg={12} xs={12}>
-                            <P>
-                              Shipping Charges
-                              <span className="txt-danger">*</span>
-                            </P>
-                            <Input
-                              type="number"
-                              placeholder="Enter Shipping Charges"
-                              value={shippingCharges}
-                              name="shippingCharges"
-                              onChange={getUserData}
-                            />
-                          </Col>
-                          <Col lg={12} xs={12} style={{ marginTop: "5px" }}>
-                            <P>
-                              Net (PKR)
-                              <span className="txt-danger">*</span>
-                            </P>
-                            <Input
-                              type="number"
-                              placeholder="Enter Net Amount"
-                              value={netAmount}
-                              name="netAmount"
-                              onChange={getUserData}
-                              disabled
-                            />
-                          </Col>
-                        </Row>
-                      </Col>
-                    </Row>
-                    <Col
-                      xs={12}
-                      className="text-end d-flex justify-content-end gap-2 align-center"
-                      style={{ marginTop: "20px" }}
-                    >
-                      <Button color="primary" onClick={() => { dispatch(setPurchaseInvoice(null)); setIscreateNewInvoice(false) }}>
-                        Cancel
-                      </Button>
-                      <Button color="primary" onClick={addAndUpdatePurchaseInvoice}>
-                        {loading ? "Loading..." : "Create"}
-                      </Button>
+                  </Row>
+                  <Row className="g-3" style={{ marginTop: "15px" }}>
+                    <Col lg={6} xs={12}>
+                      <P>
+                        Comments
+                      </P>
+                      <textarea
+                        className="form-control"
+                        placeholder="Enter Comments"
+                        rows={4.5}
+                        style={{
+                          maxHeight: "200px",
+                          resize: "vertical",
+                        }}
+                        value={comments}
+                        name="comments"
+                        onChange={getUserData}
+                      />
+                    </Col>
+                    <Col lg={6} xs={12}>
+                      <Row className="g-3">
 
-
-                      <Button color="primary" onClick={toggleModal}>VIew</Button>
+                        <Col lg={12} xs={12} style={{ marginTop: "5px" }}>
+                          <P>
+                            Net (PKR)
+                            <span className="txt-danger">*</span>
+                          </P>
+                          <Input
+                            type="number"
+                            placeholder="Enter Net Amount"
+                            value={netAmount}
+                            name="netAmount"
+                            onChange={getUserData}
+                            disabled
+                          />
+                        </Col>
+                        <Col lg={12} xs={12}>
+                          <P>
+                            Additional Charges
+                            <span className="txt-danger">*</span>
+                          </P>
+                          <Input
+                            type="number"
+                            placeholder="Enter Additional Charges"
+                            value={additionalCharges}
+                            name="additionalCharges"
+                            onChange={getUserData}
+                          />
+                        </Col>
+                        <Col lg={12} xs={12}>
+                          <P>
+                            With Holding Charges
+                            <span className="txt-danger">*</span>
+                          </P>
+                          <Input
+                            type="number"
+                            placeholder="Enter With Holding Charges"
+                            value={withHoldingCharges}
+                            name="withHoldingCharges"
+                            onChange={getUserData}
+                          />
+                        </Col>
+                        <Col lg={12} xs={12}>
+                          <P>
+                            Discounted Charges
+                            <span className="txt-danger">*</span>
+                          </P>
+                          <Input
+                            type="number"
+                            placeholder="Enter Discounted Charges"
+                            value={discount}
+                            name="discount"
+                            onChange={getUserData}
+                            disabled
+                          />
+                        </Col>
+                        <Col lg={12} xs={12}>
+                          <P>
+                            Select Tax
+                            <span className="txt-danger">*</span>
+                          </P>
+                          <Select
+                            value={selectedTax !== "" ? selectedTax : null}
+                            showSearch
+                            style={{ width: "100%", height: 36 }}
+                            placeholder="Sekect Tax"
+                            optionFilterProp="children"
+                            filterOption={(input: any, option: any) => (option?.label ?? "").includes(input)}
+                            filterSort={(optionA: any, optionB: any) => (optionA?.label ?? "").toLowerCase().localeCompare((optionB?.label ?? "").toLowerCase())}
+                            onChange={(value, option) => {
+                              setSelectedTax(value); // Pass both value and type
+                            }}
+                            options={[...taxes.map((item: any) => ({
+                              value: item.percentage,
+                              label: `${item.title} - ${item.percentage}%`,
+                            }))]}
+                          />
+                        </Col>
+                        <Col lg={12} xs={12}>
+                          <P>
+                            Gross Amount
+                            <span className="txt-danger">*</span>
+                          </P>
+                          <Input
+                            type="text"
+                            placeholder="Enter Gross Amount"
+                            value={grossAmount}
+                            name="grossAmount"
+                            onChange={getUserData}
+                            disabled
+                          />
+                        </Col>
+                      </Row>
                     </Col>
                   </Row>
-                </div>
+                  <Col
+                    xs={12}
+                    className="text-end d-flex justify-content-end gap-2 align-center"
+                    style={{ marginTop: "20px" }}
+                  >
+                    <Button color="primary" onClick={() => { setIscreateNewInvoice(false) }}>
+                      Cancel
+                    </Button>
+                    <Button color="primary" onClick={addAndUpdateSaleInvoice}>
+                      {loading ? "Loading..." : "Create"}
+                    </Button>
 
+
+                    <Button color="primary" onClick={toggleModal}>View</Button>
+                  </Col>
+                </Row>
               </Form>
-
-
             </Row>
-            <Modal isOpen={modal} toggle={toggleModal} centered size="xl" className="custom-modal" style={{ minHeight: "600px" }}>
-              <ModalBody style={{ minHeight: "600px" }}>
-                <button className="close-btn" onClick={toggleModal}>
-                  <IoClose />
-                </button>
-                <div className="footer-buttons">
-                  <div style={{ padding: "3px", borderRadius: "2px", cursor: "pointer" }} onClick={generatePDF}><IoMdDownload color="white" size="1.5rem" /></div>
-                  <div style={{ padding: "3px", borderRadius: "2px", cursor: "pointer" }} onClick={printPDF}><IoMdPrint color="white" size="1.5rem" /> </div>
-                  {/* <Button color="danger" onClick={toggleModal}>Close</Button> */}
-                </div>
-                <p>Here is a list of employees:</p>
-                <div>
-                  {pages.map((page, pageIndex) => (
-                    <div key={pageIndex} className="page">
-                      {pageIndex !== 0 && <hr className="page-divider" />}
-                      <table>
-                        {pageIndex === 0 && (
-                          <thead>
-                            <tr>
-                              <th>Name</th>
-                              <th>Age</th>
-                              <th>Position</th>
-                            </tr>
-                          </thead>
-                        )}
-                        <tbody>
-                          {page.map((item, index) => (
-                            <tr key={index} style={{ borderBottom: "0px", borderTop: "1px solid lightgray" }}>
-                              <td style={{ borderBottom: "0px", borderTop: "1px solid lightgray" }}>{item.name}</td>
-                              <td style={{ borderBottom: "0px", borderTop: "1px solid lightgray" }}>{item.age}</td>
-                              <td style={{ borderBottom: "0px", borderTop: "1px solid lightgray" }}>{item.position}</td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  ))}
-                </div>
-              </ModalBody>
-            </Modal>
-
-            <style>{`
-  .custom-modal .modal-dialog {
-    max-width: 800px;
-    margin: 30px auto;
-  }
-  .custom-modal .modal-content {
-    background: #fff;
-    border-radius: 0px;
-    padding: 20px;
-  }
-  .modal-backdrop.show {
-    opacity: 0.9;
-    background-color: black;
-    padding: 20px;
-  }
-  .close-btn {
-    position: fixed;
-    top: 3%;
-    left: 8.5%;
-    background: transparent;
-    border: none;
-    font-size: 2rem;
-    color: white;
-    cursor: pointer;
-  }
-  .footer-buttons {
-    position: fixed;
-    top: 4%;
-    right: 3%;
-    display: flex;
-    gap: 10px;
-  }
-  .page {
-    margin-bottom: 20px;
-    page-break-after: always;
-  }
-  .page-divider {
-    border-top: 6px solid black;
-    margin: 30px -40px;
-  }
-`}</style>
-
-
-
-
-
-
           </CardBody>
-        </Card>
-      </Container >
+        </Card >
+        <ViewPDFModal modal={modal} toggleModal={toggleModal} body={downloadSaleInvoicePDF} />
+      </Container>
     </>
   );
 };
 
 export default CreateNewSaleInvoice;
-
-
-
-
-
-
-
-
-
 

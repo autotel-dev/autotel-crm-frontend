@@ -6,6 +6,7 @@ const initialState = {
     customers: [],
     customer: null,
     saleLead: null,
+    invoiceData: null,
     cities: [],
     packages: [],
     banks: [],
@@ -82,6 +83,9 @@ const SalesSlice = createSlice({
         setSaleLeadsEnd: (state) => {
             state.loading = false;
         },
+        setInvoiceData: (state, action) => {
+            state.invoiceData = action.payload;
+        },
 
         setSaleLeadId: (state, action) => {
             state.saleLeadId = action.payload;
@@ -127,6 +131,7 @@ export const {
     setCustomers,
     setCustomer,
     setSaleLead,
+    setInvoiceData,
     setCities,
     setPackages,
     setBanks,

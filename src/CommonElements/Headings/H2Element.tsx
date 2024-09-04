@@ -7,7 +7,7 @@ interface propsTypes {
   
   const H2 = (props: propsTypes) => {
     const { children = "" } = props;
-    return <h2 {...props}>{children}</h2>;
+    return <h2 {...props} style={{ fontSize: "22px" }}>{children}</h2>;
   };
   
   export default H2;

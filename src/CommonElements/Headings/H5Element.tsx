@@ -6,7 +6,7 @@ export interface propsTypes {
 }
 const H5 = (props: propsTypes) => {
   return (
-    <h5 {...props} style={{ fontSize: "16px", fontWeight: "bold" }}>
+    <h5 {...props} style={{ fontSize: "15px", fontWeight: "bold" }}>
       {props.children}
     </h5>
   );

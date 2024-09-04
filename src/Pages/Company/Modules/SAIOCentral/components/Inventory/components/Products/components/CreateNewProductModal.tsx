@@ -48,10 +48,10 @@ const CreateNewProductModal = () => {
       });
     }
   };
-  
+
   const productType = useSelector((state: any) => state.inventoryProduct.productType || []);
   const units = useSelector((state: any) => state.inventoryProduct.units || []);
-  
+
   const [productTypeList, setProductTypeList] = useState<any[]>([]);
   const [productTypeId, setProductTypeId] = useState("");
   const [unitsList, setUnitsList] = useState<any[]>([]);
@@ -167,16 +167,14 @@ const CreateNewProductModal = () => {
     <Col md={6}>
       <div className="text-end">
         <button
-          className={`btn ${
-            userPersonalizationData?.buttonsAndBarsColor == null
+          className={`btn ${userPersonalizationData?.buttonsAndBarsColor == null
               ? "btn-primary"
               : ""
-          }`}
+            }`}
           style={{
             color: "white",
-            backgroundColor: `${
-              userPersonalizationData?.buttonsAndBarsColor || ""
-            }`,
+            backgroundColor: `${userPersonalizationData?.buttonsAndBarsColor || ""
+              }`,
           }}
           onClick={addToggle}
         >

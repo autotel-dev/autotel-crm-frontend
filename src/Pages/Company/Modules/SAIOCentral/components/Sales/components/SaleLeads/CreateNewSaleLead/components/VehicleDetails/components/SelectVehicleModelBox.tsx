@@ -7,24 +7,24 @@ interface propTypes {
   vehicleModel: string;
   setVehicleModel: any;
   disabled: boolean;
+  vehicleMake: any;
 }
 
-const SelectVehicleModelBox: React.FC<propTypes> = ({ placeholder, vehicleModel, setVehicleModel,disabled }) => {
+const SelectVehicleModelBox: React.FC<propTypes> = ({ placeholder, vehicleModel, setVehicleModel, disabled, vehicleMake }) => {
   const { vehicleModels } = useSelector(
     (state: any) => state.sales
   );
-  // console.log(packages);
-  const [packageId, setPackageId] = useState("");
+  console.log("vehicleMake", vehicleMake);
   const [vehicleModelsList, setVehicleModelsList] = useState([]);
   const dispatch = useDispatch();
 
   const tempList: any = [];
   useEffect(() => {
-    vehicleModels?.map((item: any, index: any) => {
+    vehicleModels?.filter((item: any) => item?.vehicleMake?._id == vehicleMake).map((item: any, index: any) => {
       tempList.push({ value: `${item?._id}`, label: `${item?.name}` });
     });
     setVehicleModelsList(tempList);
-  }, [vehicleModels]);
+  }, [vehicleModels,vehicleMake]);
   return (
     <Select
       value={vehicleModel !== "" ? vehicleModel : null}

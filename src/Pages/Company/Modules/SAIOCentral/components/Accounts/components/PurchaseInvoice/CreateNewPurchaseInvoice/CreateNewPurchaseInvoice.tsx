@@ -1,19 +1,5 @@
 
 
-
-
-
-
-
-// import { Document, Page, Text, View, StyleSheet, PDFDownloadLink } from '@react-pdf/renderer';
-
-
-
-
-
-
-
-
 import React, { useEffect, useState, ChangeEvent, useRef } from "react";
 import {
   Button,
@@ -47,6 +33,7 @@ import { setPurchaseInvoice, setPurchaseInvoices } from "../../../../../../../..
 import { IoClose } from "react-icons/io5";
 import { IoMdDownload, IoMdPrint } from "react-icons/io";
 import html2canvas from 'html2canvas';
+import { Document } from "react-pdf";
 
 
 
@@ -95,12 +82,6 @@ import html2canvas from 'html2canvas';
 //     </Page>
 //   </Document>
 // );
-
-
-
-
-
-
 
 
 
@@ -360,30 +341,6 @@ const CreateNewPurchaseInvoice: React.FC<CreateNewPurchaseInvoiceProps> = ({
   //   // Open the generated PDF in a new tab
   //   window.open(doc.output('bloburl'), '_blank');
   // };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

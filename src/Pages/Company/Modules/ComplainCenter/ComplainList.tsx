@@ -177,7 +177,7 @@ const ComplainList = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isConnecetedServersDropdownOpen, setIsConnecetedServersDropdownOpen] =
     useState(false);
-  const [containerWidth, setContainerWidth] = useState("350px");
+  const [containerWidth, setContainerWidth] = useState("300px");
   const [serverID, setServerID] = useState("");
 
   const dropdownRef = useRef<HTMLDivElement>(null); // Add type assertion here
@@ -204,13 +204,13 @@ const ComplainList = () => {
   };
 
   const toggleContainerWidth = () => {
-    if (containerWidth === "350px") {
+    if (containerWidth === "300px") {
       setContainerWidth("170px");
       if (isDropdownOpen) {
         setIsDropdownOpen(!isDropdownOpen);
       }
     } else {
-      setContainerWidth("350px");
+      setContainerWidth("300px");
     }
   };
 
@@ -250,7 +250,7 @@ const ComplainList = () => {
       <div style={{ width: "100%", display: "flex", justifyContent: "end" }}>
         <div
           style={{
-            width: containerWidth === "350px" ? "350px" : "170px",
+            width: containerWidth === "300px" ? "300px" : "170px",
             overflow: "hidden",
             height: "30px",
             transition: "width 0.5s",
@@ -287,13 +287,13 @@ const ComplainList = () => {
                 color: "white",
                 paddingLeft: "15px",
                 borderRight:
-                  containerWidth === "350px" ? "1px solid black" : "0px",
+                  containerWidth === "300px" ? "1px solid black" : "0px",
               }}
             >
-              {containerWidth === "350px" ? "Hide Analytics" : "Show Analytics"}
+              {containerWidth === "300px" ? "Hide Analytics" : "Show Analytics"}
             </div>
 
-            {containerWidth === "350px" && (
+            {containerWidth === "300px" && (
               <div
                 style={{
                   cursor: "pointer",
@@ -310,7 +310,7 @@ const ComplainList = () => {
               </div>
             )}
             {/*  */}
-            {containerWidth === "350px" && (
+            {containerWidth === "300px" && (
               <div
                 style={{
                   cursor: "pointer",
@@ -335,7 +335,7 @@ const ComplainList = () => {
           {isDropdownOpen && (
             <div
               className="custom-dropdown-analytics"
-              style={{ width: "350px", position: "absolute", zIndex: "1" }}
+              style={{ width: "300px", position: "absolute", zIndex: "1" }}
             >
               {isDropdownOpen && (
                 <div className="dropdown-options-analytics">
@@ -431,7 +431,7 @@ const ComplainList = () => {
         </div>
         <Card
           style={{
-            height: containerWidth === "350px" ? "100%" : "0",
+            height: containerWidth === "300px" ? "100%" : "0",
             overflow: "hidden",
             transition: "height 0.5s",
             marginTop: "20px",
@@ -439,44 +439,45 @@ const ComplainList = () => {
         >
           <CardBody>
             <div>
-              <Col xl="12" className="widget-sell">
-                <Row>
-                  {complainCenterStatistics.map((data: any, index: any) => (
-                    <Col
-                      xl="2"
-                      lg="2"
-                      md="4"
-                      sm="12"
-                      key={index}
-                      style={{
-                        marginBottom: "10px",
-                      }}
-                    >
-                      <div className="sale" style={{
-                        backgroundColor:
-                          data.key === "New"
-                            ? "rgba(0, 0, 255, 0.3)"
-                            : data.key == "InProgress"
-                              ? "rgba(255, 165, 0, 0.3)"
-                              : data.key === "Pending"
-                                ? "rgba(255, 0, 0, 0.3)" :
-                                data.key === "Resolved"
-                                  ? "rgba(0, 255, 0, 0.3)" : "rgb(245, 246, 249)",
-                        height: "140px"
-                      }}>
-                        <H4>{data.key !== "InternalComplaints" ? (data.key == "InProgress" ? "In Progress" : data.key) : "Total"}</H4>
-                        {/* <h5
-                          style={{
-                            fontWeight: "bold",
-                            fontSize: "24px",
-                            color: "#1f2f3e",
-                            marginBottom: "15px",
-                          }}
-                        >
-                          {data.value}
-                        </h5> */}
-                        <H5>{data.value}</H5>
-                        <P className="d-flex">
+              <Row>
+                <Col xl="10"
+                //  className="widget-sell"
+                >
+                  <Row>
+                    {complainCenterStatistics.map((data: any, index: any) => (
+                      <Col
+                        // xl={2.5}
+                        // lg={2.5}
+                        // md="4"
+                        // sm="12"
+                        key={index}
+                        style={{
+                          marginBottom: "10px",
+                          height: "80px",
+                          position: "relative",
+                        }}
+                      >
+                        <div className="sale" style={{
+                          display: "flex",
+                          alignItems: "center",
+                          padding: "0px 15px",
+                          // backgroundColor:
+                          //   data.key === "New"
+                          //     ? "rgba(0, 0, 255, 0.3)"
+                          //     : data.key == "InProgress"
+                          //       ? "rgba(255, 165, 0, 0.3)"
+                          //       : data.key === "Pending"
+                          //         ? "rgba(255, 0, 0, 0.3)" :
+                          //         data.key === "Resolved"
+                          //           ? "rgba(0, 255, 0, 0.3)" : "rgb(245, 246, 249)",
+                          boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)", // Example box shadow
+                          height: "60px",
+                          width: "92%"
+                        }}>
+                          <H4>{data.key !== "InternalComplaints" ? (data.key == "InProgress" ? "In Progress" : data.key) : "Total"}</H4>
+
+                          {/* <H6>{data.value}</H6> */}
+                          {/* <P className="d-flex">
                           <span className={`bg-light-${data.color} me-2`}>
                             <SVG iconId={data.svgIcon} />
                           </span>
@@ -484,215 +485,126 @@ const ComplainList = () => {
                             {data.percentage}
                           </span>
                         </P>
-                        <span className="sale-title">{data.time}</span>
-                      </div>
-                    </Col>
-                  ))}
-                  <Col xl="2" lg="2" md="4" sm="12">
-                    <div className="sale"
+                        <span className="sale-title">{data.time}</span> */}
+                        </div>
+                        <div style={{
+                          backgroundColor: "white",
+                          border: `4px solid ${data.key === "New"
+                            ? "rgba(0, 0, 255, 0.3)"
+                            : data.key == "InProgress"
+                              ? "rgba(255, 165, 0, 0.3)"
+                              : data.key === "Pending"
+                                ? "rgba(255, 0, 0, 0.3)" :
+                                data.key === "Resolved"
+                                  ? "rgba(0, 255, 0, 0.3)" : "rgb(245, 246, 249)"}`,
+                          height: '45px',
+                          width: "45px",
+                          borderRadius: "100px",
+                          position: "absolute",
+                          top: "0",
+                          right: "0",
+                          marginTop: "8px",
+                          marginRight: "5px",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          textAlign: "center"
+                        }}>
+                          <div style={{
+                            backgroundColor: "white",
+                            border: `3px solid lightgray`,
+                            height: '34px',
+                            width: "34px",
+                            borderRadius: "100px",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            textAlign: "center"
+                          }}>
+                            <H5>{data.value}</H5>
+                          </div>
+                        </div>
+                      </Col>
+                    ))}
 
+                  </Row>
+
+                  <Row>
+                    <div
                       style={{
-                        backgroundColor: "white", // Remove the background color
-                        paddingTop: "0px"
-                      }}>
+                        position: "relative",
+                        // padding:"0px 12px"
+                      }}
+                    >
+                      {/* Left angle bracket */}
                       <div>
                         <div
                           style={{
+                            position: "absolute",
+                            top: "50%",
+                            left: "15px",
+                            transform: "translate(-50%, -50%)",
+                            zIndex: "1",
+                            cursor: "pointer",
+                            fontSize: "13px",
+                            backgroundColor: "lightgray",
+                            padding: "10px 10px",
+                            borderRadius: "50%",
                             display: "flex",
-                            flexDirection: "row",
-                            width: "100%", // Set the width of the outer container
-                            height: "180px", // Set the height of the outer container
-                            backgroundColor: "white", // Remove the background color
-                          }}
-                        >
-                          <div
-                            style={{
-                              flex: "1",
-                              marginRight: "0px",
-                              // backgroundColor: "gray",
-                            }}
-                          >
-                            <Chart
-                              width={"100%"}
-                              height={"100%"} // Set the height of the chart to fill the outer container
-                              chartType={"PieChart"}
-                              loader={<div>{"Loading Chart"}</div>}
-                              data={[
-                                ["Complains", "Hours per Day"],
-                                ["New", complainCenterStatistics[1]?.value],
-                                ["In Progress", complainCenterStatistics[2]?.value],
-                                ["Pending", complainCenterStatistics[3]?.value],
-                                ["Resolved", complainCenterStatistics[4]?.value],
-                              ]}
-                              options={{
-                                backgroundColor: "transparent", // Set chart background color as transparent
-                                chartArea: {
-                                  backgroundColor: "transparent", // Set chart area background color as transparent
-                                  top: "5%", // Set padding of the top of chart area to 0
-                                  left: "3%", // Set padding of the left of chart area to 0
-                                  right: 0,
-                                },
-                                pieSliceText: "value", // Display the exact values of each option
-                                colors: [
-                                  "blue",
-                                  "orange",
-                                  "#ff6150",
-                                  "#51bb25",
-                                ], // Custom colors for Active and Inactive options respectively
-                                is3D: true, // Set the chart type to 3D
-                                legend: { position: "none" }, // Remove legend
-                              }}
-                              rootProps={{
-                                "data-testid": "2",
-                              }}
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </Col>
-                </Row>
-
-                <Row>
-                  <div
-                    style={{
-                      position: "relative",
-                    }}
-                  >
-                    {/* Left angle bracket */}
-                    <div>
-                      <div
-                        style={{
-                          position: "absolute",
-                          top: "50%",
-                          left: "15px",
-                          transform: "translate(-50%, -50%)",
-                          zIndex: "1",
-                          cursor: "pointer",
-                          fontSize: "17px",
-                          backgroundColor: "lightgray",
-                          padding: "12px 12px",
-                          borderRadius: "50%",
-                          display: "flex",
-                          alignItems: "center",
-                          marginRight: "10px", // Margin added
-                          marginLeft: "10px",
-                        }}
-                        onClick={scrollLeft}
-                      >
-                        <FaArrowLeft />
-                      </div>
-                    </div>
-
-                    {/* Code block with scroll */}
-                    <div
-                      id="scrollContainer"
-                      style={{
-                        display: "flex",
-                        margin: "20px 50px",
-                        overflowX: "scroll",
-                        scrollbarWidth: "none" /* Firefox */,
-                        width:
-                          "calc(100% - 100px)" /* Adjust width to accommodate brackets */,
-                        paddingLeft:
-                          "24px" /* Add left padding to make space for left bracket */,
-                        paddingRight:
-                          "24px" /* Add right padding to make space for right bracket */,
-                      }}
-                    // onScroll={(e) => setScrollPosition(e.target.scrollLeft)}
-                    >
-                      <li
-                        style={{
-                          backgroundColor: "#f5f6f9",
-                          borderRadius: "8px",
-                          padding: "10px 10px",
-                          marginRight: "8px",
-                          listStyle: "none",
-                          display: "flex",
-                          alignItems: "center",
-                          cursor: "pointer"
-                        }}
-
-                        onClick={() => {
-                          dispatch(setFilteredRole("All"))
-                        }}
-                      >
-                        <div
-                          style={{
-                            width: "30px",
-                            height: "30px",
-                            borderRadius: "100px",
-                          }}
-                        >
-                          <img
-                            height="100%"
-                            width="100%"
-                            src={UserProfile}
-                            alt="user"
-                            style={{
-                              borderRadius: "100px",
-                            }}
-                          />
-                        </div>
-                        <div
-                          className="Countries"
-                          style={{
+                            alignItems: "center",
+                            marginRight: "10px", // Margin added
                             marginLeft: "10px",
-
-                            // width: "180px",
-                            display: "flex",
-                            justifyContent: "space-between",
-                            alignItems: "center"
                           }}
+                          onClick={scrollLeft}
                         >
-                          <H5>All</H5>
-                          <div
-                            style={{
-                              padding: "6px",
-                              width: "30px",
-                              height: "30px",
-                              borderRadius: "100px",
-                              backgroundColor: "black",
-                              color: "white",
-                              display: "flex",
-                              justifyContent: "center",
-                              alignItems: "center",
-                              marginLeft: "20px",
-                              // fontFamily: "Sedan, serif",
-                              // fontWeight: "400",
-                              // fontStyle: "normal",
-                            }}
-                          >
-                            {complainCenterStatistics[0]?.value}
-                          </div>
-                          {/* <H6 className="mt-1 mb-0">{data.percentage}</H6> */}
+                          <FaArrowLeft />
                         </div>
-                      </li>
-                      {complainCenterRoles.map((data: any, index: any) => (
+                      </div>
+
+                      {/* Code block with scroll */}
+                      <div
+                        id="scrollContainer"
+                        style={{
+                          display: "flex",
+                          margin: "20px 50px",
+                          overflowX: "scroll",
+                          scrollbarWidth: "none" /* Firefox */,
+                          width:
+                            "calc(100% - 100px)" /* Adjust width to accommodate brackets */,
+                          paddingLeft:
+                            "24px" /* Add left padding to make space for left bracket */,
+                          paddingRight:
+                            "24px" /* Add right padding to make space for right bracket */,
+                        }}
+                      // onScroll={(e) => setScrollPosition(e.target.scrollLeft)}
+                      >
                         <li
                           style={{
-                            backgroundColor: "#f5f6f9",
+                            // backgroundColor: "#f5f6f9",
+
+                            // boxShadow: "0px 3.5px 7px rgba(0, 0, 0, 0.2)",
+                            border:"2px solid lightgray",
                             borderRadius: "8px",
-                            padding: "2px 10px",
+                            padding: "0px 10px",
+                            height: "40px",
                             marginRight: "8px",
                             listStyle: "none",
                             display: "flex",
                             alignItems: "center",
                             cursor: "pointer",
-                            // width: "auto", // Remove or keep it as auto
-
+                            marginBottom: "4.5px",
+                            marginTop: "3.5px"
                           }}
-                          key={index}
+
                           onClick={() => {
-                            dispatch(setFilteredRole(data.name));
+                            dispatch(setFilteredRole("All"))
                           }}
                         >
                           <div
                             style={{
-                              width: "30px",
-                              height: "30px",
+                              width: "24px",
+                              height: "24px",
                               borderRadius: "100px",
-                              flexShrink: 0, // Prevent shrinking
                             }}
                           >
                             <img
@@ -709,21 +621,19 @@ const ComplainList = () => {
                             className="Countries"
                             style={{
                               marginLeft: "10px",
+
+                              // width: "180px",
                               display: "flex",
                               justifyContent: "space-between",
-                              alignItems: "center",
+                              alignItems: "center"
                             }}
                           >
-                            {/* Remove or increase the maxWidth and minWidth properties */}
-                            <div style={{ minWidth: data.name.length < 10 ? "80px" : data.name.length < 10 ? "100px" : data.name.length < 14 ? "120px" : data.name.length < 20 ? "170px" : "180px", flexShrink: 0 }}>
-                              <H5>{data.name}</H5>
-                            </div>
-
+                            <H5>All</H5>
                             <div
                               style={{
                                 padding: "6px",
-                                width: "30px",
-                                height: "30px",
+                                width: "22px",
+                                height: "22px",
                                 borderRadius: "100px",
                                 backgroundColor: "black",
                                 color: "white",
@@ -731,48 +641,196 @@ const ComplainList = () => {
                                 justifyContent: "center",
                                 alignItems: "center",
                                 marginLeft: "20px",
-                                flexShrink: 0, // Prevent shrinking
+                                fontSize: "12px",
+                                // fontFamily: "Sedan, serif",
+                                // fontWeight: "400",
+                                // fontStyle: "normal",
                               }}
                             >
-                              {data.count}
+                              {complainCenterStatistics[0]?.value}
                             </div>
                             {/* <H6 className="mt-1 mb-0">{data.percentage}</H6> */}
                           </div>
                         </li>
-                      ))}
+                        {complainCenterRoles.map((data: any, index: any) => (
+                          <li
+                            style={{
+                              // backgroundColor: "#f5f6f9",
+                              // boxShadow: "0px 3.5px 7px rgba(0, 0, 0, 0.2)",
+                              border:"2px solid lightgray",
+                              borderRadius: "8px",
+                              padding: "0px 10px",
+                              height: "40px",
+                              marginRight: "8px",
+                              listStyle: "none",
+                              display: "flex",
+                              alignItems: "center",
+                              cursor: "pointer",
+                              marginBottom: "4.5px",
+                              marginTop: "3.5px",
+
+                              // width: "auto", // Remove or keep it as auto
+
+                            }}
+                            key={index}
+                            onClick={() => {
+                              dispatch(setFilteredRole(data.name));
+                            }}
+                          >
+                            <div
+                              style={{
+                                width: "24px",
+                                height: "24px",
+                                borderRadius: "100px",
+                                flexShrink: 0, // Prevent shrinking
+                              }}
+                            >
+                              <img
+                                height="100%"
+                                width="100%"
+                                src={UserProfile}
+                                alt="user"
+                                style={{
+                                  borderRadius: "100px",
+                                }}
+                              />
+                            </div>
+                            <div
+                              className="Countries"
+                              style={{
+                                marginLeft: "10px",
+                                display: "flex",
+                                justifyContent: "space-between",
+                                alignItems: "center",
+                              }}
+                            >
+                              {/* Remove or increase the maxWidth and minWidth properties */}
+                              <div style={{ minWidth: data.name.length < 10 ? "80px" : data.name.length < 10 ? "100px" : data.name.length < 14 ? "120px" : data.name.length < 20 ? "170px" : "180px", flexShrink: 0 }}>
+                                <H5>{data.name}</H5>
+                              </div>
+
+                              <div
+                                style={{
+                                  padding: "6px",
+                                  width: "22px",
+                                  height: "22px",
+                                  borderRadius: "100px",
+                                  backgroundColor: "black",
+                                  color: "white",
+                                  display: "flex",
+                                  fontSize: "12px",
+                                  justifyContent: "center",
+                                  alignItems: "center",
+                                  marginLeft: "20px",
+                                  flexShrink: 0, // Prevent shrinking
+                                }}
+                              >
+                                {data.count}
+                              </div>
+                              {/* <H6 className="mt-1 mb-0">{data.percentage}</H6> */}
+                            </div>
+                          </li>
+                        ))}
 
 
+                      </div>
+
+                      {/* Right angle bracket */}
+                      <div
+                        style={{
+                          position: "absolute",
+                          top: "50%",
+                          right: "-15px",
+                          transform: "translate(-50%, -50%)",
+                          zIndex: "1",
+                          cursor: "pointer",
+                          fontSize: "13px",
+                          backgroundColor: "lightgray",
+                          padding: "10px 10px",
+                          borderRadius: "50%",
+                          display: "flex",
+                          alignItems: "center",
+                          // marginRight: "10px", // Margin added
+                          marginLeft: "5px",
+                        }}
+                        onClick={scrollRight}
+                      >
+                        <FaArrowRight />
+                      </div>
                     </div>
+                  </Row>
+                </Col>
+                <Col xl="2" lg="2" md="4" sm="12">
+                  <div className="sale"
 
-                    {/* Right angle bracket */}
-                    <div
-                      style={{
-                        position: "absolute",
-                        top: "50%",
-                        right: "-15px",
-                        transform: "translate(-50%, -50%)",
-                        zIndex: "1",
-                        cursor: "pointer",
-                        fontSize: "17px",
-                        backgroundColor: "lightgray",
-                        padding: "12px 12px",
-                        borderRadius: "50%",
-                        display: "flex",
-                        alignItems: "center",
-                        // marginRight: "10px", // Margin added
-                        marginLeft: "5px",
-                      }}
-                      onClick={scrollRight}
-                    >
-                      <FaArrowRight />
+                    style={{
+                      backgroundColor: "white", // Remove the background color
+                      paddingTop: "0px"
+                    }}>
+                    <div>
+                      <div
+                        style={{
+                          display: "flex",
+                          flexDirection: "row",
+                          width: "100%", // Set the width of the outer container
+                          height: "200px", // Set the height of the outer container
+                          backgroundColor: "white", // Remove the background color
+                          marginTop:"15px",
+                          marginBottom:"-30px"
+                        }}
+                      >
+                        <div
+                          style={{
+                            flex: "1",
+                            marginRight: "0px",
+                            // backgroundColor: "gray",
+                          }}
+                        >
+                          <Chart
+                            width={"100%"}
+                            height={"100%"} // Set the height of the chart to fill the outer container
+                            chartType={"PieChart"}
+                            loader={<div>{"Loading Chart"}</div>}
+                            data={[
+                              ["Complains", "Hours per Day"],
+                              ["New", complainCenterStatistics[1]?.value],
+                              ["In Progress", complainCenterStatistics[2]?.value],
+                              ["Pending", complainCenterStatistics[3]?.value],
+                              ["Resolved", complainCenterStatistics[4]?.value],
+                            ]}
+                            options={{
+                              backgroundColor: "transparent", // Set chart background color as transparent
+                              chartArea: {
+                                backgroundColor: "transparent", // Set chart area background color as transparent
+                                top: "5%", // Set padding of the top of chart area to 0
+                                left: "3%", // Set padding of the left of chart area to 0
+                                right: 0,
+                              },
+                              pieSliceText: "value", // Display the exact values of each option
+                              colors: [
+                                "blue",
+                                "orange",
+                                "#ff6150",
+                                "#51bb25",
+                              ], // Custom colors for Active and Inactive options respectively
+                              is3D: true, // Set the chart type to 3D
+                              legend: { position: "none" }, // Remove legend
+                            }}
+                            rootProps={{
+                              "data-testid": "2",
+                            }}
+                          />
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </Row>
-              </Col>
+                </Col>
+              </Row>
+
             </div>
-          </CardBody>
-        </Card>
-      </div>
+          </CardBody >
+        </Card >
+      </div >
     </>
   );
 };

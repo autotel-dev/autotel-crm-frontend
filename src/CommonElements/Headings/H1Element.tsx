@@ -5,7 +5,7 @@ export interface propsTypes {
     className?: string;
   }
   const H1 = (props: propsTypes) => {
-    return <h1 {...props}>{props.children}</h1>;
+    return <h1 {...props} style={{ fontSize: "26px" }}>{props.children}</h1>;
   };
   
   export default H1;

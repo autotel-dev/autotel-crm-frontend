@@ -2,6 +2,7 @@
 import { useSelector } from "react-redux";
 import GroupSvg from "../../../../../../src/assets/people (1).png";
 import { useNavigate } from "react-router-dom";
+import P1 from "../../../../../CommonElements/Paragraph/P1Element";
 
 
 interface SidebarProps {
@@ -59,12 +60,13 @@ const Sidebar: React.FC<SidebarProps> = ({
                         display: "flex",
                         flexDirection: "column",
                         justifyContent: "center",
-                        height: "100px",
+                        height: "90px",
                         alignItems: "center",
                         cursor: "pointer",
                         borderBottom: "0.1px solid gray",
-                        marginTop: "5px",
+                        marginTop: "15px",
                         opacity: `${sales ? "0.6" : "1"}`
+                        
                     }}
 
                     onClick={() => {
@@ -79,12 +81,12 @@ const Sidebar: React.FC<SidebarProps> = ({
                     }}
                 >
                     <img src={GroupSvg} alt="" height={24} width={28} id="Tooltip" />
-                    <div style={{
+                    <P1 style={{
                         color: "white",
                         marginTop: "5px"
                     }}>
                         Sales
-                    </div>
+                    </P1>
                 </div>
 
 
@@ -95,7 +97,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                         display: "flex",
                         flexDirection: "column",
                         justifyContent: "center",
-                        height: "100px",
+                        height: "90px",
                         alignItems: "center",
                         opacity: `${accounts ? "0.6" : "1"}`,
                         cursor: "pointer",
@@ -113,12 +115,12 @@ const Sidebar: React.FC<SidebarProps> = ({
                     }}
                 >
                     <img src={GroupSvg} alt="" height={24} width={28} id="Tooltip" />
-                    <div style={{
+                    <P1 style={{
                         color: "white",
                         marginTop: "5px"
                     }}>
                         Accounts
-                    </div>
+                    </P1>
                 </div>
 
                 <div
@@ -128,7 +130,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                         display: "flex",
                         flexDirection: "column",
                         justifyContent: "center",
-                        height: "100px",
+                        height: "90px",
                         alignItems: "center",
                         opacity: `${inventory ? "0.6" : "1"}`,
                         cursor: "pointer",
@@ -145,12 +147,12 @@ const Sidebar: React.FC<SidebarProps> = ({
                     }}
                 >
                     <img src={GroupSvg} alt="" height={24} width={28} id="Tooltip" />
-                    <div style={{
+                    <P1 style={{
                         color: "white",
                         marginTop: "5px"
                     }}>
                         Inventory
-                    </div>
+                    </P1>
                 </div>
                 <div
                     title="Operation"
@@ -159,7 +161,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                         display: "flex",
                         flexDirection: "column",
                         justifyContent: "center",
-                        height: "100px",
+                        height: "90px",
                         alignItems: "center",
                         opacity: `${operations ? "0.6" : "1"}`,
                         cursor: "pointer",
@@ -176,12 +178,12 @@ const Sidebar: React.FC<SidebarProps> = ({
                     }}
                 >
                     <img src={GroupSvg} alt="" height={24} width={28} id="Tooltip" />
-                    <div style={{
+                    <P1 style={{
                         color: "white",
                         marginTop: "5px"
                     }}>
                         Operations
-                    </div>
+                    </P1>
                 </div>
 
             </div>

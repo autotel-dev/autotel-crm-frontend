@@ -615,7 +615,7 @@ const VehicleForm = ({ onRemove, index, vehicleData, onChange, callbackActive, i
   };
 
   const handleDefaultServiceChange = (na: any, value: string, i: any) => {
-    const updatedFormData = { ...formData, defautService: value };
+    const updatedFormData = { ...formData, defaultService: value };
     setFormData(updatedFormData);
     onChange(index, updatedFormData);
 
@@ -978,6 +978,7 @@ const VehicleForm = ({ onRemove, index, vehicleData, onChange, callbackActive, i
             vehicleModel={formData.vehicleModel}
             setVehicleModel={(value: any) => handleSelectChange('vehicleModel', value)}
             disabled={isCreated}
+            vehicleMake={formData.vehicleMake}
           />
         </Col>
         <Col xl={4} xs={12}>

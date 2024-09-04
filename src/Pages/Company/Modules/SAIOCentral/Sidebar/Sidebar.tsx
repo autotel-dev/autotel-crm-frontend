@@ -1,18 +1,10 @@
 import { useState } from "react";
-import {
-    PopoverBody,
-    PopoverHeader,
-    UncontrolledPopover,
-    UncontrolledTooltip,
-} from "reactstrap";
-import { H6, LI } from "../../../../../AbstractElements";
-import { FaCarAlt } from "react-icons/fa";
-import { ImArrowRight, ImArrowLeft } from "react-icons/im";
 import { useDispatch, useSelector } from "react-redux";
 import GroupSvg from "../../../../../../src/assets/people (1).png";
 import SubGroupSvg from "../../../../../../src/assets/group.png";
 import GeofenceSvg from "../../../../../../src/assets/placeholder.png";
 import { setType } from "../../../../../ReaduxToolkit/Reducer/GeofenceSlice";
+import P1 from "../../../../../CommonElements/Paragraph/P1Element";
 
 interface SidebarProps {
     setSales: any,
@@ -26,7 +18,6 @@ interface SidebarProps {
     operations: any;
     // customers: any
 }
-
 
 const Sidebar: React.FC<SidebarProps> = ({
     setSales,
@@ -82,12 +73,12 @@ const Sidebar: React.FC<SidebarProps> = ({
                     }}
                 >
                     <img src={GroupSvg} alt="" height={24} width={28} id="Tooltip" />
-                    <div style={{
+                    <P1 style={{
                         color: "white",
                         marginTop: "5px"
                     }}>
                         Sales
-                    </div>
+                    </P1>
                 </div>
 
 
@@ -113,12 +104,12 @@ const Sidebar: React.FC<SidebarProps> = ({
                     }}
                 >
                     <img src={GroupSvg} alt="" height={24} width={28} id="Tooltip" />
-                    <div style={{
+                    <P1 style={{
                         color: "white",
                         marginTop: "5px"
                     }}>
                         Accounts
-                    </div>
+                    </P1>
                 </div>
 
                 <div
@@ -143,12 +134,12 @@ const Sidebar: React.FC<SidebarProps> = ({
                     }}
                 >
                     <img src={GroupSvg} alt="" height={24} width={28} id="Tooltip" />
-                    <div style={{
-                        color: "white",
+                    <P1 style={{
+                        color: "green",
                         marginTop: "5px"
                     }}>
                         Inventory
-                    </div>
+                    </P1>
                 </div>
                 <div
                     title="Operation"
@@ -172,18 +163,15 @@ const Sidebar: React.FC<SidebarProps> = ({
                     }}
                 >
                     <img src={GroupSvg} alt="" height={24} width={28} id="Tooltip" />
-                    <div style={{
+                    <P1 style={{
                         color: "white",
                         marginTop: "5px"
                     }}>
                         Operation
-                    </div>
+                    </P1>
                 </div>
 
             </div>
-
-
-
 
         </div >
     );

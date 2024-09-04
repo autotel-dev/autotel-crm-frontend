@@ -1,19 +1,3 @@
-
-
-
-
-
-
-
-// import { Document, Page, Text, View, StyleSheet, PDFDownloadLink } from '@react-pdf/renderer';
-
-
-
-
-
-
-
-
 import React, { useEffect, useState, ChangeEvent, useRef } from "react";
 import {
   Button,
