@@ -7,6 +7,7 @@ export interface StockAdjustmentTypesDataType {
     id: string;
     name: string;
     isActive: string;
+    availability: string;
     date: string;
 }
 
@@ -33,6 +34,14 @@ export const stockAdjustmentTypesColumns = [
         center: true,
         // width: "100px", // Set the width for this column
     },
+    {
+        name: "Availability",
+        selector: (row: StockAdjustmentTypesDataType) => row["availability"] ? "true" : "false",
+        sortable: true,
+        center: true,
+        // width: "100px", // Set the width for this column
+    },
+
 
     {
         name: "Date",

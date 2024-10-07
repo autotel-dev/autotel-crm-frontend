@@ -7,19 +7,25 @@ import { useDispatch, useSelector } from "react-redux";
 import "../../../../../../../../CssConstaints/Style.css";
 import { PlusCircle } from "react-feather";
 import {
+  GET_ALL_ACTIVE_BRANCHES,
+  GET_ALL_ACTIVE_WAREHOUSES,
   GET_ALL_PRODUCTS,
   GET_ALL_STOCK_ADJUSTMENT_TYPES,
 } from "../../../../../../../../Utilities/api/apiEndpoints";
 import { getAll } from "../../../../../../../../Utilities/api";
-import { setProducts } from "../../../../../../../../ReaduxToolkit/Reducer/StockAdjustementSlice";
+import { setBranches, setProducts, setStockAdjustment, setWarehouses } from "../../../../../../../../ReaduxToolkit/Reducer/StockAdjustementSlice";
 import { formatUnderscoredString } from "../../../../../../../../Utilities/globals/globals";
 import { setStockAdjustmentTypes } from "../../../../../../../../ReaduxToolkit/Reducer/StockAdjustementSlice";
 import CreateNewStockAdjustmentModal from "./CreateNewStockAdjustmentModal";
+import { H4 } from "../../../../../../../../AbstractElements";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 
 const StockAdjustmentTable = () => {
   const dispatch = useDispatch();
   // Function to transform supportData into allBugReports format
   const { stockAdjustments } = useSelector((state: any) => state.stockAdjustment);
+  const [addModal, setAddModal] = useState(false);
 
   const { userPersonalizationData } = useSelector(
     (state: any) => state.personalization
@@ -43,10 +49,11 @@ const StockAdjustmentTable = () => {
     return stockAdjustments
       ?.filter(
         (item: any) =>
-          item?._id.toLowerCase().includes(searchValue) ||
+          item?.product?.name?.toLowerCase().includes(searchValue) ||
           item?.type?.name.toLowerCase().includes(searchValue)
       )
-      .map((item: any) => ({
+      .map((item: any, index: any) => ({
+        index: index + 1,
         ...item,
 
       }));
@@ -90,6 +97,26 @@ const StockAdjustmentTable = () => {
       }
     });
 
+    getAll({ url: GET_ALL_ACTIVE_WAREHOUSES }).then((data: any) => {
+      // console.log("api call --- >", data);
+      if (data !== undefined) {
+        if (data.success) {
+          // console.log("hhg");
+          dispatch(setWarehouses(data.data));
+        }
+      }
+    });
+
+    getAll({ url: GET_ALL_ACTIVE_BRANCHES }).then((data: any) => {
+      // console.log("api call --- >", data);
+      if (data !== undefined) {
+        if (data.success) {
+          // console.log("hhg");
+          dispatch(setBranches(data.data));
+        }
+      }
+    });
+
 
     getAll({ url: GET_ALL_PRODUCTS }).then((data: any) => {
       // console.log("api call --- >", data);
@@ -102,31 +129,12 @@ const StockAdjustmentTable = () => {
     });
   }, []);
 
-  // const handleDelete = () => {
-  //   if (
-  //     window.confirm(
-  //       `Are you sure you want to delete:\r ${selectedRows.map(
-  //         (r: SaleLeadsDataType) => r.id
-  //       )}?`
-  //     )
-  //   ) {
-  //     setToggleDelete(!toggleDelete);
-  //     setData(
-  //       data.filter((item: any) =>
-  //         selectedRows.filter((elem: SaleLeadsDataType) => elem.id === item.id)
-  //           .length > 0
-  //           ? false
-  //           : true
-  //       )
-  //     );
-  //     setSelectedRows([]);
-  //   }
-  // };
+
 
   const handleRowClicked = (row: any) => {
-    // navigate(
-    //   `${process.env.PUBLIC_URL}/support/ticketDetails/${row.ticket_id}`
-    // );
+    console.log("row", row);
+    dispatch(setStockAdjustment(row))
+    setAddModal(!addModal)
   };
   return (
     <div
@@ -134,15 +142,33 @@ const StockAdjustmentTable = () => {
       style={{ overflow: "auto", scrollbarWidth: "none" }}
     >
       <Row>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "end",
-            paddingRight: "25px",
-          }}
-        >
-          <CreateNewStockAdjustmentModal
-          />
+        <div style={{
+          display: "flex",
+          justifyContent: "end",
+          paddingRight: "25px"
+        }}>
+          <button
+            className={`btn ${userPersonalizationData?.buttonsAndBarsColor == null ? "btn-primary" : ""
+              }`}
+            style={{
+              color: "white",
+              backgroundColor: `${userPersonalizationData !== null &&
+                userPersonalizationData?.buttonsAndBarsColor
+                }`,
+              display: "flex",
+              alignItems: "center",
+
+            }}
+            onClick={() => {
+              dispatch(setStockAdjustment(null));
+              setAddModal(!addModal);
+            }}
+          >
+            <PlusCircle size={18} style={{
+              marginRight: "5px"
+            }} />
+            Create New Stock Adjustment
+          </button>
         </div>
       </Row>
       <Row style={{ display: "flex", alignItems: "center" }}>
@@ -160,51 +186,134 @@ const StockAdjustmentTable = () => {
       </Row>
 
       <DataTable
-        columns={[
+        columns={
+          [
+          {
+            name: (
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "start",
+                  paddingLeft: "0px ",
+                }}
+              >
+                {selectedRows.length > 0 && (
+                  <FontAwesomeIcon
+                    icon={faTrashAlt}
+                    // onClick={handleDelete}
+                    onClick={() => {
+                      // // console.log("345678");
+                      // var alertData = {
+                      //     title: "Are you sure?",
+                      //     text: "Once deleted, you will not be able to recover this ",
+                      // };
+                      // const type = "vendorType";
+                      // deleteAlert(
+                      //     alertData,
+                      //     selectedRows[0]._id,
+                      //     type,
+                      //     dispatch
+                      // ).then(() => {
+                      //     console.log("empty");
+
+                      //     setSelectedRows([]);
+                      // });
+                    }}
+                    style={{
+                      cursor: "pointer",
+                      color: "red",
+                      marginRight: "20px",
+                      paddingLeft: "0px",
+                    }}
+                  />
+                )}
+                S.No.
+              </div>
+            ),
+            selector: (row: any) => row.index,
+            sortable: true,
+            width: "7%",
+            // center: true,
+            cell: (row: any) => (
+              <div
+                style={{
+                  // textAlign: "center",
+                  paddingLeft: "10px",
+                  borderRadius: "5px",
+                }}
+              >
+                {row.index}
+              </div>
+            ),
+          },
+
+          {
+            name: "Date",
+            selector: (row: any) => "",
+            sortable: true,
+            width: "18%",
+            cell: (row: any) => (
+              <div
+              >
+                {row?.createdAt.toString().slice(0, 10)}, {new Date(
+                  row?.createdAt
+                )
+                  .toLocaleString("en-US", {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    second: "2-digit",
+                  })
+                  .toString()}
+              </div>
+            )
+
+          },
           {
             name: "ID",
-            selector: (row: any) => row._id,
+            selector: (row: any) => row.index,
             sortable: true,
-            center: true
+            width: "15%",
+            cell: (row: any) => (
+              <div
+                style={{
+
+                  borderRadius: "5px",
+                }}
+              >
+                SA - {row.index}
+              </div>
+            )
           },
+
           {
             name: "User",
-            selector: (row: any) => row.company.fullName,
+            selector: (row: any) => `${row?.user !== null ? row?.user?.fullName : "N/A"}`,
             sortable: true,
-            center: true
+            // center: true,
+            width: "15%", // Set the width for this column
+
           },
           {
-            name: "Email Address",
-            selector: (row: any) => row.company.emailAddress,
+            name: "Adjustment Type",
+            selector: (row: any) => formatUnderscoredString(row.type?.name),
             sortable: true,
             center: true
           },
           {
             name: "Product",
-            selector: (row: any) => row.product.name,
-            sortable: true,
-            center: true
-          },
-          {
-            name: "Adjustment Type",
-            selector: (row: any) => formatUnderscoredString(row.type.name),
+            selector: (row: any) => row?.product?.name,
             sortable: true,
             center: true
           },
           {
             name: "Items",
-            selector: (row: any) => row.quantity,
+            selector: (row: any) => row?.quantity,
             sortable: true,
             center: true
           },
-
-          {
-            name: "Date",
-            selector: (row: any) => row.createdAt,
-            sortable: true,
-            center: true
-          },
-        ]}
+        ]
+      }
         data={data}
         // striped={true}
         pagination
@@ -243,6 +352,10 @@ const StockAdjustmentTable = () => {
       }
       `}
       </style>
+      {addModal && <CreateNewStockAdjustmentModal
+        isVisible={addModal}
+        setIsVisible={setAddModal}
+      />}
     </div>
   );
 };

@@ -109,7 +109,7 @@ const UpdateProduct: React.FC<PropsTypes> = ({
           console.log("products->",products);
           
           if (products.success) {
-            dispatch(setProduct(products.data.products));
+            dispatch(setProduct(products.data));
           }
           Swal.fire({
             text: "Product updated successfully",

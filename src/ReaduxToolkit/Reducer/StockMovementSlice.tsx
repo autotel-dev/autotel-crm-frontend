@@ -5,6 +5,7 @@ const initialState = {
     products: [],
     branches: [],
     warehouses: [],
+    stockMovement: null,
     loading: false,
     error: null,
     isConnected: true,
@@ -21,7 +22,7 @@ const StockMovementSlice = createSlice({
         setStockMovements: (state, action) => {
             state.stockMovements = action.payload;
             state.error = null;
-            state.loading = false;
+            // state.loading = false;
         },
         setProducts: (state, action) => {
             state.products = action.payload;
@@ -31,6 +32,9 @@ const StockMovementSlice = createSlice({
         },
         setWarehouses: (state, action) => {
             state.warehouses = action.payload;
+        },
+        setStockMovement: (state, action) => {
+            state.stockMovement = action.payload;
         },
 
         setStockMovementEnd: (state) => {
@@ -49,6 +53,7 @@ export const {
     setBranches,
     setWarehouses,
     setStockMovementEnd,
+    setStockMovement,
     setIsConnected,
 } = StockMovementSlice.actions;
 

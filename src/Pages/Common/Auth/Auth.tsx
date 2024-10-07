@@ -121,7 +121,7 @@ const LoginForm = () => {
             backgroundColor: `${userPersonalizationData !== null &&
               userPersonalizationData?.loginPageBackgroundType == "SOLID" &&
               userPersonalizationData &&
-              userPersonalizationData?.backgroundColor
+              userPersonalizationData?.loginPageBackgroundColor
               }`,
             backgroundImage: `${userPersonalizationData !== null &&
               userPersonalizationData?.loginPageBackgroundType == "GRADIENT" &&

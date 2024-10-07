@@ -1,7 +1,7 @@
 import { PlusCircle } from "react-feather";
 import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { Button, FormGroup, Label, Modal, ModalBody, Row } from "reactstrap";
+import { Button, FormGroup, Input, Label, Modal, ModalBody, Row } from "reactstrap";
 import { useDispatch, useSelector } from "react-redux";
 // import { Type } from "./CountryTypes/CountryTypes";
 import Swal from "sweetalert2";
@@ -20,6 +20,7 @@ const CreateNewStockAdjustmentType = () => {
     );
     const dispatch = useDispatch();
     const [loading, setLoading] = useState(false);
+    const [isActive, setIsActive] = useState(false)
     const {
         register,
         handleSubmit,
@@ -42,6 +43,7 @@ const CreateNewStockAdjustmentType = () => {
         if (data.name !== "") {
             const formData = {
                 name: data.name,
+                availability:isActive
             };
             // console.log(city);
             try {
@@ -174,6 +176,32 @@ const CreateNewStockAdjustmentType = () => {
                                 <span style={{ color: "red" }}>
                                     {errors.name && "Adjustment Type Name is required"}
                                 </span>
+                            </FormGroup>
+                            <FormGroup className="col-md-12 create-group" style={{
+                                marginTop:"-15px"
+                            }}>
+                                <P>Availability</P>
+                                <div className="d-flex">
+                                    <div
+                                        className={`text-end flex-shrink-0 icon-state
+                            }`}
+                                    >
+                                        <Label className="switch mb-0">
+                                            <Input
+                                                type="checkbox"
+                                                defaultChecked={isActive}
+                                                value={isActive ? "on" : "off"}
+                                                onChange={(e) => {
+                                                    setIsActive(!isActive);
+                                                }}
+                                            />
+                                            <span
+                                                className={`switch-state ${isActive ? "bg-primary" : "bg-secondary"
+                                                    }`}
+                                            />
+                                        </Label>
+                                    </div>
+                                </div>
                             </FormGroup>
 
 

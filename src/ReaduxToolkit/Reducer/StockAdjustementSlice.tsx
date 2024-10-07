@@ -3,6 +3,9 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
     stockAdjustments: [],
     products: [],
+    branches: [],
+    warehouses: [],
+    stockAdjustment: null,
     stockAdjustmentTypes: [],
     loading: false,
     error: null,
@@ -20,10 +23,19 @@ const StockAdjustementSlice = createSlice({
         setStockAdjustments: (state, action) => {
             state.stockAdjustments = action.payload;
             state.error = null;
-            state.loading = false;
+            // state.loading = false;
         },
         setProducts: (state, action) => {
             state.products = action.payload;
+        },
+        setBranches: (state, action) => {
+            state.branches = action.payload;
+        },
+        setWarehouses: (state, action) => {
+            state.warehouses = action.payload;
+        },
+        setStockAdjustment: (state, action) => {
+            state.stockAdjustment = action.payload;
         },
         setStockAdjustmentTypes: (state, action) => {
             state.stockAdjustmentTypes = action.payload;
@@ -43,6 +55,9 @@ export const {
     setStockAdjustments,
     setStockAdjustmentTypes,
     setProducts,
+    setBranches,
+    setWarehouses,
+    setStockAdjustment,
     setStockAdjustmentEnd,
     setIsConnected,
 } = StockAdjustementSlice.actions;

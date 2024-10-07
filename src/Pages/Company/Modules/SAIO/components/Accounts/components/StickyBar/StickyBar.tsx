@@ -20,34 +20,31 @@ const StickyBar: React.FC<StickyBarProps> = ({
   setComponent
 }) => {
   const navigate = useNavigate()
-  const stcickyBarOptions = [{
-    label: "Vendors",
-    icon: <AiFillShop size={18} />
-  },
-  {
-    label: "Purchase Invoices",
-    icon: <FaFileInvoiceDollar size={18} />
-  },
-  {
-    label: "Expense Accounts",
-    icon: <MdSwitchAccount size={18} />
-  },
-  {
-    label: "Bank Accounts",
-    icon: <BsBank2 size={18} />
-  },
-  {
-    label: "Make Payments",
-    icon: <MdOutlinePayment size={18} />
-  },
-  {
-    label: "Expenses",
-    icon: <GiExpense size={18} />
-  },
-  {
-    label: "Tax",
-    icon: <BsBank2 size={18} />
-  }
+  const stcickyBarOptions = [
+    {
+      label: "Bank Accounts",
+      icon: <BsBank2 size={18} />
+    },
+    {
+      label: "Expense Accounts",
+      icon: <MdSwitchAccount size={18} />
+    },
+    {
+      label: "Expenses",
+      icon: <GiExpense size={18} />
+    },
+    {
+      label: "Tax",
+      icon: <BsBank2 size={18} />
+    },
+    {
+      label: "Chart Of Accounts",
+      icon: <MdSwitchAccount size={18} />
+    },
+    {
+      label: "Accounting Ledger",
+      icon: <MdSwitchAccount size={18} />
+    },
 
   ]
   return (
@@ -59,26 +56,24 @@ const StickyBar: React.FC<StickyBarProps> = ({
             }`}
           onClick={() => {
             setComponent(option.label);
-            if (option.label == "Vendors") {
-              navigate(`${process.env.PUBLIC_URL}/company/modules/saio-central/accounts/vendors`)
-            }
-            else if (option.label == "Purchase Invoices") {
-              navigate(`${process.env.PUBLIC_URL}/company/modules/saio-central/accounts/purchase-invoices`)
-            }
-            else if (option.label == "Expense Accounts") {
+
+            if (option.label == "Expense Accounts") {
               navigate(`${process.env.PUBLIC_URL}/company/modules/saio-central/accounts/expense-accounts`)
             }
             else if (option.label == "Bank Accounts") {
               navigate(`${process.env.PUBLIC_URL}/company/modules/saio-central/accounts/bank-accounts`)
-            }
-            else if (option.label == "Make Payments") {
-              navigate(`${process.env.PUBLIC_URL}/company/modules/saio-central/accounts/make-payments`)
             }
             else if (option.label == "Expenses") {
               navigate(`${process.env.PUBLIC_URL}/company/modules/saio-central/accounts/expenses`)
             }
             else if (option.label == "Tax") {
               navigate(`${process.env.PUBLIC_URL}/company/modules/saio-central/accounts/tax`)
+            }
+            else if (option.label == "Chart Of Accounts") {
+              navigate(`${process.env.PUBLIC_URL}/company/modules/saio-central/accounts/accounting-chart`)
+            }
+            else if (option.label == "Accounting Ledger") {
+              navigate(`${process.env.PUBLIC_URL}/company/modules/saio-central/accounts/accounting-ledger`)
             }
           }}
         >

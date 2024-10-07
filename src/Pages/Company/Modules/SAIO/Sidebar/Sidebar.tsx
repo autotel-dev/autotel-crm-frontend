@@ -6,30 +6,39 @@ import P1 from "../../../../../CommonElements/Paragraph/P1Element";
 
 
 interface SidebarProps {
+    setDashboard: any;
+    setPurchases: any;
     setSales: any,
     setAccounts: any;
     setInventory: any;
     setOperations: any;
-    // setCustomers: any;
+
+    dashboard: any;
+    purchases: any;
     sales: any,
     accounts: any;
     inventory: any;
     operations: any;
-    // customers: any
+
 }
 
 
 const Sidebar: React.FC<SidebarProps> = ({
+    setDashboard,
+    setPurchases,
     setSales,
     setAccounts,
     setInventory,
     setOperations,
-    // setCustomers,
+
+
+    dashboard,
+    purchases,
     sales,
     accounts,
     inventory,
     operations,
-    // customers,
+
 }) => {
     const { userPersonalizationData } = useSelector(
         (state: any) => state.personalization
@@ -53,34 +62,109 @@ const Sidebar: React.FC<SidebarProps> = ({
 
                 }}
             >
+
                 <div
-                    title="Sales"
+                    title="Dashboard"
                     style={{
                         width: "100%",
                         display: "flex",
                         flexDirection: "column",
                         justifyContent: "center",
-                        height: "90px",
+                        height: "95px",
                         alignItems: "center",
                         cursor: "pointer",
                         borderBottom: "0.1px solid gray",
-                        marginTop: "15px",
-                        opacity: `${sales ? "0.6" : "1"}`
-                        
+                        paddingTop: "15px",
+                        backgroundColor: `${dashboard ? "#35bfbf" : "transparent"}`
+                        // opacity: `${dashboard ? "0.6" : "1"}`
+
                     }}
 
                     onClick={() => {
+                        setDashboard(true);
+                        setPurchases(false);
+                        setSales(false)
+                        setAccounts(false);
+                        setInventory(false);
+                        setOperations(false);
 
+                        navigate(`${process.env.PUBLIC_URL}/company/modules/saio-central/dashboard`)
+                    }}
+                >
+                    <img src={GroupSvg} alt="" height={22} width={26} id="Tooltip" />
+                    <P1 style={{
+                        color: "white",
+                        marginTop: "5px"
+                    }}>
+                        Dashboard
+                    </P1>
+                </div>
+                <div
+                    title="Purchases"
+                    style={{
+                        width: "100%",
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "center",
+                        height: "80px",
+                        alignItems: "center",
+                        cursor: "pointer",
+                        borderBottom: "0.1px solid gray",
+                        paddingTop: "10px",
+                        backgroundColor: `${purchases ? "#35bfbf" : "transparent"}`
+                        // opacity: `${purchases ? "0.6" : "1"}`
+
+                    }}
+
+                    onClick={() => {
+                        setDashboard(false);
+                        setPurchases(true);
+                        setSales(false)
+                        setAccounts(false);
+                        setInventory(false);
+                        setOperations(false);
+
+                        navigate(`${process.env.PUBLIC_URL}/company/modules/saio-central/purchases`)
+                    }}
+                >
+                    <img src={GroupSvg} alt="" height={22} width={26} id="Tooltip" />
+                    <P1 style={{
+                        color: "white",
+                        marginTop: "5px"
+                    }}>
+                        Purchases
+                    </P1>
+                </div>
+                <div
+                    title="Purchases"
+                    style={{
+                        width: "100%",
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "center",
+                        height: "80px",
+                        alignItems: "center",
+                        cursor: "pointer",
+                        borderBottom: "0.1px solid gray",
+                        paddingTop: "10px",
+                        backgroundColor: `${sales ? "#35bfbf" : "transparent"}`
+                        // opacity: `${sales ? "0.6" : "1"}`
+
+                    }}
+
+                    onClick={() => {
+                        setDashboard(false);
+                        setPurchases(false);
                         setSales(true)
                         setAccounts(false);
                         setInventory(false);
                         setOperations(false);
-                        // setCustomers(false);
 
-                        navigate(`${process.env.PUBLIC_URL}/company/modules/saio-central/sales`)
+
+                        navigate(`${process.env.PUBLIC_URL}/company/modules/saio-central/sales/leads`)
                     }}
                 >
-                    <img src={GroupSvg} alt="" height={24} width={28} id="Tooltip" />
+                    <img src={GroupSvg} alt="" height={22} width={26} id="Tooltip" />
                     <P1 style={{
                         color: "white",
                         marginTop: "5px"
@@ -97,24 +181,26 @@ const Sidebar: React.FC<SidebarProps> = ({
                         display: "flex",
                         flexDirection: "column",
                         justifyContent: "center",
-                        height: "90px",
+                        height: "80px",
                         alignItems: "center",
-                        opacity: `${accounts ? "0.6" : "1"}`,
                         cursor: "pointer",
                         borderBottom: "0.1px solid gray",
+                        paddingTop: "10px",
+                        backgroundColor: `${accounts ? "#35bfbf" : "transparent"}`
                     }}
                     onClick={() => {
-
+                        setDashboard(false);
+                        setPurchases(false);
                         setSales(false)
                         setAccounts(true);
                         setInventory(false);
                         setOperations(false);
-                        // setCustomers(false);
+
 
                         navigate(`${process.env.PUBLIC_URL}/company/modules/saio-central/accounts`)
                     }}
                 >
-                    <img src={GroupSvg} alt="" height={24} width={28} id="Tooltip" />
+                    <img src={GroupSvg} alt="" height={22} width={26} id="Tooltip" />
                     <P1 style={{
                         color: "white",
                         marginTop: "5px"
@@ -130,23 +216,26 @@ const Sidebar: React.FC<SidebarProps> = ({
                         display: "flex",
                         flexDirection: "column",
                         justifyContent: "center",
-                        height: "90px",
+                        height: "80px",
                         alignItems: "center",
-                        opacity: `${inventory ? "0.6" : "1"}`,
                         cursor: "pointer",
                         borderBottom: "0.1px solid gray",
+                        paddingTop: "10px",
+                        backgroundColor: `${inventory ? "#35bfbf" : "transparent"}`
                     }}
                     onClick={() => {
+                        setDashboard(false);
+                        setPurchases(false);
                         setSales(false)
                         setAccounts(false);
                         setInventory(true);
                         setOperations(false);
-                        // setCustomers(false);
+
 
                         navigate(`${process.env.PUBLIC_URL}/company/modules/saio-central/inventory`)
                     }}
                 >
-                    <img src={GroupSvg} alt="" height={24} width={28} id="Tooltip" />
+                    <img src={GroupSvg} alt="" height={22} width={26} id="Tooltip" />
                     <P1 style={{
                         color: "white",
                         marginTop: "5px"
@@ -161,23 +250,26 @@ const Sidebar: React.FC<SidebarProps> = ({
                         display: "flex",
                         flexDirection: "column",
                         justifyContent: "center",
-                        height: "90px",
+                        height: "80px",
                         alignItems: "center",
-                        opacity: `${operations ? "0.6" : "1"}`,
                         cursor: "pointer",
                         borderBottom: "0.1px solid gray",
+                        paddingTop: "10px",
+                        backgroundColor: `${operations ? "#35bfbf" : "transparent"}`
                     }}
                     onClick={() => {
+                        setDashboard(false);
+                        setPurchases(false);
                         setSales(false)
                         setAccounts(false);
                         setInventory(false);
                         setOperations(true);
-                        // setCustomers(false);
+
 
                         navigate(`${process.env.PUBLIC_URL}/company/modules/saio-central/operations`)
                     }}
                 >
-                    <img src={GroupSvg} alt="" height={24} width={28} id="Tooltip" />
+                    <img src={GroupSvg} alt="" height={22} width={26} id="Tooltip" />
                     <P1 style={{
                         color: "white",
                         marginTop: "5px"

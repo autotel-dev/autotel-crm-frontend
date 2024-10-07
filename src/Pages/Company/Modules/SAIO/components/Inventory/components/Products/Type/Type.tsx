@@ -18,14 +18,14 @@ export const supportColumns = [
         name: "id",
         selector: (row: SaleLeadsDataType) => row["id"],
         sortable: true,
-        center: false,
+        center: true,
         width: "120px", // Set the width for this column
     },
     {
         name: "Username",
         selector: (row: SaleLeadsDataType) => row["username"],
         sortable: true,
-        center: false,
+        center: true,
         width: "150px", // Set the width for this column
     },
     {

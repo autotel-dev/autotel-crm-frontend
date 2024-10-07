@@ -17,6 +17,7 @@ import { formatUnderscoredString, getUserRole, getUserRoleID } from "../../../..
 import { ROLES } from "../../../../../constants/roles";
 import { CREATE_NEW_INTERNAL_COMPLAINT, GET_ALL_INTERNAL_COMPLAINT, GET_COMPLAINT_CENTER_STATISTICS } from "../../../../../Utilities/api/apiEndpoints";
 import { ERROR_MESSAGE } from "../../../../../Utilities/constants/constants";
+import { setNRReport } from "../../../../../ReaduxToolkit/Reducer/NRSlice";
 
 interface ResponseType {
   response?: string;
@@ -39,6 +40,7 @@ const ResponseForm: React.FC<PropsTypes> = ({
   selectedItems,
   setBasicTab = () => { },
 }) => {
+  const { report } = useSelector((state: any) => state.nrReport)
   const { modalData } = useSelector((state: any) => state.alerts);
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
@@ -110,6 +112,25 @@ const ResponseForm: React.FC<PropsTypes> = ({
             setIsDeviceSelectedModalVisible(!isDeviceSelectedModalVisible)
           }
           if (data.success) {
+
+
+            if (selectedItems.length > 0) {
+              const updatedReport = report.map((item: any) => {
+                // Check if the item matches the selected item by ID
+                if (item.id === selectedItems[0].id) {
+                  // Return a new object with the updated status
+                  return {
+                    ...item,
+                    status: "FORWARD", // Update the status to 'PENDING'
+                  };
+                }
+                // Return the item unchanged if no match is found
+                return item;
+              });
+
+              // Dispatch the updated report
+              dispatch(setNRReport(updatedReport));
+            }
             // // console.log(data);
             setLoading(false);
             setIsVisible(!isVisible);

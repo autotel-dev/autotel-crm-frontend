@@ -42,7 +42,6 @@ const ProtectedRoute: React.FC<PropTypes> = ({
 
   useEffect(() => {
 
-
     const getLastEndpoint = (pathname: any) => {
       // Split the pathname by '/'
       var pathSegments = pathname.split("/");

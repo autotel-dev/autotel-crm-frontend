@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { supportColumns, ComplainDataType } from "./data/SupportData";
+import { complainDataColumns, ComplainDataType } from "./data/SupportData";
 import { Button, Col, Row } from "reactstrap";
 import DataTable from "react-data-table-component";
 import { Delete, DeleteData } from "../../../../utils/Constant";
@@ -48,7 +48,9 @@ const ComplainTable = () => {
           (item: any) =>
             item.complaintId.toLowerCase().split("-")[1].includes(searchValue) ||
             item.description.toLowerCase().includes(searchValue) ||
-            item.deviceName.toLowerCase().includes(searchValue)
+            item.deviceName.toLowerCase().includes(searchValue) ||
+            item?.subRole.name.toLowerCase().includes(searchValue) ||
+            item?.type?.value.toLowerCase().includes(searchValue)
         )
         .map((item: any) => ({
           complaint_id: item?._id,
@@ -59,6 +61,7 @@ const ComplainTable = () => {
           department: item?.subRole.name,
           server: item?.server.companyName,
           status: item?.status,
+          type: item?.type?.value,
           priorty: item?.priorty == null ? "N/A" : item?.priorty,
           date: `${item?.createdAt.toString().slice(0, 10)},  ${new Date(
             item?.updatedAt
@@ -77,7 +80,10 @@ const ComplainTable = () => {
           (item: any) =>
             item.complaintId.toLowerCase().split("-")[1].includes(searchValue) ||
             item.description.toLowerCase().includes(searchValue) ||
-            item.deviceName.toLowerCase().includes(searchValue)
+            item.deviceName.toLowerCase().includes(searchValue) ||
+            item?.subRole.name.toLowerCase().includes(searchValue) ||
+            item?.type?.value.toLowerCase().includes(searchValue)
+            
         ).filter((item: any) => item.subRole.name == filteredRole)
         .map((item: any) => ({
           complaint_id: item?._id,
@@ -88,6 +94,7 @@ const ComplainTable = () => {
           department: item?.subRole.name,
           server: item?.server.companyName,
           status: item?.status,
+          type: item?.type?.value,
           priorty: item?.priorty == null ? "N/A" : item?.priorty,
           date: `${item?.createdAt.toString().slice(0, 10)},  ${new Date(
             item?.updatedAt
@@ -298,7 +305,7 @@ const ComplainTable = () => {
         </div>
       )}
       <DataTable
-        columns={supportColumns}
+        columns={complainDataColumns}
         data={data}
         // striped={true}
         pagination

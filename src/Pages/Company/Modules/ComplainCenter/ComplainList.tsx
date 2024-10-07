@@ -12,163 +12,9 @@ import { FaArrowLeft, FaArrowRight } from "react-icons/fa6";
 import { setFilteredRole } from "../../../../ReaduxToolkit/Reducer/ComplainCenterSlice";
 
 const ComplainList = () => {
-  const saleRevenueData = [
-    {
-      title: "Sale",
-      count: "654",
-      svgIcon: "arrow-down",
-      percentage: "- 36.28%",
-      time: "Then last week",
-      color: "secondary",
-    },
-    {
-      title: "Revenue",
-      count: "$45,680",
-      svgIcon: "arrow-top",
-      percentage: "+14.28%",
-      time: "Since last month",
-      color: "primary",
-    },
-    {
-      title: "Conversion",
-      count: "34%",
-      svgIcon: "arrow-down",
-      percentage: "- 36.28%",
-      time: "Then last week",
-      color: "secondary",
-    },
-    {
-      title: "Leads",
-      count: "654",
-      svgIcon: "arrow-top",
-      percentage: "+20.28%",
-      time: "Since last 6 month",
-      color: "primary",
-    },
-    {
-      title: "Conversion",
-      count: "34%",
-      svgIcon: "arrow-down",
-      percentage: "- 36.28%",
-      time: "Then last week",
-      color: "secondary",
-    },
-  ];
-  const topCountriesData = [
-    {
-      color: "primary",
-      img: "04",
-      country: "Uniter States",
-      percentage: "60%",
-      countrybadge: "primary",
-    },
-    {
-      color: "secondary",
-      img: "05",
-      country: "Germany",
-      percentage: "51%",
-      countrybadge: "secondary",
-    },
-    {
-      color: "dark",
-      img: "06",
-      country: "New Zealand",
-      percentage: "52%",
-      countrybadge: "dark",
-    },
-    {
-      color: "warning",
-      img: "07",
-      country: "Australia",
-      percentage: "62%",
-      countrybadge: "warning",
-    },
-    {
-      color: "primary",
-      img: "04",
-      country: "Uniter States",
-      percentage: "60%",
-      countrybadge: "primary",
-    },
-    {
-      color: "secondary",
-      img: "05",
-      country: "Germany",
-      percentage: "51%",
-      countrybadge: "secondary",
-    },
-    {
-      color: "dark",
-      img: "06",
-      country: "New Zealand",
-      percentage: "52%",
-      countrybadge: "dark",
-    },
-    {
-      color: "warning",
-      img: "07",
-      country: "Australia",
-      percentage: "62%",
-      countrybadge: "warning",
-    },
-    {
-      color: "primary",
-      img: "04",
-      country: "Uniter States",
-      percentage: "60%",
-      countrybadge: "primary",
-    },
-    {
-      color: "secondary",
-      img: "05",
-      country: "Germany",
-      percentage: "51%",
-      countrybadge: "secondary",
-    },
-    {
-      color: "dark",
-      img: "06",
-      country: "New Zealand",
-      percentage: "52%",
-      countrybadge: "dark",
-    },
-    {
-      color: "warning",
-      img: "07",
-      country: "Australia",
-      percentage: "62%",
-      countrybadge: "warning",
-    },
-    {
-      color: "primary",
-      img: "04",
-      country: "Uniter States",
-      percentage: "60%",
-      countrybadge: "primary",
-    },
-    {
-      color: "secondary",
-      img: "05",
-      country: "Germany",
-      percentage: "51%",
-      countrybadge: "secondary",
-    },
-    {
-      color: "dark",
-      img: "06",
-      country: "New Zealand",
-      percentage: "52%",
-      countrybadge: "dark",
-    },
-    {
-      color: "warning",
-      img: "07",
-      country: "Australia",
-      percentage: "62%",
-      countrybadge: "warning",
-    },
-  ];
-  const { complainCenterStatistics, complainCenterRoles } = useSelector((state: any) => state.complainCenter);
+
+
+  const { complainCenterStatistics, complainCenterRoles, filteredRole } = useSelector((state: any) => state.complainCenter);
   const { userPersonalizationData } = useSelector(
     (state: any) => state.personalization
   );
@@ -177,7 +23,7 @@ const ComplainList = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isConnecetedServersDropdownOpen, setIsConnecetedServersDropdownOpen] =
     useState(false);
-  const [containerWidth, setContainerWidth] = useState("300px");
+  const [containerWidth, setContainerWidth] = useState("350px");
   const [serverID, setServerID] = useState("");
 
   const dropdownRef = useRef<HTMLDivElement>(null); // Add type assertion here
@@ -204,13 +50,13 @@ const ComplainList = () => {
   };
 
   const toggleContainerWidth = () => {
-    if (containerWidth === "300px") {
+    if (containerWidth === "350px") {
       setContainerWidth("170px");
       if (isDropdownOpen) {
         setIsDropdownOpen(!isDropdownOpen);
       }
     } else {
-      setContainerWidth("300px");
+      setContainerWidth("350px");
     }
   };
 
@@ -250,7 +96,7 @@ const ComplainList = () => {
       <div style={{ width: "100%", display: "flex", justifyContent: "end" }}>
         <div
           style={{
-            width: containerWidth === "300px" ? "300px" : "170px",
+            width: containerWidth === "350px" ? "350px" : "170px",
             overflow: "hidden",
             height: "30px",
             transition: "width 0.5s",
@@ -287,13 +133,13 @@ const ComplainList = () => {
                 color: "white",
                 paddingLeft: "15px",
                 borderRight:
-                  containerWidth === "300px" ? "1px solid black" : "0px",
+                  containerWidth === "350px" ? "1px solid black" : "0px",
               }}
             >
-              {containerWidth === "300px" ? "Hide Analytics" : "Show Analytics"}
+              {containerWidth === "350px" ? "Hide Analytics" : "Show Analytics"}
             </div>
 
-            {containerWidth === "300px" && (
+            {containerWidth === "350px" && (
               <div
                 style={{
                   cursor: "pointer",
@@ -310,7 +156,7 @@ const ComplainList = () => {
               </div>
             )}
             {/*  */}
-            {containerWidth === "300px" && (
+            {containerWidth === "350px" && (
               <div
                 style={{
                   cursor: "pointer",
@@ -335,7 +181,7 @@ const ComplainList = () => {
           {isDropdownOpen && (
             <div
               className="custom-dropdown-analytics"
-              style={{ width: "300px", position: "absolute", zIndex: "1" }}
+              style={{ width: "350px", position: "absolute", zIndex: "1" }}
             >
               {isDropdownOpen && (
                 <div className="dropdown-options-analytics">
@@ -431,7 +277,7 @@ const ComplainList = () => {
         </div>
         <Card
           style={{
-            height: containerWidth === "300px" ? "100%" : "0",
+            height: containerWidth === "350px" ? "100%" : "0",
             overflow: "hidden",
             transition: "height 0.5s",
             marginTop: "20px",
@@ -580,10 +426,10 @@ const ComplainList = () => {
                       >
                         <li
                           style={{
-                            // backgroundColor: "#f5f6f9",
+                            backgroundColor: `${filteredRole == "All" ? "black" : "white"}`,
 
                             // boxShadow: "0px 3.5px 7px rgba(0, 0, 0, 0.2)",
-                            border:"2px solid lightgray",
+                            border: "2px solid lightgray",
                             borderRadius: "8px",
                             padding: "0px 10px",
                             height: "40px",
@@ -628,15 +474,21 @@ const ComplainList = () => {
                               alignItems: "center"
                             }}
                           >
-                            <H5>All</H5>
+                            <H5>
+                              <span style={{
+                                color: `${filteredRole == "All" ? "white" : "black"}`,
+                              }}>
+                                All
+                              </span>
+                            </H5>
                             <div
                               style={{
                                 padding: "6px",
                                 width: "22px",
                                 height: "22px",
                                 borderRadius: "100px",
-                                backgroundColor: "black",
-                                color: "white",
+                                backgroundColor: `${filteredRole == "All" ? "white" : "black"}`,
+                                color: `${filteredRole == "All" ? "black" : "white"}`,
                                 display: "flex",
                                 justifyContent: "center",
                                 alignItems: "center",
@@ -655,9 +507,9 @@ const ComplainList = () => {
                         {complainCenterRoles.map((data: any, index: any) => (
                           <li
                             style={{
-                              // backgroundColor: "#f5f6f9",
+                              backgroundColor: `${filteredRole == data.name ? "black" : "white"}`,
                               // boxShadow: "0px 3.5px 7px rgba(0, 0, 0, 0.2)",
-                              border:"2px solid lightgray",
+                              border: "2px solid lightgray",
                               borderRadius: "8px",
                               padding: "0px 10px",
                               height: "40px",
@@ -706,7 +558,13 @@ const ComplainList = () => {
                             >
                               {/* Remove or increase the maxWidth and minWidth properties */}
                               <div style={{ minWidth: data.name.length < 10 ? "80px" : data.name.length < 10 ? "100px" : data.name.length < 14 ? "120px" : data.name.length < 20 ? "170px" : "180px", flexShrink: 0 }}>
-                                <H5>{data.name}</H5>
+                                <H5>
+                                  <span style={{
+                                    color: `${filteredRole == data.name ? "white" : "black"}`,
+                                  }}>
+                                    {data.name}
+                                  </span>
+                                </H5>
                               </div>
 
                               <div
@@ -715,8 +573,8 @@ const ComplainList = () => {
                                   width: "22px",
                                   height: "22px",
                                   borderRadius: "100px",
-                                  backgroundColor: "black",
-                                  color: "white",
+                                  backgroundColor: `${filteredRole == data.name ? "white" : "black"}`,
+                                  color: `${filteredRole == data.name ? "black" : "white"}`,
                                   display: "flex",
                                   fontSize: "12px",
                                   justifyContent: "center",
@@ -775,8 +633,8 @@ const ComplainList = () => {
                           width: "100%", // Set the width of the outer container
                           height: "200px", // Set the height of the outer container
                           backgroundColor: "white", // Remove the background color
-                          marginTop:"15px",
-                          marginBottom:"-30px"
+                          marginTop: "15px",
+                          marginBottom: "-30px"
                         }}
                       >
                         <div

@@ -149,8 +149,6 @@ const DeviceSelecetdForNewComplain: React.FC<PropsTypes> = ({
                   await create(sendData, {
                     url: GET_DEVICE_DATA,
                   }).then((data: any) => {
-                    // dispatch(setCreateComplainModalData(data.data));
-                    // console.log(data);
 
                     if (
                       !data.success &&

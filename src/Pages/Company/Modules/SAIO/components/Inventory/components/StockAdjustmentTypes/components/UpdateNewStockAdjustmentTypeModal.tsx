@@ -9,18 +9,16 @@ import {
     Modal,
     ModalBody,
     Row,
+    
 } from "reactstrap";
-import { Cancel } from "../../../../../../../../../utils/Constant";
-import { H3, H4, P } from "../../../../../../../../../AbstractElements";
+import { H4, P } from "../../../../../../../../../AbstractElements";
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { getAll, update } from "../../../../../../../../../Utilities/api";
 import { Col } from "reactstrap";
-import { setNoDataFound } from "../../../../../../../../../ReaduxToolkit/Reducer/NoDataFoundSlice";
+
 import Swal from "sweetalert2";
-import { GET_ALL_BANK_ACCOUNTS, GET_ALL_STOCK_ADJUSTMENT_TYPES, GET_ALL_TAXES, UPDATE_BANK_ACCOUNT, UPDATE_STOCK_ADJUSTMENT_TYPE, UPDATE_TAX } from "../../../../../../../../../Utilities/api/apiEndpoints";
-import { setBankAccounts, setBankAccountsStart } from "../../../../../../../../../ReaduxToolkit/Reducer/BankAccountSlice";
-import { setTaxes, setTaxStart } from "../../../../../../../../../ReaduxToolkit/Reducer/TaxSlice";
+import { GET_ALL_STOCK_ADJUSTMENT_TYPES, UPDATE_STOCK_ADJUSTMENT_TYPE } from "../../../../../../../../../Utilities/api/apiEndpoints";
 import { setStockAdjustmentTypes } from "../../../../../../../../../ReaduxToolkit/Reducer/StockAdjustmentTypeSlice";
 
 interface PropsTypes {
@@ -37,6 +35,7 @@ const UpdateStockAdjustmentType: React.FC<PropsTypes> = ({
 
     const dispatch = useDispatch();
     const [loading, setLoading] = useState(false);
+    const [isActive, setIsActive] = useState(selectedAdjustmentType.availability)
 
     const {
         register,
@@ -54,6 +53,7 @@ const UpdateStockAdjustmentType: React.FC<PropsTypes> = ({
         reset({
             name: selectedAdjustmentType.name,
         });
+        setIsActive(selectedAdjustmentType.availability)
     }, [selectedAdjustmentType, reset]);
 
     const updateStockAdjustmentType: SubmitHandler<any> = async (data) => {
@@ -61,6 +61,7 @@ const UpdateStockAdjustmentType: React.FC<PropsTypes> = ({
         if (data.name !== "") {
             const StockAdjustmentType = {
                 name: data.name,
+                availability: isActive
             };
             try {
                 const response: any = await update(StockAdjustmentType, {
@@ -133,6 +134,32 @@ const UpdateStockAdjustmentType: React.FC<PropsTypes> = ({
                                 <span style={{ color: "red" }}>
                                     {errors.name && "Adjustment Type Name is required"}
                                 </span>
+                            </FormGroup>
+
+                            <FormGroup className="col-md-12 create-group" style={{
+                                marginTop: "-15px"
+                            }}>
+                                <P>Availability</P>
+                                <div className="d-flex">
+                                    <div
+                                        className={`text-end flex-shrink-0 icon-state
+                            }`}
+                                    >
+                                        <Label className="switch mb-0">
+                                            <Input
+                                                type="checkbox"
+                                                checked={isActive}
+                                                onChange={(e) => {
+                                                    setIsActive(!isActive);
+                                                }}
+                                            />
+                                            <span
+                                                className={`switch-state ${isActive ? "bg-primary" : "bg-secondary"
+                                                    }`}
+                                            />
+                                        </Label>
+                                    </div>
+                                </div>
                             </FormGroup>
 
 

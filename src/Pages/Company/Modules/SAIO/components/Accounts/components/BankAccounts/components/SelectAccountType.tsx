@@ -33,7 +33,7 @@ const SelectAccountTypeBox: React.FC<propTypes> = ({ placeholder, setAccountType
             placeholder={placeholder}
             optionFilterProp="children"
             filterOption={(input: any, option: any) =>
-                (option?.label ?? "").includes(input)
+                (option?.label ?? "").toLowerCase().includes(input.toLowerCase())
             }
             filterSort={(optionA: any, optionB: any) =>
                 (optionA?.label ?? "")

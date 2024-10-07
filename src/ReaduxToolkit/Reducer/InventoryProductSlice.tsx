@@ -28,12 +28,12 @@ const InventoryProductSlice = createSlice({
     setProduct: (state, action) => {
       state.product = action.payload;
       state.error = null;
-      state.loading = false;
+      // state.loading = false;
     },
     setFilterProduct: (state, action) => {
       state.filterProduct = action.payload;
       state.error = null;
-      state.loading = false;
+      // state.loading = false;
     },
     setInActiveActiveProduct: (state, action) => {
       state.activeInActiveProduct = action.payload;

@@ -33,9 +33,10 @@ import { H4, H5 } from "../../../AbstractElements";
 import H7 from "../../../CommonElements/Headings/H7Element";
 import { CHANGE_SUB_ROLE_ACTIVATION_STATUS, GET_ALL_SUB_ROLES } from "../../../Utilities/api/apiEndpoints";
 import { ERROR_MESSAGE } from "../../../Utilities/constants/constants";
+import { setFilterPackages, setPackages, setPackagesEnd, setPackagesStart } from "../../../ReaduxToolkit/Reducer/PackageSlice";
 
 const PackagesList = () => {
-  const { roles, activeInActiveRoles, loading } = useSelector(
+  const { packages, activeInActivePackages, loading } = useSelector(
     (state: any) => state.roles
   );
   const dispatch = useDispatch();
@@ -60,25 +61,11 @@ const PackagesList = () => {
   const rgbColor = hexToRgb(userPersonalizationData?.buttonsAndBarsColor); // Convert hex to RGB
 
   useEffect(() => {
-    dispatch(setRoles([]));
-    dispatch(setFilterRoles([]));
-    dispatch(setRolesStart());
+    dispatch(setPackages([]));
+    dispatch(setFilterPackages([]));
+    dispatch(setPackagesStart());
     getAll({ url: GET_ALL_SUB_ROLES }).then((data: any) => {
-      // // console.log("api call --- >", data);
-      // if (data == undefined) {
-      //   Swal.fire({
-      //     text: "Failed to fetch due to connection refused",
-      //     icon: "error",
-      //     timer: 2000,
-      //     showConfirmButton: false,
-      //   });
-      //   // dispatch(setInActiveActiveUsers("All"));
-      //   dispatch(setInActiveActiveRoles("All"));
-      //   dispatch(setRoles([]));
-      //   dispatch(setFilterRoles([]));
-      //   dispatch(setRolesEnd());
-      //   return;
-      // }
+
 
       if (data !== undefined) {
         dispatch(setNoDataFound(data.message));
@@ -95,11 +82,11 @@ const PackagesList = () => {
         }
         if (data.success) {
           // // console.log("hhg");
-          dispatch(setRoles(data.data));
-          dispatch(setFilterRoles(data.data));
+          dispatch(setPackages(data.data));
+          dispatch(setFilterPackages(data.data));
         }
       }
-      dispatch(setRolesEnd());
+      dispatch(setPackagesEnd());
     });
   }, []);
 
@@ -107,82 +94,26 @@ const PackagesList = () => {
   const [isHovered, setIsHovered] = useState(false);
   const [idd, setIdd] = useState("");
   const renderTableRows = () => {
-    return roles?.map((row: any) => (
+    return packages?.map((row: any) => (
       <tr key={row._id}
-      onMouseEnter={() => {
-        setIsHovered(true);
-        setIdd(row._id);
-      }}
-      onMouseLeave={() => setIsHovered(false)}
-      style={{
-        backgroundColor:
-          isHovered && idd == row._id
-            ? userPersonalizationData == null
-              ? "#D6EEEE"
-              : `rgba(${rgbColor.r},${rgbColor.g},${rgbColor.b},0.2)`
-            : "transparent",
-        transition: "background-color 0.3s",
-      }}>
+        onMouseEnter={() => {
+          setIsHovered(true);
+          setIdd(row._id);
+        }}
+        onMouseLeave={() => setIsHovered(false)}
+        style={{
+          backgroundColor:
+            isHovered && idd == row._id
+              ? userPersonalizationData == null
+                ? "#D6EEEE"
+                : `rgba(${rgbColor.r},${rgbColor.g},${rgbColor.b},0.2)`
+              : "transparent",
+          transition: "background-color 0.3s",
+        }}>
         <td>{row._id}</td>
         <td>{row.name}</td>
-        <td>
-          <div className="d-flex" style={{ justifyContent: "center" }}>
-            <div
-              className={`text-end flex-shrink-0 icon-state 
-                            }`}
-            >
-              <Label className="switch mb-0">
-                <Input
-                  type="checkbox"
-                  defaultChecked={row.isActive}
-                  value={row.isActive}
-                  onChange={async (e: any) => {
-                    //  --------------------------
-                    const changeStatus = {
-                      isActive: !row.isActive,
-                    };
 
-                    try {
-                      await patch(changeStatus, {
-                        url: `${CHANGE_SUB_ROLE_ACTIVATION_STATUS}/${row._id}`,
-                      }).then((data: any) => {
-                        if (data.success) {
-                          // // console.log(data);
-                          dispatch(setRolesStart());
-                          getAll({ url: GET_ALL_SUB_ROLES }).then(
-                            (data: any) => {
-                              // // console.log("api call --- >", data);
-                              dispatch(setRolesEnd());
-                              if (data !== undefined) {
-                                if (data.success) {
-                                  // // console.log("hhg");
-                                  dispatch(setRoles(data.data));
-                                  dispatch(setFilterRoles(data.data));
-                                }
-                              }
-                            }
-                          );
-                        }
-                      });
-                      // Handle successful post creation (e.g., show a success message, redirect, etc.)
-                    } catch (error) {
-                      // Handle error (e.g., show an error message)
-                      // // console.error("Error creating post:", error);
-                    }
-                  }}
-                />
-                <span
-                  // className={`switch-state ${
-                  //   row.isActive ? "bg-primary" : "bg-secondary"
-                  // }`}
-                  className="switch-state"
-                  style={{ backgroundColor: row.isActive ? "green" : "red" }}
-                />
-              </Label>
-            </div>
-          </div>
-        </td>
-        {/* <td>
+        <td>
           <div>
             <button
               style={{
@@ -195,15 +126,15 @@ const PackagesList = () => {
                 marginRight: "5px",
                 border: "none",
               }}
-              onClick={() => {
-                // // console.log("345678");
-                var alertData = {
-                  title: "Are you sure?",
-                  text: "Once deleted, you will not be able to recover this ",
-                };
-                const type = "countryType";
-                deleteAlert(alertData, row._id, type, dispatch);
-              }}
+            // onClick={() => {
+            //   // // console.log("345678");
+            //   var alertData = {
+            //     title: "Are you sure?",
+            //     text: "Once deleted, you will not be able to recover this ",
+            //   };
+            //   const type = "countryType";
+            //   deleteAlert(alertData, row._id, type, dispatch);
+            // }}
             >
               Delete
             </button>
@@ -217,18 +148,18 @@ const PackagesList = () => {
                 borderRadius: "5px",
                 border: "none",
               }}
-              onClick={() => {
-                setIsUpdateModalOpen(true);
-                // // console.log("isUpdateModalOpen: ", isUpdateModalOpen);
-                dispatch(setId(row._id));
-                setCountryName(row.name);
-                setIsActive(row.isActive);
-              }}
+            // onClick={() => {
+            //   setIsUpdateModalOpen(true);
+            //   // // console.log("isUpdateModalOpen: ", isUpdateModalOpen);
+            //   dispatch(setId(row._id));
+            //   setCountryName(row.name);
+            //   setIsActive(row.isActive);
+            // }}
             >
               Edit
             </button>
           </div>
-        </td> */}
+        </td>
       </tr>
     ));
   };
@@ -246,21 +177,20 @@ const PackagesList = () => {
                 {loading ? (
                   // <Loader />
                   <>
-                  <Skeleton height="100px" width="100%" borderRadius="10px" />
-                  <Skeleton height="40px" width="100%" marginTop="10px" marginBottom="10" borderRadius="10px" />
-                  <Skeleton height="40px" width="100%" marginTop="10px" marginBottom="10" borderRadius="10px" />
-                  <Skeleton height="40px" width="100%" marginTop="10px" marginBottom="10" borderRadius="10px" />
-                  <Skeleton height="40px" width="100%" marginTop="10px" marginBottom="10" borderRadius="10px" />
-                </>
-                ) : roles?.length > 0 && loading === false ? (
+                    <Skeleton height="100px" width="100%" borderRadius="10px" />
+                    <Skeleton height="40px" width="100%" marginTop="10px" marginBottom="10" borderRadius="10px" />
+                    <Skeleton height="40px" width="100%" marginTop="10px" marginBottom="10" borderRadius="10px" />
+                    <Skeleton height="40px" width="100%" marginTop="10px" marginBottom="10" borderRadius="10px" />
+                    <Skeleton height="40px" width="100%" marginTop="10px" marginBottom="10" borderRadius="10px" />
+                  </>
+                ) : packages?.length > 0 && loading === false ? (
                   <div>
                     <table>
                       <thead>
                         <tr>
                           <th>ID</th>
                           <th>Name</th>
-                          <th>Status</th>
-                          {/* <th>Actions</th> */}
+                          <th>Actions</th>
                         </tr>
                       </thead>
                       <tbody>{renderTableRows()}</tbody>
@@ -279,9 +209,9 @@ const PackagesList = () => {
                   //   : "No Roles Found"}
                   // </div>
                   <H7>
-                    {activeInActiveRoles !== "All"
-                      ? activeInActiveRoles
-                      : "No Roles Found"}
+                    {activeInActivePackages !== "All"
+                      ? activeInActivePackages
+                      : "No Packages Found"}
                   </H7>
                 )}
 

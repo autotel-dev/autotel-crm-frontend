@@ -42,7 +42,6 @@ import Companies from "../Pages/SuperAdmin/Companies/Companies";
 import UpdateCompanyForm from "../Pages/SuperAdmin/Companies/UpdateCompanyForm/UpdateCompanyForm";
 import CreateCompanyForm from "../Pages/SuperAdmin/Companies/CreateCompanyForm/CreateCompanyForm";
 import Departments from "../Pages/Company/Departments/Departments";
-import SAIOCentral from "../Pages/Company/Modules/SAIOCentral/SAIOCentral";
 import Banks from "../Pages/SuperAdmin/Banks/Banks";
 import Insurances from "../Pages/SuperAdmin/Insurances/Insurance";
 import VehiclesMake from "../Pages/SuperAdmin/VehicleMake/VehiclesMake";
@@ -52,7 +51,6 @@ import Packages from "../Pages/Company/Packages/Packages";
 import Groups from "../Pages/Company/Groups/Groups";
 import Warehouses from "../Pages/Company/Warehouses/Warehouses";
 import Branches from "../Pages/Company/Branches/Branches";
-import { Currency } from "../utils/Constant";
 import Currencies from "../Pages/SuperAdmin/Currencies/Currencies";
 import Languages from "../Pages/SuperAdmin/Languages/Languages";
 import SAIOCentralLayout from "../Pages/Company/Modules/SAIO/SAIOCentralLayout";
@@ -356,7 +354,7 @@ const routes = [
   },
   {
     path: `${process.env.PUBLIC_URL}/company/setup/packages`,
-    Component: <Packages />,
+    Component: <Package />,
     allowedUserRoles: [ROLES.COMPANY],
     isProtected: true,
     permissionValue: "Packages",
@@ -527,14 +525,7 @@ const routes = [
     path: `${process.env.PUBLIC_URL}/operator/modules/complain-center/complainDetails/:complaintId`,
     Component: <ComplainDetails />,
   },
-  // {
-  //   path: `${process.env.PUBLIC_URL}/support`,
-  //   Component: <Support />,
-  //   isProtected: true,
-  //   allowedUserRoles: [ROLES.OPERATOR],
-  //   permissionValue: PERMISSION_VALUES.SUPPORT,
-  // },
-  // Not Accessible
+
 
   {
     path: `${process.env.PUBLIC_URL}/not-accessible`,
@@ -548,7 +539,3 @@ const routes = [
 
 export default routes;
 
-// const routesWithPrivate = routes.map(route => ({
-//   ...route,
-//   isProtected: false,
-// }));

@@ -19,6 +19,7 @@ import { setNoDataFound } from "../../../../ReaduxToolkit/Reducer/NoDataFoundSli
 import { getUserRole } from "../../../../Utilities/globals/globals";
 import { ROLES } from "../../../../constants/roles";
 import DeviceSelecetdForNewComplain from "./DeviceSelectedForNewComplainModel";
+import SelectFilterNRDevicesModal from "./SelectFilterNRDevicesModal";
 
 interface TicketType {
   name: string;
@@ -40,6 +41,10 @@ const CreateNewComplain = () => {
     isUpdateModalOpenForDeviceSelecetdForNewComplain,
     setIsUpdateModalOpenForDeviceSelecetdForNewComplain,
   ] = useState(false);
+  const [
+    isUpdateModalOpenForNRDevices,
+    setIsUpdateModalOpenForNRDevices,
+  ] = useState(false);
   const dispatch = useDispatch();
   const { priorityStatus } = useSelector((state: any) => state.support);
   const [loading, setLoading] = useState(false);
@@ -52,22 +57,18 @@ const CreateNewComplain = () => {
   const [addModal, setAddModal] = useState(false);
   const addToggle = () => {
     setIsUpdateModalOpenForDeviceSelecetdForNewComplain(true);
-    // if (devices.length !== 0) {
+  };
 
-    // }
-    // else {
-
-    // }
-
+  const addToggleForNRDevices = () => {
+    setIsUpdateModalOpenForNRDevices(true);
   };
 
 
 
   return (
-    <div className="text-end">
-      <div id="sendButtonWaitForDevices">
+    <div className="text-end" style={{ display: "flex", justifyContent: "space-between" }}>
+      <div id="sendButtonWaitForDevices" style={{ marginRight: "10px" }}>
         <button
-
           className={`btn ${userPersonalizationData?.buttonsAndBarsColor == null ? "btn-primary" : ""
             }`}
           style={{
@@ -78,9 +79,10 @@ const CreateNewComplain = () => {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            padding: "5px 10px",
+            padding: "5px 5px",
             height: "40px",
-            width: "100%",
+            width: "100px",
+
           }}
           onClick={addToggle}
           disabled={devices.length == 0}
@@ -88,9 +90,36 @@ const CreateNewComplain = () => {
           <div
             style={{ marginRight: "2.5%", display: "flex", alignItems: "center" }}
           >
-            <PlusCircle />
+            <PlusCircle size={18} />
           </div>
           <span style={{ fontSize: "0.8em" }}>Create New</span>
+        </button>
+      </div>
+      <div>
+        <button
+          className={`btn ${userPersonalizationData?.buttonsAndBarsColor == null ? "btn-primary" : ""
+            }`}
+          style={{
+            color: "white",
+            backgroundColor: `${userPersonalizationData !== null &&
+              userPersonalizationData?.buttonsAndBarsColor
+              }`,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: "5px 5px",
+            height: "40px",
+            width: "100px",
+          }}
+          onClick={addToggleForNRDevices}
+          disabled={devices.length == 0}
+        >
+          <div
+            style={{ marginRight: "2.5%", display: "flex", alignItems: "center" }}
+          >
+            <PlusCircle size={18} />
+          </div>
+          <span style={{ fontSize: "0.8em" }}>NR Status</span>
         </button>
       </div>
 
@@ -114,6 +143,16 @@ const CreateNewComplain = () => {
         prevItem=""
         serverID={serverID}
       />
+
+      {
+        <SelectFilterNRDevicesModal
+          addModal={isUpdateModalOpenForNRDevices}
+          setAddModal={setIsUpdateModalOpenForNRDevices}
+          selectedDevices={devices}
+          prevItem=""
+          serverID={serverID}
+        />
+      }
     </div>
 
   );

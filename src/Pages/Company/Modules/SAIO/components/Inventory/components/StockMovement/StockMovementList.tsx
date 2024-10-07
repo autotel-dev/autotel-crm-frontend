@@ -13,13 +13,16 @@ import {
   GET_ALL_PRODUCTS,
 } from "../../../../../../../../Utilities/api/apiEndpoints";
 import { getAll } from "../../../../../../../../Utilities/api";
-import { setBranches, setProducts, setWarehouses } from "../../../../../../../../ReaduxToolkit/Reducer/StockMovementSlice";
+import { setBranches, setProducts, setStockMovement, setWarehouses } from "../../../../../../../../ReaduxToolkit/Reducer/StockMovementSlice";
 import { formatUnderscoredString } from "../../../../../../../../Utilities/globals/globals";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 
 const StockMovementTable = () => {
   const dispatch = useDispatch();
   // Function to transform supportData into allBugReports format
   const { stockMovements } = useSelector((state: any) => state.stockMovement);
+  const [addModal, setAddModal] = useState(false);
 
   const { userPersonalizationData } = useSelector(
     (state: any) => state.personalization
@@ -43,12 +46,12 @@ const StockMovementTable = () => {
     return stockMovements
       ?.filter(
         (item: any) =>
-          item?._id.toLowerCase().includes(searchValue) ||
-          item?.stockMovementType.toLowerCase().includes(searchValue)
+          item?.product?.name?.toLowerCase().includes(searchValue) ||
+          item?.stockMovementType?.toLowerCase().includes(searchValue)
       )
-      .map((item: any) => ({
+      .map((item: any, index: any) => ({
+        index: index + 1,
         ...item,
-
       }));
   };
 
@@ -74,10 +77,6 @@ const StockMovementTable = () => {
   const [toggleDelete, setToggleDelete] = useState(false);
   const [data, setData] = useState(stockMovementData());
 
-
-  const handleRowSelected = useCallback((state: any) => {
-    setSelectedRows(state.selectedRows);
-  }, []);
 
   useEffect(() => {
     getAll({ url: GET_ALL_ACTIVE_WAREHOUSES }).then((data: any) => {
@@ -111,31 +110,13 @@ const StockMovementTable = () => {
     });
   }, []);
 
-  // const handleDelete = () => {
-  //   if (
-  //     window.confirm(
-  //       `Are you sure you want to delete:\r ${selectedRows.map(
-  //         (r: SaleLeadsDataType) => r.id
-  //       )}?`
-  //     )
-  //   ) {
-  //     setToggleDelete(!toggleDelete);
-  //     setData(
-  //       data.filter((item: any) =>
-  //         selectedRows.filter((elem: SaleLeadsDataType) => elem.id === item.id)
-  //           .length > 0
-  //           ? false
-  //           : true
-  //       )
-  //     );
-  //     setSelectedRows([]);
-  //   }
-  // };
+
 
   const handleRowClicked = (row: any) => {
-    // navigate(
-    //   `${process.env.PUBLIC_URL}/support/ticketDetails/${row.ticket_id}`
-    // );
+    console.log("row", row);
+    dispatch(setStockMovement(row))
+    setAddModal(!addModal)
+
   };
   return (
     <div
@@ -143,15 +124,33 @@ const StockMovementTable = () => {
       style={{ overflow: "auto", scrollbarWidth: "none" }}
     >
       <Row>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "end",
-            paddingRight: "25px",
-          }}
-        >
-          <CreateNewStockMovementModal
-          />
+        <div style={{
+          display: "flex",
+          justifyContent: "end",
+          paddingRight: "25px"
+        }}>
+          <button
+            className={`btn ${userPersonalizationData?.buttonsAndBarsColor == null ? "btn-primary" : ""
+              }`}
+            style={{
+              color: "white",
+              backgroundColor: `${userPersonalizationData !== null &&
+                userPersonalizationData?.buttonsAndBarsColor
+                }`,
+              display: "flex",
+              alignItems: "center",
+
+            }}
+            onClick={() => {
+              dispatch(setStockMovement(null))
+              setAddModal(!addModal)
+            }}
+          >
+            <PlusCircle size={18} style={{
+              marginRight: "5px"
+            }} />
+            Create New Stock Movement
+          </button>
         </div>
       </Row>
       <Row style={{ display: "flex", alignItems: "center" }}>
@@ -171,28 +170,116 @@ const StockMovementTable = () => {
       <DataTable
         columns={[
           {
-            name: "ID",
-            selector: (row: any) => row._id,
+            name: (
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "start",
+                  paddingLeft: "0px ",
+                }}
+              >
+                {selectedRows.length > 0 && (
+                  <FontAwesomeIcon
+                    icon={faTrashAlt}
+                    // onClick={handleDelete}
+                    onClick={() => {
+                      // // console.log("345678");
+                      // var alertData = {
+                      //     title: "Are you sure?",
+                      //     text: "Once deleted, you will not be able to recover this ",
+                      // };
+                      // const type = "vendorType";
+                      // deleteAlert(
+                      //     alertData,
+                      //     selectedRows[0]._id,
+                      //     type,
+                      //     dispatch
+                      // ).then(() => {
+                      //     console.log("empty");
+
+                      //     setSelectedRows([]);
+                      // });
+                    }}
+                    style={{
+                      cursor: "pointer",
+                      color: "red",
+                      marginRight: "20px",
+                      paddingLeft: "0px",
+                    }}
+                  />
+                )}
+                S.No.
+              </div>
+            ),
+            selector: (row: any) => row.index,
             sortable: true,
-            center: true
+            width: "7%",
+            // center: true,
+            cell: (row: any) => (
+              <div
+                style={{
+                  // textAlign: "center",
+                  paddingLeft: "10px",
+                  borderRadius: "5px",
+                }}
+              >
+                {row.index}
+              </div>
+            ),
           },
+
+          {
+            name: "Date",
+            selector: (row: any) => "",
+            sortable: true,
+            width: "18%",
+            cell: (row: any) => (
+              <div
+              >
+                {row?.createdAt.toString().slice(0, 10)}, {new Date(
+                  row?.createdAt
+                )
+                  .toLocaleString("en-US", {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    second: "2-digit",
+                  })
+                  .toString()}
+              </div>
+            )
+
+          },
+          {
+            name: "ID",
+            selector: (row: any) => row.index,
+            sortable: true,
+            width: "15%",
+            cell: (row: any) => (
+              <div
+                style={{
+
+                  borderRadius: "5px",
+                }}
+              >
+                SM - {row.index}
+              </div>
+            )
+          },
+
           {
             name: "User",
-            selector: (row: any) => row.company.fullName,
+            selector: (row: any) => `${row?.user !== null ? row?.user?.fullName : "N/A"}`,
             sortable: true,
-            center: true
-          },
-          {
-            name: "Email Address",
-            selector: (row: any) => row.company.emailAddress,
-            sortable: true,
-            center: true
+            // center: true,
+            width: "15%", // Set the width for this column
+
           },
           {
             name: "Movement Type",
             selector: (row: any) => formatUnderscoredString(row.stockMovementType),
             sortable: true,
-            center: true
+            // center: true
           },
           {
             name: "Product",
@@ -207,18 +294,12 @@ const StockMovementTable = () => {
             center: true
           },
 
-          {
-            name: "Date",
-            selector: (row: any) => row.createdAt,
-            sortable: true,
-            center: true
-          },
+
         ]}
         data={data}
         // striped={true}
         pagination
         selectableRows
-        onSelectedRowsChange={handleRowSelected}
         onRowClicked={handleRowClicked} // Pass the event handler for row clicks
         clearSelectedRows={toggleDelete}
         style={{
@@ -252,6 +333,11 @@ const StockMovementTable = () => {
       }
       `}
       </style>
+
+      {addModal && <CreateNewStockMovementModal
+        isVisible={addModal}
+        setIsVisible={setAddModal}
+      />}
     </div>
   );
 };

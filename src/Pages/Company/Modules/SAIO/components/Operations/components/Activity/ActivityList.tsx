@@ -1,0 +1,394 @@
+import { useCallback, useEffect, useState } from "react";
+import { Button, Col, Row } from "reactstrap";
+import DataTable from "react-data-table-component";
+
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import "../../../../../../../../CssConstaints/Style.css";
+
+import { PlusCircle } from "react-feather";
+
+import SelectActivityTypeModal from "./CreateNewActivity/components/SelectActivityTypeModal";
+import { formatUnderscoredString } from "../../../../../../../../Utilities/globals/globals";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrashAlt } from "@fortawesome/free-solid-svg-icons";
+import { setActivities, setActivity, setActivityLoading } from "../../../../../../../../ReaduxToolkit/Reducer/OperationActivitySlice";
+import { getAll } from "../../../../../../../../Utilities/api";
+import { GET_ALL_ACTIVITIES } from "../../../../../../../../Utilities/api/apiEndpoints";
+import Skeleton from "../../../../../../../Utilities/Skeleton/Skeleton";
+
+const ActivityTable = ({
+
+}) => {
+    const [addModal, setAddModal] = useState(false);
+    const dispatch = useDispatch();
+    // Function to transform supportData into allBugReports format
+    const { activities, loading } = useSelector((state: any) => state.activities);
+    const [selectedRows, setSelectedRows] = useState<any[]>([]);
+
+    useEffect(() => {
+        if (loading) {
+            dispatch(setActivities([]));
+            getAll({ url: GET_ALL_ACTIVITIES }).then((data: any) => {
+
+                if (data !== undefined) {
+                    if (!data.success) {
+                        dispatch(setActivityLoading(false))
+                    }
+                    if (data.success) {
+                        dispatch(setActivities(data.data));
+                        setTimeout(() => {
+                            dispatch(setActivityLoading(false));
+                        }, 500);
+
+                    }
+                }
+            });
+        }
+    }, []);
+
+
+    useEffect(() => {
+
+        // Whenever saleLeads is updated, this effect will trigger
+        if (activities && activities.length > 0) {
+            dispatch(setActivities(activities)); // Update Redux store with the latest saleLeads
+            // setLoading(false)
+        }
+        // Dependency array with saleLeads to watch for changes
+    }, [activities]);
+
+
+
+    const { userPersonalizationData } = useSelector(
+        (state: any) => state.personalization
+    );
+    function hexToRgb(hex: any) {
+        // Remove the hash sign if present
+        hex = hex?.replace(/^#/, '');
+        // Parse the hex values to RGB
+        const bigint = parseInt(hex, 16);
+        const r = (bigint >> 16) & 255;
+        const g = (bigint >> 8) & 255;
+        const b = bigint & 255;
+        return { r, g, b };
+    }
+
+    // Usage
+    const hexColor = "#ff0000"; // Example hex color
+    const rgbColor = hexToRgb(userPersonalizationData?.buttonsAndBarsColor); // Convert hex to RGB
+    // console.log("support", support);
+    const activitiesData = () => {
+        if (activities.length > 0) {
+            return activities
+                ?.filter(
+                    (act: any) =>
+                        act?.activityType.toLowerCase().includes(searchValue)
+                )
+                .map((activity: any, index: any) => ({
+                    index: index + 1,
+                    ...activity,
+                }));
+        }
+    };
+
+    const [searchValue, setSearchValue] = useState("");
+
+    useEffect(() => {
+        setData(activitiesData());
+    }, [searchValue]);
+
+    const handleSearch = (e: any) => {
+        const searchKey = e.target.value.toLowerCase();
+        setSearchValue(searchKey);
+    };
+
+    const navigate = useNavigate();
+    const [toggleDelete, setToggleDelete] = useState(false);
+    const [data, setData] = useState([]);
+    const [activityType, setActivityType] = useState("")
+
+    const handleRowClicked = (row: any) => {
+        console.log("row", row);
+
+        dispatch(setActivity(row))
+        navigate(`${process.env.PUBLIC_URL}/company/modules/saio-central/operations/activity/activity-detail/${row._id}`)
+        // navigate(`${process.env.PUBLIC_URL}/company/modules/saio-central/accounts/purchase-invoice/invoice-detail/${row.id}`)
+    };
+
+
+    useEffect(() => {
+        setData(activitiesData());
+    }, [activities]);
+
+    return (
+        <div className="table-responsive support-table" style={{ overflow: "auto", scrollbarWidth: "none" }}>
+            <Row>
+                <div style={{
+                    display: "flex",
+                    justifyContent: "end",
+                    paddingRight: "25px"
+                }}>
+                    <button
+                        className={`btn ${userPersonalizationData?.buttonsAndBarsColor == null ? "btn-primary" : ""
+                            }`}
+                        style={{
+                            color: "white",
+                            backgroundColor: `${userPersonalizationData !== null &&
+                                userPersonalizationData?.buttonsAndBarsColor
+                                }`,
+                            display: "flex",
+                            alignItems: "center",
+
+                        }}
+                        onClick={() => {
+                            dispatch(setActivity(null))
+                            setAddModal(true)
+                        }}
+                    >
+                        <PlusCircle size={18} style={{
+                            marginRight: "5px"
+                        }} />
+                        Create New Activity
+                    </button>
+                </div>
+            </Row>
+            <Row style={{ display: "flex", alignItems: "center" }}>
+                <Col
+                    sm={12}
+                    md={
+                        12
+                    }
+                    lg={
+                        12
+                    }
+                    xl={
+                        12
+                    }
+                >
+                    <input
+                        className="global-search-field"
+                        type="text"
+                        placeholder="Type to Search.."
+                        value={searchValue}
+                        onChange={(e) => {
+                            handleSearch(e);
+                        }}
+
+                    />
+                </Col>
+
+            </Row>
+
+            {loading ? <>
+                <Skeleton height="90px" width="100%" borderRadius="10px" />
+                <Skeleton height="50px" width="100%" marginTop="10px" marginBottom="10" borderRadius="10px" />
+                <Skeleton height="50px" width="100%" marginTop="10px" marginBottom="10" borderRadius="10px" />
+                <Skeleton height="50px" width="100%" marginTop="10px" marginBottom="10" borderRadius="10px" />
+                <Skeleton height="50px" width="100%" marginTop="10px" marginBottom="10" borderRadius="10px" />
+            </> : <DataTable
+                columns={[
+                    {
+                        name: (
+                            <div
+                                style={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "start",
+                                    paddingLeft: "0px ",
+                                }}
+                            >
+                                {selectedRows.length > 0 && (
+                                    <FontAwesomeIcon
+                                        icon={faTrashAlt}
+                                        // onClick={handleDelete}
+                                        onClick={() => {
+                                            // // console.log("345678");
+                                            // var alertData = {
+                                            //     title: "Are you sure?",
+                                            //     text: "Once deleted, you will not be able to recover this ",
+                                            // };
+                                            // const type = "vendorType";
+                                            // deleteAlert(
+                                            //     alertData,
+                                            //     selectedRows[0]._id,
+                                            //     type,
+                                            //     dispatch
+                                            // ).then(() => {
+                                            //     console.log("empty");
+
+                                            //     setSelectedRows([]);
+                                            // });
+                                        }}
+                                        style={{
+                                            cursor: "pointer",
+                                            color: "red",
+                                            marginRight: "20px",
+                                            paddingLeft: "0px",
+                                        }}
+                                    />
+                                )}
+                                S.No.
+                            </div>
+                        ),
+                        selector: (row: any) => row.index,
+                        sortable: true,
+                        width: "7%",
+                        // center: true,
+                        cell: (row: any) => (
+                            <div
+                                style={{
+                                    // textAlign: "center",
+                                    paddingLeft: "10px",
+                                    borderRadius: "5px",
+                                }}
+                            >
+                                {row.index}
+                            </div>
+                        ),
+                    },
+
+                    {
+                        name: "Date",
+                        selector: (row: any) => "",
+                        sortable: true,
+                        width: "15%",
+                        cell: (row: any) => (
+                            <div
+                            >
+                                {row?.createdAt.toString().slice(0, 10)}, {new Date(
+                                    row?.createdAt
+                                )
+                                    .toLocaleString("en-US", {
+                                        hour: "2-digit",
+                                        minute: "2-digit",
+                                        second: "2-digit",
+                                    })
+                                    .toString()}
+                            </div>
+                        )
+
+                    },
+                    {
+                        name: "ID",
+                        selector: (row: any) => row.index,
+                        sortable: true,
+                        width: "10%",
+                        cell: (row: any) => (
+                            <div
+                                style={{
+
+                                    borderRadius: "5px",
+                                }}
+                            >
+                                ACT - {row.index}
+                            </div>
+                        )
+                    },
+
+                    {
+                        name: "Status",
+                        selector: (row: any) => "",
+                        sortable: true,
+                        // center: true,
+                        width: "120px", // Set the width for this column
+                        cell: (row: any) => (
+                            <div
+                                style={{
+                                    width: "100%",
+                                    textAlign: "center",
+                                    padding: "5px",
+                                    borderRadius: "5px",
+                                    backgroundColor:
+                                        "rgba(0, 0, 255, 0.3)",
+
+                                    color: "black"
+                                }}
+                            >
+                                {row?.status ? formatUnderscoredString(row?.status) : "N/A"}
+                            </div>
+                        ),
+                    },
+                    {
+                        name: "Activity Type", selector: (row: any) => formatUnderscoredString(row?.activityType),
+                        sortable: true,
+                        width: "15%", // Set the width for this column
+                    },
+                    {
+                        name: "User",
+                        selector: (row: any) => `${row?.user !== null ? row?.user?.fullName : "N/A"}`,
+                        sortable: true,
+                        // center: true,
+                        width: "13%", // Set the width for this column
+
+                    },
+                    {
+                        name: "Installer",
+                        selector: (row: any) => `${row?.installer !== null ? row?.installer.fullName : "N/A"}`,
+                        sortable: true,
+                        // center: true,
+                        width: "12%", // Set the width for this column
+
+                    },
+                    {
+                        name: "Items",
+                        selector: (row: any) => `${row?.inventoryItems.length !== 0 ? row?.inventoryItems.length : "N/A"}`,
+                        sortable: true,
+                        center: true,
+                        width: "7%", // Set the width for this column
+                    },
+                    {
+                        name: "Vehicles",
+                        selector: (row: any) => `${row?.vehicles.length !== 0 ? row?.vehicles.length : "N/A"}`,
+                        sortable: true,
+                        center: true,
+                        width: "8%", // Set the width for this column
+                    },
+                ]}
+                data={data}
+                pagination
+                selectableRows
+
+                onRowClicked={handleRowClicked} // Pass the event handler for row clicks
+                clearSelectedRows={toggleDelete}
+                style={{
+                    cursor: "pointer",
+                }}
+                className="custom-data-table" // Add a class to your DataTable for styling
+                // You can add more props as needed
+                customStyles={{
+                    rows: {
+                        style: {
+                            cursor: "pointer",
+                            transition: "background-color 0.2s", // Smooth transition for background color change
+                            "&:hover": { // Define hover style
+                                backgroundColor: `rgba(${rgbColor.r},${rgbColor.g},${rgbColor.b},0.2)`,
+                            },
+                        },
+                    },
+                    head: {
+                        style: {
+                            fontWeight: "bold",
+                            fontSize: "13px",
+                        },
+                    },
+                }}
+            />}
+            <style>
+                {`
+       .custom-data-table thead th {
+        text-align: center !important;
+      }
+      `}
+            </style>
+            {addModal && <SelectActivityTypeModal
+                addModal={addModal}
+                setAddModal={setAddModal}
+                activityType={activityType}
+                setActivityType={setActivityType}
+            />}
+        </div>
+    );
+};
+
+export default ActivityTable;

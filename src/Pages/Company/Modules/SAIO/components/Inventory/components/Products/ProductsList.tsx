@@ -21,6 +21,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 import deleteAlert from "../../../../../../../../Utilities/alerts/DeleteAlert";
 import { Id } from "../../../../../../../../utils/Constant";
+import ViewAllInventoryItemsModal from "./components/ViewAllInventoryItemsModal";
 
 const ProductsTable = () => {
   const dispatch = useDispatch();
@@ -49,6 +50,7 @@ const ProductsTable = () => {
   const [toggleDelete, setToggleDelete] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null); // State for the selected product
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false); // State for modal visibility
+  const [isViewInventoryModalOpen, setIsViewInventoryModalOpen] = useState(false)
 
   useEffect(() => {
     // Fetch Product Types
@@ -70,12 +72,14 @@ const ProductsTable = () => {
     return product
       ?.filter(
         (item: any) =>
-          item?._id.toLowerCase().includes(searchValue) ||
+          item?.productType.toLowerCase().includes(searchValue) ||
           item?.name.toLowerCase().includes(searchValue)
       )
-      .map((item: any) => ({
+      .map((item: any, index: any) => ({
+        index: index + 1,
         id: item._id,
         name: item.name,
+        user: item.user,
         isActive: item.isActive ? "true" : "false",
         qrCode: item.qrCode?.url || "N/A",
         productType: item.productType,
@@ -123,6 +127,7 @@ const ProductsTable = () => {
 
   // Define columns for the DataTable
   const columns = [
+
     {
       name: (
         <div
@@ -143,14 +148,17 @@ const ProductsTable = () => {
                   title: "Are you sure?",
                   text: "Once deleted, you will not be able to recover this ",
                 };
-                const type = "productType";
-                deleteAlert(alertData, selectedRows[0].id, type, dispatch).then(
-                  () => {
-                    console.log("empty");
+                const type = "vendorType";
+                deleteAlert(
+                  alertData,
+                  selectedRows[0]._id,
+                  type,
+                  dispatch
+                ).then(() => {
+                  console.log("empty");
 
-                    setSelectedRows([]);
-                  }
-                );
+                  setSelectedRows([]);
+                });
               }}
               style={{
                 cursor: "pointer",
@@ -160,46 +168,97 @@ const ProductsTable = () => {
               }}
             />
           )}
-          Product Name
+          S.No.
         </div>
       ),
-      selector: (row: any) => row.vendorName,
+      selector: (row: any) => row.index,
       sortable: true,
-      width: "180px",
+      width: "7%",
+      // center: true,
       cell: (row: any) => (
         <div
           style={{
-            width: "180px",
-            textAlign: "center",
-            paddingRight: "60px",
+
+            paddingLeft: "10px",
             borderRadius: "5px",
           }}
         >
-          {row.name}
+          {row.index}
         </div>
       ),
     },
-    // {
-    //   name: "Product Name",
-    //   selector: (row: any) => row.name,
-    //   sortable: true,
-    // },
-    {
-      name: "Product Type",
-      selector: (row: any) => row.productType,
-      sortable: true,
-    },
 
-    {
-      name: "Measurement unit",
-      selector: (row: any) => row.measurementUnit,
-      sortable: true,
-    },
 
     {
       name: "Date",
       selector: (row: any) => row.date,
       sortable: true,
+      // center: true,
+      width: "18%",
+    },
+    {
+      name: "ID",
+      selector: (row: any) => row.index,
+      sortable: true,
+      width: "10%",
+      cell: (row: any) => (
+        <div
+          style={{
+
+            borderRadius: "5px",
+          }}
+        >
+          P - {row.index}
+        </div>
+      )
+    },
+    {
+      name: "User",
+      selector: (row: any) => row?.user?.fullName,
+      sortable: true,
+      // center: true,
+      width: "15%",
+    },
+    {
+      name: "Product Name",
+      selector: (row: any) => row.name,
+      sortable: true,
+      // center: true,
+      width: "15%",
+    },
+
+    {
+      name: "Product Type",
+      selector: (row: any) => row.productType,
+      sortable: true,
+      // center: true,
+      width: "12%",
+    },
+
+    {
+      name: "Unit",
+      selector: (row: any) => row.measurementUnit,
+      sortable: true,
+      center: true,
+      width: "8%",
+    },
+    {
+      name: "Inventory",
+      selector: (row: any) => "",
+      sortable: true,
+      center: true,
+      width: "10%",
+      cell: (row: any) => (
+        <div
+        >
+          <Button onClick={() => {
+            setSelectedProduct(row);
+            setIsViewInventoryModalOpen(true)
+          }} color="primary" style={{ padding: "5px 15px" }}>
+            View
+          </Button>
+        </div>
+      ),
     },
   ];
 
@@ -275,6 +334,16 @@ const ProductsTable = () => {
           isVisible={isUpdateModalOpen}
           setIsVisible={setIsUpdateModalOpen}
           selectedProduct={selectedProduct}
+        />
+      )}
+
+
+
+      {isViewInventoryModalOpen && (
+        <ViewAllInventoryItemsModal
+          isVisible={isViewInventoryModalOpen}
+          setIsVisible={setIsViewInventoryModalOpen}
+          product={selectedProduct}
         />
       )}
     </div>

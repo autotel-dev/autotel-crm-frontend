@@ -58,6 +58,10 @@ import TaxSlice from "./Reducer/TaxSlice";
 import StockAdjustmentTypeSlice from "./Reducer/StockAdjustmentTypeSlice";
 import StockMovementSlice from "./Reducer/StockMovementSlice";
 import StockAdjustementSlice from "./Reducer/StockAdjustementSlice";
+import OperationActivitySlice from "./Reducer/OperationActivitySlice";
+import AccountSlice from "./Reducer/AccountSlice";
+import SaleInvoiceSlice from "./Reducer/SaleInvoiceSlice";
+import NRSlice from "./Reducer/NRSlice";
 
 const Store = configureStore({
   reducer: {
@@ -119,7 +123,11 @@ const Store = configureStore({
     taxes: TaxSlice,
     stockAdjustmentTypes: StockAdjustmentTypeSlice,
     stockMovement: StockMovementSlice,
-    stockAdjustment: StockAdjustementSlice
+    stockAdjustment: StockAdjustementSlice,
+    activities: OperationActivitySlice,
+    account: AccountSlice,
+    saleInvoice: SaleInvoiceSlice,
+    nrReport: NRSlice
   },
 });
 

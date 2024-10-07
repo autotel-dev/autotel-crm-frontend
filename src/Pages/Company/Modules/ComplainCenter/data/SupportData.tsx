@@ -41,11 +41,12 @@ export interface ComplainDataType {
   department: string;
   server: string;
   status: string;
+  type: string;
   priorty: string;
   date: string;
 }
 
-export const supportColumns = [
+export const complainDataColumns = [
   {
     name: "id",
     selector: (row: ComplainDataType) => row["id"],
@@ -80,18 +81,18 @@ export const supportColumns = [
     sortable: true,
     center: true,
     width: "140px", // Set the width for this column
-    cell: (row: ComplainDataType) => (
-      <div
-        style={{
-          whiteSpace: "nowrap", // Ensures text remains on a single line
-          overflow: "hidden", // Hides any overflowing text
-          textOverflow: "ellipsis", // Shows an ellipsis (...) if the text is too long
-          paddingRight: "10px",
-        }}
-      >
-        {formatUnderscoredString(row.department)}
-      </div>
-    ),
+    // cell: (row: ComplainDataType) => (
+    //   <div
+    //     style={{
+    //       whiteSpace: "nowrap", // Ensures text remains on a single line
+    //       overflow: "hidden", // Hides any overflowing text
+    //       textOverflow: "ellipsis", // Shows an ellipsis (...) if the text is too long
+    //       paddingRight: "10px",
+    //     }}
+    //   >
+    //     {formatUnderscoredString(row.department)}
+    //   </div>
+    // ),
   },
   {
     name: "Server",
@@ -100,6 +101,15 @@ export const supportColumns = [
     center: true,
     width: "200px", // Set the width for this column
   },
+  {
+    name: "Type",
+    selector: (row: ComplainDataType) => `${formatUnderscoredString(row.type)}`,
+    sortable: true,
+    center: true,
+    width: "150px", // Set the width for this column
+  },
+
+
 
   {
     name: "Status",

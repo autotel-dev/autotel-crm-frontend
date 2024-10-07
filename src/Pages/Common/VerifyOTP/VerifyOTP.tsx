@@ -12,7 +12,22 @@ const VerifyOTP = () => {
   );
   return (
     <Container fluid>
-      <Row>
+      <Row
+        style={{
+          backgroundColor: `${userPersonalizationData !== null &&
+            userPersonalizationData?.loginPageBackgroundType == "SOLID" &&
+            userPersonalizationData &&
+            userPersonalizationData?.loginPageBackgroundColor
+            }`,
+          backgroundImage: `${userPersonalizationData !== null &&
+            userPersonalizationData?.loginPageBackgroundType == "GRADIENT" &&
+            `linear-gradient(to ${userPersonalizationData?.gradient?.direction
+            }, ${userPersonalizationData?.gradient.color1
+            }, ${userPersonalizationData?.gradient.color2
+            })`
+            }`,
+        }}
+      >
         <Col
           xl={5}
           className="b-center bg-size p-0"
@@ -21,17 +36,10 @@ const VerifyOTP = () => {
             flexDirection: "column",
             justifyContent: "center",
             alignItems: "center",
-            backgroundColor: `${
-              userPersonalizationData && userPersonalizationData.backgroundColor
-            }`,
+            backgroundColor: `${userPersonalizationData && userPersonalizationData.backgroundColor
+              }`,
           }}
         >
-          {/* <Image
-            className="bg-img-cover bg-center w-100 vh-100"
-            src={dynamicImage("login/3.jpg")}
-            alt="looginpage"
-          /> */}
-
           <div
             style={{
               width: "80%",

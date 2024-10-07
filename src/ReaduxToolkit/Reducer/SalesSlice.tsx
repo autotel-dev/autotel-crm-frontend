@@ -65,12 +65,12 @@ const SalesSlice = createSlice({
         setSaleLeads: (state, action) => {
             state.saleLeads = action.payload;
             state.error = null;
-            state.loading = false;
+            // state.loading = false;
         },
         setCustomers: (state, action) => {
             state.customers = action.payload;
             state.error = null;
-            state.loading = false;
+            // state.loading = false;
         },
         setCustomer: (state, action) => {
             state.customer = action.payload;
@@ -124,6 +124,10 @@ const SalesSlice = createSlice({
         setIsConnected: (state, action) => {
             state.isConnected = action.payload;
         },
+        setSaleLoading: (state, action) => {
+            state.loading = action.payload
+        }
+         
     },
 });
 export const {
@@ -131,6 +135,8 @@ export const {
     setCustomers,
     setCustomer,
     setSaleLead,
+    setSaleLeadsStart,
+    setSaleLeadsEnd,
     setInvoiceData,
     setCities,
     setPackages,

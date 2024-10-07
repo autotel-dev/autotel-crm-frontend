@@ -517,13 +517,6 @@ export const deleteMultiple = async (
 
 export const getAll = async (url: URLTypes): Promise<void> => {
   if (!navigator.onLine) {
-    // Swal.fire({
-    //   text: ERROR_TEXT,
-    //   icon: "error",
-    //   timer: 2000,
-    //   showCancelButton: false,
-    // });
-    // throw new Error(ERROR_TEXT);
     const error: any = {
       success: false,
       message: ERROR_MESSAGE,
@@ -531,14 +524,55 @@ export const getAll = async (url: URLTypes): Promise<void> => {
     };
     return error;
   }
-  // -----------------------
-  // console.log(`${API_BASE_URL}/${url.url}`);
-  // console.log(header());
+
 
   try {
     const response = await axios.get(url.url, {
       headers: header(),
     });
+    const result = response.data;
+
+    return result;
+  } catch (error: any) {
+    if (error.response.data.statusCode == 401) {
+      Swal.fire({
+        text: `${error.response.data.message}`,
+        icon: "error",
+        showConfirmButton: true,
+      });
+    } else {
+      return error.response.data;
+    }
+  }
+};
+
+
+export const getAllByBodyData = async (postData: any, url: URLTypes): Promise<void> => {
+  if (!navigator.onLine) {
+    Swal.fire({
+      text: ERROR_TEXT,
+      icon: "error",
+      timer: 2000,
+      showCancelButton: false,
+    });
+    // throw new Error(ERROR_TEXT);
+    const error: any = {
+      success: false,
+      message: ERROR_MESSAGE,
+      statusCode: 401,
+    };
+    return error;
+  }
+  try {
+     // Append postData as query parameters
+     const queryParams = new URLSearchParams(postData).toString();
+     const requestUrl = `${url.url}?${queryParams}`;
+ 
+     const response = await axios.get(requestUrl, {
+       headers: header(),
+     });
+ 
+
     const result = response.data;
 
     return result;

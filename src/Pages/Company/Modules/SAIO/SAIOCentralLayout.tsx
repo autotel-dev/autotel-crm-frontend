@@ -1,22 +1,19 @@
 import { useEffect, useState } from "react";
 import Sidebar from "./Sidebar/Sidebar";
 import { Outlet } from "react-router-dom";
-// import Sales from "./components/Sales/Sales";
-// import Accounts from "./components/Accounts/Accounts";
-// import Inventory from "./components/Inventory/Inventory";
-// import Operations from "./components/Operations/Operations";
 
 const SAIOCentralLayout = () => {
 
-    const [sales, setSales] = useState(true);
+    const [dashboard, setDashboard] = useState(true);
+    const [purchases, setPurchases] = useState(false);
+    const [sales, setSales] = useState(false);
     const [accounts, setAccounts] = useState(false);
     const [inventory, setInventory] = useState(false);
     const [operations, setOperations] = useState(false);
-    const [customers, setCustomers] = useState(false);
+
 
     useEffect(() => {
         document.body.style.overflow = "unset";
-
         // Cleanup function to reset the overflow when the component is unmounted
         return () => {
             document.body.style.overflow = "hidden";
@@ -39,7 +36,7 @@ const SAIOCentralLayout = () => {
                     position: "fixed"
                 }}
             >
-                <Sidebar setSales={setSales} setAccounts={setAccounts} setInventory={setInventory} setOperations={setOperations} sales={sales} accounts={accounts} inventory={inventory} operations={operations}
+                <Sidebar setDashboard={setDashboard} setPurchases={setPurchases} setSales={setSales} setAccounts={setAccounts} setInventory={setInventory} setOperations={setOperations} dashboard={dashboard} purchases={purchases} sales={sales} accounts={accounts} inventory={inventory} operations={operations}
                 />
             </div>
             <div
@@ -56,8 +53,6 @@ const SAIOCentralLayout = () => {
                 }}
             >
                 <Outlet />
-
-                {/* {sales ? <Sales /> : accounts ? <Accounts /> : inventory ? <Inventory /> : operations && <Operations />} */}
             </div>
         </div>
     );

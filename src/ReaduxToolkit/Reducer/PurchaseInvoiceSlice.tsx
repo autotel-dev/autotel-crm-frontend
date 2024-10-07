@@ -8,7 +8,7 @@ const initialState = {
     warehouses: [],
     purchaseInvoice: null,
     serialNumbers: null,
-    loading: false,
+    loading: true,
     error: null,
     isConnected: true,
 };
@@ -24,7 +24,7 @@ const PurchaseInvoiceSlice = createSlice({
         setPurchaseInvoices: (state, action) => {
             state.purchaseInvoices = action.payload;
             state.error = null;
-            state.loading = false;
+            // state.loading = false;
         },
         setVendors: (state, action) => {
             state.vendors = action.payload;
@@ -52,6 +52,10 @@ const PurchaseInvoiceSlice = createSlice({
         setIsConnected: (state, action) => {
             state.isConnected = action.payload;
         },
+
+        setPurchaseInvoiceLoading: (state, action) => {
+            state.loading = action.payload;
+        },
     },
 });
 export const {
@@ -66,6 +70,7 @@ export const {
     setPurchaseInvoiceStart,
     setPurchaseInvoiceEnd,
     setIsConnected,
+    setPurchaseInvoiceLoading
 } = PurchaseInvoiceSlice.actions;
 
 export default PurchaseInvoiceSlice.reducer;

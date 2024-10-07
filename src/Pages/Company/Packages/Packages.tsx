@@ -59,9 +59,9 @@ const Packages = () => {
       ) : (
         <div>
           <Breadcrumbs
-            mainTitle="Department List"
+            mainTitle="Packages List"
             parent={setup}
-            title="Department List"
+            title="Packages List"
           />
           <Container fluid>
             <Row className="project-card">

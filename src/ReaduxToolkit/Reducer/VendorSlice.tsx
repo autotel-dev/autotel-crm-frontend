@@ -7,7 +7,7 @@ const initialState = {
   countries: [],
   filterVendor: [],
   activeInActiveVendor: "All",
-  loading: false,
+  loading: true,
   error: null,
   id: null,
   cityId: null,
@@ -26,13 +26,13 @@ const VendorSlice = createSlice({
     },
     setVendor: (state, action) => {
       state.vendor = action.payload;
-      state.error = null;
-      state.loading = false;
+      // state.error = null;
+      // state.loading = false;
     },
     setFilterVendor: (state, action) => {
       state.filterVendor = action.payload;
-      state.error = null;
-      state.loading = false;
+      // state.error = null;
+      // state.loading = false;
     },
     setInActiveActiveVendor: (state, action) => {
       state.activeInActiveVendor = action.payload;
@@ -40,12 +40,12 @@ const VendorSlice = createSlice({
     setCities: (state, action) => {
       state.cities = action.payload;
       state.error = null;
-      state.loading = false;
+      // state.loading = false;
     },
     setCountries: (state, action) => {
       state.countries = action.payload;
       state.error = null;
-      state.loading = false;
+      // state.loading = false;
     },
     setVendorEnd: (state) => {
       state.loading = false;
@@ -69,6 +69,9 @@ const VendorSlice = createSlice({
     setIsConnected: (state, action) => {
       state.isConnected = action.payload;
     },
+    setVendorLoading: (state, action) => {
+      state.loading = action.payload;
+    },
   },
 });
 export const {
@@ -85,6 +88,7 @@ export const {
   setValue,
   setNoVendorFound,
   setIsConnected,
+  setVendorLoading
 } = VendorSlice.actions;
 
 export default VendorSlice.reducer;

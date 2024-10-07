@@ -4,12 +4,12 @@ import DataTable from "react-data-table-component";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import "../../../../../../../../CssConstaints/Style.css";
-import { stockAdjustmentTypesColumns, StockAdjustmentTypesDataType } from "./Type/Type";
 import CreateNewStockAdjustmentType from "./components/CreateNewStockAdjustmentTypeModal";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 import deleteAlert from "../../../../../../../../Utilities/alerts/DeleteAlert";
 import UpdateStockAdjustmentType from "./components/UpdateNewStockAdjustmentTypeModal";
+import { formatUnderscoredString } from "../../../../../../../../Utilities/globals/globals";
 
 
 const StockAdjustmentTypesTable = () => {
@@ -43,23 +43,12 @@ const StockAdjustmentTypesTable = () => {
     const stockAdjustmentTypesData = () => {
         return stockAdjustmentTypes?.filter(
             (item: any) =>
-                item?._id.toLowerCase().includes(searchValue) ||
                 item?.name.toLowerCase().includes(searchValue)
         )
-            .map((item: any) => ({
-                id: item?._id,
-                user: item?.company.fullName,
-                name: item?.name,
-                isActive: item?.isActive ? "true" : "false",
-                date: `${item?.updatedAt.toString().slice(0, 10)},  ${new Date(
-                    item?.updatedAt
-                )
-                    .toLocaleString("en-US", {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                        second: "2-digit",
-                    })
-                    .toString()}`,
+            .map((item: any, index: any) => ({
+                index: index + 1,
+                ...item,
+
             }));
     };
 
@@ -87,26 +76,6 @@ const StockAdjustmentTypesTable = () => {
         setSelectedRows(state.selectedRows);
     }, []);
 
-    const handleDelete = () => {
-        if (
-            window.confirm(
-                `Are you sure you want to delete:\r ${selectedRows.map(
-                    (r: StockAdjustmentTypesDataType) => r.id
-                )}?`
-            )
-        ) {
-            setToggleDelete(!toggleDelete);
-            setData(
-                data.filter((item: any) =>
-                    selectedRows.filter((elem: StockAdjustmentTypesDataType) => elem.id === item.id)
-                        .length > 0
-                        ? false
-                        : true
-                )
-            );
-            setSelectedRows([]);
-        }
-    };
 
     const handleRowClicked = (row: any) => {
         setSelectedAdjustmentType(row);
@@ -154,7 +123,128 @@ const StockAdjustmentTypesTable = () => {
             </Row>
             <div>
                 <DataTable
-                    columns={stockAdjustmentTypesColumns}
+                    columns={
+                        [
+                            {
+                                name: (
+                                    <div
+                                        style={{
+                                            display: "flex",
+                                            alignItems: "center",
+                                            justifyContent: "start",
+                                            paddingLeft: "0px ",
+                                        }}
+                                    >
+                                        {selectedRows.length > 0 && (
+                                            <FontAwesomeIcon
+                                                icon={faTrashAlt}
+                                                // onClick={handleDelete}
+                                                onClick={() => {
+                                                    // // console.log("345678");
+                                                    // var alertData = {
+                                                    //     title: "Are you sure?",
+                                                    //     text: "Once deleted, you will not be able to recover this ",
+                                                    // };
+                                                    // const type = "vendorType";
+                                                    // deleteAlert(
+                                                    //     alertData,
+                                                    //     selectedRows[0]._id,
+                                                    //     type,
+                                                    //     dispatch
+                                                    // ).then(() => {
+                                                    //     console.log("empty");
+
+                                                    //     setSelectedRows([]);
+                                                    // });
+                                                }}
+                                                style={{
+                                                    cursor: "pointer",
+                                                    color: "red",
+                                                    marginRight: "20px",
+                                                    paddingLeft: "0px",
+                                                }}
+                                            />
+                                        )}
+                                        S.No.
+                                    </div>
+                                ),
+                                selector: (row: any) => row.index,
+                                sortable: true,
+                                width: "10%",
+                                // center: true,
+                                cell: (row: any) => (
+                                    <div
+                                        style={{
+                                            // textAlign: "center",
+                                            paddingLeft: "10px",
+                                            borderRadius: "5px",
+                                        }}
+                                    >
+                                        {row.index}
+                                    </div>
+                                ),
+                            },
+
+                            {
+                                name: "Date",
+                                selector: (row: any) => "",
+                                sortable: true,
+                                width: "18%",
+                                cell: (row: any) => (
+                                    <div
+                                    >
+                                        {row?.createdAt.toString().slice(0, 10)}, {new Date(
+                                            row?.createdAt
+                                        )
+                                            .toLocaleString("en-US", {
+                                                hour: "2-digit",
+                                                minute: "2-digit",
+                                                second: "2-digit",
+                                            })
+                                            .toString()}
+                                    </div>
+                                )
+
+                            },
+                            {
+                                name: "ID",
+                                selector: (row: any) => row.index,
+                                sortable: true,
+                                width: "15%",
+                                cell: (row: any) => (
+                                    <div
+                                        style={{
+
+                                            borderRadius: "5px",
+                                        }}
+                                    >
+                                        SAT - {row.index}
+                                    </div>
+                                )
+                            },
+                            {
+                                name: "User",
+                                selector: (row: any) => `${row?.user !== null ? row?.user?.fullName : "N/A"}`,
+                                sortable: true,
+                                // center: true,
+                                width: "15%", // Set the width for this column
+
+                            },
+                            {
+                                name: "Name",
+                                selector: (row: any) => row.name,
+                                sortable: true,
+                                center: true
+                            },
+                            {
+                                name: "Availability",
+                                selector: (row: any) => `${row?.availability ? "Yes" : "No"}`,
+                                sortable: true,
+                                center: true
+                            },
+
+                        ]
+                    }
                     data={data}
                     // striped={true}
                     pagination

@@ -215,6 +215,7 @@ const CreateNewProductModal = () => {
                     filterOption={(input: any, option: any) =>
                       (option?.label ?? "").toLowerCase().includes(input.toLowerCase())
                     }
+                    
                     filterSort={(optionA: any, optionB: any) =>
                       (optionA?.label ?? "")
                         .toLowerCase()
