@@ -26,7 +26,10 @@ import { jwtDecode } from "jwt-decode";
 import { Select } from "antd";
 import Swal from "sweetalert2";
 import "./permissionsStyle.css";
-import { CREATE_OPERATOR, GET_ALL_OPERATORS } from "../../../Utilities/api/apiEndpoints";
+import {
+  CREATE_OPERATOR,
+  GET_ALL_OPERATORS,
+} from "../../../Utilities/api/apiEndpoints";
 import { ERROR_MESSAGE } from "../../../Utilities/constants/constants";
 
 const CreateNewUser = () => {
@@ -80,85 +83,78 @@ const CreateNewUser = () => {
         isActive: true,
         company: decodedToken.userId,
         subRole: role,
-        branch:branch,
+        branch: branch,
         allowedModules: allowedModules,
       };
       // console.log(operator);
       try {
-        await create(operator, { url: CREATE_OPERATOR }).then(
-          (data: any) => {
-            if (
-              !data.success &&
-              data.message === ERROR_MESSAGE
-            ) {
-              setLoading(false);
-              setAddModal(false);
-              reset({
-                name: "",
-                emailAddress: "",
-                password: "",
-                phoneNo: "",
-              });
-              setRole("");
-            }
-            if (!data.success) {
-              Swal.fire({
-                text: `${data.message}`,
-                icon: "error",
-                timer: 2000,
-                showConfirmButton: false,
-              });
-              setLoading(false);
-              setAddModal(false);
-              reset({
-                name: "",
-                emailAddress: "",
-                password: "",
-                phoneNo: "",
-              });
-              setRole("");
-            }
-            if (data.success) {
-              // console.log(data);
-              setLoading(false);
-              setAddModal(false);
-              reset({
-                name: "",
-                emailAddress: "",
-                password: "",
-                phoneNo: "",
-              });
-              setRole("");
-              dispatch(setOperatorsStart());
-              getAll({ url: GET_ALL_OPERATORS }).then(
-                (data: any) => {
-                  // console.log("api call --- >", data);
-                  if (data == undefined) {
-                    Swal.fire({
-                      text: "Failed to fetch due to connection refused",
-                      icon: "error",
-                      timer: 2000,
-                      showConfirmButton: false,
-                    });
-                    dispatch(setInActiveActiveUsers("All"));
-                    dispatch(setOperators([]));
-                    dispatch(setFilterOperators([]));
-                    dispatch(setOperatorsEnd());
-                    return;
-                  }
-                  dispatch(setOperatorsEnd());
-                  if (data !== undefined) {
-                    if (data.success) {
-                      // console.log("hhg");
-                      dispatch(setOperators(data.data));
-                      dispatch(setFilterOperators(data.data));
-                    }
-                  }
-                }
-              );
-            }
+        await create(operator, { url: CREATE_OPERATOR }).then((data: any) => {
+          if (!data.success && data.message === ERROR_MESSAGE) {
+            setLoading(false);
+            setAddModal(false);
+            reset({
+              name: "",
+              emailAddress: "",
+              password: "",
+              phoneNo: "",
+            });
+            setRole("");
           }
-        );
+          if (!data.success) {
+            Swal.fire({
+              text: `${data.message}`,
+              icon: "error",
+              timer: 2000,
+              showConfirmButton: false,
+            });
+            setLoading(false);
+            setAddModal(false);
+            reset({
+              name: "",
+              emailAddress: "",
+              password: "",
+              phoneNo: "",
+            });
+            setRole("");
+          }
+          if (data.success) {
+            // console.log(data);
+            setLoading(false);
+            setAddModal(false);
+            reset({
+              name: "",
+              emailAddress: "",
+              password: "",
+              phoneNo: "",
+            });
+            setRole("");
+            dispatch(setOperatorsStart());
+            getAll({ url: GET_ALL_OPERATORS }).then((data: any) => {
+              // console.log("api call --- >", data);
+              if (data == undefined) {
+                Swal.fire({
+                  text: "Failed to fetch due to connection refused",
+                  icon: "error",
+                  timer: 2000,
+                  showConfirmButton: false,
+                });
+                dispatch(setInActiveActiveUsers("All"));
+                dispatch(setOperators([]));
+                dispatch(setFilterOperators([]));
+                dispatch(setOperatorsEnd());
+                return;
+              }
+              dispatch(setOperatorsEnd());
+              if (data !== undefined) {
+                if (data.success) {
+                  // console.log("hhg");
+                  dispatch(setOperators(data.data));
+                  dispatch(setFilterOperators(data.data));
+                }
+              }
+            });
+          }
+        });
         // Handle successful post creation (e.g., show a success message, redirect, etc.)
       } catch (error: any) {
         // Handle error (e.g., show an error message)
@@ -185,10 +181,10 @@ const CreateNewUser = () => {
 
   const tempRolesList: any = [];
   useEffect(() => {
-    roles.map((item: any, index: any) => {
+    roles?.map((item: any, index: any) => {
       tempRolesList.push({
-        value: `${item._id}`,
-        label: `${item.name}`,
+        value: `${item?._id}`,
+        label: `${item?.name}`,
       });
     });
     setRolesList(tempRolesList);
@@ -200,10 +196,10 @@ const CreateNewUser = () => {
 
   const tempBranchesList: any = [];
   useEffect(() => {
-    branches.map((item: any, index: any) => {
+    branches?.map((item: any, index: any) => {
       tempBranchesList.push({
-        value: `${item._id}`,
-        label: `${item.name}`,
+        value: `${item?._id}`,
+        label: `${item?.name}`,
       });
     });
     setBranchesList(tempBranchesList);
@@ -227,13 +223,17 @@ const CreateNewUser = () => {
     <Col md={6}>
       <div className="text-end">
         <button
-          className={`btn ${userPersonalizationData?.buttonsAndBarsColor == null ? "btn-primary" : ""
-            }`}
+          className={`btn ${
+            userPersonalizationData?.buttonsAndBarsColor == null
+              ? "btn-primary"
+              : ""
+          }`}
           style={{
             color: "white",
-            backgroundColor: `${userPersonalizationData !== null &&
+            backgroundColor: `${
+              userPersonalizationData !== null &&
               userPersonalizationData?.buttonsAndBarsColor
-              }`,
+            }`,
           }}
           onClick={addToggle}
         >
@@ -408,7 +408,7 @@ const CreateNewUser = () => {
                                         value="value"
                                         disabled={true}
                                         checked={permission.read}
-                                        onChange={() => { }}
+                                        onChange={() => {}}
                                         style={{ display: "none" }} // Hide the default checkbox
                                       />
                                       <span
@@ -436,7 +436,7 @@ const CreateNewUser = () => {
                                         value="value"
                                         disabled={true}
                                         checked={permission.create}
-                                        onChange={() => { }}
+                                        onChange={() => {}}
                                         style={{ display: "none" }} // Hide the default checkbox
                                       />
                                       <span
@@ -464,7 +464,7 @@ const CreateNewUser = () => {
                                         value="value"
                                         disabled={true}
                                         checked={permission.edit}
-                                        onChange={() => { }}
+                                        onChange={() => {}}
                                         style={{ display: "none" }} // Hide the default checkbox
                                       />
                                       <span
@@ -493,7 +493,7 @@ const CreateNewUser = () => {
                                         value="value"
                                         disabled={true}
                                         checked={permission.delete}
-                                        onChange={() => { }}
+                                        onChange={() => {}}
                                         style={{ display: "none" }} // Hide the default checkbox
                                       />
                                       <span

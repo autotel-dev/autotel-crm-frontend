@@ -12,6 +12,8 @@ import LayoutRoutes from "./LayoutRoutes";
 import VerifyOTP from "../Pages/Common/VerifyOTP/VerifyOTP";
 import { useEffect } from "react";
 import LoginForm from "../Pages/Common/Auth/Auth";
+import ForgotPassword from "../Pages/Common/ForgotPassword/ForgotPassword";
+import ResetPassword from "../Pages/Common/ResetPassword/ResetPassword";
 
 const Routers = () => {
   useEffect(() => {
@@ -34,11 +36,7 @@ const Routers = () => {
           <>
             <Route
               path={`${process.env.PUBLIC_URL}` || "/"}
-              element={
-                <Navigate
-                  to={`${process.env.PUBLIC_URL}/dashboard`}
-                />
-              }
+              element={<Navigate to={`${process.env.PUBLIC_URL}/dashboard`} />}
             />
           </>
         ) : (
@@ -63,10 +61,25 @@ const Routers = () => {
           path={`${process.env.PUBLIC_URL}login`}
           element={<Navigate to={"/login"} />}
         /> */}
+
+        <Route
+          path={`${process.env.PUBLIC_URL}/forgot-password`}
+          element={<ForgotPassword />}
+        />
+
         <Route
           path={`${process.env.PUBLIC_URL}/verifyOTP`}
           element={<VerifyOTP />}
         />
+
+        <Route
+          path={`${process.env.PUBLIC_URL}/reset-password`}
+          element={<ResetPassword />}
+        />
+        {/* <Route
+          path={`${process.env.PUBLIC_URL}/verifyOTP`}
+          element={<VerifyOTP />}
+        /> */}
       </Routes>
     </BrowserRouter>
   );

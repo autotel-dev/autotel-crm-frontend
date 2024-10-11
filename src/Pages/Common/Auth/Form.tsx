@@ -4,7 +4,7 @@ import { H3, P } from "../../../AbstractElements";
 import { Button, Form, FormGroup, Label } from "reactstrap";
 import { EmailAddress, Password } from "../../../utils/Constant";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import { useDispatch, useSelector } from "react-redux";
 import { setActiveCRMModules } from "../../../ReaduxToolkit/Reducer/CRMModuleSlice";
@@ -18,8 +18,18 @@ import {
 } from "../../../ReaduxToolkit/Reducer/UserSlice";
 import { setDevices } from "../../../ReaduxToolkit/Reducer/MonitoringSlice";
 import { getAll, login } from "../../../Utilities/api";
-import { getOperatorCompanyUserId, getUserRole } from "../../../Utilities/globals/globals";
-import { GET_ALLOWED_MODULES, GET_ALLOWED_PERMISSIONS, GET_ALL_ACTIVE_CRM_MODULES, GET_COMPANY_PERSONALIZATION, GET_SUPERADMIN_PERSONALIZATION, GET_USER_BY_ID } from "../../../Utilities/api/apiEndpoints";
+import {
+  getOperatorCompanyUserId,
+  getUserRole,
+} from "../../../Utilities/globals/globals";
+import {
+  GET_ALLOWED_MODULES,
+  GET_ALLOWED_PERMISSIONS,
+  GET_ALL_ACTIVE_CRM_MODULES,
+  GET_COMPANY_PERSONALIZATION,
+  GET_SUPERADMIN_PERSONALIZATION,
+  GET_USER_BY_ID,
+} from "../../../Utilities/api/apiEndpoints";
 
 interface loginTypes {
   emailAddress: string; // Change 'boolean' to the actual type of isVisible
@@ -127,7 +137,7 @@ const CommonForm = ({ alignLogo }: CommonFormPropsType) => {
             getAll({
               url:
                 getUserRole() === ROLES.COMPANY ||
-                  getUserRole() === ROLES.OPERATOR
+                getUserRole() === ROLES.OPERATOR
                   ? GET_ALLOWED_MODULES
                   : GET_ALL_ACTIVE_CRM_MODULES,
             }).then((data: any) => {
@@ -277,9 +287,11 @@ const CommonForm = ({ alignLogo }: CommonFormPropsType) => {
                 <div className="show-hide">
                   <span
                     style={{
-                      color: `${userPersonalizationData &&
-                        userPersonalizationData.buttonsAndBarsColor !== "" && userPersonalizationData.buttonsAndBarsColor
-                        }
+                      color: `${
+                        userPersonalizationData &&
+                        userPersonalizationData.buttonsAndBarsColor !== "" &&
+                        userPersonalizationData.buttonsAndBarsColor
+                      }
               `,
                     }}
                     onClick={() => setShowPassWord(!showPassWord)}
@@ -290,6 +302,30 @@ const CommonForm = ({ alignLogo }: CommonFormPropsType) => {
               <span style={{ color: "red" }}>
                 {errors.password && "Paswword is required"}
               </span>
+            </FormGroup>
+            <FormGroup
+              className="mb-0 form-group"
+              style={{
+                display: "flex",
+                justifyContent: "end",
+                alignItems: "start",
+                marginTop: "-30px",
+              }}
+            >
+              <Link
+                style={{
+                  color: `${
+                    userPersonalizationData &&
+                    userPersonalizationData.buttonsAndBarsColor !== "" &&
+                    userPersonalizationData.buttonsAndBarsColor
+                  }
+        `,
+                }}
+                // className="link"
+                to={`${process.env.PUBLIC_URL}/forgot-password`}
+              >
+                Forgot Password
+              </Link>
             </FormGroup>
             <FormGroup className="mb-0 form-group">
               {/* <Link
@@ -307,21 +343,21 @@ const CommonForm = ({ alignLogo }: CommonFormPropsType) => {
                   {loading ? "Loading..." : "Sign In"}
                 </Button> */}
                 {userPersonalizationData &&
-                  userPersonalizationData.buttonsAndBarsColor !== "" ? (
+                userPersonalizationData.buttonsAndBarsColor !== "" ? (
                   <button
                     disabled={loading}
                     style={{
                       fontWeight: "bold",
-                      backgroundColor: `${userPersonalizationData.buttonsAndBarsColor
-                        }
+                      backgroundColor: `${userPersonalizationData.buttonsAndBarsColor}
                   `,
                       padding: "10px 10px",
                       borderRadius: "5px",
                       color: "white",
                       outline: "none",
-                      border: `${userPersonalizationData &&
+                      border: `${
+                        userPersonalizationData &&
                         userPersonalizationData.buttonsAndBarsColor
-                        }
+                      }
                   `,
                     }}
                     className="btn-block w-100"

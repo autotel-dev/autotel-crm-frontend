@@ -8,10 +8,13 @@ interface propTypes {
   disabled: any;
 }
 
-const SelectVendorBox: React.FC<propTypes> = ({ placeholder, setVendor, vendor, disabled }) => {
-  const { vendors } = useSelector(
-    (state: any) => state.purchaseInvoice
-  );
+const SelectVendorBox: React.FC<propTypes> = ({
+  placeholder,
+  setVendor,
+  vendor,
+  disabled,
+}) => {
+  const { vendors } = useSelector((state: any) => state.purchaseInvoice);
   const [vendorsList, setVendorsList] = useState([]);
   const dispatch = useDispatch();
 
@@ -24,7 +27,7 @@ const SelectVendorBox: React.FC<propTypes> = ({ placeholder, setVendor, vendor, 
   }, [vendors]);
   return (
     <Select
-    disabled={disabled}
+      disabled={disabled}
       value={vendor !== "" ? vendor : null}
       showSearch
       style={{ width: "100%", height: 36 }}
@@ -39,9 +42,8 @@ const SelectVendorBox: React.FC<propTypes> = ({ placeholder, setVendor, vendor, 
           .localeCompare((optionB?.label ?? "").toLowerCase())
       }
       onChange={(e) => {
-        // console.log(e);
+        // // console.log(e);
         setVendor(e);
-
       }}
       options={vendorsList}
     />

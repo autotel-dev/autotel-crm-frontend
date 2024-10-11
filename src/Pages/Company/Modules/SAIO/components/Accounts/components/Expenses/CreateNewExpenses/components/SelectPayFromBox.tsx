@@ -7,10 +7,12 @@ interface propTypes {
   bankAccount: string;
 }
 
-const SelectPayFromBox: React.FC<propTypes> = ({ placeholder, setBankAccount, bankAccount }) => {
-  const { bankAccounts } = useSelector(
-    (state: any) => state.expenses
-  );
+const SelectPayFromBox: React.FC<propTypes> = ({
+  placeholder,
+  setBankAccount,
+  bankAccount,
+}) => {
+  const { bankAccounts } = useSelector((state: any) => state.expenses);
   const [bankAccountsList, setBankAccountsList] = useState([]);
   const dispatch = useDispatch();
 
@@ -37,9 +39,8 @@ const SelectPayFromBox: React.FC<propTypes> = ({ placeholder, setBankAccount, ba
           .localeCompare((optionB?.label ?? "").toLowerCase())
       }
       onChange={(e) => {
-        // console.log(e);
+        // // console.log(e);
         setBankAccount(e);
-
       }}
       options={bankAccountsList}
     />

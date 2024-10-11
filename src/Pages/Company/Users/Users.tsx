@@ -71,7 +71,6 @@ const Users = () => {
           // console.log("hhg");
           dispatch(setBranches(data.data));
         }
-
       }
     });
   }, []);

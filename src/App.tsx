@@ -12,7 +12,15 @@ import { setPermissions } from "./ReaduxToolkit/Reducer/CompanySlice";
 import { setUserPermissions } from "./ReaduxToolkit/Reducer/PermissionSlice";
 import { setUserData } from "./ReaduxToolkit/Reducer/UserSlice";
 import { ROLES } from "./constants/roles";
-import { GET_ALLOWED_MODULES, GET_ALLOWED_PERMISSIONS, GET_ALL_ACTIVE_CRM_MODULES, GET_ALL_PERMISSIONS, GET_COMPANY_PERSONALIZATION, GET_SUPERADMIN_PERSONALIZATION, GET_USER_BY_ID } from "./Utilities/api/apiEndpoints";
+import {
+  GET_ALLOWED_MODULES,
+  GET_ALLOWED_PERMISSIONS,
+  GET_ALL_ACTIVE_CRM_MODULES,
+  GET_ALL_PERMISSIONS,
+  GET_COMPANY_PERSONALIZATION,
+  GET_SUPERADMIN_PERSONALIZATION,
+  GET_USER_BY_ID,
+} from "./Utilities/api/apiEndpoints";
 const App = () => {
   const { userPermissions } = useSelector(
     (state: any) => state.userPermissions

@@ -13,10 +13,14 @@ interface propTypes {
   vehicleId: string;
 }
 
-const SelectInstallerBox: React.FC<propTypes> = ({ placeholder, installer, setInstaller, vehicleId,isAddedInventory }) => {
-  const { installedUsers } = useSelector(
-    (state: any) => state.sales
-  );
+const SelectInstallerBox: React.FC<propTypes> = ({
+  placeholder,
+  installer,
+  setInstaller,
+  vehicleId,
+  isAddedInventory,
+}) => {
+  const { installedUsers } = useSelector((state: any) => state.sales);
 
   const [installerUsersList, setInstallerUsersList] = useState([]);
   const dispatch = useDispatch();
@@ -44,12 +48,14 @@ const SelectInstallerBox: React.FC<propTypes> = ({ placeholder, installer, setIn
           .localeCompare((optionB?.label ?? "").toLowerCase())
       }
       onChange={async (e) => {
-        // console.log(e);
+        // // console.log(e);
 
         try {
-          await patch({ installer: e }, { url: `${ATTACH_INSTALLER_TO_VEHICLE}/${vehicleId}` }).then((data: any) => {
+          await patch(
+            { installer: e },
+            { url: `${ATTACH_INSTALLER_TO_VEHICLE}/${vehicleId}` }
+          ).then((data: any) => {
             if (data !== undefined) {
-
               if (!data.success) {
                 Swal.fire({
                   text: `${data.message}`,
@@ -57,10 +63,8 @@ const SelectInstallerBox: React.FC<propTypes> = ({ placeholder, installer, setIn
                   timer: 2000,
                   showConfirmButton: false,
                 });
-
               }
               if (data.success) {
-
               }
             }
           });
@@ -76,10 +80,7 @@ const SelectInstallerBox: React.FC<propTypes> = ({ placeholder, installer, setIn
           // console.error("Error creating post:", error);
         }
 
-
-
         setInstaller(e);
-
       }}
       options={installerUsersList}
       disabled={isAddedInventory}

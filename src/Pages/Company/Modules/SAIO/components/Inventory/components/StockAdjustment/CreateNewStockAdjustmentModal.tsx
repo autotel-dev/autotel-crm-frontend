@@ -10,7 +10,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { Cancel } from "../../../../../../../../utils/Constant";
 import { create, getAll } from "../../../../../../../../Utilities/api";
 import {
-
   CREATE_NEW_STOCK_ADJUSTMENT,
   CREATE_NEW_STOCK_MOVEMENT,
   GET_ALL_INVENTORY_ITEMS_BY_PRODUCT_ID,
@@ -26,33 +25,61 @@ interface CreateNewStockAdjustmentModalProps {
   setIsVisible: any;
 }
 
-
-const CreateNewStockAdjustmentModal: React.FC<CreateNewStockAdjustmentModalProps> = ({
-  isVisible,
-  setIsVisible,
-}) => {
+const CreateNewStockAdjustmentModal: React.FC<
+  CreateNewStockAdjustmentModalProps
+> = ({ isVisible, setIsVisible }) => {
   const { userPersonalizationData } = useSelector(
     (state: any) => state.personalization
   );
-  const { stockAdjustmentTypes, branches, warehouses, products, stockAdjustment } = useSelector((state: any) => state.stockAdjustment);
+  const {
+    stockAdjustmentTypes,
+    branches,
+    warehouses,
+    products,
+    stockAdjustment,
+  } = useSelector((state: any) => state.stockAdjustment);
 
   const dispatch = useDispatch();
-  const [fromBranch, setFromBranch] = useState(stockAdjustment !== null ? stockAdjustment?.fromBranch?._id : branches.length > 0 ? branches?.find((item: any) => item?.name == "Default")?._id : "")
-  const [fromWarehouse, setFromWarehouse] = useState(stockAdjustment !== null ? stockAdjustment?.fromWarehouse?._id : warehouses.length > 0 ? warehouses?.find((item: any) => item?.name == "Default")?._id : "")
+  const [fromBranch, setFromBranch] = useState(
+    stockAdjustment !== null
+      ? stockAdjustment?.fromBranch?._id
+      : branches.length > 0
+      ? branches?.find((item: any) => item?.name == "Default")?._id
+      : ""
+  );
+  const [fromWarehouse, setFromWarehouse] = useState(
+    stockAdjustment !== null
+      ? stockAdjustment?.fromWarehouse?._id
+      : warehouses.length > 0
+      ? warehouses?.find((item: any) => item?.name == "Default")?._id
+      : ""
+  );
 
-  const [product, setProduct] = useState(stockAdjustment !== null ? stockAdjustment?.product?._id : "")
-  const [adjustmentType, setAdjustmentType] = useState(stockAdjustment !== null ? stockAdjustment?.type?._id : "")
+  const [product, setProduct] = useState(
+    stockAdjustment !== null ? stockAdjustment?.product?._id : ""
+  );
+  const [adjustmentType, setAdjustmentType] = useState(
+    stockAdjustment !== null ? stockAdjustment?.type?._id : ""
+  );
   const [loading, setLoading] = useState(false);
   const [addModal, setAddModal] = useState(false);
   const [addSerialModalOpen, setAddSerialModalOPen] = useState(false);
-  const [items, setItems] = useState(stockAdjustment !== null ? stockAdjustment?.items : []);
-  const [notAvailableSerialsOrSkus, setnotAvailableSerialsOrSkus]: any = useState([])
-  const [quantity, setQuantity] = useState(stockAdjustment !== null ? stockAdjustment?.quantity : "")
-  const [comments, setComments] = useState(stockAdjustment !== null ? stockAdjustment?.comments : "")
+  const [items, setItems] = useState(
+    stockAdjustment !== null ? stockAdjustment?.items : []
+  );
+  const [notAvailableSerialsOrSkus, setnotAvailableSerialsOrSkus]: any =
+    useState([]);
+  const [quantity, setQuantity] = useState(
+    stockAdjustment !== null ? stockAdjustment?.quantity : ""
+  );
+  const [comments, setComments] = useState(
+    stockAdjustment !== null ? stockAdjustment?.comments : ""
+  );
 
-  const [inventoryItems, setInventoryItems]: any = useState(stockAdjustment !== null ? stockAdjustment?.items : [])
-  const [inventoryLoading, setInventoryLoading] = useState(false)
-
+  const [inventoryItems, setInventoryItems]: any = useState(
+    stockAdjustment !== null ? stockAdjustment?.items : []
+  );
+  const [inventoryLoading, setInventoryLoading] = useState(false);
 
   const {
     register,
@@ -61,35 +88,58 @@ const CreateNewStockAdjustmentModal: React.FC<CreateNewStockAdjustmentModalProps
     formState: { errors },
   } = useForm();
 
-
   const addToggle = () => {
     if (!loading) {
       setIsVisible(!isVisible);
       setInventoryItems([]);
-      setAdjustmentType("")
-      setFromBranch(branches.length > 0 ? branches?.find((item: any) => item?.name == "Default")?._id : "")
-      setFromWarehouse(warehouses.length > 0 ? warehouses?.find((item: any) => item?.name == "Default")?._id : "")
+      setAdjustmentType("");
+      setFromBranch(
+        branches.length > 0
+          ? branches?.find((item: any) => item?.name == "Default")?._id
+          : ""
+      );
+      setFromWarehouse(
+        warehouses.length > 0
+          ? warehouses?.find((item: any) => item?.name == "Default")?._id
+          : ""
+      );
     }
   };
-
 
   const addStockAdjustment: SubmitHandler<any> = async (data: any) => {
     setLoading(true);
 
-    if (quantity !== "" && fromWarehouse !== "" && product !== "" && ((inventoryItems.length > 0 && inventoryItems[0]?.productType == "ACCESSORIES") || items.length > 0)) {
+    if (
+      quantity !== "" &&
+      fromWarehouse !== "" &&
+      product !== "" &&
+      ((inventoryItems.length > 0 &&
+        inventoryItems[0]?.productType == "ACCESSORIES") ||
+        items.length > 0)
+    ) {
       var formData: any;
       formData = {
         type: adjustmentType,
         product: product,
         quantity: quantity,
-        items: inventoryItems.length > 0 && inventoryItems[0]?.productType == "ACCESSORIES" ? [...inventoryItems.map((item: any) => item?._id).reverse().slice(0, quantity)] : [...items.map((item: any) => item.id)],
+        items:
+          inventoryItems.length > 0 &&
+          inventoryItems[0]?.productType == "ACCESSORIES"
+            ? [
+                ...inventoryItems
+                  .map((item: any) => item?._id)
+                  .reverse()
+                  .slice(0, quantity),
+              ]
+            : [...items.map((item: any) => item.id)],
         comments: comments,
-        vehicleId: null
-
+        vehicleId: null,
       };
 
-
-      if (inventoryItems[0]?.productType !== "ACCESSORIES" && items.length !== Number(quantity)) {
+      if (
+        inventoryItems[0]?.productType !== "ACCESSORIES" &&
+        items.length !== Number(quantity)
+      ) {
         Swal.fire({
           text: "Number of Quantity is not matched with the number of Items",
           icon: "error",
@@ -99,7 +149,10 @@ const CreateNewStockAdjustmentModal: React.FC<CreateNewStockAdjustmentModalProps
         setLoading(false);
         return;
       }
-      if (inventoryItems[0]?.productType == "ACCESSORIES" && inventoryItems.length !== Number(quantity)) {
+      if (
+        inventoryItems[0]?.productType == "ACCESSORIES" &&
+        inventoryItems.length !== Number(quantity)
+      ) {
         Swal.fire({
           text: "Number of Quantity is not matched with the number of Items",
           icon: "error",
@@ -113,13 +166,9 @@ const CreateNewStockAdjustmentModal: React.FC<CreateNewStockAdjustmentModalProps
         await create(formData, { url: CREATE_NEW_STOCK_ADJUSTMENT }).then(
           (data: any) => {
             if (data !== undefined) {
-              if (
-                !data.success &&
-                data.message === ERROR_MESSAGE
-              ) {
+              if (!data.success && data.message === ERROR_MESSAGE) {
                 setLoading(false);
-                addToggle()
-
+                addToggle();
               }
               if (!data.success) {
                 Swal.fire({
@@ -129,7 +178,7 @@ const CreateNewStockAdjustmentModal: React.FC<CreateNewStockAdjustmentModalProps
                   showConfirmButton: false,
                 });
                 setLoading(false);
-                addToggle()
+                addToggle();
 
                 setFromBranch("");
                 setFromWarehouse("");
@@ -140,47 +189,45 @@ const CreateNewStockAdjustmentModal: React.FC<CreateNewStockAdjustmentModalProps
                 setnotAvailableSerialsOrSkus([]);
               }
               if (data.success) {
-                // console.log(data);
+                // // console.log(data);
 
-                getAll({ url: GET_ALL_STOCK_ADJUSTMENT }).then(
-                  (data: any) => {
-                    // console.log("api call --- >", data);
-                    if (data == undefined) {
-                      setLoading(false);
-                      Swal.fire({
-                        text: "Failed to fetch due to connection refused",
-                        icon: "error",
-                        timer: 2000,
-                        showConfirmButton: false,
-                      });
-                      dispatch(setStockAdjustments([]));
-                      return;
-                    }
-                    if (data !== undefined) {
-                      if (data.success) {
-                        setLoading(false);
-                        // console.log("hhg");
-                        dispatch(setStockAdjustments(data.data));
-                        addToggle()
-                      }
-                      if (!data.success) {
-                        setLoading(false);
-                        addToggle()
-                      }
-                    }
-                    reset({
-                      quantity: "",
+                getAll({ url: GET_ALL_STOCK_ADJUSTMENT }).then((data: any) => {
+                  // // console.log("api call --- >", data);
+                  if (data == undefined) {
+                    setLoading(false);
+                    Swal.fire({
+                      text: "Failed to fetch due to connection refused",
+                      icon: "error",
+                      timer: 2000,
+                      showConfirmButton: false,
                     });
-                    setFromBranch("");
-                    setFromWarehouse("");
-                    setProduct("");
-                    setItems([]);
-                    setnotAvailableSerialsOrSkus([]);
-                    setProduct("");
-                    setComments("");
-                    setQuantity("");
+                    dispatch(setStockAdjustments([]));
+                    return;
                   }
-                );
+                  if (data !== undefined) {
+                    if (data.success) {
+                      setLoading(false);
+                      // // console.log("hhg");
+                      dispatch(setStockAdjustments(data.data));
+                      addToggle();
+                    }
+                    if (!data.success) {
+                      setLoading(false);
+                      addToggle();
+                    }
+                  }
+                  reset({
+                    quantity: "",
+                  });
+                  setFromBranch("");
+                  setFromWarehouse("");
+                  setProduct("");
+                  setItems([]);
+                  setnotAvailableSerialsOrSkus([]);
+                  setProduct("");
+                  setComments("");
+                  setQuantity("");
+                });
               }
             }
           }
@@ -190,7 +237,7 @@ const CreateNewStockAdjustmentModal: React.FC<CreateNewStockAdjustmentModalProps
         // Handle error (e.g., show an error message)
         // console.error("Error creating post:", error);
         setLoading(false);
-        addToggle()
+        addToggle();
         reset({
           quantity: "",
         });
@@ -215,12 +262,13 @@ const CreateNewStockAdjustmentModal: React.FC<CreateNewStockAdjustmentModalProps
     }
   };
 
-
   return (
     <>
       <Modal isOpen={isVisible} toggle={addToggle} size="md" centered>
         <div className="modal-header">
-          <H4 className="modal-title">{stockAdjustment !== null ? "View" : "Create New"} Stock Adjustment</H4>
+          <H4 className="modal-title">
+            {stockAdjustment !== null ? "View" : "Create New"} Stock Adjustment
+          </H4>
           <Button
             color="transparent"
             className="btn-close"
@@ -233,65 +281,76 @@ const CreateNewStockAdjustmentModal: React.FC<CreateNewStockAdjustmentModalProps
             onSubmit={handleSubmit(addStockAdjustment)}
           >
             <Row>
-              {stockAdjustment == null && <FormGroup className="col-md-6 create-group">
-                <P>From Branch</P>
-                <Select
-                  disabled={stockAdjustment !== null}
-                  value={fromBranch}
-                  showSearch
-                  style={{ width: "100%", height: 36 }}
-                  placeholder="From Branch"
-                  optionFilterProp="children"
-                  filterOption={(input: any, option: any) =>
-                    (option?.label ?? "").toLowerCase().includes(input.toLowerCase())
-                  }
-                  filterSort={(optionA: any, optionB: any) =>
-                    (optionA?.P ?? "")
-                      .toLowerCase()
-                      .localeCompare((optionB?.P ?? "").toLowerCase())
-                  }
-                  onChange={(e: any) => {
-                    // console.log(e);
-                    setFromBranch(e);
-                  }}
-                  options={[...branches?.map((item: any, index: any) => {
-                    return {
-                      value: item?._id,
-                      label: item?.name
+              {stockAdjustment == null && (
+                <FormGroup className="col-md-6 create-group">
+                  <P>From Branch</P>
+                  <Select
+                    disabled={stockAdjustment !== null}
+                    value={fromBranch}
+                    showSearch
+                    style={{ width: "100%", height: 36 }}
+                    placeholder="From Branch"
+                    optionFilterProp="children"
+                    filterOption={(input: any, option: any) =>
+                      (option?.label ?? "")
+                        .toLowerCase()
+                        .includes(input.toLowerCase())
                     }
-                  })]}
-                />
-              </FormGroup>}
-              {stockAdjustment == null && <FormGroup className="col-md-6 create-group">
-                <P>From Warehouse</P>
-                <Select
-                  disabled={stockAdjustment !== null}
-                  showSearch
-                  value={fromWarehouse}
-                  style={{ width: "100%", height: 36 }}
-                  placeholder="From Warehouse"
-                  optionFilterProp="children"
-                  filterOption={(input: any, option: any) =>
-                    (option?.label ?? "").toLowerCase().includes(input.toLowerCase())
-                  }
-                  filterSort={(optionA: any, optionB: any) =>
-                    (optionA?.P ?? "")
-                      .toLowerCase()
-                      .localeCompare((optionB?.P ?? "").toLowerCase())
-                  }
-                  onChange={(e: any) => {
-                    setProduct("")
-                    setFromWarehouse(e);
-
-                  }}
-                  options={[...warehouses?.map((item: any, index: any) => {
-                    return {
-                      value: item?._id,
-                      label: item?.name,
+                    filterSort={(optionA: any, optionB: any) =>
+                      (optionA?.P ?? "")
+                        .toLowerCase()
+                        .localeCompare((optionB?.P ?? "").toLowerCase())
                     }
-                  })]}
-                />
-              </FormGroup>}
+                    onChange={(e: any) => {
+                      // // console.log(e);
+                      setFromBranch(e);
+                    }}
+                    options={[
+                      ...branches?.map((item: any, index: any) => {
+                        return {
+                          value: item?._id,
+                          label: item?.name,
+                        };
+                      }),
+                    ]}
+                  />
+                </FormGroup>
+              )}
+              {stockAdjustment == null && (
+                <FormGroup className="col-md-6 create-group">
+                  <P>From Warehouse</P>
+                  <Select
+                    disabled={stockAdjustment !== null}
+                    showSearch
+                    value={fromWarehouse}
+                    style={{ width: "100%", height: 36 }}
+                    placeholder="From Warehouse"
+                    optionFilterProp="children"
+                    filterOption={(input: any, option: any) =>
+                      (option?.label ?? "")
+                        .toLowerCase()
+                        .includes(input.toLowerCase())
+                    }
+                    filterSort={(optionA: any, optionB: any) =>
+                      (optionA?.P ?? "")
+                        .toLowerCase()
+                        .localeCompare((optionB?.P ?? "").toLowerCase())
+                    }
+                    onChange={(e: any) => {
+                      setProduct("");
+                      setFromWarehouse(e);
+                    }}
+                    options={[
+                      ...warehouses?.map((item: any, index: any) => {
+                        return {
+                          value: item?._id,
+                          label: item?.name,
+                        };
+                      }),
+                    ]}
+                  />
+                </FormGroup>
+              )}
               <FormGroup className="col-md-12 create-group">
                 <P>Select Adjustment Type</P>
                 <Select
@@ -302,7 +361,9 @@ const CreateNewStockAdjustmentModal: React.FC<CreateNewStockAdjustmentModalProps
                   placeholder="Select Type"
                   optionFilterProp="children"
                   filterOption={(input: any, option: any) =>
-                    (option?.label ?? "").toLowerCase().includes(input.toLowerCase())
+                    (option?.label ?? "")
+                      .toLowerCase()
+                      .includes(input.toLowerCase())
                   }
                   filterSort={(optionA: any, optionB: any) =>
                     (optionA?.P ?? "")
@@ -310,217 +371,259 @@ const CreateNewStockAdjustmentModal: React.FC<CreateNewStockAdjustmentModalProps
                       .localeCompare((optionB?.P ?? "").toLowerCase())
                   }
                   onChange={(e: any) => {
-                    // console.log(e);
+                    // // console.log(e);
                     setAdjustmentType(e);
                   }}
-                  options={[...stockAdjustmentTypes.map((item: any, index: any) => {
-                    return {
-                      value: item?._id,
-                      label: item?.name
-                    }
-                  })]}
+                  options={[
+                    ...stockAdjustmentTypes.map((item: any, index: any) => {
+                      return {
+                        value: item?._id,
+                        label: item?.name,
+                      };
+                    }),
+                  ]}
                 />
               </FormGroup>
             </Row>
-
-
-
-
-            {fromWarehouse !== "" && <Row>
-              <FormGroup className="col-md-12 create-group">
-                <P>Product</P>
-                <Select
-                  disabled={stockAdjustment !== null}
-                  value={product !== "" ? product : null}
-                  showSearch
-                  style={{ width: "100%", height: 36 }}
-                  placeholder="Select Product"
-                  optionFilterProp="children"
-                  filterOption={(input: any, option: any) =>
-                    (option?.label ?? "").toLowerCase().includes(input.toLowerCase())
-                  }
-                  filterSort={(optionA: any, optionB: any) =>
-                    (optionA?.P ?? "")
-                      .toLowerCase()
-                      .localeCompare((optionB?.P ?? "").toLowerCase())
-                  }
-                  onChange={async (e: any) => {
-                    setInventoryLoading(true);
-                    setInventoryItems([]);
-                    setQuantity("");
-
-                    setProduct(e);
-                    // console.log(e);
-                    const inventoryItems: any = await create({
-                      productId: e,
-                      warehouseId: fromWarehouse
-                    }, {
-                      url: `${GET_ALL_INVENTORY_ITEMS_BY_PRODUCT_ID}`,
-                    });
-
-                    if (inventoryItems?.success) {
-                      console.log("inventoryItems", inventoryItems);
-                      setInventoryItems(inventoryItems.data);
-                      setInventoryLoading(false)
-                    }
-                    if (!inventoryItems?.success) {
-                      setInventoryLoading(false)
-                    }
-
-                  }}
-                  options={[...products.map((item: any, index: any) => {
-                    return {
-                      value: item?._id,
-                      label: item?.name
-                    }
-                  })]}
-                />
-              </FormGroup>
-            </Row>}
-
-            {inventoryLoading && <Row style={{ width: "100%", padding: "10px", display: "flex", justifyContent: "center" }}>
-              <H5>Loading...</H5>
-            </Row>}
-            {product !== "" && inventoryItems.length > 0 ? <>
-              <Row>
-                <P>Total Items</P>
-                <FormGroup
-                  className="col-md-12 create-group"
-                  style={{ display: "flex" }}
-                >
-                  <input
-                    className="form-control"
-                    type="text"
-                    value={inventoryItems.length}
-                    placeholder="Enter Quantity Here..."
-                    onChange={(e) => setQuantity(e.target.value)}
-                    // {...register("quantity", { required: true })}
-                    disabled
-                  />
-                </FormGroup>
-              </Row>
-              <Row>
-                <P>Quantity</P>
-                <FormGroup
-
-                  className="col-md-12 create-group"
-                  style={{ display: "flex" }}
-                >
-                  <div style={{ width: `${inventoryItems[0]?.productType !== "ACCESSORIES" ? "85%" : "100%"}`, paddingRight: "10px" }}>
-                    <input
-                      disabled={stockAdjustment !== null}
-                      className="form-control"
-                      type="text"
-                      placeholder="Enter Quantity Here..."
-                      value={quantity}
-                      onChange={(e) => {
-                        if (Number(e.target.value) <= inventoryItems.length) {
-                          setQuantity(e.target.value)
-                        }
-                      }}
-                    // {...register("quantity", { required: true })}
-                    />
-                  </div>
-
-                  {stockAdjustment == null && inventoryItems[0]?.productType !== "ACCESSORIES" && <div>
-                    <button
-                      type="button"
-                      className={`btn ${userPersonalizationData?.buttonsAndBarsColor == null
-                        ? "btn-primary"
-                        : ""
-                        }`}
-                      style={{
-                        color: "white",
-                        marginTop: "0px",
-                        backgroundColor: `${userPersonalizationData !== null &&
-                          userPersonalizationData?.buttonsAndBarsColor
-                          }`,
-                      }}
-                      onClick={() => {
-                        // setItems([]);
-                        // setnotAvailableSerialsOrSkus([])
-                        setAddSerialModalOPen(true);
-                      }}
-                    >
-                      <span
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          padding: "1px",
-                        }}
-                      >
-                        <MdOutlineMinorCrash size={20} />
-                      </span>
-                    </button>
-                  </div>}
-
-
-                  {stockAdjustment !== null && inventoryItems.length > 0 && inventoryItems[0]?.productType !== "ACCESSORIES" && <div>
-                    <button
-                      type="button"
-                      className={`btn ${userPersonalizationData?.buttonsAndBarsColor == null
-                        ? "btn-primary"
-                        : ""
-                        }`}
-                      style={{
-                        color: "white",
-                        marginTop: "0px",
-                        backgroundColor: `${userPersonalizationData !== null &&
-                          userPersonalizationData?.buttonsAndBarsColor
-                          }`,
-                      }}
-                      onClick={() => {
-                        setAddSerialModalOPen(true);
-                      }}
-                    >
-                      <span
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          padding: "1px",
-                        }}
-                      >
-                        <MdOutlineMinorCrash size={20} />
-                      </span>
-                    </button>
-                  </div>}
-                </FormGroup>
-              </Row>
-
+            {fromWarehouse !== "" && (
               <Row>
                 <FormGroup className="col-md-12 create-group">
-                  <P>Comments</P>
-                  <input
-                    value={comments}
-                    className="form-control"
-                    type="text"
-                    placeholder="Enter Comments Here..."
-                    onChange={(e) => setComments(e.target.value)}
+                  <P>Product</P>
+                  <Select
+                    disabled={stockAdjustment !== null}
+                    value={product !== "" ? product : null}
+                    showSearch
+                    style={{ width: "100%", height: 36 }}
+                    placeholder="Select Product"
+                    optionFilterProp="children"
+                    filterOption={(input: any, option: any) =>
+                      (option?.label ?? "")
+                        .toLowerCase()
+                        .includes(input.toLowerCase())
+                    }
+                    filterSort={(optionA: any, optionB: any) =>
+                      (optionA?.P ?? "")
+                        .toLowerCase()
+                        .localeCompare((optionB?.P ?? "").toLowerCase())
+                    }
+                    onChange={async (e: any) => {
+                      setInventoryLoading(true);
+                      setInventoryItems([]);
+                      setQuantity("");
+
+                      setProduct(e);
+                      // // console.log(e);
+                      const inventoryItems: any = await create(
+                        {
+                          productId: e,
+                          warehouseId: fromWarehouse,
+                        },
+                        {
+                          url: `${GET_ALL_INVENTORY_ITEMS_BY_PRODUCT_ID}`,
+                        }
+                      );
+
+                      if (inventoryItems?.success) {
+                        // console.log("inventoryItems", inventoryItems);
+                        setInventoryItems(inventoryItems.data);
+                        setInventoryLoading(false);
+                      }
+                      if (!inventoryItems?.success) {
+                        setInventoryLoading(false);
+                      }
+                    }}
+                    options={[
+                      ...products.map((item: any, index: any) => {
+                        return {
+                          value: item?._id,
+                          label: item?.name,
+                        };
+                      }),
+                    ]}
                   />
                 </FormGroup>
               </Row>
-            </> :
-              product !== "" && fromWarehouse !== "" && inventoryItems.length > 0 && <Row>
-                <P>Total Items</P>
-                <FormGroup
-                  className="col-md-12 create-group"
-                  style={{ display: "flex" }}
-                >
-                  <input
-                    className="form-control"
-                    type="text"
-                    value={inventoryItems.length}
-                    placeholder="Enter Quantity Here..."
-                    onChange={(e) => setQuantity(e.target.value)}
-                    // {...register("quantity", { required: true })}
-                    disabled
-                  />
-                </FormGroup>
+            )}
+            {inventoryLoading && (
+              <Row
+                style={{
+                  width: "100%",
+                  padding: "10px",
+                  display: "flex",
+                  justifyContent: "center",
+                }}
+              >
+                <H5>Loading...</H5>
               </Row>
-            }
-            {stockAdjustment == null && <Button color="primary" className="me-1">
-              {loading ? "Loading ..." : `Save`}
-            </Button>}
+            )}
+            {product !== "" && inventoryItems.length > 0 ? (
+              <>
+                <Row>
+                  <P>Total Items</P>
+                  <FormGroup
+                    className="col-md-12 create-group"
+                    style={{ display: "flex" }}
+                  >
+                    <input
+                      className="form-control"
+                      type="text"
+                      value={inventoryItems.length}
+                      placeholder="Enter Quantity Here..."
+                      onChange={(e) => setQuantity(e.target.value)}
+                      // {...register("quantity", { required: true })}
+                      disabled
+                    />
+                  </FormGroup>
+                </Row>
+                <Row>
+                  <P>Quantity</P>
+                  <FormGroup
+                    className="col-md-12 create-group"
+                    style={{ display: "flex" }}
+                  >
+                    <div
+                      style={{
+                        width: `${
+                          inventoryItems[0]?.productType !== "ACCESSORIES"
+                            ? "85%"
+                            : "100%"
+                        }`,
+                        paddingRight: "10px",
+                      }}
+                    >
+                      <input
+                        disabled={stockAdjustment !== null}
+                        className="form-control"
+                        type="text"
+                        placeholder="Enter Quantity Here..."
+                        value={quantity}
+                        onChange={(e) => {
+                          if (Number(e.target.value) <= inventoryItems.length) {
+                            setQuantity(e.target.value);
+                          }
+                        }}
+                        // {...register("quantity", { required: true })}
+                      />
+                    </div>
+
+                    {stockAdjustment == null &&
+                      inventoryItems[0]?.productType !== "ACCESSORIES" && (
+                        <div>
+                          <button
+                            type="button"
+                            className={`btn ${
+                              userPersonalizationData?.buttonsAndBarsColor ==
+                              null
+                                ? "btn-primary"
+                                : ""
+                            }`}
+                            style={{
+                              color: "white",
+                              marginTop: "0px",
+                              backgroundColor: `${
+                                userPersonalizationData !== null &&
+                                userPersonalizationData?.buttonsAndBarsColor
+                              }`,
+                            }}
+                            onClick={() => {
+                              // setItems([]);
+                              // setnotAvailableSerialsOrSkus([])
+                              setAddSerialModalOPen(true);
+                            }}
+                          >
+                            <span
+                              style={{
+                                display: "flex",
+                                alignItems: "center",
+                                padding: "1px",
+                              }}
+                            >
+                              <MdOutlineMinorCrash size={20} />
+                            </span>
+                          </button>
+                        </div>
+                      )}
+
+                    {stockAdjustment !== null &&
+                      inventoryItems.length > 0 &&
+                      inventoryItems[0]?.productType !== "ACCESSORIES" && (
+                        <div>
+                          <button
+                            type="button"
+                            className={`btn ${
+                              userPersonalizationData?.buttonsAndBarsColor ==
+                              null
+                                ? "btn-primary"
+                                : ""
+                            }`}
+                            style={{
+                              color: "white",
+                              marginTop: "0px",
+                              backgroundColor: `${
+                                userPersonalizationData !== null &&
+                                userPersonalizationData?.buttonsAndBarsColor
+                              }`,
+                            }}
+                            onClick={() => {
+                              setAddSerialModalOPen(true);
+                            }}
+                          >
+                            <span
+                              style={{
+                                display: "flex",
+                                alignItems: "center",
+                                padding: "1px",
+                              }}
+                            >
+                              <MdOutlineMinorCrash size={20} />
+                            </span>
+                          </button>
+                        </div>
+                      )}
+                  </FormGroup>
+                </Row>
+
+                <Row>
+                  <FormGroup className="col-md-12 create-group">
+                    <P>Comments</P>
+                    <input
+                      value={comments}
+                      className="form-control"
+                      type="text"
+                      placeholder="Enter Comments Here..."
+                      onChange={(e) => setComments(e.target.value)}
+                    />
+                  </FormGroup>
+                </Row>
+              </>
+            ) : (
+              product !== "" &&
+              fromWarehouse !== "" &&
+              inventoryItems.length > 0 && (
+                <Row>
+                  <P>Total Items</P>
+                  <FormGroup
+                    className="col-md-12 create-group"
+                    style={{ display: "flex" }}
+                  >
+                    <input
+                      className="form-control"
+                      type="text"
+                      value={inventoryItems.length}
+                      placeholder="Enter Quantity Here..."
+                      onChange={(e) => setQuantity(e.target.value)}
+                      // {...register("quantity", { required: true })}
+                      disabled
+                    />
+                  </FormGroup>
+                </Row>
+              )
+            )}
+            {stockAdjustment == null && (
+              <Button color="primary" className="me-1">
+                {loading ? "Loading ..." : `Save`}
+              </Button>
+            )}
             &nbsp;&nbsp;
             <Button disabled={loading} color="secondary" onClick={addToggle}>
               {Cancel}

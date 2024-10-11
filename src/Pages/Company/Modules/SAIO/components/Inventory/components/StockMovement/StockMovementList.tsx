@@ -13,7 +13,12 @@ import {
   GET_ALL_PRODUCTS,
 } from "../../../../../../../../Utilities/api/apiEndpoints";
 import { getAll } from "../../../../../../../../Utilities/api";
-import { setBranches, setProducts, setStockMovement, setWarehouses } from "../../../../../../../../ReaduxToolkit/Reducer/StockMovementSlice";
+import {
+  setBranches,
+  setProducts,
+  setStockMovement,
+  setWarehouses,
+} from "../../../../../../../../ReaduxToolkit/Reducer/StockMovementSlice";
 import { formatUnderscoredString } from "../../../../../../../../Utilities/globals/globals";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrashAlt } from "@fortawesome/free-solid-svg-icons";
@@ -55,8 +60,6 @@ const StockMovementTable = () => {
       }));
   };
 
-
-
   useEffect(() => {
     setData(stockMovementData());
   }, [searchValue]);
@@ -66,7 +69,7 @@ const StockMovementTable = () => {
     setSearchValue(searchKey);
   };
 
-  // console.log("allBugReports", supportData());
+  // // console.log("allBugReports", supportData());
   useEffect(() => {
     setData(stockMovementData());
   }, [stockMovements]);
@@ -77,46 +80,42 @@ const StockMovementTable = () => {
   const [toggleDelete, setToggleDelete] = useState(false);
   const [data, setData] = useState(stockMovementData());
 
-
   useEffect(() => {
     getAll({ url: GET_ALL_ACTIVE_WAREHOUSES }).then((data: any) => {
-      // console.log("api call --- >", data);
+      // // console.log("api call --- >", data);
       if (data !== undefined) {
         if (data.success) {
-          // console.log("hhg");
+          // // console.log("hhg");
           dispatch(setWarehouses(data.data));
         }
       }
     });
 
     getAll({ url: GET_ALL_ACTIVE_BRANCHES }).then((data: any) => {
-      // console.log("api call --- >", data);
+      // // console.log("api call --- >", data);
       if (data !== undefined) {
         if (data.success) {
-          // console.log("hhg");
+          // // console.log("hhg");
           dispatch(setBranches(data.data));
         }
       }
     });
 
     getAll({ url: GET_ALL_PRODUCTS }).then((data: any) => {
-      // console.log("api call --- >", data);
+      // // console.log("api call --- >", data);
       if (data !== undefined) {
         if (data.success) {
-          // console.log("hhg");
+          // // console.log("hhg");
           dispatch(setProducts(data.data));
         }
       }
     });
   }, []);
 
-
-
   const handleRowClicked = (row: any) => {
-    console.log("row", row);
-    dispatch(setStockMovement(row))
-    setAddModal(!addModal)
-
+    // console.log("row", row);
+    dispatch(setStockMovement(row));
+    setAddModal(!addModal);
   };
   return (
     <div
@@ -124,31 +123,39 @@ const StockMovementTable = () => {
       style={{ overflow: "auto", scrollbarWidth: "none" }}
     >
       <Row>
-        <div style={{
-          display: "flex",
-          justifyContent: "end",
-          paddingRight: "25px"
-        }}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "end",
+            paddingRight: "25px",
+          }}
+        >
           <button
-            className={`btn ${userPersonalizationData?.buttonsAndBarsColor == null ? "btn-primary" : ""
-              }`}
+            className={`btn ${
+              userPersonalizationData?.buttonsAndBarsColor == null
+                ? "btn-primary"
+                : ""
+            }`}
             style={{
               color: "white",
-              backgroundColor: `${userPersonalizationData !== null &&
+              backgroundColor: `${
+                userPersonalizationData !== null &&
                 userPersonalizationData?.buttonsAndBarsColor
-                }`,
+              }`,
               display: "flex",
               alignItems: "center",
-
             }}
             onClick={() => {
-              dispatch(setStockMovement(null))
-              setAddModal(!addModal)
+              dispatch(setStockMovement(null));
+              setAddModal(!addModal);
             }}
           >
-            <PlusCircle size={18} style={{
-              marginRight: "5px"
-            }} />
+            <PlusCircle
+              size={18}
+              style={{
+                marginRight: "5px",
+              }}
+            />
             Create New Stock Movement
           </button>
         </div>
@@ -184,7 +191,7 @@ const StockMovementTable = () => {
                     icon={faTrashAlt}
                     // onClick={handleDelete}
                     onClick={() => {
-                      // // console.log("345678");
+                      // // // console.log("345678");
                       // var alertData = {
                       //     title: "Are you sure?",
                       //     text: "Once deleted, you will not be able to recover this ",
@@ -196,8 +203,7 @@ const StockMovementTable = () => {
                       //     type,
                       //     dispatch
                       // ).then(() => {
-                      //     console.log("empty");
-
+                      //     // console.log("empty");
                       //     setSelectedRows([]);
                       // });
                     }}
@@ -235,11 +241,9 @@ const StockMovementTable = () => {
             sortable: true,
             width: "18%",
             cell: (row: any) => (
-              <div
-              >
-                {row?.createdAt.toString().slice(0, 10)}, {new Date(
-                  row?.createdAt
-                )
+              <div>
+                {row?.createdAt.toString().slice(0, 10)},{" "}
+                {new Date(row?.createdAt)
                   .toLocaleString("en-US", {
                     hour: "2-digit",
                     minute: "2-digit",
@@ -247,8 +251,7 @@ const StockMovementTable = () => {
                   })
                   .toString()}
               </div>
-            )
-
+            ),
           },
           {
             name: "ID",
@@ -258,26 +261,26 @@ const StockMovementTable = () => {
             cell: (row: any) => (
               <div
                 style={{
-
                   borderRadius: "5px",
                 }}
               >
                 SM - {row.index}
               </div>
-            )
+            ),
           },
 
           {
             name: "User",
-            selector: (row: any) => `${row?.user !== null ? row?.user?.fullName : "N/A"}`,
+            selector: (row: any) =>
+              `${row?.user !== null ? row?.user?.fullName : "N/A"}`,
             sortable: true,
             // center: true,
             width: "15%", // Set the width for this column
-
           },
           {
             name: "Movement Type",
-            selector: (row: any) => formatUnderscoredString(row.stockMovementType),
+            selector: (row: any) =>
+              formatUnderscoredString(row.stockMovementType),
             sortable: true,
             // center: true
           },
@@ -285,16 +288,14 @@ const StockMovementTable = () => {
             name: "Product",
             selector: (row: any) => row.product.name,
             sortable: true,
-            center: true
+            center: true,
           },
           {
             name: "Items",
             selector: (row: any) => row.quantity,
             sortable: true,
-            center: true
+            center: true,
           },
-
-
         ]}
         data={data}
         // striped={true}
@@ -334,10 +335,12 @@ const StockMovementTable = () => {
       `}
       </style>
 
-      {addModal && <CreateNewStockMovementModal
-        isVisible={addModal}
-        setIsVisible={setAddModal}
-      />}
+      {addModal && (
+        <CreateNewStockMovementModal
+          isVisible={addModal}
+          setIsVisible={setAddModal}
+        />
+      )}
     </div>
   );
 };

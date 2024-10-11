@@ -37,7 +37,15 @@ import {
   setDevicesStatuses,
   setServerDevices,
 } from "../../../../ReaduxToolkit/Reducer/MonitoringSlice";
-import { GET_ALL_ACTIVE_SUB_ROLES, GET_ALL_ACTIVE_TYPES, GET_ALL_INTERNAL_COMPLAINT, GET_COMPLAINT_CENTER_PRIORITY_STATUS, GET_COMPLAINT_CENTER_STATISTICS, GET_COMPLAINT_CENTER_STATUS_TYPES, GET_DEVICES } from "../../../../Utilities/api/apiEndpoints";
+import {
+  GET_ALL_ACTIVE_SUB_ROLES,
+  GET_ALL_ACTIVE_TYPES,
+  GET_ALL_INTERNAL_COMPLAINT,
+  GET_COMPLAINT_CENTER_PRIORITY_STATUS,
+  GET_COMPLAINT_CENTER_STATISTICS,
+  GET_COMPLAINT_CENTER_STATUS_TYPES,
+  GET_DEVICES,
+} from "../../../../Utilities/api/apiEndpoints";
 import { ERROR_MESSAGE } from "../../../../Utilities/constants/constants";
 
 const ComplainCenter = () => {
@@ -166,21 +174,19 @@ const ComplainCenter = () => {
       }
     });
 
-    getAll({ url: GET_COMPLAINT_CENTER_PRIORITY_STATUS }).then(
-      (data: any) => {
-        // console.log("api call --- >", data);
-        if (data !== undefined) {
-          if (data.success) {
-            // console.log("hhg");
-            dispatch(
-              setComplainPriorityTypes(
-                data.data.internalComplaintPriortyStatusTypes
-              )
-            );
-          }
+    getAll({ url: GET_COMPLAINT_CENTER_PRIORITY_STATUS }).then((data: any) => {
+      // console.log("api call --- >", data);
+      if (data !== undefined) {
+        if (data.success) {
+          // console.log("hhg");
+          dispatch(
+            setComplainPriorityTypes(
+              data.data.internalComplaintPriortyStatusTypes
+            )
+          );
         }
       }
-    );
+    });
 
     getAll({ url: GET_ALL_ACTIVE_SUB_ROLES }).then((data: any) => {
       // console.log("api call --- >", data);
@@ -303,6 +309,7 @@ const ComplainCenter = () => {
                 if (expirationDate < currentDate) {
                   // Compare expiration date with current date
                   expiredDevices.push({ ...element, checked: false });
+                  console.log("expiredDevices", expiredDevices);
                 }
               }
               if (i === data.data.length - 1) {

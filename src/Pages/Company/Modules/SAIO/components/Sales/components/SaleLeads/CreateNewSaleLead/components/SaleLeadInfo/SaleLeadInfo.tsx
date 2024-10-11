@@ -8,11 +8,29 @@ import { P } from "../../../../../../../../../../../AbstractElements";
 import SelectCitiesBox from "./components/SelectCitiesBox";
 import SelectPackageBox from "./components/SelectPackageBox";
 import SelectProvincesBox from "./components/SelectProvincesBox";
-import { create, getAll, patch, update } from "../../../../../../../../../../../Utilities/api";
-import { CONFIRM_OR_REJECT_SALELEAD, CREATE_NEW_LEAD, GET_ALL_SALELEADS, GET_SINGLE_CUSTOMERS, GET_SINGLE_SALELEAD, UPDATE_SALE_LEAD } from "../../../../../../../../../../../Utilities/api/apiEndpoints";
+import {
+  create,
+  getAll,
+  patch,
+  update,
+} from "../../../../../../../../../../../Utilities/api";
+import {
+  CONFIRM_OR_REJECT_SALELEAD,
+  CREATE_NEW_LEAD,
+  GET_ALL_SALELEADS,
+  GET_SINGLE_CUSTOMERS,
+  GET_SINGLE_SALELEAD,
+  UPDATE_SALE_LEAD,
+} from "../../../../../../../../../../../Utilities/api/apiEndpoints";
 import { ERROR_MESSAGE } from "../../../../../../../../../../../Utilities/constants/constants";
 import Swal from "sweetalert2";
-import { setSaleLeadId, setSaleLeads, setIsConnected, setCustomer, setSaleLead } from "../../../../../../../../../../../ReaduxToolkit/Reducer/SalesSlice";
+import {
+  setSaleLeadId,
+  setSaleLeads,
+  setIsConnected,
+  setCustomer,
+  setSaleLead,
+} from "../../../../../../../../../../../ReaduxToolkit/Reducer/SalesSlice";
 import { Select } from "antd";
 import { formatUnderscoredString } from "../../../../../../../../../../../Utilities/globals/globals";
 import { useNavigate } from "react-router-dom";
@@ -20,8 +38,6 @@ import Skeleton from "../../../../../../../../../../Utilities/Skeleton/Skeleton"
 
 interface SaleLeadInfoProps {
   callbackActive: (val: number | undefined) => void;
-
-
 }
 
 const SaleLeadInfo = ({ callbackActive }: SaleLeadInfoProps) => {
@@ -30,39 +46,49 @@ const SaleLeadInfo = ({ callbackActive }: SaleLeadInfoProps) => {
   );
 
   const { customer, saleLead } = useSelector((state: any) => state.sales);
-  console.log("saleLead", saleLead);
+  // console.log("saleLead", saleLead);
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const [saleLeadInfoForm, setSaleLeadInfoForm] = useState({
     customerName: "",
     customerContactNo: "",
     discountedServiceCharges: "",
     requirements: "",
-    totalNoOfVehicles: ""
+    totalNoOfVehicles: "",
   });
   const {
     customerName,
     customerContactNo,
     discountedServiceCharges,
     requirements,
-    totalNoOfVehicles
+    totalNoOfVehicles,
   } = saleLeadInfoForm;
 
   const [city, setCity] = useState("");
   const [packagee, setPackage] = useState("");
   const [loading, setLoading] = useState(false);
-  const [saleLeadLoading, setSaleLeadLoading] = useState(saleLead !== null ? true : false);
-  const [customerLoading, setCustomerLoading] = useState(customer !== null ? true : false)
+  const [saleLeadLoading, setSaleLeadLoading] = useState(
+    saleLead !== null ? true : false
+  );
+  const [customerLoading, setCustomerLoading] = useState(
+    customer !== null ? true : false
+  );
 
-  const getUserData = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const getUserData = (
+    event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     let name = event.target.name;
-    let value = name == "discountedServiceCharges" ? Number(event.target.value) :
-      event.target.value;
+    let value =
+      name == "discountedServiceCharges"
+        ? Number(event.target.value)
+        : event.target.value;
     setSaleLeadInfoForm({ ...saleLeadInfoForm, [name]: value });
   };
 
-  const [isEditSaleLeadInfo, setIsEditSaleLeadInfo] = useState(saleLead !== null ? true : false)
+  const [isEditSaleLeadInfo, setIsEditSaleLeadInfo] = useState(
+    saleLead !== null ? true : false
+  );
 
   const createLead = async () => {
     setLoading(true);
@@ -71,9 +97,11 @@ const SaleLeadInfo = ({ callbackActive }: SaleLeadInfoProps) => {
       customerContactNo !== "" &&
       city !== "" &&
       // province !== "" &&
-      packagee !== "" && discountedServiceCharges !== "" && requirements !== ""
+      packagee !== "" &&
+      discountedServiceCharges !== "" &&
+      requirements !== ""
     ) {
-      console.log("this");
+      // console.log("this");
 
       const body = {
         ...saleLeadInfoForm,
@@ -81,19 +109,14 @@ const SaleLeadInfo = ({ callbackActive }: SaleLeadInfoProps) => {
         package: packagee,
         isExistingCustomer: customer !== null ? true : false,
         customer: customer !== null && customer,
-
-      }
+      };
 
       try {
         await create(body, { url: CREATE_NEW_LEAD }).then((data: any) => {
           if (data !== undefined) {
-            if (
-              !data.success &&
-              data.message === ERROR_MESSAGE
-            ) {
+            if (!data.success && data.message === ERROR_MESSAGE) {
               setLoading(false);
-              console.log("data.message", data.message);
-
+              // console.log("data.message", data.message);
             }
             if (!data.success) {
               Swal.fire({
@@ -103,13 +126,14 @@ const SaleLeadInfo = ({ callbackActive }: SaleLeadInfoProps) => {
                 showConfirmButton: false,
               });
               setLoading(false);
-
             }
             if (data.success) {
-              dispatch(setSaleLeadId(data.data.saleLead._id))
-              console.log("data.data.saleLead._id", data.data.saleLead._id);
+              dispatch(setSaleLeadId(data.data.saleLead._id));
+              // console.log("data.data.saleLead._id", data.data.saleLead._id);
               if (customer !== null) {
-                navigate(`${process.env.PUBLIC_URL}/company/modules/saio-central/sales/leads`);
+                navigate(
+                  `${process.env.PUBLIC_URL}/company/modules/saio-central/sales/leads`
+                );
                 // getAll({ url: GET_ALL_SALELEADS }).then((data: any) => {
                 //   //   navigate(`${process.env.PUBLIC_URL}/company/modules/saio-central/sales/leads`);
                 //   if (data !== undefined) {
@@ -130,7 +154,9 @@ const SaleLeadInfo = ({ callbackActive }: SaleLeadInfoProps) => {
                 //     }
                 //   }
                 // });
-                getAll({ url: `${GET_SINGLE_SALELEAD}/${data.data.saleLead._id}` }).then((data: any) => {
+                getAll({
+                  url: `${GET_SINGLE_SALELEAD}/${data.data.saleLead._id}`,
+                }).then((data: any) => {
                   // dispatch(setSaleLead(null));
                   if (data !== undefined) {
                     if (data.success) {
@@ -139,9 +165,10 @@ const SaleLeadInfo = ({ callbackActive }: SaleLeadInfoProps) => {
                   }
                 });
                 // navigate(`${process.env.PUBLIC_URL}/company/modules/saio-central/sales/leads`);
-              }
-              else {
-                navigate(`${process.env.PUBLIC_URL}/company/modules/saio-central/sales/leads`);
+              } else {
+                navigate(
+                  `${process.env.PUBLIC_URL}/company/modules/saio-central/sales/leads`
+                );
                 // getAll({ url: GET_ALL_SALELEADS }).then((data: any) => {
                 //   //   navigate(`${process.env.PUBLIC_URL}/company/modules/saio-central/sales/leads`);
                 //   if (data !== undefined) {
@@ -163,10 +190,8 @@ const SaleLeadInfo = ({ callbackActive }: SaleLeadInfoProps) => {
 
                 // });
 
-
                 // navigate(`${process.env.PUBLIC_URL}/company/modules/saio-central/sales/leads`);
               }
-
             }
           }
         });
@@ -176,7 +201,6 @@ const SaleLeadInfo = ({ callbackActive }: SaleLeadInfoProps) => {
         // console.error("Error creating post:", error);
         setLoading(false);
       }
-
     } else {
       ShowError();
       setLoading(false);
@@ -190,9 +214,11 @@ const SaleLeadInfo = ({ callbackActive }: SaleLeadInfoProps) => {
       customerContactNo !== "" &&
       city !== "" &&
       // province !== "" &&
-      packagee !== "" && discountedServiceCharges !== "" && requirements !== ""
+      packagee !== "" &&
+      discountedServiceCharges !== "" &&
+      requirements !== ""
     ) {
-      console.log("this");
+      // console.log("this");
 
       const body = {
         ...saleLeadInfoForm,
@@ -200,62 +226,60 @@ const SaleLeadInfo = ({ callbackActive }: SaleLeadInfoProps) => {
         package: packagee,
         isExistingCustomer: customer !== null ? true : false,
         customer: customer !== null && customer,
-      }
+      };
 
       try {
-        await update(body, { url: `${UPDATE_SALE_LEAD}/${saleLead._id}` }).then((data: any) => {
-          console.log("update data", data);
+        await update(body, { url: `${UPDATE_SALE_LEAD}/${saleLead._id}` }).then(
+          (data: any) => {
+            // console.log("update data", data);
 
-          if (data !== undefined) {
-            if (
-              !data.success &&
-              data.message === ERROR_MESSAGE
-            ) {
-              setLoading(false);
-              console.log("data.message", data.message);
-
-            }
-            if (!data.success) {
-              Swal.fire({
-                text: `${data.message}`,
-                icon: "error",
-                timer: 2000,
-                showConfirmButton: false,
-              });
-              setLoading(false);
-
-            }
-            if (data.success) {
-              getAll({ url: `${GET_SINGLE_SALELEAD}/${saleLead._id}` }).then((data: any) => {
-                if (data !== undefined) {
-                  if (!data.success) {
-                    setLoading(false);
-                    setIsEditSaleLeadInfo(true)
+            if (data !== undefined) {
+              if (!data.success && data.message === ERROR_MESSAGE) {
+                setLoading(false);
+                // console.log("data.message", data.message);
+              }
+              if (!data.success) {
+                Swal.fire({
+                  text: `${data.message}`,
+                  icon: "error",
+                  timer: 2000,
+                  showConfirmButton: false,
+                });
+                setLoading(false);
+              }
+              if (data.success) {
+                getAll({ url: `${GET_SINGLE_SALELEAD}/${saleLead._id}` }).then(
+                  (data: any) => {
+                    if (data !== undefined) {
+                      if (!data.success) {
+                        setLoading(false);
+                        setIsEditSaleLeadInfo(true);
+                      }
+                      if (data.success) {
+                        setLoading(false);
+                        setIsEditSaleLeadInfo(true);
+                        dispatch(setSaleLead(data.data));
+                      }
+                    }
                   }
-                  if (data.success) {
-                    setLoading(false);
-                    setIsEditSaleLeadInfo(true)
-                    dispatch(setSaleLead(data.data));
-                  }
-                }
-              });
-              // getAll({ url: GET_ALL_SALELEADS }).then((data: any) => {
-              //   if (data !== undefined) {
-              //     if (data.success) {
-              //       dispatch(setSaleLeads(data.data));
-              //     }
-              //   }
-              // });
+                );
+                // getAll({ url: GET_ALL_SALELEADS }).then((data: any) => {
+                //   if (data !== undefined) {
+                //     if (data.success) {
+                //       dispatch(setSaleLeads(data.data));
+                //     }
+                //   }
+                // });
+              }
             }
           }
-        });
+        );
         // Handle successful post creation (e.g., show a success message, redirect, etc.)
       } catch (error: any) {
         // Handle error (e.g., show an error message)
         // console.error("Error creating post:", error);
         setLoading(false);
       }
-
     } else {
       ShowError();
       setLoading(false);
@@ -265,32 +289,26 @@ const SaleLeadInfo = ({ callbackActive }: SaleLeadInfoProps) => {
   const [rejectLoading, setRejectLoading] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
 
-
-
   const acceptOrRejectSaleLead = async (status: any) => {
     if (status == "CONFIRMED") {
       setConfirmLoading(true);
+    } else {
+      setRejectLoading(true);
     }
-    else {
-      setRejectLoading(true)
-    }
-
 
     const body = {
-      status: status
+      status: status,
     };
 
     try {
-      await patch(body, { url: `${CONFIRM_OR_REJECT_SALELEAD}/${saleLead._id}` }).then((data: any) => {
+      await patch(body, {
+        url: `${CONFIRM_OR_REJECT_SALELEAD}/${saleLead._id}`,
+      }).then((data: any) => {
         if (data !== undefined) {
-          if (
-            !data.success &&
-            data.message === ERROR_MESSAGE
-          ) {
+          if (!data.success && data.message === ERROR_MESSAGE) {
             setConfirmLoading(false);
-            setRejectLoading(false)
-            console.log("data.message", data.message);
-
+            setRejectLoading(false);
+            // console.log("data.message", data.message);
           }
           if (!data.success) {
             Swal.fire({
@@ -300,17 +318,18 @@ const SaleLeadInfo = ({ callbackActive }: SaleLeadInfoProps) => {
               showConfirmButton: false,
             });
             setConfirmLoading(false);
-            setRejectLoading(false)
-
+            setRejectLoading(false);
           }
           if (data.success) {
             if (status == "CONFIRMED") {
-              dispatch(setSaleLeadId(saleLead._id))
+              dispatch(setSaleLeadId(saleLead._id));
               if (data.data.customer !== null) {
-                getAll({ url: `${GET_SINGLE_CUSTOMERS}/${data.data.customer}` }).then((data: any) => {
+                getAll({
+                  url: `${GET_SINGLE_CUSTOMERS}/${data.data.customer}`,
+                }).then((data: any) => {
                   if (data !== undefined) {
                     if (data.success) {
-                      dispatch(setCustomer(data.data))
+                      dispatch(setCustomer(data.data));
                     }
                   }
                 });
@@ -325,33 +344,32 @@ const SaleLeadInfo = ({ callbackActive }: SaleLeadInfoProps) => {
               //     }
               //   }
               // });
-              getAll({ url: `${GET_SINGLE_SALELEAD}/${saleLead._id}` }).then((data: any) => {
-
-                if (data !== undefined) {
-
-                  if (!data.success) {
-                    Swal.fire({
-                      text: `${data.message}`,
-                      icon: "error",
-                      timer: 2000,
-                      showConfirmButton: false,
-                    });
-                  }
-                  if (data.success) {
-                    dispatch(setSaleLead(data.data));
-
+              getAll({ url: `${GET_SINGLE_SALELEAD}/${saleLead._id}` }).then(
+                (data: any) => {
+                  if (data !== undefined) {
+                    if (!data.success) {
+                      Swal.fire({
+                        text: `${data.message}`,
+                        icon: "error",
+                        timer: 2000,
+                        showConfirmButton: false,
+                      });
+                    }
+                    if (data.success) {
+                      dispatch(setSaleLead(data.data));
+                    }
                   }
                 }
-              });
+              );
               setConfirmLoading(false);
-              setRejectLoading(false)
+              setRejectLoading(false);
               callbackActive(2);
-
-            }
-            else {
+            } else {
               dispatch(setCustomer(null));
               dispatch(setSaleLeadId(""));
-              navigate(`${process.env.PUBLIC_URL}/company/modules/saio-central/sales/leads`)
+              navigate(
+                `${process.env.PUBLIC_URL}/company/modules/saio-central/sales/leads`
+              );
               // getAll({ url: GET_ALL_SALELEADS }).then((data: any) => {
 
               //   if (data !== undefined) {
@@ -374,13 +392,10 @@ const SaleLeadInfo = ({ callbackActive }: SaleLeadInfoProps) => {
               //   }
               // });
 
-
               // callbackActive(2);
               setConfirmLoading(false);
               setRejectLoading(false);
-
             }
-
           }
         }
       });
@@ -390,54 +405,12 @@ const SaleLeadInfo = ({ callbackActive }: SaleLeadInfoProps) => {
       // console.error("Error creating post:", error);
       setLoading(false);
     }
-
-
   };
 
   useEffect(() => {
     if (customer !== null) {
-      getAll({ url: `${GET_SINGLE_CUSTOMERS}/${customer}` }).then((data: any) => {
-
-        if (data !== undefined) {
-          if (!data.success && data.message === ERROR_MESSAGE) {
-            dispatch(setIsConnected(true));
-          }
-          if (!data.success) {
-            Swal.fire({
-              text: `${data.message}`,
-              icon: "error",
-              timer: 2000,
-              showConfirmButton: false,
-            });
-            setCustomerLoading(false)
-          }
-          if (data.success) {
-
-            setSaleLeadInfoForm({
-              ...saleLeadInfoForm,
-              customerName: data.data !== null ? data.data.fullName : "",
-              customerContactNo: data.data !== null ? data.data.phoneNo : "",
-            })
-            setCity(data.data !== null ? data.data.city._id : city);
-            dispatch(setCustomer(data.data));
-
-            setCustomerLoading(false)
-          }
-        }
-      });
-    }
-  }, []);
-
-  // useEffect(() => {
-
-  // }, [saleLead])
-
-  useEffect(() => {
-    if (saleLead !== null) {
-
-      if (saleLead.status == "NEW" || saleLead.status == "REJECTED" || saleLead.status == "IN_PROGRESS" || saleLead.status == "CONFIRMED" || saleLead.status == "COMPLETED" || saleLead.status == "INSTALLATION" || saleLead.status == "INSTALLED") {
-        getAll({ url: `${GET_SINGLE_SALELEAD}/${saleLead.id}` }).then((data: any) => {
-          dispatch(setSaleLead(null));
+      getAll({ url: `${GET_SINGLE_CUSTOMERS}/${customer}` }).then(
+        (data: any) => {
           if (data !== undefined) {
             if (!data.success && data.message === ERROR_MESSAGE) {
               dispatch(setIsConnected(true));
@@ -449,89 +422,180 @@ const SaleLeadInfo = ({ callbackActive }: SaleLeadInfoProps) => {
                 timer: 2000,
                 showConfirmButton: false,
               });
-              setCustomerLoading(false)
+              setCustomerLoading(false);
             }
             if (data.success) {
-
               setSaleLeadInfoForm({
                 ...saleLeadInfoForm,
-                customerName: data.data !== null ? data.data.customerName : "",
-                customerContactNo: data.data !== null ? data.data.customerContactNo : "",
-                discountedServiceCharges: data.data !== null ? data.data.discountedServiceCharges : "",
-                totalNoOfVehicles: data.data !== null ? data.data?.totalNoOfVehicles : "",
-                requirements: data.data !== null ? data.data.requirements : "",
-              })
-              setCity(data.data !== null ? data.data.city._id : city);
-              setPackage(data.data !== null ? data.data.package._id : packagee);
-              dispatch(setSaleLead(data.data));
-              if (saleLead !== null) {
-                if (data.data.status == "CONFIRMED" || data.data.status == "IN_PROGRESS" || data.data.status == "INSTALLATION" || data.data.status == "INSTALLED" || data.data.status == "COMPLETED") {
-                  if (data.data.status == "IN_PROGRESS" && data.data?.vehicles?.length == 0) {
-                    callbackActive(1)
-                    console.log("Tab 1");
-                    setSaleLeadLoading(false);
-                  }
-
-                  else if (data.data.status == "COMPLETED") {
-                    callbackActive(1)
-                    console.log("Tab 7");
-                    setSaleLeadLoading(false);
-                  }
-
-                  else if (data.data.customer !== null && data.data?.vehicles.length == data.data?.totalNoOfVehicles && data.data?.vehicles?.every((item: any) => item?.inventory?.length > 0) && data.data?.vehicles.every((item: any) => item?.installationStatus == "INSTALLED") && data.data?.vehicles.every((item: any) => item.securityBriefing.authenticationCredentials.username !== "") && data.data.status == "INSTALLED") {
-                    callbackActive(7)
-                    console.log("Tab 7");
-                    setSaleLeadLoading(false);
-
-                  }
-                  // console.log(saleLead.customer, saleLead.vehicle);
-                  else if (data.data.customer !== null && data.data?.vehicles.length == data.data?.totalNoOfVehicles && data.data?.vehicles?.every((item: any) => item?.inventory?.length > 0) && data.data?.vehicles.every((item: any) => item?.installationStatus == "INSTALLED") && data.data.status == "INSTALLED") {
-                    callbackActive(6)
-                    console.log("Tab 6");
-                    setSaleLeadLoading(false);
-
-                  }
-                  else if (data.data.customer !== null && data.data?.vehicles.length == data.data?.totalNoOfVehicles && data.data?.vehicles?.every((item: any) => item?.inventory?.length > 0)) {
-                    callbackActive(5)
-                    console.log("Tab 5");
-                    setSaleLeadLoading(false);
-                  }
-
-                  else if (data.data.customer !== null && data.data?.vehicles.length == data.data?.totalNoOfVehicles) {
-                    callbackActive(4)
-                    console.log("Tab 4");
-                    setSaleLeadLoading(false);
-                  }
-                  else if (data.data.customer !== null && data.data?.vehicles?.length < data.data?.totalNoOfVehicles) {
-                    callbackActive(3)
-                    setSaleLeadLoading(false);
-                  }
-                  else {
-                    callbackActive(2)
-                    setSaleLeadLoading(false);
-                  }
-
-                }
-
-              }
-              setSaleLeadLoading(false)
-              getAll({ url: GET_ALL_SALELEADS }).then((data: any) => {
-
-                if (data !== undefined) {
-                  if (data.success) {
-                    // // console.log("hhg");
-                    dispatch(setSaleLeads(data.data));
-                  }
-                }
+                customerName: data.data !== null ? data.data.fullName : "",
+                customerContactNo: data.data !== null ? data.data.phoneNo : "",
               });
-              setCustomerLoading(false)
+              setCity(data.data !== null ? data.data.city._id : city);
+              dispatch(setCustomer(data.data));
+
+              setCustomerLoading(false);
             }
           }
-        });
-      }
+        }
+      );
     }
   }, []);
 
+  // useEffect(() => {
+
+  // }, [saleLead])
+
+  useEffect(() => {
+    if (saleLead !== null) {
+      if (
+        saleLead.status == "NEW" ||
+        saleLead.status == "REJECTED" ||
+        saleLead.status == "IN_PROGRESS" ||
+        saleLead.status == "CONFIRMED" ||
+        saleLead.status == "COMPLETED" ||
+        saleLead.status == "INSTALLATION" ||
+        saleLead.status == "INSTALLED"
+      ) {
+        getAll({ url: `${GET_SINGLE_SALELEAD}/${saleLead.id}` }).then(
+          (data: any) => {
+            dispatch(setSaleLead(null));
+            if (data !== undefined) {
+              if (!data.success && data.message === ERROR_MESSAGE) {
+                dispatch(setIsConnected(true));
+              }
+              if (!data.success) {
+                Swal.fire({
+                  text: `${data.message}`,
+                  icon: "error",
+                  timer: 2000,
+                  showConfirmButton: false,
+                });
+                setCustomerLoading(false);
+              }
+              if (data.success) {
+                setSaleLeadInfoForm({
+                  ...saleLeadInfoForm,
+                  customerName:
+                    data.data !== null ? data.data.customerName : "",
+                  customerContactNo:
+                    data.data !== null ? data.data.customerContactNo : "",
+                  discountedServiceCharges:
+                    data.data !== null
+                      ? data.data.discountedServiceCharges
+                      : "",
+                  totalNoOfVehicles:
+                    data.data !== null ? data.data?.totalNoOfVehicles : "",
+                  requirements:
+                    data.data !== null ? data.data.requirements : "",
+                });
+                setCity(data.data !== null ? data.data.city._id : city);
+                setPackage(
+                  data.data !== null ? data.data.package._id : packagee
+                );
+                dispatch(setSaleLead(data.data));
+                if (saleLead !== null) {
+                  if (
+                    data.data.status == "CONFIRMED" ||
+                    data.data.status == "IN_PROGRESS" ||
+                    data.data.status == "INSTALLATION" ||
+                    data.data.status == "INSTALLED" ||
+                    data.data.status == "COMPLETED"
+                  ) {
+                    if (
+                      data.data.status == "IN_PROGRESS" &&
+                      data.data?.vehicles?.length == 0
+                    ) {
+                      callbackActive(1);
+                      // console.log("Tab 1");
+                      setSaleLeadLoading(false);
+                    } else if (data.data.status == "COMPLETED") {
+                      callbackActive(1);
+                      // console.log("Tab 7");
+                      setSaleLeadLoading(false);
+                    } else if (
+                      data.data.customer !== null &&
+                      data.data?.vehicles.length ==
+                        data.data?.totalNoOfVehicles &&
+                      data.data?.vehicles?.every(
+                        (item: any) => item?.inventory?.length > 0
+                      ) &&
+                      data.data?.vehicles.every(
+                        (item: any) => item?.installationStatus == "INSTALLED"
+                      ) &&
+                      data.data?.vehicles.every(
+                        (item: any) =>
+                          item.securityBriefing.authenticationCredentials
+                            .username !== ""
+                      ) &&
+                      data.data.status == "INSTALLED"
+                    ) {
+                      callbackActive(7);
+                      // console.log("Tab 7");
+                      setSaleLeadLoading(false);
+                    }
+                    // // console.log(saleLead.customer, saleLead.vehicle);
+                    else if (
+                      data.data.customer !== null &&
+                      data.data?.vehicles.length ==
+                        data.data?.totalNoOfVehicles &&
+                      data.data?.vehicles?.every(
+                        (item: any) => item?.inventory?.length > 0
+                      ) &&
+                      data.data?.vehicles.every(
+                        (item: any) => item?.installationStatus == "INSTALLED"
+                      ) &&
+                      data.data.status == "INSTALLED"
+                    ) {
+                      callbackActive(6);
+                      // console.log("Tab 6");
+                      setSaleLeadLoading(false);
+                    } else if (
+                      data.data.customer !== null &&
+                      data.data?.vehicles.length ==
+                        data.data?.totalNoOfVehicles &&
+                      data.data?.vehicles?.every(
+                        (item: any) => item?.inventory?.length > 0
+                      )
+                    ) {
+                      callbackActive(5);
+                      // console.log("Tab 5");
+                      setSaleLeadLoading(false);
+                    } else if (
+                      data.data.customer !== null &&
+                      data.data?.vehicles.length == data.data?.totalNoOfVehicles
+                    ) {
+                      callbackActive(4);
+                      // console.log("Tab 4");
+                      setSaleLeadLoading(false);
+                    } else if (
+                      data.data.customer !== null &&
+                      data.data?.vehicles?.length < data.data?.totalNoOfVehicles
+                    ) {
+                      callbackActive(3);
+                      setSaleLeadLoading(false);
+                    } else {
+                      callbackActive(2);
+                      setSaleLeadLoading(false);
+                    }
+                  }
+                }
+                setSaleLeadLoading(false);
+                getAll({ url: GET_ALL_SALELEADS }).then((data: any) => {
+                  if (data !== undefined) {
+                    if (data.success) {
+                      // // // console.log("hhg");
+                      dispatch(setSaleLeads(data.data));
+                    }
+                  }
+                });
+                setCustomerLoading(false);
+              }
+            }
+          }
+        );
+      }
+    }
+  }, []);
 
   return (
     <Form
@@ -539,8 +603,8 @@ const SaleLeadInfo = ({ callbackActive }: SaleLeadInfoProps) => {
       className="needs-validation"
       noValidate
     >
-      {
-        saleLeadLoading ? <>
+      {saleLeadLoading ? (
+        <>
           <div style={{ textAlign: "center" }}>
             {/* <Loader /> */}
 
@@ -553,10 +617,9 @@ const SaleLeadInfo = ({ callbackActive }: SaleLeadInfoProps) => {
                   marginLeft: "20px",
                   //  marginRight:"50px",
                   marginTop: "20px",
-
                 }}
               >
-                <div style={{ width: "33%", }}>
+                <div style={{ width: "33%" }}>
                   <Skeleton
                     height="20px"
                     width="45%"
@@ -598,7 +661,6 @@ const SaleLeadInfo = ({ callbackActive }: SaleLeadInfoProps) => {
                     borderRadius="10px"
                   />
                 </div>
-
               </div>
               <div
                 style={{
@@ -610,7 +672,7 @@ const SaleLeadInfo = ({ callbackActive }: SaleLeadInfoProps) => {
                   marginTop: "30px",
                 }}
               >
-                <div style={{ width: "33%", }}>
+                <div style={{ width: "33%" }}>
                   <Skeleton
                     height="20px"
                     width="45%"
@@ -652,8 +714,6 @@ const SaleLeadInfo = ({ callbackActive }: SaleLeadInfoProps) => {
                     borderRadius="10px"
                   />
                 </div>
-
-
               </div>
               <div
                 style={{
@@ -665,7 +725,7 @@ const SaleLeadInfo = ({ callbackActive }: SaleLeadInfoProps) => {
                   marginTop: "30px",
                 }}
               >
-                <div style={{ width: "33%", }}>
+                <div style={{ width: "33%" }}>
                   <Skeleton
                     height="20px"
                     width="45%"
@@ -707,8 +767,6 @@ const SaleLeadInfo = ({ callbackActive }: SaleLeadInfoProps) => {
                     borderRadius="10px"
                   />
                 </div>
-
-
               </div>
               <div
                 style={{
@@ -720,7 +778,7 @@ const SaleLeadInfo = ({ callbackActive }: SaleLeadInfoProps) => {
                   marginTop: "30px",
                 }}
               >
-                <div style={{ width: "33%", }}>
+                <div style={{ width: "33%" }}>
                   <Skeleton
                     height="20px"
                     width="45%"
@@ -762,12 +820,12 @@ const SaleLeadInfo = ({ callbackActive }: SaleLeadInfoProps) => {
                     borderRadius="10px"
                   />
                 </div>
-
-
               </div>
             </>
           </div>
-        </> : <Row className="g-3">
+        </>
+      ) : (
+        <Row className="g-3">
           <Col xl={4} xs={12}>
             <P>
               Customer Name
@@ -804,7 +862,12 @@ const SaleLeadInfo = ({ callbackActive }: SaleLeadInfoProps) => {
                 <span className="txt-danger">*</span>
               </P>
             </div>
-            <SelectCitiesBox placeholder="Select City" setCity={setCity} city={city} disabled={isEditSaleLeadInfo} />
+            <SelectCitiesBox
+              placeholder="Select City"
+              setCity={setCity}
+              city={city}
+              disabled={isEditSaleLeadInfo}
+            />
           </Col>
           <Col xl={4} xs={12}>
             <div>
@@ -813,7 +876,12 @@ const SaleLeadInfo = ({ callbackActive }: SaleLeadInfoProps) => {
                 <span className="txt-danger">*</span>
               </P>
             </div>
-            <SelectPackageBox placeholder="Select Package" setPackage={setPackage} packagee={packagee} disabled={isEditSaleLeadInfo} />
+            <SelectPackageBox
+              placeholder="Select Package"
+              setPackage={setPackage}
+              packagee={packagee}
+              disabled={isEditSaleLeadInfo}
+            />
           </Col>
 
           {/* <Col xl={4} xs={12}>
@@ -879,25 +947,28 @@ const SaleLeadInfo = ({ callbackActive }: SaleLeadInfoProps) => {
                     timer: 2000,
                     showConfirmButton: false,
                   });
-                }
-                else {
+                } else {
                   setSaleLeadInfoForm({
                     ...saleLeadInfoForm,
-                    totalNoOfVehicles: e
-                  })
+                    totalNoOfVehicles: e,
+                  });
                 }
-
               }}
-
               options={[
-                { value: "1", label: "1" }, { value: "2", label: "2" },
-                { value: "3", label: "3" }, { value: "4", label: "4" },
-                { value: "5", label: "5" }, { value: "6", label: "6" },
-                { value: "7", label: "7" }, { value: "8", label: "8" },
-                { value: "9", label: "9" }, { value: "10", label: "10" },
-                { value: "11", label: "11" }, { value: "12", label: "12" },
-                { value: "13", label: "13" }, { value: "14", label: "14" },
-
+                { value: "1", label: "1" },
+                { value: "2", label: "2" },
+                { value: "3", label: "3" },
+                { value: "4", label: "4" },
+                { value: "5", label: "5" },
+                { value: "6", label: "6" },
+                { value: "7", label: "7" },
+                { value: "8", label: "8" },
+                { value: "9", label: "9" },
+                { value: "10", label: "10" },
+                { value: "11", label: "11" },
+                { value: "12", label: "12" },
+                { value: "13", label: "13" },
+                { value: "14", label: "14" },
               ]}
               disabled={isEditSaleLeadInfo}
             />
@@ -919,61 +990,139 @@ const SaleLeadInfo = ({ callbackActive }: SaleLeadInfoProps) => {
               name="requirements"
               onChange={getUserData}
               disabled={isEditSaleLeadInfo}
-            // {...register("description", { required: true })}
+              // {...register("description", { required: true })}
             />
-
           </Col>
 
-          {
-            saleLead?.status == "REJECTED" ? <Col xs={12} className="text-end d-flex justify-content-end gap-2 align-center">
-              <Button color="secondary" onClick={() => {
-                dispatch(setSaleLead(null));
-                navigate(`${process.env.PUBLIC_URL}/company/modules/saio-central/sales/leads`)
-              }}>
+          {saleLead?.status == "REJECTED" ? (
+            <Col
+              xs={12}
+              className="text-end d-flex justify-content-end gap-2 align-center"
+            >
+              <Button
+                color="secondary"
+                onClick={() => {
+                  dispatch(setSaleLead(null));
+                  navigate(
+                    `${process.env.PUBLIC_URL}/company/modules/saio-central/sales/leads`
+                  );
+                }}
+              >
                 Cancel
               </Button>
               <Button color="primary" disabled>
                 Rejected
               </Button>
-
-            </Col> : saleLead?.status == "CONFIRMED" || saleLead?.status == "INSTALLATION" || saleLead?.status == "INSTALLED" || saleLead?.status == "COMPLETED" ? <Col xs={12} className="text-end d-flex justify-content-end gap-2 align-center">
-              <Button color="secondary" disabled={loading} onClick={() => {
-                dispatch(setSaleLead(null));
-                navigate(`${process.env.PUBLIC_URL}/company/modules/saio-central/sales/leads`)
-              }}>
+            </Col>
+          ) : saleLead?.status == "CONFIRMED" ||
+            saleLead?.status == "INSTALLATION" ||
+            saleLead?.status == "INSTALLED" ||
+            saleLead?.status == "COMPLETED" ? (
+            <Col
+              xs={12}
+              className="text-end d-flex justify-content-end gap-2 align-center"
+            >
+              <Button
+                color="secondary"
+                disabled={loading}
+                onClick={() => {
+                  dispatch(setSaleLead(null));
+                  navigate(
+                    `${process.env.PUBLIC_URL}/company/modules/saio-central/sales/leads`
+                  );
+                }}
+              >
                 Cancel
               </Button>
-              <Button color="primary" onClick={() => !isEditSaleLeadInfo ? updateLead() : setIsEditSaleLeadInfo(!isEditSaleLeadInfo)} disabled={saleLead?.status == "INSTALLED" || saleLead?.status == "COMPLETED"}>
-                {saleLead?.status == "INSTALLED" || saleLead?.status == "COMPLETED" ? formatUnderscoredString(saleLead?.status) : loading ? "Loading..." : isEditSaleLeadInfo == false ? "Save" : "Edit"}
+              <Button
+                color="primary"
+                onClick={() =>
+                  !isEditSaleLeadInfo
+                    ? updateLead()
+                    : setIsEditSaleLeadInfo(!isEditSaleLeadInfo)
+                }
+                disabled={
+                  saleLead?.status == "INSTALLED" ||
+                  saleLead?.status == "COMPLETED"
+                }
+              >
+                {saleLead?.status == "INSTALLED" ||
+                saleLead?.status == "COMPLETED"
+                  ? formatUnderscoredString(saleLead?.status)
+                  : loading
+                  ? "Loading..."
+                  : isEditSaleLeadInfo == false
+                  ? "Save"
+                  : "Edit"}
               </Button>
-
-            </Col> : saleLead !== null ? <Col xs={12} className="text-end d-flex justify-content-end gap-2 align-center">
-              <Button color="primary" disabled={confirmLoading || rejectLoading} onClick={() => {
-                dispatch(setSaleLead(null));
-                navigate(`${process.env.PUBLIC_URL}/company/modules/saio-central/sales/leads`)
-
-              }}>
+            </Col>
+          ) : saleLead !== null ? (
+            <Col
+              xs={12}
+              className="text-end d-flex justify-content-end gap-2 align-center"
+            >
+              <Button
+                color="primary"
+                disabled={confirmLoading || rejectLoading}
+                onClick={() => {
+                  dispatch(setSaleLead(null));
+                  navigate(
+                    `${process.env.PUBLIC_URL}/company/modules/saio-central/sales/leads`
+                  );
+                }}
+              >
                 Cancel
               </Button>
 
-              <Button color="secondary" disabled={confirmLoading || rejectLoading} onClick={() => { acceptOrRejectSaleLead("REJECTED") }}>
+              <Button
+                color="secondary"
+                disabled={confirmLoading || rejectLoading}
+                onClick={() => {
+                  acceptOrRejectSaleLead("REJECTED");
+                }}
+              >
                 {rejectLoading ? "Loading..." : "Reject"}
               </Button>
-              <Button color="primary" disabled={confirmLoading || rejectLoading} onClick={() => { acceptOrRejectSaleLead("CONFIRMED") }}>
+              <Button
+                color="primary"
+                disabled={confirmLoading || rejectLoading}
+                onClick={() => {
+                  acceptOrRejectSaleLead("CONFIRMED");
+                }}
+              >
                 {confirmLoading ? "Loading..." : "Confirm"}
               </Button>
-            </Col> : <Col xs={12} className="text-end d-flex justify-content-end gap-2 align-center">
-              <Button disabled={loading} color="secondary" onClick={() => { dispatch(setCustomer(null)); dispatch(setSaleLeadId("")); navigate(`${process.env.PUBLIC_URL}/company/modules/saio-central/sales/leads`) }}>
+            </Col>
+          ) : (
+            <Col
+              xs={12}
+              className="text-end d-flex justify-content-end gap-2 align-center"
+            >
+              <Button
+                disabled={loading}
+                color="secondary"
+                onClick={() => {
+                  dispatch(setCustomer(null));
+                  dispatch(setSaleLeadId(""));
+                  navigate(
+                    `${process.env.PUBLIC_URL}/company/modules/saio-central/sales/leads`
+                  );
+                }}
+              >
                 Cancel
               </Button>
-              <Button color="primary" disabled={loading} onClick={() => createLead()}>
+              <Button
+                color="primary"
+                disabled={loading}
+                onClick={() => createLead()}
+              >
                 {loading ? "Loading..." : "Create Lead"}
               </Button>
             </Col>
-          }
+          )}
         </Row>
-      }
-    </Form >
+      )}
+    </Form>
   );
 };
 

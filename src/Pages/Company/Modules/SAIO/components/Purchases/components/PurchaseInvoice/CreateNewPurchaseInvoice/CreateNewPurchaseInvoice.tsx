@@ -11,26 +11,34 @@ import {
   Modal,
   ModalHeader,
   ModalBody,
-  ModalFooter
+  ModalFooter,
 } from "reactstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { P } from "../../../../../../../../../AbstractElements";
 import SelectVendorBox from "./components/SelectVendorBox";
-import jsPDF from 'jspdf';
-import 'jspdf-autotable';
+import jsPDF from "jspdf";
+import "jspdf-autotable";
 import { MdDelete } from "react-icons/md";
 import SingleProductObject from "./components/SingleProductObject";
 import SelectBranchBox from "./components/SelectBranchBox";
 import SelectWarehouseBox from "./components/SelectWarehouseBox";
 import { SubmitHandler } from "react-hook-form";
 import { create, getAll } from "../../../../../../../../../Utilities/api";
-import { CREATE_NEW_PURCHASE_INVOICE, GET_ALL_PURCHASE_INVOICES, IMAGE_BASE_URL } from "../../../../../../../../../Utilities/api/apiEndpoints";
+import {
+  CREATE_NEW_PURCHASE_INVOICE,
+  GET_ALL_PURCHASE_INVOICES,
+  IMAGE_BASE_URL,
+} from "../../../../../../../../../Utilities/api/apiEndpoints";
 import Swal from "sweetalert2";
-import { setPurchaseInvoice, setPurchaseInvoiceLoading, setPurchaseInvoices } from "../../../../../../../../../ReaduxToolkit/Reducer/PurchaseInvoiceSlice";
+import {
+  setPurchaseInvoice,
+  setPurchaseInvoiceLoading,
+  setPurchaseInvoices,
+} from "../../../../../../../../../ReaduxToolkit/Reducer/PurchaseInvoiceSlice";
 
 import { IoClose } from "react-icons/io5";
 import { IoMdDownload, IoMdPrint } from "react-icons/io";
-import html2canvas from 'html2canvas';
+import html2canvas from "html2canvas";
 import { useNavigate } from "react-router-dom";
 import ViewPDFModal from "../../../../ViewPDFModal";
 import {
@@ -43,24 +51,20 @@ import {
   Image,
   PDFViewer,
   Font,
-  BlobProvider
+  BlobProvider,
 } from "@react-pdf/renderer";
 import BcakgroundImage from "../../../../../../../../../assets/Background Image.png";
 
-
-
-declare module 'jspdf' {
+declare module "jspdf" {
   interface jsPDF {
     autoTable: (options: any) => jsPDF;
   }
 }
 
-
-
-const CreateNewPurchaseInvoice = ({
-
-}) => {
-  const { products, purchaseInvoice, vendors } = useSelector((state: any) => state.purchaseInvoice);
+const CreateNewPurchaseInvoice = ({}) => {
+  const { products, purchaseInvoice, vendors } = useSelector(
+    (state: any) => state.purchaseInvoice
+  );
   const { userPersonalizationData } = useSelector(
     (state: any) => state.personalization
   );
@@ -68,104 +72,82 @@ const CreateNewPurchaseInvoice = ({
   const dispatch = useDispatch();
 
   const [customerLoading, setCustomerLoading] = useState(false);
-  const [vendor, setVendor] = useState(purchaseInvoice !== null ? purchaseInvoice?.vendor : "");
-  const [branch, setBranch] = useState(purchaseInvoice !== null ? purchaseInvoice?.branch?._id : "");
-  const [warehouse, setWarehouse] = useState(purchaseInvoice !== null ? purchaseInvoice?.warehouse?._id : "");
+  const [vendor, setVendor] = useState(
+    purchaseInvoice !== null ? purchaseInvoice?.vendor : ""
+  );
+  const [branch, setBranch] = useState(
+    purchaseInvoice !== null ? purchaseInvoice?.branch?._id : ""
+  );
+  const [warehouse, setWarehouse] = useState(
+    purchaseInvoice !== null ? purchaseInvoice?.warehouse?._id : ""
+  );
   const [loading, setLoading] = useState(false);
   const [modal, setModal] = useState(false);
 
   const [purchaseInvoiceForm, setPurchaseInvoiceForm] = useState({
-    date: purchaseInvoice !== null ? purchaseInvoice?.invoiceDate.slice(0, 10) : new Date().toISOString().slice(0, 10),
-    dueDate: purchaseInvoice !== null ? purchaseInvoice?.invoiceDueDate.slice(0, 10) : new Date().toISOString().slice(0, 10),
+    date:
+      purchaseInvoice !== null
+        ? purchaseInvoice?.invoiceDate.slice(0, 10)
+        : new Date().toISOString().slice(0, 10),
+    dueDate:
+      purchaseInvoice !== null
+        ? purchaseInvoice?.invoiceDueDate.slice(0, 10)
+        : new Date().toISOString().slice(0, 10),
     reference: purchaseInvoice !== null ? purchaseInvoice?.reference : "",
     comments: purchaseInvoice !== null ? purchaseInvoice?.comments : "",
-    shippingCharges: purchaseInvoice !== null ? purchaseInvoice?.shippingCharges : "",
-    netAmount: purchaseInvoice !== null ? purchaseInvoice?.netAmount : ""
+    shippingCharges:
+      purchaseInvoice !== null ? purchaseInvoice?.shippingCharges : "",
+    netAmount: purchaseInvoice !== null ? purchaseInvoice?.netAmount : "",
   });
 
-  const {
-    date,
-    dueDate,
-    reference,
-    comments,
-    shippingCharges,
-    netAmount
-  } = purchaseInvoiceForm;
+  const { date, dueDate, reference, comments, shippingCharges, netAmount } =
+    purchaseInvoiceForm;
 
-  const getUserData = (event: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLTextAreaElement>) => {
+  const getUserData = (
+    event: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLTextAreaElement>
+  ) => {
     let name = event.target.name;
     let value = event.target.value;
     setPurchaseInvoiceForm({ ...purchaseInvoiceForm, [name]: value });
   };
 
-
   // ---------------------------------------------------------------
-
 
   const pdfRef = useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
 
-  const handleGeneratePdf = () => {
-    if (pdfRef.current) {
-      const input = pdfRef.current;
-      html2canvas(input)
-        .then((canvas) => {
-          const imgData = canvas.toDataURL('image/png');
-          const pdf = new jsPDF('p', 'mm', 'a4');
-          const imgProps = pdf.getImageProperties(imgData);
-          const pdfWidth = pdf.internal.pageSize.getWidth();
-          const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-
-          // Define padding
-          const padding = 10; // Padding in mm
-
-          // Calculate new dimensions and coordinates
-          const imgWidth = pdfWidth - 2 * padding;
-          const imgHeight = (imgProps.height * imgWidth) / imgProps.width;
-          const yOffset = padding;
-
-          pdf.addImage(imgData, 'PNG', padding, yOffset, imgWidth, imgHeight);
-          pdf.save('download.pdf');
-        })
-        .catch((err) => console.log(err));
-    } else {
-      console.error('Ref is null');
-    }
-  };
-
-
-
-
   // --------------------------------------------------------------
-
 
   const [productObjects, setProductObjects] = useState<
     {
-      product: string,
-      type: string,
-      quantity: number,
-      price: string,
-      discount: number,
-      totalAmount: string,
-      description: string,
+      product: string;
+      type: string;
+      quantity: number;
+      price: string;
+      discount: number;
+      totalAmount: string;
+      description: string;
       serialsOrSkus: [];
     }[]
   >(purchaseInvoice !== null ? purchaseInvoice.productsDetails : []);
 
   // Function to add a new body parameter
   const addProductObject = () => {
-    console.log("productObjects", productObjects);
+    // console.log("productObjects", productObjects);
 
-    setProductObjects([...productObjects, {
-      product: "",
-      type: "",
-      quantity: Number(""),
-      price: "",
-      discount: Number(""),
-      totalAmount: "",
-      description: "",
-      serialsOrSkus: []
-    }]);
+    setProductObjects([
+      ...productObjects,
+      {
+        product: "",
+        type: "",
+        quantity: Number(""),
+        price: "",
+        discount: Number(""),
+        totalAmount: "",
+        description: "",
+        serialsOrSkus: [],
+      },
+    ]);
   };
 
   // Function to delete a body parameter
@@ -178,39 +160,50 @@ const CreateNewPurchaseInvoice = ({
   const handleProductObjectChange = (
     index: number,
     newParam: {
-      product: string,
-      type: string,
-      quantity: number,
-      price: string,
-      discount: number,
-      totalAmount: string,
-      description: string,
+      product: string;
+      type: string;
+      quantity: number;
+      price: string;
+      discount: number;
+      totalAmount: string;
+      description: string;
       serialsOrSkus: [];
     }
   ) => {
-    console.log("productObjects", productObjects);
+    // console.log("productObjects", productObjects);
 
     const updatedProductObject = productObjects.map((param, i) =>
-      i === index ? {
-        ...newParam,
-        totalAmount: newParam.discount == 0 ? calculateAmount(newParam.quantity, newParam.price, 0) : calculateAmount(newParam.quantity, newParam.price, newParam.discount)
-      } : param
+      i === index
+        ? {
+            ...newParam,
+            totalAmount:
+              newParam.discount == 0
+                ? calculateAmount(newParam.quantity, newParam.price, 0)
+                : calculateAmount(
+                    newParam.quantity,
+                    newParam.price,
+                    newParam.discount
+                  ),
+          }
+        : param
     );
-
 
     setProductObjects(updatedProductObject);
     const totalAmount = updatedProductObject.reduce((sum, param) => {
       return sum + parseFloat(param.totalAmount);
     }, 0);
-    console.log("total", totalAmount);
-
+    // console.log("total", totalAmount);
 
     setPurchaseInvoiceForm({ ...purchaseInvoiceForm, netAmount: totalAmount });
   };
 
   // Function to calculate amount based on quantity, price, and discount
-  const calculateAmount = (quantity: number, price: string, discount: number) => {
-    console.log(quantity, price, discount);
+  const calculateAmount = (
+    quantity: number,
+    price: string,
+    discount: number
+  ) => {
+    // console.log(quantity, price, discount);
 
     const parsedQuantity = quantity;
     const parsedPrice = parseFloat(price);
@@ -218,7 +211,11 @@ const CreateNewPurchaseInvoice = ({
 
     if (parsedQuantity && parsedPrice) {
       if (parsedDiscount > 0) {
-        return ((parsedQuantity * parsedPrice) * ((100 - parsedDiscount) / 100)).toFixed(2);
+        return (
+          parsedQuantity *
+          parsedPrice *
+          ((100 - parsedDiscount) / 100)
+        ).toFixed(2);
       } else {
         return (parsedQuantity * parsedPrice).toFixed(2);
       }
@@ -226,7 +223,6 @@ const CreateNewPurchaseInvoice = ({
       return "";
     }
   };
-
 
   const styles2 = StyleSheet.create({
     page: { padding: 20 },
@@ -251,119 +247,126 @@ const CreateNewPurchaseInvoice = ({
     heavyUnderlineText: {
       // fontWeight: 'heavy', // Set to extrabold
       fontSize: 8,
-      textDecoration: "underline"
+      textDecoration: "underline",
     },
-    textRow: { flexDirection: 'row', marginBottom: 2 },
+    textRow: { flexDirection: "row", marginBottom: 2 },
     image: {
-      width: '160px', height: '120px',
+      width: "160px",
+      height: "120px",
     },
     centerText: {
-      flexDirection: 'row',
-      justifyContent: 'center',
-      alignItems: 'center',
+      flexDirection: "row",
+      justifyContent: "center",
+      alignItems: "center",
       marginVertical: 10,
     },
     titleText: {
       fontSize: 16,
-      fontWeight: 'extrabold', // Set to extrabold
+      fontWeight: "extrabold", // Set to extrabold
     },
     tableContainer: {
-      width: '28%',
+      width: "28%",
       height: "auto",
-      border: '1px solid black',
+      border: "1px solid black",
       position: "absolute",
       right: "20",
-      top: "20%"
+      top: "20%",
     },
     tableRow: {
-      flexDirection: 'row',
+      flexDirection: "row",
     },
     tableCell: {
       flex: 1,
-      border: '1px solid black',
+      border: "1px solid black",
       padding: 3,
       fontSize: "9px",
       margin: -1,
-      fontWeight: 'extrabold', // Set to extrabold
+      fontWeight: "extrabold", // Set to extrabold
     },
     tableCell1: {
       flex: 1,
-      border: '1px solid black',
+      border: "1px solid black",
       padding: 4,
       fontSize: "9px",
       margin: -1,
-      fontWeight: 'extrabold', // Set to extrabold
+      fontWeight: "extrabold", // Set to extrabold
     },
     tableCell2: {
       flex: 2,
-      border: '1px solid black',
+      border: "1px solid black",
       padding: 4,
       fontSize: "9px",
       margin: -1,
-      fontWeight: 'extrabold', // Set to extrabold
+      fontWeight: "extrabold", // Set to extrabold
     },
     tableCell3: {
       flex: 7,
-      border: '1px solid black',
+      border: "1px solid black",
       padding: 4,
       fontSize: "9px",
       margin: -1,
-      fontWeight: 'extrabold', // Set to extrabold
+      fontWeight: "extrabold", // Set to extrabold
     },
     headerCell1: {
       flex: 1,
-      border: '1px solid black',
+      border: "1px solid black",
       padding: 4,
       margin: -1,
-      fontFamily: 'Helvetica-Bold', // Replace with your bold font family
+      fontFamily: "Helvetica-Bold", // Replace with your bold font family
       fontSize: 9,
     },
     headerCell2: {
       flex: 2,
-      border: '1px solid black',
+      border: "1px solid black",
       padding: 4,
       margin: -1,
-      fontFamily: 'Helvetica-Bold', // Replace with your bold font family
+      fontFamily: "Helvetica-Bold", // Replace with your bold font family
       fontSize: 9,
     },
     headerCell3: {
       flex: 7,
-      border: '1px solid black',
+      border: "1px solid black",
       padding: 4,
       margin: -1,
-      fontFamily: 'Helvetica-Bold', // Replace with your bold font family
+      fontFamily: "Helvetica-Bold", // Replace with your bold font family
       fontSize: 9,
     },
   });
-
 
   const downloadPurchaseInvoicePDF = () => (
     <Document>
       <Page style={styles2.page}>
         <View style={styles2.section}>
-
           <View style={{ marginBottom: "10px" }}>
             <Image
-              src={userPersonalizationData !== null && userPersonalizationData?.loginPageLogo.url !== ""
-                ? `${IMAGE_BASE_URL}/${userPersonalizationData?.loginPageLogo.url}`
-                : BcakgroundImage}
+              src={
+                userPersonalizationData !== null &&
+                userPersonalizationData?.loginPageLogo.url !== ""
+                  ? `${IMAGE_BASE_URL}/${userPersonalizationData?.loginPageLogo.url}`
+                  : BcakgroundImage
+              }
               style={styles2.image}
             />
           </View>
-          <View >
+          <View>
             <Text style={styles2.text}></Text>
           </View>
           <br />
 
-          <View >
+          <View>
             <View style={styles2.textRow}>
               <Text style={styles2.heavyText}>Mail: </Text>
-              <Text style={styles2.text}>{vendors.find((item: any) => item.vendorName == vendor)?.emailAddress}</Text>
+              <Text style={styles2.text}>
+                {
+                  vendors.find((item: any) => item.vendorName == vendor)
+                    ?.emailAddress
+                }
+              </Text>
             </View>
           </View>
           <br></br>
 
-          <View >
+          <View>
             <View style={styles2.textRow}>
               <Text style={styles2.heavyText}>GST No.: </Text>
               <Text style={styles2.text}>GST No</Text>
@@ -385,7 +388,7 @@ const CreateNewPurchaseInvoice = ({
             </View>
           </View>
           <br />
-          <View >
+          <View>
             <View style={styles2.heavyText}>
               <Text style={styles2.heavyText}>{vendor}</Text>
             </View>
@@ -396,11 +399,12 @@ const CreateNewPurchaseInvoice = ({
           <Text style={styles2.titleText}>Purchase Invoice</Text>
         </View>
 
-
         <View style={styles2.tableContainer}>
           <View style={styles2.tableRow}>
             <Text style={styles2.tableCell}>Number</Text>
-            <Text style={styles2.tableCell2}>{purchaseInvoice?.purchaseInvoiceId}</Text>
+            <Text style={styles2.tableCell2}>
+              {purchaseInvoice?.purchaseInvoiceId}
+            </Text>
           </View>
           <View style={styles2.tableRow}>
             <Text style={styles2.tableCell}>Date</Text>
@@ -414,14 +418,14 @@ const CreateNewPurchaseInvoice = ({
             <Text style={styles2.tableCell}>Reference</Text>
             <Text style={styles2.tableCell2}>{reference}</Text>
           </View>
-
-
         </View>
 
-        <View >
+        <View>
           <View style={{ ...styles2.textRow, marginBottom: "10px" }}>
             <Text style={styles2.text}>Invoice No: </Text>
-            <Text style={styles2.heavyUnderlineText}>{purchaseInvoice?.purchaseInvoiceId}</Text>
+            <Text style={styles2.heavyUnderlineText}>
+              {purchaseInvoice?.purchaseInvoiceId}
+            </Text>
           </View>
         </View>
         <br></br>
@@ -434,7 +438,6 @@ const CreateNewPurchaseInvoice = ({
             <Text style={styles2.headerCell2}>Price</Text>
             <Text style={styles2.headerCell2}>Amount</Text>
           </View>
-
         </View>
         {purchaseInvoice?.productsDetails?.map((product: any, index: any) => (
           <View style={styles2.tableRow}>
@@ -444,19 +447,42 @@ const CreateNewPurchaseInvoice = ({
               <Text style={{ fontSize: "12px" }}>{product?.product?.name}</Text>
               {"\n"}
               {"\n"}
-              {product?.serialsOrSkus?.map((item: any) => `${item.serialNo} | `)}
+              {product?.serialsOrSkus?.map(
+                (item: any) => `${item.serialNo} | `
+              )}
             </Text>
-            <Text style={styles2.tableCell1}>{product?.serialsOrSkus?.length}</Text>
+            <Text style={styles2.tableCell1}>
+              {product?.serialsOrSkus?.length}
+            </Text>
             <Text style={styles2.tableCell1}>{product?.discount}</Text>
             <Text style={styles2.tableCell2}>{product?.price}</Text>
             <Text style={styles2.tableCell2}>{product?.totalAmount}</Text>
           </View>
         ))}
 
-        <View style={{ marginTop: "25px", width: "100%", position: "relative", right: 0, display: "flex", justifyContent: "flex-end" }}>
-          <View style={{ width: "30%", ...styles2.textRow, justifyContent: "flex-end", marginLeft: "70%", marginBottom: "4px", borderBottom: "2px solid black", paddingVertical: "5px" }}>
+        <View
+          style={{
+            marginTop: "25px",
+            width: "100%",
+            position: "relative",
+            right: 0,
+            display: "flex",
+            justifyContent: "flex-end",
+          }}
+        >
+          <View
+            style={{
+              width: "30%",
+              ...styles2.textRow,
+              justifyContent: "flex-end",
+              marginLeft: "70%",
+              marginBottom: "4px",
+              borderBottom: "2px solid black",
+              paddingVertical: "5px",
+            }}
+          >
             <Text style={{ ...styles2.text, flex: 1 }}>Net Amount: </Text>
-            <Text style={styles2.heavyText}>{netAmount}</Text>
+            <Text style={styles2.heavyText}>{netAmount - shippingCharges}</Text>
           </View>
           <br />
           {/* <View style={{ width: "30%", ...styles2.textRow, justifyContent: "flex-end", marginLeft: "70%", marginBottom: "4px", borderBottom: "2px solid black", paddingVertical: "3.5px" }}>
@@ -473,16 +499,35 @@ const CreateNewPurchaseInvoice = ({
             <Text style={{ ...styles2.text, flex: 1 }}>Additional Charges: </Text>
             <Text style={styles2.heavyText}>{additionalCharges}</Text>
           </View> */}
-          <View style={{ width: "30%", ...styles2.textRow, justifyContent: "flex-end", marginLeft: "70%", marginBottom: "4px", borderBottom: "2px solid black", paddingVertical: "3.5px" }}>
+          <View
+            style={{
+              width: "30%",
+              ...styles2.textRow,
+              justifyContent: "flex-end",
+              marginLeft: "70%",
+              marginBottom: "4px",
+              borderBottom: "2px solid black",
+              paddingVertical: "3.5px",
+            }}
+          >
             <Text style={{ ...styles2.text, flex: 1 }}>Shipping Charges: </Text>
             <Text style={styles2.heavyText}>{shippingCharges}</Text>
           </View>
           <br />
-          <View style={{ width: "30%", ...styles2.textRow, justifyContent: "flex-end", marginLeft: "70%", marginBottom: "4px", borderBottom: "2px solid black", paddingVertical: "3.5px" }}>
+          <View
+            style={{
+              width: "30%",
+              ...styles2.textRow,
+              justifyContent: "flex-end",
+              marginLeft: "70%",
+              marginBottom: "4px",
+              borderBottom: "2px solid black",
+              paddingVertical: "3.5px",
+            }}
+          >
             <Text style={{ ...styles2.text, flex: 1 }}>Gross Amount: </Text>
-            <Text style={styles2.heavyText}>{netAmount + shippingCharges}</Text>
+            <Text style={styles2.heavyText}>{netAmount}</Text>
           </View>
-
         </View>
 
         <View style={{ marginTop: "22px", marginBottom: "5px" }}>
@@ -490,35 +535,51 @@ const CreateNewPurchaseInvoice = ({
         </View>
 
         <View style={{ marginVertical: "3px" }}>
-          <Text style={styles2.text}>i) Autotel warrants to the original purchaser that tracker shall be free from defects in material and workmanship for a period of 12 months from date of activation. If a
-            defect covered by this warranty occurs during the warranty period, Autoel will repair or replace your tracker free of charge.</Text>
+          <Text style={styles2.text}>
+            i) Autotel warrants to the original purchaser that tracker shall be
+            free from defects in material and workmanship for a period of 12
+            months from date of activation. If a defect covered by this warranty
+            occurs during the warranty period, Autoel will repair or replace
+            your tracker free of charge.
+          </Text>
         </View>
         <View style={{ marginVertical: "3px" }}>
-          <Text style={styles2.text}>ii) Autotel warrants  from defects in material and workmanship for a period of 12 months from date of activation. If a
-            defect covered by this warranty occurs during the warranty period, Autoel will repair or replace your tracker free of charge.</Text>
+          <Text style={styles2.text}>
+            ii) Autotel warrants from defects in material and workmanship for a
+            period of 12 months from date of activation. If a defect covered by
+            this warranty occurs during the warranty period, Autoel will repair
+            or replace your tracker free of charge.
+          </Text>
         </View>
         <View style={{ marginVertical: "3px" }}>
-          <Text style={styles2.text}>iii) Autotel warrants to the original purchaser that tracker shall be free from defects in material and workmanship for a period of 12 months from date of activation. If a
-            defect  during the warranty period, Autoel will repair or replace your tracker free of charge.</Text>
+          <Text style={styles2.text}>
+            iii) Autotel warrants to the original purchaser that tracker shall
+            be free from defects in material and workmanship for a period of 12
+            months from date of activation. If a defect during the warranty
+            period, Autoel will repair or replace your tracker free of charge.
+          </Text>
         </View>
-
       </Page>
-    </Document >
+    </Document>
   );
-
-
-
 
   const addAndUpdatePurchaseInvoice: SubmitHandler<any> = async (data) => {
     setLoading(true);
     if (
-      date !== "" && vendor !== "" && dueDate !== "" && productObjects.length > 0 && netAmount > 0 && shippingCharges > 0
+      date !== "" &&
+      vendor !== "" &&
+      dueDate !== "" &&
+      productObjects.length > 0 &&
+      netAmount > 0 &&
+      shippingCharges > 0
     ) {
       let isValid = true;
       productObjects.forEach((item) => {
         if (item.quantity == 0) {
           Swal.fire({
-            text: `Quantity of ${products.find((i: any) => i._id == item.product).name} of type ${item.type} is ${item.quantity}`,
+            text: `Quantity of ${
+              products.find((i: any) => i._id == item.product).name
+            } of type ${item.type} is ${item.quantity}`,
             icon: "error",
             timer: 2000,
             showConfirmButton: false,
@@ -527,9 +588,20 @@ const CreateNewPurchaseInvoice = ({
           setLoading(false);
           return;
         }
-        if ((item.type === "SIM" || item.type === "DEVICES") && Number(item.quantity) !== item.serialsOrSkus.length) {
+        if (
+          (item.type === "SIM" || item.type === "DEVICES") &&
+          Number(item.quantity) !== item.serialsOrSkus.length
+        ) {
           Swal.fire({
-            text: `Quantity for ${products.find((i: any) => i._id == item.product).name} of type ${item.type} does not match the number of ${item.type == "SIM" ? "Sim numbers" : item.type == "DEVICES" ? "IMEIS" : "serial numbers"}`,
+            text: `Quantity for ${
+              products.find((i: any) => i._id == item.product).name
+            } of type ${item.type} does not match the number of ${
+              item.type == "SIM"
+                ? "Sim numbers"
+                : item.type == "DEVICES"
+                ? "IMEIS"
+                : "serial numbers"
+            }`,
             icon: "error",
             timer: 2000,
             showConfirmButton: false,
@@ -554,25 +626,35 @@ const CreateNewPurchaseInvoice = ({
         comments: comments,
         netAmount: Number(netAmount) + Number(shippingCharges),
         shippingCharges: Number(shippingCharges),
-        productsDetails: productObjects.map(({ type, quantity, serialsOrSkus = [], ...rest }) => {
-          const updatedSerialsOrSku = serialsOrSkus.length > 0
-            ? serialsOrSkus
-            : Array.from({ length: quantity }, () => ({ serialNumber: null, sku: null }));
+        productsDetails: productObjects.map(
+          ({ type, quantity, serialsOrSkus = [], ...rest }) => {
+            const updatedSerialsOrSku =
+              serialsOrSkus.length > 0
+                ? serialsOrSkus
+                : Array.from({ length: quantity }, () => ({
+                    serialNumber: null,
+                    sku: null,
+                  }));
 
-          return {
-            ...rest,
-            quantity,
-            serialsOrSkus: updatedSerialsOrSku,
-          };
-        })
+            return {
+              ...rest,
+              quantity,
+              serialsOrSkus: updatedSerialsOrSku,
+            };
+          }
+        ),
       };
 
       try {
-        const response: any = await create(purchaseInvoiceData, { url: CREATE_NEW_PURCHASE_INVOICE });
+        const response: any = await create(purchaseInvoiceData, {
+          url: CREATE_NEW_PURCHASE_INVOICE,
+        });
         if (response.success) {
           dispatch(setPurchaseInvoiceLoading(true));
           setLoading(false);
-          navigate(`${process.env.PUBLIC_URL}/company/modules/saio-central/purchases/purchase-invoices`)
+          navigate(
+            `${process.env.PUBLIC_URL}/company/modules/saio-central/purchases/purchase-invoices`
+          );
 
           // const purchaseInvoicesResponse: any = await getAll({ url: GET_ALL_PURCHASE_INVOICES });
           // if (purchaseInvoicesResponse.success) {
@@ -618,12 +700,10 @@ const CreateNewPurchaseInvoice = ({
   //   pages.push(data.slice(i, i + rowsPerPage));
   // }
 
-
   const toggleModal = () => setModal(!modal);
 
   return (
     <>
-
       <>
         <Row>
           <Form
@@ -632,7 +712,7 @@ const CreateNewPurchaseInvoice = ({
             noValidate
           >
             <div ref={pdfRef}>
-              <Row className="g-3" >
+              <Row className="g-3">
                 <Col lg={3} xs={12}>
                   <div>
                     <P>
@@ -640,7 +720,12 @@ const CreateNewPurchaseInvoice = ({
                       <span className="txt-danger">*</span>
                     </P>
                   </div>
-                  <SelectVendorBox placeholder="Select Vendor" setVendor={setVendor} vendor={vendor} disabled={purchaseInvoice !== null} />
+                  <SelectVendorBox
+                    placeholder="Select Vendor"
+                    setVendor={setVendor}
+                    vendor={vendor}
+                    disabled={purchaseInvoice !== null}
+                  />
                 </Col>
                 <Col lg={2} xs={12}>
                   <div>
@@ -652,7 +737,11 @@ const CreateNewPurchaseInvoice = ({
                   <Input
                     type="text"
                     placeholder="Enter Invoice Number"
-                    value={purchaseInvoice !== null ? purchaseInvoice.purchaseInvoiceId : "PI-000"}
+                    value={
+                      purchaseInvoice !== null
+                        ? purchaseInvoice.purchaseInvoiceId
+                        : "PI-000"
+                    }
                     // name="dueDate"
                     // onChange={getUserData}
                     disabled
@@ -687,9 +776,7 @@ const CreateNewPurchaseInvoice = ({
                   />
                 </Col>
                 <Col lg={3} xs={12}>
-                  <P>
-                    Reference
-                  </P>
+                  <P>Reference</P>
                   <Input
                     type="text"
                     placeholder="Enter Reference"
@@ -706,7 +793,12 @@ const CreateNewPurchaseInvoice = ({
                       <span className="txt-danger">*</span>
                     </P>
                   </div>
-                  <SelectBranchBox placeholder="Select Branch" setBranch={setBranch} branch={branch} disabled={purchaseInvoice !== null} />
+                  <SelectBranchBox
+                    placeholder="Select Branch"
+                    setBranch={setBranch}
+                    branch={branch}
+                    disabled={purchaseInvoice !== null}
+                  />
                 </Col>
                 <Col lg={3} xs={12}>
                   <div>
@@ -715,19 +807,23 @@ const CreateNewPurchaseInvoice = ({
                       <span className="txt-danger">*</span>
                     </P>
                   </div>
-                  <SelectWarehouseBox placeholder="Select Warehouse" setWarehouse={setWarehouse} warehouse={warehouse} disabled={purchaseInvoice !== null} />
+                  <SelectWarehouseBox
+                    placeholder="Select Warehouse"
+                    setWarehouse={setWarehouse}
+                    warehouse={warehouse}
+                    disabled={purchaseInvoice !== null}
+                  />
                 </Col>
                 <Row className="g-3" style={{ marginTop: "35px" }}>
-                  {purchaseInvoice == null && <div style={{ display: "flex", justifyContent: "end" }}>
-                    {
-                      userPersonalizationData !== null ? (
+                  {purchaseInvoice == null && (
+                    <div style={{ display: "flex", justifyContent: "end" }}>
+                      {userPersonalizationData !== null ? (
                         <Button
                           color=""
                           onClick={addProductObject}
                           style={{
                             color: "white",
-                            backgroundColor: `${userPersonalizationData?.buttonsAndBarsColor
-                              }`,
+                            backgroundColor: `${userPersonalizationData?.buttonsAndBarsColor}`,
                           }}
                         >
                           Add Product
@@ -736,52 +832,84 @@ const CreateNewPurchaseInvoice = ({
                         <Button color="primary" onClick={addProductObject}>
                           Add Product
                         </Button>
-                      )
-                    }
-                  </div>}
-                  {productObjects.length > 0 && <table style={{ border: "1px solid lightgray", width: "100%" }}>
-                    <thead>
-                      <tr>
-                        <th style={{ width: "23%", borderRight: "1px solid lightgray" }}>
-                          Product
-                        </th>
-                        <th style={{ width: "17%", borderRight: "1px solid lightgray" }}>
-                          Quantity
-                        </th>
-                        <th style={{ width: "17%", borderRight: "1px solid lightgray" }}>
-                          Price
-                        </th>
-                        <th style={{ width: "17%", borderRight: "1px solid lightgray" }}>
-                          Discount %
-                        </th>
-                        <th style={{ width: "17%", borderRight: "1px solid lightgray" }}>
-                          Amount
-                        </th>
-                        <th style={{ width: "10%", borderRight: "1px solid lightgray" }}>Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {productObjects.map((param, index) => (
-                        <SingleProductObject
-                          key={index}
-                          param={param}
-                          onChange={(newParam: any) =>
-                            handleProductObjectChange(index, newParam)
-                          }
-                          onDelete={() => deleteProductObject(index)}
-                          disabled={purchaseInvoice !== null}
-                        />
-                      ))}
-                    </tbody>
-                  </table>}
-
-
+                      )}
+                    </div>
+                  )}
+                  {productObjects.length > 0 && (
+                    <table
+                      style={{ border: "1px solid lightgray", width: "100%" }}
+                    >
+                      <thead>
+                        <tr>
+                          <th
+                            style={{
+                              width: "23%",
+                              borderRight: "1px solid lightgray",
+                            }}
+                          >
+                            Product
+                          </th>
+                          <th
+                            style={{
+                              width: "17%",
+                              borderRight: "1px solid lightgray",
+                            }}
+                          >
+                            Quantity
+                          </th>
+                          <th
+                            style={{
+                              width: "17%",
+                              borderRight: "1px solid lightgray",
+                            }}
+                          >
+                            Price
+                          </th>
+                          <th
+                            style={{
+                              width: "17%",
+                              borderRight: "1px solid lightgray",
+                            }}
+                          >
+                            Discount %
+                          </th>
+                          <th
+                            style={{
+                              width: "17%",
+                              borderRight: "1px solid lightgray",
+                            }}
+                          >
+                            Amount
+                          </th>
+                          <th
+                            style={{
+                              width: "10%",
+                              borderRight: "1px solid lightgray",
+                            }}
+                          >
+                            Actions
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {productObjects.map((param, index) => (
+                          <SingleProductObject
+                            key={index}
+                            param={param}
+                            onChange={(newParam: any) =>
+                              handleProductObjectChange(index, newParam)
+                            }
+                            onDelete={() => deleteProductObject(index)}
+                            disabled={purchaseInvoice !== null}
+                          />
+                        ))}
+                      </tbody>
+                    </table>
+                  )}
                 </Row>
                 <Row className="g-3" style={{ marginTop: "15px" }}>
                   <Col lg={6} xs={12}>
-                    <P>
-                      Comments
-                    </P>
+                    <P>Comments</P>
                     <textarea
                       className="form-control"
                       placeholder="Enter Comments"
@@ -834,59 +962,53 @@ const CreateNewPurchaseInvoice = ({
                   className="text-end d-flex justify-content-end gap-2 align-center"
                   style={{ marginTop: "20px" }}
                 >
-                  <Button color="primary" disabled={loading} onClick={() => {
-                    dispatch(setPurchaseInvoice(null));
-                    // setIscreateNewPurchaseInvoice(false);
+                  <Button
+                    color="primary"
+                    disabled={loading}
+                    onClick={() => {
+                      dispatch(setPurchaseInvoice(null));
+                      // setIscreateNewPurchaseInvoice(false);
 
-                    navigate(`${process.env.PUBLIC_URL}/company/modules/saio-central/purchases/purchase-invoices`)
-                  }}>
+                      navigate(
+                        `${process.env.PUBLIC_URL}/company/modules/saio-central/purchases/purchase-invoices`
+                      );
+                    }}
+                  >
                     Cancel
                   </Button>
-                  {purchaseInvoice == null && < Button disabled={loading} color="primary" onClick={addAndUpdatePurchaseInvoice}>
-                    {loading ? "Loading..." : "Create"}
-                  </Button>}
-                  {purchaseInvoice !== null &&
-                    <Button color="primary" onClick={toggleModal}>View PDF</Button>
-                  }
-
-
+                  {purchaseInvoice == null && (
+                    <Button
+                      disabled={loading}
+                      color="primary"
+                      onClick={addAndUpdatePurchaseInvoice}
+                    >
+                      {loading ? "Loading..." : "Create"}
+                    </Button>
+                  )}
+                  {purchaseInvoice !== null && (
+                    <Button color="primary" onClick={toggleModal}>
+                      View PDF
+                    </Button>
+                  )}
                 </Col>
               </Row>
             </div>
-
           </Form>
-
-
         </Row>
-
-
       </>
-      <ViewPDFModal modal={modal} toggleModal={toggleModal} body={downloadPurchaseInvoicePDF} />
+      <ViewPDFModal
+        modal={modal}
+        toggleModal={toggleModal}
+        body={downloadPurchaseInvoicePDF}
+      />
     </>
   );
 };
 
 export default CreateNewPurchaseInvoice;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-{/* <div className="text-end mt-3">
+{
+  /* <div className="text-end mt-3">
                         <PDFDownloadLink
                           document={
                             <PurchaseInvoicePDF
@@ -906,31 +1028,18 @@ export default CreateNewPurchaseInvoice;
                             loading ? "Loading PDF..." : "Download PDF"
                           }
                         </PDFDownloadLink>
-                      </div> */}
+                      </div> */
+}
 
-
-{/* <Button color="primary" onClick={handleGeneratePdf}>
+{
+  /* <Button color="primary" onClick={handleGeneratePdf}>
                       {loading ? "Loading..." : "PDF"}
-                    </Button> */}
+                    </Button> */
+}
 
-{/* <Button color="primary" onClick={toggleModal}>VIew</Button> */ }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+{
+  /* <Button color="primary" onClick={toggleModal}>VIew</Button> */
+}
 
 // const styles = StyleSheet.create({
 //   page: { padding: 20 },
@@ -975,28 +1084,6 @@ export default CreateNewPurchaseInvoice;
 //     </Page>
 //   </Document>
 // );
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // const data = [
 //   { "name": "John Doe", "age": 30, "position": "Developer" },
@@ -1056,7 +1143,6 @@ export default CreateNewPurchaseInvoice;
 //   doc.save('table.pdf');
 // };
 
-
 // const generatePDF = () => {
 //   const doc = new jsPDF();
 //   doc.setFontSize(20);
@@ -1094,10 +1180,6 @@ export default CreateNewPurchaseInvoice;
 
 //   window.open(doc.output('bloburl'), '_blank');
 // };
-
-
-
-
 
 // const printPDF = () => {
 //   const doc = new jsPDF();
@@ -1139,12 +1221,6 @@ export default CreateNewPurchaseInvoice;
 //   window.open(doc.output('bloburl'), '_blank');
 // };
 
-
-
-
-
-
-
 // const printPDF = () => {
 //   const doc = new jsPDF();
 
@@ -1166,9 +1242,6 @@ export default CreateNewPurchaseInvoice;
 //   // Open the generated PDF in a new tab
 //   window.open(doc.output('bloburl'), '_blank');
 // };
-
-
-
 
 // const printPDF = () => {
 //   const doc = new jsPDF();
@@ -1202,33 +1275,8 @@ export default CreateNewPurchaseInvoice;
 //   window.open(doc.output('bloburl'), '_blank');
 // };
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-{/* <Modal isOpen={modal} toggle={toggleModal} centered size="xl" className="custom-modal" style={{ minHeight: "600px" }}>
+{
+  /* <Modal isOpen={modal} toggle={toggleModal} centered size="xl" className="custom-modal" style={{ minHeight: "600px" }}>
 <ModalBody style={{ minHeight: "600px" }}>
   <button className="close-btn" onClick={toggleModal}>
     <IoClose />
@@ -1309,4 +1357,5 @@ page-break-after: always;
 border-top: 6px solid black;
 margin: 30px -40px;
 }
-`}</style> */}
+`}</style> */
+}

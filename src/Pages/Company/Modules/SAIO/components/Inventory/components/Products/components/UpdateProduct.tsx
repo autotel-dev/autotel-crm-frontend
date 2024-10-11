@@ -35,8 +35,7 @@ const UpdateProduct: React.FC<PropsTypes> = ({
   const { userPersonalizationData } = useSelector(
     (state: any) => state.personalization
   );
-  console.log("selectedProduct",selectedProduct);
-  
+  // console.log("selectedProduct",selectedProduct);
 
   const [loading, setLoading] = useState(false);
 
@@ -72,7 +71,9 @@ const UpdateProduct: React.FC<PropsTypes> = ({
     selectedProduct.productType
   );
   const [unitsList, setUnitsList] = useState<any[]>([]);
-  const [measurementUnit, setMeasurementUnit] = useState(selectedProduct.measurementUnit);
+  const [measurementUnit, setMeasurementUnit] = useState(
+    selectedProduct.measurementUnit
+  );
 
   useEffect(() => {
     const tempList = productType.map((item: any) => ({
@@ -103,11 +104,10 @@ const UpdateProduct: React.FC<PropsTypes> = ({
           url: `${UPDATE_PRODUCT}/${selectedProduct.id}`,
         });
         if (response.success) {
-          
           dispatch(setProductStart());
           const products: any = await getAll({ url: GET_ALL_PRODUCTS });
-          console.log("products->",products);
-          
+          // console.log("products->",products);
+
           if (products.success) {
             dispatch(setProduct(products.data));
           }

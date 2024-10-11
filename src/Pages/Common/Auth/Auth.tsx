@@ -7,13 +7,16 @@ import Swal from "sweetalert2";
 import { getAll } from "../../../Utilities/api";
 import Loader from "../../Utilities/Loader/Loader";
 import { setUserPersonalizationData } from "../../../ReaduxToolkit/Reducer/PersonalizationSlice";
-import { GET_COMPANY_PERSONALIZATION, GET_SUPERADMIN_PERSONALIZATION, IMAGE_BASE_URL } from "../../../Utilities/api/apiEndpoints";
+import {
+  GET_COMPANY_PERSONALIZATION,
+  GET_SUPERADMIN_PERSONALIZATION,
+  IMAGE_BASE_URL,
+} from "../../../Utilities/api/apiEndpoints";
 const LoginForm = () => {
   const [loading, setLoading] = useState<any>(true);
   const { userPersonalizationData } = useSelector(
     (state: any) => state.personalization
   );
-
 
   const dispatch = useDispatch();
 
@@ -59,46 +62,48 @@ const LoginForm = () => {
       });
   }, []);
 
+  const [defaultText, setDefaultText] = useState(
+    "The best tracking platform in the tracking industry"
+  );
   const [text, setText] = useState("");
-  const [index, setIndex] = useState(0);
   const [typing, setTyping] = useState(true);
 
   useEffect(() => {
     const interval = setInterval(() => {
+      const targetText =
+        userPersonalizationData !== null &&
+        userPersonalizationData?.subHeaderText.length !== 0
+          ? userPersonalizationData?.subHeaderText
+          : defaultText;
+
       if (typing) {
+        // Animate forward (typing effect)
         setText((prevText) =>
-          prevText.length < userPersonalizationData?.subHeaderText.length
-            ? userPersonalizationData?.subHeaderText.slice(
-              0,
-              prevText.length + 1
-            )
+          prevText.length < targetText.length
+            ? targetText.slice(0, prevText.length + 1)
             : prevText
         );
 
-        if (text === userPersonalizationData?.subHeaderText) {
-          setTyping(false);
+        if (text === targetText) {
+          setTyping(false); // Start erasing after the full text is displayed
         }
       } else {
-        // setText((prevText) =>
-        //   prevText.length > 0 ? prevText.slice(0, prevText.length - 1) : ""
-        // );
+        // Animate backward (erasing effect)
+        setText((prevText) =>
+          prevText.length > 3
+            ? prevText.slice(0, prevText.length - 1)
+            : targetText.slice(0, 3)
+        );
 
-        // if (text === "") {
-        //   setTyping(true);
-        // }
-        setText((prevText) => {
-          const remainingChars = prevText.length > 3 ? prevText.slice(0, prevText.length - 1) : userPersonalizationData?.subHeaderText.slice(0, 3);
-          return remainingChars;
-        });
-
-        if (text === userPersonalizationData?.subHeaderText.slice(0, 3)) {
-          setTyping(true);
+        if (text === targetText.slice(0, 3)) {
+          setTyping(true); // Start typing again once the text is erased to 3 chars
         }
       }
     }, 70);
 
     return () => clearInterval(interval);
-  }, [typing, text, userPersonalizationData?.subHeaderText]);
+  }, [typing, text, userPersonalizationData, defaultText]);
+
   return (
     <Container fluid>
       {loading ? (
@@ -118,18 +123,17 @@ const LoginForm = () => {
       ) : (
         <Row
           style={{
-            backgroundColor: `${userPersonalizationData !== null &&
+            backgroundColor: `${
+              userPersonalizationData !== null &&
               userPersonalizationData?.loginPageBackgroundType == "SOLID" &&
               userPersonalizationData &&
               userPersonalizationData?.loginPageBackgroundColor
-              }`,
-            backgroundImage: `${userPersonalizationData !== null &&
+            }`,
+            backgroundImage: `${
+              userPersonalizationData !== null &&
               userPersonalizationData?.loginPageBackgroundType == "GRADIENT" &&
-              `linear-gradient(to ${userPersonalizationData?.gradient?.direction
-              }, ${userPersonalizationData?.gradient.color1
-              }, ${userPersonalizationData?.gradient.color2
-              })`
-              }`,
+              `linear-gradient(to ${userPersonalizationData?.gradient?.direction}, ${userPersonalizationData?.gradient.color1}, ${userPersonalizationData?.gradient.color2})`
+            }`,
           }}
         >
           <Col
@@ -183,9 +187,7 @@ const LoginForm = () => {
               }}
               className="pacifico-regular"
             >
-              {userPersonalizationData !== null
-                ? text
-                : "The best tracking platform in the tracking industry"}
+              {userPersonalizationData !== null ? text : text}
               {/* {userPersonalizationData !== null
                 ? userPersonalizationData.subHeaderText
                 : "The best tracking platform in the tracking industry"} */}
@@ -193,7 +195,8 @@ const LoginForm = () => {
 
             <img
               src={
-                userPersonalizationData !== null && userPersonalizationData?.loginPageLogo.url !== ""
+                userPersonalizationData !== null &&
+                userPersonalizationData?.loginPageLogo.url !== ""
                   ? `${IMAGE_BASE_URL}/${userPersonalizationData?.loginPageLogo.url}`
                   : BcakgroundImage
               }

@@ -24,7 +24,13 @@ import Swal from "sweetalert2";
 import Loader from "../../../../../Utilities/Loader/Loader";
 import { serverCredentials } from "../../../../../../Utilities/headers/header";
 import { getUserRole } from "../../../../../../Utilities/globals/globals";
-import { ASSIGN_ALERT_EVENT_TO_ME, COMPLETE_AN_ALERT_EVENT, GET_ALERT_EVENTS, GET_ALL_ASSIGNED_ALERT_EVENTS, GET_ALL_COMPLETED_ALERT_EVENTS } from "../../../../../../Utilities/api/apiEndpoints";
+import {
+  ASSIGN_ALERT_EVENT_TO_ME,
+  COMPLETE_AN_ALERT_EVENT,
+  GET_ALERT_EVENTS,
+  GET_ALL_ASSIGNED_ALERT_EVENTS,
+  GET_ALL_COMPLETED_ALERT_EVENTS,
+} from "../../../../../../Utilities/api/apiEndpoints";
 import { ERROR_MESSAGE } from "../../../../../../Utilities/constants/constants";
 
 const LiveAlerts = () => {
@@ -61,13 +67,7 @@ const LiveAlerts = () => {
   const [dataList, setDataList]: any = useState([]);
   const [loading, setLoading] = useState(false); // State to manage loading
   const [assignLoading, setAssignLoading] = useState(true);
-  const tableHeader = [
-    "Device",
-    "Alert",
-    "Type",
-    "Message",
-    "Address",
-  ];
+  const tableHeader = ["Device", "Alert", "Type", "Message", "Address"];
   const containerRef = useRef(null);
   const [pageNo, setPageNo] = useState(1);
   useEffect(() => {
@@ -189,7 +189,7 @@ const LiveAlerts = () => {
           style={{
             backgroundColor:
               userPersonalizationData !== null &&
-                userPersonalizationData?.buttonsAndBarsColor !== null
+              userPersonalizationData?.buttonsAndBarsColor !== null
                 ? userPersonalizationData?.buttonsAndBarsColor
                 : "#63d5be",
             height: "40px",
@@ -206,10 +206,10 @@ const LiveAlerts = () => {
             {liveAlertsData == null
               ? 0
               : liveAlerts.length < 15
-                ? liveAlerts.length
-                : liveAlertsData.lastPage > 1
-                  ? liveAlerts.length + (liveAlertsData.lastPage - 1) * 30
-                  : liveAlerts.length}
+              ? liveAlerts.length
+              : liveAlertsData.lastPage > 1
+              ? liveAlerts.length + (liveAlertsData.lastPage - 1) * 30
+              : liveAlerts.length}
             )
           </div>
         </div>
@@ -227,21 +227,19 @@ const LiveAlerts = () => {
               />
             </FormGroup>
           </Row>
-          
-            <Table className="display order-wrapper" id="recent-order">
-              <thead>
-                <tr>
 
-
-                  {tableHeader.map((data, index) => (
-                    <th key={index} style={{ width: "20%" }}>
-                      {data}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              </ Table>
-              <div
+          <Table className="display order-wrapper" id="recent-order">
+            <thead>
+              <tr>
+                {tableHeader.map((data, index) => (
+                  <th key={index} style={{ width: "20%" }}>
+                    {data}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+          </Table>
+          <div
             ref={containerRef}
             className="table-responsive theme-scrollbar recent-wrapper"
             style={{
@@ -257,8 +255,7 @@ const LiveAlerts = () => {
             }}
             onScroll={handleScroll}
           >
-
-              <Table className="display order-wrapper" id="recent-order">
+            <Table className="display order-wrapper" id="recent-order">
               <tbody>
                 {dataList.length > 0 ? (
                   dataList
@@ -283,7 +280,7 @@ const LiveAlerts = () => {
                                 : `rgba(${rgbColor.r},${rgbColor.g},${rgbColor.b},0.2)`
                               : "transparent",
                           transition: "background-color 0.3s",
-                          cursor:"pointer",
+                          cursor: "pointer",
                         }}
                         onClick={async () => {
                           if (data.preInfo == null) {
@@ -295,7 +292,9 @@ const LiveAlerts = () => {
                                 allowOutsideClick: false, // Prevent closing by clicking outside the modal
                               });
                             }
-                            const serverInfo = serverCredentials(data.server._id);
+                            const serverInfo = serverCredentials(
+                              data.server._id
+                            );
                             // console.log("serverInfo", serverInfo);
 
                             const assignEvent = {
@@ -311,6 +310,7 @@ const LiveAlerts = () => {
                               course: data.course,
                               serverId: serverInfo?.serverId,
                               serverHashKey: serverInfo?.serverHashKey,
+                              geofenceId: data.geofenceId,
                             };
                             // console.log(assignEvent);
                             try {
@@ -379,7 +379,8 @@ const LiveAlerts = () => {
                           } else {
                             var checkServer =
                               liveAlertsData?.connectedServers?.find(
-                                (item: any) => item.server._id === data.server._id
+                                (item: any) =>
+                                  item.server._id === data.server._id
                               );
                             if (checkServer?.isConnected) {
                               Swal.fire({
@@ -440,8 +441,7 @@ const LiveAlerts = () => {
                                     }).then((dataa: any) => {
                                       if (
                                         !dataa.success &&
-                                        dataa.message ==
-                                        ERROR_MESSAGE
+                                        dataa.message == ERROR_MESSAGE
                                       ) {
                                         setAssignLoading(false);
                                       }
@@ -461,7 +461,10 @@ const LiveAlerts = () => {
                                         updatedAlerts.splice(index, 1); // Remove the item at the specified index
 
                                         setDataList(
-                                          updatedAlerts.slice(0, dataList.length)
+                                          updatedAlerts.slice(
+                                            0,
+                                            dataList.length
+                                          )
                                         );
                                         // console.log("updatedAlerts", updatedAlerts);
                                         // console.log("dataList", dataList);
@@ -533,8 +536,7 @@ const LiveAlerts = () => {
                                     }).then(async (dataa: any) => {
                                       if (
                                         !dataa.success &&
-                                        dataa.message ==
-                                        ERROR_MESSAGE
+                                        dataa.message == ERROR_MESSAGE
                                       ) {
                                         setAssignLoading(false);
                                       }
@@ -554,7 +556,10 @@ const LiveAlerts = () => {
                                         updatedAlerts.splice(index, 1); // Remove the item at the specified index
 
                                         setDataList(
-                                          updatedAlerts.slice(0, dataList.length)
+                                          updatedAlerts.slice(
+                                            0,
+                                            dataList.length
+                                          )
                                         );
                                         // console.log("updatedAlerts", updatedAlerts);
                                         // console.log("dataList", dataList);
@@ -575,8 +580,7 @@ const LiveAlerts = () => {
                                           }).then((data: any) => {
                                             if (
                                               !data.success &&
-                                              data.message ==
-                                              ERROR_MESSAGE
+                                              data.message == ERROR_MESSAGE
                                             ) {
                                               setLoading(false);
                                             }
@@ -608,7 +612,9 @@ const LiveAlerts = () => {
                                                   if (data.success) {
                                                     // console.log("length --- >", data.data.length);
                                                     dispatch(
-                                                      setAssignedAlerts(data.data)
+                                                      setAssignedAlerts(
+                                                        data.data
+                                                      )
                                                     );
                                                   }
                                                   if (data.statusCode === 404) {
@@ -685,17 +691,17 @@ const LiveAlerts = () => {
                             </div>
                           </div>
                         </td>
-                        <td className={`txt-primary`} style={{ width: "20%"}}>
+                        <td className={`txt-primary`} style={{ width: "20%" }}>
                           {data.name}
                         </td>
-                        <td style={{ width: "20%"}}>{data.type}</td>
-                        <td style={{ width: "20%"}}>{data.message}</td>
-                        <td id="addressLiveAlerts" style={{ width: "20%"}}>
+                        <td style={{ width: "20%" }}>{data.type}</td>
+                        <td style={{ width: "20%" }}>{data.message}</td>
+                        <td id="addressLiveAlerts" style={{ width: "20%" }}>
                           {data.address == null
                             ? "N/A"
                             : data.address.length > 10
-                              ? data.address.substring(0, 10) + "..."
-                              : data.address}
+                            ? data.address.substring(0, 10) + "..."
+                            : data.address}
                         </td>
                         {data.address != null && (
                           <UncontrolledPopover

@@ -8,11 +8,14 @@ interface propTypes {
   disabled: boolean;
 }
 
-const SelectBanksBox: React.FC<propTypes> = ({ placeholder, bank, setBank, disabled }) => {
-  const { banks } = useSelector(
-    (state: any) => state.sales
-  );
-  // console.log(cities);
+const SelectBanksBox: React.FC<propTypes> = ({
+  placeholder,
+  bank,
+  setBank,
+  disabled,
+}) => {
+  const { banks } = useSelector((state: any) => state.sales);
+  // // console.log(cities);
   const [cityId, setCityId] = useState("");
   const [banksList, setBanksList] = useState([]);
   const dispatch = useDispatch();
@@ -40,7 +43,7 @@ const SelectBanksBox: React.FC<propTypes> = ({ placeholder, bank, setBank, disab
           .localeCompare((optionB?.label ?? "").toLowerCase())
       }
       onChange={(e) => {
-        setBank(e)
+        setBank(e);
       }}
       options={banksList}
       disabled={disabled}

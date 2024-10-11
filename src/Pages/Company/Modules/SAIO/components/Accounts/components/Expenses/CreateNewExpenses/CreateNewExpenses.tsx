@@ -7,24 +7,36 @@ import {
   Row,
   Container,
   Card,
-  CardBody
+  CardBody,
 } from "reactstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { P } from "../../../../../../../../../AbstractElements";
-import jsPDF from 'jspdf';
-import 'jspdf-autotable';
+import jsPDF from "jspdf";
+import "jspdf-autotable";
 import SelectPayFromBox from "./components/SelectPayFromBox";
 import SelectExpesneNumberBox from "./components/SelectExpesneNumberBox";
 import SingleExpenseObject from "./components/SingleExpenseObject";
 import Dropzone from "react-dropzone-uploader";
 import { SubmitHandler } from "react-hook-form";
-import { create, createWithMultipart, getAll, updateWithMultipart } from "../../../../../../../../../Utilities/api";
-import { CREATE_NEW_EXPENSE, GET_ALL_EXPENSES, UPDATE_EXPENSES } from "../../../../../../../../../Utilities/api/apiEndpoints";
-import { setExpense, setExpenses } from "../../../../../../../../../ReaduxToolkit/Reducer/ExpensesSlice";
+import {
+  create,
+  createWithMultipart,
+  getAll,
+  updateWithMultipart,
+} from "../../../../../../../../../Utilities/api";
+import {
+  CREATE_NEW_EXPENSE,
+  GET_ALL_EXPENSES,
+  UPDATE_EXPENSES,
+} from "../../../../../../../../../Utilities/api/apiEndpoints";
+import {
+  setExpense,
+  setExpenses,
+} from "../../../../../../../../../ReaduxToolkit/Reducer/ExpensesSlice";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 
-declare module 'jspdf' {
+declare module "jspdf" {
   interface jsPDF {
     autoTable: (options: any) => jsPDF;
   }
@@ -35,11 +47,12 @@ interface CreateNewExpensesProps {
   // setIscreateNewExpenses: any
 }
 
-const CreateNewExpenses: React.FC<CreateNewExpensesProps> = ({
-  // iscreateNewExpenses,
-  // setIscreateNewExpenses,
-}) => {
-
+const CreateNewExpenses: React.FC<CreateNewExpensesProps> = (
+  {
+    // iscreateNewExpenses,
+    // setIscreateNewExpenses,
+  }
+) => {
   const { expense } = useSelector((state: any) => state.expenses);
   const { userPersonalizationData } = useSelector(
     (state: any) => state.personalization
@@ -48,70 +61,75 @@ const CreateNewExpenses: React.FC<CreateNewExpensesProps> = ({
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const [bankAccount, setBankAccount] = useState(expense !== null ? expense.payFrom : "");
+  const [bankAccount, setBankAccount] = useState(
+    expense !== null ? expense.payFrom : ""
+  );
   const [loading, setLoading] = useState(false);
 
   const [expenseForm, setExpenseForm] = useState({
-    date: expense !== null ? expense.date.slice(0, 10) : new Date().toISOString().slice(0, 10),
+    date:
+      expense !== null
+        ? expense.date.slice(0, 10)
+        : new Date().toISOString().slice(0, 10),
     reference: expense !== null ? expense.reference : "",
-    totalAmount: expense !== null ? expense.totalAmount : ""
+    totalAmount: expense !== null ? expense.totalAmount : "",
   });
 
-  const {
-    date,
-    reference,
-    totalAmount
-  } = expenseForm;
+  const { date, reference, totalAmount } = expenseForm;
 
-  const getUserData = (event: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLTextAreaElement>) => {
+  const getUserData = (
+    event: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLTextAreaElement>
+  ) => {
     let name = event.target.name;
     let value = event.target.value;
-    console.log(name, value);
+    // console.log(name, value);
     setExpenseForm({ ...expenseForm, [name]: value });
-
   };
 
   const data = [
-    { "name": "John Doe", "age": 30, "position": "Developer" },
-    { "name": "Jane Smith", "age": 25, "position": "Designer" },
+    { name: "John Doe", age: 30, position: "Developer" },
+    { name: "Jane Smith", age: 25, position: "Designer" },
   ];
 
   const generatePDF = () => {
     const doc = new jsPDF();
     doc.setFontSize(20);
-    doc.text('Employee List', 14, 22);
+    doc.text("Employee List", 14, 22);
 
     const columns = ["Name", "Age", "Position"];
-    const rows = data.map(item => [item.name, item.age, item.position]);
+    const rows = data.map((item) => [item.name, item.age, item.position]);
 
     doc.autoTable({
       head: [columns],
       body: rows,
       startY: 30,
-      theme: 'striped',
+      theme: "striped",
       headStyles: { fillColor: [22, 160, 133] },
     });
 
-    doc.save('table.pdf');
+    doc.save("table.pdf");
   };
 
   const [expenseObjects, setExpenseObject] = useState<
     {
-      expenseAccount: string
-      description: string,
-      amount: string,
+      expenseAccount: string;
+      description: string;
+      amount: string;
     }[]
   >(expense !== null ? expense.expenseItems : []);
 
   // Function to add a new body parameter
   const addExpenseObject = () => {
-    console.log("expenseObjects", expenseObjects);
+    // console.log("expenseObjects", expenseObjects);
 
-    setExpenseObject([...expenseObjects, {
-      expenseAccount: "",
-      amount: "",
-      description: "",
-    }]);
+    setExpenseObject([
+      ...expenseObjects,
+      {
+        expenseAccount: "",
+        amount: "",
+        description: "",
+      },
+    ]);
   };
 
   // Function to delete a body parameter
@@ -124,17 +142,19 @@ const CreateNewExpenses: React.FC<CreateNewExpensesProps> = ({
   const handleExpenseObjectChange = (
     index: number,
     newParam: {
-      expenseAccount: string
-      amount: string,
-      description: string,
+      expenseAccount: string;
+      amount: string;
+      description: string;
     }
   ) => {
-    console.log("expenseObjects", expenseObjects);
+    // console.log("expenseObjects", expenseObjects);
 
     const updatedExpenseObject = expenseObjects.map((param, i) =>
-      i === index ? {
-        ...newParam,
-      } : param
+      i === index
+        ? {
+            ...newParam,
+          }
+        : param
     );
     setExpenseObject(updatedExpenseObject);
     const totalAmount = updatedExpenseObject.reduce((sum, param) => {
@@ -155,14 +175,14 @@ const CreateNewExpenses: React.FC<CreateNewExpensesProps> = ({
 
   const handleAttachementAdd = ({ file, meta, remove }: type, status: any) => {
     if (status === "done") {
-      // console.log("File uploaded successfully:", file);
+      // // console.log("File uploaded successfully:", file);
       if (isEdit) {
         setEditedAttachementImage(file);
       } else {
         setAttachementImage(file);
       }
     } else if (status === "removed") {
-      // console.log("File removed:", file);
+      // // console.log("File removed:", file);
       if (isEdit) {
         setEditedAttachementImage(null);
       } else {
@@ -171,12 +191,13 @@ const CreateNewExpenses: React.FC<CreateNewExpensesProps> = ({
     }
   };
 
-
-
   const addAndUpdateExpense: SubmitHandler<any> = async (data) => {
     setLoading(true);
     if (
-      date !== "" && totalAmount !== "" && bankAccount !== "" && expenseObjects.length > 0
+      date !== "" &&
+      totalAmount !== "" &&
+      bankAccount !== "" &&
+      expenseObjects.length > 0
     ) {
       const expenseData = {
         payFrom: bankAccount,
@@ -191,9 +212,9 @@ const CreateNewExpenses: React.FC<CreateNewExpensesProps> = ({
         // }),
 
         expenseItems: expenseObjects,
-        attachement: attachementImage
+        attachement: attachementImage,
       };
-      console.log("new expense -> ", expenseData);
+      // console.log("new expense -> ", expenseData);
 
       // const formData = new FormData();
       // formData.append("payFrom", bankAccount);
@@ -209,14 +230,18 @@ const CreateNewExpenses: React.FC<CreateNewExpensesProps> = ({
       //   formData.append("attachement", attachementImage);
       // }
 
-
-      // console.log("new expense -> ", formData);
-
+      // // console.log("new expense -> ", formData);
 
       try {
-        const response: any = expense !== null ? await updateWithMultipart(expenseData, { url: `${UPDATE_EXPENSES}/${expense.id}` }) : await createWithMultipart(expenseData, { url: CREATE_NEW_EXPENSE });
+        const response: any =
+          expense !== null
+            ? await updateWithMultipart(expenseData, {
+                url: `${UPDATE_EXPENSES}/${expense.id}`,
+              })
+            : await createWithMultipart(expenseData, {
+                url: CREATE_NEW_EXPENSE,
+              });
         if (response.success) {
-
           setLoading(false);
           dispatch(setExpense(null));
           const expensesResponse: any = await getAll({ url: GET_ALL_EXPENSES });
@@ -224,7 +249,9 @@ const CreateNewExpenses: React.FC<CreateNewExpensesProps> = ({
             dispatch(setExpenses(expensesResponse.data));
             // setIscreateNewExpenses(false)
 
-            navigate(`${process.env.PUBLIC_URL}/company/modules/saio-central/accounts/expenses`)
+            navigate(
+              `${process.env.PUBLIC_URL}/company/modules/saio-central/accounts/expenses`
+            );
           }
         } else {
           Swal.fire({
@@ -234,7 +261,6 @@ const CreateNewExpenses: React.FC<CreateNewExpensesProps> = ({
             showConfirmButton: false,
           });
           setLoading(false);
-
         }
       } catch (error: any) {
         Swal.fire({
@@ -257,8 +283,6 @@ const CreateNewExpenses: React.FC<CreateNewExpensesProps> = ({
     }
   };
 
-
-
   return (
     <>
       <Row>
@@ -275,7 +299,11 @@ const CreateNewExpenses: React.FC<CreateNewExpensesProps> = ({
                   <span className="txt-danger">*</span>
                 </P>
               </div>
-              <SelectPayFromBox placeholder="Select Bank Account" setBankAccount={setBankAccount} bankAccount={bankAccount} />
+              <SelectPayFromBox
+                placeholder="Select Bank Account"
+                setBankAccount={setBankAccount}
+                bankAccount={bankAccount}
+              />
             </Col>
             <Col md={3} xs={12}>
               <div>
@@ -307,9 +335,7 @@ const CreateNewExpenses: React.FC<CreateNewExpensesProps> = ({
             </Col>
 
             <Col md={3} xs={12}>
-              <P>
-                Reference
-              </P>
+              <P>Reference</P>
               <Input
                 type="text"
                 placeholder="Enter Reference"
@@ -320,25 +346,22 @@ const CreateNewExpenses: React.FC<CreateNewExpensesProps> = ({
             </Col>
             <Row className="g-3" style={{ marginTop: "35px" }}>
               <div style={{ display: "flex", justifyContent: "end" }}>
-                {
-                  userPersonalizationData !== null ? (
-                    <Button
-                      color=""
-                      onClick={addExpenseObject}
-                      style={{
-                        color: "white",
-                        backgroundColor: `${userPersonalizationData?.buttonsAndBarsColor
-                          }`,
-                      }}
-                    >
-                      Add Expense
-                    </Button>
-                  ) : (
-                    <Button color="primary" onClick={addExpenseObject}>
-                      Add Expense
-                    </Button>
-                  )
-                }
+                {userPersonalizationData !== null ? (
+                  <Button
+                    color=""
+                    onClick={addExpenseObject}
+                    style={{
+                      color: "white",
+                      backgroundColor: `${userPersonalizationData?.buttonsAndBarsColor}`,
+                    }}
+                  >
+                    Add Expense
+                  </Button>
+                ) : (
+                  <Button color="primary" onClick={addExpenseObject}>
+                    Add Expense
+                  </Button>
+                )}
               </div>
 
               {expenseObjects.map((param, index) => (
@@ -351,14 +374,10 @@ const CreateNewExpenses: React.FC<CreateNewExpensesProps> = ({
                   onDelete={() => deleteExpenseObject(index)}
                 />
               ))}
-
             </Row>
             <Row className="g-3" style={{ marginTop: "15px" }}>
               <Col lg={6} xs={12}>
-                <P>
-                  Attachement
-
-                </P>
+                <P>Attachement</P>
                 <Dropzone
                   onChangeStatus={handleAttachementAdd}
                   // accept="image/*"
@@ -393,7 +412,7 @@ const CreateNewExpenses: React.FC<CreateNewExpensesProps> = ({
                       value={totalAmount}
                       name="totalAmount"
                       disabled
-                    // onChange={getUserData}
+                      // onChange={getUserData}
                     />
                   </Col>
                 </Row>
@@ -404,10 +423,15 @@ const CreateNewExpenses: React.FC<CreateNewExpensesProps> = ({
               className="text-end d-flex justify-content-end gap-2 align-center"
               style={{ marginTop: "20px" }}
             >
-              <Button color="primary" onClick={() => {
-                // setIscreateNewExpenses(false);
-                navigate(`${process.env.PUBLIC_URL}/company/modules/saio-central/accounts/expenses`)
-              }}>
+              <Button
+                color="primary"
+                onClick={() => {
+                  // setIscreateNewExpenses(false);
+                  navigate(
+                    `${process.env.PUBLIC_URL}/company/modules/saio-central/accounts/expenses`
+                  );
+                }}
+              >
                 Cancel
               </Button>
               <Button color="primary" onClick={addAndUpdateExpense}>
@@ -422,8 +446,3 @@ const CreateNewExpenses: React.FC<CreateNewExpensesProps> = ({
 };
 
 export default CreateNewExpenses;
-
-
-
-
-

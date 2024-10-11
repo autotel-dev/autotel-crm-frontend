@@ -15,17 +15,29 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { P } from "../../../../../../../../../../../AbstractElements";
 import { BusinessFormCommonProps } from "../../../../../../../../../../../Types/Forms/FormLayout/FormWizardTypes";
-import { create, getAll, update } from "../../../../../../../../../../../Utilities/api";
-import { CREATE_NEW_CUSTOMER, GET_ALL_SALELEADS, GET_SINGLE_SALELEAD, UPDATE_CUSTOMER } from "../../../../../../../../../../../Utilities/api/apiEndpoints";
+import {
+  create,
+  getAll,
+  update,
+} from "../../../../../../../../../../../Utilities/api";
+import {
+  CREATE_NEW_CUSTOMER,
+  GET_ALL_SALELEADS,
+  GET_SINGLE_SALELEAD,
+  UPDATE_CUSTOMER,
+} from "../../../../../../../../../../../Utilities/api/apiEndpoints";
 import { ERROR_MESSAGE } from "../../../../../../../../../../../Utilities/constants/constants";
 import Swal from "sweetalert2";
-import { setCustomer, setSaleLead, setSaleLeadId, setSaleLeads } from "../../../../../../../../../../../ReaduxToolkit/Reducer/SalesSlice";
+import {
+  setCustomer,
+  setSaleLead,
+  setSaleLeadId,
+  setSaleLeads,
+} from "../../../../../../../../../../../ReaduxToolkit/Reducer/SalesSlice";
 import { useNavigate } from "react-router-dom";
 
 interface CustomerInfoProps {
   callbackActive: (val: number | undefined) => void;
-
-
 }
 
 const CustomerInfo = ({ callbackActive }: CustomerInfoProps) => {
@@ -35,10 +47,10 @@ const CustomerInfo = ({ callbackActive }: CustomerInfoProps) => {
   const { saleLeadId, customer, saleLead } = useSelector(
     (state: any) => state.sales
   );
-  console.log("saleLeadId", saleLeadId);
+  // // console.log("saleLeadId", saleLeadId);
 
   const dispatch = useDispatch();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const [personalDetailsForm, setPersonalDetailsForm] = useState({
     cnic: "",
     dob: "",
@@ -64,7 +76,6 @@ const CustomerInfo = ({ callbackActive }: CustomerInfoProps) => {
     emailAddress,
     residentialNo,
     homeAddress,
-
   } = personalDetailsForm;
   const getUserData = (event: ChangeEvent<HTMLInputElement>) => {
     let name = event.target.name;
@@ -74,13 +85,13 @@ const CustomerInfo = ({ callbackActive }: CustomerInfoProps) => {
   };
 
   const [loading, setLoading] = useState(false);
-  console.log("saleLeadId", saleLeadId);
+  // // console.log("saleLeadId", saleLeadId);
 
-  const [isEditCustomerInfo, setIsEditCustomerInfo] = useState(saleLead?.customer !== null ? true : false)
-
+  const [isEditCustomerInfo, setIsEditCustomerInfo] = useState(
+    saleLead?.customer !== null ? true : false
+  );
 
   const createCustomer = async () => {
-
     setLoading(true);
     if (
       cnic !== "" &&
@@ -90,18 +101,16 @@ const CustomerInfo = ({ callbackActive }: CustomerInfoProps) => {
       emailAddress !== "" &&
       residentialNo !== "" &&
       homeAddress
-
     ) {
       try {
-        await create({ ...personalDetailsForm, saleLeadId: saleLead._id }, { url: CREATE_NEW_CUSTOMER }).then((data: any) => {
+        await create(
+          { ...personalDetailsForm, saleLeadId: saleLead._id },
+          { url: CREATE_NEW_CUSTOMER }
+        ).then((data: any) => {
           if (data !== undefined) {
-            if (
-              !data.success &&
-              data.message === ERROR_MESSAGE
-            ) {
+            if (!data.success && data.message === ERROR_MESSAGE) {
               setLoading(false);
-              console.log("data.message", data.message);
-
+              // // console.log("data.message", data.message);
             }
             if (!data.success) {
               Swal.fire({
@@ -112,18 +121,19 @@ const CustomerInfo = ({ callbackActive }: CustomerInfoProps) => {
               });
               setLoading(false);
               dispatch(setCustomer(null));
-              dispatch(setSaleLeadId(""))
-
+              dispatch(setSaleLeadId(""));
             }
             if (data.success) {
-              getAll({ url: `${GET_SINGLE_SALELEAD}/${saleLead._id}` }).then((data: any) => {
-                if (data !== undefined) {
-                  if (data.success) {
-                    dispatch(setSaleLead(data.data));
-                    callbackActive(3);
+              getAll({ url: `${GET_SINGLE_SALELEAD}/${saleLead._id}` }).then(
+                (data: any) => {
+                  if (data !== undefined) {
+                    if (data.success) {
+                      dispatch(setSaleLead(data.data));
+                      callbackActive(3);
+                    }
                   }
                 }
-              });
+              );
 
               getAll({ url: GET_ALL_SALELEADS }).then((data: any) => {
                 if (data !== undefined) {
@@ -138,7 +148,6 @@ const CustomerInfo = ({ callbackActive }: CustomerInfoProps) => {
                     dispatch(setCustomer(null));
                   }
                   if (data.success) {
-
                     dispatch(setSaleLeadId(""));
                     dispatch(setCustomer(null));
                     dispatch(setSaleLeads(data.data));
@@ -147,7 +156,6 @@ const CustomerInfo = ({ callbackActive }: CustomerInfoProps) => {
                 setLoading(false);
               });
               // setLoading(false);
-
             }
           }
         });
@@ -164,7 +172,6 @@ const CustomerInfo = ({ callbackActive }: CustomerInfoProps) => {
   };
 
   const updateCustomer = async () => {
-
     setLoading(true);
     if (
       cnic !== "" &&
@@ -174,23 +181,22 @@ const CustomerInfo = ({ callbackActive }: CustomerInfoProps) => {
       emailAddress !== "" &&
       residentialNo !== "" &&
       homeAddress
-
     ) {
       try {
-        await update({
-          ...personalDetailsForm,
-          customerName: saleLead?.customerName,
-          customerContactNo: saleLead?.customerContactNo,
-          city: saleLead?.city._id, saleLeadId: saleLead._id
-        }, { url: `${UPDATE_CUSTOMER}/${saleLead?.customer?._id}` }).then((data: any) => {
+        await update(
+          {
+            ...personalDetailsForm,
+            customerName: saleLead?.customerName,
+            customerContactNo: saleLead?.customerContactNo,
+            city: saleLead?.city._id,
+            saleLeadId: saleLead._id,
+          },
+          { url: `${UPDATE_CUSTOMER}/${saleLead?.customer?._id}` }
+        ).then((data: any) => {
           if (data !== undefined) {
-            if (
-              !data.success &&
-              data.message === ERROR_MESSAGE
-            ) {
+            if (!data.success && data.message === ERROR_MESSAGE) {
               setLoading(false);
-              console.log("data.message", data.message);
-
+              // // console.log("data.message", data.message);
             }
             if (!data.success) {
               Swal.fire({
@@ -200,14 +206,12 @@ const CustomerInfo = ({ callbackActive }: CustomerInfoProps) => {
                 showConfirmButton: false,
               });
               setLoading(false);
-              setIsEditCustomerInfo(true)
-
+              setIsEditCustomerInfo(true);
             }
             if (data.success) {
               setLoading(false);
-              setIsEditCustomerInfo(true)
+              setIsEditCustomerInfo(true);
               getAll({ url: GET_ALL_SALELEADS }).then((data: any) => {
-
                 if (data !== undefined) {
                   if (!data.success) {
                     Swal.fire({
@@ -218,10 +222,12 @@ const CustomerInfo = ({ callbackActive }: CustomerInfoProps) => {
                     });
                   }
                   if (data.success) {
-                    // // console.log("hhg");
+                    // // // // console.log("hhg");
                     dispatch(setSaleLeads(data.data));
-                    setIsEditCustomerInfo(true)
-                    getAll({ url: `${GET_SINGLE_SALELEAD}/${saleLead._id}` }).then((data: any) => {
+                    setIsEditCustomerInfo(true);
+                    getAll({
+                      url: `${GET_SINGLE_SALELEAD}/${saleLead._id}`,
+                    }).then((data: any) => {
                       if (data !== undefined) {
                         if (data.success) {
                           dispatch(setSaleLead(data.data));
@@ -231,8 +237,6 @@ const CustomerInfo = ({ callbackActive }: CustomerInfoProps) => {
                   }
                 }
               });
-
-
             }
           }
         });
@@ -253,30 +257,39 @@ const CustomerInfo = ({ callbackActive }: CustomerInfoProps) => {
       setPersonalDetailsForm({
         cnic: customer !== null ? customer?.cnic : "",
         dob: customer !== null ? customer?.dob?.slice(0, 10) : "",
-        additionalContactNo: customer !== null ? customer?.additionalContactNo : "",
+        additionalContactNo:
+          customer !== null ? customer?.additionalContactNo : "",
         officeNo: customer !== null ? customer?.officeNo : "",
         emailAddress: customer !== null ? customer?.emailAddress : "",
         residentialNo: customer !== null ? customer?.residentialNo : "",
         homeAddress: customer !== null ? customer?.homeAddress : "",
-      })
+      });
     }
-
-
-  }, [customer])
+  }, [customer]);
 
   useEffect(() => {
     if (saleLead?.customer !== null) {
       setPersonalDetailsForm({
         cnic: saleLead?.customer !== null ? saleLead?.customer?.cnic : "",
-        dob: saleLead?.customer !== null ? saleLead?.customer?.dob?.slice(0, 10) : "",
-        additionalContactNo: saleLead?.customer !== null ? saleLead?.customer?.additionalContactNo : "",
-        officeNo: saleLead?.customer !== null ? saleLead?.customer?.officeNo : "",
-        emailAddress: saleLead?.customer !== null ? saleLead?.customer?.emailAddress : "",
-        residentialNo: saleLead?.customer !== null ? saleLead?.customer?.residentialNo : "",
-        homeAddress: saleLead?.customer !== null ? saleLead?.customer?.homeAddress : "",
-      })
+        dob:
+          saleLead?.customer !== null
+            ? saleLead?.customer?.dob?.slice(0, 10)
+            : "",
+        additionalContactNo:
+          saleLead?.customer !== null
+            ? saleLead?.customer?.additionalContactNo
+            : "",
+        officeNo:
+          saleLead?.customer !== null ? saleLead?.customer?.officeNo : "",
+        emailAddress:
+          saleLead?.customer !== null ? saleLead?.customer?.emailAddress : "",
+        residentialNo:
+          saleLead?.customer !== null ? saleLead?.customer?.residentialNo : "",
+        homeAddress:
+          saleLead?.customer !== null ? saleLead?.customer?.homeAddress : "",
+      });
     }
-  }, [saleLead])
+  }, [saleLead]);
 
   return (
     <Form
@@ -371,15 +384,13 @@ const CustomerInfo = ({ callbackActive }: CustomerInfoProps) => {
         </Col>
         <Col xl={4} xs={12}>
           <P>
-
             Phone No
             <span className="txt-danger">*</span>
           </P>
           <Input
             type="text"
             placeholder="Enter Phone No"
-            value={
-              residentialNo}
+            value={residentialNo}
             name="residentialNo"
             onChange={getUserData}
             disabled={isEditCustomerInfo}
@@ -400,65 +411,124 @@ const CustomerInfo = ({ callbackActive }: CustomerInfoProps) => {
           />
         </Col>
 
-        {
-          saleLead?.status == "INSTALLED" ? <>
+        {saleLead?.status == "INSTALLED" ? (
+          <>
             <Col
               xs={12}
               className="text-end d-flex justify-content-end gap-2 align-center"
             >
-              <Button color="secondary" onClick={() => { dispatch(setCustomer(null)); dispatch(setSaleLeadId("")); dispatch(setSaleLead(null)); navigate(`${process.env.PUBLIC_URL}/company/modules/saio-central/sales/leads`) }}>
+              <Button
+                color="secondary"
+                onClick={() => {
+                  dispatch(setCustomer(null));
+                  dispatch(setSaleLeadId(""));
+                  dispatch(setSaleLead(null));
+                  navigate(
+                    `${process.env.PUBLIC_URL}/company/modules/saio-central/sales/leads`
+                  );
+                }}
+              >
                 Cancel
               </Button>
               <Button color="primary" onClick={() => callbackActive(3)}>
                 Next
               </Button>
             </Col>
-          </> : <>
-            {
-              customer !== null ? <Col
+          </>
+        ) : (
+          <>
+            {customer !== null ? (
+              <Col
                 xs={12}
                 className="text-end d-flex justify-content-end gap-2 align-center"
               >
-                <Button color="secondary" onClick={() => { dispatch(setCustomer(null)); dispatch(setSaleLeadId("")); dispatch(setSaleLead(null)); navigate(`${process.env.PUBLIC_URL}/company/modules/saio-central/sales/leads`) }}>
+                <Button
+                  color="secondary"
+                  onClick={() => {
+                    dispatch(setCustomer(null));
+                    dispatch(setSaleLeadId(""));
+                    dispatch(setSaleLead(null));
+                    navigate(
+                      `${process.env.PUBLIC_URL}/company/modules/saio-central/sales/leads`
+                    );
+                  }}
+                >
                   Cancel
                 </Button>
                 <Button color="primary" onClick={() => callbackActive(3)}>
                   OK
                 </Button>
-              </Col> :
-                saleLead?.customer !== null ? <Col
-                  xs={12}
-                  className="text-end d-flex justify-content-end gap-2 align-center"
+              </Col>
+            ) : saleLead?.customer !== null ? (
+              <Col
+                xs={12}
+                className="text-end d-flex justify-content-end gap-2 align-center"
+              >
+                {/* {customer !== null &&  */}
+                <Button
+                  color="secondary"
+                  disabled={loading}
+                  onClick={() => {
+                    dispatch(setCustomer(null));
+                    dispatch(setSaleLeadId(""));
+                    dispatch(setSaleLead(null));
+                    navigate(
+                      `${process.env.PUBLIC_URL}/company/modules/saio-central/sales/leads`
+                    );
+                  }}
                 >
-                  {/* {customer !== null &&  */}
-                  <Button color="secondary" disabled={loading} onClick={() => { dispatch(setCustomer(null)); dispatch(setSaleLeadId("")); dispatch(setSaleLead(null)); navigate(`${process.env.PUBLIC_URL}/company/modules/saio-central/sales/leads`) }}>
-                    Cancel
-                  </Button>
+                  Cancel
+                </Button>
 
-                  <Button color="primary" disabled={loading || saleLead?.status == "COMPLETED"} onClick={() => !isEditCustomerInfo ? updateCustomer() : setIsEditCustomerInfo(!isEditCustomerInfo)}>
-                    {loading ? "Loading..." : !isEditCustomerInfo ? "Save" : "Edit"}
-                  </Button>
-
-                </Col> :
-                  <Col
-                    xs={12}
-                    className="text-end d-flex justify-content-end gap-2 align-center"
-                  >
-                    {/* {customer !== null &&  */}
-                    <Button color="secondary" disabled={loading} onClick={() => { dispatch(setCustomer(null)); dispatch(setSaleLeadId("")); dispatch(setSaleLead(null)); navigate(`${process.env.PUBLIC_URL}/company/modules/saio-central/sales/leads`) }}>
-                      Cancel
-                    </Button>
-                    <Button color="primary" disabled={loading} onClick={() => createCustomer()}>
-                      {loading ? "Loading..." : "Create Customer"}
-                    </Button>
-
-                  </Col>
-            }
+                <Button
+                  color="primary"
+                  disabled={loading || saleLead?.status == "COMPLETED"}
+                  onClick={() =>
+                    !isEditCustomerInfo
+                      ? updateCustomer()
+                      : setIsEditCustomerInfo(!isEditCustomerInfo)
+                  }
+                >
+                  {loading
+                    ? "Loading..."
+                    : !isEditCustomerInfo
+                    ? "Save"
+                    : "Edit"}
+                </Button>
+              </Col>
+            ) : (
+              <Col
+                xs={12}
+                className="text-end d-flex justify-content-end gap-2 align-center"
+              >
+                {/* {customer !== null &&  */}
+                <Button
+                  color="secondary"
+                  disabled={loading}
+                  onClick={() => {
+                    dispatch(setCustomer(null));
+                    dispatch(setSaleLeadId(""));
+                    dispatch(setSaleLead(null));
+                    navigate(
+                      `${process.env.PUBLIC_URL}/company/modules/saio-central/sales/leads`
+                    );
+                  }}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  color="primary"
+                  disabled={loading}
+                  onClick={() => createCustomer()}
+                >
+                  {loading ? "Loading..." : "Create Customer"}
+                </Button>
+              </Col>
+            )}
           </>
-        }
-
+        )}
       </Row>
-    </Form >
+    </Form>
   );
 };
 

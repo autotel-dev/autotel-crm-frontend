@@ -49,7 +49,13 @@
 
 // ------------------------------------------------------------
 
-import { Map, Marker, GoogleApiWrapper, InfoWindow } from "google-maps-react";
+import {
+  Map,
+  Marker,
+  GoogleApiWrapper,
+  InfoWindow,
+  Polygon,
+} from "google-maps-react";
 import { useEffect, useState, useRef } from "react";
 import { useSelector } from "react-redux";
 import LocationArrow from "../../../../../../../assets/deviceLocationArrow.png";
@@ -59,6 +65,7 @@ const Location = (props) => {
   const [activeMarker, setActiveMarker] = useState(null);
   const [showInfoWindow, setShowInfoWindow] = useState(false);
   const mapRef = useRef(null);
+  const polygonRef = useRef(null);
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
@@ -168,6 +175,8 @@ const Location = (props) => {
     );
   }
 
+  const renderGeofences = () => {};
+
   return (
     <div className="map-container">
       <Map
@@ -180,7 +189,20 @@ const Location = (props) => {
         disableDefaultUI={false} // Enable default UI controls
         style={{ height: "88%", width: "97%", overflow: "unset" }}
         ref={mapRef} // Set ref for the map
-      ></Map>
+      >
+        <Polygon
+          ref={polygonRef}
+          paths={modalData.geofenceCoordinates}
+          options={{
+            strokeColor: "blue",
+            strokeOpacity: 0.8,
+            strokeWeight: 2,
+            fillColor: "blue",
+            fillOpacity: 0.35,
+          }}
+          // onClick={handlePolygonEdit}
+        />
+      </Map>
     </div>
   );
 };

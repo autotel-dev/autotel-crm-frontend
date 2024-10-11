@@ -10,21 +10,27 @@ interface propTypes {
   vehicleMake: any;
 }
 
-const SelectVehicleModelBox: React.FC<propTypes> = ({ placeholder, vehicleModel, setVehicleModel, disabled, vehicleMake }) => {
-  const { vehicleModels } = useSelector(
-    (state: any) => state.sales
-  );
-  console.log("vehicleMake", vehicleMake);
+const SelectVehicleModelBox: React.FC<propTypes> = ({
+  placeholder,
+  vehicleModel,
+  setVehicleModel,
+  disabled,
+  vehicleMake,
+}) => {
+  const { vehicleModels } = useSelector((state: any) => state.sales);
+  // console.log("vehicleMake", vehicleMake);
   const [vehicleModelsList, setVehicleModelsList] = useState([]);
   const dispatch = useDispatch();
 
   const tempList: any = [];
   useEffect(() => {
-    vehicleModels?.filter((item: any) => item?.vehicleMake?._id == vehicleMake).map((item: any, index: any) => {
-      tempList.push({ value: `${item?._id}`, label: `${item?.name}` });
-    });
+    vehicleModels
+      ?.filter((item: any) => item?.vehicleMake?._id == vehicleMake)
+      .map((item: any, index: any) => {
+        tempList.push({ value: `${item?._id}`, label: `${item?.name}` });
+      });
     setVehicleModelsList(tempList);
-  }, [vehicleModels,vehicleMake]);
+  }, [vehicleModels, vehicleMake]);
   return (
     <Select
       value={vehicleModel !== "" ? vehicleModel : null}
@@ -41,7 +47,7 @@ const SelectVehicleModelBox: React.FC<propTypes> = ({ placeholder, vehicleModel,
           .localeCompare((optionB?.label ?? "").toLowerCase())
       }
       onChange={(e) => {
-        setVehicleModel(e)
+        setVehicleModel(e);
       }}
       options={vehicleModelsList}
       disabled={disabled}

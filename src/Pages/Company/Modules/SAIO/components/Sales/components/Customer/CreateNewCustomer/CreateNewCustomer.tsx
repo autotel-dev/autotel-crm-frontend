@@ -1,7 +1,3 @@
-
-
-
-
 import {
   Button,
   Col,
@@ -13,34 +9,44 @@ import {
   Row,
   Container,
   Card,
-  CardBody
+  CardBody,
 } from "reactstrap";
 import { useEffect, useState, ChangeEvent } from "react";
 import { useDispatch } from "react-redux";
 import { P } from "../../../../../../../../../AbstractElements";
 import { useSelector } from "react-redux";
-import { create, getAll, update } from "../../../../../../../../../Utilities/api";
-import { CREATE_NEW_CUSTOMER, GET_ALL_CUSTOMERS, GET_SINGLE_CUSTOMERS, UPDATE_CUSTOMER } from "../../../../../../../../../Utilities/api/apiEndpoints";
+import {
+  create,
+  getAll,
+  update,
+} from "../../../../../../../../../Utilities/api";
+import {
+  CREATE_NEW_CUSTOMER,
+  GET_ALL_CUSTOMERS,
+  GET_SINGLE_CUSTOMERS,
+  UPDATE_CUSTOMER,
+} from "../../../../../../../../../Utilities/api/apiEndpoints";
 import { ERROR_MESSAGE } from "../../../../../../../../../Utilities/constants/constants";
 import Swal from "sweetalert2";
 import ShowError from "./ShowError";
 import SelectCitiesBox from "./components/SelectCitiesBox";
-import { setCustomer, setCustomers, setIsConnected } from "../../../../../../../../../ReaduxToolkit/Reducer/SalesSlice";
+import {
+  setCustomer,
+  setCustomers,
+  setIsConnected,
+} from "../../../../../../../../../ReaduxToolkit/Reducer/SalesSlice";
 import Skeleton from "../../../../../../../../Utilities/Skeleton/Skeleton";
 import { useNavigate } from "react-router-dom";
 
-
-
 const CreateNewCustomer = () => {
-
-  const { customer } = useSelector(
-    (state: any) => state.sales
-  );
-  console.log("customer", customer);
+  const { customer } = useSelector((state: any) => state.sales);
+  // console.log("customer", customer);
   const dispatch = useDispatch();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
-  const [customerLoading, setCustomerLoading] = useState(customer !== null ? true : false)
+  const [customerLoading, setCustomerLoading] = useState(
+    customer !== null ? true : false
+  );
 
   const [city, setCity] = useState("");
   const [loading, setLoading] = useState(false);
@@ -55,7 +61,7 @@ const CreateNewCustomer = () => {
     officeNo: "",
     emailAddress: "",
     residentialNo: "",
-    homeAddress: ""
+    homeAddress: "",
   });
   const {
     customerName,
@@ -66,7 +72,7 @@ const CreateNewCustomer = () => {
     officeNo,
     emailAddress,
     residentialNo,
-    homeAddress
+    homeAddress,
   } = customerInfoForm;
   const getUserData = (event: ChangeEvent<HTMLInputElement>) => {
     let name = event.target.name;
@@ -76,9 +82,11 @@ const CreateNewCustomer = () => {
   };
 
   const createCustomer = async () => {
-    setLoading(true)
+    setLoading(true);
     if (
-      customerName !== "" && customerContactNo !== "" && cnic !== "" &&
+      customerName !== "" &&
+      customerContactNo !== "" &&
+      cnic !== "" &&
       dob !== "" &&
       additionalContactNo !== "" &&
       officeNo !== "" &&
@@ -87,15 +95,14 @@ const CreateNewCustomer = () => {
       homeAddress
     ) {
       try {
-        await create({ ...customerInfoForm, city: city, saleLeadId: null }, { url: CREATE_NEW_CUSTOMER }).then((data: any) => {
+        await create(
+          { ...customerInfoForm, city: city, saleLeadId: null },
+          { url: CREATE_NEW_CUSTOMER }
+        ).then((data: any) => {
           if (data !== undefined) {
-            if (
-              !data.success &&
-              data.message === ERROR_MESSAGE
-            ) {
+            if (!data.success && data.message === ERROR_MESSAGE) {
               setLoading(false);
-              console.log("data.message", data.message);
-
+              // console.log("data.message", data.message);
             }
             if (!data.success) {
               Swal.fire({
@@ -105,12 +112,10 @@ const CreateNewCustomer = () => {
                 showConfirmButton: false,
               });
               setLoading(false);
-
             }
             if (data.success) {
               setLoading(false);
               getAll({ url: GET_ALL_CUSTOMERS }).then((data: any) => {
-
                 if (data !== undefined) {
                   if (!data.success && data.message === ERROR_MESSAGE) {
                     dispatch(setIsConnected(true));
@@ -122,14 +127,17 @@ const CreateNewCustomer = () => {
                       timer: 2000,
                       showConfirmButton: false,
                     });
-                    navigate(`${process.env.PUBLIC_URL}/company/modules/saio-central/sales/customers`)
+                    navigate(
+                      `${process.env.PUBLIC_URL}/company/modules/saio-central/sales/customers`
+                    );
                   }
                   if (data.success) {
                     dispatch(setCustomers(data.data));
-                    navigate(`${process.env.PUBLIC_URL}/company/modules/saio-central/sales/customers`)
+                    navigate(
+                      `${process.env.PUBLIC_URL}/company/modules/saio-central/sales/customers`
+                    );
                     dispatch(setCustomer(null));
-                    // // console.log("hhg");
-
+                    // // // console.log("hhg");
                   }
                 }
               });
@@ -148,31 +156,28 @@ const CreateNewCustomer = () => {
     }
   };
 
-
-
   const editCustomer = async () => {
-    setLoading(true)
+    setLoading(true);
     if (
-      customerName !== "" && customerContactNo !== "" && cnic !== "" &&
+      customerName !== "" &&
+      customerContactNo !== "" &&
+      cnic !== "" &&
       dob !== "" &&
       additionalContactNo !== "" &&
       officeNo !== "" &&
       emailAddress !== "" &&
       residentialNo !== "" &&
       homeAddress
-
     ) {
-
       try {
-        await update({ ...customerInfoForm, city: city, saleLeadId: null }, { url: `${UPDATE_CUSTOMER}/${customer.id}` }).then((data: any) => {
+        await update(
+          { ...customerInfoForm, city: city, saleLeadId: null },
+          { url: `${UPDATE_CUSTOMER}/${customer.id}` }
+        ).then((data: any) => {
           if (data !== undefined) {
-            if (
-              !data.success &&
-              data.message === ERROR_MESSAGE
-            ) {
+            if (!data.success && data.message === ERROR_MESSAGE) {
               setLoading(false);
-              console.log("data.message", data.message);
-
+              // console.log("data.message", data.message);
             }
             if (!data.success) {
               Swal.fire({
@@ -182,12 +187,10 @@ const CreateNewCustomer = () => {
                 showConfirmButton: false,
               });
               setLoading(false);
-
             }
             if (data.success) {
               setLoading(false);
               getAll({ url: GET_ALL_CUSTOMERS }).then((data: any) => {
-
                 if (data !== undefined) {
                   if (!data.success && data.message === ERROR_MESSAGE) {
                     dispatch(setIsConnected(true));
@@ -203,8 +206,7 @@ const CreateNewCustomer = () => {
                   }
                   if (data.success) {
                     dispatch(setCustomers(data.data));
-                    setIsEdit(!isEdit)
-
+                    setIsEdit(!isEdit);
                   }
                 }
               });
@@ -225,49 +227,50 @@ const CreateNewCustomer = () => {
 
   useEffect(() => {
     if (customer !== null) {
-      getAll({ url: `${GET_SINGLE_CUSTOMERS}/${customer.id}` }).then((data: any) => {
+      getAll({ url: `${GET_SINGLE_CUSTOMERS}/${customer.id}` }).then(
+        (data: any) => {
+          if (data !== undefined) {
+            if (!data.success && data.message === ERROR_MESSAGE) {
+              dispatch(setIsConnected(true));
+            }
+            if (!data.success) {
+              Swal.fire({
+                text: `${data.message}`,
+                icon: "error",
+                timer: 2000,
+                showConfirmButton: false,
+              });
+              setCustomerLoading(false);
+            }
+            if (data.success) {
+              setCustomerInfoForm({
+                customerName: data.data !== null ? data.data.fullName : "",
+                customerContactNo: data.data !== null ? data.data.phoneNo : "",
+                cnic: data.data !== null ? data.data.cnic : "",
+                dob: data.data !== null ? data.data.dob.slice(0, 10) : "",
+                additionalContactNo:
+                  data.data !== null ? data.data.additionalContactNo : "",
+                officeNo: data.data !== null ? data.data.officeNo : "",
+                emailAddress: data.data !== null ? data.data.emailAddress : "",
+                residentialNo:
+                  data.data !== null ? data.data.residentialNo : "",
+                homeAddress: data.data !== null ? data.data.homeAddress : "",
+              });
+              setCity(data.data !== null ? data.data.city._id : city);
 
-        if (data !== undefined) {
-          if (!data.success && data.message === ERROR_MESSAGE) {
-            dispatch(setIsConnected(true));
-          }
-          if (!data.success) {
-            Swal.fire({
-              text: `${data.message}`,
-              icon: "error",
-              timer: 2000,
-              showConfirmButton: false,
-            });
-            setCustomerLoading(false)
-          }
-          if (data.success) {
-
-            setCustomerInfoForm({
-              customerName: data.data !== null ? data.data.fullName : "",
-              customerContactNo: data.data !== null ? data.data.phoneNo : "",
-              cnic: data.data !== null ? data.data.cnic : "",
-              dob: data.data !== null ? data.data.dob.slice(0, 10) : "",
-              additionalContactNo: data.data !== null ? data.data.additionalContactNo : "",
-              officeNo: data.data !== null ? data.data.officeNo : "",
-              emailAddress: data.data !== null ? data.data.emailAddress : "",
-              residentialNo: data.data !== null ? data.data.residentialNo : "",
-              homeAddress: data.data !== null ? data.data.homeAddress : ""
-            })
-            setCity(data.data !== null ? data.data.city._id : city);
-
-            setCustomerLoading(false)
+              setCustomerLoading(false);
+            }
           }
         }
-      });
+      );
     }
   }, []);
 
   return (
     <>
       <Container fluid>
-
-        {
-          customerLoading ? <>
+        {customerLoading ? (
+          <>
             <div style={{ textAlign: "center" }}>
               {/* <Loader /> */}
 
@@ -280,10 +283,9 @@ const CreateNewCustomer = () => {
                     marginLeft: "20px",
                     //  marginRight:"50px",
                     marginTop: "20px",
-
                   }}
                 >
-                  <div style={{ width: "33%", }}>
+                  <div style={{ width: "33%" }}>
                     <Skeleton
                       height="20px"
                       width="45%"
@@ -325,8 +327,6 @@ const CreateNewCustomer = () => {
                       borderRadius="10px"
                     />
                   </div>
-
-
                 </div>
                 <div
                   style={{
@@ -338,7 +338,7 @@ const CreateNewCustomer = () => {
                     marginTop: "30px",
                   }}
                 >
-                  <div style={{ width: "33%", }}>
+                  <div style={{ width: "33%" }}>
                     <Skeleton
                       height="20px"
                       width="45%"
@@ -380,8 +380,6 @@ const CreateNewCustomer = () => {
                       borderRadius="10px"
                     />
                   </div>
-
-
                 </div>
                 <div
                   style={{
@@ -393,7 +391,7 @@ const CreateNewCustomer = () => {
                     marginTop: "30px",
                   }}
                 >
-                  <div style={{ width: "33%", }}>
+                  <div style={{ width: "33%" }}>
                     <Skeleton
                       height="20px"
                       width="45%"
@@ -435,8 +433,6 @@ const CreateNewCustomer = () => {
                       borderRadius="10px"
                     />
                   </div>
-
-
                 </div>
                 <div
                   style={{
@@ -448,7 +444,7 @@ const CreateNewCustomer = () => {
                     marginTop: "30px",
                   }}
                 >
-                  <div style={{ width: "33%", }}>
+                  <div style={{ width: "33%" }}>
                     <Skeleton
                       height="20px"
                       width="45%"
@@ -490,12 +486,12 @@ const CreateNewCustomer = () => {
                       borderRadius="10px"
                     />
                   </div>
-
-
                 </div>
               </>
             </div>
-          </> : <Row>
+          </>
+        ) : (
+          <Row>
             <Form
               onSubmit={(event) => event.preventDefault()}
               className="needs-validation"
@@ -530,7 +526,6 @@ const CreateNewCustomer = () => {
                     disabled={isEdit}
                   />
                 </Col>
-
                 <Col xl={4} xs={12}>
                   <div>
                     <P>
@@ -538,7 +533,11 @@ const CreateNewCustomer = () => {
                       <span className="txt-danger">*</span>
                     </P>
                   </div>
-                  <SelectCitiesBox placeholder="Select City" setCity={setCity} city={city} />
+                  <SelectCitiesBox
+                    placeholder="Select City"
+                    setCity={setCity}
+                    city={city}
+                  />
                 </Col>
                 <Col xl={4} xs={12}>
                   <P>
@@ -567,7 +566,8 @@ const CreateNewCustomer = () => {
                     onChange={getUserData}
                     disabled={isEdit}
                   />
-                </Col> <Col xl={4} xs={12}>
+                </Col>{" "}
+                <Col xl={4} xs={12}>
                   <P>
                     Additional Contact No
                     <span className="txt-danger">*</span>
@@ -594,7 +594,8 @@ const CreateNewCustomer = () => {
                     onChange={getUserData}
                     disabled={isEdit}
                   />
-                </Col> <Col xl={4} xs={12}>
+                </Col>{" "}
+                <Col xl={4} xs={12}>
                   <P>
                     Email Address
                     <span className="txt-danger">*</span>
@@ -607,24 +608,23 @@ const CreateNewCustomer = () => {
                     onChange={getUserData}
                     disabled={isEdit}
                   />
-                </Col> <Col xl={4} xs={12}>
+                </Col>{" "}
+                <Col xl={4} xs={12}>
                   <P>
-
                     Residential No
                     <span className="txt-danger">*</span>
                   </P>
                   <Input
                     type="text"
                     placeholder="Enter Residential No"
-                    value={
-                      residentialNo}
+                    value={residentialNo}
                     name="residentialNo"
                     onChange={getUserData}
                     disabled={isEdit}
                   />
-                </Col> <Col xl={4} xs={12}>
+                </Col>{" "}
+                <Col xl={4} xs={12}>
                   <P>
-
                     Home Address
                     <span className="txt-danger">*</span>
                   </P>
@@ -637,36 +637,42 @@ const CreateNewCustomer = () => {
                     disabled={isEdit}
                   />
                 </Col>
-
-
                 <Col
                   xs={12}
                   className="text-end d-flex justify-content-end gap-2 align-center"
                 >
-                  <Button color="primary" onClick={() => { navigate(`${process.env.PUBLIC_URL}/company/modules/saio-central/sales/customers`) }}>
+                  <Button
+                    color="primary"
+                    onClick={() => {
+                      navigate(
+                        `${process.env.PUBLIC_URL}/company/modules/saio-central/sales/customers`
+                      );
+                    }}
+                  >
                     Cancel
                   </Button>
-                  {
-                    customer == null ? <Button color="primary" onClick={createCustomer}>
+                  {customer == null ? (
+                    <Button color="primary" onClick={createCustomer}>
                       Create Customer
-                    </Button> : <Button color="primary" onClick={() => !isEdit ? editCustomer() : setIsEdit(!isEdit)}>
+                    </Button>
+                  ) : (
+                    <Button
+                      color="primary"
+                      onClick={() =>
+                        !isEdit ? editCustomer() : setIsEdit(!isEdit)
+                      }
+                    >
                       {loading ? "Loading..." : !isEdit ? "Update" : "Edit"}
                     </Button>
-                  }
-
+                  )}
                 </Col>
               </Row>
             </Form>
           </Row>
-        }
-
-
+        )}
       </Container>
-
-
     </>
   );
 };
 
 export default CreateNewCustomer;
-

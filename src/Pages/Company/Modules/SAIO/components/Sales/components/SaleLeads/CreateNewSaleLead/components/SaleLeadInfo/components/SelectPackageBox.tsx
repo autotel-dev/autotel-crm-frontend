@@ -9,10 +9,13 @@ interface propTypes {
   disabled: boolean;
 }
 
-const SelectPackageBox: React.FC<propTypes> = ({ placeholder, setPackage, packagee, disabled }) => {
-  const { packages } = useSelector(
-    (state: any) => state.sales
-  );
+const SelectPackageBox: React.FC<propTypes> = ({
+  placeholder,
+  setPackage,
+  packagee,
+  disabled,
+}) => {
+  const { packages } = useSelector((state: any) => state.sales);
 
   const [packageList, setPackageList] = useState([]);
   const dispatch = useDispatch();
@@ -40,9 +43,8 @@ const SelectPackageBox: React.FC<propTypes> = ({ placeholder, setPackage, packag
           .localeCompare((optionB?.label ?? "").toLowerCase())
       }
       onChange={(e) => {
-        // console.log(e);
+        // // console.log(e);
         setPackage(e);
-
       }}
       options={packageList}
       disabled={disabled}

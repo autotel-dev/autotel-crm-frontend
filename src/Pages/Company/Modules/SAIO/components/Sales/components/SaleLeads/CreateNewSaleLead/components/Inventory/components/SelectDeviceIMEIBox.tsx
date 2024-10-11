@@ -1,10 +1,12 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Select } from "antd";
 import { useDispatch, useSelector } from "react-redux";
-import { GET_ALL_INVENTORY_ITEMS, GET_ALL_SINGLE_INVENTORY_ITEM } from "../../../../../../../../../../../../Utilities/api/apiEndpoints";
+import {
+  GET_ALL_INVENTORY_ITEMS,
+  GET_ALL_SINGLE_INVENTORY_ITEM,
+} from "../../../../../../../../../../../../Utilities/api/apiEndpoints";
 import { getAll } from "../../../../../../../../../../../../Utilities/api";
 import debounce from "lodash.debounce";
-
 
 interface propTypes {
   placeholder: any;
@@ -14,9 +16,14 @@ interface propTypes {
   productId: string;
 }
 
-const SelectDeviceIMEIBox: React.FC<propTypes> = ({ placeholder, imeiNumber, setImeiNumber, productId, isAddedInventory }) => {
-
-  // console.log(cities);
+const SelectDeviceIMEIBox: React.FC<propTypes> = ({
+  placeholder,
+  imeiNumber,
+  setImeiNumber,
+  productId,
+  isAddedInventory,
+}) => {
+  // // console.log(cities);
   const [inventoryList, setInventoryList] = useState([]);
 
   const fetchInventoryitems = async (searchString: string) => {
@@ -32,11 +39,8 @@ const SelectDeviceIMEIBox: React.FC<propTypes> = ({ placeholder, imeiNumber, set
           id: item._id,
         }))
       );
-    }
-    else {
-      setInventoryList(
-        []
-      );
+    } else {
+      setInventoryList([]);
     }
   };
 

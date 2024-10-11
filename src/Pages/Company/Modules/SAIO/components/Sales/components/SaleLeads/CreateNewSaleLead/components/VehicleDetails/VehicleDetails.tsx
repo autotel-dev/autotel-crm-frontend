@@ -1,9 +1,6 @@
-
-
-
 // src/components/VehicleForm.js
-import React, { useState, useEffect } from 'react';
-import { Button, Col, Row, Form, Input } from 'reactstrap';
+import React, { useState, useEffect } from "react";
+import { Button, Col, Row, Form, Input } from "reactstrap";
 import SelectBanksBox from "./components/SelectBanksBox";
 import SelectInsuranceBox from "./components/SelectInsuranceBox";
 import SelectGroupsBox from "./components/SelectGroupsBox";
@@ -12,25 +9,43 @@ import SelectVehicleModelBox from "./components/SelectVehicleModelBox";
 import SelectVehicleYearBox from "./components/SelectVehicleYearBox";
 import SelectTransmissionBox from "./components/SelectTransmissionBox";
 import SelectFuelTypeBox from "./components/SelectFuelTypeBox";
-import Swal from 'sweetalert2';
-import { create, deleteSingle, getAll, update } from '../../../../../../../../../../../Utilities/api';
-import { CREATE_NEW_SALELEAD_VEHICLE, DELETE_VEHICLE, GET_ALL_SALELEADS, GET_SINGLE_SALELEAD, UPDATE_VEHICLE } from '../../../../../../../../../../../Utilities/api/apiEndpoints';
-import { ERROR_MESSAGE } from '../../../../../../../../../../../Utilities/constants/constants';
-import { useDispatch } from 'react-redux';
-import { setSaleLead, setSaleLeads } from '../../../../../../../../../../../ReaduxToolkit/Reducer/SalesSlice';
-import ShowError from '../../ShowError';
-import { useSelector } from 'react-redux';
-import { H4, P } from '../../../../../../../../../../../AbstractElements';
-import SelectServersBox from './components/SelectServerBox';
-import { Select } from 'antd';
-import { formatUnderscoredString } from '../../../../../../../../../../../Utilities/globals/globals';
+import Swal from "sweetalert2";
+import {
+  create,
+  deleteSingle,
+  getAll,
+  update,
+} from "../../../../../../../../../../../Utilities/api";
+import {
+  CREATE_NEW_SALELEAD_VEHICLE,
+  DELETE_VEHICLE,
+  GET_ALL_SALELEADS,
+  GET_SINGLE_SALELEAD,
+  UPDATE_VEHICLE,
+} from "../../../../../../../../../../../Utilities/api/apiEndpoints";
+import { ERROR_MESSAGE } from "../../../../../../../../../../../Utilities/constants/constants";
+import { useDispatch } from "react-redux";
+import {
+  setSaleLead,
+  setSaleLeads,
+} from "../../../../../../../../../../../ReaduxToolkit/Reducer/SalesSlice";
+import ShowError from "../../ShowError";
+import { useSelector } from "react-redux";
+import { H4, P } from "../../../../../../../../../../../AbstractElements";
+import SelectServersBox from "./components/SelectServerBox";
+import { Select } from "antd";
+import { formatUnderscoredString } from "../../../../../../../../../../../Utilities/globals/globals";
 
-
-
-const VehicleForm = ({ onRemove, index, vehicleData, onChange, callbackActive }: any) => {
+const VehicleForm = ({
+  onRemove,
+  index,
+  vehicleData,
+  onChange,
+  callbackActive,
+}: any) => {
   const [formData, setFormData] = useState(vehicleData);
-  console.log("formData", formData);
-  const { saleLead } = useSelector((state: any) => state.sales)
+  // console.log("formData", formData);
+  const { saleLead } = useSelector((state: any) => state.sales);
 
   useEffect(() => {
     setFormData(vehicleData);
@@ -48,8 +63,9 @@ const VehicleForm = ({ onRemove, index, vehicleData, onChange, callbackActive }:
   };
 
   const handleCheckboxChange = (index: number) => {
-    const updatedServices = formData.additionalServices.map((service: any, i: number) =>
-      i === index ? { ...service, checked: !service.checked } : service
+    const updatedServices = formData.additionalServices.map(
+      (service: any, i: number) =>
+        i === index ? { ...service, checked: !service.checked } : service
     );
     setFormData({ ...formData, additionalServices: updatedServices });
     onChange(index, { ...formData, additionalServices: updatedServices });
@@ -59,16 +75,20 @@ const VehicleForm = ({ onRemove, index, vehicleData, onChange, callbackActive }:
     const updatedFormData = { ...formData, defaultService: value };
     setFormData(updatedFormData);
     onChange(index, updatedFormData);
-
-  }
-  const [loading, setLoading] = useState(false)
-  const [removedloading, setRemovedLoading] = useState(false)
+  };
+  const [loading, setLoading] = useState(false);
+  const [removedloading, setRemovedLoading] = useState(false);
   const dispatch = useDispatch();
-  const [isCreated, setIsCreated] = useState(saleLead.vehicles.find((item: any, i: number) => formData.registrationNo == item.registrationNo) ? true : false);
+  const [isCreated, setIsCreated] = useState(
+    saleLead.vehicles.find(
+      (item: any, i: number) => formData.registrationNo == item.registrationNo
+    )
+      ? true
+      : false
+  );
 
   const [selection, setSelection] = useState("Self"); // Added state for selection
 
- 
   const createVehicle = async () => {
     setLoading(true);
     if (
@@ -89,100 +109,101 @@ const VehicleForm = ({ onRemove, index, vehicleData, onChange, callbackActive }:
     ) {
       const body = {
         ...formData,
-        additionalServices: [...formData.additionalServices
-          .filter((service: any) => service.checked)
-          .map((service: any) => service.value)],
+        additionalServices: [
+          ...formData.additionalServices
+            .filter((service: any) => service.checked)
+            .map((service: any) => service.value),
+        ],
         saleLeadId: saleLead._id,
         customer: saleLead.customer._id,
-      }
+      };
 
       try {
-        await create(body, { url: CREATE_NEW_SALELEAD_VEHICLE }).then((data: any) => {
-          if (data !== undefined) {
-            if (
-              !data.success &&
-              data.message === ERROR_MESSAGE
-            ) {
-              setLoading(false);
-              console.log("data.message", data.message);
+        await create(body, { url: CREATE_NEW_SALELEAD_VEHICLE }).then(
+          (data: any) => {
+            if (data !== undefined) {
+              if (!data.success && data.message === ERROR_MESSAGE) {
+                setLoading(false);
+                // console.log("data.message", data.message);
+              }
+              if (!data.success) {
+                Swal.fire({
+                  text: `${data.message}`,
+                  icon: "error",
+                  timer: 2000,
+                  showConfirmButton: false,
+                });
+                setLoading(false);
+              }
+              if (data.success) {
+                // getAll({ url: GET_ALL_SALELEADS }).then((data: any) => {
+                //   if (data !== undefined) {
+                //     if (!data.success) {
+                //       // setIscreateNewSaleLead(false);
+                //       setLoading(false);
+                //     }
+                //     if (data.success) {
 
-            }
-            if (!data.success) {
-              Swal.fire({
-                text: `${data.message}`,
-                icon: "error",
-                timer: 2000,
-                showConfirmButton: false,
-              });
-              setLoading(false);
+                //       dispatch(setSaleLeads(data.data));
 
-            }
-            if (data.success) {
-              // getAll({ url: GET_ALL_SALELEADS }).then((data: any) => {
-              //   if (data !== undefined) {
-              //     if (!data.success) {
-              //       // setIscreateNewSaleLead(false);
-              //       setLoading(false);
-              //     }
-              //     if (data.success) {
+                //       getAll({ url: `${GET_SINGLE_SALELEAD}/${saleLead._id}` }).then((data: any) => {
+                //         if (data !== undefined) {
+                //           if (data.success) {
+                //             dispatch(setSaleLead(data.data));
+                //             if (data.data.vehicles.length == data.data.totalNoOfVehicles) {
+                //               setIsCreated(true);
+                //               callbackActive(4)
+                //             } else {
+                //               setIsCreated(true);
+                //             }
+                //           }
+                //         }
+                //       });
+                //       setLoading(false);
+                //     }
+                //   }
+                // });
 
-              //       dispatch(setSaleLeads(data.data));
-
-              //       getAll({ url: `${GET_SINGLE_SALELEAD}/${saleLead._id}` }).then((data: any) => {
-              //         if (data !== undefined) {
-              //           if (data.success) {
-              //             dispatch(setSaleLead(data.data));
-              //             if (data.data.vehicles.length == data.data.totalNoOfVehicles) {
-              //               setIsCreated(true);
-              //               callbackActive(4)
-              //             } else {
-              //               setIsCreated(true);
-              //             }
-              //           }
-              //         }
-              //       });
-              //       setLoading(false);
-              //     }
-              //   }
-              // });
-
-              getAll({ url: `${GET_SINGLE_SALELEAD}/${saleLead._id}` }).then((data: any) => {
-                if (data !== undefined) {
-                  if (!data.success) {
-                    setLoading(false);
-                  }
-                  if (data.success) {
-                    dispatch(setSaleLead(data.data));
-                    setLoading(false);
-                    if (data.data.vehicles.length == data.data.totalNoOfVehicles) {
-                      setIsCreated(true);
-                      callbackActive(4)
-                    } else {
-                      setIsCreated(true);
+                getAll({ url: `${GET_SINGLE_SALELEAD}/${saleLead._id}` }).then(
+                  (data: any) => {
+                    if (data !== undefined) {
+                      if (!data.success) {
+                        setLoading(false);
+                      }
+                      if (data.success) {
+                        dispatch(setSaleLead(data.data));
+                        setLoading(false);
+                        if (
+                          data.data.vehicles.length ==
+                          data.data.totalNoOfVehicles
+                        ) {
+                          setIsCreated(true);
+                          callbackActive(4);
+                        } else {
+                          setIsCreated(true);
+                        }
+                      }
                     }
                   }
-                }
-              });
-              // setLoading(false);
+                );
+                // setLoading(false);
 
-              // setLoading(false);
+                // setLoading(false);
+              }
             }
           }
-        });
+        );
         // Handle successful post creation (e.g., show a success message, redirect, etc.)
       } catch (error: any) {
         // Handle error (e.g., show an error message)
         // console.error("Error creating post:", error);
         setLoading(false);
       }
-
     } else {
       ShowError();
       setLoading(false);
     }
   };
-
-
 
   const updateVehicle = async () => {
     setLoading(true);
@@ -204,23 +225,23 @@ const VehicleForm = ({ onRemove, index, vehicleData, onChange, callbackActive }:
     ) {
       const body = {
         ...formData,
-        additionalServices: [...formData.additionalServices
-          .filter((service: any) => service.checked)
-          .map((service: any) => service.value)],
+        additionalServices: [
+          ...formData.additionalServices
+            .filter((service: any) => service.checked)
+            .map((service: any) => service.value),
+        ],
         saleLeadId: saleLead._id,
         customer: saleLead.customer._id,
-      }
+      };
 
       try {
-        await update(body, { url: `${UPDATE_VEHICLE}/${formData.vehicleData._id}` }).then((data: any) => {
+        await update(body, {
+          url: `${UPDATE_VEHICLE}/${formData.vehicleData._id}`,
+        }).then((data: any) => {
           if (data !== undefined) {
-            if (
-              !data.success &&
-              data.message === ERROR_MESSAGE
-            ) {
+            if (!data.success && data.message === ERROR_MESSAGE) {
               setLoading(false);
-              console.log("data.message", data.message);
-
+              // console.log("data.message", data.message);
             }
             if (!data.success) {
               Swal.fire({
@@ -230,7 +251,6 @@ const VehicleForm = ({ onRemove, index, vehicleData, onChange, callbackActive }:
                 showConfirmButton: false,
               });
               setLoading(false);
-
             }
             if (data.success) {
               // getAll({ url: GET_ALL_SALELEADS }).then((data: any) => {
@@ -245,18 +265,20 @@ const VehicleForm = ({ onRemove, index, vehicleData, onChange, callbackActive }:
               //     }
               //   }
               // });
-              getAll({ url: `${GET_SINGLE_SALELEAD}/${saleLead._id}` }).then((data: any) => {
-                if (data !== undefined) {
-                  if (!data.success) {
-                    setLoading(false);
-                  }
-                  if (data.success) {
-                    dispatch(setSaleLead(data.data));
-                    setLoading(false);
-                    setIsCreated(true);
+              getAll({ url: `${GET_SINGLE_SALELEAD}/${saleLead._id}` }).then(
+                (data: any) => {
+                  if (data !== undefined) {
+                    if (!data.success) {
+                      setLoading(false);
+                    }
+                    if (data.success) {
+                      dispatch(setSaleLead(data.data));
+                      setLoading(false);
+                      setIsCreated(true);
+                    }
                   }
                 }
-              });
+              );
 
               // setLoading(false);
             }
@@ -268,7 +290,6 @@ const VehicleForm = ({ onRemove, index, vehicleData, onChange, callbackActive }:
         // console.error("Error creating post:", error);
         setLoading(false);
       }
-
     } else {
       ShowError();
       setLoading(false);
@@ -282,10 +303,8 @@ const VehicleForm = ({ onRemove, index, vehicleData, onChange, callbackActive }:
         text: "Please remove the inventory of this vehicle before you delete this",
         icon: "warning",
         showCancelButton: true,
-      })
-    }
-    else {
-
+      });
+    } else {
       Swal.fire({
         title: "Remove Vehicle",
         text: "Are you sure You want to remove this vehicle",
@@ -300,15 +319,14 @@ const VehicleForm = ({ onRemove, index, vehicleData, onChange, callbackActive }:
             showConfirmButton: false,
           });
           try {
-            await create({ saleLeadId: saleLead?._id }, { url: `${DELETE_VEHICLE}/${formData.vehicleData._id}` }).then((data: any) => {
+            await create(
+              { saleLeadId: saleLead?._id },
+              { url: `${DELETE_VEHICLE}/${formData.vehicleData._id}` }
+            ).then((data: any) => {
               if (data !== undefined) {
-                if (
-                  !data.success &&
-                  data.message === ERROR_MESSAGE
-                ) {
+                if (!data.success && data.message === ERROR_MESSAGE) {
                   setRemovedLoading(false);
-                  console.log("data.message", data.message);
-
+                  // console.log("data.message", data.message);
                 }
                 if (!data.success) {
                   Swal.fire({
@@ -318,7 +336,6 @@ const VehicleForm = ({ onRemove, index, vehicleData, onChange, callbackActive }:
                     showConfirmButton: false,
                   });
                   setRemovedLoading(false);
-
                 }
                 if (data.success) {
                   Swal.fire({
@@ -327,11 +344,13 @@ const VehicleForm = ({ onRemove, index, vehicleData, onChange, callbackActive }:
                     timer: 2500,
                     showConfirmButton: false,
                   });
-                  getAll({ url: `${GET_SINGLE_SALELEAD}/${saleLead._id}` }).then((data: any) => {
+                  getAll({
+                    url: `${GET_SINGLE_SALELEAD}/${saleLead._id}`,
+                  }).then((data: any) => {
                     if (data !== undefined) {
                       if (data.success) {
                         dispatch(setSaleLead(data.data));
-                        onRemove(index)
+                        onRemove(index);
                         setIsCreated(false);
                       }
                     }
@@ -361,7 +380,6 @@ const VehicleForm = ({ onRemove, index, vehicleData, onChange, callbackActive }:
         }
       });
     }
-
   };
 
   return (
@@ -377,7 +395,7 @@ const VehicleForm = ({ onRemove, index, vehicleData, onChange, callbackActive }:
           <SelectBanksBox
             placeholder="Select Bank"
             bank={formData.bank}
-            setBank={(value: any) => handleSelectChange('bank', value)}
+            setBank={(value: any) => handleSelectChange("bank", value)}
             disabled={isCreated}
           />
         </Col>
@@ -391,7 +409,9 @@ const VehicleForm = ({ onRemove, index, vehicleData, onChange, callbackActive }:
           <SelectInsuranceBox
             placeholder="Select Insurance"
             insurance={formData.insurance}
-            setInsurance={(value: any) => handleSelectChange('insurance', value)}
+            setInsurance={(value: any) =>
+              handleSelectChange("insurance", value)
+            }
             disabled={isCreated}
           />
         </Col>
@@ -405,7 +425,7 @@ const VehicleForm = ({ onRemove, index, vehicleData, onChange, callbackActive }:
           <SelectGroupsBox
             placeholder="Select Group"
             group={formData.group}
-            setGroup={(value: any) => handleSelectChange('group', value)}
+            setGroup={(value: any) => handleSelectChange("group", value)}
             disabled={isCreated}
           />
         </Col>
@@ -419,7 +439,9 @@ const VehicleForm = ({ onRemove, index, vehicleData, onChange, callbackActive }:
           <SelectVehicleMakeBox
             placeholder="Select Vehicle Make"
             vehicleMake={formData.vehicleMake}
-            setVehicleMake={(value: any) => handleSelectChange('vehicleMake', value)}
+            setVehicleMake={(value: any) =>
+              handleSelectChange("vehicleMake", value)
+            }
             disabled={isCreated}
           />
         </Col>
@@ -433,7 +455,9 @@ const VehicleForm = ({ onRemove, index, vehicleData, onChange, callbackActive }:
           <SelectVehicleModelBox
             placeholder="Select Vehicle Model"
             vehicleModel={formData.vehicleModel}
-            setVehicleModel={(value: any) => handleSelectChange('vehicleModel', value)}
+            setVehicleModel={(value: any) =>
+              handleSelectChange("vehicleModel", value)
+            }
             disabled={isCreated}
             vehicleMake={formData.vehicleMake}
           />
@@ -448,7 +472,7 @@ const VehicleForm = ({ onRemove, index, vehicleData, onChange, callbackActive }:
           <SelectVehicleYearBox
             placeholder="Select Vehicle Year"
             vehicleYear={formData.year}
-            setVehicleYear={(value: any) => handleSelectChange('year', value)}
+            setVehicleYear={(value: any) => handleSelectChange("year", value)}
             disabled={isCreated}
           />
         </Col>
@@ -462,7 +486,7 @@ const VehicleForm = ({ onRemove, index, vehicleData, onChange, callbackActive }:
           <SelectFuelTypeBox
             placeholder="Select Fuel Type"
             fuelType={formData.fuelType}
-            setFuelType={(value: any) => handleSelectChange('fuelType', value)}
+            setFuelType={(value: any) => handleSelectChange("fuelType", value)}
             disabled={isCreated}
           />
         </Col>
@@ -476,7 +500,9 @@ const VehicleForm = ({ onRemove, index, vehicleData, onChange, callbackActive }:
           <SelectTransmissionBox
             placeholder="Select Transmission"
             transmission={formData.transmissionType}
-            setTransmission={(value: any) => handleSelectChange('transmissionType', value)}
+            setTransmission={(value: any) =>
+              handleSelectChange("transmissionType", value)
+            }
             disabled={isCreated}
           />
         </Col>
@@ -535,9 +561,12 @@ const VehicleForm = ({ onRemove, index, vehicleData, onChange, callbackActive }:
             }}
             disabled={isCreated}
             options={[
-              { value: "Black", label: "Black" }, { value: "Blue", label: "Blue" },
-              { value: "White", label: "White" }, { value: "Gray", label: "Gray" },
-              { value: "Green", label: "Green" }, { value: "Red", label: "Red" },
+              { value: "Black", label: "Black" },
+              { value: "Blue", label: "Blue" },
+              { value: "White", label: "White" },
+              { value: "Gray", label: "Gray" },
+              { value: "Green", label: "Green" },
+              { value: "Red", label: "Red" },
             ]}
           />
         </Col>
@@ -608,61 +637,72 @@ const VehicleForm = ({ onRemove, index, vehicleData, onChange, callbackActive }:
           />
         </Col>
 
-
         <Row className="g-3">
           <Row style={{ display: "flex", flexWrap: "wrap", marginTop: "50px" }}>
             <H4>Default Services</H4>
-            <div style={{
-              height: "20px",
-
-            }}>  </div>
+            <div
+              style={{
+                height: "20px",
+              }}
+            >
+              {" "}
+            </div>
             <Row>
-              <div style={{ display: "flex", justifyContent: "start", alignItems: "center", marginBottom: "25px" }}>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "start",
+                  alignItems: "center",
+                  marginBottom: "25px",
+                }}
+              >
                 <Input
                   type="radio"
                   name="selection"
                   value="Self"
                   checked={formData?.defaultService === "Self"}
-                  onChange={() => handleDefaultServiceChange("defaultService", "Self", index)}
-                  style={{ display: 'none' }}
+                  onChange={() =>
+                    handleDefaultServiceChange("defaultService", "Self", index)
+                  }
+                  style={{ display: "none" }}
                   id="Self"
                 />
                 <label
                   htmlFor="Self"
                   style={{
-                    position: 'relative',
-                    paddingLeft: '25px',
-                    marginRight: '50px',
-                    cursor: 'pointer',
-                    fontSize: '16px',
-                    color: '#333'
+                    position: "relative",
+                    paddingLeft: "25px",
+                    marginRight: "50px",
+                    cursor: "pointer",
+                    fontSize: "16px",
+                    color: "#333",
                   }}
                 >
                   Self
                   <span
                     style={{
-                      content: '',
-                      position: 'absolute',
+                      content: "",
+                      position: "absolute",
                       left: 0,
                       top: 0,
-                      width: '18px',
-                      height: '18px',
-                      border: '2px solid black',
-                      borderRadius: '50%',
-                      background: 'white'
+                      width: "18px",
+                      height: "18px",
+                      border: "2px solid black",
+                      borderRadius: "50%",
+                      background: "white",
                     }}
                   />
-                  {formData?.defaultService === 'Self' && (
+                  {formData?.defaultService === "Self" && (
                     <span
                       style={{
-                        content: '',
-                        position: 'absolute',
-                        left: '5px',
-                        top: '5px',
-                        width: '8px',
-                        height: '8px',
-                        borderRadius: '50%',
-                        background: 'green'
+                        content: "",
+                        position: "absolute",
+                        left: "5px",
+                        top: "5px",
+                        width: "8px",
+                        height: "8px",
+                        borderRadius: "50%",
+                        background: "green",
                       }}
                     />
                   )}
@@ -672,46 +712,52 @@ const VehicleForm = ({ onRemove, index, vehicleData, onChange, callbackActive }:
                   name="selection"
                   value="Control Room"
                   checked={formData?.defaultService === "Control Room"}
-                  onChange={() => handleDefaultServiceChange("defaultService", "Control Room", index)}
-                  style={{ display: 'none' }}
+                  onChange={() =>
+                    handleDefaultServiceChange(
+                      "defaultService",
+                      "Control Room",
+                      index
+                    )
+                  }
+                  style={{ display: "none" }}
                   id="Control Room"
                 />
                 <label
                   htmlFor="Control Room"
                   style={{
-                    position: 'relative',
-                    paddingLeft: '25px',
-                    marginRight: '20px',
-                    cursor: 'pointer',
-                    fontSize: '16px',
-                    color: '#333'
+                    position: "relative",
+                    paddingLeft: "25px",
+                    marginRight: "20px",
+                    cursor: "pointer",
+                    fontSize: "16px",
+                    color: "#333",
                   }}
                 >
                   Control Room
                   <span
                     style={{
-                      content: '',
-                      position: 'absolute',
+                      content: "",
+                      position: "absolute",
                       left: 0,
                       top: 0,
-                      width: '18px',
-                      height: '18px',
-                      border: '2px solid black',
-                      borderRadius: '50%',
-                      background: 'white'
+                      width: "18px",
+                      height: "18px",
+                      border: "2px solid black",
+                      borderRadius: "50%",
+                      background: "white",
                     }}
                   />
-                  {formData?.defaultService === 'Control Room' && (
+                  {formData?.defaultService === "Control Room" && (
                     <span
                       style={{
-                        content: '',
-                        position: 'absolute',
-                        left: '5px',
-                        top: '5px',
-                        width: '8px',
-                        height: '8px',
-                        borderRadius: '50%',
-                        background: 'green'
+                        content: "",
+                        position: "absolute",
+                        left: "5px",
+                        top: "5px",
+                        width: "8px",
+                        height: "8px",
+                        borderRadius: "50%",
+                        background: "green",
                       }}
                     />
                   )}
@@ -719,11 +765,11 @@ const VehicleForm = ({ onRemove, index, vehicleData, onChange, callbackActive }:
               </div>
             </Row>
             <H4>Optional Services</H4>
-            <div style={{
-              height: "20px"
-            }}>
-
-            </div>
+            <div
+              style={{
+                height: "20px",
+              }}
+            ></div>
             {formData?.additionalServices?.map((item: any, index: any) => {
               return (
                 <>
@@ -736,7 +782,7 @@ const VehicleForm = ({ onRemove, index, vehicleData, onChange, callbackActive }:
                         cursor: "pointer",
                         marginRight: "25px",
                         fontSize: "18px",
-                        marginBottom: "15px" // Add some space between rows
+                        marginBottom: "15px", // Add some space between rows
                       }}
                       onClick={(e) => e.stopPropagation()}
                     >
@@ -747,14 +793,14 @@ const VehicleForm = ({ onRemove, index, vehicleData, onChange, callbackActive }:
                         checked={item.checked}
                         onChange={() => handleCheckboxChange(index)}
                         style={{ display: "none" }}
-
                       />
                       <span
                         onClick={(e) => e.stopPropagation()}
                         className="green"
                       ></span>
                       <span style={{ marginTop: "5px" }}>{item.title}</span>
-                    </label></Col>
+                    </label>
+                  </Col>
                 </>
               );
             })}
@@ -801,53 +847,83 @@ const VehicleForm = ({ onRemove, index, vehicleData, onChange, callbackActive }:
             <SelectServersBox
               placeholder="Select Server"
               server={formData.server}
-              setServer={(value: any) => handleSelectChange('server', value)}
+              setServer={(value: any) => handleSelectChange("server", value)}
               disabled={isCreated}
             />
           </Col>
         </Row>
-        {
-          saleLead?.status == "INSTALLED" || formData?.vehicleData?.installationStatus == "INSTALLED" ? <Col
+        {saleLead?.status == "INSTALLED" ||
+        formData?.vehicleData?.installationStatus == "INSTALLED" ? (
+          <Col
             xs={12}
             className="text-end d-flex justify-content-end gap-2 align-center"
           >
             <Button color="primary" disabled>
-              {formData?.vehicleData?.installationStatus == "INSTALLED" && formatUnderscoredString("INSTALLED")}
+              {formData?.vehicleData?.installationStatus == "INSTALLED" &&
+                formatUnderscoredString("INSTALLED")}
             </Button>
-          </Col> : <Col
+          </Col>
+        ) : (
+          <Col
             xs={12}
             className="text-end d-flex justify-content-end gap-2 align-center"
           >
-            {
-              saleLead.vehicles.find((item: any, i: number) => formData.registrationNo == item.registrationNo) ? <>
-
-                {!isCreated && <Button color="secondary" disabled={loading} onClick={() => setIsCreated(!isCreated)}>
-                  Cancel
-                </Button>}
-                <Button color="primary" onClick={() => removeVehicle()} disabled={removedloading}>
+            {saleLead.vehicles.find(
+              (item: any, i: number) =>
+                formData.registrationNo == item.registrationNo
+            ) ? (
+              <>
+                {!isCreated && (
+                  <Button
+                    color="secondary"
+                    disabled={loading}
+                    onClick={() => setIsCreated(!isCreated)}
+                  >
+                    Cancel
+                  </Button>
+                )}
+                <Button
+                  color="primary"
+                  onClick={() => removeVehicle()}
+                  disabled={removedloading}
+                >
                   {removedloading ? "Deleting..." : "Delete"}
                 </Button>
-                <Button color="primary" disabled={loading} onClick={() => !isCreated ? updateVehicle() : setIsCreated(!isCreated)}>
+                <Button
+                  color="primary"
+                  disabled={loading}
+                  onClick={() =>
+                    !isCreated ? updateVehicle() : setIsCreated(!isCreated)
+                  }
+                >
                   {isCreated ? "Edit" : loading ? "Loading..." : "Save"}
                 </Button>
-
               </>
-                : <>
-                  <Button color="primary" disabled={loading} onClick={() => createVehicle()}>
-                    {loading ? "Loading..." : "Save"}
-                  </Button>
+            ) : (
+              <>
+                <Button
+                  color="primary"
+                  disabled={loading}
+                  onClick={() => createVehicle()}
+                >
+                  {loading ? "Loading..." : "Save"}
+                </Button>
 
-                  {!isCreated && <Button disabled={loading} color="danger" onClick={() => onRemove(index)}>
+                {!isCreated && (
+                  <Button
+                    disabled={loading}
+                    color="danger"
+                    onClick={() => onRemove(index)}
+                  >
                     Remove
-                  </Button>}
-                </>
-            }
-
+                  </Button>
+                )}
+              </>
+            )}
           </Col>
-        }
-
+        )}
       </Row>
-    </Form >
+    </Form>
   );
 };
 

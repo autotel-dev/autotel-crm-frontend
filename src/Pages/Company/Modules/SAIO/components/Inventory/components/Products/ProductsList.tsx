@@ -50,7 +50,8 @@ const ProductsTable = () => {
   const [toggleDelete, setToggleDelete] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null); // State for the selected product
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false); // State for modal visibility
-  const [isViewInventoryModalOpen, setIsViewInventoryModalOpen] = useState(false)
+  const [isViewInventoryModalOpen, setIsViewInventoryModalOpen] =
+    useState(false);
 
   useEffect(() => {
     // Fetch Product Types
@@ -109,7 +110,7 @@ const ProductsTable = () => {
   };
   const [idd, setIdd] = useState("");
 
-  // console.log("allBugReports", supportData());
+  // // console.log("allBugReports", supportData());
   useEffect(() => {
     setData(productsData());
   }, [product]);
@@ -127,7 +128,6 @@ const ProductsTable = () => {
 
   // Define columns for the DataTable
   const columns = [
-
     {
       name: (
         <div
@@ -143,7 +143,7 @@ const ProductsTable = () => {
               icon={faTrashAlt}
               // onClick={handleDelete}
               onClick={() => {
-                // console.log("345678");
+                // // console.log("345678");
                 var alertData = {
                   title: "Are you sure?",
                   text: "Once deleted, you will not be able to recover this ",
@@ -155,7 +155,7 @@ const ProductsTable = () => {
                   type,
                   dispatch
                 ).then(() => {
-                  console.log("empty");
+                  // console.log("empty");
 
                   setSelectedRows([]);
                 });
@@ -178,7 +178,6 @@ const ProductsTable = () => {
       cell: (row: any) => (
         <div
           style={{
-
             paddingLeft: "10px",
             borderRadius: "5px",
           }}
@@ -187,7 +186,6 @@ const ProductsTable = () => {
         </div>
       ),
     },
-
 
     {
       name: "Date",
@@ -204,13 +202,12 @@ const ProductsTable = () => {
       cell: (row: any) => (
         <div
           style={{
-
             borderRadius: "5px",
           }}
         >
           P - {row.index}
         </div>
-      )
+      ),
     },
     {
       name: "User",
@@ -249,12 +246,15 @@ const ProductsTable = () => {
       center: true,
       width: "10%",
       cell: (row: any) => (
-        <div
-        >
-          <Button onClick={() => {
-            setSelectedProduct(row);
-            setIsViewInventoryModalOpen(true)
-          }} color="primary" style={{ padding: "5px 15px" }}>
+        <div>
+          <Button
+            onClick={() => {
+              setSelectedProduct(row);
+              setIsViewInventoryModalOpen(true);
+            }}
+            color="primary"
+            style={{ padding: "5px 15px" }}
+          >
             View
           </Button>
         </div>
@@ -310,7 +310,8 @@ const ProductsTable = () => {
             style: {
               cursor: "pointer",
               transition: "background-color 0.2s", // Smooth transition for background color change
-              "&:hover": { // Define hover style
+              "&:hover": {
+                // Define hover style
                 backgroundColor: `rgba(${rgbColor.r},${rgbColor.g},${rgbColor.b},0.2)`,
               },
             },
@@ -336,8 +337,6 @@ const ProductsTable = () => {
           selectedProduct={selectedProduct}
         />
       )}
-
-
 
       {isViewInventoryModalOpen && (
         <ViewAllInventoryItemsModal

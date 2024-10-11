@@ -26,16 +26,21 @@ import { setNoDataFound } from "../../../ReaduxToolkit/Reducer/NoDataFoundSlice"
 import Loader from "../../Utilities/Loader/Loader";
 import UpdateUser from "./UpdateUser";
 import { jwtDecode } from "jwt-decode";
-import { formatUnderscoredString, getUserRole } from "../../../Utilities/globals/globals";
+import {
+  formatUnderscoredString,
+  getUserRole,
+} from "../../../Utilities/globals/globals";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import { H4 } from "../../../AbstractElements";
 import Skeleton from "../../Utilities/Skeleton/Skeleton";
 import "../../../CssConstaints/Style.css";
 import deleteAlert from "../../../Utilities/alerts/DeleteAlert";
-import { GET_ALL_OPERATORS, UPDATE_OPERATOR } from "../../../Utilities/api/apiEndpoints";
+import {
+  GET_ALL_OPERATORS,
+  UPDATE_OPERATOR,
+} from "../../../Utilities/api/apiEndpoints";
 import { ERROR_MESSAGE } from "../../../Utilities/constants/constants";
-
 
 const UsersList = () => {
   const { operators, loading, activeInActiveOperators } = useSelector(
@@ -138,7 +143,8 @@ const UsersList = () => {
   const renderTableRows = () => {
     return operators?.map((row: any, index: any) => (
       // setIsActive(row.isActive);
-      <tr key={row.id}
+      <tr
+        key={row.id}
         onMouseEnter={() => {
           setIsHovered(true);
           setIdd(row._id);
@@ -154,11 +160,15 @@ const UsersList = () => {
           transition: "background-color 0.3s",
         }}
       >
-        <td style={{ width: "10%" }}>{row._id}</td>
-        <td style={{ width: "15%" }}>{row.fullName}</td>
-        <td style={{ width: "10%" }}>{formatUnderscoredString(row.subRole.name)}</td>
-        <td style={{ width: "10%" }}>{formatUnderscoredString(row.branch.name)}</td>
-        <td style={{ width: "15%" }}>{row.emailAddress}</td>
+        <td style={{ width: "10%" }}>{row?._id}</td>
+        <td style={{ width: "15%" }}>{row?.fullName}</td>
+        <td style={{ width: "10%" }}>
+          {formatUnderscoredString(row?.subRole?.name)}
+        </td>
+        <td style={{ width: "10%" }}>
+          {formatUnderscoredString(row?.branch?.name)}
+        </td>
+        <td style={{ width: "15%" }}>{row?.emailAddress}</td>
         <td style={{ width: "10%" }}>
           <div className="d-flex" style={{ justifyContent: "center" }}>
             <div
@@ -307,10 +317,34 @@ const UsersList = () => {
                   // <Loader />
                   <>
                     <Skeleton height="100px" width="100%" borderRadius="10px" />
-                    <Skeleton height="40px" width="100%" marginTop="10px" marginBottom="10" borderRadius="10px" />
-                    <Skeleton height="40px" width="100%" marginTop="10px" marginBottom="10" borderRadius="10px" />
-                    <Skeleton height="40px" width="100%" marginTop="10px" marginBottom="10" borderRadius="10px" />
-                    <Skeleton height="40px" width="100%" marginTop="10px" marginBottom="10" borderRadius="10px" />
+                    <Skeleton
+                      height="40px"
+                      width="100%"
+                      marginTop="10px"
+                      marginBottom="10"
+                      borderRadius="10px"
+                    />
+                    <Skeleton
+                      height="40px"
+                      width="100%"
+                      marginTop="10px"
+                      marginBottom="10"
+                      borderRadius="10px"
+                    />
+                    <Skeleton
+                      height="40px"
+                      width="100%"
+                      marginTop="10px"
+                      marginBottom="10"
+                      borderRadius="10px"
+                    />
+                    <Skeleton
+                      height="40px"
+                      width="100%"
+                      marginTop="10px"
+                      marginBottom="10"
+                      borderRadius="10px"
+                    />
                   </>
                 ) : operators?.length > 0 && loading === false ? (
                   <div>
