@@ -400,7 +400,7 @@ const SaleLeadsTable = () => {
       name: "Customer Name",
       selector: (row: SaleLeadsDataType) => row["customer_name"],
       sortable: true,
-      // center: true,
+      center: true,
       width: "12%", // Set the width for this column
     },
     {

@@ -856,7 +856,15 @@ const InventoryDetails = ({
                   : setIsAddedInventory(!isAddedInventory)
               }
             >
-              {isAddedInventory ? "Edit" : loading ? "Loading..." : "Save"}
+              {isAddedInventory
+                ? saleLead?.vehicles.find(
+                    (item: any) => item?._id == inventoryData.vehicleId
+                  )?.installationStatus == "INSTALLED"
+                  ? "Installed"
+                  : "Edit"
+                : loading
+                ? "Loading..."
+                : "Save"}
             </Button>
           }
         </Col>

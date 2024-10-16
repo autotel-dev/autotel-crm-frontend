@@ -36,10 +36,12 @@ const MonitoringSidebar = () => {
       >
         <div
           onClick={() => {
-            if (collapsedWidth === "0px") {
-              setCollapsedWidth("350px");
-            } else {
-              setCollapsedWidth("0px");
+            if (serverDevices.length > 0) {
+              if (collapsedWidth === "0px") {
+                setCollapsedWidth("350px");
+              } else {
+                setCollapsedWidth("0px");
+              }
             }
           }}
           style={{
@@ -66,16 +68,19 @@ const MonitoringSidebar = () => {
             textAlign: "center",
             display: "flex",
             height: "35px",
-            margin: "-4px", //  margin: "22px",
-            width: "50px", // width: "70px"
+            margin: "-2px", //  margin: "22px",
+            width: "55px", // width: "70px"
             fontWeight: "bold",
-            fontSize: "12px", //  fontSize: "10px",
+            fontSize: "11.5px", //  fontSize: "10px",
             alignItems: "center",
             justifyContent: "center", // Adjust content alignment
             cursor: "pointer",
           }}
           onClick={() => {
-            setStatusDevices("");
+            if (serverDevices.length > 0) {
+              setStatusDevices("");
+            }
+
             // const array = serverDevices;
             // for (let i = 0; i < array.length; i++) {
             //   const element = array[i].title;
@@ -106,7 +111,7 @@ const MonitoringSidebar = () => {
         >
           Total
           <br />
-          {serverDevices.length}
+          {serverDevices.length == 0 ? "Loading.." : serverDevices.length}
           {/* {
             devicesStatuses.map(
               (item: any, index: any) => item.online === "online"
@@ -121,10 +126,10 @@ const MonitoringSidebar = () => {
             textAlign: "center",
             display: "flex",
             height: "35px",
-            margin: "22px", //  margin: "22px",
-            width: "50px", // width: "70px"
+            margin: "25px", //  margin: "22px",
+            width: "55px", // width: "70px"
             fontWeight: "bold",
-            fontSize: "12px", //  fontSize: "10px",
+            fontSize: "11.5px", //  fontSize: "10px",
             alignItems: "center",
             justifyContent: "center", // Adjust content alignment
             cursor: "pointer",
@@ -144,7 +149,10 @@ const MonitoringSidebar = () => {
             // ).flat();
 
             // // console.log(filteredDevices);
-            setStatusDevices("online");
+            if (serverDevices.length > 0) {
+              setStatusDevices("online");
+            }
+
             // const array =
             //   devicesStatuses.find(
             //     (item: any, index: any) => item.online === "online"
@@ -179,10 +187,12 @@ const MonitoringSidebar = () => {
             // dispatch(setDevices(initialGroupDevices));
           }}
         >
+          {serverDevices.length == 0 && "Move"}
           {devicesStatuses.find((item: any) => item.online === "online") &&
             "Move"}
           {/* &nbsp;=&nbsp; */}
           <br />
+          {serverDevices.length == 0 && "Loading.."}
           {devicesStatuses.find(
             (item: any, index: any) => item.online === "online"
           ) &&
@@ -202,16 +212,19 @@ const MonitoringSidebar = () => {
             // fontWeight: "bold",
             // fontSize: "10px",
             height: "35px",
-            margin: "-4px", //  margin: "22px",
-            width: "50px", // width: "70px"
+            margin: "-1.5px", //  margin: "22px",
+            width: "55px", // width: "70px"
             fontWeight: "bold",
-            fontSize: "12px", //  fontSize: "10px",
+            fontSize: "11.5px", //  fontSize: "10px",
             alignItems: "center",
             justifyContent: "center", // Adjust content alignment
             cursor: "pointer",
           }}
           onClick={() => {
-            setStatusDevices("engine");
+            if (serverDevices.length > 0) {
+              setStatusDevices("engine");
+            }
+
             // const array =
             //   devicesStatuses.find(
             //     (item: any, index: any) => item.online === "engine"
@@ -246,10 +259,12 @@ const MonitoringSidebar = () => {
             // dispatch(setDevices(initialGroupDevices));
           }}
         >
+          {serverDevices.length == 0 && "Idle"}
           {devicesStatuses.find((item: any) => item.online === "engine") &&
             "Idle"}
           {/* &nbsp;=&nbsp; */}
           <br />
+          {serverDevices.length == 0 && "Loading.."}
           {devicesStatuses.find(
             (item: any, index: any) => item.online === "engine"
           ) &&
@@ -269,16 +284,19 @@ const MonitoringSidebar = () => {
             // fontWeight: "bold",
             // fontSize: "10px",
             height: "35px",
-            margin: "22px", //  margin: "22px",
-            width: "50px", // width: "70px"
+            margin: "25px", //  margin: "22px",
+            width: "55px", // width: "70px"
             fontWeight: "bold",
-            fontSize: "12px", //  fontSize: "10px",
+            fontSize: "11.5px", //  fontSize: "10px",
             alignItems: "center",
             justifyContent: "center", // Adjust content alignment
             cursor: "pointer",
           }}
           onClick={() => {
-            setStatusDevices("ack");
+            if (serverDevices.length > 0) {
+              setStatusDevices("ack");
+            }
+
             // const array =
             //   devicesStatuses.find(
             //     (item: any, index: any) => item.online === "ack"
@@ -313,9 +331,11 @@ const MonitoringSidebar = () => {
             // dispatch(setDevices(initialGroupDevices));
           }}
         >
+          {serverDevices.length == 0 && "Stop"}
           {devicesStatuses.find((item: any) => item.online === "ack") && "Stop"}
           {/* &nbsp;=&nbsp; */}
           <br />
+          {serverDevices.length == 0 && "Loading.."}
           {devicesStatuses.find(
             (item: any, index: any) => item.online === "ack"
           ) &&
@@ -335,16 +355,19 @@ const MonitoringSidebar = () => {
             // fontWeight: "bold",
             // fontSize: "10px",
             height: "35px",
-            margin: "-4px", //  margin: "22px",
-            width: "50px", // width: "70px"
+            margin: "-1.5px", //  margin: "22px",
+            width: "55px", // width: "70px"
             fontWeight: "bold",
-            fontSize: "12px", //  fontSize: "10px",
+            fontSize: "11.5px", //  fontSize: "10px",
             alignItems: "center",
             justifyContent: "center", // Adjust content alignment
             cursor: "pointer",
           }}
           onClick={() => {
-            setStatusDevices("offline");
+            if (serverDevices.length > 0) {
+              setStatusDevices("offline");
+            }
+
             // const array =
             //   devicesStatuses.find(
             //     (item: any, index: any) => item.online === "offline"
@@ -379,10 +402,12 @@ const MonitoringSidebar = () => {
             // dispatch(setDevices(initialGroupDevices));
           }}
         >
+          {serverDevices.length == 0 && "Offline"}
           {devicesStatuses.find((item: any) => item.online === "offline") &&
             "Offline"}
           {/* &nbsp;=&nbsp; */}
           <br />
+          {serverDevices.length == 0 && "Loading.."}
           {devicesStatuses.find(
             (item: any, index: any) => item.online === "offline"
           ) &&
@@ -402,16 +427,19 @@ const MonitoringSidebar = () => {
             // fontWeight: "bold",
             // fontSize: "10px",
             height: "35px",
-            margin: "22px", //  margin: "22px",
-            width: "50px", // width: "70px"
+            margin: "24px", //  margin: "22px",
+            width: "55px", // width: "70px"
             fontWeight: "bold",
-            fontSize: "12px", //  fontSize: "10px",
+            fontSize: "11.5px", //  fontSize: "10px",
             alignItems: "center",
             justifyContent: "center", // Adjust content alignment
             cursor: "pointer",
           }}
           onClick={() => {
-            setStatusDevices("Expired");
+            if (serverDevices.length > 0) {
+              setStatusDevices("Expired");
+            }
+
             // const array =
             //   devicesStatuses.find(
             //     (item: any, index: any) => item.online === "Expired"
@@ -446,16 +474,30 @@ const MonitoringSidebar = () => {
             // dispatch(setDevices(initialGroupDevices));
           }}
         >
-          {devicesStatuses.find((item: any) => item.online === "Expired") &&
+          {serverDevices?.length == 0 && "Expired"}
+
+          {devicesStatuses?.find((item: any) => item.online === "Expired") &&
             "Expired"}
+          {serverDevices?.length > 0 &&
+            devicesStatuses?.find((item: any) => item.online === "Expired") ==
+              undefined &&
+            "Expired"}
+
           {/* &nbsp;=&nbsp; */}
           <br />
-          {devicesStatuses.find(
-            (item: any, index: any) => item.online === "Expired"
-          ) &&
-            devicesStatuses.find(
+          {serverDevices?.length == 0 && "Loading.."}
+          {devicesStatuses?.length > 0 &&
+            devicesStatuses?.find(
+              (item: any, index: any) => item.online === "Expired"
+            ) &&
+            devicesStatuses?.find(
               (item: any, index: any) => item.online === "Expired"
             ).items.length}
+          {/* --------- */}
+          {serverDevices?.length > 0 &&
+            devicesStatuses?.find((item: any) => item.online === "Expired") ==
+              undefined &&
+            0}
         </div>
         <div
           style={{
@@ -469,16 +511,19 @@ const MonitoringSidebar = () => {
             // fontWeight: "bold",
             // fontSize: "10px",
             height: "35px",
-            margin: "-4px", //  margin: "22px",
-            width: "50px", // width: "70px"
+            margin: "-2px", //  margin: "22px",
+            width: "55px", // width: "70px"
             fontWeight: "bold",
-            fontSize: "12px", //  fontSize: "10px",
+            fontSize: "11.5px", //  fontSize: "10px",
             alignItems: "center",
             justifyContent: "center", // Adjust content alignment
             cursor: "pointer",
           }}
           onClick={() => {
-            setStatusDevices("Not Connected");
+            if (serverDevices.length > 0) {
+              setStatusDevices("Not Connected");
+            }
+
             // const array =
             //   devicesStatuses.find(
             //     (item: any, index: any) => item.online === "Not Connected"
@@ -515,17 +560,32 @@ const MonitoringSidebar = () => {
             // }
           }}
         >
-          {devicesStatuses.find(
+          {serverDevices?.length == 0 && "No Data"}
+          {devicesStatuses?.find(
             (item: any) => item.online === "Not Connected"
           ) && "No Data"}
+          {serverDevices?.length > 0 &&
+            devicesStatuses?.find(
+              (item: any) => item.online === "Not Connected"
+            ) == undefined &&
+            "No Data"}
+
           {/* &nbsp;=&nbsp; */}
           <br />
-          {devicesStatuses.find(
-            (item: any, index: any) => item.online === "Not Connected"
-          ) &&
-            devicesStatuses.find(
+          {serverDevices?.length == 0 && "Loading.."}
+          {devicesStatuses?.length > 0 &&
+            devicesStatuses?.find(
+              (item: any, index: any) => item.online === "Not Connected"
+            ) &&
+            devicesStatuses?.find(
               (item: any, index: any) => item.online === "Not Connected"
             ).items.length}
+          {/* ----------- */}
+          {serverDevices?.length > 0 &&
+            devicesStatuses?.find(
+              (item: any) => item.online === "Not Connected"
+            ) == undefined &&
+            0}
         </div>
       </div>
 
@@ -538,7 +598,7 @@ const MonitoringSidebar = () => {
           height: "92.5vh",
           overflow: "auto",
           paddingBottom: "40%",
-          scrollbarWidth:"none",
+          scrollbarWidth: "none",
         }}
       >
         {/* <DevicesTreeViewAccordian /> */}

@@ -57,7 +57,7 @@ const CreateNewSaleInvoice = ({}) => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [modal, setModal] = useState(false);
-  const [selectedTax, setSelectedTax] = useState("");
+  const [selectedTax, setSelectedTax] = useState(0);
 
   const { invoiceData } = useSelector((state: any) => state.sales);
   const { taxes } = useSelector((state: any) => state.taxes);
@@ -67,8 +67,8 @@ const CreateNewSaleInvoice = ({}) => {
     invoiceDueDate: "",
     reference: "",
     comments: "",
-    additionalCharges: "",
-    withHoldingCharges: "",
+    additionalCharges: 0,
+    withHoldingCharges: 0,
     discount:
       invoiceData !== null
         ? invoiceData?.discounted_service_charges *
@@ -123,16 +123,16 @@ const CreateNewSaleInvoice = ({}) => {
 
   useEffect(() => {
     var grossAmount = Number(discount);
-    if (additionalCharges !== "") {
+    if (additionalCharges >= 0) {
       grossAmount = Number(discount) + Number(additionalCharges);
     }
-    if (withHoldingCharges !== "") {
+    if (withHoldingCharges >= 0) {
       grossAmount =
         Number(discount) +
         Number(additionalCharges) +
         Number(withHoldingCharges);
     }
-    if (selectedTax !== "") {
+    if (selectedTax >= 0) {
       grossAmount =
         Number(discount) +
         Number(additionalCharges) +
@@ -897,7 +897,7 @@ const CreateNewSaleInvoice = ({}) => {
                     <Col lg={12} xs={12}>
                       <P>
                         Additional Charges
-                        <span className="txt-danger">*</span>
+                        {/* <span className="txt-danger">*</span> */}
                       </P>
                       <Input
                         type="number"
@@ -910,7 +910,7 @@ const CreateNewSaleInvoice = ({}) => {
                     <Col lg={12} xs={12}>
                       <P>
                         With Holding Charges
-                        <span className="txt-danger">*</span>
+                        {/* <span className="txt-danger">*</span> */}
                       </P>
                       <Input
                         type="number"
@@ -937,10 +937,10 @@ const CreateNewSaleInvoice = ({}) => {
                     <Col lg={12} xs={12}>
                       <P>
                         Select Tax
-                        <span className="txt-danger">*</span>
+                        {/* <span className="txt-danger">*</span> */}
                       </P>
                       <Select
-                        value={selectedTax !== "" ? selectedTax : null}
+                        value={selectedTax >= 0 ? selectedTax : 0}
                         showSearch
                         style={{ width: "100%", height: 36 }}
                         placeholder="Select Tax"

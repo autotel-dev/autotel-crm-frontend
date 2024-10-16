@@ -40,12 +40,32 @@ import { useDispatch } from "react-redux";
 import { ERROR_MESSAGE } from "../../../../../../Utilities/constants/constants";
 import Swal from "sweetalert2";
 import StickyBar from "./components/StickyBar/StickyBar";
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import { setSaleInvoices } from "../../../../../../ReaduxToolkit/Reducer/SaleInvoiceSlice";
 import { useSelector } from "react-redux";
 
 const Sales = () => {
+  const location = useLocation(); // Access current route information
   const [component, setComponent] = useState("Sale Leads");
+
+  useEffect(() => {
+    console.log(location.pathname.split("/"));
+    const arr = location.pathname.split("/");
+    const route = arr[arr.length - 1];
+
+    if (arr.includes("leads")) {
+      setComponent("Sale Leads");
+    } else if (arr.includes("invoice-detail")) {
+      setComponent("Sale Invoice Detail");
+    } else if (arr.includes("invoices")) {
+      setComponent("Sale Invoices");
+    } else if (arr.includes("receive-money")) {
+      setComponent("Receive Money");
+    } else if (arr.includes("customers")) {
+      setComponent("Customers");
+    }
+  }, [location.pathname]);
+
   const { customers, saleLeads } = useSelector((state: any) => state.sales);
 
   const dispatch = useDispatch();

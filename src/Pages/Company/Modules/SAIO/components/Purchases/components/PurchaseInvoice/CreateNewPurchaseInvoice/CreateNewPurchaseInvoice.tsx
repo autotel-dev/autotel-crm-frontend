@@ -96,7 +96,7 @@ const CreateNewPurchaseInvoice = ({}) => {
     reference: purchaseInvoice !== null ? purchaseInvoice?.reference : "",
     comments: purchaseInvoice !== null ? purchaseInvoice?.comments : "",
     shippingCharges:
-      purchaseInvoice !== null ? purchaseInvoice?.shippingCharges : "",
+      purchaseInvoice !== null ? purchaseInvoice?.shippingCharges : 0,
     netAmount: purchaseInvoice !== null ? purchaseInvoice?.netAmount : "",
   });
 
@@ -571,7 +571,7 @@ const CreateNewPurchaseInvoice = ({}) => {
       dueDate !== "" &&
       productObjects.length > 0 &&
       netAmount > 0 &&
-      shippingCharges > 0
+      shippingCharges >= 0
     ) {
       let isValid = true;
       productObjects.forEach((item) => {

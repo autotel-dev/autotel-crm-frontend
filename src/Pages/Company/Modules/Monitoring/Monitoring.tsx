@@ -263,7 +263,7 @@ const Monitoring = () => {
       // console.log("Devices Called");
       // console.log("DevicesCalled in Devices");
       fetchDataAndDispatch(); // Call function to fetch data and dispatch actions
-    }, 60000);
+    }, 180000);
 
     // Cleanup function to clear interval when component unmounts or when loading becomes true
     return () => {
@@ -463,7 +463,7 @@ const Monitoring = () => {
   const [undefinedData, setUndefinedData] = useState<any>(false);
   return (
     <>
-      {isConnected ? (
+      {/* {isConnected ? (
         <NoInternetConnection />
       ) : !loading ? (
         devices.length > 0 && (
@@ -517,6 +517,46 @@ const Monitoring = () => {
           <div style={{ textAlign: "center" }}>
             <Loader />
           </div>
+        </div>
+      )} */}
+
+      {isConnected ? (
+        <NoInternetConnection />
+      ) : (
+        <div
+          style={{
+            marginLeft: "-35px",
+            marginTop: "80px",
+            // marginTop: "130px",
+            height: "92.5vh",
+            display: "flex",
+            overflow: "unset",
+            scrollbarWidth: "none",
+          }}
+        >
+          <GoogleMap />
+
+          <div
+            style={{
+              position: "absolute",
+              // zIndex: "1000" when lraflet
+              // marginTop:"15px"
+            }}
+          >
+            <MonitoringSidebar />
+          </div>
+
+          {devicesDetailData.length > 0 && (
+            <div
+              style={{
+                position: "absolute",
+                right: 0,
+                // zIndex: "1000" when lraflet
+              }}
+            >
+              <DeviceDetailsBar />
+            </div>
+          )}
         </div>
       )}
     </>

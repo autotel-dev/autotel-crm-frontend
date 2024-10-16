@@ -382,7 +382,6 @@ export const createWithMultipart = async (
   }
 };
 
-
 export const patchWithMultipart = async (
   postData: any,
   url: URLTypes
@@ -525,7 +524,6 @@ export const getAll = async (url: URLTypes): Promise<void> => {
     return error;
   }
 
-
   try {
     const response = await axios.get(url.url, {
       headers: header(),
@@ -546,8 +544,53 @@ export const getAll = async (url: URLTypes): Promise<void> => {
   }
 };
 
+// export const getAll = async (url: URLTypes): Promise<void> => {
+//   if (!navigator.onLine) {
+//     const error: any = {
+//       success: false,
+//       message: ERROR_MESSAGE,
+//     };
+//     return error;
+//   }
 
-export const getAllByBodyData = async (postData: any, url: URLTypes): Promise<void> => {
+//   try {
+//     const response = await axios.get(url.url, {
+//       headers: header(),
+//       timeout: 240000, // Set timeout to 4 minutes (240,000 milliseconds)
+//     });
+//     const result = response.data;
+
+//     return result;
+//   } catch (error: any) {
+//     if (error.response) {
+//       if (error.response.data.statusCode === 401) {
+//         Swal.fire({
+//           text: `${error.response.data.message}`,
+//           icon: "error",
+//           showConfirmButton: true,
+//         });
+//       } else {
+//         return error.response.data;
+//       }
+//     } else if (error.code === "ECONNABORTED") {
+//       // Handle timeout error
+//       Swal.fire({
+//         text: "Request timed out after 4 minutes.",
+//         icon: "error",
+//         showConfirmButton: true,
+//       });
+//     } else {
+//       // Handle other errors
+//       console.error(error);
+//       return error.response.data;
+//     }
+//   }
+// };
+
+export const getAllByBodyData = async (
+  postData: any,
+  url: URLTypes
+): Promise<void> => {
   if (!navigator.onLine) {
     Swal.fire({
       text: ERROR_TEXT,
@@ -564,14 +607,13 @@ export const getAllByBodyData = async (postData: any, url: URLTypes): Promise<vo
     return error;
   }
   try {
-     // Append postData as query parameters
-     const queryParams = new URLSearchParams(postData).toString();
-     const requestUrl = `${url.url}?${queryParams}`;
- 
-     const response = await axios.get(requestUrl, {
-       headers: header(),
-     });
- 
+    // Append postData as query parameters
+    const queryParams = new URLSearchParams(postData).toString();
+    const requestUrl = `${url.url}?${queryParams}`;
+
+    const response = await axios.get(requestUrl, {
+      headers: header(),
+    });
 
     const result = response.data;
 

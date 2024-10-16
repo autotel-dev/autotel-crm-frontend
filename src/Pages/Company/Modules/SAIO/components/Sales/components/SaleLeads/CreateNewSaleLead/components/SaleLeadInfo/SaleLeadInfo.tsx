@@ -896,12 +896,12 @@ const SaleLeadInfo = ({ callbackActive }: SaleLeadInfoProps) => {
 
           <Col xl={4} xs={12}>
             <P>
-              Discounted Service Charges
+              Service Charges
               <span className="txt-danger">*</span>
             </P>
             <Input
               type="text"
-              placeholder="Enter Discounted Service Charges"
+              placeholder="Enter Service Charges"
               value={discountedServiceCharges}
               name="discountedServiceCharges"
               disabled={isEditSaleLeadInfo}
@@ -940,9 +940,9 @@ const SaleLeadInfo = ({ callbackActive }: SaleLeadInfoProps) => {
                 (option?.label ?? "").includes(input)
               }
               onChange={(e) => {
-                if (e < totalNoOfVehicles) {
+                if (e < totalNoOfVehicles && isEditSaleLeadInfo) {
                   Swal.fire({
-                    text: `You are not selected the number ofvehicles less than vehicles added`,
+                    text: `You are not selected the number of vehicles less than vehicles added after creation of the lead`,
                     icon: "error",
                     timer: 2000,
                     showConfirmButton: false,

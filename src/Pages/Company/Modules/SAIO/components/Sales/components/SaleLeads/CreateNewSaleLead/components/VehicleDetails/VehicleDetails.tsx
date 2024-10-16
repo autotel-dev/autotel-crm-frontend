@@ -96,11 +96,6 @@ const VehicleForm = ({
       formData.color !== "" &&
       formData.engineNo !== "" &&
       formData.chasisNo !== "" &&
-      formData.instructions !== "" &&
-      formData.remarks !== "" &&
-      formData.bank !== "" &&
-      formData.insurance !== "" &&
-      formData.group !== "" &&
       formData.vehicleMake !== "" &&
       formData.vehicleModel !== "" &&
       formData.year !== "" &&
@@ -212,11 +207,6 @@ const VehicleForm = ({
       formData.color !== "" &&
       formData.engineNo !== "" &&
       formData.chasisNo !== "" &&
-      formData.instructions !== "" &&
-      formData.remarks !== "" &&
-      formData.bank !== "" &&
-      formData.insurance !== "" &&
-      formData.group !== "" &&
       formData.vehicleMake !== "" &&
       formData.vehicleModel !== "" &&
       formData.year !== "" &&
@@ -385,50 +375,25 @@ const VehicleForm = ({
   return (
     <Form className="vehicle-form">
       <Row className="g-3">
+        {/* ------------------------------------ */}
+
         <Col xl={4} xs={12}>
           <div>
             <P>
-              Select Bank
+              Enter Registration Number
               <span className="txt-danger">*</span>
             </P>
           </div>
-          <SelectBanksBox
-            placeholder="Select Bank"
-            bank={formData.bank}
-            setBank={(value: any) => handleSelectChange("bank", value)}
+          <Input
+            type="text"
+            placeholder="Enter Vehicle Registration No"
+            value={formData.registrationNo}
+            name="registrationNo"
+            onChange={handleInputChange}
             disabled={isCreated}
           />
         </Col>
-        <Col xl={4} xs={12}>
-          <div>
-            <P>
-              Select Insurance
-              <span className="txt-danger">*</span>
-            </P>
-          </div>
-          <SelectInsuranceBox
-            placeholder="Select Insurance"
-            insurance={formData.insurance}
-            setInsurance={(value: any) =>
-              handleSelectChange("insurance", value)
-            }
-            disabled={isCreated}
-          />
-        </Col>
-        <Col xl={4} xs={12}>
-          <div>
-            <P>
-              Select Group
-              <span className="txt-danger">*</span>
-            </P>
-          </div>
-          <SelectGroupsBox
-            placeholder="Select Group"
-            group={formData.group}
-            setGroup={(value: any) => handleSelectChange("group", value)}
-            disabled={isCreated}
-          />
-        </Col>
+
         <Col xl={4} xs={12}>
           <div>
             <P>
@@ -462,6 +427,7 @@ const VehicleForm = ({
             vehicleMake={formData.vehicleMake}
           />
         </Col>
+
         <Col xl={4} xs={12}>
           <div>
             <P>
@@ -506,38 +472,6 @@ const VehicleForm = ({
             disabled={isCreated}
           />
         </Col>
-        <Col xl={4} xs={12}>
-          <div>
-            <P>
-              Enter Registration Number
-              <span className="txt-danger">*</span>
-            </P>
-          </div>
-          <Input
-            type="text"
-            placeholder="Enter Vehicle Registration No"
-            value={formData.registrationNo}
-            name="registrationNo"
-            onChange={handleInputChange}
-            disabled={isCreated}
-          />
-        </Col>
-        {/* <Col xl={4} xs={12}>
-          <div>
-            <P>
-              Select Vehicle Color
-              <span className="txt-danger">*</span>
-            </P>
-          </div>
-          <Input
-            type="text"
-            placeholder="Enter Vehicle Color"
-            value={formData.color}
-            name="color"
-            onChange={handleInputChange}
-            disabled={isCreated}
-          />
-        </Col> */}
 
         <Col xl={4} xs={12}>
           <div>
@@ -570,22 +504,7 @@ const VehicleForm = ({
             ]}
           />
         </Col>
-        <Col xl={4} xs={12}>
-          <div>
-            <P>
-              Enter Chasis Number
-              <span className="txt-danger">*</span>
-            </P>
-          </div>
-          <Input
-            type="text"
-            placeholder="Enter Chasis Number"
-            value={formData.chasisNo}
-            name="chasisNo"
-            onChange={handleInputChange}
-            disabled={isCreated}
-          />
-        </Col>
+
         <Col xl={4} xs={12}>
           <div>
             <P>
@@ -602,11 +521,79 @@ const VehicleForm = ({
             disabled={isCreated}
           />
         </Col>
+        <Col xl={4} xs={12}>
+          <div>
+            <P>
+              Enter Chasis Number
+              <span className="txt-danger">*</span>
+            </P>
+          </div>
+          <Input
+            type="text"
+            placeholder="Enter Chasis Number"
+            value={formData.chasisNo}
+            name="chasisNo"
+            onChange={handleInputChange}
+            disabled={isCreated}
+          />
+        </Col>
+      </Row>
+
+      <Row
+        className="g-3"
+        style={{
+          marginTop: "70px",
+        }}
+      >
+        <Col xl={4} xs={12}>
+          <div>
+            <P>
+              Select Bank
+              {/* <span className="txt-danger">*</span> */}
+            </P>
+          </div>
+          <SelectBanksBox
+            placeholder="Select Bank"
+            bank={formData.bank}
+            setBank={(value: any) => handleSelectChange("bank", value)}
+            disabled={isCreated}
+          />
+        </Col>
+        <Col xl={4} xs={12}>
+          <div>
+            <P>
+              Select Insurance
+              {/* <span className="txt-danger">*</span> */}
+            </P>
+          </div>
+          <SelectInsuranceBox
+            placeholder="Select Insurance"
+            insurance={formData.insurance}
+            setInsurance={(value: any) =>
+              handleSelectChange("insurance", value)
+            }
+            disabled={isCreated}
+          />
+        </Col>
+        <Col xl={4} xs={12}>
+          <div>
+            <P>
+              Select Group
+              {/* <span className="txt-danger">*</span> */}
+            </P>
+          </div>
+          <SelectGroupsBox
+            placeholder="Select Group"
+            group={formData.group}
+            setGroup={(value: any) => handleSelectChange("group", value)}
+            disabled={isCreated}
+          />
+        </Col>
         <Col xl={12} xs={12}>
           <div>
             <P>
               Enter Instructions
-              <span className="txt-danger">*</span>
+              {/* <span className="txt-danger">*</span> */}
             </P>
           </div>
           <textarea
@@ -623,7 +610,7 @@ const VehicleForm = ({
           <div>
             <P>
               Enter Remarks
-              <span className="txt-danger">*</span>
+              {/* <span className="txt-danger">*</span> */}
             </P>
           </div>
           <textarea
@@ -636,175 +623,177 @@ const VehicleForm = ({
             disabled={isCreated}
           />
         </Col>
+      </Row>
 
-        <Row className="g-3">
-          <Row style={{ display: "flex", flexWrap: "wrap", marginTop: "50px" }}>
-            <H4>Default Services</H4>
+      {/* ---------------------------------------------------- */}
+
+      <Row className="g-3">
+        <Row style={{ display: "flex", flexWrap: "wrap", marginTop: "50px" }}>
+          <H4>Default Services</H4>
+          <div
+            style={{
+              height: "20px",
+            }}
+          >
+            {" "}
+          </div>
+          <Row>
             <div
               style={{
-                height: "20px",
+                display: "flex",
+                justifyContent: "start",
+                alignItems: "center",
+                marginBottom: "25px",
               }}
             >
-              {" "}
-            </div>
-            <Row>
-              <div
+              <Input
+                type="radio"
+                name="selection"
+                value="Self"
+                checked={formData?.defaultService === "Self"}
+                onChange={() =>
+                  handleDefaultServiceChange("defaultService", "Self", index)
+                }
+                style={{ display: "none" }}
+                id="Self"
+              />
+              <label
+                htmlFor="Self"
                 style={{
-                  display: "flex",
-                  justifyContent: "start",
-                  alignItems: "center",
-                  marginBottom: "25px",
+                  position: "relative",
+                  paddingLeft: "25px",
+                  marginRight: "50px",
+                  cursor: "pointer",
+                  fontSize: "16px",
+                  color: "#333",
                 }}
               >
-                <Input
-                  type="radio"
-                  name="selection"
-                  value="Self"
-                  checked={formData?.defaultService === "Self"}
-                  onChange={() =>
-                    handleDefaultServiceChange("defaultService", "Self", index)
-                  }
-                  style={{ display: "none" }}
-                  id="Self"
-                />
-                <label
-                  htmlFor="Self"
+                Self
+                <span
                   style={{
-                    position: "relative",
-                    paddingLeft: "25px",
-                    marginRight: "50px",
-                    cursor: "pointer",
-                    fontSize: "16px",
-                    color: "#333",
+                    content: "",
+                    position: "absolute",
+                    left: 0,
+                    top: 0,
+                    width: "18px",
+                    height: "18px",
+                    border: "2px solid black",
+                    borderRadius: "50%",
+                    background: "white",
                   }}
-                >
-                  Self
+                />
+                {formData?.defaultService === "Self" && (
                   <span
                     style={{
                       content: "",
                       position: "absolute",
-                      left: 0,
-                      top: 0,
-                      width: "18px",
-                      height: "18px",
-                      border: "2px solid black",
+                      left: "5px",
+                      top: "5px",
+                      width: "8px",
+                      height: "8px",
                       borderRadius: "50%",
-                      background: "white",
+                      background: "green",
                     }}
                   />
-                  {formData?.defaultService === "Self" && (
-                    <span
-                      style={{
-                        content: "",
-                        position: "absolute",
-                        left: "5px",
-                        top: "5px",
-                        width: "8px",
-                        height: "8px",
-                        borderRadius: "50%",
-                        background: "green",
-                      }}
-                    />
-                  )}
-                </label>
-                <Input
-                  type="radio"
-                  name="selection"
-                  value="Control Room"
-                  checked={formData?.defaultService === "Control Room"}
-                  onChange={() =>
-                    handleDefaultServiceChange(
-                      "defaultService",
-                      "Control Room",
-                      index
-                    )
-                  }
-                  style={{ display: "none" }}
-                  id="Control Room"
-                />
-                <label
-                  htmlFor="Control Room"
+                )}
+              </label>
+              <Input
+                type="radio"
+                name="selection"
+                value="Control Room"
+                checked={formData?.defaultService === "Control Room"}
+                onChange={() =>
+                  handleDefaultServiceChange(
+                    "defaultService",
+                    "Control Room",
+                    index
+                  )
+                }
+                style={{ display: "none" }}
+                id="Control Room"
+              />
+              <label
+                htmlFor="Control Room"
+                style={{
+                  position: "relative",
+                  paddingLeft: "25px",
+                  marginRight: "20px",
+                  cursor: "pointer",
+                  fontSize: "16px",
+                  color: "#333",
+                }}
+              >
+                Control Room
+                <span
                   style={{
-                    position: "relative",
-                    paddingLeft: "25px",
-                    marginRight: "20px",
-                    cursor: "pointer",
-                    fontSize: "16px",
-                    color: "#333",
+                    content: "",
+                    position: "absolute",
+                    left: 0,
+                    top: 0,
+                    width: "18px",
+                    height: "18px",
+                    border: "2px solid black",
+                    borderRadius: "50%",
+                    background: "white",
                   }}
-                >
-                  Control Room
+                />
+                {formData?.defaultService === "Control Room" && (
                   <span
                     style={{
                       content: "",
                       position: "absolute",
-                      left: 0,
-                      top: 0,
-                      width: "18px",
-                      height: "18px",
-                      border: "2px solid black",
+                      left: "5px",
+                      top: "5px",
+                      width: "8px",
+                      height: "8px",
                       borderRadius: "50%",
-                      background: "white",
+                      background: "green",
                     }}
                   />
-                  {formData?.defaultService === "Control Room" && (
-                    <span
-                      style={{
-                        content: "",
-                        position: "absolute",
-                        left: "5px",
-                        top: "5px",
-                        width: "8px",
-                        height: "8px",
-                        borderRadius: "50%",
-                        background: "green",
-                      }}
-                    />
-                  )}
-                </label>
-              </div>
-            </Row>
-            <H4>Optional Services</H4>
-            <div
-              style={{
-                height: "20px",
-              }}
-            ></div>
-            {formData?.additionalServices?.map((item: any, index: any) => {
-              return (
-                <>
-                  <Col sm={3}>
-                    <label
-                      style={{
-                        display: "inline-flex", // Use flexbox
-                        alignItems: "center", // Center items vertically
-                        position: "relative",
-                        cursor: "pointer",
-                        marginRight: "25px",
-                        fontSize: "18px",
-                        marginBottom: "15px", // Add some space between rows
-                      }}
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <input
-                        type="checkbox"
-                        name="key"
-                        value={item.value}
-                        checked={item.checked}
-                        onChange={() => handleCheckboxChange(index)}
-                        style={{ display: "none" }}
-                      />
-                      <span
-                        onClick={(e) => e.stopPropagation()}
-                        className="green"
-                      ></span>
-                      <span style={{ marginTop: "5px" }}>{item.title}</span>
-                    </label>
-                  </Col>
-                </>
-              );
-            })}
+                )}
+              </label>
+            </div>
           </Row>
+          <H4>Optional Services</H4>
+          <div
+            style={{
+              height: "20px",
+            }}
+          ></div>
+          {formData?.additionalServices?.map((item: any, index: any) => {
+            return (
+              <>
+                <Col sm={3}>
+                  <label
+                    style={{
+                      display: "inline-flex", // Use flexbox
+                      alignItems: "center", // Center items vertically
+                      position: "relative",
+                      cursor: "pointer",
+                      marginRight: "25px",
+                      fontSize: "18px",
+                      marginBottom: "15px", // Add some space between rows
+                    }}
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <input
+                      type="checkbox"
+                      name="key"
+                      value={item.value}
+                      checked={item.checked}
+                      onChange={() => handleCheckboxChange(index)}
+                      style={{ display: "none" }}
+                    />
+                    <span
+                      onClick={(e) => e.stopPropagation()}
+                      className="green"
+                    ></span>
+                    <span style={{ marginTop: "5px" }}>{item.title}</span>
+                  </label>
+                </Col>
+              </>
+            );
+          })}
         </Row>
 
         <Row className="g-3">
@@ -825,7 +814,7 @@ const VehicleForm = ({
             <div>
               <P>
                 Enter Device Id
-                <span className="txt-danger">*</span>
+                {/* <span className="txt-danger">*</span> */}
               </P>
             </div>
             <Input
@@ -841,7 +830,7 @@ const VehicleForm = ({
             <div>
               <P>
                 Select Server
-                <span className="txt-danger">*</span>
+                {/* <span className="txt-danger">*</span> */}
               </P>
             </div>
             <SelectServersBox
@@ -852,8 +841,10 @@ const VehicleForm = ({
             />
           </Col>
         </Row>
-        {saleLead?.status == "INSTALLED" ||
-        formData?.vehicleData?.installationStatus == "INSTALLED" ? (
+        {/* {saleLead?.status == "INSTALLED" &&
+        formData?.vehicleData?.installationStatus == "INSTALLED" ? ( */}
+
+        {formData?.vehicleData?.installationStatus == "INSTALLED" ? (
           <Col
             xs={12}
             className="text-end d-flex justify-content-end gap-2 align-center"

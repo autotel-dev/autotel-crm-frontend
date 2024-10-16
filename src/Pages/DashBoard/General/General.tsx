@@ -1358,7 +1358,7 @@ const General = () => {
                                 [
                                   "Passed",
                                   daysRemaining > 0
-                                    ? generalData?.companyPackageStatistics
+                                    ?  generalData?.companyPackageStatistics
                                       ?.packageDays - daysRemaining
                                     : generalData?.companyPackageStatistics
                                       ?.packageDays,

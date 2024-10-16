@@ -194,10 +194,10 @@ const Location = (props) => {
           ref={polygonRef}
           paths={modalData.geofenceCoordinates}
           options={{
-            strokeColor: "blue",
+            strokeColor: `${modalData.geofenceInfo.polygon_color}`,
             strokeOpacity: 0.8,
             strokeWeight: 2,
-            fillColor: "blue",
+            fillColor: `${modalData.geofenceInfo.polygon_color}`,
             fillOpacity: 0.35,
           }}
           // onClick={handlePolygonEdit}

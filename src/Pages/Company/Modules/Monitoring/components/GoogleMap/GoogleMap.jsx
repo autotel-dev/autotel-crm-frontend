@@ -82,7 +82,6 @@
 //         options={{ disableDefaultUI: true }}
 //       >
 
-
 //         {devices.map((marker) =>
 //           marker.items
 //             .filter((item) => item.checked) // Filter items where checked is true
@@ -134,18 +133,9 @@
 
 // export default GoogleMapComponent;
 
-
-
-
 // ----------------------------------------------------
 
-
-
-
-
-
 // Leaflet Maps-------------------------------
-
 
 // import React, { useEffect, useRef, useState } from "react";
 // import { MapContainer, TileLayer, Marker, Polyline, useMap } from "react-leaflet";
@@ -250,52 +240,16 @@
 
 // export default LeafletMapComponent;
 
-
-
-
-
-
-
-
-
-
-
-
-
 // ---------------------------------------------------
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 import { useEffect, useRef, useState } from "react";
-import {
-  Map,
-  Marker,
-  GoogleApiWrapper,
-  Polyline,
-} from "google-maps-react";
+import { Map, Marker, GoogleApiWrapper, Polyline } from "google-maps-react";
 import { useDispatch, useSelector } from "react-redux";
 import "./googleMap.css";
 
-
-
 const GoogleMap = (props) => {
   const dispatch = useDispatch();
-  const {
-    expandedDevice,
-    devices,
-  } = useSelector((state) => state.monitoring);
+  const { expandedDevice, devices } = useSelector((state) => state.monitoring);
 
   const [rotation, setRotation] = useState(-270);
   const [zoom, setZoom] = useState(12); // State to manage zoom level
@@ -429,11 +383,6 @@ const GoogleMap = (props) => {
     };
   }, [props.google, devices]);
 
-
-
-
-
-
   if (!props.google) {
     return <div>Error: Google Maps API failed to load.</div>;
   }
@@ -446,7 +395,6 @@ const GoogleMap = (props) => {
       disableDefaultUI={true} // Enable default UI controls
       ref={mapRef}
     >
-
       {expandedDevice !== null && (
         <Polyline
           path={expandedDevice.tail.map(({ lat, lng }) => ({
@@ -455,12 +403,11 @@ const GoogleMap = (props) => {
           }))}
           options={{
             strokeColor: "blue",
-            strokeOpacity: 1.0,
-            strokeWeight: 10,
+            strokeOpacity: 0.8,
+            strokeWeight: 4,
           }}
         />
       )}
-
 
       <div className="custom-zoom-control">
         <button onClick={zoomIn} className="zoom-button">
@@ -479,213 +426,6 @@ const GoogleMap = (props) => {
 export default GoogleApiWrapper({
   apiKey: "AIzaSyDI3fB-ItM1LpMOyMg_P8UxTUuxHCyQS34",
 })(GoogleMap);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // ------------------------------------------------------------
 
@@ -999,4 +739,3 @@ export default GoogleApiWrapper({
 //     }
 //   }
 // }, [expandedDevice]);
-
