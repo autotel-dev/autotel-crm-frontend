@@ -35,18 +35,19 @@ const SaleLeadsTable = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
+    dispatch(setSaleLeads([]));
     getAll({ url: GET_ALL_SALELEADS }).then((data: any) => {
       if (data !== undefined) {
         if (!data.success && data.message === ERROR_MESSAGE) {
           dispatch(setIsConnected(true));
         }
         if (!data.success) {
-          Swal.fire({
-            text: `${data.message}`,
-            icon: "error",
-            timer: 2000,
-            showConfirmButton: false,
-          });
+          // Swal.fire({
+          //   text: `${data.message}`,
+          //   icon: "error",
+          //   timer: 2000,
+          //   showConfirmButton: false,
+          // });
           setLoading(false);
         }
         if (data.success) {

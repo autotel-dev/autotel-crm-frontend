@@ -40,13 +40,19 @@ import {
 } from "../../ReaduxToolkit/Reducer/MonitoringSlice";
 import { useNavigate } from "react-router-dom";
 import { setErrorData } from "../../ReaduxToolkit/Reducer/UserSlice";
-import { GET_COMPANY_ALERTS_OVERVIEW, GET_COMPLAINT_CENTER_STATISTICS } from "../../Utilities/api/apiEndpoints";
+import {
+  GET_COMPANY_ALERTS_OVERVIEW,
+  GET_COMPLAINT_CENTER_STATISTICS,
+} from "../../Utilities/api/apiEndpoints";
 import { ERROR_MESSAGE } from "../../Utilities/constants/constants";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import Chart from "react-google-charts";
 import { H4, H5, P } from "../../AbstractElements";
 import SVG from "../../utils/CommonSvgIcon/SVG";
-import { setComplainCenterRoles, setComplainCenterStatistics } from "../../ReaduxToolkit/Reducer/ComplainCenterSlice";
+import {
+  setComplainCenterRoles,
+  setComplainCenterStatistics,
+} from "../../ReaduxToolkit/Reducer/ComplainCenterSlice";
 import Skeleton from "../Utilities/Skeleton/Skeleton";
 import StickyBar from "./StickyBar/StickyBar";
 
@@ -110,8 +116,9 @@ const Dashboard = () => {
   // Simulating data fetching with a timeout
 
   const [statisticsloading, setStatisticsLoading] = useState(true);
-  const { complainCenterStatistics, complainCenterRoles } = useSelector((state: any) => state.complainCenter);
-
+  const { complainCenterStatistics, complainCenterRoles } = useSelector(
+    (state: any) => state.complainCenter
+  );
 
   useEffect(() => {
     getAll({ url: GET_COMPLAINT_CENTER_STATISTICS }).then((data: any) => {
@@ -155,8 +162,7 @@ const Dashboard = () => {
         }
       }
     });
-  }, [])
-
+  }, []);
 
   useEffect(() => {
     dispatch(setLiveAlerts([]));
@@ -229,10 +235,10 @@ const Dashboard = () => {
               dayOfWeek: [],
               totalAssigned: [],
               totalCompleted: [],
-              totalAlerts: []
+              totalAlerts: [],
             };
 
-            (data.data.alertsOverview as Alert[]).forEach(day => {
+            (data.data.alertsOverview as Alert[]).forEach((day) => {
               alertsOverview.dayOfWeek.push(day.dayOfWeek);
               alertsOverview.totalAssigned.push(day.totalAssigned);
               alertsOverview.totalCompleted.push(day.totalCompleted);
@@ -241,12 +247,12 @@ const Dashboard = () => {
             // console.log(alertsOverview);
             setTimeout(() => {
               dispatch(setAlertsOverview(alertsOverview));
-            }, 500)
+            }, 500);
 
             dispatch(setAlertsPending(data.data.allPendingAlerts));
             setTimeout(() => {
               setAlertsOverviewLoading(false);
-            }, 2500)
+            }, 2500);
           }
           if (!data.success) {
             // // // console.log("length --- >", data.data);
@@ -254,7 +260,7 @@ const Dashboard = () => {
             dispatch(setAlertsPending([]));
             setTimeout(() => {
               setAlertsOverviewLoading(false);
-            }, 2500)
+            }, 2500);
           }
         }
       });
@@ -286,16 +292,13 @@ const Dashboard = () => {
   const [fromDate, setFromDate] = useState(startDate);
   const [toDate, setToDate] = useState(endDate);
 
-
   // Visibility state
   const [visibleSections, setVisibleSections]: any = useState({
-    "general": true,
+    general: true,
     "control-room": true,
     "killed-vehicles": true,
     "complaint-center": true,
   });
-
-
 
   useEffect(() => {
     const storedVisibility = localStorage.getItem("visibilityState");
@@ -319,9 +322,7 @@ const Dashboard = () => {
       [section]: !prevState[section],
     }));
     console.log(visibleSections);
-
   };
-
 
   const componentMap: { [key: string]: JSX.Element } = {
     general: <General />,
@@ -331,18 +332,20 @@ const Dashboard = () => {
           {alertsOverviewloading ? (
             <div style={{ display: "flex", justifyContent: "space-between" }}>
               <div style={{ marginBottom: "20px", marginRight: "20px" }}>
-                <Skeleton height="450px"
-                  width="700px" />
+                <Skeleton height="450px" width="700px" />
               </div>
               <div style={{ marginBottom: "20px", marginRight: "20px" }}>
-                <Skeleton height="450px"
-                  width="700px" />
+                <Skeleton height="450px" width="700px" />
               </div>
             </div>
           ) : (
             <Row
               id="control-room"
-              style={{ display: "flex", paddingRight: "0px", marginRight: "0px" }}
+              style={{
+                display: "flex",
+                paddingRight: "0px",
+                marginRight: "0px",
+              }}
             >
               <AlertsOverview />
               <AlertsPending />
@@ -353,21 +356,19 @@ const Dashboard = () => {
     ),
     "killed-vehicles": (
       <>
-        {
-          !alertsOverviewloading && (
-            <Row>
-              <Col xl="12">
-                <div id="killed-vehicles">
-                  <KilledVehicles fromDate={fromDate} toDate={toDate} />
-                </div>
-              </Col>
-            </Row>
-          )
-        }
+        {!alertsOverviewloading && (
+          <Row>
+            <Col xl="12">
+              <div id="killed-vehicles">
+                <KilledVehicles fromDate={fromDate} toDate={toDate} />
+              </div>
+            </Col>
+          </Row>
+        )}
       </>
     ),
-    "complaint-center": (
-      statisticsloading ? <div
+    "complaint-center": statisticsloading ? (
+      <div
         style={{
           display: "flex",
           // flexDirection: "column",
@@ -415,7 +416,9 @@ const Dashboard = () => {
           marginBottom="20px"
           marginLeft="30px"
         />
-      </div> : <Card
+      </div>
+    ) : (
+      <Card
         style={{
           height: "200px",
           paddingBottom: "-20px",
@@ -431,20 +434,17 @@ const Dashboard = () => {
                 className="pb-0"
                 style={{
                   padding: "0px",
-
                 }}
               >
                 <div className="header-top">
-                  <H4 className="m-0">
-                    Complaint Center
-                  </H4>
+                  <H4 className="m-0">Complaint Center</H4>
                 </div>
               </CardHeader>
-              <div style={{
-                marginBottom: "15px"
-              }}>
-
-              </div>
+              <div
+                style={{
+                  marginBottom: "15px",
+                }}
+              ></div>
               <Row>
                 {complainCenterStatistics.map((data: any, index: any) => (
                   <Col
@@ -459,25 +459,34 @@ const Dashboard = () => {
                       position: "relative",
                     }}
                   >
-                    <div className="sale" style={{
-                      display: "flex",
-                      alignItems: "center",
-                      textAlign: "center",
-                      padding: "0px 15px",
-                      backgroundColor: "white",
-                      //   data.key === "New"
-                      //     ? "rgba(0, 0, 255, 0.3)"
-                      //     : data.key == "InProgress"
-                      //       ? "rgba(255, 165, 0, 0.3)"
-                      //       : data.key === "Pending"
-                      //         ? "rgba(255, 0, 0, 0.3)" :
-                      //         data.key === "Resolved"
-                      //           ? "rgba(0, 255, 0, 0.3)" : "rgb(245, 246, 249)",
-                      boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)", // Example box shadow
-                      height: "60px",
-                      width: "92%"
-                    }}>
-                      <H4>{data.key !== "InternalComplaints" ? (data.key == "InProgress" ? "In Progress" : data.key) : "Total"}</H4>
+                    <div
+                      className="sale"
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        textAlign: "center",
+                        padding: "0px 15px",
+                        backgroundColor: "white",
+                        //   data.key === "New"
+                        //     ? "rgba(0, 0, 255, 0.3)"
+                        //     : data.key == "InProgress"
+                        //       ? "rgba(255, 165, 0, 0.3)"
+                        //       : data.key === "Pending"
+                        //         ? "rgba(255, 0, 0, 0.3)" :
+                        //         data.key === "Resolved"
+                        //           ? "rgba(0, 255, 0, 0.3)" : "rgb(245, 246, 249)",
+                        boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)", // Example box shadow
+                        height: "60px",
+                        width: "92%",
+                      }}
+                    >
+                      <H4>
+                        {data.key !== "InternalComplaints"
+                          ? data.key == "InProgress"
+                            ? "In Progress"
+                            : data.key
+                          : "Total"}
+                      </H4>
 
                       {/* <H6>{data.value}</H6> */}
                       {/* <P className="d-flex">
@@ -490,56 +499,72 @@ const Dashboard = () => {
                         </P>
                         <span className="sale-title">{data.time}</span> */}
                     </div>
-                    <div style={{
-                      backgroundColor: "white",
-                      border: `4px solid ${data.key === "New"
-                        ? "rgba(0, 0, 255, 0.3)"
-                        : data.key == "InProgress"
-                          ? "rgba(255, 165, 0, 0.3)"
-                          : data.key === "Pending"
-                            ? "rgba(255, 0, 0, 0.3)" :
-                            data.key === "Resolved"
-                              ? "rgba(0, 255, 0, 0.3)" : "rgb(245, 246, 249)"}`,
-                      height: '45px',
-                      width: "45px",
-                      borderRadius: "100px",
-                      position: "absolute",
-                      top: "0",
-                      right: "0",
-                      marginTop: "8px",
-                      marginRight: "5px",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      textAlign: "center"
-                    }}>
-                      <div style={{
+                    <div
+                      style={{
                         backgroundColor: "white",
-                        border: `3px solid lightgray`,
-                        height: '34px',
-                        width: "34px",
+                        border: `4px solid ${
+                          data.key === "New"
+                            ? "rgba(0, 0, 255, 0.3)"
+                            : data.key == "InProgress"
+                            ? "rgba(255, 165, 0, 0.3)"
+                            : data.key === "Pending"
+                            ? "rgba(255, 0, 0, 0.3)"
+                            : data.key === "Resolved"
+                            ? "rgba(0, 255, 0, 0.3)"
+                            : "rgb(245, 246, 249)"
+                        }`,
+                        height: "45px",
+                        width: "45px",
                         borderRadius: "100px",
+                        position: "absolute",
+                        top: "0",
+                        right: "0",
+                        marginTop: "8px",
+                        marginRight: "5px",
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
-                        textAlign: "center"
-                      }}>
+                        textAlign: "center",
+                      }}
+                    >
+                      <div
+                        style={{
+                          backgroundColor: "white",
+                          border: `3px solid lightgray`,
+                          height: "34px",
+                          width: "34px",
+                          borderRadius: "100px",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          textAlign: "center",
+                        }}
+                      >
                         <H5>{data.value}</H5>
                       </div>
                     </div>
                   </Col>
                 ))}
-                <Col xl="2" lg="2" md="4" sm="12" style={{
-                  // display:"flex",
-                  // alignItems:"center"
-                  // marginTop: "15px"
-                }}>
-                  <div className="sale"
-
+                <Col
+                  xl="2"
+                  lg="2"
+                  md="4"
+                  sm="12"
+                  style={
+                    {
+                      // display:"flex",
+                      // alignItems:"center"
+                      // marginTop: "15px"
+                    }
+                  }
+                >
+                  <div
+                    className="sale"
                     style={{
                       backgroundColor: "white", // Remove the background color
-                      paddingTop: "0px"
-                    }}>
+                      paddingTop: "0px",
+                    }}
+                  >
                     <div>
                       <div
                         style={{
@@ -567,7 +592,10 @@ const Dashboard = () => {
                             data={[
                               ["Complains", "Hours per Day"],
                               ["New", complainCenterStatistics[1]?.value],
-                              ["In Progress", complainCenterStatistics[2]?.value],
+                              [
+                                "In Progress",
+                                complainCenterStatistics[2]?.value,
+                              ],
                               ["Pending", complainCenterStatistics[3]?.value],
                               ["Resolved", complainCenterStatistics[4]?.value],
                             ]}
@@ -580,12 +608,7 @@ const Dashboard = () => {
                                 right: 0,
                               },
                               pieSliceText: "value", // Display the exact values of each option
-                              colors: [
-                                "blue",
-                                "orange",
-                                "#ff6150",
-                                "#51bb25",
-                              ], // Custom colors for Active and Inactive options respectively
+                              colors: ["blue", "orange", "#ff6150", "#51bb25"], // Custom colors for Active and Inactive options respectively
                               is3D: true, // Set the chart type to 3D
                               legend: { position: "none" }, // Remove legend
                             }}
@@ -599,16 +622,19 @@ const Dashboard = () => {
                   </div>
                 </Col>
               </Row>
-
-
             </Col>
           </div>
         </CardBody>
       </Card>
-    )
+    ),
   };
 
-  const initialOrder: string[] = ["general", "control-room", "killed-vehicles", "complaint-center"];
+  const initialOrder: string[] = [
+    "general",
+    "control-room",
+    "killed-vehicles",
+    "complaint-center",
+  ];
 
   const [componentOrder, setComponentOrder] = useState<string[]>(initialOrder);
 
@@ -635,7 +661,12 @@ const Dashboard = () => {
 
   return (
     <>
-      {getUserRole() === ROLES.COMPANY && <StickyBar toggleSection={toggleSection} visibleSections={visibleSections} />}
+      {getUserRole() === ROLES.COMPANY && (
+        <StickyBar
+          toggleSection={toggleSection}
+          visibleSections={visibleSections}
+        />
+      )}
       <Breadcrumbs mainTitle="Dashboard" parent="Dashboard" title="Dashboard" />
       {getUserRole() === ROLES.SUPER_ADMIN ? (
         <Container fluid className="dashboard_default">
@@ -655,11 +686,8 @@ const Dashboard = () => {
       ) : dashboard !== undefined &&
         dashboard?.read &&
         getUserRole() === ROLES.COMPANY ? (
-
         <Container fluid className="crm_dashboard">
-
           <Row className="widget-grid">
-
             <DragDropContext onDragEnd={onDragEnd}>
               <Droppable droppableId="dashboard">
                 {(provided) => (
@@ -683,10 +711,8 @@ const Dashboard = () => {
                 )}
               </Droppable>
             </DragDropContext>
-
           </Row>
         </Container>
-
       ) : (
         <div
           style={{
@@ -707,15 +733,6 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
-
-
-
-
-
-
-
-
-
 
 // const [items, setItems] = useState([
 //   {
@@ -848,8 +865,6 @@ export default Dashboard;
 //                     <AlertsPending />
 //                   </Row>
 
-
-
 //                 </>
 //               )}
 //             </Row>
@@ -886,9 +901,6 @@ export default Dashboard;
 
 //   setItems(reorderedItems);
 // };
-
-
-
 
 // <Container fluid className="crm_dashboard">
 //   <Row className="widget-grid">

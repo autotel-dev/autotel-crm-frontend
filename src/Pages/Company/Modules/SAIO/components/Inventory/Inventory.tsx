@@ -58,12 +58,12 @@ const Inventory = () => {
           // dispatch(setIsConnected(true));
         }
         if (!data.success) {
-          Swal.fire({
-            text: `${data.message}`,
-            icon: "error",
-            timer: 2000,
-            showConfirmButton: false,
-          });
+          // Swal.fire({
+          //   text: `${data.message}`,
+          //   icon: "error",
+          //   timer: 2000,
+          //   showConfirmButton: false,
+          // });
         }
         if (data.success) {
           // // console.log("hhg");
