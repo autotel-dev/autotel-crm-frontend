@@ -120,7 +120,7 @@ const InventoryDetails = ({
           ...formData.sensors.map((item: any) => item.id),
           ...formData.accessories.map((item: any) => item.id),
         ],
-        saleLeadId: saleLead._id,
+        saleLeadId: saleLead?._id,
       };
       // console.log("body", body);
 
@@ -155,7 +155,7 @@ const InventoryDetails = ({
               //         }
               //     }
               // });
-              getAll({ url: `${GET_SINGLE_SALELEAD}/${saleLead._id}` }).then(
+              getAll({ url: `${GET_SINGLE_SALELEAD}/${saleLead?._id}` }).then(
                 (data: any) => {
                   if (data !== undefined) {
                     if (!data.success) {
@@ -212,7 +212,7 @@ const InventoryDetails = ({
         try {
           const body = {
             inventoryItems: [],
-            saleLeadId: saleLead._id,
+            saleLeadId: saleLead?._id,
           };
           await patch(body, {
             url: `${ATTACH_INVENTORY_TO_VEHICLE}/${formData.vehicleId}`,
@@ -250,7 +250,7 @@ const InventoryDetails = ({
                 //         }
                 //     }
                 // });
-                getAll({ url: `${GET_SINGLE_SALELEAD}/${saleLead._id}` }).then(
+                getAll({ url: `${GET_SINGLE_SALELEAD}/${saleLead?._id}` }).then(
                   (data: any) => {
                     if (data !== undefined) {
                       if (data.success) {
@@ -1308,7 +1308,7 @@ export default InventoryDetails;
 //     const dispatch = useDispatch();
 
 //     const [selectedVehicles, setSelectedVehicles] = useState<Vehicle[]>(
-//         saleLead.vehicles.map((vehicle, index) => ({
+//         saleLead?.vehicles.map((vehicle, index) => ({
 //             ...vehicle,
 //             checked: index === 0,
 //             form: {

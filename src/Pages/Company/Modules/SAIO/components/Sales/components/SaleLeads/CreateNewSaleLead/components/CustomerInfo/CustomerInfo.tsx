@@ -104,7 +104,7 @@ const CustomerInfo = ({ callbackActive }: CustomerInfoProps) => {
     ) {
       try {
         await create(
-          { ...personalDetailsForm, saleLeadId: saleLead._id },
+          { ...personalDetailsForm, saleLeadId: saleLead?._id },
           { url: CREATE_NEW_CUSTOMER }
         ).then((data: any) => {
           if (data !== undefined) {
@@ -124,7 +124,7 @@ const CustomerInfo = ({ callbackActive }: CustomerInfoProps) => {
               dispatch(setSaleLeadId(""));
             }
             if (data.success) {
-              getAll({ url: `${GET_SINGLE_SALELEAD}/${saleLead._id}` }).then(
+              getAll({ url: `${GET_SINGLE_SALELEAD}/${saleLead?._id}` }).then(
                 (data: any) => {
                   if (data !== undefined) {
                     if (data.success) {
@@ -189,7 +189,7 @@ const CustomerInfo = ({ callbackActive }: CustomerInfoProps) => {
             customerName: saleLead?.customerName,
             customerContactNo: saleLead?.customerContactNo,
             city: saleLead?.city._id,
-            saleLeadId: saleLead._id,
+            saleLeadId: saleLead?._id,
           },
           { url: `${UPDATE_CUSTOMER}/${saleLead?.customer?._id}` }
         ).then((data: any) => {
@@ -226,7 +226,7 @@ const CustomerInfo = ({ callbackActive }: CustomerInfoProps) => {
                     dispatch(setSaleLeads(data.data));
                     setIsEditCustomerInfo(true);
                     getAll({
-                      url: `${GET_SINGLE_SALELEAD}/${saleLead._id}`,
+                      url: `${GET_SINGLE_SALELEAD}/${saleLead?._id}`,
                     }).then((data: any) => {
                       if (data !== undefined) {
                         if (data.success) {

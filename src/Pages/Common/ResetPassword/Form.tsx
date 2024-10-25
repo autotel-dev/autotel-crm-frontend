@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import Swal from "sweetalert2";
 
 import { create } from "../../../Utilities/api";
+import { RESET_PASSWORD } from "../../../Utilities/api/apiEndpoints";
 // import { RESET_PASSWORD } from "../../../Utilities/api/apiEndpoints";
 
 interface PropTypes {
@@ -17,14 +18,9 @@ interface PropTypes {
 
 export interface CommonFormPropsType {
   alignLogo?: string;
-  emailAddress?: string;
-  userId?: string;
+  state?: any;
 }
-const CommonForm = ({
-  alignLogo,
-  emailAddress,
-  userId,
-}: CommonFormPropsType) => {
+const CommonForm = ({ alignLogo, state }: CommonFormPropsType) => {
   const [showPassWord, setShowPassWord] = useState(false);
   const [showConfirmPassWord, setShowConfirmPassWord] = useState(false);
 
@@ -42,83 +38,85 @@ const CommonForm = ({
     formState: { errors },
   } = useForm<PropTypes>();
 
-  // const resetPassword: SubmitHandler<PropTypes> = async (data, e: any) => {
-  //   setLoading(true);
-  //   e.preventDefault();
-  //   if (data.password !== "" && data.confirmpassword !== "") {
-  //     if (data.password == data.confirmpassword) {
-  //       var resetData = {
-  //         userId: userId,
-  //         updatedPassword: data.password,
-  //         updatedConfirmPassword: data.confirmpassword,
-  //       };
+  const resetPassword: SubmitHandler<PropTypes> = async (data, e: any) => {
+    setLoading(true);
+    e.preventDefault();
+    if (data.password !== "" && data.confirmpassword !== "") {
+      if (data.password == data.confirmpassword) {
+        var resetData = {
+          userId: state.userId,
+          emailAddress: state.emailAddress,
+          password: data.password,
+          confirmPassword: data.confirmpassword,
+        };
 
-  //       // console.log(loginData);
-  //       try {
-  //         await create(resetData, {
-  //           url: RESET_PASSWORD,
-  //         }).then(async (data: any) => {
-  //           console.log("response: ", data);
+        // console.log(loginData);
+        try {
+          await create(resetData, {
+            url: RESET_PASSWORD,
+          }).then(async (data: any) => {
+            console.log("response: ", data);
+            setLoading(false);
 
-  //           setLoading(false);
+            if (!data.success) {
+              Swal.fire({
+                text: `${data.message}`,
+                icon: "error",
+                timer: 2000,
+                showConfirmButton: false,
+              });
+              setLoading(false);
+            }
 
-  //           if (!data.success) {
-  //             Swal.fire({
-  //               text: `${data.message}`,
-  //               icon: "error",
-  //               timer: 2000,
-  //               showConfirmButton: false,
-  //             });
-  //           }
+            if (data.success) {
+              Swal.fire({
+                text: `${data.message}`,
+                icon: "success",
+                timer: 2000,
+                showConfirmButton: false,
+              });
+              setLoading(false);
+              navigate(`${process.env.PUBLIC_URL}/login`);
+            }
 
-  //           if (data.success) {
-  //             Swal.fire({
-  //               text: `${data.message}`,
-  //               icon: "success",
-  //               timer: 2000,
-  //               showConfirmButton: false,
-  //             });
+            reset({
+              confirmpassword: "",
+              password: "",
+            });
+          });
 
-  //             navigate(`${process.env.PUBLIC_URL}/login`);
-  //           }
-
-  //           reset({
-  //             confirmpassword: "",
-  //             password: "",
-  //           });
-  //         });
-
-  //         // Handle successful post creation (e.g., show a success message, redirect, etc.)
-  //       } catch (error: any) {
-  //         Swal.fire({
-  //           text: `${error?.message}`,
-  //           icon: "error",
-  //           timer: 2000,
-  //           showConfirmButton: false,
-  //         });
-  //         setLoading(false);
-  //         reset({
-  //           confirmpassword: "",
-  //           password: "",
-  //         });
-  //       }
-  //     } else {
-  //       Swal.fire({
-  //         text: `Password Not Matched`,
-  //         icon: "error",
-  //         timer: 2000,
-  //         showConfirmButton: false,
-  //       });
-  //     }
-  //   } else {
-  //     Swal.fire({
-  //       text: `Required Fileds are empty`,
-  //       icon: "error",
-  //       timer: 2000,
-  //       showConfirmButton: false,
-  //     });
-  //   }
-  // };
+          // Handle successful post creation (e.g., show a success message, redirect, etc.)
+        } catch (error: any) {
+          Swal.fire({
+            text: `${error?.message}`,
+            icon: "error",
+            timer: 2000,
+            showConfirmButton: false,
+          });
+          setLoading(false);
+          reset({
+            confirmpassword: "",
+            password: "",
+          });
+        }
+      } else {
+        Swal.fire({
+          text: `Password Not Matched`,
+          icon: "error",
+          timer: 2000,
+          showConfirmButton: false,
+        });
+        setLoading(false);
+      }
+    } else {
+      Swal.fire({
+        text: `Required Fileds are empty`,
+        icon: "error",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+    }
+  };
   return (
     <div className="login-card login-dark">
       <div>
@@ -126,10 +124,7 @@ const CommonForm = ({
           <Logo alignLogo={alignLogo} />
         </div> */}
         <div className="login-main">
-          <Form
-            className="theme-form"
-            //  onSubmit={handleSubmit(resetPassword)}
-          >
+          <Form className="theme-form" onSubmit={handleSubmit(resetPassword)}>
             <H3>Reset Password</H3>
             <P>{"Enter your New Password"}</P>
             <FormGroup>
@@ -142,12 +137,12 @@ const CommonForm = ({
                   required
                   {...register("password", {
                     required: true,
-                    pattern: {
-                      value:
-                        /^(?=.*[@|!|#|$|%|^|&|*|.|,|?||-|_])(?=.*[A-Z])(?=.*[a-z])(?=.*\d).+$/,
-                      message:
-                        "Password contain special Char, Uppercase, lowercase and digit",
-                    },
+                    // pattern: {
+                    //   value:
+                    //     /^(?=.*[@|!|#|$|%|^|&|*|.|,|?||-|_])(?=.*[A-Z])(?=.*[a-z])(?=.*\d).+$/,
+                    //   message:
+                    //     "Password contain special Char, Uppercase, lowercase and digit",
+                    // },
                   })}
                 />
 
@@ -176,11 +171,11 @@ const CommonForm = ({
                   required
                   {...register("confirmpassword", {
                     required: true,
-                    pattern: {
-                      value: /^(?=.*[@])(?=.*[A])(?=.*[a])(?=.*\d).+$/,
-                      message:
-                        "Password contain special Char, Uppercase, lowercase and digit",
-                    },
+                    // pattern: {
+                    //   value: /^(?=.*[@])(?=.*[A])(?=.*[a])(?=.*\d).+$/,
+                    //   message:
+                    //     "Password contain special Char, Uppercase, lowercase and digit",
+                    // },
                   })}
                 />
 
@@ -225,7 +220,7 @@ const CommonForm = ({
                   }}
                   className="btn-block w-100"
                 >
-                  {loading ? "Loading..." : "Reset"}
+                  {loading ? "Loading..." : "Reset Password"}
                 </button>
               ) : (
                 <Button
@@ -233,7 +228,7 @@ const CommonForm = ({
                   color="primary"
                   className="btn-block w-100"
                 >
-                  {loading ? "Loading..." : "Reset"}
+                  {loading ? "Loading..." : "Reset Password"}
                 </Button>
               )}
             </div>

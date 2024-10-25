@@ -12,8 +12,10 @@ import {
   GET_SUPERADMIN_PERSONALIZATION,
   IMAGE_BASE_URL,
 } from "../../../Utilities/api/apiEndpoints";
+import { useLocation } from "react-router-dom";
 
 const ResetPassword = () => {
+  const location = useLocation();
   const [loading, setLoading] = useState<any>(true);
   const { userPersonalizationData } = useSelector(
     (state: any) => state.personalization
@@ -209,7 +211,7 @@ const ResetPassword = () => {
             />
           </Col>
           <Col xl={7} className="p-0">
-            <CommonForm alignLogo="text-start" />
+            <CommonForm alignLogo="text-start" state={location.state} />
           </Col>
         </Row>
       )}

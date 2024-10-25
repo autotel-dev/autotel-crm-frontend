@@ -125,7 +125,7 @@ const InstallationForm = ({
       bodyData.append("trackerLocation", formData.trackerLocation);
       bodyData.append("otherEvidence", formData.otherEvidence);
       bodyData.append("installationRemarks", formData.installationRemarks);
-      bodyData.append("saleLeadId", saleLead._id);
+      bodyData.append("saleLeadId", saleLead?._id);
       // console.log("bodyData", bodyData);
 
       try {
@@ -158,7 +158,7 @@ const InstallationForm = ({
               //         }
               //     }
               // });
-              getAll({ url: `${GET_SINGLE_SALELEAD}/${saleLead._id}` }).then(
+              getAll({ url: `${GET_SINGLE_SALELEAD}/${saleLead?._id}` }).then(
                 (data: any) => {
                   if (data !== undefined) {
                     if (!data.success) {

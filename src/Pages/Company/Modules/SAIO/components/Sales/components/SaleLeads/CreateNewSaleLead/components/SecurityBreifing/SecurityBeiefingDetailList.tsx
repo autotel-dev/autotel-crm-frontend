@@ -37,7 +37,7 @@ const SecurityBriefingDetailsList = ({
 
   useEffect(() => {
     if (saleLead) {
-      const vehicleOptions = saleLead.vehicles.map((vehicle: any) => ({
+      const vehicleOptions = saleLead?.vehicles?.map((vehicle: any) => ({
         title: vehicle.registrationNo,
         value: vehicle.registrationNo,
         id: vehicle._id,
@@ -225,7 +225,7 @@ const SecurityBriefingDetailsList = ({
                     dispatch(setSaleLeads(data.data));
 
                     getAll({
-                      url: `${GET_SINGLE_SALELEAD}/${saleLead._id}`,
+                      url: `${GET_SINGLE_SALELEAD}/${saleLead?._id}`,
                     }).then((data: any) => {
                       if (data !== undefined) {
                         if (data.success) {

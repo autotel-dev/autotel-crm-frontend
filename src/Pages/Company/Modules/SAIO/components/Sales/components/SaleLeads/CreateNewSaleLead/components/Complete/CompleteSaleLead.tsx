@@ -42,7 +42,7 @@ const CompleteSaleLead = ({ callbackActive }: CompleteSaleLeadProps) => {
 
   useEffect(() => {
     if (saleLead) {
-      const vehicleOptions = saleLead.vehicles.map((vehicle: any) => ({
+      const vehicleOptions = saleLead?.vehicles?.map((vehicle: any) => ({
         title: vehicle.registrationNo,
         value: vehicle.registrationNo,
         id: vehicle._id,
@@ -127,7 +127,7 @@ const CompleteSaleLead = ({ callbackActive }: CompleteSaleLeadProps) => {
       )
     ) {
       try {
-        await patch({}, { url: `${COMPLETE_SALE_LEAD}/${saleLead._id}` }).then(
+        await patch({}, { url: `${COMPLETE_SALE_LEAD}/${saleLead?._id}` }).then(
           (data: any) => {
             if (data !== undefined) {
               if (!data.success && data.message === ERROR_MESSAGE) {

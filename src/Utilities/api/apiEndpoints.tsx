@@ -67,6 +67,13 @@ export const UPDATE_SUPERADMIN_BY_OWN = `${API_BASE_URL}/super-admin/update-supe
 export const UPDATE_COMPANY_BY_OWN = `${API_BASE_URL}/company/update-company`;
 export const UPDATE_OPERATOR_BY_OWN = `${API_BASE_URL}/operator/update-operator`;
 
+// Account -> Forgot Password
+export const VERIFY_EMAIL = `${API_BASE_URL}/user/forgot-password/verify-email`;
+export const SEND_OTP = `${API_BASE_URL}/user/forgot-password/send-otp`;
+export const VERIFY_OTP = `${API_BASE_URL}/user/forgot-password/verify-otp`;
+export const RESET_PASSWORD = `${API_BASE_URL}/user/forgot-password/reset-password`;
+export const VERIFY_PASSWORD = `${API_BASE_URL}/user/forgot-password/verify-password`;
+
 // Settings -> Personalization -> User
 export const CREATE_PERSONALIZATION = `${API_BASE_URL}/personalization/create-personalization`;
 export const GET_ALL_ACTIVE_PERSONALIZATION = `${API_BASE_URL}/personalization/get-all-active-personalizations`;
@@ -247,6 +254,10 @@ export const GET_INTERNAL_COMPLAIN_BY_ID = `${API_BASE_URL}/complaint-center/get
 export const SEND_INTERNAL_COMPLAINT_MESSAGE = `${API_BASE_URL}/complaint-center/internal-complaint`;
 export const UPDATE_INTERNAL_COMPLAINT = `${API_BASE_URL}/complaint-center/update-internal-complaint`;
 export const GET_COMPLAINT_CENTER_STATISTICS = `${API_BASE_URL}/complaint-center/get-statistics`;
+
+// company -> Modules - ComplaintCenter -> NR
+
+export const GET_NR_DEVICES = `${API_BASE_URL}/complaint-center/get-nr-devices`;
 
 // Company -> Modules - ControlRoom
 export const GET_ALERT_EVENTS = `${API_BASE_URL}/company/alert-events`;

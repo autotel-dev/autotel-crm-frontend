@@ -80,7 +80,7 @@ const VehicleForm = ({
   const [removedloading, setRemovedLoading] = useState(false);
   const dispatch = useDispatch();
   const [isCreated, setIsCreated] = useState(
-    saleLead.vehicles.find(
+    saleLead?.vehicles?.find(
       (item: any, i: number) => formData.registrationNo == item.registrationNo
     )
       ? true
@@ -109,8 +109,8 @@ const VehicleForm = ({
             .filter((service: any) => service.checked)
             .map((service: any) => service.value),
         ],
-        saleLeadId: saleLead._id,
-        customer: saleLead.customer._id,
+        saleLeadId: saleLead?._id,
+        customer: saleLead?.customer._id,
       };
 
       try {
@@ -159,7 +159,7 @@ const VehicleForm = ({
                 //   }
                 // });
 
-                getAll({ url: `${GET_SINGLE_SALELEAD}/${saleLead._id}` }).then(
+                getAll({ url: `${GET_SINGLE_SALELEAD}/${saleLead?._id}` }).then(
                   (data: any) => {
                     if (data !== undefined) {
                       if (!data.success) {
@@ -220,8 +220,8 @@ const VehicleForm = ({
             .filter((service: any) => service.checked)
             .map((service: any) => service.value),
         ],
-        saleLeadId: saleLead._id,
-        customer: saleLead.customer._id,
+        saleLeadId: saleLead?._id,
+        customer: saleLead?.customer._id,
       };
 
       try {
@@ -255,7 +255,7 @@ const VehicleForm = ({
               //     }
               //   }
               // });
-              getAll({ url: `${GET_SINGLE_SALELEAD}/${saleLead._id}` }).then(
+              getAll({ url: `${GET_SINGLE_SALELEAD}/${saleLead?._id}` }).then(
                 (data: any) => {
                   if (data !== undefined) {
                     if (!data.success) {
@@ -335,7 +335,7 @@ const VehicleForm = ({
                     showConfirmButton: false,
                   });
                   getAll({
-                    url: `${GET_SINGLE_SALELEAD}/${saleLead._id}`,
+                    url: `${GET_SINGLE_SALELEAD}/${saleLead?._id}`,
                   }).then((data: any) => {
                     if (data !== undefined) {
                       if (data.success) {
@@ -859,7 +859,7 @@ const VehicleForm = ({
             xs={12}
             className="text-end d-flex justify-content-end gap-2 align-center"
           >
-            {saleLead.vehicles.find(
+            {saleLead?.vehicles?.find(
               (item: any, i: number) =>
                 formData.registrationNo == item.registrationNo
             ) ? (

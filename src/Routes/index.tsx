@@ -14,6 +14,7 @@ import { useEffect } from "react";
 import LoginForm from "../Pages/Common/Auth/Auth";
 import ForgotPassword from "../Pages/Common/ForgotPassword/ForgotPassword";
 import ResetPassword from "../Pages/Common/ResetPassword/ResetPassword";
+import VerifyOTPForForgotPassword from "../Pages/Common/VerifyOTPForForgotPassword/VerifyOTPForForgotPassword";
 
 const Routers = () => {
   useEffect(() => {
@@ -61,15 +62,17 @@ const Routers = () => {
           path={`${process.env.PUBLIC_URL}login`}
           element={<Navigate to={"/login"} />}
         /> */}
-
+        <Route
+          path={`${process.env.PUBLIC_URL}/verifyOTP`}
+          element={<VerifyOTP />}
+        />
         <Route
           path={`${process.env.PUBLIC_URL}/forgot-password`}
           element={<ForgotPassword />}
         />
-
         <Route
-          path={`${process.env.PUBLIC_URL}/verifyOTP`}
-          element={<VerifyOTP />}
+          path={`${process.env.PUBLIC_URL}/verifyOTPForForgotPassword`}
+          element={<VerifyOTPForForgotPassword />}
         />
 
         <Route

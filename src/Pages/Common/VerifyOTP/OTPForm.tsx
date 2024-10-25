@@ -3,19 +3,35 @@ import Logo from "./Logo";
 import { H1, H4 } from "../../../AbstractElements";
 import { Button, Form, FormGroup, Input, Label } from "reactstrap";
 import { useNavigate } from "react-router-dom";
-import { getAll, login, otpVerification, resendOTP } from "../../../Utilities/api";
+import {
+  getAll,
+  login,
+  otpVerification,
+  resendOTP,
+} from "../../../Utilities/api";
 
 import OTPInput from "react-otp-input";
 import "./otpstyles.css";
 import Swal from "sweetalert2";
 import { setUserData } from "../../../ReaduxToolkit/Reducer/UserSlice";
 import { useDispatch } from "react-redux";
-import { getOperatorCompanyUserId, getUserRole } from "../../../Utilities/globals/globals";
+import {
+  getOperatorCompanyUserId,
+  getUserRole,
+} from "../../../Utilities/globals/globals";
 import { setUserPersonalizationData } from "../../../ReaduxToolkit/Reducer/PersonalizationSlice";
 import { setActiveCRMModules } from "../../../ReaduxToolkit/Reducer/CRMModuleSlice";
 import { setUserPermissions } from "../../../ReaduxToolkit/Reducer/PermissionSlice";
 import { ROLES } from "../../../constants/roles";
-import { GET_ALLOWED_MODULES, GET_ALLOWED_PERMISSIONS, GET_ALL_ACTIVE_CRM_MODULES, GET_COMPANY_PERSONALIZATION, GET_SUPERADMIN_PERSONALIZATION, GET_USER_BY_ID, RESENT_SECURITY_CODE } from "../../../Utilities/api/apiEndpoints";
+import {
+  GET_ALLOWED_MODULES,
+  GET_ALLOWED_PERMISSIONS,
+  GET_ALL_ACTIVE_CRM_MODULES,
+  GET_COMPANY_PERSONALIZATION,
+  GET_SUPERADMIN_PERSONALIZATION,
+  GET_USER_BY_ID,
+  RESENT_SECURITY_CODE,
+} from "../../../Utilities/api/apiEndpoints";
 // import OTPInput, { ResendOTP } from "otp-input-react";
 
 export interface CommonFormPropsType {
@@ -107,7 +123,8 @@ const OTPForm = ({ alignLogo }: CommonFormPropsType) => {
             const userId = localStorage.getItem("userId");
             getAll({
               url:
-                getUserRole() === ROLES.COMPANY || getUserRole() === ROLES.OPERATOR
+                getUserRole() === ROLES.COMPANY ||
+                getUserRole() === ROLES.OPERATOR
                   ? GET_ALLOWED_MODULES
                   : GET_ALL_ACTIVE_CRM_MODULES,
             }).then((data: any) => {
@@ -165,7 +182,10 @@ const OTPForm = ({ alignLogo }: CommonFormPropsType) => {
               }
             });
 
-            if (getUserRole() === ROLES.COMPANY || getUserRole() === ROLES.OPERATOR) {
+            if (
+              getUserRole() === ROLES.COMPANY ||
+              getUserRole() === ROLES.OPERATOR
+            ) {
               getAll({ url: GET_ALLOWED_PERMISSIONS })
                 .then((data: any) => {
                   // console.log("api call --- >", data);

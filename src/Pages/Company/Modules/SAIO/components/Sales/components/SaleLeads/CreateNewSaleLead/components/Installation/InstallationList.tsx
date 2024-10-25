@@ -25,7 +25,7 @@ const InstallationList = ({ callbackActive }: InstallationListProps) => {
 
   useEffect(() => {
     if (saleLead) {
-      const vehicleOptions = saleLead.vehicles.map((vehicle: any) => ({
+      const vehicleOptions = saleLead?.vehicles?.map((vehicle: any) => ({
         title: vehicle.registrationNo,
         value: vehicle.registrationNo,
         checked: vehicle.installationStatus == "INSTALLED" ? true : false,

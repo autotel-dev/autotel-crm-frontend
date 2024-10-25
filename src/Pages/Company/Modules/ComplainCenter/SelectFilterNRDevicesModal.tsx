@@ -19,9 +19,12 @@ import { SendCommandType } from "../ControlRoom/Analytics/components/Type/SendCo
 import DevicesDropdown from "../ControlRoom/Analytics/components/DevicesDropdown/DevicesDropdown";
 import CreateComplainModal from "./CreateComplainModal";
 import { serverCredentials } from "../../../../Utilities/headers/header";
-import { create } from "../../../../Utilities/api";
+import { create, getAll } from "../../../../Utilities/api";
 import { setCreateComplainModalData } from "../../../../ReaduxToolkit/Reducer/ComplainCenterSlice";
-import { GET_DEVICE_DATA } from "../../../../Utilities/api/apiEndpoints";
+import {
+  GET_DEVICE_DATA,
+  GET_NR_DEVICES,
+} from "../../../../Utilities/api/apiEndpoints";
 import { ERROR_MESSAGE } from "../../../../Utilities/constants/constants";
 import SelectFilterHoursTypes from "./components/SelectFilterHoursTypes";
 import DataTable from "react-data-table-component";
@@ -76,183 +79,47 @@ const SelectFilterNRDevicesModal: React.FC<PropsTypes> = ({
   const [basicTab, setBasicTab] = useState("1");
   const [hour, selectedHour] = useState("");
 
-  const parseCustomDate = (dateString: string) => {
-    // console.log("dateString", dateString);
+  // const parseCustomDate = (dateString: string) => {
+  //   // console.log("dateString", dateString);
 
-    const [date, time, period] = dateString.split(" "); // Split date, time, and AM/PM
-    const [day, month, year] = date.split("-"); // Split DD-MM-YYYY
-    const [hours, minutes, seconds] = time.split(":"); // Split hh:mm:ss
+  //   const [date, time, period] = dateString.split(" "); // Split date, time, and AM/PM
+  //   const [day, month, year] = date.split("-"); // Split DD-MM-YYYY
+  //   const [hours, minutes, seconds] = time.split(":"); // Split hh:mm:ss
 
-    let hoursIn24Format = parseInt(hours);
-    if (period === "PM" && hoursIn24Format < 12) hoursIn24Format += 12; // Convert to 24-hour format if PM
-    if (period === "AM" && hoursIn24Format === 12) hoursIn24Format = 0; // Midnight correction
+  //   let hoursIn24Format = parseInt(hours);
+  //   if (period === "PM" && hoursIn24Format < 12) hoursIn24Format += 12; // Convert to 24-hour format if PM
+  //   if (period === "AM" && hoursIn24Format === 12) hoursIn24Format = 0; // Midnight correction
 
-    return new Date(
-      parseInt(year),
-      parseInt(month) - 1, // JavaScript months are 0-indexed
-      parseInt(day),
-      hoursIn24Format,
-      parseInt(minutes),
-      parseInt(seconds)
-    );
-  };
-
-  const transformData = () => {
-    const now = new Date(); // Get the current time
-    const hourInMilliseconds = Number(hour) * 3600000; // Convert selected hours to milliseconds
-
-    const allItems = selectedDevices.flatMap((device: any) => device.items);
-
-    // Filter out items where time is "Expired" or "Not connected"
-    const filteredItems = allItems.filter(
-      (item: any) => item?.time !== "Expired" && item?.time !== "Not connected"
-    );
-
-    const data = filteredItems
-      .filter((item: any) => {
-        const itemTime = parseCustomDate(item?.time); // Parse "DD-MM-YYYY hh:mm:ss AM/PM"
-        const timeDifference = now.getTime() - itemTime.getTime(); // Difference in milliseconds
-
-        // Only include items that are older than the selected hours
-        const isOutsideSelectedHour = timeDifference > hourInMilliseconds;
-
-        // console.log("isOutsideSelectedHour:", isOutsideSelectedHour);
-        return isOutsideSelectedHour;
-      })
-      .map((item: any, index: any) => ({
-        ...item,
-        index: index + 1,
-        status: "NEW",
-      }));
-
-    return data;
-  };
-
-  // const transformData = () => {
-  //   const now = new Date(); // Capture current time once
-  //   const hourInMilliseconds = Number(hour) * 3600000; // Convert selected hours to milliseconds
-
-  //   // Filter out items where time is "Expired" or "Not connected"
-  //   const filteredItems = selectedDevices[0]?.items?.filter(
-  //     (item: any) => item?.time !== "Expired" || item?.time !== "Not connected"
+  //   return new Date(
+  //     parseInt(year),
+  //     parseInt(month) - 1, // JavaScript months are 0-indexed
+  //     parseInt(day),
+  //     hoursIn24Format,
+  //     parseInt(minutes),
+  //     parseInt(seconds)
   //   );
-
-  //   const data = filteredItems
-  //     // .filter((item: any) => {
-  //     //   // Parse the "DD-MM-YYYY hh:mm:ss AM/PM" directly inside this function
-  //     //   const dateString = item?.time;
-  //     //   const [date, time, period] = dateString.split(" "); // Split date, time, and AM/PM
-  //     //   const [day, month, year] = date.split("-"); // Split DD-MM-YYYY
-  //     //   const [hours, minutes, seconds] = time.split(":"); // Split hh:mm:ss
-
-  //     //   let hoursIn24Format = parseInt(hours);
-  //     //   if (period === "PM" && hoursIn24Format < 12) hoursIn24Format += 12; // Convert to 24-hour format if PM
-  //     //   if (period === "AM" && hoursIn24Format === 12) hoursIn24Format = 0; // Midnight correction
-
-  //     //   const itemTime = new Date(
-  //     //     parseInt(year),
-  //     //     parseInt(month) - 1, // JavaScript months are 0-indexed
-  //     //     parseInt(day),
-  //     //     hoursIn24Format,
-  //     //     parseInt(minutes),
-  //     //     parseInt(seconds)
-  //     //   );
-
-  //     //   const timeDifference = now.getTime() - itemTime.getTime(); // Difference in milliseconds
-
-  //     //   // Only include items that are older than the selected hours
-  //     //   const isOutsideSelectedHour = timeDifference > hourInMilliseconds;
-  //     //   console.log("item", {
-  //     //     id: item?.id,
-  //     //     name: item?.name,
-  //     //     now: now,
-  //     //     hourInMilliseconds: hourInMilliseconds,
-  //     //     itemTime: itemTime,
-  //     //     timeDifference: timeDifference,
-  //     //     isOutsideSelectedHour: isOutsideSelectedHour,
-  //     //   });
-  //     //   console.log("isOutsideSelectedHour:", isOutsideSelectedHour);
-
-  //     //   return isOutsideSelectedHour;
-  //     // })
-  //     .map((item: any, index: any) => ({
-  //       ...item,
-  //       index: index + 1,
-  //       status: "NEW",
-  //     }));
-  // dispatch(setNRReport(data));
-  // console.log("selectedDevices[0]?.items?", selectedDevices[0]?.items);
-  // console.log(
-  //   "wasted",
-  //   selectedDevices[0]?.items?.filter(
-  //     (item: any) => item?.time == "Expired" || item?.time == "Not connected"
-  //   )
-  // );
-
-  // console.log("selected-data:", data);
-
-  //   // return data;
   // };
 
   // const transformData = () => {
-  //   const now = new Date(); // Get current time in the server's time zone
+  //   const now = new Date(); // Get the current time
   //   const hourInMilliseconds = Number(hour) * 3600000; // Convert selected hours to milliseconds
 
-  //   // Adjust the current time for time zone differences
-  //   const serverTimezoneOffset = now.getTimezoneOffset() * 60000; // Get the server's time zone offset in milliseconds
-  //   const adjustedNow = new Date(now.getTime() - serverTimezoneOffset); // Adjust to UTC
+  //   const allItems = selectedDevices.flatMap((device: any) => device.items);
 
   //   // Filter out items where time is "Expired" or "Not connected"
-  //   const filteredItems = selectedDevices[0]?.items?.filter(
+  //   const filteredItems = allItems.filter(
   //     (item: any) => item?.time !== "Expired" && item?.time !== "Not connected"
   //   );
 
   //   const data = filteredItems
   //     .filter((item: any) => {
-  //       // Parse the "DD-MM-YYYY hh:mm:ss AM/PM" directly inside this function
-  //       const dateString = item?.time;
-  //       const [date, time, period] = dateString.split(" "); // Split date, time, and AM/PM
-  //       const [day, month, year] = date.split("-"); // Split DD-MM-YYYY
-  //       const [hours, minutes, seconds] = time.split(":"); // Split hh:mm:ss
-
-  //       let hoursIn24Format = parseInt(hours);
-  //       if (period === "PM" && hoursIn24Format < 12) hoursIn24Format += 12; // Convert to 24-hour format if PM
-  //       if (period === "AM" && hoursIn24Format === 12) hoursIn24Format = 0; // Midnight correction
-
-  //       const itemTime = new Date(
-  //         parseInt(year),
-  //         parseInt(month) - 1, // JavaScript months are 0-indexed
-  //         parseInt(day),
-  //         hoursIn24Format,
-  //         parseInt(minutes),
-  //         parseInt(seconds)
-  //       );
-
-  //       // Adjust the item time for time zone differences
-  //       const adjustedItemTime = new Date(
-  //         itemTime.getTime() - serverTimezoneOffset
-  //       );
-
-  //       const timeDifference =
-  //         adjustedNow.getTime() - adjustedItemTime.getTime(); // Difference in milliseconds
+  //       const itemTime = parseCustomDate(item?.time); // Parse "DD-MM-YYYY hh:mm:ss AM/PM"
+  //       const timeDifference = now.getTime() - itemTime.getTime(); // Difference in milliseconds
 
   //       // Only include items that are older than the selected hours
   //       const isOutsideSelectedHour = timeDifference > hourInMilliseconds;
 
-  //       console.log("item", {
-  //         id: item?.id,
-  //         name: item?.name,
-  //         now: now,
-  //         hourInMilliseconds: hourInMilliseconds,
-  //         serverTimezoneOffset: serverTimezoneOffset,
-  //         adjustedNow: adjustedNow,
-  //         itemTime: itemTime,
-  //         adjustedItemTime: adjustedItemTime,
-  //         timeDifference: timeDifference,
-  //         isOutsideSelectedHour: isOutsideSelectedHour,
-  //       });
-
-  //       console.log("isOutsideSelectedHour:", isOutsideSelectedHour);
+  //       // console.log("isOutsideSelectedHour:", isOutsideSelectedHour);
   //       return isOutsideSelectedHour;
   //     })
   //     .map((item: any, index: any) => ({
@@ -260,8 +127,6 @@ const SelectFilterNRDevicesModal: React.FC<PropsTypes> = ({
   //       index: index + 1,
   //       status: "NEW",
   //     }));
-
-  //   console.log("selected-data:", data);
 
   //   return data;
   // };
@@ -289,6 +154,44 @@ const SelectFilterNRDevicesModal: React.FC<PropsTypes> = ({
   function handleButtonClick(e: any, settings: any, excelData: any) {
     xlsx(excelData, settings);
   }
+
+  const getNRData = () => {
+    dispatch(setNRReport([]));
+
+    const fromDate = new Date(); // Current date and time
+    var toDate = new Date().setHours(fromDate.getHours() - Number(hour));
+
+    // const toDate = new Date(fromDate);
+    // toDate.setHours(fromDate.getHours() - Number(hour));
+
+    const formattedFromDate = fromDate.toISOString();
+    // const formattedToDate = toDate;
+
+    create(
+      {},
+      {
+        url: `${GET_NR_DEVICES}?fromDate=${formattedFromDate}&toDate=${toDate}`,
+      }
+    ).then((data: any) => {
+      if (data !== undefined) {
+        if (!data.success) {
+          Swal.fire({
+            text: `${data.message}`,
+            icon: "error",
+            timer: 2000,
+            showConfirmButton: false,
+          });
+          setLoading(false);
+        }
+        if (data.success) {
+          console.log("nr-data", data.data);
+
+          dispatch(setNRReport(data.data));
+          setLoading(false);
+        }
+      }
+    });
+  };
 
   return (
     <Modal isOpen={addModal} toggle={addToggle} size="xl" centered>
@@ -331,7 +234,8 @@ const SelectFilterNRDevicesModal: React.FC<PropsTypes> = ({
                     disabled={report.length > 0}
                     onClick={() => {
                       if (hour !== "") {
-                        dispatch(setNRReport(transformData()));
+                        getNRData();
+                        // dispatch(setNRReport(transformData()));
                         // setData(transformData());
                       }
                     }}
@@ -556,7 +460,7 @@ const SelectFilterNRDevicesModal: React.FC<PropsTypes> = ({
                   overflow: "auto",
                 }}
               >
-                <DataTable
+                {/* <DataTable
                   columns={[
                     {
                       name: (
@@ -743,7 +647,7 @@ const SelectFilterNRDevicesModal: React.FC<PropsTypes> = ({
                       },
                     },
                   }}
-                />
+                /> */}
               </div>
             </FormGroup>
           </Row>

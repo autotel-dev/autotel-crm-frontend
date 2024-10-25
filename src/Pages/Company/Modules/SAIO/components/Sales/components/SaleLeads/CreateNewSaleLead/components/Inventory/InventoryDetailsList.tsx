@@ -24,7 +24,7 @@ const InventoryDetailsList = ({
   const navigate = useNavigate();
 
   useEffect(() => {
-    // console.log("saleLead.vehicles", saleLead?.vehicles);
+    // console.log("saleLead?.vehicles", saleLead?.vehicles);
 
     if (saleLead) {
       const vehicleOptions = saleLead?.vehicles?.map((vehicle: any) => ({

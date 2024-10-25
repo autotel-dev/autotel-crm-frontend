@@ -128,8 +128,8 @@ const SaleLeadInfo = ({ callbackActive }: SaleLeadInfoProps) => {
               setLoading(false);
             }
             if (data.success) {
-              dispatch(setSaleLeadId(data.data.saleLead._id));
-              // console.log("data.data.saleLead._id", data.data.saleLead._id);
+              dispatch(setSaleLeadId(data.data?.saleLead?._id));
+              // console.log("data.data.saleLead?._id", data.data.saleLead?._id);
               if (customer !== null) {
                 navigate(
                   `${process.env.PUBLIC_URL}/company/modules/saio-central/sales/leads`
@@ -155,7 +155,7 @@ const SaleLeadInfo = ({ callbackActive }: SaleLeadInfoProps) => {
                 //   }
                 // });
                 getAll({
-                  url: `${GET_SINGLE_SALELEAD}/${data.data.saleLead._id}`,
+                  url: `${GET_SINGLE_SALELEAD}/${data.data?.saleLead?._id}`,
                 }).then((data: any) => {
                   // dispatch(setSaleLead(null));
                   if (data !== undefined) {
@@ -229,51 +229,51 @@ const SaleLeadInfo = ({ callbackActive }: SaleLeadInfoProps) => {
       };
 
       try {
-        await update(body, { url: `${UPDATE_SALE_LEAD}/${saleLead._id}` }).then(
-          (data: any) => {
-            // console.log("update data", data);
+        await update(body, {
+          url: `${UPDATE_SALE_LEAD}/${saleLead?._id}`,
+        }).then((data: any) => {
+          // console.log("update data", data);
 
-            if (data !== undefined) {
-              if (!data.success && data.message === ERROR_MESSAGE) {
-                setLoading(false);
-                // console.log("data.message", data.message);
-              }
-              if (!data.success) {
-                Swal.fire({
-                  text: `${data.message}`,
-                  icon: "error",
-                  timer: 2000,
-                  showConfirmButton: false,
-                });
-                setLoading(false);
-              }
-              if (data.success) {
-                getAll({ url: `${GET_SINGLE_SALELEAD}/${saleLead._id}` }).then(
-                  (data: any) => {
-                    if (data !== undefined) {
-                      if (!data.success) {
-                        setLoading(false);
-                        setIsEditSaleLeadInfo(true);
-                      }
-                      if (data.success) {
-                        setLoading(false);
-                        setIsEditSaleLeadInfo(true);
-                        dispatch(setSaleLead(data.data));
-                      }
+          if (data !== undefined) {
+            if (!data.success && data.message === ERROR_MESSAGE) {
+              setLoading(false);
+              // console.log("data.message", data.message);
+            }
+            if (!data.success) {
+              Swal.fire({
+                text: `${data.message}`,
+                icon: "error",
+                timer: 2000,
+                showConfirmButton: false,
+              });
+              setLoading(false);
+            }
+            if (data.success) {
+              getAll({ url: `${GET_SINGLE_SALELEAD}/${saleLead?._id}` }).then(
+                (data: any) => {
+                  if (data !== undefined) {
+                    if (!data.success) {
+                      setLoading(false);
+                      setIsEditSaleLeadInfo(true);
+                    }
+                    if (data.success) {
+                      setLoading(false);
+                      setIsEditSaleLeadInfo(true);
+                      dispatch(setSaleLead(data.data));
                     }
                   }
-                );
-                // getAll({ url: GET_ALL_SALELEADS }).then((data: any) => {
-                //   if (data !== undefined) {
-                //     if (data.success) {
-                //       dispatch(setSaleLeads(data.data));
-                //     }
-                //   }
-                // });
-              }
+                }
+              );
+              // getAll({ url: GET_ALL_SALELEADS }).then((data: any) => {
+              //   if (data !== undefined) {
+              //     if (data.success) {
+              //       dispatch(setSaleLeads(data.data));
+              //     }
+              //   }
+              // });
             }
           }
-        );
+        });
         // Handle successful post creation (e.g., show a success message, redirect, etc.)
       } catch (error: any) {
         // Handle error (e.g., show an error message)
@@ -302,7 +302,7 @@ const SaleLeadInfo = ({ callbackActive }: SaleLeadInfoProps) => {
 
     try {
       await patch(body, {
-        url: `${CONFIRM_OR_REJECT_SALELEAD}/${saleLead._id}`,
+        url: `${CONFIRM_OR_REJECT_SALELEAD}/${saleLead?._id}`,
       }).then((data: any) => {
         if (data !== undefined) {
           if (!data.success && data.message === ERROR_MESSAGE) {
@@ -322,10 +322,10 @@ const SaleLeadInfo = ({ callbackActive }: SaleLeadInfoProps) => {
           }
           if (data.success) {
             if (status == "CONFIRMED") {
-              dispatch(setSaleLeadId(saleLead._id));
-              if (data.data.customer !== null) {
+              dispatch(setSaleLeadId(saleLead?._id));
+              if (data.data?.customer !== null) {
                 getAll({
-                  url: `${GET_SINGLE_CUSTOMERS}/${data.data.customer}`,
+                  url: `${GET_SINGLE_CUSTOMERS}/${data.data?.customer}`,
                 }).then((data: any) => {
                   if (data !== undefined) {
                     if (data.success) {
@@ -344,7 +344,7 @@ const SaleLeadInfo = ({ callbackActive }: SaleLeadInfoProps) => {
               //     }
               //   }
               // });
-              getAll({ url: `${GET_SINGLE_SALELEAD}/${saleLead._id}` }).then(
+              getAll({ url: `${GET_SINGLE_SALELEAD}/${saleLead?._id}` }).then(
                 (data: any) => {
                   if (data !== undefined) {
                     if (!data.success) {
@@ -427,10 +427,11 @@ const SaleLeadInfo = ({ callbackActive }: SaleLeadInfoProps) => {
             if (data.success) {
               setSaleLeadInfoForm({
                 ...saleLeadInfoForm,
-                customerName: data.data !== null ? data.data.fullName : "",
-                customerContactNo: data.data !== null ? data.data.phoneNo : "",
+                customerName: data.data !== null ? data?.data?.fullName : "",
+                customerContactNo:
+                  data.data !== null ? data?.data?.phoneNo : "",
               });
-              setCity(data.data !== null ? data.data.city._id : city);
+              setCity(data.data !== null ? data?.data?.city?._id : city);
               dispatch(setCustomer(data.data));
 
               setCustomerLoading(false);
@@ -448,15 +449,15 @@ const SaleLeadInfo = ({ callbackActive }: SaleLeadInfoProps) => {
   useEffect(() => {
     if (saleLead !== null) {
       if (
-        saleLead.status == "NEW" ||
-        saleLead.status == "REJECTED" ||
-        saleLead.status == "IN_PROGRESS" ||
-        saleLead.status == "CONFIRMED" ||
-        saleLead.status == "COMPLETED" ||
-        saleLead.status == "INSTALLATION" ||
-        saleLead.status == "INSTALLED"
+        saleLead?.status == "NEW" ||
+        saleLead?.status == "REJECTED" ||
+        saleLead?.status == "IN_PROGRESS" ||
+        saleLead?.status == "CONFIRMED" ||
+        saleLead?.status == "COMPLETED" ||
+        saleLead?.status == "INSTALLATION" ||
+        saleLead?.status == "INSTALLED"
       ) {
-        getAll({ url: `${GET_SINGLE_SALELEAD}/${saleLead.id}` }).then(
+        getAll({ url: `${GET_SINGLE_SALELEAD}/${saleLead?.id}` }).then(
           (data: any) => {
             dispatch(setSaleLead(null));
             if (data !== undefined) {
@@ -476,84 +477,84 @@ const SaleLeadInfo = ({ callbackActive }: SaleLeadInfoProps) => {
                 setSaleLeadInfoForm({
                   ...saleLeadInfoForm,
                   customerName:
-                    data.data !== null ? data.data.customerName : "",
+                    data.data !== null ? data?.data?.customerName : "",
                   customerContactNo:
-                    data.data !== null ? data.data.customerContactNo : "",
+                    data.data !== null ? data?.data?.customerContactNo : "",
                   discountedServiceCharges:
                     data.data !== null
-                      ? data.data.discountedServiceCharges
+                      ? data?.data?.discountedServiceCharges
                       : "",
                   totalNoOfVehicles:
-                    data.data !== null ? data.data?.totalNoOfVehicles : "",
+                    data.data !== null ? data?.data?.totalNoOfVehicles : "",
                   requirements:
-                    data.data !== null ? data.data.requirements : "",
+                    data.data !== null ? data?.data?.requirements : "",
                 });
-                setCity(data.data !== null ? data.data.city._id : city);
+                setCity(data.data !== null ? data?.data?.city?._id : city);
                 setPackage(
-                  data.data !== null ? data.data.package._id : packagee
+                  data.data !== null ? data?.data?.package?._id : packagee
                 );
                 dispatch(setSaleLead(data.data));
                 if (saleLead !== null) {
                   if (
-                    data.data.status == "CONFIRMED" ||
-                    data.data.status == "IN_PROGRESS" ||
-                    data.data.status == "INSTALLATION" ||
-                    data.data.status == "INSTALLED" ||
-                    data.data.status == "COMPLETED"
+                    data?.data?.status == "CONFIRMED" ||
+                    data?.data?.status == "IN_PROGRESS" ||
+                    data?.data?.status == "INSTALLATION" ||
+                    data?.data?.status == "INSTALLED" ||
+                    data?.data?.status == "COMPLETED"
                   ) {
                     if (
-                      data.data.status == "IN_PROGRESS" &&
-                      data.data?.vehicles?.length == 0
+                      data?.data?.status == "IN_PROGRESS" &&
+                      data?.data?.vehicles?.length == 0
                     ) {
                       callbackActive(1);
                       // console.log("Tab 1");
                       setSaleLeadLoading(false);
-                    } else if (data.data.status == "COMPLETED") {
+                    } else if (data?.data?.status == "COMPLETED") {
                       callbackActive(1);
                       // console.log("Tab 7");
                       setSaleLeadLoading(false);
                     } else if (
-                      data.data.customer !== null &&
+                      data.data?.customer !== null &&
                       data.data?.vehicles.length ==
                         data.data?.totalNoOfVehicles &&
                       data.data?.vehicles?.every(
                         (item: any) => item?.inventory?.length > 0
                       ) &&
-                      data.data?.vehicles.every(
+                      data?.data?.vehicles?.every(
                         (item: any) => item?.installationStatus == "INSTALLED"
                       ) &&
-                      data.data?.vehicles.every(
+                      data?.data?.vehicles?.every(
                         (item: any) =>
                           item.securityBriefing.authenticationCredentials
                             .username !== ""
                       ) &&
-                      data.data.status == "INSTALLED"
+                      data?.data?.status == "INSTALLED"
                     ) {
                       callbackActive(7);
                       // console.log("Tab 7");
                       setSaleLeadLoading(false);
                     }
-                    // // console.log(saleLead.customer, saleLead.vehicle);
+                    // // console.log(saleLead?.customer, saleLead?.vehicle);
                     else if (
-                      data.data.customer !== null &&
-                      data.data?.vehicles.length ==
-                        data.data?.totalNoOfVehicles &&
-                      data.data?.vehicles?.every(
+                      data?.data?.customer !== null &&
+                      data.data?.vehicles?.length ==
+                        data?.data?.totalNoOfVehicles &&
+                      data?.data?.vehicles?.every(
                         (item: any) => item?.inventory?.length > 0
                       ) &&
-                      data.data?.vehicles.every(
+                      data?.data?.vehicles.every(
                         (item: any) => item?.installationStatus == "INSTALLED"
                       ) &&
-                      data.data.status == "INSTALLED"
+                      data?.data?.status == "INSTALLED"
                     ) {
                       callbackActive(6);
                       // console.log("Tab 6");
                       setSaleLeadLoading(false);
                     } else if (
-                      data.data.customer !== null &&
-                      data.data?.vehicles.length ==
+                      data?.data?.customer !== null &&
+                      data?.data?.vehicles?.length ==
                         data.data?.totalNoOfVehicles &&
-                      data.data?.vehicles?.every(
+                      data?.data?.vehicles?.every(
                         (item: any) => item?.inventory?.length > 0
                       )
                     ) {
@@ -561,15 +562,17 @@ const SaleLeadInfo = ({ callbackActive }: SaleLeadInfoProps) => {
                       // console.log("Tab 5");
                       setSaleLeadLoading(false);
                     } else if (
-                      data.data.customer !== null &&
-                      data.data?.vehicles.length == data.data?.totalNoOfVehicles
+                      data?.data?.customer !== null &&
+                      data?.data?.vehicles?.length ==
+                        data.data?.totalNoOfVehicles
                     ) {
                       callbackActive(4);
                       // console.log("Tab 4");
                       setSaleLeadLoading(false);
                     } else if (
-                      data.data.customer !== null &&
-                      data.data?.vehicles?.length < data.data?.totalNoOfVehicles
+                      data?.data?.customer !== null &&
+                      data?.data?.vehicles?.length <
+                        data.data?.totalNoOfVehicles
                     ) {
                       callbackActive(3);
                       setSaleLeadLoading(false);

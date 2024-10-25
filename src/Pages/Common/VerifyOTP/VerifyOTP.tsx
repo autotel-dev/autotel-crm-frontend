@@ -5,8 +5,12 @@ import OTPForm from "./OTPForm";
 import { useSelector } from "react-redux";
 import BcakgroundImage from "../../../assets/Background Image.png";
 import { IMAGE_BASE_URL } from "../../../Utilities/api/apiEndpoints";
+import { useLocation } from "react-router-dom";
 
 const VerifyOTP = () => {
+  const location = useLocation();
+  console.log(location.state);
+
   const { userPersonalizationData } = useSelector(
     (state: any) => state.personalization
   );
@@ -14,18 +18,17 @@ const VerifyOTP = () => {
     <Container fluid>
       <Row
         style={{
-          backgroundColor: `${userPersonalizationData !== null &&
+          backgroundColor: `${
+            userPersonalizationData !== null &&
             userPersonalizationData?.loginPageBackgroundType == "SOLID" &&
             userPersonalizationData &&
             userPersonalizationData?.loginPageBackgroundColor
-            }`,
-          backgroundImage: `${userPersonalizationData !== null &&
+          }`,
+          backgroundImage: `${
+            userPersonalizationData !== null &&
             userPersonalizationData?.loginPageBackgroundType == "GRADIENT" &&
-            `linear-gradient(to ${userPersonalizationData?.gradient?.direction
-            }, ${userPersonalizationData?.gradient.color1
-            }, ${userPersonalizationData?.gradient.color2
-            })`
-            }`,
+            `linear-gradient(to ${userPersonalizationData?.gradient?.direction}, ${userPersonalizationData?.gradient.color1}, ${userPersonalizationData?.gradient.color2})`
+          }`,
         }}
       >
         <Col
@@ -36,8 +39,9 @@ const VerifyOTP = () => {
             flexDirection: "column",
             justifyContent: "center",
             alignItems: "center",
-            backgroundColor: `${userPersonalizationData && userPersonalizationData.backgroundColor
-              }`,
+            backgroundColor: `${
+              userPersonalizationData && userPersonalizationData.backgroundColor
+            }`,
           }}
         >
           <div
