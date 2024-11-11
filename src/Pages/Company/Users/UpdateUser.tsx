@@ -27,7 +27,10 @@ import {
 import Swal from "sweetalert2";
 import { Select } from "antd";
 import "./permissionsStyle.css";
-import { GET_ALL_OPERATORS, UPDATE_OPERATOR } from "../../../Utilities/api/apiEndpoints";
+import {
+  GET_ALL_OPERATORS,
+  UPDATE_OPERATOR,
+} from "../../../Utilities/api/apiEndpoints";
 import { ERROR_MESSAGE } from "../../../Utilities/constants/constants";
 // import { setNoDataFound } from "../../ReaduxToolkit/Reducer/NoDataFoundSlice";
 
@@ -43,12 +46,12 @@ interface PropsTypes {
   allowedModules: any;
   setAllowedModules: React.Dispatch<React.SetStateAction<any>>;
   subRole: any;
-  userBranch: string;
+  userBranch: any;
 }
 
 const UpdateUser: React.FC<PropsTypes> = ({
   isVisible,
-  setIsVisible = () => { },
+  setIsVisible = () => {},
   id,
   name,
   emailAddress,
@@ -58,7 +61,7 @@ const UpdateUser: React.FC<PropsTypes> = ({
   allowedModules,
   setAllowedModules,
   subRole,
-  userBranch
+  userBranch,
 
   // setValue
 }) => {
@@ -143,16 +146,14 @@ const UpdateUser: React.FC<PropsTypes> = ({
         isActive: isActive,
         company: decodedToken.userId,
         allowedModules: allowedModules,
+        branch: userBranch,
         subRole: role !== "" ? role : subRole,
       };
       // // console.log(operator);
       try {
         await update(operator, { url: `${UPDATE_OPERATOR}/${id}` }).then(
           (data: any) => {
-            if (
-              !data.success &&
-              data.message === ERROR_MESSAGE
-            ) {
+            if (!data.success && data.message === ERROR_MESSAGE) {
               setLoading(false);
               setIsVisible(!isVisible);
             }
@@ -172,32 +173,30 @@ const UpdateUser: React.FC<PropsTypes> = ({
               setIsVisible(!isVisible);
 
               dispatch(setOperatorsStart());
-              getAll({ url: GET_ALL_OPERATORS }).then(
-                (data: any) => {
-                  // // console.log("api call --- >", data);
-                  if (data == undefined) {
-                    Swal.fire({
-                      text: "Failed to fetch due to connection refused",
-                      icon: "error",
-                      timer: 2000,
-                      showConfirmButton: false,
-                    });
-                    dispatch(setInActiveActiveUsers("All"));
-                    dispatch(setOperators([]));
-                    dispatch(setFilterOperators([]));
-                    dispatch(setOperatorsEnd());
-                    return;
-                  }
+              getAll({ url: GET_ALL_OPERATORS }).then((data: any) => {
+                // // console.log("api call --- >", data);
+                if (data == undefined) {
+                  Swal.fire({
+                    text: "Failed to fetch due to connection refused",
+                    icon: "error",
+                    timer: 2000,
+                    showConfirmButton: false,
+                  });
+                  dispatch(setInActiveActiveUsers("All"));
+                  dispatch(setOperators([]));
+                  dispatch(setFilterOperators([]));
                   dispatch(setOperatorsEnd());
-                  if (data !== undefined) {
-                    if (data.success) {
-                      // // console.log("hhg");
-                      dispatch(setOperators(data.data));
-                      dispatch(setFilterOperators(data.data));
-                    }
+                  return;
+                }
+                dispatch(setOperatorsEnd());
+                if (data !== undefined) {
+                  if (data.success) {
+                    // // console.log("hhg");
+                    dispatch(setOperators(data.data));
+                    dispatch(setFilterOperators(data.data));
                   }
                 }
-              );
+              });
             }
           }
         );
@@ -322,8 +321,11 @@ const UpdateUser: React.FC<PropsTypes> = ({
                   </div>
                   <Select
                     value={
-                      roles &&
-                      roles.find((role: any) => role?._id === subRole)?.name
+                      role !== ""
+                        ? role
+                        : roles &&
+                          roles.find((role: any) => role?._id === subRole?._id)
+                            ?.name
                     }
                     showSearch
                     style={{ width: "100%", height: 36 }}
@@ -350,8 +352,11 @@ const UpdateUser: React.FC<PropsTypes> = ({
                   </div>
                   <Select
                     value={
-                      branches &&
-                      branches.find((b: any) => b?._id === userBranch)?.name
+                      branch !== ""
+                        ? branch
+                        : branches &&
+                          branches.find((b: any) => b?._id === userBranch?._id)
+                            ?.name
                     }
                     showSearch
                     style={{ width: "100%", height: 36 }}
@@ -374,7 +379,6 @@ const UpdateUser: React.FC<PropsTypes> = ({
                 </Col>
               </Row>
             </FormGroup>
-
 
             {role !== "" && <P>Given Permissions : </P>}
             <FormGroup
@@ -439,7 +443,7 @@ const UpdateUser: React.FC<PropsTypes> = ({
                                     value="value"
                                     disabled={true}
                                     checked={permission.read}
-                                    onChange={() => { }}
+                                    onChange={() => {}}
                                     style={{ display: "none" }} // Hide the default checkbox
                                   />
                                   <span
@@ -467,7 +471,7 @@ const UpdateUser: React.FC<PropsTypes> = ({
                                     value="value"
                                     disabled={true}
                                     checked={permission.create}
-                                    onChange={() => { }}
+                                    onChange={() => {}}
                                     style={{ display: "none" }} // Hide the default checkbox
                                   />
                                   <span
@@ -495,7 +499,7 @@ const UpdateUser: React.FC<PropsTypes> = ({
                                     value="value"
                                     disabled={true}
                                     checked={permission.edit}
-                                    onChange={() => { }}
+                                    onChange={() => {}}
                                     style={{ display: "none" }} // Hide the default checkbox
                                   />
                                   <span
@@ -523,7 +527,7 @@ const UpdateUser: React.FC<PropsTypes> = ({
                                     value="value"
                                     disabled={true}
                                     checked={permission.delete}
-                                    onChange={() => { }}
+                                    onChange={() => {}}
                                     style={{ display: "none" }} // Hide the default checkbox
                                   />
                                   <span
@@ -631,8 +635,9 @@ const UpdateUser: React.FC<PropsTypes> = ({
                       }}
                     />
                     <span
-                      className={`switch-state ${isActive ? "bg-primary" : "bg-secondary"
-                        }`}
+                      className={`switch-state ${
+                        isActive ? "bg-primary" : "bg-secondary"
+                      }`}
                     />
                   </Label>
                 </div>

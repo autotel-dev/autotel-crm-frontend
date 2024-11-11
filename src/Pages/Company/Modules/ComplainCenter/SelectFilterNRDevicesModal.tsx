@@ -157,6 +157,7 @@ const SelectFilterNRDevicesModal: React.FC<PropsTypes> = ({
 
   const getNRData = () => {
     dispatch(setNRReport([]));
+    setLoading(true);
 
     const fromDate = new Date(); // Current date and time
     var toDate = new Date().setHours(fromDate.getHours() - Number(hour));
@@ -185,8 +186,7 @@ const SelectFilterNRDevicesModal: React.FC<PropsTypes> = ({
         }
         if (data.success) {
           console.log("nr-data", data.data);
-
-          dispatch(setNRReport(data.data));
+          dispatch(setNRReport(data.data.allDevices));
           setLoading(false);
         }
       }
@@ -194,7 +194,16 @@ const SelectFilterNRDevicesModal: React.FC<PropsTypes> = ({
   };
 
   return (
-    <Modal isOpen={addModal} toggle={addToggle} size="xl" centered>
+    <Modal
+      isOpen={addModal}
+      size="xl"
+      toggle={addToggle}
+      centered
+      style={{
+        minWidth: "90%",
+        maxWidth: "90%",
+      }}
+    >
       <div className="modal-header">
         <H3 className="modal-title">NR Devices</H3>
         <Button
@@ -204,7 +213,12 @@ const SelectFilterNRDevicesModal: React.FC<PropsTypes> = ({
         ></Button>
       </div>
 
-      <ModalBody style={{ minHeight: "70vh", maxHeight: "85vh" }}>
+      <ModalBody
+        style={{
+          minHeight: "70vh",
+          maxHeight: "85vh",
+        }}
+      >
         <form
           className="form-bookmark needs-validation"
           //   onSubmit={handleSubmit(deviceAlerts)}
@@ -231,7 +245,7 @@ const SelectFilterNRDevicesModal: React.FC<PropsTypes> = ({
                       height: "36px",
                     }}
                     color="primary"
-                    disabled={report.length > 0}
+                    disabled={loading || report.length > 0}
                     onClick={() => {
                       if (hour !== "") {
                         getNRData();
@@ -240,7 +254,7 @@ const SelectFilterNRDevicesModal: React.FC<PropsTypes> = ({
                       }
                     }}
                   >
-                    Done
+                    {loading ? "Loading..." : "Done"}
                   </Button>
 
                   {report.length > 0 && (
@@ -278,7 +292,11 @@ const SelectFilterNRDevicesModal: React.FC<PropsTypes> = ({
                             objectOwner: item.object_owner,
                             simNumber: item.sim_number,
                             lastPacket: item.time,
-                            status: item.status,
+                            latestComplaintMessage:
+                              item?.latestComplaint !== null
+                                ? item?.latestComplaint?.description
+                                : "N/A",
+                            status: item.hasComplaint ? "Forwarded" : "Pending",
                           };
                         });
 
@@ -292,6 +310,7 @@ const SelectFilterNRDevicesModal: React.FC<PropsTypes> = ({
                           objectOwner: "",
                           simNumber: "",
                           lastPacket: "",
+                          latestComplaintMessage: "",
                           status: "",
                         };
                         let data = [
@@ -344,6 +363,12 @@ const SelectFilterNRDevicesModal: React.FC<PropsTypes> = ({
                                 value: "lastPacket",
                                 style: { fontWeight: "bold" },
                               },
+
+                              {
+                                label: "Last Complaint Message",
+                                value: "latestComplaintMessage",
+                                style: { fontWeight: "bold" },
+                              },
                               {
                                 label: "Status",
                                 value: "status",
@@ -391,50 +416,28 @@ const SelectFilterNRDevicesModal: React.FC<PropsTypes> = ({
                     fontWeight: "bold",
                   }}
                 >
-                  <Col md="3" sm="6">
+                  <Col md="4" sm="12">
                     Total&nbsp;: &nbsp;{report.length}
                   </Col>
-                  <Col md="3" sm="6">
-                    New &nbsp;:&nbsp;
-                    {
-                      report.filter((item: any) => item.status === "NEW")
-                        ?.length
-                    }
+                  <Col md="4" sm="12">
+                    New&nbsp;: &nbsp;{report.length}
                   </Col>
-                  <Col md="3" sm="6">
+                  {/* <Col md="3" sm="6">
                     In Progress &nbsp;: &nbsp;
                     {
                       report.filter(
                         (item: any) => item.status === "IN PROGRESS"
                       )?.length
                     }
-                  </Col>
-                  <Col md="3" sm="6">
+                  </Col> */}
+                  <Col md="4" sm="12">
                     Forward &nbsp;: &nbsp;
                     {
-                      report.filter((item: any) => item.status === "FORWARD")
-                        ?.length
+                      report.filter(
+                        (item: any) => item?.hasComplaint === "FORWARD"
+                      )?.length
                     }
                   </Col>
-
-                  {/* <div>
-                  In Progress:
-                  {report.filter((item: any) => item.status == "NEW")?.length}
-                </div>
-                <div>
-                  In Progress:
-                  {
-                    report.filter((item: any) => item.status == "IN PROGRESS")
-                      ?.length
-                  }
-                </div>
-                <div>
-                  Forwarded:{" "}
-                  {
-                    report.filter((item: any) => item.status == "FORWARD")
-                      ?.length
-                  }
-                </div> */}
                 </Row>
               )}
 
@@ -460,39 +463,11 @@ const SelectFilterNRDevicesModal: React.FC<PropsTypes> = ({
                   overflow: "auto",
                 }}
               >
-                {/* <DataTable
+                <DataTable
                   columns={[
                     {
-                      name: (
-                        <div
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "start",
-                            paddingLeft: "0px ",
-                          }}
-                        >
-                          S.No.
-                        </div>
-                      ),
-                      selector: (row: any) => row.index,
-                      sortable: true,
-                      width: "7%",
-                      // center: true,
-                      cell: (row: any) => (
-                        <div
-                          style={{
-                            paddingLeft: "10px",
-                            borderRadius: "5px",
-                          }}
-                        >
-                          {row.index}
-                        </div>
-                      ),
-                    },
-                    {
                       name: "Vehicle Name",
-                      selector: (row: any) => row.name,
+                      selector: (row: any) => row?.name,
                       sortable: true,
                       width: "14%",
                       center: true,
@@ -501,54 +476,83 @@ const SelectFilterNRDevicesModal: React.FC<PropsTypes> = ({
                       name: "Customer Name",
                       selector: (row: any) =>
                         `${
-                          row.customerInfo.name !== ""
-                            ? row.customerInfo.name
+                          row?.customerInfo?.name !== ""
+                            ? row?.customerInfo?.name
+                            : "N/A"
+                        }`,
+                      sortable: true,
+                      width: "13%",
+                      center: true,
+                    },
+
+                    {
+                      name: "Imei",
+                      selector: (row: any) =>
+                        `${row?.imei !== "" ? row?.imei : "N/A"}`,
+                      sortable: true,
+                      width: "12%",
+                      center: true,
+                    },
+                    {
+                      name: "Last Packet",
+                      selector: (row: any) =>
+                        `${row?.time?.slice(0, 10)} , ${row?.time?.slice(11)}`,
+                      sortable: true,
+                      width: "20%",
+                      center: true,
+                    },
+                    {
+                      name: "Last Complaint",
+                      selector: (row: any) =>
+                        `${
+                          row?.latestComplaint !== null
+                            ? row?.latestComplaint?.description
+                            : row?.complaintMessage !== undefined
+                            ? row?.complaintMessage
                             : "N/A"
                         }`,
                       sortable: true,
                       width: "15%",
                       center: true,
                     },
-                    // {
-                    //     name: "Installation Date",
-                    //     selector: (row: any) => `${row.installation_date
-                    //         !== "" ? row.installation_date
-                    //         : "N/A"}`,
-                    //     sortable: true,
-                    //     width: "15%",
-                    //     center: true
-                    // },
-                    {
-                      name: "Imei",
-                      selector: (row: any) =>
-                        `${row.imei !== "" ? row.imei : "N/A"}`,
-                      sortable: true,
-                      width: "15%",
-                      center: true,
-                    },
-                    {
-                      name: "Last Packet",
-                      selector: (row: any) =>
-                        `${row.time.slice(0, 10)} , ${row.time.slice(11)}`,
-                      sortable: true,
-                      width: "20%",
-                      center: true,
-                    },
 
                     {
                       name: "Status",
                       selector: (row: any) =>
-                        `${formatUnderscoredString(row.status)}`,
+                        `${formatUnderscoredString(
+                          row?.hasComplaint ? "Forwarded" : "Forward"
+                        )}`,
                       sortable: true,
                       width: "10%",
                       center: true,
+                      cell: (row: any) => (
+                        <div
+                          style={{
+                            // width: "100px",
+                            textAlign: "center",
+                            padding: "2px",
+                            borderRadius: "5px",
+                            fontWeight: "bold",
+                            fontSize: "16px",
+                            color: `${
+                              row?.hasComplaint
+                                ? "rgba(0,128,0)"
+                                : "rgba(255, 0, 0)"
+                            }`,
+                          }}
+                        >
+                          {formatUnderscoredString(
+                            row?.hasComplaint ? "Forwarded" : "Pending"
+                          )}
+                        </div>
+                      ),
                     },
                     {
                       name: "Actions",
                       selector: (row: any) => row["actions"],
                       sortable: true,
                       center: true,
-                      width: "15%", // Set the width for this column
+                      width: "20%", // Set the width for this column
                       cell: (row: any) => (
                         <div
                           style={{
@@ -557,6 +561,8 @@ const SelectFilterNRDevicesModal: React.FC<PropsTypes> = ({
                             padding: "2px",
                             borderRadius: "5px",
                             color: "black",
+                            display: "flex",
+                            gap: "3px",
                           }}
                         >
                           <Button
@@ -565,11 +571,11 @@ const SelectFilterNRDevicesModal: React.FC<PropsTypes> = ({
                               padding: "5px 20px",
                               margin: "0px",
                             }}
-                            disabled={row.status == "FORWARD"}
+                            disabled={row?.hasComplaint}
                             onClick={async (e) => {
                               e.preventDefault();
                               setSelectedItems([row]);
-                              setBasicTab("1");
+                              setBasicTab("5");
 
                               setIsUpdateModalOpen(true);
 
@@ -614,7 +620,64 @@ const SelectFilterNRDevicesModal: React.FC<PropsTypes> = ({
                               }
                             }}
                           >
-                            {row.status == "FORWARD" ? "Forwarded" : "Forward"}
+                            {row?.hasComplaint ? "Forwarded" : "Forward"}
+                          </Button>
+                          <Button
+                            color="primary"
+                            style={{
+                              padding: "5px 20px",
+                              margin: "0px",
+                            }}
+                            // disabled={row?.hasComplaint}
+                            onClick={async (e) => {
+                              e.preventDefault();
+                              setSelectedItems([row]);
+                              setBasicTab("4");
+
+                              setIsUpdateModalOpen(true);
+
+                              const serverInfo = serverCredentials(
+                                row.server._id
+                              );
+
+                              const sendData = {
+                                serverId: serverInfo?.serverId,
+                                serverHashKey: serverInfo?.serverHashKey,
+                                deviceId: row.id,
+                              };
+
+                              try {
+                                await create(sendData, {
+                                  url: GET_DEVICE_DATA,
+                                }).then((data: any) => {
+                                  if (
+                                    !data.success &&
+                                    data.message === ERROR_MESSAGE
+                                  ) {
+                                  }
+                                  if (!data.success) {
+                                    Swal.fire({
+                                      text: `${data.message}`,
+                                      icon: "error",
+                                      timer: 2000,
+                                      showConfirmButton: false,
+                                    });
+                                    setIsUpdateModalOpen(false);
+                                  }
+                                  if (data.success) {
+                                    dispatch(
+                                      setCreateComplainModalData(data.data)
+                                    );
+                                  }
+                                });
+                                // Handle successful post creation (e.g., show a success message, redirect, etc.)
+                              } catch (error: any) {
+                                // Handle error (e.g., show an error message)
+                                dispatch(setCreateComplainModalData(undefined));
+                              }
+                            }}
+                          >
+                            History
                           </Button>
                         </div>
                       ),
@@ -624,9 +687,6 @@ const SelectFilterNRDevicesModal: React.FC<PropsTypes> = ({
                   pagination
                   paginationPerPage={6} // Set pagination to display 6 items per page
                   paginationRowsPerPageOptions={[6, 10, 20, 30]} // Set options for rows per page
-                  // selectableRows
-                  // onSelectedRowsChange={handleRowSelected}
-                  // onRowClicked={handleRowClicked}
                   style={{ cursor: "pointer" }}
                   className="custom-data-table"
                   customStyles={{
@@ -634,10 +694,15 @@ const SelectFilterNRDevicesModal: React.FC<PropsTypes> = ({
                       style: {
                         cursor: "pointer",
                         transition: "background-color 0.2s", // Smooth transition for background color change
-                        "&:hover": {
-                          // Define hover style
-                          backgroundColor: `rgba(${rgbColor.r},${rgbColor.g},${rgbColor.b},0.2)`,
-                        },
+                        // backgroundColor: `${
+                        //   row?.hasComplaint
+                        //     ? "rgba(0,128,0,0.2)"
+                        //     : "rgba(0,128,0,0.2)"
+                        // }`,
+                        // "&:hover": {
+                        //   // Define hover style
+                        //   backgroundColor: `rgba(${rgbColor.r},${rgbColor.g},${rgbColor.b},0.2)`,
+                        // },
                       },
                     },
                     head: {
@@ -647,7 +712,7 @@ const SelectFilterNRDevicesModal: React.FC<PropsTypes> = ({
                       },
                     },
                   }}
-                /> */}
+                />
               </div>
             </FormGroup>
           </Row>

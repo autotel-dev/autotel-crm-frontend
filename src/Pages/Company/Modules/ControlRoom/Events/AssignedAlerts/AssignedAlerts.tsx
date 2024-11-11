@@ -113,36 +113,35 @@ const AssignedAlerts = () => {
             </FormGroup>
           </Row>
 
-          
-            <div className="table-responsive theme-scrollbar recent-wrapper">
+          <div className="table-responsive theme-scrollbar recent-wrapper">
+            <Table className="display order-wrapper" id="recent-order">
+              <thead>
+                <tr>
+                  <th>Device</th>
+                  <th>Alert</th>
+                  <th>Type</th>
+                  <th>Message</th>
+                  <th>Address</th>
+                </tr>
+              </thead>
+            </Table>
+            <div
+              ref={containerRef}
+              className="table-responsive theme-scrollbar recent-wrapper"
+              style={{
+                overflowY: "scroll",
+                overflowX: "auto",
+                maxHeight: "calc(66vh - 20px)", // Subtract scrollbar width from max height
+                WebkitOverflowScrolling: "touch", // Enable momentum scrolling on iOS
+                scrollbarWidth: "thin", // Specify scrollbar width
+                WebkitBorderRadius: "5px", // For WebKit browsers (Chrome, Safari)
+                MozBorderRadius: "5px", // For Mozilla Firefox
+                borderRadius: "5px", // For other browsers
+                scrollbarColor: "lightgray transparent", // Specify scrollbar color
+              }}
+              onScroll={handleScroll}
+            >
               <Table className="display order-wrapper" id="recent-order">
-                <thead>
-                  <tr>
-                    <th>Device</th>
-                    <th>Alert</th>
-                    <th>Type</th>
-                    <th>Message</th>
-                    <th>Address</th>
-                  </tr>
-                </thead>
-                </Table>
-                <div
-            ref={containerRef}
-            className="table-responsive theme-scrollbar recent-wrapper"
-            style={{
-              overflowY: "scroll",
-              overflowX: "auto",
-              maxHeight: "calc(66vh - 20px)", // Subtract scrollbar width from max height
-              WebkitOverflowScrolling: "touch", // Enable momentum scrolling on iOS
-              scrollbarWidth: "thin", // Specify scrollbar width
-              WebkitBorderRadius: "5px", // For WebKit browsers (Chrome, Safari)
-              MozBorderRadius: "5px", // For Mozilla Firefox
-              borderRadius: "5px", // For other browsers
-              scrollbarColor: "lightgray transparent", // Specify scrollbar color
-            }}
-            onScroll={handleScroll}
-          >
-                <Table className="display order-wrapper" id="recent-order">
                 <tbody>
                   {dataList.length === 0 ? (
                     <tr>
@@ -159,7 +158,6 @@ const AssignedAlerts = () => {
                       )
                       .map((data: any, index: any) => (
                         <tr
-                         
                           key={index}
                           onClick={async () => {
                             var checkServer =
@@ -243,7 +241,7 @@ const AssignedAlerts = () => {
                                   : `rgba(${rgbColor.r},${rgbColor.g},${rgbColor.b},0.2)`
                                 : "transparent",
                             transition: "background-color 0.3s",
-                            cursor:"pointer",
+                            cursor: "pointer",
                           }}
                         >
                           {/* <td>{data.eventId}</td> */}
@@ -259,11 +257,47 @@ const AssignedAlerts = () => {
                                   {data.deviceName}
                                 </h5>
                                 <div style={{ fontSize: "10px" }}>
-                                  {data.createdAt.slice(0, 10)}
+                                  {new Date(
+                                    new Date(data.createdAt).setHours(
+                                      new Date(data.createdAt).getHours() + 5
+                                    )
+                                  )
+                                    .toISOString()
+                                    .slice(0, 10)}
                                 </div>
 
                                 <div style={{ fontSize: "10px" }}>
-                                  {data.createdAt.slice(11, 19)}
+                                  {(() => {
+                                    // Create a new Date object for the original time in UTC
+                                    const originalDate = new Date(
+                                      data.createdAt
+                                    );
+
+                                    // Adjust the time by adding 5 hours
+                                    originalDate.setHours(
+                                      originalDate.getHours()
+                                    );
+
+                                    // Get the hours, minutes, and seconds from the adjusted date
+                                    const hours24 = originalDate.getHours(); // Get the hours in 24-hour format
+                                    const minutes = originalDate
+                                      .getMinutes()
+                                      .toString()
+                                      .padStart(2, "0"); // Get minutes, ensure 2 digits
+                                    const seconds = originalDate
+                                      .getSeconds()
+                                      .toString()
+                                      .padStart(2, "0"); // Get seconds, ensure 2 digits
+
+                                    // Determine AM/PM
+                                    const period = hours24 >= 12 ? "PM" : "AM";
+
+                                    // Convert to 12-hour format
+                                    const hours12 = hours24 % 12 || 12; // Convert 0 to 12 (midnight), 13-23 to 1-11 PM
+
+                                    // Return the formatted time in 12-hour format with AM/PM
+                                    return `${hours12}:${minutes}:${seconds} ${period}`;
+                                  })()}
                                 </div>
                               </div>
                             </div>
@@ -275,8 +309,8 @@ const AssignedAlerts = () => {
                             {data.address == null
                               ? "N/A"
                               : data.address.length > 10
-                                ? data.address.substring(0, 10) + "..."
-                                : data.address}
+                              ? data.address.substring(0, 10) + "..."
+                              : data.address}
                           </td>
                           {data.address != null && (
                             <UncontrolledPopover

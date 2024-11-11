@@ -173,11 +173,44 @@ const AssignedAlerts = () => {
                                   {data.deviceName}
                                 </h5>
                                 <div style={{ fontSize: "10px" }}>
-                                  {data.createdAt.slice(0, 10)}
+                                  {new Date(
+                                    new Date(data.createdAt).setHours(
+                                      new Date(data.createdAt).getHours() + 5
+                                    )
+                                  )
+                                    .toISOString()
+                                    .slice(0, 10)}
                                 </div>
 
                                 <div style={{ fontSize: "10px" }}>
-                                  {data.createdAt.slice(11, 19)}
+                                  {(() => {
+                                    // Adjust the time by adding 5 hours to the `createdAt` time
+                                    const adjustedDate = new Date(
+                                      new Date(data.createdAt).setHours(
+                                        new Date(data.createdAt).getHours()
+                                      )
+                                    );
+
+                                    // Get the hours, minutes, and seconds from the adjusted date
+                                    const hours24 = adjustedDate.getHours(); // Get the hours in 24-hour format
+                                    const minutes = adjustedDate
+                                      .getMinutes()
+                                      .toString()
+                                      .padStart(2, "0"); // Get minutes, ensure 2 digits
+                                    const seconds = adjustedDate
+                                      .getSeconds()
+                                      .toString()
+                                      .padStart(2, "0"); // Get seconds, ensure 2 digits
+
+                                    // Determine AM/PM
+                                    const period = hours24 >= 12 ? "PM" : "AM";
+
+                                    // Convert to 12-hour format
+                                    const hours12 = hours24 % 12 || 12; // Convert 0 to 12 (midnight), 13-23 to 1-11 PM
+
+                                    // Return the formatted time in 12-hour format with AM/PM
+                                    return `${hours12}:${minutes}:${seconds} ${period}`;
+                                  })()}
                                 </div>
                               </div>
                             </div>

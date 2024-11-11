@@ -50,6 +50,13 @@ const CreateNewUser = () => {
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [allowedModules, setAllowedModules]: any = useState([]);
+
+  const { roles } = useSelector((state: any) => state.roles);
+  const { branches } = useSelector((state: any) => state.operators);
+  const [rolesList, setRolesList] = useState([]);
+  const [role, setRole] = useState("");
+  const [branchesList, setBranchesList] = useState([]);
+  const [branch, setBranch] = useState("");
   const {
     register,
     handleSubmit,
@@ -74,7 +81,7 @@ const CreateNewUser = () => {
 
   const addOperator: SubmitHandler<UserType> = async (data: any) => {
     setLoading(true);
-    if (data.name !== "" && role !== "") {
+    if (role !== "" && branch !== "") {
       const operator = {
         name: data.name,
         emailAddress: data.emailAddress,
@@ -170,13 +177,18 @@ const CreateNewUser = () => {
         });
         setRole("");
       }
+    } else {
+      Swal.fire({
+        text: "Please select the department and branch both",
+        icon: "info",
+        timer: 2000,
+        showCancelButton: false,
+        showConfirmButton: true,
+      });
+      setLoading(false);
     }
   };
 
-  const { roles } = useSelector((state: any) => state.roles);
-  const { branches } = useSelector((state: any) => state.operators);
-  const [rolesList, setRolesList] = useState([]);
-  const [role, setRole] = useState("");
   // console.log("Roles", roles);
 
   const tempRolesList: any = [];
@@ -190,8 +202,6 @@ const CreateNewUser = () => {
     setRolesList(tempRolesList);
   }, [roles]);
 
-  const [branchesList, setBranchesList] = useState([]);
-  const [branch, setBranch] = useState("");
   // console.log("Roles", roles);
 
   const tempBranchesList: any = [];

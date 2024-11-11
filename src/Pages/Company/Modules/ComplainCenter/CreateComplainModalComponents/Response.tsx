@@ -5,17 +5,29 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { Button, FormGroup, Label, Modal, ModalBody, Row } from "reactstrap";
 import { useDispatch, useSelector } from "react-redux";
 
-
 import Swal from "sweetalert2";
 import { P } from "../../../../../AbstractElements";
-import { setAllComplains, setComplainCenterRoles, setComplainCenterStatistics, setCreateComplainModalData } from "../../../../../ReaduxToolkit/Reducer/ComplainCenterSlice";
+import {
+  setAllComplains,
+  setComplainCenterRoles,
+  setComplainCenterStatistics,
+  setCreateComplainModalData,
+} from "../../../../../ReaduxToolkit/Reducer/ComplainCenterSlice";
 import SelectComplainTypesList from "../components/SelectComplainTypesList";
 import SelectComplainStatusTypes from "../components/SelectComplainStatusTypes";
 import SelectComplainRole from "../components/SelectComplainRole";
 import { create, getAll } from "../../../../../Utilities/api";
-import { formatUnderscoredString, getUserRole, getUserRoleID } from "../../../../../Utilities/globals/globals";
+import {
+  formatUnderscoredString,
+  getUserRole,
+  getUserRoleID,
+} from "../../../../../Utilities/globals/globals";
 import { ROLES } from "../../../../../constants/roles";
-import { CREATE_NEW_INTERNAL_COMPLAINT, GET_ALL_INTERNAL_COMPLAINT, GET_COMPLAINT_CENTER_STATISTICS } from "../../../../../Utilities/api/apiEndpoints";
+import {
+  CREATE_NEW_INTERNAL_COMPLAINT,
+  GET_ALL_INTERNAL_COMPLAINT,
+  GET_COMPLAINT_CENTER_STATISTICS,
+} from "../../../../../Utilities/api/apiEndpoints";
 import { ERROR_MESSAGE } from "../../../../../Utilities/constants/constants";
 import { setNRReport } from "../../../../../ReaduxToolkit/Reducer/NRSlice";
 
@@ -34,13 +46,13 @@ interface PropsTypes {
 
 const ResponseForm: React.FC<PropsTypes> = ({
   isVisible,
-  setIsVisible = () => { },
+  setIsVisible = () => {},
   isDeviceSelectedModalVisible,
-  setIsDeviceSelectedModalVisible = () => { },
+  setIsDeviceSelectedModalVisible = () => {},
   selectedItems,
-  setBasicTab = () => { },
+  setBasicTab = () => {},
 }) => {
-  const { report } = useSelector((state: any) => state.nrReport)
+  const { report } = useSelector((state: any) => state.nrReport);
   const { modalData } = useSelector((state: any) => state.alerts);
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
@@ -68,7 +80,6 @@ const ResponseForm: React.FC<PropsTypes> = ({
   const createComplain: SubmitHandler<ResponseType> = async (data: any) => {
     setLoading(true);
     if (data.response !== "") {
-
       const complainData = {
         description: data.response,
         priorty: priority,
@@ -85,10 +96,10 @@ const ResponseForm: React.FC<PropsTypes> = ({
           vehicleName: selectedItems[0].name,
           simNumber: selectedItems[0].sim_number,
           imei: selectedItems[0].imei,
-          deviceModel: selectedItems[0].device_model
+          deviceModel: selectedItems[0].device_model,
         },
-        resolvingDate: priority == "GENERAL" ? new Date() : null
-      }
+        resolvingDate: priority == "GENERAL" ? new Date() : null,
+      };
 
       // // console.log(completedResponse);
       try {
@@ -98,7 +109,7 @@ const ResponseForm: React.FC<PropsTypes> = ({
           if (!data.success && data.message === ERROR_MESSAGE) {
             setLoading(false);
             setIsVisible(!isVisible);
-            setIsDeviceSelectedModalVisible(!isDeviceSelectedModalVisible)
+            // setIsDeviceSelectedModalVisible(!isDeviceSelectedModalVisible);
           }
           if (!data.success) {
             Swal.fire({
@@ -109,11 +120,9 @@ const ResponseForm: React.FC<PropsTypes> = ({
             });
             setLoading(false);
             setIsVisible(!isVisible);
-            setIsDeviceSelectedModalVisible(!isDeviceSelectedModalVisible)
+            // setIsDeviceSelectedModalVisible(!isDeviceSelectedModalVisible);
           }
           if (data.success) {
-
-
             if (selectedItems.length > 0) {
               const updatedReport = report.map((item: any) => {
                 // Check if the item matches the selected item by ID
@@ -121,7 +130,8 @@ const ResponseForm: React.FC<PropsTypes> = ({
                   // Return a new object with the updated status
                   return {
                     ...item,
-                    status: "FORWARD", // Update the status to 'PENDING'
+                    hasComplaint: true, // Update the status to 'PENDING'
+                    complaintMessage: complainData.description,
                   };
                 }
                 // Return the item unchanged if no match is found
@@ -134,7 +144,7 @@ const ResponseForm: React.FC<PropsTypes> = ({
             // // console.log(data);
             setLoading(false);
             setIsVisible(!isVisible);
-            setIsDeviceSelectedModalVisible(!isDeviceSelectedModalVisible)
+            // setIsDeviceSelectedModalVisible(!isDeviceSelectedModalVisible);
             reset({
               response: "",
             });
@@ -154,35 +164,37 @@ const ResponseForm: React.FC<PropsTypes> = ({
                   dispatch(setAllComplains([]));
                 }
 
-                getAll({ url: GET_COMPLAINT_CENTER_STATISTICS }).then((data: any) => {
-                  // console.log("Data", data);
+                getAll({ url: GET_COMPLAINT_CENTER_STATISTICS }).then(
+                  (data: any) => {
+                    // console.log("Data", data);
 
-                  if (data !== undefined) {
-
-
-                    if (data.success) {
-                      dispatch(setComplainCenterRoles(data.data.InternalComplaintsStatistics.subRoleCounts))
-                      const mappedArray = Object.entries(
-                        data.data.InternalComplaintsStatistics
-                      ).map(([key, value]) => {
-                        // Remove "total" from the key and replace "Count" with "Tickets"
-                        if (key !== "subRoleCounts") {
-                          const formattedKey = key
-                            .replace("total", "")
-                            .replace("Count", "");
-                          return { key: formattedKey, value: value };
-                        }
-                      });
-                      mappedArray.pop()
-                      // console.log(mappedArray);
-                      dispatch(setComplainCenterStatistics(mappedArray));
-
+                    if (data !== undefined) {
+                      if (data.success) {
+                        dispatch(
+                          setComplainCenterRoles(
+                            data.data.InternalComplaintsStatistics.subRoleCounts
+                          )
+                        );
+                        const mappedArray = Object.entries(
+                          data.data.InternalComplaintsStatistics
+                        ).map(([key, value]) => {
+                          // Remove "total" from the key and replace "Count" with "Tickets"
+                          if (key !== "subRoleCounts") {
+                            const formattedKey = key
+                              .replace("total", "")
+                              .replace("Count", "");
+                            return { key: formattedKey, value: value };
+                          }
+                        });
+                        mappedArray.pop();
+                        // console.log(mappedArray);
+                        dispatch(setComplainCenterStatistics(mappedArray));
+                      }
                     }
                   }
-                });
+                );
               }
             });
-
           }
         });
         // Handle successful post creation (e.g., show a success message, redirect, etc.)
@@ -199,61 +211,74 @@ const ResponseForm: React.FC<PropsTypes> = ({
   };
 
   return (
-    <Col md={12} style={{
-      overflow: "auto",
-      overflowX: "hidden"
-    }}>
+    <Col
+      md={12}
+      style={{
+        overflow: "auto",
+        overflowX: "hidden",
+      }}
+    >
       <form
         className="form-bookmark needs-validation"
         onSubmit={handleSubmit(createComplain)}
       >
         <Row style={{ paddingTop: "20px" }}>
-
           <FormGroup className="col-md-6 create-group">
             <P>Complain Type </P>
-            <SelectComplainTypesList type={type} setType={setType} priority={priority} setPriority={setPriority} />
-
+            <SelectComplainTypesList
+              type={type}
+              setType={setType}
+              priority={priority}
+              setPriority={setPriority}
+            />
           </FormGroup>
-          {type !== "" && <>
-            < FormGroup className="col-md-6 create-group">
-              <P>Priority</P>
-              <input
-                className="form-control"
-                type="text"
-                value={formatUnderscoredString(priority)}
-                disabled
-              />
-            </FormGroup>
+          {type !== "" && (
+            <>
+              <FormGroup className="col-md-6 create-group">
+                <P>Priority</P>
+                <input
+                  className="form-control"
+                  type="text"
+                  value={formatUnderscoredString(priority)}
+                  disabled
+                />
+              </FormGroup>
 
-            <FormGroup className="col-md-6 create-group">
-              <P>Select Status</P>
-              <SelectComplainStatusTypes priority={priority} status={statuss} setStatus={setStatuss} />
-
-            </FormGroup>
-            <FormGroup className="col-md-6 create-group">
-              <P>Departmemnt</P>
-              <SelectComplainRole priority={priority} role={role} setRole={setRole} />
-
-            </FormGroup>
-            <FormGroup className="col-md-12 create-group">
-              <P>Response</P>
-              <textarea
-                className="form-control"
-                rows={3} // Minimum number of visible lines
-                style={{
-                  maxHeight: "500px", // Maximum height for 5 lines of text
-                  resize: "vertical", // Allow vertical resizing within the specified range
-                }}
-                {...register("response", { required: true })}
-              />
-              <span style={{ color: "red" }}>
-                {errors.response && "Response is required"}
-              </span>
-            </FormGroup>
-          </>}
+              <FormGroup className="col-md-6 create-group">
+                <P>Select Status</P>
+                <SelectComplainStatusTypes
+                  priority={priority}
+                  status={statuss}
+                  setStatus={setStatuss}
+                />
+              </FormGroup>
+              <FormGroup className="col-md-6 create-group">
+                <P>Departmemnt</P>
+                <SelectComplainRole
+                  priority={priority}
+                  role={role}
+                  setRole={setRole}
+                />
+              </FormGroup>
+              <FormGroup className="col-md-12 create-group">
+                <P>Response</P>
+                <textarea
+                  className="form-control"
+                  rows={3} // Minimum number of visible lines
+                  style={{
+                    maxHeight: "500px", // Maximum height for 5 lines of text
+                    resize: "vertical", // Allow vertical resizing within the specified range
+                  }}
+                  {...register("response", { required: true })}
+                />
+                <span style={{ color: "red" }}>
+                  {errors.response && "Response is required"}
+                </span>
+              </FormGroup>
+            </>
+          )}
         </Row>
         <div style={{ display: "flex", justifyContent: "end" }}>
-
           <Button
             disabled={loading ? true : false}
             color="secondary"
@@ -271,7 +296,7 @@ const ResponseForm: React.FC<PropsTypes> = ({
           </Button>
         </div>
       </form>
-    </Col >
+    </Col>
   );
 };
 

@@ -686,7 +686,24 @@ const LiveAlerts = () => {
                               </div>
 
                               <div style={{ fontSize: "10px" }}>
-                                {data.time.slice(11)}
+                                {(() => {
+                                  // Extract the time part from the ISO string
+                                  const timeStr = data.time.slice(11, 19); // Get the time part "HH:MM:SS"
+
+                                  // Convert to 12-hour format with AM/PM
+                                  const hours24 = parseInt(timeStr.slice(0, 2)); // Get the hours (0-23)
+                                  const minutes = timeStr.slice(3, 5); // Get the minutes (00-59)
+                                  const seconds = timeStr.slice(6, 8); // Get the seconds (00-59)
+
+                                  // Determine AM or PM
+                                  const period = hours24 >= 12 ? "PM" : "AM";
+
+                                  // Convert to 12-hour format
+                                  const hours12 = hours24 % 12 || 12; // Convert 0 to 12 (midnight), 13-23 to 1-11 PM
+
+                                  // Format time in 12-hour format with AM/PM
+                                  return `${hours12}:${minutes}:${seconds} ${period}`;
+                                })()}
                               </div>
                             </div>
                           </div>

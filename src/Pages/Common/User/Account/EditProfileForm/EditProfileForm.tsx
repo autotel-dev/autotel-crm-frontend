@@ -19,7 +19,12 @@ import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import { setUserData } from "../../../../../ReaduxToolkit/Reducer/UserSlice";
 import { ROLES } from "../../../../../constants/roles";
-import { GET_USER_BY_ID, UPDATE_COMPANY_BY_OWN, UPDATE_SUPERADMIN_BY_OWN } from "../../../../../Utilities/api/apiEndpoints";
+import {
+  GET_USER_BY_ID,
+  UPDATE_COMPANY_BY_OWN,
+  UPDATE_OPERATOR_BY_OWN,
+  UPDATE_SUPERADMIN_BY_OWN,
+} from "../../../../../Utilities/api/apiEndpoints";
 import { ERROR_MESSAGE } from "../../../../../Utilities/constants/constants";
 
 // interface PropTypes {
@@ -59,19 +64,29 @@ const EditProfileForm = () => {
         formData.append("address", address);
       }
 
-      update(formData, {
+      var operatorData = {
+        fullName: name,
+        emailAddress: userData?.emailAddress,
+        phoneNo: phoneNo,
+        isActive: userData?.isActive,
+        company: userData.company,
+        allowedModules: userData.allowedModules,
+        branch: userData.branch,
+        subRole: userData.subRole,
+      };
+
+      update(getUserRole() === ROLES.OPERATOR ? operatorData : formData, {
         url:
           getUserRole() === ROLES.COMPANY
             ? UPDATE_COMPANY_BY_OWN
+            : getUserRole() === ROLES.OPERATOR
+            ? `${UPDATE_OPERATOR_BY_OWN}/${userData._id}`
             : UPDATE_SUPERADMIN_BY_OWN,
       })
         .then((data: any) => {
           // // console.log("api call --- >", data);
           if (data !== undefined) {
-            if (
-              !data.success &&
-              data.message === ERROR_MESSAGE
-            ) {
+            if (!data.success && data.message === ERROR_MESSAGE) {
               setLoading(false);
               setIsEdit(!isEdit);
             }
