@@ -317,22 +317,34 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
     <Col md={6}>
       <div className="text-end">
         <button
-          className={`btn ${userPersonalizationData?.buttonsAndBarsColor == null
+          className={`btn ${
+            userPersonalizationData?.buttonsAndBarsColor == null
               ? "btn-primary"
               : ""
-            }`}
+          }`}
           style={{
             color: "white",
-            backgroundColor: `${userPersonalizationData !== null &&
+            backgroundColor: `${
+              userPersonalizationData !== null &&
               userPersonalizationData?.buttonsAndBarsColor
-              }`,
+            }`,
           }}
           onClick={addToggle}
         >
           <PlusCircle />
           Create New Report
         </button>
-        <Modal isOpen={addModal} toggle={addToggle} size="lg" centered>
+        <Modal
+          isOpen={addModal}
+          toggle={addToggle}
+          size="lg"
+          centered
+          style={
+            {
+              // he
+            }
+          }
+        >
           <div className="modal-header">
             <H3 className="modal-title">Create Report</H3>
             <Button
@@ -342,7 +354,12 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
             ></Button>
           </div>
 
-          <ModalBody>
+          <ModalBody
+            style={{
+              minHeight: "60vh",
+              maxHeight: "655vh",
+            }}
+          >
             <form
               className="form-bookmark needs-validation"
               onSubmit={handleSubmit(addReport)}
@@ -431,66 +448,6 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
                     selectedItems={selectedItems}
                     setSelectedItems={setSelectedItems}
                   />
-                  {/* <Select
-                      // showSearch
-                      // style={{ width: "100%", height: 36 }}
-                      // placeholder="Select Type"
-                      // optionFilterProp="children"
-                      // filterOption={(input: any, option: any) =>
-                      //   (option?.P ?? "").includes(input)
-                      // }
-                      // filterSort={(optionA: any, optionB: any) =>
-                      //   (optionA?.P ?? "")
-                      //     .toLowerCase()
-                      //     .localeCompare((optionB?.P ?? "").toLowerCase())
-                      // }
-                      // onChange={(e: any) => {
-                      //   // console.log(e);
-                      //   setType(e);
-                      // }}
-                      // options={reportsTypeList}
-                      defaultValue="Select an option"
-                      style={{ width: "100%", height: 36 }}
-                      onChange={(e: any) => {
-                        // setSelectedOption(value);
-                        // console.log("e", e);
-                      }}
-                    >
-                      <OptGroup>
-                        <Option>
-                          <input
-                            type="text"
-                            value="abc"
-                            // onChange={(e) => setSearchValue(e.target.value)}
-                            placeholder="Search..."
-                          />
-                        </Option>
-                      </OptGroup>
-
-                      {dropDownDevices.map((group: any) => (
-                        <OptGroup
-                          P={
-                            <strong
-                              style={{
-                                background: "lightgray",
-                                display: "block",
-                                padding: "4px 8px",
-                                color: "white",
-                              }}
-                            >
-                              {group.title}
-                            </strong>
-                          }
-                          key={group.title}
-                        >
-                          {group.items.map((item: any, index: any) => (
-                            <Option value={item._id} key={item._id}>
-                              {item.name}
-                            </Option>
-                          ))}
-                        </OptGroup>
-                      ))}
-                    </Select> */}
                 </FormGroup>
                 <FormGroup
                   className="col-md-6 create-group"
@@ -540,6 +497,7 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
                 style={{
                   display: "flex",
                   justifyContent: "start",
+                  height: "150px",
                   alignItems: "end",
                 }}
               >

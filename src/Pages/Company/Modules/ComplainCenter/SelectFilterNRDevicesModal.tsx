@@ -420,7 +420,11 @@ const SelectFilterNRDevicesModal: React.FC<PropsTypes> = ({
                     Total&nbsp;: &nbsp;{report.length}
                   </Col>
                   <Col md="4" sm="12">
-                    New&nbsp;: &nbsp;{report.length}
+                    Pending&nbsp;: &nbsp;
+                    {
+                      report.filter((item: any) => item?.hasComplaint == false)
+                        ?.length
+                    }
                   </Col>
                   {/* <Col md="3" sm="6">
                     In Progress &nbsp;: &nbsp;
@@ -432,11 +436,7 @@ const SelectFilterNRDevicesModal: React.FC<PropsTypes> = ({
                   </Col> */}
                   <Col md="4" sm="12">
                     Forward &nbsp;: &nbsp;
-                    {
-                      report.filter(
-                        (item: any) => item?.hasComplaint === "FORWARD"
-                      )?.length
-                    }
+                    {report.filter((item: any) => item?.hasComplaint)?.length}
                   </Col>
                 </Row>
               )}
@@ -518,10 +518,7 @@ const SelectFilterNRDevicesModal: React.FC<PropsTypes> = ({
 
                     {
                       name: "Status",
-                      selector: (row: any) =>
-                        `${formatUnderscoredString(
-                          row?.hasComplaint ? "Forwarded" : "Forward"
-                        )}`,
+                      selector: (row: any) => "",
                       sortable: true,
                       width: "10%",
                       center: true,

@@ -47,24 +47,23 @@ const KilledVehicles: React.FC<PropsTypes> = ({ fromDate, toDate }) => {
   const { devices } = useSelector((state: any) => state.monitoring);
   const [isUpdateModalOpenForSendCommand, setIsUpdateModalOpenForSendCommand] =
     useState(false);
-    const { userPersonalizationData } = useSelector(
-      (state: any) => state.personalization
-    );
-    function hexToRgb(hex: any) {
-      // Remove the hash sign if present
-      hex = hex?.replace(/^#/, "");
-      // Parse the hex values to RGB
-      const bigint = parseInt(hex, 16);
-      const r = (bigint >> 16) & 255;
-      const g = (bigint >> 8) & 255;
-      const b = bigint & 255;
-      return { r, g, b };
-    }
-  
-    // Usage
-    const hexColor = "#ff0000"; // Example hex color
-    const rgbColor = hexToRgb(userPersonalizationData?.buttonsAndBarsColor); // Convert hex to RGB
-  
+  const { userPersonalizationData } = useSelector(
+    (state: any) => state.personalization
+  );
+  function hexToRgb(hex: any) {
+    // Remove the hash sign if present
+    hex = hex?.replace(/^#/, "");
+    // Parse the hex values to RGB
+    const bigint = parseInt(hex, 16);
+    const r = (bigint >> 16) & 255;
+    const g = (bigint >> 8) & 255;
+    const b = bigint & 255;
+    return { r, g, b };
+  }
+
+  // Usage
+  const hexColor = "#ff0000"; // Example hex color
+  const rgbColor = hexToRgb(userPersonalizationData?.buttonsAndBarsColor); // Convert hex to RGB
 
   const [dataList, setDataList]: any = useState([...killedDevices]);
   const [loading, setLoading] = useState(false); // State to manage loading
@@ -96,8 +95,7 @@ const KilledVehicles: React.FC<PropsTypes> = ({ fromDate, toDate }) => {
           : null;
         return {
           ...device,
-          remainingTime: calculateRemainingTime(
-            device.createdAt),
+          remainingTime: calculateRemainingTime(device.createdAt),
           deviceData: deviceData ? { ...deviceData } : null,
         };
       });
@@ -112,8 +110,7 @@ const KilledVehicles: React.FC<PropsTypes> = ({ fromDate, toDate }) => {
       setDataList((prevDataList: any) =>
         prevDataList.map((device: any) => ({
           ...device,
-          remainingTime: calculateRemainingTime(
-            device.createdAt),
+          remainingTime: calculateRemainingTime(device.createdAt),
         }))
       );
     }, 1000);
@@ -161,13 +158,12 @@ const KilledVehicles: React.FC<PropsTypes> = ({ fromDate, toDate }) => {
           );
           const deviceData = matchedDevice
             ? matchedDevice.items.find(
-              (item: any) => item.id === device.deviceId
-            )
+                (item: any) => item.id === device.deviceId
+              )
             : null;
           return {
             ...device,
-            remainingTime: calculateRemainingTime(
-              device.createdAt),
+            remainingTime: calculateRemainingTime(device.createdAt),
             deviceData: deviceData ? { ...deviceData } : null,
           };
         });
@@ -295,7 +291,6 @@ const KilledVehicles: React.FC<PropsTypes> = ({ fromDate, toDate }) => {
                                   ? "10%"
                                   : "8%",
                             }}
-                            
                           >
                             {data == "Count Down" ? (
                               <div
@@ -316,7 +311,7 @@ const KilledVehicles: React.FC<PropsTypes> = ({ fromDate, toDate }) => {
                     </thead>
                     <tbody>
                       {dataList.length === 0 ? (
-                        <tr >
+                        <tr>
                           <td colSpan={11} style={{ fontSize: "25px" }}>
                             No Devices Found
                           </td>
@@ -330,22 +325,23 @@ const KilledVehicles: React.FC<PropsTypes> = ({ fromDate, toDate }) => {
                           )
 
                           .map((data: any, index: any) => (
-                            <tr  key={index}
-                            onMouseEnter={() => {
-                              setIsHovered(true);
-                              setIdd(index);
-                            }}
-                            onMouseLeave={() => setIsHovered(false)}
-                            style={{
-                              backgroundColor:
-                                isHovered && idd == index
-                                  ? userPersonalizationData == null
-                                    ? "#D6EEEE"
-                                    : `rgba(${rgbColor.r},${rgbColor.g},${rgbColor.b},0.2)`
-                                  : "transparent",
-                              transition: "background-color 0.3s",
-                              cursor: "pointer",
-                            }}
+                            <tr
+                              key={index}
+                              onMouseEnter={() => {
+                                setIsHovered(true);
+                                setIdd(index);
+                              }}
+                              onMouseLeave={() => setIsHovered(false)}
+                              style={{
+                                backgroundColor:
+                                  isHovered && idd == index
+                                    ? userPersonalizationData == null
+                                      ? "#D6EEEE"
+                                      : `rgba(${rgbColor.r},${rgbColor.g},${rgbColor.b},0.2)`
+                                    : "transparent",
+                                transition: "background-color 0.3s",
+                                cursor: "pointer",
+                              }}
                             >
                               <td style={{ width: "8%" }}>{data.deviceId}</td>
                               <td style={{ width: "8%" }}>{data.deviceName}</td>
@@ -358,28 +354,28 @@ const KilledVehicles: React.FC<PropsTypes> = ({ fromDate, toDate }) => {
                                       data.onlineStatus === "ack"
                                         ? "rgba(255, 0, 0, 0.1)"
                                         : data.onlineStatus === "engine"
-                                          ? "rgba(255, 165, 0, 0.1)"
-                                          : data.onlineStatus === "online"
-                                            ? "rgba(0, 255, 0, 0.1)"
-                                            : "rgba(0, 0, 0, 0.1)",
+                                        ? "rgba(255, 165, 0, 0.1)"
+                                        : data.onlineStatus === "online"
+                                        ? "rgba(0, 255, 0, 0.1)"
+                                        : "rgba(0, 0, 0, 0.1)",
                                     color:
                                       data.onlineStatus === "ack"
                                         ? "red"
                                         : data.onlineStatus === "engine"
-                                          ? "orange"
-                                          : data.onlineStatus === "online"
-                                            ? "green"
-                                            : "black",
+                                        ? "orange"
+                                        : data.onlineStatus === "online"
+                                        ? "green"
+                                        : "black",
                                     borderRadius: "5px",
                                   }}
                                 >
                                   {data.onlineStatus === "ack"
                                     ? "Stop"
                                     : data.onlineStatus === "engine"
-                                      ? "Idle"
-                                      : data.onlineStatus === "online"
-                                        ? "Moving"
-                                        : "Offline"}
+                                    ? "Idle"
+                                    : data.onlineStatus === "online"
+                                    ? "Moving"
+                                    : "Offline"}
                                 </div>
                               </td>
                               <td style={{ width: "10%" }}>
@@ -387,11 +383,9 @@ const KilledVehicles: React.FC<PropsTypes> = ({ fromDate, toDate }) => {
                                   <div className="flex-grow-1 ms-2">
                                     <div style={{ fontSize: "10px" }}>
                                       {format(
-
                                         new Date(
                                           data?.lastPacketTimeStamp * 1000
-                                        ).toISOString()
-                                        ,
+                                        ).toISOString(),
                                         "date"
                                       )}
                                     </div>
@@ -411,31 +405,27 @@ const KilledVehicles: React.FC<PropsTypes> = ({ fromDate, toDate }) => {
                               <td style={{ width: "8%" }}>{data.longitude}</td>
                               <td style={{ width: "8%" }}>
                                 {data.address == undefined ||
-                                  data.address === "" ||
-                                  data.address == null
+                                data.address === "" ||
+                                data.address == null
                                   ? "N/A"
                                   : data.address}
                               </td>
                               <td style={{ width: "10%" }}>
-                                {data.server.companyName}
+                                {data?.server?.companyName}
                               </td>
                               <td style={{ width: "8%" }}>
                                 <div className="d-flex">
                                   <div className="flex-grow-1 ms-2">
                                     <div style={{ fontSize: "10px" }}>
                                       {format(
-                                        new Date(
-                                          data?.createdAt
-                                        ).toISOString(),
+                                        new Date(data?.createdAt).toISOString(),
                                         "date"
                                       )}
                                     </div>
                                     <div style={{ fontSize: "10px" }}>
                                       {/* {data.updatedAt.toString().slice(11, 19)} */}
                                       {format(
-                                        new Date(
-                                          data?.createdAt
-                                        ).toISOString(),
+                                        new Date(data?.createdAt).toISOString(),
                                         "time"
                                       )}
                                     </div>
@@ -487,7 +477,7 @@ const KilledVehicles: React.FC<PropsTypes> = ({ fromDate, toDate }) => {
                                         );
                                       } else {
                                         Swal.fire({
-                                          title: `${checkServer.server.companyName}`,
+                                          title: `${checkServer?.server?.companyName}`,
                                           text: `You cannot relase this device because the Server Credentaisl that attached with it  are wrong`,
                                           icon: "error",
                                           // timer: 2000,

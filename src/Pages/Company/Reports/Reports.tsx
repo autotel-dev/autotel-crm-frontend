@@ -16,7 +16,10 @@ import {
 } from "../../../ReaduxToolkit/Reducer/ReportsSlice";
 import NoInternetConnection from "../../Utilities/NoInternetConnection/NoInternetConnection";
 import { Flex } from "antd";
-import { GET_ALL_REPORT_TYPES, GET_DEVICES } from "../../../Utilities/api/apiEndpoints";
+import {
+  GET_ALL_REPORT_TYPES,
+  GET_DEVICES,
+} from "../../../Utilities/api/apiEndpoints";
 import { ERROR_MESSAGE } from "../../../Utilities/constants/constants";
 
 const Reports = () => {
@@ -30,6 +33,7 @@ const Reports = () => {
   const [loading, setLoading] = useState(true);
   const [reportTypes, setReportTypes] = useState([]);
   const { isConnected } = useSelector((state: any) => state.reports);
+  const { devices } = useSelector((state: any) => state.monitoring);
 
   useEffect(() => {
     dispatch(setIsConnected(false));
@@ -89,8 +93,6 @@ const Reports = () => {
 
           // Update state with initialGroupDevices
           setDropDownDevices(initialGroupDevices);
-          // console.log("dropDownGroups", groups);
-          // console.log("dropDownGroupsDevices", dropDownDevices);
           setLoading(false);
 
           // ---------------------- For device status-----------------------------------
@@ -98,19 +100,16 @@ const Reports = () => {
       }
     });
   };
+
   useEffect(() => {
-    getData();
+    if (devices.length === 0) {
+      getData();
+    } else {
+      setDropDownDevices(devices);
+      setLoading(false);
+    }
+
     getAll({ url: GET_ALL_REPORT_TYPES }).then((data: any) => {
-      // console.log("data", data);
-      // if (data == undefined) {
-      //   Swal.fire({
-      //     text: "Failed to Fetch due to connection refused",
-      //     icon: "error",
-      //     timer: 2000,
-      //     showConfirmButton: false,
-      //   });
-      //   return;
-      // }
       if (data !== undefined) {
         if (!data.success && data.message === ERROR_MESSAGE) {
           dispatch(setIsConnected(true));
@@ -165,7 +164,7 @@ const Reports = () => {
                     <ReportsListNav dropDownDevices={dropDownDevices} />
                     <Col md={12}>
                       <input
-                      className="global-search-field"
+                        className="global-search-field"
                         type="text"
                         placeholder="Type to Search.."
                         value={searchValue}

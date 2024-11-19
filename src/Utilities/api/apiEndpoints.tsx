@@ -268,7 +268,7 @@ export const GET_ALERT_EVENT_BY_ID = `${API_BASE_URL}/alert-events/get-alert-eve
 export const COMPLETE_AN_ALERT_EVENT = `${API_BASE_URL}/alert-events/complete-an-alert-event`;
 export const GET_DEVICE_COMMANDS = `${API_BASE_URL}/control-room/get-device-commands`;
 export const SEND_COMMAND_TO_DEVICE = `${API_BASE_URL}/control-room/send-command-to-device`;
-export const GET_ALL_KILLED_DEVICES = `${API_BASE_URL}/control-room/get-all-killed-devices?type=self`;
+export const GET_ALL_KILLED_DEVICES = `${API_BASE_URL}/control-room/get-all-killed-devices`;
 export const CONTROLROOM_DASHBOARD_STATISTICS = `${API_BASE_URL}/control-room/dashboard/statistics`;
 export const GET_ALL_COMMANDED_DEVICES = `${API_BASE_URL}/control-room/get-all-commanded-devices`;
 export const VERIFY_VEHICLE_BLOCK_STATUS = `${API_BASE_URL}/control-room/verify-vehicle-block-status`;
@@ -396,6 +396,11 @@ export const GET_ALL_CUSTOMER_VEHICLES = `${API_BASE_URL}/operations/operation-a
 export const GET_ALL_ACTIVITIES = `${API_BASE_URL}/operations/operation-activity/get-all-operation-activities`;
 export const GET_SINGLE_ACTIVITY_BY_ID = `${API_BASE_URL}/operations/operation-activity/get-operation-activity-by-id`;
 export const UPDATE_OPERATION_STATUS = `${API_BASE_URL}/operations/operation-activity/update-operation-status`;
+
+// Company -> Modules- SAIO - Dashboard - Activity
+
+export const GET_ACTIVITY_STATISTICS = `${API_BASE_URL}/sales-dashboard/operations/get-activity-statistics`;
+export const GET_ACTIVITIES_BY_TYPE = `${API_BASE_URL}/sales-dashboard/operations/get-activities-by-type`;
 
 // {{localUrl}}/operations/operation-activity/get-vehicles-by-customer/66bf3f2797992f4024a5f3d3
 // {{localUrl}}/operations/operation-activity/get-all-operation-activities

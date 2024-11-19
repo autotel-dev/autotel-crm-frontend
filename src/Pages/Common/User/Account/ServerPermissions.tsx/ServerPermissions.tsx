@@ -51,7 +51,7 @@ const ServerPermissions = () => {
               return (
                 <div key={index}>
                   <div style={{ marginBottom: "20px" }}>
-                  <H5>{index + 1}) {server.server.companyName}</H5>
+                  <H5>{index + 1}) {server?.server?.companyName}</H5>
                     {/* <CommonHeader
                       title={`${index + 1}) ${server.server.companyName}`}
                       headClass="card-title mb-0 pb-0"

@@ -28,9 +28,11 @@ import { getAll } from "../../../Utilities/api";
 import deleteAlert from "../../../Utilities/alerts/DeleteAlert";
 import { header } from "../../../Utilities/headers/header";
 import Skeleton from "../../Utilities/Skeleton/Skeleton";
-import { GET_ALL_SERVERS, SEND_OTP_FOR_CHANGE_SERVER_PASSWORD } from "../../../Utilities/api/apiEndpoints";
+import {
+  GET_ALL_SERVERS,
+  SEND_OTP_FOR_CHANGE_SERVER_PASSWORD,
+} from "../../../Utilities/api/apiEndpoints";
 import { ERROR_MESSAGE } from "../../../Utilities/constants/constants";
-
 
 const ServersList = () => {
   const { servers, loading, error, id, activeInActiveServers } = useSelector(
@@ -145,49 +147,49 @@ const ServersList = () => {
                   defaultChecked={row.isActive}
                   value={row.isActive}
                   checked={row.isActive}
-                // onChange={async (e: any) => {
-                //   //  --------------------------
+                  // onChange={async (e: any) => {
+                  //   //  --------------------------
 
-                //   const operator = {
-                //     fullName: row.fullName,
-                //     emailAddress: row.emailAddress,
-                //     phoneNo: row.phoneNo,
-                //     isActive: !row.isActive,
-                //     company: decodedToken.userId,
-                //   };
-                //   // console.log(operator);
-                //   setIsActive(!row.isActive);
-                //   // setRowIndex(index);
-                //   // console.log(e.target.value);
-                //   try {
-                //     await update(operator, {
-                //       url: `${UPDATE_OPERATOR}/${row._id}`,
-                //     }).then((data: any) => {
-                //       if (data.success) {
-                //         // console.log(data);
+                  //   const operator = {
+                  //     fullName: row.fullName,
+                  //     emailAddress: row.emailAddress,
+                  //     phoneNo: row.phoneNo,
+                  //     isActive: !row.isActive,
+                  //     company: decodedToken.userId,
+                  //   };
+                  //   // console.log(operator);
+                  //   setIsActive(!row.isActive);
+                  //   // setRowIndex(index);
+                  //   // console.log(e.target.value);
+                  //   try {
+                  //     await update(operator, {
+                  //       url: `${UPDATE_OPERATOR}/${row._id}`,
+                  //     }).then((data: any) => {
+                  //       if (data.success) {
+                  //         // console.log(data);
 
-                //         dispatch(setOperatorsStart());
-                //         getAll({
-                //           url: GET_ALL_OPERATORS,
-                //         }).then((data: any) => {
-                //           // console.log("api call --- >", data);
-                //           dispatch(setOperatorsEnd());
-                //           if (data !== undefined) {
-                //             if (data.success) {
-                //               // console.log("hhg");
-                //               dispatch(setOperators(data.data));
-                //               dispatch(setFilterOperators(data.data));
-                //             }
-                //           }
-                //         });
-                //       }
-                //     });
-                //     // Handle successful post creation (e.g., show a success message, redirect, etc.)
-                //   } catch (error) {
-                //     // Handle error (e.g., show an error message)
-                //     // console.error("Error creating post:", error);
-                //   }
-                // }}
+                  //         dispatch(setOperatorsStart());
+                  //         getAll({
+                  //           url: GET_ALL_OPERATORS,
+                  //         }).then((data: any) => {
+                  //           // console.log("api call --- >", data);
+                  //           dispatch(setOperatorsEnd());
+                  //           if (data !== undefined) {
+                  //             if (data.success) {
+                  //               // console.log("hhg");
+                  //               dispatch(setOperators(data.data));
+                  //               dispatch(setFilterOperators(data.data));
+                  //             }
+                  //           }
+                  //         });
+                  //       }
+                  //     });
+                  //     // Handle successful post creation (e.g., show a success message, redirect, etc.)
+                  //   } catch (error) {
+                  //     // Handle error (e.g., show an error message)
+                  //     // console.error("Error creating post:", error);
+                  //   }
+                  // }}
                 />
                 <span
                   // className={`switch-state ${
@@ -240,7 +242,7 @@ const ServersList = () => {
               onClick={() => {
                 dispatch(setServer(row));
                 navigate(
-                  `${process.env.PUBLIC_URL}/super-admin/setup/server_details/update-server`
+                  `${process.env.PUBLIC_URL}/super-admin/setup/server-details/update-server`
                 );
               }}
             >
@@ -302,11 +304,39 @@ const ServersList = () => {
                   {loading ? (
                     // <Loader />
                     <>
-                      <Skeleton height="100px" width="100%" borderRadius="10px" />
-                      <Skeleton height="80px" width="100%" marginTop="10px" marginBottom="10" borderRadius="10px" />
-                      <Skeleton height="80px" width="100%" marginTop="10px" marginBottom="10" borderRadius="10px" />
-                      <Skeleton height="80px" width="100%" marginTop="10px" marginBottom="10" borderRadius="10px" />
-                      <Skeleton height="80px" width="100%" marginTop="10px" marginBottom="10" borderRadius="10px" />
+                      <Skeleton
+                        height="100px"
+                        width="100%"
+                        borderRadius="10px"
+                      />
+                      <Skeleton
+                        height="80px"
+                        width="100%"
+                        marginTop="10px"
+                        marginBottom="10"
+                        borderRadius="10px"
+                      />
+                      <Skeleton
+                        height="80px"
+                        width="100%"
+                        marginTop="10px"
+                        marginBottom="10"
+                        borderRadius="10px"
+                      />
+                      <Skeleton
+                        height="80px"
+                        width="100%"
+                        marginTop="10px"
+                        marginBottom="10"
+                        borderRadius="10px"
+                      />
+                      <Skeleton
+                        height="80px"
+                        width="100%"
+                        marginTop="10px"
+                        marginBottom="10"
+                        borderRadius="10px"
+                      />
                     </>
                   ) : servers?.length > 0 && loading === false ? (
                     <div>

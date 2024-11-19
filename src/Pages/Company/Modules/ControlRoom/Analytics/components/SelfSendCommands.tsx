@@ -27,7 +27,7 @@ interface PropsTypes {
 
 const SelfSendCommands: React.FC<PropsTypes> = ({
   isVisible,
-  setIsVisible = () => { },
+  setIsVisible = () => {},
 }) => {
   const { selfSendCommands } = useSelector((state: any) => state.alerts);
   const { devices } = useSelector((state: any) => state.monitoring);
@@ -74,8 +74,8 @@ const SelfSendCommands: React.FC<PropsTypes> = ({
           );
           const deviceData = matchedDevice
             ? matchedDevice.items.find(
-              (item: any) => item.id === device.deviceId
-            )
+                (item: any) => item.id === device.deviceId
+              )
             : null;
           return {
             ...device,
@@ -147,8 +147,8 @@ const SelfSendCommands: React.FC<PropsTypes> = ({
           );
           const deviceData = matchedDevice
             ? matchedDevice.items.find(
-              (item: any) => item.id === device.deviceId
-            )
+                (item: any) => item.id === device.deviceId
+              )
             : null;
           return {
             ...device,
@@ -368,28 +368,28 @@ const SelfSendCommands: React.FC<PropsTypes> = ({
                                         data.onlineStatus === "ack"
                                           ? "rgba(255, 0, 0, 0.1)"
                                           : data.onlineStatus === "engine"
-                                            ? "rgba(255, 165, 0, 0.1)"
-                                            : data.onlineStatus === "online"
-                                              ? "rgba(0, 255, 0, 0.1)"
-                                              : "rgba(0, 0, 0, 0.1)",
+                                          ? "rgba(255, 165, 0, 0.1)"
+                                          : data.onlineStatus === "online"
+                                          ? "rgba(0, 255, 0, 0.1)"
+                                          : "rgba(0, 0, 0, 0.1)",
                                       color:
                                         data.onlineStatus === "ack"
                                           ? "red"
                                           : data.onlineStatus === "engine"
-                                            ? "orange"
-                                            : data.onlineStatus === "online"
-                                              ? "green"
-                                              : "black",
+                                          ? "orange"
+                                          : data.onlineStatus === "online"
+                                          ? "green"
+                                          : "black",
                                       borderRadius: "5px",
                                     }}
                                   >
                                     {data.onlineStatus === "ack"
                                       ? "Stop"
                                       : data.onlineStatus === "engine"
-                                        ? "Idle"
-                                        : data.onlineStatus === "online"
-                                          ? "Moving"
-                                          : "Offline"}
+                                      ? "Idle"
+                                      : data.onlineStatus === "online"
+                                      ? "Moving"
+                                      : "Offline"}
                                   </div>
                                 </td>
                                 <td style={{ width: "10%" }}>
@@ -416,19 +416,21 @@ const SelfSendCommands: React.FC<PropsTypes> = ({
                                   </div>
                                 </td>
 
-                                <td style={{ width: "7%" }}>{data.latitude}</td>
+                                <td style={{ width: "7%" }}>
+                                  {data?.latitude}
+                                </td>
                                 <td style={{ width: "7%" }}>
                                   {data.longitude}
                                 </td>
                                 <td style={{ width: "8%" }}>
                                   {data.address == undefined ||
-                                    data.address === "" ||
-                                    data.address == null
+                                  data?.address === "" ||
+                                  data?.address == null
                                     ? "N/A"
                                     : data.address}
                                 </td>
                                 <td style={{ width: "8%" }}>
-                                  {data.server.companyName}
+                                  {data?.server?.companyName}
                                 </td>
                                 <td style={{ width: "10%" }}>
                                   <div className="d-flex">
@@ -455,27 +457,27 @@ const SelfSendCommands: React.FC<PropsTypes> = ({
                                 </td>
 
                                 <td style={{ width: "8%" }}>
-                                  {data.commandData.type === "custom"
-                                    ? data.commandData.title
-                                    : data.commandData.title}
+                                  {data?.commandData?.type === "custom"
+                                    ? data?.commandData?.title
+                                    : data?.commandData?.title}
                                 </td>
                                 {/* <td style={{ width: "8%" }}>{data.remainingTime}</td> */}
                                 <td style={{ width: "11%" }}>
-                                  {data.eMobilizerStatus !== null &&
-                                    data.eMobilizerStatus !== undefined ? (
+                                  {data?.eMobilizerStatus !== null &&
+                                  data?.eMobilizerStatus !== undefined ? (
                                     <div
                                       style={{
                                         padding: "5px",
-                                        backgroundColor: data.eMobilizerStatus
+                                        backgroundColor: data?.eMobilizerStatus
                                           ? "rgba(255, 0, 0, 0.1)"
                                           : "rgba(0, 255, 0, 0.1)",
-                                        color: data.eMobilizerStatus
+                                        color: data?.eMobilizerStatus
                                           ? "red"
                                           : "green",
                                         borderRadius: "5px",
                                       }}
                                     >
-                                      {data.eMobilizerStatus
+                                      {data?.eMobilizerStatus
                                         ? "Killed"
                                         : "Released"}
                                     </div>
@@ -496,12 +498,12 @@ const SelfSendCommands: React.FC<PropsTypes> = ({
                                             data?.server?._id
                                           );
                                           const verifyData = {
-                                            deviceId: data.deviceId,
+                                            deviceId: data?.deviceId,
                                             // commandedDeviceId: data._id,
                                             serverId: serverInfo?.serverId,
                                             serverHashKey:
                                               serverInfo?.serverHashKey,
-                                            commandedVehicleDeviceId: data._id,
+                                            commandedVehicleDeviceId: data?._id,
                                           };
                                           // addToggle();
                                           // console.log(verifyData);
@@ -512,8 +514,7 @@ const SelfSendCommands: React.FC<PropsTypes> = ({
                                             setLoading(false);
                                             if (
                                               !data.success &&
-                                              data.message ==
-                                              ERROR_MESSAGE
+                                              data.message == ERROR_MESSAGE
                                             ) {
                                             }
                                             if (!data.success) {
@@ -534,12 +535,13 @@ const SelfSendCommands: React.FC<PropsTypes> = ({
                                                     return {
                                                       ...item,
                                                       eMobilizerStatus:
-                                                        data.data.isKilled,
+                                                        data?.data?.isKilled,
                                                       lastPacketTimeStamp:
                                                         data.data
                                                           .lastPacketTimeStamp,
                                                       onlineStatus:
-                                                        data.data.onlineStatus,
+                                                        data?.data
+                                                          ?.onlineStatus,
                                                     };
                                                   }
                                                   return item; // Return unchanged item if deviceId doesn't match

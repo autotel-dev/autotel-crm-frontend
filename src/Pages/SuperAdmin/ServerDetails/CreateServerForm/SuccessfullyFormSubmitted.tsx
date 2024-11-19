@@ -31,7 +31,10 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import Swal from "sweetalert2";
 import { create, getAll } from "../../../../Utilities/api";
-import { CREATE_SERVER, GET_ALL_SERVERS } from "../../../../Utilities/api/apiEndpoints";
+import {
+  CREATE_SERVER,
+  GET_ALL_SERVERS,
+} from "../../../../Utilities/api/apiEndpoints";
 import { ERROR_MESSAGE } from "../../../../Utilities/constants/constants";
 
 const SuccessfullyFormSubmitted = ({
@@ -91,43 +94,41 @@ const SuccessfullyFormSubmitted = ({
             // console.log(data);
             setLoading(false);
             dispatch(setServersStart());
-            getAll({ url: GET_ALL_SERVERS }).then(
-              (data: any) => {
-                // console.log("api call --- >", data);
-                if (data == undefined) {
-                  Swal.fire({
-                    text: "Failed to fetch due to connection refused",
-                    icon: "error",
-                    timer: 2000,
-                    showConfirmButton: false,
-                  });
-                  dispatch(setInActiveActiveServers("All"));
-                  dispatch(setServers([]));
-                  dispatch(setFilterServers([]));
-                  dispatch(setServersEnd());
-                  return;
-                }
-                dispatch(setServerInfo({}));
-                dispatch(setServerCredentials({}));
-                dispatch(setGoogleAccountCreadentials({}));
-                dispatch(setFirebaseAccountCredentials({}));
-                dispatch(setApiKeys(""));
-                dispatch(setCreateServer({}));
-                // ----------------------
+            getAll({ url: GET_ALL_SERVERS }).then((data: any) => {
+              // console.log("api call --- >", data);
+              if (data == undefined) {
+                Swal.fire({
+                  text: "Failed to fetch due to connection refused",
+                  icon: "error",
+                  timer: 2000,
+                  showConfirmButton: false,
+                });
+                dispatch(setInActiveActiveServers("All"));
+                dispatch(setServers([]));
+                dispatch(setFilterServers([]));
                 dispatch(setServersEnd());
-                if (data !== undefined) {
-                  dispatch(setNoDataFound(data.message));
-                  if (data.success) {
-                    // console.log("hhg");
-                    dispatch(setServers(data.data.allServers));
-                    dispatch(setFilterServers(data.data.allServers));
-                    navigate(
-                      `${process.env.PUBLIC_URL}/super-admin/setup/server_details`
-                    );
-                  }
+                return;
+              }
+              dispatch(setServerInfo({}));
+              dispatch(setServerCredentials({}));
+              dispatch(setGoogleAccountCreadentials({}));
+              dispatch(setFirebaseAccountCredentials({}));
+              dispatch(setApiKeys(""));
+              dispatch(setCreateServer({}));
+              // ----------------------
+              dispatch(setServersEnd());
+              if (data !== undefined) {
+                dispatch(setNoDataFound(data.message));
+                if (data.success) {
+                  // console.log("hhg");
+                  dispatch(setServers(data.data.allServers));
+                  dispatch(setFilterServers(data.data.allServers));
+                  navigate(
+                    `${process.env.PUBLIC_URL}/super-admin/setup/server-details`
+                  );
                 }
               }
-            );
+            });
           }
         }
       });

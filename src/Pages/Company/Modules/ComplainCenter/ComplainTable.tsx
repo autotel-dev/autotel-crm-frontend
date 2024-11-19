@@ -10,15 +10,25 @@ import { useDispatch, useSelector } from "react-redux";
 import { getUserRole } from "../../../../Utilities/globals/globals";
 import { ROLES } from "../../../../constants/roles";
 import CreateNewComplain from "./CreateNewComplain";
-import { setAllComplains, setComplainCenterRoles, setComplainCenterStatistics, setTableRow } from "../../../../ReaduxToolkit/Reducer/ComplainCenterSlice";
+import {
+  setAllComplains,
+  setComplainCenterRoles,
+  setComplainCenterStatistics,
+  setTableRow,
+} from "../../../../ReaduxToolkit/Reducer/ComplainCenterSlice";
 import { getAll } from "../../../../Utilities/api";
 import "../../../../CssConstaints/Style.css";
-import { GET_ALL_INTERNAL_COMPLAINT, GET_COMPLAINT_CENTER_STATISTICS } from "../../../../Utilities/api/apiEndpoints";
+import {
+  GET_ALL_INTERNAL_COMPLAINT,
+  GET_COMPLAINT_CENTER_STATISTICS,
+} from "../../../../Utilities/api/apiEndpoints";
 
 const ComplainTable = () => {
   const dispatch = useDispatch();
   // Function to transform supportData into allBugReports format
-  const { allComplains, filteredRole } = useSelector((state: any) => state.complainCenter);
+  const { allComplains, filteredRole } = useSelector(
+    (state: any) => state.complainCenter
+  );
   const { userPermissions } = useSelector(
     (state: any) => state.userPermissions
   );
@@ -27,7 +37,7 @@ const ComplainTable = () => {
   );
   function hexToRgb(hex: any) {
     // Remove the hash sign if present
-    hex = hex?.replace(/^#/, '');
+    hex = hex?.replace(/^#/, "");
     // Parse the hex values to RGB
     const bigint = parseInt(hex, 16);
     const r = (bigint >> 16) & 255;
@@ -46,7 +56,10 @@ const ComplainTable = () => {
       return allComplains
         .filter(
           (item: any) =>
-            item.complaintId.toLowerCase().split("-")[1].includes(searchValue) ||
+            item.complaintId
+              .toLowerCase()
+              .split("-")[1]
+              .includes(searchValue) ||
             item.description.toLowerCase().includes(searchValue) ||
             item.deviceName.toLowerCase().includes(searchValue) ||
             item?.subRole.name.toLowerCase().includes(searchValue) ||
@@ -59,7 +72,7 @@ const ComplainTable = () => {
           user: item?.createdBy.fullName,
           comment: item?.description,
           department: item?.subRole.name,
-          server: item?.server.companyName,
+          server: item?.server?.companyName,
           status: item?.status,
           type: item?.type?.value,
           priorty: item?.priorty == null ? "N/A" : item?.priorty,
@@ -73,18 +86,20 @@ const ComplainTable = () => {
             })
             .toString()}`,
         }));
-    }
-    else {
+    } else {
       return allComplains
         .filter(
           (item: any) =>
-            item.complaintId.toLowerCase().split("-")[1].includes(searchValue) ||
+            item.complaintId
+              .toLowerCase()
+              .split("-")[1]
+              .includes(searchValue) ||
             item.description.toLowerCase().includes(searchValue) ||
             item.deviceName.toLowerCase().includes(searchValue) ||
             item?.subRole.name.toLowerCase().includes(searchValue) ||
             item?.type?.value.toLowerCase().includes(searchValue)
-            
-        ).filter((item: any) => item.subRole.name == filteredRole)
+        )
+        .filter((item: any) => item.subRole.name == filteredRole)
         .map((item: any) => ({
           complaint_id: item?._id,
           id: item?.complaintId,
@@ -92,7 +107,7 @@ const ComplainTable = () => {
           user: item?.createdBy.fullName,
           comment: item?.description,
           department: item?.subRole.name,
-          server: item?.server.companyName,
+          server: item?.server?.companyName,
           status: item?.status,
           type: item?.type?.value,
           priorty: item?.priorty == null ? "N/A" : item?.priorty,
@@ -107,7 +122,6 @@ const ComplainTable = () => {
             .toString()}`,
         }));
     }
-
   };
 
   const [searchValue, setSearchValue] = useState("");
@@ -156,30 +170,27 @@ const ComplainTable = () => {
       setSelectedRows([]);
     }
   };
-  const [changeStatusValue, setChangeStatusValue] = useState(false)
+  const [changeStatusValue, setChangeStatusValue] = useState(false);
 
   const handleRowClicked = (row: any) => {
-
     dispatch(setTableRow(row));
 
     if (getUserRole() === ROLES.COMPANY) {
       window.open(
         `${process.env.PUBLIC_URL}/company/modules/complain-center/complainDetails/${row.complaint_id}`,
-        '_blank'
+        "_blank"
       );
     }
 
     if (getUserRole() === ROLES.OPERATOR) {
       window.open(
         `${process.env.PUBLIC_URL}/operator/modules/complain-center/complainDetails/${row.complaint_id}`,
-        '_blank'
+        "_blank"
       );
     }
-
   };
 
   const [isUpdate, setIsUpdate] = useState("");
-
 
   useEffect(() => {
     // console.log("state1", isUpdate);
@@ -191,15 +202,18 @@ const ComplainTable = () => {
       // console.log("event", event);
       // if (isUpdate) {
       // console.log(typeof (event.data));
-      if (typeof (event.data) == "string" && event.data == "updated") {
+      if (typeof event.data == "string" && event.data == "updated") {
         setIsUpdate(event.data.toString());
         getAll({ url: GET_COMPLAINT_CENTER_STATISTICS }).then((data: any) => {
           // console.log("Data", data);
 
           if (data !== undefined) {
-
             if (data.success) {
-              dispatch(setComplainCenterRoles(data.data.InternalComplaintsStatistics.subRoleCounts))
+              dispatch(
+                setComplainCenterRoles(
+                  data.data.InternalComplaintsStatistics.subRoleCounts
+                )
+              );
               const mappedArray = Object.entries(
                 data.data.InternalComplaintsStatistics
               ).map(([key, value]) => {
@@ -211,10 +225,9 @@ const ComplainTable = () => {
                   return { key: formattedKey, value: value };
                 }
               });
-              mappedArray.pop()
+              mappedArray.pop();
               // console.log(mappedArray);
               dispatch(setComplainCenterStatistics(mappedArray));
-
             }
           }
         });
@@ -234,7 +247,6 @@ const ComplainTable = () => {
       }
 
       // }
-
     };
     // Listen for messages from other tabs
     window.addEventListener("message", listener);
@@ -243,20 +255,12 @@ const ComplainTable = () => {
     };
   }, []);
   return (
-    <div className="table-responsive support-table" style={{ overflow: "auto", scrollbarWidth: "none" }}>
+    <div
+      className="table-responsive support-table"
+      style={{ overflow: "auto", scrollbarWidth: "none" }}
+    >
       <Row style={{ display: "flex", alignItems: "center" }}>
-        <Col
-          sm={12}
-          md={
-            10
-          }
-          lg={
-            10
-          }
-          xl={
-            10
-          }
-        >
+        <Col sm={12} md={10} lg={10} xl={10}>
           <input
             className="global-search-field"
             type="text"
@@ -265,34 +269,28 @@ const ComplainTable = () => {
             onChange={(e) => {
               handleSearch(e);
             }}
-          // style={{
-          //   backgroundColor: "#f1f1f1",
-          //   borderRadius: "5px",
-          //   padding: "12px",
-          //   height: "40px",
-          //   margin: "20px 0px",
-          //   width: "100%", // Adjusting width to accommodate padding and margin
-          //   border: "none",
-          //   outline: "none", // Removing default border outline
-          // }}
+            // style={{
+            //   backgroundColor: "#f1f1f1",
+            //   borderRadius: "5px",
+            //   padding: "12px",
+            //   height: "40px",
+            //   margin: "20px 0px",
+            //   width: "100%", // Adjusting width to accommodate padding and margin
+            //   border: "none",
+            //   outline: "none", // Removing default border outline
+            // }}
           />
         </Col>
         {getUserRole() === ROLES.SUPER_ADMIN ? (
-          <Col
-            sm={12}
-            md={2}
-            lg={2}
-            xl={2}
-          >
+          <Col sm={12} md={2} lg={2} xl={2}>
             <CreateNewComplain />
           </Col>
-        ) : (getUserRole() === ROLES.COMPANY ||
-          getUserRole() === ROLES.OPERATOR)
-          ? (
-            <Col sm={12} md={12} lg={2} xl={2}>
-              <CreateNewComplain />
-            </Col>
-          ) : null}
+        ) : getUserRole() === ROLES.COMPANY ||
+          getUserRole() === ROLES.OPERATOR ? (
+          <Col sm={12} md={12} lg={2} xl={2}>
+            <CreateNewComplain />
+          </Col>
+        ) : null}
       </Row>
       {selectedRows.length !== 0 && (
         <div
@@ -310,7 +308,6 @@ const ComplainTable = () => {
         // striped={true}
         pagination
         selectableRows
-
         // onSelectedRowsChange={handleRowSelected}
         onRowClicked={handleRowClicked} // Pass the event handler for row clicks
         clearSelectedRows={toggleDelete}
@@ -324,7 +321,8 @@ const ComplainTable = () => {
             style: {
               cursor: "pointer",
               transition: "background-color 0.2s", // Smooth transition for background color change
-              "&:hover": { // Define hover style
+              "&:hover": {
+                // Define hover style
                 backgroundColor: `rgba(${rgbColor.r},${rgbColor.g},${rgbColor.b},0.2)`,
               },
             },

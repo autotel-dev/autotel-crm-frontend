@@ -20,12 +20,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 
 import { setNoDataFound } from "../../../../ReaduxToolkit/Reducer/NoDataFoundSlice";
-import {
-  create,
-  getAll,
-  getImage,
-  update,
-} from "../../../../Utilities/api";
+import { create, getAll, getImage, update } from "../../../../Utilities/api";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -45,7 +40,12 @@ import CommonHeader from "../../../../Common/CommonHeader";
 import { Select } from "antd";
 import { Document, Page, pdfjs } from "react-pdf";
 import Loader from "../../../Utilities/Loader/Loader";
-import { GET_ALL_COMPANIES, GET_COMPANY_BY_ID, IMAGE_BASE_URL, UPDATE_COMPANY } from "../../../../Utilities/api/apiEndpoints";
+import {
+  GET_ALL_COMPANIES,
+  GET_COMPANY_BY_ID,
+  IMAGE_BASE_URL,
+  UPDATE_COMPANY,
+} from "../../../../Utilities/api/apiEndpoints";
 import { ERROR_MESSAGE } from "../../../../Utilities/constants/constants";
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
@@ -91,89 +91,101 @@ const UpdateCompanyForm = () => {
     setServerList(tempList);
   }, [servers]);
   useEffect(() => {
-    getAll({ url: `${GET_COMPANY_BY_ID}/${companyId}` }).then(
-      (data: any) => {
-        // console.log("api call --- >", data);
+    getAll({ url: `${GET_COMPANY_BY_ID}/${companyId}` }).then((data: any) => {
+      // console.log("api call --- >", data);
 
-        if (data !== undefined) {
-          dispatch(setNoDataFound(data.message));
-          if (!data.success && data.message === ERROR_MESSAGE) {
-            dispatch(setIsConnected(true));
-            setLoading(false);
-          }
-          if (!data.success) {
-            Swal.fire({
-              text: `${data.message}`,
-              icon: "error",
-              timer: 2000,
-              showConfirmButton: false,
-            });
-            setLoading(false);
-          }
+      if (data !== undefined) {
+        dispatch(setNoDataFound(data.message));
+        if (!data.success && data.message === ERROR_MESSAGE) {
+          dispatch(setIsConnected(true));
+          setLoading(false);
+        }
+        if (!data.success) {
+          Swal.fire({
+            text: `${data.message}`,
+            icon: "error",
+            timer: 2000,
+            showConfirmButton: false,
+          });
+          setLoading(false);
+        }
 
-          if (data.success) {
-            const formDataWithChecked = {
-              ...data.data,
-              permissions: permissions.map((permission: any) => {
-                const matchingAdminPermission = data.data.permissions.find(
-                  (adminPermission: any) =>
-                    adminPermission.value === permission.value
-                );
-                if (matchingAdminPermission) {
-                  return {
-                    ...permission,
-                    checked: true,
-                    read: matchingAdminPermission.read,
-                    create: matchingAdminPermission.create,
-                    edit: matchingAdminPermission.edit,
-                    delete: matchingAdminPermission.delete,
-                  };
-                } else {
-                  return {
-                    ...permission,
-                    checked: false,
-                    read: false,
-                    create: false,
-                    edit: false,
-                    delete: false,
-                  };
-                }
-              }),
-            };
-
-            setFormData(formDataWithChecked);
-            const updatedCrmModules = crmModules.map((module: any) => {
-              const foundModule = data.data.allowedModules.find(
-                (allowedModule: any) => allowedModule._id === module._id
+        if (data.success) {
+          const formDataWithChecked = {
+            ...data.data,
+            permissions: permissions.map((permission: any) => {
+              const matchingAdminPermission = data.data.permissions.find(
+                (adminPermission: any) =>
+                  adminPermission.value === permission.value
               );
-              return {
-                ...module,
-                checked: !!foundModule, // Set checked to true if foundModule is truthy, otherwise false
-              };
-            });
-            setRemovedModules(updatedCrmModules);
+              if (matchingAdminPermission) {
+                return {
+                  ...permission,
+                  checked: true,
+                  read: matchingAdminPermission.read,
+                  create: matchingAdminPermission.create,
+                  edit: matchingAdminPermission.edit,
+                  delete: matchingAdminPermission.delete,
+                };
+              } else {
+                return {
+                  ...permission,
+                  checked: false,
+                  read: false,
+                  create: false,
+                  edit: false,
+                  delete: false,
+                };
+              }
+            }),
+          };
 
+          setFormData(formDataWithChecked);
+          const updatedCrmModules = crmModules?.map((module: any) => {
+            const foundModule = data.data?.allowedModules?.find(
+              (allowedModule: any) => allowedModule._id === module?._id
+            );
+            return {
+              ...module,
+              checked: !!foundModule, // Set checked to true if foundModule is truthy, otherwise false
+            };
+          });
+          setRemovedModules(updatedCrmModules);
+
+          getImage({
+            url: `${IMAGE_BASE_URL}/${data.data?.cnicFront?.url}`,
+          }).then(async (dataa: any) => {
+            if (data.data.cnicFront.url !== "") {
+              attachementImages.push({
+                key: "cnicFront",
+                url: data.data?.cnicFront?.url,
+                blob: dataa,
+              });
+            }
+
+            setAttachementImages(attachementImages);
+
+            // setFormData(formData);
             getImage({
-              url: `${IMAGE_BASE_URL}/${data.data.cnicFront.url}`,
+              url: `${IMAGE_BASE_URL}/${data.data?.cnicBack?.url}`,
             }).then(async (dataa: any) => {
-              if (data.data.cnicFront.url !== "") {
+              if (data.data?.cnicBack?.url !== "") {
                 attachementImages.push({
-                  key: "cnicFront",
-                  url: data.data?.cnicFront.url,
+                  key: "cnicBack",
+                  url: data.data?.cnicBack?.url,
                   blob: dataa,
                 });
               }
-
               setAttachementImages(attachementImages);
 
               // setFormData(formData);
               getImage({
-                url: `${IMAGE_BASE_URL}/${data.data.cnicBack.url}`,
+                url: `${IMAGE_BASE_URL}/${data.data?.ptaCertificate?.url}`,
               }).then(async (dataa: any) => {
-                if (data.data.cnicBack.url !== "") {
+                if (data.data.ptaCertificate.url !== "") {
                   attachementImages.push({
-                    key: "cnicBack",
-                    url: data.data?.cnicBack.url,
+                    key: "ptaCertificate",
+                    url: data.data?.ptaCertificate?.url,
                     blob: dataa,
                   });
                 }
@@ -181,12 +193,12 @@ const UpdateCompanyForm = () => {
 
                 // setFormData(formData);
                 getImage({
-                  url: `${IMAGE_BASE_URL}/${data.data.ptaCertificate.url}`,
+                  url: `${IMAGE_BASE_URL}/${data.data?.ntnCertificate?.url}`,
                 }).then(async (dataa: any) => {
-                  if (data.data.ptaCertificate.url !== "") {
+                  if (data.data.ntnCertificate.url !== "") {
                     attachementImages.push({
-                      key: "ptaCertificate",
-                      url: data.data?.ptaCertificate.url,
+                      key: "ntnCertificate",
+                      url: data.data?.ntnCertificate?.url,
                       blob: dataa,
                     });
                   }
@@ -194,45 +206,31 @@ const UpdateCompanyForm = () => {
 
                   // setFormData(formData);
                   getImage({
-                    url: `${IMAGE_BASE_URL}/${data.data.ntnCertificate.url}`,
+                    url: `${IMAGE_BASE_URL}/${data?.data?.otherAttachment.url}`,
                   }).then(async (dataa: any) => {
-                    if (data.data.ntnCertificate.url !== "") {
+                    if (data.data?.otherAttachment?.url !== "") {
                       attachementImages.push({
-                        key: "ntnCertificate",
-                        url: data.data?.ntnCertificate.url,
+                        key: "otherAttachment",
+                        url: data.data?.otherAttachment?.url,
                         blob: dataa,
                       });
                     }
                     setAttachementImages(attachementImages);
 
                     // setFormData(formData);
-                    getImage({
-                      url: `${IMAGE_BASE_URL}/${data.data.otherAttachment.url}`,
-                    }).then(async (dataa: any) => {
-                      if (data.data.otherAttachment.url !== "") {
-                        attachementImages.push({
-                          key: "otherAttachment",
-                          url: data.data?.otherAttachment.url,
-                          blob: dataa,
-                        });
-                      }
-                      setAttachementImages(attachementImages);
-
-                      // setFormData(formData);
-                      setLoading(false);
-                    });
+                    setLoading(false);
                   });
                 });
               });
             });
+          });
 
-            // if (attachementImages.length === 5) {
-              setLoading(false);
-            // }
-          }
+          // if (attachementImages.length === 5) {
+          setLoading(false);
+          // }
         }
       }
-    );
+    });
   }, []);
 
   const [showPassword, setShowPassword] = useState(false);
@@ -259,7 +257,7 @@ const UpdateCompanyForm = () => {
   };
 
   const handleServerCredentialChange = (index: any, field: any, value: any) => {
-    const updatedCredentials = [...formData.serverCredentials];
+    const updatedCredentials = [...formData?.serverCredentials];
     updatedCredentials[index][field] = value;
     setFormData({ ...formData, serverCredentials: updatedCredentials });
   };
@@ -272,7 +270,7 @@ const UpdateCompanyForm = () => {
     title: any
   ) => {
     // Clone the permissions array from formData
-    let updatedPermissions = [...formData.permissions];
+    let updatedPermissions = [...formData?.permissions];
 
     // Update the specific permission field if it's not "checked"
 
@@ -302,16 +300,16 @@ const UpdateCompanyForm = () => {
   const updateCompanySubmitted = async (e: any) => {
     e.preventDefault();
     setLoading(true);
-    const convertedServerCredentials = formData.serverCredentials.map(
+    const convertedServerCredentials = formData?.serverCredentials?.map(
       (credential: any) => ({
-        emailAddress: credential.emailAddress,
-        password: credential.password,
-        hostUrl: credential.hostUrl,
-        server: credential.server._id,
+        emailAddress: credential?.emailAddress,
+        password: credential?.password,
+        hostUrl: credential?.hostUrl,
+        server: credential?.server?._id,
       })
     );
-    const filteredPermissions = formData.permissions.filter(
-      (permission: any) => permission.checked
+    const filteredPermissions = formData?.permissions?.filter(
+      (permission: any) => permission?.checked
     );
 
     // Create a copy of the filtered permissions array without the checked key
@@ -321,10 +319,10 @@ const UpdateCompanyForm = () => {
     });
     // console.log("updatedFormData", formData);
 
-    const updatedRemoveModules = removedModules.filter(
+    const updatedRemoveModules = removedModules?.filter(
       (module: any) => module.checked
     );
-    const updatedModuless = updatedRemoveModules.map((module: any) => {
+    const updatedModuless = updatedRemoveModules?.map((module: any) => {
       const { _id, ...rest } = module;
       return _id;
     });
@@ -333,9 +331,9 @@ const UpdateCompanyForm = () => {
       ...formData,
       allowedModules: updatedModuless,
       permissions: updatedPermissions,
-      package: updatedPackage !== "" ? updatedPackage : formData.package._id,
-      city: updatedCity !== "" ? updatedCity : formData.city._id,
-      timezone: updatedTimeZone !== "" ? updatedTimeZone : formData.timezone,
+      package: updatedPackage !== "" ? updatedPackage : formData?.package?._id,
+      city: updatedCity !== "" ? updatedCity : formData?.city?._id,
+      timezone: updatedTimeZone !== "" ? updatedTimeZone : formData?.timezone,
       serverCredentials: convertedServerCredentials,
     };
 
@@ -363,10 +361,7 @@ const UpdateCompanyForm = () => {
           getAll({ url: GET_ALL_COMPANIES }).then((data: any) => {
             if (data !== undefined) {
               dispatch(setNoDataFound(data.message));
-              if (
-                !data.success &&
-                data.message === ERROR_MESSAGE
-              ) {
+              if (!data.success && data.message === ERROR_MESSAGE) {
                 setLoading(false);
               }
               if (!data.success) {
@@ -498,21 +493,21 @@ const UpdateCompanyForm = () => {
         //     alignItems: "center",
         //   }}
         // >
-          <div style={{ textAlign: "center" }}>
-            {/* <Loader /> */}
+        <div style={{ textAlign: "center" }}>
+          {/* <Loader /> */}
 
-            <>
-              <div
-                style={{
-                  display: "flex",
-                  width :"100%",
-                  justifyContent: "space-between",
-                   marginLeft:"20px",
-                  //  marginRight:"50px",
-                   marginTop:"200px",
-                }}
-              >
-                <div style={{width:"33%", }}>
+          <>
+            <div
+              style={{
+                display: "flex",
+                width: "100%",
+                justifyContent: "space-between",
+                marginLeft: "20px",
+                //  marginRight:"50px",
+                marginTop: "200px",
+              }}
+            >
+              <div style={{ width: "33%" }}>
                 <Skeleton
                   height="20px"
                   width="45%"
@@ -525,49 +520,8 @@ const UpdateCompanyForm = () => {
                   marginBottom="10"
                   borderRadius="10px"
                 />
-                </div>
-                <div style={{width:"30%"}}>
-                <Skeleton
-                  height="20px"
-                  width="45%"
-                  borderRadius="10px"
-                  marginBottom="5px"
-                />
-                <Skeleton
-                  height="40px"
-                  width="100%"
-                  marginBottom="10"
-                  borderRadius="10px"
-                />
-                </div>
-                <div style={{width:"30%" ,  marginRight:"50px"}}>
-                <Skeleton
-                  height="20px"
-                  width="45%"
-                  borderRadius="10px"
-                  marginBottom="5px"
-                />
-                <Skeleton
-                  height="40px"
-                  width="100%"
-                  marginBottom="10"
-                  borderRadius="10px"
-                />
-                </div>
-                
-               
               </div>
-              <div
-                style={{
-                  display: "flex",
-                  width :"100%",
-                  justifyContent: "space-between",
-                   marginLeft:"20px",
-                  //  marginRight:"50px",
-                   marginTop:"60px",
-                }}
-              >
-                <div style={{width:"33%", }}>
+              <div style={{ width: "30%" }}>
                 <Skeleton
                   height="20px"
                   width="45%"
@@ -580,49 +534,8 @@ const UpdateCompanyForm = () => {
                   marginBottom="10"
                   borderRadius="10px"
                 />
-                </div>
-                <div style={{width:"30%"}}>
-                <Skeleton
-                  height="20px"
-                  width="45%"
-                  borderRadius="10px"
-                  marginBottom="5px"
-                />
-                <Skeleton
-                  height="40px"
-                  width="100%"
-                  marginBottom="10"
-                  borderRadius="10px"
-                />
-                </div>
-                <div style={{width:"30%" ,  marginRight:"50px"}}>
-                <Skeleton
-                  height="20px"
-                  width="45%"
-                  borderRadius="10px"
-                  marginBottom="5px"
-                />
-                <Skeleton
-                  height="40px"
-                  width="100%"
-                  marginBottom="10"
-                  borderRadius="10px"
-                />
-                </div>
-                
-               
               </div>
-              <div
-                style={{
-                  display: "flex",
-                  width :"100%",
-                  justifyContent: "space-between",
-                   marginLeft:"20px",
-                  //  marginRight:"50px",
-                   marginTop:"60px",
-                }}
-              >
-                <div style={{width:"33%", }}>
+              <div style={{ width: "30%", marginRight: "50px" }}>
                 <Skeleton
                   height="20px"
                   width="45%"
@@ -635,49 +548,19 @@ const UpdateCompanyForm = () => {
                   marginBottom="10"
                   borderRadius="10px"
                 />
-                </div>
-                <div style={{width:"30%"}}>
-                <Skeleton
-                  height="20px"
-                  width="45%"
-                  borderRadius="10px"
-                  marginBottom="5px"
-                />
-                <Skeleton
-                  height="40px"
-                  width="100%"
-                  marginBottom="10"
-                  borderRadius="10px"
-                />
-                </div>
-                <div style={{width:"30%" ,  marginRight:"50px"}}>
-                <Skeleton
-                  height="20px"
-                  width="45%"
-                  borderRadius="10px"
-                  marginBottom="5px"
-                />
-                <Skeleton
-                  height="40px"
-                  width="100%"
-                  marginBottom="10"
-                  borderRadius="10px"
-                />
-                </div>
-                
-               
               </div>
-              <div
-                style={{
-                  display: "flex",
-                  width :"100%",
-                  justifyContent: "space-between",
-                   marginLeft:"20px",
-                  //  marginRight:"50px",
-                   marginTop:"60px",
-                }}
-              >
-                <div style={{width:"33%", }}>
+            </div>
+            <div
+              style={{
+                display: "flex",
+                width: "100%",
+                justifyContent: "space-between",
+                marginLeft: "20px",
+                //  marginRight:"50px",
+                marginTop: "60px",
+              }}
+            >
+              <div style={{ width: "33%" }}>
                 <Skeleton
                   height="20px"
                   width="45%"
@@ -690,41 +573,144 @@ const UpdateCompanyForm = () => {
                   marginBottom="10"
                   borderRadius="10px"
                 />
-                </div>
-                <div style={{width:"30%"}}>
-                <Skeleton
-                  height="20px"
-                  width="45%"
-                  borderRadius="10px"
-                  marginBottom="5px"
-                />
-                <Skeleton
-                  height="40px"
-                  width="100%"
-                  marginBottom="10"
-                  borderRadius="10px"
-                />
-                </div>
-                <div style={{width:"30%" ,  marginRight:"50px"}}>
-                <Skeleton
-                  height="20px"
-                  width="45%"
-                  borderRadius="10px"
-                  marginBottom="5px"
-                />
-                <Skeleton
-                  height="40px"
-                  width="100%"
-                  marginBottom="10"
-                  borderRadius="10px"
-                />
-                </div>
-                
-               
               </div>
-            </>
-          </div>
-        
+              <div style={{ width: "30%" }}>
+                <Skeleton
+                  height="20px"
+                  width="45%"
+                  borderRadius="10px"
+                  marginBottom="5px"
+                />
+                <Skeleton
+                  height="40px"
+                  width="100%"
+                  marginBottom="10"
+                  borderRadius="10px"
+                />
+              </div>
+              <div style={{ width: "30%", marginRight: "50px" }}>
+                <Skeleton
+                  height="20px"
+                  width="45%"
+                  borderRadius="10px"
+                  marginBottom="5px"
+                />
+                <Skeleton
+                  height="40px"
+                  width="100%"
+                  marginBottom="10"
+                  borderRadius="10px"
+                />
+              </div>
+            </div>
+            <div
+              style={{
+                display: "flex",
+                width: "100%",
+                justifyContent: "space-between",
+                marginLeft: "20px",
+                //  marginRight:"50px",
+                marginTop: "60px",
+              }}
+            >
+              <div style={{ width: "33%" }}>
+                <Skeleton
+                  height="20px"
+                  width="45%"
+                  borderRadius="10px"
+                  marginBottom="5px"
+                />
+                <Skeleton
+                  height="40px"
+                  width="100%"
+                  marginBottom="10"
+                  borderRadius="10px"
+                />
+              </div>
+              <div style={{ width: "30%" }}>
+                <Skeleton
+                  height="20px"
+                  width="45%"
+                  borderRadius="10px"
+                  marginBottom="5px"
+                />
+                <Skeleton
+                  height="40px"
+                  width="100%"
+                  marginBottom="10"
+                  borderRadius="10px"
+                />
+              </div>
+              <div style={{ width: "30%", marginRight: "50px" }}>
+                <Skeleton
+                  height="20px"
+                  width="45%"
+                  borderRadius="10px"
+                  marginBottom="5px"
+                />
+                <Skeleton
+                  height="40px"
+                  width="100%"
+                  marginBottom="10"
+                  borderRadius="10px"
+                />
+              </div>
+            </div>
+            <div
+              style={{
+                display: "flex",
+                width: "100%",
+                justifyContent: "space-between",
+                marginLeft: "20px",
+                //  marginRight:"50px",
+                marginTop: "60px",
+              }}
+            >
+              <div style={{ width: "33%" }}>
+                <Skeleton
+                  height="20px"
+                  width="45%"
+                  borderRadius="10px"
+                  marginBottom="5px"
+                />
+                <Skeleton
+                  height="40px"
+                  width="100%"
+                  marginBottom="10"
+                  borderRadius="10px"
+                />
+              </div>
+              <div style={{ width: "30%" }}>
+                <Skeleton
+                  height="20px"
+                  width="45%"
+                  borderRadius="10px"
+                  marginBottom="5px"
+                />
+                <Skeleton
+                  height="40px"
+                  width="100%"
+                  marginBottom="10"
+                  borderRadius="10px"
+                />
+              </div>
+              <div style={{ width: "30%", marginRight: "50px" }}>
+                <Skeleton
+                  height="20px"
+                  width="45%"
+                  borderRadius="10px"
+                  marginBottom="5px"
+                />
+                <Skeleton
+                  height="40px"
+                  width="100%"
+                  marginBottom="10"
+                  borderRadius="10px"
+                />
+              </div>
+            </div>
+          </>
+        </div>
       ) : (
         <div>
           <Breadcrumbs
@@ -1014,7 +1000,7 @@ const UpdateCompanyForm = () => {
                               (server: any) => server?.server?.companyName
                             )}
                             value={formData?.serverCredentials?.map(
-                              (server: any) => server?.server?._id
+                              (server: any) => server?.server._id
                             )}
                             showSearch
                             mode="multiple"

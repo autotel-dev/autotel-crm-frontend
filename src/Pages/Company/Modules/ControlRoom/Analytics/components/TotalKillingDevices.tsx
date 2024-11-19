@@ -33,7 +33,7 @@ interface PropsTypes {
 
 const TotalKillingDevices: React.FC<PropsTypes> = ({
   isVisible,
-  setIsVisible = () => { },
+  setIsVisible = () => {},
   fromDate,
   toDate,
 }) => {
@@ -92,9 +92,7 @@ const TotalKillingDevices: React.FC<PropsTypes> = ({
           : null;
         return {
           ...device,
-          remainingTime: calculateRemainingTime(
-            device.createdAt
-          ),
+          remainingTime: calculateRemainingTime(device.createdAt),
           deviceData: deviceData ? { ...deviceData } : null,
         };
       });
@@ -109,9 +107,7 @@ const TotalKillingDevices: React.FC<PropsTypes> = ({
       setDataList((prevDataList: any) =>
         prevDataList.map((device: any) => ({
           ...device,
-          remainingTime: calculateRemainingTime(
-            device.createdAt
-          ),
+          remainingTime: calculateRemainingTime(device.createdAt),
         }))
       );
     }, 1000);
@@ -159,14 +155,12 @@ const TotalKillingDevices: React.FC<PropsTypes> = ({
           );
           const deviceData = matchedDevice
             ? matchedDevice.items.find(
-              (item: any) => item.id === device.deviceId
-            )
+                (item: any) => item.id === device.deviceId
+              )
             : null;
           return {
             ...device,
-            remainingTime: calculateRemainingTime(
-              device.createdAt
-            ),
+            remainingTime: calculateRemainingTime(device.createdAt),
             deviceData: deviceData ? { ...deviceData } : null,
           };
         });
@@ -276,7 +270,7 @@ const TotalKillingDevices: React.FC<PropsTypes> = ({
                         setBasicTab("1");
                         setLoading(true);
                         getAll({
-                          url: GET_ALL_KILLED_DEVICES,
+                          url: `${GET_ALL_KILLED_DEVICES}?type=self`,
                         }).then((data: any) => {
                           // // // console.log("api call --- >", data);
 
@@ -316,7 +310,7 @@ const TotalKillingDevices: React.FC<PropsTypes> = ({
                         setBasicTab("2");
                         setLoading(true);
                         getAll({
-                          url: GET_ALL_KILLED_DEVICES,
+                          url: `${GET_ALL_KILLED_DEVICES}?type=all`,
                         }).then((data: any) => {
                           // // // console.log("api call --- >", data);
 
@@ -396,7 +390,7 @@ const TotalKillingDevices: React.FC<PropsTypes> = ({
                                     style={{
                                       width:
                                         data === "Last Packet" ||
-                                          data === "Killed Time"
+                                        data === "Killed Time"
                                           ? "10%"
                                           : "8%",
                                     }}
@@ -440,28 +434,28 @@ const TotalKillingDevices: React.FC<PropsTypes> = ({
                                               data.onlineStatus === "ack"
                                                 ? "rgba(255, 0, 0, 0.1)"
                                                 : data.onlineStatus === "engine"
-                                                  ? "rgba(255, 165, 0, 0.1)"
-                                                  : data.onlineStatus === "online"
-                                                    ? "rgba(0, 255, 0, 0.1)"
-                                                    : "rgba(0, 0, 0, 0.1)",
+                                                ? "rgba(255, 165, 0, 0.1)"
+                                                : data.onlineStatus === "online"
+                                                ? "rgba(0, 255, 0, 0.1)"
+                                                : "rgba(0, 0, 0, 0.1)",
                                             color:
                                               data.onlineStatus === "ack"
                                                 ? "red"
                                                 : data.onlineStatus === "engine"
-                                                  ? "orange"
-                                                  : data.onlineStatus === "online"
-                                                    ? "green"
-                                                    : "black",
+                                                ? "orange"
+                                                : data.onlineStatus === "online"
+                                                ? "green"
+                                                : "black",
                                             borderRadius: "5px",
                                           }}
                                         >
                                           {data.onlineStatus === "ack"
                                             ? "Stop"
                                             : data.onlineStatus === "engine"
-                                              ? "Idle"
-                                              : data.onlineStatus === "online"
-                                                ? "Moving"
-                                                : "Offline"}
+                                            ? "Idle"
+                                            : data.onlineStatus === "online"
+                                            ? "Moving"
+                                            : "Offline"}
                                         </div>
                                       </td>
                                       <td style={{ width: "10%" }}>
@@ -472,7 +466,7 @@ const TotalKillingDevices: React.FC<PropsTypes> = ({
                                                 new Date(
                                                   new Date(
                                                     data?.lastPacketTimeStamp *
-                                                    1000
+                                                      1000
                                                   ).toISOString()
                                                 ).toLocaleString(),
                                                 "date"
@@ -484,7 +478,7 @@ const TotalKillingDevices: React.FC<PropsTypes> = ({
                                                 new Date(
                                                   new Date(
                                                     data?.lastPacketTimeStamp *
-                                                    1000
+                                                      1000
                                                   ).toISOString()
                                                 ).toLocaleString(),
                                                 "time"
@@ -501,13 +495,13 @@ const TotalKillingDevices: React.FC<PropsTypes> = ({
                                       </td>
                                       <td style={{ width: "8%" }}>
                                         {data.address == undefined ||
-                                          data.address === "" ||
-                                          data.address == null
+                                        data.address === "" ||
+                                        data.address == null
                                           ? "N/A"
                                           : data.address}
                                       </td>
                                       <td style={{ width: "10%" }}>
-                                        {data.server.companyName}
+                                        {data?.server?.companyName}
                                       </td>
                                       <td style={{ width: "8%" }}>
                                         <div className="d-flex">
@@ -576,13 +570,13 @@ const TotalKillingDevices: React.FC<PropsTypes> = ({
                                                     data.server._id
                                                 );
                                               if (checkServer?.isConnected) {
-                                                setDeviceData(data.deviceData);
+                                                setDeviceData(data?.deviceData);
                                                 setIsUpdateModalOpenForSendCommand(
                                                   true
                                                 );
                                               } else {
                                                 Swal.fire({
-                                                  title: `${checkServer.server.companyName}`,
+                                                  title: `${checkServer?.server?.companyName}`,
                                                   text: `You cannot relase this device because the Server Credentaisl that attached with it  are wrong`,
                                                   icon: "error",
                                                   // timer: 2000,
@@ -671,7 +665,7 @@ const TotalKillingDevices: React.FC<PropsTypes> = ({
                               style={{
                                 width:
                                   data === "Last Packet" ||
-                                    data === "Killed Time"
+                                  data === "Killed Time"
                                     ? "10%"
                                     : "8%",
                               }}
@@ -702,28 +696,28 @@ const TotalKillingDevices: React.FC<PropsTypes> = ({
                                       data.onlineStatus === "ack"
                                         ? "rgba(255, 0, 0, 0.1)"
                                         : data.onlineStatus === "engine"
-                                          ? "rgba(255, 165, 0, 0.1)"
-                                          : data.onlineStatus === "online"
-                                            ? "rgba(0, 255, 0, 0.1)"
-                                            : "rgba(0, 0, 0, 0.1)",
+                                        ? "rgba(255, 165, 0, 0.1)"
+                                        : data.onlineStatus === "online"
+                                        ? "rgba(0, 255, 0, 0.1)"
+                                        : "rgba(0, 0, 0, 0.1)",
                                     color:
                                       data.onlineStatus === "ack"
                                         ? "red"
                                         : data.onlineStatus === "engine"
-                                          ? "orange"
-                                          : data.onlineStatus === "online"
-                                            ? "green"
-                                            : "black",
+                                        ? "orange"
+                                        : data.onlineStatus === "online"
+                                        ? "green"
+                                        : "black",
                                     borderRadius: "5px",
                                   }}
                                 >
                                   {data.onlineStatus === "ack"
                                     ? "Stop"
                                     : data.onlineStatus === "engine"
-                                      ? "Idle"
-                                      : data.onlineStatus === "online"
-                                        ? "Moving"
-                                        : "Offline"}
+                                    ? "Idle"
+                                    : data.onlineStatus === "online"
+                                    ? "Moving"
+                                    : "Offline"}
                                 </div>
                               </td>
                               <td style={{ width: "10%" }}>
@@ -753,31 +747,27 @@ const TotalKillingDevices: React.FC<PropsTypes> = ({
                               <td style={{ width: "8%" }}>{data.longitude}</td>
                               <td style={{ width: "8%" }}>
                                 {data.address == undefined ||
-                                  data.address === "" ||
-                                  data.address == null
+                                data.address === "" ||
+                                data.address == null
                                   ? "N/A"
                                   : data.address}
                               </td>
                               <td style={{ width: "10%" }}>
-                                {data.server.companyName}
+                                {data?.server?.companyName}
                               </td>
                               <td style={{ width: "8%" }}>
                                 <div className="d-flex">
                                   <div className="flex-grow-1 ms-2">
                                     <div style={{ fontSize: "10px" }}>
                                       {format(
-                                        new Date(
-                                          data?.createdAt
-                                        ).toISOString(),
+                                        new Date(data?.createdAt).toISOString(),
                                         "date"
                                       )}
                                     </div>
                                     <div style={{ fontSize: "10px" }}>
                                       {/* {data.updatedAt.toString().slice(11, 19)} */}
                                       {format(
-                                        new Date(
-                                          data?.createdAt
-                                        ).toISOString(),
+                                        new Date(data?.createdAt).toISOString(),
                                         "time"
                                       )}
                                     </div>

@@ -20,7 +20,7 @@ interface PropsTypes {
 
 const TotalPreInfoAlerts: React.FC<PropsTypes> = ({
   isVisible,
-  setIsVisible = () => { },
+  setIsVisible = () => {},
 }) => {
   const { preInfos } = useSelector((state: any) => state.alerts);
 
@@ -182,13 +182,13 @@ const TotalPreInfoAlerts: React.FC<PropsTypes> = ({
                               {data.addedByUser.fullName}
                             </td>
                             <td style={{ width: "10%" }}>
-                              {data.company.fullName}
+                              {data?.company?.fullName}
                             </td>
                             <td style={{ width: "15%" }}>
-                              {data.server.companyName}
+                              {data?.server?.companyName}
                             </td>
                             <td style={{ width: "15%" }}>
-                              {data.preInfoMessage}
+                              {data?.preInfoMessage}
                             </td>
 
                             <td style={{ width: "15%" }}>

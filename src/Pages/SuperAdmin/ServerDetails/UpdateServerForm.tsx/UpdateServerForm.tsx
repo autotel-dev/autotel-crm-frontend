@@ -1,4 +1,4 @@
-import { H4, Image,P } from "../../../../AbstractElements";
+import { H4, Image, P } from "../../../../AbstractElements";
 import Breadcrumbs from "../../../../CommonElements/Breadcrumbs/Breadcrumbs";
 import ShowError from "../CreateServerForm/ShowError";
 import {
@@ -30,7 +30,10 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import Swal from "sweetalert2";
 import { getAll, update } from "../../../../Utilities/api";
-import { GET_ALL_SERVERS, UPDATE_SERVER } from "../../../../Utilities/api/apiEndpoints";
+import {
+  GET_ALL_SERVERS,
+  UPDATE_SERVER,
+} from "../../../../Utilities/api/apiEndpoints";
 import { ERROR_MESSAGE } from "../../../../Utilities/constants/constants";
 
 interface PropsTypes {
@@ -123,51 +126,48 @@ const UpdateServerForm = () => {
           // console.log(data);
           setLoading(false);
           dispatch(setServersStart());
-          getAll({ url: GET_ALL_SERVERS }).then(
-            (data: any) => {
-              // console.log("api call --- >", data);
-              // if (data == undefined) {
-              //   Swal.fire({
-              //     text: "Failed to fetch due to connection refused",
-              //     icon: "error",
-              //     timer: 2000,
-              //     showConfirmButton: false,
-              //   });
-              //   dispatch(setInActiveActiveServers("All"));
-              //   dispatch(setServers([]));
-              //   dispatch(setFilterServers([]));
-              //   dispatch(setServersEnd());
-              //   return;
-              // }
-              // ----------------------
+          getAll({ url: GET_ALL_SERVERS }).then((data: any) => {
+            // console.log("api call --- >", data);
+            // if (data == undefined) {
+            //   Swal.fire({
+            //     text: "Failed to fetch due to connection refused",
+            //     icon: "error",
+            //     timer: 2000,
+            //     showConfirmButton: false,
+            //   });
+            //   dispatch(setInActiveActiveServers("All"));
+            //   dispatch(setServers([]));
+            //   dispatch(setFilterServers([]));
+            //   dispatch(setServersEnd());
+            //   return;
+            // }
+            // ----------------------
 
-              if (data !== undefined) {
-                dispatch(setNoDataFound(data.message));
-                if (
-                  !data.success &&
-                  data.message === ERROR_MESSAGE
-                ) {
-                  setLoading(false);
-                }
-                if (!data.success) {
-                  Swal.fire({
-                    text: `${data.message}`,
-                    icon: "error",
-                    timer: 2000,
-                    showConfirmButton: false,
-                  });
-                  setLoading(false);
-                }
-                if (data.success) {
-                  // console.log("hhg");
-                  dispatch(setServers(data.data.allServers));
-                  dispatch(setFilterServers(data.data.allServers));
-                  navigate(`${process.env.PUBLIC_URL}/super-admin/setup/server_details`);
-                }
+            if (data !== undefined) {
+              dispatch(setNoDataFound(data.message));
+              if (!data.success && data.message === ERROR_MESSAGE) {
+                setLoading(false);
               }
-              dispatch(setServersEnd());
+              if (!data.success) {
+                Swal.fire({
+                  text: `${data.message}`,
+                  icon: "error",
+                  timer: 2000,
+                  showConfirmButton: false,
+                });
+                setLoading(false);
+              }
+              if (data.success) {
+                // console.log("hhg");
+                dispatch(setServers(data.data.allServers));
+                dispatch(setFilterServers(data.data.allServers));
+                navigate(
+                  `${process.env.PUBLIC_URL}/super-admin/setup/server-details`
+                );
+              }
             }
-          );
+            dispatch(setServersEnd());
+          });
         }
       });
       // Handle successful post creation (e.g., show a success message, redirect, etc.)

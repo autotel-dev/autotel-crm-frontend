@@ -20,12 +20,14 @@ const Servers = () => {
   );
   useEffect(() => {
     dispatch(setIsConnected(false));
-  },[]);
+  }, []);
   const filterServerss = (e: any) => {
     const searchKey = e.target.value;
     setSearchValue(searchKey);
     const filtered = filterServers.filter((server: any, index: any) => {
-      return server.companyName.toLowerCase().includes(searchKey.toLowerCase());
+      return server?.companyName
+        ?.toLowerCase()
+        .includes(searchKey.toLowerCase());
       // ^ Add 'return' statement here
     });
 
@@ -33,7 +35,7 @@ const Servers = () => {
 
     // console.log(filtered);
   };
-  
+
   return (
     <>
       {isConnected ? (
@@ -52,7 +54,7 @@ const Servers = () => {
                   <ServersListNav />
                   <Col md={12}>
                     <input
-                    className="global-search-field"
+                      className="global-search-field"
                       type="text"
                       placeholder="Type to Search.."
                       value={searchValue}

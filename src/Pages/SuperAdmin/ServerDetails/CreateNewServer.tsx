@@ -13,7 +13,9 @@ const CreateNewServer = () => {
       <div className="text-end">
         <button
           className={`btn ${
-            userPersonalizationData?.buttonsAndBarsColor == null ? "btn-primary" : ""
+            userPersonalizationData?.buttonsAndBarsColor == null
+              ? "btn-primary"
+              : ""
           }`}
           style={{
             color: "white",
@@ -24,7 +26,7 @@ const CreateNewServer = () => {
           }}
           onClick={() => {
             navigate(
-              `${process.env.PUBLIC_URL}/super-admin/setup/server_details/createNewServer`
+              `${process.env.PUBLIC_URL}/super-admin/setup/server-details/create-new-Server`
             );
           }}
         >

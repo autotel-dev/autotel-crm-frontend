@@ -213,14 +213,14 @@ const routes = [
     permissionValue: "ServerDetails",
   },
   {
-    path: `${process.env.PUBLIC_URL}/super-admin/setup/server_details/createNewServer`,
+    path: `${process.env.PUBLIC_URL}/super-admin/setup/server-details/create-new-Server`,
     Component: <CreateServerForm />,
     allowedUserRoles: [ROLES.SUPER_ADMIN],
     isProtected: true,
     permissionValue: "CreateNewServer",
   },
   {
-    path: `${process.env.PUBLIC_URL}/super-admin/setup/server_details/update-server`,
+    path: `${process.env.PUBLIC_URL}/super-admin/setup/server-details/update-server`,
     Component: <UpdateServerForm />,
     allowedUserRoles: [ROLES.SUPER_ADMIN],
     isProtected: true,
@@ -453,7 +453,7 @@ const routes = [
     isProtected: true,
     allowedUserRoles: [ROLES.COMPANY],
     permissionValue: "SAIO Central",
-    isLayout: true
+    isLayout: true,
   },
 
   // Users
@@ -526,7 +526,6 @@ const routes = [
     Component: <ComplainDetails />,
   },
 
-
   {
     path: `${process.env.PUBLIC_URL}/not-accessible`,
     Component: <NotAccessible />,
@@ -538,4 +537,3 @@ const routes = [
 ];
 
 export default routes;
-

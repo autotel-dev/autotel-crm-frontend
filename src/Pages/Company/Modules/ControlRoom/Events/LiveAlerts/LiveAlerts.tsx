@@ -659,7 +659,7 @@ const LiveAlerts = () => {
                               });
                             } else {
                               Swal.fire({
-                                title: `${checkServer.server.companyName}`,
+                                title: `${checkServer?.server?.companyName}`,
                                 text: `You cannot get the info of this alert because its Server Credentials are wrong`,
                                 icon: "error",
                                 // timer: 2000,

@@ -94,7 +94,7 @@ const ViewModal: React.FC<PropsTypes> = ({
               <tbody>
                 {dataList.length === 0 ? (
                   <tr>
-                    <td colSpan={7} style={{ fontSize: "25px" }}>
+                    <td colSpan={12} style={{ fontSize: "25px" }}>
                       No Previous Alerts Found
                     </td>
                   </tr>
@@ -113,7 +113,9 @@ const ViewModal: React.FC<PropsTypes> = ({
                       <td style={{ width: "7%" }}>{row.type}</td>
                       <td style={{ width: "7%" }}>{row.speed}</td>
                       <td style={{ width: "7%" }}>{row.message}</td>
-                      <td style={{ width: "7%" }}>{formatUnderscoredString(row.userRole)}</td>
+                      <td style={{ width: "7%" }}>
+                        {formatUnderscoredString(row.userRole)}
+                      </td>
                       <td id="Popover">
                         {row.address == null
                           ? "N/A"
@@ -133,9 +135,7 @@ const ViewModal: React.FC<PropsTypes> = ({
                       )}
                       <td style={{ width: "7%" }}>{row.completionResponse}</td>
                       {row.alertEventCloseDate == "Not Completed" ? (
-                        <td style={{ width: "10%" }}>
-                         Not Completed
-                        </td>
+                        <td style={{ width: "10%" }}>Not Completed</td>
                       ) : (
                         <td style={{ width: "10%" }}>
                           <div className="d-flex">

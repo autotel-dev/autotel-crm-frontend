@@ -1,241 +1,381 @@
-import React from "react";
-import { Card, CardBody, CardHeader, Col, Row } from "reactstrap";
-import { H4, H5 } from "../../../../../../../../AbstractElements";
+import { Badge, Card, CardBody, Col, Container, Row } from "reactstrap";
 
-const Sales = () => {
+import ReactApexChart from "react-apexcharts";
+import { H2, H3, H4, H5, P } from "../../../../../../../../AbstractElements";
+import SVG from "../../../../../../../../utils/CommonSvgIcon/SVG";
+
+const TotalEarning = () => {
+  class ConfigDB {
+    static data = {
+      settings: {
+        layout_type: "ltr",
+        layout_class: "material-icon",
+        sidebar: {
+          iconType: "stroke",
+        },
+        sidebar_setting: "default-sidebar",
+      },
+      color: {
+        primary_color: "#35bfbf",
+        secondary_color: "#FF6150",
+        dark_color: "#31322D",
+        light_color: "#F1F8F1",
+        mix_background_layout: "light",
+      },
+      router_animation: "fadeIn",
+    };
+  }
+  const totalEarningChart: any = {
+    series: [
+      {
+        name: "series2",
+        data: [25, 35, 30, 25, 60, 37, 35, 50],
+      },
+    ],
+    colors: [
+      "#35bfbf21",
+      "#35bfbf21",
+      "#35bfbf21",
+      "#35bfbf21",
+      "#35bfbf21",
+      "#35bfbf21",
+      "#35bfbf21",
+      "#33BFBF",
+    ],
+    chart: {
+      height: 95,
+      type: "bar",
+      offsetY: 30,
+      sparkline: {
+        enabled: true,
+      },
+    },
+    dataLabels: {
+      enabled: false,
+    },
+    stroke: {
+      curve: "smooth",
+    },
+    plotOptions: {
+      bar: {
+        distributed: true,
+        barHeight: "35%",
+        dataLabels: {
+          position: "top",
+        },
+      },
+    },
+    responsive: [
+      {
+        breakpoint: 1700,
+        options: {
+          chart: {
+            height: 86,
+          },
+        },
+      },
+      {
+        breakpoint: 1699,
+        options: {
+          chart: {
+            height: 95,
+          },
+        },
+      },
+      {
+        breakpoint: 1460,
+        options: {
+          grid: {
+            padding: {
+              top: 0,
+              right: 0,
+              bottom: 0,
+              left: 5,
+            },
+          },
+        },
+      },
+      {
+        breakpoint: 576,
+        options: {
+          chart: {
+            offsetY: 0,
+          },
+        },
+      },
+      {
+        breakpoint: 376,
+        options: {
+          chart: {
+            height: 50,
+          },
+        },
+      },
+    ],
+  };
+
+  const totalLikesOption: any = {
+    series: [
+      {
+        name: "series2",
+        data: [0, 40, 25, 80, 35, 40, 38, 50, 35, 70, 40, 100, 20],
+      },
+    ],
+    chart: {
+      height: 95,
+      offsetY: 30,
+      type: "area",
+      sparkline: {
+        enabled: true,
+      },
+    },
+    dataLabels: {
+      enabled: false,
+    },
+    colors: ["#072448"],
+    fill: {
+      type: "gradient",
+      gradient: {
+        shadeIntensity: 1,
+        opacityFrom: 0.6,
+        opacityTo: 0.4,
+      },
+    },
+    stroke: {
+      curve: "smooth",
+      width: 2,
+    },
+    annotations: {
+      points: [
+        {
+          x: 123,
+          y: 40,
+          marker: {
+            size: 6,
+            fillColor: "#ffffff",
+            strokeColor: "#1F2F3E",
+            strokeWidth: 2,
+            radius: 1,
+            cssClass: "apexcharts-custom-class",
+          },
+        },
+      ],
+    },
+    responsive: [
+      {
+        breakpoint: 1800,
+        options: {
+          chart: {
+            height: 80,
+          },
+        },
+      },
+      {
+        breakpoint: 1500,
+        options: {
+          chart: {
+            height: 80,
+          },
+        },
+      },
+      {
+        breakpoint: 1400,
+        options: {
+          chart: {
+            height: 80,
+          },
+        },
+      },
+      {
+        breakpoint: 1200,
+        options: {
+          chart: {
+            height: 70,
+          },
+          grid: {
+            padding: {
+              top: 0,
+              right: 0,
+              bottom: 0,
+              left: 5,
+            },
+          },
+        },
+      },
+      {
+        breakpoint: 576,
+        options: {
+          chart: {
+            offsetY: 0,
+          },
+        },
+      },
+      {
+        breakpoint: 376,
+        options: {
+          chart: {
+            height: 50,
+          },
+        },
+      },
+    ],
+  };
+
+  const visitorChart: any = {
+    series: [46],
+    chart: {
+      type: "radialBar",
+      offsetY: 0,
+      width: 270,
+      height: 200,
+      sparkline: {
+        enabled: false,
+      },
+    },
+    colors: [ConfigDB.data.color.secondary_color],
+    plotOptions: {
+      radialBar: {
+        startAngle: -90,
+        endAngle: 90,
+        track: {
+          background: "rgba(255, 97, 80, 0.12)",
+          strokeWidth: "120%",
+          margin: 5,
+        },
+        dataLabels: {
+          name: {
+            show: true,
+          },
+          value: {
+            offsetY: 5,
+            fontSize: "18px",
+          },
+        },
+      },
+      bar: {
+        horizontal: false,
+        dataLabels: {
+          position: "bottom",
+        },
+      },
+    },
+    labels: ["Visitors"],
+    stroke: {
+      lineCap: "round",
+    },
+    grid: {
+      padding: {
+        top: -10,
+      },
+    },
+  };
+
+  const totalEarningData = [
+    {
+      badgeColor: "primary",
+      badge: "$",
+      title: "Sales",
+      amount: "$200.790",
+      color: "secondary",
+      icon: "arrow-down",
+      percentage: "- 36.28%",
+      time: "Since Last Month",
+      chartId: "expensesChart",
+      charts: totalEarningChart,
+      type: "bar",
+    },
+    {
+      badgeColor: "dark",
+      svgIcon: "fill-Buy",
+      // badge: "$",
+      title: "Vehicles",
+      amount: "560",
+      color: "dark",
+      icon: "arrow-up",
+      percentage: "- 90.28%",
+      time: "Then Last Week",
+      chartId: "totalLikesAreaChart",
+      charts: totalLikesOption,
+      type: "area",
+    },
+    {
+      badgeColor: "primary",
+      badge: "$",
+      title: "Customers",
+      amount: "100",
+      color: "secondary",
+      icon: "arrow-down",
+      percentage: "- 36.28%",
+      time: "Since Last Month",
+      chartId: "expensesChart",
+      charts: totalEarningChart,
+      type: "bar",
+    },
+  ];
   return (
-    <Row
-      style={{
-        marginRight: "10px",
-        marginLeft: "5px",
-      }}
-    >
-      <Card className="widget-sell handle" style={{}}>
-        <CardHeader className="pb-0">
-          <H4 className="m-0">Sales</H4>
-        </CardHeader>
-        <CardBody className="pb-0">
-          <Row>
-            <Col xl="4" lg="4" sm="3" xs="3">
-              <Row>
-                <Col xl="12" lg="12" sm="12" className="mb-4">
-                  <div
-                    className="sale"
-                    style={{ minHeight: "80px", maxHeight: "80px" }}
-                  >
-                    <div>
-                      <div
-                        style={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                          alignItems: "center",
-                        }}
-                      >
-                        <H5>Total Customers</H5>
-                        <div
-                          style={{
-                            padding: "6px",
-                            width: "45px",
-                            height: "45px",
-                            borderRadius: "100px",
-                            backgroundColor: "black",
-                            color: "white",
-                            display: "flex",
-                            justifyContent: "center",
-                            alignItems: "center",
-                          }}
+    <>
+      <Container fluid className="dashboard_default">
+        <Row className="widget-grid">
+          {totalEarningData.map((data: any, index: any) => (
+            <Col xl="4" lg="6" sm="12" className="box-col-4" key={index}>
+              <Card className="total-earning">
+                <CardBody>
+                  <Row>
+                    <Col sm="7" className="box-col-7">
+                      <div className="d-flex">
+                        <Badge
+                          color="transperant"
+                          className={`bg-light-${data.badgeColor} badge-rounded font-primary me-2`}
                         >
-                          3
+                          {data.badge ? (
+                            data.badge
+                          ) : (
+                            <SVG iconId={data.svgIcon} />
+                          )}
+                        </Badge>
+                        <div className="flex-grow-1">
+                          <H2>{data.title}</H2>
                         </div>
                       </div>
-
-                      {/* <div
-                        style={{
-                          display: "flex",
-                          flexDirection: "row",
-                          width: "90%", // Set the width of the outer container
-                          height: "160px", // Set the height of the outer container
-                          // backgroundColor: "gray", // Remove the background color
-                        }}
-                      >
-                        <div
-                          style={{
-                            flex: "1",
-                            marginRight: "0px",
-                            // backgroundColor: "gray",
-                          }}
-                        >
-                          <Chart
-                            width={"100%"}
-                            height={"100%"} // Set the height of the chart to fill the outer container
-                            chartType={"PieChart"}
-                            loader={<div>{"Loading Chart"}</div>}
-                            data={[
-                              ["Task", "Hours per Day"],
-                              [
-                                "Active",
-                                generalData?.operatorStatistics
-                                  ?.totalActiveOperators,
-                              ],
-                              [
-                                "Inctive",
-                                generalData?.operatorStatistics
-                                  ?.totalInActiveOperators,
-                              ],
-                            ]}
-                            options={{
-                              backgroundColor: "transparent", // Set chart background color as transparent
-                              chartArea: {
-                                backgroundColor: "transparent", // Set chart area background color as transparent
-                                top: "5%", // Set padding of the top of chart area to 0
-                                left: 25, // Set padding of the left of chart area to 0
-                                right: 0,
-                              },
-                              // pieHole: 0.4,
-                              pieSliceText: "value", // Display the exact values of each option
-                              colors: ["#51bb25", "#ff6150"], // Custom colors for Active and Inactive options respectively
-                              is3D: true, // Set the chart type to 3D
-                            }}
-                          />
-                        </div>
-                      </div> */}
-                    </div>
-                  </div>
-                </Col>
-              </Row>
-            </Col>
-            <Col xl="4" lg="4" sm="3" xs="3">
-              <Row>
-                <Col xl="12" lg="12" sm="12" className="mb-3">
-                  <div
-                    className="sale"
-                    style={{ minHeight: "80px", maxHeight: "80px" }}
-                  >
-                    <div>
                       <div
                         style={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                          alignItems: "center",
+                          margin: "15px 0px",
                         }}
-                      >
-                        <H5>Total Sales ( $ ) </H5>
-                        <div
-                          style={{
-                            padding: "6px",
-                            width: "45px",
-                            height: "45px",
-                            borderRadius: "100px",
-                            backgroundColor: "black",
-                            color: "white",
-                            display: "flex",
-
-                            justifyContent: "center",
-                            alignItems: "center",
-                          }}
-                        >
-                          2306
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </Col>
-              </Row>
-            </Col>
-            <Col xl="4" lg="4" sm="3" xs="3">
-              <Row>
-                <Col xl="12" lg="12" sm="12" className="mb-3">
-                  <div
-                    className="sale"
-                    style={{ minHeight: "80px", maxHeight: "80px" }}
-                  >
-                    <div>
+                      ></div>
+                      <H3>{data.amount}</H3>
                       <div
                         style={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                          alignItems: "center",
+                          margin: "15px 0px",
                         }}
-                      >
-                        <H5>Invoices Due ( $ ) </H5>
-                        <div
-                          style={{
-                            padding: "6px",
-                            width: "45px",
-                            height: "45px",
-                            borderRadius: "100px",
-                            backgroundColor: "black",
-                            color: "white",
-                            display: "flex",
-
-                            justifyContent: "center",
-                            alignItems: "center",
-                          }}
-                        >
-                          1506
-                        </div>
-                      </div>
-
-                      {/* <div
-                        style={{
-                          display: "flex",
-                          flexDirection: "row",
-                          width: "90%", // Set the width of the outer container
-                          height: "160px", // Set the height of the outer container
-                          // backgroundColor: "gray", // Remove the background color
-                        }}
-                      >
-                        <div
-                          style={{
-                            flex: "1",
-                            marginRight: "0px",
-                            // backgroundColor: "gray",
-                          }}
-                        >
-                          <Chart
-                            width={"100%"}
-                            height={"100%"} // Set the height of the chart to fill the outer container
-                            chartType={"PieChart"}
-                            loader={<div>{"Loading Chart"}</div>}
-                            data={[
-                              ["Task", "Hours per Day"],
-                              [
-                                "Active",
-                                generalData?.operatorStatistics
-                                  ?.totalActiveOperators,
-                              ],
-                              [
-                                "Inctive",
-                                generalData?.operatorStatistics
-                                  ?.totalInActiveOperators,
-                              ],
-                            ]}
-                            options={{
-                              backgroundColor: "transparent", // Set chart background color as transparent
-                              chartArea: {
-                                backgroundColor: "transparent", // Set chart area background color as transparent
-                                top: "5%", // Set padding of the top of chart area to 0
-                                left: 25, // Set padding of the left of chart area to 0
-                                right: 0,
-                              },
-                              // pieHole: 0.4,
-                              pieSliceText: "value", // Display the exact values of each option
-                              colors: ["#51bb25", "#ff6150"], // Custom colors for Active and Inactive options respectively
-                              is3D: true, // Set the chart type to 3D
-                            }}
-                          />
-                        </div>
-                      </div> */}
-                    </div>
-                  </div>
-                </Col>
-              </Row>
+                      ></div>
+                      <P className="d-flex">
+                        <span className={`bg-light-${data.color} me-2`}>
+                          <SVG iconId={data.icon} />
+                        </span>
+                        <span className={`font-${data.color} me-2`}>
+                          {data.percentage}
+                        </span>
+                        <span>{data.time}</span>
+                      </P>
+                    </Col>
+                    <Col sm="5" className={`box-col-5 ${data.chartClass}`}>
+                      <ReactApexChart
+                        id={data.chartId}
+                        options={data.charts}
+                        series={data.charts.series}
+                        type={data.charts.chart?.type}
+                        height={data.charts.chart?.height}
+                      />
+                    </Col>
+                  </Row>
+                </CardBody>
+              </Card>
             </Col>
-          </Row>
-        </CardBody>
-      </Card>
-    </Row>
+          ))}
+        </Row>
+      </Container>
+    </>
   );
 };
 
-export default Sales;
+export default TotalEarning;

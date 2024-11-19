@@ -41,6 +41,8 @@ import {
 import { useNavigate } from "react-router-dom";
 import { setErrorData } from "../../ReaduxToolkit/Reducer/UserSlice";
 import {
+  GET_ALERT_EVENTS,
+  GET_ALL_KILLED_DEVICES,
   GET_COMPANY_ALERTS_OVERVIEW,
   GET_COMPLAINT_CENTER_STATISTICS,
 } from "../../Utilities/api/apiEndpoints";
@@ -81,8 +83,8 @@ const Dashboard = () => {
       const serverError = errors[index].serverError;
 
       Swal.fire({
-        title: `${server.companyName}`,
-        text: `${serverError.message}`,
+        title: `${server?.companyName}`,
+        text: `${serverError?.message}`,
         icon: "error",
         showCancelButton: true,
         confirmButtonText: "OK",
@@ -169,7 +171,7 @@ const Dashboard = () => {
     dispatch(setLiveAlertsData(null));
 
     if (getUserRole() == "COMPANY") {
-      getAll({ url: "${company/alert-events}?pageNo=1" }).then((data: any) => {
+      getAll({ url: `${GET_ALERT_EVENTS}?pageNo=1` }).then((data: any) => {
         if (data == undefined) {
           dispatch(setLiveAlerts([]));
           dispatch(setLiveAlertsData(null));
@@ -265,7 +267,7 @@ const Dashboard = () => {
         }
       });
 
-      getAll({ url: "control-room/get-all-killed-devices?type=all" }).then(
+      getAll({ url: `${GET_ALL_KILLED_DEVICES}?type=all` }).then(
         (data: any) => {
           // // console.log("api call --- >", data);
 
