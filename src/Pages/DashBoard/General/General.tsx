@@ -45,11 +45,16 @@ import {
   setServerDevices,
 } from "../../../ReaduxToolkit/Reducer/MonitoringSlice";
 import Swal from "sweetalert2";
-import './general.css'
-import { GET_DEVICES, GET_GENERAL_DASHBOARD_STATISTICS, GET_OPERATOR_PERFORMANCE } from "../../../Utilities/api/apiEndpoints";
+import "./general.css";
+import {
+  GET_DEVICES,
+  GET_GENERAL_DASHBOARD_STATISTICS,
+  GET_OPERATOR_PERFORMANCE,
+} from "../../../Utilities/api/apiEndpoints";
 import P1 from "../../../CommonElements/Paragraph/P1Element";
 import { color } from "framer-motion";
 import P3 from "../../../CommonElements/Paragraph/P3Element";
+import P2 from "../../../CommonElements/Paragraph/P2Element";
 
 interface DraggableBoxProps {
   initialPosition: { x: number; y: number };
@@ -361,59 +366,71 @@ const General = () => {
   }, []);
 
   return (
-    <Col xl="12" lg="12" md="12" sm="12" style={{
-
-    }}>
+    <Col xl="12" lg="12" md="12" sm="12" style={{}}>
       {generalloading == true ? (
         <div
           style={{
             display: "flex",
             justifyContent: "space-between",
-            paddingRight: "40px"
+            paddingRight: "40px",
           }}
         >
-          <Col xl="3" lg="3" md="3" sm="3"
+          <Col
+            xl="3"
+            lg="3"
+            md="3"
+            sm="3"
             style={{
               marginBottom: "20px",
               marginRight: "20px",
             }}
           >
-            <Col xl="12" lg="12" md="12" sm="12"
+            <Col
+              xl="12"
+              lg="12"
+              md="12"
+              sm="12"
               style={{
                 marginBottom: "20px",
               }}
               className="skeleton"
-            >
-            </Col>
-            <Col xl="12" lg="12" md="12" sm="12" className="skeleton">
-            </Col>
+            ></Col>
+            <Col xl="12" lg="12" md="12" sm="12" className="skeleton"></Col>
           </Col>
-          <Col xl="6" lg="6" md="6" sm="6"
+          <Col
+            xl="6"
+            lg="6"
+            md="6"
+            sm="6"
             style={{
               marginBottom: "20px",
               marginRight: "20px",
             }}
           >
-            <Col xl="12" lg="12" md="12" sm="12" className="skeleton2">
-            </Col>
+            <Col xl="12" lg="12" md="12" sm="12" className="skeleton2"></Col>
           </Col>
-          <Col xl="3" lg="3" md="3" sm="3"
+          <Col
+            xl="3"
+            lg="3"
+            md="3"
+            sm="3"
             style={{
               marginBottom: "20px",
               marginRight: "20px",
             }}
           >
-            <Col xl="12" lg="12" md="12" sm="12"
+            <Col
+              xl="12"
+              lg="12"
+              md="12"
+              sm="12"
               style={{
                 marginBottom: "20px",
               }}
               className="skeleton"
-            >
-            </Col>
-            <Col xl="12" lg="12" md="12" sm="12" className="skeleton">
-            </Col>
+            ></Col>
+            <Col xl="12" lg="12" md="12" sm="12" className="skeleton"></Col>
           </Col>
-
         </div>
       ) : (
         <Row style={{ display: "flex" }}>
@@ -467,9 +484,9 @@ const General = () => {
                           >
                             {generalData !== null
                               ? generalData?.operatorStatistics
-                                ?.totalActiveOperators +
-                              generalData?.operatorStatistics
-                                ?.totalInActiveOperators
+                                  ?.totalActiveOperators +
+                                generalData?.operatorStatistics
+                                  ?.totalInActiveOperators
                               : 0}
                           </div>
                         </div>
@@ -567,9 +584,9 @@ const General = () => {
                           >
                             {generalData !== null
                               ? generalData?.companyServerStatistics
-                                ?.totalActiveServers +
-                              generalData?.companyServerStatistics
-                                ?.totalInActiveServers
+                                  ?.totalActiveServers +
+                                generalData?.companyServerStatistics
+                                  ?.totalInActiveServers
                               : 0}
                           </div>
                         </div>
@@ -704,7 +721,7 @@ const General = () => {
                               }}
                             >
                               <div style={{ fontSize: "30px", color: "white" }}>
-                                <MdFilterList style={{ marginTop: "12px", }} />
+                                <MdFilterList style={{ marginTop: "12px" }} />
                               </div>
                             </div>
                           </div>
@@ -1076,15 +1093,17 @@ const General = () => {
                           padding: "6px",
                           textAlign: "center",
                           backgroundColor: "rgb(51, 191, 191)",
-                          borderRadius: "10px",
+                          borderRadius: "5px",
                           color: "white",
                         }}
                       >
-                        Total:&nbsp;
-                        {
-                          operatorPerformance?.companyAlertEventsStatistics
-                            ?.totalLiveAlerts
-                        }
+                        <P2>
+                          Total:&nbsp;
+                          {
+                            operatorPerformance?.companyAlertEventsStatistics
+                              ?.totalLiveAlerts
+                          }
+                        </P2>
                       </div>
                       <div
                         style={{
@@ -1092,15 +1111,17 @@ const General = () => {
                           padding: "6px",
                           textAlign: "center",
                           backgroundColor: "rgb(255, 97, 80)",
-                          borderRadius: "10px",
+                          borderRadius: "5px",
                           color: "white",
                         }}
                       >
-                        Assigned: &nbsp;
-                        {
-                          operatorPerformance?.companyAlertEventsStatistics
-                            ?.totalAssignedAlerts
-                        }
+                        <P2>
+                          Assigned: &nbsp;
+                          {
+                            operatorPerformance?.companyAlertEventsStatistics
+                              ?.totalAssignedAlerts
+                          }
+                        </P2>
                       </div>
                       <div
                         style={{
@@ -1108,15 +1129,17 @@ const General = () => {
                           padding: "6px",
                           textAlign: "center",
                           backgroundColor: "rgb(81, 187, 37)",
-                          borderRadius: "10px",
+                          borderRadius: "5px",
                           color: "white",
                         }}
                       >
-                        Completed:&nbsp;
-                        {
-                          operatorPerformance?.companyAlertEventsStatistics
-                            ?.totalCompletedAlerts
-                        }
+                        <P2>
+                          Completed:&nbsp;
+                          {
+                            operatorPerformance?.companyAlertEventsStatistics
+                              ?.totalCompletedAlerts
+                          }
+                        </P2>
                       </div>
                     </div>
                     <UL
@@ -1133,25 +1156,14 @@ const General = () => {
                         scrollbarColor: "lightgray transparent", // Specify scrollbar color
                       }}
                     >
-                      {/* <Collapse
-                          defaultActiveKey={[""]}
-                          // onChange={onChange}
-                          items={items}
-                          style={{
-                            padding: "0px",
-                            border: "none",
-                            outline: "none",
-                          }}
-                        /> */}
-
                       {operatorPerformance?.groupedAlerts?.map(
                         (data: any, index: any) => (
                           <>
                             <li
-                              className="d-flex align-items-center"
+                              className="align-items-center"
                               key={index}
                               style={{
-                                padding: "10px 12px",
+                                padding: "8px 12px",
                                 display: "flex",
                                 justifyContent: "space-between",
                                 cursor: "pointer",
@@ -1163,67 +1175,42 @@ const General = () => {
                             >
                               <div
                                 style={{
-                                  display: "flex",
+                                  width: "33%",
                                 }}
                               >
-                                {/* <Image
-                                src={dynamicImage(
-                                  `dashboard-2/user/${data.img}.jpg`
-                                )}
-                                alt=""
-                              /> */}
-                                <div
-                                  style={{
-                                    display: "flex",
-                                    flexDirection: "column",
-                                  }}
-                                >
-                                  <Link className="ms-2" to={Href}>
-                                    <H5
-                                    >
-                                      {data.operator.fullName}
-                                    </H5>
-                                    <P3
-                                      style={{
-                                        // fontSize: "12px",
-                                        color: "black"
-                                      }}
-                                    >
-                                      {data.operator.emailAddress}
-                                    </P3>
-                                  </Link>
-                                </div>
+                                <P2>{data.operator.fullName}</P2>
                               </div>
 
                               <div
                                 style={{
                                   textAlign: "center",
-                                  width: "30%",
+                                  width: "33%",
                                   alignItems: "center",
                                 }}
                               >
-                                <H4>
+                                <P2>
                                   {operatorPerformance?.totalAlertEventsOfCompany ==
-                                    0
+                                  0
                                     ? 0
                                     : (
-                                      (data.alerts.length /
-                                        operatorPerformance?.totalAlertEventsOfCompany) *
-                                      100
-                                    ).toFixed(0)}
+                                        (data.alerts.length /
+                                          operatorPerformance?.totalAlertEventsOfCompany) *
+                                        100
+                                      ).toFixed(0)}
                                   %
-                                </H4>
+                                </P2>
+
                                 <Fragment key={index}>
                                   <Progress
                                     value={
                                       operatorPerformance?.totalAlertEventsOfCompany ==
-                                        0
+                                      0
                                         ? 0
                                         : (
-                                          (data.alerts.length /
-                                            operatorPerformance?.totalAlertEventsOfCompany) *
-                                          100
-                                        ).toFixed(0)
+                                            (data.alerts.length /
+                                              operatorPerformance?.totalAlertEventsOfCompany) *
+                                            100
+                                          ).toFixed(0)
                                     }
                                     // className="mb-4"
                                     striped={true}
@@ -1231,32 +1218,25 @@ const General = () => {
                                     animated={true}
                                   >
                                     {operatorPerformance?.totalAlertEventsOfCompany ==
-                                      0
+                                    0
                                       ? 0
                                       : (
-                                        (data.alerts.length /
-                                          operatorPerformance?.totalAlertEventsOfCompany) *
-                                        100
-                                      ).toFixed(0)}
+                                          (data.alerts.length /
+                                            operatorPerformance?.totalAlertEventsOfCompany) *
+                                          100
+                                        ).toFixed(0)}
                                   </Progress>
                                 </Fragment>
                               </div>
-                              <div>
-                                <span
-                                  style={{
-                                    fontSize: "16px",
-                                    fontWeight: "bold",
-                                  }}
-                                >
-                                  Alerts Catered: &nbsp;
-                                </span>
-                                <span
-                                  style={{
-                                    fontSize: "20px",
-                                  }}
-                                >
-                                  {data.alerts.length}
-                                </span>
+                              <div
+                                style={{
+                                  width: "33%",
+                                  textAlign: "end",
+                                }}
+                              >
+                                <P2>
+                                  Alerts Catered: &nbsp;{data.alerts.length}
+                                </P2>
                               </div>
                             </li>
                           </>
@@ -1358,10 +1338,10 @@ const General = () => {
                                 [
                                   "Passed",
                                   daysRemaining > 0
-                                    ?  generalData?.companyPackageStatistics
-                                      ?.packageDays - daysRemaining
+                                    ? generalData?.companyPackageStatistics
+                                        ?.packageDays - daysRemaining
                                     : generalData?.companyPackageStatistics
-                                      ?.packageDays,
+                                        ?.packageDays,
                                 ],
                               ]}
                               options={{
@@ -1471,7 +1451,9 @@ const General = () => {
 
 export default General;
 
-{/* <Skeleton width={700} height={440} /> */ }
+{
+  /* <Skeleton width={700} height={440} /> */
+}
 
 {
   /* <Draggable

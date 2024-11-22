@@ -101,7 +101,7 @@ const CreateNewActivity = () => {
     },
     {
       value: "INSTALLATION",
-      label: "Installation",
+      label: "Performed",
     },
     {
       value: "COMPLETED",

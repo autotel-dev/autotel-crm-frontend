@@ -41,10 +41,6 @@ const PurchaseSummary = () => {
         name: "series1",
         data: [0, 40, 25, 80, 35, 40, 38, 50, 35, 70, 40, 100],
       },
-      //   {
-      //     name: "series2",
-      //     data: [5, 50, 70, 55, 78, 45, 100, 80, 85, 60, 35, 80],
-      //   },
     ],
     xaxis: {
       categories: [

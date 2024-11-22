@@ -108,7 +108,6 @@ const ProductsTable = () => {
     const searchKey = e.target.value.toLowerCase();
     setSearchValue(searchKey);
   };
-  const [idd, setIdd] = useState("");
 
   // // console.log("allBugReports", supportData());
   useEffect(() => {

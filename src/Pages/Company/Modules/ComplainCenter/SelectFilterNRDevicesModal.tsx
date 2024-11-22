@@ -46,9 +46,6 @@ interface PropsTypes {
 const SelectFilterNRDevicesModal: React.FC<PropsTypes> = ({
   addModal,
   setAddModal = () => {},
-  selectedDevices,
-  prevItem,
-  serverID,
 }) => {
   // console.log("selectedDevices for NR", selectedDevices);
 
@@ -58,13 +55,6 @@ const SelectFilterNRDevicesModal: React.FC<PropsTypes> = ({
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<any[]>([]);
   const [searchValue, setSearchValue] = useState("");
-
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm<SendCommandType>();
 
   const addToggle = () => {
     if (!loading) {
@@ -78,78 +68,7 @@ const SelectFilterNRDevicesModal: React.FC<PropsTypes> = ({
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [basicTab, setBasicTab] = useState("1");
   const [hour, selectedHour] = useState("");
-
-  // const parseCustomDate = (dateString: string) => {
-  //   // console.log("dateString", dateString);
-
-  //   const [date, time, period] = dateString.split(" "); // Split date, time, and AM/PM
-  //   const [day, month, year] = date.split("-"); // Split DD-MM-YYYY
-  //   const [hours, minutes, seconds] = time.split(":"); // Split hh:mm:ss
-
-  //   let hoursIn24Format = parseInt(hours);
-  //   if (period === "PM" && hoursIn24Format < 12) hoursIn24Format += 12; // Convert to 24-hour format if PM
-  //   if (period === "AM" && hoursIn24Format === 12) hoursIn24Format = 0; // Midnight correction
-
-  //   return new Date(
-  //     parseInt(year),
-  //     parseInt(month) - 1, // JavaScript months are 0-indexed
-  //     parseInt(day),
-  //     hoursIn24Format,
-  //     parseInt(minutes),
-  //     parseInt(seconds)
-  //   );
-  // };
-
-  // const transformData = () => {
-  //   const now = new Date(); // Get the current time
-  //   const hourInMilliseconds = Number(hour) * 3600000; // Convert selected hours to milliseconds
-
-  //   const allItems = selectedDevices.flatMap((device: any) => device.items);
-
-  //   // Filter out items where time is "Expired" or "Not connected"
-  //   const filteredItems = allItems.filter(
-  //     (item: any) => item?.time !== "Expired" && item?.time !== "Not connected"
-  //   );
-
-  //   const data = filteredItems
-  //     .filter((item: any) => {
-  //       const itemTime = parseCustomDate(item?.time); // Parse "DD-MM-YYYY hh:mm:ss AM/PM"
-  //       const timeDifference = now.getTime() - itemTime.getTime(); // Difference in milliseconds
-
-  //       // Only include items that are older than the selected hours
-  //       const isOutsideSelectedHour = timeDifference > hourInMilliseconds;
-
-  //       // console.log("isOutsideSelectedHour:", isOutsideSelectedHour);
-  //       return isOutsideSelectedHour;
-  //     })
-  //     .map((item: any, index: any) => ({
-  //       ...item,
-  //       index: index + 1,
-  //       status: "NEW",
-  //     }));
-
-  //   return data;
-  // };
-
-  const handleSearch = (e: any) => {
-    setSearchValue(e.target.value.toLowerCase());
-  };
-
-  const { userPersonalizationData } = useSelector(
-    (state: any) => state.personalization
-  );
-
-  function hexToRgb(hex: any) {
-    // Remove the hash sign if present
-    hex = hex?.replace(/^#/, "");
-    // Parse the hex values to RGB
-    const bigint = parseInt(hex, 16);
-    const r = (bigint >> 16) & 255;
-    const g = (bigint >> 8) & 255;
-    const b = bigint & 255;
-    return { r, g, b };
-  }
-  const rgbColor = hexToRgb(userPersonalizationData?.buttonsAndBarsColor);
+  const [checked, setChecked] = useState("Total");
 
   function handleButtonClick(e: any, settings: any, excelData: any) {
     xlsx(excelData, settings);
@@ -162,11 +81,7 @@ const SelectFilterNRDevicesModal: React.FC<PropsTypes> = ({
     const fromDate = new Date(); // Current date and time
     var toDate = new Date().setHours(fromDate.getHours() - Number(hour));
 
-    // const toDate = new Date(fromDate);
-    // toDate.setHours(fromDate.getHours() - Number(hour));
-
     const formattedFromDate = fromDate.toISOString();
-    // const formattedToDate = toDate;
 
     create(
       {},
@@ -191,6 +106,67 @@ const SelectFilterNRDevicesModal: React.FC<PropsTypes> = ({
         }
       }
     });
+  };
+
+  const nrData = () => {
+    return report
+      ?.filter((item: any) => {
+        // Apply the search filter
+        const searchMatch =
+          item?.name.toLowerCase().includes(searchValue) ||
+          item?.imei.toLowerCase().includes(searchValue) ||
+          item?.customerInfo?.name.toLowerCase().includes(searchValue) ||
+          item?.object_owner.toLowerCase().includes(searchValue);
+
+        // Apply the complaint condition based on the 'checked' value
+        const complaintMatch =
+          checked === "Total"
+            ? item.hasComplaint === true || item.hasComplaint === false
+            : checked === "Pending"
+            ? item.hasComplaint === false
+            : item.hasComplaint === true;
+
+        // Only include item if it matches both search and complaint condition
+        return searchMatch && complaintMatch;
+      })
+      .map((item: any) => {
+        return { ...item }; // Ensure you're returning the item with spread operator
+      });
+  };
+
+  // const nrFilteredData = () => {
+  //   return report
+  //     ?.filter(
+  //       (item: any) =>
+  //         checked == "Total"
+  //           ? item.hasComplaint == true || item.hasComplaint == false
+  //           : checked == "Pending"
+  //           ? item.hasComplaint == false
+  //           : item.hasComplaint == true
+  //       //  ||
+  //       //   item?.sku.toLowerCase().includes(searchValue)
+  //     )
+  //     .map((item: any) => {
+  //       return { ...item }; // Ensure you're returning the item with spread operator
+  //     });
+  // };
+
+  useEffect(() => {
+    setChecked("Total");
+    setData(report);
+  }, [report]);
+
+  useEffect(() => {
+    setData(nrData());
+  }, [searchValue, checked]);
+
+  // useEffect(() => {
+  //   setData(nrFilteredData());
+  // }, [checked]);
+
+  const handleSearch = (e: any) => {
+    const searchKey = e.target.value.toLowerCase();
+    setSearchValue(searchKey);
   };
 
   return (
@@ -245,7 +221,7 @@ const SelectFilterNRDevicesModal: React.FC<PropsTypes> = ({
                       height: "36px",
                     }}
                     color="primary"
-                    disabled={loading || report.length > 0}
+                    disabled={loading || data.length > 0}
                     onClick={() => {
                       if (hour !== "") {
                         getNRData();
@@ -257,7 +233,7 @@ const SelectFilterNRDevicesModal: React.FC<PropsTypes> = ({
                     {loading ? "Loading..." : "Done"}
                   </Button>
 
-                  {report.length > 0 && (
+                  {data.length > 0 && (
                     <div
                       style={{
                         padding: "5px",
@@ -281,7 +257,7 @@ const SelectFilterNRDevicesModal: React.FC<PropsTypes> = ({
                           writeOptions: {}, // Style options from https://docs.sheetjs.com/docs/api/write-options
                           RTL: false, // Display the columns from right-to-left (the default value is false)
                         };
-                        const rowData = report.map((item: any, index: any) => {
+                        const rowData = data.map((item: any, index: any) => {
                           return {
                             id: item.id,
                             vehicleName: item.name,
@@ -313,7 +289,7 @@ const SelectFilterNRDevicesModal: React.FC<PropsTypes> = ({
                           latestComplaintMessage: "",
                           status: "",
                         };
-                        let data = [
+                        let dataa = [
                           {
                             sheet: "NR Rport List",
 
@@ -378,7 +354,7 @@ const SelectFilterNRDevicesModal: React.FC<PropsTypes> = ({
                             content: [blankRow, ...rowData],
                           },
                         ];
-                        handleButtonClick(e, settings, data);
+                        handleButtonClick(e, settings, dataa);
                       }}
                     >
                       <FaRegFileExcel />
@@ -416,10 +392,82 @@ const SelectFilterNRDevicesModal: React.FC<PropsTypes> = ({
                     fontWeight: "bold",
                   }}
                 >
-                  <Col md="4" sm="12">
+                  <Col
+                    md="4"
+                    sm="12"
+                    style={{
+                      display: "flex",
+                      gap: "3px",
+                      justifyContent: "flex-start",
+                      alignItems: "center",
+                    }}
+                  >
+                    <div>
+                      <Label
+                        style={{
+                          display: "inline-block",
+                          position: "relative",
+                          cursor: "pointer",
+                          marginBottom: "5px",
+                          fontSize: "18px",
+                        }}
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <input
+                          type="checkbox"
+                          name="key"
+                          value="value"
+                          checked={checked == "Total"}
+                          onChange={() => {
+                            setChecked("Total");
+                          }}
+                          style={{ display: "none" }} // Hide the default checkbox
+                        />
+                        <span
+                          onClick={(e) => e.stopPropagation()}
+                          className="green"
+                        ></span>
+                      </Label>
+                    </div>
                     Total&nbsp;: &nbsp;{report.length}
                   </Col>
-                  <Col md="4" sm="12">
+                  <Col
+                    md="4"
+                    sm="12"
+                    style={{
+                      display: "flex",
+                      gap: "3px",
+                      justifyContent: "flex-start",
+                      alignItems: "center",
+                    }}
+                  >
+                    <div>
+                      <Label
+                        style={{
+                          display: "inline-block",
+                          position: "relative",
+                          cursor: "pointer",
+                          marginBottom: "5px",
+                          fontSize: "18px",
+                        }}
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <input
+                          type="checkbox"
+                          name="key"
+                          value="value"
+                          checked={checked == "Pending"}
+                          onChange={() => {
+                            setChecked("Pending");
+                          }}
+                          style={{ display: "none" }} // Hide the default checkbox
+                        />
+                        <span
+                          onClick={(e) => e.stopPropagation()}
+                          className="green"
+                        ></span>
+                      </Label>
+                    </div>
                     Pending&nbsp;: &nbsp;
                     {
                       report.filter((item: any) => item?.hasComplaint == false)
@@ -434,7 +482,43 @@ const SelectFilterNRDevicesModal: React.FC<PropsTypes> = ({
                       )?.length
                     }
                   </Col> */}
-                  <Col md="4" sm="12">
+                  <Col
+                    md="4"
+                    sm="12"
+                    style={{
+                      display: "flex",
+                      gap: "3px",
+                      justifyContent: "flex-start",
+                      alignItems: "center",
+                    }}
+                  >
+                    <div>
+                      <Label
+                        style={{
+                          display: "inline-block",
+                          position: "relative",
+                          cursor: "pointer",
+                          marginBottom: "5px",
+                          fontSize: "18px",
+                        }}
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <input
+                          type="checkbox"
+                          name="key"
+                          value="value"
+                          checked={checked == "Forwarded"}
+                          onChange={() => {
+                            setChecked("Forwarded");
+                          }}
+                          style={{ display: "none" }} // Hide the default checkbox
+                        />
+                        <span
+                          onClick={(e) => e.stopPropagation()}
+                          className="green"
+                        ></span>
+                      </Label>
+                    </div>
                     Forward &nbsp;: &nbsp;
                     {report.filter((item: any) => item?.hasComplaint)?.length}
                   </Col>
@@ -680,7 +764,7 @@ const SelectFilterNRDevicesModal: React.FC<PropsTypes> = ({
                       ),
                     },
                   ]}
-                  data={report}
+                  data={data}
                   pagination
                   paginationPerPage={6} // Set pagination to display 6 items per page
                   paginationRowsPerPageOptions={[6, 10, 20, 30]} // Set options for rows per page
@@ -807,3 +891,55 @@ export default SelectFilterNRDevicesModal;
 //                             {loading ? "Loading ..." : `Open`}
 //                         </Button>
 //                     </div>
+
+// const parseCustomDate = (dateString: string) => {
+//   // console.log("dateString", dateString);
+
+//   const [date, time, period] = dateString.split(" "); // Split date, time, and AM/PM
+//   const [day, month, year] = date.split("-"); // Split DD-MM-YYYY
+//   const [hours, minutes, seconds] = time.split(":"); // Split hh:mm:ss
+
+//   let hoursIn24Format = parseInt(hours);
+//   if (period === "PM" && hoursIn24Format < 12) hoursIn24Format += 12; // Convert to 24-hour format if PM
+//   if (period === "AM" && hoursIn24Format === 12) hoursIn24Format = 0; // Midnight correction
+
+//   return new Date(
+//     parseInt(year),
+//     parseInt(month) - 1, // JavaScript months are 0-indexed
+//     parseInt(day),
+//     hoursIn24Format,
+//     parseInt(minutes),
+//     parseInt(seconds)
+//   );
+// };
+
+// const transformData = () => {
+//   const now = new Date(); // Get the current time
+//   const hourInMilliseconds = Number(hour) * 3600000; // Convert selected hours to milliseconds
+
+//   const allItems = selectedDevices.flatMap((device: any) => device.items);
+
+//   // Filter out items where time is "Expired" or "Not connected"
+//   const filteredItems = allItems.filter(
+//     (item: any) => item?.time !== "Expired" && item?.time !== "Not connected"
+//   );
+
+//   const data = filteredItems
+//     .filter((item: any) => {
+//       const itemTime = parseCustomDate(item?.time); // Parse "DD-MM-YYYY hh:mm:ss AM/PM"
+//       const timeDifference = now.getTime() - itemTime.getTime(); // Difference in milliseconds
+
+//       // Only include items that are older than the selected hours
+//       const isOutsideSelectedHour = timeDifference > hourInMilliseconds;
+
+//       // console.log("isOutsideSelectedHour:", isOutsideSelectedHour);
+//       return isOutsideSelectedHour;
+//     })
+//     .map((item: any, index: any) => ({
+//       ...item,
+//       index: index + 1,
+//       status: "NEW",
+//     }));
+
+//   return data;
+// };

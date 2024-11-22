@@ -24,7 +24,7 @@ const TicketTable = () => {
   );
   function hexToRgb(hex: any) {
     // Remove the hash sign if present
-    hex = hex?.replace(/^#/, '');
+    hex = hex?.replace(/^#/, "");
     // Parse the hex values to RGB
     const bigint = parseInt(hex, 16);
     const r = (bigint >> 16) & 255;
@@ -42,9 +42,9 @@ const TicketTable = () => {
     return bugReports
       .filter(
         (item: any) =>
-          item.ticketId.toLowerCase().split("-")[1].includes(searchValue) ||
-          item.name.toLowerCase().includes(searchValue) ||
-          item.user.emailAddress.toLowerCase().includes(searchValue)
+          item?.ticketId?.toLowerCase().split("-")[1].includes(searchValue) ||
+          item?.name?.toLowerCase().includes(searchValue) ||
+          item?.user?.emailAddress.toLowerCase().includes(searchValue)
       )
       .map((item: any) => ({
         ticket_id: item?._id,
@@ -116,15 +116,17 @@ const TicketTable = () => {
   };
 
   const handleRowClicked = (row: any) => {
-   
     dispatch(setTableRow(row));
-  
+
     navigate(
       `${process.env.PUBLIC_URL}/support/ticketDetails/${row.ticket_id}`
     );
   };
   return (
-    <div className="table-responsive support-table" style={{ overflow: "auto", scrollbarWidth: "none" }}>
+    <div
+      className="table-responsive support-table"
+      style={{ overflow: "auto", scrollbarWidth: "none" }}
+    >
       <Row style={{ display: "flex", alignItems: "center" }}>
         <Col
           sm={support !== undefined && support?.create ? 12 : 12}
@@ -132,22 +134,22 @@ const TicketTable = () => {
             support !== undefined && support?.create
               ? 10
               : getUserRole() === ROLES.SUPER_ADMIN
-                ? 12
-                : 12
+              ? 12
+              : 12
           }
           lg={
             support !== undefined && support?.create
               ? 10
               : getUserRole() === ROLES.SUPER_ADMIN
-                ? 10
-                : 12
+              ? 10
+              : 12
           }
           xl={
             support !== undefined && support?.create
               ? 10
               : getUserRole() === ROLES.SUPER_ADMIN
-                ? 10
-                : 12
+              ? 10
+              : 12
           }
         >
           <input
@@ -158,7 +160,6 @@ const TicketTable = () => {
             onChange={(e) => {
               handleSearch(e);
             }}
-          
           />
         </Col>
         {getUserRole() === ROLES.SUPER_ADMIN ? (
@@ -171,7 +172,7 @@ const TicketTable = () => {
             <CreateNewTicket />
           </Col>
         ) : (getUserRole() === ROLES.COMPANY ||
-          getUserRole() === ROLES.OPERATOR) &&
+            getUserRole() === ROLES.OPERATOR) &&
           support !== undefined &&
           support?.create ? (
           <Col sm={12} md={12} lg={2} xl={2}>
@@ -179,7 +180,7 @@ const TicketTable = () => {
           </Col>
         ) : null}
       </Row>
-     
+
       <DataTable
         columns={supportColumns}
         data={data}
@@ -199,7 +200,8 @@ const TicketTable = () => {
             style: {
               cursor: "pointer",
               transition: "background-color 0.2s", // Smooth transition for background color change
-              "&:hover": { // Define hover style
+              "&:hover": {
+                // Define hover style
                 backgroundColor: `rgba(${rgbColor.r},${rgbColor.g},${rgbColor.b},0.2)`,
               },
             },

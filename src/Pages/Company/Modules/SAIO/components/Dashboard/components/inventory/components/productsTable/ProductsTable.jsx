@@ -4,7 +4,7 @@ import { H4 } from "../../../../../../../../../../AbstractElements";
 import { Href } from "../../../../../../../../../../utils/Constant";
 
 const ProductsTable = () => {
-  const purchaseHeader = [
+  const productsHeader = [
     "Id",
     "product",
     "Price",
@@ -14,7 +14,7 @@ const ProductsTable = () => {
     "Check Availablity",
   ];
 
-  const purchaseBody = [
+  const productsBody = [
     {
       id: "P-001",
       product: "ATS-100",
@@ -89,18 +89,26 @@ const ProductsTable = () => {
       style={{
         maxHeight: "50vh",
         minHeight: "50vh",
+        overflowY: "auto",
+        overflowX: "auto",
+        WebkitOverflowScrolling: "touch", // Enable momentum scrolling on iOS
+        scrollbarWidth: "thin", // Specify scrollbar width
+        WebkitBorderRadius: "5px", // For WebKit browsers (Chrome, Safari)
+        MozBorderRadius: "5px", // For Mozilla Firefox
+        borderRadius: "5px", // For other browsers
+        scrollbarColor: "lightgray transparent", // Specify scrollbar color
       }}
     >
       <Table className="display order-wrapper" id="recent-order">
         <thead>
           <tr>
-            {purchaseHeader.map((data, index) => (
+            {productsHeader.map((data, index) => (
               <th key={index}>{data}</th>
             ))}
           </tr>
         </thead>
         <tbody>
-          {purchaseBody.map((data, index) => (
+          {productsBody.map((data, index) => (
             <tr key={index}>
               <td>{data.id}</td>
               <td>

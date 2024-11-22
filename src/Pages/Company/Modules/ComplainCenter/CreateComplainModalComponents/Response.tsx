@@ -86,9 +86,9 @@ const ResponseForm: React.FC<PropsTypes> = ({
         internalComplaintType: type,
         deviceId: selectedItems[0].id,
         deviceName: selectedItems[0].name,
-        subRole: getUserRole() == ROLES.OPERATOR ? getUserRoleID() : role,
+        subRole: role === "" ? null : role,
         server: selectedItems[0].server._id,
-        status: priority == "GENERAL" ? "RESOLVED" : "NEW",
+        status: priority === "GENERAL" ? "RESOLVED" : "NEW",
         deviceInfo: {
           customerName: selectedItems[0].customerInfo.name,
           mobileNo1: selectedItems[0].customerInfo.mobile_1,

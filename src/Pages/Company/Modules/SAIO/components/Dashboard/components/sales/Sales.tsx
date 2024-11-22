@@ -1,30 +1,21 @@
-import { Badge, Card, CardBody, Col, Container, Row } from "reactstrap";
+import {
+  Badge,
+  Card,
+  CardBody,
+  CardHeader,
+  Col,
+  Container,
+  Row,
+} from "reactstrap";
 
 import ReactApexChart from "react-apexcharts";
 import { H2, H3, H4, H5, P } from "../../../../../../../../AbstractElements";
 import SVG from "../../../../../../../../utils/CommonSvgIcon/SVG";
+import P2 from "../../../../../../../../CommonElements/Paragraph/P2Element";
+import SalesSummary from "./components/salesSummary/SalesSummary";
+import SalesTable from "./components/salesTable/SalesTable";
 
 const TotalEarning = () => {
-  class ConfigDB {
-    static data = {
-      settings: {
-        layout_type: "ltr",
-        layout_class: "material-icon",
-        sidebar: {
-          iconType: "stroke",
-        },
-        sidebar_setting: "default-sidebar",
-      },
-      color: {
-        primary_color: "#35bfbf",
-        secondary_color: "#FF6150",
-        dark_color: "#31322D",
-        light_color: "#F1F8F1",
-        mix_background_layout: "light",
-      },
-      router_animation: "fadeIn",
-    };
-  }
   const totalEarningChart: any = {
     series: [
       {
@@ -114,7 +105,7 @@ const TotalEarning = () => {
     ],
   };
 
-  const totalLikesOption: any = {
+  const totalVehiclesOption: any = {
     series: [
       {
         name: "series2",
@@ -221,55 +212,6 @@ const TotalEarning = () => {
     ],
   };
 
-  const visitorChart: any = {
-    series: [46],
-    chart: {
-      type: "radialBar",
-      offsetY: 0,
-      width: 270,
-      height: 200,
-      sparkline: {
-        enabled: false,
-      },
-    },
-    colors: [ConfigDB.data.color.secondary_color],
-    plotOptions: {
-      radialBar: {
-        startAngle: -90,
-        endAngle: 90,
-        track: {
-          background: "rgba(255, 97, 80, 0.12)",
-          strokeWidth: "120%",
-          margin: 5,
-        },
-        dataLabels: {
-          name: {
-            show: true,
-          },
-          value: {
-            offsetY: 5,
-            fontSize: "18px",
-          },
-        },
-      },
-      bar: {
-        horizontal: false,
-        dataLabels: {
-          position: "bottom",
-        },
-      },
-    },
-    labels: ["Visitors"],
-    stroke: {
-      lineCap: "round",
-    },
-    grid: {
-      padding: {
-        top: -10,
-      },
-    },
-  };
-
   const totalEarningData = [
     {
       badgeColor: "primary",
@@ -295,7 +237,7 @@ const TotalEarning = () => {
       percentage: "- 90.28%",
       time: "Then Last Week",
       chartId: "totalLikesAreaChart",
-      charts: totalLikesOption,
+      charts: totalVehiclesOption,
       type: "area",
     },
     {
@@ -317,13 +259,28 @@ const TotalEarning = () => {
       <Container fluid className="dashboard_default">
         <Row className="widget-grid">
           {totalEarningData.map((data: any, index: any) => (
-            <Col xl="4" lg="6" sm="12" className="box-col-4" key={index}>
+            <Col
+              xxl="4"
+              xl="4"
+              lg="4"
+              sm="12"
+              className="box-col-4"
+              key={index}
+            >
               <Card className="total-earning">
                 <CardBody>
                   <Row>
                     <Col sm="7" className="box-col-7">
                       <div className="d-flex">
                         <Badge
+                          style={{
+                            fontSize: "1rem",
+                            padding: "0.2rem 0.5rem",
+                            // style={{
+                            width: "40px",
+                            height: "40px",
+                            // }}
+                          }}
                           color="transperant"
                           className={`bg-light-${data.badgeColor} badge-rounded font-primary me-2`}
                         >
@@ -334,7 +291,7 @@ const TotalEarning = () => {
                           )}
                         </Badge>
                         <div className="flex-grow-1">
-                          <H2>{data.title}</H2>
+                          <H4>{data.title}</H4>
                         </div>
                       </div>
                       <div
@@ -342,13 +299,13 @@ const TotalEarning = () => {
                           margin: "15px 0px",
                         }}
                       ></div>
-                      <H3>{data.amount}</H3>
+                      <H5>{data.amount}</H5>
                       <div
                         style={{
                           margin: "15px 0px",
                         }}
                       ></div>
-                      <P className="d-flex">
+                      <P2 className="d-flex">
                         <span className={`bg-light-${data.color} me-2`}>
                           <SVG iconId={data.icon} />
                         </span>
@@ -356,9 +313,15 @@ const TotalEarning = () => {
                           {data.percentage}
                         </span>
                         <span>{data.time}</span>
-                      </P>
+                      </P2>
                     </Col>
-                    <Col sm="5" className={`box-col-5 ${data.chartClass}`}>
+                    <Col
+                      sm="5"
+                      className={`box-col-5 ${data.chartClass}`}
+                      style={{
+                        marginTop: "-10px",
+                      }}
+                    >
                       <ReactApexChart
                         id={data.chartId}
                         options={data.charts}
@@ -372,6 +335,28 @@ const TotalEarning = () => {
               </Card>
             </Col>
           ))}
+        </Row>
+        <Row>
+          <Col xxl="6" xl="6" lg="6" md="12">
+            <Card className="invoice-card">
+              <CardHeader className="pb-0">
+                <H4>Recent Sales</H4>
+              </CardHeader>
+              <CardBody className="transaction-card">
+                <SalesTable />
+              </CardBody>
+            </Card>
+          </Col>
+          <Col xxl="6" xl="6" lg="6" md="12">
+            <Card>
+              <CardHeader>
+                <H4>Sales Summary</H4>
+              </CardHeader>
+              <CardBody className="p-0">
+                <SalesSummary />
+              </CardBody>
+            </Card>
+          </Col>
         </Row>
       </Container>
     </>

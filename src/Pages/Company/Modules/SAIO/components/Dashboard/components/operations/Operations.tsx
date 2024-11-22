@@ -43,6 +43,7 @@ import {
   setActivitiesData,
   setStatisticsData,
 } from "../../../../../../../../ReaduxToolkit/Reducer/SalesDashboardSlice";
+import P2 from "../../../../../../../../CommonElements/Paragraph/P2Element";
 
 const Operations = () => {
   const dispatch = useDispatch();
@@ -341,7 +342,7 @@ const Operations = () => {
                         justifyContent: "space-between",
                       }}
                     >
-                      <H4 className="m-0">(Status) Activites</H4>
+                      <H4 className="m-0">(Type) Activites</H4>
                       <div>
                         <div
                           style={{
@@ -674,15 +675,17 @@ const Operations = () => {
                           padding: "6px",
                           textAlign: "center",
                           backgroundColor: "rgb(255, 97, 80)",
-                          borderRadius: "10px",
+                          borderRadius: "5px",
                           color: "white",
                         }}
                       >
-                        Assigned:&nbsp;
-                        {
-                          operatorPerformance?.companyAlertEventsStatistics
-                            ?.totalLiveAlerts
-                        }
+                        <P2>
+                          Assigned:&nbsp;
+                          {
+                            operatorPerformance?.companyAlertEventsStatistics
+                              ?.totalLiveAlerts
+                          }
+                        </P2>
                       </div>
                       <div
                         style={{
@@ -690,15 +693,17 @@ const Operations = () => {
                           padding: "6px",
                           textAlign: "center",
                           backgroundColor: "rgb(51, 191, 191)",
-                          borderRadius: "10px",
+                          borderRadius: "5px",
                           color: "white",
                         }}
                       >
-                        Installed: &nbsp;
-                        {
-                          operatorPerformance?.companyAlertEventsStatistics
-                            ?.totalAssignedAlerts
-                        }
+                        <P2>
+                          Performed: &nbsp;
+                          {
+                            operatorPerformance?.companyAlertEventsStatistics
+                              ?.totalAssignedAlerts
+                          }
+                        </P2>
                       </div>
                       <div
                         style={{
@@ -706,15 +711,17 @@ const Operations = () => {
                           padding: "6px",
                           textAlign: "center",
                           backgroundColor: "rgb(81, 187, 37)",
-                          borderRadius: "10px",
+                          borderRadius: "5px",
                           color: "white",
                         }}
                       >
-                        Completed:&nbsp;
-                        {
-                          operatorPerformance?.companyAlertEventsStatistics
-                            ?.totalCompletedAlerts
-                        }
+                        <P2>
+                          Completed:&nbsp;
+                          {
+                            operatorPerformance?.companyAlertEventsStatistics
+                              ?.totalCompletedAlerts
+                          }
+                        </P2>
                       </div>
                     </div>
                     <UL
@@ -731,25 +738,14 @@ const Operations = () => {
                         scrollbarColor: "lightgray transparent", // Specify scrollbar color
                       }}
                     >
-                      {/* <Collapse
-                          defaultActiveKey={[""]}
-                          // onChange={onChange}
-                          items={items}
-                          style={{
-                            padding: "0px",
-                            border: "none",
-                            outline: "none",
-                          }}
-                        /> */}
-
                       {operatorPerformance?.groupedAlerts?.map(
                         (data: any, index: any) => (
                           <>
                             <li
-                              className="d-flex align-items-center"
+                              className="align-items-center"
                               key={index}
                               style={{
-                                padding: "10px 12px",
+                                padding: "8px 12px",
                                 display: "flex",
                                 justifyContent: "space-between",
                                 cursor: "pointer",
@@ -761,43 +757,20 @@ const Operations = () => {
                             >
                               <div
                                 style={{
-                                  display: "flex",
+                                  width: "33%",
                                 }}
                               >
-                                {/* <Image
-                                src={dynamicImage(
-                                  `dashboard-2/user/${data.img}.jpg`
-                                )}
-                                alt=""
-                              /> */}
-                                <div
-                                  style={{
-                                    display: "flex",
-                                    flexDirection: "column",
-                                  }}
-                                >
-                                  <Link className="ms-2" to={Href}>
-                                    <H5>{data.operator.fullName}</H5>
-                                    <P3
-                                      style={{
-                                        // fontSize: "12px",
-                                        color: "black",
-                                      }}
-                                    >
-                                      {data.operator.emailAddress}
-                                    </P3>
-                                  </Link>
-                                </div>
+                                <P2>{data.operator.fullName}</P2>
                               </div>
 
                               <div
                                 style={{
                                   textAlign: "center",
-                                  width: "30%",
+                                  width: "33%",
                                   alignItems: "center",
                                 }}
                               >
-                                <H4>
+                                <P2>
                                   {operatorPerformance?.totalAlertEventsOfCompany ==
                                   0
                                     ? 0
@@ -807,7 +780,8 @@ const Operations = () => {
                                         100
                                       ).toFixed(0)}
                                   %
-                                </H4>
+                                </P2>
+
                                 <Fragment key={index}>
                                   <Progress
                                     value={
@@ -836,22 +810,15 @@ const Operations = () => {
                                   </Progress>
                                 </Fragment>
                               </div>
-                              <div>
-                                <span
-                                  style={{
-                                    fontSize: "16px",
-                                    fontWeight: "bold",
-                                  }}
-                                >
-                                  Alerts Catered: &nbsp;
-                                </span>
-                                <span
-                                  style={{
-                                    fontSize: "20px",
-                                  }}
-                                >
-                                  {data.alerts.length}
-                                </span>
+                              <div
+                                style={{
+                                  width: "33%",
+                                  textAlign: "end",
+                                }}
+                              >
+                                <P2>
+                                  Alerts Catered: &nbsp;{data.alerts.length}
+                                </P2>
                               </div>
                             </li>
                           </>
@@ -890,7 +857,7 @@ const Operations = () => {
                             justifyContent: "space-between",
                           }}
                         >
-                          <H4>Activities Status</H4>
+                          <H4>Activities Types</H4>
                           <div
                             style={{
                               padding: "6px",
