@@ -397,27 +397,6 @@ export const GET_ALL_ACTIVITIES = `${API_BASE_URL}/operations/operation-activity
 export const GET_SINGLE_ACTIVITY_BY_ID = `${API_BASE_URL}/operations/operation-activity/get-operation-activity-by-id`;
 export const UPDATE_OPERATION_STATUS = `${API_BASE_URL}/operations/operation-activity/update-operation-status`;
 
-// Company -> Modules- SAIO - Dashboard - Activity
-
-export const GET_ACTIVITY_STATISTICS = `${API_BASE_URL}/sales-dashboard/operations/get-activity-statistics`;
-export const GET_ACTIVITIES_BY_TYPE = `${API_BASE_URL}/sales-dashboard/operations/get-activities-by-type`;
-
-// {{localUrl}}/operations/operation-activity/get-vehicles-by-customer/66bf3f2797992f4024a5f3d3
-// {{localUrl}}/operations/operation-activity/get-all-operation-activities
-// {{localUrl}}/operations/operation-activity/get-all-activity-types
-
-// create operation activity
-// redo
-// {
-//   "activityType": "REDO",
-//   "vehicleId": "66bb583f83254df613df8b4e",
-//   "items": [
-//     "66b9ebc63184ef1e244bcee5",
-//     "66b9ec4257748c1403b7660a"
-
-//   ]
-// }
-
 // Company -> Modules - Monitoring
 export const GET_DEVICES = `${API_BASE_URL}/company/devices`;
 
@@ -435,3 +414,12 @@ export const GET_ALL_REPORT_TYPES = `${API_BASE_URL}/reports/get-all-report-type
 export const GET_GENERAL_DASHBOARD_STATISTICS = `${API_BASE_URL}/company/dashboard/general`;
 export const GET_OPERATOR_PERFORMANCE = `${API_BASE_URL}/company/dashboard/operators-performance`;
 export const GET_COMPANY_ALERTS_OVERVIEW = `${API_BASE_URL}/company/dashboard/alerts-overview`;
+
+// Company -> Modules- SAIO - Dashboard - Activity
+
+export const GET_ACTIVITY_STATISTICS = `${API_BASE_URL}/sales-dashboard/operations/get-activity-statistics`;
+export const GET_ACTIVITIES_BY_TYPE = `${API_BASE_URL}/sales-dashboard/operations/get-activities-by-type`;
+
+// Company -> Modules- SAIO - Dashboard - Activity
+
+export const GET_INVENTORY_STATISTICS = `${API_BASE_URL}/sales-dashboard/inventory/get-inventory-statistics`;

@@ -62,6 +62,7 @@ import OperationActivitySlice from "./Reducer/OperationActivitySlice";
 import AccountSlice from "./Reducer/AccountSlice";
 import SaleInvoiceSlice from "./Reducer/SaleInvoiceSlice";
 import NRSlice from "./Reducer/NRSlice";
+import SalesDashboardSlice from "./Reducer/SalesDashboardSlice";
 
 const Store = configureStore({
   reducer: {
@@ -127,7 +128,8 @@ const Store = configureStore({
     activities: OperationActivitySlice,
     account: AccountSlice,
     saleInvoice: SaleInvoiceSlice,
-    nrReport: NRSlice
+    nrReport: NRSlice,
+    salesDashboard: SalesDashboardSlice,
   },
 });
 

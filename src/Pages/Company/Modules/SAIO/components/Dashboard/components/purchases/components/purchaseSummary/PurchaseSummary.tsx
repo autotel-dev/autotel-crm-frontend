@@ -1,7 +1,7 @@
 import React from "react";
 import ReactApexChart from "react-apexcharts";
 
-const ProductSummary = () => {
+const PurchaseSummary = () => {
   class ConfigDB {
     static data = {
       settings: {
@@ -22,20 +22,10 @@ const ProductSummary = () => {
       router_animation: "fadeIn",
     };
   }
-
-  const productSalesChart = {
-    series: [
-      {
-        name: "Product",
-        data: [0, 40, 25, 80, 35, 40, 38, 50, 35, 70, 40, 100],
-      },
-    ],
+  const salesSummaryChart: any = {
     chart: {
-      height: 300,
-      type: "line",
-      zoom: {
-        enabled: false,
-      },
+      height: 385,
+      type: "area",
       toolbar: {
         show: false,
       },
@@ -44,17 +34,15 @@ const ProductSummary = () => {
       enabled: false,
     },
     stroke: {
-      curve: "straight",
+      curve: "smooth",
     },
-    colors: [ConfigDB.data.color.primary_color],
-    grid: {
-      row: {
-        colors: ["transparent"], // takes an array which will be repeated on columns
-        opacity: 0.5,
+    series: [
+      {
+        name: "series1",
+        data: [0, 40, 25, 80, 35, 40, 38, 50, 35, 70, 40, 100],
       },
-    },
+    ],
     xaxis: {
-      // categories: [' ', ' ', '12:00', ' ', ' ', ' ', '', ' ', '15:00' , ' ' , ' ' , ' ' , ' ' , ' ' , '18:00', ' ', ' ', ' ', ' ', ' ', '21:00', ' ', ' ' , ' ' , ' ' , ' ' , '03:00' , ' ' , ' ', ' ', ' ', ' ' , '04:00' , ' ' , ' ' ],
       categories: [
         "Jan",
         "Feb",
@@ -79,46 +67,51 @@ const ProductSummary = () => {
     },
     yaxis: {
       labels: {
-        formatter: function (val) {
-          return "$" + val + "" + "k";
+        formatter: function (val: any) {
+          return val + "0" + "k";
         },
         style: {
           fontSize: "14px",
           colors: "$black",
-          fontWeight: "500",
           fontFamily: "nunito, sans-serif",
         },
       },
     },
-    responsive: [
-      {
-        breakpoint: 1200,
-        options: {
-          chart: {
-            height: 215,
-          },
-        },
+    tooltip: {
+      x: {
+        format: "dd/MM/yy HH:mm",
       },
-      {
-        breakpoint: 992,
-        options: {
-          chart: {
-            height: 180,
-          },
-        },
+    },
+    legend: {
+      show: false,
+    },
+    fill: {
+      colors: [
+        ConfigDB.data.color.primary_color,
+        ConfigDB.data.color.secondary_color,
+      ],
+      type: "gradient",
+      gradient: {
+        shadeIntensity: 1,
+        opacityFrom: 0.6,
+        opacityTo: 0.4,
       },
+    },
+    colors: [
+      ConfigDB.data.color.primary_color,
+      ConfigDB.data.color.secondary_color,
     ],
   };
 
   return (
     <ReactApexChart
       id="area-line"
-      options={productSalesChart}
-      series={productSalesChart.series}
+      options={salesSummaryChart}
+      series={salesSummaryChart.series}
       type="area"
       height={370}
     />
   );
 };
 
-export default ProductSummary;
+export default PurchaseSummary;

@@ -22,7 +22,7 @@ const SalesSummary = () => {
       router_animation: "fadeIn",
     };
   }
-  const salesSummaryChart = {
+  const salesSummaryChart: any = {
     chart: {
       height: 385,
       type: "area",
@@ -71,7 +71,7 @@ const SalesSummary = () => {
     },
     yaxis: {
       labels: {
-        formatter: function (val) {
+        formatter: function (val: any) {
           return val + "0" + "k";
         },
         style: {

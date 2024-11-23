@@ -1,9 +1,12 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  statisticsData: null,
-  activitiesData: [],
-  loading: false,
+  operationStatisticsData: null,
+  operationActivitiesData: null,
+  inventoryStatisticsData: null,
+  operationStatisticsLoading: true,
+  operationActivitiesLoading: true,
+  inventoryStatisticsLoading: false,
   error: null,
   isConnected: true,
 };
@@ -12,11 +15,27 @@ const SalesDashboardSlice = createSlice({
   name: "SalesDashboardSlice",
   initialState,
   reducers: {
-    setStatisticsData: (state, action) => {
-      state.statisticsData = action.payload;
+    setOperationsStatisticsData: (state, action) => {
+      state.operationStatisticsData = action.payload;
+      state.operationStatisticsLoading = false;
     },
-    setActivitiesData: (state, action) => {
-      state.activitiesData = action.payload;
+    setOperationsActivitiesData: (state, action) => {
+      state.operationActivitiesData = action.payload;
+      state.operationActivitiesLoading = false;
+    },
+    setInventoryActivitiesData: (state, action) => {
+      state.inventoryStatisticsData = action.payload;
+      state.inventoryStatisticsLoading = false;
+    },
+
+    setOperationsStatisticsLoading: (state, action) => {
+      state.operationStatisticsLoading = action.payload;
+    },
+    setOperationsActivitiesLoading: (state, action) => {
+      state.operationActivitiesLoading = action.payload;
+    },
+    setInventoryActivitiesLoading: (state, action) => {
+      state.inventoryStatisticsLoading = action.payload;
     },
 
     setIsConnected: (state, action) => {
@@ -24,7 +43,14 @@ const SalesDashboardSlice = createSlice({
     },
   },
 });
-export const { setIsConnected, setStatisticsData, setActivitiesData } =
-  SalesDashboardSlice.actions;
+export const {
+  setIsConnected,
+  setOperationsStatisticsData,
+  setOperationsActivitiesData,
+  setInventoryActivitiesData,
+  setOperationsStatisticsLoading,
+  setOperationsActivitiesLoading,
+  setInventoryActivitiesLoading,
+} = SalesDashboardSlice.actions;
 
 export default SalesDashboardSlice.reducer;

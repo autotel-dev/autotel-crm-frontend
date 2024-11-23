@@ -26,7 +26,7 @@ import Draggable from "react-draggable";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import type { CollapseProps } from "antd";
-import { Collapse } from "antd";
+import { Collapse, Select } from "antd";
 import Chart from "react-google-charts";
 import { getAll } from "../../../Utilities/api";
 import {
@@ -191,6 +191,13 @@ const General = () => {
   const [selectedFilter, setSelectedFilter] = useState("Today");
   const dropdownRef = useRef<HTMLDivElement>(null); // Add type assertion here
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const daysFilter = [
+    { label: "Today", value: "Today" },
+    { label: "Yesterday", value: "Yesterday" },
+    { label: "1 Week", value: "1 Week" },
+    { label: "1 Month", value: "1 Month" },
+    { label: "Custom", value: "Custom" },
+  ];
 
   const handleClickOutside = (event: MouseEvent) => {
     if (
@@ -434,18 +441,6 @@ const General = () => {
         </div>
       ) : (
         <Row style={{ display: "flex" }}>
-          {/* <Draggable
-            handle=".handle"
-            defaultPosition={positions.box1}
-            grid={[1, 1]}
-            scale={1}
-            onStart={() => {}}
-            onDrag={(e, ui) => handleDrag("box1", e, ui)}
-            onStop={() => {}}
-          >
-            
-          </Draggable> */}
-
           <Col xl="3">
             <Card
               className="widget-sell handle"
@@ -648,18 +643,6 @@ const General = () => {
             </Card>
           </Col>
 
-          {/* <Draggable
-            handle=".handle1"
-            defaultPosition={positions.box2}
-            grid={[1, 1]}
-            scale={1}
-            onStart={() => {}}
-            onDrag={(e, ui) => handleDrag("box2", e, ui)}
-            onStop={() => {}}
-          >
-            
-          </Draggable> */}
-
           <Col xl="6" className="box">
             <Row className="handle1">
               <Col xl="12" lg="12">
@@ -676,407 +659,251 @@ const General = () => {
                       }}
                     >
                       <H4 className="m-0">Operator Performance</H4>
-                      <div>
-                        <div
-                          style={{
-                            width: "250px",
-                            overflow: "hidden",
-                            height: "30px",
-                            // transition: "width 0.5s",
-                            color: "white",
-                            borderRadius: "5px",
-                          }}
-                          className="btn-primary"
-                        >
-                          <div
-                            style={{
-                              padding: "10px",
-                              height: "30px",
-                              display: "flex",
-                              justifyContent: "space-between",
-                              alignItems: "center",
-                            }}
-                          >
-                            <div
-                              style={{
-                                cursor: "pointer",
-                                fontSize: "14px",
-                                color: "white",
-                                paddingRight: "45px",
-                                borderRight: "1px solid black",
-                              }}
-                              onClick={(e: any) => {
-                                toggleDropdown(e);
-                              }}
-                            >
-                              Filter : {selectedFilter}
-                              {/* Filter : Today */}
-                            </div>
-                            <div
-                              style={{
-                                cursor: "pointer",
-                              }}
-                              onClick={(e: any) => {
-                                toggleDropdown(e);
-                              }}
-                            >
-                              <div style={{ fontSize: "30px", color: "white" }}>
-                                <MdFilterList style={{ marginTop: "12px" }} />
-                              </div>
-                            </div>
-                          </div>
+
+                      <Select
+                        value={selectedFilter !== "" ? selectedFilter : null}
+                        // showSearch
+                        style={{ width: "200px", height: 36 }}
+                        placeholder="Select Type"
+                        optionFilterProp="children"
+                        filterOption={(input: any, option: any) =>
+                          (option?.label ?? "").includes(input)
+                        }
+                        onChange={(e) => {
+                          // console.log(e);
+                          setSelectedFilter(e);
+                          if (e == "Yesterday") {
+                            setGeneralLoading(true);
+                            const dayBeforeYesterday = new Date();
+
+                            dayBeforeYesterday.setDate(
+                              dayBeforeYesterday.getDate() - 2
+                            );
+
+                            const yesterday = new Date();
+                            yesterday.setDate(yesterday.getDate() - 1);
+                            const startDate = dayBeforeYesterday.toISOString();
+                            const endDate = yesterday.toISOString();
+                            setFromDate(startDate);
+                            setToDate(endDate);
+                            getAll({
+                              url: `${GET_OPERATOR_PERFORMANCE}?fromDate=${startDate}&toDate=${endDate}`,
+                            }).then((data: any) => {
+                              if (data !== undefined) {
+                                if (data.success) {
+                                  // // console.log("length --- >", data.data);
+                                  dispatch(setOperatorPerformance(data.data));
+                                  setGeneralLoading(false);
+                                }
+                                if (!data.success) {
+                                  // // // console.log("length --- >", data.data);
+                                  dispatch(setOperatorPerformance([]));
+                                  setGeneralLoading(false);
+                                }
+                              }
+                            });
+                          }
+                          if (e == "Today") {
+                            setGeneralLoading(true);
+                            const yesterday = new Date();
+                            yesterday.setDate(yesterday.getDate() - 1);
+                            const startDate = yesterday.toISOString();
+                            const endDate = new Date().toISOString();
+                            setFromDate(startDate);
+                            setToDate(endDate);
+                            getAll({
+                              url: `${GET_OPERATOR_PERFORMANCE}?fromDate=${startDate}&toDate=${endDate}`,
+                            }).then((data: any) => {
+                              if (data !== undefined) {
+                                if (data.success) {
+                                  // // console.log("length --- >", data.data);
+                                  dispatch(setOperatorPerformance(data.data));
+                                  setGeneralLoading(false);
+                                }
+                                if (!data.success) {
+                                  // // // console.log("length --- >", data.data);
+                                  dispatch(setOperatorPerformance([]));
+                                  setGeneralLoading(false);
+                                }
+                              }
+                            });
+                          }
+                          if (e == "1 Week") {
+                            setGeneralLoading(true);
+                            const oneWeek = new Date();
+                            oneWeek.setDate(oneWeek.getDate() - 7);
+                            const startDate = oneWeek.toISOString();
+                            const endDate = new Date().toISOString();
+                            setFromDate(startDate);
+                            setToDate(endDate);
+                            getAll({
+                              url: `${GET_OPERATOR_PERFORMANCE}?fromDate=${startDate}&toDate=${endDate}`,
+                            }).then((data: any) => {
+                              if (data !== undefined) {
+                                if (data.success) {
+                                  // // console.log("length --- >", data.data);
+                                  dispatch(setOperatorPerformance(data.data));
+                                  setGeneralLoading(false);
+                                }
+                                if (!data.success) {
+                                  // // // console.log("length --- >", data.data);
+                                  dispatch(setOperatorPerformance([]));
+                                  setGeneralLoading(false);
+                                }
+                              }
+                            });
+                          }
+                          if (e == "1 Month") {
+                            setGeneralLoading(true);
+                            const oneMonth = new Date();
+                            oneMonth.setDate(oneMonth.getDate() - 30);
+                            const startDate = oneMonth.toISOString();
+                            const endDate = new Date().toISOString();
+                            setFromDate(startDate);
+                            setToDate(endDate);
+                            getAll({
+                              url: `${GET_OPERATOR_PERFORMANCE}?fromDate=${startDate}&toDate=${endDate}`,
+                            }).then((data: any) => {
+                              if (data !== undefined) {
+                                if (data.success) {
+                                  // // console.log("length --- >", data.data);
+                                  dispatch(setOperatorPerformance(data.data));
+                                  setGeneralLoading(false);
+                                }
+                                if (!data.success) {
+                                  // // // console.log("length --- >", data.data);
+                                  dispatch(setOperatorPerformance([]));
+                                  setGeneralLoading(false);
+                                }
+                              }
+                            });
+                          }
+                          if (e == "Custom") {
+                            setSelectedFilter("Custom");
+                            addToggle();
+                          }
+                        }}
+                        options={daysFilter}
+                      />
+
+                      <Modal
+                        isOpen={addModal}
+                        toggle={addToggle}
+                        size="md"
+                        centered
+                      >
+                        <div className="modal-header">
+                          <H4 className="modal-title">Custom Filter Date</H4>
+                          <Button
+                            color="transprant"
+                            className="btn-close"
+                            onClick={addToggle}
+                          ></Button>
                         </div>
-                        <div
-                          ref={dropdownRef}
-                          style={{
-                            width: "250px",
-                            display: "flex",
-                            justifyContent: "end",
-                          }}
-                        >
-                          {isDropdownOpen && (
+
+                        <ModalBody className="modal-content">
+                          <form className="form-bookmark needs-validation">
+                            <Row>
+                              <FormGroup
+                                className="col-md-12 create-group"
+                                style={{
+                                  alignItems: "center",
+                                }}
+                              >
+                                <div>Date From:</div>
+                                <Col md={12}>
+                                  <input
+                                    className="form-control"
+                                    type="date"
+                                    value={fromDate.slice(0, 10)}
+                                    onChange={(e) => {
+                                      setFromDate(
+                                        new Date(e.target.value).toISOString()
+                                      );
+                                      // console.log("e", e.target.value);
+                                    }}
+                                  />
+                                </Col>
+                              </FormGroup>
+                              <FormGroup
+                                className="col-md-12 create-group"
+                                style={{
+                                  alignItems: "center",
+                                }}
+                              >
+                                <div>Date To:</div>
+                                <Col md={12}>
+                                  <input
+                                    className="form-control"
+                                    type="date"
+                                    value={toDate.slice(0, 10)}
+                                    onChange={(e) => {
+                                      // console.log(e.target.value);
+                                      setToDate(
+                                        new Date(e.target.value).toISOString()
+                                      );
+                                    }}
+                                  />
+                                </Col>
+                              </FormGroup>
+                            </Row>
                             <div
-                              className="custom-dropdown-analytics"
                               style={{
-                                width: "250px",
-                                position: "absolute",
-                                zIndex: "1",
+                                display: "flex",
+                                justifyContent: "end",
+                                alignItems: "end",
+                                marginTop: "-20px",
                               }}
                             >
-                              {isDropdownOpen && (
-                                <div
-                                  className="dropdown-options-analytics"
-                                  style={{
-                                    width: "250px",
-                                    overflow: "hidden",
-                                  }}
-                                >
-                                  <div
-                                    style={{
-                                      width: "250px",
-                                    }}
-                                    className="dropdown-item"
-                                    onClick={(e) => {
-                                      setGeneralLoading(true);
-                                      setSelectedFilter("Yesterday");
-                                      const dayBeforeYesterday = new Date();
-
-                                      dayBeforeYesterday.setDate(
-                                        dayBeforeYesterday.getDate() - 2
-                                      );
-
-                                      const yesterday = new Date();
-                                      yesterday.setDate(
-                                        yesterday.getDate() - 1
-                                      );
-                                      const startDate =
-                                        dayBeforeYesterday.toISOString();
-                                      const endDate = yesterday.toISOString();
-                                      setFromDate(startDate);
-                                      setToDate(endDate);
-
-                                      getAll({
-                                        url: `${GET_OPERATOR_PERFORMANCE}?fromDate=${startDate}&toDate=${endDate}`,
-                                      }).then((data: any) => {
-                                        toggleDropdown(e);
-                                        // console.log("api call --- >", data);
-                                        if (data !== undefined) {
-                                          if (data.success) {
-                                            // // console.log("length --- >", data.data);
-                                            dispatch(
-                                              setOperatorPerformance(data.data)
-                                            );
-                                            setGeneralLoading(false);
-                                          }
-                                          if (!data.success) {
-                                            // // // console.log("length --- >", data.data);
-                                            dispatch(
-                                              setOperatorPerformance([])
-                                            );
-                                            setGeneralLoading(false);
-                                          }
-                                        }
-                                      });
-                                    }}
-                                  >
-                                    Yesterday
-                                  </div>
-                                  <div
-                                    style={{
-                                      width: "250px",
-                                    }}
-                                    className="dropdown-item"
-                                    onClick={(e) => {
-                                      setGeneralLoading(true);
-                                      setSelectedFilter("Today");
-                                      const yesterday = new Date();
-                                      yesterday.setDate(
-                                        yesterday.getDate() - 1
-                                      );
-                                      const startDate = yesterday.toISOString();
-                                      const endDate = new Date().toISOString();
-                                      setFromDate(startDate);
-                                      setToDate(endDate);
-
-                                      getAll({
-                                        url: `${GET_OPERATOR_PERFORMANCE}?fromDate=${startDate}&toDate=${endDate}`,
-                                      }).then((data: any) => {
-                                        toggleDropdown(e);
-                                        // console.log("api call --- >", data);
-                                        if (data !== undefined) {
-                                          if (data.success) {
-                                            // // console.log("length --- >", data.data);
-                                            dispatch(
-                                              setOperatorPerformance(data.data)
-                                            );
-                                            setGeneralLoading(false);
-                                          }
-                                          if (!data.success) {
-                                            // // // console.log("length --- >", data.data);
-                                            dispatch(
-                                              setOperatorPerformance([])
-                                            );
-                                            setGeneralLoading(false);
-                                          }
-                                        }
-                                      });
-                                    }}
-                                  >
-                                    Today
-                                  </div>
-                                  <div
-                                    style={{
-                                      width: "250px",
-                                    }}
-                                    className="dropdown-item"
-                                    onClick={(e) => {
-                                      setGeneralLoading(true);
-                                      setSelectedFilter("1 Week");
-                                      const oneWeek = new Date();
-                                      oneWeek.setDate(oneWeek.getDate() - 7);
-                                      const startDate = oneWeek.toISOString();
-                                      const endDate = new Date().toISOString();
-                                      setFromDate(startDate);
-                                      setToDate(endDate);
-
-                                      getAll({
-                                        url: `${GET_OPERATOR_PERFORMANCE}?fromDate=${startDate}&toDate=${endDate}`,
-                                      }).then((data: any) => {
-                                        toggleDropdown(e);
-                                        // console.log("api call --- >", data);
-                                        if (data !== undefined) {
-                                          if (data.success) {
-                                            // // console.log("length --- >", data.data);
-                                            dispatch(
-                                              setOperatorPerformance(data.data)
-                                            );
-                                            setGeneralLoading(false);
-                                          }
-                                          if (!data.success) {
-                                            // // // console.log("length --- >", data.data);
-                                            dispatch(
-                                              setOperatorPerformance([])
-                                            );
-                                            setGeneralLoading(false);
-                                          }
-                                        }
-                                      });
-                                    }}
-                                  >
-                                    1 Week
-                                  </div>
-                                  <div
-                                    style={{
-                                      width: "250px",
-                                    }}
-                                    className="dropdown-item"
-                                    onClick={(e) => {
-                                      setGeneralLoading(true);
-                                      setSelectedFilter("1 Month");
-                                      const oneMonth = new Date();
-                                      oneMonth.setDate(oneMonth.getDate() - 30);
-                                      const startDate = oneMonth.toISOString();
-                                      const endDate = new Date().toISOString();
-                                      setFromDate(startDate);
-                                      setToDate(endDate);
-
-                                      getAll({
-                                        url: `${GET_OPERATOR_PERFORMANCE}?fromDate=${startDate}&toDate=${endDate}`,
-                                      }).then((data: any) => {
-                                        toggleDropdown(e);
-                                        // console.log("api call --- >", data);
-                                        if (data !== undefined) {
-                                          if (data.success) {
-                                            // // console.log("length --- >", data.data);
-                                            dispatch(
-                                              setOperatorPerformance(data.data)
-                                            );
-                                            setGeneralLoading(false);
-                                          }
-                                          if (!data.success) {
-                                            // // // console.log("length --- >", data.data);
-                                            dispatch(
-                                              setOperatorPerformance([])
-                                            );
-                                            setGeneralLoading(false);
-                                          }
-                                        }
-                                      });
-                                    }}
-                                  >
-                                    1 Month
-                                  </div>
-
-                                  <div
-                                    style={{
-                                      width: "250px",
-                                    }}
-                                    className="dropdown-item"
-                                    onClick={(e) => {
-                                      setSelectedFilter("Custom");
-                                      addToggle();
-                                      // toggleDropdown(e);
-                                    }}
-                                  >
-                                    Custom
-                                  </div>
-                                  <Modal
-                                    isOpen={addModal}
-                                    toggle={addToggle}
-                                    size="md"
-                                    centered
-                                  >
-                                    <div className="modal-header">
-                                      <H4 className="modal-title">
-                                        Custom Filter Date
-                                      </H4>
-                                      <Button
-                                        color="transprant"
-                                        className="btn-close"
-                                        onClick={addToggle}
-                                      ></Button>
-                                    </div>
-
-                                    <ModalBody className="modal-content">
-                                      <form className="form-bookmark needs-validation">
-                                        <Row>
-                                          <FormGroup
-                                            className="col-md-12 create-group"
-                                            style={{
-                                              alignItems: "center",
-                                            }}
-                                          >
-                                            <div>Date From:</div>
-                                            <Col md={12}>
-                                              <input
-                                                className="form-control"
-                                                type="date"
-                                                value={fromDate.slice(0, 10)}
-                                                onChange={(e) => {
-                                                  setFromDate(
-                                                    new Date(
-                                                      e.target.value
-                                                    ).toISOString()
-                                                  );
-                                                  // console.log("e", e.target.value);
-                                                }}
-                                              />
-                                            </Col>
-                                          </FormGroup>
-                                          <FormGroup
-                                            className="col-md-12 create-group"
-                                            style={{
-                                              alignItems: "center",
-                                            }}
-                                          >
-                                            <div>Date To:</div>
-                                            <Col md={12}>
-                                              <input
-                                                className="form-control"
-                                                type="date"
-                                                value={toDate.slice(0, 10)}
-                                                onChange={(e) => {
-                                                  // console.log(e.target.value);
-                                                  setToDate(
-                                                    new Date(
-                                                      e.target.value
-                                                    ).toISOString()
-                                                  );
-                                                }}
-                                              />
-                                            </Col>
-                                          </FormGroup>
-                                        </Row>
-                                        <div
-                                          style={{
-                                            display: "flex",
-                                            justifyContent: "end",
-                                            alignItems: "end",
-                                            marginTop: "-20px",
-                                          }}
-                                        >
-                                          <Button
-                                            disabled={
-                                              generalloading ? true : false
-                                            }
-                                            color="secondary"
-                                            onClick={(e) => {
-                                              e.preventDefault();
-                                              addToggle();
-                                            }}
-                                          >
-                                            Cancel
-                                          </Button>
-                                          &nbsp;&nbsp;
-                                          <Button
-                                            color="primary"
-                                            className="me-1"
-                                            onClick={(e) => {
-                                              e.preventDefault();
-                                              setGeneralLoading(true);
-                                              getAll({
-                                                url: `${GET_OPERATOR_PERFORMANCE}?fromDate=${fromDate}&toDate=${toDate}`,
-                                              }).then((data: any) => {
-                                                toggleDropdown(e);
-                                                // console.log("api call --- >", data);
-                                                if (data !== undefined) {
-                                                  if (data.success) {
-                                                    // // console.log("length --- >", data.data);
-                                                    dispatch(
-                                                      setOperatorPerformance(
-                                                        data.data
-                                                      )
-                                                    );
-                                                    setGeneralLoading(false);
-                                                    addToggle();
-                                                    // setSelectedFilter("Today");
-                                                  }
-                                                  if (!data.success) {
-                                                    // // // console.log("length --- >", data.data);
-                                                    dispatch(
-                                                      setOperatorPerformance([])
-                                                    );
-                                                    setGeneralLoading(false);
-                                                    addToggle();
-                                                  }
-                                                }
-                                              });
-                                            }}
-                                          >
-                                            {generalloading
-                                              ? "Loading ..."
-                                              : `Set`}
-                                          </Button>
-                                        </div>
-                                      </form>
-                                    </ModalBody>
-                                  </Modal>
-                                </div>
-                              )}
+                              <Button
+                                //   disabled={generalloading ? true : false}
+                                color="secondary"
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  addToggle();
+                                }}
+                              >
+                                Cancel
+                              </Button>
+                              &nbsp;&nbsp;
+                              <Button
+                                color="primary"
+                                className="me-1"
+                                onClick={(e) => {
+                                  setGeneralLoading(true);
+                                  e.preventDefault();
+                                  getAll({
+                                    url: `${GET_OPERATOR_PERFORMANCE}?fromDate=${fromDate}&toDate=${toDate}`,
+                                  }).then((data: any) => {
+                                    toggleDropdown(e);
+                                    // console.log("api call --- >", data);
+                                    if (data !== undefined) {
+                                      if (data.success) {
+                                        // // console.log("length --- >", data.data);
+                                        dispatch(
+                                          setOperatorPerformance(data.data)
+                                        );
+                                        setGeneralLoading(false);
+                                        addToggle();
+                                        // setSelectedFilter("Today");
+                                      }
+                                      if (!data.success) {
+                                        // // // console.log("length --- >", data.data);
+                                        dispatch(setOperatorPerformance([]));
+                                        setGeneralLoading(false);
+                                        addToggle();
+                                      }
+                                    }
+                                  });
+                                }}
+                              >
+                                Set
+                                {/* {generalloading ? "Loading ..." : `Set`} */}
+                              </Button>
                             </div>
-                          )}
-                        </div>
-                      </div>
+                          </form>
+                        </ModalBody>
+                      </Modal>
                     </div>
                   </CardHeader>
                   <CardBody>
@@ -1646,3 +1473,407 @@ export default General;
 //       showArrow: false,
 //     })
 //   );
+
+{
+  /* <div>
+                        <div
+                          style={{
+                            width: "250px",
+                            overflow: "hidden",
+                            height: "30px",
+                            // transition: "width 0.5s",
+                            color: "white",
+                            borderRadius: "5px",
+                          }}
+                          className="btn-primary"
+                        >
+                          <div
+                            style={{
+                              padding: "10px",
+                              height: "30px",
+                              display: "flex",
+                              justifyContent: "space-between",
+                              alignItems: "center",
+                            }}
+                          >
+                            <div
+                              style={{
+                                cursor: "pointer",
+                                fontSize: "14px",
+                                color: "white",
+                                paddingRight: "45px",
+                                borderRight: "1px solid black",
+                              }}
+                              onClick={(e: any) => {
+                                toggleDropdown(e);
+                              }}
+                            >
+                              Filter : {selectedFilter}
+                              {/* Filter : Today */
+}
+//       </div>
+//       <div
+//         style={{
+//           cursor: "pointer",
+//         }}
+//         onClick={(e: any) => {
+//           toggleDropdown(e);
+//         }}
+//       >
+//         <div style={{ fontSize: "30px", color: "white" }}>
+//           <MdFilterList style={{ marginTop: "12px" }} />
+//         </div>
+//       </div>
+//     </div>
+//   </div>
+//   <div
+//     ref={dropdownRef}
+//     style={{
+//       width: "250px",
+//       display: "flex",
+//       justifyContent: "end",
+//     }}
+//   >
+//     {isDropdownOpen && (
+//       <div
+//         className="custom-dropdown-analytics"
+//         style={{
+//           width: "250px",
+//           position: "absolute",
+//           zIndex: "1",
+//         }}
+//       >
+//         {isDropdownOpen && (
+//           <div
+//             className="dropdown-options-analytics"
+//             style={{
+//               width: "250px",
+//               overflow: "hidden",
+//             }}
+//           >
+//             <div
+//               style={{
+//                 width: "250px",
+//               }}
+//               className="dropdown-item"
+//               onClick={(e) => {
+//                 setGeneralLoading(true);
+//                 setSelectedFilter("Yesterday");
+//                 const dayBeforeYesterday = new Date();
+
+//                 dayBeforeYesterday.setDate(
+//                   dayBeforeYesterday.getDate() - 2
+//                 );
+
+//                 const yesterday = new Date();
+//                 yesterday.setDate(
+//                   yesterday.getDate() - 1
+//                 );
+//                 const startDate =
+//                   dayBeforeYesterday.toISOString();
+//                 const endDate = yesterday.toISOString();
+//                 setFromDate(startDate);
+//                 setToDate(endDate);
+
+//                 getAll({
+//                   url: `${GET_OPERATOR_PERFORMANCE}?fromDate=${startDate}&toDate=${endDate}`,
+//                 }).then((data: any) => {
+//                   toggleDropdown(e);
+//                   // console.log("api call --- >", data);
+//                   if (data !== undefined) {
+//                     if (data.success) {
+//                       // // console.log("length --- >", data.data);
+//                       dispatch(
+//                         setOperatorPerformance(data.data)
+//                       );
+//                       setGeneralLoading(false);
+//                     }
+//                     if (!data.success) {
+//                       // // // console.log("length --- >", data.data);
+//                       dispatch(
+//                         setOperatorPerformance([])
+//                       );
+//                       setGeneralLoading(false);
+//                     }
+//                   }
+//                 });
+//               }}
+//             >
+//               Yesterday
+//             </div>
+//             <div
+//               style={{
+//                 width: "250px",
+//               }}
+//               className="dropdown-item"
+//               onClick={(e) => {
+//                 setGeneralLoading(true);
+//                 setSelectedFilter("Today");
+//                 const yesterday = new Date();
+//                 yesterday.setDate(
+//                   yesterday.getDate() - 1
+//                 );
+//                 const startDate = yesterday.toISOString();
+//                 const endDate = new Date().toISOString();
+//                 setFromDate(startDate);
+//                 setToDate(endDate);
+
+//                 getAll({
+//                   url: `${GET_OPERATOR_PERFORMANCE}?fromDate=${startDate}&toDate=${endDate}`,
+//                 }).then((data: any) => {
+//                   toggleDropdown(e);
+//                   // console.log("api call --- >", data);
+//                   if (data !== undefined) {
+//                     if (data.success) {
+//                       // // console.log("length --- >", data.data);
+//                       dispatch(
+//                         setOperatorPerformance(data.data)
+//                       );
+//                       setGeneralLoading(false);
+//                     }
+//                     if (!data.success) {
+//                       // // // console.log("length --- >", data.data);
+//                       dispatch(
+//                         setOperatorPerformance([])
+//                       );
+//                       setGeneralLoading(false);
+//                     }
+//                   }
+//                 });
+//               }}
+//             >
+//               Today
+//             </div>
+//             <div
+//               style={{
+//                 width: "250px",
+//               }}
+//               className="dropdown-item"
+//               onClick={(e) => {
+//                 setGeneralLoading(true);
+//                 setSelectedFilter("1 Week");
+//                 const oneWeek = new Date();
+//                 oneWeek.setDate(oneWeek.getDate() - 7);
+//                 const startDate = oneWeek.toISOString();
+//                 const endDate = new Date().toISOString();
+//                 setFromDate(startDate);
+//                 setToDate(endDate);
+
+//                 getAll({
+//                   url: `${GET_OPERATOR_PERFORMANCE}?fromDate=${startDate}&toDate=${endDate}`,
+//                 }).then((data: any) => {
+//                   toggleDropdown(e);
+//                   // console.log("api call --- >", data);
+//                   if (data !== undefined) {
+//                     if (data.success) {
+//                       // // console.log("length --- >", data.data);
+//                       dispatch(
+//                         setOperatorPerformance(data.data)
+//                       );
+//                       setGeneralLoading(false);
+//                     }
+//                     if (!data.success) {
+//                       // // // console.log("length --- >", data.data);
+//                       dispatch(
+//                         setOperatorPerformance([])
+//                       );
+//                       setGeneralLoading(false);
+//                     }
+//                   }
+//                 });
+//               }}
+//             >
+//               1 Week
+//             </div>
+//             <div
+//               style={{
+//                 width: "250px",
+//               }}
+//               className="dropdown-item"
+//               onClick={(e) => {
+//                 setGeneralLoading(true);
+//                 setSelectedFilter("1 Month");
+//                 const oneMonth = new Date();
+//                 oneMonth.setDate(oneMonth.getDate() - 30);
+//                 const startDate = oneMonth.toISOString();
+//                 const endDate = new Date().toISOString();
+//                 setFromDate(startDate);
+//                 setToDate(endDate);
+
+// getAll({
+//   url: `${GET_OPERATOR_PERFORMANCE}?fromDate=${startDate}&toDate=${endDate}`,
+// }).then((data: any) => {
+//   toggleDropdown(e);
+//   // console.log("api call --- >", data);
+//   if (data !== undefined) {
+//     if (data.success) {
+//       // // console.log("length --- >", data.data);
+//       dispatch(
+//         setOperatorPerformance(data.data)
+//       );
+//       setGeneralLoading(false);
+//     }
+//     if (!data.success) {
+//       // // // console.log("length --- >", data.data);
+//       dispatch(
+//         setOperatorPerformance([])
+//       );
+//       setGeneralLoading(false);
+//     }
+//   }
+// });
+//               }}
+//             >
+//               1 Month
+//             </div>
+
+//             <div
+//               style={{
+//                 width: "250px",
+//               }}
+//               className="dropdown-item"
+//               onClick={(e) => {
+//                 setSelectedFilter("Custom");
+//                 addToggle();
+//                 // toggleDropdown(e);
+//               }}
+//             >
+//               Custom
+//             </div>
+//             <Modal
+//               isOpen={addModal}
+//               toggle={addToggle}
+//               size="md"
+//               centered
+//             >
+//               <div className="modal-header">
+//                 <H4 className="modal-title">
+//                   Custom Filter Date
+//                 </H4>
+//                 <Button
+//                   color="transprant"
+//                   className="btn-close"
+//                   onClick={addToggle}
+//                 ></Button>
+//               </div>
+
+//               <ModalBody className="modal-content">
+//                 <form className="form-bookmark needs-validation">
+//                   <Row>
+//                     <FormGroup
+//                       className="col-md-12 create-group"
+//                       style={{
+//                         alignItems: "center",
+//                       }}
+//                     >
+//                       <div>Date From:</div>
+//                       <Col md={12}>
+//                         <input
+//                           className="form-control"
+//                           type="date"
+//                           value={fromDate.slice(0, 10)}
+//                           onChange={(e) => {
+//                             setFromDate(
+//                               new Date(
+//                                 e.target.value
+//                               ).toISOString()
+//                             );
+//                             // console.log("e", e.target.value);
+//                           }}
+//                         />
+//                       </Col>
+//                     </FormGroup>
+//                     <FormGroup
+//                       className="col-md-12 create-group"
+//                       style={{
+//                         alignItems: "center",
+//                       }}
+//                     >
+//                       <div>Date To:</div>
+//                       <Col md={12}>
+//                         <input
+//                           className="form-control"
+//                           type="date"
+//                           value={toDate.slice(0, 10)}
+//                           onChange={(e) => {
+//                             // console.log(e.target.value);
+//                             setToDate(
+//                               new Date(
+//                                 e.target.value
+//                               ).toISOString()
+//                             );
+//                           }}
+//                         />
+//                       </Col>
+//                     </FormGroup>
+//                   </Row>
+//                   <div
+//                     style={{
+//                       display: "flex",
+//                       justifyContent: "end",
+//                       alignItems: "end",
+//                       marginTop: "-20px",
+//                     }}
+//                   >
+//                     <Button
+//                       disabled={
+//                         generalloading ? true : false
+//                       }
+//                       color="secondary"
+//                       onClick={(e) => {
+//                         e.preventDefault();
+//                         addToggle();
+//                       }}
+//                     >
+//                       Cancel
+//                     </Button>
+//                     &nbsp;&nbsp;
+//                     <Button
+//                       color="primary"
+//                       className="me-1"
+//                       onClick={(e) => {
+//                         e.preventDefault();
+//                         setGeneralLoading(true);
+//                         getAll({
+//                           url: `${GET_OPERATOR_PERFORMANCE}?fromDate=${fromDate}&toDate=${toDate}`,
+//                         }).then((data: any) => {
+//                           toggleDropdown(e);
+//                           // console.log("api call --- >", data);
+//                           if (data !== undefined) {
+//                             if (data.success) {
+//                               // // console.log("length --- >", data.data);
+//                               dispatch(
+//                                 setOperatorPerformance(
+//                                   data.data
+//                                 )
+//                               );
+//                               setGeneralLoading(false);
+//                               addToggle();
+//                               // setSelectedFilter("Today");
+//                             }
+//                             if (!data.success) {
+//                               // // // console.log("length --- >", data.data);
+//                               dispatch(
+//                                 setOperatorPerformance([])
+//                               );
+//                               setGeneralLoading(false);
+//                               addToggle();
+//                             }
+//                           }
+//                         });
+//                       }}
+//                     >
+//                       {generalloading
+//                         ? "Loading ..."
+//                         : `Set`}
+//                     </Button>
+//                   </div>
+//                 </form>
+//               </ModalBody>
+//             </Modal>
+//           </div>
+//         )}
+//       </div>
+//     )}
+//   </div>
+// </div> */}
