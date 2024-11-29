@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Col, Container, Row } from "reactstrap";
 import Purchases from "./components/purchases/Purchases";
 import Sales from "./components/sales/Sales";
-import Accounts from "./components/accounts/Accounts";
+// import Accounts from "./components/accounts/Accounts";
 import Inventory from "./components/inventory/Inventory";
 import Operations from "./components/operations/Operations";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";

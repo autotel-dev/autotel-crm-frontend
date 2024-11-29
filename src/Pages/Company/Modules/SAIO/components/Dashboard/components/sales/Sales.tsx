@@ -14,8 +14,58 @@ import SVG from "../../../../../../../../utils/CommonSvgIcon/SVG";
 import P2 from "../../../../../../../../CommonElements/Paragraph/P2Element";
 import SalesSummary from "./components/salesSummary/SalesSummary";
 import SalesTable from "./components/salesTable/SalesTable";
+import AMCDueTable from "./components/amcDueTable/AMCDueTable";
+import AMCDueSummary from "./components/amcDueSummary/AMCDueSummary";
+import TopCustomers from "./components/topAnalytics/topCustomers/TopCustomers";
+import TopVendors from "./components/topAnalytics/topVendors/TopVendors";
+import TopInsurances from "./components/topAnalytics/topInsurances/TopInsurances";
+import TopBanks from "./components/topAnalytics/topBanks/TopBanks";
+import P3 from "../../../../../../../../CommonElements/Paragraph/P3Element";
+import { useDispatch } from "react-redux";
+import { useEffect, useState } from "react";
+import { getAll } from "../../../../../../../../Utilities/api";
+import { GET_TOP_ENTITIES } from "../../../../../../../../Utilities/api/apiEndpoints";
+import Swal from "sweetalert2";
+import {
+  setTopEntitesData,
+  setTopEntitiesLoading,
+} from "../../../../../../../../ReaduxToolkit/Reducer/SalesDashboardSlice";
+import { ERROR_MESSAGE } from "../../../../../../../../Utilities/constants/constants";
+import { useSelector } from "react-redux";
+import Skeleton from "../../../../../../../Utilities/Skeleton/Skeleton";
 
-const TotalEarning = () => {
+const Sales = () => {
+  const { topEntitesLoading, topEntitesData } = useSelector(
+    (state: any) => state.salesDashboard
+  );
+
+  const [] = useState([]);
+  const colors = ["#4A90E2", "#FF6F61", "#A4D200", "#F5A623", "#8B5FBF"];
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(setTopEntitiesLoading(true));
+    getAll({ url: GET_TOP_ENTITIES }).then((data: any) => {
+      // console.log("api call --- >", data);
+      if (data !== undefined) {
+        if (!data.success) {
+          Swal.fire({
+            text: `${data.message}`,
+            icon: "error",
+            timer: 2000,
+            showConfirmButton: false,
+          });
+        }
+        if (!data.success && data.message === ERROR_MESSAGE) {
+          dispatch(setTopEntitesData(null));
+        }
+        if (data.success) {
+          dispatch(setTopEntitesData(data.data));
+        }
+      }
+    });
+  }, []);
   const totalEarningChart: any = {
     series: [
       {
@@ -336,6 +386,254 @@ const TotalEarning = () => {
             </Col>
           ))}
         </Row>
+        {topEntitesLoading ? (
+          <Row>
+            <Col xxl="6" xl="6" lg="6" md="6" sm="6">
+              <Skeleton
+                height="280px"
+                width="100%"
+                marginTop="10px"
+                marginBottom="25px"
+                marginRight="20px"
+                borderRadius="10px"
+              />
+            </Col>
+            <Col xxl="6" xl="6" lg="6" md="6" sm="6">
+              <Skeleton
+                height="280px"
+                width="100%"
+                marginTop="10px"
+                marginBottom="25px"
+                marginRight="20px"
+                borderRadius="10px"
+              />
+            </Col>
+          </Row>
+        ) : (
+          <Row>
+            <Col xxl="6" xl="6" lg="6" md="12">
+              <Card className="invoice-card">
+                <CardHeader className="pb-0">
+                  <H4>Top Customers</H4>
+                </CardHeader>
+                <CardBody className="chart-block chart-vertical-center">
+                  <div
+                    style={{
+                      display: "flex",
+                      gap: "20px",
+                      alignItems: "center",
+                    }}
+                  >
+                    <TopCustomers />
+                    <div style={{ display: "flex", gap: "25px" }}>
+                      {topEntitesData?.topCustomers.map(
+                        (data: any, index: any) => (
+                          <div
+                            style={{ display: "flex", gap: "6px" }}
+                            key={index}
+                          >
+                            <div
+                              style={{
+                                maxWidth: "3px",
+                                minWidth: "3px",
+                                height: "40px",
+                                backgroundColor: colors[index], // Dynamic color from customer data
+                              }}
+                            ></div>
+                            <div
+                              style={{
+                                display: "flex",
+                                flexDirection: "column",
+                              }}
+                            >
+                              <H3>{data?.vehicleCounter}</H3>
+                              {/* Dynamic percentage from customer data */}
+                              <span>{data?.fullName}</span>
+                              {/* Dynamic name from customer data */}
+                              <span>20%</span>
+                            </div>
+                          </div>
+                        )
+                      )}
+                    </div>
+                  </div>
+                </CardBody>
+              </Card>
+            </Col>
+            <Col xxl="6" xl="6" lg="6" md="12">
+              <Card>
+                <CardHeader className="pb-0">
+                  <H4>Top Vendors</H4>
+                </CardHeader>
+                <CardBody className="chart-block chart-vertical-center">
+                  <div
+                    style={{
+                      display: "flex",
+                      gap: "20px",
+                      alignItems: "center",
+                    }}
+                  >
+                    <TopVendors />
+                    <div style={{ display: "flex", gap: "25px" }}>
+                      {topEntitesData?.topVendors.map(
+                        (data: any, index: any) => (
+                          <div
+                            style={{ display: "flex", gap: "6px" }}
+                            key={index}
+                          >
+                            <div
+                              style={{
+                                maxWidth: "3px",
+                                minWidth: "3px",
+                                height: "40px",
+                                backgroundColor: colors[index], // Dynamic color from customer data
+                              }}
+                            ></div>
+                            <div
+                              style={{
+                                display: "flex",
+                                flexDirection: "column",
+                              }}
+                            >
+                              <H3>{data?.invoiceCount}</H3>
+                              {/* Dynamic percentage from customer data */}
+                              <span>{data?.vendorName}</span>
+                              {/* Dynamic name from customer data */}
+                              <span>20%</span>
+                            </div>
+                          </div>
+                        )
+                      )}
+                    </div>
+                  </div>
+                </CardBody>
+              </Card>
+            </Col>
+          </Row>
+        )}
+        {topEntitesLoading ? (
+          <Row>
+            <Col xxl="6" xl="6" lg="6" md="6" sm="6">
+              <Skeleton
+                height="280px"
+                width="100%"
+                marginTop="10px"
+                marginBottom="25px"
+                marginRight="20px"
+                borderRadius="10px"
+              />
+            </Col>
+            <Col xxl="6" xl="6" lg="6" md="6" sm="6">
+              <Skeleton
+                height="280px"
+                width="100%"
+                marginTop="10px"
+                marginBottom="25px"
+                marginRight="20px"
+                borderRadius="10px"
+              />
+            </Col>
+          </Row>
+        ) : (
+          <Row>
+            <Col xxl="6" xl="6" lg="6" md="12">
+              <Card className="invoice-card">
+                <CardHeader className="pb-0">
+                  <H4>Top Banks</H4>
+                </CardHeader>
+                <CardBody className="chart-block chart-vertical-center">
+                  <div
+                    style={{
+                      display: "flex",
+                      gap: "20px",
+                      alignItems: "center",
+                    }}
+                  >
+                    <TopBanks />
+                    <div style={{ display: "flex", gap: "25px" }}>
+                      {topEntitesData?.topBanks.map((data: any, index: any) => (
+                        <div
+                          style={{ display: "flex", gap: "6px" }}
+                          key={index}
+                        >
+                          <div
+                            style={{
+                              maxWidth: "3px",
+                              minWidth: "3px",
+                              height: "40px",
+                              backgroundColor: colors[index], // Dynamic color from customer data
+                            }}
+                          ></div>
+                          <div
+                            style={{
+                              display: "flex",
+                              flexDirection: "column",
+                            }}
+                          >
+                            <H3>{data?.vehicleCounter}</H3>
+                            {/* Dynamic percentage from customer data */}
+                            <span>{data?.name}</span>
+                            {/* Dynamic name from customer data */}
+                            <span>20%</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </CardBody>
+              </Card>
+            </Col>
+            <Col xxl="6" xl="6" lg="6" md="12">
+              <Card>
+                <CardHeader className="pb-0">
+                  <H4>Top Insurances</H4>
+                </CardHeader>
+                <CardBody className="chart-block chart-vertical-center">
+                  <div
+                    style={{
+                      display: "flex",
+                      gap: "20px",
+                      alignItems: "center",
+                    }}
+                  >
+                    <TopInsurances />
+                    <div style={{ display: "flex", gap: "25px" }}>
+                      {topEntitesData?.topInsurance.map(
+                        (data: any, index: any) => (
+                          <div
+                            style={{ display: "flex", gap: "6px" }}
+                            key={index}
+                          >
+                            <div
+                              style={{
+                                maxWidth: "3px",
+                                minWidth: "3px",
+                                height: "40px",
+                                backgroundColor: colors[index], // Dynamic color from customer data
+                              }}
+                            ></div>
+                            <div
+                              style={{
+                                display: "flex",
+                                flexDirection: "column",
+                              }}
+                            >
+                              <H3>{data?.vehicleCounter}</H3>
+                              {/* Dynamic percentage from customer data */}
+                              <span>{data?.name}</span>
+                              {/* Dynamic name from customer data */}
+                              <span>20%</span>
+                            </div>
+                          </div>
+                        )
+                      )}
+                    </div>
+                  </div>
+                </CardBody>
+              </Card>
+            </Col>
+          </Row>
+        )}
         <Row>
           <Col xxl="6" xl="6" lg="6" md="12">
             <Card className="invoice-card">
@@ -358,9 +656,32 @@ const TotalEarning = () => {
             </Card>
           </Col>
         </Row>
+
+        <Row>
+          <Col xxl="6" xl="6" lg="6" md="12">
+            <Card>
+              <CardHeader>
+                <H4>AMC</H4>
+              </CardHeader>
+              <CardBody className="p-0">
+                <AMCDueSummary />
+              </CardBody>
+            </Card>
+          </Col>
+          <Col xxl="6" xl="6" lg="6" md="12">
+            <Card className="invoice-card">
+              <CardHeader className="pb-0">
+                <H4>AMC Due</H4>
+              </CardHeader>
+              <CardBody className="transaction-card">
+                <AMCDueTable />
+              </CardBody>
+            </Card>
+          </Col>
+        </Row>
       </Container>
     </>
   );
 };
 
-export default TotalEarning;
+export default Sales;

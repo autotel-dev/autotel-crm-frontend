@@ -17,7 +17,10 @@ import {
   setInActiveActiveBranches,
 } from "../../../ReaduxToolkit/Reducer/BranchSlice";
 import Swal from "sweetalert2";
-import { CREATE_BRANCH,  GET_ALL_BRANCHES} from "../../../Utilities/api/apiEndpoints";
+import {
+  CREATE_BRANCH,
+  GET_ALL_BRANCHES,
+} from "../../../Utilities/api/apiEndpoints";
 import { ERROR_MESSAGE } from "../../../Utilities/constants/constants";
 
 const CreateNewBranch = () => {
@@ -51,70 +54,63 @@ const CreateNewBranch = () => {
       };
       // console.log(city);
       try {
-        await create(branch, { url: CREATE_BRANCH }).then(
-          (data: any) => {
-            if (data !== undefined) {
-              if (
-                !data.success &&
-                data.message === ERROR_MESSAGE
-              ) {
-                setLoading(false);
-                setAddModal(false);
-                reset({
-                  name: "",
-                });
-              }
-              if (!data.success) {
-                Swal.fire({
-                  text: `${data.message}`,
-                  icon: "error",
-                  timer: 2000,
-                  showConfirmButton: false,
-                });
-                setLoading(false);
-                setAddModal(false);
-                reset({
-                  name: "",
-                });
-              }
-              if (data.success) {
-                // console.log(data);
-                setLoading(false);
-                setAddModal(false);
-                reset({
-                  name: "",
-                });
-                dispatch(setBranchStart());
-                getAll({ url: GET_ALL_BRANCHES }).then(
-                  (data: any) => {
-                    // console.log("api call --- >", data);
-                    if (data == undefined) {
-                      Swal.fire({
-                        text: "Failed to fetch due to connection refused",
-                        icon: "error",
-                        timer: 2000,
-                        showConfirmButton: false,
-                      });
-                      dispatch(setInActiveActiveBranches("All"));
-                      dispatch(setBranch([]));
-                      dispatch(setFilterBranches([]));
-                      dispatch(setBranchEnd());
-                      return;
-                    }
-                    dispatch(setBranchEnd());
-                    if (data !== undefined) {
-                      if (data.success) {
-                        // console.log("hhg");
-                        dispatch(setBranch(data.data));
-                        dispatch(setFilterBranches(data.data));
-                      }
-                    }
+        await create(branch, { url: CREATE_BRANCH }).then((data: any) => {
+          if (data !== undefined) {
+            if (!data.success && data.message === ERROR_MESSAGE) {
+              setLoading(false);
+              setAddModal(false);
+              reset({
+                name: "",
+              });
+            }
+            if (!data.success) {
+              Swal.fire({
+                text: `${data.message}`,
+                icon: "error",
+                timer: 2000,
+                showConfirmButton: false,
+              });
+              setLoading(false);
+              setAddModal(false);
+              reset({
+                name: "",
+              });
+            }
+            if (data.success) {
+              // console.log(data);
+              setLoading(false);
+              setAddModal(false);
+              reset({
+                name: "",
+              });
+              dispatch(setBranchStart());
+              getAll({ url: GET_ALL_BRANCHES }).then((data: any) => {
+                // console.log("api call --- >", data);
+                if (data == undefined) {
+                  Swal.fire({
+                    text: "Failed to fetch due to connection refused",
+                    icon: "error",
+                    timer: 2000,
+                    showConfirmButton: false,
+                  });
+                  dispatch(setInActiveActiveBranches("All"));
+                  dispatch(setBranch([]));
+                  dispatch(setFilterBranches([]));
+                  dispatch(setBranchEnd());
+                  return;
+                }
+                dispatch(setBranchEnd());
+                if (data !== undefined) {
+                  if (data.success) {
+                    // console.log("hhg");
+                    dispatch(setBranch(data.data));
+                    dispatch(setFilterBranches(data.data));
                   }
-                );
-              }
+                }
+              });
             }
           }
-        );
+        });
         // Handle successful post creation (e.g., show a success message, redirect, etc.)
       } catch (error: any) {
         // Handle error (e.g., show an error message)
@@ -142,7 +138,9 @@ const CreateNewBranch = () => {
       <div className="text-end">
         <button
           className={`btn ${
-            userPersonalizationData?.buttonsAndBarsColor == null ? "btn-primary" : ""
+            userPersonalizationData?.buttonsAndBarsColor == null
+              ? "btn-primary"
+              : ""
           }`}
           style={{
             color: "white",
@@ -172,7 +170,7 @@ const CreateNewBranch = () => {
             >
               <Row>
                 <FormGroup className="col-md-12 create-group">
-                  <P>Group Branch</P>
+                  <P>Name</P>
                   <input
                     className="form-control"
                     type="text"

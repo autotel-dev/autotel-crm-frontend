@@ -4,9 +4,11 @@ const initialState = {
   operationStatisticsData: null,
   operationActivitiesData: null,
   inventoryStatisticsData: null,
+  topEntitesData: null,
   operationStatisticsLoading: true,
   operationActivitiesLoading: true,
-  inventoryStatisticsLoading: false,
+  inventoryStatisticsLoading: true,
+  topEntitesLoading: true,
   error: null,
   isConnected: true,
 };
@@ -27,7 +29,10 @@ const SalesDashboardSlice = createSlice({
       state.inventoryStatisticsData = action.payload;
       state.inventoryStatisticsLoading = false;
     },
-
+    setTopEntitesData: (state, action) => {
+      state.topEntitesData = action.payload;
+      state.topEntitesLoading = false;
+    },
     setOperationsStatisticsLoading: (state, action) => {
       state.operationStatisticsLoading = action.payload;
     },
@@ -36,6 +41,9 @@ const SalesDashboardSlice = createSlice({
     },
     setInventoryActivitiesLoading: (state, action) => {
       state.inventoryStatisticsLoading = action.payload;
+    },
+    setTopEntitiesLoading: (state, action) => {
+      state.topEntitesLoading = action.payload;
     },
 
     setIsConnected: (state, action) => {
@@ -48,9 +56,11 @@ export const {
   setOperationsStatisticsData,
   setOperationsActivitiesData,
   setInventoryActivitiesData,
+  setTopEntitesData,
   setOperationsStatisticsLoading,
   setOperationsActivitiesLoading,
   setInventoryActivitiesLoading,
+  setTopEntitiesLoading,
 } = SalesDashboardSlice.actions;
 
 export default SalesDashboardSlice.reducer;

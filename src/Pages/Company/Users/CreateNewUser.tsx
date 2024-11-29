@@ -266,7 +266,7 @@ const CreateNewUser = () => {
             >
               <Row>
                 <FormGroup className="col-md-12 create-group">
-                  <P>User Name</P>
+                  <P>Name</P>
                   <input
                     className="form-control"
                     type="text"

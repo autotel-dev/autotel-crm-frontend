@@ -14,33 +14,37 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Skeleton from "../../Utilities/Skeleton/Skeleton";
 import "./tableStyle.css";
-import CommonHeader from "../../../Common/CommonHeader";
-import Loader from "../../Utilities/Loader/Loader";
+
 import { setNoDataFound } from "../../../ReaduxToolkit/Reducer/NoDataFoundSlice";
 import { getAll, patch, update } from "../../../Utilities/api";
-import {
-  setFilterRoles,
-  setInActiveActiveRoles,
-  setIsConnected,
-  setRoles,
-  setRolesEnd,
-  setRolesStart,
-} from "../../../ReaduxToolkit/Reducer/RolesSlice";
-import { setOperatorsEnd } from "../../../ReaduxToolkit/Reducer/OperatorSlice";
+
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
-import { H4, H5 } from "../../../AbstractElements";
+import { H4 } from "../../../AbstractElements";
 import H7 from "../../../CommonElements/Headings/H7Element";
-import { CHANGE_SUB_ROLE_ACTIVATION_STATUS, GET_ALL_SUB_ROLES } from "../../../Utilities/api/apiEndpoints";
+
 import { ERROR_MESSAGE } from "../../../Utilities/constants/constants";
-import { setFilterPackages, setPackages, setPackagesEnd, setPackagesStart } from "../../../ReaduxToolkit/Reducer/PackageSlice";
+
+import { GET_ALL_SERVICE_PACKAGES } from "../../../Utilities/api/apiEndpoints";
+import {
+  setIsConnected,
+  setServicePackages,
+  setServiceFilterPackages,
+  setPackagesStart,
+  setPackagesEnd,
+} from "../../../ReaduxToolkit/Reducer/CompanyServicePackageSlice";
+import deleteAlert from "../../../Utilities/alerts/DeleteAlert";
+import UpdateNewPackage from "./UpdateNewPackage";
+import { formatUnderscoredString } from "../../../Utilities/globals/globals";
 
 const PackagesList = () => {
-  const { packages, activeInActivePackages, loading } = useSelector(
-    (state: any) => state.roles
+  const { servicePackages, activeInActivePackages, loading } = useSelector(
+    (state: any) => state.companyServicePackages
   );
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
+  const [selectedPackage, setSelectedPackage] = useState(null);
 
   const { userPersonalizationData } = useSelector(
     (state: any) => state.personalization
@@ -61,12 +65,10 @@ const PackagesList = () => {
   const rgbColor = hexToRgb(userPersonalizationData?.buttonsAndBarsColor); // Convert hex to RGB
 
   useEffect(() => {
-    dispatch(setPackages([]));
-    dispatch(setFilterPackages([]));
+    dispatch(setServicePackages([]));
+    dispatch(setServiceFilterPackages([]));
     dispatch(setPackagesStart());
-    getAll({ url: GET_ALL_SUB_ROLES }).then((data: any) => {
-
-
+    getAll({ url: GET_ALL_SERVICE_PACKAGES }).then((data: any) => {
       if (data !== undefined) {
         dispatch(setNoDataFound(data.message));
         if (!data.success && data.message === ERROR_MESSAGE) {
@@ -82,8 +84,8 @@ const PackagesList = () => {
         }
         if (data.success) {
           // // console.log("hhg");
-          dispatch(setPackages(data.data));
-          dispatch(setFilterPackages(data.data));
+          dispatch(setServicePackages(data.data));
+          dispatch(setServiceFilterPackages(data.data));
         }
       }
       dispatch(setPackagesEnd());
@@ -94,8 +96,9 @@ const PackagesList = () => {
   const [isHovered, setIsHovered] = useState(false);
   const [idd, setIdd] = useState("");
   const renderTableRows = () => {
-    return packages?.map((row: any) => (
-      <tr key={row._id}
+    return servicePackages?.map((row: any) => (
+      <tr
+        key={row._id}
         onMouseEnter={() => {
           setIsHovered(true);
           setIdd(row._id);
@@ -109,9 +112,12 @@ const PackagesList = () => {
                 : `rgba(${rgbColor.r},${rgbColor.g},${rgbColor.b},0.2)`
               : "transparent",
           transition: "background-color 0.3s",
-        }}>
+        }}
+      >
         <td>{row._id}</td>
-        <td>{row.name}</td>
+        <td>{row.title}</td>
+        <td>{formatUnderscoredString(row.duration)}</td>
+        <td>{row.days}</td>
 
         <td>
           <div>
@@ -126,15 +132,15 @@ const PackagesList = () => {
                 marginRight: "5px",
                 border: "none",
               }}
-            // onClick={() => {
-            //   // // console.log("345678");
-            //   var alertData = {
-            //     title: "Are you sure?",
-            //     text: "Once deleted, you will not be able to recover this ",
-            //   };
-            //   const type = "countryType";
-            //   deleteAlert(alertData, row._id, type, dispatch);
-            // }}
+              onClick={() => {
+                // // console.log("345678");
+                var alertData = {
+                  title: "Are you sure?",
+                  text: "Once deleted, you will not be able to recover this ",
+                };
+                const type = "servicePackagesType";
+                deleteAlert(alertData, row._id, type, dispatch);
+              }}
             >
               Delete
             </button>
@@ -148,13 +154,10 @@ const PackagesList = () => {
                 borderRadius: "5px",
                 border: "none",
               }}
-            // onClick={() => {
-            //   setIsUpdateModalOpen(true);
-            //   // // console.log("isUpdateModalOpen: ", isUpdateModalOpen);
-            //   dispatch(setId(row._id));
-            //   setCountryName(row.name);
-            //   setIsActive(row.isActive);
-            // }}
+              onClick={() => {
+                setSelectedPackage(row);
+                setIsUpdateModalOpen(true);
+              }}
             >
               Edit
             </button>
@@ -178,18 +181,44 @@ const PackagesList = () => {
                   // <Loader />
                   <>
                     <Skeleton height="100px" width="100%" borderRadius="10px" />
-                    <Skeleton height="40px" width="100%" marginTop="10px" marginBottom="10" borderRadius="10px" />
-                    <Skeleton height="40px" width="100%" marginTop="10px" marginBottom="10" borderRadius="10px" />
-                    <Skeleton height="40px" width="100%" marginTop="10px" marginBottom="10" borderRadius="10px" />
-                    <Skeleton height="40px" width="100%" marginTop="10px" marginBottom="10" borderRadius="10px" />
+                    <Skeleton
+                      height="40px"
+                      width="100%"
+                      marginTop="10px"
+                      marginBottom="10"
+                      borderRadius="10px"
+                    />
+                    <Skeleton
+                      height="40px"
+                      width="100%"
+                      marginTop="10px"
+                      marginBottom="10"
+                      borderRadius="10px"
+                    />
+                    <Skeleton
+                      height="40px"
+                      width="100%"
+                      marginTop="10px"
+                      marginBottom="10"
+                      borderRadius="10px"
+                    />
+                    <Skeleton
+                      height="40px"
+                      width="100%"
+                      marginTop="10px"
+                      marginBottom="10"
+                      borderRadius="10px"
+                    />
                   </>
-                ) : packages?.length > 0 && loading === false ? (
+                ) : servicePackages?.length > 0 && loading === false ? (
                   <div>
                     <table>
                       <thead>
                         <tr>
                           <th>ID</th>
-                          <th>Name</th>
+                          <th>Title</th>
+                          <th>Duration</th>
+                          <th>Days</th>
                           <th>Actions</th>
                         </tr>
                       </thead>
@@ -197,17 +226,6 @@ const PackagesList = () => {
                     </table>
                   </div>
                 ) : (
-                  // <div
-                  //   style={{
-                  //     textAlign: "center",
-                  //     fontSize: "25px",
-                  //     fontWeight: "bold",
-                  //   }}
-                  // >
-                  // {activeInActiveRoles !== "All"
-                  //   ? activeInActiveRoles
-                  //   : "No Roles Found"}
-                  // </div>
                   <H7>
                     {activeInActivePackages !== "All"
                       ? activeInActivePackages
@@ -215,7 +233,11 @@ const PackagesList = () => {
                   </H7>
                 )}
 
-                {/* )} */}
+                <UpdateNewPackage
+                  isVisible={isUpdateModalOpen}
+                  setIsVisible={setIsUpdateModalOpen}
+                  packagee={selectedPackage}
+                />
               </div>
             </CardBody>
           </Card>

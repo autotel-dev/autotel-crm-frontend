@@ -1,197 +1,176 @@
 import { PlusCircle } from "react-feather";
 import { Col } from "reactstrap";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { Button, FormGroup, Label, Modal, ModalBody, Row } from "reactstrap";
-
-import { CheckCircle } from "react-feather";
+import { Button, FormGroup, Modal, ModalBody, Row } from "reactstrap";
 
 import { useDispatch, useSelector } from "react-redux";
-import { Type } from "./PackageTypes/PackageTypes";
 import { Cancel } from "../../../utils/Constant";
 import { H3, P } from "../../../AbstractElements";
 import { create, getAll } from "../../../Utilities/api";
-import {
-  setFilterRoles,
-  setRoles,
-  setRolesEnd,
-  setRolesStart,
-} from "../../../ReaduxToolkit/Reducer/RolesSlice";
 import Swal from "sweetalert2";
-// import {
-//   setCountriesStart,
-//   setCountriesEnd,
-//   setCountries,
-//   setFilterCountries,
-// } from "../../ReaduxToolkit/Reducer/CountrySlice";
 import "./permissionsStyle.css";
-import { CREATE_SUB_ROLE, GET_ALL_SUB_ROLES } from "../../../Utilities/api/apiEndpoints";
+import {
+  CREATE_SERVICE_PACKAGE,
+  GET_ALL_SERVICE_PACKAGES,
+} from "../../../Utilities/api/apiEndpoints";
 import { ERROR_MESSAGE } from "../../../Utilities/constants/constants";
+import {
+  setInActiveActivePackages,
+  setServicePackages,
+  setServiceFilterPackages,
+} from "../../../ReaduxToolkit/Reducer/CompanyServicePackageSlice";
+import { Select } from "antd";
+import P2 from "../../../CommonElements/Paragraph/P2Element";
 
 const CreateNewPackage = () => {
   const { userPersonalizationData } = useSelector(
     (state: any) => state.personalization
   );
+  const { services, allPackagesDuration } = useSelector(
+    (state: any) => state.companyServicePackages
+  );
   const dispatch = useDispatch();
-  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<Type>();
+    setValue,
+    watch,
+  } = useForm<any>();
   const [addModal, setAddModal] = useState(false);
   const addToggle = () => {
-    if (!loading) {
-      // setGivenPermissions(
-      //   userPermissions.map((permission: any) => ({
-      //     ...permission,
-      //     checked: false,
-      //   }))
-      // );
-
-      setGivenPermissions(
-        userPermissions.map((permission: any) => ({
-          ...permission,
-          checked: false,
-          // Disable keys based on their values
-          read: permission.read ? permission.read : "disabled",
-          create: permission.create ? permission.create : "disabled",
-          edit: permission.edit ? permission.edit : "disabled",
-          delete: permission.delete ? permission.delete : "disabled",
-        }))
-      );
-      setAddModal(!addModal);
-      reset({
-        name: "",
-      });
-    }
-  };
-
-  const { userPermissions } = useSelector(
-    (state: any) => state.userPermissions
-  );
-  const [givenPermissions, setGivenPermissions] = useState<any[]>([]);
-
-  const handleCheckboxChange = (index: any, key: any) => {
-    // console.log("index", index);
-    // console.log("key", key);
-    // console.log("givenPermission", givenPermissions);
-
-    setGivenPermissions((prevPermissions: any) => {
-      const updatedPermissions = [...prevPermissions];
-      updatedPermissions[index][key] = !updatedPermissions[index][key];
-      return updatedPermissions;
+    setAddModal(!addModal);
+    reset({
+      title: "",
+      price: "",
     });
+    setValue("duration", "");
+    setValue("days", 0);
+    setPackageServices(
+      services?.map((service: any) => ({
+        service: {
+          title: service.title,
+          value: service.value,
+        },
+        isOffering: false, // Set isOffering to true by default
+      })) || []
+    );
   };
 
-  const addRole: SubmitHandler<Type> = async (data: any) => {
-    setLoading(true);
-    if (data.name !== "") {
-      const role = {
-        name: data.name,
-        permissions: givenPermissions
-          .filter((permission) => permission.checked)
-          .map(({ checked, ...rest }) => {
-            // If any of the permission keys are disabled, set them to false
-            const updatedRest = {
-              ...rest,
-              read: rest.read === "disabled" ? false : rest.read,
-              create: rest.create === "disabled" ? false : rest.create,
-              edit: rest.edit === "disabled" ? false : rest.edit,
-              delete: rest.delete === "disabled" ? false : rest.delete,
-            };
-            return updatedRest;
-          }),
+  const addPackage: SubmitHandler<any> = async (data) => {
+    if (data.title !== "" && data.price !== Number("")) {
+      const packageData = {
+        title: data.title,
+        price: data.price,
+        duration: data.duration, // Send duration from the form
+        days: data.days, // Send the corresponding number of days for the selected duration
+        services: packageServices, // Include the selected services
       };
 
-      // console.log(role);
       try {
-        await create(role, { url: CREATE_SUB_ROLE }).then(
-          (data: any) => {
-            if (
-              !data.success &&
-              data.message === ERROR_MESSAGE
-            ) {
-              setLoading(false);
-              setAddModal(false);
-              reset({
-                name: "",
-              });
-            }
-            if (!data.success) {
-              Swal.fire({
-                text: `${data.message}`,
-                icon: "error",
-                timer: 2000,
-                showConfirmButton: false,
-              });
-              setLoading(false);
-              setAddModal(false);
-              reset({
-                name: "",
-              });
-            }
-            if (data.success) {
-              // console.log(data);
-              setLoading(false);
-              setAddModal(false);
-              reset({
-                name: "",
-              });
-              setGivenPermissions(
-                userPermissions.map((permission: any) => ({
-                  ...permission,
-                  checked: false,
-                  // Disable keys based on their values
-                  read: permission.read ? permission.read : "disabled",
-                  create: permission.create ? permission.create : "disabled",
-                  edit: permission.edit ? permission.edit : "disabled",
-                  delete: permission.delete ? permission.delete : "disabled",
-                }))
-              );
-              dispatch(setRolesStart());
-              getAll({ url: GET_ALL_SUB_ROLES }).then(
-                (data: any) => {
-                  // console.log("api call --- >", data);
-                  dispatch(setRolesEnd());
-                  if (data !== undefined) {
-                    if (data.success) {
-                      // console.log("hhg");
-                      dispatch(setRoles(data.data));
-                      dispatch(setFilterRoles(data.data));
-                    }
+        setLoading(true);
+        await create(packageData, { url: CREATE_SERVICE_PACKAGE }).then(
+          (response: any) => {
+            if (response !== undefined) {
+              if (!response.success && response.message === ERROR_MESSAGE) {
+                setLoading(false);
+              }
+              if (!response.success) {
+                Swal.fire({
+                  text: `${response.message}`,
+                  icon: "error",
+                  timer: 2000,
+                  showConfirmButton: false,
+                });
+                setLoading(false);
+                // setAddModal(false);
+              }
+
+              if (response.success) {
+                setLoading(false);
+                addToggle();
+                getAll({ url: GET_ALL_SERVICE_PACKAGES }).then((data: any) => {
+                  if (data === undefined) {
+                    Swal.fire({
+                      text: "Failed to fetch due to connection refused",
+                      icon: "error",
+                      timer: 2000,
+                      showConfirmButton: false,
+                    });
+                    dispatch(setInActiveActivePackages("All"));
+                    dispatch(setServicePackages([]));
+                    dispatch(setServiceFilterPackages([]));
+                    return;
                   }
-                }
-              );
+                  if (data !== undefined && data.success) {
+                    dispatch(setServicePackages(data.data));
+                    dispatch(setServiceFilterPackages(data.data));
+                  }
+                });
+              }
             }
           }
         );
-        // Handle successful post creation (e.g., show a success message, redirect, etc.)
-      } catch (error: any) {
-        // Handle error (e.g., show an error message)
-        // console.error("Error creati post:", error);
+      } catch (error) {
         setLoading(false);
-        setAddModal(false);
-        reset({
-          name: "",
-        });
+        addToggle();
       }
+    } else {
+      Swal.fire({
+        text: "Please Select all the fields",
+        icon: "info",
+        timer: 2000,
+        showCancelButton: false,
+        showConfirmButton: true,
+      });
+      setLoading(false);
     }
+  };
+
+  const handlePackageDurationChange = (packageDuration: any) => {
+    setValue("duration", packageDuration.value);
+    setValue("days", packageDuration.days);
+  };
+
+  const [packageServices, setPackageServices] = useState<any[]>([]);
+
+  useEffect(() => {
+    setPackageServices(
+      services?.map((service: any) => ({
+        service: {
+          title: service.title,
+          value: service.value,
+        },
+        isOffering: false, // Set isOffering to true by default
+      })) || []
+    );
+  }, [services]);
+
+  const handleCheckboxChange = (index: number) => {
+    const updatedServices = packageServices.map((service: any, i: number) =>
+      i === index ? { ...service, isOffering: !service.isOffering } : service
+    );
+    setPackageServices(updatedServices);
   };
 
   return (
     <Col md={6}>
       <div className="text-end">
         <button
-          className={`btn ${userPersonalizationData?.buttonsAndBarsColor == null ? "btn-primary" : ""
-            }`}
+          className={`btn ${
+            userPersonalizationData?.buttonsAndBarsColor == null
+              ? "btn-primary"
+              : ""
+          }`}
           style={{
             color: "white",
-            backgroundColor: `${userPersonalizationData !== null &&
+            backgroundColor: `${
+              userPersonalizationData !== null &&
               userPersonalizationData?.buttonsAndBarsColor
-              }`,
+            }`,
           }}
           onClick={addToggle}
         >
@@ -210,21 +189,118 @@ const CreateNewPackage = () => {
           <ModalBody>
             <form
               className="form-bookmark needs-validation"
-              onSubmit={handleSubmit(addRole)}
+              onSubmit={handleSubmit(addPackage)}
             >
-              <Row>
-                <FormGroup className="col-md-12 create-group">
-                  <P>Package Name</P>
+              <Row
+                style={{
+                  marginBottom: "-16px",
+                }}
+              >
+                <FormGroup className="col-md-12 create-group ">
+                  <P>Name</P>
                   <input
                     className="form-control"
                     type="text"
-                    {...register("name", { required: true })}
+                    {...register("title", { required: true })}
                   />
                   <span style={{ color: "red" }}>
-                    {errors.name && "Package name is required"}
+                    {errors.name && "title is required"}
                   </span>
                 </FormGroup>
-
+              </Row>
+              <Row
+                style={{
+                  marginBottom: "-16px",
+                }}
+              >
+                <FormGroup className="col-md-12 create-group">
+                  <P>Price</P>
+                  <input
+                    className="form-control"
+                    type="text"
+                    {...register("price", { required: true })}
+                  />
+                  <span style={{ color: "red" }}>
+                    {errors.name && "Price is required"}
+                  </span>
+                </FormGroup>
+              </Row>
+              <Row>
+                <FormGroup className="col-md-12 create-group">
+                  <P>Select Duration</P>
+                  <Select
+                    style={{
+                      width: "100%",
+                      height: 36,
+                    }}
+                    showSearch
+                    placeholder="Select Duration"
+                    optionFilterProp="children"
+                    filterOption={(input, option) => {
+                      // Perform case-insensitive search
+                      return (option?.label ?? "")
+                        .toLowerCase()
+                        .includes(input.toLowerCase());
+                    }}
+                    onChange={(e, options) =>
+                      handlePackageDurationChange(options)
+                    } // Update the form's branch field when a branch is selected
+                    options={[
+                      ...allPackagesDuration.map((item: any, index: any) => {
+                        return {
+                          label: item.title,
+                          value: item.value,
+                          days: item.days,
+                        };
+                      }),
+                    ]}
+                  />
+                </FormGroup>
+              </Row>
+              <Row
+                style={{
+                  display: "flex",
+                }}
+              >
+                <P>Services</P>
+                <div
+                  style={{
+                    height: "10px",
+                  }}
+                ></div>
+                {packageServices?.map((item: any, index: number) => {
+                  return (
+                    <Col sm={4} key={index}>
+                      <label
+                        style={{
+                          display: "inline-flex",
+                          alignItems: "center",
+                          position: "relative",
+                          cursor: "pointer",
+                          marginRight: "25px",
+                          fontSize: "18px",
+                          marginBottom: "10px",
+                        }}
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <input
+                          type="checkbox"
+                          name="key"
+                          value={item.service.value}
+                          checked={item.isOffering} // Use isOffering to control checkbox state
+                          onChange={() => handleCheckboxChange(index)} // Toggle isOffering when checkbox changes
+                          style={{ display: "none" }}
+                        />
+                        <span
+                          onClick={(e) => e.stopPropagation()}
+                          className="green"
+                        ></span>
+                        <P2>{item.service.title}</P2>
+                        {/* Display the service title */}
+                      </label>
+                    </Col>
+                  );
+                })}
               </Row>
               <Button color="primary" className="me-1">
                 {loading ? "Loading ..." : `Add`}

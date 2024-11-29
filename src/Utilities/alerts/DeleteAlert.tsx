@@ -64,6 +64,7 @@ import {
   DELETE_PROVINCE,
   DELETE_SALE_GROUP,
   DELETE_SERVER,
+  DELETE_SERVICE_PACKAGE,
   DELETE_SUBGROUP,
   DELETE_TYPE,
   DELETE_VEHICLE_MAKE,
@@ -91,6 +92,7 @@ import {
   GET_ALL_PROVINCES,
   GET_ALL_SALE_GROUPS,
   GET_ALL_SERVERS,
+  GET_ALL_SERVICE_PACKAGES,
   GET_ALL_TYPES,
   GET_ALL_VEHICLES_MAKE,
   GET_ALL_VEHICLES_MODEL,
@@ -149,6 +151,10 @@ import {
   setFilterProduct,
   setProduct,
 } from "../../ReaduxToolkit/Reducer/InventoryProductSlice";
+import {
+  setServicePackages,
+  setServiceFilterPackages,
+} from "../../ReaduxToolkit/Reducer/CompanyServicePackageSlice";
 import { setBankAccounts } from "../../ReaduxToolkit/Reducer/BankAccountSlice";
 import { setExpenseAccounts } from "../../ReaduxToolkit/Reducer/ExpenseAccountsSlice";
 import { setExpenses } from "../../ReaduxToolkit/Reducer/ExpensesSlice";
@@ -221,9 +227,9 @@ const deleteAlert = (
         uri = `${DELETE_VENDOR}`;
       } else if (type === "productType") {
         uri = `${DELETE_PRODUCT}`;
+      } else if (type === "servicePackagesType") {
+        uri = `${DELETE_SERVICE_PACKAGE}`;
       }
-
-
 
       try {
         Swal.fire({
@@ -247,6 +253,30 @@ const deleteAlert = (
             }, 1000);
 
             // ------------
+
+            if (type === "servicePackagesType") {
+              getAll({ url: GET_ALL_SERVICE_PACKAGES }).then((data: any) => {
+                // console.log("api call --- >", data);
+                if (data == undefined) {
+                  dispatch(setServicePackages([]));
+                  dispatch(setServiceFilterPackages([]));
+                }
+
+                if (data !== undefined) {
+                  if (data.success) {
+                    // console.log("hhg");
+                    dispatch(setServicePackages(data.data));
+                    dispatch(setServiceFilterPackages(data.data));
+                  }
+                  if (!data.success) {
+                    dispatch(setServicePackages([]));
+                    dispatch(setServiceFilterPackages([]));
+                  }
+                } else {
+                  // console.log("ier67i");
+                }
+              });
+            }
 
             if (type === "bankType") {
               getAll({ url: GET_ALL_BANKS }).then((data: any) => {
@@ -283,7 +313,6 @@ const deleteAlert = (
                   if (data.success) {
                     // console.log("hhg");
                     dispatch(setBankAccounts(data.data));
-
                   }
                   if (!data.success) {
                     dispatch(setBankAccounts([]));
@@ -304,7 +333,6 @@ const deleteAlert = (
                   if (data.success) {
                     // console.log("hhg");
                     dispatch(setExpenses(data.data));
-
                   }
                   if (!data.success) {
                     dispatch(setExpenses([]));
@@ -315,10 +343,8 @@ const deleteAlert = (
               });
             }
 
-
             // -----------
             // -----------
-
 
             if (type === "expenseAccountsType") {
               getAll({ url: GET_ALL_EXPENSE_ACCOUNTS }).then((data: any) => {
@@ -339,7 +365,6 @@ const deleteAlert = (
                 }
               });
             }
-
 
             // ------------
             // ------------
@@ -1072,10 +1097,14 @@ const deleteAlert = (
         // Handle error (e.g., show an error message)
         // console.error("Error creating post:", error);
         // loading false
-
       }
     }
-    if (result.isDismissed && (type == "expenseAccountsType" || type == "bankAccountsType" || type == "expensesType"))
+    if (
+      result.isDismissed &&
+      (type == "expenseAccountsType" ||
+        type == "bankAccountsType" ||
+        type == "expensesType")
+    )
       return !check;
   });
 };

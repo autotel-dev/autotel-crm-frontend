@@ -90,7 +90,7 @@ const ActivityTypesTable: React.FC<ActivityTypesTableProps> = ({
               >
                 <H4 className="m-0">
                   {formatUnderscoredString(
-                    operationActivitiesData.activityType
+                    operationActivitiesData?.activityType
                   )}{" "}
                   Activites
                 </H4>

@@ -54,6 +54,7 @@ import Branches from "../Pages/Company/Branches/Branches";
 import Currencies from "../Pages/SuperAdmin/Currencies/Currencies";
 import Languages from "../Pages/SuperAdmin/Languages/Languages";
 import SAIOCentralLayout from "../Pages/Company/Modules/SAIO/SAIOCentralLayout";
+import ServicePackages from "../Pages/Company/Packages/Packages";
 
 const routes = [
   // dashboard routes
@@ -354,7 +355,7 @@ const routes = [
   },
   {
     path: `${process.env.PUBLIC_URL}/company/setup/packages`,
-    Component: <Package />,
+    Component: <ServicePackages />,
     allowedUserRoles: [ROLES.COMPANY],
     isProtected: true,
     permissionValue: "Packages",

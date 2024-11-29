@@ -7,6 +7,7 @@ import {
   GET_ALL_ACTIVE_CITIES,
   GET_ALL_ACTIVE_PACKAGES,
   GET_ALL_ACTIVE_SERVERS,
+  GET_ALL_ACTIVE_SERVICE_PACKAGES,
   GET_ALL_BANKS,
   GET_ALL_COMPANY_INSTALLERS,
   GET_ALL_CUSTOMERS,
@@ -26,7 +27,6 @@ import {
   setCustomers,
   setPackages,
   setIsConnected,
-  setSaleLeads,
   setBanks,
   setInsurances,
   setGroups,
@@ -38,10 +38,8 @@ import {
 } from "../../../../../../ReaduxToolkit/Reducer/SalesSlice";
 import { useDispatch } from "react-redux";
 import { ERROR_MESSAGE } from "../../../../../../Utilities/constants/constants";
-import Swal from "sweetalert2";
 import StickyBar from "./components/StickyBar/StickyBar";
 import { Outlet, useLocation } from "react-router-dom";
-import { setSaleInvoices } from "../../../../../../ReaduxToolkit/Reducer/SaleInvoiceSlice";
 import { useSelector } from "react-redux";
 
 const Sales = () => {
@@ -70,8 +68,23 @@ const Sales = () => {
 
   const dispatch = useDispatch();
 
+  // useEffect(() => {
+  //   getAll({ url: GET_ALL_ACTIVE_PACKAGES }).then((data: any) => {
+  //     // // console.log("api call --- >", data);
+  //     if (data !== undefined) {
+  //       if (data.success) {
+  //         // // console.log("hhg");
+  //         dispatch(setPackages(data.data));
+  //       }
+  //       if (!data.success) {
+  //         // // console.log("hhg");
+  //         dispatch(setPackages([]));
+  //       }
+  //     }
+  //   });
+  // }, []);
   useEffect(() => {
-    getAll({ url: GET_ALL_ACTIVE_PACKAGES }).then((data: any) => {
+    getAll({ url: GET_ALL_ACTIVE_SERVICE_PACKAGES }).then((data: any) => {
       // // console.log("api call --- >", data);
       if (data !== undefined) {
         if (data.success) {

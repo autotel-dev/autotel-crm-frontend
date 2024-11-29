@@ -244,6 +244,14 @@ export const CHANGE_BRANCHES_ACTIVATION_STATUS = `${API_BASE_URL}/setup/branch/c
 export const DELETE_BRANCH = `${API_BASE_URL}/setup/branch/delete-branch`;
 export const UPDATE_BRANCH = `${API_BASE_URL}/setup/branch/update-branch`;
 
+// Company -> service-package
+export const CREATE_SERVICE_PACKAGE = `${API_BASE_URL}/service-package/create-package`;
+export const GET_ALL_SERVICE_PACKAGES = `${API_BASE_URL}/service-package/get-all-packages`;
+export const GET_ALL_ACTIVE_SERVICE_PACKAGES = `${API_BASE_URL}/service-package/get-all-active-packages`;
+export const DELETE_SERVICE_PACKAGE = `${API_BASE_URL}/service-package/delete-package`;
+export const UPDATE_SERVICE_PACKAGE = `${API_BASE_URL}/service-package/update-package`;
+export const GET_ALL_SERVICE_PACKAGES_DURATION = `${API_BASE_URL}/service-package/get-package-duration-types`;
+
 // Company -> Modules - ComplaintCenter
 export const GET_DEVICE_DATA = `${API_BASE_URL}/complaint-center/get-device-data`;
 export const GET_COMPLAINT_CENTER_STATUS_TYPES = `${API_BASE_URL}/complaint-center/get-status-types`;
@@ -420,6 +428,10 @@ export const GET_COMPANY_ALERTS_OVERVIEW = `${API_BASE_URL}/company/dashboard/al
 export const GET_ACTIVITY_STATISTICS = `${API_BASE_URL}/sales-dashboard/operations/get-activity-statistics`;
 export const GET_ACTIVITIES_BY_TYPE = `${API_BASE_URL}/sales-dashboard/operations/get-activities-by-type`;
 
-// Company -> Modules- SAIO - Dashboard - Activity
+// Company -> Modules- SAIO - Dashboard - Inventory
 
 export const GET_INVENTORY_STATISTICS = `${API_BASE_URL}/sales-dashboard/inventory/get-inventory-statistics`;
+
+// Company -> Modules- SAIO - Dashboard - Sales
+
+export const GET_TOP_ENTITIES = `${API_BASE_URL}/sales-dashboard/sales/get-top-entities`;

@@ -13,7 +13,7 @@ const PurchaseSummary = () => {
         sidebar_setting: "default-sidebar",
       },
       color: {
-        primary_color: "#35bfbf",
+        primary_color: "#51bb25",
         secondary_color: "#FF6150",
         dark_color: "#31322D",
         light_color: "#F1F8F1",

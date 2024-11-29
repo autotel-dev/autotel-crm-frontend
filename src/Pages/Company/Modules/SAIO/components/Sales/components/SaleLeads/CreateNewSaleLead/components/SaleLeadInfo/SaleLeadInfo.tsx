@@ -7,7 +7,6 @@ import { BusinessFormCommonProps } from "../../../../../../../../../../../Types/
 import { P } from "../../../../../../../../../../../AbstractElements";
 import SelectCitiesBox from "./components/SelectCitiesBox";
 import SelectPackageBox from "./components/SelectPackageBox";
-import SelectProvincesBox from "./components/SelectProvincesBox";
 import {
   create,
   getAll,

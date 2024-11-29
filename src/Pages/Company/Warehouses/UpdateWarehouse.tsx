@@ -25,7 +25,10 @@ import {
 } from "../../../ReaduxToolkit/Reducer/WarehouseSlice";
 import { setNoDataFound } from "../../../ReaduxToolkit/Reducer/NoDataFoundSlice";
 import Swal from "sweetalert2";
-import { GET_ALL_WAREHOUSES, UPDATE_WAREHOUSE } from "../../../Utilities/api/apiEndpoints";
+import {
+  GET_ALL_WAREHOUSES,
+  UPDATE_WAREHOUSE,
+} from "../../../Utilities/api/apiEndpoints";
 import { ERROR_MESSAGE } from "../../../Utilities/constants/constants";
 import { Select } from "antd";
 
@@ -40,7 +43,7 @@ interface PropsTypes {
 
 const UpdateWarehouse: React.FC<PropsTypes> = ({
   isVisible,
-  setIsVisible = () => { },
+  setIsVisible = () => {},
   id,
   value,
   isActive,
@@ -51,10 +54,8 @@ const UpdateWarehouse: React.FC<PropsTypes> = ({
   const { userPersonalizationData } = useSelector(
     (state: any) => state.personalization
   );
-  const { branches } = useSelector(
-    (state: any) => state.warehouse
-  );
-  const [branch, setBranch] = useState("")
+  const { branches } = useSelector((state: any) => state.warehouse);
+  const [branch, setBranch] = useState("");
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
 
@@ -97,10 +98,7 @@ const UpdateWarehouse: React.FC<PropsTypes> = ({
       try {
         await update(warehouse, { url: `${UPDATE_WAREHOUSE}/${id}` }).then(
           (data: any) => {
-            if (
-              !data.success &&
-              data.message === ERROR_MESSAGE
-            ) {
+            if (!data.success && data.message === ERROR_MESSAGE) {
               setLoading(false);
               setIsVisible(!isVisible);
             }
@@ -204,7 +202,7 @@ const UpdateWarehouse: React.FC<PropsTypes> = ({
         >
           <Row>
             <FormGroup className="col-md-12 ">
-              <P>Warehouse Name</P>
+              <P>Name</P>
               <input
                 className="form-control"
                 type="text"
@@ -234,18 +232,16 @@ const UpdateWarehouse: React.FC<PropsTypes> = ({
                 }
                 onChange={(e) => {
                   setBranch(e);
-
                 }}
-                options={[...branches.map((item: any, index: any) => {
-                  return {
-                    value: item?._id,
-                    label: item?.name
-                  }
-                })]}
+                options={[
+                  ...branches.map((item: any, index: any) => {
+                    return {
+                      value: item?._id,
+                      label: item?.name,
+                    };
+                  }),
+                ]}
               />
-
-
-
             </FormGroup>
             <div className="d-flex">
               <div
@@ -263,8 +259,9 @@ const UpdateWarehouse: React.FC<PropsTypes> = ({
                     }}
                   />
                   <span
-                    className={`switch-state ${isActive ? "bg-primary" : "bg-secondary"
-                      }`}
+                    className={`switch-state ${
+                      isActive ? "bg-primary" : "bg-secondary"
+                    }`}
                   />
                 </Label>
               </div>

@@ -4,54 +4,57 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Breadcrumbs from "../../../CommonElements/Breadcrumbs/Breadcrumbs";
 import { setup } from "../../../utils/Constant";
-import DepartmentsList from "./PackagesList";
-import DepartmentsListNav from "./PackagesListNav";
+
 import "../../../CssConstaints/Style.css";
 import { getAll } from "../../../Utilities/api";
-import {
-  setIsConnected,
-  setRoles,
-  setUserPermissions,
-} from "../../../ReaduxToolkit/Reducer/RolesSlice";
+
 import NoInternetConnection from "../../Utilities/NoInternetConnection/NoInternetConnection";
 import PackagesListNav from "./PackagesListNav";
 import PackagesList from "./PackagesList";
-// import { setCountries } from "../../ReaduxToolkit/Reducer/CountrySlice";
+import {
+  setAllPackagesDuration,
+  setServices,
+  setIsConnected,
+} from "../../../ReaduxToolkit/Reducer/CompanyServicePackageSlice";
+import {
+  GET_ALL_SERVICE_PACKAGES_DURATION,
+  GET_ALL_SERVICES,
+} from "../../../Utilities/api/apiEndpoints";
 
-const Packages = () => {
+const ServicePackages = () => {
   const dispatch = useDispatch();
   const [searchValue, setSearchValue] = useState("");
-  const { roles, filterRoles, isConnected } = useSelector(
-    (state: any) => state.roles
+  const { isConnected } = useSelector(
+    (state: any) => state.companyServicePackages
   );
 
-
-  const filterDepartments = (e: any) => {
-    const searchKey = e.target.value;
-    setSearchValue(searchKey);
-    const filtered = filterRoles.filter((role: any, index: any) => {
-      return role.name.toLowerCase().includes(searchKey.toLowerCase());
-      // ^ Add 'return' statement here
-    });
-
-    dispatch(setRoles(filtered));
-
-    // console.log(filtered);
-  };
   useEffect(() => {
     dispatch(setIsConnected(false));
   }, []);
-  // getAll({ url: GET_USER_BY_ID }).then((parentData: any) => {
-  //   // console.log("api call --- >", parentData);
-  //   if (parentData == undefined) {
-  //   }
 
-  //   if (parentData !== undefined) {
-  //     if (parentData.success) {
-  //       dispatch(setUserPermissions(parentData.data.user.permissions));
-  //     }
-  //   }
-  // });
+  useEffect(() => {
+    dispatch(setAllPackagesDuration([]));
+    getAll({ url: GET_ALL_SERVICE_PACKAGES_DURATION }).then((data: any) => {
+      if (data !== undefined) {
+        if (data.success) {
+          // // // console.log("hhg");
+          dispatch(setAllPackagesDuration(data.data.packageDurationTypes));
+        }
+      }
+    });
+  }, []);
+  useEffect(() => {
+    dispatch(setServices([]));
+    getAll({ url: GET_ALL_SERVICES }).then((data: any) => {
+      if (data !== undefined) {
+        if (data.success) {
+          // // // console.log("hhg");
+          dispatch(setServices(data.data));
+        }
+      }
+    });
+  }, []);
+
   return (
     <>
       {isConnected ? (
@@ -75,18 +78,8 @@ const Packages = () => {
                       placeholder="Type to Search.."
                       value={searchValue}
                       onChange={(e) => {
-                        filterDepartments(e);
+                        // filterDepartments(e);
                       }}
-                    // style={{
-                    //   backgroundColor: "#f1f1f1",
-                    //   borderRadius: "5px",
-                    //   padding: "12px",
-                    //   height:"40px",
-                    //   margin: "15px",
-                    //   width: "calc(100% - 30px)", // Adjusting width to accommodate padding and margin
-                    //   border: "none",
-                    //   outline: "none", // Removing default border outline
-                    // }}
                     />
                   </Col>
                 </Card>
@@ -102,4 +95,4 @@ const Packages = () => {
   );
 };
 
-export default Packages;
+export default ServicePackages;

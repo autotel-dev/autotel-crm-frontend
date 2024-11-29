@@ -25,7 +25,10 @@ import {
 } from "../../../ReaduxToolkit/Reducer/BranchSlice";
 import { setNoDataFound } from "../../../ReaduxToolkit/Reducer/NoDataFoundSlice";
 import Swal from "sweetalert2";
-import { GET_ALL_BRANCHES, UPDATE_BRANCH} from "../../../Utilities/api/apiEndpoints";
+import {
+  GET_ALL_BRANCHES,
+  UPDATE_BRANCH,
+} from "../../../Utilities/api/apiEndpoints";
 import { ERROR_MESSAGE } from "../../../Utilities/constants/constants";
 
 interface PropsTypes {
@@ -39,7 +42,7 @@ interface PropsTypes {
 
 const UpdateBranch: React.FC<PropsTypes> = ({
   isVisible,
-  setIsVisible = () => { },
+  setIsVisible = () => {},
   id,
   value,
   isActive,
@@ -92,10 +95,7 @@ const UpdateBranch: React.FC<PropsTypes> = ({
       try {
         await update(branch, { url: `${UPDATE_BRANCH}/${id}` }).then(
           (data: any) => {
-            if (
-              !data.success &&
-              data.message === ERROR_MESSAGE
-            ) {
+            if (!data.success && data.message === ERROR_MESSAGE) {
               setLoading(false);
               setIsVisible(!isVisible);
             }
@@ -199,7 +199,7 @@ const UpdateBranch: React.FC<PropsTypes> = ({
         >
           <Row>
             <FormGroup className="col-md-12 ">
-              <P>Branch Name</P>
+              <P>Name</P>
               <input
                 className="form-control"
                 type="text"
@@ -226,8 +226,9 @@ const UpdateBranch: React.FC<PropsTypes> = ({
                       }}
                     />
                     <span
-                      className={`switch-state ${isActive ? "bg-primary" : "bg-secondary"
-                        }`}
+                      className={`switch-state ${
+                        isActive ? "bg-primary" : "bg-secondary"
+                      }`}
                     />
                   </Label>
                 </div>

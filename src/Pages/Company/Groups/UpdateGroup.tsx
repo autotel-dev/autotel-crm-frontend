@@ -25,7 +25,10 @@ import {
 } from "../../../ReaduxToolkit/Reducer/GroupSlice";
 import { setNoDataFound } from "../../../ReaduxToolkit/Reducer/NoDataFoundSlice";
 import Swal from "sweetalert2";
-import { GET_ALL_SALE_GROUPS, UPDATE_SALE_GROUP } from "../../../Utilities/api/apiEndpoints";
+import {
+  GET_ALL_SALE_GROUPS,
+  UPDATE_SALE_GROUP,
+} from "../../../Utilities/api/apiEndpoints";
 import { ERROR_MESSAGE } from "../../../Utilities/constants/constants";
 
 interface PropsTypes {
@@ -39,7 +42,7 @@ interface PropsTypes {
 
 const UpdateGroup: React.FC<PropsTypes> = ({
   isVisible,
-  setIsVisible = () => { },
+  setIsVisible = () => {},
   id,
   value,
   isActive,
@@ -166,10 +169,7 @@ const UpdateGroup: React.FC<PropsTypes> = ({
       try {
         await update(group, { url: `${UPDATE_SALE_GROUP}/${id}` }).then(
           (data: any) => {
-            if (
-              !data.success &&
-              data.message === ERROR_MESSAGE
-            ) {
+            if (!data.success && data.message === ERROR_MESSAGE) {
               setLoading(false);
               setIsVisible(!isVisible);
             }
@@ -273,7 +273,7 @@ const UpdateGroup: React.FC<PropsTypes> = ({
         >
           <Row>
             <FormGroup className="col-md-12 ">
-              <P>Group Name</P>
+              <P>Name</P>
               <input
                 className="form-control"
                 type="text"
@@ -300,8 +300,9 @@ const UpdateGroup: React.FC<PropsTypes> = ({
                       }}
                     />
                     <span
-                      className={`switch-state ${isActive ? "bg-primary" : "bg-secondary"
-                        }`}
+                      className={`switch-state ${
+                        isActive ? "bg-primary" : "bg-secondary"
+                      }`}
                     />
                   </Label>
                 </div>

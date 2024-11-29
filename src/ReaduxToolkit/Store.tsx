@@ -63,6 +63,7 @@ import AccountSlice from "./Reducer/AccountSlice";
 import SaleInvoiceSlice from "./Reducer/SaleInvoiceSlice";
 import NRSlice from "./Reducer/NRSlice";
 import SalesDashboardSlice from "./Reducer/SalesDashboardSlice";
+import CompanyServicePackageSlice from "./Reducer/CompanyServicePackageSlice";
 
 const Store = configureStore({
   reducer: {
@@ -130,6 +131,7 @@ const Store = configureStore({
     saleInvoice: SaleInvoiceSlice,
     nrReport: NRSlice,
     salesDashboard: SalesDashboardSlice,
+    companyServicePackages: CompanyServicePackageSlice,
   },
 });
 
