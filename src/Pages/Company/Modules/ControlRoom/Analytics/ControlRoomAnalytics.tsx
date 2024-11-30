@@ -531,16 +531,18 @@ const ControlRoomAnalytics = () => {
             borderRadius: "5px",
           }}
           className={`${
-            userPersonalizationData?.buttonsAndBarsColor == null ? "btn-primary" : ""
+            userPersonalizationData?.buttonsAndBarsColor == null
+              ? "btn-primary"
+              : ""
           }`}
         >
           <div
             style={{
               // padding: "10px",
-              width:"100%",
+              width: "100%",
               height: "30px",
               display: "grid",
-              gridTemplateColumns:"35% 45% 20%",
+              gridTemplateColumns: "35% 45% 20%",
               // justifyContent: "space-between",
               alignItems: "center",
             }}
@@ -551,8 +553,8 @@ const ControlRoomAnalytics = () => {
                 cursor: "pointer",
                 fontSize: "14px",
                 color: "white",
-                display:"grid",
-                gridAutoColumns:"max-content",
+                display: "grid",
+                gridAutoColumns: "max-content",
                 paddingLeft: "15px",
                 borderRight:
                   containerWidth === "350px" ? "1px solid black" : "0px",
@@ -569,7 +571,7 @@ const ControlRoomAnalytics = () => {
                   color: "white",
                   // paddingRight: "10px",
                   borderRight: "1px solid black",
-                  paddingLeft:"35px",
+                  paddingLeft: "35px",
                 }}
                 onClick={(e: any) => {
                   toggleDropdown(e);
@@ -583,7 +585,7 @@ const ControlRoomAnalytics = () => {
               <div
                 style={{
                   cursor: "pointer",
-                  alignContent:"center"
+                  alignContent: "center",
                 }}
                 onClick={(e: any) => {
                   toggleDropdown(e);
@@ -591,7 +593,16 @@ const ControlRoomAnalytics = () => {
                 // onMouseOver={toggleDropdown}
                 // onMouseOut={toggleDropdown}
               >
-                <div style={{ fontSize: "24px", color: "white" , display:"flex",justifyContent:"center"}}><MdFilterList style={{width:"50%"}} /></div>
+                <div
+                  style={{
+                    fontSize: "24px",
+                    color: "white",
+                    display: "flex",
+                    justifyContent: "center",
+                  }}
+                >
+                  <MdFilterList style={{ width: "50%" }} />
+                </div>
               </div>
             )}
           </div>
@@ -750,7 +761,8 @@ const ControlRoomAnalytics = () => {
                         <div>
                           <button
                             className={`${
-                              userPersonalizationData?.buttonsAndBarsColor == null
+                              userPersonalizationData?.buttonsAndBarsColor ==
+                              null
                                 ? "btn-primary"
                                 : ""
                             }`}
@@ -820,8 +832,11 @@ const ControlRoomAnalytics = () => {
               />
               {/*  */}
               <Col xl="3" lg="6" md="6" sm="12" className="box-col-3">
-                <Card className="total-earning" style={{position:"relative",}}>
-                  <CardBody style={{ maxHeight: "160px", padding: "1em", }}>
+                <Card
+                  className="total-earning"
+                  style={{ position: "relative" }}
+                >
+                  <CardBody style={{ maxHeight: "160px", padding: "1em" }}>
                     <Row style={{ height: "115px" }}>
                       <Col sm="12" className="box-col-7">
                         <div className="d-flex">
@@ -870,18 +885,21 @@ const ControlRoomAnalytics = () => {
                                     style={{
                                       display: "flex",
                                       justifyContent: "space-between",
-                                      width:"100%",
+                                      width: "100%",
                                     }}
                                   >
                                     <div
                                       style={{
                                         fontSize: "14px",
                                         fontWeight: "bold",
-                                        width:"55%",
+                                        width: "55%",
                                       }}
                                     >
-                                      {server?.server?.companyName.slice(0, 18)}
-                                      {server?.server?.companyName.length > 18
+                                      {server?.server?.companyName?.slice(
+                                        0,
+                                        18
+                                      )}
+                                      {server?.server?.companyName?.length > 18
                                         ? "..."
                                         : ""}{" "}
                                       :
@@ -892,7 +910,7 @@ const ControlRoomAnalytics = () => {
                                         // marginLeft: "90px",
                                         display: "flex",
                                         alignItems: "center",
-                                        width:"45%",
+                                        width: "45%",
                                       }}
                                     >
                                       <div
@@ -1111,7 +1129,8 @@ const ControlRoomAnalytics = () => {
                           <div style={{ display: "flex" }}>
                             <button
                               className={`${
-                                userPersonalizationData?.buttonsAndBarsColor == null
+                                userPersonalizationData?.buttonsAndBarsColor ==
+                                null
                                   ? "btn-primary"
                                   : ""
                               }`}
@@ -1150,7 +1169,8 @@ const ControlRoomAnalytics = () => {
                             )}
                             <button
                               className={`${
-                                userPersonalizationData?.buttonsAndBarsColor == null
+                                userPersonalizationData?.buttonsAndBarsColor ==
+                                null
                                   ? "btn-primary"
                                   : ""
                               }`}
@@ -1264,7 +1284,8 @@ const ControlRoomAnalytics = () => {
                         <div style={{ display: "flex" }}>
                           <button
                             className={`${
-                              userPersonalizationData?.buttonsAndBarsColor == null
+                              userPersonalizationData?.buttonsAndBarsColor ==
+                              null
                                 ? "btn-primary"
                                 : ""
                             }`}
@@ -1303,7 +1324,8 @@ const ControlRoomAnalytics = () => {
                           )}
                           <button
                             className={`${
-                              userPersonalizationData?.buttonsAndBarsColor == null
+                              userPersonalizationData?.buttonsAndBarsColor ==
+                              null
                                 ? "btn-primary"
                                 : ""
                             }`}

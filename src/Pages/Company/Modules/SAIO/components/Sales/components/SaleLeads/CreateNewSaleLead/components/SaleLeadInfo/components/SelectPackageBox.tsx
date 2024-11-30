@@ -7,6 +7,8 @@ interface propTypes {
   setPackage: any;
   packagee: string;
   disabled: boolean;
+  packageData: any;
+  setPackageData: any;
 }
 
 const SelectPackageBox: React.FC<propTypes> = ({
@@ -14,6 +16,8 @@ const SelectPackageBox: React.FC<propTypes> = ({
   setPackage,
   packagee,
   disabled,
+  packageData,
+  setPackageData,
 }) => {
   const { packages } = useSelector((state: any) => state.sales);
 
@@ -22,8 +26,17 @@ const SelectPackageBox: React.FC<propTypes> = ({
 
   const tempList: any = [];
   useEffect(() => {
+    console.log("pakcgaes", packages);
+
     packages?.map((item: any, index: any) => {
-      tempList.push({ value: `${item?._id}`, label: `${item?.title}` });
+      tempList.push({
+        value: `${item?._id}`,
+        label: `${item?.title}`,
+        price: `${item.price}`,
+        duration: `${item.duration}`,
+        days: `${item.days}`,
+        services: `${JSON.stringify(item.services)}`,
+      });
     });
     setPackageList(tempList);
   }, [packages]);
@@ -42,9 +55,17 @@ const SelectPackageBox: React.FC<propTypes> = ({
           .toLowerCase()
           .localeCompare((optionB?.label ?? "").toLowerCase())
       }
-      onChange={(e) => {
+      onChange={(e, options) => {
+        console.log("options", options);
+
         // // console.log(e);
         setPackage(e);
+        setPackageData({
+          price: options.price,
+          days: options.days,
+          duration: options.duration,
+          services: options.services,
+        });
       }}
       options={packageList}
       disabled={disabled}

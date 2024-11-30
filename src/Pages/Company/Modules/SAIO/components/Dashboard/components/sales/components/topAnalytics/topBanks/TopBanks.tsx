@@ -9,6 +9,7 @@ import {
   Colors,
 } from "chart.js";
 import { useSelector } from "react-redux";
+import { H2, H4 } from "../../../../../../../../../../../AbstractElements";
 
 // Register necessary chart elements
 ChartJS.register(ArcElement, Tooltip, Colors);
@@ -41,9 +42,25 @@ const TopBanks = () => {
   };
 
   return (
-    <div style={{ width: "180px", height: "180px" }}>
-      <Doughnut data={doughnutData} options={doughnutOption} />
-    </div>
+    <>
+      {banks.length > 0 ? (
+        <div style={{ width: "180px", height: "180px" }}>
+          <Doughnut data={doughnutData} options={doughnutOption} />
+        </div>
+      ) : (
+        <div
+          style={{
+            width: "100%",
+            height: "180px",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <H4>No data Yet</H4>
+        </div>
+      )}
+    </>
   );
 };
 

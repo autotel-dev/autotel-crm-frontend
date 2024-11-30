@@ -25,8 +25,8 @@ const SelectVehicleModelBox: React.FC<propTypes> = ({
   const tempList: any = [];
   useEffect(() => {
     vehicleModels
-      ?.filter((item: any) => item?.vehicleMake?._id == vehicleMake)
-      .map((item: any, index: any) => {
+      // ?.filter((item: any) => item?.vehicleMake?._id == vehicleMake)
+      ?.map((item: any, index: any) => {
         tempList.push({ value: `${item?._id}`, label: `${item?.name}` });
       });
     setVehicleModelsList(tempList);

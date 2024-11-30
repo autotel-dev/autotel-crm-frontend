@@ -424,7 +424,10 @@ const Sales = () => {
                       alignItems: "center",
                     }}
                   >
-                    <TopCustomers />
+                    <div style={{ width: "180px", height: "180px" }}>
+                      <TopCustomers />
+                    </div>
+
                     <div style={{ display: "flex", gap: "25px" }}>
                       {topEntitesData?.topCustomers.map(
                         (data: any, index: any) => (
@@ -450,7 +453,7 @@ const Sales = () => {
                               {/* Dynamic percentage from customer data */}
                               <span>{data?.fullName}</span>
                               {/* Dynamic name from customer data */}
-                              <span>20%</span>
+                              <span>{data?.percentage}%</span>
                             </div>
                           </div>
                         )
@@ -473,7 +476,10 @@ const Sales = () => {
                       alignItems: "center",
                     }}
                   >
-                    <TopVendors />
+                    <div style={{ width: "180px", height: "180px" }}>
+                      <TopVendors />
+                    </div>
+
                     <div style={{ display: "flex", gap: "25px" }}>
                       {topEntitesData?.topVendors.map(
                         (data: any, index: any) => (
@@ -499,7 +505,7 @@ const Sales = () => {
                               {/* Dynamic percentage from customer data */}
                               <span>{data?.vendorName}</span>
                               {/* Dynamic name from customer data */}
-                              <span>20%</span>
+                              <span>{data?.percentage}%</span>
                             </div>
                           </div>
                         )
@@ -549,7 +555,10 @@ const Sales = () => {
                       alignItems: "center",
                     }}
                   >
-                    <TopBanks />
+                    <div style={{ width: "180px", height: "180px" }}>
+                      <TopBanks />
+                    </div>
+
                     <div style={{ display: "flex", gap: "25px" }}>
                       {topEntitesData?.topBanks.map((data: any, index: any) => (
                         <div
@@ -574,7 +583,7 @@ const Sales = () => {
                             {/* Dynamic percentage from customer data */}
                             <span>{data?.name}</span>
                             {/* Dynamic name from customer data */}
-                            <span>20%</span>
+                            <span>{data?.percentage}%</span>
                           </div>
                         </div>
                       ))}
@@ -596,36 +605,40 @@ const Sales = () => {
                       alignItems: "center",
                     }}
                   >
-                    <TopInsurances />
+                    <div style={{ width: "180px", height: "180px" }}>
+                      <TopInsurances />
+                    </div>
+
                     <div style={{ display: "flex", gap: "25px" }}>
                       {topEntitesData?.topInsurance.map(
-                        (data: any, index: any) => (
-                          <div
-                            style={{ display: "flex", gap: "6px" }}
-                            key={index}
-                          >
+                        (data: any, index: any) =>
+                          index <= 4 && (
                             <div
-                              style={{
-                                maxWidth: "3px",
-                                minWidth: "3px",
-                                height: "40px",
-                                backgroundColor: colors[index], // Dynamic color from customer data
-                              }}
-                            ></div>
-                            <div
-                              style={{
-                                display: "flex",
-                                flexDirection: "column",
-                              }}
+                              style={{ display: "flex", gap: "6px" }}
+                              key={index}
                             >
-                              <H3>{data?.vehicleCounter}</H3>
-                              {/* Dynamic percentage from customer data */}
-                              <span>{data?.name}</span>
-                              {/* Dynamic name from customer data */}
-                              <span>20%</span>
+                              <div
+                                style={{
+                                  maxWidth: "3px",
+                                  minWidth: "3px",
+                                  height: "40px",
+                                  backgroundColor: colors[index], // Dynamic color from customer data
+                                }}
+                              ></div>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  flexDirection: "column",
+                                }}
+                              >
+                                <H3>{data?.vehicleCounter}</H3>
+
+                                <span>{data?.name}</span>
+
+                                <span>{data?.percentage}%</span>
+                              </div>
                             </div>
-                          </div>
-                        )
+                          )
                       )}
                     </div>
                   </div>

@@ -35,6 +35,7 @@ import { H4, P } from "../../../../../../../../../../../AbstractElements";
 import SelectServersBox from "./components/SelectServerBox";
 import { Select } from "antd";
 import { formatUnderscoredString } from "../../../../../../../../../../../Utilities/globals/globals";
+import P2 from "../../../../../../../../../../../CommonElements/Paragraph/P2Element";
 
 const VehicleForm = ({
   onRemove,
@@ -63,9 +64,13 @@ const VehicleForm = ({
   };
 
   const handleCheckboxChange = (index: number) => {
+    // const updatedServices = formData.additionalServices.map(
+    //   (service: any, i: number) =>
+    //     i === index ? { ...service, checked: !service.checked } : service
+    // );
     const updatedServices = formData.additionalServices.map(
       (service: any, i: number) =>
-        i === index ? { ...service, checked: !service.checked } : service
+        i === index ? { ...service, isOffering: !service.isOffering } : service
     );
     setFormData({ ...formData, additionalServices: updatedServices });
     onChange(index, { ...formData, additionalServices: updatedServices });
@@ -104,11 +109,7 @@ const VehicleForm = ({
     ) {
       const body = {
         ...formData,
-        additionalServices: [
-          ...formData.additionalServices
-            .filter((service: any) => service.checked)
-            .map((service: any) => service.value),
-        ],
+        additionalServices: formData.additionalServices,
         saleLeadId: saleLead?._id,
         customer: saleLead?.customer._id,
       };
@@ -119,7 +120,6 @@ const VehicleForm = ({
             if (data !== undefined) {
               if (!data.success && data.message === ERROR_MESSAGE) {
                 setLoading(false);
-                // console.log("data.message", data.message);
               }
               if (!data.success) {
                 Swal.fire({
@@ -537,6 +537,48 @@ const VehicleForm = ({
             disabled={isCreated}
           />
         </Col>
+        <Col xl={4} xs={12}>
+          <div>
+            <P>
+              Selected Package
+              <span className="txt-danger">*</span>
+            </P>
+          </div>
+          <Input
+            type="text"
+            placeholder="Enter Selected Package"
+            value={saleLead?.package.title}
+            disabled={true}
+          />
+        </Col>
+        <Col xl={4} xs={12}>
+          <div>
+            <P>
+              Package Price
+              <span className="txt-danger">*</span>
+            </P>
+          </div>
+          <Input
+            type="text"
+            placeholder="Enter Package Price"
+            value={saleLead?.package.price}
+            disabled={true}
+          />
+        </Col>
+        <Col xl={4} xs={12}>
+          <div>
+            <P>
+              Discounted Service Charges
+              <span className="txt-danger">*</span>
+            </P>
+          </div>
+          <Input
+            type="text"
+            placeholder="Enter Discounted Service Charges"
+            value={saleLead?.discountedServiceCharges}
+            disabled={true}
+          />
+        </Col>
       </Row>
 
       <Row
@@ -760,7 +802,7 @@ const VehicleForm = ({
               height: "20px",
             }}
           ></div>
-          {formData?.additionalServices?.map((item: any, index: any) => {
+          {/* {formData?.additionalServices?.map((item: any, index: any) => {
             return (
               <>
                 <Col sm={3}>
@@ -792,6 +834,40 @@ const VehicleForm = ({
                   </label>
                 </Col>
               </>
+            );
+          })} */}
+
+          {formData?.additionalServices?.map((item: any, index: number) => {
+            return (
+              <Col sm={4} key={index}>
+                <label
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    position: "relative",
+                    cursor: "pointer",
+                    marginRight: "25px",
+                    fontSize: "18px",
+                    marginBottom: "10px",
+                  }}
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <input
+                    type="checkbox"
+                    name="key"
+                    value={item.service.value}
+                    checked={item.isOffering} // Use isOffering to control checkbox state
+                    onChange={() => handleCheckboxChange(index)} // Toggle isOffering when checkbox changes
+                    style={{ display: "none" }}
+                  />
+                  <span
+                    onClick={(e) => e.stopPropagation()}
+                    className="green"
+                  ></span>
+                  <P2>{item.service.title}</P2>
+                  {/* Display the service title */}
+                </label>
+              </Col>
             );
           })}
         </Row>

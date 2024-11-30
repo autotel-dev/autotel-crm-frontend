@@ -34,6 +34,7 @@ import { Select } from "antd";
 import { formatUnderscoredString } from "../../../../../../../../../../../Utilities/globals/globals";
 import { useNavigate } from "react-router-dom";
 import Skeleton from "../../../../../../../../../../Utilities/Skeleton/Skeleton";
+import P2 from "../../../../../../../../../../../CommonElements/Paragraph/P2Element";
 
 interface SaleLeadInfoProps {
   callbackActive: (val: number | undefined) => void;
@@ -66,6 +67,7 @@ const SaleLeadInfo = ({ callbackActive }: SaleLeadInfoProps) => {
 
   const [city, setCity] = useState("");
   const [packagee, setPackage] = useState("");
+  const [packageData, setPackageData]: any = useState(null);
   const [loading, setLoading] = useState(false);
   const [saleLeadLoading, setSaleLeadLoading] = useState(
     saleLead !== null ? true : false
@@ -73,6 +75,32 @@ const SaleLeadInfo = ({ callbackActive }: SaleLeadInfoProps) => {
   const [customerLoading, setCustomerLoading] = useState(
     customer !== null ? true : false
   );
+
+  const [packageServices, setPackageServices] = useState<any[]>([]);
+  const [packagePrice, setPackagePrice]: any = useState("");
+
+  useEffect(() => {
+    if (packageData !== null) {
+      setPackagePrice(packageData?.price);
+      const parsedData = JSON.parse(packageData?.services);
+
+      setPackageServices(
+        parsedData?.map((service: any) => ({
+          service: {
+            title: service.service.title,
+            value: service.service.value,
+          },
+          isOffering: service.isOffering, // Set isOffering to true by default
+        })) || []
+      );
+    }
+  }, [packageData]);
+  const handleCheckboxChange = (index: number) => {
+    const updatedServices = packageServices.map((service: any, i: number) =>
+      i === index ? { ...service, isOffering: !service.isOffering } : service
+    );
+    setPackageServices(updatedServices);
+  };
 
   const getUserData = (
     event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -104,8 +132,12 @@ const SaleLeadInfo = ({ callbackActive }: SaleLeadInfoProps) => {
 
       const body = {
         ...saleLeadInfoForm,
+        totalNoOfVehicles: Number(saleLeadInfoForm.totalNoOfVehicles),
         city: city,
         package: packagee,
+        totalSaleLeadAmount:
+          Number(discountedServiceCharges) * Number(totalNoOfVehicles),
+        services: packageServices,
         isExistingCustomer: customer !== null ? true : false,
         customer: customer !== null && customer,
       };
@@ -223,6 +255,9 @@ const SaleLeadInfo = ({ callbackActive }: SaleLeadInfoProps) => {
         ...saleLeadInfoForm,
         city: city,
         package: packagee,
+        totalSaleLeadAmount:
+          Number(discountedServiceCharges) * Number(totalNoOfVehicles),
+        services: packageServices,
         isExistingCustomer: customer !== null ? true : false,
         customer: customer !== null && customer,
       };
@@ -491,6 +526,12 @@ const SaleLeadInfo = ({ callbackActive }: SaleLeadInfoProps) => {
                 setCity(data.data !== null ? data?.data?.city?._id : city);
                 setPackage(
                   data.data !== null ? data?.data?.package?._id : packagee
+                );
+                setPackagePrice(
+                  data.data !== null ? data?.data?.package?.price : ""
+                );
+                setPackageServices(
+                  data.data !== null ? data?.data?.package?.services : []
                 );
                 dispatch(setSaleLead(data.data));
                 if (saleLead !== null) {
@@ -883,47 +924,37 @@ const SaleLeadInfo = ({ callbackActive }: SaleLeadInfoProps) => {
               setPackage={setPackage}
               packagee={packagee}
               disabled={isEditSaleLeadInfo}
+              packageData={packageData}
+              setPackageData={setPackageData}
             />
           </Col>
-
-          {/* <Col xl={4} xs={12}>
-          <div>
-            <P>
-              Select Province
-              <span className="txt-danger">*</span>
-            </P>
-          </div>
-          <SelectProvincesBox placeholder="Select Province" />
-        </Col> */}
-
           <Col xl={4} xs={12}>
             <P>
-              Service Charges
+              Package Price
               <span className="txt-danger">*</span>
             </P>
             <Input
               type="text"
-              placeholder="Enter Service Charges"
+              placeholder="Enter Package Price"
+              value={packagePrice}
+              disabled={true}
+            />
+          </Col>
+
+          <Col xl={4} xs={12}>
+            <P>
+              Discounted Service Charges
+              <span className="txt-danger">*</span>
+            </P>
+            <Input
+              type="text"
+              placeholder="Enter Discounted Service Charges"
               value={discountedServiceCharges}
               name="discountedServiceCharges"
               disabled={isEditSaleLeadInfo}
               onChange={getUserData}
             />
           </Col>
-
-          {/* <Col xl={4} xs={12}>
-          <P>
-            Number Of Vehicles
-            <span className="txt-danger">*</span>
-          </P>
-          <Input
-            type="text"
-            placeholder="Enter Discounted Service Charges"
-            value={totalNoOfVehicles}
-            name="totalNoOfVehicles"
-            onChange={getUserData}
-          />
-        </Col> */}
 
           <Col xl={4} xs={12}>
             <div>
@@ -975,6 +1006,20 @@ const SaleLeadInfo = ({ callbackActive }: SaleLeadInfoProps) => {
               disabled={isEditSaleLeadInfo}
             />
           </Col>
+          <Col xl={4} xs={12}>
+            <P>
+              Total Amount
+              <span className="txt-danger">*</span>
+            </P>
+            <Input
+              type="text"
+              placeholder="Enter Total Amount"
+              value={
+                Number(discountedServiceCharges) * Number(totalNoOfVehicles)
+              }
+              disabled={true}
+            />
+          </Col>
           <Col xl={12} xs={12}>
             <P>
               Requirements
@@ -995,6 +1040,55 @@ const SaleLeadInfo = ({ callbackActive }: SaleLeadInfoProps) => {
               // {...register("description", { required: true })}
             />
           </Col>
+
+          {packageServices.length > 0 && (
+            <Row
+              style={{
+                display: "flex",
+                marginTop: "20px",
+              }}
+            >
+              <P>Services</P>
+              <div
+                style={{
+                  height: "10px",
+                }}
+              ></div>
+              {packageServices?.map((item: any, index: number) => {
+                return (
+                  <Col sm={4} key={index}>
+                    <label
+                      style={{
+                        display: "inline-flex",
+                        alignItems: "center",
+                        position: "relative",
+                        cursor: "pointer",
+                        marginRight: "25px",
+                        fontSize: "18px",
+                        marginBottom: "10px",
+                      }}
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <input
+                        type="checkbox"
+                        name="key"
+                        value={item.service.value}
+                        checked={item.isOffering} // Use isOffering to control checkbox state
+                        onChange={() => handleCheckboxChange(index)} // Toggle isOffering when checkbox changes
+                        style={{ display: "none" }}
+                      />
+                      <span
+                        onClick={(e) => e.stopPropagation()}
+                        className="green"
+                      ></span>
+                      <P2>{item.service.title}</P2>
+                      {/* Display the service title */}
+                    </label>
+                  </Col>
+                );
+              })}
+            </Row>
+          )}
 
           {saleLead?.status == "REJECTED" ? (
             <Col

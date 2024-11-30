@@ -24,6 +24,8 @@ const VehicleFormsManager = ({ callbackActive }: VehicleFormsManagerProps) => {
 
   useEffect(() => {
     if (saleLead !== null) {
+      console.log("salelead", saleLead);
+
       if (saleLead?.vehicles.length < saleLead?.totalNoOfVehicles) {
         setVehicleForms([
           ...saleLead?.vehicles.map((item: any, i: number) => {
@@ -42,15 +44,23 @@ const VehicleFormsManager = ({ callbackActive }: VehicleFormsManagerProps) => {
               year: item?.year,
               transmissionType: item?.transmissionType,
               fuelType: item?.fuelType,
-              additionalServices: [
-                ...services?.map((service: any, i: number) => {
-                  return {
-                    title: service.title,
-                    value: service.value,
-                    checked: item?.additionalServices?.includes(service.value),
-                  };
-                }),
-              ],
+              // additionalServices: [
+              //   ...services?.map((service: any, i: number) => {
+              //     return {
+              //       title: service.title,
+              //       value: service.value,
+              //       checked: item?.additionalServices?.includes(service.value),
+              //     };
+              //   }),
+              // ],
+              additionalServices:
+                item?.additionalServices?.map((service: any) => ({
+                  service: {
+                    title: service.service.title,
+                    value: service.service.value,
+                  },
+                  isOffering: service.isOffering, // Set isOffering to true by default
+                })) || [],
               defaultService: item?.defaultService,
               deviceId: item?.deviceId !== null ? item?.deviceId : null,
               server: item?.server !== null ? item?.server : null,
@@ -72,15 +82,23 @@ const VehicleFormsManager = ({ callbackActive }: VehicleFormsManagerProps) => {
             year: "",
             transmissionType: "",
             fuelType: "",
-            additionalServices: [
-              ...services?.map((service: any, i: number) => {
-                return {
-                  title: service.title,
-                  value: service.value,
-                  checked: false,
-                };
-              }),
-            ],
+            // additionalServices: [
+            //   ...services?.map((service: any, i: number) => {
+            //     return {
+            //       title: service.title,
+            //       value: service.value,
+            //       checked: false,
+            //     };
+            //   }),
+            // ],
+            additionalServices:
+              saleLead?.services?.map((service: any) => ({
+                service: {
+                  title: service.service.title,
+                  value: service.service.value,
+                },
+                isOffering: service.isOffering, // Set isOffering to true by default
+              })) || [],
             defaultService: "Self",
             deviceId: "",
             server: "",
@@ -105,15 +123,23 @@ const VehicleFormsManager = ({ callbackActive }: VehicleFormsManagerProps) => {
               year: item?.year,
               transmissionType: item?.transmissionType,
               fuelType: item?.fuelType,
-              additionalServices: [
-                ...services?.map((service: any, i: number) => {
-                  return {
-                    title: service.title,
-                    value: service.value,
-                    checked: item?.additionalServices?.includes(service.value),
-                  };
-                }),
-              ],
+              // additionalServices: [
+              //   ...services?.map((service: any, i: number) => {
+              //     return {
+              //       title: service.title,
+              //       value: service.value,
+              //       checked: item?.additionalServices?.includes(service.value),
+              //     };
+              //   }),
+              // ],
+              additionalServices:
+                item?.additionalServices?.map((service: any) => ({
+                  service: {
+                    title: service.service.title,
+                    value: service.service.value,
+                  },
+                  isOffering: service.isOffering, // Set isOffering to true by default
+                })) || [],
               defaultService: item?.defaultService,
               deviceId: item?.deviceId !== null ? item?.deviceId : null,
               server: item?.server !== null ? item?.server : null,
@@ -143,15 +169,23 @@ const VehicleFormsManager = ({ callbackActive }: VehicleFormsManagerProps) => {
         year: "",
         transmission: "",
         fuelType: "",
-        additionalServices: [
-          ...services?.map((service: any, i: number) => {
-            return {
-              title: service.title,
-              value: service.value,
-              checked: false,
-            };
-          }),
-        ],
+        // additionalServices: [
+        //   ...services?.map((service: any, i: number) => {
+        //     return {
+        //       title: service.title,
+        //       value: service.value,
+        //       checked: false,
+        //     };
+        //   }),
+        // ],
+        additionalServices:
+          saleLead?.services?.map((service: any) => ({
+            service: {
+              title: service.service.title,
+              value: service.service.value,
+            },
+            isOffering: service.isOffering, // Set isOffering to true by default
+          })) || [],
         defaultService: "Self",
         deviceId: "",
         server: "",
