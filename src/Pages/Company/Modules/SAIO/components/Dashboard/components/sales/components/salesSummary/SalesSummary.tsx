@@ -1,5 +1,6 @@
 import React from "react";
 import ReactApexChart from "react-apexcharts";
+import { useSelector } from "react-redux";
 
 const SalesSummary = () => {
   class ConfigDB {
@@ -22,6 +23,15 @@ const SalesSummary = () => {
       router_animation: "fadeIn",
     };
   }
+  const { salesSummaryData } = useSelector(
+    (state: any) => state.salesDashboard
+  );
+  const months = salesSummaryData?.map(
+    (summary: any, index: any) => summary.month
+  );
+  const amounts = salesSummaryData?.map(
+    (summary: any, index: any) => summary.totalSales
+  );
   const salesSummaryChart: any = {
     chart: {
       height: 385,
@@ -38,29 +48,12 @@ const SalesSummary = () => {
     },
     series: [
       {
-        name: "series1",
-        data: [0, 40, 25, 80, 35, 40, 38, 50, 35, 70, 40, 100],
+        name: "Total Sales",
+        data: amounts,
       },
-      //   {
-      //     name: "series2",
-      //     data: [5, 50, 70, 55, 78, 45, 100, 80, 85, 60, 35, 80],
-      //   },
     ],
     xaxis: {
-      categories: [
-        "Jan",
-        "Feb",
-        "Mar",
-        "Apr",
-        "May",
-        "Jun",
-        "Jul",
-        "Aug",
-        "Sep",
-        "Oct",
-        "Nov",
-        "Dec",
-      ],
+      categories: months,
       labels: {
         style: {
           fontSize: "13px",
@@ -72,7 +65,7 @@ const SalesSummary = () => {
     yaxis: {
       labels: {
         formatter: function (val: any) {
-          return val + "0" + "k";
+          return val + "" + "";
         },
         style: {
           fontSize: "14px",
@@ -113,7 +106,7 @@ const SalesSummary = () => {
       options={salesSummaryChart}
       series={salesSummaryChart.series}
       type="area"
-      height={370}
+      height={340}
     />
   );
 };

@@ -60,7 +60,7 @@ const AMCDueSummary = () => {
       options={alertsChartData}
       series={alertsChartData.series}
       type="bar"
-      height={370}
+      height={340}
     />
   );
 };

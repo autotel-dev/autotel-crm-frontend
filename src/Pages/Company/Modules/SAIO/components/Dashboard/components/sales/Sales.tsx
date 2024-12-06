@@ -24,9 +24,17 @@ import P3 from "../../../../../../../../CommonElements/Paragraph/P3Element";
 import { useDispatch } from "react-redux";
 import { useEffect, useState } from "react";
 import { getAll } from "../../../../../../../../Utilities/api";
-import { GET_TOP_ENTITIES } from "../../../../../../../../Utilities/api/apiEndpoints";
+import {
+  GET_LATEST_SALE_INVOICE,
+  GET_SALES_SUMMARY,
+  GET_TOP_ENTITIES,
+} from "../../../../../../../../Utilities/api/apiEndpoints";
 import Swal from "sweetalert2";
 import {
+  setRecentSalesData,
+  setRecentSalesLoading,
+  setSalesSummaryData,
+  setSalesSummaryLoading,
   setTopEntitesData,
   setTopEntitiesLoading,
 } from "../../../../../../../../ReaduxToolkit/Reducer/SalesDashboardSlice";
@@ -35,9 +43,12 @@ import { useSelector } from "react-redux";
 import Skeleton from "../../../../../../../Utilities/Skeleton/Skeleton";
 
 const Sales = () => {
-  const { topEntitesLoading, topEntitesData } = useSelector(
-    (state: any) => state.salesDashboard
-  );
+  const {
+    topEntitesLoading,
+    topEntitesData,
+    recentSalesLoading,
+    salesSummaryLoading,
+  } = useSelector((state: any) => state.salesDashboard);
 
   const [] = useState([]);
   const colors = ["#4A90E2", "#FF6F61", "#A4D200", "#F5A623", "#8B5FBF"];
@@ -46,6 +57,8 @@ const Sales = () => {
 
   useEffect(() => {
     dispatch(setTopEntitiesLoading(true));
+    dispatch(setRecentSalesLoading(true));
+    dispatch(setSalesSummaryLoading(true));
     getAll({ url: GET_TOP_ENTITIES }).then((data: any) => {
       // console.log("api call --- >", data);
       if (data !== undefined) {
@@ -62,6 +75,44 @@ const Sales = () => {
         }
         if (data.success) {
           dispatch(setTopEntitesData(data.data));
+        }
+      }
+    });
+    getAll({ url: GET_LATEST_SALE_INVOICE }).then((data: any) => {
+      // console.log("api call --- >", data);
+      if (data !== undefined) {
+        if (!data.success) {
+          Swal.fire({
+            text: `${data.message}`,
+            icon: "error",
+            timer: 2000,
+            showConfirmButton: false,
+          });
+        }
+        if (!data.success && data.message === ERROR_MESSAGE) {
+          dispatch(setRecentSalesData(null));
+        }
+        if (data.success) {
+          dispatch(setRecentSalesData(data.data));
+        }
+      }
+    });
+    getAll({ url: GET_SALES_SUMMARY }).then((data: any) => {
+      // console.log("api call --- >", data);
+      if (data !== undefined) {
+        if (!data.success) {
+          Swal.fire({
+            text: `${data.message}`,
+            icon: "error",
+            timer: 2000,
+            showConfirmButton: false,
+          });
+        }
+        if (!data.success && data.message === ERROR_MESSAGE) {
+          dispatch(setSalesSummaryData(null));
+        }
+        if (data.success) {
+          dispatch(setSalesSummaryData(data.data));
         }
       }
     });
@@ -424,9 +475,29 @@ const Sales = () => {
                       alignItems: "center",
                     }}
                   >
-                    <div style={{ width: "180px", height: "180px" }}>
-                      <TopCustomers />
-                    </div>
+                    {topEntitesData?.topCustomers.length > 0 ? (
+                      <div
+                        style={{
+                          minWidth: "160px",
+                          maxWidth: "160px",
+                          height: "180px",
+                        }}
+                      >
+                        <TopCustomers />
+                      </div>
+                    ) : (
+                      <div
+                        style={{
+                          width: "100%",
+                          height: "180px",
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                      >
+                        <H4>No data Yet</H4>
+                      </div>
+                    )}
 
                     <div style={{ display: "flex", gap: "25px" }}>
                       {topEntitesData?.topCustomers.map(
@@ -451,7 +522,9 @@ const Sales = () => {
                             >
                               <H3>{data?.vehicleCounter}</H3>
                               {/* Dynamic percentage from customer data */}
-                              <span>{data?.fullName}</span>
+                              <span style={{ width: "50px" }}>
+                                {data?.fullName}
+                              </span>
                               {/* Dynamic name from customer data */}
                               <span>{data?.percentage}%</span>
                             </div>
@@ -476,11 +549,31 @@ const Sales = () => {
                       alignItems: "center",
                     }}
                   >
-                    <div style={{ width: "180px", height: "180px" }}>
-                      <TopVendors />
-                    </div>
+                    {topEntitesData?.topCustomers.length > 0 ? (
+                      <div
+                        style={{
+                          minWidth: "160px",
+                          maxWidth: "160px",
+                          height: "180px",
+                        }}
+                      >
+                        <TopVendors />
+                      </div>
+                    ) : (
+                      <div
+                        style={{
+                          width: "100%",
+                          height: "180px",
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                      >
+                        <H4>No data Yet</H4>
+                      </div>
+                    )}
 
-                    <div style={{ display: "flex", gap: "25px" }}>
+                    <div style={{ display: "flex", gap: "15px" }}>
                       {topEntitesData?.topVendors.map(
                         (data: any, index: any) => (
                           <div
@@ -503,8 +596,10 @@ const Sales = () => {
                             >
                               <H3>{data?.invoiceCount}</H3>
                               {/* Dynamic percentage from customer data */}
-                              <span>{data?.vendorName}</span>
-                              {/* Dynamic name from customer data */}
+                              <span style={{ width: "50px" }}>
+                                {data?.vendorName}
+                              </span>
+
                               <span>{data?.percentage}%</span>
                             </div>
                           </div>
@@ -555,11 +650,31 @@ const Sales = () => {
                       alignItems: "center",
                     }}
                   >
-                    <div style={{ width: "180px", height: "180px" }}>
-                      <TopBanks />
-                    </div>
+                    {topEntitesData?.topCustomers.length > 0 ? (
+                      <div
+                        style={{
+                          minWidth: "160px",
+                          maxWidth: "160px",
+                          height: "180px",
+                        }}
+                      >
+                        <TopBanks />
+                      </div>
+                    ) : (
+                      <div
+                        style={{
+                          width: "100%",
+                          height: "180px",
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                      >
+                        <H4>No data Yet</H4>
+                      </div>
+                    )}
 
-                    <div style={{ display: "flex", gap: "25px" }}>
+                    <div style={{ display: "flex", gap: "15px" }}>
                       {topEntitesData?.topBanks.map((data: any, index: any) => (
                         <div
                           style={{ display: "flex", gap: "6px" }}
@@ -581,7 +696,7 @@ const Sales = () => {
                           >
                             <H3>{data?.vehicleCounter}</H3>
                             {/* Dynamic percentage from customer data */}
-                            <span>{data?.name}</span>
+                            <span style={{ width: "50px" }}>{data?.name}</span>
                             {/* Dynamic name from customer data */}
                             <span>{data?.percentage}%</span>
                           </div>
@@ -605,11 +720,31 @@ const Sales = () => {
                       alignItems: "center",
                     }}
                   >
-                    <div style={{ width: "180px", height: "180px" }}>
-                      <TopInsurances />
-                    </div>
+                    {topEntitesData?.topCustomers.length > 0 ? (
+                      <div
+                        style={{
+                          minWidth: "160px",
+                          maxWidth: "160px",
+                          height: "180px",
+                        }}
+                      >
+                        <TopInsurances />
+                      </div>
+                    ) : (
+                      <div
+                        style={{
+                          width: "100%",
+                          height: "180px",
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                      >
+                        <H4>No data Yet</H4>
+                      </div>
+                    )}
 
-                    <div style={{ display: "flex", gap: "25px" }}>
+                    <div style={{ display: "flex", gap: "15px" }}>
                       {topEntitesData?.topInsurance.map(
                         (data: any, index: any) =>
                           index <= 4 && (
@@ -633,8 +768,11 @@ const Sales = () => {
                               >
                                 <H3>{data?.vehicleCounter}</H3>
 
-                                <span>{data?.name}</span>
-
+                                <span style={{ width: "50px" }}>
+                                  {data?.name.length > 9
+                                    ? `${data?.name.slice(0, 8)} ...`
+                                    : data?.name}
+                                </span>
                                 <span>{data?.percentage}%</span>
                               </div>
                             </div>
@@ -647,27 +785,54 @@ const Sales = () => {
             </Col>
           </Row>
         )}
+
         <Row>
-          <Col xxl="6" xl="6" lg="6" md="12">
-            <Card className="invoice-card">
-              <CardHeader className="pb-0">
-                <H4>Recent Sales</H4>
-              </CardHeader>
-              <CardBody className="transaction-card">
-                <SalesTable />
-              </CardBody>
-            </Card>
-          </Col>
-          <Col xxl="6" xl="6" lg="6" md="12">
-            <Card>
-              <CardHeader>
-                <H4>Sales Summary</H4>
-              </CardHeader>
-              <CardBody className="p-0">
-                <SalesSummary />
-              </CardBody>
-            </Card>
-          </Col>
+          {recentSalesLoading ? (
+            <Col xxl="6" xl="6" lg="6" md="6" sm="6">
+              <Skeleton
+                height="280px"
+                width="100%"
+                marginTop="10px"
+                marginBottom="25px"
+                marginRight="20px"
+                borderRadius="10px"
+              />
+            </Col>
+          ) : (
+            <Col xxl="6" xl="6" lg="6" md="12">
+              <Card className="invoice-card">
+                <CardHeader className="pb-0">
+                  <H4>Recent Sales</H4>
+                </CardHeader>
+                <CardBody className="transaction-card">
+                  <SalesTable />
+                </CardBody>
+              </Card>
+            </Col>
+          )}
+          {salesSummaryLoading ? (
+            <Col xxl="6" xl="6" lg="6" md="6" sm="6">
+              <Skeleton
+                height="280px"
+                width="100%"
+                marginTop="10px"
+                marginBottom="25px"
+                marginRight="20px"
+                borderRadius="10px"
+              />
+            </Col>
+          ) : (
+            <Col xxl="6" xl="6" lg="6" md="12">
+              <Card>
+                <CardHeader>
+                  <H4>Sales Summary</H4>
+                </CardHeader>
+                <CardBody className="p-0">
+                  <SalesSummary />
+                </CardBody>
+              </Card>
+            </Col>
+          )}
         </Row>
 
         <Row>

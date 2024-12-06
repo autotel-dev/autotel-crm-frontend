@@ -316,12 +316,11 @@ const DevicesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
             //   (device: any) => device.id !== deviceExists.id
             // );
           }
-        })
+        });
         if (index == devices.length - 1) {
           dispatch(setDevicesDetailData([...tempList]));
         }
       });
-
 
       return { ...device, checked: true, items: updatedItems };
     });
@@ -347,7 +346,7 @@ const DevicesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
               (device: any) => device.id !== deviceExists.id
             );
           }
-        })
+        });
         if (index == devices.length - 1) {
           dispatch(setDevicesDetailData([...tempList]));
         }
@@ -356,25 +355,6 @@ const DevicesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
     });
 
     dispatch(setDevices(updatedDevices));
-  };
-
-  const formattedDate = (timeStamp: string) => {
-    var ts = parseInt(timeStamp) * 1000;
-
-    var date = new Date(ts);
-    var day = date.getDate();
-    var month = date.getMonth() + 1;
-    var year = date.getFullYear();
-
-    var formatDate =
-      (day < 10 ? "0" : "") +
-      day +
-      "-" +
-      (month < 10 ? "0" : "") +
-      month +
-      "-" +
-      year;
-    return formatDate;
   };
 
   return (
@@ -447,380 +427,270 @@ const DevicesTreeViewAccordian = ({ statusDevices }: PropTypes) => {
         </button>
       </div>
       {matchedGroups.length > 0 && (
-        <Accordion open={open} toggle={toggle} className="dark-accordion">
-          {matchedGroups
-            .filter((item: any) =>
-              item.items.some((bodyItem: any) =>
-                statusDevices === "Expired"
-                  ? bodyItem.time === statusDevices
-                  : statusDevices === "Not Connecetd"
+        <div
+          style={{
+            height: "75.5vh",
+            overflow: "auto",
+            scrollbarWidth: "none",
+          }}
+        >
+          <Accordion open={open} toggle={toggle} className="dark-accordion">
+            {matchedGroups
+              .filter((item: any) =>
+                item.items.some((bodyItem: any) =>
+                  statusDevices === "Expired"
+                    ? bodyItem.time === statusDevices
+                    : statusDevices === "Not Connecetd"
                     ? bodyItem.time == null ||
-                    bodyItem.time === "" ||
-                    bodyItem.time == undefined
+                      bodyItem.time === "" ||
+                      bodyItem.time == undefined
                     : statusDevices === ""
-                      ? bodyItem.online === bodyItem.online
-                      : bodyItem.online === statusDevices
+                    ? bodyItem.online === bodyItem.online
+                    : bodyItem.online === statusDevices
+                )
               )
-            )
-            .filter((item: any) =>
-              item.items.some(
-                (bodyItem: any) =>
-                  bodyItem.name
-                    .toLowerCase()
-                    .includes(searchValue.toLowerCase()) ||
-                  bodyItem.imei.includes(searchValue) ||
-                  bodyItem.id == searchValue
+              .filter((item: any) =>
+                item.items.some(
+                  (bodyItem: any) =>
+                    bodyItem.name
+                      .toLowerCase()
+                      .includes(searchValue.toLowerCase()) ||
+                    bodyItem.imei.includes(searchValue) ||
+                    bodyItem.id == searchValue
+                )
               )
-            )
-            .map((item: any, index: any) => {
-              const gradientId = `gradient-${index}`; // Generate a unique gradient ID for each item
-              return (
-                <AccordionItem key={index}  >
-                  {item.items.length > 0 && (
-                    <div
-                    >
-                      <AccordionHeader
-                        targetId={`${searchValue.length >= 1 ? "all" : index}`}
-                        className=" custom-accordion-header"
-
-                      >
-                        <input
-                          type="checkbox"
-                          style={{
-                            marginRight: "10px",
-                            height: "17",
-                            width: "17px",
-                          }}
-                          checked={item.checked}
-                          onClick={(e) => handleCheckboxClick(e, item)}
-                        />
-                        <span style={{ fontWeight: "bold", fontSize: "13px" }}>
-                          {item.title} &nbsp; (
-                          {
-                            item.items
-                              .filter((bodyItem: any) =>
-                                statusDevices === "Expired"
-                                  ? bodyItem.time === statusDevices
-                                  : statusDevices === "Not Connecetd"
+              .map((item: any, index: any) => {
+                const gradientId = `gradient-${index}`; // Generate a unique gradient ID for each item
+                return (
+                  <AccordionItem key={index}>
+                    {item.items.length > 0 && (
+                      <div>
+                        <AccordionHeader
+                          targetId={`${
+                            searchValue.length >= 1 ? "all" : index
+                          }`}
+                          className=" custom-accordion-header"
+                        >
+                          <input
+                            type="checkbox"
+                            style={{
+                              marginRight: "10px",
+                              height: "17",
+                              width: "17px",
+                            }}
+                            checked={item.checked}
+                            onClick={(e) => handleCheckboxClick(e, item)}
+                          />
+                          <span
+                            style={{ fontWeight: "bold", fontSize: "13px" }}
+                          >
+                            {item.title} &nbsp; (
+                            {
+                              item.items
+                                .filter((bodyItem: any) =>
+                                  statusDevices === "Expired"
+                                    ? bodyItem.time === statusDevices
+                                    : statusDevices === "Not Connecetd"
                                     ? bodyItem.time == null ||
-                                    bodyItem.time === "" ||
-                                    bodyItem.time == undefined
+                                      bodyItem.time === "" ||
+                                      bodyItem.time == undefined
                                     : statusDevices === ""
-                                      ? bodyItem.online === bodyItem.online
-                                      : bodyItem.online === statusDevices
-                              )
-                              .filter(
-                                (bodyItem: any) =>
-                                  bodyItem.name
-                                    .toLowerCase()
-                                    .includes(searchValue.toLowerCase()) ||
-                                  bodyItem.imei.includes(searchValue) ||
-                                  bodyItem.id == searchValue
-                              ).length
-                          }
-                          )
-                        </span>
-                        {/* <div style={{position:"absolute",marginTop:"35px",borderBottom:"1px solid lightGray",width:"90%"}}></div> */}
-                        <FeatherIcons
-                          iconName={
-                            open === `${index}` ? "ChevronUp" : "ChevronDown"
-                          }
-                          className="svg-color"
-                        />
-
-                      </AccordionHeader>
-
-
-
-                    </div>
-                  )}
-                  {item.items.length > 0 && (
-                    <AccordionBody
-                      accordionId={`${searchValue.length >= 1 ? "all" : index}`}
-                    >
-                      {item.items
-                        .filter((bodyItem: any) =>
-                          statusDevices === "Expired"
-                            ? bodyItem.time === statusDevices
-                            : statusDevices === "Not Connecetd"
+                                    ? bodyItem.online === bodyItem.online
+                                    : bodyItem.online === statusDevices
+                                )
+                                .filter(
+                                  (bodyItem: any) =>
+                                    bodyItem.name
+                                      .toLowerCase()
+                                      .includes(searchValue.toLowerCase()) ||
+                                    bodyItem.imei.includes(searchValue) ||
+                                    bodyItem.id == searchValue
+                                ).length
+                            }
+                            )
+                          </span>
+                          {/* <div style={{position:"absolute",marginTop:"35px",borderBottom:"1px solid lightGray",width:"90%"}}></div> */}
+                          <FeatherIcons
+                            iconName={
+                              open === `${index}` ? "ChevronUp" : "ChevronDown"
+                            }
+                            className="svg-color"
+                          />
+                        </AccordionHeader>
+                      </div>
+                    )}
+                    {item.items.length > 0 && (
+                      <AccordionBody
+                        accordionId={`${
+                          searchValue.length >= 1 ? "all" : index
+                        }`}
+                      >
+                        {item.items
+                          .filter((bodyItem: any) =>
+                            statusDevices === "Expired"
+                              ? bodyItem.time === statusDevices
+                              : statusDevices === "Not Connecetd"
                               ? bodyItem.time == null ||
-                              bodyItem.time === "" ||
-                              bodyItem.time == undefined
+                                bodyItem.time === "" ||
+                                bodyItem.time == undefined
                               : statusDevices === ""
-                                ? bodyItem.online === bodyItem.online
-                                : bodyItem.online === statusDevices
-                        )
-                        .filter(
-                          (bodyItem: any) =>
-                            bodyItem.name
-                              .toLowerCase()
-                              .includes(searchValue.toLowerCase()) ||
-                            bodyItem.imei.includes(searchValue) ||
-                            bodyItem.id == searchValue
-                        )
-                        .slice(0, itemsLength)
-                        .map((bodyItem: any, bodyindex: any) => {
-                          return (
-                            <div
-                              key={bodyItem.id}
-                              style={{
-                                padding: "8px 10px",
-                                boxShadow: "5px 5px 15px lightgray",
-                                borderRadius: "12px",
-                                margin: "10px -10px",
-                                cursor: "pointer",
-                                backgroundColor: `${bodyItem.icon_color === "green"
-                                  ? "rgba(0,255,0,0.2)"
-                                  : bodyItem.icon_color === "yellow"
-                                    ? "rgb(255,255,0,0.1)"
-                                    : bodyItem.time === "Expired"
+                              ? bodyItem.online === bodyItem.online
+                              : bodyItem.online === statusDevices
+                          )
+                          .filter(
+                            (bodyItem: any) =>
+                              bodyItem.name
+                                .toLowerCase()
+                                .includes(searchValue.toLowerCase()) ||
+                              bodyItem.imei.includes(searchValue) ||
+                              bodyItem.id == searchValue
+                          )
+                          .slice(0, itemsLength)
+                          .map((bodyItem: any, bodyindex: any) => {
+                            return (
+                              <div
+                                key={bodyItem.id}
+                                style={{
+                                  padding: "8px 10px",
+                                  boxShadow: "5px 5px 15px lightgray",
+                                  borderRadius: "12px",
+                                  margin: "10px -10px",
+                                  cursor: "pointer",
+                                  backgroundColor: `${
+                                    bodyItem.icon_color === "green"
+                                      ? "rgba(0,255,0,0.2)"
+                                      : bodyItem.icon_color === "yellow"
+                                      ? "rgb(255,255,0,0.1)"
+                                      : bodyItem.time === "Expired"
                                       ? "lightGray"
                                       : (bodyItem.icon_color === "blue" ||
-                                        bodyItem.icon_color === "black") &&
+                                          bodyItem.icon_color === "black") &&
                                         bodyItem.time !== "Expired"
-                                        ? "rgba(0,0,0,0.2)"
-                                        : "rgba(255,0,0,0.2)"
+                                      ? "rgba(0,0,0,0.2)"
+                                      : "rgba(255,0,0,0.2)"
                                   }`,
-                              }}
-                              onClick={(e) => {
-                                dispatch(
-                                  setExpandedDevice({
-                                    position: {
-                                      lat: bodyItem.lat,
-                                      lng: bodyItem.lng,
-                                    },
-                                    tail: bodyItem.tail,
-                                    deviceId: bodyItem.id,
-                                  })
-                                );
-                              }}
-                            >
-                              <div
-                                style={{
-                                  display: "flex",
-                                  justifyContent: "space-between",
+                                }}
+                                onClick={(e) => {
+                                  dispatch(
+                                    setExpandedDevice({
+                                      position: {
+                                        lat: bodyItem.lat,
+                                        lng: bodyItem.lng,
+                                      },
+                                      tail: bodyItem.tail,
+                                      deviceId: bodyItem.id,
+                                    })
+                                  );
                                 }}
                               >
                                 <div
                                   style={{
                                     display: "flex",
-                                    alignItems: "center",
+                                    justifyContent: "space-between",
                                   }}
                                 >
-                                  <label
-                                    style={{
-                                      display: "inline-block",
-                                      position: "relative",
-                                      cursor: "pointer",
-                                      paddingTop: "2px",
-                                    }}
-                                    onClick={(e) => e.stopPropagation()}
-                                  >
-                                    <input
-                                      type="checkbox"
-                                      name="key"
-                                      value="value"
-                                      checked={bodyItem.checked}
-                                      // checked={Devicess.some((item: any) => {
-                                      //   return item.id === bodyItem.id;
-                                      // })}
-                                      onChange={(e) => {
-                                        e.stopPropagation();
-                                        handleSelecetdDevices(
-                                          e,
-                                          item,
-                                          bodyItem,
-                                          bodyindex
-                                        );
-                                      }}
-                                      style={{ display: "none" }} // Hide the default checkbox
-                                    />
-                                    <span
-                                      onClick={(e) => e.stopPropagation()}
-                                      className={
-                                        bodyItem.icon_color === "green"
-                                          ? "onlineDevice"
-                                          : bodyItem.icon_color === "yellow"
-                                            ? "engine"
-                                            : bodyItem.time === "Expired"
-                                              ? "expired"
-                                              : (bodyItem.icon_color === "blue" ||
-                                                bodyItem.icon_color ===
-                                                "black") &&
-                                                bodyItem.time !== "Expired"
-                                                ? "black"
-                                                : bodyItem.icon_color === "red"
-                                                  ? "ack" : bodyItem.online
-                                      }
-                                    ></span>
-                                  </label>
-
                                   <div
                                     style={{
                                       display: "flex",
-                                      flexDirection: "column",
+                                      alignItems: "center",
                                     }}
                                   >
-                                    <span
+                                    <label
                                       style={{
-                                        fontWeight: "bold",
-                                        fontSize: "13px",
+                                        display: "inline-block",
+                                        position: "relative",
+                                        cursor: "pointer",
+                                        paddingTop: "2px",
+                                      }}
+                                      onClick={(e) => e.stopPropagation()}
+                                    >
+                                      <input
+                                        type="checkbox"
+                                        name="key"
+                                        value="value"
+                                        checked={bodyItem.checked}
+                                        // checked={Devicess.some((item: any) => {
+                                        //   return item.id === bodyItem.id;
+                                        // })}
+                                        onChange={(e) => {
+                                          e.stopPropagation();
+                                          handleSelecetdDevices(
+                                            e,
+                                            item,
+                                            bodyItem,
+                                            bodyindex
+                                          );
+                                        }}
+                                        style={{ display: "none" }} // Hide the default checkbox
+                                      />
+                                      <span
+                                        onClick={(e) => e.stopPropagation()}
+                                        className={
+                                          bodyItem.icon_color === "green"
+                                            ? "onlineDevice"
+                                            : bodyItem.icon_color === "yellow"
+                                            ? "engine"
+                                            : bodyItem.time === "Expired"
+                                            ? "expired"
+                                            : (bodyItem.icon_color === "blue" ||
+                                                bodyItem.icon_color ===
+                                                  "black") &&
+                                              bodyItem.time !== "Expired"
+                                            ? "black"
+                                            : bodyItem.icon_color === "red"
+                                            ? "ack"
+                                            : bodyItem.online
+                                        }
+                                      ></span>
+                                    </label>
+
+                                    <div
+                                      style={{
+                                        display: "flex",
+                                        flexDirection: "column",
                                       }}
                                     >
-                                      {bodyItem.name.length > 26
-                                        ? `${bodyItem.name.slice(0, 26)}...`
-                                        : bodyItem.name}
-                                    </span>
-                                    <span style={{ fontSize: "11px" }}>
-                                      {/* {formattedDate(bodyItem.timestamp)} */}
-                                      {bodyItem.time.slice(0, 10)} ,{" "}
-                                      {bodyItem.time.slice(11)}
-                                    </span>
+                                      <span
+                                        style={{
+                                          fontWeight: "bold",
+                                          fontSize: "13px",
+                                        }}
+                                      >
+                                        {bodyItem.name.length > 26
+                                          ? `${bodyItem.name.slice(0, 26)}...`
+                                          : bodyItem.name}
+                                      </span>
+                                      <span style={{ fontSize: "11px" }}>
+                                        {/* {formattedDate(bodyItem.timestamp)} */}
+                                        {bodyItem.time.slice(0, 10)} ,{" "}
+                                        {bodyItem.time.slice(11)}
+                                      </span>
+                                    </div>
                                   </div>
                                 </div>
-
-                                {/* <div
-                             style={{
-                               marginBottom: "-10px",
-                               marginRight: "20px",
-                               display: "flex",
-                             }}
-                           >
-                          
-                              <svg
-                               ref={svgRef}
-                               xmlns="http://www.w3.org/2000/svg"
-                               viewBox="0 0 100 100" // Adjusted viewBox to minimize bottom height
-                               width="58" // You may need to adjust the width accordingly
-                               height="58" // Adjusted height
-                             >
-                               <path
-                                 d="M 10 50
-A 40 40 0 0 1 90 50"
-                                 fill="none"
-                                 stroke="url(#gradient)" // Use a gradient for multicolor stroke
-                                 strokeWidth="10" // Increase stroke width for a thicker stroke
-                               />
-
-                               <defs>
-                                 <linearGradient
-                                   id={`gradient${index}`} // Use unique gradient ID for each item
-                                   x1="0%"
-                                   y1="0%"
-                                   x2="100%"
-                                   y2="0%"
-                                 >
-                                   <stop offset="0%" stopColor="red" />
-                                   <stop offset="33%" stopColor="yellow" />
-                                   <stop offset="66%" stopColor="green" />
-                                 </linearGradient>
-                               </defs>
-
-                               {Array.from(Array(20).keys()).map(
-                                 (_, index) => {
-                                   const angle =
-                                     Math.PI / 1 - (index * Math.PI) / 15;
-                                   const x = 50 + Math.cos(angle) * 40;
-                                   const y = 50 - Math.sin(angle) * 40;
-                                   return (
-                                     <circle
-                                       key={index}
-                                       cx={x}
-                                       cy={y}
-                                       r="2"
-                                       fill="black"
-                                     />
-                                   );
-                                 }
-                               )}
-                                Needle 
-                               <polygon
-                                 points="50,42 55,22 50,12 45,22"
-                                  points="50,42 55,42 55,12 50,12 45"
-                                 fill={
-                                   bodyItem.engine_status ? "green" : "red"
-                                 } Needle color
-                                  transform={`translate(0, 0) rotate(${bodyItem.speed}
-                                  , 50, 50)`}
-                               />
-                                Speed text 
-                               <text
-                                 x="50"
-                                 y="53"
-                                 textAnchor="middle"
-                                 dominantBaseline="middle"
-                                 fontSize="20"
-                               >
-                                 {bodyItem.speed} kph
-                               </text>
-                             </svg>  *
-                             
-
-                              <div>
-                               <div
-                                 style={{
-                                   display: "inline-block",
-                                   height: "32px",
-                                   width: "22px",
-                                   verticalAlign: "middle",
-                                   marginTop: "9px",
-                                   marginLeft: "15px",
-                                 }}
-                               >
-                                 <img
-                                   src={
-                                     bodyItem.engine_status
-                                       ? greenKey
-                                       : redKey
-                                   }
-                                   alt=""
-                                   height={26}
-                                   width={23}
-                                 />
-                               </div>
-                               <div
-                                 style={{
-                                   display: "inline-block",
-                                   height: "32px",
-                                   width: "22px",
-                                   verticalAlign: "middle",
-                                   marginTop: "6px",
-                                   marginLeft: "15px",
-                                 }}
-                               >
-                                 <img
-                                   src={greenSatellite}
-                                   alt=""
-                                   height={26}
-                                   width={23}
-                                 />
-                               </div>
-                             </div> 
-                           </div> */}
                               </div>
-                            </div>
-                          );
-                        })}
-                      {item.items
-                        .filter((bodyItem: any) =>
-                          statusDevices === "Expired"
-                            ? bodyItem.time === statusDevices
-                            : statusDevices === "Not Connecetd"
+                            );
+                          })}
+                        {item.items
+                          .filter((bodyItem: any) =>
+                            statusDevices === "Expired"
+                              ? bodyItem.time === statusDevices
+                              : statusDevices === "Not Connecetd"
                               ? bodyItem.time == null ||
-                              bodyItem.time === "" ||
-                              bodyItem.time == undefined
+                                bodyItem.time === "" ||
+                                bodyItem.time == undefined
                               : statusDevices === ""
-                                ? bodyItem.online === bodyItem.online
-                                : bodyItem.online === statusDevices
-                        )
-                        .filter(
-                          (bodyItem: any) =>
-                            bodyItem.name
-                              .toLowerCase()
-                              .includes(searchValue.toLowerCase()) ||
-                            bodyItem.imei.includes(searchValue) ||
-                            bodyItem.id == searchValue
-                        ).length >= 15 && (
+                              ? bodyItem.online === bodyItem.online
+                              : bodyItem.online === statusDevices
+                          )
+                          .filter(
+                            (bodyItem: any) =>
+                              bodyItem.name
+                                .toLowerCase()
+                                .includes(searchValue.toLowerCase()) ||
+                              bodyItem.imei.includes(searchValue) ||
+                              bodyItem.id == searchValue
+                          ).length >= 15 && (
                           <div
                             style={{
                               display: "flex",
@@ -843,12 +713,13 @@ A 40 40 0 0 1 90 50"
                               "Show More"}
                           </div>
                         )}
-                    </AccordionBody>
-                  )}
-                </AccordionItem>
-              );
-            })}
-        </Accordion>
+                      </AccordionBody>
+                    )}
+                  </AccordionItem>
+                );
+              })}
+          </Accordion>
+        </div>
       )}
     </>
   );

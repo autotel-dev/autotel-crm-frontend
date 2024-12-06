@@ -38,28 +38,12 @@ const TopBanks = () => {
     legend: {
       display: false,
     },
-    cutout: 70, // Reduce this value to make the doughnut ring thicker
+    cutout: 65, // Reduce this value to make the doughnut ring thicker
   };
 
   return (
     <>
-      {banks.length > 0 ? (
-        <div style={{ width: "180px", height: "180px" }}>
-          <Doughnut data={doughnutData} options={doughnutOption} />
-        </div>
-      ) : (
-        <div
-          style={{
-            width: "100%",
-            height: "180px",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <H4>No data Yet</H4>
-        </div>
-      )}
+      <Doughnut data={doughnutData} options={doughnutOption} />
     </>
   );
 };

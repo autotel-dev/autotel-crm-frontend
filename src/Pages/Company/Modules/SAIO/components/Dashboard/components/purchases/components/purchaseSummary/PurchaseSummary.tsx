@@ -1,7 +1,11 @@
 import React from "react";
 import ReactApexChart from "react-apexcharts";
+import { useSelector } from "react-redux";
 
 const PurchaseSummary = () => {
+  const { purchasesSummaryData } = useSelector(
+    (state: any) => state.salesDashboard
+  );
   class ConfigDB {
     static data = {
       settings: {
@@ -22,7 +26,14 @@ const PurchaseSummary = () => {
       router_animation: "fadeIn",
     };
   }
-  const salesSummaryChart: any = {
+
+  const months = purchasesSummaryData?.map(
+    (summary: any, index: any) => summary.month
+  );
+  const amounts = purchasesSummaryData?.map(
+    (summary: any, index: any) => summary.totalPurchases
+  );
+  const purchaseSummaryChart: any = {
     chart: {
       height: 385,
       type: "area",
@@ -38,25 +49,12 @@ const PurchaseSummary = () => {
     },
     series: [
       {
-        name: "series1",
-        data: [0, 40, 25, 80, 35, 40, 38, 50, 35, 70, 40, 100],
+        name: "Total Purchases",
+        data: amounts,
       },
     ],
     xaxis: {
-      categories: [
-        "Jan",
-        "Feb",
-        "Mar",
-        "Apr",
-        "May",
-        "Jun",
-        "Jul",
-        "Aug",
-        "Sep",
-        "Oct",
-        "Nov",
-        "Dec",
-      ],
+      categories: months,
       labels: {
         style: {
           fontSize: "13px",
@@ -106,10 +104,10 @@ const PurchaseSummary = () => {
   return (
     <ReactApexChart
       id="area-line"
-      options={salesSummaryChart}
-      series={salesSummaryChart.series}
+      options={purchaseSummaryChart}
+      series={purchaseSummaryChart.series}
       type="area"
-      height={370}
+      height={340}
     />
   );
 };

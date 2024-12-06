@@ -30,7 +30,7 @@ const MonitoringSidebar = () => {
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
-          overflow: "scrollY",
+          overflow: "hidden",
           width: "40px",
         }}
       >
@@ -596,7 +596,8 @@ const MonitoringSidebar = () => {
           backgroundColor: "white",
           transition: "width 0.5s",
           height: "92.5vh",
-          overflow: "auto",
+          // overflow: "auto",
+          overflow: "hidden",
           paddingBottom: "40%",
           scrollbarWidth: "none",
         }}

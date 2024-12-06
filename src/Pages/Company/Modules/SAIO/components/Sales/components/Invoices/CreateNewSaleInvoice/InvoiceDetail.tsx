@@ -263,7 +263,8 @@ const InvoiceDetail = ({}) => {
               {"\n"}
               {"\n"}
               {vehicle?.additionalServices?.map(
-                (item: any) => `${formatUnderscoredString(item)} | `
+                (item: any) =>
+                  `${formatUnderscoredString(item.service.title)} | `
               )}
             </Text>
             <Text style={styles2.tableCell1}>1</Text>
@@ -615,7 +616,9 @@ const InvoiceDetail = ({}) => {
                                     item.registrationNo
                                   } \n\n${item?.additionalServices?.map(
                                     (item: any) =>
-                                      `${formatUnderscoredString(item)} | `
+                                      `${formatUnderscoredString(
+                                        item?.service?.title
+                                      )} | `
                                   )}`}
                                   disabled
                                 />

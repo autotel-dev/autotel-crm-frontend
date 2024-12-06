@@ -435,3 +435,10 @@ export const GET_INVENTORY_STATISTICS = `${API_BASE_URL}/sales-dashboard/invento
 // Company -> Modules- SAIO - Dashboard - Sales
 
 export const GET_TOP_ENTITIES = `${API_BASE_URL}/sales-dashboard/sales/get-top-entities`;
+export const GET_LATEST_SALE_INVOICE = `${API_BASE_URL}/sales-dashboard/sales/get-latest-sale-invoices`;
+export const GET_SALES_SUMMARY = `${API_BASE_URL}/sales-dashboard/sales/get-sales-summary`;
+
+// Company -> Modules- SAIO - Dashboard - Purchases
+
+export const GET_LATEST_PURCHASE_INVOICE = `${API_BASE_URL}/sales-dashboard/purchase/get-latest-purchases`;
+export const GET_PURCHASE_SUMMARY = `${API_BASE_URL}/sales-dashboard/purchase/get-purchase-summary`;

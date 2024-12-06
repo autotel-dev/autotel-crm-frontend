@@ -60,8 +60,8 @@ const AMCDueTable = () => {
     <div
       className="table-responsive theme-scrollbar recent-wrapper"
       style={{
-        maxHeight: "50vh",
-        minHeight: "50vh",
+        maxHeight: "340px",
+        minHeight: "340px",
         overflowY: "auto",
         overflowX: "auto",
         WebkitOverflowScrolling: "touch", // Enable momentum scrolling on iOS
