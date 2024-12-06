@@ -28,6 +28,7 @@ import {
   GET_LATEST_SALE_INVOICE,
   GET_SALES_SUMMARY,
   GET_TOP_ENTITIES,
+  GET_WEEKLY_SUMMARY,
 } from "../../../../../../../../Utilities/api/apiEndpoints";
 import Swal from "sweetalert2";
 import {
@@ -37,6 +38,8 @@ import {
   setSalesSummaryLoading,
   setTopEntitesData,
   setTopEntitiesLoading,
+  setWeeklySummaryData,
+  setweeklySummaryLoading,
 } from "../../../../../../../../ReaduxToolkit/Reducer/SalesDashboardSlice";
 import { ERROR_MESSAGE } from "../../../../../../../../Utilities/constants/constants";
 import { useSelector } from "react-redux";
@@ -46,6 +49,8 @@ const Sales = () => {
   const {
     topEntitesLoading,
     topEntitesData,
+    weeklySummaryData,
+    weeklySummaryLoading,
     recentSalesLoading,
     salesSummaryLoading,
   } = useSelector((state: any) => state.salesDashboard);
@@ -54,11 +59,13 @@ const Sales = () => {
   const colors = ["#4A90E2", "#FF6F61", "#A4D200", "#F5A623", "#8B5FBF"];
 
   const dispatch = useDispatch();
+  const [weeklySummaryDataa, setWeeklySummaryDataa]: any = useState([]);
 
   useEffect(() => {
     dispatch(setTopEntitiesLoading(true));
     dispatch(setRecentSalesLoading(true));
     dispatch(setSalesSummaryLoading(true));
+    dispatch(setweeklySummaryLoading(true));
     getAll({ url: GET_TOP_ENTITIES }).then((data: any) => {
       // console.log("api call --- >", data);
       if (data !== undefined) {
@@ -116,14 +123,28 @@ const Sales = () => {
         }
       }
     });
+    getAll({ url: GET_WEEKLY_SUMMARY }).then((data: any) => {
+      // console.log("api call --- >", data);
+      if (data !== undefined) {
+        if (!data.success) {
+          Swal.fire({
+            text: `${data.message}`,
+            icon: "error",
+            timer: 2000,
+            showConfirmButton: false,
+          });
+        }
+        if (!data.success && data.message === ERROR_MESSAGE) {
+          dispatch(setWeeklySummaryData(null));
+        }
+        if (data.success) {
+          dispatch(setWeeklySummaryData(data.data));
+        }
+      }
+    });
   }, []);
-  const totalEarningChart: any = {
-    series: [
-      {
-        name: "series2",
-        data: [25, 35, 30, 25, 60, 37, 35, 50],
-      },
-    ],
+
+  const totalSalesChart: any = {
     colors: [
       "#35bfbf21",
       "#35bfbf21",
@@ -132,7 +153,6 @@ const Sales = () => {
       "#35bfbf21",
       "#35bfbf21",
       "#35bfbf21",
-      "#33BFBF",
     ],
     chart: {
       height: 95,
@@ -205,14 +225,7 @@ const Sales = () => {
       },
     ],
   };
-
-  const totalVehiclesOption: any = {
-    series: [
-      {
-        name: "series2",
-        data: [0, 40, 25, 80, 35, 40, 38, 50, 35, 70, 40, 100, 20],
-      },
-    ],
+  const totalVehiclesChart: any = {
     chart: {
       height: 95,
       offsetY: 30,
@@ -312,54 +325,188 @@ const Sales = () => {
       },
     ],
   };
+  const totalCustomersChart: any = {
+    colors: [
+      "#35bfbf21",
+      "#35bfbf21",
+      "#35bfbf21",
+      "#35bfbf21",
+      "#35bfbf21",
+      "#35bfbf21",
+      "#35bfbf21",
+    ],
+    chart: {
+      height: 95,
+      type: "bar",
+      offsetY: 30,
+      sparkline: {
+        enabled: true,
+      },
+    },
+    dataLabels: {
+      enabled: false,
+    },
+    stroke: {
+      curve: "smooth",
+    },
+    plotOptions: {
+      bar: {
+        distributed: true,
+        barHeight: "35%",
+        dataLabels: {
+          position: "top",
+        },
+      },
+    },
+    responsive: [
+      {
+        breakpoint: 1700,
+        options: {
+          chart: {
+            height: 86,
+          },
+        },
+      },
+      {
+        breakpoint: 1699,
+        options: {
+          chart: {
+            height: 95,
+          },
+        },
+      },
+      {
+        breakpoint: 1460,
+        options: {
+          grid: {
+            padding: {
+              top: 0,
+              right: 0,
+              bottom: 0,
+              left: 5,
+            },
+          },
+        },
+      },
+      {
+        breakpoint: 576,
+        options: {
+          chart: {
+            offsetY: 0,
+          },
+        },
+      },
+      {
+        breakpoint: 376,
+        options: {
+          chart: {
+            height: 50,
+          },
+        },
+      },
+    ],
+  };
 
-  const totalEarningData = [
-    {
-      badgeColor: "primary",
-      badge: "$",
-      title: "Sales",
-      amount: "$200.790",
-      color: "secondary",
-      icon: "arrow-down",
-      percentage: "- 36.28%",
-      time: "Since Last Month",
-      chartId: "expensesChart",
-      charts: totalEarningChart,
-      type: "bar",
-    },
-    {
-      badgeColor: "dark",
-      svgIcon: "fill-Buy",
-      // badge: "$",
-      title: "Vehicles",
-      amount: "560",
-      color: "dark",
-      icon: "arrow-up",
-      percentage: "- 90.28%",
-      time: "Then Last Week",
-      chartId: "totalLikesAreaChart",
-      charts: totalVehiclesOption,
-      type: "area",
-    },
-    {
-      badgeColor: "primary",
-      badge: "$",
-      title: "Customers",
-      amount: "100",
-      color: "secondary",
-      icon: "arrow-down",
-      percentage: "- 36.28%",
-      time: "Since Last Month",
-      chartId: "expensesChart",
-      charts: totalEarningChart,
-      type: "bar",
-    },
-  ];
+  useEffect(() => {
+    console.log("weeklySummaryData", weeklySummaryData);
+    setWeeklySummaryDataa([
+      {
+        badgeColor: "primary",
+        badge: "$",
+        title: "Sales",
+        total: weeklySummaryData?.totalSales,
+        color: `${
+          Number(weeklySummaryData?.salesAnalytics) < 0 ? "secondary" : "dark"
+        }`,
+        icon: `${
+          Number(weeklySummaryData?.salesAnalytics) < 0
+            ? "arrow-down"
+            : "arrow-up"
+        }`,
+        percentage: weeklySummaryData?.salesAnalytics,
+        chartId: "expensesChart",
+        charts: {
+          series: [
+            {
+              name: "Sales",
+              data: weeklySummaryData?.weeklyAnalytics.map(
+                (item: any, index: any) => item?.totalSales
+              ),
+            },
+          ],
+          ...totalSalesChart,
+        },
+        type: "bar",
+      },
+      {
+        badgeColor: "primary",
+        svgIcon: "fill-Buy",
+        // badge: "$",
+        title: "Vehicles",
+        total: weeklySummaryData?.totalVehicles,
+        color: `${
+          Number(weeklySummaryData?.vehiclesAnalytics) < 0
+            ? "secondary"
+            : "dark"
+        }`,
+        icon: `${
+          Number(weeklySummaryData?.vehiclesAnalytics) < 0
+            ? "arrow-down"
+            : "arrow-up"
+        }`,
+        percentage: weeklySummaryData?.vehiclesAnalytics,
+        chartId: "totalLikesAreaChart",
+        charts: {
+          series: [
+            {
+              name: "Vehicles",
+              data: weeklySummaryData?.weeklyAnalytics.map(
+                (item: any, index: any) => item?.totalVehicles
+              ),
+            },
+          ],
+          ...totalVehiclesChart,
+        },
+        type: "area",
+      },
+      {
+        badgeColor: "primary",
+        badge: "$",
+        title: "Customers",
+        total: weeklySummaryData?.totalCustomers,
+        color: `${
+          Number(weeklySummaryData?.customerAnalytics) < 0
+            ? "secondary"
+            : "dark"
+        }`,
+        icon: `${
+          Number(weeklySummaryData?.customerAnalytics) < 0
+            ? "arrow-down"
+            : "arrow-up"
+        }`,
+        percentage: weeklySummaryData?.customerAnalytics,
+        chartId: "expensesChart",
+        charts: {
+          series: [
+            {
+              name: "Sales",
+              data: weeklySummaryData?.weeklyAnalytics.map(
+                (item: any, index: any) => item?.totalCustomers
+              ),
+            },
+          ],
+          ...totalCustomersChart,
+        },
+        type: "bar",
+      },
+    ]);
+  }, [weeklySummaryData]);
+
   return (
     <>
       <Container fluid className="dashboard_default">
         <Row className="widget-grid">
-          {totalEarningData.map((data: any, index: any) => (
+          {weeklySummaryDataa.map((data: any, index: any) => (
             <Col
               xxl="4"
               xl="4"
@@ -383,16 +530,16 @@ const Sales = () => {
                             // }}
                           }}
                           color="transperant"
-                          className={`bg-light-${data.badgeColor} badge-rounded font-primary me-2`}
+                          className={`bg-light-${data?.badgeColor} badge-rounded font-primary me-2`}
                         >
-                          {data.badge ? (
-                            data.badge
+                          {data?.badge ? (
+                            data?.badge
                           ) : (
-                            <SVG iconId={data.svgIcon} />
+                            <SVG iconId={data?.svgIcon} />
                           )}
                         </Badge>
                         <div className="flex-grow-1">
-                          <H4>{data.title}</H4>
+                          <H4>{data?.title}</H4>
                         </div>
                       </div>
                       <div
@@ -400,20 +547,20 @@ const Sales = () => {
                           margin: "15px 0px",
                         }}
                       ></div>
-                      <H5>{data.amount}</H5>
+                      <H5>{data?.total}</H5>
                       <div
                         style={{
                           margin: "15px 0px",
                         }}
                       ></div>
                       <P2 className="d-flex">
-                        <span className={`bg-light-${data.color} me-2`}>
-                          <SVG iconId={data.icon} />
+                        <span className={`bg-light-${data?.color} me-2`}>
+                          <SVG iconId={data?.icon} />
                         </span>
                         <span className={`font-${data.color} me-2`}>
-                          {data.percentage}
+                          {data.percentage} %
                         </span>
-                        <span>{data.time}</span>
+                        <span className={`font-${data.color} me-2`}></span>
                       </P2>
                     </Col>
                     <Col

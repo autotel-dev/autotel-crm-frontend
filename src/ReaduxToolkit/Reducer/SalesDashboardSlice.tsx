@@ -9,6 +9,7 @@ const initialState = {
   salesSummaryData: null,
   recentPurchasesData: null,
   purchasesSummaryData: null,
+  weeklySummaryData: null,
   operationStatisticsLoading: true,
   operationActivitiesLoading: true,
   inventoryStatisticsLoading: true,
@@ -17,6 +18,7 @@ const initialState = {
   salesSummaryLoading: true,
   recentPurchasesLoading: true,
   purchasesSummaryLoading: true,
+  weeklySummaryLoading: true,
   error: null,
   isConnected: true,
 };
@@ -57,6 +59,10 @@ const SalesDashboardSlice = createSlice({
       state.purchasesSummaryData = action.payload;
       state.purchasesSummaryLoading = false;
     },
+    setWeeklySummaryData: (state, action) => {
+      state.weeklySummaryData = action.payload;
+      state.weeklySummaryLoading = false;
+    },
     setOperationsStatisticsLoading: (state, action) => {
       state.operationStatisticsLoading = action.payload;
     },
@@ -81,6 +87,9 @@ const SalesDashboardSlice = createSlice({
     setPurchaseSummaryLoading: (state, action) => {
       state.purchasesSummaryLoading = action.payload;
     },
+    setweeklySummaryLoading: (state, action) => {
+      state.weeklySummaryLoading = action.payload;
+    },
 
     setIsConnected: (state, action) => {
       state.isConnected = action.payload;
@@ -97,6 +106,7 @@ export const {
   setRecentPurchasesData,
   setSalesSummaryData,
   setPurchaseSummaryData,
+  setWeeklySummaryData,
   setOperationsStatisticsLoading,
   setOperationsActivitiesLoading,
   setInventoryActivitiesLoading,
@@ -105,6 +115,7 @@ export const {
   setRecentPurchasesLoading,
   setSalesSummaryLoading,
   setPurchaseSummaryLoading,
+  setweeklySummaryLoading,
 } = SalesDashboardSlice.actions;
 
 export default SalesDashboardSlice.reducer;
