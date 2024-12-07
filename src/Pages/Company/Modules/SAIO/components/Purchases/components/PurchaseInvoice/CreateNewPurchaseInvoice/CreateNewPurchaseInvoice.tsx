@@ -62,9 +62,9 @@ declare module "jspdf" {
 }
 
 const CreateNewPurchaseInvoice = ({}) => {
-  const { products, purchaseInvoice, vendors } = useSelector(
-    (state: any) => state.purchaseInvoice
-  );
+  const { products, purchaseInvoice, vendors, branches, warehouses } =
+    useSelector((state: any) => state.purchaseInvoice);
+
   const { userPersonalizationData } = useSelector(
     (state: any) => state.personalization
   );
@@ -76,10 +76,18 @@ const CreateNewPurchaseInvoice = ({}) => {
     purchaseInvoice !== null ? purchaseInvoice?.vendor : ""
   );
   const [branch, setBranch] = useState(
-    purchaseInvoice !== null ? purchaseInvoice?.branch?._id : ""
+    purchaseInvoice !== null
+      ? purchaseInvoice?.branch?._id
+      : branches?.map((branch: any, index: any) =>
+          branch.name == "Default" ? branch._id : ""
+        )
   );
   const [warehouse, setWarehouse] = useState(
-    purchaseInvoice !== null ? purchaseInvoice?.warehouse?._id : ""
+    purchaseInvoice !== null
+      ? purchaseInvoice?.warehouse?._id
+      : warehouses?.map((warehouse: any, index: any) =>
+          warehouse.name == "Default" ? warehouse._id : ""
+        )
   );
   const [loading, setLoading] = useState(false);
   const [modal, setModal] = useState(false);

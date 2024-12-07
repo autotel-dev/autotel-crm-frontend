@@ -44,14 +44,13 @@ const CustomerInfo = ({ callbackActive }: CustomerInfoProps) => {
   const { userPersonalizationData } = useSelector(
     (state: any) => state.personalization
   );
-  const { saleLeadId, customer, saleLead } = useSelector(
-    (state: any) => state.sales
-  );
+  const { customer, saleLead } = useSelector((state: any) => state.sales);
   // // console.log("saleLeadId", saleLeadId);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [personalDetailsForm, setPersonalDetailsForm] = useState({
+    customerName: saleLead?.customerName,
     cnic: "",
     dob: "",
     additionalContactNo: "",
@@ -69,6 +68,7 @@ const CustomerInfo = ({ callbackActive }: CustomerInfoProps) => {
   };
   const [formData, setFormData] = useState({});
   const {
+    customerName,
     cnic,
     dob,
     additionalContactNo,
@@ -94,6 +94,7 @@ const CustomerInfo = ({ callbackActive }: CustomerInfoProps) => {
   const createCustomer = async () => {
     setLoading(true);
     if (
+      customerName !== "" &&
       cnic !== "" &&
       dob !== "" &&
       additionalContactNo !== "" &&
@@ -174,6 +175,7 @@ const CustomerInfo = ({ callbackActive }: CustomerInfoProps) => {
   const updateCustomer = async () => {
     setLoading(true);
     if (
+      customerName !== "" &&
       cnic !== "" &&
       dob !== "" &&
       additionalContactNo !== "" &&
@@ -255,6 +257,7 @@ const CustomerInfo = ({ callbackActive }: CustomerInfoProps) => {
   useEffect(() => {
     if (customer !== null) {
       setPersonalDetailsForm({
+        customerName: customer !== null ? saleLead?.customerName : "",
         cnic: customer !== null ? customer?.cnic : "",
         dob: customer !== null ? customer?.dob?.slice(0, 10) : "",
         additionalContactNo:
@@ -270,6 +273,8 @@ const CustomerInfo = ({ callbackActive }: CustomerInfoProps) => {
   useEffect(() => {
     if (saleLead?.customer !== null) {
       setPersonalDetailsForm({
+        customerName:
+          saleLead?.fullName !== null ? saleLead?.customer?.fullName : "",
         cnic: saleLead?.customer !== null ? saleLead?.customer?.cnic : "",
         dob:
           saleLead?.customer !== null
@@ -298,6 +303,20 @@ const CustomerInfo = ({ callbackActive }: CustomerInfoProps) => {
       noValidate
     >
       <Row className="g-3">
+        <Col xl={4} xs={12}>
+          <P>
+            Customer Name
+            <span className="txt-danger">*</span>
+          </P>
+          <Input
+            type="text"
+            placeholder="Enter Customer Name"
+            value={customerName}
+            name="customerName"
+            onChange={getUserData}
+            disabled={isEditCustomerInfo}
+          />
+        </Col>
         <Col xl={4} xs={12}>
           <P>
             Company Name

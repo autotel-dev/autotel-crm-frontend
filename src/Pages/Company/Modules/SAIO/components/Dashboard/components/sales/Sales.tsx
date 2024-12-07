@@ -44,6 +44,8 @@ import {
 import { ERROR_MESSAGE } from "../../../../../../../../Utilities/constants/constants";
 import { useSelector } from "react-redux";
 import Skeleton from "../../../../../../../Utilities/Skeleton/Skeleton";
+import { FaCarSide, FaUserAlt } from "react-icons/fa";
+import { GiCash } from "react-icons/gi";
 
 const Sales = () => {
   const {
@@ -146,13 +148,13 @@ const Sales = () => {
 
   const totalSalesChart: any = {
     colors: [
-      "#35bfbf21",
-      "#35bfbf21",
-      "#35bfbf21",
-      "#35bfbf21",
-      "#35bfbf21",
-      "#35bfbf21",
-      "#35bfbf21",
+      "#35bfbf",
+      "#35bfbf",
+      "#35bfbf",
+      "#35bfbf",
+      "#35bfbf",
+      "#35bfbf",
+      "#35bfbf",
     ],
     chart: {
       height: 95,
@@ -228,7 +230,7 @@ const Sales = () => {
   const totalVehiclesChart: any = {
     chart: {
       height: 95,
-      offsetY: 30,
+      offsetY: 40,
       type: "area",
       sparkline: {
         enabled: true,
@@ -327,13 +329,13 @@ const Sales = () => {
   };
   const totalCustomersChart: any = {
     colors: [
-      "#35bfbf21",
-      "#35bfbf21",
-      "#35bfbf21",
-      "#35bfbf21",
-      "#35bfbf21",
-      "#35bfbf21",
-      "#35bfbf21",
+      "#35bfbf",
+      "#35bfbf",
+      "#35bfbf",
+      "#35bfbf",
+      "#35bfbf",
+      "#35bfbf",
+      "#35bfbf",
     ],
     chart: {
       height: 95,
@@ -489,7 +491,7 @@ const Sales = () => {
         charts: {
           series: [
             {
-              name: "Sales",
+              name: "Customers",
               data: weeklySummaryData?.weeklyAnalytics.map(
                 (item: any, index: any) => item?.totalCustomers
               ),
@@ -505,84 +507,129 @@ const Sales = () => {
   return (
     <>
       <Container fluid className="dashboard_default">
-        <Row className="widget-grid">
-          {weeklySummaryDataa.map((data: any, index: any) => (
-            <Col
-              xxl="4"
-              xl="4"
-              lg="4"
-              sm="12"
-              className="box-col-4"
-              key={index}
-            >
-              <Card className="total-earning">
-                <CardBody>
-                  <Row>
-                    <Col sm="7" className="box-col-7">
-                      <div className="d-flex">
-                        <Badge
-                          style={{
-                            fontSize: "1rem",
-                            padding: "0.2rem 0.5rem",
-                            // style={{
-                            width: "40px",
-                            height: "40px",
-                            // }}
-                          }}
-                          color="transperant"
-                          className={`bg-light-${data?.badgeColor} badge-rounded font-primary me-2`}
-                        >
-                          {data?.badge ? (
-                            data?.badge
-                          ) : (
-                            <SVG iconId={data?.svgIcon} />
-                          )}
-                        </Badge>
-                        <div className="flex-grow-1">
-                          <H4>{data?.title}</H4>
+        <Row className="widget-grid" style={{ marginTop: "20px" }}>
+          {weeklySummaryLoading ? (
+            <>
+              <Col xxl="4" xl="4" lg="4" sm="12" className="box-col-4">
+                <Skeleton
+                  height="170px"
+                  width="100%"
+                  marginTop="10px"
+                  marginBottom="25px"
+                  marginRight="20px"
+                  borderRadius="10px"
+                />
+              </Col>
+              <Col xxl="4" xl="4" lg="4" sm="12" className="box-col-4">
+                <Skeleton
+                  height="170px"
+                  width="100%"
+                  marginTop="10px"
+                  marginBottom="25px"
+                  marginRight="20px"
+                  borderRadius="10px"
+                />
+              </Col>
+              <Col xxl="4" xl="4" lg="4" sm="12" className="box-col-4">
+                <Skeleton
+                  height="170px"
+                  width="100%"
+                  marginTop="10px"
+                  marginBottom="25px"
+                  marginRight="20px"
+                  borderRadius="10px"
+                />
+              </Col>
+            </>
+          ) : (
+            weeklySummaryDataa.map((data: any, index: any) => (
+              <Col
+                xxl="4"
+                xl="4"
+                lg="4"
+                sm="12"
+                className="box-col-4"
+                key={index}
+              >
+                <Card className="total-earning">
+                  <CardBody>
+                    <Row>
+                      <Col sm="7" className="box-col-7">
+                        <div className="d-flex">
+                          <Badge
+                            style={{
+                              fontSize: "1rem",
+                              padding: "0.2rem 0.5rem",
+                              // style={{
+                              width: "40px",
+                              height: "40px",
+                              // }}
+                            }}
+                            color="transperant"
+                            className={`bg-light-${data?.badgeColor} badge-rounded font-primary me-2`}
+                          >
+                            {data.title == "Sales" && (
+                              <GiCash color="#35bfbf" size={11} />
+                            )}
+                            {data.title == "Vehicles" && (
+                              <FaCarSide color="#35bfbf" size={11} />
+                            )}
+                            {data.title == "Customers" && (
+                              <FaUserAlt color="#35bfbf" size={11} />
+                            )}
+
+                            {/* {data?.badge ? (
+                              data?.badge
+                            ) : (
+                              <SVG iconId={data?.svgIcon} />
+                            )} */}
+                          </Badge>
+                          <div className="flex-grow-1">
+                            <H4>{data?.title}</H4>
+                          </div>
                         </div>
-                      </div>
-                      <div
+                        <div
+                          style={{
+                            margin: "15px 0px",
+                          }}
+                        ></div>
+                        <H5>{data?.total}</H5>
+                        <div
+                          style={{
+                            margin: "15px 0px",
+                          }}
+                        ></div>
+                        <P2 className="d-flex">
+                          <span className={`bg-light-${data?.color} me-2`}>
+                            <SVG iconId={data?.icon} />
+                          </span>
+                          <span className={`font-${data.color} me-2`}>
+                            {data.percentage} %
+                          </span>
+                          <span className={`font-${data.color} me-2`}></span>
+                        </P2>
+                      </Col>
+                      <Col
+                        sm="5"
+                        className={`box-col-5 ${data.chartClass}`}
                         style={{
-                          margin: "15px 0px",
+                          marginTop: "-10px",
                         }}
-                      ></div>
-                      <H5>{data?.total}</H5>
-                      <div
-                        style={{
-                          margin: "15px 0px",
-                        }}
-                      ></div>
-                      <P2 className="d-flex">
-                        <span className={`bg-light-${data?.color} me-2`}>
-                          <SVG iconId={data?.icon} />
-                        </span>
-                        <span className={`font-${data.color} me-2`}>
-                          {data.percentage} %
-                        </span>
-                        <span className={`font-${data.color} me-2`}></span>
-                      </P2>
-                    </Col>
-                    <Col
-                      sm="5"
-                      className={`box-col-5 ${data.chartClass}`}
-                      style={{
-                        marginTop: "-10px",
-                      }}
-                    >
-                      <ReactApexChart
-                        id={data.chartId}
-                        options={data.charts}
-                        series={data.charts.series}
-                        type={data.charts.chart?.type}
-                        height={data.charts.chart?.height}
-                      />
-                    </Col>
-                  </Row>
-                </CardBody>
-              </Card>
-            </Col>
-          ))}
+                      >
+                        <ReactApexChart
+                          id={data.chartId}
+                          options={data.charts}
+                          series={data.charts.series}
+                          type={data.charts.chart?.type}
+                          height={data.charts.chart?.height}
+                        />
+                      </Col>
+                    </Row>
+                  </CardBody>
+                </Card>
+              </Col>
+            ))
+          )}
         </Row>
         {topEntitesLoading ? (
           <Row>
@@ -673,7 +720,7 @@ const Sales = () => {
                                 {data?.fullName}
                               </span>
                               {/* Dynamic name from customer data */}
-                              <span>{data?.percentage}%</span>
+                              <span>{data?.percentage.toFixed(2)} %</span>
                             </div>
                           </div>
                         )
@@ -747,7 +794,7 @@ const Sales = () => {
                                 {data?.vendorName}
                               </span>
 
-                              <span>{data?.percentage}%</span>
+                              <span>{data?.percentage.toFixed(2)} %</span>
                             </div>
                           </div>
                         )
@@ -845,7 +892,7 @@ const Sales = () => {
                             {/* Dynamic percentage from customer data */}
                             <span style={{ width: "50px" }}>{data?.name}</span>
                             {/* Dynamic name from customer data */}
-                            <span>{data?.percentage}%</span>
+                            <span>{data?.percentage.toFixed(2)} %</span>
                           </div>
                         </div>
                       ))}
@@ -920,7 +967,7 @@ const Sales = () => {
                                     ? `${data?.name.slice(0, 8)} ...`
                                     : data?.name}
                                 </span>
-                                <span>{data?.percentage}%</span>
+                                <span>{data?.percentage.toFixed(2)} %</span>
                               </div>
                             </div>
                           )

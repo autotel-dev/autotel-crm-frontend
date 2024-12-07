@@ -63,8 +63,8 @@ const CreateNewSaleInvoice = ({}) => {
   const { taxes } = useSelector((state: any) => state.taxes);
   // console.log("invoiceData", invoiceData);
   const [saleInvoiceForm, setSaleInvoiceForm] = useState({
-    invoiceDate: "",
-    invoiceDueDate: "",
+    invoiceDate: new Date().toISOString().slice(0, 10),
+    invoiceDueDate: new Date().toISOString().slice(0, 10),
     reference: "",
     comments: "",
     additionalCharges: 0,

@@ -94,6 +94,23 @@ const VehicleForm = ({
 
   const [selection, setSelection] = useState("Self"); // Added state for selection
 
+  const [renewalDate, setRenewalDate] = useState("");
+
+  useEffect(() => {
+    if (saleLead?.package?.days) {
+      // Get the current date
+      const currentDate = new Date();
+      // Add the days from saleLead?.package?.days
+      currentDate.setDate(currentDate.getDate() + saleLead?.package?.days);
+
+      // Format the date to a readable format (e.g., 'MM/DD/YYYY')
+      const formattedDate = currentDate.toLocaleDateString();
+
+      // Set the formatted date to the state
+      setRenewalDate(formattedDate);
+    }
+  }, [saleLead]);
+
   const createVehicle = async () => {
     setLoading(true);
     if (
@@ -112,6 +129,9 @@ const VehicleForm = ({
         additionalServices: formData.additionalServices,
         saleLeadId: saleLead?._id,
         customer: saleLead?.customer._id,
+        servicePackage: saleLead?.package?._id,
+        servicePackageCharges: saleLead?.discountedServiceCharges,
+        serviceRenewalDate: new Date(renewalDate).toISOString(),
       };
 
       try {
@@ -215,13 +235,17 @@ const VehicleForm = ({
     ) {
       const body = {
         ...formData,
-        additionalServices: [
-          ...formData.additionalServices
-            .filter((service: any) => service.checked)
-            .map((service: any) => service.value),
-        ],
+        // additionalServices: [
+        //   ...formData.additionalServices
+        //     .filter((service: any) => service.checked)
+        //     .map((service: any) => service.value),
+        // ],
+        additionalServices: formData.additionalServices,
         saleLeadId: saleLead?._id,
         customer: saleLead?.customer._id,
+        servicePackage: saleLead?.package?._id,
+        servicePackageCharges: saleLead?.discountedServiceCharges,
+        serviceRenewalDate: new Date(renewalDate).toISOString(),
       };
 
       try {
@@ -576,6 +600,20 @@ const VehicleForm = ({
             type="text"
             placeholder="Enter Discounted Service Charges"
             value={saleLead?.discountedServiceCharges}
+            disabled={true}
+          />
+        </Col>
+        <Col xl={4} xs={12}>
+          <div>
+            <P>
+              Renewal Date
+              <span className="txt-danger">*</span>
+            </P>
+          </div>
+          <Input
+            type="text"
+            placeholder="Enter Renewal Date"
+            value={renewalDate}
             disabled={true}
           />
         </Col>

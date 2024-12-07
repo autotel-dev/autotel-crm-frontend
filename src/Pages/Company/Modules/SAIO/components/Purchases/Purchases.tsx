@@ -2,26 +2,14 @@ import { Card, CardBody, Col, Container, Row } from "reactstrap";
 import Breadcrumbs from "../../../../../../CommonElements/Breadcrumbs/Breadcrumbs";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { PlusCircle } from "react-feather";
 import StickyBar from "./components/StickyBar/StickyBar";
 
 import { useDispatch } from "react-redux";
-import { create, getAll } from "../../../../../../Utilities/api";
-import {
-  GET_ALL_BANK_ACCOUNTS,
-  GET_ALL_EXPENSE_ACCOUNTS,
-  GET_ALL_EXPENSES,
-  GET_ALL_PURCHASE_INVOICES,
-  GET_ALL_TAXES,
-  GET_ALL_VENDORS,
-} from "../../../../../../Utilities/api/apiEndpoints";
+import { getAll } from "../../../../../../Utilities/api";
+import { GET_ALL_VENDORS } from "../../../../../../Utilities/api/apiEndpoints";
 
-import {
-  setPurchaseInvoices,
-  setVendors,
-} from "../../../../../../ReaduxToolkit/Reducer/PurchaseInvoiceSlice";
+import { setVendors } from "../../../../../../ReaduxToolkit/Reducer/PurchaseInvoiceSlice";
 import { Outlet, useLocation } from "react-router-dom";
-import { setVendor } from "../../../../../../ReaduxToolkit/Reducer/VendorSlice";
 
 const Purchases = () => {
   const location = useLocation(); // Access current route information
