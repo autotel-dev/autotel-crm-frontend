@@ -438,6 +438,8 @@ export const GET_TOP_ENTITIES = `${API_BASE_URL}/sales-dashboard/sales/get-top-e
 export const GET_LATEST_SALE_INVOICE = `${API_BASE_URL}/sales-dashboard/sales/get-latest-sale-invoices`;
 export const GET_SALES_SUMMARY = `${API_BASE_URL}/sales-dashboard/sales/get-sales-summary`;
 export const GET_WEEKLY_SUMMARY = `${API_BASE_URL}/sales-dashboard/sales/get-weekly-summary`;
+export const GET_VEHICLES_SUMMARY_AMC = `${API_BASE_URL}/sales-dashboard/sales/get-vehicles-summary`;
+export const GET_VEHICLES_DATA_AMC = `${API_BASE_URL}/sales-dashboard/sales/get-vehicles`;
 
 // Company -> Modules- SAIO - Dashboard - Purchases
 

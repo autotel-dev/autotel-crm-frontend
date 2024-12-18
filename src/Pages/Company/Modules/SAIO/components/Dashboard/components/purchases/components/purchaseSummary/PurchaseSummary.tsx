@@ -66,7 +66,7 @@ const PurchaseSummary = () => {
     yaxis: {
       labels: {
         formatter: function (val: any) {
-          return val + "0" + "k";
+          return val + "" + "";
         },
         style: {
           fontSize: "14px",

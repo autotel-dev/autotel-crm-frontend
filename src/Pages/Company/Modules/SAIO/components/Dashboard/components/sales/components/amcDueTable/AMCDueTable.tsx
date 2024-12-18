@@ -1,61 +1,14 @@
 import { Link } from "react-router-dom";
 import { Button, Table } from "reactstrap";
 import { H4, H5 } from "../../../../../../../../../../AbstractElements";
+import { useSelector } from "react-redux";
 
 const AMCDueTable = () => {
-  const amcDueHeader = ["Vehicle", , "Date", "Latitude", "Longitude", "imei"];
+  const amcDueHeader = ["Reg No.", "Renewal Date", "Charges", "Customer"];
 
-  const amcDueBody = [
-    {
-      vehicle: "SIR-0098",
-      date: "Aug 15,2023",
-      latitude: 22.676769,
-      longitude: 67.676769,
-      imei: "1989787887787878",
-    },
-    {
-      vehicle: "SIR-0098",
-      date: "Aug 15,2023",
-      latitude: 22.676769,
-      longitude: 67.676769,
-      imei: "1989787887787878",
-    },
-    {
-      vehicle: "SIR-0098",
-      date: "Aug 15,2023",
-      latitude: 22.676769,
-      longitude: 67.676769,
-      imei: "1989787887787878",
-    },
-    {
-      vehicle: "SIR-0098",
-      date: "Aug 15,2023",
-      latitude: 22.676769,
-      longitude: 67.676769,
-      imei: "1989787887787878",
-    },
-    {
-      vehicle: "SIR-0098",
-      date: "Aug 15,2023",
-      latitude: 22.676769,
-      longitude: 67.676769,
-      imei: "1989787887787878",
-    },
-    {
-      vehicle: "SIR-0098",
-      date: "Aug 15,2023",
-      latitude: 22.676769,
-      longitude: 67.676769,
-      imei: "1989787887787878",
-    },
-    {
-      vehicle: "SIR-0098",
-      date: "Aug 15,2023",
-      latitude: 22.676769,
-      longitude: 67.676769,
-      imei: "1989787887787878",
-    },
-  ];
+  const { vehiclesByMonthData } = useSelector(
+    (state: any) => state.salesDashboard
+  );
   return (
     <div
       className="table-responsive theme-scrollbar recent-wrapper"
@@ -81,13 +34,13 @@ const AMCDueTable = () => {
           </tr>
         </thead>
         <tbody>
-          {amcDueBody.map((data, index) => (
+          {vehiclesByMonthData?.map((data: any, index: any) => (
             <tr key={index}>
-              <td>{data.vehicle}</td>
-              <td>{data.date}</td>
-              <td>{data.latitude}</td>
-              <td>{data.longitude}</td>
-              <td>{data.imei}</td>
+              <td>{data?.registrationNo}</td>
+              <td>{data?.serviceRenewalDate}</td>
+              <td>{data?.servicePackageDiscountedCharges}</td>
+              <td>{data?.customer?.fullName}</td>
+              {/* <td>{data.imei}</td> */}
             </tr>
           ))}
         </tbody>

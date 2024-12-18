@@ -185,11 +185,8 @@ const Operations = () => {
         </div>
       ) : (
         <Row style={{ display: "flex" }}>
-          {/* {operationStatisticsData !== null && !operationStatisticsLoading && ( */}
           <TotalActivities />
-          {/* // )} */}
 
-          {/* {operationActivitiesData !== null && !operationActivitiesLoading && ( */}
           <ActivityTypesTable
             toggleDropdown={toggleDropdown}
             selectedFilter={selectedFilter}
@@ -205,11 +202,8 @@ const Operations = () => {
             activityType={activityType}
             setActivityType={setActivityType}
           />
-          {/* )} */}
 
-          {/* {operationStatisticsData !== null && !operationStatisticsLoading && ( */}
           <ActivityTypes />
-          {/* )} */}
         </Row>
       )}
     </Col>

@@ -10,6 +10,8 @@ const initialState = {
   recentPurchasesData: null,
   purchasesSummaryData: null,
   weeklySummaryData: null,
+  vehiclesSummaryData: null,
+  vehiclesByMonthData: null,
   operationStatisticsLoading: true,
   operationActivitiesLoading: true,
   inventoryStatisticsLoading: true,
@@ -19,6 +21,8 @@ const initialState = {
   recentPurchasesLoading: true,
   purchasesSummaryLoading: true,
   weeklySummaryLoading: true,
+  vehiclesSummaryLoading: true,
+  vehiclesByMonthLoading: true,
   error: null,
   isConnected: true,
 };
@@ -63,6 +67,14 @@ const SalesDashboardSlice = createSlice({
       state.weeklySummaryData = action.payload;
       state.weeklySummaryLoading = false;
     },
+    setVehiclesSummaryData: (state, action) => {
+      state.vehiclesSummaryData = action.payload;
+      state.vehiclesSummaryLoading = false;
+    },
+    setVehiclesByMonthData: (state, action) => {
+      state.vehiclesByMonthData = action.payload;
+      state.vehiclesByMonthLoading = false;
+    },
     setOperationsStatisticsLoading: (state, action) => {
       state.operationStatisticsLoading = action.payload;
     },
@@ -91,6 +103,14 @@ const SalesDashboardSlice = createSlice({
       state.weeklySummaryLoading = action.payload;
     },
 
+    setVehiclesSummaryLoading: (state, action) => {
+      state.vehiclesSummaryLoading = action.payload;
+    },
+
+    setVehiclesByMonthLoading: (state, action) => {
+      state.vehiclesByMonthLoading = action.payload;
+    },
+
     setIsConnected: (state, action) => {
       state.isConnected = action.payload;
     },
@@ -107,6 +127,8 @@ export const {
   setSalesSummaryData,
   setPurchaseSummaryData,
   setWeeklySummaryData,
+  setVehiclesSummaryData,
+  setVehiclesByMonthData,
   setOperationsStatisticsLoading,
   setOperationsActivitiesLoading,
   setInventoryActivitiesLoading,
@@ -116,6 +138,8 @@ export const {
   setSalesSummaryLoading,
   setPurchaseSummaryLoading,
   setweeklySummaryLoading,
+  setVehiclesSummaryLoading,
+  setVehiclesByMonthLoading,
 } = SalesDashboardSlice.actions;
 
 export default SalesDashboardSlice.reducer;

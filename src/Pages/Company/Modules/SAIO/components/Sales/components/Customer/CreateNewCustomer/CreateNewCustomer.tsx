@@ -653,7 +653,7 @@ const CreateNewCustomer = () => {
                   </Button>
                   {customer == null ? (
                     <Button color="primary" onClick={createCustomer}>
-                      Create Customer
+                      {loading ? "Loading..." : "Create"}
                     </Button>
                   ) : (
                     <Button

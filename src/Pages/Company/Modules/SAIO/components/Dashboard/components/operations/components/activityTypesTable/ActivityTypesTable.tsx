@@ -423,8 +423,8 @@ const ActivityTypesTable: React.FC<ActivityTypesTableProps> = ({
                             <td>
                               {formatUnderscoredString(data.activityType)}
                             </td>
-                            <td>{data.user}</td>
-                            <td>{data.installer}</td>
+                            <td>{data?.user?.fullName}</td>
+                            <td>{data?.installer?.fullName}</td>
                           </tr>
                         )
                       )}

@@ -130,7 +130,7 @@ const VehicleForm = ({
         saleLeadId: saleLead?._id,
         customer: saleLead?.customer._id,
         servicePackage: saleLead?.package?._id,
-        servicePackageCharges: saleLead?.discountedServiceCharges,
+        servicePackageDiscountedCharges: saleLead?.discountedServiceCharges,
         serviceRenewalDate: new Date(renewalDate).toISOString(),
       };
 
@@ -244,7 +244,7 @@ const VehicleForm = ({
         saleLeadId: saleLead?._id,
         customer: saleLead?.customer._id,
         servicePackage: saleLead?.package?._id,
-        servicePackageCharges: saleLead?.discountedServiceCharges,
+        servicePackageDiscountedCharges: saleLead?.discountedServiceCharges,
         serviceRenewalDate: new Date(renewalDate).toISOString(),
       };
 

@@ -22,11 +22,10 @@ const LoginForm = () => {
 
   useEffect(() => {
     const userId = localStorage.getItem("userId");
-    // console.log(userId);
 
     getAll({
       url:
-        userId == null && userId == undefined
+        userId == null || userId == undefined
           ? GET_SUPERADMIN_PERSONALIZATION
           : `${GET_COMPANY_PERSONALIZATION}/${userId}`,
 

@@ -28,6 +28,8 @@ import {
   GET_LATEST_SALE_INVOICE,
   GET_SALES_SUMMARY,
   GET_TOP_ENTITIES,
+  GET_VEHICLES_DATA_AMC,
+  GET_VEHICLES_SUMMARY_AMC,
   GET_WEEKLY_SUMMARY,
 } from "../../../../../../../../Utilities/api/apiEndpoints";
 import Swal from "sweetalert2";
@@ -38,6 +40,10 @@ import {
   setSalesSummaryLoading,
   setTopEntitesData,
   setTopEntitiesLoading,
+  setVehiclesByMonthData,
+  setVehiclesByMonthLoading,
+  setVehiclesSummaryData,
+  setVehiclesSummaryLoading,
   setWeeklySummaryData,
   setweeklySummaryLoading,
 } from "../../../../../../../../ReaduxToolkit/Reducer/SalesDashboardSlice";
@@ -55,6 +61,8 @@ const Sales = () => {
     weeklySummaryLoading,
     recentSalesLoading,
     salesSummaryLoading,
+    vehiclesSummaryLoading,
+    vehiclesByMonthLoading,
   } = useSelector((state: any) => state.salesDashboard);
 
   const [] = useState([]);
@@ -68,6 +76,8 @@ const Sales = () => {
     dispatch(setRecentSalesLoading(true));
     dispatch(setSalesSummaryLoading(true));
     dispatch(setweeklySummaryLoading(true));
+    dispatch(setVehiclesSummaryLoading(true));
+    dispatch(setVehiclesByMonthLoading(true));
     getAll({ url: GET_TOP_ENTITIES }).then((data: any) => {
       // console.log("api call --- >", data);
       if (data !== undefined) {
@@ -141,6 +151,44 @@ const Sales = () => {
         }
         if (data.success) {
           dispatch(setWeeklySummaryData(data.data));
+        }
+      }
+    });
+    getAll({ url: GET_VEHICLES_SUMMARY_AMC }).then((data: any) => {
+      // console.log("api call --- >", data);
+      if (data !== undefined) {
+        if (!data.success) {
+          Swal.fire({
+            text: `${data.message}`,
+            icon: "error",
+            timer: 2000,
+            showConfirmButton: false,
+          });
+        }
+        if (!data.success && data.message === ERROR_MESSAGE) {
+          dispatch(setVehiclesSummaryData(null));
+        }
+        if (data.success) {
+          dispatch(setVehiclesSummaryData(data.data));
+        }
+      }
+    });
+    getAll({ url: GET_VEHICLES_DATA_AMC }).then((data: any) => {
+      // console.log("api call --- >", data);
+      if (data !== undefined) {
+        if (!data.success) {
+          Swal.fire({
+            text: `${data.message}`,
+            icon: "error",
+            timer: 2000,
+            showConfirmButton: false,
+          });
+        }
+        if (!data.success && data.message === ERROR_MESSAGE) {
+          dispatch(setVehiclesByMonthData(null));
+        }
+        if (data.success) {
+          dispatch(setVehiclesByMonthData(data.data));
         }
       }
     });
@@ -410,7 +458,6 @@ const Sales = () => {
   };
 
   useEffect(() => {
-    console.log("weeklySummaryData", weeklySummaryData);
     setWeeklySummaryDataa([
       {
         badgeColor: "primary",
@@ -1030,26 +1077,52 @@ const Sales = () => {
         </Row>
 
         <Row>
-          <Col xxl="6" xl="6" lg="6" md="12">
-            <Card>
-              <CardHeader>
-                <H4>AMC</H4>
-              </CardHeader>
-              <CardBody className="p-0">
-                <AMCDueSummary />
-              </CardBody>
-            </Card>
-          </Col>
-          <Col xxl="6" xl="6" lg="6" md="12">
-            <Card className="invoice-card">
-              <CardHeader className="pb-0">
-                <H4>AMC Due</H4>
-              </CardHeader>
-              <CardBody className="transaction-card">
-                <AMCDueTable />
-              </CardBody>
-            </Card>
-          </Col>
+          {vehiclesSummaryLoading ? (
+            <Col xxl="6" xl="6" lg="6" md="6" sm="6">
+              <Skeleton
+                height="280px"
+                width="100%"
+                marginTop="10px"
+                marginBottom="25px"
+                marginRight="20px"
+                borderRadius="10px"
+              />
+            </Col>
+          ) : (
+            <Col xxl="6" xl="6" lg="6" md="12">
+              <Card>
+                <CardHeader>
+                  <H4>AMC</H4>
+                </CardHeader>
+                <CardBody className="p-0">
+                  <AMCDueSummary />
+                </CardBody>
+              </Card>
+            </Col>
+          )}
+          {vehiclesByMonthLoading ? (
+            <Col xxl="6" xl="6" lg="6" md="6" sm="6">
+              <Skeleton
+                height="280px"
+                width="100%"
+                marginTop="10px"
+                marginBottom="25px"
+                marginRight="20px"
+                borderRadius="10px"
+              />
+            </Col>
+          ) : (
+            <Col xxl="6" xl="6" lg="6" md="12">
+              <Card className="invoice-card">
+                <CardHeader className="pb-0">
+                  <H4>AMC Due</H4>
+                </CardHeader>
+                <CardBody className="transaction-card">
+                  <AMCDueTable />
+                </CardBody>
+              </Card>
+            </Col>
+          )}
         </Row>
       </Container>
     </>

@@ -5,7 +5,19 @@ import { useSelector } from "react-redux";
 import { H4 } from "../../../../../../../../../../AbstractElements";
 
 const AMCDueSummary = () => {
-  //   const { alertsOverview } = useSelector((state: any) => state.dashboard);
+  const { vehiclesSummaryData } = useSelector(
+    (state: any) => state.salesDashboard
+  );
+  const months = vehiclesSummaryData?.map(
+    (summary: any, index: any) => summary.month
+  );
+  const vehicles = vehiclesSummaryData?.map(
+    (summary: any, index: any) => summary.totalVehicles
+  );
+  const amounts = vehiclesSummaryData?.map(
+    (summary: any, index: any) => summary.totalServiceCharges
+  );
+
   var alertsChartData: ApexOptions = {
     chart: {
       height: 370,
@@ -30,30 +42,42 @@ const AMCDueSummary = () => {
     },
     series: [
       {
-        name: "Sales",
-        data: [44, 55, 57, 56, 61, 58, 63],
+        name: "Data",
+        data: amounts, // Show amounts on the Y-axis
       },
     ],
     xaxis: {
-      categories: ["Mon", "Tue", "Wed", "Thurs", "Fri", "Sat", "Sun"],
+      categories: months,
+      title: {
+        text: "Months",
+      },
     },
     yaxis: {
       title: {
-        text: "AMC",
+        text: "Total Service Charges", // Y-axis title for amounts
       },
+      // Optional: Set the range for the Y-axis based on amounts data
+      // min: 0,
+      // max: Math.max(...amounts) + 1000, // Example: auto calculate max value + some padding
     },
     fill: {
       opacity: 1,
     },
     tooltip: {
       y: {
-        formatter: function (val) {
-          return "" + val + " Alerts";
+        formatter: function (val, index) {
+          const array = index.series[0];
+
+          const indexx = array.indexOf(val);
+
+          const vehicleCount = vehicles[indexx];
+          return `<div><span>Vehicles : ${vehicleCount}</span>, <span>Amount : ${val}</span></div>`;
         },
       },
     },
     colors: ["#FF6150"],
   };
+
   return (
     <ReactApexChart
       id="area-line"
