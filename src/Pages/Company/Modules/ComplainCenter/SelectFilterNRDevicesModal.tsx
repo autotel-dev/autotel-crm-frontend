@@ -80,9 +80,7 @@ const SelectFilterNRDevicesModal: React.FC<PropsTypes> = ({
 
     const fromDate = new Date(); // Current date and time
     var toDate = new Date().setHours(fromDate.getHours() - Number(hour));
-
     const formattedFromDate = fromDate.toISOString();
-
     create(
       {},
       {
@@ -100,8 +98,8 @@ const SelectFilterNRDevicesModal: React.FC<PropsTypes> = ({
           setLoading(false);
         }
         if (data.success) {
-          console.log("nr-data", data.data);
-          dispatch(setNRReport(data.data.allDevices));
+          console.log("nr-data", data?.data);
+          dispatch(setNRReport(data?.data?.allDevices));
           setLoading(false);
         }
       }

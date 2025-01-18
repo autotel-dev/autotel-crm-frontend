@@ -607,19 +607,17 @@ const InvoiceDetail = ({}) => {
                                 <textarea
                                   className="form-control"
                                   placeholder="Enter Comments"
-                                  // rows={2}
                                   style={{
                                     minHeight: "130px",
                                     resize: "vertical",
                                   }}
                                   value={`${
                                     item.registrationNo
-                                  } \n\n${item?.additionalServices?.map(
-                                    (item: any) =>
-                                      `${formatUnderscoredString(
-                                        item?.service?.title
-                                      )} | `
-                                  )}`}
+                                  } \n\n${item?.additionalServices
+                                    ?.map(
+                                      (service: any) => service?.service?.title
+                                    )
+                                    .join(" | ")}`}
                                   disabled
                                 />
                               </Col>

@@ -38,19 +38,14 @@ import {
   View,
   pdf,
   Image,
-  PDFViewer,
-  Font,
-  BlobProvider,
 } from "@react-pdf/renderer";
-import { IoClose } from "react-icons/io5";
-import { IoMdDownload, IoMdPrint } from "react-icons/io";
-import ViewPDFModal from "../../../../ViewPDFModal";
+
 import { useNavigate } from "react-router-dom";
+import { setSaleInvoiceLoading } from "../../../../../../../../../ReaduxToolkit/Reducer/SaleInvoiceSlice";
 import {
-  setSaleInvoiceLoading,
-  setSaleInvoices,
-} from "../../../../../../../../../ReaduxToolkit/Reducer/SaleInvoiceSlice";
-import { setInvoiceData } from "../../../../../../../../../ReaduxToolkit/Reducer/SalesSlice";
+  setInvoiceData,
+  setIsInvoiceRenwed,
+} from "../../../../../../../../../ReaduxToolkit/Reducer/SalesSlice";
 
 const CreateNewSaleInvoice = ({}) => {
   const navigate = useNavigate();
@@ -59,29 +54,42 @@ const CreateNewSaleInvoice = ({}) => {
   const [modal, setModal] = useState(false);
   const [selectedTax, setSelectedTax] = useState(0);
 
-  const { invoiceData } = useSelector((state: any) => state.sales);
+  const { invoiceData, isInvoiceRenwed } = useSelector(
+    (state: any) => state.sales
+  );
   const { taxes } = useSelector((state: any) => state.taxes);
   // console.log("invoiceData", invoiceData);
   const [saleInvoiceForm, setSaleInvoiceForm] = useState({
-    invoiceDate: new Date().toISOString().slice(0, 10),
-    invoiceDueDate: new Date().toISOString().slice(0, 10),
+    invoiceDate: isInvoiceRenwed
+      ? invoiceData.serviceRenewalDate.slice(0, 10)
+      : new Date().toISOString().slice(0, 10),
+    invoiceDueDate: isInvoiceRenwed
+      ? invoiceData.serviceRenewalDate.slice(0, 10)
+      : new Date().toISOString().slice(0, 10),
     reference: "",
     comments: "",
     additionalCharges: 0,
     withHoldingCharges: 0,
     discount:
       invoiceData !== null
-        ? invoiceData?.discounted_service_charges *
-          invoiceData?.vehicles?.length
+        ? isInvoiceRenwed
+          ? invoiceData?.servicePackageDiscountedCharges * 1
+          : invoiceData?.discounted_service_charges *
+            invoiceData?.vehicles?.length
         : "",
     netAmount:
       invoiceData !== null
-        ? invoiceData?.service_charges * invoiceData?.vehicles?.length
+        ? isInvoiceRenwed
+          ? invoiceData?.servicePackageDiscountedCharges * 1
+          : invoiceData?.service_charges * invoiceData?.vehicles?.length
         : "",
+
     grossAmount:
       invoiceData !== null
-        ? invoiceData?.discounted_service_charges *
-          invoiceData?.vehicles?.length
+        ? isInvoiceRenwed
+          ? invoiceData?.servicePackageDiscountedCharges * 1
+          : invoiceData?.discounted_service_charges *
+            invoiceData?.vehicles?.length
         : "",
     customer: invoiceData !== null ? invoiceData?.customer?._id : "",
     customerName: invoiceData !== null ? invoiceData?.customer?.fullName : "",
@@ -89,9 +97,18 @@ const CreateNewSaleInvoice = ({}) => {
       invoiceData !== null ? invoiceData?.customer?.emailAddress : "",
     companyName: invoiceData !== null ? invoiceData?.customer?.fullName : "",
     address: "",
-    packagePrice: invoiceData !== null ? invoiceData?.service_charges : "",
+    packagePrice:
+      invoiceData !== null
+        ? isInvoiceRenwed
+          ? invoiceData?.servicePackageDiscountedCharges
+          : invoiceData?.service_charges
+        : "",
     discountedPackagePrice:
-      invoiceData !== null ? invoiceData?.discounted_service_charges : "",
+      invoiceData !== null
+        ? isInvoiceRenwed
+          ? invoiceData?.servicePackageDiscountedCharges
+          : invoiceData?.discounted_service_charges
+        : "",
   });
 
   const {
@@ -163,12 +180,16 @@ const CreateNewSaleInvoice = ({}) => {
         packagePrice,
         discountedPackagePrice,
         tax: selectedTax,
-        vehicles: [...invoiceData.vehicles?.map((item: any) => item._id)],
+        vehicles: isInvoiceRenwed
+          ? [invoiceData._id]
+          : [...invoiceData?.vehicles?.map((item: any) => item._id)],
       };
 
       try {
         const response: any = await create(saleInvoiceData, {
-          url: CREATE_SALE_INVOICE,
+          url: isInvoiceRenwed
+            ? `${CREATE_SALE_INVOICE}?isRenewal=true`
+            : CREATE_SALE_INVOICE,
         });
         if (response.success) {
           dispatch(setSaleInvoiceLoading(true));
@@ -182,6 +203,9 @@ const CreateNewSaleInvoice = ({}) => {
           //   navigate(`${process.env.PUBLIC_URL}/company/modules/saio-central/sales/invoices`)
           //   // dispatch(setInvoiceData(null))
           // }
+          if (isInvoiceRenwed) {
+            dispatch(setIsInvoiceRenwed(false));
+          }
         } else {
           Swal.fire({
             text: response.message,
@@ -815,7 +839,11 @@ const CreateNewSaleInvoice = ({}) => {
                                 <Input
                                   type="number"
                                   placeholder="Enter Price"
-                                  value={invoiceData.service_charges}
+                                  value={
+                                    isInvoiceRenwed
+                                      ? invoiceData?.servicePackageDiscountedCharges
+                                      : invoiceData.service_charges
+                                  }
                                   // name="price"
                                   disabled
                                 />
@@ -832,7 +860,11 @@ const CreateNewSaleInvoice = ({}) => {
                                 <Input
                                   type="number"
                                   placeholder="Enter Discounted Price"
-                                  value={invoiceData.discounted_service_charges}
+                                  value={
+                                    isInvoiceRenwed
+                                      ? invoiceData?.servicePackageDiscountedCharges
+                                      : invoiceData.discounted_service_charges
+                                  }
                                   // name="price"
                                   disabled
                                 />
@@ -849,7 +881,11 @@ const CreateNewSaleInvoice = ({}) => {
                                 <Input
                                   type="number"
                                   placeholder="Enter Discounted Price"
-                                  value={invoiceData.discounted_service_charges}
+                                  value={
+                                    isInvoiceRenwed
+                                      ? invoiceData?.servicePackageDiscountedCharges
+                                      : invoiceData.discounted_service_charges
+                                  }
                                   // name="price"
                                   disabled
                                 />

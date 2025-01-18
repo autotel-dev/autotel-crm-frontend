@@ -6,6 +6,13 @@ const initialState = {
   loading: false,
   error: null,
   isConnected: true,
+  operatorsForReport: [],
+  productsForReport: [],
+  productTypesForReport: [],
+  productBranchesForReport: [],
+  productWarehousesForReport: [],
+  vendorsForReports: [],
+  customersFormReports: [],
 };
 
 const ReportsSlice = createSlice({
@@ -30,6 +37,27 @@ const ReportsSlice = createSlice({
     setIsConnected: (state, action) => {
       state.isConnected = action.payload;
     },
+    setOperatorsForReport: (state, action) => {
+      state.operatorsForReport = action.payload;
+    },
+    setProductsForReport: (state, action) => {
+      state.productsForReport = action.payload;
+    },
+    setProductTypesForReport: (state, action) => {
+      state.productTypesForReport = action.payload;
+    },
+    setBranchesForReport: (state, action) => {
+      state.productBranchesForReport = action.payload;
+    },
+    setWarehousesForReport: (state, action) => {
+      state.productWarehousesForReport = action.payload;
+    },
+    setVendorsForReport: (state, action) => {
+      state.vendorsForReports = action.payload;
+    },
+    setCustomersForReport: (state, action) => {
+      state.customersFormReports = action.payload;
+    },
   },
 });
 export const {
@@ -38,6 +66,13 @@ export const {
   setReportstype,
   setReportsEnd,
   setIsConnected,
+  setOperatorsForReport,
+  setProductsForReport,
+  setProductTypesForReport,
+  setBranchesForReport,
+  setWarehousesForReport,
+  setVendorsForReport,
+  setCustomersForReport,
 } = ReportsSlice.actions;
 
 export default ReportsSlice.reducer;

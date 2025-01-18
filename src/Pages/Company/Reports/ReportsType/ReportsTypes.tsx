@@ -3,4 +3,5 @@ export interface ReportsType {
   title: string;
   startDate: string;
   endDate: string;
+  imei: String;
 }

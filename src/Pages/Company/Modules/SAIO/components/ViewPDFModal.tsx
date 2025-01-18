@@ -1,37 +1,44 @@
-import { PDFViewer } from '@react-pdf/renderer'
-import React from 'react'
-import { IoClose } from 'react-icons/io5'
-import { Modal, ModalBody } from 'reactstrap'
+import { PDFViewer } from "@react-pdf/renderer";
+import React from "react";
+import { IoClose } from "react-icons/io5";
+import { Modal, ModalBody } from "reactstrap";
 
 interface ViewPDFModalTypes {
-    modal: boolean;
-    toggleModal: any;
-    body: any
+  modal: boolean;
+  toggleModal: any;
+  body: any;
 }
 
 const ViewPDFModal: React.FC<ViewPDFModalTypes> = ({
-    modal,
-    toggleModal,
-    body,
+  modal,
+  toggleModal,
+  body,
 }) => {
-    return (
-        <div>
-            <Modal isOpen={modal} toggle={toggleModal} centered size="lg" className="custom-modal" >
-                <ModalBody style={{ margin: "-40px", scrollbarWidth: "none" }}>
-                    <button className="close-btn" onClick={toggleModal}>
-                        <IoClose />
-                    </button>
-                    <div className="footer-buttons">
-                    </div>
+  return (
+    <div>
+      <Modal
+        isOpen={modal}
+        toggle={toggleModal}
+        centered
+        size="lg"
+        className="custom-modal"
+      >
+        <ModalBody style={{ margin: "-40px", scrollbarWidth: "none" }}>
+          <button className="close-btn" onClick={toggleModal}>
+            <IoClose />
+          </button>
+          <div className="footer-buttons"></div>
 
-                    <PDFViewer className="pdf-viewer" style={{ width: "100%", height: "100vh" }}>
-                        {body()}
-                    </PDFViewer>
+          <PDFViewer
+            className="pdf-viewer"
+            style={{ width: "100%", height: "100vh" }}
+          >
+            {body()}
+          </PDFViewer>
+        </ModalBody>
+      </Modal>
 
-                </ModalBody>
-            </Modal>
-
-            <style>{`
+      <style>{`
   .custom-modal .modal-dialog {
     max-width: 800px;
     margin: 30px auto;
@@ -83,8 +90,8 @@ const ViewPDFModal: React.FC<ViewPDFModalTypes> = ({
 
   
 `}</style>
-        </div>
-    )
-}
+    </div>
+  );
+};
 
-export default ViewPDFModal
+export default ViewPDFModal;

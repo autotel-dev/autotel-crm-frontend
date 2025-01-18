@@ -196,8 +196,6 @@ const UsersList = () => {
                     };
                     // console.log(operator);
                     setIsActive(!row.isActive);
-                    // setRowIndex(index);
-                    // console.log(e.target.value);
                     try {
                       await update(operator, {
                         url: `${UPDATE_OPERATOR}/${row._id}`,

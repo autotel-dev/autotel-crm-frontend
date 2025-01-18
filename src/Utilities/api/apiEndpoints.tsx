@@ -415,7 +415,7 @@ export const UPDATE_OPERATOR = `${API_BASE_URL}/operator/update-operator`;
 export const DELETE_OPERATOR = `${API_BASE_URL}/operator/delete-operator`;
 
 // Company -> Reports
-export const GET_ALL_ALERT_EVENTS_REPORTS = `${API_BASE_URL}/reports/get-all-alert-events-report`;
+export const GET_REPORT_BASE_URL = `${API_BASE_URL}/reports`;
 export const GET_ALL_REPORT_TYPES = `${API_BASE_URL}/reports/get-all-report-types`;
 
 // Dashboard

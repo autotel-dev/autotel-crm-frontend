@@ -34,6 +34,7 @@ const SelectActivityTypeModal: React.FC<SelectActivityTypeModalProps> = ({
     { label: "Redo", value: "REDO" },
     { label: "Customer Data Update", value: "CUSTOMER_DATA_UPDATE" },
   ];
+
   const navigate = useNavigate();
 
   const { branches, warehouses, products } = useSelector(

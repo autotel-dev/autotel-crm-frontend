@@ -103,11 +103,12 @@ const VehicleForm = ({
       // Add the days from saleLead?.package?.days
       currentDate.setDate(currentDate.getDate() + saleLead?.package?.days);
 
-      // Format the date to a readable format (e.g., 'MM/DD/YYYY')
-      const formattedDate = currentDate.toLocaleDateString();
+      // Convert the date to ISO string
+      const isoString = currentDate.toISOString();
 
-      // Set the formatted date to the state
-      setRenewalDate(formattedDate);
+      // Set the ISO string date to the state
+      setRenewalDate(isoString);
+      console.log("ISO String Date:", isoString);
     }
   }, [saleLead]);
 
@@ -613,7 +614,7 @@ const VehicleForm = ({
           <Input
             type="text"
             placeholder="Enter Renewal Date"
-            value={renewalDate}
+            value={renewalDate.slice(0, 10)}
             disabled={true}
           />
         </Col>

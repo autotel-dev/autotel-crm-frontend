@@ -7,6 +7,7 @@ const initialState = {
   customer: null,
   saleLead: null,
   invoiceData: null,
+  isInvoiceRenwed: false,
   cities: [],
   packages: [],
   banks: [],
@@ -85,6 +86,9 @@ const SalesSlice = createSlice({
     setInvoiceData: (state, action) => {
       state.invoiceData = action.payload;
     },
+    setIsInvoiceRenwed: (state, action) => {
+      state.isInvoiceRenwed = action.payload;
+    },
 
     setSaleLeadId: (state, action) => {
       state.saleLeadId = action.payload;
@@ -136,6 +140,7 @@ export const {
   setSaleLeadsStart,
   setSaleLeadsEnd,
   setInvoiceData,
+  setIsInvoiceRenwed,
   setCities,
   setPackages,
   setBanks,
