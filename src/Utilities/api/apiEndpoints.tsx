@@ -1,8 +1,8 @@
-export const API_BASE_URL = "http://192.168.18.122:81/api/v1";
-export const IMAGE_BASE_URL = "http://192.168.18.122:81";
+// export const API_BASE_URL = "http://192.168.18.122:81/api/v1";
+// export const IMAGE_BASE_URL = "http://192.168.18.122:81";
 
-// export const API_BASE_URL = "https://crmapi.autotel.pk/api/v1";
-// export const IMAGE_BASE_URL = "https://crmapi.autotel.pk";
+export const API_BASE_URL = "https://crmapi.autotel.pk/api/v1";
+export const IMAGE_BASE_URL = "https://crmapi.autotel.pk";
 
 // export const API_BASE_URL = "http://localhost:81/api/v1";
 // export const IMAGE_BASE_URL = "http://localhost:81";
