@@ -24,10 +24,15 @@ import {
   setPurchaseInvoices,
 } from "../../../../../../../../../ReaduxToolkit/Reducer/PurchaseInvoiceSlice";
 import { Select } from "antd";
-import { create, getAll } from "../../../../../../../../../Utilities/api";
+import {
+  create,
+  getAll,
+  patch,
+} from "../../../../../../../../../Utilities/api";
 import {
   CREATE_SALE_INVOICE,
   GET_ALL_SALE_INVOICES,
+  SALE_INVOICE_STATUS_APPROVED,
 } from "../../../../../../../../../Utilities/api/apiEndpoints";
 import Swal from "sweetalert2";
 import {
@@ -41,7 +46,10 @@ import {
 } from "@react-pdf/renderer";
 
 import { useNavigate } from "react-router-dom";
-import { setSaleInvoiceLoading } from "../../../../../../../../../ReaduxToolkit/Reducer/SaleInvoiceSlice";
+import {
+  setSaleInvoice,
+  setSaleInvoiceLoading,
+} from "../../../../../../../../../ReaduxToolkit/Reducer/SaleInvoiceSlice";
 import {
   setInvoiceData,
   setIsInvoiceRenwed,
@@ -57,6 +65,7 @@ const CreateNewSaleInvoice = ({}) => {
   const { invoiceData, isInvoiceRenwed } = useSelector(
     (state: any) => state.sales
   );
+  const { saleInvoice } = useSelector((state: any) => state.saleInvoice);
   const { taxes } = useSelector((state: any) => state.taxes);
   // console.log("invoiceData", invoiceData);
   const [saleInvoiceForm, setSaleInvoiceForm] = useState({
@@ -139,25 +148,25 @@ const CreateNewSaleInvoice = ({}) => {
   };
 
   useEffect(() => {
-    var grossAmount = Number(discount);
+    var netAmount = Number(discount);
     if (additionalCharges >= 0) {
-      grossAmount = Number(discount) + Number(additionalCharges);
+      netAmount = Number(discount) + Number(additionalCharges);
     }
     if (withHoldingCharges >= 0) {
-      grossAmount =
+      netAmount =
         Number(discount) +
         Number(additionalCharges) +
         Number(withHoldingCharges);
     }
     if (selectedTax >= 0) {
-      grossAmount =
+      netAmount =
         Number(discount) +
         Number(additionalCharges) +
         Number(withHoldingCharges) +
         Number(discount) * (Number(selectedTax) / 100);
     }
 
-    setSaleInvoiceForm({ ...saleInvoiceForm, grossAmount: grossAmount });
+    setSaleInvoiceForm({ ...saleInvoiceForm, netAmount: netAmount });
   }, [discount, additionalCharges, withHoldingCharges, selectedTax]);
 
   const addAndUpdateSaleInvoice: SubmitHandler<any> = async (data) => {
@@ -193,9 +202,11 @@ const CreateNewSaleInvoice = ({}) => {
         });
         if (response.success) {
           dispatch(setSaleInvoiceLoading(true));
-          navigate(
-            `${process.env.PUBLIC_URL}/company/modules/saio-central/sales/invoices`
-          );
+          dispatch(setSaleInvoice(response.data.saleInvoice));
+          setLoading(false);
+          // navigate(
+          //   `${process.env.PUBLIC_URL}/company/modules/saio-central/sales/invoices`
+          // );
           // const saleInvoicesResponse: any = await getAll({ url: GET_ALL_SALE_INVOICES });
           // if (saleInvoicesResponse.success) {
           //   dispatch(setSaleInvoices(saleInvoicesResponse.data));
@@ -612,6 +623,43 @@ const CreateNewSaleInvoice = ({}) => {
     URL.revokeObjectURL(url);
   };
 
+  const approvedSaleInvoice: SubmitHandler<any> = async (data) => {
+    setLoading(true);
+    const receiveMoneyData = {
+      status: "APPROVED",
+    };
+
+    try {
+      const response: any = await patch(receiveMoneyData, {
+        url: `${SALE_INVOICE_STATUS_APPROVED}/${saleInvoice._id}`,
+      });
+      if (response.success) {
+        dispatch(setSaleInvoiceLoading(true));
+        setLoading(false);
+
+        navigate(
+          `${process.env.PUBLIC_URL}/company/modules/saio-central/sales/invoices`
+        );
+      } else {
+        Swal.fire({
+          text: response.message,
+          icon: "error",
+          timer: 2000,
+          showConfirmButton: false,
+        });
+        setLoading(false);
+      }
+    } catch (error: any) {
+      Swal.fire({
+        text: error.message || "Error creating Expense",
+        icon: "error",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+      setLoading(false);
+    }
+  };
+
   const toggleModal = () => setModal(!modal);
   return (
     <>
@@ -918,14 +966,14 @@ const CreateNewSaleInvoice = ({}) => {
                   <Row className="g-3">
                     <Col lg={12} xs={12} style={{ marginTop: "5px" }}>
                       <P>
-                        Net (PKR)
+                        Gross (PKR)
                         <span className="txt-danger">*</span>
                       </P>
                       <Input
                         type="number"
                         placeholder="Enter Net Amount"
-                        value={netAmount}
-                        name="netAmount"
+                        value={grossAmount}
+                        name="grossAmount"
                         onChange={getUserData}
                         disabled
                       />
@@ -1002,14 +1050,14 @@ const CreateNewSaleInvoice = ({}) => {
                     </Col>
                     <Col lg={12} xs={12}>
                       <P>
-                        Gross Amount
+                        Net Amount
                         <span className="txt-danger">*</span>
                       </P>
                       <Input
                         type="text"
                         placeholder="Enter Gross Amount"
-                        value={grossAmount}
-                        name="grossAmount"
+                        value={netAmount}
+                        name="netAmount"
                         onChange={getUserData}
                         disabled
                       />
@@ -1034,13 +1082,38 @@ const CreateNewSaleInvoice = ({}) => {
                 >
                   Cancel
                 </Button>
-                <Button
+                {/* <Button
                   color="primary"
                   disabled={loading}
                   onClick={addAndUpdateSaleInvoice}
                 >
                   {loading ? "Loading..." : "Create"}
-                </Button>
+                </Button> */}
+
+                {saleInvoice == null && (
+                  <Button
+                    disabled={loading}
+                    color="primary"
+                    onClick={addAndUpdateSaleInvoice}
+                  >
+                    {loading ? "Loading..." : "Create"}
+                  </Button>
+                )}
+
+                {saleInvoice !== null && saleInvoice.status == "ISSUED" && (
+                  <Button
+                    disabled={loading}
+                    color="primary"
+                    onClick={approvedSaleInvoice}
+                  >
+                    {loading ? "Loading..." : "Approve"}
+                  </Button>
+                )}
+                {saleInvoice !== null && saleInvoice.status == "APPROVED" && (
+                  <Button disabled={true} color="primary" onClick={() => {}}>
+                    {loading ? "Loading..." : "Approved"}
+                  </Button>
+                )}
                 {/* <Button color="primary" onClick={toggleModal}>View</Button> */}
               </Col>
             </Row>

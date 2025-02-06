@@ -33,6 +33,13 @@ import MakePaymentTable from "../Pages/Company/Modules/SAIO/components/Purchases
 import SalesDashboard from "../Pages/Company/Modules/SAIO/components/Dashboard/Dashboard";
 import ChartOfAccountTable from "../Pages/Company/Modules/SAIO/components/Accounts/components/ChartOfAccounts/ChartOfAccountLists";
 import InvoiceDetail from "../Pages/Company/Modules/SAIO/components/Sales/components/Invoices/CreateNewSaleInvoice/InvoiceDetail";
+import CreateNewMakePayment from "../Pages/Company/Modules/SAIO/components/Purchases/components/MakePayment/CreateNewMakePayment/CreateNewMakePayment";
+import CreateNewReceiveMoney from "../Pages/Company/Modules/SAIO/components/Sales/components/ReceiveMoney/CreateNewMakePayment/CreateNewReceiveMoney";
+import CustomerLedgerTable from "../Pages/Company/Modules/SAIO/components/Sales/components/CustomerLedger/CustomerLedgerList";
+import CreateNewCustomerLedger from "../Pages/Company/Modules/SAIO/components/Sales/components/CustomerLedger/CreateNewMakePayment/CreateNewCustomerLedger";
+import VendorLedgerTable from "../Pages/Company/Modules/SAIO/components/Purchases/components/VendorLedger/VendorLedgerList";
+import CreateNewVendorLedger from "../Pages/Company/Modules/SAIO/components/Purchases/components/VendorLedger/CreateNewMakePayment/CreateNewVendorLedger";
+import CompanyLedgerTable from "../Pages/Company/Modules/SAIO/components/Accounts/components/AccountingLedgerReport/CompanyLedgerReport";
 
 const LayoutRoutes = () => {
   return (
@@ -46,7 +53,7 @@ const LayoutRoutes = () => {
               isProtected,
               allowedUserRoles,
               permissionValue,
-              isLayout
+              isLayout,
             },
             i
           ) =>
@@ -64,65 +71,236 @@ const LayoutRoutes = () => {
                   <Route path={path} element={Component} />
                 </Route> */}
                 <Route element={<Layout />} key={i}>
-                  {
-                    isLayout == true ? <Route path={path} element={Component} key={i}>
+                  {isLayout == true ? (
+                    <Route path={path} element={Component} key={i}>
                       {/* <Route path={`${path}/sales`} element={<Sales />} /> */}
-                      <Route path={path} element={<Navigate to={`${path}/dashboard`} replace />} />
-                      <Route path={`${path}/dashboard`} element={<SalesDashboard />} />
+                      <Route
+                        path={path}
+                        element={<Navigate to={`${path}/dashboard`} replace />}
+                      />
+                      <Route
+                        path={`${path}/dashboard`}
+                        element={<SalesDashboard />}
+                      />
                       <Route path={`${path}/sales`} element={<Sales />}>
-                        <Route path={`${path}/sales`} element={<Navigate to={`${path}/sales/leads`} replace />} />
-                        <Route path={`${path}/sales/leads`} element={<SaleLeadsTable />} />
-                        <Route path={`${path}/sales/leads/sale-lead`} element={<CreateNewSaleLead />} />
-                        <Route path={`${path}/sales/leads/:id`} element={<CreateNewSaleLead />} />
-                        <Route path={`${path}/sales/invoices`} element={<InvoicesTable />} />
-                        <Route path={`${path}/sales/invoices/create-invoice`} element={<CreateNewSaleInvoice />} />
-                        <Route path={`${path}/sales/invoices/invoice-detail/:id`} element={<InvoiceDetail />} />
-                        <Route path={`${path}/sales/receive-money`} element={<ReceiveMoneyTable />} />
-                        <Route path={`${path}/sales/customers`} element={<CustomerTable />} />
-                        <Route path={`${path}/sales/customers/:id`} element={<CreateNewCustomer />} />
-                        <Route path={`${path}/sales/customers/create-customer`} element={<CreateNewCustomer />} />
+                        <Route
+                          path={`${path}/sales`}
+                          element={
+                            <Navigate to={`${path}/sales/leads`} replace />
+                          }
+                        />
+                        <Route
+                          path={`${path}/sales/leads`}
+                          element={<SaleLeadsTable />}
+                        />
+                        <Route
+                          path={`${path}/sales/leads/sale-lead`}
+                          element={<CreateNewSaleLead />}
+                        />
+                        <Route
+                          path={`${path}/sales/leads/:id`}
+                          element={<CreateNewSaleLead />}
+                        />
+                        <Route
+                          path={`${path}/sales/invoices`}
+                          element={<InvoicesTable />}
+                        />
+                        <Route
+                          path={`${path}/sales/invoices/create-invoice`}
+                          element={<CreateNewSaleInvoice />}
+                        />
+                        <Route
+                          path={`${path}/sales/invoices/invoice-detail/:id`}
+                          element={<InvoiceDetail />}
+                        />
+                        <Route
+                          path={`${path}/sales/receive-money`}
+                          element={<ReceiveMoneyTable />}
+                        />
+                        <Route
+                          path={`${path}/sales/receive-money/create-receive-money`}
+                          element={<CreateNewReceiveMoney />}
+                        />
+                        <Route
+                          path={`${path}/sales/receive-money/:id`}
+                          element={<CreateNewReceiveMoney />}
+                        />
+                        <Route
+                          path={`${path}/sales/customers`}
+                          element={<CustomerTable />}
+                        />
+                        <Route
+                          path={`${path}/sales/customers/:id`}
+                          element={<CreateNewCustomer />}
+                        />
+                        <Route
+                          path={`${path}/sales/customers/create-customer`}
+                          element={<CreateNewCustomer />}
+                        />
+                        <Route
+                          path={`${path}/sales/customer-ledger`}
+                          element={<CustomerLedgerTable />}
+                        />
+                        <Route
+                          path={`${path}/sales/customer-ledger/create-customer-ledger`}
+                          element={<CreateNewCustomerLedger />}
+                        />
                       </Route>
-
                       {/* Purchases */}
-                      <Route path={`${path}/purchases`} element={<Purchases />} >
-                        <Route path={`${path}/purchases`} element={<Navigate to={`${path}/purchases/vendors`} replace />} />
-                        <Route path={`${path}/purchases/vendors`} element={<VendorsTable />} />
-                        <Route path={`${path}/purchases/purchase-invoices`} element={<PurchaseInvoiceTable />} />
-                        <Route path={`${path}/purchases/purchase-invoices/create-invoice`} element={<CreateNewPurchaseInvoice />} />
-                        <Route path={`${path}/purchases/purchase-invoices/invoice-detail/:id`} element={<CreateNewPurchaseInvoice />} />
-                        <Route path={`${path}/purchases/make-payments`} element={<MakePaymentTable />} />
+                      <Route path={`${path}/purchases`} element={<Purchases />}>
+                        <Route
+                          path={`${path}/purchases`}
+                          element={
+                            <Navigate
+                              to={`${path}/purchases/vendors`}
+                              replace
+                            />
+                          }
+                        />
+                        <Route
+                          path={`${path}/purchases/vendors`}
+                          element={<VendorsTable />}
+                        />
+                        <Route
+                          path={`${path}/purchases/purchase-invoices`}
+                          element={<PurchaseInvoiceTable />}
+                        />
+                        <Route
+                          path={`${path}/purchases/purchase-invoices/create-invoice`}
+                          element={<CreateNewPurchaseInvoice />}
+                        />
+                        <Route
+                          path={`${path}/purchases/purchase-invoices/invoice-detail/:id`}
+                          element={<CreateNewPurchaseInvoice />}
+                        />
+                        <Route
+                          path={`${path}/purchases/make-payments`}
+                          element={<MakePaymentTable />}
+                        />
+                        <Route
+                          path={`${path}/purchases/make-payments/create-payment`}
+                          element={<CreateNewMakePayment />}
+                        />
+                        <Route
+                          path={`${path}/purchases/make-payments/:id`}
+                          element={<CreateNewMakePayment />}
+                        />
+
+                        <Route
+                          path={`${path}/purchases/vendor-ledger`}
+                          element={<VendorLedgerTable />}
+                        />
+                        <Route
+                          path={`${path}/purchases/vendor-ledger/create-vendor-ledger`}
+                          element={<CreateNewVendorLedger />}
+                        />
                       </Route>
 
                       {/* Accounts */}
-                      <Route path={`${path}/accounts`} element={<Accounts />} >
-                        <Route path={`${path}/accounts`} element={<Navigate to={`${path}/accounts/bank-accounts`} replace />} />
-                        <Route path={`${path}/accounts/bank-accounts`} element={<BankAccountsTable />} />
-                        <Route path={`${path}/accounts/expense-accounts`} element={<ExpenseAccountsTable />} />
-                        <Route path={`${path}/accounts/bank-accounts`} element={<BankAccountsTable />} />
-                        <Route path={`${path}/accounts/expenses`} element={<ExpensesTable />} />
-                        <Route path={`${path}/accounts/expenses/create-expense`} element={<CreateNewExpenses />} />
-                        <Route path={`${path}/accounts/expenses/expense-detail/:id`} element={<CreateNewExpenses />} />
-                        <Route path={`${path}/accounts/tax`} element={<TaxTable />} />
-                        <Route path={`${path}/accounts/accounting-chart`} element={<ChartOfAccountTable />} />
-
-                    
+                      <Route path={`${path}/accounts`} element={<Accounts />}>
+                        <Route
+                          path={`${path}/accounts`}
+                          element={
+                            <Navigate
+                              to={`${path}/accounts/bank-accounts`}
+                              replace
+                            />
+                          }
+                        />
+                        <Route
+                          path={`${path}/accounts/bank-accounts`}
+                          element={<BankAccountsTable />}
+                        />
+                        <Route
+                          path={`${path}/accounts/expense-accounts`}
+                          element={<ExpenseAccountsTable />}
+                        />
+                        <Route
+                          path={`${path}/accounts/bank-accounts`}
+                          element={<BankAccountsTable />}
+                        />
+                        <Route
+                          path={`${path}/accounts/expenses`}
+                          element={<ExpensesTable />}
+                        />
+                        <Route
+                          path={`${path}/accounts/expenses/create-expense`}
+                          element={<CreateNewExpenses />}
+                        />
+                        <Route
+                          path={`${path}/accounts/expenses/expense-detail/:id`}
+                          element={<CreateNewExpenses />}
+                        />
+                        <Route
+                          path={`${path}/accounts/tax`}
+                          element={<TaxTable />}
+                        />
+                        <Route
+                          path={`${path}/accounts/accounting-chart`}
+                          element={<ChartOfAccountTable />}
+                        />
+                        <Route
+                          path={`${path}/accounts/accounting-ledger`}
+                          element={<CompanyLedgerTable />}
+                        />
                       </Route>
-                      <Route path={`${path}/inventory`} element={<Inventory />} >
-                        <Route path={`${path}/inventory`} element={<Navigate to={`${path}/inventory/products`} replace />} />
-                        <Route path={`${path}/inventory/products`} element={<ProductsTable />} />
-                        <Route path={`${path}/inventory/stock-movement`} element={<StockMovementTable />} />
-                        <Route path={`${path}/inventory/stock-adjustment-type`} element={<StockAdjustmentTypesTable />} />
-                        <Route path={`${path}/inventory/stock-adjustment`} element={<StockAdjustmentTable />} />
+                      <Route path={`${path}/inventory`} element={<Inventory />}>
+                        <Route
+                          path={`${path}/inventory`}
+                          element={
+                            <Navigate
+                              to={`${path}/inventory/products`}
+                              replace
+                            />
+                          }
+                        />
+                        <Route
+                          path={`${path}/inventory/products`}
+                          element={<ProductsTable />}
+                        />
+                        <Route
+                          path={`${path}/inventory/stock-movement`}
+                          element={<StockMovementTable />}
+                        />
+                        <Route
+                          path={`${path}/inventory/stock-adjustment-type`}
+                          element={<StockAdjustmentTypesTable />}
+                        />
+                        <Route
+                          path={`${path}/inventory/stock-adjustment`}
+                          element={<StockAdjustmentTable />}
+                        />
                       </Route>
-                      <Route path={`${path}/operations`} element={<Operations />} >
-                        <Route path={`${path}/operations`} element={<Navigate to={`${path}/operations/activity`} replace />} />
-                        <Route path={`${path}/operations/activity`} element={<ActivityTable />} />
-                        <Route path={`${path}/operations/activity/create-activity`} element={<CreateNewActivity />} />
-                        <Route path={`${path}/operations/activity/activity-detail/:id`} element={<CreateNewActivity />} />
+                      <Route
+                        path={`${path}/operations`}
+                        element={<Operations />}
+                      >
+                        <Route
+                          path={`${path}/operations`}
+                          element={
+                            <Navigate
+                              to={`${path}/operations/activity`}
+                              replace
+                            />
+                          }
+                        />
+                        <Route
+                          path={`${path}/operations/activity`}
+                          element={<ActivityTable />}
+                        />
+                        <Route
+                          path={`${path}/operations/activity/create-activity`}
+                          element={<CreateNewActivity />}
+                        />
+                        <Route
+                          path={`${path}/operations/activity/activity-detail/:id`}
+                          element={<CreateNewActivity />}
+                        />
                       </Route>
-                    </Route> : <Route path={path} element={Component} />
-                  }
-
+                    </Route>
+                  ) : (
+                    <Route path={path} element={Component} />
+                  )}
                 </Route>
               </Route>
             ) : (

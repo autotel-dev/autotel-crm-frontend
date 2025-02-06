@@ -1,220 +1,418 @@
-import { useCallback, useEffect, useState } from "react";
-import { Button, Col, Row } from "reactstrap";
+import { useEffect, useState } from "react";
+import { Col, Row } from "reactstrap";
 import DataTable from "react-data-table-component";
 
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import "../../../../../../../../CssConstaints/Style.css";
-import { SaleLeadsDataType, supportColumns } from "./Type/Type";
 import { PlusCircle } from "react-feather";
+import { getAll } from "../../../../../../../../Utilities/api";
 
-const ReceiveMoneyTable = () => {
-    const dispatch = useDispatch();
-    // Function to transform supportData into allBugReports format
-    const { bugReports } = useSelector((state: any) => state.support);
-    const { userPermissions } = useSelector(
-        (state: any) => state.userPermissions
-    );
-    const { userPersonalizationData } = useSelector(
-        (state: any) => state.personalization
-    );
-    function hexToRgb(hex: any) {
-        // Remove the hash sign if present
-        hex = hex?.replace(/^#/, '');
-        // Parse the hex values to RGB
-        const bigint = parseInt(hex, 16);
-        const r = (bigint >> 16) & 255;
-        const g = (bigint >> 8) & 255;
-        const b = bigint & 255;
-        return { r, g, b };
-    }
+import {
+  GET_ALL_BANK_ACCOUNTS,
+  GET_ALL_CUSTOMERS,
+  GET_ALL_SALE_INVOICES,
+  GET_CUSTOMER_GENERAL_ACCOUNTS,
+  GET_RECEIVE_MONEY_TRANSACTIONS,
+} from "../../../../../../../../Utilities/api/apiEndpoints";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrashAlt } from "@fortawesome/free-solid-svg-icons";
+import { formatUnderscoredString } from "../../../../../../../../Utilities/globals/globals";
+import Skeleton from "../../../../../../../Utilities/Skeleton/Skeleton";
+import {
+  setFromAccounts,
+  setToAccounts,
+  setCustomers,
+  setReceiveMoneys,
+  setReceiveMoneyLoading,
+  setReceiveMoney,
+  setSaleInvoices,
+} from "../../../../../../../../ReaduxToolkit/Reducer/ReceiveMoneySlice";
 
-    // Usage
-    const hexColor = "#ff0000"; // Example hex color
-    const rgbColor = hexToRgb(userPersonalizationData?.buttonsAndBarsColor); // Convert hex to RGB
-    var support = userPermissions.find((item: any) => item.title === "Support");
-    // console.log("support", support);
-    const supportData = () => {
-        return bugReports?.filter(
-            (item: any) =>
-                item?.ticketId.toLowerCase().split("-")[1].includes(searchValue) ||
-                item?.name.toLowerCase().includes(searchValue) ||
-                item?.user.emailAddress.toLowerCase().includes(searchValue)
-        )
-            .map((item: any) => ({
-                ticket_id: item?._id,
-                id: item?.ticketId,
-                username: item?.user?.fullName,
-                email: item?.user?.emailAddress,
-                ticket_name: item?.name,
-                description: item?.description,
-                isActive: item?.isActive ? "true" : "false",
-                status: item?.status,
-                priorty: item?.priorty == null ? "N/A" : item?.priorty,
-                date: `${item?.updatedAt.toString().slice(0, 10)},  ${new Date(
-                    item?.updatedAt
-                )
-                    .toLocaleString("en-US", {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                        second: "2-digit",
-                    })
-                    .toString()}`,
-            }));
-    };
+const ReceiveMoneyTable = ({}) => {
+  const dispatch = useDispatch();
+  // Function to transform supportData into allBugReports format
+  const { receiveMoneys, loading } = useSelector(
+    (state: any) => state.receiveMoneys
+  );
 
-    const [searchValue, setSearchValue] = useState("");
-
-    useEffect(() => {
-        setData(supportData());
-    }, [searchValue]);
-
-    const handleSearch = (e: any) => {
-        const searchKey = e.target.value.toLowerCase();
-        setSearchValue(searchKey);
-    };
-
-    // console.log("allBugReports", supportData());
-    useEffect(() => {
-        setData(supportData());
-    }, [bugReports]);
-
-    const navigate = useNavigate();
-    // const history = useHistory();
-    const [selectedRows, setSelectedRows] = useState([]);
-    const [toggleDelete, setToggleDelete] = useState(false);
-    const [data, setData] = useState(supportData());
-
-    const handleRowSelected = useCallback((state: any) => {
-        setSelectedRows(state.selectedRows);
-    }, []);
-
-    const handleDelete = () => {
-        if (
-            window.confirm(
-                `Are you sure you want to delete:\r ${selectedRows.map(
-                    (r: SaleLeadsDataType) => r.id
-                )}?`
-            )
-        ) {
-            setToggleDelete(!toggleDelete);
-            setData(
-                data.filter((item: any) =>
-                    selectedRows.filter((elem: SaleLeadsDataType) => elem.id === item.id)
-                        .length > 0
-                        ? false
-                        : true
-                )
-            );
-            setSelectedRows([]);
+  useEffect(() => {
+    if (loading) {
+      dispatch(setReceiveMoneys([]));
+      getAll({ url: GET_RECEIVE_MONEY_TRANSACTIONS }).then((data: any) => {
+        if (data !== undefined) {
+          if (!data.success) {
+            dispatch(setReceiveMoneyLoading(false));
+          }
+          if (data.success) {
+            dispatch(setReceiveMoneys(data.data));
+            setTimeout(() => {
+              dispatch(setReceiveMoneyLoading(false));
+            }, 500);
+          }
         }
-    };
+      });
+    }
+  }, []);
 
-    const handleRowClicked = (row: any) => {
-        navigate(
-            `${process.env.PUBLIC_URL}/support/ticketDetails/${row.ticket_id}`
-        );
-    };
-    return (
-        <div className="table-responsive support-table" style={{ overflow: "auto", scrollbarWidth: "none" }}>
+  useEffect(() => {
+    // Whenever saleLeads is updated, this effect will trigger
+    if (receiveMoneys && receiveMoneys.length > 0) {
+      dispatch(setReceiveMoneys(receiveMoneys));
+    }
+    // Dependency array with saleLeads to watch for changes
+  }, [receiveMoneys]);
 
-            <Row>
-                <div style={{
-                    display: "flex",
-                    justifyContent: "end",
-                    paddingRight: "25px"
-                }}>
-                    <button
-                        className={`btn ${userPersonalizationData?.buttonsAndBarsColor == null ? "btn-primary" : ""
-                            }`}
-                        style={{
-                            color: "white",
-                            backgroundColor: `${userPersonalizationData !== null &&
-                                userPersonalizationData?.buttonsAndBarsColor
-                                }`,
-                            display: "flex",
-                            alignItems: "center",
+  const { userPersonalizationData } = useSelector(
+    (state: any) => state.personalization
+  );
+  function hexToRgb(hex: any) {
+    // Remove the hash sign if present
+    hex = hex?.replace(/^#/, "");
+    // Parse the hex values to RGB
+    const bigint = parseInt(hex, 16);
+    const r = (bigint >> 16) & 255;
+    const g = (bigint >> 8) & 255;
+    const b = bigint & 255;
+    return { r, g, b };
+  }
 
-                        }}
-                    // onClick={() => {
-                    //     setComponent("New Lead")
-                    // }}
-                    >
-                        <PlusCircle size={18} style={{
-                            marginRight: "5px"
-                        }} />
-                        Create Receive Money
-                    </button>
-                </div>
-            </Row>
-            <Row style={{ display: "flex", alignItems: "center" }}>
-                <Col
-                    sm={12}
-                    md={
-                        12
-                    }
-                    lg={
-                        12
-                    }
-                    xl={
-                        12
-                    }
-                >
-                    <input
-                        className="global-search-field"
-                        type="text"
-                        placeholder="Type to Search.."
-                        value={searchValue}
-                        onChange={(e) => {
-                            handleSearch(e);
-                        }}
+  // Usage
+  const hexColor = "#ff0000"; // Example hex color
+  const rgbColor = hexToRgb(userPersonalizationData?.buttonsAndBarsColor); // Convert hex to RGB
+  // // console.log("support", support);
+  const purchaseInvoicesData = () => {
+    if (receiveMoneys?.length > 0) {
+      return receiveMoneys
+        ?.filter((item: any) =>
+          item?.customer?.fullName?.toLowerCase().includes(searchValue)
+        )
+        .map((item: any, index: any) => ({
+          index: index + 1,
+          _id: item?._id,
+          customer: item?.customer,
+          debitAccount: item?.debitTrx?.debitAccount,
+          creditAccount: item?.debitTrx?.creditAccount,
+          amount: item?.amount,
+          date: `${item?.transactionDate.toString().slice(0, 10)},  ${new Date(
+            item?.transactionDate
+          )
+            .toLocaleString("en-US", {
+              hour: "2-digit",
+              minute: "2-digit",
+              second: "2-digit",
+            })
+            .toString()}`,
 
-                    />
-                </Col>
+          status: item?.status,
+          paymentType: item?.amountType,
+          reference: item?.reference,
+          comments: item?.comments,
+        }));
+    }
+  };
 
-            </Row>
+  const [searchValue, setSearchValue] = useState("");
 
-            <DataTable
-                columns={supportColumns}
-                data={data}
-                // striped={true}
-                pagination
-                selectableRows
-                onSelectedRowsChange={handleRowSelected}
-                onRowClicked={handleRowClicked} // Pass the event handler for row clicks
-                clearSelectedRows={toggleDelete}
-                style={{
-                    cursor: "pointer",
-                }}
-                className="custom-data-table" // Add a class to your DataTable for styling
-                // You can add more props as needed
-                customStyles={{
-                    rows: {
-                        style: {
-                            cursor: "pointer",
-                            transition: "background-color 0.2s", // Smooth transition for background color change
-                            "&:hover": { // Define hover style
-                                backgroundColor: `rgba(${rgbColor.r},${rgbColor.g},${rgbColor.b},0.2)`,
-                            },
-                        },
-                    },
-                    head: {
-                        style: {
-                            fontWeight: "bold",
-                            fontSize: "13px",
-                        },
-                    },
-                }}
+  useEffect(() => {
+    setData(purchaseInvoicesData());
+  }, [searchValue]);
+
+  const handleSearch = (e: any) => {
+    const searchKey = e.target.value.toLowerCase();
+    setSearchValue(searchKey);
+  };
+
+  useEffect(() => {
+    setData(purchaseInvoicesData());
+  }, [receiveMoneys]);
+
+  const navigate = useNavigate();
+  // const history = useHistory();
+  const [selectedRows, setSelectedRows] = useState([]);
+  const [toggleDelete, setToggleDelete] = useState(false);
+  const [data, setData] = useState(purchaseInvoicesData());
+
+  const handleRowClicked = (row: any) => {
+    // console.log("row", row);
+    dispatch(setReceiveMoney(row));
+    navigate(
+      `${process.env.PUBLIC_URL}/company/modules/saio-central/sales/receive-money/${row.id}`
+    );
+    // setIscreateNewPurchaseInvoice(true)
+  };
+
+  useEffect(() => {
+    getAll({ url: GET_ALL_CUSTOMERS }).then((data: any) => {
+      if (data?.success) {
+        dispatch(setCustomers(data.data));
+      }
+    });
+
+    getAll({ url: GET_CUSTOMER_GENERAL_ACCOUNTS }).then((data: any) => {
+      if (data?.success) {
+        dispatch(setFromAccounts(data.data));
+      }
+    });
+
+    getAll({ url: GET_ALL_BANK_ACCOUNTS }).then((data: any) => {
+      if (data?.success) {
+        dispatch(setToAccounts(data.data));
+      }
+    });
+    getAll({ url: GET_ALL_SALE_INVOICES }).then((data: any) => {
+      if (data?.success) {
+        dispatch(setSaleInvoices(data.data));
+      }
+    });
+  }, []);
+
+  return (
+    <div
+      className="table-responsive support-table"
+      style={{ overflow: "auto", scrollbarWidth: "none" }}
+    >
+      <Row>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "end",
+            paddingRight: "25px",
+          }}
+        >
+          <button
+            className={`btn ${
+              userPersonalizationData?.buttonsAndBarsColor == null
+                ? "btn-primary"
+                : ""
+            }`}
+            style={{
+              color: "white",
+              backgroundColor: `${
+                userPersonalizationData !== null &&
+                userPersonalizationData?.buttonsAndBarsColor
+              }`,
+              display: "flex",
+              alignItems: "center",
+            }}
+            onClick={() => {
+              // dispatch(setPurchaseInvoice(null));
+              navigate(
+                `${process.env.PUBLIC_URL}/company/modules/saio-central/sales/receive-money/create-receive-money`
+              );
+              // setIscreateNewPurchaseInvoice(true)
+            }}
+          >
+            <PlusCircle
+              size={18}
+              style={{
+                marginRight: "5px",
+              }}
             />
-            <style>
-                {`
+            Create New Receive Money
+          </button>
+        </div>
+      </Row>
+      <Row style={{ display: "flex", alignItems: "center" }}>
+        <Col sm={12} md={12} lg={12} xl={12}>
+          <input
+            className="global-search-field"
+            type="text"
+            placeholder="Type to Search.."
+            value={searchValue}
+            onChange={(e) => {
+              handleSearch(e);
+            }}
+          />
+        </Col>
+      </Row>
+
+      {loading ? (
+        <>
+          <Skeleton height="90px" width="100%" borderRadius="10px" />
+          <Skeleton
+            height="50px"
+            width="100%"
+            marginTop="10px"
+            marginBottom="10"
+            borderRadius="10px"
+          />
+          <Skeleton
+            height="50px"
+            width="100%"
+            marginTop="10px"
+            marginBottom="10"
+            borderRadius="10px"
+          />
+          <Skeleton
+            height="50px"
+            width="100%"
+            marginTop="10px"
+            marginBottom="10"
+            borderRadius="10px"
+          />
+          <Skeleton
+            height="50px"
+            width="100%"
+            marginTop="10px"
+            marginBottom="10"
+            borderRadius="10px"
+          />
+        </>
+      ) : (
+        <DataTable
+          columns={[
+            {
+              name: (
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "start",
+                    paddingLeft: "0px ",
+                  }}
+                >
+                  {selectedRows.length > 0 && (
+                    <FontAwesomeIcon
+                      icon={faTrashAlt}
+                      onClick={() => {}}
+                      style={{
+                        cursor: "pointer",
+                        color: "red",
+                        marginRight: "20px",
+                        paddingLeft: "0px",
+                      }}
+                    />
+                  )}
+                  S.No.
+                </div>
+              ),
+              selector: (row: any) => row.index,
+              sortable: true,
+              width: "10%",
+              // center: true,
+              cell: (row: any) => (
+                <div
+                  style={{
+                    paddingLeft: "10px",
+                    borderRadius: "5px",
+                  }}
+                >
+                  {row.index}
+                </div>
+              ),
+            },
+            {
+              name: "Date",
+              selector: (row: any) => row["date"],
+              sortable: true,
+              width: "15%", // Set the width for this column
+            },
+            {
+              name: "Customer",
+              selector: (row: any) => row["customer"]["fullName"],
+              sortable: true,
+              width: "15%", // Set the width for this column
+            },
+            // {
+            //   name: "Debit Account",
+            //   selector: (row: any) => row["debitAccount"]["name"],
+            //   sortable: true,
+            //   width: "15%", // Set the width for this column
+            // },
+            // {
+            //   name: "Credit Account",
+            //   selector: (row: any) => row["creditAccount"]["name"],
+            //   sortable: true,
+            //   width: "15%", // Set the width for this column
+            // },
+            {
+              name: "Account",
+              selector: (row: any) => row["debitAccount"]["name"],
+              sortable: true,
+              width: "15%", // Set the width for this column
+            },
+
+            {
+              name: "Amount",
+              selector: (row: any) => row["amount"],
+              sortable: true,
+              width: "15%", // Set the width for this column
+            },
+            {
+              name: "Status",
+              selector: (row: any) => row["status"],
+              sortable: true,
+              // center: true,
+              width: "15%", // Set the width for this column
+              cell: (row: any) => (
+                <div
+                  style={{
+                    width: "80%",
+                    textAlign: "center",
+                    padding: "5px",
+                    borderRadius: "5px",
+                    backgroundColor:
+                      row.status === "DRAFT"
+                        ? "rgba(0, 0, 255, 0.3)"
+                        : "rgba(0, 255, 0, 0.3)",
+                    // color:
+                    //   row.status === "NEW"
+                    //     ? "blue"
+                    //     : row.status === "IN_PROGRESS"
+                    //     ? "orange"
+                    //     : row.status === "PENDING"
+                    //     ? "red"
+                    //     : "green",
+                    color: "black",
+                  }}
+                >
+                  {formatUnderscoredString(row.status)}
+                </div>
+              ),
+            },
+          ]}
+          data={data}
+          // striped={true}
+          pagination
+          selectableRows
+          // onSelectedRowsChange={handleRowSelected}
+          onRowClicked={handleRowClicked} // Pass the event handler for row clicks
+          clearSelectedRows={toggleDelete}
+          style={{
+            cursor: "pointer",
+          }}
+          className="custom-data-table" // Add a class to your DataTable for styling
+          // You can add more props as needed
+          customStyles={{
+            rows: {
+              style: {
+                cursor: "pointer",
+                transition: "background-color 0.2s", // Smooth transition for background color change
+                "&:hover": {
+                  // Define hover style
+                  backgroundColor: `rgba(${rgbColor.r},${rgbColor.g},${rgbColor.b},0.2)`,
+                },
+              },
+            },
+            head: {
+              style: {
+                fontWeight: "bold",
+                fontSize: "13px",
+              },
+            },
+          }}
+        />
+      )}
+      <style>
+        {`
        .custom-data-table thead th {
         text-align: center !important;
       }
       `}
-            </style>
-        </div>
-    );
+      </style>
+    </div>
+  );
 };
 
 export default ReceiveMoneyTable;

@@ -31,6 +31,10 @@ const StickyBar: React.FC<StickyBarProps> = ({ component, setComponent }) => {
       label: "Customers",
       icon: <BsPersonLinesFill size={18} />,
     },
+    {
+      label: "Customer Ledger",
+      icon: <BsPersonLinesFill size={18} />,
+    },
   ];
 
   const navigate = useNavigate();
@@ -60,6 +64,10 @@ const StickyBar: React.FC<StickyBarProps> = ({ component, setComponent }) => {
             } else if (option.label == "Customers") {
               navigate(
                 `${process.env.PUBLIC_URL}/company/modules/saio-central/sales/customers`
+              );
+            } else if (option.label == "Customer Ledger") {
+              navigate(
+                `${process.env.PUBLIC_URL}/company/modules/saio-central/sales/customer-ledger`
               );
             }
           }}

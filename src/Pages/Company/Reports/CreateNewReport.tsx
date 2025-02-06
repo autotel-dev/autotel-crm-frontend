@@ -101,7 +101,7 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
       });
     });
     setReportsType(tempReportsTypeList);
-  }, []);
+  }, [reportsType]);
 
   const [reportPeriodList, setReportPeriodType] = useState([]);
 
@@ -350,8 +350,8 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
       const report = {
         id: 1,
         title: data.title,
-        startDate: startDate,
-        endDate: endDate,
+        toDate: endDate,
+        fromDate: startDate,
       };
 
       try {
@@ -466,7 +466,6 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
       setLoading(false);
     }
   };
-
   const addReportForOperatorPerformance: SubmitHandler<ReportsType> = async (
     data: any
   ) => {
@@ -574,7 +573,6 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
       setLoading(false);
     }
   };
-
   const addReportForInventoryReport: SubmitHandler<ReportsType> = async (
     data: any
   ) => {
@@ -701,7 +699,6 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
       setLoading(false);
     }
   };
-
   const addReportForSaleInvoices: SubmitHandler<ReportsType> = async (
     data: any
   ) => {
@@ -809,7 +806,6 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
       setLoading(false);
     }
   };
-
   const addReportForPurchaseInvoices: SubmitHandler<ReportsType> = async (
     data: any
   ) => {
@@ -1024,7 +1020,6 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
       setLoading(false);
     }
   };
-
   const addReportForOperationActivity: SubmitHandler<ReportsType> = async (
     data: any
   ) => {
@@ -1670,7 +1665,7 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
                         // mode="multiple"
                         showSearch
                         style={{ width: "100%" }}
-                        placeholder="Select Customers"
+                        placeholder="Select Customer"
                         optionFilterProp="children"
                         filterOption={(input: any, option: any) =>
                           (option?.P ?? "").includes(input)
@@ -1684,7 +1679,11 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
                           setCustomerForVehicleOperationActivity(e);
                         }}
                         options={customersForOperationActivitiesReportsList}
-                        value={customerForVehicleOperationActivity}
+                        value={
+                          customerForVehicleOperationActivity !== ""
+                            ? customerForVehicleOperationActivity
+                            : null
+                        }
                       />
                     </Col>
                   </FormGroup>

@@ -692,12 +692,12 @@ const InvoiceDetail = ({}) => {
                   <Row className="g-3">
                     <Col lg={12} xs={12} style={{ marginTop: "5px" }}>
                       <P>
-                        Net (PKR)
+                        Gross (PKR)
                         <span className="txt-danger">*</span>
                       </P>
                       <Input
                         type="number"
-                        value={saleInvoice?.netAmount}
+                        value={saleInvoice?.grossAmount}
                         disabled={saleInvoice !== null}
                       />
                     </Col>
@@ -747,12 +747,12 @@ const InvoiceDetail = ({}) => {
                     </Col>
                     <Col lg={12} xs={12}>
                       <P>
-                        Gross Amount
+                        Net Amount
                         <span className="txt-danger">*</span>
                       </P>
                       <Input
                         type="text"
-                        value={saleInvoice?.grossAmount}
+                        value={saleInvoice?.netAmount}
                         disabled={saleInvoice !== null}
                       />
                     </Col>
