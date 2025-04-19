@@ -13,6 +13,10 @@ const initialState = {
   productWarehousesForReport: [],
   vendorsForReports: [],
   customersFormReports: [],
+  complaintTypesForReports: [],
+  complaintStatusForReports: [],
+  complaintPriorityForReports: [],
+  complaintDepartmentForReports: [],
 };
 
 const ReportsSlice = createSlice({
@@ -58,6 +62,18 @@ const ReportsSlice = createSlice({
     setCustomersForReport: (state, action) => {
       state.customersFormReports = action.payload;
     },
+    setComplaintTypesForReport: (state, action) => {
+      state.customersFormReports = action.payload;
+    },
+    setComplaintStatusForReport: (state, action) => {
+      state.complaintStatusForReports = action.payload;
+    },
+    setComplaintPriorityForReport: (state, action) => {
+      state.complaintPriorityForReports = action.payload;
+    },
+    setComplaintDepartmetForReport: (state, action) => {
+      state.complaintDepartmentForReports = action.payload;
+    },
   },
 });
 export const {
@@ -73,6 +89,10 @@ export const {
   setWarehousesForReport,
   setVendorsForReport,
   setCustomersForReport,
+  setComplaintTypesForReport,
+  setComplaintPriorityForReport,
+  setComplaintStatusForReport,
+  setComplaintDepartmetForReport,
 } = ReportsSlice.actions;
 
 export default ReportsSlice.reducer;

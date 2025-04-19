@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Col, Row } from "reactstrap";
+import { Button, Col, FormGroup, Input, Row } from "reactstrap";
 import DataTable from "react-data-table-component";
 
 import { useNavigate } from "react-router-dom";
@@ -8,11 +8,35 @@ import "../../../../../../../../CssConstaints/Style.css";
 import { PlusCircle } from "react-feather";
 import { getAll } from "../../../../../../../../Utilities/api";
 
-import { GET_ALL_BANK_ACCOUNTS } from "../../../../../../../../Utilities/api/apiEndpoints";
+import {
+  GET_ACCOUNT_STATEMENT,
+  GET_ALL_BANK_ACCOUNTS,
+  IMAGE_BASE_URL,
+} from "../../../../../../../../Utilities/api/apiEndpoints";
 
 import { TbFileInvoice } from "react-icons/tb";
 import CreateNewCompanyLedger from "./CreateNewMakePayment/CreateNewCompanyLedger";
-import { setFromAccounts } from "../../../../../../../../ReaduxToolkit/Reducer/CompanyLedgerSlice";
+import {
+  setCompanyLedgers,
+  setFromAccounts,
+} from "../../../../../../../../ReaduxToolkit/Reducer/CompanyLedgerSlice";
+import { P } from "../../../../../../../../AbstractElements";
+import SelectAccountBox from "./CreateNewMakePayment/components/SelectAccountBox";
+import { SubmitHandler } from "react-hook-form";
+import Swal from "sweetalert2";
+import BackgroundImage from "../../../../../../../../assets/Background Image.png";
+
+import {
+  Document,
+  Page,
+  PDFViewer,
+  Text,
+  View,
+  StyleSheet,
+  Image,
+  pdf,
+  PDFDownloadLink,
+} from "@react-pdf/renderer";
 
 const CompanyLedgerTable = ({}) => {
   const dispatch = useDispatch();
@@ -40,23 +64,18 @@ const CompanyLedgerTable = ({}) => {
   const vendorLedgerData = () => {
     if (companyLedgers?.length > 0) {
       return companyLedgers.map((item: any, index: any) => ({
-        index: index + 1,
-        title: item.title,
-        from: `${item?.from.toString().slice(0, 10)},  ${new Date(item?.from)
+        date: `${item?.date.toString().slice(0, 10)},  ${new Date(item?.date)
           .toLocaleString("en-US", {
             hour: "2-digit",
             minute: "2-digit",
             second: "2-digit",
           })
           .toString()}`,
-        to: `${item?.to.toString().slice(0, 10)},  ${new Date(item?.to)
-          .toLocaleString("en-US", {
-            hour: "2-digit",
-            minute: "2-digit",
-            second: "2-digit",
-          })
-          .toString()}`,
-        statement: item.statement,
+        reference: item.reference,
+        narration: item.narration,
+        debit: item.debit,
+        credit: item.credit,
+        balance: item.balance,
       }));
     }
   };
@@ -91,6 +110,247 @@ const CompanyLedgerTable = ({}) => {
     });
   }, []);
 
+  const [accountId, setAccountId] = useState("");
+  const [startDate, setStartDate] = useState(
+    new Date().toISOString().slice(0, 10)
+  );
+  const [endDate, setEndDate] = useState(new Date().toISOString().slice(0, 10));
+
+  const [loading, setLoading] = useState(false);
+
+  const addVendorLedger: SubmitHandler<any> = async (data) => {
+    setLoading(true);
+    if (accountId !== "" && startDate !== "" && endDate !== "") {
+      try {
+        const response: any = await getAll({
+          url: `${GET_ACCOUNT_STATEMENT}?accountId=${accountId}&startDate=${startDate}&endDate=${endDate}`,
+        });
+        if (response.success) {
+          console.log("data", response.data.statement);
+          dispatch(setCompanyLedgers(response.data.statement));
+          setLoading(false);
+        } else {
+          Swal.fire({
+            text: response.message,
+            icon: "error",
+            timer: 2000,
+            showConfirmButton: false,
+          });
+          setLoading(false);
+        }
+      } catch (error: any) {
+        Swal.fire({
+          text: error.message || "Error creating Expense",
+          icon: "error",
+          timer: 2000,
+          showConfirmButton: false,
+        });
+        setLoading(false);
+      }
+    } else {
+      Swal.fire({
+        text: "Please fill in all the fields",
+        icon: "info",
+        timer: 2000,
+        showCancelButton: false,
+        showConfirmButton: true,
+      });
+      setLoading(false);
+    }
+  };
+
+  const styles2 = StyleSheet.create({
+    page: { padding: 20 },
+    section: { marginBottom: 10 },
+    text: {
+      fontSize: 8,
+    },
+    reportName: {
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    titleName: {
+      fontSize: 12,
+    },
+    titleText: {
+      fontSize: 16,
+    },
+    companyDetails: {
+      fontSize: 12,
+      maxWidth: "200px",
+    },
+    detailsRow: {
+      flexDirection: "row",
+      justifyContent: "flex-start",
+      paddingVertical: 3,
+    },
+    tableContainer: {
+      width: "100%",
+      height: "auto",
+      border: "2px solid black",
+    },
+    tableRowForHeader: {
+      flexDirection: "row",
+      borderBottom: "2px solid black",
+    },
+    tableRow: {
+      flexDirection: "row",
+      borderBottom: "1px solid black",
+      borderColor: "gray",
+    },
+    tableCell: {
+      paddingVertical: 7,
+      paddingLeft: 7,
+      fontSize: "7.5px",
+      margin: -1,
+      fontWeight: "extrabold",
+    },
+    headerCell: {
+      paddingVertical: 10,
+      paddingLeft: 7,
+      margin: -1,
+      fontFamily: "Helvetica-Bold",
+      fontSize: "9.5px",
+    },
+    image: {
+      minWidth: "150px",
+      maxWidth: "160px",
+      height: "80px",
+    },
+    header: {
+      flexDirection: "row",
+      marginBottom: 10,
+      justifyContent: "space-between",
+    },
+  });
+  const [header, setHeader]: any = useState([]);
+  const [pdfData, setPdfData] = useState([]);
+  const [reportName, setReportName]: any = useState("");
+
+  // Function to calculate the max width of each column or distribute evenly
+  const getColumnWidths = () => {
+    const totalColumns = header?.length;
+    if (pdfData?.length === 0) {
+      return Array(totalColumns).fill(100); // If no data, make each column equal width
+    }
+    const widths = header?.map((headerItem: any) => {
+      let maxLength = headerItem.label.length; // Initialize with the label length
+      // Check max length from data values for each column
+      pdfData?.forEach((item: any) => {
+        const itemLength = String(item[headerItem.value] || "").length;
+        if (itemLength > maxLength) {
+          maxLength = itemLength;
+        }
+      });
+      return maxLength * 7; // Multiply by a factor to ensure enough space for text (7px per character)
+    });
+    // If there is less data, distribute columns evenly across the page
+    const totalWidth = widths?.reduce((sum: any, width: any) => sum + width, 0);
+    if (totalWidth < 800) {
+      return Array(totalColumns).fill(800 / totalColumns); // Distribute evenly if total width is too small
+    }
+    return widths;
+  };
+
+  const columnWidths = getColumnWidths(); // Get dynamic column widths
+
+  const PDFDcoument = () => (
+    <Document>
+      <Page size={[842.89, 555.28]} style={styles2.page}>
+        <View style={styles2.section}>
+          <View style={styles2.header}>
+            <Image
+              src={
+                userPersonalizationData !== null &&
+                userPersonalizationData?.loginPageLogo.url !== ""
+                  ? `${IMAGE_BASE_URL}/${userPersonalizationData?.loginPageLogo.url}`
+                  : BackgroundImage
+              }
+              style={styles2.image}
+            />
+            <View style={styles2.reportName}>
+              <View>
+                <Text style={styles2.titleName}>Report Name:</Text>
+              </View>
+              <View>
+                <Text style={styles2.titleText}>{reportName}</Text>
+              </View>
+            </View>
+            <View style={styles2.companyDetails}>
+              <View style={styles2.detailsRow}>
+                <Text style={styles2.titleName}> Name: &nbsp;</Text>
+                <Text style={styles2.titleName}>
+                  abc@gmail.com
+                  {userPersonalizationData?.user?.emailAddress}
+                </Text>
+              </View>
+              <View style={styles2.detailsRow}>
+                <Text style={styles2.titleName}> Email: &nbsp;</Text>
+                <Text style={styles2.titleName}>
+                  abc@gmail.com
+                  {userPersonalizationData?.user?.emailAddress}
+                </Text>
+              </View>
+              <View style={styles2.detailsRow}>
+                <Text style={styles2.titleName}> Address: &nbsp;</Text>
+                <Text style={styles2.titleName}>
+                  abc address
+                  {userPersonalizationData?.user?.emailAddress}
+                </Text>
+              </View>
+              <View style={styles2.detailsRow}>
+                <Text style={styles2.titleName}> Phone: &nbsp;</Text>
+                <Text style={styles2.titleName}>
+                  021-36215572
+                  {userPersonalizationData?.user?.emailAddress}
+                </Text>
+              </View>
+            </View>
+          </View>
+          <Text style={styles2.text}></Text>
+          <br />
+
+          <br />
+          <View style={styles2.tableContainer}>
+            {/* Table Header */}
+            <View style={styles2.tableRowForHeader}>
+              {header &&
+                Array.isArray(header) &&
+                header?.map((item: any, index: any) => (
+                  <Text
+                    style={[styles2.headerCell, { width: columnWidths[index] }]}
+                    key={index}
+                  >
+                    {item.label}
+                  </Text>
+                ))}
+            </View>
+
+            {/* Table Data */}
+            {pdfData?.map((item: any, index: any) => (
+              <View style={styles2.tableRow} key={index}>
+                {header?.map((headerItem: any, headerIndex: number) => {
+                  const value = item[headerItem.value];
+                  return (
+                    <Text
+                      style={[
+                        styles2.tableCell,
+                        { width: columnWidths[headerIndex] },
+                      ]}
+                      key={headerIndex}
+                    >
+                      {value || "N/A"}
+                    </Text>
+                  );
+                })}
+              </View>
+            ))}
+          </View>
+        </View>
+      </Page>
+    </Document>
+  );
+
   return (
     <div
       className="table-responsive support-table"
@@ -100,11 +360,141 @@ const CompanyLedgerTable = ({}) => {
         <div
           style={{
             display: "flex",
-            justifyContent: "end",
+            gap: "20px",
+            // justifyContent: "end",
             paddingRight: "25px",
+            paddingLeft: "25px",
+            alignItems: "center",
           }}
         >
-          <CreateNewCompanyLedger />
+          <Col md={3}>
+            <FormGroup>
+              <div>
+                <P>
+                  Select Account
+                  <span className="txt-danger">*</span>
+                </P>
+              </div>
+              <SelectAccountBox
+                placeholder="Select Account"
+                setAccountId={setAccountId}
+                accountId={accountId}
+                // disabled={receiveMoney !== null}
+              />
+            </FormGroup>
+          </Col>
+          <Col md={3}>
+            <FormGroup>
+              <P>
+                From Date
+                <span className="txt-danger">*</span>
+              </P>
+              <Input
+                type="date"
+                placeholder="Enter Date "
+                value={startDate}
+                name="startDate"
+                onChange={(e) => setStartDate(e.target.value)}
+              />
+            </FormGroup>
+          </Col>
+          <Col md={3}>
+            <FormGroup>
+              <P>
+                To Date
+                <span className="txt-danger">*</span>
+              </P>
+              <Input
+                type="date"
+                placeholder="Enter Date "
+                value={endDate}
+                name="endDate"
+                onChange={(e) => setEndDate(e.target.value)}
+              />
+            </FormGroup>
+          </Col>
+          <Col xs={3} style={{ marginTop: "15px" }}>
+            {companyLedgers.length > 0 && (
+              <Button
+                style={{ marginRight: "10px" }}
+                color="primary"
+                disabled={loading}
+                onClick={() => {
+                  dispatch(setCompanyLedgers([]));
+                  setAccountId("");
+                  setStartDate(new Date().toISOString().slice(0, 10));
+                  setEndDate(new Date().toISOString().slice(0, 10));
+                }}
+              >
+                Cancel
+              </Button>
+            )}
+
+            {companyLedgers.length == 0 && (
+              <Button
+                disabled={loading}
+                color="primary"
+                onClick={addVendorLedger}
+              >
+                {loading ? "Loading..." : "Generate"}
+              </Button>
+            )}
+            {companyLedgers.length > 0 && (
+              <PDFDownloadLink
+                document={<PDFDcoument />} // PDF content to be downloaded
+                fileName={`${reportName}.pdf`} // Name of the file to be downloaded
+              >
+                <Button
+                  disabled={loading}
+                  color="primary"
+                  onClick={() => {
+                    var columns = [
+                      { label: "Date", value: "date" },
+                      { label: "Reference", value: "reference" },
+                      { label: "Narration", value: "narration" },
+                      {
+                        label: "Debit",
+                        value: "debit",
+                      },
+                      {
+                        label: "Credit",
+                        value: "credit",
+                      },
+                      {
+                        label: "Balance",
+                        value: "balance",
+                      },
+                    ];
+                    var rowData = companyLedgers.map(
+                      (item: any, index: any) => {
+                        return {
+                          date: `${item?.date
+                            .toString()
+                            .slice(0, 10)},  ${new Date(item?.date)
+                            .toLocaleString("en-US", {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              second: "2-digit",
+                            })
+                            .toString()}`,
+                          reference: item.reference,
+                          narration: item.narration,
+                          debit: item.debit,
+                          credit: item.credit,
+                          balance: item.balance,
+                        };
+                      }
+                    );
+                    setHeader(columns);
+                    setPdfData(rowData);
+                  }}
+                >
+                  Download
+                </Button>
+              </PDFDownloadLink>
+            )}
+          </Col>
+          {/* <CreateNewVendorLedger /> */}
         </div>
       </Row>
       <Row style={{ display: "flex", alignItems: "center" }}>
@@ -124,53 +514,41 @@ const CompanyLedgerTable = ({}) => {
       <DataTable
         columns={[
           {
-            name: "Title",
-            selector: (row: any) => row["title"],
+            name: "Date",
+            selector: (row: any) => row["date"],
             sortable: true,
-            width: "25%",
+            width: "15%",
           },
           {
-            name: "From",
-            selector: (row: any) => row["from"],
+            name: "Narration",
+            selector: (row: any) => row["narration"],
             sortable: true,
-            width: "25%",
+            width: "35%",
           },
           {
-            name: "To",
-            selector: (row: any) => row["to"],
+            name: "Refernce",
+            selector: (row: any) => row["reference"],
             sortable: true,
-            width: "25%",
+            width: "15%",
+          },
+
+          {
+            name: "Debit",
+            selector: (row: any) => row["debit"],
+            sortable: true,
+            width: "8%",
           },
           {
-            name: "Actions",
-            selector: (row: any) => row["actions"],
+            name: "Credit",
+            selector: (row: any) => row["credit"],
             sortable: true,
-            center: true,
-            width: "20%", // Set the width for this column
-            cell: (row: any) => (
-              <div
-                style={{
-                  // width: "100px",
-                  textAlign: "center",
-                  paddingTop: "2px",
-                  marginBottom: "-12px",
-                  borderRadius: "5px",
-                  color: "black",
-                }}
-              >
-                <div
-                  onClick={() => {
-                    // dispatch(setInvoiceData(row));
-                    // navigate(
-                    //   `${process.env.PUBLIC_URL}/company/modules/saio-central/sales/invoices/create-invoice`
-                    // );
-                  }}
-                >
-                  <TbFileInvoice size={18} />
-                  <span className="tooltip">View Statement</span>
-                </div>
-              </div>
-            ),
+            width: "8%",
+          },
+          {
+            name: "Balance",
+            selector: (row: any) => row["balance"],
+            sortable: true,
+            width: "8%",
           },
         ]}
         data={data}

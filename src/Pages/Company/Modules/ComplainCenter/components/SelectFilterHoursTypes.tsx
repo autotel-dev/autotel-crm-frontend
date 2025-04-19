@@ -18,7 +18,7 @@ const SelectFilterHoursTypes: React.FC<propTypes> = ({
   const dispatch = useDispatch();
   return (
     <Select
-      disabled={report.length > 0}
+      // disabled={report.length > 0}
       value={hour !== "" ? hour : null}
       showSearch
       style={{ width: "50%", height: 36 }}

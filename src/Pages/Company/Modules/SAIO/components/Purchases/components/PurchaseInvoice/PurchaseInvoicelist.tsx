@@ -185,52 +185,62 @@ const PurchaseInvoiceTable = ({}) => {
     });
   }, []);
 
+  const { userPermissions } = useSelector(
+    (state: any) => state.userPermissions
+  );
+
+  var saio_purchases = userPermissions.find(
+    (item: any) => item.title === "SAIO Purchases"
+  );
+
   return (
     <div
       className="table-responsive support-table"
       style={{ overflow: "auto", scrollbarWidth: "none" }}
     >
-      <Row>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "end",
-            paddingRight: "25px",
-          }}
-        >
-          <button
-            className={`btn ${
-              userPersonalizationData?.buttonsAndBarsColor == null
-                ? "btn-primary"
-                : ""
-            }`}
+      {saio_purchases && saio_purchases.create && (
+        <Row>
+          <div
             style={{
-              color: "white",
-              backgroundColor: `${
-                userPersonalizationData !== null &&
-                userPersonalizationData?.buttonsAndBarsColor
-              }`,
               display: "flex",
-              alignItems: "center",
-            }}
-            onClick={() => {
-              dispatch(setPurchaseInvoice(null));
-              navigate(
-                `${process.env.PUBLIC_URL}/company/modules/saio-central/purchases/purchase-invoices/create-invoice`
-              );
-              // setIscreateNewPurchaseInvoice(true)
+              justifyContent: "end",
+              paddingRight: "25px",
             }}
           >
-            <PlusCircle
-              size={18}
+            <button
+              className={`btn ${
+                userPersonalizationData?.buttonsAndBarsColor == null
+                  ? "btn-primary"
+                  : ""
+              }`}
               style={{
-                marginRight: "5px",
+                color: "white",
+                backgroundColor: `${
+                  userPersonalizationData !== null &&
+                  userPersonalizationData?.buttonsAndBarsColor
+                }`,
+                display: "flex",
+                alignItems: "center",
               }}
-            />
-            Create New Purchase Invoice
-          </button>
-        </div>
-      </Row>
+              onClick={() => {
+                dispatch(setPurchaseInvoice(null));
+                navigate(
+                  `${process.env.PUBLIC_URL}/company/modules/saio-central/purchases/purchase-invoices/create-invoice`
+                );
+                // setIscreateNewPurchaseInvoice(true)
+              }}
+            >
+              <PlusCircle
+                size={18}
+                style={{
+                  marginRight: "5px",
+                }}
+              />
+              Create New Purchase Invoice
+            </button>
+          </div>
+        </Row>
+      )}
       <Row style={{ display: "flex", alignItems: "center" }}>
         <Col sm={12} md={12} lg={12} xl={12}>
           <input
@@ -361,7 +371,11 @@ const PurchaseInvoiceTable = ({}) => {
             },
             {
               name: "Remaining",
-              selector: (row: any) => row["remainingBalance"],
+              selector: (row: any) =>
+                row["remainingBalance"] == 0 &&
+                row["netAmount"] - row["remainingBalance"] == row["netAmount"]
+                  ? row["netAmount"]
+                  : row["remainingBalance"],
               sortable: true,
               // center: true,
               width: "10%",

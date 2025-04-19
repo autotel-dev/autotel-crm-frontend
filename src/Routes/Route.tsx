@@ -382,6 +382,27 @@ const routes = [
     permissionValue: "Branches",
   },
   {
+    path: `${process.env.PUBLIC_URL}/company/setup/complain-types`,
+    Component: <ComplainType />,
+    allowedUserRoles: [ROLES.COMPANY],
+    isProtected: true,
+    permissionValue: "ComplainTypes",
+  },
+  {
+    path: `${process.env.PUBLIC_URL}/company/setup/vehicle-make`,
+    Component: <VehiclesMake />,
+    allowedUserRoles: [ROLES.COMPANY],
+    isProtected: true,
+    permissionValue: "VehiclesMake",
+  },
+  {
+    path: `${process.env.PUBLIC_URL}/company/setup/vehicle-model`,
+    Component: <VehiclesModel />,
+    allowedUserRoles: [ROLES.COMPANY],
+    isProtected: true,
+    permissionValue: "VehiclesModel",
+  },
+  {
     path: `${process.env.PUBLIC_URL}/company/setup/email-gateway`,
     Component: <EmailGateway />,
     allowedUserRoles: [ROLES.COMPANY],
@@ -525,6 +546,14 @@ const routes = [
   {
     path: `${process.env.PUBLIC_URL}/operator/modules/complain-center/complainDetails/:complaintId`,
     Component: <ComplainDetails />,
+  },
+  {
+    path: `${process.env.PUBLIC_URL}/operator/modules/saio-central`,
+    Component: <SAIOCentralLayout />,
+    isProtected: true,
+    allowedUserRoles: [ROLES.OPERATOR],
+    permissionValue: "SAIO Central",
+    isLayout: true,
   },
 
   {

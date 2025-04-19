@@ -167,7 +167,7 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
         {
           // svgIcon: "bonus-kit",
           svgIcon: `${ComplaintypeIcon}`,
-          title: "Complain types",
+          title: "Complain Types",
           link: `${process.env.PUBLIC_URL}/super-admin/setup/complain-types`,
         },
 
@@ -248,7 +248,9 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
               ? ControlroomIcon
               : item.route === "/monitoring"
               ? MonitorIcon
-              : item.route === "/complaint-center" ? ComplaincenterIcon : SalesIcon
+              : item.route === "/complaint-center"
+              ? ComplaincenterIcon
+              : SalesIcon
           }`, // Replace DefaultIcon with the default icon you want to use
           title: `${item.name}`,
           link: `${process.env.PUBLIC_URL}/dashboard`,
@@ -319,28 +321,46 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
         },
         {
           // svgIcon: "bonus-kit",
+          svgIcon: `${ComplaintypeIcon}`,
+          title: "Complain Types",
+          link: `${process.env.PUBLIC_URL}/company/setup/complain-types`,
+        },
+        {
+          // svgIcon: "bonus-kit",
+          svgIcon: `${VehicleMakeIcon}`,
+          title: "Vehicle Make",
+          link: `${process.env.PUBLIC_URL}/company/setup/vehicle-make`,
+        },
+        {
+          // svgIcon: "bonus-kit",
+          svgIcon: `${VehicleModelIcon}`,
+          title: "Vehicle Model",
+          link: `${process.env.PUBLIC_URL}/company/setup/vehicle-model`,
+        },
+        {
+          // svgIcon: "bonus-kit",
           title: "Email Gateway",
           svgIcon: `${EmailgatewayIcon}`,
           link: `${process.env.PUBLIC_URL}/company/setup/email-gateway`,
         },
-        {
-          // svgIcon: "bonus-kit",
-          svgIcon: `${WhatsappGatewayIcon}`,
-          title: "WhatsApp Gateway",
-          link: `${process.env.PUBLIC_URL}/company/setup/whatsApp-gateway`,
-        },
+        // {
+        //   // svgIcon: "bonus-kit",
+        //   svgIcon: `${WhatsappGatewayIcon}`,
+        //   title: "WhatsApp Gateway",
+        //   link: `${process.env.PUBLIC_URL}/company/setup/whatsApp-gateway`,
+        // },
         {
           // svgIcon: "bonus-kit",
           svgIcon: `${EmailtemplateIcon}`,
           title: "Email Templates",
           link: `${process.env.PUBLIC_URL}/company/setup/email-template`,
         },
-        {
-          // svgIcon: "bonus-kit",
-          svgIcon: `${WhatsapptemplateIcon}`,
-          title: "WhatsApp Templates",
-          link: `${process.env.PUBLIC_URL}/company/setup/whatsapp-template`,
-        },
+        // {
+        //   // svgIcon: "bonus-kit",
+        //   svgIcon: `${WhatsapptemplateIcon}`,
+        //   title: "WhatsApp Templates",
+        //   link: `${process.env.PUBLIC_URL}/company/setup/whatsapp-template`,
+        // },
         // {
         //   svgIcon: `${GeofenceIcon}`,
         //   title: "Geofence",
@@ -382,7 +402,9 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
               ? ControlroomIcon
               : item.route === "/monitoring"
               ? MonitorIcon
-              : item.route === "/complaint-center" ? ComplaincenterIcon : SalesIcon
+              : item.route === "/complaint-center"
+              ? ComplaincenterIcon
+              : SalesIcon
           }`, // Replace DefaultIcon with the default icon you want to use
           title: `${item.name}`,
           link: `${process.env.PUBLIC_URL}/company/modules${item.route}`,
@@ -424,7 +446,8 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
 
     {
       title: "Modules",
-      svgIcon: "home",
+      // svgIcon: "home",
+      svgIcon: `${ModuleIcon}`,
       subMenu: crmActiveModules.map((item: any, index: any) => {
         return {
           // svgIcon: "bonus-kit",
@@ -433,7 +456,9 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
               ? ControlroomIcon
               : item.route === "/monitoring"
               ? MonitorIcon
-              : item.route === "/complaint-center" && ComplaincenterIcon
+              : item.route === "/complaint-center"
+              ? ComplaincenterIcon
+              : SalesIcon
           }`, // Replace DefaultIcon with the default icon you want to use
           title: `${item.name}`,
           link: `${process.env.PUBLIC_URL}/operator/modules${item.route}`,
@@ -661,28 +686,27 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
                           }`}
                           to={data.link ? data.link : "#"}
                           onClick={() => handleClick(data)}
-                          
                         >
-                         <div>
-                          <span
-                            style={{
-                              height: "20px",
-                              width: "20px",
-                              marginRight: "8px",
-                            }}
-                          >
-                            <img
-                              src={data.svgIcon}
+                          <div>
+                            <span
                               style={{
-                                height: "100%",
-                                width: "100%",
+                                height: "20px",
+                                width: "20px",
+                                marginRight: "8px",
                               }}
-                              alt=""
-                            />
-                          </span>
-                          <span style={{ fontSize: "13px" }}>
-                            {t(data.title)}
-                          </span>
+                            >
+                              <img
+                                src={data.svgIcon}
+                                style={{
+                                  height: "100%",
+                                  width: "100%",
+                                }}
+                                alt=""
+                              />
+                            </span>
+                            <span style={{ fontSize: "13px" }}>
+                              {t(data.title)}
+                            </span>
                           </div>
                         </Link>
                         {data.link ? (

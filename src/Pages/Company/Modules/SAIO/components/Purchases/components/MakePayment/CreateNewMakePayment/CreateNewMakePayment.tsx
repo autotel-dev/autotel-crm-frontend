@@ -25,6 +25,7 @@ import {
 } from "../../../../../../../../../ReaduxToolkit/Reducer/MakePaymentSlice";
 import DataTable from "react-data-table-component";
 import { formatUnderscoredString } from "../../../../../../../../../Utilities/globals/globals";
+import { setPurchaseInvoiceLoading } from "../../../../../../../../../ReaduxToolkit/Reducer/PurchaseInvoiceSlice";
 
 const CreateNewMakePayment = ({}) => {
   const { makePayment, purchaseInvoices } = useSelector(
@@ -158,6 +159,7 @@ const CreateNewMakePayment = ({}) => {
           url: CREATE_MAKE_PAYMENT,
         });
         if (response.success) {
+          dispatch(setPurchaseInvoiceLoading(true));
           dispatch(setMakePaymentLoading(true));
           dispatch(setMakePayment(response.data));
           setLoading(false);

@@ -47,6 +47,7 @@ interface PropsTypes {
   setAllowedModules: React.Dispatch<React.SetStateAction<any>>;
   subRole: any;
   userBranch: any;
+  permissions: any;
 }
 
 const UpdateUser: React.FC<PropsTypes> = ({
@@ -62,6 +63,7 @@ const UpdateUser: React.FC<PropsTypes> = ({
   setAllowedModules,
   subRole,
   userBranch,
+  permissions,
 
   // setValue
 }) => {
@@ -148,6 +150,7 @@ const UpdateUser: React.FC<PropsTypes> = ({
         allowedModules: allowedModules,
         branch: userBranch,
         subRole: role !== "" ? role : subRole,
+        permissions: givenPermissions,
       };
       // // console.log(operator);
       try {
@@ -243,6 +246,68 @@ const UpdateUser: React.FC<PropsTypes> = ({
       );
       setAllowedModules(updatedItems);
     }
+  };
+
+  const { userPermissions } = useSelector(
+    (state: any) => state.userPermissions
+  );
+
+  const [givenPermissions, setGivenPermissions] = useState<any[]>([]);
+
+  useEffect(() => {
+    const updatedPermissions = userPermissions.map((permission: any) => {
+      // Find the corresponding permission in the selected role
+      const rolePermission = permissions?.find(
+        (rp: any) => rp.value === permission.value
+      );
+
+      // If the permission exists in the role and is true, set it to true, otherwise false
+      return {
+        ...permission,
+        read: rolePermission ? rolePermission.read : false,
+        create: rolePermission ? rolePermission.create : false,
+        edit: rolePermission ? rolePermission.edit : false,
+        delete: rolePermission ? rolePermission.delete : false,
+      };
+    });
+
+    // Update the givenPermissions state
+    setGivenPermissions(updatedPermissions);
+  }, [isVisible]);
+
+  useEffect(() => {
+    // Map over userPermissions and update the permissions based on the selected role
+    if (role !== "") {
+      const selectedRole = roles.find((r: any) => r._id === role);
+
+      // Map over userPermissions and update the permissions based on the selected role
+      const updatedPermissions = userPermissions.map((permission: any) => {
+        // Find the corresponding permission in the selected role
+        const rolePermission = selectedRole?.permissions.find(
+          (rp: any) => rp.value === permission.value
+        );
+
+        // If the permission exists in the role and is true, set it to true, otherwise false
+        return {
+          ...permission,
+          read: rolePermission ? rolePermission.read : false,
+          create: rolePermission ? rolePermission.create : false,
+          edit: rolePermission ? rolePermission.edit : false,
+          delete: rolePermission ? rolePermission.delete : false,
+        };
+      });
+
+      // Update the givenPermissions state
+      setGivenPermissions(updatedPermissions);
+    }
+  }, [role]);
+
+  const handleCheckboxChange = (index: any, key: any) => {
+    setGivenPermissions((prevPermissions: any) => {
+      const updatedPermissions = [...prevPermissions];
+      updatedPermissions[index][key] = !updatedPermissions[index][key];
+      return updatedPermissions;
+    });
   };
 
   return (
@@ -380,7 +445,7 @@ const UpdateUser: React.FC<PropsTypes> = ({
               </Row>
             </FormGroup>
 
-            {role !== "" && <P>Given Permissions : </P>}
+            <P>Given Permissions : </P>
             <FormGroup
               className="col-md-12 create-group"
               style={{
@@ -394,159 +459,169 @@ const UpdateUser: React.FC<PropsTypes> = ({
                 scrollbarColor: "lightgray transparent", // Specify scrollbar color
               }}
             >
-              {roles
-                .filter(
-                  (item: any) => item._id === (role !== "" ? role : subRole)
-                )
-                .map((filteredRole: any) =>
-                  filteredRole.permissions.map(
-                    (permission: any, index: any) => {
-                      return (
-                        <div key={index}>
-                          <Row>
-                            <Col
-                              key={index}
-                              xl={12}
-                              lg={12}
-                              md={12}
-                              sm={12}
-                              xs={12}
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                                alignItems: "center",
-                              }}
-                            >
-                              <span
-                                style={{
-                                  fontSize: "16px",
-                                }}
-                              >
-                                {permission.title}
-                              </span>
+              {givenPermissions.map((permission: any, index: any) => {
+                return (
+                  <div key={index}>
+                    <Row>
+                      <Col
+                        key={index}
+                        xl={12}
+                        lg={12}
+                        md={12}
+                        sm={12}
+                        xs={12}
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                        }}
+                      >
+                        <P>{permission.title}</P>
 
-                              <div>
-                                <label
-                                  style={{
-                                    display: "inline-block",
-                                    position: "relative",
-                                    cursor: "not-allowed",
-                                    marginRight: "25px",
-                                    marginBottom: "15px",
-                                    fontSize: "18px",
-                                  }}
-                                  onClick={(e) => e.stopPropagation()}
-                                >
-                                  <input
-                                    type="checkbox"
-                                    name="key"
-                                    value="value"
-                                    disabled={true}
-                                    checked={permission.read}
-                                    onChange={() => {}}
-                                    style={{ display: "none" }} // Hide the default checkbox
-                                  />
-                                  <span
-                                    onClick={(e) => e.stopPropagation()}
-                                    className={
-                                      permission.read ? "green" : "red"
-                                    }
-                                  ></span>
-                                  Read
-                                </label>
-                                <label
-                                  style={{
-                                    display: "inline-block",
-                                    position: "relative",
-                                    cursor: "not-allowed",
-                                    marginRight: "25px",
-                                    marginBottom: "15px",
-                                    fontSize: "16px",
-                                  }}
-                                  onClick={(e) => e.stopPropagation()}
-                                >
-                                  <input
-                                    type="checkbox"
-                                    name="key"
-                                    value="value"
-                                    disabled={true}
-                                    checked={permission.create}
-                                    onChange={() => {}}
-                                    style={{ display: "none" }} // Hide the default checkbox
-                                  />
-                                  <span
-                                    onClick={(e) => e.stopPropagation()}
-                                    className={
-                                      permission.create ? "green" : "red"
-                                    }
-                                  ></span>
-                                  Create
-                                </label>
-                                <label
-                                  style={{
-                                    display: "inline-block",
-                                    position: "relative",
-                                    cursor: "not-allowed",
-                                    marginRight: "25px",
-                                    marginBottom: "15px",
-                                    fontSize: "16px",
-                                  }}
-                                  onClick={(e) => e.stopPropagation()}
-                                >
-                                  <input
-                                    type="checkbox"
-                                    name="key"
-                                    value="value"
-                                    disabled={true}
-                                    checked={permission.edit}
-                                    onChange={() => {}}
-                                    style={{ display: "none" }} // Hide the default checkbox
-                                  />
-                                  <span
-                                    onClick={(e) => e.stopPropagation()}
-                                    className={
-                                      permission.edit ? "green" : "red"
-                                    }
-                                  ></span>
-                                  Edit
-                                </label>
-                                <label
-                                  style={{
-                                    display: "inline-block",
-                                    position: "relative",
-                                    cursor: "not-allowed",
-                                    marginRight: "25px",
-                                    marginBottom: "15px",
-                                    fontSize: "16px",
-                                  }}
-                                  onClick={(e) => e.stopPropagation()}
-                                >
-                                  <input
-                                    type="checkbox"
-                                    name="key"
-                                    value="value"
-                                    disabled={true}
-                                    checked={permission.delete}
-                                    onChange={() => {}}
-                                    style={{ display: "none" }} // Hide the default checkbox
-                                  />
-                                  <span
-                                    onClick={(e) => e.stopPropagation()}
-                                    className={
-                                      permission.delete ? "green" : "red"
-                                    }
-                                  ></span>
-                                  Delete
-                                </label>
-                                {/* Similarly, add labels for other permissions */}
-                              </div>
-                            </Col>
-                          </Row>
+                        <div>
+                          <Label
+                            style={{
+                              display: "inline-block",
+                              position: "relative",
+                              // cursor: "not-allowed",
+                              cursor: "pointer",
+                              marginRight: "25px",
+                              marginBottom: "15px",
+                              fontSize: "18px",
+                            }}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleCheckboxChange(index, "read");
+                            }}
+                          >
+                            <input
+                              type="checkbox"
+                              name="key"
+                              value="value"
+                              // disabled={true}
+                              checked={permission.read}
+                              onChange={() => {}}
+                              style={{ display: "none" }} // Hide the default checkbox
+                            />
+                            <span
+                              onClick={() => {
+                                handleCheckboxChange(index, "read");
+                              }}
+                              // className={permission.read ? "green" : "red"}
+                              className="green"
+                            ></span>
+                            Read
+                          </Label>
+                          <Label
+                            style={{
+                              display: "inline-block",
+                              position: "relative",
+                              // cursor: "not-allowed",
+                              cursor: "pointer",
+                              marginRight: "25px",
+                              marginBottom: "15px",
+                              fontSize: "18px",
+                            }}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleCheckboxChange(index, "create");
+                            }}
+                          >
+                            <input
+                              type="checkbox"
+                              name="key"
+                              value="value"
+                              // disabled={true}
+                              checked={permission.create}
+                              onChange={() => {}}
+                              style={{ display: "none" }} // Hide the default checkbox
+                            />
+                            <span
+                              onClick={() => {
+                                handleCheckboxChange(index, "create");
+                              }}
+                              // className={
+                              //   permission.create ? "green" : "red"
+                              // }
+                              className="green"
+                            ></span>
+                            Create
+                          </Label>
+                          <Label
+                            style={{
+                              display: "inline-block",
+                              position: "relative",
+                              // cursor: "not-allowed",
+                              cursor: "pointer",
+                              marginRight: "25px",
+                              marginBottom: "15px",
+                              fontSize: "18px",
+                            }}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleCheckboxChange(index, "edit");
+                            }}
+                          >
+                            <input
+                              type="checkbox"
+                              name="key"
+                              value="value"
+                              // disabled={true}
+                              checked={permission.edit}
+                              onChange={() => {}}
+                              style={{ display: "none" }} // Hide the default checkbox
+                            />
+                            <span
+                              onClick={() => {
+                                handleCheckboxChange(index, "edit");
+                              }}
+                              // className={permission.edit ? "green" : "red"}
+                              className="green"
+                            ></span>
+                            Edit
+                          </Label>
+                          <Label
+                            style={{
+                              display: "inline-block",
+                              position: "relative",
+                              cursor: "pointer",
+                              marginRight: "25px",
+                              marginBottom: "15px",
+                              fontSize: "18px",
+                              verticalAlign: "center",
+                            }}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleCheckboxChange(index, "delete");
+                            }}
+                          >
+                            <input
+                              type="checkbox"
+                              name="key"
+                              value="value"
+                              // disabled={true}
+                              checked={permission.delete}
+                              onChange={() => {}}
+                              style={{ display: "none" }} // Hide the default checkbox
+                            />
+                            <span
+                              onClick={() => {
+                                handleCheckboxChange(index, "delete");
+                              }}
+                              // className={
+                              //   permission.delete ? "green" : "red"
+                              // }
+                              className="green"
+                            ></span>
+                            Delete
+                          </Label>
+                          {/* Similarly, add Ps for other permissions */}
                         </div>
-                      );
-                    }
-                  )
-                )}
+                      </Col>
+                    </Row>
+                  </div>
+                );
+              })}
             </FormGroup>
             <P>Allowed Modules : </P>
             <FormGroup

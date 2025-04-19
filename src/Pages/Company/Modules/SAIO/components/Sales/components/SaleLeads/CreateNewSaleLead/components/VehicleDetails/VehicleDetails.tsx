@@ -519,14 +519,72 @@ const VehicleForm = ({
               onChange(index, { ...formData, color: e });
             }}
             disabled={isCreated}
-            options={[
-              { value: "Black", label: "Black" },
-              { value: "Blue", label: "Blue" },
-              { value: "White", label: "White" },
-              { value: "Gray", label: "Gray" },
-              { value: "Green", label: "Green" },
-              { value: "Red", label: "Red" },
-            ]}
+            options={
+              //   [
+              //   { value: "Black", label: "Black" },
+              //   { value: "Blue", label: "Blue" },
+              //   { value: "White", label: "White" },
+              //   { value: "Gray", label: "Gray" },
+              //   { value: "Green", label: "Green" },
+              //   { value: "Red", label: "Red" },
+              // ]
+
+              [
+                { value: "Super White", label: "Super White" },
+                { value: "Attitude Black", label: "Attitude Black" },
+                { value: "Graphite Grey", label: "Graphite Grey" },
+                { value: "Silver Metallic", label: "Silver Metallic" },
+                { value: "Phantom Brown", label: "Phantom Brown" },
+                { value: "Strong Blue", label: "Strong Blue" },
+                { value: "Oxford Blue", label: "Oxford Blue" },
+                {
+                  value: "Black Diamond Metallic",
+                  label: "Black Diamond Metallic",
+                },
+                { value: "Polar White", label: "Polar White" },
+                { value: "Fiery Red", label: "Fiery Red" },
+                { value: "Aqua Silver", label: "Aqua Silver" },
+                { value: "Teal Blue", label: "Teal Blue" },
+                { value: "Pearl Red", label: "Pearl Red" },
+                { value: "Cerulean Blue", label: "Cerulean Blue" },
+                { value: "Silky Silver", label: "Silky Silver" },
+                { value: "Super Pearl Black", label: "Super Pearl Black" },
+                { value: "Pearl White", label: "Pearl White" },
+                { value: "Solid White", label: "Solid White" },
+                { value: "Pearl Black", label: "Pearl Black" },
+                { value: "Clear White", label: "Clear White" },
+                { value: "Sparkling Silver", label: "Sparkling Silver" },
+                { value: "Mineral Blue", label: "Mineral Blue" },
+                { value: "Cherry Black", label: "Cherry Black" },
+                { value: "Steel Grey", label: "Steel Grey" },
+                { value: "Milky Beige", label: "Milky Beige" },
+                { value: "Mercury Blue", label: "Mercury Blue" },
+                { value: "Lime Light", label: "Lime Light" },
+                { value: "Graphite", label: "Graphite" },
+                { value: "Crimson Spark Red", label: "Crimson Spark Red" },
+                { value: "Dark Teal Mica", label: "Dark Teal Mica" },
+                { value: "Carnelian Red", label: "Carnelian Red" },
+                { value: "Urban Titanium", label: "Urban Titanium" },
+                { value: "Crystal Black", label: "Crystal Black" },
+                { value: "Lunar Silver", label: "Lunar Silver" },
+                { value: "Taffeta White", label: "Taffeta White" },
+                { value: "Modern Steel", label: "Modern Steel" },
+                {
+                  value: "Lunar Silver Metallic",
+                  label: "Lunar Silver Metallic",
+                },
+                {
+                  value: "Modern Steel Metallic",
+                  label: "Modern Steel Metallic",
+                },
+                { value: "Crystal Black Pearl", label: "Crystal Black Pearl" },
+                { value: "Carnelian Red Pearl", label: "Carnelian Red Pearl" },
+                { value: "Galaxy Black", label: "Galaxy Black" },
+                { value: "Space Grey", label: "Space Grey" },
+                { value: "Stellar White", label: "Stellar White" },
+                { value: "Cosmic Red", label: "Cosmic Red" },
+              ]
+            }
           />
         </Col>
 

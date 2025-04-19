@@ -43,7 +43,17 @@ import NoInternetConnection from "../../../Utilities/NoInternetConnection/NoInte
 import { getUserRole } from "../../../../Utilities/globals/globals";
 import { ROLES } from "../../../../constants/roles";
 import { setErrorData } from "../../../../ReaduxToolkit/Reducer/UserSlice";
-import { CONTROLROOM_DASHBOARD_STATISTICS, GET_ALERT_EVENTS, GET_ALL_ASSIGNED_ALERT_EVENTS, GET_ALL_COMMANDED_DEVICES, GET_ALL_COMPLETED_ALERT_EVENTS, GET_ALL_KILLED_DEVICES, GET_ALL_VALID_PRE_INFOS, GET_DEVICES, VERIFY_AND_UPDATE_ALL_VEHICLE_BLOCK_STATUS } from "../../../../Utilities/api/apiEndpoints";
+import {
+  CONTROLROOM_DASHBOARD_STATISTICS,
+  GET_ALERT_EVENTS,
+  GET_ALL_ASSIGNED_ALERT_EVENTS,
+  GET_ALL_COMMANDED_DEVICES,
+  GET_ALL_COMPLETED_ALERT_EVENTS,
+  GET_ALL_KILLED_DEVICES,
+  GET_ALL_VALID_PRE_INFOS,
+  GET_DEVICES,
+  VERIFY_AND_UPDATE_ALL_VEHICLE_BLOCK_STATUS,
+} from "../../../../Utilities/api/apiEndpoints";
 import { ERROR_MESSAGE } from "../../../../Utilities/constants/constants";
 
 const ControlRoom = () => {
@@ -175,22 +185,20 @@ const ControlRoom = () => {
     });
   }, []);
   useEffect(() => {
-    getAll({ url: GET_ALL_KILLED_DEVICES }).then(
-      (data: any) => {
-        // // console.log("api call --- >", data);
+    getAll({ url: `${GET_ALL_KILLED_DEVICES}?type=self` }).then((data: any) => {
+      // // console.log("api call --- >", data);
 
-        if (data !== undefined) {
-          if (data.success) {
-            // // console.log("length --- >", data.data);
-            dispatch(setKilledDevices(data.data));
-          }
-          if (!data.success) {
-            // // // console.log("length --- >", data.data);
-            dispatch(setKilledDevices([]));
-          }
+      if (data !== undefined) {
+        if (data.success) {
+          // // console.log("length --- >", data.data);
+          dispatch(setKilledDevices(data.data));
+        }
+        if (!data.success) {
+          // // // console.log("length --- >", data.data);
+          dispatch(setKilledDevices([]));
         }
       }
-    );
+    });
   }, []);
   useEffect(() => {
     const yesterday = new Date();
@@ -212,22 +220,20 @@ const ControlRoom = () => {
     });
   }, []);
   useEffect(() => {
-    getAll({ url: GET_ALL_COMMANDED_DEVICES }).then(
-      (data: any) => {
-        // // console.log("api call --- >", data);
+    getAll({ url: GET_ALL_COMMANDED_DEVICES }).then((data: any) => {
+      // // console.log("api call --- >", data);
 
-        if (data !== undefined) {
-          if (data.success) {
-            // // // console.log("length --- >", data.data);
-            dispatch(setSelfSendCommands(data.data));
-          }
-          if (!data.success) {
-            // // // console.log("length --- >", data.data);
-            dispatch(setSelfSendCommands([]));
-          }
+      if (data !== undefined) {
+        if (data.success) {
+          // // // console.log("length --- >", data.data);
+          dispatch(setSelfSendCommands(data.data));
+        }
+        if (!data.success) {
+          // // // console.log("length --- >", data.data);
+          dispatch(setSelfSendCommands([]));
         }
       }
-    );
+    });
   }, []);
   useEffect(() => {
     getAll({ url: GET_ALL_VALID_PRE_INFOS }).then((data: any) => {
@@ -503,11 +509,12 @@ const ControlRoom = () => {
                       tabs
                       className="simple-wrapper"
                       style={{
-                        backgroundColor: `${userPersonalizationData !== null &&
-                            userPersonalizationData?.buttonsAndBarsColor !== null
+                        backgroundColor: `${
+                          userPersonalizationData !== null &&
+                          userPersonalizationData?.buttonsAndBarsColor !== null
                             ? userPersonalizationData?.buttonsAndBarsColor
                             : "#63d5be"
-                          }`,
+                        }`,
 
                         borderTopLeftRadius: "10px",
                         borderTopRightRadius: "10px",
@@ -525,13 +532,15 @@ const ControlRoom = () => {
                         <NavLink
                           className={` ${basicTab === "1" ? "active" : ""}`}
                           style={{
-                            color: `${basicTab === "1"
+                            color: `${
+                              basicTab === "1"
                                 ? userPersonalizationData !== null &&
-                                  userPersonalizationData?.buttonsAndBarsColor !== null
+                                  userPersonalizationData?.buttonsAndBarsColor !==
+                                    null
                                   ? userPersonalizationData?.buttonsAndBarsColor
                                   : "#63d5be"
                                 : "white"
-                              }`,
+                            }`,
                           }}
                           onClick={() => setBasicTab("1")}
                         >
@@ -550,13 +559,15 @@ const ControlRoom = () => {
                         <NavLink
                           className={` ${basicTab === "2" ? "active" : ""}`}
                           style={{
-                            color: `${basicTab === "2"
+                            color: `${
+                              basicTab === "2"
                                 ? userPersonalizationData !== null &&
-                                  userPersonalizationData?.buttonsAndBarsColor !== null
+                                  userPersonalizationData?.buttonsAndBarsColor !==
+                                    null
                                   ? userPersonalizationData?.buttonsAndBarsColor
                                   : "#63d5be"
                                 : "white"
-                              }`,
+                            }`,
                           }}
                           onClick={() => setBasicTab("2")}
                         >
@@ -607,7 +618,7 @@ const ControlRoom = () => {
                   style={{
                     display: "flex",
                     // flexDirection: "column",
-                    width:"100%"
+                    width: "100%",
                   }}
                 >
                   <Skeleton
@@ -647,118 +658,113 @@ const ControlRoom = () => {
                   style={{
                     display: "flex",
                     // flexDirection: "column",
-                    width:"100%",
+                    width: "100%",
                     // marginLeft:"20px",
-                    marginTop:"20px",
+                    marginTop: "20px",
                   }}
                 >
                   <div
-                   style={{
-                    // display: "flex",
-                    // flexDirection: "column",
-                    width:"50%",
-                    // marginLeft:"20px"
-                    paddingRight:"10px",
-                  }}
+                    style={{
+                      // display: "flex",
+                      // flexDirection: "column",
+                      width: "50%",
+                      // marginLeft:"20px"
+                      paddingRight: "10px",
+                    }}
                   >
-                  <Skeleton
-                    height="100px"
-                    width="100%"
-                    marginTop="10px"
-                    marginBottom="20px"
-                    borderRadius="10px"
-                    // marginRight="20px"
-                  />
-                  <Skeleton
-                    height="40px"
-                    width="100%"
-                    marginTop="10px"
-                    marginBottom="20px"
-                    borderRadius="10px"
-                    // marginRight="20px"
-                  />
-                  <Skeleton
-                    height="40px"
-                    width="100%"
-                    marginTop="10px"
-                    marginBottom="20px"
-                    borderRadius="10px"
-                    // marginRight="20px"
-                  />
-                   <Skeleton
-                    height="40px"
-                    width="100%"
-                    marginTop="10px"
-                    marginBottom="20px"
-                    borderRadius="10px"
-                    // marginRight="20px"
-                  />
-                  <Skeleton
-                    height="40px"
-                    width="100%"
-                    marginTop="10px"
-                    marginBottom="20px"
-                    borderRadius="10px"
-                    // marginRight="20px"
-                  />
-
-
+                    <Skeleton
+                      height="100px"
+                      width="100%"
+                      marginTop="10px"
+                      marginBottom="20px"
+                      borderRadius="10px"
+                      // marginRight="20px"
+                    />
+                    <Skeleton
+                      height="40px"
+                      width="100%"
+                      marginTop="10px"
+                      marginBottom="20px"
+                      borderRadius="10px"
+                      // marginRight="20px"
+                    />
+                    <Skeleton
+                      height="40px"
+                      width="100%"
+                      marginTop="10px"
+                      marginBottom="20px"
+                      borderRadius="10px"
+                      // marginRight="20px"
+                    />
+                    <Skeleton
+                      height="40px"
+                      width="100%"
+                      marginTop="10px"
+                      marginBottom="20px"
+                      borderRadius="10px"
+                      // marginRight="20px"
+                    />
+                    <Skeleton
+                      height="40px"
+                      width="100%"
+                      marginTop="10px"
+                      marginBottom="20px"
+                      borderRadius="10px"
+                      // marginRight="20px"
+                    />
                   </div>
                   <div
-                   style={{
-                    // display: "flex",
-                    // flexDirection: "column",
-                    width:"50%",
-                    marginRight:"20px",
-                    paddingLeft:"10px"
-                  }}
+                    style={{
+                      // display: "flex",
+                      // flexDirection: "column",
+                      width: "50%",
+                      marginRight: "20px",
+                      paddingLeft: "10px",
+                    }}
                   >
-                  <Skeleton
-                    height="100px"
-                    width="100%"
-                    marginTop="10px"
-                    marginBottom="20px"
-                    borderRadius="10px"
-                    // marginRight="20px"
-                  />
-                  <Skeleton
-                    height="40px"
-                    width="100%"
-                    marginTop="10px"
-                    marginBottom="20px"
-                    borderRadius="10px"
-                    // marginRight="20px"
-                  />
-                  <Skeleton
-                    height="40px"
-                    width="100%"
-                    marginTop="10px"
-                    marginBottom="20px"
-                    borderRadius="10px"
-                    // marginRight="20px"
-                  />
-                   <Skeleton
-                    height="40px"
-                    width="100%"
-                    marginTop="10px"
-                    marginBottom="20px"
-                    borderRadius="10px"
-                    // marginRight="20px"
-                  />
-                  <Skeleton
-                    height="40px"
-                    width="100%"
-                    marginTop="10px"
-                    marginBottom="20px"
-                    borderRadius="10px"
-                    // marginRight="20px"
-                  />
-
-
+                    <Skeleton
+                      height="100px"
+                      width="100%"
+                      marginTop="10px"
+                      marginBottom="20px"
+                      borderRadius="10px"
+                      // marginRight="20px"
+                    />
+                    <Skeleton
+                      height="40px"
+                      width="100%"
+                      marginTop="10px"
+                      marginBottom="20px"
+                      borderRadius="10px"
+                      // marginRight="20px"
+                    />
+                    <Skeleton
+                      height="40px"
+                      width="100%"
+                      marginTop="10px"
+                      marginBottom="20px"
+                      borderRadius="10px"
+                      // marginRight="20px"
+                    />
+                    <Skeleton
+                      height="40px"
+                      width="100%"
+                      marginTop="10px"
+                      marginBottom="20px"
+                      borderRadius="10px"
+                      // marginRight="20px"
+                    />
+                    <Skeleton
+                      height="40px"
+                      width="100%"
+                      marginTop="10px"
+                      marginBottom="20px"
+                      borderRadius="10px"
+                      // marginRight="20px"
+                    />
                   </div>
-                  
+                </div>
               </div>
-            </div>
             </div>
           )}
         </Container>

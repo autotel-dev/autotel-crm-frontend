@@ -19,10 +19,17 @@ import ViewPDFModal from "../../../../ViewPDFModal";
 import { useNavigate } from "react-router-dom";
 import {
   setSaleInvoice,
+  setSaleInvoiceLoading,
   setSaleInvoices,
 } from "../../../../../../../../../ReaduxToolkit/Reducer/SaleInvoiceSlice";
 import { formatUnderscoredString } from "../../../../../../../../../Utilities/globals/globals";
-import { IMAGE_BASE_URL } from "../../../../../../../../../Utilities/api/apiEndpoints";
+import {
+  IMAGE_BASE_URL,
+  SALE_INVOICE_STATUS_APPROVED,
+} from "../../../../../../../../../Utilities/api/apiEndpoints";
+import Swal from "sweetalert2";
+import { patch } from "../../../../../../../../../Utilities/api";
+import { SubmitHandler } from "react-hook-form";
 
 const InvoiceDetail = ({}) => {
   const navigate = useNavigate();
@@ -33,6 +40,7 @@ const InvoiceDetail = ({}) => {
   );
 
   const { saleInvoice } = useSelector((state: any) => state.saleInvoice);
+  const [loading, setLoading] = useState(false);
   // console.log("saleInv", saleInvoice);
   const { taxes } = useSelector((state: any) => state.taxes);
   const styles2 = StyleSheet.create({
@@ -81,7 +89,7 @@ const InvoiceDetail = ({}) => {
       border: "1px solid black",
       position: "absolute",
       right: "20",
-      top: "20%",
+      // top: "20%",
     },
     tableRow: {
       flexDirection: "row",
@@ -149,15 +157,24 @@ const InvoiceDetail = ({}) => {
       <Page style={styles2.page}>
         <View style={styles2.section}>
           <View style={{ marginBottom: "10px" }}>
-            <Image
-              src={
-                userPersonalizationData !== null &&
-                userPersonalizationData?.loginPageLogo.url !== ""
-                  ? `${IMAGE_BASE_URL}/${userPersonalizationData?.loginPageLogo.url}`
-                  : BcakgroundImage
-              }
-              style={styles2.image}
-            />
+            {/* <Image
+                         src={
+                           userPersonalizationData !== null &&
+                           userPersonalizationData?.loginPageLogo.url !== ""
+                             ? `${IMAGE_BASE_URL}/${userPersonalizationData?.loginPageLogo.url}`
+                             : BackgroundImage
+                         }
+                         style={styles2.image}
+                       /> */}
+            {userPersonalizationData !== null &&
+            userPersonalizationData?.loginPageLogo.url !== "" ? (
+              <Image
+                src={`${IMAGE_BASE_URL}/${userPersonalizationData?.loginPageLogo.url}`}
+                style={styles2.image}
+              />
+            ) : (
+              <View style={styles2.image}></View>
+            )}
           </View>
           <View>
             <Text style={styles2.text}></Text>
@@ -165,21 +182,40 @@ const InvoiceDetail = ({}) => {
           <br />
           <View>
             <View style={styles2.textRow}>
+              <Text style={styles2.heavyText}>Name: </Text>
+              <Text style={styles2.text}>{saleInvoice?.customerName}</Text>
+            </View>
+          </View>
+          <br />
+
+          <View>
+            <View style={styles2.textRow}>
               <Text style={styles2.heavyText}>Address: </Text>
               <Text style={styles2.text}>{saleInvoice?.address}</Text>
             </View>
           </View>
-          <br></br>
-
+          <br />
           <View>
             <View style={styles2.textRow}>
-              <Text style={styles2.heavyText}>Mail: </Text>
-              <Text style={styles2.text}>Mail@mail.com</Text>
+              <Text style={styles2.heavyText}></Text>
+              <Text style={styles2.text}></Text>
             </View>
           </View>
-          <br></br>
-
           <View>
+            <View style={styles2.textRow}>
+              <Text style={styles2.heavyText}></Text>
+              <Text style={styles2.text}></Text>
+            </View>
+          </View>
+          <br />
+          <View>
+            <View style={styles2.textRow}>
+              <Text style={styles2.heavyText}></Text>
+              <Text style={styles2.text}></Text>
+            </View>
+          </View>
+
+          {/* <View>
             <View style={styles2.textRow}>
               <Text style={styles2.heavyText}>GST No.: </Text>
               <Text style={styles2.text}>GST No</Text>
@@ -192,8 +228,8 @@ const InvoiceDetail = ({}) => {
               <Text style={styles2.heavyText}>Sst No.: </Text>
               <Text style={styles2.text}>SST No</Text>
             </View>
-          </View>
-          <br></br>
+          </View> */}
+          <br />
 
           <View style={styles2.textRow}>
             <View style={styles2.heavyText}>
@@ -212,7 +248,16 @@ const InvoiceDetail = ({}) => {
           <Text style={styles2.titleText}>Sale Invoice</Text>
         </View>
 
-        <View style={styles2.tableContainer}>
+        <View
+          style={{
+            ...styles2.tableContainer,
+            top:
+              userPersonalizationData !== null &&
+              userPersonalizationData?.loginPageLogo.url !== ""
+                ? "20%"
+                : "4%",
+          }}
+        >
           <View style={styles2.tableRow}>
             <Text style={styles2.tableCell}>Number</Text>
             <Text style={styles2.tableCell2}>SI-0000</Text>
@@ -299,7 +344,7 @@ const InvoiceDetail = ({}) => {
               paddingVertical: "5px",
             }}
           >
-            <Text style={{ ...styles2.text, flex: 1 }}>Net Amount: </Text>
+            <Text style={{ ...styles2.text, flex: 1 }}>Gross Amount: </Text>
             <Text style={styles2.heavyText}>{saleInvoice?.netAmount}</Text>
           </View>
           <br />
@@ -386,7 +431,7 @@ const InvoiceDetail = ({}) => {
               paddingVertical: "3.5px",
             }}
           >
-            <Text style={{ ...styles2.text, flex: 1 }}>Gross Amount: </Text>
+            <Text style={{ ...styles2.text, flex: 1 }}>Net Amount: </Text>
             <Text style={styles2.heavyText}>{saleInvoice?.grossAmount}</Text>
           </View>
         </View>
@@ -395,7 +440,7 @@ const InvoiceDetail = ({}) => {
           <Text style={styles2.titleText}>Comments</Text>
         </View>
 
-        <View style={{ marginVertical: "3px" }}>
+        {/* <View style={{ marginVertical: "3px" }}>
           <Text style={styles2.text}>
             i) Autotel warrants to the original purchaser that tracker shall be
             free from defects in material and workmanship for a period of 12
@@ -419,10 +464,72 @@ const InvoiceDetail = ({}) => {
             months from date of activation. If a defect during the warranty
             period, Autoel will repair or replace your tracker free of charge.
           </Text>
+        </View> */}
+
+        <View style={{ marginVertical: "3px" }}>
+          <Text style={styles2.text}>
+            i) Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
+            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
+            ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+            aliquip ex ea commodo consequat.
+          </Text>
+        </View>
+        <View style={{ marginVertical: "3px" }}>
+          <Text style={styles2.text}>
+            ii) Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
+            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
+            ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+            aliquip ex ea commodo consequat.
+          </Text>
+        </View>
+        <View style={{ marginVertical: "3px" }}>
+          <Text style={styles2.text}>
+            iii) Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
+            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
+            ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+            aliquip ex ea commodo consequat.
+          </Text>
         </View>
       </Page>
     </Document>
   );
+
+  const approvedSaleInvoice: SubmitHandler<any> = async (data) => {
+    setLoading(true);
+    const receiveMoneyData = {
+      status: "APPROVED",
+    };
+
+    try {
+      const response: any = await patch(receiveMoneyData, {
+        url: `${SALE_INVOICE_STATUS_APPROVED}/${saleInvoice._id}`,
+      });
+      if (response.success) {
+        dispatch(setSaleInvoiceLoading(true));
+        setLoading(false);
+
+        navigate(
+          `${process.env.PUBLIC_URL}/company/modules/saio-central/sales/invoices`
+        );
+      } else {
+        Swal.fire({
+          text: response.message,
+          icon: "error",
+          timer: 2000,
+          showConfirmButton: false,
+        });
+        setLoading(false);
+      }
+    } catch (error: any) {
+      Swal.fire({
+        text: error.message || "Error creating Expense",
+        icon: "error",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+      setLoading(false);
+    }
+  };
 
   const toggleModal = () => setModal(!modal);
   return (
@@ -775,7 +882,15 @@ const InvoiceDetail = ({}) => {
                 >
                   Cancel
                 </Button>
-
+                {saleInvoice !== null && saleInvoice.status == "ISSUED" && (
+                  <Button
+                    disabled={loading}
+                    color="primary"
+                    onClick={approvedSaleInvoice}
+                  >
+                    {loading ? "Loading..." : "Approve"}
+                  </Button>
+                )}
                 <Button color="primary" onClick={toggleModal}>
                   View PDF
                 </Button>

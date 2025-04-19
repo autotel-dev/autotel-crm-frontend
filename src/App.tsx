@@ -85,21 +85,22 @@ const App = () => {
       });
 
       if (getUserRole() == ROLES.COMPANY || getUserRole() == ROLES.OPERATOR) {
-        getAll({ url: GET_ALLOWED_PERMISSIONS }).then((data: any) => {
-          // console.log("api call --- >", data);
-          if (data !== undefined) {
-            if (data.success) {
-              // console.log("hhg");
-              dispatch(setUserPermissions(data.data.allowedPermissions));
-            }
-          }
-        });
+        // getAll({ url: GET_ALLOWED_PERMISSIONS }).then((data: any) => {
+        //   // console.log("api call --- >", data);
+        //   if (data !== undefined) {
+        //     if (data.success) {
+        //       // console.log("hhg");
+        //       dispatch(setUserPermissions(data.data.allowedPermissions));
+        //     }
+        //   }
+        // });
       }
       dispatch(setUserData(null));
       getAll({ url: GET_USER_BY_ID }).then((parentData: any) => {
         if (parentData !== undefined) {
           if (parentData.success) {
             dispatch(setUserData(parentData.data.user));
+            dispatch(setUserPermissions(parentData.data?.user?.permissions));
           }
         }
       });

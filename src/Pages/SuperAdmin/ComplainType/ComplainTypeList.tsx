@@ -28,7 +28,6 @@ import Skeleton from "../../Utilities/Skeleton/Skeleton";
 import { GET_ALL_TYPES } from "../../../Utilities/api/apiEndpoints";
 import { ERROR_MESSAGE } from "../../../Utilities/constants/constants";
 
-
 const ComplainTypeList = () => {
   const { complainTypes, loading, id, activeInActiveComplainTypes } =
     useSelector((state: any) => state.complainTypes);
@@ -57,9 +56,10 @@ const ComplainTypeList = () => {
   const hexColor = "#ff0000"; // Example hex color
   const rgbColor = hexToRgb(userPersonalizationData?.buttonsAndBarsColor); // Convert hex to RGB
 
-
   useEffect(() => {
     dispatch(setComplainsTypesStart());
+    dispatch(setComplainsTypes([]));
+    dispatch(setFilterComplainsTypes([]));
     getAll({
       url: GET_ALL_TYPES,
     }).then((data: any) => {
@@ -140,49 +140,49 @@ const ComplainTypeList = () => {
                   defaultChecked={row.isActive}
                   value={row.isActive}
                   checked={row.isActive}
-                // onChange={async (e: any) => {
-                //   //  --------------------------
+                  // onChange={async (e: any) => {
+                  //   //  --------------------------
 
-                //   const operator = {
-                //     fullName: row.fullName,
-                //     emailAddress: row.emailAddress,
-                //     phoneNo: row.phoneNo,
-                //     isActive: !row.isActive,
-                //     company: decodedToken.userId,
-                //   };
-                //   // console.log(operator);
-                //   setIsActive(!row.isActive);
-                //   // setRowIndex(index);
-                //   // console.log(e.target.value);
-                //   try {
-                //     await update(operator, {
-                //       url: `${UPDATE_OPERATOR}/${row._id}`,
-                //     }).then((data: any) => {
-                //       if (data.success) {
-                //         // console.log(data);
+                  //   const operator = {
+                  //     fullName: row.fullName,
+                  //     emailAddress: row.emailAddress,
+                  //     phoneNo: row.phoneNo,
+                  //     isActive: !row.isActive,
+                  //     company: decodedToken.userId,
+                  //   };
+                  //   // console.log(operator);
+                  //   setIsActive(!row.isActive);
+                  //   // setRowIndex(index);
+                  //   // console.log(e.target.value);
+                  //   try {
+                  //     await update(operator, {
+                  //       url: `${UPDATE_OPERATOR}/${row._id}`,
+                  //     }).then((data: any) => {
+                  //       if (data.success) {
+                  //         // console.log(data);
 
-                //         dispatch(setOperatorsStart());
-                //         getAll({
-                //           url: GET_ALL_OPERATORS,
-                //         }).then((data: any) => {
-                //           // console.log("api call --- >", data);
-                //           dispatch(setOperatorsEnd());
-                //           if (data !== undefined) {
-                //             if (data.success) {
-                //               // console.log("hhg");
-                //               dispatch(setOperators(data.data));
-                //               dispatch(setFilterOperators(data.data));
-                //             }
-                //           }
-                //         });
-                //       }
-                //     });
-                //     // Handle successful post creation (e.g., show a success message, redirect, etc.)
-                //   } catch (error) {
-                //     // Handle error (e.g., show an error message)
-                //     // console.error("Error creating post:", error);
-                //   }
-                // }}
+                  //         dispatch(setOperatorsStart());
+                  //         getAll({
+                  //           url: GET_ALL_OPERATORS,
+                  //         }).then((data: any) => {
+                  //           // console.log("api call --- >", data);
+                  //           dispatch(setOperatorsEnd());
+                  //           if (data !== undefined) {
+                  //             if (data.success) {
+                  //               // console.log("hhg");
+                  //               dispatch(setOperators(data.data));
+                  //               dispatch(setFilterOperators(data.data));
+                  //             }
+                  //           }
+                  //         });
+                  //       }
+                  //     });
+                  //     // Handle successful post creation (e.g., show a success message, redirect, etc.)
+                  //   } catch (error) {
+                  //     // Handle error (e.g., show an error message)
+                  //     // console.error("Error creating post:", error);
+                  //   }
+                  // }}
                 />
                 <span
                   // className={`switch-state ${
@@ -238,7 +238,7 @@ const ComplainTypeList = () => {
                 dispatch(setId(row._id));
                 setComplainTitle(row.title);
                 setIsActive(row.isActive);
-                setPriorty(row.priorty)
+                setPriorty(row.priorty);
               }}
             >
               Edit
@@ -261,10 +261,34 @@ const ComplainTypeList = () => {
                   // <Loader />
                   <>
                     <Skeleton height="100px" width="100%" borderRadius="10px" />
-                    <Skeleton height="40px" width="100%" marginTop="10px" marginBottom="10" borderRadius="10px" />
-                    <Skeleton height="40px" width="100%" marginTop="10px" marginBottom="10" borderRadius="10px" />
-                    <Skeleton height="40px" width="100%" marginTop="10px" marginBottom="10" borderRadius="10px" />
-                    <Skeleton height="40px" width="100%" marginTop="10px" marginBottom="10" borderRadius="10px" />
+                    <Skeleton
+                      height="40px"
+                      width="100%"
+                      marginTop="10px"
+                      marginBottom="10"
+                      borderRadius="10px"
+                    />
+                    <Skeleton
+                      height="40px"
+                      width="100%"
+                      marginTop="10px"
+                      marginBottom="10"
+                      borderRadius="10px"
+                    />
+                    <Skeleton
+                      height="40px"
+                      width="100%"
+                      marginTop="10px"
+                      marginBottom="10"
+                      borderRadius="10px"
+                    />
+                    <Skeleton
+                      height="40px"
+                      width="100%"
+                      marginTop="10px"
+                      marginBottom="10"
+                      borderRadius="10px"
+                    />
                   </>
                 ) : complainTypes?.length > 0 && loading === false ? (
                   <div>
@@ -310,7 +334,7 @@ const ComplainTypeList = () => {
                 isActive={isActive}
                 setIsActive={setIsActive}
                 priorty={priorty}
-              // setValue={setCityName}
+                // setValue={setCityName}
               />
             </CardBody>
           </Card>

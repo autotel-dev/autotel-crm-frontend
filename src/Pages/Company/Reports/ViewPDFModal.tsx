@@ -43,6 +43,8 @@ const ViewPDFModalForReports: React.FC<ViewPDFModalTypes> = ({
   header,
   reportName,
 }) => {
+  const { userData } = useSelector((state: any) => state.user);
+
   // Function to calculate the max width of each column or distribute evenly
   const getColumnWidths = () => {
     const totalColumns = header?.length;
@@ -88,7 +90,7 @@ const ViewPDFModalForReports: React.FC<ViewPDFModalTypes> = ({
     },
     companyDetails: {
       fontSize: 12,
-      maxWidth: "200px",
+      minWidth: "230px",
     },
     detailsRow: {
       flexDirection: "row",
@@ -144,7 +146,7 @@ const ViewPDFModalForReports: React.FC<ViewPDFModalTypes> = ({
       <Page size={[842.89, 555.28]} style={styles2.page}>
         <View style={styles2.section}>
           <View style={styles2.header}>
-            <Image
+            {/* <Image
               src={
                 userPersonalizationData !== null &&
                 userPersonalizationData?.loginPageLogo.url !== ""
@@ -152,7 +154,16 @@ const ViewPDFModalForReports: React.FC<ViewPDFModalTypes> = ({
                   : BackgroundImage
               }
               style={styles2.image}
-            />
+            /> */}
+            {userPersonalizationData !== null &&
+            userPersonalizationData?.loginPageLogo.url !== "" ? (
+              <Image
+                src={`${IMAGE_BASE_URL}/${userPersonalizationData?.loginPageLogo.url}`}
+                style={styles2.image}
+              />
+            ) : (
+              <View style={styles2.image}></View>
+            )}
             <View style={styles2.reportName}>
               <View>
                 <Text style={styles2.titleName}>Report Name:</Text>
@@ -165,28 +176,28 @@ const ViewPDFModalForReports: React.FC<ViewPDFModalTypes> = ({
               <View style={styles2.detailsRow}>
                 <Text style={styles2.titleName}> Name: &nbsp;</Text>
                 <Text style={styles2.titleName}>
-                  abc@gmail.com
+                  {userData.fullName}
                   {userPersonalizationData?.user?.emailAddress}
                 </Text>
               </View>
               <View style={styles2.detailsRow}>
                 <Text style={styles2.titleName}> Email: &nbsp;</Text>
                 <Text style={styles2.titleName}>
-                  abc@gmail.com
+                  {userData.emailAddress}
                   {userPersonalizationData?.user?.emailAddress}
                 </Text>
               </View>
-              <View style={styles2.detailsRow}>
+              {/* <View style={styles2.detailsRow}>
                 <Text style={styles2.titleName}> Address: &nbsp;</Text>
                 <Text style={styles2.titleName}>
                   abc address
                   {userPersonalizationData?.user?.emailAddress}
                 </Text>
-              </View>
+              </View> */}
               <View style={styles2.detailsRow}>
                 <Text style={styles2.titleName}> Phone: &nbsp;</Text>
                 <Text style={styles2.titleName}>
-                  021-36215572
+                  {userData.phoneNo}
                   {userPersonalizationData?.user?.emailAddress}
                 </Text>
               </View>

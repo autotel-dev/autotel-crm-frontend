@@ -12,6 +12,7 @@ import {
   GET_ACCOUNT_STATEMENT,
   GET_ALL_VENDORS,
   GET_VENDOR_GENERAL_ACCOUNTS,
+  IMAGE_BASE_URL,
 } from "../../../../../../../../Utilities/api/apiEndpoints";
 
 import Skeleton from "../../../../../../../Utilities/Skeleton/Skeleton";
@@ -20,12 +21,24 @@ import {
   setFromAccounts,
   setVendorLedgers,
 } from "../../../../../../../../ReaduxToolkit/Reducer/VendorLedgerSlice";
-import CreateNewVendorLedger from "./CreateNewMakePayment/CreateNewVendorLedger";
-import { TbFileInvoice } from "react-icons/tb";
+
 import { P } from "../../../../../../../../AbstractElements";
 import SelectVendorBox from "./CreateNewMakePayment/components/SelectVendorBox";
 import Swal from "sweetalert2";
 import { SubmitHandler } from "react-hook-form";
+import BackgroundImage from "../../../../../../../../assets/Background Image.png";
+
+import {
+  Document,
+  Page,
+  PDFViewer,
+  Text,
+  View,
+  StyleSheet,
+  Image,
+  pdf,
+  PDFDownloadLink,
+} from "@react-pdf/renderer";
 
 const VendorLedgerTable = ({}) => {
   const dispatch = useDispatch();
@@ -123,7 +136,7 @@ const VendorLedgerTable = ({}) => {
         });
         if (response.success) {
           console.log("data", response.data.statement);
-
+          setReportName(`${vendor} Ledger`);
           dispatch(setVendorLedgers(response.data.statement));
           setLoading(false);
         } else {
@@ -155,6 +168,198 @@ const VendorLedgerTable = ({}) => {
       setLoading(false);
     }
   };
+
+  const styles2 = StyleSheet.create({
+    page: { padding: 20 },
+    section: { marginBottom: 10 },
+    text: {
+      fontSize: 8,
+    },
+    reportName: {
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    titleName: {
+      fontSize: 12,
+    },
+    titleText: {
+      fontSize: 16,
+    },
+    companyDetails: {
+      fontSize: 12,
+      maxWidth: "200px",
+    },
+    detailsRow: {
+      flexDirection: "row",
+      justifyContent: "flex-start",
+      paddingVertical: 3,
+    },
+    tableContainer: {
+      width: "100%",
+      height: "auto",
+      border: "2px solid black",
+    },
+    tableRowForHeader: {
+      flexDirection: "row",
+      borderBottom: "2px solid black",
+    },
+    tableRow: {
+      flexDirection: "row",
+      borderBottom: "1px solid black",
+      borderColor: "gray",
+    },
+    tableCell: {
+      paddingVertical: 7,
+      paddingLeft: 7,
+      fontSize: "7.5px",
+      margin: -1,
+      fontWeight: "extrabold",
+    },
+    headerCell: {
+      paddingVertical: 10,
+      paddingLeft: 7,
+      margin: -1,
+      fontFamily: "Helvetica-Bold",
+      fontSize: "9.5px",
+    },
+    image: {
+      minWidth: "150px",
+      maxWidth: "160px",
+      height: "80px",
+    },
+    header: {
+      flexDirection: "row",
+      marginBottom: 10,
+      justifyContent: "space-between",
+    },
+  });
+  const [header, setHeader]: any = useState([]);
+  const [pdfData, setPdfData] = useState([]);
+  const [reportName, setReportName]: any = useState("");
+
+  // Function to calculate the max width of each column or distribute evenly
+  const getColumnWidths = () => {
+    const totalColumns = header?.length;
+    if (pdfData?.length === 0) {
+      return Array(totalColumns).fill(100); // If no data, make each column equal width
+    }
+    const widths = header?.map((headerItem: any) => {
+      let maxLength = headerItem.label.length; // Initialize with the label length
+      // Check max length from data values for each column
+      pdfData?.forEach((item: any) => {
+        const itemLength = String(item[headerItem.value] || "").length;
+        if (itemLength > maxLength) {
+          maxLength = itemLength;
+        }
+      });
+      return maxLength * 7; // Multiply by a factor to ensure enough space for text (7px per character)
+    });
+    // If there is less data, distribute columns evenly across the page
+    const totalWidth = widths?.reduce((sum: any, width: any) => sum + width, 0);
+    if (totalWidth < 800) {
+      return Array(totalColumns).fill(800 / totalColumns); // Distribute evenly if total width is too small
+    }
+    return widths;
+  };
+
+  const columnWidths = getColumnWidths(); // Get dynamic column widths
+
+  const PDFDcoument = () => (
+    <Document>
+      <Page size={[842.89, 555.28]} style={styles2.page}>
+        <View style={styles2.section}>
+          <View style={styles2.header}>
+            <Image
+              src={
+                userPersonalizationData !== null &&
+                userPersonalizationData?.loginPageLogo.url !== ""
+                  ? `${IMAGE_BASE_URL}/${userPersonalizationData?.loginPageLogo.url}`
+                  : BackgroundImage
+              }
+              style={styles2.image}
+            />
+            <View style={styles2.reportName}>
+              <View>
+                <Text style={styles2.titleName}>Report Name:</Text>
+              </View>
+              <View>
+                <Text style={styles2.titleText}>{reportName}</Text>
+              </View>
+            </View>
+            <View style={styles2.companyDetails}>
+              <View style={styles2.detailsRow}>
+                <Text style={styles2.titleName}> Name: &nbsp;</Text>
+                <Text style={styles2.titleName}>
+                  abc@gmail.com
+                  {userPersonalizationData?.user?.emailAddress}
+                </Text>
+              </View>
+              <View style={styles2.detailsRow}>
+                <Text style={styles2.titleName}> Email: &nbsp;</Text>
+                <Text style={styles2.titleName}>
+                  abc@gmail.com
+                  {userPersonalizationData?.user?.emailAddress}
+                </Text>
+              </View>
+              <View style={styles2.detailsRow}>
+                <Text style={styles2.titleName}> Address: &nbsp;</Text>
+                <Text style={styles2.titleName}>
+                  abc address
+                  {userPersonalizationData?.user?.emailAddress}
+                </Text>
+              </View>
+              <View style={styles2.detailsRow}>
+                <Text style={styles2.titleName}> Phone: &nbsp;</Text>
+                <Text style={styles2.titleName}>
+                  021-36215572
+                  {userPersonalizationData?.user?.emailAddress}
+                </Text>
+              </View>
+            </View>
+          </View>
+          <Text style={styles2.text}></Text>
+          <br />
+
+          <br />
+          <View style={styles2.tableContainer}>
+            {/* Table Header */}
+            <View style={styles2.tableRowForHeader}>
+              {header &&
+                Array.isArray(header) &&
+                header?.map((item: any, index: any) => (
+                  <Text
+                    style={[styles2.headerCell, { width: columnWidths[index] }]}
+                    key={index}
+                  >
+                    {item.label}
+                  </Text>
+                ))}
+            </View>
+
+            {/* Table Data */}
+            {pdfData?.map((item: any, index: any) => (
+              <View style={styles2.tableRow} key={index}>
+                {header?.map((headerItem: any, headerIndex: number) => {
+                  const value = item[headerItem.value];
+                  return (
+                    <Text
+                      style={[
+                        styles2.tableCell,
+                        { width: columnWidths[headerIndex] },
+                      ]}
+                      key={headerIndex}
+                    >
+                      {value || "N/A"}
+                    </Text>
+                  );
+                })}
+              </View>
+            ))}
+          </View>
+        </View>
+      </Page>
+    </Document>
+  );
 
   return (
     <div
@@ -248,9 +453,56 @@ const VendorLedgerTable = ({}) => {
               </Button>
             )}
             {vendorLedgers.length > 0 && (
-              <Button disabled={loading} color="primary" onClick={() => {}}>
-                Download
-              </Button>
+              <PDFDownloadLink
+                document={<PDFDcoument />} // PDF content to be downloaded
+                fileName={`${reportName}.pdf`} // Name of the file to be downloaded
+              >
+                <Button
+                  disabled={loading}
+                  color="primary"
+                  onClick={() => {
+                    var columns = [
+                      { label: "Date", value: "date" },
+                      { label: "Reference", value: "reference" },
+                      { label: "Narration", value: "narration" },
+                      {
+                        label: "Debit",
+                        value: "debit",
+                      },
+                      {
+                        label: "Credit",
+                        value: "credit",
+                      },
+                      {
+                        label: "Balance",
+                        value: "balance",
+                      },
+                    ];
+                    var rowData = vendorLedgers.map((item: any, index: any) => {
+                      return {
+                        date: `${item?.date
+                          .toString()
+                          .slice(0, 10)},  ${new Date(item?.date)
+                          .toLocaleString("en-US", {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                            second: "2-digit",
+                          })
+                          .toString()}`,
+                        reference: item.reference,
+                        narration: item.narration,
+                        debit: item.debit,
+                        credit: item.credit,
+                        balance: item.balance,
+                      };
+                    });
+                    setHeader(columns);
+                    setPdfData(rowData);
+                  }}
+                >
+                  Download
+                </Button>
+              </PDFDownloadLink>
             )}
           </Col>
           {/* <CreateNewVendorLedger /> */}

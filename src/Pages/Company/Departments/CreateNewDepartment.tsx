@@ -4,8 +4,6 @@ import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Button, FormGroup, Label, Modal, ModalBody, Row } from "reactstrap";
 
-import { CheckCircle } from "react-feather";
-
 import { useDispatch, useSelector } from "react-redux";
 import { Type } from "./CountryTypes/CountryTypes";
 import { Cancel } from "../../../utils/Constant";
@@ -18,12 +16,7 @@ import {
   setRolesStart,
 } from "../../../ReaduxToolkit/Reducer/RolesSlice";
 import Swal from "sweetalert2";
-// import {
-//   setCountriesStart,
-//   setCountriesEnd,
-//   setCountries,
-//   setFilterCountries,
-// } from "../../ReaduxToolkit/Reducer/CountrySlice";
+
 import "./permissionsStyle.css";
 import {
   CREATE_SUB_ROLE,
@@ -44,16 +37,13 @@ const CreateNewDepartment = () => {
     reset,
     formState: { errors },
   } = useForm<Type>();
+  const { userPermissions } = useSelector(
+    (state: any) => state.userPermissions
+  );
+  const [givenPermissions, setGivenPermissions] = useState<any[]>([]);
   const [addModal, setAddModal] = useState(false);
   const addToggle = () => {
     if (!loading) {
-      // setGivenPermissions(
-      //   userPermissions.map((permission: any) => ({
-      //     ...permission,
-      //     checked: false,
-      //   }))
-      // );
-
       setGivenPermissions(
         userPermissions.map((permission: any) => ({
           ...permission,
@@ -72,16 +62,7 @@ const CreateNewDepartment = () => {
     }
   };
 
-  const { userPermissions } = useSelector(
-    (state: any) => state.userPermissions
-  );
-  const [givenPermissions, setGivenPermissions] = useState<any[]>([]);
-
   const handleCheckboxChange = (index: any, key: any) => {
-    // console.log("index", index);
-    // console.log("key", key);
-    // console.log("givenPermission", givenPermissions);
-
     setGivenPermissions((prevPermissions: any) => {
       const updatedPermissions = [...prevPermissions];
       updatedPermissions[index][key] = !updatedPermissions[index][key];
@@ -221,7 +202,7 @@ const CreateNewDepartment = () => {
                     {...register("name", { required: true })}
                   />
                   <span style={{ color: "red" }}>
-                    {errors.name && "Country name is required"}
+                    {errors.name && "Department name is required"}
                   </span>
                 </FormGroup>
                 <P> Permissions</P>

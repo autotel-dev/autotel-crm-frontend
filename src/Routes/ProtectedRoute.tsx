@@ -8,7 +8,11 @@ import { PERMISSION_VALUES } from "../constants/permissions";
 import { ROLES } from "../constants/roles";
 import Swal from "sweetalert2";
 import NoInternetConnection from "../Pages/Utilities/NoInternetConnection/NoInternetConnection";
-import { GET_ALLOWED_MODULES, GET_ALLOWED_PERMISSIONS } from "../Utilities/api/apiEndpoints";
+import {
+  GET_ALLOWED_MODULES,
+  GET_ALLOWED_PERMISSIONS,
+  GET_USER_BY_ID,
+} from "../Utilities/api/apiEndpoints";
 import { ERROR_MESSAGE } from "../Utilities/constants/constants";
 
 interface PropTypes {
@@ -41,7 +45,6 @@ const ProtectedRoute: React.FC<PropTypes> = ({
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-
     const getLastEndpoint = (pathname: any) => {
       // Split the pathname by '/'
       var pathSegments = pathname.split("/");
@@ -50,18 +53,13 @@ const ProtectedRoute: React.FC<PropTypes> = ({
     };
 
     const validatePermissions = () => {
-
-
       const userRole = getUserRole(); // Assuming getUserRole() returns the user's role
 
       if (allowedUserRoles.includes(userRole)) {
-
-
         const pathname = window.location.pathname;
         const lastEndpoint = getLastEndpoint(pathname);
 
         if (pathname.includes("modules")) {
-
           if (userRole === "COMPANY" || userRole === "OPERATOR") {
             // console.log("company or operator check");
             getAll({
@@ -70,10 +68,7 @@ const ProtectedRoute: React.FC<PropTypes> = ({
               // console.log("active Modules --- >", data);
 
               if (data !== undefined) {
-                if (
-                  !data.success &&
-                  data.message === ERROR_MESSAGE
-                ) {
+                if (!data.success && data.message === ERROR_MESSAGE) {
                   setIsConnected(true);
                 }
                 if (!data.success) {
@@ -99,8 +94,7 @@ const ProtectedRoute: React.FC<PropTypes> = ({
                       setIsConnected(false);
                       setHasPermission(true);
                       return;
-                    }
-                    else {
+                    } else {
                       if (extractedChars === lastEndpoint.toLowerCase()) {
                         setLoading(false);
                         setIsConnected(false);
@@ -108,9 +102,6 @@ const ProtectedRoute: React.FC<PropTypes> = ({
                         return;
                       }
                     }
-
-
-
                   }
                   setLoading(false);
                   setIsConnected(false);
@@ -137,17 +128,15 @@ const ProtectedRoute: React.FC<PropTypes> = ({
             permissionValue === PERMISSION_VALUES.PROFILE
           ) {
             // console.log("permissionValue inside if", permissionValue);
-
+            // getAll({
+            //   url: GET_ALLOWED_PERMISSIONS,
             getAll({
-              url: GET_ALLOWED_PERMISSIONS,
+              url: GET_USER_BY_ID,
             }).then((data: any) => {
               // console.log("user permissions --- >", data);
 
               if (data !== undefined) {
-                if (
-                  !data.success &&
-                  data.message === ERROR_MESSAGE
-                ) {
+                if (!data.success && data.message === ERROR_MESSAGE) {
                   setIsConnected(true);
                 }
                 if (!data.success) {
@@ -164,7 +153,8 @@ const ProtectedRoute: React.FC<PropTypes> = ({
                 }
                 if (data.success) {
                   // console.log("permisionData", data.data);
-                  for (const item of data.data.allowedPermissions) {
+                  // for (const item of data.data.allowedPermissions) {
+                  for (const item of data.data.user.permissions) {
                     const itemData = item;
                     // console.log("itemData", itemData);
 
@@ -213,7 +203,6 @@ const ProtectedRoute: React.FC<PropTypes> = ({
 
     validatePermissions();
     // console.log("hasPermission", hasPermission);
-
   }, [hasPermission]);
 
   return loading ? (
@@ -233,13 +222,18 @@ const ProtectedRoute: React.FC<PropTypes> = ({
   ) : isConnected ? (
     <NoInternetConnection />
   ) : hasPermission ? (
-    <div style={{
-      height: "100vh", overflow: "auto", backgroundColor: `${userPersonalizationData !== null &&
-        userPersonalizationData?.backgroundColor !== null
-        ? userPersonalizationData?.backgroundColor
-        : ""
+    <div
+      style={{
+        height: "100vh",
+        overflow: "auto",
+        backgroundColor: `${
+          userPersonalizationData !== null &&
+          userPersonalizationData?.backgroundColor !== null
+            ? userPersonalizationData?.backgroundColor
+            : ""
         }`,
-    }}>
+      }}
+    >
       <Outlet />
     </div>
   ) : (

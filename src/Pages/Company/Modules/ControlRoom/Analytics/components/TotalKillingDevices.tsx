@@ -23,6 +23,8 @@ import { setKilledDevices } from "../../../../../../ReaduxToolkit/Reducer/Alerts
 import Loader from "../../../../../Utilities/Loader/Loader";
 import Swal from "sweetalert2";
 import { GET_ALL_KILLED_DEVICES } from "../../../../../../Utilities/api/apiEndpoints";
+import { getUserRole } from "../../../../../../Utilities/globals/globals";
+import { ROLES } from "../../../../../../constants/roles";
 
 interface PropsTypes {
   isVisible: boolean; // Change 'boolean' to the actual type of isVisible
@@ -59,7 +61,7 @@ const TotalKillingDevices: React.FC<PropsTypes> = ({
     "Last Packet",
     "Latitude",
     "Longitude",
-    "Address",
+    "User",
     "Server",
     "Sent Command Time",
     "Is Killed",
@@ -99,6 +101,8 @@ const TotalKillingDevices: React.FC<PropsTypes> = ({
 
       setDataList(updatedDataList);
       // // // console.log("dataList", dataList);
+    } else {
+      setDataList([]);
     }
   }, [killedDevices, devices]);
 
@@ -241,7 +245,9 @@ const TotalKillingDevices: React.FC<PropsTypes> = ({
       <ModalBody>
         <Card className="invoice-card">
           <CardBody className="transaction-card">
-            {allAlertsPreview !== undefined && allAlertsPreview?.read ? (
+            {/* {allAlertsPreview !== undefined && allAlertsPreview?.read } */}
+            {getUserRole() === ROLES.COMPANY ||
+            getUserRole() === ROLES.OPERATOR ? (
               <div>
                 <Nav
                   tabs
@@ -276,14 +282,14 @@ const TotalKillingDevices: React.FC<PropsTypes> = ({
 
                           if (data !== undefined) {
                             if (data.success) {
-                              setLoading(false);
                               // // // console.log("length --- >", data.data);
                               dispatch(setKilledDevices(data.data));
+                              setLoading(false);
                             }
                             if (!data.success) {
-                              setLoading(false);
                               // // // // console.log("length --- >", data.data);
                               dispatch(setKilledDevices([]));
+                              setLoading(false);
                             }
                           }
                         });
@@ -316,14 +322,14 @@ const TotalKillingDevices: React.FC<PropsTypes> = ({
 
                           if (data !== undefined) {
                             if (data.success) {
+                              dispatch(setKilledDevices(data.data));
                               setLoading(false);
                               // // // console.log("length --- >", data.data);
-                              dispatch(setKilledDevices(data.data));
                             }
                             if (!data.success) {
+                              dispatch(setKilledDevices([]));
                               setLoading(false);
                               // // // // console.log("length --- >", data.data);
-                              dispatch(setKilledDevices([]));
                             }
                           }
                         });
@@ -464,11 +470,9 @@ const TotalKillingDevices: React.FC<PropsTypes> = ({
                                             <div style={{ fontSize: "10px" }}>
                                               {format(
                                                 new Date(
-                                                  new Date(
-                                                    data?.lastPacketTimeStamp *
-                                                      1000
-                                                  ).toISOString()
-                                                ).toLocaleString(),
+                                                  data?.lastPacketTimeStamp *
+                                                    1000
+                                                ).toISOString(),
                                                 "date"
                                               )}
                                             </div>
@@ -476,11 +480,9 @@ const TotalKillingDevices: React.FC<PropsTypes> = ({
                                               {/* {data.updatedAt.toString().slice(11, 19)} */}
                                               {format(
                                                 new Date(
-                                                  new Date(
-                                                    data?.lastPacketTimeStamp *
-                                                      1000
-                                                  ).toISOString()
-                                                ).toLocaleString(),
+                                                  data?.lastPacketTimeStamp *
+                                                    1000
+                                                ).toISOString(),
                                                 "time"
                                               )}
                                             </div>
@@ -493,12 +495,15 @@ const TotalKillingDevices: React.FC<PropsTypes> = ({
                                       <td style={{ width: "8%" }}>
                                         {data.longitude}
                                       </td>
-                                      <td style={{ width: "8%" }}>
-                                        {data.address == undefined ||
+                                      <td style={{ width: "10%" }}>
+                                        {/* {data.address == undefined ||
                                         data.address === "" ||
                                         data.address == null
                                           ? "N/A"
-                                          : data.address}
+                                          : data.address} */}
+                                        {data?.user !== null
+                                          ? data?.user?.fullName
+                                          : "N/A"}
                                       </td>
                                       <td style={{ width: "10%" }}>
                                         {data?.server?.companyName}
@@ -746,11 +751,12 @@ const TotalKillingDevices: React.FC<PropsTypes> = ({
                               <td style={{ width: "8%" }}>{data.latitude}</td>
                               <td style={{ width: "8%" }}>{data.longitude}</td>
                               <td style={{ width: "8%" }}>
-                                {data.address == undefined ||
+                                {/* {data.address == undefined ||
                                 data.address === "" ||
                                 data.address == null
                                   ? "N/A"
-                                  : data.address}
+                                  : data.address} */}
+                                {data?.user?.fullName}
                               </td>
                               <td style={{ width: "10%" }}>
                                 {data?.server?.companyName}

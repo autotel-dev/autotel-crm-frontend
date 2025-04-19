@@ -15,9 +15,9 @@ import ticketImage from "../../assets/ticketImage.png";
 import { IoSend } from "react-icons/io5";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {  getAll, getImage, patch } from "../../../../Utilities/api";
+import { getAll, getImage, patch } from "../../../../Utilities/api";
 import Loader from "../../../Utilities/Loader/Loader";
-import './ComplainDetails.css'
+import "./ComplainDetails.css";
 
 import { Select } from "antd";
 import {
@@ -34,7 +34,13 @@ import {
   setComplainPriorityTypes,
   setComplainStatusTypes,
 } from "../../../../ReaduxToolkit/Reducer/ComplainCenterSlice";
-import { GET_COMPLAINT_CENTER_PRIORITY_STATUS, GET_COMPLAINT_CENTER_STATUS_TYPES, GET_INTERNAL_COMPLAIN_BY_ID, SEND_INTERNAL_COMPLAINT_MESSAGE, UPDATE_INTERNAL_COMPLAINT } from "../../../../Utilities/api/apiEndpoints";
+import {
+  GET_COMPLAINT_CENTER_PRIORITY_STATUS,
+  GET_COMPLAINT_CENTER_STATUS_TYPES,
+  GET_INTERNAL_COMPLAIN_BY_ID,
+  SEND_INTERNAL_COMPLAINT_MESSAGE,
+  UPDATE_INTERNAL_COMPLAINT,
+} from "../../../../Utilities/api/apiEndpoints";
 import { ERROR_MESSAGE } from "../../../../Utilities/constants/constants";
 
 const ComplainDetails = () => {
@@ -50,9 +56,7 @@ const ComplainDetails = () => {
     (state: any) => state.complainCenter
   );
   const [changeStatus, setChangeStatus] = useState("");
-  const [changePriortyStatus, setChangePriortyStatus] = useState(
-    ""
-  );
+  const [changePriortyStatus, setChangePriortyStatus] = useState("");
   // // console.log("tableRow", tableRow);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null); // Ref for the textarea element
   const [loading, setLoading] = useState(true);
@@ -170,11 +174,9 @@ const ComplainDetails = () => {
           setChangePriortyStatus(data.data.internalComplaint.priorty);
           setLoading(false);
           // console.log("data.data.internalComplaint.status", data.data.internalComplaint.status);
-
         }
       }
     });
-
   }, []);
   useEffect(() => {
     if (complainDetails?.status == "NEW") {
@@ -191,7 +193,7 @@ const ComplainDetails = () => {
           url: `${UPDATE_INTERNAL_COMPLAINT}/${complaintId}`,
         }
       ).then((data: any) => {
-        handleChangeUpdatedStatus("updated")
+        handleChangeUpdatedStatus("updated");
         // console.log("api call --- >", data);
         if (data !== undefined) {
           if (data.success) {
@@ -201,24 +203,22 @@ const ComplainDetails = () => {
               // console.log("api call --- >", data);
               if (data !== undefined) {
                 if (data.success) {
-                  dispatch(setComplainDetails(data.data.internalComplaint));
-                  setChangeStatus(data.data.internalComplaint.status);
-                  setChangePriortyStatus(data.data.internalComplaint.priorty);
-                  setStatusLoading(false)
+                  dispatch(setComplainDetails(data?.data?.internalComplaint));
+                  setChangeStatus(data?.data?.internalComplaint?.status);
+                  setChangePriortyStatus(
+                    data?.data?.internalComplaint?.priorty
+                  );
+                  setStatusLoading(false);
                 }
               }
             });
-
           }
         }
       });
+    } else {
+      setStatusLoading(false);
     }
-    else {
-      setStatusLoading(false)
-    }
-  }, [complainDetails])
-
-
+  }, [complainDetails]);
 
   const convertDateString = (dateString: string) => {
     const currentTime = new Date(dateString);
@@ -244,7 +244,6 @@ const ComplainDetails = () => {
       day: "2-digit",
       month: "short",
       year: "numeric",
-
     }).format(currentTime);
 
     return formattedDate;
@@ -343,9 +342,11 @@ const ComplainDetails = () => {
               // console.log("api call --- >", data);
               if (data !== undefined) {
                 if (data.success) {
-                  dispatch(setComplainDetails(data.data.internalComplaint));
-                  if (data.data.internalComplaint.messages.length > 2) {
-                    setItemsLength(data.data.internalComplaint.messages.length);
+                  dispatch(setComplainDetails(data?.data?.internalComplaint));
+                  if (data?.data?.internalComplaint?.messages.length > 2) {
+                    setItemsLength(
+                      data?.data?.internalComplaint?.messages?.length
+                    );
                   }
                 }
               }
@@ -400,15 +401,19 @@ const ComplainDetails = () => {
       // console.log("function call");
       patch(
         {
-          updatedStatus: changeStatus == "" ? complainDetails?.status : changeStatus,
-          updatedPriortyStatus: changePriortyStatus == "" ? complainDetails?.priorty : changePriortyStatus,
+          updatedStatus:
+            changeStatus == "" ? complainDetails?.status : changeStatus,
+          updatedPriortyStatus:
+            changePriortyStatus == ""
+              ? complainDetails?.priorty
+              : changePriortyStatus,
           resolvingDate: null,
         },
         {
           url: `${UPDATE_INTERNAL_COMPLAINT}/${complaintId}`,
         }
       ).then((data: any) => {
-        handleChangeUpdatedStatus("updated")
+        handleChangeUpdatedStatus("updated");
         // console.log("api call --- >", data);
         if (data !== undefined) {
           if (!data.success && data.message === ERROR_MESSAGE) {
@@ -430,7 +435,7 @@ const ComplainDetails = () => {
               // console.log("api call --- >", data);
               if (data !== undefined) {
                 if (data.success) {
-                  dispatch(setComplainDetails(data.data.internalComplaint));
+                  dispatch(setComplainDetails(data?.data?.internalComplaint));
                   setEdit(false);
                 }
               }
@@ -446,14 +451,17 @@ const ComplainDetails = () => {
     patch(
       {
         updatedStatus: "RESOLVED",
-        updatedPriortyStatus: changePriortyStatus == "" ? complainDetails?.priorty : changePriortyStatus,
+        updatedPriortyStatus:
+          changePriortyStatus == ""
+            ? complainDetails?.priorty
+            : changePriortyStatus,
         resolvingDate: new Date(),
       },
       {
         url: `${UPDATE_INTERNAL_COMPLAINT}/${complaintId}`,
       }
     ).then((data: any) => {
-      handleChangeUpdatedStatus("updated")
+      handleChangeUpdatedStatus("updated");
       // console.log("api call --- >", data);
       if (data !== undefined) {
         if (!data.success && data.message === ERROR_MESSAGE) {
@@ -501,28 +509,28 @@ const ComplainDetails = () => {
   useEffect(() => {
     // console.log("called get-priorty-status-types");
 
-    getAll({ url: GET_COMPLAINT_CENTER_PRIORITY_STATUS }).then(
-      (data: any) => {
-        // console.log("api call --- >", data);
-        if (data !== undefined) {
-          if (data.success) {
-            // console.log("hhg");
-            dispatch(
-              setComplainPriorityTypes(
-                data.data.internalComplaintPriortyStatusTypes
-              )
-            );
-            data.data.internalComplaintPriortyStatusTypes?.map((item: any, index: any) => {
+    getAll({ url: GET_COMPLAINT_CENTER_PRIORITY_STATUS }).then((data: any) => {
+      // console.log("api call --- >", data);
+      if (data !== undefined) {
+        if (data.success) {
+          // console.log("hhg");
+          dispatch(
+            setComplainPriorityTypes(
+              data.data.internalComplaintPriortyStatusTypes
+            )
+          );
+          data.data.internalComplaintPriortyStatusTypes?.map(
+            (item: any, index: any) => {
               tempPriorityStatusesList.push({
                 value: `${item.value}`,
                 label: `${item.title}`,
               });
-            });
-            setPriorityStatusesList(tempPriorityStatusesList);
-          }
+            }
+          );
+          setPriorityStatusesList(tempPriorityStatusesList);
         }
       }
-    );
+    });
   }, []);
 
   useEffect(() => {
@@ -565,7 +573,6 @@ const ComplainDetails = () => {
                   padding: "20px 25px",
                 }}
               >
-
                 <div
                   style={{
                     color: "black",
@@ -574,13 +581,16 @@ const ComplainDetails = () => {
                   }}
                 >
                   Device Name -&nbsp;
-                  <span style={{
-                    color: `${userPersonalizationData !== null &&
-                      userPersonalizationData?.buttonsAndBarsColor !== null
-                      ? userPersonalizationData?.buttonsAndBarsColor
-                      : "#35bfbf"
+                  <span
+                    style={{
+                      color: `${
+                        userPersonalizationData !== null &&
+                        userPersonalizationData?.buttonsAndBarsColor !== null
+                          ? userPersonalizationData?.buttonsAndBarsColor
+                          : "#35bfbf"
                       }`,
-                  }}>
+                    }}
+                  >
                     {complainDetails?.deviceName}
                   </span>
                 </div>
@@ -604,16 +614,19 @@ const ComplainDetails = () => {
                         fontSize: "24px",
                       }}
                     >
-                      {complainDetails.createdBy.fullName} -&nbsp;
-                      {formatUnderscoredString(complainDetails.createdBy.role)}
+                      {complainDetails?.createdBy?.fullName} -&nbsp;
+                      {formatUnderscoredString(
+                        complainDetails?.createdBy?.role
+                      )}
                     </div>
                     <div
                       style={{
-                        color: `${userPersonalizationData !== null &&
+                        color: `${
+                          userPersonalizationData !== null &&
                           userPersonalizationData?.buttonsAndBarsColor !== null
-                          ? userPersonalizationData?.buttonsAndBarsColor
-                          : "#35bfbf"
-                          }`,
+                            ? userPersonalizationData?.buttonsAndBarsColor
+                            : "#35bfbf"
+                        }`,
                         fontWeight: "normal",
                         fontSize: "16px",
                         marginBottom: "5px",
@@ -653,17 +666,18 @@ const ComplainDetails = () => {
                       <Col
                         md={3}
                         style={{
-                          color: `${userPersonalizationData !== null &&
+                          color: `${
+                            userPersonalizationData !== null &&
                             userPersonalizationData?.buttonsAndBarsColor !==
-                            null
-                            ? userPersonalizationData?.buttonsAndBarsColor
-                            : "#35bfbf"
-                            }`,
+                              null
+                              ? userPersonalizationData?.buttonsAndBarsColor
+                              : "#35bfbf"
+                          }`,
                           margin: "25px 0px",
                           fontSize: "14px",
                         }}
                       >
-                        {convertDateString(complainDetails.createdAt)}
+                        {convertDateString(complainDetails?.createdAt)}
                       </Col>
                     </Row>
                     <div
@@ -674,7 +688,7 @@ const ComplainDetails = () => {
                       <hr />
                     </div>
 
-                    {complainDetails.messages.length >= 1 && (
+                    {complainDetails?.messages?.length >= 1 && (
                       <div
                         style={{
                           backgroundColor: "#def4fb",
@@ -693,9 +707,9 @@ const ComplainDetails = () => {
                               }}
                             >
                               {
-                                complainDetails.messages[
-                                  complainDetails.messages.length - 1
-                                ].messageText
+                                complainDetails?.messages[
+                                  complainDetails?.messages?.length - 1
+                                ]?.messageText
                               }
                             </div>
                           </Col>
@@ -703,20 +717,21 @@ const ComplainDetails = () => {
                           <Col
                             md={3}
                             style={{
-                              color: `${userPersonalizationData !== null &&
+                              color: `${
+                                userPersonalizationData !== null &&
                                 userPersonalizationData?.buttonsAndBarsColor !==
-                                null
-                                ? userPersonalizationData?.buttonsAndBarsColor
-                                : "#35bfbf"
-                                }`,
+                                  null
+                                  ? userPersonalizationData?.buttonsAndBarsColor
+                                  : "#35bfbf"
+                              }`,
                               margin: "2px 0px",
                               fontSize: "12px",
                             }}
                           >
                             {convertDateString(
-                              complainDetails.messages[
-                                complainDetails.messages.length - 1
-                              ].createdAt
+                              complainDetails?.messages[
+                                complainDetails?.messages?.length - 1
+                              ]?.createdAt
                             )}
                           </Col>
                         </Row>
@@ -739,9 +754,9 @@ const ComplainDetails = () => {
                           }}
                         >
                           {
-                            complainDetails.messages[
-                              complainDetails.messages.length - 1
-                            ].user.fullName
+                            complainDetails?.messages[
+                              complainDetails.messages?.length - 1
+                            ]?.user?.fullName
                           }
                         </div>
                         <div
@@ -755,12 +770,13 @@ const ComplainDetails = () => {
                           <a
                             href="#"
                             style={{
-                              color: `${userPersonalizationData !== null &&
+                              color: `${
+                                userPersonalizationData !== null &&
                                 userPersonalizationData?.buttonsAndBarsColor !==
-                                null
-                                ? userPersonalizationData?.buttonsAndBarsColor
-                                : "#35bfbf"
-                                }`,
+                                  null
+                                  ? userPersonalizationData?.buttonsAndBarsColor
+                                  : "#35bfbf"
+                              }`,
                               fontSize: "16px",
                             }}
                           >
@@ -817,12 +833,13 @@ const ComplainDetails = () => {
                                       ? "0px"
                                       : "40%",
                                   borderRadius: "10px",
-                                  marginBottom: `${index === 2 &&
+                                  marginBottom: `${
+                                    index === 2 &&
                                     index ===
-                                    complainDetails.messages.length - 1
-                                    ? "50px"
-                                    : "20px"
-                                    }`,
+                                      complainDetails.messages.length - 1
+                                      ? "50px"
+                                      : "20px"
+                                  }`,
                                   marginTop: "10px",
                                 }}
                               >
@@ -865,14 +882,15 @@ const ComplainDetails = () => {
                                       <div
                                         style={{
                                           margin: "0px 10px",
-
                                         }}
                                       >
-                                        <div style={{
-                                          display: "flex",
-                                          justifyContent: "space-between",
-                                          width: "100%"
-                                        }}>
+                                        <div
+                                          style={{
+                                            display: "flex",
+                                            justifyContent: "space-between",
+                                            width: "100%",
+                                          }}
+                                        >
                                           <div
                                             style={{
                                               color: "black",
@@ -888,7 +906,6 @@ const ComplainDetails = () => {
                                             style={{
                                               color: "black",
                                               fontSize: "12px",
-
                                             }}
                                           >
                                             {convertDateString(reply.createdAt)}
@@ -915,7 +932,6 @@ const ComplainDetails = () => {
                                         </div>
                                       </div>
                                     </div>
-
                                   </div>
                                 </div>
                               </div>
@@ -939,12 +955,13 @@ const ComplainDetails = () => {
                                         : "40%",
                                     padding: "15px",
                                     borderRadius: "10px",
-                                    marginBottom: `${index === 2 &&
+                                    marginBottom: `${
+                                      index === 2 &&
                                       index ===
-                                      complainDetails.messages.length - 1
-                                      ? "50px"
-                                      : "20px"
-                                      }`,
+                                        complainDetails.messages.length - 1
+                                        ? "50px"
+                                        : "20px"
+                                    }`,
                                     marginTop: "10px",
                                   }}
                                 >
@@ -987,14 +1004,15 @@ const ComplainDetails = () => {
                                         <div
                                           style={{
                                             margin: "0px 10px",
-
                                           }}
                                         >
-                                          <div style={{
-                                            display: "flex",
-                                            justifyContent: "space-between",
-                                            width: "100%"
-                                          }}>
+                                          <div
+                                            style={{
+                                              display: "flex",
+                                              justifyContent: "space-between",
+                                              width: "100%",
+                                            }}
+                                          >
                                             <div
                                               style={{
                                                 color: "black",
@@ -1010,10 +1028,11 @@ const ComplainDetails = () => {
                                               style={{
                                                 color: "black",
                                                 fontSize: "12px",
-
                                               }}
                                             >
-                                              {convertDateString(reply.createdAt)}
+                                              {convertDateString(
+                                                reply.createdAt
+                                              )}
                                             </div>
                                           </div>
                                           <div
@@ -1037,7 +1056,6 @@ const ComplainDetails = () => {
                                           </div>
                                         </div>
                                       </div>
-
                                     </div>
                                   </div>
                                 </div>
@@ -1082,108 +1100,110 @@ const ComplainDetails = () => {
                       >
                         {formatUnderscoredString(complainDetails.status) !==
                           "Resolved" && (
-                            <div
+                          <div
+                            style={{
+                              border: "1px solid lightgray",
+                            }}
+                          >
+                            <textarea
+                              ref={textareaRef}
+                              onChange={handleChange}
+                              value={replyText}
+                              className="form-control replyText"
+                              placeholder="Reply Here..."
+                              rows={3} // Minimum number of visible lines
                               style={{
-                                border: "1px solid lightgray",
+                                maxHeight: "100px", // Maximum height for 5 lines of text
+                                resize: "vertical", // Allow vertical resizing within the specified range
+                                borderRadius: "0px",
+                                fontSize: "20px",
+                                overflowY: "auto",
+                                WebkitOverflowScrolling: "touch", // Enable momentum scrolling on iOS
+                                scrollbarWidth: "thin", // Specify scrollbar width
+                                WebkitBorderRadius: "5px !important", // For WebKit browsers (Chrome, Safari)
+                                MozBorderRadius: "5px !important", // For Mozilla Firefox
+                                scrollbarColor: "lightgray transparent", // Specify scrollbar color
+                                outline: "0px",
+                                border: "0px",
                               }}
-                            >
-                              <textarea
-                                ref={textareaRef}
-                                onChange={handleChange}
-                                value={replyText}
-                                className="form-control replyText"
-                                placeholder="Reply Here..."
-                                rows={3} // Minimum number of visible lines
-                                style={{
-                                  maxHeight: "100px", // Maximum height for 5 lines of text
-                                  resize: "vertical", // Allow vertical resizing within the specified range
-                                  borderRadius: "0px",
-                                  fontSize: "20px",
-                                  overflowY: "auto",
-                                  WebkitOverflowScrolling: "touch", // Enable momentum scrolling on iOS
-                                  scrollbarWidth: "thin", // Specify scrollbar width
-                                  WebkitBorderRadius: "5px !important", // For WebKit browsers (Chrome, Safari)
-                                  MozBorderRadius: "5px !important", // For Mozilla Firefox
-                                  scrollbarColor: "lightgray transparent", // Specify scrollbar color
-                                  outline: "0px",
-                                  border: "0px",
-                                }}
-                              />
-                              <style>
-                                {`
+                            />
+                            <style>
+                              {`
     .replyText::placeholder {
       font-size: 18px;
   }`}
-                              </style>
-                              <div
-                                style={{
-                                  backgroundColor: "whitesmoke",
-                                  padding: "20px",
-                                  display: "flex",
-                                  justifyContent: "space-between",
-                                }}
-                              >
-                                <div></div>
-                                <div style={{ display: "flex" }}>
-                                  <button
-                                    className={`btn ${userPersonalizationData?.buttonsAndBarsColor ==
-                                      null
+                            </style>
+                            <div
+                              style={{
+                                backgroundColor: "whitesmoke",
+                                padding: "20px",
+                                display: "flex",
+                                justifyContent: "space-between",
+                              }}
+                            >
+                              <div></div>
+                              <div style={{ display: "flex" }}>
+                                <button
+                                  className={`btn ${
+                                    userPersonalizationData?.buttonsAndBarsColor ==
+                                    null
                                       ? "btn-primary"
                                       : ""
-                                      }`}
-                                    disabled={replyText.length == 0}
-                                    style={{
-                                      color: "white",
-                                      backgroundColor: `${userPersonalizationData !== null &&
-                                        userPersonalizationData?.buttonsAndBarsColor
-                                        }`,
-                                      display: "flex",
-                                      alignItems: "center",
-                                      justifyContent: "center",
-                                      padding: "5px 20px",
-                                      margin: "0px 15px",
-                                      height: "50px",
-                                      width: "auto",
-                                      fontSize: "18px",
-                                      fontWeight: "bold",
-                                    }}
-                                    onClick={() => {
-                                      Swal.fire({
-                                        title: "Complete Complain",
-                                        text: "Are you sure , you want to complete this complain",
-                                        icon: "warning",
-                                        showCancelButton: true,
-                                      }).then(async (result) => {
-                                        if (result.isConfirmed) {
-                                          try {
-                                            Swal.fire({
-                                              text: "Loading...",
-                                              icon: "info",
-                                              // timer: 2000,
-                                              showCancelButton: false,
-                                              showConfirmButton: false,
-                                            });
-                                            handleResolved();
-                                            // Handle successful post creation (e.g., show a success message, redirect, etc.)
-                                          } catch (error) {
-                                            // Handle error (e.g., show an error message)
-                                            // console.error(
-                                            //   "Error creating post:",
-                                            //   error
-                                            // );
-                                            // loading false
-                                          }
+                                  }`}
+                                  disabled={replyText.length == 0}
+                                  style={{
+                                    color: "white",
+                                    backgroundColor: `${
+                                      userPersonalizationData !== null &&
+                                      userPersonalizationData?.buttonsAndBarsColor
+                                    }`,
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    padding: "5px 20px",
+                                    margin: "0px 15px",
+                                    height: "50px",
+                                    width: "auto",
+                                    fontSize: "18px",
+                                    fontWeight: "bold",
+                                  }}
+                                  onClick={() => {
+                                    Swal.fire({
+                                      title: "Complete Complain",
+                                      text: "Are you sure , you want to complete this complain",
+                                      icon: "warning",
+                                      showCancelButton: true,
+                                    }).then(async (result) => {
+                                      if (result.isConfirmed) {
+                                        try {
+                                          Swal.fire({
+                                            text: "Loading...",
+                                            icon: "info",
+                                            // timer: 2000,
+                                            showCancelButton: false,
+                                            showConfirmButton: false,
+                                          });
+                                          handleResolved();
+                                          // Handle successful post creation (e.g., show a success message, redirect, etc.)
+                                        } catch (error) {
+                                          // Handle error (e.g., show an error message)
+                                          // console.error(
+                                          //   "Error creating post:",
+                                          //   error
+                                          // );
+                                          // loading false
                                         }
-                                      });
-                                    }}
-                                  >
-                                    {formatUnderscoredString(
-                                      complainDetails?.status
-                                    ) === "Resolved"
-                                      ? "Completed"
-                                      : "Complete"}
-                                  </button>
-                                  {/* <button
+                                      }
+                                    });
+                                  }}
+                                >
+                                  {formatUnderscoredString(
+                                    complainDetails?.status
+                                  ) === "Resolved"
+                                    ? "Completed"
+                                    : "Complete"}
+                                </button>
+                                {/* <button
                                   className={`btn ${
                                     userPersonalizationData?.buttonsAndBarsColor ==
                                     null
@@ -1217,683 +1237,738 @@ const ComplainDetails = () => {
                                   </div>
                                   {sendMessageLoading ? "Loading.." : "Send"}
                                 </button> */}
-                                  <button
-                                    className={`btn ${userPersonalizationData?.buttonsAndBarsColor == null
+                                <button
+                                  className={`btn ${
+                                    userPersonalizationData?.buttonsAndBarsColor ==
+                                    null
                                       ? "btn-primary"
                                       : ""
-                                      }`}
-                                    style={{
-                                      color: "white",
-                                      backgroundColor: `${userPersonalizationData !== null &&
-                                        userPersonalizationData?.buttonsAndBarsColor
-                                        }`,
-                                      display: "flex",
-                                      alignItems: "center",
-                                      justifyContent: "center",
-                                      padding: "5px 20px",
-                                      margin: "0px 15px",
-                                      height: "50px",
-                                      width: "auto",
-                                      fontSize: "18px",
-                                      fontWeight: "bold",
-                                    }}
-                                    onClick={() => {
-                                      setSendMessageLoading(true);
-                                      sendMessage();
-                                    }}
-                                    disabled={replyText.length == 0}
-                                  >
-                                    {sendMessageLoading ? (
-                                      <>
-                                        <Spinner color="light" size="sm" style={{ marginRight: "10px" }} />
-                                        Loading...
-                                      </>
-                                    ) : (
-                                      <>
-                                        <div style={{ marginRight: "10px" }}>
-                                          <IoSend color="white" />
-                                        </div>
-                                        Send
-                                      </>
-                                    )}
-                                  </button>
-                                </div>
+                                  }`}
+                                  style={{
+                                    color: "white",
+                                    backgroundColor: `${
+                                      userPersonalizationData !== null &&
+                                      userPersonalizationData?.buttonsAndBarsColor
+                                    }`,
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    padding: "5px 20px",
+                                    margin: "0px 15px",
+                                    height: "50px",
+                                    width: "auto",
+                                    fontSize: "18px",
+                                    fontWeight: "bold",
+                                  }}
+                                  onClick={() => {
+                                    setSendMessageLoading(true);
+                                    sendMessage();
+                                  }}
+                                  disabled={replyText.length == 0}
+                                >
+                                  {sendMessageLoading ? (
+                                    <>
+                                      <Spinner
+                                        color="light"
+                                        size="sm"
+                                        style={{ marginRight: "10px" }}
+                                      />
+                                      Loading...
+                                    </>
+                                  ) : (
+                                    <>
+                                      <div style={{ marginRight: "10px" }}>
+                                        <IoSend color="white" />
+                                      </div>
+                                      Send
+                                    </>
+                                  )}
+                                </button>
                               </div>
                             </div>
-                          )}
+                          </div>
+                        )}
                       </Col>
                     </div>
                   </div>
                 </Col>
-                {statusLoading ? <><Col sm={12}
-                  md={12}
-                  lg={12}
-                  xl={12}
-                  xxl={3}
-                  style={{
-                    marginBottom: "20px",
-                    // marginRight: "20px",
-                  }}
-                >
-                  <Col xl="12" lg="12" md="12" sm="12"
-                    style={{
-                      marginBottom: "20px",
-                    }}
-                    className="skeletons"
-                  >
-                  </Col>
-                  <Col xl="12" lg="12" md="12" sm="12" className="skeletons">
-                  </Col>
-                </Col></> : <> <Col
-                  sm={12}
-                  md={12}
-                  lg={12}
-                  xl={12}
-                  xxl={3}
-                  style={{
-                    borderTopLeftRadius: "15px",
-                    borderTopRightRadius: "15px",
-                  }}
-                >
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                    }}
-                  >
-                    <div>
+                {statusLoading ? (
+                  <>
+                    <Col
+                      sm={12}
+                      md={12}
+                      lg={12}
+                      xl={12}
+                      xxl={3}
+                      style={{
+                        marginBottom: "20px",
+                        // marginRight: "20px",
+                      }}
+                    >
+                      <Col
+                        xl="12"
+                        lg="12"
+                        md="12"
+                        sm="12"
+                        style={{
+                          marginBottom: "20px",
+                        }}
+                        className="skeletons"
+                      ></Col>
+                      <Col
+                        xl="12"
+                        lg="12"
+                        md="12"
+                        sm="12"
+                        className="skeletons"
+                      ></Col>
+                    </Col>
+                  </>
+                ) : (
+                  <>
+                    {" "}
+                    <Col
+                      sm={12}
+                      md={12}
+                      lg={12}
+                      xl={12}
+                      xxl={3}
+                      style={{
+                        borderTopLeftRadius: "15px",
+                        borderTopRightRadius: "15px",
+                      }}
+                    >
                       <div
                         style={{
-                          backgroundColor: `${userPersonalizationData !== null &&
-                            userPersonalizationData?.buttonsAndBarsColor !==
-                            null
-                            ? userPersonalizationData?.buttonsAndBarsColor
-                            : "#35bfbf"
-                            }`,
-                          color: "white",
-                          fontWeight: "bold",
-                          padding: "10px",
-                          fontSize: "18px",
-                        }}
-                      // className="btn-primary"
-                      >
-                        Vehicle Info
-                      </div>
-                      <div
-                        style={{
-                          backgroundColor: "white",
-                          color: "gray",
-                          padding: "15px",
+                          display: "flex",
+                          flexDirection: "column",
                         }}
                       >
-                        <div
-                          style={{
-                            borderBottom: "1px solid #e1e1e1",
-                            display: "flex",
-                            justifyContent: "space-between",
-                            padding: "8px 0px",
-                          }}
-                        >
+                        <div>
                           <div
                             style={{
-                              fontSize: "16px",
-                              color: "gray",
+                              backgroundColor: `${
+                                userPersonalizationData !== null &&
+                                userPersonalizationData?.buttonsAndBarsColor !==
+                                  null
+                                  ? userPersonalizationData?.buttonsAndBarsColor
+                                  : "#35bfbf"
+                              }`,
+                              color: "white",
                               fontWeight: "bold",
+                              padding: "10px",
+                              fontSize: "18px",
                             }}
+                            // className="btn-primary"
                           >
-                            Customer Name
+                            Vehicle Info
                           </div>
                           <div
                             style={{
-                              fontSize: "16px",
-                              color: "black",
-                            }}
-                          >
-                            {complainDetails.deviceInfo.customerName == "" ? "N/A" : complainDetails.deviceInfo.customerName}
-                          </div>
-                        </div>
-                        <div
-                          style={{
-                            borderBottom: "1px solid #e1e1e1",
-                            display: "flex",
-                            justifyContent: "space-between",
-                            padding: "8px 0px",
-                          }}
-                        >
-                          <div
-                            style={{
-                              fontSize: "16px",
+                              backgroundColor: "white",
                               color: "gray",
-                              fontWeight: "bold",
+                              padding: "15px",
                             }}
                           >
-                            Mobile No 1
-                          </div>
-                          <div
-                            style={{
-                              fontSize: "16px",
-                              color: "black",
-                            }}
-                          >
-                            {complainDetails.deviceInfo.mobileNo1 == "" ? "N/A" : complainDetails.deviceInfo.mobileNo1}
-                          </div>
-                        </div>
-                        <div
-                          style={{
-                            borderBottom: "1px solid #e1e1e1",
-                            display: "flex",
-                            justifyContent: "space-between",
-                            padding: "8px 0px",
-                          }}
-                        >
-                          <div
-                            style={{
-                              fontSize: "16px",
-                              color: "gray",
-                              fontWeight: "bold",
-                            }}
-                          >
-                            Mobile No 2
-                          </div>
-                          <div
-                            style={{
-                              fontSize: "16px",
-                              color: "black",
-                            }}
-                          >
-                            {complainDetails.deviceInfo.mobileNo2 == "" ? "N/A" : complainDetails.deviceInfo.mobileNo2}
-                          </div>
-                        </div>
-                        <div
-                          style={{
-                            borderBottom: "1px solid #e1e1e1",
-                            display: "flex",
-                            justifyContent: "space-between",
-                            padding: "8px 0px",
-                          }}
-                        >
-                          <div
-                            style={{
-                              fontSize: "16px",
-                              color: "gray",
-                              fontWeight: "bold",
-                            }}
-                          >
-                            Vehcile Name
-                          </div>
-                          <div
-                            style={{
-                              fontSize: "16px",
-                              color: "black",
-                            }}
-                          >
-                            {complainDetails.deviceInfo.vehicleName == "" ? "N/A" : complainDetails.deviceInfo.vehicleName}
-                          </div>
-                        </div>
-                        <div
-                          style={{
-                            borderBottom: "1px solid #e1e1e1",
-                            display: "flex",
-                            justifyContent: "space-between",
-                            padding: "8px 0px",
-                          }}
-                        >
-                          <div
-                            style={{
-                              fontSize: "16px",
-                              color: "gray",
-                              fontWeight: "bold",
-                            }}
-                          >
-                            Sim Number
-                          </div>
-                          <div
-                            style={{
-                              fontSize: "16px",
-                              color: "black",
-                            }}
-                          >
-                            {complainDetails.deviceInfo.simNumber == "" ? "N/A" : complainDetails.deviceInfo.simNumber}
-                          </div>
-                        </div>
-
-                        <div
-                          style={{
-                            borderBottom: "1px solid #e1e1e1",
-                            display: "flex",
-                            justifyContent: "space-between",
-                            padding: "8px 0px",
-                          }}
-                        >
-                          <div
-                            style={{
-                              fontSize: "16px",
-                              color: "gray",
-                              fontWeight: "bold",
-                            }}
-                          >
-                            IMEI
-                          </div>
-                          <div
-                            style={{
-                              fontSize: "16px",
-                              color: "black",
-                            }}
-                          >
-                            {complainDetails.deviceInfo.imei == "" ? "N/A" : complainDetails.deviceInfo.imei}
-                          </div>
-                        </div>
-                        <div
-                          style={{
-                            borderBottom: "1px solid #e1e1e1",
-                            display: "flex",
-                            justifyContent: "space-between",
-                            padding: "8px 0px",
-                          }}
-                        >
-                          <div
-                            style={{
-                              fontSize: "16px",
-                              color: "gray",
-                              fontWeight: "bold",
-                            }}
-                          >
-                            Device Model
-                          </div>
-                          <div
-                            style={{
-                              fontSize: "16px",
-                              color: "black",
-                            }}
-                          >
-                            {complainDetails.deviceInfo.deviceModel == "" ? "N/A" : complainDetails.deviceInfo.deviceModel}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    {/* -----------------------------------Vehicle Info-------------------- */}
-
-                    <div>
-                      <div
-                        style={{
-                          backgroundColor: `${userPersonalizationData !== null &&
-                            userPersonalizationData?.buttonsAndBarsColor !==
-                            null
-                            ? userPersonalizationData?.buttonsAndBarsColor
-                            : "#35bfbf"
-                            }`,
-                          color: "white",
-                          fontWeight: "bold",
-                          padding: "10px",
-                          marginTop: "10px",
-                          fontSize: "18px",
-                        }}
-                      // className="btn-primary"
-                      >
-                        Complain Info
-                      </div>
-                      <div
-                        style={{
-                          backgroundColor: "white",
-                          color: "gray",
-                          padding: "15px",
-                        }}
-                      >
-                        <div
-                          style={{
-                            borderBottom: "1px solid #e1e1e1",
-                            display: "flex",
-                            justifyContent: "space-between",
-                            padding: "8px 0px",
-                          }}
-                        >
-                          <div
-                            style={{
-                              fontSize: "16px",
-                              color: "gray",
-                              fontWeight: "bold",
-                            }}
-                          >
-                            Complain Id
-                          </div>
-                          <div
-                            style={{
-                              fontSize: "16px",
-                              color: "black",
-                            }}
-                          >
-                            {complainDetails.complaintId}
-                          </div>
-                        </div>
-
-                        <div
-                          style={{
-                            borderBottom: "1px solid #e1e1e1",
-                            display: "flex",
-                            justifyContent: "space-between",
-                            padding: "8px 0px",
-                          }}
-                        >
-                          <div
-                            style={{
-                              fontSize: "16px",
-                              color: "gray",
-                              fontWeight: "bold",
-                            }}
-                          >
-                            Date
-                          </div>
-                          <div
-                            style={{
-                              fontSize: "16px",
-                              color: "black",
-                            }}
-                          >
-                            {convertDateForComplainInfo(complainDetails.createdAt)}
-                          </div>
-                        </div>
-                        <div
-                          style={{
-                            borderBottom: "1px solid #e1e1e1",
-                            display: "flex",
-                            justifyContent: "space-between",
-                            padding: "8px 0px",
-                          }}
-                        >
-                          <div
-                            style={{
-                              fontSize: "16px",
-                              color: "gray",
-                              fontWeight: "bold",
-                            }}
-                          >
-                            Time
-                          </div>
-                          <div
-                            style={{
-                              fontSize: "16px",
-                              color: "black",
-                            }}
-                          >
-                            {convertTimeForComplainInfo(complainDetails.createdAt)}
-                          </div>
-                        </div>
-                        <div
-                          style={{
-                            borderBottom: "1px solid #e1e1e1",
-                            display: "flex",
-                            justifyContent: "space-between",
-                            padding: "8px 0px",
-                          }}
-                        >
-                          <div
-                            style={{
-                              fontSize: "16px",
-                              color: "gray",
-                              fontWeight: "bold",
-                            }}
-                          >
-                            Type
-                          </div>
-                          <div
-                            style={{
-                              fontSize: "16px",
-                              color: "black",
-                            }}
-                          >
-                            {complainDetails.type.title}
-                          </div>
-                        </div>
-                        <div
-                          style={{
-                            borderBottom: "1px solid #e1e1e1",
-                            display: "flex",
-                            justifyContent: "space-between",
-                            padding: "8px 0px",
-                          }}
-                        >
-                          <div
-                            style={{
-                              fontSize: "16px",
-                              color: "gray",
-                              fontWeight: "bold",
-                            }}
-                          >
-                            Priority
-                          </div>
-                          {isEdit ? (
-                            <Select
-                              defaultValue={complainDetails?.priorty}
-                              showSearch
-                              style={{ width: 200, height: 36 }}
-                              placeholder="Select Priority"
-                              optionFilterProp="children"
-                              filterOption={(input: any, option: any) =>
-                                (option?.label ?? "").includes(input)
-                              }
-                              filterSort={(optionA: any, optionB: any) =>
-                                (optionA?.label ?? "")
-                                  .toLowerCase()
-                                  .localeCompare(
-                                    (optionB?.label ?? "").toLowerCase()
-                                  )
-                              }
-                              onChange={(e) => {
-                                // console.log(e);
-                                setChangePriortyStatus(e);
-                              }}
-                              options={priorityStatusesList}
-                            />
-                          ) : (
                             <div
                               style={{
-                                fontSize: "16px",
-                                color:
-                                  complainDetails.priorty === "LOW"
-                                    ? "green"
-                                    : complainDetails.priorty === "HIGH"
-                                      ? "red"
-                                      : "orange",
-                                fontWeight: "bold",
+                                borderBottom: "1px solid #e1e1e1",
+                                display: "flex",
+                                justifyContent: "space-between",
+                                padding: "8px 0px",
                               }}
                             >
-                              {formatUnderscoredString(complainDetails.priorty)}
+                              <div
+                                style={{
+                                  fontSize: "16px",
+                                  color: "gray",
+                                  fontWeight: "bold",
+                                }}
+                              >
+                                Customer Name
+                              </div>
+                              <div
+                                style={{
+                                  fontSize: "16px",
+                                  color: "black",
+                                }}
+                              >
+                                {complainDetails.deviceInfo.customerName == ""
+                                  ? "N/A"
+                                  : complainDetails.deviceInfo.customerName}
+                              </div>
                             </div>
-                          )}
-                        </div>
-
-                        <div
-                          style={{
-                            borderBottom: "1px solid #e1e1e1",
-                            display: "flex",
-                            justifyContent: "space-between",
-                            padding: "8px 0px",
-                          }}
-                        >
-                          <div
-                            style={{
-                              fontSize: "16px",
-                              color: "gray",
-                              fontWeight: "bold",
-                            }}
-                          >
-                            Status
-                          </div>
-                          {isEdit ? (
-                            <Select
-                              defaultValue={complainDetails?.status}
-                              showSearch
-                              style={{ width: 200, height: 36 }}
-                              placeholder="Select Status"
-                              optionFilterProp="children"
-                              filterOption={(input: any, option: any) =>
-                                (option?.label ?? "").includes(input)
-                              }
-                              filterSort={(optionA: any, optionB: any) =>
-                                (optionA?.label ?? "")
-                                  .toLowerCase()
-                                  .localeCompare(
-                                    (optionB?.label ?? "").toLowerCase()
-                                  )
-                              }
-                              onChange={(e) => {
-                                // console.log(e);
-                                setChangeStatus(e);
-                              }}
-                              options={statusesList}
-                            />
-                          ) : (
                             <div
                               style={{
-                                fontSize: "16px",
-                                color:
-                                  complainDetails.status === "NEW"
-                                    ? "blue"
-                                    : complainDetails.status === "IN_PROGRESS"
-                                      ? "orange"
-                                      : complainDetails.status === "PENDING"
+                                borderBottom: "1px solid #e1e1e1",
+                                display: "flex",
+                                justifyContent: "space-between",
+                                padding: "8px 0px",
+                              }}
+                            >
+                              <div
+                                style={{
+                                  fontSize: "16px",
+                                  color: "gray",
+                                  fontWeight: "bold",
+                                }}
+                              >
+                                Mobile No 1
+                              </div>
+                              <div
+                                style={{
+                                  fontSize: "16px",
+                                  color: "black",
+                                }}
+                              >
+                                {complainDetails.deviceInfo.mobileNo1 == ""
+                                  ? "N/A"
+                                  : complainDetails.deviceInfo.mobileNo1}
+                              </div>
+                            </div>
+                            <div
+                              style={{
+                                borderBottom: "1px solid #e1e1e1",
+                                display: "flex",
+                                justifyContent: "space-between",
+                                padding: "8px 0px",
+                              }}
+                            >
+                              <div
+                                style={{
+                                  fontSize: "16px",
+                                  color: "gray",
+                                  fontWeight: "bold",
+                                }}
+                              >
+                                Mobile No 2
+                              </div>
+                              <div
+                                style={{
+                                  fontSize: "16px",
+                                  color: "black",
+                                }}
+                              >
+                                {complainDetails.deviceInfo.mobileNo2 == ""
+                                  ? "N/A"
+                                  : complainDetails.deviceInfo.mobileNo2}
+                              </div>
+                            </div>
+                            <div
+                              style={{
+                                borderBottom: "1px solid #e1e1e1",
+                                display: "flex",
+                                justifyContent: "space-between",
+                                padding: "8px 0px",
+                              }}
+                            >
+                              <div
+                                style={{
+                                  fontSize: "16px",
+                                  color: "gray",
+                                  fontWeight: "bold",
+                                }}
+                              >
+                                Vehcile Name
+                              </div>
+                              <div
+                                style={{
+                                  fontSize: "16px",
+                                  color: "black",
+                                }}
+                              >
+                                {complainDetails.deviceInfo.vehicleName == ""
+                                  ? "N/A"
+                                  : complainDetails.deviceInfo.vehicleName}
+                              </div>
+                            </div>
+                            <div
+                              style={{
+                                borderBottom: "1px solid #e1e1e1",
+                                display: "flex",
+                                justifyContent: "space-between",
+                                padding: "8px 0px",
+                              }}
+                            >
+                              <div
+                                style={{
+                                  fontSize: "16px",
+                                  color: "gray",
+                                  fontWeight: "bold",
+                                }}
+                              >
+                                Sim Number
+                              </div>
+                              <div
+                                style={{
+                                  fontSize: "16px",
+                                  color: "black",
+                                }}
+                              >
+                                {complainDetails.deviceInfo.simNumber == ""
+                                  ? "N/A"
+                                  : complainDetails.deviceInfo.simNumber}
+                              </div>
+                            </div>
+
+                            <div
+                              style={{
+                                borderBottom: "1px solid #e1e1e1",
+                                display: "flex",
+                                justifyContent: "space-between",
+                                padding: "8px 0px",
+                              }}
+                            >
+                              <div
+                                style={{
+                                  fontSize: "16px",
+                                  color: "gray",
+                                  fontWeight: "bold",
+                                }}
+                              >
+                                IMEI
+                              </div>
+                              <div
+                                style={{
+                                  fontSize: "16px",
+                                  color: "black",
+                                }}
+                              >
+                                {complainDetails.deviceInfo.imei == ""
+                                  ? "N/A"
+                                  : complainDetails.deviceInfo.imei}
+                              </div>
+                            </div>
+                            <div
+                              style={{
+                                borderBottom: "1px solid #e1e1e1",
+                                display: "flex",
+                                justifyContent: "space-between",
+                                padding: "8px 0px",
+                              }}
+                            >
+                              <div
+                                style={{
+                                  fontSize: "16px",
+                                  color: "gray",
+                                  fontWeight: "bold",
+                                }}
+                              >
+                                Device Model
+                              </div>
+                              <div
+                                style={{
+                                  fontSize: "16px",
+                                  color: "black",
+                                }}
+                              >
+                                {complainDetails.deviceInfo.deviceModel == ""
+                                  ? "N/A"
+                                  : complainDetails.deviceInfo.deviceModel}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        {/* -----------------------------------Vehicle Info-------------------- */}
+
+                        <div>
+                          <div
+                            style={{
+                              backgroundColor: `${
+                                userPersonalizationData !== null &&
+                                userPersonalizationData?.buttonsAndBarsColor !==
+                                  null
+                                  ? userPersonalizationData?.buttonsAndBarsColor
+                                  : "#35bfbf"
+                              }`,
+                              color: "white",
+                              fontWeight: "bold",
+                              padding: "10px",
+                              marginTop: "10px",
+                              fontSize: "18px",
+                            }}
+                            // className="btn-primary"
+                          >
+                            Complain Info
+                          </div>
+                          <div
+                            style={{
+                              backgroundColor: "white",
+                              color: "gray",
+                              padding: "15px",
+                            }}
+                          >
+                            <div
+                              style={{
+                                borderBottom: "1px solid #e1e1e1",
+                                display: "flex",
+                                justifyContent: "space-between",
+                                padding: "8px 0px",
+                              }}
+                            >
+                              <div
+                                style={{
+                                  fontSize: "16px",
+                                  color: "gray",
+                                  fontWeight: "bold",
+                                }}
+                              >
+                                Complain Id
+                              </div>
+                              <div
+                                style={{
+                                  fontSize: "16px",
+                                  color: "black",
+                                }}
+                              >
+                                {complainDetails.complaintId}
+                              </div>
+                            </div>
+
+                            <div
+                              style={{
+                                borderBottom: "1px solid #e1e1e1",
+                                display: "flex",
+                                justifyContent: "space-between",
+                                padding: "8px 0px",
+                              }}
+                            >
+                              <div
+                                style={{
+                                  fontSize: "16px",
+                                  color: "gray",
+                                  fontWeight: "bold",
+                                }}
+                              >
+                                Date
+                              </div>
+                              <div
+                                style={{
+                                  fontSize: "16px",
+                                  color: "black",
+                                }}
+                              >
+                                {convertDateForComplainInfo(
+                                  complainDetails.createdAt
+                                )}
+                              </div>
+                            </div>
+                            <div
+                              style={{
+                                borderBottom: "1px solid #e1e1e1",
+                                display: "flex",
+                                justifyContent: "space-between",
+                                padding: "8px 0px",
+                              }}
+                            >
+                              <div
+                                style={{
+                                  fontSize: "16px",
+                                  color: "gray",
+                                  fontWeight: "bold",
+                                }}
+                              >
+                                Time
+                              </div>
+                              <div
+                                style={{
+                                  fontSize: "16px",
+                                  color: "black",
+                                }}
+                              >
+                                {convertTimeForComplainInfo(
+                                  complainDetails.createdAt
+                                )}
+                              </div>
+                            </div>
+                            <div
+                              style={{
+                                borderBottom: "1px solid #e1e1e1",
+                                display: "flex",
+                                justifyContent: "space-between",
+                                padding: "8px 0px",
+                              }}
+                            >
+                              <div
+                                style={{
+                                  fontSize: "16px",
+                                  color: "gray",
+                                  fontWeight: "bold",
+                                }}
+                              >
+                                Type
+                              </div>
+                              <div
+                                style={{
+                                  fontSize: "16px",
+                                  color: "black",
+                                }}
+                              >
+                                {complainDetails.type.title}
+                              </div>
+                            </div>
+                            <div
+                              style={{
+                                borderBottom: "1px solid #e1e1e1",
+                                display: "flex",
+                                justifyContent: "space-between",
+                                padding: "8px 0px",
+                              }}
+                            >
+                              <div
+                                style={{
+                                  fontSize: "16px",
+                                  color: "gray",
+                                  fontWeight: "bold",
+                                }}
+                              >
+                                Priority
+                              </div>
+                              {isEdit ? (
+                                <Select
+                                  defaultValue={complainDetails?.priorty}
+                                  showSearch
+                                  style={{ width: 200, height: 36 }}
+                                  placeholder="Select Priority"
+                                  optionFilterProp="children"
+                                  filterOption={(input: any, option: any) =>
+                                    (option?.label ?? "").includes(input)
+                                  }
+                                  filterSort={(optionA: any, optionB: any) =>
+                                    (optionA?.label ?? "")
+                                      .toLowerCase()
+                                      .localeCompare(
+                                        (optionB?.label ?? "").toLowerCase()
+                                      )
+                                  }
+                                  onChange={(e) => {
+                                    // console.log(e);
+                                    setChangePriortyStatus(e);
+                                  }}
+                                  options={priorityStatusesList}
+                                />
+                              ) : (
+                                <div
+                                  style={{
+                                    fontSize: "16px",
+                                    color:
+                                      complainDetails.priorty === "LOW"
+                                        ? "green"
+                                        : complainDetails.priorty === "HIGH"
+                                        ? "red"
+                                        : "orange",
+                                    fontWeight: "bold",
+                                  }}
+                                >
+                                  {formatUnderscoredString(
+                                    complainDetails.priorty
+                                  )}
+                                </div>
+                              )}
+                            </div>
+
+                            <div
+                              style={{
+                                borderBottom: "1px solid #e1e1e1",
+                                display: "flex",
+                                justifyContent: "space-between",
+                                padding: "8px 0px",
+                              }}
+                            >
+                              <div
+                                style={{
+                                  fontSize: "16px",
+                                  color: "gray",
+                                  fontWeight: "bold",
+                                }}
+                              >
+                                Status
+                              </div>
+                              {isEdit ? (
+                                <Select
+                                  defaultValue={complainDetails?.status}
+                                  showSearch
+                                  style={{ width: 200, height: 36 }}
+                                  placeholder="Select Status"
+                                  optionFilterProp="children"
+                                  filterOption={(input: any, option: any) =>
+                                    (option?.label ?? "").includes(input)
+                                  }
+                                  filterSort={(optionA: any, optionB: any) =>
+                                    (optionA?.label ?? "")
+                                      .toLowerCase()
+                                      .localeCompare(
+                                        (optionB?.label ?? "").toLowerCase()
+                                      )
+                                  }
+                                  onChange={(e) => {
+                                    // console.log(e);
+                                    setChangeStatus(e);
+                                  }}
+                                  options={statusesList}
+                                />
+                              ) : (
+                                <div
+                                  style={{
+                                    fontSize: "16px",
+                                    color:
+                                      complainDetails.status === "NEW"
+                                        ? "blue"
+                                        : complainDetails.status ===
+                                          "IN_PROGRESS"
+                                        ? "orange"
+                                        : complainDetails.status === "PENDING"
                                         ? "red"
                                         : "green",
-                                fontWeight: "bold",
-                              }}
-                            >
-                              {formatUnderscoredString(complainDetails.status)}
+                                    fontWeight: "bold",
+                                  }}
+                                >
+                                  {formatUnderscoredString(
+                                    complainDetails.status
+                                  )}
+                                </div>
+                              )}
                             </div>
-                          )}
-                        </div>
-                        {complainDetails.resolvingDate !== null && (
-                          <div
-                            style={{
-                              borderBottom: "1px solid #e1e1e1",
-                              display: "flex",
-                              justifyContent: "space-between",
-                              padding: "8px 0px",
-                            }}
-                          >
+                            {complainDetails.resolvingDate !== null && (
+                              <div
+                                style={{
+                                  borderBottom: "1px solid #e1e1e1",
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                  padding: "8px 0px",
+                                }}
+                              >
+                                <div
+                                  style={{
+                                    fontSize: "16px",
+                                    color: "gray",
+                                    fontWeight: "bold",
+                                  }}
+                                >
+                                  Resolving Date
+                                </div>
+                                <div
+                                  style={{
+                                    fontSize: "16px",
+                                    color: "black",
+                                  }}
+                                >
+                                  {complainDetails.resolvingDate
+                                    .toString()
+                                    .slice(0, 10)}
+                                </div>
+                              </div>
+                            )}
                             <div
                               style={{
-                                fontSize: "16px",
-                                color: "gray",
-                                fontWeight: "bold",
+                                display: "flex",
+                                justifyContent: "space-between",
+                                padding: "8px 0px",
+                                marginBottom: "10px",
                               }}
                             >
-                              Resolving Date
+                              <div
+                                style={{
+                                  fontSize: "16px",
+                                  color: "gray",
+                                  fontWeight: "bold",
+                                }}
+                              >
+                                Response
+                              </div>
+                              <div
+                                style={{
+                                  fontSize: "16px",
+                                  color: "green",
+                                  fontWeight: "bold",
+                                }}
+                              >
+                                {complainDetails.messages.length >= 1
+                                  ? calculateTimeAgo(
+                                      complainDetails.messages[
+                                        complainDetails.messages.length - 1
+                                      ].updatedAt
+                                    )
+                                  : "N/A"}
+                              </div>
                             </div>
-                            <div
-                              style={{
-                                fontSize: "16px",
-                                color: "black",
-                              }}
-                            >
-                              {complainDetails.resolvingDate
-                                .toString()
-                                .slice(0, 10)}
-                            </div>
-                          </div>
-                        )}
-                        <div
-                          style={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                            padding: "8px 0px",
-                            marginBottom: "10px",
-                          }}
-                        >
-                          <div
-                            style={{
-                              fontSize: "16px",
-                              color: "gray",
-                              fontWeight: "bold",
-                            }}
-                          >
-                            Response
-                          </div>
-                          <div
-                            style={{
-                              fontSize: "16px",
-                              color: "green",
-                              fontWeight: "bold",
-                            }}
-                          >
-                            {complainDetails.messages.length >= 1
-                              ? calculateTimeAgo(
-                                complainDetails.messages[
-                                  complainDetails.messages.length - 1
-                                ].updatedAt
-                              )
-                              : "N/A"}
-                          </div>
-                        </div>
 
-                        <div
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "space-between",
-                          }}
-                        >
-                          {formatUnderscoredString(complainDetails.status) !==
-                            "Resolved" && (
-                              <button
-                                className={`btn ${userPersonalizationData?.buttonsAndBarsColor ==
-                                  null
-                                  ? "btn-primary"
-                                  : ""
+                            <div
+                              style={{
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "space-between",
+                              }}
+                            >
+                              {formatUnderscoredString(
+                                complainDetails.status
+                              ) !== "Resolved" && (
+                                <button
+                                  className={`btn ${
+                                    userPersonalizationData?.buttonsAndBarsColor ==
+                                    null
+                                      ? "btn-primary"
+                                      : ""
                                   }`}
-                                style={{
-                                  color: "white",
-                                  backgroundColor: `${userPersonalizationData !== null &&
-                                    userPersonalizationData?.buttonsAndBarsColor
+                                  style={{
+                                    color: "white",
+                                    backgroundColor: `${
+                                      userPersonalizationData !== null &&
+                                      userPersonalizationData?.buttonsAndBarsColor
                                     }`,
-                                  display: "flex",
-                                  alignItems: "center",
-                                  justifyContent: "center",
-                                  padding: "2px 0px",
-                                  margin: "0px 0px",
-                                  height: "50px",
-                                  width: "130px",
-                                  fontSize: "16px",
-                                  fontWeight: "bold",
-                                }}
-                                onClick={handleGoToReply}
-                              >
-                                Go to Reply
-                              </button>
-                            )}
-                          {formatUnderscoredString(complainDetails.status) !==
-                            "Resolved" && (
-                              <button
-                                className={`btn ${userPersonalizationData?.buttonsAndBarsColor ==
-                                  null
-                                  ? "btn-primary"
-                                  : ""
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    padding: "2px 0px",
+                                    margin: "0px 0px",
+                                    height: "50px",
+                                    width: "130px",
+                                    fontSize: "16px",
+                                    fontWeight: "bold",
+                                  }}
+                                  onClick={handleGoToReply}
+                                >
+                                  Go to Reply
+                                </button>
+                              )}
+                              {formatUnderscoredString(
+                                complainDetails.status
+                              ) !== "Resolved" && (
+                                <button
+                                  className={`btn ${
+                                    userPersonalizationData?.buttonsAndBarsColor ==
+                                    null
+                                      ? "btn-primary"
+                                      : ""
                                   }`}
-                                style={{
-                                  color: "white",
-                                  backgroundColor: `${userPersonalizationData !== null &&
-                                    userPersonalizationData?.buttonsAndBarsColor
+                                  style={{
+                                    color: "white",
+                                    backgroundColor: `${
+                                      userPersonalizationData !== null &&
+                                      userPersonalizationData?.buttonsAndBarsColor
                                     }`,
-                                  display: "flex",
-                                  alignItems: "center",
-                                  justifyContent: "center",
-                                  padding: "2px 0px",
-                                  margin: "0px 0px",
-                                  height: "50px",
-                                  width: "130px",
-                                  fontSize: "16px",
-                                  fontWeight: "bold",
-                                }}
-                                onClick={handleEdit}
-                              >
-                                {isEdit ? "Save" : "Edit"}
-                              </button>
-                            )}
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    padding: "2px 0px",
+                                    margin: "0px 0px",
+                                    height: "50px",
+                                    width: "130px",
+                                    fontSize: "16px",
+                                    fontWeight: "bold",
+                                  }}
+                                  onClick={handleEdit}
+                                >
+                                  {isEdit ? "Save" : "Edit"}
+                                </button>
+                              )}
+                            </div>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </div>
-                </Col></>}
-
+                    </Col>
+                  </>
+                )}
               </Row>
             </CardBody>
           ) : (

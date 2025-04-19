@@ -259,7 +259,7 @@ const CreateNewPurchaseInvoice = ({}) => {
       border: "1px solid black",
       position: "absolute",
       right: "20",
-      top: "20%",
+      // top: "20%",
     },
     tableRow: {
       flexDirection: "row",
@@ -327,15 +327,22 @@ const CreateNewPurchaseInvoice = ({}) => {
       <Page style={styles2.page}>
         <View style={styles2.section}>
           <View style={{ marginBottom: "10px" }}>
-            <Image
-              src={
-                userPersonalizationData !== null &&
-                userPersonalizationData?.loginPageLogo.url !== ""
-                  ? `${IMAGE_BASE_URL}/${userPersonalizationData?.loginPageLogo.url}`
-                  : BcakgroundImage
-              }
-              style={styles2.image}
-            />
+            {/* <Image
+                         src={
+                           userPersonalizationData !== null &&
+                           userPersonalizationData?.loginPageLogo.url !== ""
+                             ? `${IMAGE_BASE_URL}/${userPersonalizationData?.loginPageLogo.url}`
+                             : BackgroundImage
+                         }
+                         style={styles2.image}
+                       /> */}
+            {userPersonalizationData !== null &&
+              userPersonalizationData?.loginPageLogo.url !== "" && (
+                <Image
+                  src={`${IMAGE_BASE_URL}/${userPersonalizationData?.loginPageLogo.url}`}
+                  style={styles2.image}
+                />
+              )}
           </View>
           <View>
             <Text style={styles2.text}></Text>
@@ -353,9 +360,28 @@ const CreateNewPurchaseInvoice = ({}) => {
               </Text>
             </View>
           </View>
-          <br></br>
-
+          <br />
           <View>
+            <View style={styles2.textRow}>
+              <Text style={styles2.heavyText}></Text>
+              <Text style={styles2.text}></Text>
+            </View>
+          </View>
+          <View>
+            <View style={styles2.textRow}>
+              <Text style={styles2.heavyText}></Text>
+              <Text style={styles2.text}></Text>
+            </View>
+          </View>
+          <br />
+          <View>
+            <View style={styles2.textRow}>
+              <Text style={styles2.heavyText}></Text>
+              <Text style={styles2.text}></Text>
+            </View>
+          </View>
+
+          {/* <View>
             <View style={styles2.textRow}>
               <Text style={styles2.heavyText}>GST No.: </Text>
               <Text style={styles2.text}>GST No</Text>
@@ -368,7 +394,7 @@ const CreateNewPurchaseInvoice = ({}) => {
               <Text style={styles2.heavyText}>Sst No.: </Text>
               <Text style={styles2.text}>SST No</Text>
             </View>
-          </View>
+          </View> */}
           <br></br>
 
           <View style={styles2.textRow}>
@@ -388,7 +414,16 @@ const CreateNewPurchaseInvoice = ({}) => {
           <Text style={styles2.titleText}>Purchase Invoice</Text>
         </View>
 
-        <View style={styles2.tableContainer}>
+        <View
+          style={{
+            ...styles2.tableContainer,
+            top:
+              userPersonalizationData !== null &&
+              userPersonalizationData?.loginPageLogo.url !== ""
+                ? "20%"
+                : "4%",
+          }}
+        >
           <View style={styles2.tableRow}>
             <Text style={styles2.tableCell}>Number</Text>
             <Text style={styles2.tableCell2}>
@@ -470,7 +505,7 @@ const CreateNewPurchaseInvoice = ({}) => {
               paddingVertical: "5px",
             }}
           >
-            <Text style={{ ...styles2.text, flex: 1 }}>Net Amount: </Text>
+            <Text style={{ ...styles2.text, flex: 1 }}>Gross Amount: </Text>
             <Text style={styles2.heavyText}>{netAmount - shippingCharges}</Text>
           </View>
           <br />
@@ -514,7 +549,7 @@ const CreateNewPurchaseInvoice = ({}) => {
               paddingVertical: "3.5px",
             }}
           >
-            <Text style={{ ...styles2.text, flex: 1 }}>Gross Amount: </Text>
+            <Text style={{ ...styles2.text, flex: 1 }}>Net Amount: </Text>
             <Text style={styles2.heavyText}>{netAmount}</Text>
           </View>
         </View>
@@ -523,7 +558,7 @@ const CreateNewPurchaseInvoice = ({}) => {
           <Text style={styles2.titleText}>Comments</Text>
         </View>
 
-        <View style={{ marginVertical: "3px" }}>
+        {/* <View style={{ marginVertical: "3px" }}>
           <Text style={styles2.text}>
             i) Autotel warrants to the original purchaser that tracker shall be
             free from defects in material and workmanship for a period of 12
@@ -546,6 +581,30 @@ const CreateNewPurchaseInvoice = ({}) => {
             be free from defects in material and workmanship for a period of 12
             months from date of activation. If a defect during the warranty
             period, Autoel will repair or replace your tracker free of charge.
+          </Text>
+        </View> */}
+        <View style={{ marginVertical: "3px" }}>
+          <Text style={styles2.text}>
+            i) Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
+            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
+            ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+            aliquip ex ea commodo consequat.
+          </Text>
+        </View>
+        <View style={{ marginVertical: "3px" }}>
+          <Text style={styles2.text}>
+            ii) Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
+            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
+            ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+            aliquip ex ea commodo consequat.
+          </Text>
+        </View>
+        <View style={{ marginVertical: "3px" }}>
+          <Text style={styles2.text}>
+            iii) Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
+            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
+            ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+            aliquip ex ea commodo consequat.
           </Text>
         </View>
       </Page>

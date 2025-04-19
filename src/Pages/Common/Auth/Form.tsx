@@ -186,28 +186,27 @@ const CommonForm = ({ alignLogo }: CommonFormPropsType) => {
                 }
               }
             });
-            dispatch(setUserData(null));
-            getAll({ url: GET_USER_BY_ID }).then((parentData: any) => {
-              if (parentData !== undefined) {
-                if (parentData.success) {
-                  dispatch(setUserData(parentData.data.user));
-                }
-              }
-            });
-
+            // dispatch(setUserData(null));
+            // getAll({ url: GET_USER_BY_ID }).then((parentData: any) => {
+            //   if (parentData !== undefined) {
+            //     if (parentData.success) {
+            //       dispatch(setUserData(parentData.data.user));
+            //     }
+            //   }
+            // });
             if (
               getUserRole() === ROLES.COMPANY ||
               getUserRole() === ROLES.OPERATOR
             ) {
-              getAll({ url: GET_ALLOWED_PERMISSIONS })
+              dispatch(setUserData(null));
+              getAll({ url: GET_USER_BY_ID })
                 .then((data: any) => {
                   // console.log("api call --- >", data);
                   if (data !== undefined) {
                     if (data.success) {
                       // console.log("hhg");
-                      dispatch(
-                        setUserPermissions(data.data.allowedPermissions)
-                      );
+                      dispatch(setUserData(data.data.user));
+                      dispatch(setUserPermissions(data.data.user.permissions));
                       setLoading(false);
                       navigate(`${process.env.PUBLIC_URL}/dashboard`);
                     }
@@ -222,6 +221,34 @@ const CommonForm = ({ alignLogo }: CommonFormPropsType) => {
             } else {
               navigate(`${process.env.PUBLIC_URL}/dashboard`);
             }
+            // if (
+            //   getUserRole() === ROLES.COMPANY ||
+            //   getUserRole() === ROLES.OPERATOR
+            // ) {
+            //   getAll({ url: GET_ALLOWED_PERMISSIONS })
+            //     .then((data: any) => {
+            //       // console.log("api call --- >", data);
+            //       if (data !== undefined) {
+            //         if (data.success) {
+            //           // console.log("hhg");
+
+            //           dispatch(
+            //             setUserPermissions(data.data.allowedPermissions)
+            //           );
+            //           setLoading(false);
+            //           navigate(`${process.env.PUBLIC_URL}/dashboard`);
+            //         }
+            //         if (!data.success) {
+            //           navigate(`${process.env.PUBLIC_URL}/dashboard`);
+            //         }
+            //       }
+            //     })
+            //     .catch((error: any) => {
+            //       navigate(`${process.env.PUBLIC_URL}/dashboard`);
+            //     });
+            // } else {
+            //   navigate(`${process.env.PUBLIC_URL}/dashboard`);
+            // }
           }
 
           reset({

@@ -135,22 +135,33 @@ const BankAccountsTable = () => {
       }
     });
   }, []);
+
+  const { userPermissions } = useSelector(
+    (state: any) => state.userPermissions
+  );
+
+  var saio_accounts = userPermissions.find(
+    (item: any) => item.title === "SAIO Accounts"
+  );
+
   return (
     <div
       className="table-responsive support-table"
       style={{ overflow: "auto", scrollbarWidth: "none" }}
     >
-      <Row>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "end",
-            paddingRight: "25px",
-          }}
-        >
-          <CreateNewBankAccount />
-        </div>
-      </Row>
+      {saio_accounts && saio_accounts.create && (
+        <Row>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "end",
+              paddingRight: "25px",
+            }}
+          >
+            <CreateNewBankAccount />
+          </div>
+        </Row>
+      )}
       <Row style={{ display: "flex", alignItems: "center" }}>
         <Col sm={12} md={12} lg={12} xl={12}>
           <input

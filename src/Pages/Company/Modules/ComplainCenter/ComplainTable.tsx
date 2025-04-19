@@ -60,23 +60,23 @@ const ComplainTable = () => {
               .toLowerCase()
               .split("-")[1]
               .includes(searchValue) ||
-            item.description.toLowerCase().includes(searchValue) ||
-            item.deviceName.toLowerCase().includes(searchValue) ||
-            item?.subRole.name.toLowerCase().includes(searchValue) ||
+            item?.description.toLowerCase().includes(searchValue) ||
+            item?.deviceName.toLowerCase().includes(searchValue) ||
+            item?.subRole?.name.toLowerCase().includes(searchValue) ||
             item?.type?.value.toLowerCase().includes(searchValue)
         )
         .map((item: any) => ({
           complaint_id: item?._id,
           id: item?.complaintId,
           device_name: item?.deviceName,
-          user: item?.createdBy.fullName,
+          user: item?.createdBy?.fullName,
           comment: item?.description,
-          department: item?.subRole.name,
+          department: item?.subRole?.name,
           server: item?.server?.companyName,
           status: item?.status,
           type: item?.type?.value,
           priorty: item?.priorty == null ? "N/A" : item?.priorty,
-          date: `${item?.createdAt.toString().slice(0, 10)},  ${new Date(
+          date: `${item?.createdAt?.toString().slice(0, 10)},  ${new Date(
             item?.updatedAt
           )
             .toLocaleString("en-US", {
@@ -94,24 +94,24 @@ const ComplainTable = () => {
               .toLowerCase()
               .split("-")[1]
               .includes(searchValue) ||
-            item.description.toLowerCase().includes(searchValue) ||
-            item.deviceName.toLowerCase().includes(searchValue) ||
-            item?.subRole.name.toLowerCase().includes(searchValue) ||
+            item?.description.toLowerCase().includes(searchValue) ||
+            item?.deviceName.toLowerCase().includes(searchValue) ||
+            item?.subRole?.name?.toLowerCase().includes(searchValue) ||
             item?.type?.value.toLowerCase().includes(searchValue)
         )
-        .filter((item: any) => item.subRole.name == filteredRole)
+        .filter((item: any) => item?.subRole?.name == filteredRole)
         .map((item: any) => ({
           complaint_id: item?._id,
           id: item?.complaintId,
           device_name: item?.deviceName,
-          user: item?.createdBy.fullName,
+          user: item?.createdBy?.fullName,
           comment: item?.description,
-          department: item?.subRole.name,
+          department: item?.subRole?.name,
           server: item?.server?.companyName,
           status: item?.status,
           type: item?.type?.value,
           priorty: item?.priorty == null ? "N/A" : item?.priorty,
-          date: `${item?.createdAt.toString().slice(0, 10)},  ${new Date(
+          date: `${item?.createdAt?.toString().slice(0, 10)},  ${new Date(
             item?.updatedAt
           )
             .toLocaleString("en-US", {

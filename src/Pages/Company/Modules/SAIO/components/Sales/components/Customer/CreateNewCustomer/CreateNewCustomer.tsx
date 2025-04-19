@@ -114,7 +114,7 @@ const CreateNewCustomer = () => {
               setLoading(false);
             }
             if (data.success) {
-              setLoading(false);
+              // setLoading(false);
               getAll({ url: GET_ALL_CUSTOMERS }).then((data: any) => {
                 if (data !== undefined) {
                   if (!data.success && data.message === ERROR_MESSAGE) {
@@ -189,7 +189,7 @@ const CreateNewCustomer = () => {
               setLoading(false);
             }
             if (data.success) {
-              setLoading(false);
+              // setLoading(false);
               getAll({ url: GET_ALL_CUSTOMERS }).then((data: any) => {
                 if (data !== undefined) {
                   if (!data.success && data.message === ERROR_MESSAGE) {
@@ -652,12 +652,17 @@ const CreateNewCustomer = () => {
                     Cancel
                   </Button>
                   {customer == null ? (
-                    <Button color="primary" onClick={createCustomer}>
+                    <Button
+                      disabled={loading}
+                      color="primary"
+                      onClick={createCustomer}
+                    >
                       {loading ? "Loading..." : "Create"}
                     </Button>
                   ) : (
                     <Button
                       color="primary"
+                      disabled={loading}
                       onClick={() =>
                         !isEdit ? editCustomer() : setIsEdit(!isEdit)
                       }

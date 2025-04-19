@@ -10,25 +10,18 @@ import {
 } from "../../../../../../../../../Utilities/api";
 import {
   CREATE_NEW_OPERATION_ACTIVITY,
-  GET_ALL_ACTIVITIES,
   GET_ALL_CUSTOMER_VEHICLES,
   GET_SINGLE_ACTIVITY_BY_ID,
   UPDATE_OPERATION_STATUS,
 } from "../../../../../../../../../Utilities/api/apiEndpoints";
 import { useNavigate } from "react-router-dom";
 import SelectAdjustmentTypeModal from "./components/SelectAdjustmentTypeModal";
-import { SubmitHandler } from "react-hook-form";
 import { ERROR_MESSAGE } from "../../../../../../../../../Utilities/constants/constants";
 import Swal from "sweetalert2";
-import {
-  setActivities,
-  setActivity,
-  setActivityLoading,
-} from "../../../../../../../../../ReaduxToolkit/Reducer/OperationActivitySlice";
+import { setActivityLoading } from "../../../../../../../../../ReaduxToolkit/Reducer/OperationActivitySlice";
 import { formatUnderscoredString } from "../../../../../../../../../Utilities/globals/globals";
 import AddInventoryItemModal from "./components/AddInventoryItemModal";
 import ChangeCustomerDataModal from "./components/ChangeCustomerDataModal";
-import { Id } from "../../../../../../../../../utils/Constant";
 
 const CreateNewActivity = () => {
   const activityType = localStorage.getItem("activityType");
@@ -432,6 +425,14 @@ const CreateNewActivity = () => {
       setIsChangeStatus(!isChangeStatus);
     }
   };
+
+  const { userPermissions } = useSelector(
+    (state: any) => state.userPermissions
+  );
+
+  var saio_operations = userPermissions.find(
+    (item: any) => item.title === "SAIO Operations"
+  );
 
   return (
     <>
@@ -1361,24 +1362,26 @@ const CreateNewActivity = () => {
                     </Button>
                   )}
 
-                  {activitiy !== null && (
-                    <Button
-                      color="primary"
-                      onClick={() => {
-                        if (isChangeStatus) {
-                          updateActivityStatus();
-                        } else {
-                          setIsChangeStatus(!isChangeStatus);
-                        }
-                      }}
-                    >
-                      {isChangeStatus
-                        ? loading
-                          ? "Loading..."
-                          : "Save"
-                        : "Edit"}
-                    </Button>
-                  )}
+                  {saio_operations &&
+                    saio_operations.edit &&
+                    activitiy !== null && (
+                      <Button
+                        color="primary"
+                        onClick={() => {
+                          if (isChangeStatus) {
+                            updateActivityStatus();
+                          } else {
+                            setIsChangeStatus(!isChangeStatus);
+                          }
+                        }}
+                      >
+                        {isChangeStatus
+                          ? loading
+                            ? "Loading..."
+                            : "Save"
+                          : "Edit"}
+                      </Button>
+                    )}
                 </Col>
               </Row>
             </div>

@@ -65,6 +65,7 @@ import {
   DELETE_SALE_GROUP,
   DELETE_SERVER,
   DELETE_SERVICE_PACKAGE,
+  DELETE_SUB_ROLE,
   DELETE_SUBGROUP,
   DELETE_TYPE,
   DELETE_VEHICLE_MAKE,
@@ -93,6 +94,7 @@ import {
   GET_ALL_SALE_GROUPS,
   GET_ALL_SERVERS,
   GET_ALL_SERVICE_PACKAGES,
+  GET_ALL_SUB_ROLES,
   GET_ALL_TYPES,
   GET_ALL_VEHICLES_MAKE,
   GET_ALL_VEHICLES_MODEL,
@@ -158,6 +160,10 @@ import {
 import { setBankAccounts } from "../../ReaduxToolkit/Reducer/BankAccountSlice";
 import { setExpenseAccounts } from "../../ReaduxToolkit/Reducer/ExpenseAccountsSlice";
 import { setExpenses } from "../../ReaduxToolkit/Reducer/ExpensesSlice";
+import {
+  setFilterRoles,
+  setRoles,
+} from "../../ReaduxToolkit/Reducer/RolesSlice";
 
 const deleteAlert = (
   alertData: alertTypes,
@@ -229,6 +235,8 @@ const deleteAlert = (
         uri = `${DELETE_PRODUCT}`;
       } else if (type === "servicePackagesType") {
         uri = `${DELETE_SERVICE_PACKAGE}`;
+      } else if (type === "subRolesType") {
+        uri = `${DELETE_SUB_ROLE}`;
       }
 
       try {
@@ -253,6 +261,30 @@ const deleteAlert = (
             }, 1000);
 
             // ------------
+
+            if (type === "subRolesType") {
+              getAll({ url: GET_ALL_SUB_ROLES }).then((data: any) => {
+                // console.log("api call --- >", data);
+                if (data == undefined) {
+                  dispatch(setRoles([]));
+                  dispatch(setFilterRoles([]));
+                }
+
+                if (data !== undefined) {
+                  if (data.success) {
+                    // console.log("hhg");
+                    dispatch(setRoles(data.data));
+                    dispatch(setFilterRoles(data.data));
+                  }
+                  if (!data.success) {
+                    dispatch(setRoles([]));
+                    dispatch(setFilterRoles([]));
+                  }
+                } else {
+                  // console.log("ier67i");
+                }
+              });
+            }
 
             if (type === "servicePackagesType") {
               getAll({ url: GET_ALL_SERVICE_PACKAGES }).then((data: any) => {

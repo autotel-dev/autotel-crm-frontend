@@ -38,6 +38,7 @@ import BackgroundImage from "../../../assets/Background Image.png";
 
 const ReportsList = () => {
   const { reports } = useSelector((state: any) => state.reports);
+
   // console.log("Reports in list", reports);
 
   const dispatch = useDispatch();
@@ -58,6 +59,22 @@ const ReportsList = () => {
   const [header, setHeader]: any = useState([]);
   const [pdfData, setPdfData] = useState([]);
   const [reportName, setReportName]: any = useState("");
+
+  // Function to convert 24-hour time to 12-hour with AM/PM
+  const convertTo12HourFormat = (timeString: any, serverTime: any) => {
+    const date = new Date(timeString);
+    let hours = serverTime ? date.getHours() - 5 : date.getHours();
+    const minutes = date.getMinutes();
+    const seconds = date.getSeconds();
+    const ampm = hours >= 12 ? "PM" : "AM";
+
+    hours = hours % 12; // Convert to 12-hour format
+    hours = hours ? hours : 12; // Hour 0 should be 12
+    const minutesFormatted = minutes < 10 ? "0" + minutes : minutes;
+    const secondsFormatted = seconds < 10 ? "0" + seconds : seconds;
+
+    return `${hours}:${minutesFormatted}:${secondsFormatted} ${ampm}`;
+  };
 
   const renderTableRows = () => {
     return reports?.map((row: any, index: any) => (
@@ -96,15 +113,15 @@ const ReportsList = () => {
                 if (row.type == "/get-all-alert-events-report") {
                   columns = [
                     // { label: "Id", value: "_id" },
-                    { label: "Event Id", value: "eventId" },
-                    { label: "Device Id", value: "deviceId" },
+                    // { label: "Event Id", value: "eventId" },
+                    // { label: "Device Id", value: "deviceId" },
                     { label: "Device Name", value: "deviceName" },
                     { label: "Latitude", value: "latitude" },
                     { label: "Longitude", value: "longitude" },
                     { label: "Speed", value: "speed" },
                     { label: "Type", value: "type" },
                     { label: "Message", value: "message" },
-                    { label: "User Role", value: "userRole" },
+                    { label: "User", value: "user" },
                     {
                       label: "Completion Response",
                       value: "completionResponse",
@@ -113,16 +130,37 @@ const ReportsList = () => {
                       label: "Alert Event Close Date",
                       value: "alertEventCloseDate",
                     },
-                    { label: "Created At", value: "createdAt" },
+                    { label: "Server Time", value: "serverTime" },
                   ];
                   rowData = row.data.data.reportData.map(
                     (item: any, index: any) => {
                       return {
                         ...item,
-                        createdAt: `${item?.createdAt.slice(
+                        alertEventCloseDate: `${
+                          item?.alertEventCloseDate == "Not Completed"
+                            ? "Not Completed"
+                            : item?.alertEventCloseDate.slice(0, 10)
+                        }, ${
+                          item?.alertEventCloseDate == "Not Completed"
+                            ? ""
+                            : convertTo12HourFormat(
+                                item?.alertEventCloseDate,
+                                false
+                              )
+                        }`,
+                        serverTime: `${item?.serverDateAndTime.slice(
                           0,
                           10
-                        )}, ${item?.createdAt.slice(11, 19)}`,
+                        )}, ${convertTo12HourFormat(
+                          item?.serverDateAndTime,
+                          true
+                        )}`,
+                        user:
+                          item?.alertEventCloseDate == "Not Completed"
+                            ? item?.assignedTo?.fullName
+                            : item?.completedByUser?.fullName,
+                        latitude: Number(item.latitude).toFixed(7),
+                        longitude: Number(item.longitude).toFixed(7),
                       };
                     }
                   );
@@ -339,6 +377,56 @@ const ReportsList = () => {
                         item.servicePackageDiscountedCharges,
                     };
                   });
+                } else if (row.type == "/get-complaint-report") {
+                  columns = [
+                    { label: "Complaint Id", value: "complaintId" },
+                    { label: "Device Name", value: "deviceName" },
+                    { label: "Description", value: "description" },
+                    { label: "Priorty", value: "priorty" },
+                    {
+                      label: "Status",
+                      value: "status",
+                    },
+                    {
+                      label: "Resolving Date",
+                      value: "resolvingDate",
+                    },
+                    {
+                      label: "Created At",
+                      value: "createdAt",
+                    },
+                  ];
+                  rowData =
+                    row.data.data.length == 0
+                      ? []
+                      : row.data.data.map((item: any, index: any) => {
+                          return {
+                            complaintId: item.complaintId,
+                            deviceName: item?.deviceName,
+                            description: item?.description,
+                            priorty: item?.priorty,
+                            status: item?.status,
+                            resolvingDate: `${
+                              item?.resolvingDate !== null
+                                ? item?.resolvingDate.slice(0, 10)
+                                : "N/A"
+                            }, ${
+                              item?.resolvingDate !== null
+                                ? convertTo12HourFormat(
+                                    item?.resolvingDate,
+                                    true
+                                  )
+                                : ""
+                            }`,
+                            createdAt: `${item?.createdAt.slice(
+                              0,
+                              10
+                            )}, ${convertTo12HourFormat(
+                              item?.createdAt,
+                              true
+                            )}`,
+                          };
+                        });
                 }
 
                 let data = [
@@ -372,15 +460,15 @@ const ReportsList = () => {
                 if (row.type == "/get-all-alert-events-report") {
                   columns = [
                     // { label: "Id", value: "_id" },
-                    { label: "Event Id", value: "eventId" },
-                    { label: "Device Id", value: "deviceId" },
+                    // { label: "Event Id", value: "eventId" },
+                    // { label: "Device Id", value: "deviceId" },
                     { label: "Device Name", value: "deviceName" },
                     { label: "Latitude", value: "latitude" },
                     { label: "Longitude", value: "longitude" },
                     { label: "Speed", value: "speed" },
                     { label: "Type", value: "type" },
                     { label: "Message", value: "message" },
-                    { label: "User Role", value: "userRole" },
+                    { label: "User", value: "user" },
                     {
                       label: "Completion Response",
                       value: "completionResponse",
@@ -389,16 +477,37 @@ const ReportsList = () => {
                       label: "Alert Event Close Date",
                       value: "alertEventCloseDate",
                     },
-                    { label: "Created At", value: "createdAt" },
+                    { label: "Server Time", value: "serverTime" },
                   ];
                   rowData = row.data.data.reportData.map(
                     (item: any, index: any) => {
                       return {
                         ...item,
-                        createdAt: `${item?.createdAt.slice(
+                        alertEventCloseDate: `${
+                          item?.alertEventCloseDate == "Not Completed"
+                            ? "Not Completed"
+                            : item?.alertEventCloseDate.slice(0, 10)
+                        }, ${
+                          item?.alertEventCloseDate == "Not Completed"
+                            ? ""
+                            : convertTo12HourFormat(
+                                item?.alertEventCloseDate,
+                                false
+                              )
+                        }`,
+                        serverTime: `${item?.serverDateAndTime.slice(
                           0,
                           10
-                        )}, ${item?.createdAt.slice(11, 19)}`,
+                        )}, ${convertTo12HourFormat(
+                          item?.serverDateAndTime,
+                          true
+                        )}`,
+                        user:
+                          item?.alertEventCloseDate == "Not Completed"
+                            ? item?.assignedTo?.fullName
+                            : item?.completedByUser?.fullName,
+                        latitude: Number(item.latitude).toFixed(7),
+                        longitude: Number(item.longitude).toFixed(7),
                       };
                     }
                   );
@@ -636,6 +745,59 @@ const ReportsList = () => {
                         });
                   setHeader(columns);
                   setPdfData(rowData);
+                } else if (row.type == "/get-complaint-report") {
+                  columns = [
+                    { label: "Complaint Id", value: "complaintId" },
+                    { label: "Device Name", value: "deviceName" },
+                    { label: "Description", value: "description" },
+                    { label: "Priorty", value: "priorty" },
+                    {
+                      label: "Status",
+                      value: "status",
+                    },
+                    {
+                      label: "Resolving Date",
+                      value: "resolvingDate",
+                    },
+                    {
+                      label: "Created At",
+                      value: "createdAt",
+                    },
+                  ];
+                  rowData =
+                    row.data.data.length == 0
+                      ? []
+                      : row.data.data.map((item: any, index: any) => {
+                          return {
+                            complaintId: item.complaintId,
+                            deviceName: item.deviceName,
+                            description: item.description,
+                            priorty: item.priorty,
+                            status: item.status,
+                            resolvingDate: `${
+                              item?.resolvingDate !== null
+                                ? item?.resolvingDate.slice(0, 10)
+                                : "N/A"
+                            }, ${
+                              item?.resolvingDate !== null
+                                ? convertTo12HourFormat(
+                                    item?.resolvingDate,
+                                    true
+                                  )
+                                : ""
+                            }`,
+                            createdAt: `${item?.createdAt.slice(
+                              0,
+                              10
+                            )}, ${convertTo12HourFormat(
+                              item?.createdAt,
+                              true
+                            )}`,
+                          };
+                        });
+
+                  setHeader(columns);
+                  setPdfData(rowData);
                 }
 
                 setReportName(row.data.title);
@@ -664,15 +826,15 @@ const ReportsList = () => {
                 if (row.type == "/get-all-alert-events-report") {
                   columns = [
                     // { label: "Id", value: "_id" },
-                    { label: "Event Id", value: "eventId" },
-                    { label: "Device Id", value: "deviceId" },
+                    // { label: "Event Id", value: "eventId" },
+                    // { label: "Device Id", value: "deviceId" },
                     { label: "Device Name", value: "deviceName" },
                     { label: "Latitude", value: "latitude" },
                     { label: "Longitude", value: "longitude" },
                     { label: "Speed", value: "speed" },
                     { label: "Type", value: "type" },
                     { label: "Message", value: "message" },
-                    { label: "User Role", value: "userRole" },
+                    { label: "User", value: "user" },
                     {
                       label: "Completion Response",
                       value: "completionResponse",
@@ -681,16 +843,37 @@ const ReportsList = () => {
                       label: "Alert Event Close Date",
                       value: "alertEventCloseDate",
                     },
-                    { label: "Created At", value: "createdAt" },
+                    { label: "Server Time", value: "serverTime" },
                   ];
                   rowData = row.data.data.reportData.map(
                     (item: any, index: any) => {
                       return {
                         ...item,
-                        createdAt: `${item?.createdAt.slice(
+                        alertEventCloseDate: `${
+                          item?.alertEventCloseDate == "Not Completed"
+                            ? "Not Completed"
+                            : item?.alertEventCloseDate.slice(0, 10)
+                        }, ${
+                          item?.alertEventCloseDate == "Not Completed"
+                            ? ""
+                            : convertTo12HourFormat(
+                                item?.alertEventCloseDate,
+                                false
+                              )
+                        }`,
+                        serverTime: `${item?.serverDateAndTime.slice(
                           0,
                           10
-                        )}, ${item?.createdAt.slice(11, 19)}`,
+                        )}, ${convertTo12HourFormat(
+                          item?.serverDateAndTime,
+                          true
+                        )}`,
+                        user:
+                          item?.alertEventCloseDate == "Not Completed"
+                            ? item?.assignedTo?.fullName
+                            : item?.completedByUser?.fullName,
+                        latitude: Number(item.latitude).toFixed(7),
+                        longitude: Number(item.longitude).toFixed(7),
                       };
                     }
                   );
@@ -908,6 +1091,59 @@ const ReportsList = () => {
                         item.servicePackageDiscountedCharges,
                     };
                   });
+                  setHeader(columns);
+                  setPdfData(rowData);
+                } else if (row.type == "/get-complaint-report") {
+                  columns = [
+                    { label: "Complaint Id", value: "complaintId" },
+                    { label: "Device Name", value: "deviceName" },
+                    { label: "Description", value: "description" },
+                    { label: "Priorty", value: "priorty" },
+                    {
+                      label: "Status",
+                      value: "status",
+                    },
+                    {
+                      label: "Resolving Date",
+                      value: "resolvingDate",
+                    },
+                    {
+                      label: "Created At",
+                      value: "createdAt",
+                    },
+                  ];
+                  rowData =
+                    row.data.data.length == 0
+                      ? []
+                      : row.data.data.map((item: any, index: any) => {
+                          return {
+                            complaintId: item.complaintId,
+                            deviceName: item.deviceName,
+                            description: item.description,
+                            priorty: item.priorty,
+                            status: item.status,
+                            resolvingDate: `${
+                              item?.resolvingDate !== null
+                                ? item?.resolvingDate.slice(0, 10)
+                                : "N/A"
+                            }, ${
+                              item?.resolvingDate !== null
+                                ? convertTo12HourFormat(
+                                    item?.resolvingDate,
+                                    true
+                                  )
+                                : ""
+                            }`,
+                            createdAt: `${item?.createdAt.slice(
+                              0,
+                              10
+                            )}, ${convertTo12HourFormat(
+                              item?.createdAt,
+                              true
+                            )}`,
+                          };
+                        });
+
                   setHeader(columns);
                   setPdfData(rowData);
                 }

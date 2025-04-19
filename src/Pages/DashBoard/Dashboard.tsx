@@ -358,7 +358,15 @@ const Dashboard = () => {
     ),
     "killed-vehicles": (
       <>
-        {!alertsOverviewloading && (
+        {getUserRole() == "COMPANY" && !alertsOverviewloading ? (
+          <Row>
+            <Col xl="12">
+              <div id="killed-vehicles">
+                <KilledVehicles fromDate={fromDate} toDate={toDate} />
+              </div>
+            </Col>
+          </Row>
+        ) : (
           <Row>
             <Col xl="12">
               <div id="killed-vehicles">
@@ -637,26 +645,45 @@ const Dashboard = () => {
     "killed-vehicles",
     "complaint-center",
   ];
+  const initialOrderForOperator: string[] = [
+    "killed-vehicles",
+    "complaint-center",
+  ];
 
   const [componentOrder, setComponentOrder] = useState<string[]>(initialOrder);
+  const [operatorComponentOrder, setOperatorComponentOrder] = useState<
+    string[]
+  >(initialOrderForOperator);
 
   useEffect(() => {
     const storedOrder = localStorage.getItem("dashboardOrder");
     if (storedOrder) {
-      setComponentOrder(JSON.parse(storedOrder));
+      if (getUserRole() === "OPERATOR") {
+        setOperatorComponentOrder(initialOrderForOperator);
+      } else {
+        setComponentOrder(JSON.parse(storedOrder));
+      }
     } else {
-      setComponentOrder(initialOrder);
+      if (getUserRole() === "OPERATOR") {
+        setOperatorComponentOrder(initialOrder);
+      } else {
+        setComponentOrder(initialOrder);
+      }
     }
   }, [alertsOverviewloading, statisticsloading]);
 
   const onDragEnd = (result: any) => {
     if (!result.destination) return;
 
-    const newOrder = Array.from(componentOrder);
+    const newOrder =
+      getUserRole() === "OPERATOR"
+        ? Array.from(operatorComponentOrder)
+        : Array.from(componentOrder);
     const [movedItem] = newOrder.splice(result.source.index, 1);
     newOrder.splice(result.destination.index, 0, movedItem);
 
     setComponentOrder(newOrder);
+
     localStorage.setItem("dashboardOrder", JSON.stringify(newOrder));
   };
   // ----------------------------------
@@ -716,254 +743,50 @@ const Dashboard = () => {
           </Row>
         </Container>
       ) : (
-        <div
-          style={{
-            fontSize: "30px",
-            fontWeight: "bold",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            height: "85vh",
-          }}
-        >
-          {/* <div>Welcome to the Autotel Private Limited</div> */}
-          <div>Something better is Coming</div>
-        </div>
+        // <div
+        //   style={{
+        //     fontSize: "30px",
+        //     fontWeight: "bold",
+        //     display: "flex",
+        //     justifyContent: "center",
+        //     alignItems: "center",
+        //     height: "85vh",
+        //   }}
+        // >
+        //   {/* <div>Welcome to the Autotel Private Limited</div> */}
+        //   <div>Something better is Coming</div>
+        // </div>
+
+        <Container fluid className="crm_dashboard">
+          <Row className="widget-grid">
+            <DragDropContext onDragEnd={onDragEnd}>
+              <Droppable droppableId="dashboard">
+                {(provided) => (
+                  <div {...provided.droppableProps} ref={provided.innerRef}>
+                    {operatorComponentOrder.map((id: any, index) => (
+                      <Draggable key={id} draggableId={id} index={index}>
+                        {(provided) => (
+                          <div
+                            ref={provided.innerRef}
+                            {...provided.draggableProps}
+                            {...provided.dragHandleProps}
+                          >
+                            {/* {componentMap[id]} */}
+                            {visibleSections[id] && componentMap[id]}
+                          </div>
+                        )}
+                      </Draggable>
+                    ))}
+                    {provided.placeholder}
+                  </div>
+                )}
+              </Droppable>
+            </DragDropContext>
+          </Row>
+        </Container>
       )}
     </>
   );
 };
 
 export default Dashboard;
-
-// const [items, setItems] = useState([
-//   {
-//     id: "general", content: <div>
-//       <General />
-//     </div>
-//   },
-//   {
-//     id: "control-room",
-//     content: (
-//       <>
-//         {/* <AlertsOverview />
-//         <AlertsPending /> */}
-//         <Col xl="12" lg="12" md="12" sm="12">
-//           <Row>
-//             {alertsOverviewloading == true ? (
-//               <div
-//                 style={{
-//                   display: "flex",
-//                   justifyContent: "space-between",
-//                 }}
-//               >
-//                 <div
-//                   style={{
-//                     marginBottom: "20px",
-//                     marginRight: "20px",
-//                   }}
-//                 >
-//                   <Skeleton width={700} height={450} />
-//                 </div>
-//                 <div
-//                   style={{
-//                     marginBottom: "20px",
-//                     marginRight: "20px",
-//                   }}
-//                 >
-//                   <Skeleton width={700} height={440} />
-//                 </div>
-//               </div>
-//             ) : (
-//               <>
-
-//                 <Row id="control-room" style={{
-//                   display: "flex",
-//                   paddingRight: "0px",
-//                   marginRight: "0px"
-
-//                 }}>
-//                   <AlertsOverview />
-//                   <AlertsPending />
-//                 </Row>
-
-//                 {/* <div id="killed-vehicles">
-//                     <KilledVehicles fromDate={fromDate} toDate={toDate} />
-//                   </div> */}
-
-//               </>
-//             )}
-//           </Row>
-//         </Col>
-//       </>
-//     ),
-//   },
-//   {
-//     id: "killed-vehicles",
-//     content: (
-//       <>
-//         {!alertsOverviewloading && <Row>
-//           <Col xl="12">
-//             <div id="killed-vehicles">
-//               <KilledVehicles fromDate={fromDate} toDate={toDate} />
-//             </div>
-//           </Col>
-//         </Row>}
-//       </>
-//     )
-//     // <KilledVehicles fromDate={fromDate} toDate={toDate} />,
-//   },
-// ]);
-
-// useEffect(() => {
-//   setItems([
-//     {
-//       id: "general", content: <div>
-//         <General />
-//       </div>
-//     },
-//     {
-//       id: "control-room",
-//       content: (
-//         <>
-//           {/* <AlertsOverview />
-//       <AlertsPending /> */}
-//           <Col xl="12" lg="12" md="12" sm="12">
-//             <Row>
-//               {alertsOverviewloading == true ? (
-//                 <div
-//                   style={{
-//                     display: "flex",
-//                     justifyContent: "space-between",
-//                   }}
-//                 >
-//                   <div
-//                     style={{
-//                       marginBottom: "20px",
-//                       marginRight: "20px",
-//                     }}
-//                   >
-//                     <Skeleton width={700} height={450} />
-//                   </div>
-//                   <div
-//                     style={{
-//                       marginBottom: "20px",
-//                       marginRight: "20px",
-//                     }}
-//                   >
-//                     <Skeleton width={700} height={440} />
-//                   </div>
-//                 </div>
-//               ) : (
-//                 <>
-
-//                   <Row id="control-room" style={{
-//                     display: "flex",
-//                     paddingRight: "0px",
-//                     marginRight: "0px"
-
-//                   }}>
-//                     <AlertsOverview />
-//                     <AlertsPending />
-//                   </Row>
-
-//                 </>
-//               )}
-//             </Row>
-//           </Col>
-//         </>
-//       ),
-//     },
-//     {
-//       id: "killed-vehicles",
-//       content: (
-//         <>
-//           {!alertsOverviewloading && <Row>
-//             <Col xl="12">
-//               <div id="killed-vehicles">
-//                 <KilledVehicles fromDate={fromDate} toDate={toDate} />
-//               </div>
-//             </Col>
-//           </Row>}
-//         </>
-//       )
-
-//     },
-//   ])
-// }, [alertsOverviewloading])
-
-// const onDragEnd = (result: any) => {
-//   if (!result.destination) {
-//     return;
-//   }
-
-//   const reorderedItems = Array.from(items);
-//   const [removed] = reorderedItems.splice(result.source.index, 1);
-//   reorderedItems.splice(result.destination.index, 0, removed);
-
-//   setItems(reorderedItems);
-// };
-
-// <Container fluid className="crm_dashboard">
-//   <Row className="widget-grid">
-//     {/* Skegeneralleton loading effect */}
-//     <div id="genearl">
-//       <General />
-//     </div>
-
-//     <Col xl="12" lg="12" md="12" sm="12">
-//       <Row>
-//         {alertsOverviewloading == true ? (
-//           <div
-//             style={{
-//               display: "flex",
-//               justifyContent: "space-between",
-//             }}
-//           >
-//             <div
-//               style={{
-//                 marginBottom: "20px",
-//                 marginRight: "20px",
-//               }}
-//             >
-//               <Skeleton width={700} height={450} />
-//             </div>
-//             <div
-//               style={{
-//                 marginBottom: "20px",
-//                 marginRight: "20px",
-//               }}
-//             >
-//               <Skeleton width={700} height={440} />
-//             </div>
-//           </div>
-//         ) : (
-//           <>
-
-//             <Row id="control-room" style={{
-//               display: "flex",
-//               paddingRight: "0px",
-//               marginRight: "0px"
-
-//             }}>
-//               <AlertsOverview />
-//               <AlertsPending />
-//             </Row>
-
-//             {/* <div id="killed-vehicles">
-//               <KilledVehicles fromDate={fromDate} toDate={toDate} />
-//             </div> */}
-
-//           </>
-//         )}
-//       </Row>
-//     </Col>
-//     {!alertsOverviewloading && <Row>
-//       <Col xl="12">
-//         <div id="killed-vehicles">
-//           <KilledVehicles fromDate={fromDate} toDate={toDate} />
-//         </div>
-//       </Col>
-//     </Row>}
-//   </Row>
-// </Container>

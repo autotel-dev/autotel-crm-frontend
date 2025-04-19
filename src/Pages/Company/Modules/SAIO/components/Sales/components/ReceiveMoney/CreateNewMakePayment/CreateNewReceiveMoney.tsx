@@ -25,6 +25,7 @@ import {
 } from "../../../../../../../../../ReaduxToolkit/Reducer/ReceiveMoneySlice";
 import { formatUnderscoredString } from "../../../../../../../../../Utilities/globals/globals";
 import DataTable from "react-data-table-component";
+import { setSaleInvoiceLoading } from "../../../../../../../../../ReaduxToolkit/Reducer/SaleInvoiceSlice";
 
 const CreateNewReceiveMoney = ({}) => {
   const { receiveMoney, saleInvoices } = useSelector(
@@ -155,6 +156,7 @@ const CreateNewReceiveMoney = ({}) => {
           url: CREATE_RECEIVE_MONEY,
         });
         if (response.success) {
+          dispatch(setSaleInvoiceLoading(true));
           dispatch(setReceiveMoneyLoading(true));
           dispatch(setReceiveMoney(response.data));
           setLoading(false);

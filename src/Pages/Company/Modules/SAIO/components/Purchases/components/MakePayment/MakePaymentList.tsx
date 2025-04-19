@@ -169,52 +169,62 @@ const MakePaymentTable = ({}) => {
     });
   }, []);
 
+  const { userPermissions } = useSelector(
+    (state: any) => state.userPermissions
+  );
+
+  var saio_purchases = userPermissions.find(
+    (item: any) => item.title === "SAIO Purchases"
+  );
+
   return (
     <div
       className="table-responsive support-table"
       style={{ overflow: "auto", scrollbarWidth: "none" }}
     >
-      <Row>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "end",
-            paddingRight: "25px",
-          }}
-        >
-          <button
-            className={`btn ${
-              userPersonalizationData?.buttonsAndBarsColor == null
-                ? "btn-primary"
-                : ""
-            }`}
+      {saio_purchases && saio_purchases.create && (
+        <Row>
+          <div
             style={{
-              color: "white",
-              backgroundColor: `${
-                userPersonalizationData !== null &&
-                userPersonalizationData?.buttonsAndBarsColor
-              }`,
               display: "flex",
-              alignItems: "center",
-            }}
-            onClick={() => {
-              dispatch(setMakePayment(null));
-              navigate(
-                `${process.env.PUBLIC_URL}/company/modules/saio-central/purchases/make-payments/create-payment`
-              );
-              // setIscreateNewPurchaseInvoice(true)
+              justifyContent: "end",
+              paddingRight: "25px",
             }}
           >
-            <PlusCircle
-              size={18}
+            <button
+              className={`btn ${
+                userPersonalizationData?.buttonsAndBarsColor == null
+                  ? "btn-primary"
+                  : ""
+              }`}
               style={{
-                marginRight: "5px",
+                color: "white",
+                backgroundColor: `${
+                  userPersonalizationData !== null &&
+                  userPersonalizationData?.buttonsAndBarsColor
+                }`,
+                display: "flex",
+                alignItems: "center",
               }}
-            />
-            Create New Make Payment
-          </button>
-        </div>
-      </Row>
+              onClick={() => {
+                dispatch(setMakePayment(null));
+                navigate(
+                  `${process.env.PUBLIC_URL}/company/modules/saio-central/purchases/make-payments/create-payment`
+                );
+                // setIscreateNewPurchaseInvoice(true)
+              }}
+            >
+              <PlusCircle
+                size={18}
+                style={{
+                  marginRight: "5px",
+                }}
+              />
+              Create New Make Payment
+            </button>
+          </div>
+        </Row>
+      )}
       <Row style={{ display: "flex", alignItems: "center" }}>
         <Col sm={12} md={12} lg={12} xl={12}>
           <input

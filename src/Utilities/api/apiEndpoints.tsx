@@ -1,8 +1,8 @@
-// export const API_BASE_URL = "http://192.168.18.122:81/api/v1";
-// export const IMAGE_BASE_URL = "http://192.168.18.122:81";
+export const API_BASE_URL = "http://192.168.18.122:81/api/v1";
+export const IMAGE_BASE_URL = "http://192.168.18.122:81";
 
-export const API_BASE_URL = "https://crmapi.autotel.pk/api/v1";
-export const IMAGE_BASE_URL = "https://crmapi.autotel.pk";
+// export const API_BASE_URL = "https://crmapi.autotel.pk/api/v1";
+// export const IMAGE_BASE_URL = "https://crmapi.autotel.pk";
 
 // export const API_BASE_URL = "http://localhost:81/api/v1";
 // export const IMAGE_BASE_URL = "http://localhost:81";
@@ -219,6 +219,8 @@ export const CREATE_SUB_ROLE = `${API_BASE_URL}/sub-role/create-sub-role`;
 export const GET_ALL_SUB_ROLES = `${API_BASE_URL}/sub-role/get-all-sub-roles`;
 export const GET_ALL_ACTIVE_SUB_ROLES = `${API_BASE_URL}/sub-role/get-all-active-sub-roles`;
 export const CHANGE_SUB_ROLE_ACTIVATION_STATUS = `${API_BASE_URL}/sub-role/change-activation-status`;
+export const DELETE_SUB_ROLE = `${API_BASE_URL}/sub-role/delete-sub-role`;
+export const EDIT_SUB_ROLE = `${API_BASE_URL}/sub-role/edit-sub-role`;
 
 // Company -> Warehouses
 export const CREATE_WAREHOUSE = `${API_BASE_URL}/setup/warehouse/create-warehouse`;

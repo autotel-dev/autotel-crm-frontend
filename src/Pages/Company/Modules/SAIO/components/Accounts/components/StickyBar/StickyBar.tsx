@@ -38,6 +38,10 @@ const StickyBar: React.FC<StickyBarProps> = ({ component, setComponent }) => {
       label: "Tax",
       icon: <BsBank2 size={18} />,
     },
+    // {
+    //   label: "Comments",
+    //   icon: <MdSwitchAccount size={18} />,
+    // },
     {
       label: "Chart Of Accounts",
       icon: <MdSwitchAccount size={18} />,
@@ -82,6 +86,11 @@ const StickyBar: React.FC<StickyBarProps> = ({ component, setComponent }) => {
                 `${process.env.PUBLIC_URL}/company/modules/saio-central/accounts/accounting-ledger`
               );
             }
+            // else if (option.label == "Comments") {
+            //   navigate(
+            //     `${process.env.PUBLIC_URL}/company/modules/saio-central/accounts/comments`
+            //   );
+            // }
           }}
         >
           {option.icon}

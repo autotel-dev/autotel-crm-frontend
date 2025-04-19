@@ -112,47 +112,37 @@ const VendorsTable = () => {
     // console.log(state.selectedRows);
   };
 
-  //   const handleDelete = () => {
-  //     if (
-  //       window.confirm(
-  //         `Are you sure you want to delete:\r ${selectedRows
-  //           .map((r: any) => r.vendorName)
-  //           .join(", ")}?`
-  //       )
-  //     ) {
-  //       setToggleDelete(!toggleDelete);
-  // setData(
-  //   data.filter((item: any) =>
-  //     selectedRows.filter((elem: any) => elem._id === item._id).length > 0
-  //       ? false
-  //       : true
-  //   )
-  // );
-  // setSelectedRows([]);
-  //     }
-  //   };
-
   const handleRowClicked = (row: any) => {
     setSelectedVendor(row);
     setIsUpdateModalOpen(true);
   };
+
+  const { userPermissions } = useSelector(
+    (state: any) => state.userPermissions
+  );
+
+  var saio_purchases = userPermissions.find(
+    (item: any) => item.title === "SAIO Purchases"
+  );
 
   return (
     <div
       className="table-responsive support-table"
       style={{ overflow: "auto", scrollbarWidth: "none" }}
     >
-      <Row>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "end",
-            paddingRight: "25px",
-          }}
-        >
-          <CreateNewVendorModal />
-        </div>
-      </Row>
+      {saio_purchases && saio_purchases.create && (
+        <Row>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "end",
+              paddingRight: "25px",
+            }}
+          >
+            <CreateNewVendorModal />
+          </div>
+        </Row>
+      )}
       <Row style={{ display: "flex", alignItems: "center" }}>
         <Col sm={12}>
           <input
