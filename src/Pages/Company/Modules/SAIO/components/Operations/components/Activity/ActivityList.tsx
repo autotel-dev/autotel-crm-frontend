@@ -117,49 +117,59 @@ const ActivityTable = ({}) => {
     setData(activitiesData());
   }, [activities]);
 
+  const { userPermissions } = useSelector(
+    (state: any) => state.userPermissions
+  );
+
+  var saio_operations = userPermissions.find(
+    (item: any) => item.title === "SAIO Operations"
+  );
+
   return (
     <div
       className="table-responsive support-table"
       style={{ overflow: "auto", scrollbarWidth: "none" }}
     >
-      <Row>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "end",
-            paddingRight: "25px",
-          }}
-        >
-          <button
-            className={`btn ${
-              userPersonalizationData?.buttonsAndBarsColor == null
-                ? "btn-primary"
-                : ""
-            }`}
+      {saio_operations && saio_operations.create && (
+        <Row>
+          <div
             style={{
-              color: "white",
-              backgroundColor: `${
-                userPersonalizationData !== null &&
-                userPersonalizationData?.buttonsAndBarsColor
-              }`,
               display: "flex",
-              alignItems: "center",
-            }}
-            onClick={() => {
-              dispatch(setActivity(null));
-              setAddModal(true);
+              justifyContent: "end",
+              paddingRight: "25px",
             }}
           >
-            <PlusCircle
-              size={18}
+            <button
+              className={`btn ${
+                userPersonalizationData?.buttonsAndBarsColor == null
+                  ? "btn-primary"
+                  : ""
+              }`}
               style={{
-                marginRight: "5px",
+                color: "white",
+                backgroundColor: `${
+                  userPersonalizationData !== null &&
+                  userPersonalizationData?.buttonsAndBarsColor
+                }`,
+                display: "flex",
+                alignItems: "center",
               }}
-            />
-            Create New Activity
-          </button>
-        </div>
-      </Row>
+              onClick={() => {
+                dispatch(setActivity(null));
+                setAddModal(true);
+              }}
+            >
+              <PlusCircle
+                size={18}
+                style={{
+                  marginRight: "5px",
+                }}
+              />
+              Create New Activity
+            </button>
+          </div>
+        </Row>
+      )}
       <Row style={{ display: "flex", alignItems: "center" }}>
         <Col sm={12} md={12} lg={12} xl={12}>
           <input

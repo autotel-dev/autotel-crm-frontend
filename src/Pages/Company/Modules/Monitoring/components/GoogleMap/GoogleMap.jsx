@@ -1,741 +1,651 @@
-// import React, { useEffect, useRef, useState } from "react";
-// import {
-//   GoogleMap,
-//   LoadScript,
-//   Marker,
-//   Polyline,
-// } from "@react-google-maps/api";
+// import { useEffect, useRef, useState } from "react";
+// import { Map, Marker, GoogleApiWrapper, InfoWindow } from "google-maps-react";
 // import { useDispatch, useSelector } from "react-redux";
 // import "./googleMap.css";
+// import carIcon from "../../../monitoring-assets/car-icon.png";
 
-// const GoogleMapComponent = () => {
-//   const dispatch = useDispatch();
-//   const {
-//     expandedDevice,
-//     devices,
-//   } = useSelector((state) => state.monitoring);
+// import { IMAGE_BASE_URL_RENTAL } from "../../../../../../Utilities/api/apiEndpoints";
+// import { setExpandedDevice } from "../../../../../../ReaduxToolkit/Reducer/MonitoringSlice";
 
-//   const [zoom, setZoom] = useState(12);
-//   const mapRef = useRef(null);
-
-//   const zoomToMarker = (latLng) => {
-//     if (mapRef.current) {
-//       const map = mapRef.current;
-//       map.setZoom(16);
-//       map.panTo(latLng);
-//       map.setCenter(latLng);
-//     }
-//   };
-
-//   const zoomIn = () => {
-//     if (mapRef.current) {
-//       setZoom(zoom + 1);
-//     }
-//   };
-
-//   const zoomOut = () => {
-//     if (mapRef.current) {
-//       setZoom(zoom - 1);
-//     }
-//   };
-
-//   useEffect(() => {
-//     if (expandedDevice !== null) {
-//       zoomToMarker(expandedDevice.position);
-//     }
-//   }, [expandedDevice]);
-
-//   const rotateImage = (url, rotation, callback) => {
-//     const img = new Image();
-//     img.crossOrigin = "Anonymous";
-//     img.src = url;
-//     img.onload = () => {
-//       const canvas = document.createElement("canvas");
-//       const context = canvas.getContext("2d");
-//       const size = Math.max(img.width, img.height);
-//       canvas.width = size;
-//       canvas.height = size;
-//       context.translate(size / 2, size / 2);
-//       context.rotate((rotation * Math.PI) / 180);
-//       context.drawImage(img, -img.width / 2, -img.height / 2);
-//       callback(canvas.toDataURL());
-//     };
-//   };
-
-//   const containerStyle = {
-//     width: '100%',
-//     height: '100%'
-//   };
-
-//   const center = {
-//     lat: 24.8607,
-//     lng: 67.0011
-//   };
-
-//   return (
-//     <LoadScript googleMapsApiKey="AIzaSyDI3fB-ItM1LpMOyMg_P8UxTUuxHCyQS34">
-//       <GoogleMap
-//         mapContainerStyle={containerStyle}
-//         center={center}
-//         zoom={zoom}
-//         onLoad={map => mapRef.current = map}
-//         options={{ disableDefaultUI: true }}
-//       >
-
-//         {devices.map((marker) =>
-//           marker.items
-//             .filter((item) => item.checked) // Filter items where checked is true
-//             .map((item) => {
-//               // console.log("item", item);
-//               const icon = {
-//                 url: `${item.server.url}/${item.icon.path}`,
-//                 scaledSize: new window.google.maps.Size(22, 40),
-
-//               };
-
-//               return (
-//                 <div key={item.id} style={{ position: "relative" }}>
-//                   <Marker
-//                     name={item.title}
-//                     position={{
-//                       lat: parseFloat(item.lat),
-//                       lng: parseFloat(item.lng),
-//                     }}
-//                     icon={icon}
-//                   />
-//                 </div>
-//               );
-//             })
-//         )}
-
-//         {expandedDevice !== null && (
-//           <Polyline
-//             path={expandedDevice.tail.map(({ lat, lng }) => ({
-//               lat: parseFloat(lat),
-//               lng: parseFloat(lng),
-//             }))}
-//             options={{
-//               strokeColor: "blue",
-//               strokeOpacity: 1.0,
-//               strokeWeight: 10,
-//             }}
-//           />
-//         )}
-
-//         <div className="custom-zoom-control">
-//           <button onClick={zoomIn} className="zoom-button">+</button>
-//           <button onClick={zoomOut} className="zoom-button">-</button>
-//         </div>
-//       </GoogleMap>
-//     </LoadScript>
+// const GoogleMap = (props) => {
+//   const { devicesDetailData, devices } = useSelector(
+//     (state) => state.monitoring
 //   );
-// };
-
-// export default GoogleMapComponent;
-
-// ----------------------------------------------------
-
-// Leaflet Maps-------------------------------
-
-// import React, { useEffect, useRef, useState } from "react";
-// import { MapContainer, TileLayer, Marker, Polyline, useMap } from "react-leaflet";
-// import "leaflet/dist/leaflet.css";
-// import "leaflet-draw/dist/leaflet.draw.css";
-// import L from "leaflet";
-// import { useDispatch, useSelector } from "react-redux";
-
-// // Utility function to create a rotated icon
-// const createRotatedIcon = (url, rotation) => {
-//   const icon = L.icon({
-//     iconUrl: url,
-//     iconSize: [25, 35],
-//     className: "rotated-icon",
-//     rotation: rotation
-//   });
-
-//   const rotatedIcon = L.divIcon({
-//     html: `<div style="transform: rotate(${rotation}deg);">${icon.createIcon().outerHTML}</div>`,
-//     className: "leaflet-marker-icon",
-//     iconSize: icon.options.iconSize,
-//   });
-
-//   return rotatedIcon;
-// };
-
-// const ZoomToMarker = ({ position }) => {
-//   const map = useMap();
-//   useEffect(() => {
-//     if (position) {
-//       map.setView(position, 12);
-//     }
-//   }, [position, map]);
-//   return null;
-// };
-
-// const LeafletMapComponent = () => {
 //   const dispatch = useDispatch();
-//   const { expandedDevice, devices } = useSelector((state) => state.monitoring);
-
-//   const [zoom, setZoom] = useState(12);
+//   const [zoom, setZoom] = useState(8);
+//   const [selectedDevice, setSelectedDevice] = useState(null);
+//   const [infoWindowPosition, setInfoWindowPosition] = useState(null);
+//   const [infoWindowVisible, setInfoWindowVisible] = useState(false);
 //   const mapRef = useRef(null);
 
-//   const zoomToMarker = (latLng) => {
-//     if (mapRef.current) {
-//       const map = mapRef.current;
-//       map.setView(latLng, 16);
+//   const [deviceData, setDeviceData] = useState({ lat: 30.3753, lng: 69.3451 });
+
+//   // useEffect(() => {
+//   //   if (devices?.length > 0) {
+//   //     setDeviceData({
+//   //       lat: devicesDetailData[0]?.latitude,
+//   //       lng: devicesDetailData[0]?.longitude,
+//   //     });
+//   //   }
+//   // }, [devicesDetailData]);
+
+//   const devicesArray = devicesDetailData || [];
+
+//   const zoomIn = () => setZoom((prevZoom) => prevZoom + 1);
+//   const zoomOut = () => setZoom((prevZoom) => prevZoom - 1);
+
+//   const handleMarkerClick = (device) => {
+//     setInfoWindowVisible(true);
+//     setSelectedDevice(device);
+//     setInfoWindowPosition({ lat: device?.latitude, lng: device?.longitude });
+//     dispatch(setExpandedDevice(true));
+//   };
+
+// const closeInfoWindow = () => {
+//   setInfoWindowVisible(false);
+//   dispatch(setExpandedDevice(false));
+// };
+
+//   const getMarkerIcon = (dev) => {
+//     const { device, vehicle } = dev;
+//     const { vehicleIcon } = vehicle;
+
+//     if (vehicleIcon?.type === "STATIC") {
+//       return vehicleIcon?.vehicleImage?.staticImage || carIcon;
+//     } else if (vehicleIcon?.type === "DYNAMIC") {
+//       switch (device?.currentStatus) {
+//         case "STOP":
+//           return (
+//             vehicleIcon.vehicleImage?.dynamicImages?.stop ||
+//             "/vehicleIcon/stop.png"
+//           );
+//         case "MOVING":
+//           return (
+//             vehicleIcon.vehicleImage?.dynamicImages?.moving ||
+//             "/vehicleIcon/moving.png"
+//           );
+//         case "OFFLINE":
+//           return (
+//             vehicleIcon.vehicleImage?.dynamicImages?.offline ||
+//             "/vehicleIcon/offline.png"
+//           );
+//         case "IDLE":
+//           return (
+//             vehicleIcon.vehicleImage?.dynamicImages?.idle ||
+//             "/vehicleIcon/idle.png"
+//           );
+//         default:
+//           return carIcon;
+//       }
+//     } else {
+//       return carIcon;
 //     }
 //   };
 
-//   const zoomIn = () => {
-//     if (mapRef.current) {
-//       mapRef.current.setZoom(mapRef.current.getZoom() + 1);
-//     }
-//   };
-
-//   const zoomOut = () => {
-//     if (mapRef.current) {
-//       mapRef.current.setZoom(mapRef.current.getZoom() - 1);
-//     }
-//   };
-
-//   useEffect(() => {
-//     if (expandedDevice !== null) {
-//       zoomToMarker(expandedDevice.position);
-//     }
-//   }, [expandedDevice]);
-
-//   const center = [24.8607, 67.0011];
+//   if (!props.google) {
+//     return <div>Error: Google Maps API failed to load.</div>;
+//   }
 
 //   return (
-
-//     <MapContainer
-//       style={{ height: "92.5vh", width: "100%", marginLeft: "40px" }}
-//       center={[24.8607, 67.0011]}
-//       zoom={13}
-//       scrollWheelZoom={true}
+//     <Map
+//       google={props.google}
+//       zoom={zoom}
+//       initialCenter={deviceData}
 //       ref={mapRef}
-//       whenCreated={(mapInstance) => {
-//         mapRef.current = mapInstance;
-//       }}
+//       gestureHandling="greedy"
+//       disableDefaultUI={true}
 //     >
-//       <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-//       {devices.map((marker) =>
-//         marker.items
-//           .filter((item) => item.checked) // Filter items where checked is true
-//           .map((item) => {
-//             const icon = createRotatedIcon(`${item.server.url}/${item.icon.path}`, item.course || 0);
-//             return (
-//               <Marker
-//                 key={item.id}
-//                 position={[parseFloat(item.lat), parseFloat(item.lng)]}
-//                 icon={icon}
-//               />
-//             );
-//           })
-//       )}
-//     </MapContainer>
+//       {/* {devices?.map(
+//         (device) =>
+//           device.checked && (
+//             <Marker
+//               key={device._id}
+//               position={{
+//                 lat: device.device.latitude,
+//                 lng: device.device.longitude,
+//               }}
+//               icon={{
+//                 url: `${IMAGE_BASE_URL_RENTAL}${getMarkerIcon(device)}`,
+//                 scaledSize: new props.google.maps.Size(40, 40),
+//               }}
+//               onClick={() => handleMarkerClick(device)}
+//             />
+//           )
+//       )} */}
 
+//       <Marker
+//         position={lahoreCoords}
+//         onClick={handleMarkerClick}
+//         icon={{
+//           url: carIcon,
+//           scaledSize: new props.google.maps.Size(40, 40),
+//         }}
+//       />
+
+//       <InfoWindow
+//         position={infoWindowPosition}
+//         visible={infoWindowVisible}
+//         onClose={closeInfoWindow}
+//       >
+//         <div>
+//           <h4>Device Details</h4>
+//           <p>
+//             <strong>Device ID:</strong> {selectedDevice?.deviceId}
+//           </p>
+//           <p>
+//             <strong>Speed:</strong> {selectedDevice?.speed} km/h
+//           </p>
+//           <p>
+//             <strong>Ignition:</strong>{" "}
+//             {selectedDevice?.basicInfo?.ignition === false ? "OFF" : "ON"}
+//           </p>
+//           <p>
+//             <strong>Direction:</strong> {selectedDevice?.direction}
+//           </p>
+//           <p>
+//             <strong>Sleep Mode:</strong>{" "}
+//             {selectedDevice?.sensor?.sleepMode === false ? "OFF" : "ON"}
+//           </p>
+//           <p>
+//             <strong>Odometer:</strong>{" "}
+//             {(selectedDevice?.basicInfo?.odometer || 0).toFixed(2)}
+//           </p>
+//           <h4>Vehicle Details</h4>
+//           <p>
+//             <strong>Vehicle Name:</strong> {selectedDevice?.vehicle?.title}
+//           </p>
+//           <p>
+//             <strong>Color:</strong> {selectedDevice?.vehicle?.color}
+//           </p>
+//           <p>
+//             <strong>Engine Number:</strong>{" "}
+//             {selectedDevice?.vehicle?.engineNumber}
+//           </p>
+//           <p>
+//             <strong>Registration Number:</strong>{" "}
+//             {selectedDevice?.vehicle?.registrationNumber}
+//           </p>
+//         </div>
+//       </InfoWindow>
+
+//       <div className="custom-zoom-control">
+//         <button onClick={zoomIn} className="zoom-button">
+//           +
+//         </button>
+//         <button onClick={zoomOut} className="zoom-button">
+//           -
+//         </button>
+//       </div>
+//     </Map>
 //   );
 // };
 
-// export default LeafletMapComponent;
-
-// ---------------------------------------------------
+// export default GoogleApiWrapper({
+//   apiKey: "AIzaSyDI3fB-ItM1LpMOyMg_P8UxTUuxHCyQS34",
+// })(GoogleMap);
 
 import { useEffect, useRef, useState } from "react";
-import { Map, Marker, GoogleApiWrapper, Polyline } from "google-maps-react";
+import { Map, Marker, GoogleApiWrapper, InfoWindow } from "google-maps-react";
 import { useDispatch, useSelector } from "react-redux";
 import "./googleMap.css";
+import carIcon from "../../../monitoring-assets/car-icon.png";
+
+import { IMAGE_BASE_URL_RENTAL } from "../../../../../../Utilities/api/apiEndpoints";
+import { setExpandedDevice } from "../../../../../../ReaduxToolkit/Reducer/MonitoringSlice";
 
 const GoogleMap = (props) => {
+  const { devicesDetailData, devices } = useSelector(
+    (state) => state.monitoring
+  );
   const dispatch = useDispatch();
-  const { expandedDevice, devices } = useSelector((state) => state.monitoring);
-
-  const [rotation, setRotation] = useState(-270);
-  const [zoom, setZoom] = useState(12); // State to manage zoom level
+  const [zoom, setZoom] = useState(8);
+  const [selectedDevice, setSelectedDevice] = useState(null);
+  const [infoWindowPosition, setInfoWindowPosition] = useState(null);
+  const [infoWindowVisible, setInfoWindowVisible] = useState(false);
   const mapRef = useRef(null);
-  const zoomToMarker = (latLng) => {
-    if (mapRef.current) {
-      const map = mapRef.current.map;
-      map.setZoom(16);
-      map.panTo(latLng);
-      map.setZoom(16);
-      map.setCenter(latLng);
+
+  const [deviceData, setDeviceData] = useState({ lat: 30.3753, lng: 69.3451 });
+
+  const devicesArray = devicesDetailData || [];
+
+  const zoomIn = () => setZoom((prevZoom) => prevZoom + 1);
+  const zoomOut = () => setZoom((prevZoom) => prevZoom - 1);
+
+  const lahoreCoords = { lat: 31.5204, lng: 74.3587 };
+
+  const handleMarkerClick = () => {
+    if (
+      infoWindowVisible &&
+      infoWindowPosition?.lat === lahoreCoords.lat &&
+      infoWindowPosition?.lng === lahoreCoords.lng
+    ) {
+      setInfoWindowVisible(false);
+    } else {
+      setInfoWindowPosition(lahoreCoords);
+      setInfoWindowVisible(true);
     }
   };
 
-  const zoomIn = () => {
-    if (mapRef.current) {
-      setZoom(zoom + 1); // Increase zoom level by 1
-    }
+  const closeInfoWindow = () => {
+    setInfoWindowVisible(false);
   };
 
-  // Function to handle zoom out
-  const zoomOut = () => {
-    if (mapRef.current) {
-      setZoom(zoom - 1); // Decrease zoom level by 1
-    }
+  const handleMapClick = () => {
+    setInfoWindowVisible(false);
   };
-  useEffect(() => {
-    if (expandedDevice !== null) {
-      zoomToMarker(expandedDevice.position);
-    }
-  }, [expandedDevice]);
-
-  useEffect(() => {
-    // Array to store references to created markers
-    const createdMarkers = [];
-
-    // Loop through devices and their items
-    devices?.forEach((marker) => {
-      marker.items.forEach((item) => {
-        // Check if item is checked
-        if (item.checked) {
-          // Create marker only if item is checked
-          const iconUrl = `${item.server.url}/${item.icon.path}`;
-          const img = new Image();
-          img.crossOrigin = "Anonymous"; // Set crossOrigin attribute on the image
-          img.src = iconUrl;
-
-          img.onload = () => {
-            const canvas = document.createElement("canvas");
-            const context = canvas.getContext("2d");
-
-            // Calculate canvas dimensions to accommodate rotated image
-            const canvasWidth = Math.max(img.width, img.height);
-            const canvasHeight = canvasWidth;
-
-            canvas.width = canvasWidth;
-            canvas.height = canvasHeight;
-
-            // Clear canvas
-            context.clearRect(0, 0, canvas.width, canvas.height);
-
-            // Rotate and draw image
-            context.translate(canvas.width / 2, canvas.height / 2);
-            context.rotate((item.course * Math.PI) / 180);
-            context.drawImage(
-              img,
-              -img.width / 2,
-              -img.height / 2,
-              img.width,
-              img.height
-            );
-
-            // Convert canvas to data URL
-            const rotatedIconUrl = canvas.toDataURL();
-
-            // Create the marker
-            const markerInstance = new window.google.maps.Marker({
-              position: {
-                lat: parseFloat(item.lat),
-                lng: parseFloat(item.lng),
-              },
-              icon: {
-                url: rotatedIconUrl,
-                scaledSize: new window.google.maps.Size(
-                  canvasWidth,
-                  canvasHeight
-                ),
-              },
-              map: mapRef.current.map,
-            });
-
-            // Create info window
-            const infoWindow = new window.google.maps.InfoWindow({
-              content: `<div>
-              <h3>Device Info</h3>
-              <br />
-              <p>
-                <span style={{ fontWeight: "bold" }}>Device ID: </span>
-                <span> ${item.id}</span>
-              </p>
-              <p>
-                <span style={{ fontWeight: "bold" }}>Device Name: </span>
-                <span>${item.name}</span>
-              </p>
-              <p>
-              <span style={{ fontWeight: "bold" }}>LatLng: </span>
-              <a href="https://www.google.com/maps/search/?api=1&query=${item.lat},${item.lng}" target="_blank">${item.lat},${item.lng}</a>
-            </p>
-            </div>`, // You can customize this content as needed
-            });
-
-            // Open info window when marker is clicked
-            markerInstance.addListener("click", () => {
-              infoWindow.open(mapRef.current.map, markerInstance);
-            });
-
-            // Store the marker instance and item in createdMarkers
-            createdMarkers.push({ markerInstance, item, id: item.id });
-          };
-        }
-      });
-    });
-
-    // Clean up: Remove markers for unchecked items
-    return () => {
-      // console.log("Cleaning up markers...");
-      createdMarkers.forEach(({ markerInstance, markerItem, id }) => {
-        // If item is unchecked, remove its corresponding marker from the map
-        markerInstance.setMap(null);
-      });
-    };
-  }, [props.google, devices]);
 
   if (!props.google) {
     return <div>Error: Google Maps API failed to load.</div>;
   }
 
   return (
-    <Map
-      google={props.google}
-      zoom={zoom}
-      initialCenter={{ lat: 24.8607, lng: 67.0011 }}
-      disableDefaultUI={true} // Enable default UI controls
-      ref={mapRef}
-    >
-      {expandedDevice !== null && (
-        <Polyline
-          path={expandedDevice.tail.map(({ lat, lng }) => ({
-            lat: parseFloat(lat),
-            lng: parseFloat(lng),
-          }))}
-          options={{
-            strokeColor: "blue",
-            strokeOpacity: 0.8,
-            strokeWeight: 4,
+    <div style={{ width: "300px", height: "300px", overflow: "hidden" }}>
+      <Map
+        google={props.google}
+        zoom={zoom}
+        initialCenter={deviceData}
+        ref={mapRef}
+        gestureHandling="greedy"
+        disableDefaultUI={true}
+        onClick={handleMapClick}
+      >
+        <Marker
+          position={lahoreCoords}
+          onClick={handleMarkerClick}
+          icon={{
+            url: carIcon,
+            scaledSize: new props.google.maps.Size(40, 40),
           }}
         />
-      )}
 
-      <div className="custom-zoom-control">
-        <button onClick={zoomIn} className="zoom-button">
-          +
-        </button>
-        <button onClick={zoomOut} className="zoom-button">
-          -
-        </button>
-      </div>
-    </Map>
+        <InfoWindow
+          position={infoWindowPosition}
+          visible={infoWindowVisible}
+          onClose={closeInfoWindow}
+          options={{
+            disableAutoPan: false,
+            pixelOffset: new props.google.maps.Size(0, -40),
+            disableClose: true,
+            closeBoxMargin: "0",
+            closeBoxURL: "",
+            maxWidth: 400, // Set a maxWidth but not maxHeight
+          }}
+        >
+          <div
+            style={{
+              minWidth: "400px",
+              overflow: "hidden !important",
+              margin: "0px !important",
+              padding: "0px !important",
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                padding: "10px 25px",
+                borderBottom: "1px solid lightgray",
+              }}
+            >
+              <div style={{ display: "flex", alignItems: "center" }}>
+                <h2>VB 4285 </h2>
+                <span
+                  style={{
+                    marginLeft: "16px",
+                    color: "gray",
+                    fontWeight: "bold",
+                  }}
+                >
+                  Van
+                </span>
+              </div>
+              <span style={{ fontWeight: "bold", color: "red" }}>on route</span>
+            </div>
+
+            <div
+              style={{
+                padding: "10px 25px",
+                borderBottom: "0.5px solid lightgray",
+              }}
+            >
+              <div
+                style={{
+                  marginTop: "10px",
+                  marginBottom: "5px",
+                  fontSize: "15px",
+                }}
+              >
+                <strong style={{ width: "110px" }}>Device ID:</strong>{" "}
+                {selectedDevice?.deviceId} 20
+              </div>
+              <div
+                style={{
+                  // marginTop: "20px",
+                  marginBottom: "5px",
+                  fontSize: "15px",
+                }}
+              >
+                <strong style={{ width: "110px" }}>Address:</strong>{" "}
+                {selectedDevice?.speed} Makran Coastal Highway, Lota Bazaar,
+                Kund Malir, Liari Tehsil.
+              </div>
+              <div
+                style={{
+                  // marginTop: "20px",
+                  marginBottom: "5px",
+                  fontSize: "15px",
+                }}
+              >
+                <strong style={{ width: "110px" }}>Time:</strong>{" "}
+                {selectedDevice?.speed} 07-05-2025 11:53:56 AM
+              </div>
+              {/* <div
+                style={{
+                  // marginTop: "20px",
+                  marginBottom: "5px",
+                  fontSize: "15px",
+                }}
+              >
+                <strong>Speed:</strong> {selectedDevice?.speed} 35 km/h
+              </div>
+              <div
+                style={{
+                  // marginTop: "20px",
+                  marginBottom: "5px",
+                  fontSize: "15px",
+                }}
+              >
+                <strong>Speed:</strong> {selectedDevice?.speed} 35 km/h
+              </div> */}
+              <div
+                style={{
+                  // marginTop: "20px",
+                  marginBottom: "5px",
+                  fontSize: "15px",
+                }}
+              >
+                <strong style={{ width: "110px" }}>Stop Duration:</strong>{" "}
+                {selectedDevice?.speed} 1h 31min 6s
+              </div>
+              <div
+                style={{
+                  // marginTop: "20px",
+                  marginBottom: "5px",
+                  fontSize: "15px",
+                }}
+              >
+                <strong style={{ width: "110px" }}>Speed:</strong>{" "}
+                {selectedDevice?.speed} 35 km/h
+              </div>
+              <div
+                style={{
+                  // marginTop: "20px",
+                  marginBottom: "15px",
+                  fontSize: "15px",
+                }}
+              >
+                <strong style={{ width: "110px" }}>Ignition:</strong>{" "}
+                {selectedDevice?.basicInfo?.ignition === false ? "OFF" : "ON"}
+              </div>
+            </div>
+
+            <div
+              style={{
+                padding: "0px 25px",
+                paddingBottom: "15px",
+                paddingTop: "20px",
+                display: "flex",
+                overflowX: "auto", // Enable horizontal scrolling
+                gap: "5px",
+                borderBottom: "0.5px solid lightgray",
+                scrollbarWidth: "none", // Hide scrollbar in Firefox
+                msOverflowStyle: "none", // Hide scrollbar in IE
+                "&::-webkit-scrollbar": {
+                  // Hide scrollbar in WebKit browsers
+                  display: "none",
+                },
+              }}
+            >
+              <div
+                style={{
+                  border: "0.5px solid lightgray",
+                  borderRadius: "5px",
+                  padding: "12px 0px",
+                  fontWeight: "400",
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  gap: "2px",
+                  minWidth: "170px",
+                  maxWidth: "170px",
+                  flexShrink: 0, // Prevent boxes from shrinking
+                }}
+                className="info-box"
+              >
+                <div style={{ color: "gray" }}>Vehicle Condition</div>
+                <div style={{ color: "red" }}>Critical</div>
+              </div>
+              <div
+                style={{
+                  border: "0.5px solid lightgray",
+                  borderRadius: "5px",
+                  padding: "12px 0",
+                  fontWeight: "400",
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  gap: "2px",
+                  minWidth: "170px",
+                  maxWidth: "170px",
+                  flexShrink: 0,
+                }}
+                className="info-box"
+              >
+                <div style={{ color: "gray" }}>Number of Errors</div>
+                <div style={{ color: "red" }}>1</div>
+              </div>
+              <div
+                style={{
+                  border: "0.5px solid lightgray",
+                  borderRadius: "5px",
+                  padding: "12px 0",
+                  fontWeight: "400",
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  gap: "2px",
+                  minWidth: "170px",
+                  maxWidth: "170px",
+                  flexShrink: 0,
+                }}
+                className="info-box"
+              >
+                <div style={{ color: "gray" }}>Average Speed</div>
+                <div style={{ color: "black", fontSize: "13px" }}>62.5 MPH</div>
+              </div>
+              <div
+                style={{
+                  border: "0.5px solid lightgray",
+                  borderRadius: "5px",
+                  padding: "12px 0px",
+                  fontWeight: "400",
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  gap: "2px",
+                  minWidth: "170px",
+                  maxWidth: "170px",
+                  flexShrink: 0,
+                }}
+                className="info-box"
+              >
+                <div style={{ color: "gray" }}>Fuel Consumption</div>
+                <div style={{ color: "black", fontSize: "13px" }}>5.99 MPG</div>
+              </div>
+            </div>
+
+            {/* <div
+              style={{
+                padding: "0px 25px",
+                paddingBottom: "10px",
+                paddingTop: "20px",
+                display: "flex",
+                justifyContent: "space-between",
+                gap: "5px",
+              }}
+            >
+              <div
+                style={{
+                  border: "0.5px solid lightgray",
+                  borderRadius: "5px",
+                  padding: "12px 0px",
+                  fontWeight: "400",
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  gap: "2px",
+                  minWidth: "170px",
+                  maxWidth: "170px",
+                }}
+                className="info-box"
+              >
+                <div style={{ color: "gray" }}>Vehicle Condition</div>
+                <div style={{ color: "red" }}>Critical</div>
+              </div>
+              <div
+                style={{
+                  border: "0.5px solid lightgray",
+                  borderRadius: "5px",
+                  padding: "12px 0",
+                  fontWeight: "400",
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  gap: "2px",
+                  minWidth: "170px",
+                  maxWidth: "170px",
+                }}
+                className="info-box"
+              >
+                <div style={{ color: "gray" }}>Number of Errors</div>
+                <div style={{ color: "red" }}>1</div>
+              </div>
+            </div>
+            <div
+              style={{
+                padding: "0px 25px",
+                paddingBottom: "15px",
+                display: "flex",
+                justifyContent: "space-between",
+                gap: "5px",
+                borderBottom: "0.5px solid lightgray",
+              }}
+            >
+              <div
+                style={{
+                  border: "0.5px solid lightgray",
+                  borderRadius: "5px",
+                  padding: "12px 0",
+                  fontWeight: "400",
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  gap: "2px",
+                  minWidth: "170px",
+                  maxWidth: "170px",
+                }}
+                className="info-box"
+              >
+                <div style={{ color: "gray" }}>Average Speed</div>
+                <div style={{ color: "black", fontSize: "13px" }}>62.5 MPH</div>
+              </div>
+              <div
+                style={{
+                  border: "0.5px solid lightgray",
+                  borderRadius: "5px",
+                  padding: "12px 0px",
+                  fontWeight: "400",
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  gap: "2px",
+                  minWidth: "170px",
+                  maxWidth: "170px",
+                }}
+                className="info-box"
+              >
+                <div style={{ color: "gray" }}>Fuel Consumption</div>
+                <div style={{ color: "black", fontSize: "13px" }}>5.99 MPG</div>
+              </div>
+            </div> */}
+
+            <div
+              style={{
+                padding: "15px 25px",
+                paddingBottom: "15px",
+                display: "flex",
+                justifyContent: "space-between",
+                gap: "5px",
+              }}
+            >
+              <button
+                style={{
+                  minWidth: "170px",
+                  maxWidth: "170px",
+                  border: "none",
+                  outline: "none",
+                  backgroundColor: "lightgray",
+                  fontWeight: "600",
+                  color: "black",
+                  textAlign: "center",
+                  padding: "15px",
+                  borderRadius: "5px",
+                }}
+              >
+                ALL EVENTS
+              </button>
+              <button
+                style={{
+                  minWidth: "170px",
+                  maxWidth: "170px",
+                  border: "none",
+                  outline: "none",
+                  backgroundColor: "lightgray",
+                  fontWeight: "600",
+                  color: "black",
+                  textAlign: "center",
+                  padding: "15px",
+                  borderRadius: "5px",
+                }}
+              >
+                TRIP
+              </button>
+            </div>
+          </div>
+        </InfoWindow>
+
+        <div className="custom-zoom-control">
+          <button onClick={zoomIn} className="zoom-button">
+            +
+          </button>
+          <button onClick={zoomOut} className="zoom-button">
+            -
+          </button>
+        </div>
+      </Map>
+    </div>
   );
 };
-
-// ---------------------------------------------------------------
 
 export default GoogleApiWrapper({
   apiKey: "AIzaSyDI3fB-ItM1LpMOyMg_P8UxTUuxHCyQS34",
 })(GoogleMap);
-
-// ------------------------------------------------------------
-
-// Item.course value
-
-// if (item.course < 90) {
-//   context.rotate((item.course * Math.PI) / 90);
-// } else if (item.course < 180) {
-//   context.rotate((item.course * Math.PI) / -360);
-// } else if (item.course < 270) {
-//   context.rotate((item.course * Math.PI) / -360);
-// } else {
-//   context.rotate((item.course * Math.PI) / 360);
-// }
-
-{
-  /* Render tail for each item */
-}
-
-{
-  /* {devices?.map((marker) =>
-        marker.items.map((item) => (
-          <Polyline
-            path={item.tail.map(({ lat, lng }) => ({
-              lat: parseFloat(lat),
-              lng: parseFloat(lng),
-            }))}
-            options={{
-              strokeColor: "blue",
-              strokeOpacity: 1.0,
-              strokeWeight: 5,
-            }}
-          />
-        ))
-      )} */
-}
-
-// For only zoomed device below code
-
-{
-  /* {expandedDevice !== null && (
-        <Polyline
-          path={expandedDevice.tail.map(({ lat, lng }) => ({
-            lat: parseFloat(lat),
-            lng: parseFloat(lng),
-          }))}
-          options={{
-            strokeColor: "blue",
-            strokeOpacity: 1.0,
-            strokeWeight: 5,
-          }}
-        />
-      )} */
-}
-
-{
-  /* {devices.map((marker) =>
-        marker.items
-          .filter((item) => item.checked) // Filter items where checked is true
-          .map((item) => {
-            // console.log("item", item);
-            const icon = {
-              url: `${item.server.url}/${item.icon.path}`,
-              scaledSize: new window.google.maps.Size(22, 40),
-            };
-
-            return (
-              <div key={item.id} style={{ position: "relative" }}>
-                <Marker
-                  name={item.title}
-                  position={{
-                    lat: parseFloat(item.lat),
-                    lng: parseFloat(item.lng),
-                  }}
-                  icon={icon}
-                />
-              </div>
-            );
-          })
-      )} */
-}
-
-{
-  /* {selectedDevices.map((marker) => {
-        const icon = {
-          url: `${marker.server.url}/${marker.icon.path}`,
-          scaledSize: new window.google.maps.Size(22, 40),
-        };
-        return (
-          <Marker
-            key={marker.id}
-            name={marker.title}
-            position={{
-              lat: parseFloat(marker.lat),
-              lng: parseFloat(marker.lng),
-            }}
-            icon={icon}
-            // rotation={170}
-            style={{
-              transform: "rotate(45deg)",
-            }}
-          />
-        );
-      })} */
-} // using instead of devices when we use alternate approach
-
-// useEffect(() => {
-//   const tempMarkers = [];
-//   devices.forEach((marker) => {
-//     marker.items.forEach((item) => {
-//       // Check if item is checked
-//       if (item.checked) {
-//         const iconUrl = `${item.server.url}/${item.icon.path}`;
-//         const img = new Image();
-//         img.crossOrigin = "Anonymous"; // Set crossOrigin attribute on the image
-//         img.src = iconUrl;
-
-//         img.onload = () => {
-//           const canvas = document.createElement("canvas");
-//           const context = canvas.getContext("2d");
-
-//           // Calculate canvas dimensions to accommodate rotated image
-//           const canvasWidth = Math.max(img.width, img.height); // Set canvas width to the larger dimension
-//           const canvasHeight = canvasWidth; // Set canvas height to match canvasWidth for square canvas
-
-//           canvas.width = canvasWidth;
-//           canvas.height = canvasHeight;
-
-//           // Clear canvas
-//           context.clearRect(0, 0, canvas.width, canvas.height);
-
-//           // Rotate and draw image
-//           context.translate(canvas.width / 2, canvas.height / 2);
-//           context.rotate((item.course * Math.PI) / 180); // Convert degrees to radians
-//           context.drawImage(
-//             img,
-//             -img.width / 2,
-//             -img.height / 2,
-//             img.width,
-//             img.height
-//           );
-
-//           // Convert canvas to data URL
-//           const rotatedIconUrl = canvas.toDataURL();
-
-//           // Create the marker
-//           const markerInstance = new window.google.maps.Marker({
-//             position: {
-//               lat: parseFloat(item.lat),
-//               lng: parseFloat(item.lng),
-//             },
-//             icon: {
-//               url: rotatedIconUrl,
-//               scaledSize: new window.google.maps.Size(
-//                 canvasWidth,
-//                 canvasHeight
-//               ), // Use canvas dimensions
-//             },
-//             map: mapRef.current.map,
-//           });
-
-//           // Create info window
-//           const infoWindow = new window.google.maps.InfoWindow({
-//             content: `<div>
-//           <h3>Device Info</h3>
-//           <br />
-//           <p>
-//             <span style={{ fontWeight: "bold" }}>Device ID: </span>
-//             <span> ${item.id}</span>
-//           </p>
-//           <p>
-//             <span style={{ fontWeight: "bold" }}>Alert: </span>
-//             <span>${item.name}</span>
-//           </p>
-//           <p>
-//             <span style={{ fontWeight: "bold" }}>Latitude: </span>
-//             <span> ${item.lat}</span>
-//           </p>
-//           <p>
-//             <span style={{ fontWeight: "bold" }}>Longitude: </span>
-//             <span> ${item.lng}</span>
-//           </p>
-
-//         </div>`, // You can customize this content as needed
-//           });
-
-//           // Open info window when marker is clicked
-//           markerInstance.addListener("click", () => {
-//             infoWindow.open(mapRef.current.map, markerInstance);
-//           });
-
-//           // Store the marker instance and item in createdMarkers
-//           createdMarkers?.map((marker) => {
-//             if (marker.id !== item.id) {
-//               tempMarkers.push({
-//                 markerInstance,
-//                 checked: true,
-//                 id: item.id,
-//               });
-//               setCreatedMarkers(tempMarkers);
-//             }
-//           });
-
-//           // return createdMarkers;
-//         };
-//       } else {
-//         // Remove the marker from the map if item.checked is false
-//         tempMarkers?.map((marker) => {
-//           if (marker.id == item.id) {
-//             return {
-//               ...marker,
-//               checked: false,
-//             };
-//           }
-//         });
-//         setCreatedMarkers(tempMarkers);
-//       }
-//     });
-//   });
-
-//   // Clean up: Remove all markers not corresponding to checked items
-//   return () => {
-//     createdMarkers?.forEach(({ markerInstance, checked, id }) => {
-//       if (!checked) {
-//         markerInstance.setMap(null);
-//       }
-//     });
-//   };
-// }, [props.google, devices, createdMarkers]);
-
-// marker running animation
-
-// useEffect(() => {
-//   const animateMarkers = () => {
-//     devices.forEach((device) => {
-//       device.items.forEach((item) => {
-//         const path = item.tail;
-//         console.log("path", { name: item.name, tail: item.tail });
-//         if (path.length == 0) return; // Skip empty paths
-//         let index = 0;
-
-//         // const animateMarker = () => {
-//         const currentPosition = path[index];
-//         const nextPosition = path[index + 1];
-
-//         if (!currentPosition || !nextPosition) return;
-
-//         const duration = 1000; // Adjust duration as needed
-//         const framesPerSecond = 30;
-//         const distanceLat =
-//           (nextPosition.lat - currentPosition.lat) /
-//           ((duration / 1000) * framesPerSecond);
-//         const distanceLng =
-//           (nextPosition.lng - currentPosition.lng) /
-//           ((duration / 1000) * framesPerSecond);
-
-//         let currentLat = currentPosition.lat;
-//         let currentLng = currentPosition.lng;
-
-//         const moveMarker = () => {
-//           currentLat += distanceLat;
-//           currentLng += distanceLng;
-//           const newPosition = { lat: currentLat, lng: currentLng };
-
-//           // Update the position of the marker
-//           if (mapRef.current) {
-//             const marker = mapRef.current.map.markers[index];
-//             marker.setPosition(newPosition);
-//           }
-
-//           // Update the position in redux state if needed
-//           device.position = newPosition;
-
-//           // Move to the next position or end the animation if reached the end of the path
-//           if (currentPosition === nextPosition) {
-//             index++;
-//             if (index < path.length - 1) {
-//               setTimeout(moveMarker, 1000 / framesPerSecond);
-//             }
-//           }
-//           // };
-
-//           // Start the animation
-//           moveMarker();
-//         };
-
-//         // // // Start the animation for each device item
-//         // animateMarker();
-//       });
-//     });
-//   };
-
-//   animateMarkers();
-// }, [devices]);
-
-// const [createdMarkers, setCreatedMarkers] = useState([]);
-
-// Render markers with rotation
-
-// const [markerPosition, setMarkerPosition] = useState(null);
-// // Function to update marker position based on polyline's tail
-// useEffect(() => {
-//   if (expandedDevice !== null) {
-//     const tail = expandedDevice.tail;
-//     if (tail.length > 0) {
-//       const lastPoint = tail[tail.length - 1];
-//       setMarkerPosition({
-//         lat: parseFloat(lastPoint.lat),
-//         lng: parseFloat(lastPoint.lng),
-//       });
-//     }
-//   }
-// }, [expandedDevice]);

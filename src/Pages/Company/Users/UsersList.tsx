@@ -81,6 +81,7 @@ const UsersList = () => {
   const [phoneNo, setPhoneNo] = useState(false);
   const [allowedModules, setAllowedModules] = useState(false);
   const [subRole, setSubRole] = useState("");
+  const [permissions, setPermissions] = useState(null);
   const [userBranch, setUserBranch] = useState("");
   const navigate = useNavigate();
 
@@ -288,6 +289,7 @@ const UsersList = () => {
                     setIsActive(row.isActive);
                     setAllowedModules(row.allowedModules);
                     setSubRole(row.subRole);
+                    setPermissions(row.permissions);
                     setUserBranch(row?.branch);
                   }}
                 >
@@ -389,6 +391,7 @@ const UsersList = () => {
                 allowedModules={allowedModules}
                 setAllowedModules={setAllowedModules}
                 subRole={subRole}
+                permissions={permissions}
                 userBranch={userBranch}
               />
             </CardBody>

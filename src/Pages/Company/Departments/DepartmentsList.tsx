@@ -36,6 +36,8 @@ import {
   GET_ALL_SUB_ROLES,
 } from "../../../Utilities/api/apiEndpoints";
 import { ERROR_MESSAGE } from "../../../Utilities/constants/constants";
+import deleteAlert from "../../../Utilities/alerts/DeleteAlert";
+import UpdateDepartment from "./UpdateDepartment";
 
 const DepartmentsList = () => {
   const { roles, activeInActiveRoles, loading } = useSelector(
@@ -43,6 +45,10 @@ const DepartmentsList = () => {
   );
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
+  const [departmentPermissions, setDepartmentPermissions] = useState("");
+  const [name, setName] = useState("");
+  const [id, setId] = useState("");
 
   const { userPersonalizationData } = useSelector(
     (state: any) => state.personalization
@@ -198,53 +204,44 @@ const DepartmentsList = () => {
             </div>
           </div>
         </td>
-        {/* <td>
+        <td>
           <div>
+            {
+              <button
+                className="global-table-delete-btn"
+                onClick={() => {
+                  var alertData = {
+                    title: "Are you sure?",
+                    text: "Once deleted, you will not be able to recover this ",
+                  };
+                  const type = "subRolesType";
+                  deleteAlert(alertData, row._id, type, dispatch);
+                }}
+                disabled={
+                  row.name == "Sales" ||
+                  row.name == "Inventory" ||
+                  row.name == "CRO" ||
+                  row.name == "Accounts" ||
+                  row.name == "Installation"
+                }
+              >
+                Delete
+              </button>
+            }
+
             <button
-              style={{
-                width: 60,
-                fontSize: 14,
-                padding: 3,
-                color: "white",
-                backgroundColor: "red",
-                borderRadius: "5px",
-                marginRight: "5px",
-                border: "none",
-              }}
-              onClick={() => {
-                // // console.log("345678");
-                var alertData = {
-                  title: "Are you sure?",
-                  text: "Once deleted, you will not be able to recover this ",
-                };
-                const type = "countryType";
-                deleteAlert(alertData, row._id, type, dispatch);
-              }}
-            >
-              Delete
-            </button>
-            <button
-              style={{
-                width: 60,
-                fontSize: 14,
-                padding: 3,
-                color: "white",
-                backgroundColor: "green",
-                borderRadius: "5px",
-                border: "none",
-              }}
+              className="global-table-edit-btn"
               onClick={() => {
                 setIsUpdateModalOpen(true);
-                // // console.log("isUpdateModalOpen: ", isUpdateModalOpen);
-                dispatch(setId(row._id));
-                setCountryName(row.name);
-                setIsActive(row.isActive);
+                setId(row._id);
+                setName(row.name);
+                setDepartmentPermissions(row.permissions);
               }}
             >
               Edit
             </button>
           </div>
-        </td> */}
+        </td>
       </tr>
     ));
   };
@@ -300,33 +297,30 @@ const DepartmentsList = () => {
                           <th>ID</th>
                           <th>Name</th>
                           <th>Status</th>
-                          {/* <th>Actions</th> */}
+                          <th>Actions</th>
                         </tr>
                       </thead>
                       <tbody>{renderTableRows()}</tbody>
                     </table>
                   </div>
                 ) : (
-                  // <div
-                  //   style={{
-                  //     textAlign: "center",
-                  //     fontSize: "25px",
-                  //     fontWeight: "bold",
-                  //   }}
-                  // >
-                  // {activeInActiveRoles !== "All"
-                  //   ? activeInActiveRoles
-                  //   : "No Roles Found"}
-                  // </div>
                   <H7>
                     {activeInActiveRoles !== "All"
                       ? activeInActiveRoles
-                      : "No Roles Found"}
+                      : "No Sub Roles Found"}
                   </H7>
                 )}
 
                 {/* )} */}
               </div>
+
+              <UpdateDepartment
+                isVisible={isUpdateModalOpen}
+                setIsVisible={setIsUpdateModalOpen}
+                name={name}
+                id={id}
+                departmentPermissions={departmentPermissions}
+              />
             </CardBody>
           </Card>
         </Col>

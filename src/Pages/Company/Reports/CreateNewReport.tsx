@@ -22,6 +22,8 @@ import {
 } from "../../../ReaduxToolkit/Reducer/ReportsSlice";
 import CustomDropdown from "./CustomDropdown";
 import {
+  GET_ALL_ACTIVE_SUB_ROLES,
+  GET_ALL_ACTIVE_TYPES,
   GET_ALL_BRANCHES,
   GET_ALL_CUSTOMER_VEHICLES,
   GET_ALL_CUSTOMERS,
@@ -30,6 +32,8 @@ import {
   GET_ALL_PRODUCTS,
   GET_ALL_VENDORS,
   GET_ALL_WAREHOUSES,
+  GET_COMPLAINT_CENTER_PRIORITY_STATUS,
+  GET_COMPLAINT_CENTER_STATUS_TYPES,
   GET_REPORT_BASE_URL,
 } from "../../../Utilities/api/apiEndpoints";
 import { ERROR_MESSAGE } from "../../../Utilities/constants/constants";
@@ -38,15 +42,7 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
   const { userPersonalizationData } = useSelector(
     (state: any) => state.personalization
   );
-  const {
-    reports,
-    reportsType,
-    operatorsForReport,
-    productsForReport,
-    productTypesForReport,
-    branchesForReport,
-    warehousesForReport,
-  } = useSelector((state: any) => state.reports);
+  const { reports, reportsType } = useSelector((state: any) => state.reports);
   var tempReports: any = [...reports];
   const [decodedToken, setDecodedToken]: any = useState(null);
   const authToken = localStorage.getItem("token");
@@ -101,7 +97,7 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
       });
     });
     setReportsType(tempReportsTypeList);
-  }, []);
+  }, [reportsType]);
 
   const [reportPeriodList, setReportPeriodType] = useState([]);
 
@@ -148,6 +144,21 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
   const [
     vehiclesForOperationActivitiesReportsList,
     setvehiclesForOperationActivitiesReportsList,
+  ]: any = useState([]);
+
+  // Complaint Reports
+
+  const [complaintTypesForReportsList, setComplaintTypesForReportsList]: any =
+    useState([]);
+  const [
+    complaintPriorityForReportsList,
+    setComplaintPriorityForReportsList,
+  ]: any = useState([]);
+  const [complaintStatusForReportsList, setComplaintStatusForReportsList]: any =
+    useState([]);
+  const [
+    complaintDepartmentForReportsList,
+    setComplaintDepartmentForReportsList,
   ]: any = useState([]);
 
   useEffect(() => {
@@ -289,6 +300,74 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
         }
       });
     }
+    if (type == "/get-complaint-report") {
+      getAll({ url: GET_ALL_ACTIVE_TYPES }).then((data: any) => {
+        if (data?.success) {
+          // dispatch(setProductTypesForReport(data.data));
+          setComplaintTypesForReportsList(
+            data?.data?.map((item: any, index: any) => {
+              return {
+                value: `${item?._id}`,
+                label: `${item?.title}`,
+              };
+            })
+          );
+        } else {
+          setComplaintTypesForReportsList([]);
+        }
+      });
+      getAll({ url: GET_COMPLAINT_CENTER_STATUS_TYPES }).then((data: any) => {
+        if (data?.success) {
+          // dispatch(setProductTypesForReport(data.data));
+          setComplaintStatusForReportsList(
+            data?.data?.internalComplaintStatusTypes.map(
+              (item: any, index: any) => {
+                return {
+                  value: `${item?.value}`,
+                  label: `${item?.title}`,
+                };
+              }
+            )
+          );
+        } else {
+          setComplaintStatusForReportsList([]);
+        }
+      });
+      getAll({ url: GET_COMPLAINT_CENTER_PRIORITY_STATUS }).then(
+        (data: any) => {
+          if (data?.success) {
+            // dispatch(setProductTypesForReport(data.data));
+            setComplaintPriorityForReportsList(
+              data?.data?.internalComplaintPriortyStatusTypes.map(
+                (item: any, index: any) => {
+                  return {
+                    value: `${item?.value}`,
+                    label: `${item?.title}`,
+                  };
+                }
+              )
+            );
+          } else {
+            setComplaintPriorityForReportsList([]);
+          }
+        }
+      );
+      getAll({ url: GET_ALL_ACTIVE_SUB_ROLES }).then((data: any) => {
+        if (data?.success) {
+          // dispatch(setProductTypesForReport(data.data));
+          setComplaintDepartmentForReportsList(
+            data?.data?.map((item: any, index: any) => {
+              return {
+                value: `${item?._id}`,
+                label: `${item?.name}`,
+              };
+            })
+          );
+        } else {
+          setComplaintDepartmentForReportsList([]);
+        }
+      });
+    }
   }, [type]);
 
   const [reportType, setReportType] = useState<string>("");
@@ -314,6 +393,11 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
   const [vehicleIdForActivities, setVehicleIdForActivities]: any = useState("");
   const [activityStatus, setActivityStatus]: any = useState("");
   const [activityType, setActivityType]: any = useState("");
+
+  const [complaintType, setComplaintType]: any = useState("");
+  const [complaintStatus, setComplaintStatus]: any = useState("");
+  const [complaintPriority, setComplaintPriority]: any = useState("");
+  const [complaintDepartment, setComplaintDepartment]: any = useState("");
 
   useEffect(() => {
     if (customerForVehicleOperationActivity !== "") {
@@ -350,8 +434,8 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
       const report = {
         id: 1,
         title: data.title,
-        startDate: startDate,
-        endDate: endDate,
+        toDate: endDate,
+        fromDate: startDate,
       };
 
       try {
@@ -466,7 +550,6 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
       setLoading(false);
     }
   };
-
   const addReportForOperatorPerformance: SubmitHandler<ReportsType> = async (
     data: any
   ) => {
@@ -574,7 +657,6 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
       setLoading(false);
     }
   };
-
   const addReportForInventoryReport: SubmitHandler<ReportsType> = async (
     data: any
   ) => {
@@ -701,7 +783,6 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
       setLoading(false);
     }
   };
-
   const addReportForSaleInvoices: SubmitHandler<ReportsType> = async (
     data: any
   ) => {
@@ -809,7 +890,6 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
       setLoading(false);
     }
   };
-
   const addReportForPurchaseInvoices: SubmitHandler<ReportsType> = async (
     data: any
   ) => {
@@ -1024,7 +1104,6 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
       setLoading(false);
     }
   };
-
   const addReportForOperationActivity: SubmitHandler<ReportsType> = async (
     data: any
   ) => {
@@ -1241,6 +1320,125 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
       setLoading(false);
     }
   };
+  const addReportForInternalComplaint: SubmitHandler<ReportsType> = async (
+    data: any
+  ) => {
+    setLoading(true);
+    if (
+      data.title !== "" &&
+      startDate !== null &&
+      endDate !== null &&
+      type !== ""
+    ) {
+      const report = {
+        title: data.title,
+        toDate: endDate,
+        fromDate: startDate,
+        status: complaintStatus,
+        priority: complaintPriority,
+        type: complaintType,
+        subRole: complaintDepartment,
+      };
+
+      try {
+        await create(report, {
+          url: `${GET_REPORT_BASE_URL}${type}`,
+        }).then((data: any) => {
+          // console.log("data", data);
+
+          if (!data.success && data.message === ERROR_MESSAGE) {
+            setLoading(false);
+            const yesterday = new Date();
+            yesterday.setDate(yesterday.getDate() - 1); // Subtract one day
+            setStartDate(yesterday.toISOString());
+            // setStartDate(new Date().toISOString());
+            setEndDate(new Date().toISOString());
+            addToggle();
+            setType("Select Type");
+            setComplaintDepartment("");
+            setComplaintPriority("");
+            setComplaintStatus("");
+            setComplaintType("");
+          }
+          if (!data.success) {
+            Swal.fire({
+              text: `${data.message}`,
+              icon: "error",
+              timer: 2000,
+              showConfirmButton: false,
+            });
+            setLoading(false);
+            const yesterday = new Date();
+            yesterday.setDate(yesterday.getDate() - 1); // Subtract one day
+            setStartDate(yesterday.toISOString());
+            // setStartDate(new Date().toISOString());
+            setEndDate(new Date().toISOString());
+            addToggle();
+            setType("Select Type");
+          }
+          if (data.success) {
+            // console.log(data);
+            tempReports.push({
+              type: type,
+              data: {
+                title: report.title,
+                startDate: startDate,
+                endDate: endDate,
+                data: data.data,
+              },
+            });
+
+            // console.log("Reports", reports);
+            dispatch(setReports(tempReports));
+            const yesterday = new Date();
+            yesterday.setDate(yesterday.getDate() - 1); // Subtract one day
+            setStartDate(yesterday.toISOString());
+            // setStartDate(new Date().toISOString());
+            setEndDate(new Date().toISOString());
+            setLoading(false);
+            addToggle();
+            setType("Select Type");
+            setComplaintDepartment("");
+            setComplaintPriority("");
+            setComplaintStatus("");
+            setComplaintType("");
+          }
+        });
+        // Handle successful post creation (e.g., show a success message, redirect, etc.)
+      } catch (error: any) {
+        const yesterday = new Date();
+        yesterday.setDate(yesterday.getDate() - 1); // Subtract one day
+        setStartDate(yesterday.toISOString());
+        // setStartDate(new Date().toISOString());
+        setEndDate(new Date().toISOString());
+        if (data == undefined) {
+          Swal.fire({
+            text: "Failed to create due to connection refused",
+            icon: "error",
+            timer: 2000,
+            showConfirmButton: false,
+          });
+
+          return;
+        }
+        setLoading(false);
+        addToggle();
+        setType("Select Type");
+        setComplaintDepartment("");
+        setComplaintPriority("");
+        setComplaintStatus("");
+        setComplaintType("");
+      }
+    } else {
+      Swal.fire({
+        text: "Required Fields are empty",
+        icon: "info",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+      setLoading(false);
+    }
+  };
 
   const getReport = (data: any) => {
     if (type == "/get-all-alert-events-report") {
@@ -1259,6 +1457,8 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
       addReportForOperationActivity(data);
     } else if (type == "/get-amc-due-report") {
       addReportForAMCDue(data);
+    } else if (type == "/get-complaint-report") {
+      addReportForInternalComplaint(data);
     }
   };
 
@@ -1670,7 +1870,7 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
                         // mode="multiple"
                         showSearch
                         style={{ width: "100%" }}
-                        placeholder="Select Customers"
+                        placeholder="Select Customer"
                         optionFilterProp="children"
                         filterOption={(input: any, option: any) =>
                           (option?.P ?? "").includes(input)
@@ -1684,7 +1884,44 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
                           setCustomerForVehicleOperationActivity(e);
                         }}
                         options={customersForOperationActivitiesReportsList}
-                        value={customerForVehicleOperationActivity}
+                        value={
+                          customerForVehicleOperationActivity !== ""
+                            ? customerForVehicleOperationActivity
+                            : null
+                        }
+                      />
+                    </Col>
+                  </FormGroup>
+                ) : type == "/get-complaint-report" ? (
+                  <FormGroup
+                    className="col-md-6 create-group"
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                    }}
+                  >
+                    <div>Complaint Type:</div>
+                    <Col md={8}>
+                      <Select
+                        // mode="multiple"
+                        showSearch
+                        style={{ width: "100%" }}
+                        placeholder="Select Type"
+                        optionFilterProp="children"
+                        filterOption={(input: any, option: any) =>
+                          (option?.P ?? "").includes(input)
+                        }
+                        filterSort={(optionA: any, optionB: any) =>
+                          (optionA?.P ?? "")
+                            .toLowerCase()
+                            .localeCompare((optionB?.P ?? "").toLowerCase())
+                        }
+                        onChange={(e: any, options) => {
+                          setComplaintType(e);
+                        }}
+                        options={complaintTypesForReportsList}
+                        value={complaintType !== "" ? complaintType : null}
                       />
                     </Col>
                   </FormGroup>
@@ -1787,6 +2024,38 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
                       />
                     </Col>
                   </FormGroup>
+                ) : type == "/get-complaint-report" ? (
+                  <FormGroup
+                    className="col-md-6 create-group"
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                    }}
+                  >
+                    <div>Department:</div>
+                    <Col md={8}>
+                      <Select
+                        // mode="multiple"
+                        showSearch
+                        style={{ width: "100%" }}
+                        placeholder="Select Department"
+                        optionFilterProp="children"
+                        filterOption={(input: any, option: any) =>
+                          (option?.P ?? "").includes(input)
+                        }
+                        filterSort={(optionA: any, optionB: any) =>
+                          (optionA?.P ?? "")
+                            .toLowerCase()
+                            .localeCompare((optionB?.P ?? "").toLowerCase())
+                        }
+                        onChange={(e: any, options) => {
+                          setComplaintDepartment(e);
+                        }}
+                        options={complaintDepartmentForReportsList}
+                      />
+                    </Col>
+                  </FormGroup>
                 ) : (
                   <div></div>
                 )}
@@ -1840,21 +2109,6 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
                           setBranch(e);
                         }}
                         options={branchesForReportsList}
-                        // onChange={(e: any, options) => {
-                        //   console.log("e", e);
-
-                        //   if (e.includes("All")) {
-                        //     setBranch(
-                        //       branchesForReportsList.map((b: any) => b.value)
-                        //     );
-                        //   } else {
-                        //     setBranch(e);
-                        //   }
-                        // }}
-                        // options={[
-                        //   { value: "All", label: "All" }, // Adding the 'All' option
-                        //   ...branchesForReportsList,
-                        // ]}
                       />
                     </Col>
                   </FormGroup>
@@ -1903,6 +2157,38 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
                             value: "CUSTOMER_DATA_UPDATE",
                           },
                         ]}
+                      />
+                    </Col>
+                  </FormGroup>
+                ) : type == "/get-complaint-report" ? (
+                  <FormGroup
+                    className="col-md-6 create-group"
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                    }}
+                  >
+                    <div>Status:</div>
+                    <Col md={8}>
+                      <Select
+                        // mode="multiple"
+                        showSearch
+                        style={{ width: "100%" }}
+                        placeholder="Select Status"
+                        optionFilterProp="children"
+                        filterOption={(input: any, option: any) =>
+                          (option?.P ?? "").includes(input)
+                        }
+                        filterSort={(optionA: any, optionB: any) =>
+                          (optionA?.P ?? "")
+                            .toLowerCase()
+                            .localeCompare((optionB?.P ?? "").toLowerCase())
+                        }
+                        onChange={(e: any, options) => {
+                          setComplaintStatus(e);
+                        }}
+                        options={complaintStatusForReportsList}
                       />
                     </Col>
                   </FormGroup>
@@ -1999,6 +2285,38 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
                             label: "Completed",
                           },
                         ]}
+                      />
+                    </Col>
+                  </FormGroup>
+                ) : type == "/get-complaint-report" ? (
+                  <FormGroup
+                    className="col-md-6 create-group"
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                    }}
+                  >
+                    <div>Priority:</div>
+                    <Col md={8}>
+                      <Select
+                        // mode="multiple"
+                        showSearch
+                        style={{ width: "100%" }}
+                        placeholder="Select Priority"
+                        optionFilterProp="children"
+                        filterOption={(input: any, option: any) =>
+                          (option?.P ?? "").includes(input)
+                        }
+                        filterSort={(optionA: any, optionB: any) =>
+                          (optionA?.P ?? "")
+                            .toLowerCase()
+                            .localeCompare((optionB?.P ?? "").toLowerCase())
+                        }
+                        onChange={(e: any, options) => {
+                          setComplaintPriority(e);
+                        }}
+                        options={complaintPriorityForReportsList}
                       />
                     </Col>
                   </FormGroup>

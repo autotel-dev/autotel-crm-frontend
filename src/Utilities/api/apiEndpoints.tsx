@@ -1,11 +1,18 @@
-export const API_BASE_URL = "http://192.168.18.122:81/api/v1";
-export const IMAGE_BASE_URL = "http://192.168.18.122:81";
+// export const API_BASE_URL = "http://192.168.18.122:81/api/v1";
+// export const IMAGE_BASE_URL = "http://192.168.18.122:81";
+
+export const API_BASE_URL = "http://163.61.91.52:81/api/v1";
+export const IMAGE_BASE_URL = "http://163.61.91.52:81";
 
 // export const API_BASE_URL = "https://crmapi.autotel.pk/api/v1";
 // export const IMAGE_BASE_URL = "https://crmapi.autotel.pk";
 
 // export const API_BASE_URL = "http://localhost:81/api/v1";
 // export const IMAGE_BASE_URL = "http://localhost:81";
+
+export const IMAGE_BASE_URL_RENTAL = `${API_BASE_URL}/company/server-credentials/test-connection`;
+export const GET_DEVICES_PARSER_RENTAL = `${API_BASE_URL}/company/server-credentials/test-connection`;
+export const TODAY_VEHICLE_ACTIVITY = `${API_BASE_URL}/company/server-credentials/test-connection`;
 
 // Miscellaneous
 export const TEST_SERVER_CONNECTION = `${API_BASE_URL}/company/server-credentials/test-connection`;
@@ -219,6 +226,8 @@ export const CREATE_SUB_ROLE = `${API_BASE_URL}/sub-role/create-sub-role`;
 export const GET_ALL_SUB_ROLES = `${API_BASE_URL}/sub-role/get-all-sub-roles`;
 export const GET_ALL_ACTIVE_SUB_ROLES = `${API_BASE_URL}/sub-role/get-all-active-sub-roles`;
 export const CHANGE_SUB_ROLE_ACTIVATION_STATUS = `${API_BASE_URL}/sub-role/change-activation-status`;
+export const DELETE_SUB_ROLE = `${API_BASE_URL}/sub-role/delete-sub-role`;
+export const EDIT_SUB_ROLE = `${API_BASE_URL}/sub-role/edit-sub-role`;
 
 // Company -> Warehouses
 export const CREATE_WAREHOUSE = `${API_BASE_URL}/setup/warehouse/create-warehouse`;
@@ -354,6 +363,15 @@ export const DELETE_TAX = `${API_BASE_URL}/accounts/tax/delete-tax`;
 
 // Company -> Modules - SAIO-Central -Accounts - Accounting Chart
 export const GET_ACCOUNTING_CHART = `${API_BASE_URL}/accounts/sub-account/get-accounting-chart`;
+export const CREATE_RECEIVE_MONEY = `${API_BASE_URL}/accounts/accounting/receive-money`;
+export const CREATE_MAKE_PAYMENT = `${API_BASE_URL}/accounts/accounting/make-payment`;
+export const GET_CUSTOMER_GENERAL_ACCOUNTS = `${API_BASE_URL}/accounts/accounting/customer-general-accounts`;
+export const GET_VENDOR_GENERAL_ACCOUNTS = `${API_BASE_URL}/accounts/accounting/vendor-general-accounts`;
+export const GET_MAKE_PAYEMENT_TRANSACTIONS = `${API_BASE_URL}/accounts/accounting/get-make-payment-transactions`;
+export const GET_RECEIVE_MONEY_TRANSACTIONS = `${API_BASE_URL}/accounts/accounting/get-recieve-money-transactions`;
+export const GET_ACCOUNT_STATEMENT = `${API_BASE_URL}/accounts/accounting/get-account-statement`;
+export const MAKE_PAYMENT_STATUS_CHANGE = `${API_BASE_URL}/accounts/accounting/update-make-payment-status`;
+export const RECEIVE_MONEY_STATUS_CHANGE = `${API_BASE_URL}/accounts/accounting/update-receive-money-status`;
 
 // Company -> Modules- SAIO - Purchases - Vendor
 export const CREATE_VENDOR = `${API_BASE_URL}/setup/vendor/create-vendor`;
@@ -367,6 +385,8 @@ export const GET_VENDOR_BY_ID = `${API_BASE_URL}/setup/vendor/get-vendor-by-id`;
 export const CREATE_NEW_PURCHASE_INVOICE = `${API_BASE_URL}/purchase-invoice/create-purchase-invoice`;
 export const GET_ALL_PURCHASE_INVOICES = `${API_BASE_URL}/purchase-invoice/get-all-purchase-invoice`;
 export const VALIDATE_SERIALS = `${API_BASE_URL}/purchase-invoice/bulk-validate-serials`;
+export const PURCHASE_INVOICE_STATUS_APPROVED = `${API_BASE_URL}/purchase-invoice/change-purchase-invoice-status`;
+export const SALE_INVOICE_STATUS_APPROVED = `${API_BASE_URL}/sale-invoice/change-sale-invoice-status`;
 
 // Company -> Modules- SAIO - inventory - Products
 export const CREATE_PRODUCT = `${API_BASE_URL}/product/create-product`;

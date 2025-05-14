@@ -261,22 +261,32 @@ const ProductsTable = () => {
     },
   ];
 
+  const { userPermissions } = useSelector(
+    (state: any) => state.userPermissions
+  );
+
+  var saio_inventory = userPermissions.find(
+    (item: any) => item.title === "SAIO Inventory"
+  );
+
   return (
     <div
       className="table-responsive support-table"
       style={{ overflow: "auto", scrollbarWidth: "none" }}
     >
-      <Row>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "end",
-            paddingRight: "25px",
-          }}
-        >
-          <CreateNewProductModal />
-        </div>
-      </Row>
+      {saio_inventory && saio_inventory.create && (
+        <Row>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "end",
+              paddingRight: "25px",
+            }}
+          >
+            <CreateNewProductModal />
+          </div>
+        </Row>
+      )}
       <Row style={{ display: "flex", alignItems: "center" }}>
         <Col sm={12} md={12} lg={12} xl={12}>
           <input

@@ -142,7 +142,7 @@ const Reports = () => {
             parent="Reports"
             title="Reports List"
           />
-          {loading ? (
+          {/* {loading ? (
             <div
               style={{
                 display: "flex",
@@ -189,7 +189,39 @@ const Reports = () => {
                 </Col>
               </Row>
             </Container>
-          )}
+          )} */}
+          <Container fluid>
+            <Row className="project-card">
+              <Col md={12} className="project-list">
+                <Card>
+                  <ReportsListNav dropDownDevices={dropDownDevices} />
+                  <Col md={12}>
+                    <input
+                      className="global-search-field"
+                      type="text"
+                      placeholder="Type to Search.."
+                      value={searchValue}
+                      onChange={(e) => {
+                        // filterCountriess(e);
+                      }}
+                      // style={{
+                      //   backgroundColor: "#f1f1f1",
+                      //   borderRadius: "5px",
+                      //   padding: "15px",
+                      //   margin: "15px",
+                      //   width: "calc(100% - 30px)", // Adjusting width to accommodate padding and margin
+                      //   border: "none",
+                      //   outline: "none", // Removing default border outline
+                      // }}
+                    />
+                  </Col>
+                </Card>
+              </Col>
+              <Col sm={12}>
+                <ReportsList />
+              </Col>
+            </Row>
+          </Container>
         </div>
       )}
     </>

@@ -38,6 +38,7 @@ import BackgroundImage from "../../../assets/Background Image.png";
 
 const ReportsList = () => {
   const { reports } = useSelector((state: any) => state.reports);
+
   // console.log("Reports in list", reports);
 
   const dispatch = useDispatch();
@@ -58,6 +59,22 @@ const ReportsList = () => {
   const [header, setHeader]: any = useState([]);
   const [pdfData, setPdfData] = useState([]);
   const [reportName, setReportName]: any = useState("");
+
+  // Function to convert 24-hour time to 12-hour with AM/PM
+  const convertTo12HourFormat = (timeString: any, serverTime: any) => {
+    const date = new Date(timeString);
+    let hours = serverTime ? date.getHours() - 5 : date.getHours();
+    const minutes = date.getMinutes();
+    const seconds = date.getSeconds();
+    const ampm = hours >= 12 ? "PM" : "AM";
+
+    hours = hours % 12; // Convert to 12-hour format
+    hours = hours ? hours : 12; // Hour 0 should be 12
+    const minutesFormatted = minutes < 10 ? "0" + minutes : minutes;
+    const secondsFormatted = seconds < 10 ? "0" + seconds : seconds;
+
+    return `${hours}:${minutesFormatted}:${secondsFormatted} ${ampm}`;
+  };
 
   const renderTableRows = () => {
     return reports?.map((row: any, index: any) => (
@@ -91,20 +108,20 @@ const ReportsList = () => {
                   RTL: false, // Display the columns from right-to-left (the default value is false)
                 };
 
-                var rowData;
-                var columns;
+                var rowData: any;
+                var columns: any;
                 if (row.type == "/get-all-alert-events-report") {
                   columns = [
                     // { label: "Id", value: "_id" },
-                    { label: "Event Id", value: "eventId" },
-                    { label: "Device Id", value: "deviceId" },
+                    // { label: "Event Id", value: "eventId" },
+                    // { label: "Device Id", value: "deviceId" },
                     { label: "Device Name", value: "deviceName" },
                     { label: "Latitude", value: "latitude" },
                     { label: "Longitude", value: "longitude" },
                     { label: "Speed", value: "speed" },
                     { label: "Type", value: "type" },
                     { label: "Message", value: "message" },
-                    { label: "User Role", value: "userRole" },
+                    { label: "User", value: "user" },
                     {
                       label: "Completion Response",
                       value: "completionResponse",
@@ -113,16 +130,37 @@ const ReportsList = () => {
                       label: "Alert Event Close Date",
                       value: "alertEventCloseDate",
                     },
-                    { label: "Created At", value: "createdAt" },
+                    { label: "Server Time", value: "serverTime" },
                   ];
                   rowData = row.data.data.reportData.map(
                     (item: any, index: any) => {
                       return {
                         ...item,
-                        createdAt: `${item?.createdAt.slice(
+                        alertEventCloseDate: `${
+                          item?.alertEventCloseDate == "Not Completed"
+                            ? "Not Completed"
+                            : item?.alertEventCloseDate.slice(0, 10)
+                        }, ${
+                          item?.alertEventCloseDate == "Not Completed"
+                            ? ""
+                            : convertTo12HourFormat(
+                                item?.alertEventCloseDate,
+                                false
+                              )
+                        }`,
+                        serverTime: `${item?.serverDateAndTime.slice(
                           0,
                           10
-                        )}, ${item?.createdAt.slice(11, 19)}`,
+                        )}, ${convertTo12HourFormat(
+                          item?.serverDateAndTime,
+                          true
+                        )}`,
+                        user:
+                          item?.alertEventCloseDate == "Not Completed"
+                            ? item?.assignedTo?.fullName
+                            : item?.completedByUser?.fullName,
+                        latitude: Number(item.latitude).toFixed(7),
+                        longitude: Number(item.longitude).toFixed(7),
                       };
                     }
                   );
@@ -138,11 +176,14 @@ const ReportsList = () => {
                     { label: "Rating", value: "rating" },
                   ];
 
-                  rowData = row.data.data.map((item: any, index: any) => {
-                    return {
-                      ...item,
-                    };
-                  });
+                  rowData =
+                    row.data.data.length == 0
+                      ? []
+                      : row.data.data.map((item: any, index: any) => {
+                          return {
+                            ...item,
+                          };
+                        });
                 } else if (row.type == "/get-inventory-report") {
                   columns = [
                     // { label: "Id", value: "_id" },
@@ -155,19 +196,22 @@ const ReportsList = () => {
                     { label: "Branch", value: "branch" },
                     { label: "Warehouse", value: "warehouse" },
                   ];
-                  rowData = row.data.data.map((item: any, index: any) => {
-                    return {
-                      // _id: item._id,
-                      productName: item.productName,
-                      productType: item.productType,
-                      serialNumber: item.serialNumber,
-                      sku: item.sku,
-                      user: item.user.fullName,
-                      company: item.company.fullName,
-                      branch: item.branch.name,
-                      warehouse: item.warehouse.name,
-                    };
-                  });
+                  rowData =
+                    row.data.data.length == 0
+                      ? []
+                      : row.data.data.map((item: any, index: any) => {
+                          return {
+                            // _id: item._id,
+                            productName: item.productName,
+                            productType: item.productType,
+                            serialNumber: item.serialNumber,
+                            sku: item.sku,
+                            user: item.user.fullName,
+                            company: item.company.fullName,
+                            branch: item.branch.name,
+                            warehouse: item.warehouse.name,
+                          };
+                        });
                 } else if (row.type == "/get-sale-invoice-report") {
                   columns = [
                     // { label: "Id", value: "_id" },
@@ -180,19 +224,22 @@ const ReportsList = () => {
                     { label: "Net Amount", value: "netAmount" },
                     { label: "Gross Amount", value: "grossAmount" },
                   ];
-                  rowData = row.data.data.map((item: any, index: any) => {
-                    return {
-                      // _id: item._id,
-                      customerName: item.customerName,
-                      address: item.address,
-                      comments: item.comments,
-                      date: item.invoiceDate,
-                      dueDate: item.invoiceDueDate,
-                      status: item.status,
-                      netAmount: item.netAmount,
-                      grossAmount: item.grossAmount,
-                    };
-                  });
+                  rowData =
+                    row.data.data.length == 0
+                      ? []
+                      : row.data.data.map((item: any, index: any) => {
+                          return {
+                            // _id: item._id,
+                            customerName: item.customerName,
+                            address: item.address,
+                            comments: item.comments,
+                            date: item.invoiceDate,
+                            dueDate: item.invoiceDueDate,
+                            status: item.status,
+                            netAmount: item.netAmount,
+                            grossAmount: item.grossAmount,
+                          };
+                        });
                 } else if (row.type == "/get-purchase-invoice-report") {
                   columns = [
                     // { label: "Id", value: "_id" },
@@ -205,19 +252,22 @@ const ReportsList = () => {
                     { label: "Shipping Details", value: "shippingCharges" },
                     { label: "Net Amount", value: "netAmount" },
                   ];
-                  rowData = row.data.data.map((item: any, index: any) => {
-                    return {
-                      // _id: item._id,
-                      vendor: item.vendor.vendorName,
-                      branch: item.branch.name,
-                      warehouse: item.warehouse.name,
-                      date: item.invoiceDate,
-                      dueDate: item.invoiceDueDate,
-                      status: item.status,
-                      shippingCharges: item.shippingCharges,
-                      netAmount: item.netAmount,
-                    };
-                  });
+                  rowData =
+                    row.data.data.length == 0
+                      ? []
+                      : row.data.data.map((item: any, index: any) => {
+                          return {
+                            // _id: item._id,
+                            vendor: item.vendor.vendorName,
+                            branch: item.branch.name,
+                            warehouse: item.warehouse.name,
+                            date: item.invoiceDate,
+                            dueDate: item.invoiceDueDate,
+                            status: item.status,
+                            shippingCharges: item.shippingCharges,
+                            netAmount: item.netAmount,
+                          };
+                        });
                 } else if (row.type == "/get-inventory-lifecycle-report") {
                   columns = [
                     // { label: "Id", value: "_id" },
@@ -229,35 +279,38 @@ const ReportsList = () => {
                     { label: "To Customer", value: "toCustomer" },
                     { label: "Installer", value: "installer" },
                   ];
-                  rowData = row.data.data[0].activities.map(
-                    (item: any, index: any) => {
-                      return {
-                        // _id: item._id,
-                        type: formatUnderscoredString(item.activityType),
-                        status: formatUnderscoredString(item.status),
-                        fromVehicle:
-                          item.fromVehicle == null
-                            ? "N/A"
-                            : item?.fromVehicle.registrationNo,
-                        toVehicle:
-                          item.toVehicle == null
-                            ? "N/A"
-                            : item?.toVehicle.registrationNo,
-                        fromCustomer:
-                          item.fromCustomer == null
-                            ? "N/A"
-                            : item?.fromCustomer?.fullName,
-                        toCustomer:
-                          item.toCustomer == null
-                            ? "N/A"
-                            : item?.toCustomer?.fullName,
-                        installer:
-                          item.installer == null
-                            ? "N/A"
-                            : item?.installer?.fullName,
-                      };
-                    }
-                  );
+                  rowData =
+                    row.data.data.length == 0
+                      ? []
+                      : row.data.data[0].activities.map(
+                          (item: any, index: any) => {
+                            return {
+                              // _id: item._id,
+                              type: formatUnderscoredString(item.activityType),
+                              status: formatUnderscoredString(item.status),
+                              fromVehicle:
+                                item.fromVehicle == null
+                                  ? "N/A"
+                                  : item?.fromVehicle.registrationNo,
+                              toVehicle:
+                                item.toVehicle == null
+                                  ? "N/A"
+                                  : item?.toVehicle.registrationNo,
+                              fromCustomer:
+                                item.fromCustomer == null
+                                  ? "N/A"
+                                  : item?.fromCustomer?.fullName,
+                              toCustomer:
+                                item.toCustomer == null
+                                  ? "N/A"
+                                  : item?.toCustomer?.fullName,
+                              installer:
+                                item.installer == null
+                                  ? "N/A"
+                                  : item?.installer?.fullName,
+                            };
+                          }
+                        );
                 } else if (row.type == "/get-activity-report") {
                   columns = [
                     // { label: "Id", value: "_id" },
@@ -269,33 +322,37 @@ const ReportsList = () => {
                     { label: "Installer", value: "installer" },
                     { label: "Remarks", value: "remarks" },
                   ];
-                  rowData = row.data.data.map((item: any, index: any) => {
-                    return {
-                      // _id: item._id,
-                      type: formatUnderscoredString(item.activityType),
-                      status: formatUnderscoredString(item.status),
-                      fromVehicle:
-                        item.fromVehicle == null
-                          ? "N/A"
-                          : item?.fromVehicle.registrationNo,
-                      toVehicle:
-                        item.toVehicle == null
-                          ? "N/A"
-                          : item?.toVehicle.registrationNo,
-                      inventory:
-                        item?.inventoryItems?.length == 0
-                          ? "N/A"
-                          : `${item?.inventoryItems.map(
-                              (inv: any, index: any) => `${inv.serialNumber} | `
-                            )}`,
+                  rowData =
+                    row.data.data.length == 0
+                      ? []
+                      : row.data.data.map((item: any, index: any) => {
+                          return {
+                            // _id: item._id,
+                            type: formatUnderscoredString(item.activityType),
+                            status: formatUnderscoredString(item.status),
+                            fromVehicle:
+                              item.fromVehicle == null
+                                ? "N/A"
+                                : item?.fromVehicle.registrationNo,
+                            toVehicle:
+                              item.toVehicle == null
+                                ? "N/A"
+                                : item?.toVehicle.registrationNo,
+                            inventory:
+                              item?.inventoryItems?.length == 0
+                                ? "N/A"
+                                : `${item?.inventoryItems.map(
+                                    (inv: any, index: any) =>
+                                      `${inv.serialNumber} | `
+                                  )}`,
 
-                      installer:
-                        item.installer == null
-                          ? "N/A"
-                          : item?.installer?.fullName,
-                      remarks: item.remarks == "" ? "N/A" : item?.remarks,
-                    };
-                  });
+                            installer:
+                              item.installer == null
+                                ? "N/A"
+                                : item?.installer?.fullName,
+                            remarks: item.remarks == "" ? "N/A" : item?.remarks,
+                          };
+                        });
                 } else if (row.type == "/get-amc-due-report") {
                   columns = [
                     { label: "Customer", value: "customer" },
@@ -320,13 +377,63 @@ const ReportsList = () => {
                         item.servicePackageDiscountedCharges,
                     };
                   });
+                } else if (row.type == "/get-complaint-report") {
+                  columns = [
+                    { label: "Complaint Id", value: "complaintId" },
+                    { label: "Device Name", value: "deviceName" },
+                    { label: "Description", value: "description" },
+                    { label: "Priorty", value: "priorty" },
+                    {
+                      label: "Status",
+                      value: "status",
+                    },
+                    {
+                      label: "Resolving Date",
+                      value: "resolvingDate",
+                    },
+                    {
+                      label: "Created At",
+                      value: "createdAt",
+                    },
+                  ];
+                  rowData =
+                    row.data.data.length == 0
+                      ? []
+                      : row.data.data.map((item: any, index: any) => {
+                          return {
+                            complaintId: item.complaintId,
+                            deviceName: item?.deviceName,
+                            description: item?.description,
+                            priorty: item?.priorty,
+                            status: item?.status,
+                            resolvingDate: `${
+                              item?.resolvingDate !== null
+                                ? item?.resolvingDate.slice(0, 10)
+                                : "N/A"
+                            }, ${
+                              item?.resolvingDate !== null
+                                ? convertTo12HourFormat(
+                                    item?.resolvingDate,
+                                    true
+                                  )
+                                : ""
+                            }`,
+                            createdAt: `${item?.createdAt.slice(
+                              0,
+                              10
+                            )}, ${convertTo12HourFormat(
+                              item?.createdAt,
+                              true
+                            )}`,
+                          };
+                        });
                 }
 
                 let data = [
                   {
                     sheet: "Sheet 1",
-                    columns: columns || [],
-                    content: rowData || [],
+                    columns: columns.length > 0 ? columns : [],
+                    content: rowData.length > 0 ? rowData : [],
                   },
                 ];
                 handleButtonClick(e, settings, data, index);
@@ -353,15 +460,15 @@ const ReportsList = () => {
                 if (row.type == "/get-all-alert-events-report") {
                   columns = [
                     // { label: "Id", value: "_id" },
-                    { label: "Event Id", value: "eventId" },
-                    { label: "Device Id", value: "deviceId" },
+                    // { label: "Event Id", value: "eventId" },
+                    // { label: "Device Id", value: "deviceId" },
                     { label: "Device Name", value: "deviceName" },
                     { label: "Latitude", value: "latitude" },
                     { label: "Longitude", value: "longitude" },
                     { label: "Speed", value: "speed" },
                     { label: "Type", value: "type" },
                     { label: "Message", value: "message" },
-                    { label: "User Role", value: "userRole" },
+                    { label: "User", value: "user" },
                     {
                       label: "Completion Response",
                       value: "completionResponse",
@@ -370,16 +477,37 @@ const ReportsList = () => {
                       label: "Alert Event Close Date",
                       value: "alertEventCloseDate",
                     },
-                    { label: "Created At", value: "createdAt" },
+                    { label: "Server Time", value: "serverTime" },
                   ];
                   rowData = row.data.data.reportData.map(
                     (item: any, index: any) => {
                       return {
                         ...item,
-                        createdAt: `${item?.createdAt.slice(
+                        alertEventCloseDate: `${
+                          item?.alertEventCloseDate == "Not Completed"
+                            ? "Not Completed"
+                            : item?.alertEventCloseDate.slice(0, 10)
+                        }, ${
+                          item?.alertEventCloseDate == "Not Completed"
+                            ? ""
+                            : convertTo12HourFormat(
+                                item?.alertEventCloseDate,
+                                false
+                              )
+                        }`,
+                        serverTime: `${item?.serverDateAndTime.slice(
                           0,
                           10
-                        )}, ${item?.createdAt.slice(11, 19)}`,
+                        )}, ${convertTo12HourFormat(
+                          item?.serverDateAndTime,
+                          true
+                        )}`,
+                        user:
+                          item?.alertEventCloseDate == "Not Completed"
+                            ? item?.assignedTo?.fullName
+                            : item?.completedByUser?.fullName,
+                        latitude: Number(item.latitude).toFixed(7),
+                        longitude: Number(item.longitude).toFixed(7),
                       };
                     }
                   );
@@ -397,11 +525,14 @@ const ReportsList = () => {
                     { label: "Rating", value: "rating" },
                   ];
 
-                  rowData = row.data.data.map((item: any, index: any) => {
-                    return {
-                      ...item,
-                    };
-                  });
+                  rowData =
+                    row.data.data.length == 0
+                      ? []
+                      : row.data.data.map((item: any, index: any) => {
+                          return {
+                            ...item,
+                          };
+                        });
                   setHeader(columns);
                   setPdfData(rowData);
                 } else if (row.type == "/get-inventory-report") {
@@ -416,19 +547,22 @@ const ReportsList = () => {
                     { label: "Branch", value: "branch" },
                     { label: "Warehouse", value: "warehouse" },
                   ];
-                  rowData = row.data.data.map((item: any, index: any) => {
-                    return {
-                      // _id: item._id,
-                      productName: item.productName,
-                      productType: item.productType,
-                      serialNumber: item.serialNumber,
-                      sku: item.sku,
-                      user: item.user.fullName,
-                      company: item.company.fullName,
-                      branch: item.branch.name,
-                      warehouse: item.warehouse.name,
-                    };
-                  });
+                  rowData =
+                    row.data.data.length == 0
+                      ? []
+                      : row.data.data.map((item: any, index: any) => {
+                          return {
+                            // _id: item._id,
+                            productName: item.productName,
+                            productType: item.productType,
+                            serialNumber: item.serialNumber,
+                            sku: item.sku,
+                            user: item.user.fullName,
+                            company: item.company.fullName,
+                            branch: item.branch.name,
+                            warehouse: item.warehouse.name,
+                          };
+                        });
                   setHeader(columns);
                   setPdfData(rowData);
                 } else if (row.type == "/get-sale-invoice-report") {
@@ -443,19 +577,22 @@ const ReportsList = () => {
                     { label: "Net Amount", value: "netAmount" },
                     { label: "Gross Amount", value: "grossAmount" },
                   ];
-                  rowData = row.data.data.map((item: any, index: any) => {
-                    return {
-                      // _id: item._id,
-                      customerName: item.customerName,
-                      address: item.address,
-                      comments: item.comments,
-                      date: item.invoiceDate,
-                      dueDate: item.invoiceDueDate,
-                      status: item.status,
-                      netAmount: item.netAmount,
-                      grossAmount: item.grossAmount,
-                    };
-                  });
+                  rowData =
+                    row.data.data.length == 0
+                      ? []
+                      : row.data.data.map((item: any, index: any) => {
+                          return {
+                            // _id: item._id,
+                            customerName: item.customerName,
+                            address: item.address,
+                            comments: item.comments,
+                            date: item.invoiceDate,
+                            dueDate: item.invoiceDueDate,
+                            status: item.status,
+                            netAmount: item.netAmount,
+                            grossAmount: item.grossAmount,
+                          };
+                        });
                   setHeader(columns);
                   setPdfData(rowData);
                 } else if (row.type == "/get-purchase-invoice-report") {
@@ -497,35 +634,38 @@ const ReportsList = () => {
                     { label: "To Customer", value: "toCustomer" },
                     { label: "Installer", value: "installer" },
                   ];
-                  rowData = row.data.data[0].activities.map(
-                    (item: any, index: any) => {
-                      return {
-                        // _id: item._id,
-                        type: formatUnderscoredString(item.activityType),
-                        status: formatUnderscoredString(item.status),
-                        fromVehicle:
-                          item.fromVehicle == null
-                            ? "N/A"
-                            : item?.fromVehicle.registrationNo,
-                        toVehicle:
-                          item.toVehicle == null
-                            ? "N/A"
-                            : item?.toVehicle.registrationNo,
-                        fromCustomer:
-                          item.fromCustomer == null
-                            ? "N/A"
-                            : item?.fromCustomer?.fullName,
-                        toCustomer:
-                          item.toCustomer == null
-                            ? "N/A"
-                            : item?.toCustomer?.fullName,
-                        installer:
-                          item.installer == null
-                            ? "N/A"
-                            : item?.installer?.fullName,
-                      };
-                    }
-                  );
+                  rowData =
+                    row.data.data.length == 0
+                      ? []
+                      : row.data.data[0].activities.map(
+                          (item: any, index: any) => {
+                            return {
+                              // _id: item._id,
+                              type: formatUnderscoredString(item.activityType),
+                              status: formatUnderscoredString(item.status),
+                              fromVehicle:
+                                item.fromVehicle == null
+                                  ? "N/A"
+                                  : item?.fromVehicle.registrationNo,
+                              toVehicle:
+                                item.toVehicle == null
+                                  ? "N/A"
+                                  : item?.toVehicle.registrationNo,
+                              fromCustomer:
+                                item.fromCustomer == null
+                                  ? "N/A"
+                                  : item?.fromCustomer?.fullName,
+                              toCustomer:
+                                item.toCustomer == null
+                                  ? "N/A"
+                                  : item?.toCustomer?.fullName,
+                              installer:
+                                item.installer == null
+                                  ? "N/A"
+                                  : item?.installer?.fullName,
+                            };
+                          }
+                        );
                   setHeader(columns);
                   setPdfData(rowData);
                 } else if (row.type == "/get-activity-report") {
@@ -540,33 +680,37 @@ const ReportsList = () => {
                     { label: "Installer", value: "installer" },
                     { label: "Remarks", value: "remarks" },
                   ];
-                  rowData = row.data.data.map((item: any, index: any) => {
-                    return {
-                      // _id: item._id,
-                      type: formatUnderscoredString(item.activityType),
-                      status: formatUnderscoredString(item.status),
-                      fromVehicle:
-                        item.fromVehicle == null
-                          ? "N/A"
-                          : item?.fromVehicle.registrationNo,
-                      toVehicle:
-                        item.toVehicle == null
-                          ? "N/A"
-                          : item?.toVehicle.registrationNo,
-                      inventory:
-                        item?.inventoryItems?.length == 0
-                          ? "N/A"
-                          : `${item?.inventoryItems.map(
-                              (inv: any, index: any) => `${inv.serialNumber} | `
-                            )}`,
+                  rowData =
+                    row.data.data.length == 0
+                      ? []
+                      : row.data.data.map((item: any, index: any) => {
+                          return {
+                            // _id: item._id,
+                            type: formatUnderscoredString(item.activityType),
+                            status: formatUnderscoredString(item.status),
+                            fromVehicle:
+                              item.fromVehicle == null
+                                ? "N/A"
+                                : item?.fromVehicle.registrationNo,
+                            toVehicle:
+                              item.toVehicle == null
+                                ? "N/A"
+                                : item?.toVehicle.registrationNo,
+                            inventory:
+                              item?.inventoryItems?.length == 0
+                                ? "N/A"
+                                : `${item?.inventoryItems.map(
+                                    (inv: any, index: any) =>
+                                      `${inv.serialNumber} | `
+                                  )}`,
 
-                      installer:
-                        item.installer == null
-                          ? "N/A"
-                          : item?.installer?.fullName,
-                      remarks: item.remarks == "" ? "N/A" : item?.remarks,
-                    };
-                  });
+                            installer:
+                              item.installer == null
+                                ? "N/A"
+                                : item?.installer?.fullName,
+                            remarks: item.remarks == "" ? "N/A" : item?.remarks,
+                          };
+                        });
                   setHeader(columns);
                   setPdfData(rowData);
                 } else if (row.type == "/get-amc-due-report") {
@@ -583,16 +727,75 @@ const ReportsList = () => {
                       value: "servicePackageDiscountedCharges",
                     },
                   ];
-                  rowData = row.data.data.map((item: any, index: any) => {
-                    return {
-                      customer: item.customer.fullName,
-                      registrationNo: item.registrationNo,
-                      serviceRenewalDate: item.serviceRenewalDate.slice(0, 10),
-                      servicePackageCharges: item.servicePackageCharges,
-                      servicePackageDiscountedCharges:
-                        item.servicePackageDiscountedCharges,
-                    };
-                  });
+                  rowData =
+                    row.data.data.length == 0
+                      ? []
+                      : row.data.data.map((item: any, index: any) => {
+                          return {
+                            customer: item.customer.fullName,
+                            registrationNo: item.registrationNo,
+                            serviceRenewalDate: item.serviceRenewalDate.slice(
+                              0,
+                              10
+                            ),
+                            servicePackageCharges: item.servicePackageCharges,
+                            servicePackageDiscountedCharges:
+                              item.servicePackageDiscountedCharges,
+                          };
+                        });
+                  setHeader(columns);
+                  setPdfData(rowData);
+                } else if (row.type == "/get-complaint-report") {
+                  columns = [
+                    { label: "Complaint Id", value: "complaintId" },
+                    { label: "Device Name", value: "deviceName" },
+                    { label: "Description", value: "description" },
+                    { label: "Priorty", value: "priorty" },
+                    {
+                      label: "Status",
+                      value: "status",
+                    },
+                    {
+                      label: "Resolving Date",
+                      value: "resolvingDate",
+                    },
+                    {
+                      label: "Created At",
+                      value: "createdAt",
+                    },
+                  ];
+                  rowData =
+                    row.data.data.length == 0
+                      ? []
+                      : row.data.data.map((item: any, index: any) => {
+                          return {
+                            complaintId: item.complaintId,
+                            deviceName: item.deviceName,
+                            description: item.description,
+                            priorty: item.priorty,
+                            status: item.status,
+                            resolvingDate: `${
+                              item?.resolvingDate !== null
+                                ? item?.resolvingDate.slice(0, 10)
+                                : "N/A"
+                            }, ${
+                              item?.resolvingDate !== null
+                                ? convertTo12HourFormat(
+                                    item?.resolvingDate,
+                                    true
+                                  )
+                                : ""
+                            }`,
+                            createdAt: `${item?.createdAt.slice(
+                              0,
+                              10
+                            )}, ${convertTo12HourFormat(
+                              item?.createdAt,
+                              true
+                            )}`,
+                          };
+                        });
+
                   setHeader(columns);
                   setPdfData(rowData);
                 }
@@ -623,15 +826,15 @@ const ReportsList = () => {
                 if (row.type == "/get-all-alert-events-report") {
                   columns = [
                     // { label: "Id", value: "_id" },
-                    { label: "Event Id", value: "eventId" },
-                    { label: "Device Id", value: "deviceId" },
+                    // { label: "Event Id", value: "eventId" },
+                    // { label: "Device Id", value: "deviceId" },
                     { label: "Device Name", value: "deviceName" },
                     { label: "Latitude", value: "latitude" },
                     { label: "Longitude", value: "longitude" },
                     { label: "Speed", value: "speed" },
                     { label: "Type", value: "type" },
                     { label: "Message", value: "message" },
-                    { label: "User Role", value: "userRole" },
+                    { label: "User", value: "user" },
                     {
                       label: "Completion Response",
                       value: "completionResponse",
@@ -640,16 +843,37 @@ const ReportsList = () => {
                       label: "Alert Event Close Date",
                       value: "alertEventCloseDate",
                     },
-                    { label: "Created At", value: "createdAt" },
+                    { label: "Server Time", value: "serverTime" },
                   ];
                   rowData = row.data.data.reportData.map(
                     (item: any, index: any) => {
                       return {
                         ...item,
-                        createdAt: `${item?.createdAt.slice(
+                        alertEventCloseDate: `${
+                          item?.alertEventCloseDate == "Not Completed"
+                            ? "Not Completed"
+                            : item?.alertEventCloseDate.slice(0, 10)
+                        }, ${
+                          item?.alertEventCloseDate == "Not Completed"
+                            ? ""
+                            : convertTo12HourFormat(
+                                item?.alertEventCloseDate,
+                                false
+                              )
+                        }`,
+                        serverTime: `${item?.serverDateAndTime.slice(
                           0,
                           10
-                        )}, ${item?.createdAt.slice(11, 19)}`,
+                        )}, ${convertTo12HourFormat(
+                          item?.serverDateAndTime,
+                          true
+                        )}`,
+                        user:
+                          item?.alertEventCloseDate == "Not Completed"
+                            ? item?.assignedTo?.fullName
+                            : item?.completedByUser?.fullName,
+                        latitude: Number(item.latitude).toFixed(7),
+                        longitude: Number(item.longitude).toFixed(7),
                       };
                     }
                   );
@@ -767,35 +991,38 @@ const ReportsList = () => {
                     { label: "To Customer", value: "toCustomer" },
                     { label: "Installer", value: "installer" },
                   ];
-                  rowData = row.data.data[0].activities.map(
-                    (item: any, index: any) => {
-                      return {
-                        // _id: item._id,
-                        type: formatUnderscoredString(item.activityType),
-                        status: formatUnderscoredString(item.status),
-                        fromVehicle:
-                          item.fromVehicle == null
-                            ? "N/A"
-                            : item?.fromVehicle.registrationNo,
-                        toVehicle:
-                          item.toVehicle == null
-                            ? "N/A"
-                            : item?.toVehicle.registrationNo,
-                        fromCustomer:
-                          item.fromCustomer == null
-                            ? "N/A"
-                            : item?.fromCustomer?.fullName,
-                        toCustomer:
-                          item.toCustomer == null
-                            ? "N/A"
-                            : item?.toCustomer?.fullName,
-                        installer:
-                          item.installer == null
-                            ? "N/A"
-                            : item?.installer?.fullName,
-                      };
-                    }
-                  );
+                  rowData =
+                    row.data.data.length == 0
+                      ? []
+                      : row.data.data[0].activities.map(
+                          (item: any, index: any) => {
+                            return {
+                              // _id: item._id,
+                              type: formatUnderscoredString(item.activityType),
+                              status: formatUnderscoredString(item.status),
+                              fromVehicle:
+                                item.fromVehicle == null
+                                  ? "N/A"
+                                  : item?.fromVehicle.registrationNo,
+                              toVehicle:
+                                item.toVehicle == null
+                                  ? "N/A"
+                                  : item?.toVehicle.registrationNo,
+                              fromCustomer:
+                                item.fromCustomer == null
+                                  ? "N/A"
+                                  : item?.fromCustomer?.fullName,
+                              toCustomer:
+                                item.toCustomer == null
+                                  ? "N/A"
+                                  : item?.toCustomer?.fullName,
+                              installer:
+                                item.installer == null
+                                  ? "N/A"
+                                  : item?.installer?.fullName,
+                            };
+                          }
+                        );
 
                   setHeader(columns);
                   setPdfData(rowData);
@@ -864,6 +1091,59 @@ const ReportsList = () => {
                         item.servicePackageDiscountedCharges,
                     };
                   });
+                  setHeader(columns);
+                  setPdfData(rowData);
+                } else if (row.type == "/get-complaint-report") {
+                  columns = [
+                    { label: "Complaint Id", value: "complaintId" },
+                    { label: "Device Name", value: "deviceName" },
+                    { label: "Description", value: "description" },
+                    { label: "Priorty", value: "priorty" },
+                    {
+                      label: "Status",
+                      value: "status",
+                    },
+                    {
+                      label: "Resolving Date",
+                      value: "resolvingDate",
+                    },
+                    {
+                      label: "Created At",
+                      value: "createdAt",
+                    },
+                  ];
+                  rowData =
+                    row.data.data.length == 0
+                      ? []
+                      : row.data.data.map((item: any, index: any) => {
+                          return {
+                            complaintId: item.complaintId,
+                            deviceName: item.deviceName,
+                            description: item.description,
+                            priorty: item.priorty,
+                            status: item.status,
+                            resolvingDate: `${
+                              item?.resolvingDate !== null
+                                ? item?.resolvingDate.slice(0, 10)
+                                : "N/A"
+                            }, ${
+                              item?.resolvingDate !== null
+                                ? convertTo12HourFormat(
+                                    item?.resolvingDate,
+                                    true
+                                  )
+                                : ""
+                            }`,
+                            createdAt: `${item?.createdAt.slice(
+                              0,
+                              10
+                            )}, ${convertTo12HourFormat(
+                              item?.createdAt,
+                              true
+                            )}`,
+                          };
+                        });
+
                   setHeader(columns);
                   setPdfData(rowData);
                 }

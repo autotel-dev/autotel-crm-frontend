@@ -47,7 +47,7 @@ const Sales = () => {
   const [component, setComponent] = useState("Sale Leads");
 
   useEffect(() => {
-    console.log(location.pathname.split("/"));
+    // console.log(location.pathname.split("/"));
     const arr = location.pathname.split("/");
     const route = arr[arr.length - 1];
 

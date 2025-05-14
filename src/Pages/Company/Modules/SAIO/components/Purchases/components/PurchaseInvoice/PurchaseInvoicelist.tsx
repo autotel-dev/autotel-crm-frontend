@@ -93,13 +93,14 @@ const PurchaseInvoiceTable = ({}) => {
         )
         .map((item: any, index: any) => ({
           index: index + 1,
-          id: item?._id,
+          _id: item?._id,
           vendor: item?.vendor?.vendorName,
           reference: item?.reference,
           comments: item?.comments,
           productsDetails: item?.productsDetails,
           shippingCharges: item?.shippingCharges,
           netAmount: item?.netAmount,
+          remainingBalance: item?.remainingBalance,
           purchaseInvoiceId: item?.purchaseInvoiceId,
           user: item?.user?.fullName,
           branch: item?.branch,
@@ -184,52 +185,62 @@ const PurchaseInvoiceTable = ({}) => {
     });
   }, []);
 
+  const { userPermissions } = useSelector(
+    (state: any) => state.userPermissions
+  );
+
+  var saio_purchases = userPermissions.find(
+    (item: any) => item.title === "SAIO Purchases"
+  );
+
   return (
     <div
       className="table-responsive support-table"
       style={{ overflow: "auto", scrollbarWidth: "none" }}
     >
-      <Row>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "end",
-            paddingRight: "25px",
-          }}
-        >
-          <button
-            className={`btn ${
-              userPersonalizationData?.buttonsAndBarsColor == null
-                ? "btn-primary"
-                : ""
-            }`}
+      {saio_purchases && saio_purchases.create && (
+        <Row>
+          <div
             style={{
-              color: "white",
-              backgroundColor: `${
-                userPersonalizationData !== null &&
-                userPersonalizationData?.buttonsAndBarsColor
-              }`,
               display: "flex",
-              alignItems: "center",
-            }}
-            onClick={() => {
-              dispatch(setPurchaseInvoice(null));
-              navigate(
-                `${process.env.PUBLIC_URL}/company/modules/saio-central/purchases/purchase-invoices/create-invoice`
-              );
-              // setIscreateNewPurchaseInvoice(true)
+              justifyContent: "end",
+              paddingRight: "25px",
             }}
           >
-            <PlusCircle
-              size={18}
+            <button
+              className={`btn ${
+                userPersonalizationData?.buttonsAndBarsColor == null
+                  ? "btn-primary"
+                  : ""
+              }`}
               style={{
-                marginRight: "5px",
+                color: "white",
+                backgroundColor: `${
+                  userPersonalizationData !== null &&
+                  userPersonalizationData?.buttonsAndBarsColor
+                }`,
+                display: "flex",
+                alignItems: "center",
               }}
-            />
-            Create New Purchase Invoice
-          </button>
-        </div>
-      </Row>
+              onClick={() => {
+                dispatch(setPurchaseInvoice(null));
+                navigate(
+                  `${process.env.PUBLIC_URL}/company/modules/saio-central/purchases/purchase-invoices/create-invoice`
+                );
+                // setIscreateNewPurchaseInvoice(true)
+              }}
+            >
+              <PlusCircle
+                size={18}
+                style={{
+                  marginRight: "5px",
+                }}
+              />
+              Create New Purchase Invoice
+            </button>
+          </div>
+        </Row>
+      )}
       <Row style={{ display: "flex", alignItems: "center" }}>
         <Col sm={12} md={12} lg={12} xl={12}>
           <input
@@ -279,66 +290,18 @@ const PurchaseInvoiceTable = ({}) => {
       ) : (
         <DataTable
           columns={[
+            // {
+            //   name: "Date",
+            //   selector: (row: any) => row["invoiceDate"],
+            //   sortable: true,
+            //   // center: true,
+            //   width: "15%", // Set the width for this column
+            // },
             {
-              name: (
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "start",
-                    paddingLeft: "0px ",
-                  }}
-                >
-                  {selectedRows.length > 0 && (
-                    <FontAwesomeIcon
-                      icon={faTrashAlt}
-                      onClick={() => {
-                        // var alertData = {
-                        //     title: "Are you sure?",
-                        //     text: "Once deleted, you will not be able to recover this ",
-                        // };
-                        // const type = "vendorType";
-                        // deleteAlert(
-                        //     alertData,
-                        //     selectedRows[0]._id,
-                        //     type,
-                        //     dispatch
-                        // ).then(() => {
-                        //     // console.log("empty");
-                        //     setSelectedRows([]);
-                        // });
-                      }}
-                      style={{
-                        cursor: "pointer",
-                        color: "red",
-                        marginRight: "20px",
-                        paddingLeft: "0px",
-                      }}
-                    />
-                  )}
-                  S.No.
-                </div>
-              ),
-              selector: (row: any) => row.index,
+              name: "Due Date",
+              selector: (row: any) => row["invoiceDueDate"],
               sortable: true,
-              width: "7%",
-              // center: true,
-              cell: (row: any) => (
-                <div
-                  style={{
-                    paddingLeft: "10px",
-                    borderRadius: "5px",
-                  }}
-                >
-                  {row.index}
-                </div>
-              ),
-            },
-            {
-              name: "Date",
-              selector: (row: any) => row["invoiceDate"],
-              sortable: true,
-              // center: true,
+              center: true,
               width: "15%", // Set the width for this column
             },
             {
@@ -353,7 +316,7 @@ const PurchaseInvoiceTable = ({}) => {
               selector: (row: any) => row["status"],
               sortable: true,
               // center: true,
-              width: "8%", // Set the width for this column
+              width: "12%", // Set the width for this column
               cell: (row: any) => (
                 <div
                   style={{
@@ -380,19 +343,13 @@ const PurchaseInvoiceTable = ({}) => {
                 </div>
               ),
             },
-            {
-              name: "User",
-              selector: (row: any) => row["user"],
-              sortable: true,
-              // center: true,
-              width: "12%",
-            },
+
             {
               name: "Vendor",
               selector: (row: any) => row.vendor,
               sortable: true,
               // center: true,
-              width: "12%", // Set the width for this column
+              width: "15%", // Set the width for this column
             },
 
             {
@@ -400,16 +357,30 @@ const PurchaseInvoiceTable = ({}) => {
               selector: (row: any) => row["netAmount"],
               sortable: true,
               // center: true,
-              width: "8%", // Set the width for this column
+              width: "10%", // Set the width for this column
+            },
+            {
+              name: "Adjusted",
+              selector: (row: any) =>
+                row["netAmount"] - row["remainingBalance"] == row["netAmount"]
+                  ? 0
+                  : row["netAmount"] - row["remainingBalance"],
+              sortable: true,
+              // center: true,
+              width: "10%",
+            },
+            {
+              name: "Remaining",
+              selector: (row: any) =>
+                row["remainingBalance"] == 0 &&
+                row["netAmount"] - row["remainingBalance"] == row["netAmount"]
+                  ? row["netAmount"]
+                  : row["remainingBalance"],
+              sortable: true,
+              // center: true,
+              width: "10%",
             },
 
-            {
-              name: "Due Date",
-              selector: (row: any) => row["invoiceDueDate"],
-              sortable: true,
-              center: true,
-              width: "15%", // Set the width for this column
-            },
             //         {
             //             name: "Actions",
             //             selector: (row: any) => row["actions"],

@@ -28,6 +28,7 @@ import { setKilledDevices } from "../../../ReaduxToolkit/Reducer/AlertsSlice";
 import Loader from "../../Utilities/Loader/Loader";
 import SendCommand from "../../Company/Modules/ControlRoom/Analytics/components/SendCommand";
 import Swal from "sweetalert2";
+import { GET_ALL_KILLED_DEVICES } from "../../../Utilities/api/apiEndpoints";
 
 interface PropsTypes {
   fromDate: any;
@@ -74,7 +75,7 @@ const KilledVehicles: React.FC<PropsTypes> = ({ fromDate, toDate }) => {
     "Last Packet",
     "Latitude",
     "Longitude",
-    "Address",
+    "User",
     "Server",
     "Sent Command Time",
     "Is Killed",
@@ -84,6 +85,23 @@ const KilledVehicles: React.FC<PropsTypes> = ({ fromDate, toDate }) => {
   const containerRef = useRef(null);
 
   const [deviceData, setDeviceData] = useState("");
+
+  useEffect(() => {
+    getAll({ url: `${GET_ALL_KILLED_DEVICES}?type=all` }).then((data: any) => {
+      // // console.log("api call --- >", data);
+
+      if (data !== undefined) {
+        if (data.success) {
+          // // console.log("length --- >", data.data);
+          dispatch(setKilledDevices(data.data));
+        }
+        if (!data.success) {
+          // // // console.log("length --- >", data.data);
+          dispatch(setKilledDevices([]));
+        }
+      }
+    });
+  }, []);
   useEffect(() => {
     if (killedDevices.length !== 0) {
       const updatedDataList = killedDevices.slice(0, 12).map((device: any) => {
@@ -102,6 +120,8 @@ const KilledVehicles: React.FC<PropsTypes> = ({ fromDate, toDate }) => {
 
       setDataList(updatedDataList);
       // // // console.log("dataList", dataList);
+    } else {
+      setDataList([]);
     }
   }, [killedDevices, devices]);
 
@@ -403,12 +423,13 @@ const KilledVehicles: React.FC<PropsTypes> = ({ fromDate, toDate }) => {
                               </td>
                               <td style={{ width: "8%" }}>{data.latitude}</td>
                               <td style={{ width: "8%" }}>{data.longitude}</td>
-                              <td style={{ width: "8%" }}>
-                                {data.address == undefined ||
+                              <td style={{ width: "10%" }}>
+                                {/* {data.address == undefined ||
                                 data.address === "" ||
                                 data.address == null
                                   ? "N/A"
-                                  : data.address}
+                                  : data.address} */}
+                                {data?.user?.fullName}
                               </td>
                               <td style={{ width: "10%" }}>
                                 {data?.server?.companyName}

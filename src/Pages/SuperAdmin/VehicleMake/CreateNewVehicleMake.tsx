@@ -17,7 +17,10 @@ import {
   setInActiveActiveVehiclesMake,
 } from "../../../ReaduxToolkit/Reducer/VehicleMakeSlice";
 import Swal from "sweetalert2";
-import { CREATE_VEHICLE_MAKE, GET_ALL_VEHICLES_MAKE } from "../../../Utilities/api/apiEndpoints";
+import {
+  CREATE_VEHICLE_MAKE,
+  GET_ALL_VEHICLES_MAKE,
+} from "../../../Utilities/api/apiEndpoints";
 import { ERROR_MESSAGE } from "../../../Utilities/constants/constants";
 import { setColView } from "../../../ReaduxToolkit/Reducer/FilterSlice";
 
@@ -55,10 +58,7 @@ const CreateNewVehicleMake = () => {
         await create(vehicleMake, { url: CREATE_VEHICLE_MAKE }).then(
           (data: any) => {
             if (data !== undefined) {
-              if (
-                !data.success &&
-                data.message === ERROR_MESSAGE
-              ) {
+              if (!data.success && data.message === ERROR_MESSAGE) {
                 setLoading(false);
                 setAddModal(false);
                 reset({
@@ -86,32 +86,30 @@ const CreateNewVehicleMake = () => {
                   name: "",
                 });
                 dispatch(setVehicleMakeStart());
-                getAll({ url: GET_ALL_VEHICLES_MAKE }).then(
-                  (data: any) => {
-                    // console.log("api call --- >", data);
-                    if (data == undefined) {
-                      Swal.fire({
-                        text: "Failed to fetch due to connection refused",
-                        icon: "error",
-                        timer: 2000,
-                        showConfirmButton: false,
-                      });
-                      dispatch(setInActiveActiveVehiclesMake("All"));
-                      dispatch(setVehicleMake([]));
-                      dispatch(setFilterVehiclesMake([]));
-                      dispatch(setVehicleMakeEnd());
-                      return;
-                    }
+                getAll({ url: GET_ALL_VEHICLES_MAKE }).then((data: any) => {
+                  // console.log("api call --- >", data);
+                  if (data == undefined) {
+                    Swal.fire({
+                      text: "Failed to fetch due to connection refused",
+                      icon: "error",
+                      timer: 2000,
+                      showConfirmButton: false,
+                    });
+                    dispatch(setInActiveActiveVehiclesMake("All"));
+                    dispatch(setVehicleMake([]));
+                    dispatch(setFilterVehiclesMake([]));
                     dispatch(setVehicleMakeEnd());
-                    if (data !== undefined) {
-                      if (data.success) {
-                        // console.log("hhg");
-                        dispatch(setVehicleMake(data.data));
-                        dispatch(setFilterVehiclesMake(data.data));
-                      }
+                    return;
+                  }
+                  dispatch(setVehicleMakeEnd());
+                  if (data !== undefined) {
+                    if (data.success) {
+                      // console.log("hhg");
+                      dispatch(setVehicleMake(data.data));
+                      dispatch(setFilterVehiclesMake(data.data));
                     }
                   }
-                );
+                });
               }
             }
           }
@@ -143,7 +141,9 @@ const CreateNewVehicleMake = () => {
       <div className="text-end">
         <button
           className={`btn ${
-            userPersonalizationData?.buttonsAndBarsColor == null ? "btn-primary" : ""
+            userPersonalizationData?.buttonsAndBarsColor == null
+              ? "btn-primary"
+              : ""
           }`}
           style={{
             color: "white",
@@ -159,7 +159,7 @@ const CreateNewVehicleMake = () => {
         </button>
         <Modal isOpen={addModal} toggle={addToggle} size="md" centered>
           <div className="modal-header">
-            <H4 className="modal-title">Add Country</H4>
+            <H4 className="modal-title">Add Vehicle Make</H4>
             <Button
               color="transprant"
               className="btn-close"

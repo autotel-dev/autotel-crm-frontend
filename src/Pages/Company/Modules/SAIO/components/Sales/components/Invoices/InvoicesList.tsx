@@ -220,75 +220,29 @@ const SaleInvoiceTable = ({}) => {
         <DataTable
           columns={[
             {
-              name: (
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "start",
-                    paddingLeft: "0px ",
-                  }}
-                >
-                  {selectedRows.length > 0 && (
-                    <FontAwesomeIcon
-                      icon={faTrashAlt}
-                      onClick={() => {}}
-                      style={{
-                        cursor: "pointer",
-                        color: "red",
-                        marginRight: "20px",
-                        paddingLeft: "0px",
-                      }}
-                    />
-                  )}
-                  S.No.
-                </div>
-              ),
-              selector: (row: any) => row.index,
+              name: "Due Date",
+              selector: (row: any) => row["invoiceDueDate"],
               sortable: true,
-              width: "7%",
-
-              cell: (row: any) => (
-                <div
-                  style={{
-                    paddingLeft: "10px",
-                    borderRadius: "5px",
-                  }}
-                >
-                  {row.index}
-                </div>
-              ),
+              center: true,
+              width: "15%", // Set the width for this column
             },
             {
-              name: "Date",
-              selector: (row: any) => row["invoiceDate"],
+              name: "Invoice Id",
+              selector: (row: any) => `S-INV-${row?.index}`,
               sortable: true,
-
-              width: "15%",
-            },
-            {
-              name: "ID",
-              selector: (row: any) => row.index,
-              sortable: true,
-              width: "10%",
-              cell: (row: any) => (
-                <div
-                  style={{
-                    borderRadius: "5px",
-                  }}
-                >
-                  S-INV - {row.index}
-                </div>
-              ),
+              // center: true,
+              width: "12%", // Set the width for this column
             },
             {
               name: "Status",
               selector: (row: any) => row["status"],
               sortable: true,
-              width: "10%",
+              // center: true,
+              width: "12%", // Set the width for this column
               cell: (row: any) => (
                 <div
                   style={{
+                    width: "80%",
                     textAlign: "center",
                     padding: "5px",
                     borderRadius: "5px",
@@ -296,7 +250,14 @@ const SaleInvoiceTable = ({}) => {
                       row.status === "DRAFT"
                         ? "rgba(0, 0, 255, 0.3)"
                         : "rgba(0, 255, 0, 0.3)",
-
+                    // color:
+                    //   row.status === "NEW"
+                    //     ? "blue"
+                    //     : row.status === "IN_PROGRESS"
+                    //     ? "orange"
+                    //     : row.status === "PENDING"
+                    //     ? "red"
+                    //     : "green",
                     color: "black",
                   }}
                 >
@@ -304,56 +265,63 @@ const SaleInvoiceTable = ({}) => {
                 </div>
               ),
             },
-            {
-              name: "User",
-              selector: (row: any) =>
-                `${
-                  row.user !== null || row?.user !== undefined
-                    ? row?.user?.fullName
-                    : "N/A"
-                }`,
-              sortable: true,
-              width: "12%",
-            },
+
             {
               name: "Customer",
-              selector: (row: any) => row?.customerName,
+              selector: (row: any) => row.customerName,
               sortable: true,
-
-              width: "12%",
+              // center: true,
+              width: "15%", // Set the width for this column
             },
 
             {
               name: "Amount",
-              selector: (row: any) => row["grossAmount"],
+              selector: (row: any) => row["netAmount"],
               sortable: true,
-
-              width: "8%",
+              // center: true,
+              width: "10%", // Set the width for this column
             },
-
             {
-              name: "Due Date",
-              selector: (row: any) => row["invoiceDueDate"],
+              name: "Adjusted",
+              selector: (row: any) =>
+                row["netAmount"] - row["remainingBalance"] == row["netAmount"]
+                  ? 0
+                  : row["netAmount"] - row["remainingBalance"],
               sortable: true,
-              center: true,
-              width: "15%",
+              // center: true,
+              width: "10%",
+            },
+            {
+              name: "Remaining",
+              selector: (row: any) =>
+                row["remainingBalance"] == 0 &&
+                row["netAmount"] - row["remainingBalance"] == row["netAmount"]
+                  ? row["netAmount"]
+                  : row["remainingBalance"],
+              sortable: true,
+              // center: true,
+              width: "10%",
             },
           ]}
           data={data}
+          // striped={true}
           pagination
           selectableRows
-          onRowClicked={handleRowClicked}
+          // onSelectedRowsChange={handleRowSelected}
+          onRowClicked={handleRowClicked} // Pass the event handler for row clicks
           clearSelectedRows={toggleDelete}
           style={{
             cursor: "pointer",
           }}
-          className="custom-data-table"
+          className="custom-data-table" // Add a class to your DataTable for styling
+          // You can add more props as needed
           customStyles={{
             rows: {
               style: {
                 cursor: "pointer",
-                transition: "background-color 0.2s",
+                transition: "background-color 0.2s", // Smooth transition for background color change
                 "&:hover": {
+                  // Define hover style
                   backgroundColor: `rgba(${rgbColor.r},${rgbColor.g},${rgbColor.b},0.2)`,
                 },
               },

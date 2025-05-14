@@ -974,7 +974,7 @@ const General = () => {
                       style={{
                         overflowY: "scroll",
                         overflowX: "auto",
-                        maxHeight: "calc(38vh - 20px)", // Subtract scrollbar width from max height
+                        maxHeight: "34vh", // Subtract scrollbar width from max height
                         WebkitOverflowScrolling: "touch", // Enable momentum scrolling on iOS
                         scrollbarWidth: "thin", // Specify scrollbar width
                         WebkitBorderRadius: "5px", // For WebKit browsers (Chrome, Safari)

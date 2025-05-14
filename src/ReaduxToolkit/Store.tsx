@@ -64,6 +64,11 @@ import SaleInvoiceSlice from "./Reducer/SaleInvoiceSlice";
 import NRSlice from "./Reducer/NRSlice";
 import SalesDashboardSlice from "./Reducer/SalesDashboardSlice";
 import CompanyServicePackageSlice from "./Reducer/CompanyServicePackageSlice";
+import MakePaymentSlice from "./Reducer/MakePaymentSlice";
+import ReceiveMoneySlice from "./Reducer/ReceiveMoneySlice";
+import CustomerLedgerSlice from "./Reducer/CustomerLedgerSlice";
+import VendorLedgerSlice from "./Reducer/VendorLedgerSlice";
+import CompanyLedgerSlice from "./Reducer/CompanyLedgerSlice";
 
 const Store = configureStore({
   reducer: {
@@ -132,6 +137,11 @@ const Store = configureStore({
     nrReport: NRSlice,
     salesDashboard: SalesDashboardSlice,
     companyServicePackages: CompanyServicePackageSlice,
+    makePayments: MakePaymentSlice,
+    receiveMoneys: ReceiveMoneySlice,
+    customerLedgers: CustomerLedgerSlice,
+    vendorLedgers: VendorLedgerSlice,
+    companyLedgers: CompanyLedgerSlice,
   },
 });
 

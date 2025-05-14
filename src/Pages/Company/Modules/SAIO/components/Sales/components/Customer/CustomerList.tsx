@@ -96,51 +96,57 @@ const CustomerTable = () => {
       `${process.env.PUBLIC_URL}/company/modules/saio-central/sales/customers/${row.id}`
     );
   };
+
+  var saio_sales = userPermissions.find(
+    (item: any) => item.title === "SAIO Sales"
+  );
   return (
     <div
       className="table-responsive support-table"
       style={{ overflow: "auto", scrollbarWidth: "none" }}
     >
-      <Row>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "end",
-            paddingRight: "25px",
-          }}
-        >
-          <button
-            className={`btn ${
-              userPersonalizationData?.buttonsAndBarsColor == null
-                ? "btn-primary"
-                : ""
-            }`}
+      {saio_sales && saio_sales.create && (
+        <Row>
+          <div
             style={{
-              color: "white",
-              backgroundColor: `${
-                userPersonalizationData !== null &&
-                userPersonalizationData?.buttonsAndBarsColor
-              }`,
               display: "flex",
-              alignItems: "center",
-            }}
-            onClick={() => {
-              dispatch(setCustomer(null));
-              navigate(
-                `${process.env.PUBLIC_URL}/company/modules/saio-central/sales/customers/create-customer`
-              );
+              justifyContent: "end",
+              paddingRight: "25px",
             }}
           >
-            <PlusCircle
-              size={18}
+            <button
+              className={`btn ${
+                userPersonalizationData?.buttonsAndBarsColor == null
+                  ? "btn-primary"
+                  : ""
+              }`}
               style={{
-                marginRight: "5px",
+                color: "white",
+                backgroundColor: `${
+                  userPersonalizationData !== null &&
+                  userPersonalizationData?.buttonsAndBarsColor
+                }`,
+                display: "flex",
+                alignItems: "center",
               }}
-            />
-            Create New Customer
-          </button>
-        </div>
-      </Row>
+              onClick={() => {
+                dispatch(setCustomer(null));
+                navigate(
+                  `${process.env.PUBLIC_URL}/company/modules/saio-central/sales/customers/create-customer`
+                );
+              }}
+            >
+              <PlusCircle
+                size={18}
+                style={{
+                  marginRight: "5px",
+                }}
+              />
+              Create New Customer
+            </button>
+          </div>
+        </Row>
+      )}
       <Row style={{ display: "flex", alignItems: "center" }}>
         <Col sm={12} md={12} lg={12} xl={12}>
           <input

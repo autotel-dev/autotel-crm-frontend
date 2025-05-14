@@ -1,17 +1,11 @@
 import { Card, CardBody, Col, Container, Row } from "reactstrap";
 import Breadcrumbs from "../../../../CommonElements/Breadcrumbs/Breadcrumbs";
-import { support } from "../../../../utils/Constant";
-import CommonHeader from "../../../../Common/CommonHeader";
-import SupportList from "./ComplainList";
-import SupportTable from "./ComplainTable";
+
 import { useEffect, useState } from "react";
 import Skeleton from "../../../Utilities/Skeleton/Skeleton";
 import { getAll } from "../../../../Utilities/api";
 import {
-  setBugReports,
   setIsConnected,
-  setPriorityStatuses,
-  setStatuses,
   setSupportStatistics,
 } from "../../../../ReaduxToolkit/Reducer/SupportSlice";
 import { useDispatch, useSelector } from "react-redux";

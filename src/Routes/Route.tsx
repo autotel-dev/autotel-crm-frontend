@@ -55,6 +55,8 @@ import Currencies from "../Pages/SuperAdmin/Currencies/Currencies";
 import Languages from "../Pages/SuperAdmin/Languages/Languages";
 import SAIOCentralLayout from "../Pages/Company/Modules/SAIO/SAIOCentralLayout";
 import ServicePackages from "../Pages/Company/Packages/Packages";
+import MonitoringForSingleVehicle from "../Pages/Company/Modules/MonitoringForSingleVehicle/MonitoringForSingleVehicle";
+import Playback from "../Pages/Company/Modules/Playback/Playback";
 
 const routes = [
   // dashboard routes
@@ -382,6 +384,27 @@ const routes = [
     permissionValue: "Branches",
   },
   {
+    path: `${process.env.PUBLIC_URL}/company/setup/complain-types`,
+    Component: <ComplainType />,
+    allowedUserRoles: [ROLES.COMPANY],
+    isProtected: true,
+    permissionValue: "ComplainTypes",
+  },
+  {
+    path: `${process.env.PUBLIC_URL}/company/setup/vehicle-make`,
+    Component: <VehiclesMake />,
+    allowedUserRoles: [ROLES.COMPANY],
+    isProtected: true,
+    permissionValue: "VehiclesMake",
+  },
+  {
+    path: `${process.env.PUBLIC_URL}/company/setup/vehicle-model`,
+    Component: <VehiclesModel />,
+    allowedUserRoles: [ROLES.COMPANY],
+    isProtected: true,
+    permissionValue: "VehiclesModel",
+  },
+  {
     path: `${process.env.PUBLIC_URL}/company/setup/email-gateway`,
     Component: <EmailGateway />,
     allowedUserRoles: [ROLES.COMPANY],
@@ -423,6 +446,20 @@ const routes = [
   {
     path: `${process.env.PUBLIC_URL}/company/modules/monitoring`,
     Component: <Monitoring />,
+    isProtected: true,
+    allowedUserRoles: [ROLES.COMPANY],
+    permissionValue: "Monitoring",
+  },
+  {
+    path: `${process.env.PUBLIC_URL}/company/modules/monitoring-for-single-vehicle`,
+    Component: <MonitoringForSingleVehicle />,
+    isProtected: true,
+    allowedUserRoles: [ROLES.COMPANY],
+    permissionValue: "Monitoring",
+  },
+  {
+    path: `${process.env.PUBLIC_URL}/company/modules/monitoring/playback`,
+    Component: <Playback />,
     isProtected: true,
     allowedUserRoles: [ROLES.COMPANY],
     permissionValue: "Monitoring",
@@ -525,6 +562,14 @@ const routes = [
   {
     path: `${process.env.PUBLIC_URL}/operator/modules/complain-center/complainDetails/:complaintId`,
     Component: <ComplainDetails />,
+  },
+  {
+    path: `${process.env.PUBLIC_URL}/operator/modules/saio-central`,
+    Component: <SAIOCentralLayout />,
+    isProtected: true,
+    allowedUserRoles: [ROLES.OPERATOR],
+    permissionValue: "SAIO Central",
+    isLayout: true,
   },
 
   {

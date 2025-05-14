@@ -12,6 +12,7 @@ const initialState = {
   expandedDevice: null,
   isConnected: true,
   item: null,
+  selectedSingleDevice: {},
 };
 
 const MonitoringSlice = createSlice({

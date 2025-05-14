@@ -26,7 +26,7 @@ const AssignedAlerts = () => {
     "Alert",
     "Type",
     "Message",
-    "Address",
+    "Server Time",
     "Completion Response",
   ];
   const { userPersonalizationData } = useSelector(
@@ -223,7 +223,37 @@ const AssignedAlerts = () => {
                           </td>
                           <td style={{ width: "15%" }}>{data.type}</td>
                           <td style={{ width: "20%" }}>{data.message}</td>
-                          <td
+
+                          <td style={{ width: "15%" }}>
+                            <div style={{ fontSize: "10px" }}>
+                              {data.serverDateAndTime.slice(0, 10)}
+                            </div>
+
+                            <div style={{ fontSize: "10px" }}>
+                              {(() => {
+                                // Extract the time part from the ISO string
+                                const timeStr = data.serverDateAndTime.slice(
+                                  11,
+                                  19
+                                ); // Get the time part "HH:MM:SS"
+
+                                // Convert to 12-hour format with AM/PM
+                                const hours24 = parseInt(timeStr.slice(0, 2)); // Get the hours (0-23)
+                                const minutes = timeStr.slice(3, 5); // Get the minutes (00-59)
+                                const seconds = timeStr.slice(6, 8); // Get the seconds (00-59)
+
+                                // Determine AM or PM
+                                const period = hours24 >= 12 ? "PM" : "AM";
+
+                                // Convert to 12-hour format
+                                const hours12 = hours24 % 12 || 12; // Convert 0 to 12 (midnight), 13-23 to 1-11 PM
+
+                                // Format time in 12-hour format with AM/PM
+                                return `${hours12}:${minutes}:${seconds} ${period}`;
+                              })()}
+                            </div>
+                          </td>
+                          {/* <td
                             id="addressCompletedAlerts"
                             style={{ width: "20%" }}
                           >
@@ -242,7 +272,7 @@ const AssignedAlerts = () => {
                               <PopoverHeader>Address</PopoverHeader>
                               <PopoverBody>{data.address}</PopoverBody>
                             </UncontrolledPopover>
-                          )}
+                          )} */}
                           <td style={{ width: "20%" }}>
                             {data.completionResponse}
                           </td>

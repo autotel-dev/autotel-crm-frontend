@@ -69,7 +69,7 @@ const ActivityTypesTable: React.FC<ActivityTypesTableProps> = ({
     { label: "Yesterday", value: "Yesterday" },
     { label: "1 Week", value: "1 Week" },
     { label: "1 Month", value: "1 Month" },
-    { label: "Custom", value: "Custom" },
+    // { label: "Custom", value: "Custom" },
   ];
 
   return (
@@ -89,10 +89,7 @@ const ActivityTypesTable: React.FC<ActivityTypesTableProps> = ({
                 }}
               >
                 <H4 className="m-0">
-                  {formatUnderscoredString(
-                    operationActivitiesData?.activityType
-                  )}{" "}
-                  Activites
+                  {formatUnderscoredString(activityType)} Activites
                 </H4>
                 <div
                   style={{
@@ -164,15 +161,15 @@ const ActivityTypesTable: React.FC<ActivityTypesTableProps> = ({
                         setFromDate(startDate);
                         setToDate(endDate);
                       }
-                      if (e == "Custom") {
-                        setSelectedFilter("Custom");
-                        addToggle();
-                      }
+                      // if (e == "Custom") {
+                      //   setSelectedFilter("Custom");
+                      //   addToggle();
+                      // }
                     }}
                     options={daysFilter}
                   />
 
-                  <Modal
+                  {/* <Modal
                     isOpen={addModal}
                     toggle={addToggle}
                     size="md"
@@ -206,7 +203,6 @@ const ActivityTypesTable: React.FC<ActivityTypesTableProps> = ({
                                   setFromDate(
                                     new Date(e.target.value).toISOString()
                                   );
-                                  // console.log("e", e.target.value);
                                 }}
                               />
                             </Col>
@@ -224,7 +220,6 @@ const ActivityTypesTable: React.FC<ActivityTypesTableProps> = ({
                                 type="date"
                                 value={toDate.slice(0, 10)}
                                 onChange={(e) => {
-                                  // console.log(e.target.value);
                                   setToDate(
                                     new Date(e.target.value).toISOString()
                                   );
@@ -242,7 +237,6 @@ const ActivityTypesTable: React.FC<ActivityTypesTableProps> = ({
                           }}
                         >
                           <Button
-                            //   disabled={generalloading ? true : false}
                             color="secondary"
                             onClick={(e) => {
                               e.preventDefault();
@@ -252,47 +246,13 @@ const ActivityTypesTable: React.FC<ActivityTypesTableProps> = ({
                             Cancel
                           </Button>
                           &nbsp;&nbsp;
-                          <Button
-                            color="primary"
-                            className="me-1"
-                            //   onClick={(e) => {
-                            //     e.preventDefault();
-                            //     getAll({
-                            //       url: `${GET_OPERATOR_PERFORMANCE}?fromDate=${fromDate}&toDate=${toDate}`,
-                            //     }).then((data: any) => {
-                            //       toggleDropdown(e);
-                            //       // console.log("api call --- >", data);
-                            //       if (data !== undefined) {
-                            //         if (data.success) {
-                            //           // // console.log("length --- >", data.data);
-                            //           dispatch(
-                            //             setOperatorPerformance(
-                            //               data.data
-                            //             )
-                            //           );
-                            //           setGeneralLoading(false);
-                            //           addToggle();
-                            //           // setSelectedFilter("Today");
-                            //         }
-                            //         if (!data.success) {
-                            //           // // // console.log("length --- >", data.data);
-                            //           dispatch(
-                            //             setOperatorPerformance([])
-                            //           );
-                            //           setGeneralLoading(false);
-                            //           addToggle();
-                            //         }
-                            //       }
-                            //     });
-                            //   }}
-                          >
+                          <Button color="primary" className="me-1">
                             Set
-                            {/* {generalloading ? "Loading ..." : `Set`} */}
                           </Button>
                         </div>
                       </form>
                     </ModalBody>
-                  </Modal>
+                  </Modal> */}
                 </div>
               </div>
             </CardHeader>
@@ -316,7 +276,9 @@ const ActivityTypesTable: React.FC<ActivityTypesTableProps> = ({
                 >
                   <P2>
                     Assigned:&nbsp;
-                    {operationActivitiesData?.statuses?.assigned}
+                    {operationActivitiesData !== null
+                      ? operationActivitiesData?.statuses?.assigned
+                      : 0}
                   </P2>
                 </div>
                 <div
@@ -331,7 +293,9 @@ const ActivityTypesTable: React.FC<ActivityTypesTableProps> = ({
                 >
                   <P2>
                     Performed: &nbsp;
-                    {operationActivitiesData?.statuses?.installed}
+                    {operationActivitiesData !== null
+                      ? operationActivitiesData?.statuses?.installed
+                      : 0}
                   </P2>
                 </div>
                 <div
@@ -346,39 +310,27 @@ const ActivityTypesTable: React.FC<ActivityTypesTableProps> = ({
                 >
                   <P2>
                     Completed:&nbsp;
-                    {operationActivitiesData?.statuses?.completed}
+                    {operationActivitiesData !== null
+                      ? operationActivitiesData?.statuses?.completed
+                      : 0}
                   </P2>
                 </div>
               </div>
               <UL
-                className="theme-scrollbar"
-                style={{
-                  overflowY: "scroll",
-                  overflowX: "auto",
-                  maxHeight: "calc(38vh - 20px)", // Subtract scrollbar width from max height
-                  WebkitOverflowScrolling: "touch", // Enable momentum scrolling on iOS
-                  scrollbarWidth: "thin", // Specify scrollbar width
-                  WebkitBorderRadius: "5px", // For WebKit browsers (Chrome, Safari)
-                  MozBorderRadius: "5px", // For Mozilla Firefox
-                  borderRadius: "5px", // For other browsers
-                  scrollbarColor: "lightgray transparent", // Specify scrollbar color
-                }}
+              // className="theme-scrollbar"
+              // style={{
+              //   overflowY: "scroll",
+              //   overflowX: "auto",
+              //   maxHeight: "calc(38vh - 20px)", // Subtract scrollbar width from max height
+              //   WebkitOverflowScrolling: "touch", // Enable momentum scrolling on iOS
+              //   scrollbarWidth: "thin", // Specify scrollbar width
+              //   WebkitBorderRadius: "5px", // For WebKit browsers (Chrome, Safari)
+              //   MozBorderRadius: "5px", // For Mozilla Firefox
+              //   borderRadius: "5px", // For other browsers
+              //   scrollbarColor: "lightgray transparent", // Specify scrollbar color
+              // }}
               >
-                <div
-                  className="table-responsive theme-scrollbar recent-wrapper"
-                  style={{
-                    maxHeight: "50vh",
-                    minHeight: "50vh",
-                    overflowY: "auto",
-                    overflowX: "auto",
-                    WebkitOverflowScrolling: "touch", // Enable momentum scrolling on iOS
-                    scrollbarWidth: "thin", // Specify scrollbar width
-                    WebkitBorderRadius: "5px", // For WebKit browsers (Chrome, Safari)
-                    MozBorderRadius: "5px", // For Mozilla Firefox
-                    borderRadius: "5px", // For other browsers
-                    scrollbarColor: "lightgray transparent", // Specify scrollbar color
-                  }}
-                >
+                <div>
                   <Table className="display order-wrapper" id="recent-order">
                     <thead>
                       <tr>
@@ -387,7 +339,21 @@ const ActivityTypesTable: React.FC<ActivityTypesTableProps> = ({
                         ))}
                       </tr>
                     </thead>
-                    <tbody>
+                    <tbody
+                      className="table-responsive theme-scrollbar recent-wrapper"
+                      style={{
+                        maxHeight: "50vh",
+                        minHeight: "50vh",
+                        overflowY: "auto",
+                        overflowX: "auto",
+                        WebkitOverflowScrolling: "touch", // Enable momentum scrolling on iOS
+                        scrollbarWidth: "thin", // Specify scrollbar width
+                        WebkitBorderRadius: "5px", // For WebKit browsers (Chrome, Safari)
+                        MozBorderRadius: "5px", // For Mozilla Firefox
+                        borderRadius: "5px", // For other browsers
+                        scrollbarColor: "lightgray transparent", // Specify scrollbar color
+                      }}
+                    >
                       {operationActivitiesData?.activities?.map(
                         (data: any, index: any) => (
                           <tr key={index}>

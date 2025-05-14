@@ -111,18 +111,18 @@ const SelectFilterNRDevicesModal: React.FC<PropsTypes> = ({
       ?.filter((item: any) => {
         // Apply the search filter
         const searchMatch =
-          item?.name.toLowerCase().includes(searchValue) ||
-          item?.imei.toLowerCase().includes(searchValue) ||
-          item?.customerInfo?.name.toLowerCase().includes(searchValue) ||
-          item?.object_owner.toLowerCase().includes(searchValue);
+          item?.name?.toLowerCase().includes(searchValue) ||
+          item?.imei?.toLowerCase().includes(searchValue) ||
+          item?.customerInfo?.name?.toLowerCase().includes(searchValue) ||
+          item?.object_owner?.toLowerCase().includes(searchValue);
 
         // Apply the complaint condition based on the 'checked' value
         const complaintMatch =
           checked === "Total"
-            ? item.hasComplaint === true || item.hasComplaint === false
+            ? item?.hasComplaint === true || item?.hasComplaint === false
             : checked === "Pending"
-            ? item.hasComplaint === false
-            : item.hasComplaint === true;
+            ? item?.hasComplaint === false
+            : item?.hasComplaint === true;
 
         // Only include item if it matches both search and complaint condition
         return searchMatch && complaintMatch;
@@ -219,7 +219,7 @@ const SelectFilterNRDevicesModal: React.FC<PropsTypes> = ({
                       height: "36px",
                     }}
                     color="primary"
-                    disabled={loading || data.length > 0}
+                    // disabled={loading || data.length > 0}
                     onClick={() => {
                       if (hour !== "") {
                         getNRData();
@@ -257,20 +257,22 @@ const SelectFilterNRDevicesModal: React.FC<PropsTypes> = ({
                         };
                         const rowData = data.map((item: any, index: any) => {
                           return {
-                            id: item.id,
-                            vehicleName: item.name,
-                            imei: item.imei,
-                            customerName: item.customerInfo.name,
-                            customerMobile1: item.customerInfo.mobile_1,
-                            customerMobile2: item.customerInfo.mobile_1,
-                            objectOwner: item.object_owner,
-                            simNumber: item.sim_number,
-                            lastPacket: item.time,
+                            id: item?.id,
+                            vehicleName: item?.name,
+                            imei: item?.imei,
+                            customerName: item?.customerInfo?.name,
+                            customerMobile1: item?.customerInfo?.mobile_1,
+                            customerMobile2: item?.customerInfo?.mobile_1,
+                            objectOwner: item?.object_owner,
+                            simNumber: item?.sim_number,
+                            lastPacket: item?.time,
                             latestComplaintMessage:
                               item?.latestComplaint !== null
                                 ? item?.latestComplaint?.description
                                 : "N/A",
-                            status: item.hasComplaint ? "Forwarded" : "Pending",
+                            status: item?.hasComplaint
+                              ? "Forwarded"
+                              : "Pending",
                           };
                         });
 

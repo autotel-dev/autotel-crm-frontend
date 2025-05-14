@@ -10,10 +10,15 @@ import SingleProductObject from "./components/SingleProductObject";
 import SelectBranchBox from "./components/SelectBranchBox";
 import SelectWarehouseBox from "./components/SelectWarehouseBox";
 import { SubmitHandler } from "react-hook-form";
-import { create, getAll } from "../../../../../../../../../Utilities/api";
+import {
+  create,
+  getAll,
+  patch,
+} from "../../../../../../../../../Utilities/api";
 import {
   CREATE_NEW_PURCHASE_INVOICE,
   IMAGE_BASE_URL,
+  PURCHASE_INVOICE_STATUS_APPROVED,
 } from "../../../../../../../../../Utilities/api/apiEndpoints";
 import Swal from "sweetalert2";
 import {
@@ -54,30 +59,28 @@ const CreateNewPurchaseInvoice = ({}) => {
     purchaseInvoice !== null ? purchaseInvoice?.vendor : ""
   );
   const [branch, setBranch] = useState(
-    purchaseInvoice !== null
-      ? purchaseInvoice?.branch?._id
-      : branches?.map((branch: any, index: any) =>
-          branch.name == "Default" ? branch._id : ""
-        )
+    purchaseInvoice?.branch?._id ||
+      branches?.find((branch: any) => branch.name === "Default")?._id ||
+      null
   );
+
   const [warehouse, setWarehouse] = useState(
-    purchaseInvoice !== null
-      ? purchaseInvoice?.warehouse?._id
-      : warehouses?.map((warehouse: any, index: any) =>
-          warehouse.name == "Default" ? warehouse._id : ""
-        )
+    purchaseInvoice?.warehouse?._id ||
+      warehouses?.find((warehouse: any) => warehouse.name === "Default")?._id ||
+      null
   );
+
   const [loading, setLoading] = useState(false);
   const [modal, setModal] = useState(false);
 
   const [purchaseInvoiceForm, setPurchaseInvoiceForm] = useState({
     date:
       purchaseInvoice !== null
-        ? purchaseInvoice?.invoiceDate.slice(0, 10)
+        ? purchaseInvoice?.invoiceDate?.slice(0, 10)
         : new Date().toISOString().slice(0, 10),
     dueDate:
       purchaseInvoice !== null
-        ? purchaseInvoice?.invoiceDueDate.slice(0, 10)
+        ? purchaseInvoice?.invoiceDueDate?.slice(0, 10)
         : new Date().toISOString().slice(0, 10),
     reference: purchaseInvoice !== null ? purchaseInvoice?.reference : "",
     comments: purchaseInvoice !== null ? purchaseInvoice?.comments : "",
@@ -256,7 +259,7 @@ const CreateNewPurchaseInvoice = ({}) => {
       border: "1px solid black",
       position: "absolute",
       right: "20",
-      top: "20%",
+      // top: "20%",
     },
     tableRow: {
       flexDirection: "row",
@@ -324,15 +327,22 @@ const CreateNewPurchaseInvoice = ({}) => {
       <Page style={styles2.page}>
         <View style={styles2.section}>
           <View style={{ marginBottom: "10px" }}>
-            <Image
-              src={
-                userPersonalizationData !== null &&
-                userPersonalizationData?.loginPageLogo.url !== ""
-                  ? `${IMAGE_BASE_URL}/${userPersonalizationData?.loginPageLogo.url}`
-                  : BcakgroundImage
-              }
-              style={styles2.image}
-            />
+            {/* <Image
+                         src={
+                           userPersonalizationData !== null &&
+                           userPersonalizationData?.loginPageLogo.url !== ""
+                             ? `${IMAGE_BASE_URL}/${userPersonalizationData?.loginPageLogo.url}`
+                             : BackgroundImage
+                         }
+                         style={styles2.image}
+                       /> */}
+            {userPersonalizationData !== null &&
+              userPersonalizationData?.loginPageLogo.url !== "" && (
+                <Image
+                  src={`${IMAGE_BASE_URL}/${userPersonalizationData?.loginPageLogo.url}`}
+                  style={styles2.image}
+                />
+              )}
           </View>
           <View>
             <Text style={styles2.text}></Text>
@@ -350,9 +360,28 @@ const CreateNewPurchaseInvoice = ({}) => {
               </Text>
             </View>
           </View>
-          <br></br>
-
+          <br />
           <View>
+            <View style={styles2.textRow}>
+              <Text style={styles2.heavyText}></Text>
+              <Text style={styles2.text}></Text>
+            </View>
+          </View>
+          <View>
+            <View style={styles2.textRow}>
+              <Text style={styles2.heavyText}></Text>
+              <Text style={styles2.text}></Text>
+            </View>
+          </View>
+          <br />
+          <View>
+            <View style={styles2.textRow}>
+              <Text style={styles2.heavyText}></Text>
+              <Text style={styles2.text}></Text>
+            </View>
+          </View>
+
+          {/* <View>
             <View style={styles2.textRow}>
               <Text style={styles2.heavyText}>GST No.: </Text>
               <Text style={styles2.text}>GST No</Text>
@@ -365,7 +394,7 @@ const CreateNewPurchaseInvoice = ({}) => {
               <Text style={styles2.heavyText}>Sst No.: </Text>
               <Text style={styles2.text}>SST No</Text>
             </View>
-          </View>
+          </View> */}
           <br></br>
 
           <View style={styles2.textRow}>
@@ -385,7 +414,16 @@ const CreateNewPurchaseInvoice = ({}) => {
           <Text style={styles2.titleText}>Purchase Invoice</Text>
         </View>
 
-        <View style={styles2.tableContainer}>
+        <View
+          style={{
+            ...styles2.tableContainer,
+            top:
+              userPersonalizationData !== null &&
+              userPersonalizationData?.loginPageLogo.url !== ""
+                ? "20%"
+                : "4%",
+          }}
+        >
           <View style={styles2.tableRow}>
             <Text style={styles2.tableCell}>Number</Text>
             <Text style={styles2.tableCell2}>
@@ -467,7 +505,7 @@ const CreateNewPurchaseInvoice = ({}) => {
               paddingVertical: "5px",
             }}
           >
-            <Text style={{ ...styles2.text, flex: 1 }}>Net Amount: </Text>
+            <Text style={{ ...styles2.text, flex: 1 }}>Gross Amount: </Text>
             <Text style={styles2.heavyText}>{netAmount - shippingCharges}</Text>
           </View>
           <br />
@@ -511,7 +549,7 @@ const CreateNewPurchaseInvoice = ({}) => {
               paddingVertical: "3.5px",
             }}
           >
-            <Text style={{ ...styles2.text, flex: 1 }}>Gross Amount: </Text>
+            <Text style={{ ...styles2.text, flex: 1 }}>Net Amount: </Text>
             <Text style={styles2.heavyText}>{netAmount}</Text>
           </View>
         </View>
@@ -520,7 +558,7 @@ const CreateNewPurchaseInvoice = ({}) => {
           <Text style={styles2.titleText}>Comments</Text>
         </View>
 
-        <View style={{ marginVertical: "3px" }}>
+        {/* <View style={{ marginVertical: "3px" }}>
           <Text style={styles2.text}>
             i) Autotel warrants to the original purchaser that tracker shall be
             free from defects in material and workmanship for a period of 12
@@ -543,6 +581,30 @@ const CreateNewPurchaseInvoice = ({}) => {
             be free from defects in material and workmanship for a period of 12
             months from date of activation. If a defect during the warranty
             period, Autoel will repair or replace your tracker free of charge.
+          </Text>
+        </View> */}
+        <View style={{ marginVertical: "3px" }}>
+          <Text style={styles2.text}>
+            i) Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
+            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
+            ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+            aliquip ex ea commodo consequat.
+          </Text>
+        </View>
+        <View style={{ marginVertical: "3px" }}>
+          <Text style={styles2.text}>
+            ii) Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
+            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
+            ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+            aliquip ex ea commodo consequat.
+          </Text>
+        </View>
+        <View style={{ marginVertical: "3px" }}>
+          <Text style={styles2.text}>
+            iii) Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
+            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
+            ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+            aliquip ex ea commodo consequat.
           </Text>
         </View>
       </Page>
@@ -636,11 +698,12 @@ const CreateNewPurchaseInvoice = ({}) => {
           url: CREATE_NEW_PURCHASE_INVOICE,
         });
         if (response.success) {
+          dispatch(setPurchaseInvoice(response.data.PurchaseInvoice));
           dispatch(setPurchaseInvoiceLoading(true));
           setLoading(false);
-          navigate(
-            `${process.env.PUBLIC_URL}/company/modules/saio-central/purchases/purchase-invoices`
-          );
+          // navigate(
+          //   `${process.env.PUBLIC_URL}/company/modules/saio-central/purchases/purchase-invoices`
+          // );
 
           // const purchaseInvoicesResponse: any = await getAll({ url: GET_ALL_PURCHASE_INVOICES });
           // if (purchaseInvoicesResponse.success) {
@@ -680,11 +743,42 @@ const CreateNewPurchaseInvoice = ({}) => {
     }
   };
 
-  // const rowsPerPage = 20;
-  // const pages = [];
-  // for (let i = 0; i < data.length; i += rowsPerPage) {
-  //   pages.push(data.slice(i, i + rowsPerPage));
-  // }
+  const approvedPurchaseInvoice: SubmitHandler<any> = async (data) => {
+    setLoading(true);
+    const receiveMoneyData = {
+      status: "APPROVED",
+    };
+
+    try {
+      const response: any = await patch(receiveMoneyData, {
+        url: `${PURCHASE_INVOICE_STATUS_APPROVED}/${purchaseInvoice._id}`,
+      });
+      if (response.success) {
+        dispatch(setPurchaseInvoiceLoading(true));
+        setLoading(false);
+
+        navigate(
+          `${process.env.PUBLIC_URL}/company/modules/saio-central/purchases/purchase-invoices`
+        );
+      } else {
+        Swal.fire({
+          text: response.message,
+          icon: "error",
+          timer: 2000,
+          showConfirmButton: false,
+        });
+        setLoading(false);
+      }
+    } catch (error: any) {
+      Swal.fire({
+        text: error.message || "Error creating Expense",
+        icon: "error",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+      setLoading(false);
+    }
+  };
 
   const toggleModal = () => setModal(!modal);
 
@@ -821,7 +915,7 @@ const CreateNewPurchaseInvoice = ({}) => {
                       )}
                     </div>
                   )}
-                  {productObjects.length > 0 && (
+                  {productObjects?.length > 0 && (
                     <table
                       style={{ border: "1px solid lightgray", width: "100%" }}
                     >
@@ -878,7 +972,7 @@ const CreateNewPurchaseInvoice = ({}) => {
                         </tr>
                       </thead>
                       <tbody>
-                        {productObjects.map((param, index) => (
+                        {productObjects?.map((param, index) => (
                           <SingleProductObject
                             key={index}
                             param={param}
@@ -971,6 +1065,27 @@ const CreateNewPurchaseInvoice = ({}) => {
                       {loading ? "Loading..." : "Create"}
                     </Button>
                   )}
+
+                  {purchaseInvoice !== null &&
+                    purchaseInvoice.status == "DRAFT" && (
+                      <Button
+                        disabled={loading}
+                        color="primary"
+                        onClick={approvedPurchaseInvoice}
+                      >
+                        {loading ? "Loading..." : "Approve"}
+                      </Button>
+                    )}
+                  {purchaseInvoice !== null &&
+                    purchaseInvoice.status == "APPROVED" && (
+                      <Button
+                        disabled={true}
+                        color="primary"
+                        onClick={() => {}}
+                      >
+                        {loading ? "Loading..." : "Approved"}
+                      </Button>
+                    )}
                   {purchaseInvoice !== null && (
                     <Button color="primary" onClick={toggleModal}>
                       View PDF
