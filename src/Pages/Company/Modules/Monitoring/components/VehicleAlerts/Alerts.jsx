@@ -1,5 +1,12 @@
 import React from "react";
-import { Card, CardBody, CardHeader, ListGroup, ListGroupItem, Button } from "reactstrap";
+import {
+  Card,
+  CardBody,
+  CardHeader,
+  ListGroup,
+  ListGroupItem,
+  Button,
+} from "reactstrap";
 import { FaTimes } from "react-icons/fa";
 
 function Alerts() {
@@ -17,18 +24,18 @@ function Alerts() {
     { id: 10, name: "Vehicle 10", status: "Inactive" },
   ];
 
-  
   const sampleAlerts = [
-    { message: "Ignition On", type: "green" }, 
+    { message: "Ignition On", type: "green" },
     { message: "Crossed 100 Speed", type: "red" },
-    { message: "Low Fuel", type: "blue" }, 
-    { message: "Engine Temperature High", type: "red" }, 
-    { message: "Maintenance Due", type: "blue" }, 
+    { message: "Low Fuel", type: "blue" },
+    { message: "Engine Temperature High", type: "red" },
+    { message: "Maintenance Due", type: "blue" },
   ];
 
   // Generate random alerts for vehicles
   const randomAlerts = vehicleData.map((vehicle) => {
-    const randomAlert = sampleAlerts[Math.floor(Math.random() * sampleAlerts.length)];
+    const randomAlert =
+      sampleAlerts[Math.floor(Math.random() * sampleAlerts.length)];
     return {
       id: vehicle.id,
       name: vehicle.name,
@@ -45,18 +52,42 @@ function Alerts() {
   };
 
   return (
-    <Card style={{ borderRadius: "5px", marginTop: "-35px", width: "382px", marginLeft: "-12px" }}>
-      <CardHeader style={{ padding: "5px 10px" }}>
-        <h6>Alerts</h6>
+    <Card
+      style={{
+        borderRadius: "5px",
+        minWidth: "100%",
+        maxWidth: "100%",
+        backgroundColor: "#99A6A7",
+      }}
+    >
+      <CardHeader style={{ padding: "2px 8px" }}>
+        <h4
+          style={{
+            margin: "10px 0px",
+            fontWeight: "bold",
+            fontSize: "17px",
+            backgroundColor: "#99A6A7",
+          }}
+        >
+          Alerts
+        </h4>
       </CardHeader>
-      <CardBody style={{ height: "252px", overflowY: "auto", padding: "0" ,scrollbarWidth:"none"}}>
+      <CardBody
+        style={{
+          height: "262px",
+          overflowY: "auto",
+          padding: "0",
+          scrollbarWidth: "none",
+          backgroundColor: "#99A6A7",
+        }}
+      >
         <ListGroup flush>
-          {randomAlerts.slice(0, 6).map((alert) => (
+          {randomAlerts.slice(0, 9).map((alert) => (
             <ListGroupItem
               key={alert.id}
               style={{
                 // backgroundColor: alertColors[alert.type],
-                backgroundColor:"transparent",
+                backgroundColor: "transparent",
                 display: "flex",
                 justifyContent: "space-between",
                 alignItems: "center",

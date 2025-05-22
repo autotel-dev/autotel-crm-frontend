@@ -11,10 +11,12 @@ const Topbar = () => {
   // Ensure devices is an array
   const deviceArray = Array.isArray(devices) ? devices : [];
 
-  // Process device data to count statuses
-  const statusCounts = deviceArray.reduce(
-    (acc, { device: { currentStatus } }) => {
-      acc[currentStatus] = (acc[currentStatus] || 0) + 1;
+  const statusCounts = deviceArray?.reduce(
+    (acc, item) => {
+      const currentStatus = item?.currentStatus;
+      if (currentStatus && acc.hasOwnProperty(currentStatus)) {
+        acc[currentStatus] += 1;
+      }
       acc.total += 1;
       return acc;
     },
@@ -27,6 +29,8 @@ const Topbar = () => {
     <Card
       style={{
         borderRadius: "4px",
+        // backgroundColor: "#e5e5e5",
+        backgroundColor: "#99A6A7",
       }}
     >
       <div

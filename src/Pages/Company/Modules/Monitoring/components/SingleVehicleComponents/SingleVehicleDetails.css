@@ -3,12 +3,15 @@
   background-color: transparent;
   color: black;
   border: none;
-  border-bottom: 2px solid black;
+
   border-radius: 0px;
   padding: 5px 10px;
+  font-weight: bold;
   font-size: 12px;
   transition: background-color 0.3s ease, color 0.3s ease;
   /* margin-right: 5px; */
+  border-radius: 5px;
+  min-width: 100px;
 }
 
 /* Hover effect for buttons */
@@ -16,16 +19,19 @@
   color: #35bfbf; /* Change text color to a blue shade */
   /* background-color: rgb(189, 191, 233);  */
   /* Light blue background on hover */
+  border-radius: 5px;
 }
 
 /* Active state style for buttons */
 .custom-button.active {
   background-color: #35bfbf; /* Dark blue background for active state */
   color: white; /* Keep text white when active */
+  border-radius: 5px;
 }
 
 /* Ensure hover works on active buttons */
 .custom-button.active:hover {
   background-color: #35bfbf !important; /* Maintain dark blue when hovering over active button */
   color: white; /* Keep text white on hover */
+  border-radius: 5px;
 }

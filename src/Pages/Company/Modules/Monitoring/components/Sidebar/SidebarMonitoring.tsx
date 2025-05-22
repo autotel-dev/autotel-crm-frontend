@@ -15,9 +15,12 @@ import { useSelector, useDispatch } from "react-redux";
 import { IoMdWifi } from "react-icons/io";
 import {
   setDevices,
+  setSelectedSingleDevice,
   // setSelectedSingleDevice,
 } from "../../../../../../ReaduxToolkit/Reducer/MonitoringSlice";
-import { IMAGE_BASE_URL_RENTAL } from "../../../../../../Utilities/api/apiEndpoints";
+import { IoKeyOutline, IoKey } from "react-icons/io5";
+// import carIcon from "../../../monitoring-assets/car-icon.png";
+import carIcon from "../../../monitoring-assets/carIcon.png";
 
 function SidebarMonitoring() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -30,7 +33,7 @@ function SidebarMonitoring() {
     e.stopPropagation();
 
     const updatedDevices = devices.map((d: any) =>
-      d.device._id === item.device._id ? { ...d, checked: e.target.checked } : d
+      d._id === item._id ? { ...d, checked: e.target.checked } : d
     );
 
     console.log("Updated devices:", updatedDevices);
@@ -38,20 +41,20 @@ function SidebarMonitoring() {
   };
 
   const handleDeviceClick = (device: any) => {
-    // dispatch(setSelectedSingleDevice(device));
+    dispatch(setSelectedSingleDevice(device));
   };
 
   return (
-    <Card style={{ borderRadius: "5px", marginTop: "-35px" }}>
-      <CardHeader style={{ padding: "0px 8px" }}>
+    <Card style={{ borderRadius: "5px", backgroundColor: "#99A6A7" }}>
+      <CardHeader style={{ padding: "0px 8px", backgroundColor: "#99A6A7" }}>
         <h4
           style={{
             margin: "10px 0px",
             fontWeight: "bold",
-            fontSize: "16px",
+            fontSize: "17px",
           }}
         >
-          Vehicles List
+          Vehicles
         </h4>
         <Form>
           <FormGroup>
@@ -73,20 +76,21 @@ function SidebarMonitoring() {
       <CardBody
         className="social-status filter-cards-view"
         style={{
-          maxHeight: "66.6vh",
-          minHeight: "63vh",
+          maxHeight: "64.2vh",
+          minHeight: "64.2vh",
           overflowY: "auto",
           scrollbarWidth: "none",
           margin: "0px",
           padding: "0px 8px",
         }}
       >
-        {devices.length > 0 ? (
+        {devices && devices.length > 0 ? (
           devices.map(
             (item: any) =>
-              item.vehicle?.vehicleModel.name
+              (item.vehicleInfo?.model?.name
                 ?.toLowerCase()
-                .includes(searchTerm.toLowerCase()) && (
+                .includes(searchTerm.toLowerCase()) ||
+                item.vehicleInfo?.model == null) && (
                 <div
                   key={item.id}
                   style={{ display: "flex", alignItems: "center" }}
@@ -112,19 +116,20 @@ function SidebarMonitoring() {
                       transition: "background-color 0.3s",
                     }}
                     onMouseEnter={(e) =>
-                      (e.currentTarget.style.backgroundColor = "#3949ab")
+                      (e.currentTarget.style.backgroundColor = "lightGray")
                     }
                     onMouseLeave={(e) =>
                       (e.currentTarget.style.backgroundColor = "transparent")
                     }
                     onClick={() => handleDeviceClick(item)}
                   >
-                    <img
+                    {/* <img
                       className="img-30 rounded-circle m-r-15"
                       style={{ display: "flex", alignItems: "center" }}
                       src={`${IMAGE_BASE_URL_RENTAL}${item?.vehicle?.vehicleIcon?.vehicleImage3D}`}
                       alt="Vehicle"
-                    />
+                    /> */}
+
                     <Media body>
                       <div
                         style={{
@@ -133,15 +138,36 @@ function SidebarMonitoring() {
                           justifyContent: "space-between",
                         }}
                       >
-                        <div>
-                          <span
-                            style={{ fontSize: "11px" }}
-                            className="f-w-700 d-block"
-                          >
-                            {item.vehicle?.vehicleModel.name || "N/A"}
-                          </span>
-                          <div className="d-block" style={{ fontSize: "8px" }}>
-                            {item.vehicle?.deviceName || "N/A"}
+                        <div
+                          style={{
+                            display: "flex",
+                            gap: "6px",
+                            alignItems: "center",
+                          }}
+                        >
+                          <img
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              width: "20px",
+                              height: "20px",
+                            }}
+                            src={carIcon}
+                            alt="Vehicle"
+                          />
+                          <div>
+                            <span
+                              style={{ fontSize: "14px", fontWeight: "bols" }}
+                              className="f-w-700 d-block"
+                            >
+                              {item?.vehicleInfo?.registrationNo || "N/A"}
+                            </span>
+                            <div
+                              className="d-block"
+                              style={{ fontSize: "9px" }}
+                            >
+                              {item?.vehicleInfo?.model?.name || "N/A"}
+                            </div>
                           </div>
                         </div>
 
@@ -149,7 +175,7 @@ function SidebarMonitoring() {
                           style={{
                             display: "flex",
                             alignItems: "center",
-                            gap: "5px",
+                            gap: "6px",
                           }}
                         >
                           <div
@@ -160,9 +186,11 @@ function SidebarMonitoring() {
                             }}
                           >
                             <div style={{ fontSize: "11.5px" }}>
-                              {item.device.speed}
+                              {item?.speed > 0
+                                ? Number(item?.speed).toFixed(2)
+                                : item?.speed}
                             </div>
-                            <div style={{ fontSize: "8.5px" }}>km/h</div>
+                            <div style={{ fontSize: "9px" }}>km/h</div>
                           </div>
                           <div
                             style={{
@@ -171,13 +199,13 @@ function SidebarMonitoring() {
                               alignItems: "center",
                             }}
                           >
-                            {item.device.basicInfo.ignition === true ? (
-                              <IoMdWifi color="green" size={15} />
+                            {item?.basicInfo?.ignition === true ? (
+                              <IoKey color="green" size={16} />
                             ) : (
-                              <IoMdWifi color="red" size={15} />
+                              <IoKey color="red" size={16} />
                             )}
 
-                            <div style={{ fontSize: "8.5px" }}>IGN</div>
+                            <div style={{ fontSize: "9px" }}>IGN</div>
                           </div>
                           <div
                             style={{
@@ -186,8 +214,8 @@ function SidebarMonitoring() {
                               alignItems: "center",
                             }}
                           >
-                            <IoMdWifi color="yellow" size={15} />
-                            <div style={{ fontSize: "8.5px" }}>GPS</div>
+                            <IoMdWifi color="red" size={16} />
+                            <div style={{ fontSize: "9px" }}>GPS</div>
                           </div>
                         </div>
                       </div>

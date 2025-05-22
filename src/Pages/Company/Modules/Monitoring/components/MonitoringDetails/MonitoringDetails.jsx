@@ -14,38 +14,6 @@ function MonitoringDetails() {
 
   // console.log("selectedSingleDevice", selectedSingleDevice);
 
-  const vehicleData = [
-    {
-      id: 1,
-      name: "Vehicle 1",
-      status: "Active",
-    },
-    {
-      id: 2,
-      name: "Vehicle 2",
-      status: "Inactive",
-    },
-    {
-      id: 3,
-      name: "Vehicle 3",
-      status: "Active",
-    },
-    {
-      id: 4,
-      name: "Vehicle 4",
-      status: "Maintenance",
-    },
-    {
-      id: 5,
-      name: "Vehicle 5",
-      status: "Active",
-    },
-    ...Array.from({ length: 15 }, (_, i) => ({
-      id: i + 6,
-      name: `Vehicle ${i + 6}`,
-      status: i % 3 === 0 ? "Active" : "Inactive",
-    })),
-  ];
   return (
     <Container fluid={12}>
       <div>
@@ -97,52 +65,45 @@ function MonitoringDetails() {
         <div
           style={{
             borderRadius: "5px",
-            width: "98%",
+            width: "99%",
             paddingLeft: "5px",
-            // paddingTop: "5px",
             paddingBottom: "20px",
           }}
         >
           <Topbar />
         </div>
 
-        <div
-          style={{
-            display: "flex",
-            gap: "30px",
-          }}
-        >
-          <Col xl="5" lg="12" md="5" style={{ paddingLeft: "2.5%" }}>
-            <div>
-              <Row>
-                <SidebarMonitoring vehicleData={vehicleData} />
-              </Row>
+        <Row>
+          <div
+            style={{
+              display: "flex",
+              gap: "8px",
+              minWidth: "100%",
+              padding: "0px 20px",
+              marginTop: "-40px",
+            }}
+          >
+            <div style={{ minWidth: "42%" }}>
+              <SidebarMonitoring />
             </div>
-          </Col>
-          <Col xl="6" lg="12" md="6">
-            {/* <div>
-              <Row>
-                {selectedSingleDevice === null ? (
-                  <VehicleStatusPieChart vehicleData={vehicleData} />
+            <div style={{ minWidth: "57%", maxWidth: "57%" }}>
+              <div style={{}}>
+                {selectedSingleDevice == null ? (
+                  <VehicleStatusPieChart />
                 ) : (
                   <Vehicle3dImageDetails />
                 )}
-              </Row>
-            </div> */}
-            <div>
-              {/* abc */}
-              <Row>
-                <div>
-                  {selectedSingleDevice === null ? (
-                    <Alerts />
-                  ) : (
-                    <SingleVehicleDetails />
-                  )}
-                </div>
-              </Row>
+              </div>
+              <div style={{ marginTop: "-22px" }}>
+                {selectedSingleDevice == null ? (
+                  <Alerts />
+                ) : (
+                  <SingleVehicleDetails />
+                )}
+              </div>
             </div>
-          </Col>
-        </div>
+          </div>
+        </Row>
       </div>
     </Container>
   );

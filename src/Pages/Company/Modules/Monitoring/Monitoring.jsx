@@ -12,81 +12,83 @@ import { getAll } from "../../../../Utilities/api";
 import {
   setDevices,
   setIsConnected,
+  setSelectedSingleDevice,
 } from "../../../../ReaduxToolkit/Reducer/MonitoringSlice";
-import { GET_DEVICES_PARSER_RENTAL } from "../../../../Utilities/api/apiEndpoints";
+import { GET_PARSER_DEVICES } from "../../../../Utilities/api/apiEndpoints";
 
 // import { MapContainer } from "react-leaflet";
 
 const Monitoring = () => {
   const dispatch = useDispatch();
-  const { devices } = useSelector((state) => state.monitoring);
+  const { devices, selectedSingleDevice } = useSelector(
+    (state) => state.monitoring
+  );
 
   const [loading, setLoading] = useState(false);
   const [isDetailsVisible, setIsDetailsVisible] = useState(true); // State to toggle MonitoringDetails visibility
 
   useEffect(() => {
     dispatch(setIsConnected(false));
-  }, []);
-
-  const [da, setDa] = useState("");
-
-  useEffect(() => {
     document.body.style.overflow = "hidden";
-
-    if (devices?.length === 0) {
-      getData();
-    }
-
+    if (!devices.length) fetchDevices();
     return () => {
       document.body.style.overflow = "unset";
     };
   }, []);
 
-  const [decodedToken, setDecodedToken] = useState("");
+  useEffect(() => {
+    const interval = setInterval(fetchUpdatedDevices, 6000);
+    return () => clearInterval(interval);
+  }, [devices]);
 
-  // useEffect(() => {
-  //   const fetchInterval = setInterval(() => {
-  //     getData();
-  //   }, 500000);
-
-  //   return () => {
-  //     clearInterval(fetchInterval);
-  //   };
-  // }, []);
-
-  const navigate = useNavigate();
-
-  const getData = () => {
+  const fetchDevices = async () => {
     setLoading(true);
-    getAll({ url: GET_DEVICES_PARSER_RENTAL }).then((data) => {
-      if (data !== undefined) {
-        console.log("dataa - ", data);
-
-        // const devicess = data?.data.map((dev, ind) => ({
-        //   ...dev,
-        //   checked: false,
-        // }));
-
-        dispatch(
-          setDevices(
-            data?.data?.map((dev, ind) => ({
-              ...dev,
-              checked: false,
-            })) || []
-          )
-        );
-
-        setLoading(false);
+    try {
+      const data = await getAll({ url: GET_PARSER_DEVICES });
+      if (data?.data) {
+        const updatedDevices = data.data.map((device) => ({
+          ...device,
+          // checked: false,
+          checked: true,
+        }));
+        dispatch(setDevices(updatedDevices));
       } else {
         Swal.fire({
-          text: `Data not found`,
+          text: "Data not found",
           icon: "error",
           timer: 2000,
           showConfirmButton: false,
         });
-        setLoading(false);
       }
-    });
+    } catch (error) {
+      console.error("Error fetching devices:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchUpdatedDevices = async () => {
+    try {
+      const data = await getAll({ url: GET_PARSER_DEVICES });
+      if (data?.data) {
+        const updatedDevices = data.data.map((device) => {
+          const prevDevice = devices.find((d) => d._id === device._id);
+          return {
+            ...device,
+            checked: prevDevice ? prevDevice.checked : false,
+          };
+        });
+        dispatch(setDevices(updatedDevices));
+        if (selectedSingleDevice !== null) {
+          const singleSelectedDevice = updatedDevices.find(
+            (d) => d._id === selectedSingleDevice._id
+          );
+          dispatch(setSelectedSingleDevice(singleSelectedDevice));
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching updated devices:", error);
+    }
   };
 
   return (
@@ -99,9 +101,11 @@ const Monitoring = () => {
         marginLeft: "-35px",
         position: "absolute",
         overflowY: "hidden",
+        overflowX: "hidden",
       }}
     >
       {/* MapContainer */}
+
       <div
         style={{
           width: isDetailsVisible ? "50%" : "100%", // Adjust width when details are hidden
@@ -118,6 +122,10 @@ const Monitoring = () => {
         style={{
           width: isDetailsVisible ? "50%" : "40px", // Show a small sidebar for the arrow when hidden
           paddingLeft: "0px",
+          // backgroundColor: "#000000",
+          // backgroundColor: "#3c4044",
+          // backgroundColor: "rgb(240,184,50,0.4)",
+          backgroundColor: "#F0B832",
           // overflow: "hidden",
           transition: "width 0.7s ease-in-out", // Smooth transition for width changes
         }}
@@ -128,7 +136,7 @@ const Monitoring = () => {
             // position: "absolute",
             // right: "0px",
             paddingTop: "5px",
-            paddingLeft: "10px",
+            paddingLeft: "6px",
 
             zIndex: 2,
             display: "flex",
@@ -143,79 +151,84 @@ const Monitoring = () => {
               style={{ fontSize: "25px", cursor: "pointer", width: "40px" }}
               onClick={() => setIsDetailsVisible(!isDetailsVisible)} // Toggle visibility
             >
-              <FaArrowAltCircleRight />
+              <FaArrowAltCircleRight color="black" />
             </Label> // Arrow to open
           ) : (
             <Label
               onClick={() => setIsDetailsVisible(!isDetailsVisible)} // Toggle visibility
               style={{ fontSize: "25px", cursor: "pointer", width: "40px" }}
             >
-              <FaArrowAltCircleLeft />
+              <FaArrowAltCircleLeft color="black" />
             </Label> // Arrow to close
           )}
 
-          <div
-            style={{
-              width: "full",
-              marginRight: "18px",
-              display: "flex",
-              gap: "20px",
-              marginBottom: "10px",
-            }}
-          >
-            <button
+          {isDetailsVisible && (
+            <div
               style={{
-                outline: "none",
-                backgroundColor: "white",
-                border: "none",
-                padding: "6px 15px",
-                fontWeight: "bold",
-                borderRadius: "5px",
-                border: "2px solid #35bfbf",
+                width: "full",
+                marginRight: "6px",
+                display: "flex",
+                gap: "20px",
+                marginBottom: "10px",
               }}
             >
-              Alerts
-            </button>
-            <button
-              style={{
-                outline: "none",
-                backgroundColor: "white",
-                border: "none",
-                padding: "6px 15px",
-                fontWeight: "bold",
-                borderRadius: "5px",
-                border: "2px solid #35bfbf",
-              }}
-            >
-              Geofence
-            </button>
-            <button
-              style={{
-                outline: "none",
-                backgroundColor: "white",
-                border: "none",
-                padding: "6px 15px",
-                fontWeight: "bold",
-                borderRadius: "5px",
-                border: "2px solid #35bfbf",
-              }}
-            >
-              POI
-            </button>
-            <button
-              style={{
-                outline: "none",
-                backgroundColor: "white",
-                border: "none",
-                padding: "6px 15px",
-                fontWeight: "bold",
-                borderRadius: "5px",
-                border: "2px solid #35bfbf",
-              }}
-            >
-              Reports
-            </button>
-          </div>
+              <button
+                style={{
+                  outline: "none",
+                  backgroundColor: "#e5e5e5",
+                  border: "none",
+                  padding: "6px 15px",
+                  fontWeight: "bold",
+                  borderRadius: "5px",
+                  // border: "2px solid #35bfbf",
+                }}
+              >
+                Alerts
+              </button>
+              <button
+                style={{
+                  outline: "none",
+                  // backgroundColor: "white",
+                  backgroundColor: "#e5e5e5",
+                  border: "none",
+                  padding: "6px 15px",
+                  fontWeight: "bold",
+                  borderRadius: "5px",
+                  // border: "2px solid #35bfbf",
+                }}
+              >
+                Geofence
+              </button>
+              <button
+                style={{
+                  outline: "none",
+                  // backgroundColor: "white",
+                  backgroundColor: "#e5e5e5",
+                  border: "none",
+                  padding: "6px 15px",
+                  fontWeight: "bold",
+                  borderRadius: "5px",
+                  // border: "2px solid #35bfbf",
+                }}
+              >
+                POI
+              </button>
+              <button
+                style={{
+                  outline: "none",
+                  // backgroundColor: "white",
+                  backgroundColor: "#e5e5e5",
+                  border: "none",
+                  padding: "6px 15px",
+                  fontWeight: "bold",
+                  borderRadius: "5px",
+                  // border: "2px solid #35bfbf",
+                }}
+              >
+                Reports
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Content */}

@@ -6,9 +6,8 @@ import { useSelector } from "react-redux";
 function VehicleStatusPieChart() {
   const { devices } = useSelector((state) => state.monitoring);
   // console.log("devices from redux",devices);
-   
+
   const devicess = devices;
-  
 
   const vehicles = Array.isArray(devicess) ? devicess : [];
 
@@ -54,11 +53,26 @@ function VehicleStatusPieChart() {
   };
 
   return (
-    <Card style={{ borderRadius: "5px", marginTop: "-35px", minWidth: "300px" }}>
-      <CardHeader style={{ padding: "5px 12px" }}>
-        <h6>Vehicle Status Pie Chart</h6>
+    <Card
+      style={{
+        borderRadius: "5px",
+        minWidth: "100%",
+        maxWidth: "100%",
+        backgroundColor: "#99A6A7",
+      }}
+    >
+      <CardHeader style={{ padding: "2px 8px" }}>
+        <h4
+          style={{
+            margin: "10px 0px",
+            fontWeight: "bold",
+            fontSize: "17px",
+          }}
+        >
+          Vehicle Status Pie Chart
+        </h4>
       </CardHeader>
-      <CardBody className="apex-chart" style={{padding:"10px 0px" }}>
+      <CardBody className="apex-chart" style={{ padding: "10px 0px" }}>
         <div id="piechart">
           {series.some((count) => count > 0) ? (
             <ReactApexChart

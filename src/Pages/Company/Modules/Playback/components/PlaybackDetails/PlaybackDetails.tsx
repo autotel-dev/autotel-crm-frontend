@@ -7,7 +7,7 @@ import Speed from "./components/Speed/Speed";
 
 const PlaybackDetails = () => {
   const [activeTab, setActiveTab] = useState("Trips");
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(true);
 
   const navItems = [
     "Trips",

@@ -557,6 +557,7 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
                 ? userPersonalizationData?.secondaryColor
                 : ""
             }`,
+            // backgroundColor: "#99A6A7",
           }}
         >
           <UL className="sidebar-links simple-list" id="simple-bar">
