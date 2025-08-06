@@ -6,11 +6,8 @@ import {
   ListGroup,
   ListGroupItem,
 } from "reactstrap";
-import Swal from "sweetalert2";
 import "./SingleVehicleDetails.css";
 import { useSelector } from "react-redux";
-import { getAll } from "../../../../../../Utilities/api";
-import { TODAY_VEHICLE_ACTIVITY } from "../../../../../../Utilities/api/apiEndpoints";
 
 const SingleVehicleDetails = () => {
   const { selectedSingleDevice } = useSelector((state) => state.monitoring);
@@ -62,13 +59,6 @@ const SingleVehicleDetails = () => {
   // };
 
   useEffect(() => {
-    // Trigger Today Activity API only if the button is active
-    // if (selectedSingleDevice && activeButton === "todayActivity") {
-    //   handleTodayActivity();
-    // }
-  }, [selectedSingleDevice, activeButton]); // Dependency includes selectedSingleDevice and activeButton
-
-  useEffect(() => {
     // Update the current data when the device changes
     if (selectedSingleDevice) {
       setCurrentData(selectedSingleDevice || {});
@@ -81,7 +71,9 @@ const SingleVehicleDetails = () => {
         borderRadius: "5px",
         minWidth: "100%",
         maxWidth: "100%",
-        backgroundColor: "#99A6A7",
+        backgroundColor: "#21262C",
+        border: "1px solid black",
+        boxShadow: "0 4px 10px rgba(0, 0, 0, 0.5)",
       }}
     >
       <CardHeader
@@ -89,21 +81,23 @@ const SingleVehicleDetails = () => {
           padding: "0px 0px 0px 2px",
           margin: "0px",
           borderRadius: "5px",
-          backgroundColor: "#99A6A7",
+          backgroundColor: "#21262C",
+          color: "white",
         }}
       >
         <div
           style={{
             display: "flex",
             fontSize: "11px",
+            color: "white",
             width: "99%",
             overflowX: "scroll",
-            borderBottom: "2px solid black",
+            borderBottom: "2px solid gray",
             WebkitOverflowScrolling: "touch", // Smooth scrolling on mobile
             scrollbarWidth: "none", // Firefox
             paddingTop: "5px",
             paddingBottom: "5px",
-            backgroundColor: "#99A6A7",
+            backgroundColor: "#21262C",
           }}
           className="hide-scrollbar"
         >
@@ -112,6 +106,7 @@ const SingleVehicleDetails = () => {
             className={`custom-button ${
               activeButton === "vehicleInfo" ? "active" : ""
             }`}
+            style={{ color: "white" }}
           >
             Vehicle Info
           </button>
@@ -120,6 +115,7 @@ const SingleVehicleDetails = () => {
             className={`custom-button ${
               activeButton === "customerInfo" ? "active" : ""
             }`}
+            style={{ color: "white" }}
           >
             Customer Info
           </button>
@@ -128,6 +124,7 @@ const SingleVehicleDetails = () => {
             className={`custom-button ${
               activeButton === "trackerInfo" ? "active" : ""
             }`}
+            style={{ color: "white" }}
           >
             Tracker Info
           </button>
@@ -139,6 +136,7 @@ const SingleVehicleDetails = () => {
             className={`custom-button ${
               activeButton === "todayActivity" ? "active" : ""
             }`}
+            style={{ color: "white" }}
           >
             Today Activity
           </button>
@@ -147,6 +145,7 @@ const SingleVehicleDetails = () => {
             className={`custom-button ${
               activeButton === "powerInfo" ? "active" : ""
             }`}
+            style={{ color: "white" }}
           >
             Analytics
           </button>
@@ -155,6 +154,7 @@ const SingleVehicleDetails = () => {
             className={`custom-button ${
               activeButton === "sensorInfo" ? "active" : ""
             }`}
+            style={{ color: "white" }}
           >
             Reports
           </button>
@@ -163,13 +163,13 @@ const SingleVehicleDetails = () => {
 
       <CardBody
         style={{
-          maxHeight: "36.5vh",
-          minHeight: "36.5vh",
+          maxHeight: "31.5vh",
+          minHeight: "31.5vh",
           overflowY: "auto",
           padding: "0",
           scrollbarWidth: "none",
           borderRadius: "5px",
-          backgroundColor: "#99A6A7",
+          backgroundColor: "#21262C",
         }}
       >
         {loading ? (
@@ -177,14 +177,15 @@ const SingleVehicleDetails = () => {
             <div className="loader-19"></div>
           </div>
         ) : activeButton === "todayActivity" && currentData ? (
-          <ListGroup flush style={{ backgroundColor: "#99A6A7" }}>
+          <ListGroup flush style={{ backgroundColor: "#21262C" }}>
             <ListGroupItem
               style={{
                 borderBottom: "1px solid gray",
-                backgroundColor: "#99A6A7",
+                backgroundColor: "#21262C",
                 display: "flex",
                 justifyContent: "space-between",
                 fontSize: "11px",
+                color: "white",
               }}
             >
               <strong>Average Speed:</strong>
@@ -195,7 +196,8 @@ const SingleVehicleDetails = () => {
                 display: "flex",
                 justifyContent: "space-between",
                 fontSize: "11px",
-                backgroundColor: "#99A6A7",
+                color: "white",
+                backgroundColor: "#21262C",
                 borderBottom: "1px solid gray",
               }}
             >
@@ -207,7 +209,8 @@ const SingleVehicleDetails = () => {
                 display: "flex",
                 justifyContent: "space-between",
                 fontSize: "11px",
-                backgroundColor: "#99A6A7",
+                color: "white",
+                backgroundColor: "#21262C",
               }}
             >
               <strong>Status Durations:</strong>
@@ -215,7 +218,11 @@ const SingleVehicleDetails = () => {
                 {currentData.statusDurations?.map((status, index) => (
                   <li
                     key={index}
-                    style={{ fontSize: "11px", marginBottom: "5px" }}
+                    style={{
+                      fontSize: "11px",
+                      color: "white",
+                      marginBottom: "5px",
+                    }}
                   >
                     <strong>{status.status}:</strong>{" "}
                     {status.timeInHours.toFixed(2)} hours
@@ -225,166 +232,171 @@ const SingleVehicleDetails = () => {
             </ListGroupItem>
           </ListGroup>
         ) : activeButton === "vehicleInfo" ? (
-          <ListGroup flush style={{ backgroundColor: "#99A6A7" }}>
+          <ListGroup flush style={{ backgroundColor: "#21262C" }}>
             <ListGroupItem
               style={{
                 borderBottom: "1px solid gray",
-                backgroundColor: "#99A6A7",
+                backgroundColor: "#21262C",
                 display: "flex",
                 justifyContent: "space-between",
                 fontSize: "11px",
+                color: "white",
               }}
             >
               <strong> Registration Number</strong>
-              <span>{selectedSingleDevice?.vehicleInfo?.registrationNo}</span>
+              <span>{selectedSingleDevice?.vehicle?.registrationNo}</span>
             </ListGroupItem>
             <ListGroupItem
               style={{
                 borderBottom: "1px solid gray",
-                backgroundColor: "#99A6A7",
+                backgroundColor: "#21262C",
                 display: "flex",
                 justifyContent: "space-between",
                 fontSize: "11px",
+                color: "white",
               }}
             >
               <strong>Vehicle Model</strong>
-              <span>{selectedSingleDevice?.vehicleInfo?.model?.name}</span>
+              <span>{selectedSingleDevice?.vehicle?.model?.name}</span>
             </ListGroupItem>
             <ListGroupItem
               style={{
                 borderBottom: "1px solid gray",
-                backgroundColor: "#99A6A7",
+                backgroundColor: "#21262C",
                 display: "flex",
                 justifyContent: "space-between",
                 fontSize: "11px",
+                color: "white",
               }}
             >
               <strong>Vehicle Make</strong>
-              <span>{selectedSingleDevice?.vehicleInfo?.make?.name}</span>
+              <span>{selectedSingleDevice?.vehicle?.make?.name}</span>
             </ListGroupItem>
 
             <ListGroupItem
               style={{
                 borderBottom: "1px solid gray",
-                backgroundColor: "#99A6A7",
+                backgroundColor: "#21262C",
                 display: "flex",
                 justifyContent: "space-between",
                 fontSize: "11px",
+                color: "white",
               }}
             >
               <strong>Year</strong>
-              <span>{selectedSingleDevice?.vehicleInfo?.year}</span>
+              <span>{selectedSingleDevice?.vehicle?.year}</span>
             </ListGroupItem>
             <ListGroupItem
               style={{
                 borderBottom: "1px solid gray",
-                backgroundColor: "#99A6A7",
+                backgroundColor: "#21262C",
                 display: "flex",
                 justifyContent: "space-between",
                 fontSize: "11px",
+                color: "white",
               }}
             >
               <strong>Package Price</strong>
               <span>
-                {
-                  selectedSingleDevice?.vehicleInfo
-                    ?.servicePackageDiscountedCharges
-                }
+                {selectedSingleDevice?.vehicle?.servicePackageDiscountedCharges}
               </span>
             </ListGroupItem>
             <ListGroupItem
               style={{
                 borderBottom: "1px solid gray",
-                backgroundColor: "#99A6A7",
+                backgroundColor: "#21262C",
                 display: "flex",
                 justifyContent: "space-between",
                 fontSize: "11px",
+                color: "white",
               }}
             >
               <strong>Color</strong>
-              <span>{selectedSingleDevice?.vehicleInfo?.color}</span>
+              <span>{selectedSingleDevice?.vehicle?.color}</span>
             </ListGroupItem>
             <ListGroupItem
               style={{
                 borderBottom: "1px solid gray",
-                backgroundColor: "#99A6A7",
+                backgroundColor: "#21262C",
                 display: "flex",
                 justifyContent: "space-between",
                 fontSize: "11px",
+                color: "white",
               }}
             >
               <strong>IMEI Number</strong>
-              <span>{selectedSingleDevice?.vehicleInfo?.imei}</span>
+              <span>{selectedSingleDevice?.vehicle?.imei}</span>
             </ListGroupItem>
 
             <ListGroupItem
               style={{
                 borderBottom: "1px solid gray",
-                backgroundColor: "#99A6A7",
+                backgroundColor: "#21262C",
                 display: "flex",
                 justifyContent: "space-between",
                 fontSize: "11px",
+                color: "white",
               }}
             >
               <strong>Chasis Number</strong>
-              <span>{selectedSingleDevice?.vehicleInfo?.chasisNo}</span>
+              <span>{selectedSingleDevice?.vehicle?.chasisNo}</span>
             </ListGroupItem>
             <ListGroupItem
               style={{
                 borderBottom: "1px solid gray",
-                backgroundColor: "#99A6A7",
+                backgroundColor: "#21262C",
                 display: "flex",
                 justifyContent: "space-between",
                 fontSize: "11px",
+                color: "white",
               }}
             >
               <strong>Engine Number</strong>
-              <span>{selectedSingleDevice?.vehicleInfo?.engineNo}</span>
+              <span>{selectedSingleDevice?.vehicle?.engineNo}</span>
             </ListGroupItem>
           </ListGroup>
         ) : activeButton === "customerInfo" ? (
-          <ListGroup flush style={{ backgroundColor: "#99A6A7" }}>
+          <ListGroup flush style={{ backgroundColor: "#21262C" }}>
             <ListGroupItem
               style={{
                 borderBottom: "1px solid gray",
-                backgroundColor: "#99A6A7",
+                backgroundColor: "#21262C",
                 display: "flex",
                 justifyContent: "space-between",
                 fontSize: "11px",
+                color: "white",
               }}
             >
               <strong> Name</strong>
-              <span>
-                {selectedSingleDevice?.vehicleInfo?.customer?.fullName}
-              </span>
+              <span>{selectedSingleDevice?.vehicle?.customer?.fullName}</span>
             </ListGroupItem>
             <ListGroupItem
               style={{
                 borderBottom: "1px solid gray",
-                backgroundColor: "#99A6A7",
+                backgroundColor: "#21262C",
                 display: "flex",
                 justifyContent: "space-between",
                 fontSize: "11px",
+                color: "white",
               }}
             >
               <strong> Email Address</strong>
               <span>
-                {selectedSingleDevice?.vehicleInfo?.customer?.emailAddress}
+                {selectedSingleDevice?.vehicle?.customer?.emailAddress}
               </span>
             </ListGroupItem>
             <ListGroupItem
               style={{
                 borderBottom: "1px solid gray",
-                backgroundColor: "#99A6A7",
+                backgroundColor: "#21262C",
                 display: "flex",
                 justifyContent: "space-between",
                 fontSize: "11px",
+                color: "white",
               }}
             >
               <strong> Phone Number</strong>
-              <span>
-                {selectedSingleDevice?.vehicleInfo?.customer?.phoneNo}
-              </span>
+              <span>{selectedSingleDevice?.vehicle?.customer?.phoneNo}</span>
             </ListGroupItem>
           </ListGroup>
         ) : activeButton === "trackerInfo" ? (
@@ -392,44 +404,47 @@ const SingleVehicleDetails = () => {
             <ListGroupItem
               style={{
                 borderBottom: "1px solid gray",
-                backgroundColor: "#99A6A7",
+                backgroundColor: "#21262C",
                 display: "flex",
                 justifyContent: "space-between",
                 fontSize: "11px",
+                color: "white",
               }}
             >
               <strong>Direction</strong>
-              <span>{selectedSingleDevice?.direction}</span>
+              <span>{selectedSingleDevice?.latestPosition?.course}</span>
             </ListGroupItem>
             <ListGroupItem
               style={{
                 borderBottom: "1px solid gray",
-                backgroundColor: "#99A6A7",
+                backgroundColor: "#21262C",
                 display: "flex",
                 justifyContent: "space-between",
                 fontSize: "11px",
+                color: "white",
               }}
             >
               <strong>Latitude</strong>
               <span>
-                {selectedSingleDevice?.latitude !== null
-                  ? selectedSingleDevice?.latitude
+                {selectedSingleDevice?.latestPosition?.latitude !== null
+                  ? selectedSingleDevice?.latestPosition?.latitude
                   : "N/A"}
               </span>
             </ListGroupItem>
             <ListGroupItem
               style={{
                 borderBottom: "1px solid gray",
-                backgroundColor: "#99A6A7",
+                backgroundColor: "#21262C",
                 display: "flex",
                 justifyContent: "space-between",
                 fontSize: "11px",
+                color: "white",
               }}
             >
               <strong>Longitude</strong>
               <span>
-                {selectedSingleDevice?.longitude !== null
-                  ? selectedSingleDevice?.longitude
+                {selectedSingleDevice?.latestPosition?.longitude !== null
+                  ? selectedSingleDevice?.latestPosition?.longitude
                   : "N/A"}
               </span>
             </ListGroupItem>
@@ -437,123 +452,141 @@ const SingleVehicleDetails = () => {
             <ListGroupItem
               style={{
                 borderBottom: "1px solid gray",
-                backgroundColor: "#99A6A7",
+                backgroundColor: "#21262C",
                 display: "flex",
                 justifyContent: "space-between",
                 fontSize: "11px",
+                color: "white",
               }}
             >
               <strong>Protocol Type</strong>
-              <span>{selectedSingleDevice?.deviceType}</span>
+              <span>{selectedSingleDevice?.latestPosition?.protocol}</span>
             </ListGroupItem>
             <ListGroupItem
               style={{
                 borderBottom: "1px solid gray",
-                backgroundColor: "#99A6A7",
+                backgroundColor: "#21262C",
                 display: "flex",
                 justifyContent: "space-between",
                 fontSize: "11px",
+                color: "white",
               }}
             >
               <strong>Server Time</strong>
               <span>
-                {selectedSingleDevice?.serverTime !== null
-                  ? formatDateTime(selectedSingleDevice?.serverTime)
+                {selectedSingleDevice?.latestPosition?.serverTime !== null
+                  ? formatDateTime(
+                      selectedSingleDevice?.latestPosition?.serverTime
+                    )
                   : "N/A"}
               </span>
             </ListGroupItem>
             <ListGroupItem
               style={{
                 borderBottom: "1px solid gray",
-                backgroundColor: "#99A6A7",
+                backgroundColor: "#21262C",
                 display: "flex",
                 justifyContent: "space-between",
                 fontSize: "11px",
+                color: "white",
               }}
             >
-              <strong>Time stamp</strong>
+              <strong>Device Time</strong>
               <span>
-                {selectedSingleDevice?.timestamp !== null
-                  ? formatDateTime(selectedSingleDevice?.timestamp)
+                {selectedSingleDevice?.latestPosition?.deviceTime !== null
+                  ? formatDateTime(
+                      selectedSingleDevice?.latestPosition?.deviceTime
+                    )
                   : "N/A"}
               </span>
             </ListGroupItem>
             <ListGroupItem
               style={{
                 borderBottom: "1px solid gray",
-                backgroundColor: "#99A6A7",
+                backgroundColor: "#21262C",
                 display: "flex",
                 justifyContent: "space-between",
                 fontSize: "11px",
+                color: "white",
               }}
             >
               <strong>Speed</strong>
-              <span>{Number(selectedSingleDevice?.speed).toFixed(2)} km/h</span>
+              <span>
+                {Number(selectedSingleDevice?.latestPosition?.speed).toFixed(2)}{" "}
+                km/h
+              </span>
             </ListGroupItem>
             <ListGroupItem
               style={{
                 borderBottom: "1px solid gray",
-                backgroundColor: "#99A6A7",
+                backgroundColor: "#21262C",
                 display: "flex",
                 justifyContent: "space-between",
                 fontSize: "11px",
+                color: "white",
               }}
             >
               <strong>Current Status</strong>
-              <span>{selectedSingleDevice?.currentStatus}</span>
+              <span>{selectedSingleDevice?.status}</span>
             </ListGroupItem>
-            <ListGroupItem
+            {/* <ListGroupItem
               style={{
                 borderBottom: "1px solid gray",
-                backgroundColor: "#99A6A7",
+                backgroundColor: "#21262C",
                 display: "flex",
                 justifyContent: "space-between",
                 fontSize: "11px",
+                color: "white",
               }}
             >
               <strong>Protocol Number</strong>
               <span>{selectedSingleDevice?.protocolNumber}</span>
-            </ListGroupItem>
+            </ListGroupItem> */}
             <ListGroupItem
               style={{
                 borderBottom: "1px solid gray",
-                backgroundColor: "#99A6A7",
+                backgroundColor: "#21262C",
                 display: "flex",
                 justifyContent: "space-between",
                 fontSize: "11px",
+                color: "white",
               }}
             >
               <strong>Ignition</strong>
               <span>
-                {selectedSingleDevice?.basicInfo?.ignition == false
+                {selectedSingleDevice?.latestPosition?.ignition == false
                   ? "Off"
                   : "On"}
               </span>
             </ListGroupItem>
-            <ListGroupItem
+            {/* <ListGroupItem
               style={{
                 borderBottom: "1px solid gray",
-                backgroundColor: "#99A6A7",
+                backgroundColor: "#21262C",
                 display: "flex",
                 justifyContent: "space-between",
                 fontSize: "11px",
+                color: "white",
               }}
             >
               <strong>Satellite Count</strong>
               <span>{selectedSingleDevice?.basicInfo?.satelliteCount}</span>
-            </ListGroupItem>
+            </ListGroupItem> */}
             <ListGroupItem
               style={{
                 borderBottom: "1px solid gray",
-                backgroundColor: "#99A6A7",
+                backgroundColor: "#21262C",
                 display: "flex",
                 justifyContent: "space-between",
                 fontSize: "11px",
+                color: "white",
               }}
             >
               <strong>Odometer</strong>
               <span>
-                {Number(selectedSingleDevice?.basicInfo?.odometer).toFixed(0)}
+                {Number(
+                  selectedSingleDevice?.latestPosition?.attributes?.odometer
+                ).toFixed(0)}
               </span>
             </ListGroupItem>
           </ListGroup>

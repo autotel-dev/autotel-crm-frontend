@@ -1,198 +1,962 @@
-// import { useEffect, useRef, useState } from "react";
-// import {
-//   Map,
-//   Marker,
-//   GoogleApiWrapper,
-//   InfoWindow,
-//   Polyline,
-// } from "google-maps-react";
+// import { useEffect, useRef, useState, useMemo, useCallback } from "react";
+// import { Map, GoogleApiWrapper, InfoWindow, Polyline } from "google-maps-react";
 // import { useDispatch, useSelector } from "react-redux";
 // import "./googleMap.css";
-// import { setExpandedDevice } from "../../../../../../ReaduxToolkit/Reducer/MonitoringSlice";
+// import carIcon from "../../../monitoring-assets/deviceLocationArrow.png";
+
+// import { dataPoints } from "./data.js";
+
+// // Custom Animated Car Marker Component
+// const AnimatedCarMarker = ({
+//   map,
+//   google,
+//   position,
+//   icon,
+//   rotation,
+//   onClick,
+// }) => {
+//   const markerRef = useRef(null);
+//   const divRef = useRef(null);
+
+//   useEffect(() => {
+//     if (!map || !google) return;
+
+//     const div = document.createElement("div");
+//     div.style.position = "absolute";
+//     div.style.width = "30px";
+//     div.style.height = "30px";
+//     div.style.transform = `rotate(${rotation}deg)`;
+//     div.style.transformOrigin = "center";
+//     div.style.transition = "transform 0.3s ease";
+//     div.style.zIndex = "1000";
+//     div.innerHTML = `<img src="${icon}" width="24" height="40" style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);" />`;
+
+//     if (onClick) {
+//       div.style.cursor = "pointer";
+//       div.addEventListener("click", onClick);
+//     }
+
+//     const overlay = new google.maps.OverlayView();
+//     overlay.onAdd = function () {
+//       const panes = this.getPanes();
+//       panes.overlayMouseTarget.appendChild(div);
+//     };
+
+//     overlay.draw = function () {
+//       const projection = this.getProjection();
+//       if (!projection) return;
+
+//       const point = projection.fromLatLngToDivPixel(
+//         new google.maps.LatLng(position.lat, position.lng)
+//       );
+
+//       if (point) {
+//         div.style.left = `${point.x - 15}px`;
+//         div.style.top = `${point.y - 15}px`;
+//       }
+//     };
+
+//     overlay.onRemove = function () {
+//       if (div.parentNode) {
+//         div.parentNode.removeChild(div);
+//       }
+//     };
+
+//     overlay.setMap(map);
+//     markerRef.current = overlay;
+//     divRef.current = div;
+
+//     return () => {
+//       overlay.setMap(null);
+//     };
+//   }, [map, google, icon, onClick]);
+
+//   // Update position and rotation smoothly
+//   useEffect(() => {
+//     if (divRef.current) {
+//       divRef.current.style.transform = `rotate(${rotation}deg)`;
+//     }
+//     if (markerRef.current) {
+//       markerRef.current.draw();
+//     }
+//   }, [position, rotation]);
+
+//   return null;
+// };
 
 // const GoogleMap = (props) => {
 //   const dispatch = useDispatch();
-//   const { devicesDetailData, devices } = useSelector(
-//     (state) => state.monitoring
-//   );
-
-//   const [zoom, setZoom] = useState(8);
-//   const [selectedDevice, setSelectedDevice] = useState(null);
+//   const [zoom, setZoom] = useState(12);
+//   const [selectedPoint, setSelectedPoint] = useState(null);
 //   const [infoWindowPosition, setInfoWindowPosition] = useState(null);
 //   const [infoWindowVisible, setInfoWindowVisible] = useState(false);
-//   const [carPosition, setCarPosition] = useState({
-//     lat: 24.9461,
-//     lng: 67.1301,
-//   });
-
+//   const [showTrack, setShowTrack] = useState(true);
+//   const [carPosition, setCarPosition] = useState(null);
+//   const [isAnimating, setIsAnimating] = useState(false);
+//   const [animationSpeed, setAnimationSpeed] = useState(70000); // milliseconds for complete journey
+//   const [markersInitialized, setMarkersInitialized] = useState(false);
+//   const [currentSegmentIndex, setCurrentSegmentIndex] = useState(0);
+//   const [animationProgress, setAnimationProgress] = useState(0);
 //   const mapRef = useRef(null);
-//   const requestRef = useRef();
-//   const progressRef = useRef(0);
-//   const lastTimeRef = useRef(null);
+//   const animationRef = useRef(null);
+//   const markersRef = useRef([]);
 
-//   const dummyCarIcon = "https://cdn-icons-png.flaticon.com/512/744/744465.png";
+//   // Calculate center from dataPoints
+//   const mapCenter = useMemo(() => {
+//     if (dataPoints.length === 0) return { lat: 24.8607, lng: 67.0011 };
 
-//   const superHighwayPath = [
-//     { lat: 24.9461, lng: 67.1301 },
-//     { lat: 24.95, lng: 67.135 },
-//     { lat: 24.96, lng: 67.145 },
-//     { lat: 24.98, lng: 67.16 },
-//     { lat: 25.0, lng: 67.18 },
-//     { lat: 25.05, lng: 67.2 },
-//     { lat: 25.1, lng: 67.22 },
-//     { lat: 25.15, lng: 67.25 },
-//     { lat: 25.2, lng: 67.28 },
-//     { lat: 25.25, lng: 67.3 },
-//     { lat: 25.3, lng: 67.32 },
-//     { lat: 25.35, lng: 67.35 },
-//     { lat: 25.4, lng: 67.38 },
-//     { lat: 25.45, lng: 67.4 },
-//     { lat: 25.5, lng: 67.42 },
-//     { lat: 25.55, lng: 67.45 },
-//     { lat: 25.6, lng: 67.48 },
-//     { lat: 25.65, lng: 67.5 },
-//     { lat: 25.7, lng: 67.52 },
-//     { lat: 25.75, lng: 67.55 },
-//     { lat: 25.8, lng: 67.58 },
-//     { lat: 25.85, lng: 67.6 },
-//     { lat: 25.9, lng: 67.62 },
-//     { lat: 25.95, lng: 67.65 },
-//     { lat: 25.9876, lng: 68.0 },
-//     { lat: 25.99, lng: 68.02 },
-//   ];
+//     const sum = dataPoints.reduce(
+//       (acc, point) => ({
+//         lat: acc.lat + point.latitude,
+//         lng: acc.lng + point.longitude,
+//       }),
+//       { lat: 0, lng: 0 }
+//     );
 
-//   const zoomIn = () => setZoom((prevZoom) => prevZoom + 1);
-//   const zoomOut = () => setZoom((prevZoom) => prevZoom - 1);
-
-//   const handleMarkerClick = (device) => {
-//     setInfoWindowVisible(true);
-//     setSelectedDevice(device);
-//     setInfoWindowPosition({ lat: device?.latitude, lng: device?.longitude });
-//     dispatch(setExpandedDevice(true));
-//   };
-
-//   const closeInfoWindow = () => {
-//     setInfoWindowVisible(false);
-//     dispatch(setExpandedDevice(false));
-//   };
-
-//   // Linear interpolation between two points
-//   const lerp = (start, end, t) => start + (end - start) * t;
-
-//   const animateCar = (time) => {
-//     if (!lastTimeRef.current) lastTimeRef.current = time;
-//     const delta = time - lastTimeRef.current;
-//     lastTimeRef.current = time;
-
-//     const speed = 0.0005; // Smaller = slower
-//     progressRef.current += speed * delta;
-
-//     if (progressRef.current >= superHighwayPath.length - 1) {
-//       progressRef.current = 0; // Loop
-//     }
-
-//     const index = Math.floor(progressRef.current);
-//     const t = progressRef.current - index;
-
-//     const currentPoint = superHighwayPath[index];
-//     const nextPoint = superHighwayPath[index + 1] || currentPoint;
-
-//     const lat = lerp(currentPoint.lat, nextPoint.lat, t);
-//     const lng = lerp(currentPoint.lng, nextPoint.lng, t);
-
-//     setCarPosition({ lat, lng });
-
-//     requestRef.current = requestAnimationFrame(animateCar);
-//   };
-
-//   useEffect(() => {
-//     requestRef.current = requestAnimationFrame(animateCar);
-//     return () => cancelAnimationFrame(requestRef.current);
+//     return {
+//       lat: sum.lat / dataPoints.length,
+//       lng: sum.lng / dataPoints.length,
+//     };
 //   }, []);
+
+//   // Create polyline path from dataPoints
+//   const polylinePath = useMemo(() => {
+//     return dataPoints.map((point) => ({
+//       lat: point.latitude,
+//       lng: point.longitude,
+//     }));
+//   }, []);
+
+//   // Sort dataPoints by timestamp for proper track sequence
+//   const sortedDataPoints = useMemo(() => {
+//     return [...dataPoints].sort(
+//       (a, b) => new Date(a.timestamp) - new Date(b.timestamp)
+//     );
+//   }, []);
+
+//   // Calculate bearing between two points for car rotation
+//   const calculateBearing = useCallback((start, end) => {
+//     const startLat = (start.latitude * Math.PI) / 180;
+//     const startLng = (start.longitude * Math.PI) / 180;
+//     const endLat = (end.latitude * Math.PI) / 180;
+//     const endLng = (end.longitude * Math.PI) / 180;
+
+//     const dLng = endLng - startLng;
+//     const y = Math.sin(dLng) * Math.cos(endLat);
+//     const x =
+//       Math.cos(startLat) * Math.sin(endLat) -
+//       Math.sin(startLat) * Math.cos(endLat) * Math.cos(dLng);
+
+//     const bearing = (Math.atan2(y, x) * 180) / Math.PI;
+//     return (bearing + 360) % 360;
+//   }, []);
+
+//   // Initialize static markers once
+//   const initializeMarkers = useCallback(() => {
+//     if (!mapRef.current?.map || !props.google || markersInitialized) return;
+
+//     // Clear existing markers
+//     markersRef.current.forEach((marker) => {
+//       if (marker.setMap) marker.setMap(null);
+//     });
+//     markersRef.current = [];
+
+//     // Create markers for each GPS point
+//     sortedDataPoints.forEach((point, index) => {
+//       const marker = new props.google.maps.Marker({
+//         position: { lat: point.latitude, lng: point.longitude },
+//         map: mapRef.current.map,
+//         icon: {
+//           path: props.google.maps.SymbolPath.CIRCLE,
+//           fillColor: point.speed && point.speed > 0 ? "#4285F4" : "#EA4335",
+//           fillOpacity: 0.7,
+//           strokeColor: "#FFFFFF",
+//           strokeWeight: 1,
+//           scale: 4,
+//         },
+//         title: `Point ${index + 1}: ${point.timestamp}`,
+//       });
+
+//       // Add click listener
+//       marker.addListener("click", () => {
+//         setSelectedPoint(point);
+//         setInfoWindowPosition({
+//           lat: point.latitude,
+//           lng: point.longitude,
+//         });
+//         setInfoWindowVisible(true);
+//       });
+
+//       markersRef.current.push(marker);
+//     });
+
+//     setMarkersInitialized(true);
+//   }, [sortedDataPoints, props.google, markersInitialized]);
+
+//   // Initialize car at starting position
+//   useEffect(() => {
+//     if (sortedDataPoints.length > 0 && !carPosition) {
+//       setCarPosition({
+//         lat: sortedDataPoints[0].latitude,
+//         lng: sortedDataPoints[0].longitude,
+//         bearing: sortedDataPoints[0].bearing || 0,
+//         pointData: sortedDataPoints[0],
+//       });
+//     }
+//   }, [sortedDataPoints, carPosition]);
+
+//   // Initialize markers when map is ready
+//   useEffect(() => {
+//     if (mapRef.current?.map && props.google && !markersInitialized) {
+//       setTimeout(() => {
+//         initializeMarkers();
+//       }, 100);
+//     }
+//   }, [
+//     mapRef.current?.map,
+//     props.google,
+//     initializeMarkers,
+//     markersInitialized,
+//   ]);
+
+//   // Smooth continuous animation function
+//   const animateCar = useCallback(() => {
+//     if (sortedDataPoints.length <= 1) return;
+
+//     const totalSegments = sortedDataPoints.length - 1;
+//     const segmentDuration = animationSpeed / totalSegments;
+//     let startTime = performance.now();
+//     let currentSegment = 0;
+
+//     const animate = (currentTime) => {
+//       if (!isAnimating) return;
+
+//       const elapsed = currentTime - startTime;
+//       const segmentProgress = Math.min(elapsed / segmentDuration, 1);
+
+//       // Current segment points
+//       const startPoint = sortedDataPoints[currentSegment];
+//       const endPoint = sortedDataPoints[currentSegment + 1];
+
+//       if (startPoint && endPoint) {
+//         // Smooth interpolation between points
+//         const lat =
+//           startPoint.latitude +
+//           (endPoint.latitude - startPoint.latitude) * segmentProgress;
+//         const lng =
+//           startPoint.longitude +
+//           (endPoint.longitude - startPoint.longitude) * segmentProgress;
+
+//         // Calculate bearing for smooth rotation
+//         const bearing = calculateBearing(startPoint, endPoint);
+
+//         // Update car position
+//         setCarPosition({
+//           lat,
+//           lng,
+//           bearing,
+//           pointData: segmentProgress > 0.5 ? endPoint : startPoint,
+//         });
+
+//         setCurrentSegmentIndex(currentSegment);
+//         setAnimationProgress(
+//           (currentSegment + segmentProgress) / totalSegments
+//         );
+//       }
+
+//       // Move to next segment when current one completes
+//       if (segmentProgress >= 1) {
+//         currentSegment++;
+//         startTime = currentTime;
+
+//         // Check if animation is complete
+//         if (currentSegment >= totalSegments) {
+//           // Loop back to start
+//           currentSegment = 0;
+//           setCarPosition({
+//             lat: sortedDataPoints[0].latitude,
+//             lng: sortedDataPoints[0].longitude,
+//             bearing: sortedDataPoints[0].bearing || 0,
+//             pointData: sortedDataPoints[0],
+//           });
+//         }
+//       }
+
+//       animationRef.current = requestAnimationFrame(animate);
+//     };
+
+//     animationRef.current = requestAnimationFrame(animate);
+//   }, [sortedDataPoints, animationSpeed, calculateBearing, isAnimating]);
+
+//   // Start animation
+//   const startAnimation = useCallback(() => {
+//     if (sortedDataPoints.length <= 1) return;
+//     setIsAnimating(true);
+//     setCurrentSegmentIndex(0);
+//     setAnimationProgress(0);
+//   }, [sortedDataPoints]);
+
+//   // Stop animation
+//   const stopAnimation = useCallback(() => {
+//     setIsAnimating(false);
+//     if (animationRef.current) {
+//       cancelAnimationFrame(animationRef.current);
+//       animationRef.current = null;
+//     }
+//   }, []);
+
+//   // Reset animation
+//   const resetAnimation = useCallback(() => {
+//     stopAnimation();
+//     setCurrentSegmentIndex(0);
+//     setAnimationProgress(0);
+//     if (sortedDataPoints.length > 0) {
+//       setCarPosition({
+//         lat: sortedDataPoints[0].latitude,
+//         lng: sortedDataPoints[0].longitude,
+//         bearing: sortedDataPoints[0].bearing || 0,
+//         pointData: sortedDataPoints[0],
+//       });
+//     }
+//   }, [stopAnimation, sortedDataPoints]);
+
+//   // Handle speed change
+//   const handleSpeedChange = useCallback((newSpeed) => {
+//     setAnimationSpeed(newSpeed);
+//   }, []);
+
+//   // Start animation when isAnimating becomes true
+//   useEffect(() => {
+//     if (isAnimating) {
+//       animateCar();
+//     }
+//   }, [isAnimating, animateCar]);
+
+//   // Handle car marker click
+//   const handleCarMarkerClick = useCallback(() => {
+//     if (carPosition) {
+//       setSelectedPoint(carPosition.pointData);
+//       setInfoWindowPosition({
+//         lat: carPosition.lat,
+//         lng: carPosition.lng,
+//       });
+//       setInfoWindowVisible(true);
+//     }
+//   }, [carPosition]);
+
+//   // Cleanup on unmount
+//   useEffect(() => {
+//     return () => {
+//       if (animationRef.current) {
+//         cancelAnimationFrame(animationRef.current);
+//       }
+//       // Clean up markers
+//       markersRef.current.forEach((marker) => {
+//         if (marker.setMap) marker.setMap(null);
+//       });
+//     };
+//   }, []);
+
+//   const zoomIn = () => setZoom((prevZoom) => Math.min(prevZoom + 1, 20));
+//   const zoomOut = () => setZoom((prevZoom) => Math.max(prevZoom - 1, 1));
 
 //   if (!props.google) {
 //     return <div>Error: Google Maps API failed to load.</div>;
 //   }
 
 //   return (
-//     <Map
-//       google={props.google}
-//       zoom={zoom}
-//       initialCenter={superHighwayPath[0]}
-//       ref={mapRef}
-//       gestureHandling="greedy"
-//       disableDefaultUI={true}
-//     >
-//       <Polyline
-//         path={superHighwayPath}
-//         strokeColor="#FF0000"
-//         strokeOpacity={0.8}
-//         strokeWeight={4}
-//       />
-
-//       <Marker
-//         position={carPosition}
-//         icon={{
-//           url: dummyCarIcon,
-//           scaledSize: new props.google.maps.Size(40, 40),
+//     <div>
+//       {/* Animation Control Panel */}
+//       <div
+//         style={{
+//           position: "absolute",
+//           top: "25%",
+//           left: "10px",
+//           zIndex: 1000,
+//           background: "white",
+//           padding: "15px",
+//           borderRadius: "8px",
+//           boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
+//           minWidth: "320px",
 //         }}
-//       />
-
-//       <InfoWindow
-//         position={infoWindowPosition}
-//         visible={infoWindowVisible}
-//         onClose={closeInfoWindow}
 //       >
-//         <div>
-//           <h4>Device Details</h4>
-//           <p>
-//             <strong>Device ID:</strong> {selectedDevice?.deviceId}
-//           </p>
-//           <p>
-//             <strong>Speed:</strong> {selectedDevice?.speed} km/h
-//           </p>
-//           <p>
-//             <strong>Ignition:</strong>{" "}
-//             {selectedDevice?.basicInfo?.ignition === false ? "OFF" : "ON"}
-//           </p>
-//           <p>
-//             <strong>Direction:</strong> {selectedDevice?.direction}
-//           </p>
-//           <p>
-//             <strong>Sleep Mode:</strong>{" "}
-//             {selectedDevice?.sensor?.sleepMode === false ? "OFF" : "ON"}
-//           </p>
-//           <p>
-//             <strong>Odometer:</strong>{" "}
-//             {(selectedDevice?.basicInfo?.odometer || 0).toFixed(2)}
-//           </p>
-//           <h4>Vehicle Details</h4>
-//           <p>
-//             <strong>Vehicle Name:</strong> {selectedDevice?.vehicle?.title}
-//           </p>
-//           <p>
-//             <strong>Color:</strong> {selectedDevice?.vehicle?.color}
-//           </p>
-//           <p>
-//             <strong>Engine Number:</strong>{" "}
-//             {selectedDevice?.vehicle?.engineNumber}
-//           </p>
-//           <p>
-//             <strong>Registration Number:</strong>{" "}
-//             {selectedDevice?.vehicle?.registrationNumber}
-//           </p>
-//         </div>
-//       </InfoWindow>
+//         <h4 style={{ margin: "0 0 15px 0", color: "#333" }}>Control Options</h4>
 
-//       <div className="custom-zoom-control">
-//         <button onClick={zoomIn} className="zoom-button">
-//           +
-//         </button>
-//         <button onClick={zoomOut} className="zoom-button">
-//           -
-//         </button>
+//         {/* Video-style playback controls */}
+//         <div
+//           style={{
+//             marginBottom: "15px",
+//             display: "flex",
+//             alignItems: "center",
+//             gap: "10px",
+//           }}
+//         >
+//           {/* Play/Pause Button */}
+//           <button
+//             onClick={isAnimating ? stopAnimation : startAnimation}
+//             style={{
+//               width: "40px",
+//               height: "40px",
+//               backgroundColor: "#4CAF50",
+//               color: "white",
+//               border: "none",
+//               borderRadius: "50%",
+//               cursor: "pointer",
+//               display: "flex",
+//               alignItems: "center",
+//               justifyContent: "center",
+//               fontSize: "16px",
+//               boxShadow: "0 2px 4px rgba(0,0,0,0.2)",
+//             }}
+//             title={isAnimating ? "Pause" : "Play"}
+//           >
+//             {isAnimating ? (
+//               // Pause icon
+//               <div style={{ display: "flex", gap: "2px" }}>
+//                 <div
+//                   style={{
+//                     width: "3px",
+//                     height: "14px",
+//                     backgroundColor: "white",
+//                   }}
+//                 ></div>
+//                 <div
+//                   style={{
+//                     width: "3px",
+//                     height: "14px",
+//                     backgroundColor: "white",
+//                   }}
+//                 ></div>
+//               </div>
+//             ) : (
+//               // Play icon
+//               <div
+//                 style={{
+//                   width: 0,
+//                   height: 0,
+//                   borderLeft: "8px solid white",
+//                   borderTop: "6px solid transparent",
+//                   borderBottom: "6px solid transparent",
+//                   marginLeft: "2px",
+//                 }}
+//               ></div>
+//             )}
+//           </button>
+
+//           {/* Reset Button */}
+//           <button
+//             onClick={resetAnimation}
+//             style={{
+//               width: "40px",
+//               height: "40px",
+//               backgroundColor: "#FF9800",
+//               color: "white",
+//               border: "none",
+//               borderRadius: "50%",
+//               cursor: "pointer",
+//               display: "flex",
+//               alignItems: "center",
+//               justifyContent: "center",
+//               fontSize: "14px",
+//               boxShadow: "0 2px 4px rgba(0,0,0,0.2)",
+//             }}
+//             title="Reset"
+//           >
+//             {/* Reset/Restart icon */}
+//             <div
+//               style={{
+//                 width: "16px",
+//                 height: "16px",
+//                 border: "2px solid white",
+//                 borderRadius: "50%",
+//                 borderTopColor: "transparent",
+//                 position: "relative",
+//               }}
+//             >
+//               <div
+//                 style={{
+//                   position: "absolute",
+//                   top: "-2px",
+//                   right: "2px",
+//                   width: 0,
+//                   height: 0,
+//                   borderLeft: "4px solid white",
+//                   borderTop: "2px solid transparent",
+//                   borderBottom: "2px solid transparent",
+//                 }}
+//               ></div>
+//             </div>
+//           </button>
+
+//           {/* Speed Control Dropdown */}
+//           <div style={{ marginLeft: "10px" }}>
+//             <select
+//               value={animationSpeed}
+//               onChange={(e) => handleSpeedChange(parseInt(e.target.value))}
+//               style={{
+//                 padding: "8px 12px",
+//                 borderRadius: "4px",
+//                 border: "1px solid #ccc",
+//                 backgroundColor: "white",
+//                 fontSize: "12px",
+//                 fontWeight: "bold",
+//                 cursor: "pointer",
+//                 outline: "none",
+//               }}
+//             >
+//               <option value={140000}>0.5x</option>
+//               <option value={112000}>0.75x</option>
+//               <option value={70000}>1x</option>
+//               <option value={35000}>2x</option>
+//               <option value={23333}>3x</option>
+//               <option value={17500}>4x</option>
+//             </select>
+//           </div>
+//         </div>
+
+//         {/* Video-style playback slider */}
+//         <div style={{ marginBottom: "15px" }}>
+//           <div
+//             style={{
+//               display: "flex",
+//               alignItems: "center",
+//               gap: "10px",
+//               marginBottom: "5px",
+//             }}
+//           >
+//             {/* <span style={{ fontSize: "12px", color: "#666", minWidth: "40px" }}>
+//               {Math.floor(
+//                 animationProgress * (sortedDataPoints.length - 1) * 2
+//               )}
+//               :
+//               {Math.floor(
+//                 ((animationProgress * (sortedDataPoints.length - 1) * 2) % 1) *
+//                   60
+//               )
+//                 .toString()
+//                 .padStart(2, "0")}
+//             </span> */}
+
+//             {/* Playback slider */}
+//             <div
+//               style={{
+//                 flex: 1,
+//                 height: "4px",
+//                 backgroundColor: "#e0e0e0",
+//                 borderRadius: "2px",
+//                 position: "relative",
+//                 cursor: "pointer",
+//               }}
+//             >
+//               <div
+//                 style={{
+//                   width: `${animationProgress * 100}%`,
+//                   height: "100%",
+//                   backgroundColor: "#4CAF50",
+//                   borderRadius: "2px",
+//                   position: "relative",
+//                 }}
+//               >
+//                 <div
+//                   style={{
+//                     position: "absolute",
+//                     right: "-6px",
+//                     top: "50%",
+//                     transform: "translateY(-50%)",
+//                     width: "12px",
+//                     height: "12px",
+//                     backgroundColor: "#4CAF50",
+//                     borderRadius: "50%",
+//                     boxShadow: "0 1px 3px rgba(0,0,0,0.3)",
+//                   }}
+//                 ></div>
+//               </div>
+//             </div>
+
+//             {/* <span style={{ fontSize: "12px", color: "#666", minWidth: "40px" }}>
+//               {Math.floor((sortedDataPoints.length - 1) * 2)}:
+//               {Math.floor((((sortedDataPoints.length - 1) * 2) % 1) * 60)
+//                 .toString()
+//                 .padStart(2, "0")}
+//             </span> */}
+//           </div>
+//         </div>
+
+//         {/* Status indicator */}
+//         <div
+//           style={{
+//             marginBottom: "15px",
+//             padding: "8px 12px",
+//             backgroundColor: isAnimating ? "#e8f5e8" : "#f5f5f5",
+//             borderRadius: "4px",
+//             fontSize: "12px",
+//             color: isAnimating ? "#2e7d32" : "#666",
+//             fontWeight: "bold",
+//             textAlign: "center",
+//           }}
+//         >
+//           {isAnimating ? "▶ PLAYING" : "⏸ PAUSED"}
+//         </div>
+
+//         {/* Trip details */}
+//         <div style={{ fontSize: "13px", color: "#666" }}>
+//           <div
+//             style={{
+//               marginBottom: "5px",
+//               display: "flex",
+//               justifyContent: "space-between",
+//             }}
+//           >
+//             <strong>Total Points:</strong>
+//             <span>{sortedDataPoints.length}</span>
+//           </div>
+//           <div
+//             style={{
+//               marginBottom: "5px",
+//               display: "flex",
+//               justifyContent: "space-between",
+//             }}
+//           >
+//             <strong>Current Segment:</strong> {currentSegmentIndex + 1}/
+//             {Math.max(sortedDataPoints.length - 1, 1)}
+//           </div>
+//           {carPosition && (
+//             <>
+//               <div
+//                 style={{
+//                   marginBottom: "5px",
+//                   display: "flex",
+//                   justifyContent: "space-between",
+//                 }}
+//               >
+//                 <strong>Current Time:</strong> {carPosition.pointData.timestamp}
+//               </div>
+//               <div
+//                 style={{
+//                   marginBottom: "5px",
+//                   display: "flex",
+//                   justifyContent: "space-between",
+//                 }}
+//               >
+//                 <strong>Speed:</strong> {carPosition.pointData.speed || "N/A"}{" "}
+//                 km/h
+//               </div>
+//               <div
+//                 style={{
+//                   display: "flex",
+//                   justifyContent: "space-between",
+//                 }}
+//               >
+//                 <strong>Bearing:</strong> {Math.round(carPosition.bearing)}°
+//               </div>
+//             </>
+//           )}
+//         </div>
 //       </div>
-//     </Map>
+
+//       <Map
+//         google={props.google}
+//         zoom={zoom}
+//         initialCenter={mapCenter}
+//         center={mapCenter}
+//         ref={mapRef}
+//         gestureHandling="greedy"
+//         disableDefaultUI={true}
+//         style={{ width: "100%", height: "100vh" }}
+//       >
+//         {/* Draw the track polyline */}
+//         {showTrack && polylinePath.length > 1 && (
+//           <Polyline
+//             path={polylinePath}
+//             strokeColor="#FF0000"
+//             strokeOpacity={0.8}
+//             strokeWeight={3}
+//           />
+//         )}
+
+//         {/* Animated Car Marker */}
+//         {carPosition && (
+//           <AnimatedCarMarker
+//             map={mapRef.current?.map}
+//             google={props.google}
+//             position={{
+//               lat: carPosition.lat,
+//               lng: carPosition.lng,
+//             }}
+//             icon={carIcon}
+//             rotation={carPosition.bearing || 0}
+//             onClick={handleCarMarkerClick}
+//           />
+//         )}
+
+//         {/* Info Window for selected point */}
+//         <InfoWindow
+//           position={infoWindowPosition}
+//           visible={infoWindowVisible}
+//           onClose={() => setInfoWindowVisible(false)}
+//           options={{
+//             disableAutoPan: false,
+//             pixelOffset: new props.google.maps.Size(0, -40),
+//             disableClose: true,
+//             closeBoxMargin: "0",
+//             closeBoxURL: "",
+//             maxWidth: 400,
+//           }}
+//         >
+//           <div
+//             style={{
+//               minWidth: "400px",
+//               overflow: "hidden !important",
+//               margin: "0px !important",
+//               padding: "0px !important",
+//             }}
+//           >
+//             <div
+//               style={{
+//                 display: "flex",
+//                 justifyContent: "space-between",
+//                 alignItems: "center",
+//                 padding: "10px 25px",
+//                 borderBottom: "1px solid lightgray",
+//               }}
+//             >
+//               <div style={{ display: "flex", alignItems: "center" }}>
+//                 <h2>VB 4285 </h2>
+//                 <span
+//                   style={{
+//                     marginLeft: "16px",
+//                     color: "gray",
+//                     fontWeight: "bold",
+//                   }}
+//                 >
+//                   Van
+//                 </span>
+//               </div>
+//               <span style={{ fontWeight: "bold", color: "red" }}>
+//                 {selectedPoint?.speed && selectedPoint?.speed > 0
+//                   ? "Moving"
+//                   : "Stationary"}
+//               </span>
+//             </div>
+
+//             <div
+//               style={{
+//                 padding: "10px 25px",
+//                 borderBottom: "0.5px solid lightgray",
+//               }}
+//             >
+//               <div
+//                 style={{
+//                   marginTop: "10px",
+//                   marginBottom: "5px",
+//                   fontSize: "15px",
+//                 }}
+//               >
+//                 <strong style={{ width: "110px" }}>Device ID:</strong>{" "}
+//                 {selectedPoint?.id}
+//               </div>
+//               <div
+//                 style={{
+//                   marginBottom: "5px",
+//                   fontSize: "15px",
+//                 }}
+//               >
+//                 <strong style={{ width: "110px" }}>Coordinates:</strong>{" "}
+//                 {selectedPoint?.latitude?.toFixed(6)},{" "}
+//                 {selectedPoint?.longitude?.toFixed(6)}
+//               </div>
+//               <div
+//                 style={{
+//                   marginBottom: "5px",
+//                   fontSize: "15px",
+//                 }}
+//               >
+//                 <strong style={{ width: "110px" }}>Time:</strong>{" "}
+//                 {selectedPoint?.timestamp}
+//               </div>
+//               <div
+//                 style={{
+//                   marginBottom: "5px",
+//                   fontSize: "15px",
+//                 }}
+//               >
+//                 <strong style={{ width: "110px" }}>Speed:</strong>{" "}
+//                 {selectedPoint?.speed || 0} km/h
+//               </div>
+//               {selectedPoint?.bearing !== undefined && (
+//                 <div
+//                   style={{
+//                     marginBottom: "15px",
+//                     fontSize: "15px",
+//                   }}
+//                 >
+//                   <strong style={{ width: "110px" }}>Bearing:</strong>{" "}
+//                   {selectedPoint?.bearing}°
+//                 </div>
+//               )}
+//             </div>
+
+//             <div
+//               style={{
+//                 padding: "0px 25px",
+//                 paddingBottom: "15px",
+//                 paddingTop: "20px",
+//                 display: "flex",
+//                 overflowX: "auto",
+//                 gap: "5px",
+//                 borderBottom: "0.5px solid lightgray",
+//                 scrollbarWidth: "none",
+//                 msOverflowStyle: "none",
+//               }}
+//             >
+//               <div
+//                 style={{
+//                   border: "0.5px solid lightgray",
+//                   borderRadius: "5px",
+//                   padding: "12px 0px",
+//                   fontWeight: "400",
+//                   display: "flex",
+//                   flexDirection: "column",
+//                   justifyContent: "center",
+//                   alignItems: "center",
+//                   gap: "2px",
+//                   minWidth: "170px",
+//                   maxWidth: "170px",
+//                   flexShrink: 0,
+//                 }}
+//               >
+//                 <div style={{ color: "gray" }}>Vehicle Status</div>
+//                 <div
+//                   style={{
+//                     color:
+//                       selectedPoint?.speed && selectedPoint?.speed > 0
+//                         ? "green"
+//                         : "red",
+//                   }}
+//                 >
+//                   {selectedPoint?.speed && selectedPoint?.speed > 0
+//                     ? "Moving"
+//                     : "Stopped"}
+//                 </div>
+//               </div>
+//               <div
+//                 style={{
+//                   border: "0.5px solid lightgray",
+//                   borderRadius: "5px",
+//                   padding: "12px 0",
+//                   fontWeight: "400",
+//                   display: "flex",
+//                   flexDirection: "column",
+//                   justifyContent: "center",
+//                   alignItems: "center",
+//                   gap: "2px",
+//                   minWidth: "170px",
+//                   maxWidth: "170px",
+//                   flexShrink: 0,
+//                 }}
+//               >
+//                 <div style={{ color: "gray" }}>Current Speed</div>
+//                 <div style={{ color: "black" }}>
+//                   {selectedPoint?.speed || 0} km/h
+//                 </div>
+//               </div>
+//             </div>
+
+//             <div
+//               style={{
+//                 padding: "15px 25px",
+//                 paddingBottom: "15px",
+//                 display: "flex",
+//                 justifyContent: "space-between",
+//                 gap: "5px",
+//               }}
+//             >
+//               <button
+//                 style={{
+//                   minWidth: "170px",
+//                   maxWidth: "170px",
+//                   border: "none",
+//                   outline: "none",
+//                   backgroundColor: "lightgray",
+//                   fontWeight: "600",
+//                   color: "black",
+//                   textAlign: "center",
+//                   padding: "15px",
+//                   borderRadius: "5px",
+//                   cursor: "pointer",
+//                 }}
+//               >
+//                 ALL EVENTS
+//               </button>
+//               <button
+//                 style={{
+//                   minWidth: "170px",
+//                   maxWidth: "170px",
+//                   border: "none",
+//                   outline: "none",
+//                   backgroundColor: "lightgray",
+//                   fontWeight: "600",
+//                   color: "black",
+//                   textAlign: "center",
+//                   padding: "15px",
+//                   borderRadius: "5px",
+//                   cursor: "pointer",
+//                 }}
+//               >
+//                 TRIP
+//               </button>
+//             </div>
+//           </div>
+//         </InfoWindow>
+
+//         {/* Custom zoom controls */}
+//         <div
+//           className="custom-zoom-control"
+//           style={{
+//             position: "absolute",
+//             right: "10px",
+//             top: "50%",
+//             transform: "translateY(-50%)",
+//             display: "flex",
+//             flexDirection: "column",
+//             gap: "5px",
+//           }}
+//         >
+//           <button
+//             onClick={zoomIn}
+//             className="zoom-button"
+//             style={{
+//               width: "40px",
+//               height: "40px",
+//               backgroundColor: "white",
+//               border: "2px solid #ccc",
+//               borderRadius: "4px",
+//               cursor: "pointer",
+//               fontSize: "18px",
+//               fontWeight: "bold",
+//             }}
+//           >
+//             +
+//           </button>
+//           <button
+//             onClick={zoomOut}
+//             className="zoom-button"
+//             style={{
+//               width: "40px",
+//               height: "40px",
+//               backgroundColor: "white",
+//               border: "2px solid #ccc",
+//               borderRadius: "4px",
+//               cursor: "pointer",
+//               fontSize: "18px",
+//               fontWeight: "bold",
+//             }}
+//           >
+//             -
+//           </button>
+//         </div>
+//       </Map>
+//     </div>
 //   );
 // };
 
@@ -200,612 +964,1030 @@
 //   apiKey: "AIzaSyDI3fB-ItM1LpMOyMg_P8UxTUuxHCyQS34",
 // })(GoogleMap);
 
-import { useEffect, useRef, useState } from "react";
-import { Map, Marker, GoogleApiWrapper, InfoWindow } from "google-maps-react";
+import { useEffect, useRef, useState, useMemo, useCallback } from "react";
+import { Map, GoogleApiWrapper, InfoWindow, Polyline } from "google-maps-react";
 import { useDispatch, useSelector } from "react-redux";
 import "./googleMap.css";
-import carIcon from "../../../monitoring-assets/car-icon.png";
+import carIcon from "../../../monitoring-assets/deviceLocationArrow.png";
 
-import { IMAGE_BASE_URL_RENTAL } from "../../../../../../Utilities/api/apiEndpoints";
-import { setExpandedDevice } from "../../../../../../ReaduxToolkit/Reducer/MonitoringSlice";
+import { dataPoints } from "./data.js";
+
+// Custom Animated Car Marker Component
+const AnimatedCarMarker = ({
+  map,
+  google,
+  position,
+  icon,
+  rotation,
+  onClick,
+}) => {
+  const markerRef = useRef(null);
+  const divRef = useRef(null);
+
+  useEffect(() => {
+    if (!map || !google) return;
+
+    const div = document.createElement("div");
+    div.style.position = "absolute";
+    div.style.width = "30px";
+    div.style.height = "30px";
+    div.style.transform = `rotate(${rotation}deg)`;
+    div.style.transformOrigin = "center";
+    div.style.transition = "transform 0.3s ease";
+    div.style.zIndex = "1000";
+    div.innerHTML = `<img src="${icon}" width="24" height="40" style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);" />`;
+
+    if (onClick) {
+      div.style.cursor = "pointer";
+      div.addEventListener("click", onClick);
+    }
+
+    const overlay = new google.maps.OverlayView();
+    overlay.onAdd = function () {
+      const panes = this.getPanes();
+      panes.overlayMouseTarget.appendChild(div);
+    };
+
+    overlay.draw = function () {
+      const projection = this.getProjection();
+      if (!projection) return;
+
+      const point = projection.fromLatLngToDivPixel(
+        new google.maps.LatLng(position.lat, position.lng)
+      );
+
+      if (point) {
+        div.style.left = `${point.x - 15}px`;
+        div.style.top = `${point.y - 15}px`;
+      }
+    };
+
+    overlay.onRemove = function () {
+      if (div.parentNode) {
+        div.parentNode.removeChild(div);
+      }
+    };
+
+    overlay.setMap(map);
+    markerRef.current = overlay;
+    divRef.current = div;
+
+    return () => {
+      overlay.setMap(null);
+    };
+  }, [map, google, icon, onClick]);
+
+  // Update position and rotation smoothly
+  useEffect(() => {
+    if (divRef.current) {
+      divRef.current.style.transform = `rotate(${rotation}deg)`;
+    }
+    if (markerRef.current) {
+      markerRef.current.draw();
+    }
+  }, [position, rotation]);
+
+  return null;
+};
 
 const GoogleMap = (props) => {
-  const { devicesDetailData, devices } = useSelector(
-    (state) => state.monitoring
-  );
   const dispatch = useDispatch();
-  const [zoom, setZoom] = useState(8);
-  const [selectedDevice, setSelectedDevice] = useState(null);
+  const [zoom, setZoom] = useState(12);
+  const [selectedPoint, setSelectedPoint] = useState(null);
   const [infoWindowPosition, setInfoWindowPosition] = useState(null);
   const [infoWindowVisible, setInfoWindowVisible] = useState(false);
+  const [showTrack, setShowTrack] = useState(true);
+  const [carPosition, setCarPosition] = useState(null);
+  const [isAnimating, setIsAnimating] = useState(false);
+  const [animationSpeed, setAnimationSpeed] = useState(70000); // milliseconds for complete journey
+  const [markersInitialized, setMarkersInitialized] = useState(false);
+  const [currentSegmentIndex, setCurrentSegmentIndex] = useState(0);
+  const [animationProgress, setAnimationProgress] = useState(0);
   const mapRef = useRef(null);
+  const animationRef = useRef(null);
+  const markersRef = useRef([]);
 
-  const [deviceData, setDeviceData] = useState({ lat: 30.3753, lng: 69.3451 });
+  // Calculate center from dataPoints
+  const mapCenter = useMemo(() => {
+    if (dataPoints.length === 0) return { lat: 24.8607, lng: 67.0011 };
 
-  // useEffect(() => {
-  //   if (devices?.length > 0) {
-  //     setDeviceData({
-  //       lat: devicesDetailData[0]?.latitude,
-  //       lng: devicesDetailData[0]?.longitude,
-  //     });
-  //   }
-  // }, [devicesDetailData]);
+    const sum = dataPoints.reduce(
+      (acc, point) => ({
+        lat: acc.lat + point.latitude,
+        lng: acc.lng + point.longitude,
+      }),
+      { lat: 0, lng: 0 }
+    );
 
-  const devicesArray = devicesDetailData || [];
+    return {
+      lat: sum.lat / dataPoints.length,
+      lng: sum.lng / dataPoints.length,
+    };
+  }, []);
 
-  const zoomIn = () => setZoom((prevZoom) => prevZoom + 1);
-  const zoomOut = () => setZoom((prevZoom) => prevZoom - 1);
+  // Create polyline path from dataPoints
+  const polylinePath = useMemo(() => {
+    return dataPoints.map((point) => ({
+      lat: point.latitude,
+      lng: point.longitude,
+    }));
+  }, []);
 
-  const handleMarkerClick = (device) => {
-    setInfoWindowVisible(true);
-    setSelectedDevice(device);
-    setInfoWindowPosition({ lat: device?.latitude, lng: device?.longitude });
-    dispatch(setExpandedDevice(true));
-  };
+  // Sort dataPoints by timestamp for proper track sequence
+  const sortedDataPoints = useMemo(() => {
+    return [...dataPoints].sort(
+      (a, b) => new Date(a.timestamp) - new Date(b.timestamp)
+    );
+  }, []);
 
-  const closeInfoWindow = () => {
-    setInfoWindowVisible(false);
-    dispatch(setExpandedDevice(false));
-  };
+  // Calculate bearing between two points for car rotation
+  const calculateBearing = useCallback((start, end) => {
+    const startLat = (start.latitude * Math.PI) / 180;
+    const startLng = (start.longitude * Math.PI) / 180;
+    const endLat = (end.latitude * Math.PI) / 180;
+    const endLng = (end.longitude * Math.PI) / 180;
 
-  const getMarkerIcon = (dev) => {
-    const { device, vehicle } = dev;
-    const { vehicleIcon } = vehicle;
+    const dLng = endLng - startLng;
+    const y = Math.sin(dLng) * Math.cos(endLat);
+    const x =
+      Math.cos(startLat) * Math.sin(endLat) -
+      Math.sin(startLat) * Math.cos(endLat) * Math.cos(dLng);
 
-    if (vehicleIcon?.type === "STATIC") {
-      return vehicleIcon?.vehicleImage?.staticImage || carIcon;
-    } else if (vehicleIcon?.type === "DYNAMIC") {
-      switch (device?.currentStatus) {
-        case "STOP":
-          return (
-            vehicleIcon.vehicleImage?.dynamicImages?.stop ||
-            "/vehicleIcon/stop.png"
-          );
-        case "MOVING":
-          return (
-            vehicleIcon.vehicleImage?.dynamicImages?.moving ||
-            "/vehicleIcon/moving.png"
-          );
-        case "OFFLINE":
-          return (
-            vehicleIcon.vehicleImage?.dynamicImages?.offline ||
-            "/vehicleIcon/offline.png"
-          );
-        case "IDLE":
-          return (
-            vehicleIcon.vehicleImage?.dynamicImages?.idle ||
-            "/vehicleIcon/idle.png"
-          );
-        default:
-          return carIcon;
-      }
-    } else {
-      return carIcon;
+    const bearing = (Math.atan2(y, x) * 180) / Math.PI;
+    return (bearing + 360) % 360;
+  }, []);
+
+  // Initialize static markers once
+  const initializeMarkers = useCallback(() => {
+    if (!mapRef.current?.map || !props.google || markersInitialized) return;
+
+    // Clear existing markers
+    markersRef.current.forEach((marker) => {
+      if (marker.setMap) marker.setMap(null);
+    });
+    markersRef.current = [];
+
+    // Create markers for each GPS point
+    sortedDataPoints.forEach((point, index) => {
+      const marker = new props.google.maps.Marker({
+        position: { lat: point.latitude, lng: point.longitude },
+        map: mapRef.current.map,
+        icon: {
+          path: props.google.maps.SymbolPath.CIRCLE,
+          fillColor: point.speed && point.speed > 0 ? "#4285F4" : "#EA4335",
+          fillOpacity: 0.7,
+          strokeColor: "#FFFFFF",
+          strokeWeight: 1,
+          scale: 4,
+        },
+        title: `Point ${index + 1}: ${point.timestamp}`,
+      });
+
+      // Add click listener
+      marker.addListener("click", () => {
+        setSelectedPoint(point);
+        setInfoWindowPosition({
+          lat: point.latitude,
+          lng: point.longitude,
+        });
+        setInfoWindowVisible(true);
+      });
+
+      markersRef.current.push(marker);
+    });
+
+    setMarkersInitialized(true);
+  }, [sortedDataPoints, props.google, markersInitialized]);
+
+  // Initialize car at starting position
+  useEffect(() => {
+    if (sortedDataPoints.length > 0 && !carPosition) {
+      setCarPosition({
+        lat: sortedDataPoints[0].latitude,
+        lng: sortedDataPoints[0].longitude,
+        bearing: sortedDataPoints[0].bearing || 0,
+        pointData: sortedDataPoints[0],
+      });
     }
-  };
+  }, [sortedDataPoints, carPosition]);
+
+  // Initialize markers when map is ready
+  useEffect(() => {
+    if (mapRef.current?.map && props.google && !markersInitialized) {
+      setTimeout(() => {
+        initializeMarkers();
+      }, 100);
+    }
+  }, [
+    mapRef.current?.map,
+    props.google,
+    initializeMarkers,
+    markersInitialized,
+  ]);
+
+  // Smooth continuous animation function
+  const animateCar = useCallback(() => {
+    if (sortedDataPoints.length <= 1) return;
+
+    const totalSegments = sortedDataPoints.length - 1;
+    const segmentDuration = animationSpeed / totalSegments;
+    let startTime = performance.now();
+    let currentSegment = 0;
+
+    const animate = (currentTime) => {
+      if (!isAnimating) return;
+
+      const elapsed = currentTime - startTime;
+      const segmentProgress = Math.min(elapsed / segmentDuration, 1);
+
+      // Current segment points
+      const startPoint = sortedDataPoints[currentSegment];
+      const endPoint = sortedDataPoints[currentSegment + 1];
+
+      if (startPoint && endPoint) {
+        // Smooth interpolation between points
+        const lat =
+          startPoint.latitude +
+          (endPoint.latitude - startPoint.latitude) * segmentProgress;
+        const lng =
+          startPoint.longitude +
+          (endPoint.longitude - startPoint.longitude) * segmentProgress;
+
+        // Calculate bearing for smooth rotation
+        const bearing = calculateBearing(startPoint, endPoint);
+
+        // Update car position
+        setCarPosition({
+          lat,
+          lng,
+          bearing,
+          pointData: segmentProgress > 0.5 ? endPoint : startPoint,
+        });
+
+        setCurrentSegmentIndex(currentSegment);
+        setAnimationProgress(
+          (currentSegment + segmentProgress) / totalSegments
+        );
+      }
+
+      // Move to next segment when current one completes
+      if (segmentProgress >= 1) {
+        currentSegment++;
+        startTime = currentTime;
+
+        // Check if animation is complete
+        if (currentSegment >= totalSegments) {
+          // Loop back to start
+          currentSegment = 0;
+          setCarPosition({
+            lat: sortedDataPoints[0].latitude,
+            lng: sortedDataPoints[0].longitude,
+            bearing: sortedDataPoints[0].bearing || 0,
+            pointData: sortedDataPoints[0],
+          });
+        }
+      }
+
+      animationRef.current = requestAnimationFrame(animate);
+    };
+
+    animationRef.current = requestAnimationFrame(animate);
+  }, [sortedDataPoints, animationSpeed, calculateBearing, isAnimating]);
+
+  // Start animation
+  const startAnimation = useCallback(() => {
+    if (sortedDataPoints.length <= 1) return;
+    setIsAnimating(true);
+    setCurrentSegmentIndex(0);
+    setAnimationProgress(0);
+  }, [sortedDataPoints]);
+
+  // Stop animation
+  const stopAnimation = useCallback(() => {
+    setIsAnimating(false);
+    if (animationRef.current) {
+      cancelAnimationFrame(animationRef.current);
+      animationRef.current = null;
+    }
+  }, []);
+
+  // Reset animation
+  const resetAnimation = useCallback(() => {
+    stopAnimation();
+    setCurrentSegmentIndex(0);
+    setAnimationProgress(0);
+    if (sortedDataPoints.length > 0) {
+      setCarPosition({
+        lat: sortedDataPoints[0].latitude,
+        lng: sortedDataPoints[0].longitude,
+        bearing: sortedDataPoints[0].bearing || 0,
+        pointData: sortedDataPoints[0],
+      });
+    }
+  }, [stopAnimation, sortedDataPoints]);
+
+  // Handle speed change
+  const handleSpeedChange = useCallback((newSpeed) => {
+    setAnimationSpeed(newSpeed);
+  }, []);
+
+  // Start animation when isAnimating becomes true
+  useEffect(() => {
+    if (isAnimating) {
+      animateCar();
+    }
+  }, [isAnimating, animateCar]);
+
+  // Handle car marker click
+  const handleCarMarkerClick = useCallback(() => {
+    if (carPosition) {
+      setSelectedPoint(carPosition.pointData);
+      setInfoWindowPosition({
+        lat: carPosition.lat,
+        lng: carPosition.lng,
+      });
+      setInfoWindowVisible(true);
+    }
+  }, [carPosition]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+      }
+      // Clean up markers
+      markersRef.current.forEach((marker) => {
+        if (marker.setMap) marker.setMap(null);
+      });
+    };
+  }, []);
+
+  const zoomIn = () => setZoom((prevZoom) => Math.min(prevZoom + 1, 20));
+  const zoomOut = () => setZoom((prevZoom) => Math.max(prevZoom - 1, 1));
 
   if (!props.google) {
     return <div>Error: Google Maps API failed to load.</div>;
   }
 
   return (
-    <Map
-      google={props.google}
-      zoom={zoom}
-      initialCenter={deviceData}
-      ref={mapRef}
-      gestureHandling="greedy"
-      disableDefaultUI={true}
-    >
-      {/* {devices?.map(
-        (device) =>
-          device.checked && (
-            <Marker
-              key={device._id}
-              position={{
-                lat: device.device.latitude,
-                lng: device.device.longitude,
-              }}
-              icon={{
-                url: `${IMAGE_BASE_URL_RENTAL}${getMarkerIcon(device)}`,
-                scaledSize: new props.google.maps.Size(40, 40),
-              }}
-              onClick={() => handleMarkerClick(device)}
-            />
-          )
-      )} */}
-
-      <InfoWindow
-        position={infoWindowPosition}
-        visible={infoWindowVisible}
-        onClose={closeInfoWindow}
+    <div>
+      {/* Animation Control Panel */}
+      <div
+        style={{
+          position: "absolute",
+          top: "25%",
+          left: "10px",
+          zIndex: 1000,
+          background: "white",
+          padding: "15px",
+          borderRadius: "8px",
+          boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
+          minWidth: "320px",
+        }}
       >
-        <div>
-          <h4>Device Details</h4>
-          <p>
-            <strong>Device ID:</strong> {selectedDevice?.deviceId}
-          </p>
-          <p>
-            <strong>Speed:</strong> {selectedDevice?.speed} km/h
-          </p>
-          <p>
-            <strong>Ignition:</strong>{" "}
-            {selectedDevice?.basicInfo?.ignition === false ? "OFF" : "ON"}
-          </p>
-          <p>
-            <strong>Direction:</strong> {selectedDevice?.direction}
-          </p>
-          <p>
-            <strong>Sleep Mode:</strong>{" "}
-            {selectedDevice?.sensor?.sleepMode === false ? "OFF" : "ON"}
-          </p>
-          <p>
-            <strong>Odometer:</strong>{" "}
-            {(selectedDevice?.basicInfo?.odometer || 0).toFixed(2)}
-          </p>
-          <h4>Vehicle Details</h4>
-          <p>
-            <strong>Vehicle Name:</strong> {selectedDevice?.vehicle?.title}
-          </p>
-          <p>
-            <strong>Color:</strong> {selectedDevice?.vehicle?.color}
-          </p>
-          <p>
-            <strong>Engine Number:</strong>{" "}
-            {selectedDevice?.vehicle?.engineNumber}
-          </p>
-          <p>
-            <strong>Registration Number:</strong>{" "}
-            {selectedDevice?.vehicle?.registrationNumber}
-          </p>
-        </div>
-      </InfoWindow>
+        <h4 style={{ margin: "0 0 15px 0", color: "#333" }}>
+          Playback Controls
+        </h4>
 
-      <div className="custom-zoom-control">
-        <button onClick={zoomIn} className="zoom-button">
-          +
-        </button>
-        <button onClick={zoomOut} className="zoom-button">
-          -
-        </button>
+        {/* Video-style playback controls */}
+        <div
+          style={{
+            marginBottom: "15px",
+            display: "flex",
+            alignItems: "center",
+            gap: "10px",
+          }}
+        >
+          {/* Play/Pause Button */}
+          <button
+            onClick={isAnimating ? stopAnimation : startAnimation}
+            style={{
+              width: "40px",
+              height: "40px",
+              backgroundColor: "#4CAF50",
+              color: "white",
+              border: "none",
+              borderRadius: "50%",
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontSize: "16px",
+              boxShadow: "0 2px 4px rgba(0,0,0,0.2)",
+              transition: "all 0.2s ease",
+            }}
+            title={isAnimating ? "Pause" : "Play"}
+          >
+            {isAnimating ? (
+              // Pause icon
+              <div style={{ display: "flex", gap: "4px" }}>
+                <div
+                  style={{
+                    width: "4px",
+                    height: "14px",
+                    backgroundColor: "white",
+                    borderRadius: "2px",
+                  }}
+                ></div>
+                <div
+                  style={{
+                    width: "4px",
+                    height: "14px",
+                    backgroundColor: "white",
+                    borderRadius: "2px",
+                  }}
+                ></div>
+              </div>
+            ) : (
+              // Play icon
+              <div
+                style={{
+                  width: 0,
+                  height: 0,
+                  borderLeft: "10px solid white",
+                  borderTop: "6px solid transparent",
+                  borderBottom: "6px solid transparent",
+                  marginLeft: "2px",
+                }}
+              ></div>
+            )}
+          </button>
+
+          {/* Reset Button */}
+          <button
+            onClick={resetAnimation}
+            style={{
+              width: "40px",
+              height: "40px",
+              backgroundColor: "#607d8b",
+              color: "white",
+              border: "none",
+              borderRadius: "50%",
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontSize: "14px",
+              boxShadow: "0 2px 4px rgba(0,0,0,0.2)",
+              transition: "all 0.2s ease",
+            }}
+            title="Reset"
+          >
+            {/* Reset/Restart icon */}
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <polyline points="23 4 23 10 17 10"></polyline>
+              <polyline points="1 20 1 14 7 14"></polyline>
+              <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+            </svg>
+          </button>
+
+          {/* Speed Control Dropdown */}
+          <div style={{ marginLeft: "auto" }}>
+            <select
+              value={animationSpeed}
+              onChange={(e) => handleSpeedChange(parseInt(e.target.value))}
+              style={{
+                padding: "8px 12px",
+                borderRadius: "20px",
+                border: "1px solid #ddd",
+                backgroundColor: "#f5f5f5",
+                fontSize: "12px",
+                fontWeight: "bold",
+                cursor: "pointer",
+                outline: "none",
+                appearance: "none",
+                backgroundImage: `url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e")`,
+                backgroundRepeat: "no-repeat",
+                backgroundPosition: "right 8px center",
+                backgroundSize: "12px",
+                paddingRight: "30px",
+              }}
+            >
+              <option value={140000}>0.5x</option>
+              <option value={112000}>0.75x</option>
+              <option value={70000}>1x</option>
+              <option value={35000}>2x</option>
+              <option value={23333}>3x</option>
+              <option value={17500}>4x</option>
+            </select>
+          </div>
+        </div>
+
+        {/* Video-style playback slider */}
+        <div style={{ marginBottom: "20px", marginTop: "15px" }}>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "12px",
+              marginBottom: "8px",
+              marginTop: "8px",
+            }}
+          >
+            {/* <span style={{ fontSize: "11px", color: "#666", minWidth: "40px" }}>
+              {Math.floor(animationProgress * 100)}%
+            </span> */}
+
+            {/* Playback slider */}
+            <div
+              style={{
+                flex: 1,
+                height: "6px",
+                backgroundColor: "#e0e0e0",
+                borderRadius: "3px",
+                position: "relative",
+                cursor: "pointer",
+              }}
+              onClick={(e) => {
+                const rect = e.currentTarget.getBoundingClientRect();
+                const clickPosition = (e.clientX - rect.left) / rect.width;
+                const newSegment = Math.floor(
+                  clickPosition * (sortedDataPoints.length - 1)
+                );
+                setCurrentSegmentIndex(newSegment);
+                setAnimationProgress(clickPosition);
+
+                // Calculate new position based on click
+                if (sortedDataPoints.length > 1) {
+                  const segmentIndex = Math.min(
+                    Math.floor(clickPosition * (sortedDataPoints.length - 1)),
+                    sortedDataPoints.length - 2
+                  );
+                  const segmentProgress =
+                    clickPosition * (sortedDataPoints.length - 1) -
+                    segmentIndex;
+
+                  const startPoint = sortedDataPoints[segmentIndex];
+                  const endPoint = sortedDataPoints[segmentIndex + 1];
+
+                  if (startPoint && endPoint) {
+                    const lat =
+                      startPoint.latitude +
+                      (endPoint.latitude - startPoint.latitude) *
+                        segmentProgress;
+                    const lng =
+                      startPoint.longitude +
+                      (endPoint.longitude - startPoint.longitude) *
+                        segmentProgress;
+                    const bearing = calculateBearing(startPoint, endPoint);
+
+                    setCarPosition({
+                      lat,
+                      lng,
+                      bearing,
+                      pointData: segmentProgress > 0.5 ? endPoint : startPoint,
+                    });
+                  }
+                }
+              }}
+            >
+              <div
+                style={{
+                  width: `${animationProgress * 100}%`,
+                  height: "100%",
+                  backgroundColor: "#4CAF50",
+                  borderRadius: "3px",
+                  position: "relative",
+                }}
+              >
+                <div
+                  style={{
+                    position: "absolute",
+                    right: "-8px",
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    width: "16px",
+                    height: "16px",
+                    backgroundColor: "#4CAF50",
+                    borderRadius: "50%",
+                    boxShadow: "0 1px 3px rgba(0,0,0,0.3)",
+                    border: "2px solid white",
+                  }}
+                ></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Status indicator */}
+        <div
+          style={{
+            marginBottom: "15px",
+            padding: "8px 12px",
+            backgroundColor: isAnimating ? "#e8f5e9" : "#f5f5f5",
+            borderRadius: "4px",
+            fontSize: "12px",
+            color: isAnimating ? "#2e7d32" : "#666",
+            fontWeight: "bold",
+            textAlign: "center",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: "6px",
+          }}
+        >
+          {isAnimating ? (
+            <>
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="#2e7d32"
+                stroke="none"
+              >
+                <rect x="6" y="4" width="4" height="16" rx="1" />
+                <rect x="14" y="4" width="4" height="16" rx="1" />
+              </svg>
+              PLAYING
+            </>
+          ) : (
+            <>
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="#666"
+                stroke="none"
+              >
+                <polygon points="5 3 19 12 5 21 5 3" />
+              </svg>
+              PAUSED
+            </>
+          )}
+        </div>
+
+        {/* Trip details */}
+        <div style={{ fontSize: "13px", color: "#666" }}>
+          <div
+            style={{
+              marginBottom: "5px",
+              display: "flex",
+              justifyContent: "space-between",
+            }}
+          >
+            <strong>Total Points:</strong>
+            <span>{sortedDataPoints.length}</span>
+          </div>
+          <div
+            style={{
+              marginBottom: "5px",
+              display: "flex",
+              justifyContent: "space-between",
+            }}
+          >
+            <strong>Current Segment:</strong> {currentSegmentIndex + 1}/
+            {Math.max(sortedDataPoints.length - 1, 1)}
+          </div>
+          {carPosition && (
+            <>
+              <div
+                style={{
+                  marginBottom: "5px",
+                  display: "flex",
+                  justifyContent: "space-between",
+                }}
+              >
+                <strong>Current Time:</strong> {carPosition.pointData.timestamp}
+              </div>
+              <div
+                style={{
+                  marginBottom: "5px",
+                  display: "flex",
+                  justifyContent: "space-between",
+                }}
+              >
+                <strong>Speed:</strong> {carPosition.pointData.speed || "N/A"}{" "}
+                km/h
+              </div>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                }}
+              >
+                <strong>Bearing:</strong> {Math.round(carPosition.bearing)}°
+              </div>
+            </>
+          )}
+        </div>
       </div>
-    </Map>
+
+      <Map
+        google={props.google}
+        zoom={zoom}
+        initialCenter={mapCenter}
+        center={mapCenter}
+        ref={mapRef}
+        gestureHandling="greedy"
+        disableDefaultUI={true}
+        style={{ width: "100%", height: "100vh" }}
+      >
+        {/* Draw the track polyline */}
+        {showTrack && polylinePath.length > 1 && (
+          <Polyline
+            path={polylinePath}
+            strokeColor="#FF0000"
+            strokeOpacity={0.8}
+            strokeWeight={3}
+          />
+        )}
+
+        {/* Animated Car Marker */}
+        {carPosition && (
+          <AnimatedCarMarker
+            map={mapRef.current?.map}
+            google={props.google}
+            position={{
+              lat: carPosition.lat,
+              lng: carPosition.lng,
+            }}
+            icon={carIcon}
+            rotation={carPosition.bearing || 0}
+            onClick={handleCarMarkerClick}
+          />
+        )}
+
+        {/* Info Window for selected point */}
+        <InfoWindow
+          position={infoWindowPosition}
+          visible={infoWindowVisible}
+          onClose={() => setInfoWindowVisible(false)}
+          options={{
+            disableAutoPan: false,
+            pixelOffset: new props.google.maps.Size(0, -40),
+            disableClose: true,
+            closeBoxMargin: "0",
+            closeBoxURL: "",
+            maxWidth: 400,
+          }}
+        >
+          <div
+            style={{
+              minWidth: "400px",
+              overflow: "hidden !important",
+              margin: "0px !important",
+              padding: "0px !important",
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                padding: "10px 25px",
+                borderBottom: "1px solid lightgray",
+              }}
+            >
+              <div style={{ display: "flex", alignItems: "center" }}>
+                <h2>VB 4285 </h2>
+                <span
+                  style={{
+                    marginLeft: "16px",
+                    color: "gray",
+                    fontWeight: "bold",
+                  }}
+                >
+                  Van
+                </span>
+              </div>
+              <span style={{ fontWeight: "bold", color: "red" }}>
+                {selectedPoint?.speed && selectedPoint?.speed > 0
+                  ? "Moving"
+                  : "Stationary"}
+              </span>
+            </div>
+
+            <div
+              style={{
+                padding: "10px 25px",
+                borderBottom: "0.5px solid lightgray",
+              }}
+            >
+              <div
+                style={{
+                  marginTop: "10px",
+                  marginBottom: "5px",
+                  fontSize: "15px",
+                }}
+              >
+                <strong style={{ width: "110px" }}>Device ID:</strong>{" "}
+                {selectedPoint?.id}
+              </div>
+              <div
+                style={{
+                  marginBottom: "5px",
+                  fontSize: "15px",
+                }}
+              >
+                <strong style={{ width: "110px" }}>Coordinates:</strong>{" "}
+                {selectedPoint?.latitude?.toFixed(6)},{" "}
+                {selectedPoint?.longitude?.toFixed(6)}
+              </div>
+              <div
+                style={{
+                  marginBottom: "5px",
+                  fontSize: "15px",
+                }}
+              >
+                <strong style={{ width: "110px" }}>Time:</strong>{" "}
+                {selectedPoint?.timestamp}
+              </div>
+              <div
+                style={{
+                  marginBottom: "5px",
+                  fontSize: "15px",
+                }}
+              >
+                <strong style={{ width: "110px" }}>Speed:</strong>{" "}
+                {selectedPoint?.speed || 0} km/h
+              </div>
+              {selectedPoint?.bearing !== undefined && (
+                <div
+                  style={{
+                    marginBottom: "15px",
+                    fontSize: "15px",
+                  }}
+                >
+                  <strong style={{ width: "110px" }}>Bearing:</strong>{" "}
+                  {selectedPoint?.bearing}°
+                </div>
+              )}
+            </div>
+
+            <div
+              style={{
+                padding: "0px 25px",
+                paddingBottom: "15px",
+                paddingTop: "20px",
+                display: "flex",
+                overflowX: "auto",
+                gap: "5px",
+                borderBottom: "0.5px solid lightgray",
+                scrollbarWidth: "none",
+                msOverflowStyle: "none",
+              }}
+            >
+              <div
+                style={{
+                  border: "0.5px solid lightgray",
+                  borderRadius: "5px",
+                  padding: "12px 0px",
+                  fontWeight: "400",
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  gap: "2px",
+                  minWidth: "170px",
+                  maxWidth: "170px",
+                  flexShrink: 0,
+                }}
+              >
+                <div style={{ color: "gray" }}>Vehicle Status</div>
+                <div
+                  style={{
+                    color:
+                      selectedPoint?.speed && selectedPoint?.speed > 0
+                        ? "green"
+                        : "red",
+                  }}
+                >
+                  {selectedPoint?.speed && selectedPoint?.speed > 0
+                    ? "Moving"
+                    : "Stopped"}
+                </div>
+              </div>
+              <div
+                style={{
+                  border: "0.5px solid lightgray",
+                  borderRadius: "5px",
+                  padding: "12px 0",
+                  fontWeight: "400",
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  gap: "2px",
+                  minWidth: "170px",
+                  maxWidth: "170px",
+                  flexShrink: 0,
+                }}
+              >
+                <div style={{ color: "gray" }}>Current Speed</div>
+                <div style={{ color: "black" }}>
+                  {selectedPoint?.speed || 0} km/h
+                </div>
+              </div>
+            </div>
+
+            <div
+              style={{
+                padding: "15px 25px",
+                paddingBottom: "15px",
+                display: "flex",
+                justifyContent: "space-between",
+                gap: "5px",
+              }}
+            >
+              <button
+                style={{
+                  minWidth: "170px",
+                  maxWidth: "170px",
+                  border: "none",
+                  outline: "none",
+                  backgroundColor: "lightgray",
+                  fontWeight: "600",
+                  color: "black",
+                  textAlign: "center",
+                  padding: "15px",
+                  borderRadius: "5px",
+                  cursor: "pointer",
+                }}
+              >
+                ALL EVENTS
+              </button>
+              <button
+                style={{
+                  minWidth: "170px",
+                  maxWidth: "170px",
+                  border: "none",
+                  outline: "none",
+                  backgroundColor: "lightgray",
+                  fontWeight: "600",
+                  color: "black",
+                  textAlign: "center",
+                  padding: "15px",
+                  borderRadius: "5px",
+                  cursor: "pointer",
+                }}
+              >
+                TRIP
+              </button>
+            </div>
+          </div>
+        </InfoWindow>
+
+        {/* Custom zoom controls */}
+        <div
+          className="custom-zoom-control"
+          style={{
+            position: "absolute",
+            right: "10px",
+            top: "50%",
+            transform: "translateY(-50%)",
+            display: "flex",
+            flexDirection: "column",
+            gap: "5px",
+          }}
+        >
+          <button
+            onClick={zoomIn}
+            className="zoom-button"
+            style={{
+              width: "40px",
+              height: "40px",
+              backgroundColor: "white",
+              border: "2px solid #ccc",
+              borderRadius: "4px",
+              cursor: "pointer",
+              fontSize: "18px",
+              fontWeight: "bold",
+            }}
+          >
+            +
+          </button>
+          <button
+            onClick={zoomOut}
+            className="zoom-button"
+            style={{
+              width: "40px",
+              height: "40px",
+              backgroundColor: "white",
+              border: "2px solid #ccc",
+              borderRadius: "4px",
+              cursor: "pointer",
+              fontSize: "18px",
+              fontWeight: "bold",
+            }}
+          >
+            -
+          </button>
+        </div>
+      </Map>
+    </div>
   );
 };
 
 export default GoogleApiWrapper({
   apiKey: "AIzaSyDI3fB-ItM1LpMOyMg_P8UxTUuxHCyQS34",
 })(GoogleMap);
-
-// const superHighwayPath = [
-//   // Karachi Start Point (Near Sohrab Goth)
-//   { lat: 24.9575, lng: 67.0986 },
-//   { lat: 24.9589, lng: 67.1034 },
-//   { lat: 24.9602, lng: 67.1082 },
-//   { lat: 24.9615, lng: 67.113 },
-//   { lat: 24.9628, lng: 67.1178 },
-//   { lat: 24.9641, lng: 67.1226 },
-//   { lat: 24.9654, lng: 67.1274 },
-//   { lat: 24.9667, lng: 67.1322 },
-//   { lat: 24.968, lng: 67.137 },
-//   { lat: 24.9693, lng: 67.1418 },
-//   { lat: 24.9706, lng: 67.1466 },
-//   { lat: 24.9719, lng: 67.1514 },
-//   { lat: 24.9732, lng: 67.1562 },
-//   { lat: 24.9745, lng: 67.161 },
-//   { lat: 24.9758, lng: 67.1658 },
-//   { lat: 24.9771, lng: 67.1706 },
-//   { lat: 24.9784, lng: 67.1754 },
-//   { lat: 24.9797, lng: 67.1802 },
-//   { lat: 24.981, lng: 67.185 },
-//   { lat: 24.9823, lng: 67.1898 },
-//   { lat: 24.9836, lng: 67.1946 },
-//   { lat: 24.9849, lng: 67.1994 },
-//   { lat: 24.9862, lng: 67.2042 },
-//   { lat: 24.9875, lng: 67.209 },
-//   { lat: 24.9888, lng: 67.2138 },
-//   { lat: 24.9901, lng: 67.2186 },
-//   { lat: 24.9914, lng: 67.2234 },
-//   { lat: 24.9927, lng: 67.2282 },
-//   { lat: 24.994, lng: 67.233 },
-//   { lat: 24.9953, lng: 67.2378 },
-//   { lat: 24.9966, lng: 67.2426 },
-//   { lat: 24.9979, lng: 67.2474 },
-//   { lat: 24.9992, lng: 67.2522 },
-//   { lat: 25.0005, lng: 67.257 },
-//   { lat: 25.0018, lng: 67.2618 },
-//   { lat: 25.0031, lng: 67.2666 },
-//   { lat: 25.0044, lng: 67.2714 },
-//   { lat: 25.0057, lng: 67.2762 },
-//   { lat: 25.007, lng: 67.281 },
-//   { lat: 25.0083, lng: 67.2858 },
-//   { lat: 25.0096, lng: 67.2906 },
-//   { lat: 25.0109, lng: 67.2954 },
-//   { lat: 25.0122, lng: 67.3002 },
-//   { lat: 25.0135, lng: 67.305 },
-//   { lat: 25.0148, lng: 67.3098 },
-//   { lat: 25.0161, lng: 67.3146 },
-//   { lat: 25.0174, lng: 67.3194 },
-//   { lat: 25.0187, lng: 67.3242 },
-//   { lat: 25.02, lng: 67.329 },
-//   { lat: 25.0213, lng: 67.3338 },
-//   { lat: 25.0226, lng: 67.3386 },
-//   { lat: 25.0239, lng: 67.3434 },
-//   { lat: 25.0252, lng: 67.3482 },
-//   { lat: 25.0265, lng: 67.353 },
-//   { lat: 25.0278, lng: 67.3578 },
-//   { lat: 25.0291, lng: 67.3626 },
-//   { lat: 25.0304, lng: 67.3674 },
-//   { lat: 25.0317, lng: 67.3722 },
-//   { lat: 25.033, lng: 67.377 },
-//   { lat: 25.0343, lng: 67.3818 },
-//   { lat: 25.0356, lng: 67.3866 },
-//   { lat: 25.0369, lng: 67.3914 },
-//   { lat: 25.0382, lng: 67.3962 },
-//   { lat: 25.0395, lng: 67.401 },
-//   { lat: 25.0408, lng: 67.4058 },
-//   { lat: 25.0421, lng: 67.4106 },
-//   { lat: 25.0434, lng: 67.4154 },
-//   { lat: 25.0447, lng: 67.4202 },
-//   { lat: 25.046, lng: 67.425 },
-//   { lat: 25.0473, lng: 67.4298 },
-//   { lat: 25.0486, lng: 67.4346 },
-//   { lat: 25.0499, lng: 67.4394 },
-//   { lat: 25.0512, lng: 67.4442 },
-//   { lat: 25.0525, lng: 67.449 },
-//   { lat: 25.0538, lng: 67.4538 },
-//   { lat: 25.0551, lng: 67.4586 },
-//   { lat: 25.0564, lng: 67.4634 },
-//   { lat: 25.0577, lng: 67.4682 },
-//   { lat: 25.059, lng: 67.473 },
-//   { lat: 25.0603, lng: 67.4778 },
-//   { lat: 25.0616, lng: 67.4826 },
-//   { lat: 25.0629, lng: 67.4874 },
-//   { lat: 25.0642, lng: 67.4922 },
-//   { lat: 25.0655, lng: 67.497 },
-//   { lat: 25.0668, lng: 67.5018 },
-//   { lat: 25.0681, lng: 67.5066 },
-//   { lat: 25.0694, lng: 67.5114 },
-//   { lat: 25.0707, lng: 67.5162 },
-//   { lat: 25.072, lng: 67.521 },
-//   { lat: 25.0733, lng: 67.5258 },
-//   { lat: 25.0746, lng: 67.5306 },
-//   { lat: 25.0759, lng: 67.5354 },
-//   { lat: 25.0772, lng: 67.5402 },
-//   { lat: 25.0785, lng: 67.545 },
-//   { lat: 25.0798, lng: 67.5498 },
-//   { lat: 25.0811, lng: 67.5546 },
-//   { lat: 25.0824, lng: 67.5594 },
-//   { lat: 25.0837, lng: 67.5642 },
-//   { lat: 25.085, lng: 67.569 },
-//   { lat: 25.0863, lng: 67.5738 },
-//   { lat: 25.0876, lng: 67.5786 },
-//   { lat: 25.0889, lng: 67.5834 },
-//   { lat: 25.0902, lng: 67.5882 },
-//   { lat: 25.0915, lng: 67.593 },
-//   { lat: 25.0928, lng: 67.5978 },
-//   { lat: 25.0941, lng: 67.6026 },
-//   { lat: 25.0954, lng: 67.6074 },
-//   { lat: 25.0967, lng: 67.6122 },
-//   { lat: 25.098, lng: 67.617 },
-//   { lat: 25.0993, lng: 67.6218 },
-//   { lat: 25.1006, lng: 67.6266 },
-//   { lat: 25.1019, lng: 67.6314 },
-//   { lat: 25.1032, lng: 67.6362 },
-//   { lat: 25.1045, lng: 67.641 },
-//   { lat: 25.1058, lng: 67.6458 },
-//   { lat: 25.1071, lng: 67.6506 },
-//   { lat: 25.1084, lng: 67.6554 },
-//   { lat: 25.1097, lng: 67.6602 },
-//   { lat: 25.111, lng: 67.665 },
-//   { lat: 25.1123, lng: 67.6698 },
-//   { lat: 25.1136, lng: 67.6746 },
-//   { lat: 25.1149, lng: 67.6794 },
-//   { lat: 25.1162, lng: 67.6842 },
-//   { lat: 25.1175, lng: 67.689 },
-//   { lat: 25.1188, lng: 67.6938 },
-//   { lat: 25.1201, lng: 67.6986 },
-//   { lat: 25.1214, lng: 67.7034 },
-//   { lat: 25.1227, lng: 67.7082 },
-//   { lat: 25.124, lng: 67.713 },
-//   { lat: 25.1253, lng: 67.7178 },
-//   { lat: 25.1266, lng: 67.7226 },
-//   { lat: 25.1279, lng: 67.7274 },
-//   { lat: 25.1292, lng: 67.7322 },
-//   { lat: 25.1305, lng: 67.737 },
-//   { lat: 25.1318, lng: 67.7418 },
-//   { lat: 25.1331, lng: 67.7466 },
-//   { lat: 25.1344, lng: 67.7514 },
-//   { lat: 25.1357, lng: 67.7562 },
-//   { lat: 25.137, lng: 67.761 },
-//   { lat: 25.1383, lng: 67.7658 },
-//   { lat: 25.1396, lng: 67.7706 },
-//   { lat: 25.1409, lng: 67.7754 },
-//   { lat: 25.1422, lng: 67.7802 },
-//   { lat: 25.1435, lng: 67.785 },
-//   { lat: 25.1448, lng: 67.7898 },
-//   { lat: 25.1461, lng: 67.7946 },
-//   { lat: 25.1474, lng: 67.7994 },
-//   { lat: 25.1487, lng: 67.8042 },
-//   { lat: 25.15, lng: 67.809 },
-//   { lat: 25.1513, lng: 67.8138 },
-//   { lat: 25.1526, lng: 67.8186 },
-//   { lat: 25.1539, lng: 67.8234 },
-//   { lat: 25.1552, lng: 67.8282 },
-//   { lat: 25.1565, lng: 67.833 },
-//   { lat: 25.1578, lng: 67.8378 },
-//   { lat: 25.1591, lng: 67.8426 },
-//   { lat: 25.1604, lng: 67.8474 },
-//   { lat: 25.1617, lng: 67.8522 },
-//   { lat: 25.163, lng: 67.857 },
-//   { lat: 25.1643, lng: 67.8618 },
-//   { lat: 25.1656, lng: 67.8666 },
-//   { lat: 25.1669, lng: 67.8714 },
-//   { lat: 25.1682, lng: 67.8762 },
-//   { lat: 25.1695, lng: 67.881 },
-//   { lat: 25.1708, lng: 67.8858 },
-//   { lat: 25.1721, lng: 67.8906 },
-//   { lat: 25.1734, lng: 67.8954 },
-//   { lat: 25.1747, lng: 67.9002 },
-//   { lat: 25.176, lng: 67.905 },
-//   { lat: 25.1773, lng: 67.9098 },
-//   { lat: 25.1786, lng: 67.9146 },
-//   { lat: 25.1799, lng: 67.9194 },
-//   { lat: 25.1812, lng: 67.9242 },
-//   { lat: 25.1825, lng: 67.929 },
-//   { lat: 25.1838, lng: 67.9338 },
-//   { lat: 25.1851, lng: 67.9386 },
-//   { lat: 25.1864, lng: 67.9434 },
-//   { lat: 25.1877, lng: 67.9482 },
-//   { lat: 25.189, lng: 67.953 },
-//   { lat: 25.1903, lng: 67.9578 },
-//   { lat: 25.1916, lng: 67.9626 },
-//   { lat: 25.1929, lng: 67.9674 },
-//   { lat: 25.1942, lng: 67.9722 },
-//   { lat: 25.1955, lng: 67.977 },
-//   { lat: 25.1968, lng: 67.9818 },
-//   { lat: 25.1981, lng: 67.9866 },
-//   { lat: 25.1994, lng: 67.9914 },
-//   { lat: 25.2007, lng: 67.9962 },
-//   { lat: 25.202, lng: 68.001 },
-//   { lat: 25.2033, lng: 68.0058 },
-//   { lat: 25.2046, lng: 68.0106 },
-//   { lat: 25.2059, lng: 68.0154 },
-//   { lat: 25.2072, lng: 68.0202 },
-//   { lat: 25.2085, lng: 68.025 },
-//   { lat: 25.2098, lng: 68.0298 },
-//   { lat: 25.2111, lng: 68.0346 },
-//   { lat: 25.2124, lng: 68.0394 },
-//   { lat: 25.2137, lng: 68.0442 },
-//   { lat: 25.215, lng: 68.049 },
-//   { lat: 25.2163, lng: 68.0538 },
-//   { lat: 25.2176, lng: 68.0586 },
-//   { lat: 25.2189, lng: 68.0634 },
-//   { lat: 25.2202, lng: 68.0682 },
-//   { lat: 25.2215, lng: 68.073 },
-//   { lat: 25.2228, lng: 68.0778 },
-//   { lat: 25.2241, lng: 68.0826 },
-//   { lat: 25.2254, lng: 68.0874 },
-//   { lat: 25.2267, lng: 68.0922 },
-//   { lat: 25.228, lng: 68.097 },
-//   { lat: 25.2293, lng: 68.1018 },
-//   { lat: 25.2306, lng: 68.1066 },
-//   { lat: 25.2319, lng: 68.1114 },
-//   { lat: 25.2332, lng: 68.1162 },
-//   { lat: 25.2345, lng: 68.121 },
-//   { lat: 25.2358, lng: 68.1258 },
-//   { lat: 25.2371, lng: 68.1306 },
-//   { lat: 25.2384, lng: 68.1354 },
-//   { lat: 25.2397, lng: 68.1402 },
-//   { lat: 25.241, lng: 68.145 },
-//   { lat: 25.2423, lng: 68.1498 },
-//   { lat: 25.2436, lng: 68.1546 },
-//   { lat: 25.2449, lng: 68.1594 },
-//   { lat: 25.2462, lng: 68.1642 },
-//   { lat: 25.2475, lng: 68.169 },
-//   { lat: 25.2488, lng: 68.1738 },
-//   { lat: 25.2501, lng: 68.1786 },
-//   { lat: 25.2514, lng: 68.1834 },
-//   { lat: 25.2527, lng: 68.1882 },
-//   { lat: 25.254, lng: 68.193 },
-//   { lat: 25.2553, lng: 68.1978 },
-//   { lat: 25.2566, lng: 68.2026 },
-//   { lat: 25.2579, lng: 68.2074 },
-//   { lat: 25.2592, lng: 68.2122 },
-//   { lat: 25.2605, lng: 68.217 },
-//   { lat: 25.2618, lng: 68.2218 },
-//   { lat: 25.2631, lng: 68.2266 },
-//   { lat: 25.2644, lng: 68.2314 },
-//   { lat: 25.2657, lng: 68.2362 },
-//   { lat: 25.267, lng: 68.241 },
-//   { lat: 25.2683, lng: 68.2458 },
-//   { lat: 25.2696, lng: 68.2506 },
-//   { lat: 25.2709, lng: 68.2554 },
-//   { lat: 25.2722, lng: 68.2602 },
-//   { lat: 25.2735, lng: 68.265 },
-//   { lat: 25.2748, lng: 68.2698 },
-//   { lat: 25.2761, lng: 68.2746 },
-//   { lat: 25.2774, lng: 68.2794 },
-//   { lat: 25.2787, lng: 68.2842 },
-//   { lat: 25.28, lng: 68.289 },
-//   { lat: 25.2813, lng: 68.2938 },
-//   { lat: 25.2826, lng: 68.2986 },
-//   { lat: 25.2839, lng: 68.3034 },
-//   { lat: 25.2852, lng: 68.3082 },
-//   { lat: 25.2865, lng: 68.313 },
-//   { lat: 25.2878, lng: 68.3178 },
-//   { lat: 25.2891, lng: 68.3226 },
-//   { lat: 25.2904, lng: 68.3274 },
-//   { lat: 25.2917, lng: 68.3322 },
-//   { lat: 25.293, lng: 68.337 },
-//   { lat: 25.2943, lng: 68.3418 },
-//   { lat: 25.2956, lng: 68.3466 },
-//   { lat: 25.2969, lng: 68.3514 },
-//   { lat: 25.2982, lng: 68.3562 },
-//   { lat: 25.2995, lng: 68.361 },
-//   { lat: 25.3008, lng: 68.3658 },
-//   { lat: 25.3021, lng: 68.3706 },
-//   { lat: 25.3034, lng: 68.3754 },
-//   { lat: 25.3047, lng: 68.3802 },
-//   { lat: 25.306, lng: 68.385 },
-//   { lat: 25.3073, lng: 68.3898 },
-//   { lat: 25.3086, lng: 68.3946 },
-//   { lat: 25.3099, lng: 68.3994 },
-//   { lat: 25.3112, lng: 68.4042 },
-//   { lat: 25.3125, lng: 68.409 },
-//   { lat: 25.3138, lng: 68.4138 },
-//   { lat: 25.3151, lng: 68.4186 },
-//   { lat: 25.3164, lng: 68.4234 },
-//   { lat: 25.3177, lng: 68.4282 },
-//   { lat: 25.319, lng: 68.433 },
-//   { lat: 25.3203, lng: 68.4378 },
-//   { lat: 25.3216, lng: 68.4426 },
-//   { lat: 25.3229, lng: 68.4474 },
-//   { lat: 25.3242, lng: 68.4522 },
-//   { lat: 25.3255, lng: 68.457 },
-//   { lat: 25.3268, lng: 68.4618 },
-//   { lat: 25.3281, lng: 68.4666 },
-//   { lat: 25.3294, lng: 68.4714 },
-//   { lat: 25.3307, lng: 68.4762 },
-//   { lat: 25.332, lng: 68.481 },
-//   { lat: 25.3333, lng: 68.4858 },
-//   { lat: 25.3346, lng: 68.4906 },
-//   { lat: 25.3359, lng: 68.4954 },
-//   { lat: 25.3372, lng: 68.5002 },
-//   { lat: 25.3385, lng: 68.505 },
-//   { lat: 25.3398, lng: 68.5098 },
-//   { lat: 25.3411, lng: 68.5146 },
-//   { lat: 25.3424, lng: 68.5194 },
-//   { lat: 25.3437, lng: 68.5242 },
-//   { lat: 25.345, lng: 68.529 },
-//   { lat: 25.3463, lng: 68.5338 },
-//   { lat: 25.3476, lng: 68.5386 },
-//   { lat: 25.3489, lng: 68.5434 },
-//   { lat: 25.3502, lng: 68.5482 },
-//   { lat: 25.3515, lng: 68.553 },
-//   { lat: 25.3528, lng: 68.5578 },
-//   { lat: 25.3541, lng: 68.5626 },
-//   { lat: 25.3554, lng: 68.5674 },
-//   { lat: 25.3567, lng: 68.5722 },
-//   { lat: 25.358, lng: 68.577 },
-//   { lat: 25.3593, lng: 68.5818 },
-//   { lat: 25.3606, lng: 68.5866 },
-//   { lat: 25.3619, lng: 68.5914 },
-//   { lat: 25.3632, lng: 68.5962 },
-//   { lat: 25.3645, lng: 68.601 },
-//   { lat: 25.3658, lng: 68.6058 },
-//   { lat: 25.3671, lng: 68.6106 },
-//   { lat: 25.3684, lng: 68.6154 },
-//   { lat: 25.3697, lng: 68.6202 },
-//   { lat: 25.371, lng: 68.625 },
-//   { lat: 25.3723, lng: 68.6298 },
-//   { lat: 25.3736, lng: 68.6346 },
-//   { lat: 25.3749, lng: 68.6394 },
-//   { lat: 25.3762, lng: 68.6442 },
-//   { lat: 25.3775, lng: 68.649 },
-//   { lat: 25.3788, lng: 68.6538 },
-//   { lat: 25.3801, lng: 68.6586 },
-//   { lat: 25.3814, lng: 68.6634 },
-//   { lat: 25.3827, lng: 68.6682 },
-//   { lat: 25.384, lng: 68.673 },
-//   { lat: 25.3853, lng: 68.6778 },
-//   { lat: 25.3866, lng: 68.6826 },
-//   { lat: 25.3879, lng: 68.6874 },
-//   { lat: 25.3892, lng: 68.6922 },
-//   { lat: 25.3905, lng: 68.697 },
-//   { lat: 25.3918, lng: 68.7018 },
-//   { lat: 25.3931, lng: 68.7066 },
-//   { lat: 25.3944, lng: 68.7114 },
-//   { lat: 25.3957, lng: 68.7162 },
-//   { lat: 25.397, lng: 68.721 },
-//   { lat: 25.3983, lng: 68.7258 },
-//   { lat: 25.3996, lng: 68.7306 },
-//   { lat: 25.4009, lng: 68.7354 },
-//   { lat: 25.4022, lng: 68.7402 },
-//   { lat: 25.4035, lng: 68.745 },
-//   { lat: 25.4048, lng: 68.7498 },
-//   { lat: 25.4061, lng: 68.7546 },
-//   { lat: 25.4074, lng: 68.7594 },
-//   { lat: 25.4087, lng: 68.7642 },
-//   { lat: 25.41, lng: 68.769 },
-//   { lat: 25.4113, lng: 68.7738 },
-//   { lat: 25.4126, lng: 68.7786 },
-//   { lat: 25.4139, lng: 68.7834 },
-//   { lat: 25.4152, lng: 68.7882 },
-//   { lat: 25.4165, lng: 68.793 },
-//   { lat: 25.4178, lng: 68.7978 },
-//   { lat: 25.4191, lng: 68.8026 },
-//   { lat: 25.4204, lng: 68.8074 },
-//   { lat: 25.4217, lng: 68.8122 },
-//   { lat: 25.423, lng: 68.817 },
-//   { lat: 25.4243, lng: 68.8218 },
-//   { lat: 25.4256, lng: 68.8266 },
-//   { lat: 25.4269, lng: 68.8314 },
-//   { lat: 25.4282, lng: 68.8362 },
-//   { lat: 25.4295, lng: 68.841 },
-//   { lat: 25.4308, lng: 68.8458 },
-//   { lat: 25.4321, lng: 68.8506 },
-//   { lat: 25.4334, lng: 68.8554 },
-//   { lat: 25.4347, lng: 68.8602 },
-//   { lat: 25.436, lng: 68.865 },
-//   { lat: 25.4373, lng: 68.8698 },
-//   { lat: 25.4386, lng: 68.8746 },
-//   { lat: 25.4399, lng: 68.8794 },
-//   { lat: 25.4412, lng: 68.8842 },
-//   { lat: 25.4425, lng: 68.889 },
-//   { lat: 25.4438, lng: 68.8938 },
-//   { lat: 25.4451, lng: 68.8986 },
-//   { lat: 25.4464, lng: 68.9034 },
-//   { lat: 25.4477, lng: 68.9082 },
-//   { lat: 25.449, lng: 68.913 },
-//   { lat: 25.4503, lng: 68.9178 },
-//   { lat: 25.4516, lng: 68.9226 },
-//   { lat: 25.4529, lng: 68.9274 },
-//   { lat: 25.4542, lng: 68.9322 },
-//   { lat: 25.4555, lng: 68.937 },
-//   { lat: 25.4568, lng: 68.9418 },
-//   { lat: 25.4581, lng: 68.9466 },
-//   { lat: 25.4594, lng: 68.9514 },
-//   { lat: 25.4607, lng: 68.9562 },
-//   { lat: 25.462, lng: 68.961 },
-//   { lat: 25.4633, lng: 68.9658 },
-//   { lat: 25.4646, lng: 68.9706 },
-//   { lat: 25.4659, lng: 68.9754 },
-//   { lat: 25.4672, lng: 68.9802 },
-//   { lat: 25.4685, lng: 68.985 },
-//   { lat: 25.4698, lng: 68.9898 },
-//   { lat: 25.4711, lng: 68.9946 },
-//   { lat: 25.4724, lng: 68.9994 },
-//   { lat: 25.4737, lng: 69.0042 },
-//   { lat: 25.475, lng: 69.009 },
-//   { lat: 25.4763, lng: 69.0138 },
-//   { lat: 25.4776, lng: 69.0186 },
-//   { lat: 25.4789, lng: 69.0234 },
-//   { lat: 25.4802, lng: 69.0282 },
-//   { lat: 25.4815, lng: 69.033 },
-//   { lat: 25.4828, lng: 69.0378 },
-//   { lat: 25.4841, lng: 69.0426 },
-//   { lat: 25.4854, lng: 69.0474 },
-//   { lat: 25.4867, lng: 69.0522 },
-//   { lat: 25.488, lng: 69.057 },
-//   { lat: 25.4893, lng: 69.0618 },
-//   { lat: 25.4906, lng: 69.0666 },
-//   { lat: 25.4919, lng: 69.0714 },
-//   { lat: 25.4932, lng: 69.0762 },
-//   { lat: 25.4945, lng: 69.081 },
-//   { lat: 25.4958, lng: 69.0858 },
-//   { lat: 25.4971, lng: 69.0906 },
-//   { lat: 25.4984, lng: 69.0954 },
-//   { lat: 25.4997, lng: 69.1002 },
-//   { lat: 25.501, lng: 69.105 },
-//   { lat: 25.5023, lng: 69.1098 },
-//   { lat: 25.5036, lng: 69.1146 },
-//   { lat: 25.5049, lng: 69.1194 },
-//   { lat: 25.5062, lng: 69.1242 },
-//   { lat: 25.5075, lng: 69.129 },
-//   { lat: 25.5088, lng: 69.1338 },
-//   { lat: 25.5101, lng: 69.1386 },
-//   { lat: 25.5114, lng: 69.1434 },
-// ];
-
-

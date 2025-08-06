@@ -10,7 +10,8 @@ import { GiBattery100 } from "react-icons/gi";
 import { useSelector } from "react-redux";
 import { IMAGE_BASE_URL_RENTAL } from "../../../../../../Utilities/api/apiEndpoints";
 // import carIcon from "../../../monitoring-assets/car-icon.png";
-import carIcon from "../../../monitoring-assets/carIcon.png";
+// import carIcon from "../../../monitoring-assets/carIcon.png";
+import carIcon from "../../../monitoring-assets/car_icon.png";
 
 function Vehicle3dImageDetails() {
   let { selectedSingleDevice } = useSelector((state: any) => state.monitoring);
@@ -34,11 +35,18 @@ function Vehicle3dImageDetails() {
         borderRadius: "5px",
         minWidth: "100%",
         maxWidth: "100%",
-        backgroundColor: "#99A6A7",
+        // backgroundColor: "#21262C",
+        backgroundColor: "#21262C",
+        border: "1px solid black",
+        boxShadow: "0 4px 10px rgba(0, 0, 0, 0.5)",
       }}
     >
       <CardBody
-        style={{ padding: "10px 10px 0px 15px", backgroundColor: "#99A6A7" }}
+        style={{
+          padding: "10px 10px 0px 15px",
+          // backgroundColor: "#21262C"
+          backgroundColor: "#21262C",
+        }}
       >
         <div
           style={{
@@ -58,18 +66,19 @@ function Vehicle3dImageDetails() {
             <div>
               <img
                 style={{
-                  height: "170px",
+                  height: "160px",
                 }}
                 src={carIcon}
                 // src={`${IMAGE_BASE_URL_RENTAL}${selectedSingleDevice?.vehicle?.vehicleIcon?.vehicleImage3D}`}
                 alt="Vehicle Image"
-                height={170}
-                width={190}
+                height={160}
+                width={260}
               />
             </div>
             <div
               style={{
                 // height: "100%",
+                marginTop: "10px",
                 paddingTop: "20px", // 20% of the first column
                 display: "flex",
                 gap: "10px",
@@ -87,20 +96,24 @@ function Vehicle3dImageDetails() {
                   <>
                     <div style={{ alignItems: "center", display: "flex" }}>
                       <IoMdWifi color="red" size={18} />
-                      <strong style={{ fontSize: "9px" }}>IGNITION</strong>
+                      <strong style={{ fontSize: "9px", color: "white" }}>
+                        IGNITION
+                      </strong>
                     </div>
                     <div>
-                      <h6 style={{ fontSize: "9px" }}>OFF</h6>
+                      <h6 style={{ fontSize: "9px", color: "white" }}>OFF</h6>
                     </div>{" "}
                   </>
                 ) : (
                   <>
                     <div style={{ alignItems: "center", display: "flex" }}>
                       <IoMdWifi color="green" size={18} />
-                      <strong style={{ fontSize: "9px" }}>IGNITION</strong>
+                      <strong style={{ fontSize: "9px", color: "white" }}>
+                        IGNITION
+                      </strong>
                     </div>
                     <div>
-                      <h6 style={{ fontSize: "9px" }}>ON</h6>
+                      <h6 style={{ fontSize: "9px", color: "white" }}>ON</h6>
                     </div>
                   </>
                 )}
@@ -122,10 +135,12 @@ function Vehicle3dImageDetails() {
               >
                 <div style={{ alignItems: "center", display: "flex" }}>
                   <IoMdWifi color="yellow" size={18} />
-                  <strong style={{ fontSize: "9px" }}>GPS</strong>
+                  <strong style={{ fontSize: "9px", color: "white" }}>
+                    GPS
+                  </strong>
                 </div>
                 <div>
-                  <h6 style={{ fontSize: "9px" }}>ON</h6>
+                  <h6 style={{ fontSize: "9px", color: "white" }}>ON</h6>
                 </div>
               </div>
 
@@ -146,10 +161,12 @@ function Vehicle3dImageDetails() {
               >
                 <div style={{ alignItems: "center", display: "flex" }}>
                   <GiBattery100 color="green" size={18} />
-                  <strong style={{ fontSize: "9px" }}>Battery</strong>
+                  <strong style={{ fontSize: "9px", color: "white" }}>
+                    Battery
+                  </strong>
                 </div>
                 <div>
-                  <h6 style={{ fontSize: "9px" }}>99%</h6>
+                  <h6 style={{ fontSize: "9px", color: "white" }}>99%</h6>
                 </div>
               </div>
             </div>
@@ -158,6 +175,7 @@ function Vehicle3dImageDetails() {
           <div
             style={{
               // height: "100%",
+
               paddingLeft: "20px", // Full height of the second column
             }}
           >
@@ -167,10 +185,12 @@ function Vehicle3dImageDetails() {
                 width: "70px",
               }}
             >
-              <div style={{ padding: "8px 0px 0px 5px" }}>
+              <div style={{ padding: "7px 0px 0px 4px" }}>
                 <CircularProgressbarWithChildren
                   value={parseFloat(
-                    Number(selectedSingleDevice?.speed).toFixed(1)
+                    Number(selectedSingleDevice?.latestPosition?.speed).toFixed(
+                      1
+                    )
                   )}
                   // styles={{
                   //   background: {
@@ -184,21 +204,25 @@ function Vehicle3dImageDetails() {
                     text: { fill: "white" },
                   }}
                 >
-                  <div style={{ fontSize: 8, marginTop: -5 }}>
+                  <div style={{ fontSize: 7, marginTop: -5, color: "white" }}>
                     <strong>
                       {parseFloat(
-                        Number(selectedSingleDevice?.speed).toFixed(1)
+                        Number(
+                          selectedSingleDevice?.latestPosition?.speed
+                        ).toFixed(0)
                       )}
                     </strong>
-                    km
+                    &nbsp;km/h
                   </div>
-                  <div style={{ fontSize: 9 }}>Speed</div>
+                  <div style={{ fontSize: 8, color: "white" }}>Speed</div>
                 </CircularProgressbarWithChildren>
               </div>
-              <div style={{ padding: "8px 0px 0px 5px" }}>
+              <div style={{ padding: "7px 0px 0px 4px" }}>
                 <CircularProgressbarWithChildren
                   value={parseInt(
-                    Number(selectedSingleDevice?.basicInfo?.odometer).toFixed(0)
+                    Number(
+                      selectedSingleDevice?.latestPosition?.attributes?.odometer
+                    ).toFixed(0)
                   )}
                   // styles={{
                   //   path: {
@@ -228,23 +252,24 @@ function Vehicle3dImageDetails() {
                     text: { fill: "white" },
                   }}
                 >
-                  <div style={{ fontSize: 8, marginTop: -5 }}>
+                  <div style={{ fontSize: 7, marginTop: -5, color: "white" }}>
                     <strong>
                       {formatNumber(
                         parseInt(
                           Number(
-                            selectedSingleDevice?.basicInfo?.odometer
-                          ).toFixed(0)
+                            selectedSingleDevice?.latestPosition?.attributes
+                              ?.odometer
+                          ).toFixed(4)
                         )
                       )}
                     </strong>
-                    km
+                    &nbsp;km
                   </div>
-                  <div style={{ fontSize: 9 }}>Odometer</div>
+                  <div style={{ fontSize: 8, color: "white" }}>Odometer</div>
                 </CircularProgressbarWithChildren>
               </div>
 
-              <div style={{ padding: "8px 0px 0px 5px" }}>
+              <div style={{ padding: "7px 0px 0px 4px" }}>
                 <CircularProgressbarWithChildren
                   value={currentEngineTemp}
                   maxValue={maxSafeEngineTemp}
@@ -254,10 +279,10 @@ function Vehicle3dImageDetails() {
                     text: { fill: "white" },
                   }}
                 >
-                  <div style={{ fontSize: 9 }}>
+                  <div style={{ fontSize: 7, color: "white" }}>
                     <strong>{currentEngineTemp}°C</strong>
                   </div>
-                  <div style={{ fontSize: 9 }}>Engine </div>
+                  <div style={{ fontSize: 8, color: "white" }}>Engine </div>
                 </CircularProgressbarWithChildren>
               </div>
             </div>

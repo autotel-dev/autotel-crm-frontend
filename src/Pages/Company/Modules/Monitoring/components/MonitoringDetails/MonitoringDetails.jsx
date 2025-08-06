@@ -65,8 +65,8 @@ function MonitoringDetails() {
         <div
           style={{
             borderRadius: "5px",
-            width: "99%",
-            paddingLeft: "5px",
+            width: "98%",
+            paddingLeft: "15px",
             paddingBottom: "20px",
           }}
         >
@@ -77,16 +77,16 @@ function MonitoringDetails() {
           <div
             style={{
               display: "flex",
-              gap: "8px",
+              gap: "15px",
               minWidth: "100%",
-              padding: "0px 20px",
-              marginTop: "-40px",
+              padding: "0px 28px",
+              marginTop: "-35px",
             }}
           >
-            <div style={{ minWidth: "42%" }}>
+            <div style={{ minWidth: "43%" }}>
               <SidebarMonitoring />
             </div>
-            <div style={{ minWidth: "57%", maxWidth: "57%" }}>
+            <div style={{ minWidth: "55%", maxWidth: "55%" }}>
               <div style={{}}>
                 {selectedSingleDevice == null ? (
                   <VehicleStatusPieChart />
@@ -94,7 +94,7 @@ function MonitoringDetails() {
                   <Vehicle3dImageDetails />
                 )}
               </div>
-              <div style={{ marginTop: "-22px" }}>
+              <div style={{ marginTop: "-20px" }}>
                 {selectedSingleDevice == null ? (
                   <Alerts />
                 ) : (

@@ -30,7 +30,10 @@ const Topbar = () => {
       style={{
         borderRadius: "4px",
         // backgroundColor: "#e5e5e5",
-        backgroundColor: "#99A6A7",
+        // backgroundColor: "#99A6A7",
+        backgroundColor: "#21262C",
+        border: "1px solid black",
+        boxShadow: "0 4px 10px rgba(0, 0, 0, 0.5)",
       }}
     >
       <div
@@ -49,7 +52,8 @@ const Topbar = () => {
                 display: "flex",
                 gap: "5px",
                 alignItems: "center",
-                paddingTop: "2px",
+                paddingTop: "5px",
+                paddingBottom: "5px",
               }}
             >
               <button style={{ background: "transparent", border: "none" }}>
@@ -137,6 +141,7 @@ const Topbar = () => {
           <FaPlay
             size={18}
             cursor="pointer"
+            color="white"
             onClick={() => {
               setOpenModal(true);
             }}
@@ -192,6 +197,7 @@ function vehicleStats(bgColor, iconColor, totalCars, status) {
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
+            color: "white",
           }}
         >
           <Label>{totalCars}</Label>

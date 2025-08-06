@@ -57,16 +57,23 @@ function Alerts() {
         borderRadius: "5px",
         minWidth: "100%",
         maxWidth: "100%",
-        backgroundColor: "#99A6A7",
+        backgroundColor: "#21262C",
+        border: "1px solid black",
+        boxShadow: "0 4px 10px rgba(0, 0, 0, 0.5)",
       }}
     >
-      <CardHeader style={{ padding: "2px 8px" }}>
+      <CardHeader
+        style={{
+          padding: "2px 8px",
+          backgroundColor: "#21262C",
+          color: "white",
+        }}
+      >
         <h4
           style={{
             margin: "10px 0px",
             fontWeight: "bold",
             fontSize: "17px",
-            backgroundColor: "#99A6A7",
           }}
         >
           Alerts
@@ -78,7 +85,8 @@ function Alerts() {
           overflowY: "auto",
           padding: "0",
           scrollbarWidth: "none",
-          backgroundColor: "#99A6A7",
+          backgroundColor: "#21262C",
+          color: "white",
         }}
       >
         <ListGroup flush>
@@ -94,13 +102,14 @@ function Alerts() {
                 padding: "5px 10px",
                 borderRadius: "5px",
                 marginBottom: "5px",
+                color: "white",
               }}
             >
               <div>
                 <strong>{alert.name}:</strong> {alert.message}
               </div>
               <Button color="link" size="sm">
-                <FaTimes color="black" />
+                <FaTimes color="white" />
               </Button>
             </ListGroupItem>
           ))}

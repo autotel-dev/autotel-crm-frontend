@@ -15,6 +15,7 @@ import {
   setSelectedSingleDevice,
 } from "../../../../ReaduxToolkit/Reducer/MonitoringSlice";
 import { GET_PARSER_DEVICES } from "../../../../Utilities/api/apiEndpoints";
+import AlertsModal from "./components/Alerts/AlertsModal";
 
 // import { MapContainer } from "react-leaflet";
 
@@ -26,6 +27,8 @@ const Monitoring = () => {
 
   const [loading, setLoading] = useState(false);
   const [isDetailsVisible, setIsDetailsVisible] = useState(true); // State to toggle MonitoringDetails visibility
+
+  const [openAlertsModal, setOpenAlertsModal] = useState(false);
 
   useEffect(() => {
     dispatch(setIsConnected(false));
@@ -81,8 +84,10 @@ const Monitoring = () => {
         dispatch(setDevices(updatedDevices));
         if (selectedSingleDevice !== null) {
           const singleSelectedDevice = updatedDevices.find(
-            (d) => d._id === selectedSingleDevice._id
+            (d) => d._id == selectedSingleDevice._id
           );
+          console.log("singleSelectedDevice up : ", singleSelectedDevice);
+
           dispatch(setSelectedSingleDevice(singleSelectedDevice));
         }
       }
@@ -125,7 +130,8 @@ const Monitoring = () => {
           // backgroundColor: "#000000",
           // backgroundColor: "#3c4044",
           // backgroundColor: "rgb(240,184,50,0.4)",
-          backgroundColor: "#F0B832",
+          // backgroundColor: "#F0B832",
+          backgroundColor: "#1E2329",
           // overflow: "hidden",
           transition: "width 0.7s ease-in-out", // Smooth transition for width changes
         }}
@@ -141,6 +147,7 @@ const Monitoring = () => {
             zIndex: 2,
             display: "flex",
             justifyContent: "space-between",
+            alignItems: "center",
 
             // color: "#333",
             transition: "transform 0.7s ease-in-out", // Smooth rotation of the arrow
@@ -151,14 +158,14 @@ const Monitoring = () => {
               style={{ fontSize: "25px", cursor: "pointer", width: "40px" }}
               onClick={() => setIsDetailsVisible(!isDetailsVisible)} // Toggle visibility
             >
-              <FaArrowAltCircleRight color="black" />
+              <FaArrowAltCircleRight color="white" />
             </Label> // Arrow to open
           ) : (
             <Label
               onClick={() => setIsDetailsVisible(!isDetailsVisible)} // Toggle visibility
               style={{ fontSize: "25px", cursor: "pointer", width: "40px" }}
             >
-              <FaArrowAltCircleLeft color="black" />
+              <FaArrowAltCircleLeft color="white" />
             </Label> // Arrow to close
           )}
 
@@ -166,35 +173,45 @@ const Monitoring = () => {
             <div
               style={{
                 width: "full",
-                marginRight: "6px",
+                marginRight: "15px",
                 display: "flex",
-                gap: "20px",
-                marginBottom: "10px",
+                gap: "15px",
+                marginBottom: "15px",
+                marginTop: "10px",
+                // justifyContent: "flex-end",
               }}
             >
               <button
                 style={{
                   outline: "none",
-                  backgroundColor: "#e5e5e5",
+                  backgroundColor: "#21262C",
                   border: "none",
                   padding: "6px 15px",
                   fontWeight: "bold",
                   borderRadius: "5px",
-                  // border: "2px solid #35bfbf",
+                  color: "white",
+                  border: "1px solid black",
+                  boxShadow: "0 4px 10px rgba(0, 0, 0, 0.5)",
+                }}
+                onClick={() => {
+                  setOpenAlertsModal(true);
                 }}
               >
                 Alerts
               </button>
+
               <button
                 style={{
                   outline: "none",
                   // backgroundColor: "white",
-                  backgroundColor: "#e5e5e5",
+                  backgroundColor: "#21262C",
                   border: "none",
                   padding: "6px 15px",
                   fontWeight: "bold",
                   borderRadius: "5px",
-                  // border: "2px solid #35bfbf",
+                  color: "white",
+                  border: "1px solid black",
+                  boxShadow: "0 4px 10px rgba(0, 0, 0, 0.5)",
                 }}
               >
                 Geofence
@@ -203,12 +220,14 @@ const Monitoring = () => {
                 style={{
                   outline: "none",
                   // backgroundColor: "white",
-                  backgroundColor: "#e5e5e5",
+                  backgroundColor: "#21262C",
                   border: "none",
                   padding: "6px 15px",
                   fontWeight: "bold",
                   borderRadius: "5px",
-                  // border: "2px solid #35bfbf",
+                  color: "white",
+                  border: "1px solid black",
+                  boxShadow: "0 4px 10px rgba(0, 0, 0, 0.5)",
                 }}
               >
                 POI
@@ -217,16 +236,25 @@ const Monitoring = () => {
                 style={{
                   outline: "none",
                   // backgroundColor: "white",
-                  backgroundColor: "#e5e5e5",
+                  backgroundColor: "#21262C",
+
                   border: "none",
                   padding: "6px 15px",
                   fontWeight: "bold",
                   borderRadius: "5px",
-                  // border: "2px solid #35bfbf",
+                  color: "white",
+                  border: "1px solid black",
+                  boxShadow: "0 4px 10px rgba(0, 0, 0, 0.5)",
                 }}
               >
                 Reports
               </button>
+              {openAlertsModal && (
+                <AlertsModal
+                  isVisible={openAlertsModal}
+                  setIsVisible={setOpenAlertsModal}
+                />
+              )}
             </div>
           )}
         </div>

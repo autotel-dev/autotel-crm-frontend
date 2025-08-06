@@ -7,12 +7,11 @@ function VehicleStatusPieChart() {
   const { devices } = useSelector((state) => state.monitoring);
   // console.log("devices from redux",devices);
 
-  const devicess = devices;
-
-  const vehicles = Array.isArray(devicess) ? devicess : [];
+  const vehicles = Array.isArray(devices) ? devices : [];
 
   // Initialize all possible statuses with a count of 0
-  const possibleStatuses = ["STOP", "MOVING", "OFFLINE", "NODATA", "IDLE"];
+  // const possibleStatuses = ["STOP", "MOVING", "OFFLINE", "NODATA", "IDLE"];
+  const possibleStatuses = ["offline", "online"];
   const statusCounts = possibleStatuses.reduce((acc, status) => {
     acc[status] = 0;
     return acc;
@@ -20,7 +19,7 @@ function VehicleStatusPieChart() {
 
   // Aggregate actual statuses from the devices
   vehicles.forEach((vehicle) => {
-    const status = vehicle.device?.currentStatus || "Unknown";
+    const status = vehicle?.status || "Unknown";
     if (statusCounts.hasOwnProperty(status)) {
       statusCounts[status] += 1;
     }
@@ -58,21 +57,27 @@ function VehicleStatusPieChart() {
         borderRadius: "5px",
         minWidth: "100%",
         maxWidth: "100%",
-        backgroundColor: "#99A6A7",
+        backgroundColor: "#21262C",
+        border: "1px solid black",
+        boxShadow: "0 4px 10px rgba(0, 0, 0, 0.5)",
       }}
     >
-      <CardHeader style={{ padding: "2px 8px" }}>
+      <CardHeader style={{ padding: "2px 8px", backgroundColor: "#21262C" }}>
         <h4
           style={{
             margin: "10px 0px",
             fontWeight: "bold",
             fontSize: "17px",
+            color: "white",
           }}
         >
           Vehicle Status Pie Chart
         </h4>
       </CardHeader>
-      <CardBody className="apex-chart" style={{ padding: "10px 0px" }}>
+      <CardBody
+        className="apex-chart"
+        style={{ padding: "10px 0px", color: "white" }}
+      >
         <div id="piechart">
           {series.some((count) => count > 0) ? (
             <ReactApexChart
