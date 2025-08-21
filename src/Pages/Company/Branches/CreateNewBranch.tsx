@@ -28,7 +28,6 @@ const CreateNewBranch = () => {
     (state: any) => state.personalization
   );
   const dispatch = useDispatch();
-  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const {
     register,

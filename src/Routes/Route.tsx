@@ -57,6 +57,7 @@ import SAIOCentralLayout from "../Pages/Company/Modules/SAIO/SAIOCentralLayout";
 import ServicePackages from "../Pages/Company/Packages/Packages";
 import MonitoringForSingleVehicle from "../Pages/Company/Modules/MonitoringForSingleVehicle/MonitoringForSingleVehicle";
 import Playback from "../Pages/Company/Modules/Playback/Playback";
+import AlertManagement from "../Pages/Company/AlertManagement/AlertManagement";
 
 const routes = [
   // dashboard routes
@@ -382,6 +383,13 @@ const routes = [
     allowedUserRoles: [ROLES.COMPANY],
     isProtected: true,
     permissionValue: "Branches",
+  },
+  {
+    path: `${process.env.PUBLIC_URL}/company/setup/alert-management`,
+    Component: <AlertManagement />,
+    allowedUserRoles: [ROLES.COMPANY],
+    isProtected: true,
+    permissionValue: "AlertManagement",
   },
   {
     path: `${process.env.PUBLIC_URL}/company/setup/complain-types`,

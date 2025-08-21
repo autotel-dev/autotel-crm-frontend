@@ -1,14 +1,20 @@
 import { useEffect, useRef, useState } from "react";
-import { Map, Marker, GoogleApiWrapper, InfoWindow } from "google-maps-react";
+import { Map, GoogleApiWrapper, InfoWindow } from "google-maps-react";
 import { useDispatch, useSelector } from "react-redux";
 import "./googleMap.css";
 // import carIcon from "../../../monitoring-assets/carIcon.png";
 import carIcon from "../../../monitoring-assets/deviceLocationArrow.png";
 
-import {
-  setExpandedDevice,
-  setSelectedSingleDevice,
-} from "../../../../../../ReaduxToolkit/Reducer/MonitoringSlice";
+import { MdAdd } from "react-icons/md";
+import { GrFormSubtract } from "react-icons/gr";
+import { FaLocationArrow } from "react-icons/fa";
+import { GrMapLocation } from "react-icons/gr";
+import { FaTrafficLight } from "react-icons/fa";
+import { MdLocationOn } from "react-icons/md";
+import { FaArrowTrendDown } from "react-icons/fa6";
+import { FaRegMap } from "react-icons/fa6";
+
+import { setExpandedDevice } from "../../../../../../ReaduxToolkit/Reducer/MonitoringSlice";
 import CustomMarker from "./customMarker/CustomMarker";
 
 const GoogleMap = (props) => {
@@ -64,6 +70,32 @@ const GoogleMap = (props) => {
   if (!props.google) {
     return <div>Error: Google Maps API failed to load.</div>;
   }
+
+  // Tooltip component
+  const TooltipButton = ({ onClick, children, tooltip, style }) => {
+    const [isHovered, setIsHovered] = useState(false);
+
+    return (
+      <div
+        style={{
+          position: "relative",
+          display: "inline-block",
+          // margin: "5px 0", // Added margin between buttons
+        }}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+      >
+        <button
+          onClick={onClick}
+          className="zoom-button tooltip-button"
+          style={style}
+        >
+          {children}
+        </button>
+        {isHovered && <div className="tooltip-text">{tooltip}</div>}
+      </div>
+    );
+  };
 
   return (
     <Map
@@ -357,13 +389,122 @@ const GoogleMap = (props) => {
         </div>
       </InfoWindow>
 
-      <div className="custom-zoom-control">
-        <button onClick={zoomIn} className="zoom-button">
-          +
-        </button>
-        <button onClick={zoomOut} className="zoom-button">
-          -
-        </button>
+      <div
+        className="custom-zoom-control"
+        style={{ backgroundColor: "#21262C" }}
+      >
+        <div style={{ height: "5px" }}></div>
+        <TooltipButton
+          onClick={zoomIn}
+          tooltip="Zoom In"
+          style={{
+            backgroundColor: "#6dbfb8",
+            color: "white",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <MdAdd size={20} />
+        </TooltipButton>
+
+        <TooltipButton
+          onClick={zoomOut}
+          tooltip="Zoom Out"
+          style={{
+            backgroundColor: "#6dbfb8",
+            color: "white",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <GrFormSubtract size={20} />
+        </TooltipButton>
+
+        <TooltipButton
+          onClick={zoomOut}
+          tooltip="Alternate Maps"
+          style={{
+            backgroundColor: "#6dbfb8",
+            color: "white",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <FaRegMap size={20} />
+        </TooltipButton>
+
+        <TooltipButton
+          onClick={() => {}}
+          tooltip="Objects"
+          style={{
+            backgroundColor: "#6dbfb8",
+            color: "white",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <FaLocationArrow size={20} />
+        </TooltipButton>
+
+        <TooltipButton
+          onClick={() => {}}
+          tooltip="Geofence"
+          style={{
+            backgroundColor: "#6dbfb8",
+            color: "white",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <GrMapLocation size={20} />
+        </TooltipButton>
+
+        <TooltipButton
+          onClick={() => {}}
+          tooltip="Routes"
+          style={{
+            backgroundColor: "#6dbfb8",
+            color: "white",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <FaTrafficLight size={20} />
+        </TooltipButton>
+
+        <TooltipButton
+          onClick={() => {}}
+          tooltip="POI"
+          style={{
+            backgroundColor: "#6dbfb8",
+            color: "white",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <MdLocationOn size={20} />
+        </TooltipButton>
+
+        <TooltipButton
+          onClick={() => {}}
+          tooltip="Tail"
+          style={{
+            backgroundColor: "#6dbfb8",
+            color: "white",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <FaArrowTrendDown size={20} />
+        </TooltipButton>
       </div>
     </Map>
   );

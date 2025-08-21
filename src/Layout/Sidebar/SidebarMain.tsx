@@ -319,6 +319,13 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
           title: "Branches",
           link: `${process.env.PUBLIC_URL}/company/setup/branches`,
         },
+
+        {
+          // svgIcon: "bonus-kit",
+          svgIcon: `${WarehouseIcon}`,
+          title: "Alert Management",
+          link: `${process.env.PUBLIC_URL}/company/setup/alert-management`,
+        },
         {
           // svgIcon: "bonus-kit",
           svgIcon: `${ComplaintypeIcon}`,
@@ -355,6 +362,7 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
           title: "Email Templates",
           link: `${process.env.PUBLIC_URL}/company/setup/email-template`,
         },
+
         // {
         //   // svgIcon: "bonus-kit",
         //   svgIcon: `${WhatsapptemplateIcon}`,

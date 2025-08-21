@@ -1129,31 +1129,33 @@ const GoogleMap = (props) => {
 
     // Create markers for each GPS point
     sortedDataPoints.forEach((point, index) => {
-      const marker = new props.google.maps.Marker({
-        position: { lat: point.latitude, lng: point.longitude },
-        map: mapRef.current.map,
-        icon: {
-          path: props.google.maps.SymbolPath.CIRCLE,
-          fillColor: point.speed && point.speed > 0 ? "#4285F4" : "#EA4335",
-          fillOpacity: 0.7,
-          strokeColor: "#FFFFFF",
-          strokeWeight: 1,
-          scale: 4,
-        },
-        title: `Point ${index + 1}: ${point.timestamp}`,
-      });
-
-      // Add click listener
-      marker.addListener("click", () => {
-        setSelectedPoint(point);
-        setInfoWindowPosition({
-          lat: point.latitude,
-          lng: point.longitude,
+      if (index % 4 == 0) {
+        const marker = new props.google.maps.Marker({
+          position: { lat: point.latitude, lng: point.longitude },
+          map: mapRef.current.map,
+          icon: {
+            path: props.google.maps.SymbolPath.CIRCLE,
+            fillColor: point.speed && point.speed > 0 ? "#4285F4" : "#EA4335",
+            fillOpacity: 0.7,
+            strokeColor: "#FFFFFF",
+            strokeWeight: 1,
+            scale: 4,
+          },
+          title: `Point ${index + 1}: ${point.timestamp}`,
         });
-        setInfoWindowVisible(true);
-      });
 
-      markersRef.current.push(marker);
+        // Add click listener
+        marker.addListener("click", () => {
+          setSelectedPoint(point);
+          setInfoWindowPosition({
+            lat: point.latitude,
+            lng: point.longitude,
+          });
+          setInfoWindowVisible(true);
+        });
+
+        markersRef.current.push(marker);
+      }
     });
 
     setMarkersInitialized(true);
