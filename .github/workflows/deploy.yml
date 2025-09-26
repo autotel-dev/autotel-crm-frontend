@@ -3,7 +3,8 @@ name: CI/CD Frontend Deploy
 on:
   push:
     branches:
-      - frontend/bilal   # deploy only when this branch is updated
+      - main
+      - frontend/bilal
 
 jobs:
   build-and-deploy:
