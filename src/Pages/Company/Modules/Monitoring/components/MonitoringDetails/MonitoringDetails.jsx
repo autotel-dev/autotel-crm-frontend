@@ -17,51 +17,6 @@ function MonitoringDetails() {
   return (
     <Container fluid={12}>
       <div>
-        {/* <div
-          style={{
-            paddingTop: "5px",
-            paddingLeft: "5px",
-            paddingBottom: "5px",
-          }}
-          className="typography"
-        >
-          <button
-            style={{
-              backgroundColor: "transparent",
-              border: "none",
-              borderRight: "2px solid black",
-              padding: "5px 8px",
-              cursor: "pointer", // Add pointer for button behavior
-              fontWeight: "bold",
-            }}
-          >
-            Vehicles
-          </button>
-          <button
-            style={{
-              backgroundColor: "transparent",
-              border: "none",
-              borderRight: "2px solid black",
-              padding: "5px 8px",
-              cursor: "pointer", // Add pointer for button behavior
-              fontWeight: "bold",
-            }}
-          >
-            Drivers
-          </button>
-          <button
-            style={{
-              backgroundColor: "transparent",
-              border: "none",
-              borderRight: "2px solid black",
-              padding: "5px 8px",
-              cursor: "pointer", // Add pointer for button behavior
-              fontWeight: "bold",
-            }}
-          >
-            Alerts
-          </button>
-        </div> */}
         <div
           style={{
             borderRadius: "5px",

@@ -14,15 +14,14 @@ import { Modal, ModalBody } from "reactstrap";
 import { Font } from "@react-pdf/renderer";
 import { IMAGE_BASE_URL } from "../../../../../../Utilities/api/apiEndpoints";
 import { useSelector } from "react-redux";
-import BackgroundImage from "../../../assets/Background Image.png";
 
 // Register local Helvetica fonts
 Font.register({
   family: "Helvetica",
   fonts: [
-    { src: require("../../../assets/fonts/helvetica/Helvetica.ttf") }, // Regular
+    { src: require("../../../../../../assets/fonts/helvetica/Helvetica.ttf") }, // Regular
     {
-      src: require("../../../assets/fonts/helvetica/Helvetica-Bold.ttf"),
+      src: require("../../../../../../assets/fonts/helvetica/Helvetica-Bold.ttf"),
       fontWeight: "bold",
     }, // Bold
   ],

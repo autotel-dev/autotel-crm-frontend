@@ -1,12 +1,12 @@
 import { Col, Row } from "reactstrap";
 
-import CreateNewReport from "./CreateNewReport";
+import CreateNewTripReport from "./CreateNewTripReport";
 
 const ReportsListNav = ({ dropDownDevices }: any) => {
   return (
     <Row>
       <Col md={6}></Col>
-      <CreateNewReport dropDownDevices={dropDownDevices} />
+      <CreateNewTripReport dropDownDevices={dropDownDevices} />
     </Row>
   );
 };

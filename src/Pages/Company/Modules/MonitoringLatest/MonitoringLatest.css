@@ -1,0 +1,29 @@
+.tooltip-text-for-single-device {
+  position: absolute;
+  top: -10px; /* Position upward instead of bottom: 125% */
+  left: 100%; /* Position to the right instead of left: 50% */
+  margin-left: 10px; /* Add spacing from the button */
+  transform: none; /* Remove the center transform */
+  background-color: #333;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  z-index: 9999;
+  opacity: 1;
+  pointer-events: none;
+}
+
+.tooltip-text-for-single-device::after {
+  content: "";
+  position: absolute;
+  top: 50%; /* Center the arrow vertically */
+  left: -5px; /* Position arrow on the left side of tooltip */
+  transform: translateY(-50%); /* Center the arrow */
+  margin-left: 0; /* Remove margin-left */
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent #333 transparent transparent; /* Arrow pointing left */
+  z-index: 9999;
+}

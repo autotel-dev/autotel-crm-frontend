@@ -58,6 +58,8 @@ import ServicePackages from "../Pages/Company/Packages/Packages";
 import MonitoringForSingleVehicle from "../Pages/Company/Modules/MonitoringForSingleVehicle/MonitoringForSingleVehicle";
 import Playback from "../Pages/Company/Modules/Playback/Playback";
 import AlertManagement from "../Pages/Company/AlertManagement/AlertManagement";
+import TripReports from "../Pages/Company/Modules/Monitoring/components/Reports/TripReports";
+import MonitoringLatest from "../Pages/Company/Modules/MonitoringLatest/MonetoringLatest";
 
 const routes = [
   // dashboard routes
@@ -451,13 +453,22 @@ const routes = [
 
   // Modules
 
+  // {
+  //   path: `${process.env.PUBLIC_URL}/company/modules/monitoring`,
+  //   Component: <Monitoring />,
+  //   isProtected: true,
+  //   allowedUserRoles: [ROLES.COMPANY],
+  //   permissionValue: "Monitoring",
+  // },
+
   {
     path: `${process.env.PUBLIC_URL}/company/modules/monitoring`,
-    Component: <Monitoring />,
+    Component: <MonitoringLatest />,
     isProtected: true,
     allowedUserRoles: [ROLES.COMPANY],
     permissionValue: "Monitoring",
   },
+
   {
     path: `${process.env.PUBLIC_URL}/company/modules/monitoring-for-single-vehicle`,
     Component: <MonitoringForSingleVehicle />,
@@ -536,6 +547,13 @@ const routes = [
     permissionValue: "Reports",
   },
 
+  {
+    path: `${process.env.PUBLIC_URL}/company/trip-reports`,
+    Component: <TripReports />,
+    isProtected: true,
+    allowedUserRoles: [ROLES.COMPANY],
+    permissionValue: "TripReports",
+  },
   // Operator Routes
 
   // Dashboard

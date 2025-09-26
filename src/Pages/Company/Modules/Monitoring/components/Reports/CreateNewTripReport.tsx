@@ -38,7 +38,7 @@ import {
 } from "../../../../../../Utilities/api/apiEndpoints";
 import { ERROR_MESSAGE } from "../../../../../../Utilities/constants/constants";
 
-const CreateNewReport = ({ dropDownDevices }: any) => {
+const CreateNewTripReport = ({ dropDownDevices }: any) => {
   const { userPersonalizationData } = useSelector(
     (state: any) => state.personalization
   );
@@ -1545,7 +1545,7 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
           onClick={addToggle}
         >
           <PlusCircle />
-          Create New Report
+          Create New
         </button>
         <Modal
           isOpen={addModal}
@@ -1559,7 +1559,7 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
           }
         >
           <div className="modal-header">
-            <H3 className="modal-title">Create Report</H3>
+            <H3 className="modal-title">Create Trip Report</H3>
             <Button
               color="transprant"
               className="btn-close"
@@ -1607,11 +1607,212 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
                         .localeCompare((optionB?.P ?? "").toLowerCase())
                     }
                     onChange={(e: any, options) => {
-                      setValue("title", options.label);
+                      // setValue("title", options.label);
                       // console.log(e);
                       setType(e);
                     }}
-                    options={reportsTypeList}
+                    options={[
+                      {
+                        value: "Travel Summary",
+                        label: "Travel Summary",
+                      },
+                      {
+                        value: "Travel Summary Bulk",
+                        label: "Travel Summary Bulk",
+                      },
+                      {
+                        value: "Travel Summary Custom",
+                        label: "Travel Summary Custom",
+                      },
+                      {
+                        value: "Travel Summary Custom 1",
+                        label: "Travel Summary Custom 1",
+                      },
+                      {
+                        value: "Travel Summary Custom 2",
+                        label: "Travel Summary Custom 2",
+                      },
+                      {
+                        value: "Travel Summary Custom 3",
+                        label: "Travel Summary Custom 3",
+                      },
+
+                      {
+                        value: "Stops Move Summary",
+                        label: "Stops Move Summary",
+                      },
+
+                      {
+                        value: "Stop Move With Geofence",
+                        label: "Stop Move With Geofence",
+                      },
+                      {
+                        value: "Stop Move With Drivers",
+                        label: "Stop Move With Drivers",
+                      },
+                      {
+                        value: "Stop Move Simlified",
+                        label: "Stop Move Simlified",
+                      },
+
+                      {
+                        value: "Stoppage Summary",
+                        label: "Stoppage Summary",
+                      },
+
+                      {
+                        value: "Move Summary",
+                        label: "Move Summary",
+                      },
+
+                      {
+                        value: "Move Summary Detailed",
+                        label: "Move Summary Detailed",
+                      },
+
+                      {
+                        value: "Overspeed",
+                        label: "Overspeed",
+                      },
+                      {
+                        value: "Overspeed In geofence",
+                        label: "Overspeed In geofence",
+                      },
+
+                      {
+                        value: "Underspeed",
+                        label: "Underspeed",
+                      },
+
+                      {
+                        value: "Geofences",
+                        label: "Geofences",
+                      },
+
+                      {
+                        value: "Geofence in out (ignition on off)",
+                        label: "Geofence in out (ignition on off)",
+                      },
+
+                      {
+                        value: "Geofence in out shift",
+                        label: "Geofence in out shift",
+                      },
+
+                      {
+                        value: "Geofence (Touch all)",
+                        label: "Geofence (Touch all)",
+                      },
+                      {
+                        value: "Geofence (Touch all) 2",
+                        label: "Geofence (Touch all) 2",
+                      },
+
+                      {
+                        value: "Events",
+                        label: "Events",
+                      },
+
+                      {
+                        value: "Fuel Level",
+                        label: "Fuel Level",
+                      },
+
+                      {
+                        value: "Fuel Fillings",
+                        label: "Fuel Fillings",
+                      },
+
+                      {
+                        value: "Fuel Thefts",
+                        label: "Fuel Thefts",
+                      },
+
+                      {
+                        value: "Temperature",
+                        label: "Temperature",
+                      },
+
+                      {
+                        value: "RAG",
+                        label: "RAG",
+                      },
+
+                      {
+                        value: "Rag Seatbelt",
+                        label: "Rag Seatbelt",
+                      },
+
+                      {
+                        value: "Vehicle history",
+                        label: "Vehicle history",
+                      },
+
+                      {
+                        value: "Sent Commands",
+                        label: "Sent Commands",
+                      },
+
+                      {
+                        value: "Tracker Installation All",
+                        label: "Tracker Installation All",
+                      },
+
+                      {
+                        value: "Offline Vehicles All",
+                        label: "Offline Vehicles All",
+                      },
+
+                      {
+                        value: "Tracvel Summary With Playback Image",
+                        label: "Tracvel Summary With Playback Image",
+                      },
+
+                      {
+                        value: "Task Report",
+                        label: "Task Report",
+                      },
+
+                      {
+                        value: "Expenses",
+                        label: "Expenses",
+                      },
+
+                      {
+                        value: "Speed",
+                        label: "Speed",
+                      },
+
+                      {
+                        value: "Daily Travel Report",
+                        label: "Daily Travel Report",
+                      },
+
+                      {
+                        value: "Speed Compare GPS ECM report",
+                        label: "Speed Compare GPS ECM report",
+                      },
+
+                      {
+                        value: "Overspeed Speed ECM",
+                        label: "Overspeed Speed ECM",
+                      },
+
+                      {
+                        value: "Geofence in (grouped)",
+                        label: "Geofence in (grouped)",
+                      },
+
+                      {
+                        value: "Events Agent Reponse",
+                        label: "Events Agent Reponse",
+                      },
+
+                      {
+                        value: "Multi Vehicle Trip",
+                        label: "Multi Vehicle Trip",
+                      },
+                    ]}
                   />
                 </FormGroup>
 
@@ -2364,12 +2565,212 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
                 ) : (
                   <div></div>
                 )}
+
+                <Row>
+                  <FormGroup className="col-md-6 create-group">
+                    <P>Send to Email</P>
+                    <input className="form-control" type="text" />
+                  </FormGroup>
+                  <FormGroup className="col-md-3 create-group">
+                    <P>Speed Limit</P>
+                    <input className="form-control" type="text" />
+                  </FormGroup>
+
+                  <FormGroup className="col-md-3 create-group">
+                    <P>Interval</P>
+                    <Select
+                      // mode="multiple"
+                      showSearch
+                      style={{ width: "100%" }}
+                      placeholder="Select Interval"
+                      optionFilterProp="children"
+                      filterOption={(input: any, option: any) =>
+                        (option?.P ?? "").includes(input)
+                      }
+                      filterSort={(optionA: any, optionB: any) =>
+                        (optionA?.P ?? "")
+                          .toLowerCase()
+                          .localeCompare((optionB?.P ?? "").toLowerCase())
+                      }
+                      onChange={(e: any, options) => {
+                        // setComplaintPriority(e);
+                      }}
+                      options={[
+                        {
+                          label: "5 s",
+                          value: "5 s",
+                        },
+                        {
+                          label: "10 s",
+                          value: "10 s",
+                        },
+                        {
+                          label: "30 s",
+                          value: "30 s",
+                        },
+                        {
+                          label: "1 m",
+                          value: "1 m",
+                        },
+                        {
+                          label: "5 m",
+                          value: "5 m",
+                        },
+                        {
+                          label: "15 m",
+                          value: "15 m",
+                        },
+                        {
+                          label: "30 m",
+                          value: "30 m",
+                        },
+                        {
+                          label: "45 m",
+                          value: "45 m",
+                        },
+                        {
+                          label: "60 m",
+                          value: "60 m",
+                        },
+                      ]}
+                    />
+                  </FormGroup>
+                </Row>
+                <Row>
+                  <FormGroup className="col-md-3 create-group">
+                    <P>Stops</P>
+                    <Select
+                      // mode="multiple"
+                      showSearch
+                      style={{ width: "100%" }}
+                      placeholder="Select Stops"
+                      optionFilterProp="children"
+                      filterOption={(input: any, option: any) =>
+                        (option?.P ?? "").includes(input)
+                      }
+                      filterSort={(optionA: any, optionB: any) =>
+                        (optionA?.P ?? "")
+                          .toLowerCase()
+                          .localeCompare((optionB?.P ?? "").toLowerCase())
+                      }
+                      onChange={(e: any, options) => {
+                        // setComplaintPriority(e);
+                      }}
+                      options={[
+                        {
+                          label: "> 1 m",
+                          value: "> 1 m",
+                        },
+                        {
+                          label: "> 5 m",
+                          value: "> 5 m",
+                        },
+                        {
+                          label: "> 10 m",
+                          value: "> 10 m",
+                        },
+                        {
+                          label: "> 15 m",
+                          value: "> 15 m",
+                        },
+                        {
+                          label: "> 20 m",
+                          value: "> 20 m",
+                        },
+                        {
+                          label: "> 30 m",
+                          value: "> 30 m",
+                        },
+                        {
+                          label: "> 45 m",
+                          value: "> 45 m",
+                        },
+                        {
+                          label: "> 60 m",
+                          value: "> 60 m",
+                        },
+                      ]}
+                    />
+                  </FormGroup>
+                </Row>
+                <Row
+                  style={{
+                    display: "flex",
+                    gap: "20px",
+                  }}
+                >
+                  <FormGroup
+                    check
+                    className="col-3 mb-2"
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "start",
+                    }}
+                  >
+                    <input
+                      type="checkbox"
+                      id="Daily"
+                      className="custom-checkbox me-2"
+                    />
+                    <label
+                      htmlFor="Daily"
+                      style={{ margin: "0px", padding: "0px" }}
+                    >
+                      Daily
+                    </label>
+                  </FormGroup>
+
+                  <FormGroup
+                    check
+                    className="col-3 mb-2"
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "start",
+                    }}
+                  >
+                    <input
+                      type="checkbox"
+                      id="Weekly"
+                      className="custom-checkbox me-2"
+                    />
+                    <label
+                      htmlFor="Weekly"
+                      style={{ margin: "0px", padding: "0px" }}
+                    >
+                      Weekly
+                    </label>
+                  </FormGroup>
+
+                  <FormGroup
+                    check
+                    className="col-3 mb-2"
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "start",
+                    }}
+                  >
+                    <input
+                      type="checkbox"
+                      id="Monthly"
+                      className="custom-checkbox me-2"
+                    />
+                    <label
+                      htmlFor="Monthly"
+                      style={{ margin: "0px", padding: "0px" }}
+                    >
+                      Monthly
+                    </label>
+                  </FormGroup>
+                </Row>
               </Row>
               <div
                 style={{
                   display: "flex",
                   justifyContent: "start",
-                  height: "150px",
+                  height: "100px",
                   alignItems: "end",
                 }}
               >
@@ -2393,4 +2794,4 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
   );
 };
 
-export default CreateNewReport;
+export default CreateNewTripReport;

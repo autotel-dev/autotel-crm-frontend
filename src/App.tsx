@@ -21,6 +21,7 @@ import {
   GET_SUPERADMIN_PERSONALIZATION,
   GET_USER_BY_ID,
 } from "./Utilities/api/apiEndpoints";
+import { socketConnection } from "./sockets/socket";
 const App = () => {
   const { userPermissions } = useSelector(
     (state: any) => state.userPermissions
@@ -117,6 +118,10 @@ const App = () => {
       }
     }
   }, []);
+
+  // useEffect(() => {
+  //   socketConnection();
+  // }, []);
 
   return (
     <>

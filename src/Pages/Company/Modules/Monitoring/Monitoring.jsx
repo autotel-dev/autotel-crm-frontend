@@ -16,6 +16,7 @@ import {
 } from "../../../../ReaduxToolkit/Reducer/MonitoringSlice";
 import { GET_PARSER_DEVICES } from "../../../../Utilities/api/apiEndpoints";
 import AlertsModal from "./components/Alerts/AlertsModal";
+import { socketConnection } from "../../../../sockets/socket";
 
 // import { MapContainer } from "react-leaflet";
 
@@ -24,6 +25,7 @@ const Monitoring = () => {
   const { devices, selectedSingleDevice } = useSelector(
     (state) => state.monitoring
   );
+  const navigate = useNavigate();
 
   const [loading, setLoading] = useState(false);
   const [isDetailsVisible, setIsDetailsVisible] = useState(true); // State to toggle MonitoringDetails visibility
@@ -95,6 +97,52 @@ const Monitoring = () => {
       console.error("Error fetching updated devices:", error);
     }
   };
+
+  // useEffect(() => {
+  //   // 🔹 Check immediately (may be false if still connecting)
+  //   console.log("Initial connected state:", socketConnection.connected);
+
+  //   // 🔹 Listen for successful connection
+  //   socketConnection.on("connect", () => {
+  //     console.log("✅ Connected to server with ID:", socketConnection.id);
+  //     dispatch(setIsConnected(true));
+  //   });
+
+  //   // 🔹 Listen for disconnection
+  //   socketConnection.on("disconnect", (reason) => {
+  //     console.log("❌ Disconnected from server. Reason:", reason);
+  //     dispatch(setIsConnected(false));
+  //   });
+
+  //   // 🔹 Listen for connection errors
+  //   socketConnection.on("connect_error", (err) => {
+  //     console.error("⚠️ Connection failed:", err.message);
+  //     dispatch(setIsConnected(false));
+  //   });
+
+  //   // 🔹 Your custom events
+  //   socketConnection.on("vehicle:updated", (data) => {
+  //     console.log("📩 vehicle:updated:", data);
+  //   });
+
+  //   socketConnection.on("vehicle:created", (data) => {
+  //     console.log("📩 vehicle:created:", data);
+  //   });
+
+  //   socketConnection.on("vehicle:deleted", (data) => {
+  //     console.log("📩 vehicle:deleted:", data);
+  //   });
+
+  //   // cleanup listeners on unmount
+  //   return () => {
+  //     socketConnection.off("connect");
+  //     socketConnection.off("disconnect");
+  //     socketConnection.off("connect_error");
+  //     socketConnection.off("vehicle:updated");
+  //     socketConnection.off("vehicle:created");
+  //     socketConnection.off("vehicle:deleted");
+  //   };
+  // }, []);
 
   return (
     <div
@@ -245,6 +293,9 @@ const Monitoring = () => {
                   color: "white",
                   border: "1px solid black",
                   boxShadow: "0 4px 10px rgba(0, 0, 0, 0.5)",
+                }}
+                onClick={() => {
+                  navigate(`${process.env.PUBLIC_URL}/company/trip-reports`);
                 }}
               >
                 Reports

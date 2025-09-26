@@ -1,0 +1,5 @@
+.gray-placeholder::placeholder {
+  color: gray;
+  size: 10px;
+  opacity: 1; /* Ensures the white color is fully visible */
+}

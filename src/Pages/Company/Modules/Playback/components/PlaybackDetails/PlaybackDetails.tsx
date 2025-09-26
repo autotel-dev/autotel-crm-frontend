@@ -4,6 +4,8 @@ import Trips from "./components/Trips/Trips";
 import Events from "./components/Events/Events";
 import Datalog from "./components/Datalog/Datalog";
 import Speed from "./components/Speed/Speed";
+import Fuels from "./components/Fuels/Fuels";
+import Temperature from "./components/Temperature/Temperature";
 
 const PlaybackDetails = () => {
   const [activeTab, setActiveTab] = useState("Trips");
@@ -16,7 +18,7 @@ const PlaybackDetails = () => {
     "Speed",
     "Fuel",
     "Temperature",
-    "Gallery",
+    // "Gallery",
   ];
 
   // Sample data (replace with actual API data or props)
@@ -115,6 +117,10 @@ const PlaybackDetails = () => {
           <Datalog />
         ) : activeTab == "Speed" ? (
           <Speed />
+        ) : activeTab == "Fuel" ? (
+          <Fuels />
+        ) : activeTab == "Temperature" ? (
+          <Temperature />
         ) : (
           <></>
         )}

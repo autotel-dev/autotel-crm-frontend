@@ -3,11 +3,11 @@ import { Col, Container, Row, Input, Form, Card } from "reactstrap";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Breadcrumbs from "../../../../../../CommonElements/Breadcrumbs/Breadcrumbs";
-import ReportsList from "./ReportsList";
+import ReportsList from "./TripReportsList";
 import ReportsListNav from "./ReportsListNav";
 import { getAll } from "../../../../../../Utilities/api";
 import Swal from "sweetalert2";
-import "../../../CssConstaints/Style.css";
+import "../../../../../../CssConstaints/Style.css";
 import {
   setIsConnected,
   setReportstype,
@@ -20,7 +20,7 @@ import {
 } from "../../../../../../Utilities/api/apiEndpoints";
 import { ERROR_MESSAGE } from "../../../../../../Utilities/constants/constants";
 
-const Reports = () => {
+const TripReports = () => {
   const dispatch = useDispatch();
   const [searchValue, setSearchValue] = useState("");
   const groups: any = [];
@@ -136,9 +136,9 @@ const Reports = () => {
       ) : (
         <div>
           <Breadcrumbs
-            mainTitle="Reports List"
-            parent="Reports"
-            title="Reports List"
+            mainTitle="Trip Reports List"
+            parent="Trip Reports"
+            title="Trip Reports List"
           />
           {/* {loading ? (
             <div
@@ -226,4 +226,4 @@ const Reports = () => {
   );
 };
 
-export default Reports;
+export default TripReports;

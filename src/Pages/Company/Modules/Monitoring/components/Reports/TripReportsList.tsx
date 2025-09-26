@@ -20,7 +20,7 @@ import H7 from "../../../../../../CommonElements/Headings/H7Element";
 import { FaFileExcel } from "react-icons/fa6";
 import { BiSolidFilePdf } from "react-icons/bi";
 import ViewPDFModalForReports from "./ViewPDFModal";
-import { formatUnderscoredString } from "../../../../../..//Utilities/globals/globals";
+import { formatUnderscoredString } from "../../../../../../Utilities/globals/globals";
 import { FaEye } from "react-icons/fa";
 import {
   Document,
@@ -34,12 +34,10 @@ import {
   PDFDownloadLink,
 } from "@react-pdf/renderer";
 import { IMAGE_BASE_URL } from "../../../../../../Utilities/api/apiEndpoints";
-import BackgroundImage from "../../../assets/Background Image.png";
+import BackgroundImage from "../../../../../../assets/Background Image.png";
 
-const ReportsList = () => {
+const TripReportsList = () => {
   const { reports } = useSelector((state: any) => state.reports);
-
-  // console.log("Reports in list", reports);
 
   const dispatch = useDispatch();
   const [modal, setModal] = useState(false);
@@ -1413,4 +1411,4 @@ const ReportsList = () => {
   );
 };
 
-export default ReportsList;
+export default TripReportsList;
