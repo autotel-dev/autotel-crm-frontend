@@ -3,7 +3,6 @@ name: CI/CD Frontend Deploy
 on:
   push:
     branches:
-      - main
       - frontend/bilal
 
 jobs:
