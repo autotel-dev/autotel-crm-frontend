@@ -7,7 +7,7 @@ on:
 
 jobs:
   build-and-deploy:
-    runs-on: Centos-latest
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
