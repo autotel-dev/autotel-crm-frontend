@@ -10,14 +10,25 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Trigger deployment on server
-        uses: appleboy/ssh-action@v1.2.0   # ⬅ upgrade version
+      - name: Push code & run deploy script on server
+        uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.DEPLOY_HOST }}
           username: ${{ secrets.DEPLOY_USER }}
           key: ${{ secrets.DEPLOY_KEY }}
           port: 5768
-          script_stop: true         # stop if any command fails on server
-          timeout: 30m              # now actually works
+          script_stop: true
+          timeout: 5m   # keep GitHub Action short
           script: |
-            /root/deploy.sh
+            # Ensure repo exists on server
+            if [ ! -d "/root/frontend-bilal/.git" ]; then
+              git clone -b frontend/bilal git@github.com:YOUR_ORG/YOUR_REPO.git /root/frontend-bilal
+            fi
+
+            # Pull latest code
+            cd /root/frontend-bilal
+            git fetch origin
+            git reset --hard origin/frontend/bilal
+
+            # Run deploy script in background (so GitHub Action exits fast)
+            nohup bash /root/deploy.sh > /dev/null 2>&1 &
