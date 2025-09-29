@@ -17,5 +17,7 @@ jobs:
           username: ${{ secrets.DEPLOY_USER }}
           key: ${{ secrets.DEPLOY_KEY }}
           port: 5768
+          script_stop: true         # stop if any command fails on server
+          timeout: 30m              # extend timeout (default is 10m)
           script: |
             /root/deploy.sh
