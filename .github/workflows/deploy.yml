@@ -11,13 +11,13 @@ jobs:
 
     steps:
       - name: Trigger deployment on server
-        uses: appleboy/ssh-action@v1.0.0
+        uses: appleboy/ssh-action@v1.2.0   # ⬅ upgrade version
         with:
           host: ${{ secrets.DEPLOY_HOST }}
           username: ${{ secrets.DEPLOY_USER }}
           key: ${{ secrets.DEPLOY_KEY }}
           port: 5768
           script_stop: true         # stop if any command fails on server
-          timeout: 30m              # extend timeout (default is 10m)
+          timeout: 30m              # now actually works
           script: |
             /root/deploy.sh
