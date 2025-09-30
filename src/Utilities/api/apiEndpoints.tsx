@@ -12,6 +12,7 @@ export const IMAGE_BASE_URL = "http://163.61.91.52:81";
 
 export const IMAGE_BASE_URL_RENTAL = `${API_BASE_URL}/company/server-credentials/test-connection`;
 export const GET_PARSER_DEVICES = `${API_BASE_URL}/company/get-parser-devices`;
+export const GET_VEHICLE_HISTORY = `${API_BASE_URL}/vehicle/get-vehicle-history`;
 export const TODAY_VEHICLE_ACTIVITY = `${API_BASE_URL}/company/server-credentials/test-connection`;
 
 // Miscellaneous

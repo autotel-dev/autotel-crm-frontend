@@ -6,6 +6,7 @@ const initialState = {
   selectedDevices: [],
   devicesStatuses: [],
   devicesDetailData: [],
+  vehicleHistoryData: null,
   noDevicesFound: "",
   loading: false,
   error: null,
@@ -55,7 +56,9 @@ const MonitoringSlice = createSlice({
     setSelectedSingleDevice: (state, action) => {
       state.selectedSingleDevice = action.payload;
     },
-
+    setVehicleHistoryData: (state, action) => {
+      state.vehicleHistoryData = action.payload;
+    },
     setDevicesEnd: (state) => {
       state.loading = false;
     },
@@ -74,6 +77,7 @@ export const {
   setDevicesEnd,
   setNoDevicesFound,
   setServerDevices,
+  setVehicleHistoryData,
   setSelecetdDevices,
   setDevicesStatuses,
   setDevicesDetailData,

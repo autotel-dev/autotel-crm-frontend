@@ -16,8 +16,8 @@ const PlaybackDetails = () => {
     "Events",
     "Datalog",
     "Speed",
-    "Fuel",
-    "Temperature",
+    // "Fuel",
+    // "Temperature",
     // "Gallery",
   ];
 
@@ -117,11 +117,13 @@ const PlaybackDetails = () => {
           <Datalog />
         ) : activeTab == "Speed" ? (
           <Speed />
-        ) : activeTab == "Fuel" ? (
-          <Fuels />
-        ) : activeTab == "Temperature" ? (
-          <Temperature />
         ) : (
+          // : activeTab == "Fuel" ? (
+          //   <Fuels />
+          // ) : activeTab == "Temperature" ? (
+          //   <Temperature />
+          // )
+
           <></>
         )}
       </div>

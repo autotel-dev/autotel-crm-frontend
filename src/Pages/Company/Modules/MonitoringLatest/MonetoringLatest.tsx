@@ -55,6 +55,8 @@ const MonitoringLatest = () => {
   const { devices, selectedSingleDevice } = useSelector(
     (state: any) => state.monitoring
   );
+
+  console.log("selectedSingleDevice", selectedSingleDevice);
   const updatesBufferRef = React.useRef<any[]>([]);
 
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -101,7 +103,7 @@ const MonitoringLatest = () => {
         dispatch(setDevices(updatedDevices));
         console.log("✅ Devices state updated with buffered changes");
       }
-    }, 5000);
+    }, 4000);
 
     return () => clearInterval(interval);
   }, [devices, dispatch]);
@@ -310,7 +312,7 @@ const MonitoringLatest = () => {
 
       // get latestPosition update
       const latestPosition = changes?.updatedFields?.latestPosition;
-      console.log("payload", payload);
+      // console.log("payload", payload);
 
       if (!latestPosition) return; // no position update
       // Push into buffer (not Redux yet)
@@ -328,7 +330,7 @@ const MonitoringLatest = () => {
 
       // get latestPosition update
       const latestPosition = changes?.updatedFields?.latestPosition;
-      console.log("payload", payload);
+      // console.log("payload", payload);
 
       if (!latestPosition) return; // no position update
       // Push into buffer (not Redux yet)
@@ -346,7 +348,7 @@ const MonitoringLatest = () => {
 
       // get latestPosition update
       const latestPosition = changes?.updatedFields?.latestPosition;
-      console.log("payload", payload);
+      // console.log("payload", payload);
 
       if (!latestPosition) return; // no position update
       // Push into buffer (not Redux yet)

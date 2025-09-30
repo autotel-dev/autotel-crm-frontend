@@ -113,6 +113,7 @@ const DevicesSidebar = ({ setOpen, open }: any) => {
 
   const handleDeviceClick = (device: any) => {
     dispatch(setSelectedSingleDevice(device));
+    setOpen(!open);
   };
 
   // Expand all groups initially
@@ -494,9 +495,9 @@ const DevicesSidebar = ({ setOpen, open }: any) => {
                           paddingRight: "8px",
                           borderRadius: "10px",
                         }}
-                        onClick={() => {
-                          setOpen(!open);
-                        }}
+                        // onClick={() => {
+                        //   setOpen(!open);
+                        // }}
                       >
                         <input
                           type="checkbox"
