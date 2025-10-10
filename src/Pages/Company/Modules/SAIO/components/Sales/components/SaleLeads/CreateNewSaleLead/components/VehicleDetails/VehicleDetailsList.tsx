@@ -37,6 +37,10 @@ const VehicleFormsManager = ({ callbackActive }: VehicleFormsManagerProps) => {
               instructions: item?.instructions,
               remarks: item?.remarks,
               bank: item?.bank?._id,
+              geofenceIds:
+                item?.geofences?.length > 0
+                  ? [...item?.geofences?.map((g: any) => g)]
+                  : [],
               insurance: item?.insurance?._id,
               group: item?.group?._id,
               vehicleMake: item?.make?._id,
@@ -75,6 +79,7 @@ const VehicleFormsManager = ({ callbackActive }: VehicleFormsManagerProps) => {
             instructions: "",
             remarks: "",
             bank: "",
+            geofenceIds: [],
             insurance: "",
             group: "",
             vehicleMake: "",
@@ -116,6 +121,10 @@ const VehicleFormsManager = ({ callbackActive }: VehicleFormsManagerProps) => {
               instructions: item?.instructions,
               remarks: item?.remarks,
               bank: item?.bank?._id,
+              geofenceIds:
+                item?.geofences?.length > 0
+                  ? [...item?.geofences?.map((g: any) => g)]
+                  : [],
               insurance: item?.insurance?._id,
               group: item?.group?._id,
               vehicleMake: item?.make?._id,
@@ -162,6 +171,7 @@ const VehicleFormsManager = ({ callbackActive }: VehicleFormsManagerProps) => {
         instructions: "",
         remarks: "",
         bank: "",
+        geofenceIds: [],
         insurance: "",
         group: "",
         vehicleMake: "",

@@ -10,6 +10,7 @@ const initialState = {
   isInvoiceRenwed: false,
   cities: [],
   packages: [],
+  geofences: [],
   banks: [],
   insurances: [],
   groups: [],
@@ -100,6 +101,10 @@ const SalesSlice = createSlice({
     setPackages: (state, action) => {
       state.packages = action.payload;
     },
+
+    setGeofences: (state, action) => {
+      state.geofences = action.payload;
+    },
     setBanks: (state, action) => {
       state.banks = action.payload;
     },
@@ -143,6 +148,7 @@ export const {
   setIsInvoiceRenwed,
   setCities,
   setPackages,
+  setGeofences,
   setBanks,
   setInsurances,
   setGroups,

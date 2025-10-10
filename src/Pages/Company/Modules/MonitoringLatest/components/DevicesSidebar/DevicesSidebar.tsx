@@ -486,18 +486,50 @@ const DevicesSidebar = ({ setOpen, open }: any) => {
                         style={{
                           display: "flex",
                           alignItems: "center",
-                          background: `${
-                            item?.latestPosition?.attributes?.ignition === true
-                              ? "rgba(0,255,0,0.1)"
-                              : "rgba(255,0,0,0.1)"
-                          }`,
+                          // background: `${
+                          //   item?.latestPosition?.attributes?.ignition === true
+                          //     ? "rgba(0,255,0,0.1)"
+                          //     : "rgba(255,0,0,0.1)"
+                          // }`,
+
+                          background: (() => {
+                            const renewalDate = item?.vehicle
+                              ?.serviceRenewalDate
+                              ? new Date(item.vehicle.serviceRenewalDate)
+                              : null;
+                            const deviceTime: any = item?.latestPosition
+                              ?.deviceTime
+                              ? new Date(item.latestPosition.deviceTime)
+                              : null;
+                            const now: any = new Date();
+
+                            if (renewalDate && renewalDate < now) {
+                              return "rgba(128, 128, 128, 0.2)"; // Expired
+                            }
+
+                            if (
+                              !deviceTime ||
+                              (now - deviceTime) / (1000 * 60 * 60) > 24
+                            ) {
+                              return "rgba(128, 0, 128, 0.1)"; // Inactive
+                            }
+
+                            switch (item?.mainVehicleStatus?.toLowerCase()) {
+                              case "moving":
+                                return "rgba(0, 255, 0, 0.1)";
+                              case "stopped":
+                                return "rgba(255, 0, 0, 0.1)";
+                              case "idle":
+                                return "rgba(255, 165, 0, 0.1)";
+                              default:
+                                return "rgba(240,240,240,0.4)";
+                            }
+                          })(),
+
                           paddingLeft: "8px",
                           paddingRight: "8px",
                           borderRadius: "10px",
                         }}
-                        // onClick={() => {
-                        //   setOpen(!open);
-                        // }}
                       >
                         <input
                           type="checkbox"
@@ -556,16 +588,7 @@ const DevicesSidebar = ({ setOpen, open }: any) => {
                                   >
                                     {item?.vehicle?.registrationNo || "N/A"}
                                   </span>
-                                  {/* -
-                                  <span
-                                    style={{
-                                      fontSize: "10px",
-                                      color: "gray",
-                                      fontWeight: "semibold",
-                                    }}
-                                  >
-                                    {item?.vehicle?.model?.name || "N/A"}
-                                  </span> */}
+
                                   <div
                                     className="d-block"
                                     style={{

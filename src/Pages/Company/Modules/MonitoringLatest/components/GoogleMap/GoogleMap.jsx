@@ -1,8 +1,14 @@
 import { useEffect, useRef, useState } from "react";
-import { Map, GoogleApiWrapper, InfoWindow } from "google-maps-react";
+import {
+  Map,
+  GoogleApiWrapper,
+  InfoWindow,
+  Circle,
+  Rectangle,
+  Polygon,
+} from "google-maps-react";
 import { useDispatch, useSelector } from "react-redux";
 import "./googleMap.css";
-// import carIcon from "../../../monitoring-assets/carIcon.png";
 import carIcon from "../../../monitoring-assets/deviceLocationArrow.png";
 
 import { MdAdd } from "react-icons/md";
@@ -26,6 +32,7 @@ const GoogleMap = (props) => {
   const [selectedDevice, setSelectedDevice] = useState(null);
   const [infoWindowPosition, setInfoWindowPosition] = useState(null);
   const [infoWindowVisible, setInfoWindowVisible] = useState(false);
+  const [showGeofences, setShowGeofences] = useState(false);
   const mapRef = useRef(null);
 
   const [deviceData, setDeviceData] = useState({ lat: 30.3753, lng: 69.3451 });
@@ -41,7 +48,6 @@ const GoogleMap = (props) => {
       lat: device?.latestPosition?.latitude,
       lng: device?.latestPosition?.longitude,
     });
-    // dispatch(setSelectedSingleDevice(device));
     dispatch(setExpandedDevice(true));
     setInfoWindowVisible(!infoWindowVisible);
   };
@@ -49,6 +55,10 @@ const GoogleMap = (props) => {
   const closeInfoWindow = () => {
     setInfoWindowVisible(false);
     dispatch(setExpandedDevice(false));
+  };
+
+  const toggleGeofences = () => {
+    setShowGeofences(!showGeofences);
   };
 
   useEffect(() => {
@@ -63,7 +73,7 @@ const GoogleMap = (props) => {
         lng: selectedSingleDevice.latestPosition.longitude,
       };
       mapRef.current.map.panTo(latLng);
-      setZoom(14); // Optional: adjust zoom level
+      setZoom(14);
     }
   }, [selectedSingleDevice]);
 
@@ -71,8 +81,111 @@ const GoogleMap = (props) => {
     return <div>Error: Google Maps API failed to load.</div>;
   }
 
+  // Get all devices that have geofences
+  const getDevicesWithGeofences = () => {
+    return (
+      devices?.filter(
+        (device) =>
+          device.checked &&
+          device.vehicle?.geofences &&
+          device.vehicle.geofences.length > 0
+      ) || []
+    );
+  };
+
+  // Render geofences for all devices
+  const renderGeofences = () => {
+    if (!showGeofences) return null;
+
+    const devicesWithGeofences = getDevicesWithGeofences();
+
+    return devicesWithGeofences.map((device) =>
+      device.vehicle.geofences.map((geofence, index) => {
+        const key = `${device._id}-${geofence._id}-${index}`;
+
+        if (geofence.type === "circle") {
+          return (
+            <Circle
+              key={key}
+              center={geofence.geofencePositions.center}
+              radius={geofence.geofencePositions.radius}
+              options={{
+                strokeColor: "#FF0000",
+                strokeOpacity: 0.8,
+                strokeWeight: 2,
+                fillColor: "#FF0000",
+                fillOpacity: 0.35,
+                clickable: false,
+              }}
+            />
+          );
+        } else if (geofence.type === "rectangle") {
+          // For rectangle, we need to convert bounds to proper format
+          const bounds = {
+            north:
+              geofence.geofencePositions.bounds?.north ||
+              geofence.geofencePositions.bounds?.northeast?.lat,
+            south:
+              geofence.geofencePositions.bounds?.south ||
+              geofence.geofencePositions.bounds?.southwest?.lat,
+            east:
+              geofence.geofencePositions.bounds?.east ||
+              geofence.geofencePositions.bounds?.northeast?.lng,
+            west:
+              geofence.geofencePositions.bounds?.west ||
+              geofence.geofencePositions.bounds?.southwest?.lng,
+          };
+
+          return (
+            <Rectangle
+              key={key}
+              bounds={bounds}
+              options={{
+                strokeColor: "#0000FF",
+                strokeOpacity: 0.8,
+                strokeWeight: 2,
+                fillColor: "#0000FF",
+                fillOpacity: 0.35,
+                clickable: false,
+              }}
+            />
+          );
+        } else if (geofence.type === "polygon") {
+          // For polygon, ensure paths are in correct format
+          const paths =
+            geofence.geofencePositions.bounds ||
+            geofence.geofencePositions.paths ||
+            [];
+
+          return (
+            <Polygon
+              key={key}
+              paths={paths}
+              options={{
+                strokeColor: "#00FF00",
+                strokeOpacity: 0.8,
+                strokeWeight: 2,
+                fillColor: "#00FF00",
+                fillOpacity: 0.35,
+                clickable: false,
+              }}
+            />
+          );
+        }
+
+        return null;
+      })
+    );
+  };
+
   // Tooltip component
-  const TooltipButton = ({ onClick, children, tooltip, style }) => {
+  const TooltipButton = ({
+    onClick,
+    children,
+    tooltip,
+    style,
+    isActive = false,
+  }) => {
     const [isHovered, setIsHovered] = useState(false);
 
     return (
@@ -80,7 +193,6 @@ const GoogleMap = (props) => {
         style={{
           position: "relative",
           display: "inline-block",
-          // margin: "5px 0", // Added margin between buttons
         }}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
@@ -88,7 +200,11 @@ const GoogleMap = (props) => {
         <button
           onClick={onClick}
           className="zoom-button tooltip-button"
-          style={style}
+          style={{
+            ...style,
+            backgroundColor: isActive ? "red" : "#6dbfb8",
+            border: isActive ? "2px solid white" : "none",
+          }}
         >
           {children}
         </button>
@@ -124,6 +240,9 @@ const GoogleMap = (props) => {
           )
       )}
 
+      {/* Render geofences */}
+      {renderGeofences()}
+
       <InfoWindow
         position={infoWindowPosition}
         visible={infoWindowVisible}
@@ -134,7 +253,7 @@ const GoogleMap = (props) => {
           disableClose: true,
           closeBoxMargin: "0",
           closeBoxURL: "",
-          maxWidth: 400, // Set a maxWidth but not maxHeight
+          maxWidth: 400,
         }}
       >
         <div
@@ -187,7 +306,6 @@ const GoogleMap = (props) => {
             </div>
             <div
               style={{
-                // marginTop: "20px",
                 marginBottom: "5px",
                 fontSize: "15px",
               }}
@@ -198,7 +316,6 @@ const GoogleMap = (props) => {
             </div>
             <div
               style={{
-                // marginTop: "20px",
                 marginBottom: "5px",
                 fontSize: "15px",
               }}
@@ -209,7 +326,6 @@ const GoogleMap = (props) => {
 
             <div
               style={{
-                // marginTop: "20px",
                 marginBottom: "5px",
                 fontSize: "15px",
               }}
@@ -219,7 +335,6 @@ const GoogleMap = (props) => {
             </div>
             <div
               style={{
-                // marginTop: "20px",
                 marginBottom: "5px",
                 fontSize: "15px",
               }}
@@ -232,7 +347,6 @@ const GoogleMap = (props) => {
             </div>
             <div
               style={{
-                // marginTop: "20px",
                 marginBottom: "15px",
                 fontSize: "15px",
               }}
@@ -251,13 +365,12 @@ const GoogleMap = (props) => {
               paddingBottom: "15px",
               paddingTop: "20px",
               display: "flex",
-              overflowX: "auto", // Enable horizontal scrolling
+              overflowX: "auto",
               gap: "5px",
               borderBottom: "0.5px solid lightgray",
-              scrollbarWidth: "none", // Hide scrollbar in Firefox
-              msOverflowStyle: "none", // Hide scrollbar in IE
+              scrollbarWidth: "none",
+              msOverflowStyle: "none",
               "&::-webkit-scrollbar": {
-                // Hide scrollbar in WebKit browsers
                 display: "none",
               },
             }}
@@ -389,9 +502,8 @@ const GoogleMap = (props) => {
         </div>
       </InfoWindow>
 
-      {/* <div
+      <div
         className="custom-zoom-control"
-        // style={{ backgroundColor: "#21262C" }}
         style={{ backgroundColor: "rgba(0, 0, 0, 0.6)" }}
       >
         <div style={{ height: "5px" }}></div>
@@ -399,7 +511,6 @@ const GoogleMap = (props) => {
           onClick={zoomIn}
           tooltip="Zoom In"
           style={{
-            backgroundColor: "#6dbfb8",
             color: "white",
             display: "flex",
             justifyContent: "center",
@@ -413,7 +524,6 @@ const GoogleMap = (props) => {
           onClick={zoomOut}
           tooltip="Zoom Out"
           style={{
-            backgroundColor: "#6dbfb8",
             color: "white",
             display: "flex",
             justifyContent: "center",
@@ -427,7 +537,6 @@ const GoogleMap = (props) => {
           onClick={zoomOut}
           tooltip="Alternate Maps"
           style={{
-            backgroundColor: "#6dbfb8",
             color: "white",
             display: "flex",
             justifyContent: "center",
@@ -441,7 +550,6 @@ const GoogleMap = (props) => {
           onClick={() => {}}
           tooltip="Objects"
           style={{
-            backgroundColor: "#6dbfb8",
             color: "white",
             display: "flex",
             justifyContent: "center",
@@ -452,10 +560,10 @@ const GoogleMap = (props) => {
         </TooltipButton>
 
         <TooltipButton
-          onClick={() => {}}
+          onClick={toggleGeofences}
           tooltip="Geofence"
+          isActive={showGeofences}
           style={{
-            backgroundColor: "#6dbfb8",
             color: "white",
             display: "flex",
             justifyContent: "center",
@@ -469,7 +577,6 @@ const GoogleMap = (props) => {
           onClick={() => {}}
           tooltip="Routes"
           style={{
-            backgroundColor: "#6dbfb8",
             color: "white",
             display: "flex",
             justifyContent: "center",
@@ -483,7 +590,6 @@ const GoogleMap = (props) => {
           onClick={() => {}}
           tooltip="POI"
           style={{
-            backgroundColor: "#6dbfb8",
             color: "white",
             display: "flex",
             justifyContent: "center",
@@ -497,7 +603,6 @@ const GoogleMap = (props) => {
           onClick={() => {}}
           tooltip="Tail"
           style={{
-            backgroundColor: "#6dbfb8",
             color: "white",
             display: "flex",
             justifyContent: "center",
@@ -506,11 +611,12 @@ const GoogleMap = (props) => {
         >
           <FaArrowTrendDown size={20} />
         </TooltipButton>
-      </div> */}
+      </div>
     </Map>
   );
 };
 
 export default GoogleApiWrapper({
   apiKey: "AIzaSyDI3fB-ItM1LpMOyMg_P8UxTUuxHCyQS34",
+  libraries: ["drawing"],
 })(GoogleMap);

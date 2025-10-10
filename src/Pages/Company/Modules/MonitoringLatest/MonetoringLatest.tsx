@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { ImClock } from "react-icons/im";
 import { motion } from "framer-motion"; // ✅ Import Framer Motion
 import GoogleMap from "./components/GoogleMap/GoogleMap";
@@ -56,7 +56,6 @@ const MonitoringLatest = () => {
     (state: any) => state.monitoring
   );
 
-  console.log("selectedSingleDevice", selectedSingleDevice);
   const updatesBufferRef = React.useRef<any[]>([]);
 
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -75,10 +74,70 @@ const MonitoringLatest = () => {
     };
   }, []);
 
-  // useEffect(() => {
-  //   const interval = setInterval(fetchUpdatedDevices, 6000);
-  //   return () => clearInterval(interval);
-  // }, [devices]);
+  useEffect(() => {
+    console.log("selectedSingleDevice", selectedSingleDevice);
+    console.log("devices", devices);
+  }, [devices]);
+
+  const now: any = new Date();
+
+  const { expiredCount, inactiveCount, movingCount, idleCount, stoppedCount } =
+    useMemo(() => {
+      // Step 1: Find expired devices
+      const expiredDevices = devices.filter((d: any) => {
+        const renewalDate = d?.vehicle?.serviceRenewalDate
+          ? new Date(d.vehicle.serviceRenewalDate)
+          : null;
+
+        if (!renewalDate) return false;
+
+        return renewalDate < now; // expired if renewal date is before now
+      });
+
+      const nonExpiredDevices = devices.filter(
+        (d: any) => !expiredDevices.includes(d)
+      );
+
+      // Step 2: Find inactive devices (from non-expired)
+      const inactiveDevices = nonExpiredDevices.filter((d: any) => {
+        const deviceTime: any = d?.latestPosition?.deviceTime
+          ? new Date(d.latestPosition.deviceTime)
+          : null;
+
+        // No deviceTime = inactive
+        if (!deviceTime) return true;
+
+        const diffHours = (now - deviceTime) / (1000 * 60 * 60);
+
+        // Inactive if older than 24h
+        return diffHours > 24;
+      });
+
+      const activeDevices = nonExpiredDevices.filter(
+        (d: any) => !inactiveDevices.includes(d)
+      );
+
+      // Step 3: From remaining (active & non-expired) — check statuses
+      const movingCount = activeDevices.filter(
+        (d: any) => d.mainVehicleStatus?.toLowerCase() === "moving"
+      ).length;
+
+      const idleCount = activeDevices.filter(
+        (d: any) => d.mainVehicleStatus?.toLowerCase() === "idle"
+      ).length;
+
+      const stoppedCount = activeDevices.filter(
+        (d: any) => d.mainVehicleStatus?.toLowerCase() === "stopped"
+      ).length;
+
+      return {
+        expiredCount: expiredDevices.length,
+        inactiveCount: inactiveDevices.length,
+        movingCount,
+        idleCount,
+        stoppedCount,
+      };
+    }, [devices]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -94,6 +153,7 @@ const MonitoringLatest = () => {
             return {
               ...device,
               latestPosition: update.latestPosition,
+              mainVehicleStatus: update.vehicleStatus,
             };
           }
           return device;
@@ -115,7 +175,6 @@ const MonitoringLatest = () => {
       if (data?.data) {
         const updatedDevices = data.data.map((device: any) => ({
           ...device,
-          // checked: false,
           checked: true,
         }));
         dispatch(setDevices(updatedDevices));
@@ -133,6 +192,40 @@ const MonitoringLatest = () => {
       setLoading(false);
     }
   };
+
+  function getVehicleStatus(packet: any) {
+    if (!packet || !packet.attributes) {
+      return "unknown";
+    }
+
+    const { ignition } = packet.attributes;
+    const speed = packet.speed || 0;
+
+    // Rule 1: Moving
+    if (ignition === true && speed > 5) {
+      return "moving";
+    }
+
+    // Rule 2: Idle
+    if (ignition === true && speed <= 5) {
+      return "idle";
+    }
+
+    // Rule 3: Stopped
+    if (ignition === false && speed < 5) {
+      return "stopped";
+    }
+
+    if (packet.outdated === true || packet.valid === false) {
+      return "inactive";
+    }
+
+    if (packet.attributes.expired === true) {
+      return "expired";
+    }
+
+    return "unknown";
+  }
 
   const sidebarMenus = [
     {
@@ -308,25 +401,19 @@ const MonitoringLatest = () => {
     console.log("Initial connected state:", socketConnection.connected);
 
     socketConnection.on("vehicle:updated", (payload) => {
-      const { id, changes } = payload;
+      const { id, changes, vehicleStatus } = payload;
 
       // get latestPosition update
       const latestPosition = changes?.updatedFields?.latestPosition;
-      // console.log("payload", payload);
+      console.log("payload", payload);
 
       if (!latestPosition) return; // no position update
       // Push into buffer (not Redux yet)
-      updatesBufferRef.current.push({ id, latestPosition });
-
-      // const updatedDevices = devices.map((device: any) =>
-      //   device._id === id ? { ...device, latestPosition } : device
-      // );
-
-      // dispatch(setDevices(updatedDevices));
+      updatesBufferRef.current.push({ id, latestPosition, vehicleStatus });
     });
 
     socketConnection.on("vehicle:created", (payload) => {
-      const { id, changes } = payload;
+      const { id, changes, vehicleStatus } = payload;
 
       // get latestPosition update
       const latestPosition = changes?.updatedFields?.latestPosition;
@@ -334,7 +421,7 @@ const MonitoringLatest = () => {
 
       if (!latestPosition) return; // no position update
       // Push into buffer (not Redux yet)
-      updatesBufferRef.current.push({ id, latestPosition });
+      updatesBufferRef.current.push({ id, latestPosition, vehicleStatus });
 
       // const updatedDevices = devices.map((device: any) =>
       //   device._id === id ? { ...device, latestPosition } : device
@@ -344,7 +431,7 @@ const MonitoringLatest = () => {
     });
 
     socketConnection.on("vehicle:deleted", (payload) => {
-      const { id, changes } = payload;
+      const { id, changes, vehicleStatus } = payload;
 
       // get latestPosition update
       const latestPosition = changes?.updatedFields?.latestPosition;
@@ -352,7 +439,7 @@ const MonitoringLatest = () => {
 
       if (!latestPosition) return; // no position update
       // Push into buffer (not Redux yet)
-      updatesBufferRef.current.push({ id, latestPosition });
+      updatesBufferRef.current.push({ id, latestPosition, vehicleStatus });
 
       // const updatedDevices = devices.map((device: any) =>
       //   device._id === id ? { ...device, latestPosition } : device
@@ -468,43 +555,38 @@ const MonitoringLatest = () => {
             >
               {/* Status row */}
               <StatusBox
-                count={118}
+                count={movingCount}
                 label="Moving"
                 color="green"
                 background="rgba(0, 255, 0, 0.1)"
               />
               <StatusBox
-                count={118}
+                count={stoppedCount}
                 label="Stopped"
                 color="red"
                 background="rgba(255, 0, 0, 0.1)"
               />
               <StatusBox
-                count={118}
+                count={idleCount}
                 label="Idle"
                 color="orange"
                 background="rgba(255, 165, 0, 0.1)"
               />
               <StatusBox
-                count={118}
+                count={inactiveCount}
                 label="Inactive"
                 color="purple"
                 background="rgba(128, 0, 128, 0.1)"
               />
               <StatusBox
-                count={118}
+                count={expiredCount}
                 label="Expired"
                 color="gray"
                 background="rgba(128, 128, 128, 0.2)"
               />
+
               <StatusBox
-                count={118}
-                label="Not Conn."
-                color="gray"
-                background="rgba(128, 128, 128, 0.2)"
-              />
-              <StatusBox
-                count={118}
+                count={devices.length}
                 label="Total"
                 color="blue"
                 background="rgba(0, 0, 255, 0.1)"
@@ -706,246 +788,13 @@ const MonitoringLatest = () => {
 
 export default MonitoringLatest;
 
-// const fetchUpdatedDevices = async () => {
-//   try {
-//     const data: any = await getAll({ url: GET_PARSER_DEVICES });
-//     if (data?.data) {
-//       const updatedDevices = data.data.map((device: any) => {
-//         const prevDevice = devices.find((d: any) => d._id === device._id);
-//         return {
-//           ...device,
-//           checked: prevDevice ? prevDevice.checked : false,
-//         };
-//       });
-//       dispatch(setDevices(updatedDevices));
-//       if (selectedSingleDevice !== null) {
-//         const singleSelectedDevice = updatedDevices.find(
-//           (d: any) => d._id == selectedSingleDevice._id
-//         );
+//
 
-//         dispatch(setSelectedSingleDevice(singleSelectedDevice));
-//       }
-//     }
-//   } catch (error) {
-//     console.error("Error fetching updated devices:", error);
-//   }
-// };
-
-// APP_NAME = Suthra Punjab Scheduling
-// NODE_ENV = DEVELOPMENT
-// #NODE_ENV = PRODUCTION
-// JWT_SECRET = 31fe6586dbfa72e390bf430f5a0218282880bc40e571e83f8bcaf2f5be3e4707
-// MONGO_DB_URI_DEV = mongodb://192.168.18.122:27017/AutotelControlRoomDB
-// MONGO_DB_URI_PROD = mongodb://127.0.0.1:27017/AutotelControlRoomDB
-// PORT = 8083
-// MONGO_DB_URI_CLOUD = mongodb+srv://sandesh:sandesh123@autotel-crm-cluster.4dqcl.mongodb.net/CrmServiceDB
-// LOAD_BALANCER = false
-// CONCOX_GPS_PORT = 8082
-// KINGWU_GPS_PORT = 8083
-// WORK_SPACE = REMOTE
-// MONGO_DB_URI_CRM_SERVICE_CLOUD = mongodb+srv://sandesh:sandesh123@autotel-crm-cluster.4dqcl.mongodb.net/CrmServiceDB
-// MONGO_DB_URI_TESTING = mongodb://127.0.0.1:27017/suthra-punjab-testing
-
-// import { ENVIRONMENTS, WORK_SPACES } from "../constants/basic.js";
-// import { ERROR_MESSAGES } from "../constants/errors.js";
-// import {
-//   STATUS_CODE,
-//   STATUS_MESSAGES,
-//   SUCCESS_MESSAGES,
-// } from "../constants/response.js";
-// import SuccessResponse from "./classes/successResponse.js";
-
-// export const getCurrentRunningEnvironment = () => {
-//   return process.env.NODE_ENV === ENVIRONMENTS.DEVELOPMENT
-//     ? ENVIRONMENTS.DEVELOPMENT
-//     : ENVIRONMENTS.PRODUCTION;
-// };
-
-// export const validateRequiredFields = (body, requiredFields) => {
-//   return new Promise((resolve, reject) => {
-//     const missingFields = requiredFields.filter((field) => !body[field]);
-
-//     if (missingFields.length > 0) {
-//       resolve(
-//         SuccessResponse.custom(
-//           false,
-//           STATUS_MESSAGES.ERROR,
-//           STATUS_CODE.BAD_REQUEST,
-//           ERROR_MESSAGES.EMPTY_REQUIRED_FIELDS,
-//           { missingFields }
-//         )
-//       );
-//     } else {
-//       resolve(
-//         SuccessResponse.custom(
-//           true,
-//           STATUS_MESSAGES.SUCCESS,
-//           STATUS_CODE.OK,
-//           SUCCESS_MESSAGES.OPERATION_SUCCESSFULL,
-//           null
-//         )
-//       );
-//     }
-//   });
-// };
-
-// export const getAppName = () => {
-//   return `${process.env.APP_NAME}`;
-// };
-
-// export function getDatabaseURI() {
-//   const NODE_ENV = getCurrentRunningEnvironment();
-//   const WORK_SPACE = process.env.WORK_SPACE;
-
-//   // return NODE_ENV === ENVIRONMENTS.DEVELOPMENT
-//   //   ? WORK_SPACE === WORK_SPACES.REMOTE
-//   //     ? process.env.MONGO_DB_URI_CLOUD
-//   //     : process.env.MONGO_DB_URI_DEV
-//   //   : process.env.MONGO_DB_URI_PROD;
-
-//   return NODE_ENV === ENVIRONMENTS.DEVELOPMENT
-//     ? WORK_SPACE === WORK_SPACES.REMOTE
-//       ? process.env.MONGO_DB_URI_TESTING
-//       : process.env.MONGO_DB_URI_DEV
-//     : process.env.MONGO_DB_URI_PROD;
-// }
-
-// export function restructureArray(data) {
-//   if (!Array.isArray(data)) {
-//     throw new Error("Input must be an array.");
-//   }
-
-//   const result = [];
-
-//   data.forEach((group) => {
-//     console.log("group : ", group.title);
-
-//     const { id: groupId, title: groupName, items } = group;
-//     if (!Array.isArray(items)) {
-//       throw new Error(`Items for group with id ${groupId} must be an array.`);
-//     }
-
-//     items.forEach((vehicle) => {
-//       result.push({
-//         ...vehicle,
-//         groupId,
-//         groupName,
-//       });
-//     });
-//   });
-
-//   return result;
-// }
-
-// // export const formatDuration = (durationMs) => {
-// //   const minutes = Math.floor(durationMs / 60000);
-// //   const seconds = Math.floor((durationMs % 60000) / 1000);
-// //   const milliseconds = Math.floor(durationMs % 1000);
-// //   return `${minutes} minute(s), ${seconds} second(s), and ${milliseconds} ms`;
-// // };
-
-// export const formatDuration = (durationMs) => {
-//   const hours = Math.floor(durationMs / 3600000);
-//   const minutes = Math.floor((durationMs % 3600000) / 60000);
-//   const seconds = Math.floor((durationMs % 60000) / 1000);
-//   const milliseconds = Math.floor(durationMs % 1000);
-//   return `${hours} hour(s), ${minutes} minute(s), ${seconds} second(s), and ${milliseconds} ms`;
-// };
-
-// export const formatSeconds = (totalSeconds) => {
-//   const hours = Math.floor(totalSeconds / 3600); // Calculate total hours
-//   const minutes = Math.floor((totalSeconds % 3600) / 60); // Remaining minutes
-//   const seconds = totalSeconds % 60; // Remaining seconds
-//   return `${hours} hour(s), ${minutes} minute(s), and ${seconds} second(s)`;
-// };
-
-// export function formatTimestamp(milliseconds) {
-//   const date = new Date(milliseconds);
-
-//   // Helper to ensure two-digit formatting
-//   const pad = (num) => (num < 10 ? `0${num}` : num);
-
-//   const year = date.getFullYear();
-//   const month = pad(date.getMonth() + 1); // Months are zero-based
-//   const day = pad(date.getDate());
-//   const hours = pad(date.getHours());
-//   const minutes = pad(date.getMinutes());
-//   const seconds = pad(date.getSeconds());
-
-//   return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-// }
-
-// export function convertToStandardFormat(input) {
-//   // Split the input into date and time components
-//   const [datePart, timePart, meridian] = input.split(/[\s]+/);
-
-//   // Extract month, day, and year from the date
-//   const [month, day, year] = datePart.split("-");
-
-//   // Extract hours, minutes, and seconds from the time
-//   let [hours, minutes, seconds] = timePart.split(":");
-
-//   // Convert 12-hour time to 24-hour time
-//   if (meridian === "PM" && hours !== "12") {
-//     hours = String(Number(hours) + 12);
-//   } else if (meridian === "AM" && hours === "12") {
-//     hours = "00";
-//   }
-
-//   // Construct and return the new format
-//   return `${
-//     year >= "2036" ? "2025" : year
-//   }-${day}-${month} ${hours}:${minutes}:${seconds}`;
-// }
-
-// export const convertSecondsToDecimalMinutes = (seconds) => {
-//   if (typeof seconds !== "number" || seconds < 0) {
-//     throw new Error("Input must be a non-negative number.");
-//   }
-
-//   return (seconds / 60).toFixed(2); // Convert to minutes and round to 2 decimal places
-// };
-
-// export function getKeyByColor(iconColor, iconColors) {
-//   for (const [key, value] of Object.entries(iconColors)) {
-//     if (value === iconColor) {
-//       return key; // Return the first matching key
-//     }
-//   }
-//   return null; // Return null if no match is found
-// }
-
-// export function filterTodayAndYesterday(arr) {
-//   const now = new Date();
-
-//   // Get today's date at midnight
-//   const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-//   // Get tomorrow's date at midnight
-//   const tomorrowStart = new Date(todayStart);
-//   tomorrowStart.setDate(todayStart.getDate() + 1);
-//   // Get yesterday's date at midnight
-//   const yesterdayStart = new Date(todayStart);
-//   yesterdayStart.setDate(todayStart.getDate() - 1);
-
-//   return arr.filter((item) => {
-//     const ts = new Date(item.timestamp);
-//     return ts >= yesterdayStart && ts < tomorrowStart;
-//   });
-// }
-
-// export function filterBeforeYesterday(arr) {
-//   const now = new Date();
-
-//   // Get today's date at midnight
-//   const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-//   // Get yesterday's date at midnight
-//   const yesterdayStart = new Date(todayStart);
-//   yesterdayStart.setDate(todayStart.getDate() - 1);
-
-//   return arr
-//     .filter((item) => {
-//       const ts = new Date(item.timestamp);
-//       return ts < yesterdayStart; // strictly before yesterday
-//     })
-//     .map((item) => item); // return only names
-// }
+{
+  /* <StatusBox
+                count={118}
+                label="Not Conn."
+                color="gray"
+                background="rgba(128, 128, 128, 0.2)"
+              /> */
+}

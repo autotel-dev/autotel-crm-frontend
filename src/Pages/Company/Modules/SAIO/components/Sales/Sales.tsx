@@ -5,17 +5,13 @@ import { useEffect, useState } from "react";
 
 import {
   GET_ALL_ACTIVE_CITIES,
-  GET_ALL_ACTIVE_PACKAGES,
-  GET_ALL_ACTIVE_SERVERS,
   GET_ALL_ACTIVE_SERVICE_PACKAGES,
   GET_ALL_BANKS,
   GET_ALL_COMPANY_INSTALLERS,
   GET_ALL_CUSTOMERS,
+  GET_ALL_GEFENCES_DROPDOWN,
   GET_ALL_INSURANCES,
-  GET_ALL_OPERATORS,
   GET_ALL_SALE_GROUPS,
-  GET_ALL_SALE_INVOICES,
-  GET_ALL_SALELEADS,
   GET_ALL_SERVICES,
   GET_ALL_VEHICLES_MAKE,
   GET_ALL_VEHICLES_MODEL,
@@ -26,6 +22,7 @@ import {
   setCities,
   setCustomers,
   setPackages,
+  setGeofences,
   setIsConnected,
   setBanks,
   setInsurances,
@@ -68,21 +65,22 @@ const Sales = () => {
 
   const dispatch = useDispatch();
 
-  // useEffect(() => {
-  //   getAll({ url: GET_ALL_ACTIVE_PACKAGES }).then((data: any) => {
-  //     // // console.log("api call --- >", data);
-  //     if (data !== undefined) {
-  //       if (data.success) {
-  //         // // console.log("hhg");
-  //         dispatch(setPackages(data.data));
-  //       }
-  //       if (!data.success) {
-  //         // // console.log("hhg");
-  //         dispatch(setPackages([]));
-  //       }
-  //     }
-  //   });
-  // }, []);
+  useEffect(() => {
+    getAll({ url: GET_ALL_GEFENCES_DROPDOWN }).then((data: any) => {
+      // // console.log("api call --- >", data);
+      if (data !== undefined) {
+        if (data.success) {
+          // // console.log("hhg");
+          dispatch(setGeofences(data.data));
+        }
+        if (!data.success) {
+          // // console.log("hhg");
+          dispatch(setGeofences([]));
+        }
+      }
+    });
+  }, []);
+
   useEffect(() => {
     getAll({ url: GET_ALL_ACTIVE_SERVICE_PACKAGES }).then((data: any) => {
       // // console.log("api call --- >", data);

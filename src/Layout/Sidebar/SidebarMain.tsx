@@ -369,11 +369,11 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
         //   title: "WhatsApp Templates",
         //   link: `${process.env.PUBLIC_URL}/company/setup/whatsapp-template`,
         // },
-        // {
-        //   svgIcon: `${GeofenceIcon}`,
-        //   title: "Geofence",
-        //   link: `${process.env.PUBLIC_URL}/company/setup/geofence`,
-        // },
+        {
+          svgIcon: `${GeofenceIcon}`,
+          title: "Geofence",
+          link: `${process.env.PUBLIC_URL}/company/setup/geofence`,
+        },
       ],
     },
     // {

@@ -14,6 +14,7 @@ export const IMAGE_BASE_URL_RENTAL = `${API_BASE_URL}/company/server-credentials
 export const GET_PARSER_DEVICES = `${API_BASE_URL}/company/get-parser-devices`;
 export const GET_VEHICLE_HISTORY = `${API_BASE_URL}/vehicle/get-vehicle-history`;
 export const TODAY_VEHICLE_ACTIVITY = `${API_BASE_URL}/company/server-credentials/test-connection`;
+export const GET_ALL_GEFENCES_DROPDOWN = `${API_BASE_URL}/monitoring/geofence/get-all-geofences-dropdown`;
 
 // Miscellaneous
 export const TEST_SERVER_CONNECTION = `${API_BASE_URL}/company/server-credentials/test-connection`;

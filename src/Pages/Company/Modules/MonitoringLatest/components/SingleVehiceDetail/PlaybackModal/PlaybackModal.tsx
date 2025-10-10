@@ -3,13 +3,16 @@ import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { Button, FormGroup, Modal, ModalBody, Row } from "reactstrap";
 import { H4, P } from "../../../../../../../AbstractElements";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Select } from "antd";
 import { getAll } from "../../../../../../../Utilities/api";
 import { GET_VEHICLE_HISTORY } from "../../../../../../../Utilities/api/apiEndpoints";
 import Swal from "sweetalert2";
 import { useDispatch } from "react-redux";
-import { setVehicleHistoryData } from "../../../../../../../ReaduxToolkit/Reducer/MonitoringSlice";
+import {
+  setVehicleHistoryData,
+  setVehicleHistoryDateRange,
+} from "../../../../../../../ReaduxToolkit/Reducer/MonitoringSlice";
 import { useSelector } from "react-redux";
 
 interface PlaybackModalProps {
@@ -23,20 +26,27 @@ const PlaybackModal: React.FC<PlaybackModalProps> = ({
 }: any) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const location = useLocation(); // Add this hook
+
+  // Now you can get the current URL pathname
+  console.log("Current URL:", location.pathname);
   const [loading, setLoading] = useState(false);
   const {
     register,
     formState: { errors },
   } = useForm<any>();
 
-  useEffect(() => {
-    dispatch(setVehicleHistoryData(null));
-  }, []);
+  // useEffect(() => {
+  //   dispatch(setVehicleHistoryData(null));
+  // }, []);
 
-  const [selectedFilter, setSelectedFilter] = useState("Today");
-
-  const { selectedSingleDevice, vehicleHistoryData } = useSelector(
+  const { selectedSingleDevice, vehicleHistoryDateRange } = useSelector(
     (state: any) => state.monitoring
+  );
+  console.log("vehicleHistoryDateRange", vehicleHistoryDateRange);
+
+  const [selectedFilter, setSelectedFilter] = useState(
+    vehicleHistoryDateRange !== null ? "Custom" : "Today"
   );
 
   function filterHistoryData(history: any[]) {
@@ -45,14 +55,26 @@ const PlaybackModal: React.FC<PlaybackModalProps> = ({
     const filtered: any[] = [];
     let prevLat: number | null = null;
     let prevLng: number | null = null;
+    let prevAltitude: number | null = null;
+    let prevSpeed: number | null = null;
+    let prevCourse: number | null = null;
 
     for (const packet of history) {
-      const { latitude, longitude } = packet;
+      const { latitude, longitude, altitude, speed, course } = packet;
 
-      if (latitude !== prevLat || longitude !== prevLng) {
+      if (
+        latitude !== prevLat ||
+        longitude !== prevLng ||
+        altitude !== prevAltitude ||
+        speed !== prevSpeed ||
+        course !== prevCourse
+      ) {
         filtered.push(packet);
         prevLat = latitude;
         prevLng = longitude;
+        prevAltitude = altitude;
+        prevSpeed = speed;
+        prevCourse = course;
       }
     }
 
@@ -123,10 +145,16 @@ const PlaybackModal: React.FC<PlaybackModalProps> = ({
       if (data) {
         const filteredHistory = filterHistoryData(data?.data?.history);
         dispatch(setVehicleHistoryData(filteredHistory));
-
-        navigate(
-          `${process.env.PUBLIC_URL}/company/modules/monitoring/playback`
+        dispatch(
+          setVehicleHistoryDateRange({ start: fromDateTime, end: toDateTime })
         );
+        if (location.pathname == "/company/modules/monitoring") {
+          navigate(
+            `${process.env.PUBLIC_URL}/company/modules/monitoring/playback`
+          );
+        } else {
+          addToggle();
+        }
       } else {
         Swal.fire({
           text: "Data not found",
@@ -141,6 +169,12 @@ const PlaybackModal: React.FC<PlaybackModalProps> = ({
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (location.pathname == "/company/modules/monitoring") {
+      setSelectedFilter("Today");
+    }
+  }, []);
 
   return (
     <Col md={6}>
@@ -183,7 +217,11 @@ const PlaybackModal: React.FC<PlaybackModalProps> = ({
                       <input
                         className="form-control"
                         type="datetime-local"
-                        value={fromDateTime}
+                        value={
+                          vehicleHistoryDateRange !== null && fromDateTime == ""
+                            ? vehicleHistoryDateRange.start
+                            : fromDateTime
+                        }
                         onChange={(e) => setFromDateTime(e.target.value)}
                       />
                       <span style={{ color: "red" }}>
@@ -201,7 +239,11 @@ const PlaybackModal: React.FC<PlaybackModalProps> = ({
                       <input
                         className="form-control"
                         type="datetime-local"
-                        value={toDateTime}
+                        value={
+                          vehicleHistoryDateRange !== null && toDateTime == ""
+                            ? vehicleHistoryDateRange.end
+                            : toDateTime
+                        }
                         onChange={(e) => setToDateTime(e.target.value)}
                       />
                       <span style={{ color: "red" }}>

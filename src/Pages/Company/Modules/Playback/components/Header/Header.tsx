@@ -1,11 +1,40 @@
 import React, { useState } from "react";
 import { FaPencilAlt } from "react-icons/fa"; // Importing pencil icon
-import PlaybackModal from "../PlaybackModal/PlaybackModal";
+
+import { useSelector } from "react-redux";
+import PlaybackModal from "../../../MonitoringLatest/components/SingleVehiceDetail/PlaybackModal/PlaybackModal";
 
 const Header = () => {
-  const carName = "AGS-234";
-  const startTime = "11:47:01 AM 12-05-2025";
-  const endTime = "12:30:55 PM 12-05-2025";
+  const { selectedSingleDevice, vehicleHistoryDateRange } = useSelector(
+    (state: any) => state.monitoring
+  );
+
+  console.log("selectedSingleDevice", selectedSingleDevice);
+  const carName = selectedSingleDevice?.vehicle?.registrationNo;
+
+  function formatDateWithOffset(dateString: any) {
+    if (!dateString) return "Invalid date";
+
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return "Invalid date";
+
+    date.setHours(date.getHours() + 5);
+
+    const datePart = date.toISOString().split("T")[0];
+    const timePart = date
+      .toLocaleString("en-US", {
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: true,
+      })
+      .toLowerCase();
+
+    return `${datePart}, ${timePart}`;
+  }
+
+  const startTime = formatDateWithOffset(vehicleHistoryDateRange.start);
+  const endTime = formatDateWithOffset(vehicleHistoryDateRange.end);
 
   const [openModal, setOpenModal] = useState(false);
 
