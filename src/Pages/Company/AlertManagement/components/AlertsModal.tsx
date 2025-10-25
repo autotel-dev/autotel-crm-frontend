@@ -2,18 +2,46 @@ import { Button, FormGroup, Modal, ModalBody, Row } from "reactstrap";
 import { Cancel } from "../../../../utils/Constant";
 import { H4, P } from "../../../../AbstractElements";
 import { useState, useMemo, useEffect } from "react";
-
+import { SubmitHandler } from "react-hook-form";
 import { Select } from "antd";
 import type { MenuProps } from "antd";
 import { Dropdown } from "antd";
 import { MdExpandMore, MdExpandLess } from "react-icons/md";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useForm } from "react-hook-form";
 import "./styles.css";
+import { create, getAll } from "../../../../Utilities/api";
+import {
+  CREATE_ALERT_RULE,
+  GET_ALERT_RULES,
+  GET_ALL_VEHICLES_DROPDOWN_FOR_ALERT,
+} from "../../../../Utilities/api/apiEndpoints";
+import Swal from "sweetalert2";
+import {
+  setAlertRules,
+  setAlertRuleStart,
+  setFilterAlertRules,
+  setInActiveActiveAlertRules,
+} from "../../../../ReaduxToolkit/Reducer/AlertRuleSlice";
 
 interface AlertsModalProps {
   isVisible: any;
   setIsVisible: any;
+}
+
+interface Device {
+  _id: string;
+  registrationNo: string;
+  engineNo: string;
+  imei: string;
+  group?: {
+    _id: string;
+    name: string;
+  };
+}
+
+interface AlertFormData {
+  name: string;
 }
 
 const AlertsModal: React.FC<AlertsModalProps> = ({
@@ -25,35 +53,58 @@ const AlertsModal: React.FC<AlertsModalProps> = ({
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<any>();
-  const { devices } = useSelector((state: any) => state.monitoring);
-  const [searchTerm, setSearchTerm] = useState("");
+  } = useForm<AlertFormData>();
 
+  const dispatch = useDispatch();
+  const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(false);
   const [type, setType] = useState("");
+  const [thresholdValue, setThresholdValue] = useState<number | null>(null);
+  const [selectedDevices, setSelectedDevices] = useState<string[]>([]);
+  const [devicesData, setDevicesData] = useState<Device[]>([]);
 
   const addToggle = () => {
     if (!loading) {
       setIsVisible(!isVisible);
+      resetForm();
     }
   };
 
+  const resetForm = () => {
+    reset();
+    setType("");
+    setThresholdValue(null);
+    setSelectedDevices([]);
+    setSearchTerm("");
+  };
+
+  // Fetch devices data
+  useEffect(() => {
+    getAll({ url: GET_ALL_VEHICLES_DROPDOWN_FOR_ALERT }).then((data: any) => {
+      if (data !== undefined) {
+        if (data.success) {
+          console.log("data", data.data);
+          setDevicesData(data.data);
+        }
+      }
+    });
+  }, [dispatch]);
+
   // --- GROUPING LOGIC ---
   const groupedDevices = useMemo(() => {
-    if (!devices || devices.length === 0) return {};
-    return devices.reduce((groups: any, device: any) => {
-      const groupName = device.vehicle?.group?.name || "Ungrouped";
-      const groupId = device.vehicle?.group?._id || "ungrouped";
+    if (!devicesData || devicesData.length === 0) return {};
+    return devicesData.reduce((groups: any, device: Device) => {
+      const groupName = device.group?.name || "Ungrouped";
+      const groupId = device.group?._id || "ungrouped";
       if (!groups[groupId]) {
         groups[groupId] = { name: groupName, devices: [] };
       }
       groups[groupId].devices.push(device);
       return groups;
     }, {});
-  }, [devices]);
+  }, [devicesData]);
 
   const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
-  const [selectedDevices, setSelectedDevices] = useState<string[]>([]);
 
   useEffect(() => {
     // Expand all by default
@@ -71,47 +122,249 @@ const AlertsModal: React.FC<AlertsModalProps> = ({
     const group = groupedDevices[groupId]?.devices || [];
     return (
       group.length > 0 &&
-      group.every((d: any) =>
-        selectedDevices.includes(d.vehicle.registrationNo)
-      )
+      group.every((d: Device) => selectedDevices.includes(d._id))
     );
   };
 
   const isGroupPartiallyChecked = (groupId: string) => {
     const group = groupedDevices[groupId]?.devices || [];
-    const count = group.filter((d: any) =>
-      selectedDevices.includes(d.vehicle.registrationNo)
+    const count = group.filter((d: Device) =>
+      selectedDevices.includes(d._id)
     ).length;
     return count > 0 && count < group.length;
   };
 
   const handleGroupCheckboxClick = (groupId: string, checked: boolean) => {
     const group = groupedDevices[groupId]?.devices || [];
-    const regNos = group.map((d: any) => d.vehicle.registrationNo);
+    const deviceIds = group.map((d: Device) => d._id);
     setSelectedDevices((prev) => {
       if (checked) {
         // add all from group
-        return Array.from(new Set([...prev, ...regNos]));
+        return Array.from(new Set([...prev, ...deviceIds]));
       } else {
         // remove all from group
-        return prev.filter((r) => !regNos.includes(r));
+        return prev.filter((id) => !deviceIds.includes(id));
       }
     });
   };
 
-  const handleDeviceToggle = (regNo: string) => {
+  const handleDeviceToggle = (deviceId: string) => {
     setSelectedDevices((prev) =>
-      prev.includes(regNo) ? prev.filter((d) => d !== regNo) : [...prev, regNo]
+      prev.includes(deviceId)
+        ? prev.filter((d) => d !== deviceId)
+        : [...prev, deviceId]
     );
   };
 
   const handleSelectAll = () => {
-    const allRegNos = devices.map((d: any) => d.vehicle.registrationNo);
-    setSelectedDevices(allRegNos);
+    const allDeviceIds = devicesData.map((d: Device) => d._id);
+    setSelectedDevices(allDeviceIds);
   };
 
   const handleDeselectAll = () => {
     setSelectedDevices([]);
+  };
+
+  // Function to chunk array into groups of 4 for grid layout
+  const chunkArray = (array: any[], size: number) => {
+    const chunked = [];
+    for (let i = 0; i < array.length; i += size) {
+      chunked.push(array.slice(i, i + size));
+    }
+    return chunked;
+  };
+
+  // Check if threshold field should be shown
+  const shouldShowThreshold = () => {
+    return ["OVER_SPEEDING", "POWER_CUT", "POWER_RESTORE"].includes(type);
+  };
+
+  // Get threshold placeholder based on type
+  const getThresholdPlaceholder = () => {
+    switch (type) {
+      case "OVER_SPEEDING":
+        return "Enter speed threshold (kph)";
+      case "POWER_CUT":
+      case "POWER_RESTORE":
+        return "Enter power threshold";
+      default:
+        return "Enter threshold value";
+    }
+  };
+
+  // Get threshold label based on type
+  const getThresholdLabel = () => {
+    switch (type) {
+      case "OVER_SPEEDING":
+        return "Speed Threshold (kph)";
+      case "POWER_CUT":
+      case "POWER_RESTORE":
+        return "Power Threshold";
+      default:
+        return "Threshold Value";
+    }
+  };
+
+  // Build payload based on alert type
+  const buildPayload = (formData: AlertFormData) => {
+    const basePayload: any = {
+      ruleName: formData.name,
+      alertType: type,
+      vehicleIds: selectedDevices, // Send selected device IDs in devices array
+      threshold: {},
+    };
+
+    switch (type) {
+      case "IGNITION_ON":
+        basePayload.threshold = {
+          ignitionThreshold: {
+            ignitionValue: true,
+          },
+        };
+        break;
+
+      case "IGNITION_OFF":
+        basePayload.threshold = {
+          ignitionThreshold: {
+            ignitionValue: false,
+          },
+        };
+        break;
+
+      case "OVER_SPEEDING":
+        basePayload.threshold = {
+          speedThreshold: {
+            speedValue: thresholdValue || 0,
+          },
+        };
+        break;
+
+      case "POWER_CUT":
+        basePayload.threshold = {
+          powerThreshold: {
+            powerValue: thresholdValue || 0,
+          },
+        };
+        break;
+
+      case "POWER_RESTORE":
+        basePayload.threshold = {
+          powerThreshold: {
+            powerValue: thresholdValue || 0,
+          },
+        };
+        break;
+
+      default:
+        basePayload.threshold = {};
+    }
+
+    return basePayload;
+  };
+
+  const addAlertRule: SubmitHandler<AlertFormData> = async (
+    formData: AlertFormData
+  ) => {
+    setLoading(true);
+
+    // Validation
+    if (!formData.name || !type) {
+      Swal.fire({
+        text: "Please fill all required fields ",
+        icon: "warning",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+      setLoading(false);
+      return;
+    }
+
+    // Check if devices are selected
+    if (selectedDevices.length === 0) {
+      Swal.fire({
+        text: "Please select at least one device",
+        icon: "warning",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+      setLoading(false);
+      return;
+    }
+
+    // Additional validation for threshold types
+    if (shouldShowThreshold() && !thresholdValue) {
+      Swal.fire({
+        text: `Please enter ${getThresholdLabel().toLowerCase()}`,
+        icon: "warning",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const payload = buildPayload(formData);
+      console.log("Sending payload:", payload); // Debug log
+
+      await create(payload, { url: CREATE_ALERT_RULE }).then(
+        (response: any) => {
+          if (response !== undefined) {
+            if (!response.success) {
+              Swal.fire({
+                text: response.message || "Failed to create alert rule",
+                icon: "error",
+                timer: 2000,
+                showConfirmButton: false,
+              });
+            } else {
+              Swal.fire({
+                text: "Alert rule created successfully!",
+                icon: "success",
+                timer: 2000,
+                showConfirmButton: false,
+              });
+              // Reset form and close modal on success
+              resetForm();
+
+              dispatch(setAlertRuleStart());
+              getAll({ url: GET_ALERT_RULES }).then((data: any) => {
+                if (data == undefined) {
+                  Swal.fire({
+                    text: "Failed to fetch due to connection refused",
+                    icon: "error",
+                    timer: 2000,
+                    showConfirmButton: false,
+                  });
+                  dispatch(setInActiveActiveAlertRules("All"));
+                  dispatch(setAlertRules([]));
+                  dispatch(setFilterAlertRules([]));
+                  return;
+                }
+
+                if (data !== undefined) {
+                  if (data.success) {
+                    dispatch(setAlertRules(data.data));
+                    dispatch(setFilterAlertRules(data.data));
+                  }
+                }
+              });
+              setIsVisible(false);
+            }
+          }
+        }
+      );
+    } catch (error: any) {
+      console.error("Error creating alert rule:", error);
+      Swal.fire({
+        text: "An error occurred while creating the alert rule",
+        icon: "error",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -122,50 +375,79 @@ const AlertsModal: React.FC<AlertsModalProps> = ({
           color="transprant"
           className="btn-close"
           onClick={addToggle}
+          disabled={loading}
         ></Button>
       </div>
       <ModalBody>
-        <form>
+        <form onSubmit={handleSubmit(addAlertRule)}>
           <Row>
             <FormGroup className="col-md-12 create-group">
-              <P>Name</P>
+              <P>Name *</P>
               <input
                 className="form-control"
                 type="text"
                 {...register("name", { required: true })}
+                placeholder="Enter alert rule name"
+                disabled={loading}
               />
               {errors.name && (
                 <span style={{ color: "red" }}>Alert name is required</span>
               )}
             </FormGroup>
           </Row>
+
           <Row>
             <FormGroup className="col-md-12 create-group">
-              <P>Select Type</P>
+              <P>Select Type *</P>
               <Select
                 value={type || null}
                 style={{ width: "100%", height: 36 }}
-                placeholder="Select Type"
-                onChange={(e) => setType(e)}
+                placeholder="Select Alert Type"
+                onChange={(value) => {
+                  setType(value);
+                  setThresholdValue(null); // Reset threshold when type changes
+                }}
                 options={[
-                  { value: "OVERSPEED", label: "Overspeed (kph)" },
-                  { value: "ZONE OUT", label: "Zone Out" },
-                  { value: "ZONE IN", label: "Zone In" },
-                  { value: "IGNITION ON", label: "Ignition On" },
-                  { value: "IGNITION OUT", label: "Ignition Out" },
+                  { value: "OVER_SPEEDING", label: "Overspeed (kph)" },
+                  { value: "IGNITION_ON", label: "Ignition On" },
+                  { value: "IGNITION_OFF", label: "Ignition Off" },
+                  { value: "POWER_CUT", label: "Power Cut" },
+                  { value: "POWER_RESTORE", label: "Power Restore" },
                 ]}
+                disabled={loading}
               />
             </FormGroup>
           </Row>
+
+          {/* Only show threshold input for specific alert types */}
+          {shouldShowThreshold() && (
+            <Row>
+              <FormGroup className="col-md-12 create-group">
+                <P>{getThresholdLabel()} *</P>
+                <input
+                  className="form-control"
+                  type="number"
+                  step={type === "OVER_SPEEDING" ? "1" : "0.1"}
+                  placeholder={getThresholdPlaceholder()}
+                  value={thresholdValue || ""}
+                  onChange={(e) => setThresholdValue(Number(e.target.value))}
+                  disabled={loading}
+                  min="0"
+                />
+              </FormGroup>
+            </Row>
+          )}
+
           <Row>
             <FormGroup className="col-md-12 create-group">
-              <P>Devices</P>
+              <P>Devices *</P>
               <input
                 className="form-control"
                 type="search"
                 placeholder="Search by registration no..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
+                disabled={loading}
               />
 
               <div
@@ -186,8 +468,12 @@ const AlertsModal: React.FC<AlertsModalProps> = ({
                   <input
                     type="checkbox"
                     onChange={handleSelectAll}
-                    checked={selectedDevices.length === devices.length}
+                    checked={
+                      selectedDevices.length === devicesData.length &&
+                      devicesData.length > 0
+                    }
                     className="custom-checkbox"
+                    disabled={loading || devicesData.length === 0}
                   />
                   <span style={{ marginLeft: "5px" }}>Select All</span>
                 </div>
@@ -203,101 +489,167 @@ const AlertsModal: React.FC<AlertsModalProps> = ({
                     onChange={handleDeselectAll}
                     checked={selectedDevices.length === 0}
                     className="custom-checkbox"
+                    disabled={loading}
                   />
                   <span style={{ marginLeft: "5px" }}>Deselect All</span>
                 </div>
               </div>
 
-              {Object.entries(groupedDevices).map(
-                ([groupId, group]: [string, any]) => {
-                  // filter devices inside the group
-                  const filteredDevices = group.devices.filter((device: any) =>
-                    device.vehicle.registrationNo
-                      .toLowerCase()
-                      .includes(searchTerm.toLowerCase())
-                  );
+              <div style={{ maxHeight: "300px", overflowY: "auto" }}>
+                {Object.entries(groupedDevices).map(
+                  ([groupId, group]: [string, any]) => {
+                    // filter devices inside the group
+                    const filteredDevices = group.devices.filter(
+                      (device: Device) =>
+                        device.registrationNo
+                          .toLowerCase()
+                          .includes(searchTerm.toLowerCase())
+                    );
 
-                  // If no devices match, skip this group
-                  if (filteredDevices.length === 0) return null;
+                    // If no devices match, skip this group
+                    if (filteredDevices.length === 0) return null;
 
-                  return (
-                    <div key={groupId} style={{ marginBottom: "8px" }}>
-                      <div
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          background: "#f0f0f0",
-                          padding: "6px",
-                          cursor: "pointer",
-                        }}
-                        onClick={() => toggleGroupExpansion(groupId)}
-                      >
-                        <input
-                          type="checkbox"
-                          className="custom-checkbox"
-                          checked={isGroupFullyChecked(groupId)}
-                          ref={(input) => {
-                            if (input)
-                              input.indeterminate =
-                                isGroupPartiallyChecked(groupId);
+                    // Chunk filtered devices into groups of 4 for grid layout
+                    const deviceChunks = chunkArray(filteredDevices, 4);
+
+                    return (
+                      <div key={groupId} style={{ marginBottom: "8px" }}>
+                        <div
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            background: "#f0f0f0",
+                            padding: "6px",
+                            cursor: "pointer",
                           }}
-                          onChange={(e) =>
-                            handleGroupCheckboxClick(groupId, e.target.checked)
-                          }
-                          onClick={(e) => e.stopPropagation()}
-                        />
-                        <span style={{ marginLeft: "8px", flex: 1 }}>
-                          {group.name} ({group.devices.length})
-                        </span>
-                        {expandedGroups.has(groupId) ? (
-                          <MdExpandLess />
-                        ) : (
-                          <MdExpandMore />
+                          onClick={() => toggleGroupExpansion(groupId)}
+                        >
+                          <input
+                            type="checkbox"
+                            className="custom-checkbox"
+                            checked={isGroupFullyChecked(groupId)}
+                            ref={(input) => {
+                              if (input)
+                                input.indeterminate =
+                                  isGroupPartiallyChecked(groupId);
+                            }}
+                            onChange={(e) =>
+                              handleGroupCheckboxClick(
+                                groupId,
+                                e.target.checked
+                              )
+                            }
+                            onClick={(e) => e.stopPropagation()}
+                            disabled={loading}
+                          />
+                          <span style={{ marginLeft: "8px", flex: 1 }}>
+                            {group.name} ({group.devices.length})
+                          </span>
+                          {expandedGroups.has(groupId) ? (
+                            <MdExpandLess />
+                          ) : (
+                            <MdExpandMore />
+                          )}
+                        </div>
+
+                        {expandedGroups.has(groupId) && (
+                          <div
+                            style={{
+                              paddingLeft: "20px",
+                              paddingTop: "5px",
+                              paddingRight: "10px",
+                            }}
+                          >
+                            {deviceChunks.map((chunk, chunkIndex) => (
+                              <div
+                                key={chunkIndex}
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                  marginBottom: "8px",
+                                  gap: "15px",
+                                }}
+                              >
+                                {chunk.map((device: Device) => (
+                                  <div
+                                    key={device._id}
+                                    style={{
+                                      display: "flex",
+                                      alignItems: "center",
+                                      flex: "1",
+                                      maxWidth: "175px",
+                                      minWidth: "175px",
+                                      padding: "4px 8px",
+                                      // border: "1px solid #e0e0e0",
+                                      borderRadius: "4px",
+                                      background: selectedDevices.includes(
+                                        device._id
+                                      )
+                                        ? "#e6f7ff"
+                                        : "transparent",
+                                    }}
+                                  >
+                                    <input
+                                      type="checkbox"
+                                      className="custom-checkbox"
+                                      checked={selectedDevices.includes(
+                                        device._id
+                                      )}
+                                      onChange={() =>
+                                        handleDeviceToggle(device._id)
+                                      }
+                                      disabled={loading}
+                                      style={{ marginRight: "8px" }}
+                                    />
+                                    <span
+                                      style={{
+                                        marginLeft: "0px",
+                                        fontSize: "14px",
+                                        whiteSpace: "nowrap",
+                                        overflow: "hidden",
+                                        textOverflow: "ellipsis",
+                                      }}
+                                      title={device.registrationNo}
+                                    >
+                                      {device.registrationNo}
+                                    </span>
+                                  </div>
+                                ))}
+                                {/* Add empty divs to maintain grid layout for last row */}
+                                {chunk.length < 4 &&
+                                  Array.from({ length: 4 - chunk.length }).map(
+                                    (_, index) => (
+                                      <div
+                                        key={`empty-${index}`}
+                                        style={{ flex: "1" }}
+                                      />
+                                    )
+                                  )}
+                              </div>
+                            ))}
+                          </div>
                         )}
                       </div>
-
-                      {expandedGroups.has(groupId) && (
-                        <div style={{ paddingLeft: "20px", paddingTop: "5px" }}>
-                          {filteredDevices.map((device: any) => (
-                            <div
-                              key={device.vehicle.registrationNo}
-                              style={{
-                                display: "flex",
-                                alignItems: "center",
-                                marginBottom: "4px",
-                              }}
-                            >
-                              <input
-                                type="checkbox"
-                                className="custom-checkbox"
-                                checked={selectedDevices.includes(
-                                  device.vehicle.registrationNo
-                                )}
-                                onChange={() =>
-                                  handleDeviceToggle(
-                                    device.vehicle.registrationNo
-                                  )
-                                }
-                              />
-                              <span style={{ marginLeft: "8px" }}>
-                                {device.vehicle.registrationNo}
-                              </span>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  );
-                }
-              )}
+                    );
+                  }
+                )}
+              </div>
+              {/* {selectedDevices.length === 0 && (
+                <span style={{ color: "red", fontSize: "12px" }}>
+                  Please select at least one device
+                </span>
+              )} */}
             </FormGroup>
           </Row>
-          <Button color="primary" className="me-1">
-            {loading ? "Loading ..." : `Save`}
-          </Button>
-          <Button disabled={loading} color="secondary" onClick={addToggle}>
-            {Cancel}
-          </Button>
+
+          <div style={{ display: "flex", gap: "10px", marginTop: "20px" }}>
+            <Button color="primary" type="submit" disabled={loading}>
+              {loading ? "Loading..." : "Save"}
+            </Button>
+            <Button disabled={loading} color="secondary" onClick={addToggle}>
+              {Cancel}
+            </Button>
+          </div>
         </form>
       </ModalBody>
     </Modal>

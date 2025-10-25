@@ -534,7 +534,7 @@ const GoogleMap = (props) => {
         </TooltipButton>
 
         <TooltipButton
-          onClick={zoomOut}
+          onClick={() => {}}
           tooltip="Alternate Maps"
           style={{
             color: "white",

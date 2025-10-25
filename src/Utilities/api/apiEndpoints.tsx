@@ -467,3 +467,11 @@ export const GET_VEHICLES_DATA_AMC = `${API_BASE_URL}/sales-dashboard/sales/get-
 
 export const GET_LATEST_PURCHASE_INVOICE = `${API_BASE_URL}/sales-dashboard/purchase/get-latest-purchases`;
 export const GET_PURCHASE_SUMMARY = `${API_BASE_URL}/sales-dashboard/purchase/get-purchase-summary`;
+
+// Company Alert Rules
+
+export const CREATE_ALERT_RULE = `${API_BASE_URL}/alert-events/rule/create-rule`;
+export const GET_ALERT_RULES = `${API_BASE_URL}/alert-events/rule/get-all-rules`;
+export const DELETE_ALERT_RULE = `${API_BASE_URL}/alert-events/rule/delete-rule`;
+export const UPDATE_ALERT_RULE_ACTIVATION_STATUS = `${API_BASE_URL}/alert-events/rule/update-rule-activation-status`;
+export const GET_ALL_VEHICLES_DROPDOWN_FOR_ALERT = `${API_BASE_URL}/alert-events/rule/get-all-vehicles-dropdown`;

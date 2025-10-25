@@ -44,6 +44,7 @@ import {
   setFilterComplainsTypes,
 } from "../../ReaduxToolkit/Reducer/ComplainsTypeSlice";
 import {
+  DELETE_ALERT_RULE,
   DELETE_BANK,
   DELETE_BANK_ACCOUNT,
   DELETE_BRANCH,
@@ -72,6 +73,7 @@ import {
   DELETE_VEHICLE_MODEL,
   DELETE_VENDOR,
   DELETE_WAREHOUSE,
+  GET_ALERT_RULES,
   GET_ALL_BANK_ACCOUNTS,
   GET_ALL_BANKS,
   GET_ALL_BRANCHES,
@@ -164,6 +166,10 @@ import {
   setFilterRoles,
   setRoles,
 } from "../../ReaduxToolkit/Reducer/RolesSlice";
+import {
+  setAlertRules,
+  setFilterAlertRules,
+} from "../../ReaduxToolkit/Reducer/AlertRuleSlice";
 
 const deleteAlert = (
   alertData: alertTypes,
@@ -237,6 +243,8 @@ const deleteAlert = (
         uri = `${DELETE_SERVICE_PACKAGE}`;
       } else if (type === "subRolesType") {
         uri = `${DELETE_SUB_ROLE}`;
+      } else if (type === "alertRuleType") {
+        uri = `${DELETE_ALERT_RULE}`;
       }
 
       try {
@@ -261,6 +269,31 @@ const deleteAlert = (
             }, 1000);
 
             // ------------
+
+            if (type === "alertRuleType") {
+              getAll({ url: GET_ALERT_RULES }).then((data: any) => {
+                // console.log("api call --- >", data);
+                if (data == undefined) {
+                  dispatch(setAlertRules([]));
+                  dispatch(setFilterAlertRules([]));
+                }
+
+                if (data !== undefined) {
+                  if (data.success) {
+                    // console.log("hhg");
+
+                    dispatch(setAlertRules(data.data));
+                    dispatch(setFilterAlertRules(data.data));
+                  }
+                  if (!data.success) {
+                    dispatch(setAlertRules([]));
+                    dispatch(setFilterAlertRules([]));
+                  }
+                } else {
+                  // console.log("ier67i");
+                }
+              });
+            }
 
             if (type === "subRolesType") {
               getAll({ url: GET_ALL_SUB_ROLES }).then((data: any) => {

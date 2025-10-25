@@ -49,6 +49,8 @@ import { Tooltip } from "react-tooltip";
 
 import "./MonitoringLatest.css";
 import { socketConnection } from "../../../../sockets/socket";
+import GlassToast from "../../../../components/ui/GlassToast";
+import Toast from "../../../../Utilities/toasts/Toast";
 
 const MonitoringLatest = () => {
   const dispatch = useDispatch();
@@ -74,10 +76,10 @@ const MonitoringLatest = () => {
     };
   }, []);
 
-  useEffect(() => {
-    console.log("selectedSingleDevice", selectedSingleDevice);
-    console.log("devices", devices);
-  }, [devices]);
+  // useEffect(() => {
+  //   console.log("selectedSingleDevice", selectedSingleDevice);
+  //   console.log("devices", devices);
+  // }, [devices]);
 
   const now: any = new Date();
 
@@ -161,7 +163,7 @@ const MonitoringLatest = () => {
 
         // Dispatch once every 5 sec
         dispatch(setDevices(updatedDevices));
-        console.log("✅ Devices state updated with buffered changes");
+        // console.log("✅ Devices state updated with buffered changes");
       }
     }, 4000);
 
@@ -405,7 +407,7 @@ const MonitoringLatest = () => {
 
       // get latestPosition update
       const latestPosition = changes?.updatedFields?.latestPosition;
-      console.log("payload", payload);
+      // console.log("update payload", payload);
 
       if (!latestPosition) return; // no position update
       // Push into buffer (not Redux yet)
@@ -440,21 +442,40 @@ const MonitoringLatest = () => {
       if (!latestPosition) return; // no position update
       // Push into buffer (not Redux yet)
       updatesBufferRef.current.push({ id, latestPosition, vehicleStatus });
-
-      // const updatedDevices = devices.map((device: any) =>
-      //   device._id === id ? { ...device, latestPosition } : device
-      // );
-
-      // dispatch(setDevices(updatedDevices));
     });
 
-    // cleanup listeners on unmount
+    socketConnection.on("new_alert_event", (payload) => {
+      console.log("new_alert_event payload", payload);
+
+      const { actualAlert } = payload || {};
+      if (!actualAlert) return;
+
+      const { alertType, message } = actualAlert;
+
+      Toast({
+        title: alertType,
+        text: message,
+        icon: alertType, // handles IGNITION_ON / IGNITION_OFF color & icon
+        duration: 3000,
+      });
+    });
+
     return () => {
       socketConnection.off("vehicle:updated");
       socketConnection.off("vehicle:created");
       socketConnection.off("vehicle:deleted");
+      socketConnection.off("new_alert_event");
     };
   }, []);
+
+  // useEffect(() => {
+  //   Toast({
+  //     title: "IGNITION_ON",
+  //     text: "IGNITION_ON",
+  //     icon: "IGNITION_ON", // handles IGNITION_ON / IGNITION_OFF color & icon
+  //     duration: 2000,
+  //   });
+  // }, []);
 
   return (
     <div

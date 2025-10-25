@@ -325,7 +325,7 @@ const Sidebar: React.FC<SidebarProps> = ({
           </div>
         )}
 
-        {/* {saio_operations && saio_operations.read && (
+        {saio_operations && saio_operations.read && (
           <div
             title="Operation"
             style={{
@@ -363,7 +363,7 @@ const Sidebar: React.FC<SidebarProps> = ({
               Operations
             </P1>
           </div>
-        )} */}
+        )}
       </div>
     </div>
   );
