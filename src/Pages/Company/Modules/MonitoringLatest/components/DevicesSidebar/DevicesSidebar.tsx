@@ -506,11 +506,10 @@ const DevicesSidebar = ({ setOpen, open }: any) => {
                             if (renewalDate && renewalDate < now) {
                               return "rgba(128, 128, 128, 0.2)"; // Expired
                             }
-
-                            if (
-                              !deviceTime ||
-                              (now - deviceTime) / (1000 * 60 * 60) > 24
-                            ) {
+                            if (!deviceTime) {
+                              return "rgba(0, 0, 255, 0.3)"; // Not COnn.
+                            }
+                            if ((now - deviceTime) / (1000 * 60 * 60) > 24) {
                               return "rgba(128, 0, 128, 0.1)"; // Inactive
                             }
 

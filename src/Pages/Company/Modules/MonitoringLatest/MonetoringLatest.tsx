@@ -83,63 +83,132 @@ const MonitoringLatest = () => {
 
   const now: any = new Date();
 
-  const { expiredCount, inactiveCount, movingCount, idleCount, stoppedCount } =
-    useMemo(() => {
-      // Step 1: Find expired devices
-      const expiredDevices = devices.filter((d: any) => {
-        const renewalDate = d?.vehicle?.serviceRenewalDate
-          ? new Date(d.vehicle.serviceRenewalDate)
-          : null;
+  // const { expiredCount, inactiveCount, movingCount, idleCount, stoppedCount } =
+  //   useMemo(() => {
+  //     // Step 1: Find expired devices
+  //     const expiredDevices = devices.filter((d: any) => {
+  //       const renewalDate = d?.vehicle?.serviceRenewalDate
+  //         ? new Date(d.vehicle.serviceRenewalDate)
+  //         : null;
 
-        if (!renewalDate) return false;
+  //       if (!renewalDate) return false;
 
-        return renewalDate < now; // expired if renewal date is before now
-      });
+  //       return renewalDate < now; // expired if renewal date is before now
+  //     });
 
-      const nonExpiredDevices = devices.filter(
-        (d: any) => !expiredDevices.includes(d)
-      );
+  //     const nonExpiredDevices = devices.filter(
+  //       (d: any) => !expiredDevices.includes(d)
+  //     );
 
-      // Step 2: Find inactive devices (from non-expired)
-      const inactiveDevices = nonExpiredDevices.filter((d: any) => {
-        const deviceTime: any = d?.latestPosition?.deviceTime
-          ? new Date(d.latestPosition.deviceTime)
-          : null;
+  //     // Step 2: Find inactive devices (from non-expired)
+  //     const inactiveDevices = nonExpiredDevices.filter((d: any) => {
+  //       const deviceTime: any = d?.latestPosition?.deviceTime
+  //         ? new Date(d.latestPosition.deviceTime)
+  //         : null;
 
-        // No deviceTime = inactive
-        if (!deviceTime) return true;
+  //       // No deviceTime = inactive
+  //       if (!deviceTime) return true;
 
-        const diffHours = (now - deviceTime) / (1000 * 60 * 60);
+  //       const diffHours = (now - deviceTime) / (1000 * 60 * 60);
 
-        // Inactive if older than 24h
-        return diffHours > 24;
-      });
+  //       // Inactive if older than 24h
+  //       return diffHours > 24;
+  //     });
 
-      const activeDevices = nonExpiredDevices.filter(
-        (d: any) => !inactiveDevices.includes(d)
-      );
+  //     const activeDevices = nonExpiredDevices.filter(
+  //       (d: any) => !inactiveDevices.includes(d)
+  //     );
 
-      // Step 3: From remaining (active & non-expired) — check statuses
-      const movingCount = activeDevices.filter(
-        (d: any) => d.mainVehicleStatus?.toLowerCase() === "moving"
-      ).length;
+  //     // Step 3: From remaining (active & non-expired) — check statuses
+  //     const movingCount = activeDevices.filter(
+  //       (d: any) => d.mainVehicleStatus?.toLowerCase() === "moving"
+  //     ).length;
 
-      const idleCount = activeDevices.filter(
-        (d: any) => d.mainVehicleStatus?.toLowerCase() === "idle"
-      ).length;
+  //     const idleCount = activeDevices.filter(
+  //       (d: any) => d.mainVehicleStatus?.toLowerCase() === "idle"
+  //     ).length;
 
-      const stoppedCount = activeDevices.filter(
-        (d: any) => d.mainVehicleStatus?.toLowerCase() === "stopped"
-      ).length;
+  //     const stoppedCount = activeDevices.filter(
+  //       (d: any) => d.mainVehicleStatus?.toLowerCase() === "stopped"
+  //     ).length;
 
-      return {
-        expiredCount: expiredDevices.length,
-        inactiveCount: inactiveDevices.length,
-        movingCount,
-        idleCount,
-        stoppedCount,
-      };
-    }, [devices]);
+  //     return {
+  //       expiredCount: expiredDevices.length,
+  //       inactiveCount: inactiveDevices.length,
+  //       movingCount,
+  //       idleCount,
+  //       stoppedCount,
+  //     };
+  //   }, [devices]);
+
+  const {
+    expiredCount,
+    notConnectedCount,
+    inactiveCount,
+    movingCount,
+    idleCount,
+    stoppedCount,
+  } = useMemo(() => {
+    // Step 1: Find expired devices
+    const expiredDevices = devices.filter((d: any) => {
+      const renewalDate = d?.vehicle?.serviceRenewalDate
+        ? new Date(d.vehicle.serviceRenewalDate)
+        : null;
+
+      if (!renewalDate) return false;
+
+      return renewalDate < now; // expired if renewal date is before now
+    });
+
+    const nonExpiredDevices = devices.filter(
+      (d: any) => !expiredDevices.includes(d)
+    );
+
+    // Step 2: Classify inactive and not connected devices (from non-expired)
+    const notConnectedDevices = nonExpiredDevices.filter((d: any) => {
+      return !d?.latestPosition?.deviceTime; // No deviceTime at all
+    });
+
+    const inactiveDevices = nonExpiredDevices.filter((d: any) => {
+      const deviceTime: any = d?.latestPosition?.deviceTime
+        ? new Date(d.latestPosition.deviceTime)
+        : null;
+
+      if (!deviceTime) return false; // handled by notConnectedDevices
+
+      const diffHours = (now - deviceTime) / (1000 * 60 * 60);
+
+      // Inactive if older than 24h
+      return diffHours > 24;
+    });
+
+    // Step 3: From remaining (active & non-expired) — check statuses
+    const activeDevices = nonExpiredDevices.filter(
+      (d: any) =>
+        !inactiveDevices.includes(d) && !notConnectedDevices.includes(d)
+    );
+
+    const movingCount = activeDevices.filter(
+      (d: any) => d.mainVehicleStatus?.toLowerCase() === "moving"
+    ).length;
+
+    const idleCount = activeDevices.filter(
+      (d: any) => d.mainVehicleStatus?.toLowerCase() === "idle"
+    ).length;
+
+    const stoppedCount = activeDevices.filter(
+      (d: any) => d.mainVehicleStatus?.toLowerCase() === "stopped"
+    ).length;
+
+    return {
+      expiredCount: expiredDevices.length,
+      notConnectedCount: notConnectedDevices.length,
+      inactiveCount: inactiveDevices.length,
+      movingCount,
+      idleCount,
+      stoppedCount,
+    };
+  }, [devices]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -599,6 +668,13 @@ const MonitoringLatest = () => {
                 color="purple"
                 background="rgba(128, 0, 128, 0.1)"
               />
+
+              <StatusBox
+                count={notConnectedCount}
+                label="Not Conn."
+                color="purple"
+                background="rgba(0, 0, 255, 0.3)"
+              />
               <StatusBox
                 count={expiredCount}
                 label="Expired"
@@ -613,7 +689,7 @@ const MonitoringLatest = () => {
                 background="rgba(0, 0, 255, 0.1)"
               />
 
-              <div
+              {/* <div
                 style={{
                   display: "flex",
                   gap: "10px",
@@ -669,7 +745,7 @@ const MonitoringLatest = () => {
                     Button 2
                   </p>
                 </div>
-              </div>
+              </div> */}
             </div>
             <GoogleMap />
           </div>

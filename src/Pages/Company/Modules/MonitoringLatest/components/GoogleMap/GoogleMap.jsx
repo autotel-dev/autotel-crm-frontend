@@ -243,7 +243,7 @@ const GoogleMap = (props) => {
       {/* Render geofences */}
       {renderGeofences()}
 
-      <InfoWindow
+      {/* <InfoWindow
         position={infoWindowPosition}
         visible={infoWindowVisible}
         onClose={closeInfoWindow}
@@ -500,7 +500,7 @@ const GoogleMap = (props) => {
             </button>
           </div>
         </div>
-      </InfoWindow>
+      </InfoWindow> */}
 
       <div
         className="custom-zoom-control"
