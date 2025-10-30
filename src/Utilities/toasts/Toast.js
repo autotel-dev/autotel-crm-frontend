@@ -39,7 +39,7 @@ const GlassToast = ({ title, text, icon }) => {
         fontWeight: 400,
         backdropFilter: "blur(12px)",
         boxShadow: "0 4px 25px rgba(0, 0, 0, 0.4)",
-        border: `1.5px solid ${color}`,
+        border: `3px solid ${color}`,
         background: "black", // 🔳 light black overlay
         minWidth: "260px",
         maxWidth: "340px",
@@ -51,7 +51,7 @@ const GlassToast = ({ title, text, icon }) => {
         {title && (
           <span
             style={{
-              fontSize: "16px", // title 3px larger
+              fontSize: "18px", // title 3px larger
               fontWeight: "bold",
               lineHeight: "1.2",
               color,
@@ -62,7 +62,7 @@ const GlassToast = ({ title, text, icon }) => {
           </span>
         )}
         {text && (
-          <div style={{ fontSize: "12px", lineHeight: "1.4", color }}>
+          <div style={{ fontSize: "14px", lineHeight: "1.4", color }}>
             {text}
           </div>
         )}

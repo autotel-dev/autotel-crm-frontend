@@ -51,6 +51,7 @@ import "./MonitoringLatest.css";
 import { socketConnection } from "../../../../sockets/socket";
 import GlassToast from "../../../../components/ui/GlassToast";
 import Toast from "../../../../Utilities/toasts/Toast";
+import { formatUnderscoredString } from "../../../../Utilities/globals/globals";
 
 const MonitoringLatest = () => {
   const dispatch = useDispatch();
@@ -522,10 +523,10 @@ const MonitoringLatest = () => {
       const { alertType, message } = actualAlert;
 
       Toast({
-        title: alertType,
+        title: formatUnderscoredString(alertType),
         text: message,
         icon: alertType, // handles IGNITION_ON / IGNITION_OFF color & icon
-        duration: 3000,
+        duration: 3500,
       });
     });
 
