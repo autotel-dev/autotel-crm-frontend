@@ -40,10 +40,12 @@ import { MdOutlineSensors } from "react-icons/md";
 import { HiDeviceMobile } from "react-icons/hi";
 import { FaPlay } from "react-icons/fa6";
 import { BsSendArrowUpFill } from "react-icons/bs";
+import { HiChartBar } from "react-icons/hi";
 import VehicleInfo from "./components/SingleVehiceDetail/VehicleInfo/VehicleInfo";
 import DeviceInfo from "./components/SingleVehiceDetail/DeviceInfo/DeviceInfo";
 import SensorInfo from "./components/SingleVehiceDetail/SensorInfo/SensorInfo";
 import CustomerInfo from "./components/SingleVehiceDetail/CustomerInfo/CustomerInfo";
+import Analytics from "./components/SingleVehiceDetail/Analytics/Analytics";
 import PlaybackModal from "./components/SingleVehiceDetail/PlaybackModal/PlaybackModal";
 import { Tooltip } from "react-tooltip";
 
@@ -457,7 +459,10 @@ const MonitoringLatest = () => {
       icon: FaUserAlt,
       tooltipName: "Customer Info",
     },
-
+    {
+      icon: HiChartBar,
+      tooltipName: "Analytics",
+    },
     {
       icon: FaPlay,
       tooltipName: "Playback",
@@ -797,7 +802,7 @@ const MonitoringLatest = () => {
                     data-tooltip-id={`tooltip-${i}`} // Use unique ID for each button
                     data-tooltip-content={menu.tooltipName}
                     onClick={() => {
-                      if (i == 4) {
+                      if (i == 5) {
                         setOpenModal(true);
                       } else {
                         setSelectedComponentIndex(i);
@@ -846,6 +851,7 @@ const MonitoringLatest = () => {
           {selectedComponentIndex == 1 && <DeviceInfo />}
           {selectedComponentIndex == 2 && <SensorInfo />}
           {selectedComponentIndex == 3 && <CustomerInfo />}
+          {selectedComponentIndex == 4 && <Analytics />}
 
           <div
             style={{

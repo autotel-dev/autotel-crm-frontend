@@ -15,6 +15,7 @@ import "./DevicesSidebar.css";
 import { IoMdWifi } from "react-icons/io";
 import { IoKey } from "react-icons/io5";
 import { MdExpandMore, MdExpandLess } from "react-icons/md";
+import { BsThreeDotsVertical } from "react-icons/bs";
 import carIcon from "../../../monitoring-assets/deviceLocationArrow.png";
 
 import {
@@ -26,6 +27,7 @@ import { motion } from "framer-motion";
 const DevicesSidebar = ({ setOpen, open }: any) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [expandedGroups, setExpandedGroups] = useState(new Set());
+  const [openMenuId, setOpenMenuId] = useState<string | null>(null);
   const { devices } = useSelector((state: any) => state.monitoring);
   const dispatch = useDispatch();
 
@@ -116,11 +118,39 @@ const DevicesSidebar = ({ setOpen, open }: any) => {
     setOpen(!open);
   };
 
+  const toggleMenu = (e: React.MouseEvent, deviceId: string) => {
+    e.stopPropagation();
+    setOpenMenuId(openMenuId === deviceId ? null : deviceId);
+  };
+
+  const handleMenuAction = (
+    e: React.MouseEvent,
+    action: string,
+    device: any
+  ) => {
+    e.stopPropagation();
+    console.log(`Action: ${action}`, device);
+    setOpenMenuId(null);
+    // Add your action handlers here
+  };
+
   // Expand all groups initially
   useEffect(() => {
     const allGroupIds = Object.keys(groupedDevices);
     setExpandedGroups(new Set(allGroupIds));
   }, [Object.keys(groupedDevices).length]);
+
+  // Close menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = () => {
+      if (openMenuId) {
+        setOpenMenuId(null);
+      }
+    };
+
+    document.addEventListener("click", handleClickOutside);
+    return () => document.removeEventListener("click", handleClickOutside);
+  }, [openMenuId]);
 
   const [selectedNav, setSelectedNav] = useState("Vehicles");
 
@@ -657,13 +687,119 @@ const DevicesSidebar = ({ setOpen, open }: any) => {
                                 </div>
                                 <div
                                   style={{
+                                    position: "relative",
                                     display: "flex",
-                                    flexDirection: "column",
                                     alignItems: "center",
                                   }}
                                 >
-                                  <IoMdWifi color="red" size={16} />
-                                  <div style={{ fontSize: "9px" }}>GPS</div>
+                                  <button
+                                    onClick={(e) => toggleMenu(e, item._id)}
+                                    style={{
+                                      background: "transparent",
+                                      border: "none",
+                                      cursor: "pointer",
+                                      padding: "4px",
+                                      display: "flex",
+                                      alignItems: "center",
+                                      justifyContent: "center",
+                                      borderRadius: "4px",
+                                      transition: "all 0.2s",
+                                    }}
+                                    onMouseEnter={(e) => {
+                                      e.currentTarget.style.backgroundColor =
+                                        "#6dbfb8";
+                                      e.currentTarget.style.transform =
+                                        "scale(1.1)";
+                                    }}
+                                    onMouseLeave={(e) => {
+                                      e.currentTarget.style.backgroundColor =
+                                        "transparent";
+                                      e.currentTarget.style.transform =
+                                        "scale(1)";
+                                    }}
+                                  >
+                                    <BsThreeDotsVertical
+                                      color="black"
+                                      size={18}
+                                    />
+                                  </button>
+
+                                  {openMenuId === item._id && (
+                                    <div
+                                      style={{
+                                        position: "absolute",
+                                        right: "100%",
+                                        top: "0%",
+                                        transform: "translateY(-0%)",
+                                        marginRight: "8px",
+                                        backgroundColor: "white",
+                                        borderRadius: "8px",
+                                        boxShadow:
+                                          "0 4px 15px rgba(109, 191, 184, 0.8)",
+                                        zIndex: 1000,
+                                        minWidth: "200px",
+                                        overflow: "hidden",
+                                        border: "1px solid #6dbfb8",
+                                      }}
+                                    >
+                                      {[
+                                        {
+                                          label: "Customer Details",
+                                          action: "customer-details",
+                                        },
+                                        {
+                                          label: "Show History (Yesterday)",
+                                          action: "history-yesterday",
+                                        },
+                                        {
+                                          label: "Show History (Today)",
+                                          action: "history-today",
+                                        },
+                                        {
+                                          label: "Send Command",
+                                          action: "send-command",
+                                        },
+                                        { label: "Alerts", action: "alerts" },
+                                      ].map((menuItem, idx) => (
+                                        <div
+                                          key={idx}
+                                          onClick={(e) =>
+                                            handleMenuAction(
+                                              e,
+                                              menuItem.action,
+                                              item
+                                            )
+                                          }
+                                          style={{
+                                            padding: "12px 16px",
+                                            cursor: "pointer",
+                                            fontSize: "13px",
+                                            fontWeight: "500",
+                                            color: "#333",
+                                            transition: "all 0.2s",
+                                            borderBottom:
+                                              idx < 4
+                                                ? "1px solid #f0f0f0"
+                                                : "none",
+                                          }}
+                                          onMouseEnter={(e) => {
+                                            e.currentTarget.style.backgroundColor =
+                                              "#6dbfb8";
+                                            e.currentTarget.style.color =
+                                              "white";
+                                          }}
+                                          onMouseLeave={(e) => {
+                                            e.currentTarget.style.backgroundColor =
+                                              "transparent";
+                                            e.currentTarget.style.color =
+                                              "#333";
+                                          }}
+                                        >
+                                          {menuItem.label}
+                                        </div>
+                                      ))}
+                                    </div>
+                                  )}
                                 </div>
                               </div>
                             </div>
