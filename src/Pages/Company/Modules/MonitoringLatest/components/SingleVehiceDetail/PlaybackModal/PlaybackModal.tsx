@@ -45,9 +45,8 @@ const PlaybackModal: React.FC<PlaybackModalProps> = ({
   );
   console.log("vehicleHistoryDateRange", vehicleHistoryDateRange);
 
-  const [selectedFilter, setSelectedFilter] = useState(
-    vehicleHistoryDateRange !== null ? "Custom" : "Today"
-  );
+  // Initialize filter based on saved date range
+  const [selectedFilter, setSelectedFilter] = useState<string>("Today");
 
   function filterHistoryData(history: any[]) {
     if (!Array.isArray(history)) return [];
@@ -92,40 +91,112 @@ const PlaybackModal: React.FC<PlaybackModalProps> = ({
     { label: "Custom", value: "Custom" },
   ];
 
+  // ✅ Helper function to check if date range matches a preset filter
+  const getFilterTypeFromDates = (start: string, end: string) => {
+    if (!start || !end) return "Today";
+
+    const startDate = new Date(start);
+    const endDate = new Date(end);
+    const now = new Date();
+
+    // Calculate the time difference in hours
+    const timeDiffHours = (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60);
+
+    // Check if it's approximately 24 hours (Today or Yesterday)
+    if (timeDiffHours >= 23 && timeDiffHours <= 25) {
+      // Check if end date is close to now (within a few hours) = "Today"
+      const hoursDiffFromNow = Math.abs((endDate.getTime() - now.getTime()) / (1000 * 60 * 60));
+
+      if (hoursDiffFromNow < 2) {
+        // End date is very close to now = "Today" (last 24 hours)
+        return "Today";
+      }
+
+      // Check if end date is close to yesterday
+      const yesterday = new Date(now);
+      yesterday.setDate(now.getDate() - 1);
+      const hoursDiffFromYesterday = Math.abs((endDate.getTime() - yesterday.getTime()) / (1000 * 60 * 60));
+
+      if (hoursDiffFromYesterday < 2) {
+        // End date is close to yesterday = "Yesterday"
+        return "Yesterday";
+      }
+    }
+
+    // Check if it's approximately 7 days (1 Week)
+    const daysDiff = (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24);
+    if (daysDiff >= 6.5 && daysDiff <= 7.5) {
+      return "1 Week";
+    }
+
+    // Otherwise it's custom
+    return "Custom";
+  };
+
+  // ✅ Initialize state from Redux when modal opens
+  useEffect(() => {
+    if (isVisible && vehicleHistoryDateRange !== null) {
+      const filterType = getFilterTypeFromDates(
+        vehicleHistoryDateRange.start,
+        vehicleHistoryDateRange.end
+      );
+      setSelectedFilter(filterType);
+
+      if (filterType === "Custom") {
+        setFromDateTime(vehicleHistoryDateRange.start);
+        setToDateTime(vehicleHistoryDateRange.end);
+      }
+    } else if (isVisible && location.pathname !== "/company/modules/monitoring") {
+      // If reopening from playback page without saved dates, default to Today
+      setSelectedFilter("Today");
+    }
+  }, [isVisible]);
+
   // ✅ Update fromDateTime & toDateTime whenever filter changes
   useEffect(() => {
     const now = new Date();
-    const currentTime = now.toISOString().slice(11, 16); // HH:mm
 
     if (selectedFilter === "Today") {
-      const today = new Date();
-      const start = new Date(today);
-      start.setHours(now.getHours(), now.getMinutes(), 0, 0);
-      setFromDateTime(start.toISOString().slice(0, 16));
-      setToDateTime(today.toISOString().slice(0, 16));
+      // Today = Last 24 hours (Yesterday's current time → Today's current time)
+      const endDate = new Date(now);
+      const startDate = new Date(now);
+      startDate.setDate(now.getDate() - 1); // Go back 1 day (24 hours)
+
+      setFromDateTime(startDate.toISOString().slice(0, 16));
+      setToDateTime(endDate.toISOString().slice(0, 16));
     } else if (selectedFilter === "Yesterday") {
-      const yesterday = new Date();
-      yesterday.setDate(now.getDate() - 1);
-      yesterday.setHours(now.getHours(), now.getMinutes(), 0, 0);
+      // Yesterday = 24 hours before that (2 days ago → Yesterday's current time)
+      const endDate = new Date(now);
+      endDate.setDate(now.getDate() - 1); // Yesterday's current time
 
-      const end = new Date(yesterday);
-      end.setHours(now.getHours(), now.getMinutes(), 0, 0);
+      const startDate = new Date(now);
+      startDate.setDate(now.getDate() - 2); // 2 days ago (48 hours back)
 
-      setFromDateTime(yesterday.toISOString().slice(0, 16));
-      setToDateTime(end.toISOString().slice(0, 16));
+      setFromDateTime(startDate.toISOString().slice(0, 16));
+      setToDateTime(endDate.toISOString().slice(0, 16));
     } else if (selectedFilter === "1 Week") {
-      const weekAgo = new Date();
-      weekAgo.setDate(now.getDate() - 7);
-      weekAgo.setHours(now.getHours(), now.getMinutes(), 0, 0);
+      // 1 Week = Last 7 days (7 days ago → Now)
+      const endDate = new Date(now);
+      const startDate = new Date(now);
+      startDate.setDate(now.getDate() - 7);
 
-      const today = new Date();
-      today.setHours(now.getHours(), now.getMinutes(), 0, 0);
-
-      setFromDateTime(weekAgo.toISOString().slice(0, 16));
-      setToDateTime(today.toISOString().slice(0, 16));
+      setFromDateTime(startDate.toISOString().slice(0, 16));
+      setToDateTime(endDate.toISOString().slice(0, 16));
     } else if (selectedFilter === "Custom") {
-      setFromDateTime("");
-      setToDateTime("");
+      // Custom: Use saved dates from Redux if available
+      if (vehicleHistoryDateRange !== null) {
+        setFromDateTime(vehicleHistoryDateRange.start);
+        setToDateTime(vehicleHistoryDateRange.end);
+      } else if (fromDateTime === "" && toDateTime === "") {
+        // If no saved dates and fields are empty, set a default
+        const endDate = new Date(now);
+        const startDate = new Date(now);
+        startDate.setDate(now.getDate() - 1);
+
+        setFromDateTime(startDate.toISOString().slice(0, 16));
+        setToDateTime(endDate.toISOString().slice(0, 16));
+      }
+      // If dates already manually entered, keep them
     }
   }, [selectedFilter]);
 
@@ -217,11 +288,7 @@ const PlaybackModal: React.FC<PlaybackModalProps> = ({
                       <input
                         className="form-control"
                         type="datetime-local"
-                        value={
-                          vehicleHistoryDateRange !== null && fromDateTime == ""
-                            ? vehicleHistoryDateRange.start
-                            : fromDateTime
-                        }
+                        value={fromDateTime}
                         onChange={(e) => setFromDateTime(e.target.value)}
                       />
                       <span style={{ color: "red" }}>
@@ -239,11 +306,7 @@ const PlaybackModal: React.FC<PlaybackModalProps> = ({
                       <input
                         className="form-control"
                         type="datetime-local"
-                        value={
-                          vehicleHistoryDateRange !== null && toDateTime == ""
-                            ? vehicleHistoryDateRange.end
-                            : toDateTime
-                        }
+                        value={toDateTime}
                         onChange={(e) => setToDateTime(e.target.value)}
                       />
                       <span style={{ color: "red" }}>

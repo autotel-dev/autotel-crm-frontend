@@ -260,6 +260,26 @@ const GoogleMap = (props) => {
     }
   }, [optimizedDataPoints, carPosition, centerMapOnPosition]);
 
+  // Reset markers when vehicleHistoryData changes (new data loaded)
+  useEffect(() => {
+    if (vehicleHistoryData) {
+      // Clear existing markers
+      markersRef.current.forEach((marker) => {
+        if (marker.setMap) marker.setMap(null);
+      });
+      markersRef.current = [];
+
+      // Reset markers initialized flag to allow re-initialization
+      setMarkersInitialized(false);
+
+      // Reset animation state
+      setIsAnimating(false);
+      setCurrentSegmentIndex(0);
+      setAnimationProgress(0);
+      setCarPosition(null);
+    }
+  }, [vehicleHistoryData]);
+
   // Initialize markers when map is ready
   useEffect(() => {
     if (mapRef.current?.map && props.google && !markersInitialized) {
