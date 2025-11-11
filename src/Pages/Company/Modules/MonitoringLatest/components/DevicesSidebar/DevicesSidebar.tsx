@@ -21,13 +21,20 @@ import carIcon from "../../../monitoring-assets/deviceLocationArrow.png";
 import {
   setDevices,
   setSelectedSingleDevice,
+  setVehicleHistoryDateRange,
 } from "../../../../../../ReaduxToolkit/Reducer/MonitoringSlice";
 import { motion } from "framer-motion";
+import CustomerDetailsModal from "./CustomerDetailsModal";
+import PlaybackModal from "../SingleVehiceDetail/PlaybackModal/PlaybackModal";
 
 const DevicesSidebar = ({ setOpen, open }: any) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [expandedGroups, setExpandedGroups] = useState(new Set());
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+  const [customerDetailsModal, setCustomerDetailsModal] = useState(false);
+  const [playbackModal, setPlaybackModal] = useState(false);
+  const [selectedDevice, setSelectedDevice] = useState<any>(null);
+  const [historyType, setHistoryType] = useState<"today" | "yesterday" | null>(null);
   const { devices } = useSelector((state: any) => state.monitoring);
   const dispatch = useDispatch();
 
@@ -129,9 +136,54 @@ const DevicesSidebar = ({ setOpen, open }: any) => {
     device: any
   ) => {
     e.stopPropagation();
-    console.log(`Action: ${action}`, device);
     setOpenMenuId(null);
-    // Add your action handlers here
+
+    console.log("Menu action triggered:", action, device);
+
+    switch (action) {
+      case "customer-details":
+        console.log("Opening customer details modal");
+        // Open customer details modal
+        setSelectedDevice(device);
+        dispatch(setSelectedSingleDevice(device));
+        setCustomerDetailsModal(true);
+        break;
+
+      case "history-today":
+        console.log("Opening history today modal");
+        // Open playback modal with Today filter
+        setSelectedDevice(device);
+        dispatch(setSelectedSingleDevice(device));
+        setHistoryType("today");
+        // Clear previous date range so modal shows "Today"
+        dispatch(setVehicleHistoryDateRange(null));
+        setPlaybackModal(true);
+        break;
+
+      case "history-yesterday":
+        console.log("Opening history yesterday modal");
+        // Open playback modal with Yesterday filter
+        setSelectedDevice(device);
+        dispatch(setSelectedSingleDevice(device));
+        setHistoryType("yesterday");
+        // Clear previous date range so modal shows "Yesterday"
+        dispatch(setVehicleHistoryDateRange(null));
+        setPlaybackModal(true);
+        break;
+
+      case "send-command":
+        // TODO: Implement send command functionality
+        console.log("Send command for device:", device);
+        break;
+
+      case "alerts":
+        // TODO: Implement alerts functionality
+        console.log("Show alerts for device:", device);
+        break;
+
+      default:
+        console.log(`Unknown action: ${action}`, device);
+    }
   };
 
   // Expand all groups initially
@@ -151,6 +203,23 @@ const DevicesSidebar = ({ setOpen, open }: any) => {
     document.addEventListener("click", handleClickOutside);
     return () => document.removeEventListener("click", handleClickOutside);
   }, [openMenuId]);
+
+  // Reset history type when playback modal closes
+  useEffect(() => {
+    if (!playbackModal) {
+      setHistoryType(null);
+    }
+  }, [playbackModal]);
+
+  // Debug modal states
+  useEffect(() => {
+    console.log("Modal States:", {
+      customerDetailsModal,
+      playbackModal,
+      selectedDevice: selectedDevice ? "Device present" : "No device",
+      historyType,
+    });
+  }, [customerDetailsModal, playbackModal, selectedDevice, historyType]);
 
   const [selectedNav, setSelectedNav] = useState("Vehicles");
 
@@ -275,15 +344,16 @@ const DevicesSidebar = ({ setOpen, open }: any) => {
   // }, []); // Empty dependency array ensures this runs only on mount/unmount
 
   return (
-    <Card
-      style={{
-        borderRadius: "10px",
-        backgroundColor: "white",
-        // border: "1px solid black",
-        boxShadow: "0 4px 15px rgba(109, 191, 184, 0.8)", // ✅ Shadow
-        // overflowY: "hidden",
-      }}
-    >
+    <>
+      <Card
+        style={{
+          borderRadius: "10px",
+          backgroundColor: "white",
+          // border: "1px solid black",
+          boxShadow: "0 4px 15px rgba(109, 191, 184, 0.8)", // ✅ Shadow
+          // overflowY: "hidden",
+        }}
+      >
       <CardHeader style={{ padding: "0px 12px", backgroundColor: "white" }}>
         <div
           style={{
@@ -826,6 +896,25 @@ const DevicesSidebar = ({ setOpen, open }: any) => {
         )}
       </CardBody>
     </Card>
+
+      {/* Customer Details Modal */}
+      {customerDetailsModal && selectedDevice && (
+        <CustomerDetailsModal
+          isVisible={customerDetailsModal}
+          setIsVisible={setCustomerDetailsModal}
+          device={selectedDevice}
+        />
+      )}
+
+      {/* Playback Modal for History */}
+      {playbackModal && selectedDevice && (
+        <PlaybackModal
+          isVisible={playbackModal}
+          setIsVisible={setPlaybackModal}
+          initialFilter={historyType === "today" ? "Today" : historyType === "yesterday" ? "Yesterday" : undefined}
+        />
+      )}
+    </>
   );
 };
 

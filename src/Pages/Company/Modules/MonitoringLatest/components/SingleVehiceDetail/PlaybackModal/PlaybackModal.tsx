@@ -18,11 +18,13 @@ import { useSelector } from "react-redux";
 interface PlaybackModalProps {
   isVisible: any;
   setIsVisible: any;
+  initialFilter?: "Today" | "Yesterday" | "1 Week" | "Custom";
 }
 
 const PlaybackModal: React.FC<PlaybackModalProps> = ({
   isVisible,
   setIsVisible = () => {},
+  initialFilter,
 }: any) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -45,8 +47,10 @@ const PlaybackModal: React.FC<PlaybackModalProps> = ({
   );
   console.log("vehicleHistoryDateRange", vehicleHistoryDateRange);
 
-  // Initialize filter based on saved date range
-  const [selectedFilter, setSelectedFilter] = useState<string>("Today");
+  // Initialize filter based on saved date range or initialFilter prop
+  const [selectedFilter, setSelectedFilter] = useState<string>(
+    initialFilter || "Today"
+  );
 
   function filterHistoryData(history: any[]) {
     if (!Array.isArray(history)) return [];
@@ -135,25 +139,37 @@ const PlaybackModal: React.FC<PlaybackModalProps> = ({
 
   // ✅ Initialize state from Redux when modal opens
   useEffect(() => {
-    if (isVisible && vehicleHistoryDateRange !== null) {
-      const filterType = getFilterTypeFromDates(
-        vehicleHistoryDateRange.start,
-        vehicleHistoryDateRange.end
-      );
-      setSelectedFilter(filterType);
-
-      if (filterType === "Custom") {
-        setFromDateTime(vehicleHistoryDateRange.start);
-        setToDateTime(vehicleHistoryDateRange.end);
+    if (isVisible) {
+      // Priority 1: Use initialFilter if provided (from quick actions)
+      if (initialFilter) {
+        console.log("Setting filter from initialFilter:", initialFilter);
+        setSelectedFilter(initialFilter);
       }
-    } else if (isVisible && location.pathname !== "/company/modules/monitoring") {
-      // If reopening from playback page without saved dates, default to Today
-      setSelectedFilter("Today");
+      // Priority 2: Use saved date range from Redux
+      else if (vehicleHistoryDateRange !== null) {
+        const filterType = getFilterTypeFromDates(
+          vehicleHistoryDateRange.start,
+          vehicleHistoryDateRange.end
+        );
+        console.log("Setting filter from saved dates:", filterType);
+        setSelectedFilter(filterType);
+
+        if (filterType === "Custom") {
+          setFromDateTime(vehicleHistoryDateRange.start);
+          setToDateTime(vehicleHistoryDateRange.end);
+        }
+      }
+      // Priority 3: Default to Today if not on monitoring page
+      else if (location.pathname !== "/company/modules/monitoring") {
+        console.log("Setting default filter: Today");
+        setSelectedFilter("Today");
+      }
     }
-  }, [isVisible]);
+  }, [isVisible, initialFilter, vehicleHistoryDateRange, location.pathname]);
 
   // ✅ Update fromDateTime & toDateTime whenever filter changes
   useEffect(() => {
+    console.log("Filter changed to:", selectedFilter);
     const now = new Date();
 
     if (selectedFilter === "Today") {
@@ -161,6 +177,11 @@ const PlaybackModal: React.FC<PlaybackModalProps> = ({
       const endDate = new Date(now);
       const startDate = new Date(now);
       startDate.setDate(now.getDate() - 1); // Go back 1 day (24 hours)
+
+      console.log("Setting Today dates:", {
+        start: startDate.toISOString().slice(0, 16),
+        end: endDate.toISOString().slice(0, 16),
+      });
 
       setFromDateTime(startDate.toISOString().slice(0, 16));
       setToDateTime(endDate.toISOString().slice(0, 16));
@@ -171,6 +192,11 @@ const PlaybackModal: React.FC<PlaybackModalProps> = ({
 
       const startDate = new Date(now);
       startDate.setDate(now.getDate() - 2); // 2 days ago (48 hours back)
+
+      console.log("Setting Yesterday dates:", {
+        start: startDate.toISOString().slice(0, 16),
+        end: endDate.toISOString().slice(0, 16),
+      });
 
       setFromDateTime(startDate.toISOString().slice(0, 16));
       setToDateTime(endDate.toISOString().slice(0, 16));

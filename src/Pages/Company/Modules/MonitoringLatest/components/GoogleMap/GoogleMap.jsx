@@ -243,7 +243,8 @@ const GoogleMap = (props) => {
       {/* Render geofences */}
       {renderGeofences()}
 
-      {/* <InfoWindow
+      {/* OLD COMMENTED INFOWINDOW - KEPT FOR REFERENCE
+      <InfoWindow
         position={infoWindowPosition}
         visible={infoWindowVisible}
         onClose={closeInfoWindow}
@@ -500,7 +501,293 @@ const GoogleMap = (props) => {
             </button>
           </div>
         </div>
-      </InfoWindow> */}
+      </InfoWindow>
+      END OF OLD COMMENTED INFOWINDOW */}
+
+      {/* ✨ NEW BEAUTIFUL ANIMATED INFOWINDOW ✨ */}
+      <InfoWindow
+        position={infoWindowPosition}
+        visible={infoWindowVisible}
+        onClose={closeInfoWindow}
+        options={{
+          disableAutoPan: false,
+          pixelOffset: new props.google.maps.Size(0, -40),
+          disableClose: true,
+          closeBoxMargin: "0",
+          closeBoxURL: "",
+          maxWidth: 380,
+        }}
+      >
+        <div
+          className="elegant-infowindow"
+          style={{
+            minWidth: "360px",
+            maxWidth: "360px",
+            overflow: "hidden",
+            margin: "0px",
+            padding: "0px",
+            borderRadius: "10px",
+            boxShadow: "0 6px 20px rgba(109, 191, 184, 0.2)",
+            fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+          }}
+        >
+          {/* 🎨 Header with gradient background */}
+          <div
+            style={{
+              background: "linear-gradient(135deg, #6dbfb8 0%, #5aa9a2 100%)",
+              padding: "12px 16px",
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              color: "white",
+              position: "relative",
+              overflow: "hidden",
+            }}
+          >
+            <div
+              style={{
+                position: "absolute",
+                top: "-50px",
+                right: "-50px",
+                width: "150px",
+                height: "150px",
+                background: "rgba(255, 255, 255, 0.1)",
+                borderRadius: "50%",
+              }}
+            ></div>
+            <div style={{ display: "flex", alignItems: "center", gap: "8px", zIndex: 1 }}>
+              <div
+                style={{
+                  backgroundColor: "rgba(255, 255, 255, 0.25)",
+                  padding: "6px 10px",
+                  borderRadius: "6px",
+                  fontSize: "16px",
+                  fontWeight: "bold",
+                  backdropFilter: "blur(10px)",
+                }}
+              >
+                {selectedDevice?.vehicle?.registrationNo || "N/A"}
+              </div>
+              <span
+                style={{
+                  fontSize: "12px",
+                  fontWeight: "500",
+                  backgroundColor: "rgba(255, 255, 255, 0.2)",
+                  padding: "3px 8px",
+                  borderRadius: "10px",
+                }}
+              >
+                {selectedDevice?.vehicle?.vehicleType || "Vehicle"}
+              </span>
+            </div>
+            <span
+              style={{
+                fontWeight: "600",
+                fontSize: "11px",
+                backgroundColor: selectedDevice?.latestPosition?.speed > 0 ? "rgba(76, 175, 80, 0.9)" : "rgba(255, 87, 34, 0.9)",
+                padding: "5px 10px",
+                borderRadius: "12px",
+                zIndex: 1,
+                textTransform: "uppercase",
+                letterSpacing: "0.3px",
+              }}
+            >
+              {selectedDevice?.latestPosition?.speed > 0 ? "Moving" : "Stopped"}
+            </span>
+          </div>
+
+          {/* 📊 Main Info Section with modern cards */}
+          <div
+            style={{
+              padding: "12px 16px",
+              backgroundColor: "#f8fafa",
+            }}
+          >
+            {/* Info Grid */}
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "1fr",
+                gap: "6px",
+              }}
+            >
+              {[
+                { label: "Device ID", value: selectedDevice?.id || "N/A", icon: "🔧" },
+                { label: "Address", value: selectedDevice?.latestPosition?.address || "Loading address...", icon: "📍" },
+                {
+                  label: "Time",
+                  value: selectedDevice?.latestPosition?.deviceTime
+                    ? new Date(selectedDevice.latestPosition.deviceTime).toLocaleString()
+                    : "N/A",
+                  icon: "⏰"
+                },
+                {
+                  label: "Speed",
+                  value: `${selectedDevice?.latestPosition?.speed || 0} km/h`,
+                  icon: "🚗",
+                  highlight: true
+                },
+                {
+                  label: "Ignition",
+                  value: selectedDevice?.latestPosition?.attributes?.ignition ? "ON" : "OFF",
+                  icon: "🔑",
+                  status: selectedDevice?.latestPosition?.attributes?.ignition
+                },
+              ].map((item, idx) => (
+                <div
+                  key={idx}
+                  style={{
+                    backgroundColor: "white",
+                    padding: "8px 12px",
+                    borderRadius: "8px",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "10px",
+                    borderLeft: item.highlight ? "3px solid #6dbfb8" : "3px solid transparent",
+                    boxShadow: "0 1px 4px rgba(0, 0, 0, 0.06)",
+                    transition: "all 0.3s ease",
+                    cursor: "default",
+                  }}
+                  className="info-row-hover"
+                >
+                  <span style={{ fontSize: "16px", filter: "grayscale(0.2)" }}>
+                    {item.icon}
+                  </span>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: "10px", color: "#666", marginBottom: "1px", fontWeight: "500" }}>
+                      {item.label}
+                    </div>
+                    <div
+                      style={{
+                        fontSize: "12px",
+                        fontWeight: "600",
+                        color: item.status !== undefined
+                          ? (item.status ? "#4CAF50" : "#FF5722")
+                          : "#333",
+                      }}
+                    >
+                      {item.value}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* 📈 Stats Cards Section */}
+          <div
+            style={{
+              padding: "12px 16px",
+              paddingTop: "0px",
+              backgroundColor: "#f8fafa",
+              borderBottom: "1px solid #e0e0e0",
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                gap: "6px",
+                overflowX: "auto",
+                paddingBottom: "8px",
+                scrollbarWidth: "thin",
+                scrollbarColor: "#6dbfb8 #f0f0f0",
+              }}
+            >
+              {[
+                { label: "Battery", value: `${selectedDevice?.latestPosition?.attributes?.battery || 0}%`, color: "#4CAF50" },
+                { label: "Satellites", value: selectedDevice?.latestPosition?.attributes?.sat || "0", color: "#2196F3" },
+                { label: "Altitude", value: `${selectedDevice?.latestPosition?.altitude || 0}m`, color: "#FF9800" },
+                { label: "Distance", value: `${selectedDevice?.latestPosition?.attributes?.distance || 0} km`, color: "#9C27B0" },
+              ].map((stat, idx) => (
+                <div
+                  key={idx}
+                  style={{
+                    minWidth: "78px",
+                    backgroundColor: "white",
+                    borderRadius: "8px",
+                    padding: "8px 6px",
+                    textAlign: "center",
+                    boxShadow: "0 1px 4px rgba(0, 0, 0, 0.06)",
+                    border: `2px solid ${stat.color}20`,
+                    flexShrink: 0,
+                    transition: "all 0.3s ease",
+                  }}
+                  className="stat-card-hover"
+                >
+                  <div
+                    style={{
+                      fontSize: "14px",
+                      fontWeight: "bold",
+                      color: stat.color,
+                      marginBottom: "2px",
+                    }}
+                  >
+                    {stat.value}
+                  </div>
+                  <div style={{ fontSize: "9px", color: "#666", fontWeight: "500" }}>
+                    {stat.label}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* 🎯 Action Buttons */}
+          <div
+            style={{
+              padding: "10px 16px",
+              display: "flex",
+              gap: "8px",
+              backgroundColor: "white",
+              borderRadius: "0 0 10px 10px",
+            }}
+          >
+            <button
+              style={{
+                flex: 1,
+                border: "2px solid #6dbfb8",
+                outline: "none",
+                backgroundColor: "white",
+                fontWeight: "600",
+                color: "#6dbfb8",
+                textAlign: "center",
+                padding: "8px 12px",
+                borderRadius: "6px",
+                fontSize: "11px",
+                cursor: "pointer",
+                transition: "all 0.3s ease",
+                textTransform: "uppercase",
+                letterSpacing: "0.3px",
+              }}
+              className="action-button-outline"
+            >
+              Events
+            </button>
+            <button
+              style={{
+                flex: 1,
+                border: "none",
+                outline: "none",
+                background: "linear-gradient(135deg, #6dbfb8 0%, #5aa9a2 100%)",
+                fontWeight: "600",
+                color: "white",
+                textAlign: "center",
+                padding: "8px 12px",
+                borderRadius: "6px",
+                fontSize: "11px",
+                cursor: "pointer",
+                transition: "all 0.3s ease",
+                boxShadow: "0 3px 8px rgba(109, 191, 184, 0.3)",
+                textTransform: "uppercase",
+                letterSpacing: "0.3px",
+              }}
+              className="action-button-filled"
+            >
+              Trip
+            </button>
+          </div>
+        </div>
+      </InfoWindow>
 
       <div
         className="custom-zoom-control"

@@ -33,8 +33,12 @@ const Header = () => {
     return `${datePart}, ${timePart}`;
   }
 
-  const startTime = formatDateWithOffset(vehicleHistoryDateRange.start);
-  const endTime = formatDateWithOffset(vehicleHistoryDateRange.end);
+  const startTime = vehicleHistoryDateRange
+    ? formatDateWithOffset(vehicleHistoryDateRange.start)
+    : "N/A";
+  const endTime = vehicleHistoryDateRange
+    ? formatDateWithOffset(vehicleHistoryDateRange.end)
+    : "N/A";
 
   const [openModal, setOpenModal] = useState(false);
 

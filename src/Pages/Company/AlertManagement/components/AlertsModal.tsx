@@ -14,8 +14,10 @@ import { create, getAll } from "../../../../Utilities/api";
 import {
   CREATE_ALERT_RULE,
   GET_ALERT_RULES,
+  GET_ALL_GEOFENCES,
   GET_ALL_VEHICLES_DROPDOWN_FOR_ALERT,
 } from "../../../../Utilities/api/apiEndpoints";
+
 import Swal from "sweetalert2";
 import {
   setAlertRules,
@@ -34,10 +36,33 @@ interface Device {
   registrationNo: string;
   engineNo: string;
   imei: string;
+  geofences?: string[];
   group?: {
     _id: string;
     name: string;
   };
+}
+
+interface Geofence {
+  _id: string;
+  title: string;
+  geofenceId: string;
+  type: string;
+  user: string;
+  geofencePositions: any;
+  createdBySuperAdmin: boolean;
+  isActive: boolean;
+  geofenceGroup?: {
+    _id: string;
+    title: string;
+    isActive: boolean;
+  } | null;
+  geofenceSubGroup?: {
+    _id: string;
+    title: string;
+    isActive: boolean;
+  } | null;
+  geofenceCounter: number;
 }
 
 interface AlertFormData {
@@ -62,6 +87,11 @@ const AlertsModal: React.FC<AlertsModalProps> = ({
   const [thresholdValue, setThresholdValue] = useState<number | null>(null);
   const [selectedDevices, setSelectedDevices] = useState<string[]>([]);
   const [devicesData, setDevicesData] = useState<Device[]>([]);
+  const [geofencesData, setGeofencesData] = useState<Geofence[]>([]);
+  const [selectedGeofence, setSelectedGeofence] = useState<Geofence | null>(
+    null
+  );
+  const [autoCheckedDevices, setAutoCheckedDevices] = useState<string[]>([]);
 
   const addToggle = () => {
     if (!loading) {
@@ -76,6 +106,8 @@ const AlertsModal: React.FC<AlertsModalProps> = ({
     setThresholdValue(null);
     setSelectedDevices([]);
     setSearchTerm("");
+    setSelectedGeofence(null);
+    setAutoCheckedDevices([]);
   };
 
   // Fetch devices data
@@ -89,6 +121,18 @@ const AlertsModal: React.FC<AlertsModalProps> = ({
       }
     });
   }, [dispatch]);
+
+  // Fetch geofences data
+  useEffect(() => {
+    getAll({ url: GET_ALL_GEOFENCES }).then((data: any) => {
+      if (data !== undefined) {
+        if (data.success) {
+          console.log("geofences data", data.data);
+          setGeofencesData(data.data);
+        }
+      }
+    });
+  }, []);
 
   // --- GROUPING LOGIC ---
   const groupedDevices = useMemo(() => {
@@ -136,7 +180,10 @@ const AlertsModal: React.FC<AlertsModalProps> = ({
 
   const handleGroupCheckboxClick = (groupId: string, checked: boolean) => {
     const group = groupedDevices[groupId]?.devices || [];
-    const deviceIds = group.map((d: Device) => d._id);
+    // Only include devices that are not auto-checked (not already linked to geofence)
+    const deviceIds = group
+      .filter((d: Device) => !autoCheckedDevices.includes(d._id))
+      .map((d: Device) => d._id);
     setSelectedDevices((prev) => {
       if (checked) {
         // add all from group
@@ -149,6 +196,9 @@ const AlertsModal: React.FC<AlertsModalProps> = ({
   };
 
   const handleDeviceToggle = (deviceId: string) => {
+    // Don't allow toggling if device is auto-checked (already has the geofence)
+    if (autoCheckedDevices.includes(deviceId)) return;
+
     setSelectedDevices((prev) =>
       prev.includes(deviceId)
         ? prev.filter((d) => d !== deviceId)
@@ -162,7 +212,8 @@ const AlertsModal: React.FC<AlertsModalProps> = ({
   };
 
   const handleDeselectAll = () => {
-    setSelectedDevices([]);
+    // Keep only auto-checked devices when deselecting all
+    setSelectedDevices(autoCheckedDevices);
   };
 
   // Function to chunk array into groups of 4 for grid layout
@@ -177,6 +228,11 @@ const AlertsModal: React.FC<AlertsModalProps> = ({
   // Check if threshold field should be shown
   const shouldShowThreshold = () => {
     return ["OVER_SPEEDING", "POWER_CUT", "POWER_RESTORE"].includes(type);
+  };
+
+  // Check if geofence dropdown should be shown
+  const shouldShowGeofence = () => {
+    return ["GEOFENCE_ENTER", "GEOFENCE_EXIT"].includes(type);
   };
 
   // Get threshold placeholder based on type
@@ -210,7 +266,10 @@ const AlertsModal: React.FC<AlertsModalProps> = ({
     const basePayload: any = {
       ruleName: formData.name,
       alertType: type,
-      vehicleIds: selectedDevices, // Send selected device IDs in devices array
+      // Filter out auto-checked devices (already linked to geofence)
+      vehicleIds: selectedDevices.filter(
+        (id) => !autoCheckedDevices.includes(id)
+      ),
       threshold: {},
     };
 
@@ -255,6 +314,16 @@ const AlertsModal: React.FC<AlertsModalProps> = ({
         };
         break;
 
+      case "GEOFENCE_ENTER":
+      case "GEOFENCE_EXIT":
+        basePayload.threshold = {
+          geofenceThreshold: {
+            geofenceId: selectedGeofence?._id,
+            geofenceData: selectedGeofence,
+          },
+        };
+        break;
+
       default:
         basePayload.threshold = {};
     }
@@ -295,6 +364,18 @@ const AlertsModal: React.FC<AlertsModalProps> = ({
     if (shouldShowThreshold() && !thresholdValue) {
       Swal.fire({
         text: `Please enter ${getThresholdLabel().toLowerCase()}`,
+        icon: "warning",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+      setLoading(false);
+      return;
+    }
+
+    // Additional validation for geofence types
+    if (shouldShowGeofence() && !selectedGeofence) {
+      Swal.fire({
+        text: "Please select a geofence",
         icon: "warning",
         timer: 2000,
         showConfirmButton: false,
@@ -406,6 +487,9 @@ const AlertsModal: React.FC<AlertsModalProps> = ({
                 onChange={(value) => {
                   setType(value);
                   setThresholdValue(null); // Reset threshold when type changes
+                  setSelectedGeofence(null); // Reset geofence when type changes
+                  setAutoCheckedDevices([]); // Reset auto-checked devices
+                  setSelectedDevices([]); // Reset selected devices
                 }}
                 options={[
                   { value: "OVER_SPEEDING", label: "Overspeed (kph)" },
@@ -413,6 +497,8 @@ const AlertsModal: React.FC<AlertsModalProps> = ({
                   { value: "IGNITION_OFF", label: "Ignition Off" },
                   { value: "POWER_CUT", label: "Power Cut" },
                   { value: "POWER_RESTORE", label: "Power Restore" },
+                  { value: "GEOFENCE_ENTER", label: "Geofence Enter" },
+                  { value: "GEOFENCE_EXIT", label: "Geofence Exit" },
                 ]}
                 disabled={loading}
               />
@@ -434,6 +520,116 @@ const AlertsModal: React.FC<AlertsModalProps> = ({
                   disabled={loading}
                   min="0"
                 />
+              </FormGroup>
+            </Row>
+          )}
+
+          {/* Show geofence dropdown for geofence alert types */}
+          {shouldShowGeofence() && (
+            <Row>
+              <FormGroup className="col-md-12 create-group">
+                <P>Select Geofence *</P>
+                <Select
+                  value={selectedGeofence?._id || null}
+                  style={{ width: "100%", height: 36 }}
+                  placeholder="Select a geofence"
+                  onChange={(value) => {
+                    const geofence = geofencesData.find((g) => g._id === value);
+                    setSelectedGeofence(geofence || null);
+
+                    // Auto-check devices that already have this geofence
+                    if (geofence) {
+                      const matchedDeviceIds = devicesData
+                        .filter((device) =>
+                          device.geofences?.includes(geofence._id)
+                        )
+                        .map((device) => device._id);
+                      setAutoCheckedDevices(matchedDeviceIds);
+                      setSelectedDevices((prev) =>
+                        Array.from(new Set([...prev, ...matchedDeviceIds]))
+                      );
+                    } else {
+                      setAutoCheckedDevices([]);
+                    }
+                  }}
+                  options={geofencesData.map((geofence) => ({
+                    value: geofence._id,
+                    label: `${geofence.title} (${geofence.type})`,
+                  }))}
+                  disabled={loading}
+                  showSearch
+                  filterOption={(input, option) =>
+                    (option?.label ?? "")
+                      .toLowerCase()
+                      .includes(input.toLowerCase())
+                  }
+                />
+                {selectedGeofence && (
+                  <div
+                    style={{
+                      marginTop: "10px",
+                      padding: "10px",
+                      backgroundColor: "#f0f9ff",
+                      borderRadius: "6px",
+                      border: "1px solid #6dbfb8",
+                    }}
+                  >
+                    <div style={{ fontSize: "12px", color: "#666" }}>
+                      <strong>Selected Geofence:</strong>
+                    </div>
+                    <div style={{ fontSize: "13px", marginTop: "5px" }}>
+                      <strong>{selectedGeofence.title}</strong>
+                    </div>
+                    <div
+                      style={{
+                        fontSize: "11px",
+                        color: "#666",
+                        marginTop: "3px",
+                      }}
+                    >
+                      Type: <strong>{selectedGeofence.type}</strong>
+                    </div>
+                    {selectedGeofence.geofenceGroup && (
+                      <div
+                        style={{
+                          fontSize: "11px",
+                          color: "#666",
+                          marginTop: "3px",
+                        }}
+                      >
+                        Group:{" "}
+                        <strong>{selectedGeofence.geofenceGroup.title}</strong>
+                      </div>
+                    )}
+                    {selectedGeofence.geofenceSubGroup && (
+                      <div
+                        style={{
+                          fontSize: "11px",
+                          color: "#666",
+                          marginTop: "3px",
+                        }}
+                      >
+                        Sub-Group:{" "}
+                        <strong>
+                          {selectedGeofence.geofenceSubGroup.title}
+                        </strong>
+                      </div>
+                    )}
+                    {autoCheckedDevices.length > 0 && (
+                      <div
+                        style={{
+                          fontSize: "11px",
+                          color: "#52c41a",
+                          marginTop: "8px",
+                          fontWeight: "bold",
+                        }}
+                      >
+                        {autoCheckedDevices.length} device(s) already linked to
+                        this geofence
+                      </div>
+                    )}
+                  </div>
+                )}
               </FormGroup>
             </Row>
           )}
@@ -487,7 +683,7 @@ const AlertsModal: React.FC<AlertsModalProps> = ({
                   <input
                     type="checkbox"
                     onChange={handleDeselectAll}
-                    checked={selectedDevices.length === 0}
+                    checked={selectedDevices.length === autoCheckedDevices.length}
                     className="custom-checkbox"
                     disabled={loading}
                   />
@@ -582,10 +778,12 @@ const AlertsModal: React.FC<AlertsModalProps> = ({
                                       padding: "4px 8px",
                                       // border: "1px solid #e0e0e0",
                                       borderRadius: "4px",
-                                      background: selectedDevices.includes(
+                                      background: autoCheckedDevices.includes(
                                         device._id
                                       )
-                                        ? "#e6f7ff"
+                                        ? "#d1f7c4" // Green for already linked
+                                        : selectedDevices.includes(device._id)
+                                        ? "#e6f7ff" // Blue for newly selected
                                         : "transparent",
                                     }}
                                   >
@@ -598,7 +796,10 @@ const AlertsModal: React.FC<AlertsModalProps> = ({
                                       onChange={() =>
                                         handleDeviceToggle(device._id)
                                       }
-                                      disabled={loading}
+                                      disabled={
+                                        loading ||
+                                        autoCheckedDevices.includes(device._id)
+                                      }
                                       style={{ marginRight: "8px" }}
                                     />
                                     <span
@@ -609,9 +810,25 @@ const AlertsModal: React.FC<AlertsModalProps> = ({
                                         overflow: "hidden",
                                         textOverflow: "ellipsis",
                                       }}
-                                      title={device.registrationNo}
+                                      title={
+                                        autoCheckedDevices.includes(device._id)
+                                          ? `${device.registrationNo} (Already linked to this geofence)`
+                                          : device.registrationNo
+                                      }
                                     >
                                       {device.registrationNo}
+                                      {autoCheckedDevices.includes(device._id) && (
+                                        <span
+                                          style={{
+                                            marginLeft: "5px",
+                                            fontSize: "10px",
+                                            color: "#52c41a",
+                                            fontWeight: "bold",
+                                          }}
+                                        >
+                                          ✓
+                                        </span>
+                                      )}
                                     </span>
                                   </div>
                                 ))}

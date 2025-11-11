@@ -131,3 +131,74 @@
     opacity: 0;
   }
 }
+
+/* ========================================
+   ✨ NEW ELEGANT INFOWINDOW STYLES ✨
+   ======================================== */
+
+/* Note: Animations removed to prevent continuous looping */
+/* InfoWindow now appears instantly with static styling */
+
+/* Info row hover effect */
+.info-row-hover:hover {
+  transform: translateX(5px);
+  box-shadow: 0 4px 12px rgba(109, 191, 184, 0.15) !important;
+}
+
+/* Stat card hover effect */
+.stat-card-hover:hover {
+  transform: translateY(-4px) scale(1.05);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12) !important;
+}
+
+/* Action button outline hover */
+.action-button-outline:hover {
+  background-color: #6dbfb8 !important;
+  color: white !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(109, 191, 184, 0.3);
+}
+
+/* Action button filled hover */
+.action-button-filled:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(109, 191, 184, 0.4) !important;
+}
+
+/* Elegant infowindow container */
+.elegant-infowindow {
+  position: relative;
+  will-change: transform, opacity;
+}
+
+/* Custom scrollbar for stats section */
+.elegant-infowindow ::-webkit-scrollbar {
+  height: 6px;
+}
+
+.elegant-infowindow ::-webkit-scrollbar-track {
+  background: #f0f0f0;
+  border-radius: 10px;
+}
+
+.elegant-infowindow ::-webkit-scrollbar-thumb {
+  background: #6dbfb8;
+  border-radius: 10px;
+}
+
+.elegant-infowindow ::-webkit-scrollbar-thumb:hover {
+  background: #5aa9a2;
+}
+
+/* Smooth transitions for all interactive elements */
+.elegant-infowindow button,
+.elegant-infowindow .info-row-hover,
+.elegant-infowindow .stat-card-hover {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Hide scrollbar for Firefox in stats section */
+.elegant-infowindow [style*="overflow"] {
+  scrollbar-width: thin;
+  scrollbar-color: #6dbfb8 #f0f0f0;
+}
