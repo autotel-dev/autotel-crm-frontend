@@ -15,6 +15,7 @@ const initialState = {
   isConnected: true,
   item: null,
   selectedSingleDevice: null,
+  alertsEnabled: true,
 };
 
 const MonitoringSlice = createSlice({
@@ -74,6 +75,9 @@ const MonitoringSlice = createSlice({
     setIsConnected: (state, action) => {
       state.isConnected = action.payload;
     },
+    setAlertsEnabled: (state, action) => {
+      state.alertsEnabled = action.payload;
+    },
   },
 });
 export const {
@@ -91,6 +95,7 @@ export const {
   setItem,
   setIsConnected,
   setSelectedSingleDevice,
+  setAlertsEnabled,
 } = MonitoringSlice.actions;
 
 export default MonitoringSlice.reducer;

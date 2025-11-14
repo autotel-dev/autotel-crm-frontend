@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
+import { Label, Input } from "reactstrap";
 import { ImClock } from "react-icons/im";
 import { motion } from "framer-motion"; // ✅ Import Framer Motion
 import GoogleMap from "./components/GoogleMap/GoogleMap";
@@ -7,6 +8,7 @@ import {
   setDevices,
   setIsConnected,
   setSelectedSingleDevice,
+  setAlertsEnabled,
 } from "../../../../ReaduxToolkit/Reducer/MonitoringSlice";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
@@ -57,7 +59,7 @@ import { formatUnderscoredString } from "../../../../Utilities/globals/globals";
 
 const MonitoringLatest = () => {
   const dispatch = useDispatch();
-  const { devices, selectedSingleDevice } = useSelector(
+  const { devices, selectedSingleDevice, alertsEnabled } = useSelector(
     (state: any) => state.monitoring
   );
 
@@ -527,12 +529,15 @@ const MonitoringLatest = () => {
 
       const { alertType, message } = actualAlert;
 
-      Toast({
-        title: formatUnderscoredString(alertType),
-        text: message,
-        icon: alertType, // handles IGNITION_ON / IGNITION_OFF color & icon
-        duration: 3500,
-      });
+      // Only show toast if alerts are enabled
+      if (alertsEnabled) {
+        Toast({
+          title: formatUnderscoredString(alertType),
+          text: message,
+          icon: alertType, // handles IGNITION_ON / IGNITION_OFF color & icon
+          duration: 3500,
+        });
+      }
     });
 
     return () => {
@@ -541,16 +546,7 @@ const MonitoringLatest = () => {
       socketConnection.off("vehicle:deleted");
       socketConnection.off("new_alert_event");
     };
-  }, []);
-
-  // useEffect(() => {
-  //   Toast({
-  //     title: "IGNITION_ON",
-  //     text: "IGNITION_ON",
-  //     icon: "IGNITION_ON", // handles IGNITION_ON / IGNITION_OFF color & icon
-  //     duration: 2000,
-  //   });
-  // }, []);
+  }, [alertsEnabled]);
 
   return (
     <div
@@ -695,63 +691,38 @@ const MonitoringLatest = () => {
                 background="rgba(0, 0, 255, 0.1)"
               />
 
-              {/* <div
+              <div
                 style={{
                   display: "flex",
                   gap: "10px",
                   marginLeft: "auto", // ✅ pushes this box to the far right
+                  alignItems: "center",
                 }}
               >
-                <div
+                <p
                   style={{
-                    width: "80px",
-                    height: "100%",
-                    borderRadius: "8px",
-                    background: "rgba(0, 0, 0, 0.1)", // ⚫ Gray with 0.4 alpha
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    marginLeft: "auto", // ✅ pushes this box to the far right
+                    margin: "0px",
+                    fontSize: "14px",
+                    fontWeight: "bold",
+                    color: "black",
                   }}
                 >
-                  <p
-                    style={{
-                      margin: "0px",
-                      fontSize: "12px",
-                      fontWeight: "bold",
-                      color: "Gray",
+                  Alerts
+                </p>
+                <Label className="switch mb-0">
+                  <Input
+                    type="checkbox"
+                    checked={alertsEnabled}
+                    onChange={() => {
+                      dispatch(setAlertsEnabled(!alertsEnabled));
                     }}
-                  >
-                    Button 1
-                  </p>
-                </div>
-
-                <div
-                  style={{
-                    width: "80px",
-                    height: "100%",
-                    borderRadius: "8px",
-                    background: "rgba(0, 0, 0, 0.1)", // ⚫ Gray with 0.4 alpha
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    marginLeft: "auto", // ✅ pushes this box to the far right
-                  }}
-                >
-                  <p
-                    style={{
-                      margin: "0px",
-                      fontSize: "12px",
-                      fontWeight: "bold",
-                      color: "Gray",
-                    }}
-                  >
-                    Button 2
-                  </p>
-                </div>
-              </div> */}
+                  />
+                  <span
+                    className="switch-state"
+                    style={{ backgroundColor: alertsEnabled ? "green" : "red" }}
+                  />
+                </Label>
+              </div>
             </div>
             <GoogleMap />
           </div>

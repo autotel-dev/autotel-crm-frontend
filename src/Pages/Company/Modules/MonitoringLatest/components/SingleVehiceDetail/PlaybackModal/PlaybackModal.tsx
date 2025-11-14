@@ -61,16 +61,18 @@ const PlaybackModal: React.FC<PlaybackModalProps> = ({
     let prevAltitude: number | null = null;
     let prevSpeed: number | null = null;
     let prevCourse: number | null = null;
+    let prevIgnition: boolean | null = null;
 
     for (const packet of history) {
-      const { latitude, longitude, altitude, speed, course } = packet;
+      const { latitude, longitude, altitude, speed, course, ignition } = packet;
 
       if (
         latitude !== prevLat ||
         longitude !== prevLng ||
         altitude !== prevAltitude ||
         speed !== prevSpeed ||
-        course !== prevCourse
+        course !== prevCourse ||
+        ignition !== prevIgnition
       ) {
         filtered.push(packet);
         prevLat = latitude;
@@ -78,6 +80,7 @@ const PlaybackModal: React.FC<PlaybackModalProps> = ({
         prevAltitude = altitude;
         prevSpeed = speed;
         prevCourse = course;
+        prevIgnition = ignition;
       }
     }
 
@@ -104,12 +107,15 @@ const PlaybackModal: React.FC<PlaybackModalProps> = ({
     const now = new Date();
 
     // Calculate the time difference in hours
-    const timeDiffHours = (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60);
+    const timeDiffHours =
+      (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60);
 
     // Check if it's approximately 24 hours (Today or Yesterday)
     if (timeDiffHours >= 23 && timeDiffHours <= 25) {
       // Check if end date is close to now (within a few hours) = "Today"
-      const hoursDiffFromNow = Math.abs((endDate.getTime() - now.getTime()) / (1000 * 60 * 60));
+      const hoursDiffFromNow = Math.abs(
+        (endDate.getTime() - now.getTime()) / (1000 * 60 * 60)
+      );
 
       if (hoursDiffFromNow < 2) {
         // End date is very close to now = "Today" (last 24 hours)
@@ -119,7 +125,9 @@ const PlaybackModal: React.FC<PlaybackModalProps> = ({
       // Check if end date is close to yesterday
       const yesterday = new Date(now);
       yesterday.setDate(now.getDate() - 1);
-      const hoursDiffFromYesterday = Math.abs((endDate.getTime() - yesterday.getTime()) / (1000 * 60 * 60));
+      const hoursDiffFromYesterday = Math.abs(
+        (endDate.getTime() - yesterday.getTime()) / (1000 * 60 * 60)
+      );
 
       if (hoursDiffFromYesterday < 2) {
         // End date is close to yesterday = "Yesterday"
@@ -128,7 +136,8 @@ const PlaybackModal: React.FC<PlaybackModalProps> = ({
     }
 
     // Check if it's approximately 7 days (1 Week)
-    const daysDiff = (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24);
+    const daysDiff =
+      (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24);
     if (daysDiff >= 6.5 && daysDiff <= 7.5) {
       return "1 Week";
     }
