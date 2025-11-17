@@ -266,10 +266,8 @@ const AlertsModal: React.FC<AlertsModalProps> = ({
     const basePayload: any = {
       ruleName: formData.name,
       alertType: type,
-      // Filter out auto-checked devices (already linked to geofence)
-      vehicleIds: selectedDevices.filter(
-        (id) => !autoCheckedDevices.includes(id)
-      ),
+      // Send all selected devices (both auto-checked and manually selected)
+      vehicleIds: selectedDevices,
       threshold: {},
     };
 

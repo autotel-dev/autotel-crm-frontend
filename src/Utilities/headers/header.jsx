@@ -52,8 +52,8 @@ export const serverCredentials = (serverID) => {
   const decodedToken = jwtDecode(authToken);
   // console.log(decodedToken);
 
-  for (let i = 0; i < decodedToken.serverCredentials.length; i++) {
-    const element = decodedToken.serverCredentials[i];
+  for (let i = 0; i < decodedToken.serverCredentials?.length; i++) {
+    const element = decodedToken?.serverCredentials[i];
     // console.log("element", element);
     if (element.serverId === serverID) {
       // console.log(element);
@@ -62,9 +62,8 @@ export const serverCredentials = (serverID) => {
   }
 };
 
-
 export const getAllServerCredential = () => {
   const authToken = localStorage.getItem("token");
   const decodedToken = jwtDecode(authToken);
-  return decodedToken.serverCredentials
+  return decodedToken.serverCredentials;
 };

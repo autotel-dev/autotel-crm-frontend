@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Button, FormGroup, Label, Modal, ModalBody, Row } from "reactstrap";
@@ -17,7 +16,14 @@ import {
 } from "../../../../../../ReaduxToolkit/Reducer/AlertsSlice";
 import { create, getAll } from "../../../../../../Utilities/api";
 import { serverCredentials } from "../../../../../../Utilities/headers/header";
-import { CONTROLROOM_DASHBOARD_STATISTICS, GET_ALL_COMMANDED_DEVICES, GET_ALL_KILLED_DEVICES, GET_DEVICE_COMMANDS, SEND_COMMAND_TO_DEVICE, VERIFY_VEHICLE_BLOCK_STATUS } from "../../../../../../Utilities/api/apiEndpoints";
+import {
+  CONTROLROOM_DASHBOARD_STATISTICS,
+  GET_ALL_COMMANDED_DEVICES,
+  GET_ALL_KILLED_DEVICES,
+  GET_DEVICE_COMMANDS,
+  SEND_COMMAND_TO_DEVICE,
+  VERIFY_VEHICLE_BLOCK_STATUS,
+} from "../../../../../../Utilities/api/apiEndpoints";
 import { ERROR_MESSAGE } from "../../../../../../Utilities/constants/constants";
 
 interface PropsTypes {
@@ -31,7 +37,7 @@ interface PropsTypes {
 
 const SendCommand: React.FC<PropsTypes> = ({
   addModal,
-  setAddModal = () => { },
+  setAddModal = () => {},
   dropDownDevices,
   prevItem,
   fromDate,
@@ -87,7 +93,7 @@ const SendCommand: React.FC<PropsTypes> = ({
 
   useEffect(() => {
     const serverInfo = serverCredentials(selectedItems[0]?.server?._id);
-    if (selectedItems.length !== 0) {
+    if (selectedItems?.length !== 0) {
       create(
         {
           deviceId: selectedItems[0].id,
@@ -188,10 +194,7 @@ const SendCommand: React.FC<PropsTypes> = ({
                 }).then((data: any) => {
                   // // console.log("data", data);
                   setLoading(false);
-                  if (
-                    !data.success &&
-                    data.message === ERROR_MESSAGE
-                  ) {
+                  if (!data.success && data.message === ERROR_MESSAGE) {
                     setLoading(false);
                     addToggle();
                   }
@@ -219,18 +222,16 @@ const SendCommand: React.FC<PropsTypes> = ({
                 timer: 1000,
                 showConfirmButton: false,
               });
-              getAll({ url: GET_ALL_COMMANDED_DEVICES }).then(
-                (data: any) => {
-                  // // console.log("api call --- >", data);
+              getAll({ url: GET_ALL_COMMANDED_DEVICES }).then((data: any) => {
+                // // console.log("api call --- >", data);
 
-                  if (data !== undefined) {
-                    if (data.success) {
-                      // // // console.log("length --- >", data.data);
-                      dispatch(setSelfSendCommands(data.data));
-                    }
+                if (data !== undefined) {
+                  if (data.success) {
+                    // // // console.log("length --- >", data.data);
+                    dispatch(setSelfSendCommands(data.data));
                   }
                 }
-              );
+              });
               const fromDateUpdated = new Date(fromDate);
               fromDateUpdated.setMinutes(new Date().getMinutes());
               fromDateUpdated.setSeconds(new Date().getSeconds() + 10);

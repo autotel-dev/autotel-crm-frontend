@@ -34,6 +34,8 @@ const GoogleMap = (props) => {
   const [infoWindowVisible, setInfoWindowVisible] = useState(false);
   const [showGeofences, setShowGeofences] = useState(false);
   const mapRef = useRef(null);
+  const [address, setAddress] = useState("Loading address...");
+  const [isLoadingAddress, setIsLoadingAddress] = useState(false);
 
   const [deviceData, setDeviceData] = useState({ lat: 30.3753, lng: 69.3451 });
 
@@ -41,6 +43,38 @@ const GoogleMap = (props) => {
 
   const zoomIn = () => setZoom((prevZoom) => prevZoom + 1);
   const zoomOut = () => setZoom((prevZoom) => prevZoom - 1);
+
+  // Fetch address from Nominatim API
+  const fetchAddress = async (lat, lng) => {
+    if (!lat || !lng) return "Address not available";
+
+    setIsLoadingAddress(true);
+    try {
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`,
+        {
+          headers: {
+            "User-Agent": "AutotelCRM/1.0",
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch address");
+      }
+
+      const data = await response.json();
+      const displayAddress = data.display_name || "Address not found";
+      setAddress(displayAddress);
+      setIsLoadingAddress(false);
+      return displayAddress;
+    } catch (error) {
+      console.error("Error fetching address:", error);
+      setAddress("Unable to load address");
+      setIsLoadingAddress(false);
+      return "Unable to load address";
+    }
+  };
 
   const handleMarkerClick = (device) => {
     setSelectedDevice(device);
@@ -50,6 +84,14 @@ const GoogleMap = (props) => {
     });
     dispatch(setExpandedDevice(true));
     setInfoWindowVisible(!infoWindowVisible);
+
+    // Fetch address when marker is clicked
+    if (device?.latestPosition?.latitude && device?.latestPosition?.longitude) {
+      fetchAddress(
+        device.latestPosition.latitude,
+        device.latestPosition.longitude
+      );
+    }
   };
 
   const closeInfoWindow = () => {
@@ -60,6 +102,42 @@ const GoogleMap = (props) => {
   const toggleGeofences = () => {
     setShowGeofences(!showGeofences);
   };
+
+  // Update selected device data in real-time without blinking
+  useEffect(() => {
+    if (selectedDevice && infoWindowVisible) {
+      // Find the updated device from devices array
+      const updatedDevice = devices?.find((d) => d._id === selectedDevice._id);
+
+      if (updatedDevice && updatedDevice.checked) {
+        // Check if position has changed
+        const hasPositionChanged =
+          updatedDevice.latestPosition?.latitude !==
+            selectedDevice.latestPosition?.latitude ||
+          updatedDevice.latestPosition?.longitude !==
+            selectedDevice.latestPosition?.longitude;
+
+        // Update selected device with new data
+        setSelectedDevice(updatedDevice);
+
+        // Only fetch new address if position has changed
+        if (
+          hasPositionChanged &&
+          updatedDevice.latestPosition?.latitude &&
+          updatedDevice.latestPosition?.longitude
+        ) {
+          setInfoWindowPosition({
+            lat: updatedDevice.latestPosition.latitude,
+            lng: updatedDevice.latestPosition.longitude,
+          });
+          fetchAddress(
+            updatedDevice.latestPosition.latitude,
+            updatedDevice.latestPosition.longitude
+          );
+        }
+      }
+    }
+  }, [devices, devicesDetailData]);
 
   useEffect(() => {
     if (
@@ -504,7 +582,7 @@ const GoogleMap = (props) => {
       </InfoWindow>
       END OF OLD COMMENTED INFOWINDOW */}
 
-      {/* ✨ NEW BEAUTIFUL ANIMATED INFOWINDOW ✨ */}
+      {/* ✨ COMPACT INFOWINDOW WITH REAL-TIME UPDATES ✨ */}
       <InfoWindow
         position={infoWindowPosition}
         visible={infoWindowVisible}
@@ -515,66 +593,58 @@ const GoogleMap = (props) => {
           disableClose: true,
           closeBoxMargin: "0",
           closeBoxURL: "",
-          maxWidth: 380,
+          maxWidth: 300,
         }}
       >
         <div
           className="elegant-infowindow"
           style={{
-            minWidth: "360px",
-            maxWidth: "360px",
+            minWidth: "280px",
+            maxWidth: "280px",
             overflow: "hidden",
             margin: "0px",
             padding: "0px",
-            borderRadius: "10px",
-            boxShadow: "0 6px 20px rgba(109, 191, 184, 0.2)",
+            borderRadius: "8px",
+            boxShadow: "0 4px 16px rgba(109, 191, 184, 0.2)",
             fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
           }}
         >
-          {/* 🎨 Header with gradient background */}
+          {/* 🎨 Compact Header */}
           <div
             style={{
               background: "linear-gradient(135deg, #6dbfb8 0%, #5aa9a2 100%)",
-              padding: "12px 16px",
+              padding: "8px 12px",
               display: "flex",
               justifyContent: "space-between",
               alignItems: "center",
               color: "white",
-              position: "relative",
-              overflow: "hidden",
             }}
           >
             <div
               style={{
-                position: "absolute",
-                top: "-50px",
-                right: "-50px",
-                width: "150px",
-                height: "150px",
-                background: "rgba(255, 255, 255, 0.1)",
-                borderRadius: "50%",
+                display: "flex",
+                alignItems: "center",
+                gap: "6px",
               }}
-            ></div>
-            <div style={{ display: "flex", alignItems: "center", gap: "8px", zIndex: 1 }}>
+            >
               <div
                 style={{
                   backgroundColor: "rgba(255, 255, 255, 0.25)",
-                  padding: "6px 10px",
-                  borderRadius: "6px",
-                  fontSize: "16px",
+                  padding: "4px 8px",
+                  borderRadius: "5px",
+                  fontSize: "14px",
                   fontWeight: "bold",
-                  backdropFilter: "blur(10px)",
                 }}
               >
                 {selectedDevice?.vehicle?.registrationNo || "N/A"}
               </div>
               <span
                 style={{
-                  fontSize: "12px",
+                  fontSize: "10px",
                   fontWeight: "500",
                   backgroundColor: "rgba(255, 255, 255, 0.2)",
-                  padding: "3px 8px",
-                  borderRadius: "10px",
+                  padding: "2px 6px",
+                  borderRadius: "8px",
                 }}
               >
                 {selectedDevice?.vehicle?.vehicleType || "Vehicle"}
@@ -583,11 +653,13 @@ const GoogleMap = (props) => {
             <span
               style={{
                 fontWeight: "600",
-                fontSize: "11px",
-                backgroundColor: selectedDevice?.latestPosition?.speed > 0 ? "rgba(76, 175, 80, 0.9)" : "rgba(255, 87, 34, 0.9)",
-                padding: "5px 10px",
-                borderRadius: "12px",
-                zIndex: 1,
+                fontSize: "9px",
+                backgroundColor:
+                  selectedDevice?.latestPosition?.speed > 0
+                    ? "rgba(76, 175, 80, 0.9)"
+                    : "rgba(255, 87, 34, 0.9)",
+                padding: "4px 8px",
+                borderRadius: "10px",
                 textTransform: "uppercase",
                 letterSpacing: "0.3px",
               }}
@@ -596,10 +668,10 @@ const GoogleMap = (props) => {
             </span>
           </div>
 
-          {/* 📊 Main Info Section with modern cards */}
+          {/* 📊 Compact Main Info Section */}
           <div
             style={{
-              padding: "12px 16px",
+              padding: "8px 12px",
               backgroundColor: "#f8fafa",
             }}
           >
@@ -608,77 +680,134 @@ const GoogleMap = (props) => {
               style={{
                 display: "grid",
                 gridTemplateColumns: "1fr",
-                gap: "6px",
+                gap: "4px",
               }}
             >
               {[
-                { label: "Device ID", value: selectedDevice?.id || "N/A", icon: "🔧" },
-                { label: "Address", value: selectedDevice?.latestPosition?.address || "Loading address...", icon: "📍" },
                 {
-                  label: "Time",
-                  value: selectedDevice?.latestPosition?.deviceTime
-                    ? new Date(selectedDevice.latestPosition.deviceTime).toLocaleString()
+                  label: "IMEI",
+                  value: selectedDevice?.vehicle?.imei || "N/A",
+                  icon: "🔧",
+                },
+                {
+                  label: "Location & Time",
+                  value: address,
+                  subValue: selectedDevice?.latestPosition?.deviceTime
+                    ? new Date(
+                        selectedDevice.latestPosition.deviceTime
+                      ).toLocaleString("en-US", {
+                        month: "2-digit",
+                        day: "2-digit",
+                        year: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        second: "2-digit",
+                        hour12: true,
+                      })
                     : "N/A",
-                  icon: "⏰"
+                  icon: "📍",
+                  isLoading: isLoadingAddress,
                 },
                 {
                   label: "Speed",
-                  value: `${selectedDevice?.latestPosition?.speed || 0} km/h`,
+                  value: `${
+                    selectedDevice?.latestPosition?.speed?.toFixed(2) || 0
+                  } km/h`,
                   icon: "🚗",
-                  highlight: true
+                  highlight: true,
                 },
                 {
                   label: "Ignition",
-                  value: selectedDevice?.latestPosition?.attributes?.ignition ? "ON" : "OFF",
+                  value: selectedDevice?.latestPosition?.attributes?.ignition
+                    ? "ON"
+                    : "OFF",
                   icon: "🔑",
-                  status: selectedDevice?.latestPosition?.attributes?.ignition
+                  status: selectedDevice?.latestPosition?.attributes?.ignition,
                 },
               ].map((item, idx) => (
                 <div
                   key={idx}
                   style={{
                     backgroundColor: "white",
-                    padding: "8px 12px",
-                    borderRadius: "8px",
+                    padding: "6px 10px",
+                    borderRadius: "6px",
                     display: "flex",
-                    alignItems: "center",
-                    gap: "10px",
-                    borderLeft: item.highlight ? "3px solid #6dbfb8" : "3px solid transparent",
-                    boxShadow: "0 1px 4px rgba(0, 0, 0, 0.06)",
+                    alignItems: item.subValue ? "flex-start" : "center",
+                    gap: "8px",
+                    borderLeft: item.highlight
+                      ? "3px solid #6dbfb8"
+                      : "3px solid transparent",
+                    boxShadow: "0 1px 3px rgba(0, 0, 0, 0.06)",
                     transition: "all 0.3s ease",
                     cursor: "default",
                   }}
                   className="info-row-hover"
                 >
-                  <span style={{ fontSize: "16px", filter: "grayscale(0.2)" }}>
+                  <span
+                    style={{
+                      fontSize: "14px",
+                      filter: "grayscale(0.2)",
+                      paddingTop: item.subValue ? "2px" : "0",
+                    }}
+                  >
                     {item.icon}
                   </span>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: "10px", color: "#666", marginBottom: "1px", fontWeight: "500" }}>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div
+                      style={{
+                        fontSize: "9px",
+                        color: "#666",
+                        marginBottom: "1px",
+                        fontWeight: "500",
+                      }}
+                    >
                       {item.label}
                     </div>
                     <div
                       style={{
-                        fontSize: "12px",
+                        fontSize: "11px",
                         fontWeight: "600",
-                        color: item.status !== undefined
-                          ? (item.status ? "#4CAF50" : "#FF5722")
-                          : "#333",
+                        color:
+                          item.status !== undefined
+                            ? item.status
+                              ? "#4CAF50"
+                              : "#FF5722"
+                            : "#333",
+                        wordBreak: "break-word",
+                        lineHeight: "1.3",
                       }}
                     >
-                      {item.value}
+                      {item.isLoading ? (
+                        <span style={{ color: "#999", fontStyle: "italic" }}>
+                          Loading...
+                        </span>
+                      ) : (
+                        item.value
+                      )}
                     </div>
+                    {item.subValue && (
+                      <div
+                        style={{
+                          fontSize: "9px",
+                          color: "#888",
+                          marginTop: "2px",
+                          fontWeight: "500",
+                        }}
+                      >
+                        ⏰ {item.subValue}
+                      </div>
+                    )}
                   </div>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* 📈 Stats Cards Section */}
+          {/* 📈 Compact Stats Cards Section */}
           <div
             style={{
-              padding: "12px 16px",
-              paddingTop: "0px",
+              padding: "6px 12px",
+              paddingTop: "4px",
               backgroundColor: "#f8fafa",
               borderBottom: "1px solid #e0e0e0",
             }}
@@ -686,29 +815,58 @@ const GoogleMap = (props) => {
             <div
               style={{
                 display: "flex",
-                gap: "6px",
+                gap: "4px",
                 overflowX: "auto",
-                paddingBottom: "8px",
+                paddingBottom: "4px",
                 scrollbarWidth: "thin",
                 scrollbarColor: "#6dbfb8 #f0f0f0",
               }}
             >
               {[
-                { label: "Battery", value: `${selectedDevice?.latestPosition?.attributes?.battery || 0}%`, color: "#4CAF50" },
-                { label: "Satellites", value: selectedDevice?.latestPosition?.attributes?.sat || "0", color: "#2196F3" },
-                { label: "Altitude", value: `${selectedDevice?.latestPosition?.altitude || 0}m`, color: "#FF9800" },
-                { label: "Distance", value: `${selectedDevice?.latestPosition?.attributes?.distance || 0} km`, color: "#9C27B0" },
+                {
+                  label: "Direction",
+                  value: `${selectedDevice?.latestPosition?.course || 0}°`,
+                  color: "#4CAF50",
+                },
+                {
+                  label: "Power",
+                  value: `${
+                    selectedDevice?.latestPosition?.attributes?.power?.toFixed(
+                      2
+                    ) || 0
+                  }%`,
+                  color: "#4CAF50",
+                },
+                {
+                  label: "Satellites",
+                  value: selectedDevice?.latestPosition?.attributes?.sat || "0",
+                  color: "#2196F3",
+                },
+                {
+                  label: "Altitude",
+                  value: `${selectedDevice?.latestPosition?.altitude || 0}m`,
+                  color: "#FF9800",
+                },
+                {
+                  label: "Distance",
+                  value: `${
+                    selectedDevice?.latestPosition?.attributes?.distance?.toFixed(
+                      2
+                    ) || 0
+                  } km`,
+                  color: "#9C27B0",
+                },
               ].map((stat, idx) => (
                 <div
                   key={idx}
                   style={{
-                    minWidth: "78px",
+                    minWidth: "60px",
                     backgroundColor: "white",
-                    borderRadius: "8px",
-                    padding: "8px 6px",
+                    borderRadius: "6px",
+                    padding: "5px 4px",
                     textAlign: "center",
-                    boxShadow: "0 1px 4px rgba(0, 0, 0, 0.06)",
-                    border: `2px solid ${stat.color}20`,
+                    boxShadow: "0 1px 3px rgba(0, 0, 0, 0.06)",
+                    border: `1.5px solid ${stat.color}20`,
                     flexShrink: 0,
                     transition: "all 0.3s ease",
                   }}
@@ -716,15 +874,21 @@ const GoogleMap = (props) => {
                 >
                   <div
                     style={{
-                      fontSize: "14px",
+                      fontSize: "11px",
                       fontWeight: "bold",
                       color: stat.color,
-                      marginBottom: "2px",
+                      marginBottom: "1px",
                     }}
                   >
                     {stat.value}
                   </div>
-                  <div style={{ fontSize: "9px", color: "#666", fontWeight: "500" }}>
+                  <div
+                    style={{
+                      fontSize: "8px",
+                      color: "#666",
+                      fontWeight: "500",
+                    }}
+                  >
                     {stat.label}
                   </div>
                 </div>
@@ -732,60 +896,7 @@ const GoogleMap = (props) => {
             </div>
           </div>
 
-          {/* 🎯 Action Buttons */}
-          <div
-            style={{
-              padding: "10px 16px",
-              display: "flex",
-              gap: "8px",
-              backgroundColor: "white",
-              borderRadius: "0 0 10px 10px",
-            }}
-          >
-            <button
-              style={{
-                flex: 1,
-                border: "2px solid #6dbfb8",
-                outline: "none",
-                backgroundColor: "white",
-                fontWeight: "600",
-                color: "#6dbfb8",
-                textAlign: "center",
-                padding: "8px 12px",
-                borderRadius: "6px",
-                fontSize: "11px",
-                cursor: "pointer",
-                transition: "all 0.3s ease",
-                textTransform: "uppercase",
-                letterSpacing: "0.3px",
-              }}
-              className="action-button-outline"
-            >
-              Events
-            </button>
-            <button
-              style={{
-                flex: 1,
-                border: "none",
-                outline: "none",
-                background: "linear-gradient(135deg, #6dbfb8 0%, #5aa9a2 100%)",
-                fontWeight: "600",
-                color: "white",
-                textAlign: "center",
-                padding: "8px 12px",
-                borderRadius: "6px",
-                fontSize: "11px",
-                cursor: "pointer",
-                transition: "all 0.3s ease",
-                boxShadow: "0 3px 8px rgba(109, 191, 184, 0.3)",
-                textTransform: "uppercase",
-                letterSpacing: "0.3px",
-              }}
-              className="action-button-filled"
-            >
-              Trip
-            </button>
-          </div>
+          {/* 🎯 Compact Action Buttons */}
         </div>
       </InfoWindow>
 
