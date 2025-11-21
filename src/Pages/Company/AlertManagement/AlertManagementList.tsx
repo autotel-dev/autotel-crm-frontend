@@ -20,6 +20,7 @@ import {
 } from "../../../ReaduxToolkit/Reducer/AlertRuleSlice";
 import { setNoDataFound } from "../../../ReaduxToolkit/Reducer/NoDataFoundSlice";
 import { formatUnderscoredString } from "../../../Utilities/globals/globals";
+import AlertsModal from "./components/AlertsModal";
 
 const AlertManagementList = () => {
   const { alertRules, loading, id, activeInActiveAlertRules } = useSelector(
@@ -31,6 +32,8 @@ const AlertManagementList = () => {
   const dispatch = useDispatch();
   const [isHovered, setIsHovered] = useState(false);
   const [hoveredId, setHoveredId] = useState("");
+  const [isUpdateModalVisible, setIsUpdateModalVisible] = useState(false);
+  const [selectedRuleForUpdate, setSelectedRuleForUpdate] = useState<any>(null);
 
   // Convert HEX → RGB for hover color
   const hexToRgb = (hex: any) => {
@@ -151,70 +154,91 @@ const AlertManagementList = () => {
           </div>
         </td>
         <td>
-          <button
-            className="global-table-delete-btn"
-            onClick={() => {
-              const alertData = {
-                title: "Are you sure?",
-                text: "Once deleted, you will not be able to recover this alert rule!",
-              };
-              const type = "alertRuleType";
-              deleteAlert(alertData, row._id, type, dispatch);
-            }}
-          >
-            Delete
-          </button>
+          <div style={{ display: "flex", gap: "10px", justifyContent: "center" }}>
+            <button
+              className="global-table-edit-btn"
+              onClick={() => {
+                setSelectedRuleForUpdate(row);
+                setIsUpdateModalVisible(true);
+              }}
+            >
+              Edit
+            </button>
+            <button
+              className="global-table-delete-btn"
+              onClick={() => {
+                const alertData = {
+                  title: "Are you sure?",
+                  text: "Once deleted, you will not be able to recover this alert rule!",
+                };
+                const type = "alertRuleType";
+                deleteAlert(alertData, row._id, type, dispatch);
+              }}
+            >
+              Delete
+            </button>
+          </div>
         </td>
       </tr>
     ));
   };
 
   return (
-    <Container fluid>
-      <Col sm="12">
-        <Card>
-          <CommonHeader title="All Alert Rules" />
-          <CardBody>
-            <div className="table-responsive product-table">
-              {loading ? (
-                <>
-                  <Skeleton height="100px" width="100%" borderRadius="10px" />
-                  {[1, 2, 3, 4, 5].map((i) => (
-                    <Skeleton
-                      key={i}
-                      height="40px"
-                      width="100%"
-                      marginTop="10px"
-                      marginBottom="10"
-                      borderRadius="10px"
-                    />
-                  ))}
-                </>
-              ) : alertRules?.length > 0 ? (
-                <table>
-                  <thead>
-                    <tr>
-                      <th>ID</th>
-                      <th>Name</th>
-                      <th>Type</th>
-                      <th>Status</th>
-                      <th>Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>{renderTableRows()}</tbody>
-                </table>
-              ) : (
-                <H7>
-                  {activeInActiveAlertRules !== "All"
-                    ? activeInActiveAlertRules
-                    : "No Alert Rules Found"}
-                </H7>
-              )}
-            </div>
-          </CardBody>
-        </Card>
-      </Col>
-    </Container>
+    <>
+      <Container fluid>
+        <Col sm="12">
+          <Card>
+            <CommonHeader title="All Alert Rules" />
+            <CardBody>
+              <div className="table-responsive product-table">
+                {loading ? (
+                  <>
+                    <Skeleton height="100px" width="100%" borderRadius="10px" />
+                    {[1, 2, 3, 4, 5].map((i) => (
+                      <Skeleton
+                        key={i}
+                        height="40px"
+                        width="100%"
+                        marginTop="10px"
+                        marginBottom="10"
+                        borderRadius="10px"
+                      />
+                    ))}
+                  </>
+                ) : alertRules?.length > 0 ? (
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Type</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>{renderTableRows()}</tbody>
+                  </table>
+                ) : (
+                  <H7>
+                    {activeInActiveAlertRules !== "All"
+                      ? activeInActiveAlertRules
+                      : "No Alert Rules Found"}
+                  </H7>
+                )}
+              </div>
+            </CardBody>
+          </Card>
+        </Col>
+      </Container>
+
+      {/* Update Modal */}
+      <AlertsModal
+        isVisible={isUpdateModalVisible}
+        setIsVisible={setIsUpdateModalVisible}
+        mode="update"
+        selectedRule={selectedRuleForUpdate}
+      />
+    </>
   );
 };
 

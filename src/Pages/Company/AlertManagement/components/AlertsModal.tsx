@@ -10,9 +10,10 @@ import { MdExpandMore, MdExpandLess } from "react-icons/md";
 import { useSelector, useDispatch } from "react-redux";
 import { useForm } from "react-hook-form";
 import "./styles.css";
-import { create, getAll } from "../../../../Utilities/api";
+import { create, getAll, update } from "../../../../Utilities/api";
 import {
   CREATE_ALERT_RULE,
+  UPDATE_ALERT_RULE,
   GET_ALERT_RULES,
   GET_ALL_GEOFENCES,
   GET_ALL_VEHICLES_DROPDOWN_FOR_ALERT,
@@ -29,6 +30,8 @@ import {
 interface AlertsModalProps {
   isVisible: any;
   setIsVisible: any;
+  mode?: "create" | "update";
+  selectedRule?: any;
 }
 
 interface Device {
@@ -37,6 +40,7 @@ interface Device {
   engineNo: string;
   imei: string;
   geofences?: string[];
+  alertRules?: string[];
   group?: {
     _id: string;
     name: string;
@@ -72,11 +76,14 @@ interface AlertFormData {
 const AlertsModal: React.FC<AlertsModalProps> = ({
   isVisible,
   setIsVisible,
+  mode = "create",
+  selectedRule,
 }) => {
   const {
     register,
     handleSubmit,
     reset,
+    setValue,
     formState: { errors },
   } = useForm<AlertFormData>();
 
@@ -96,7 +103,10 @@ const AlertsModal: React.FC<AlertsModalProps> = ({
   const addToggle = () => {
     if (!loading) {
       setIsVisible(!isVisible);
-      resetForm();
+      // Reset form when closing the modal (both create and update modes)
+      if (isVisible) {
+        resetForm();
+      }
     }
   };
 
@@ -110,29 +120,81 @@ const AlertsModal: React.FC<AlertsModalProps> = ({
     setAutoCheckedDevices([]);
   };
 
-  // Fetch devices data
+  // Fetch devices and geofences data when modal opens
   useEffect(() => {
-    getAll({ url: GET_ALL_VEHICLES_DROPDOWN_FOR_ALERT }).then((data: any) => {
-      if (data !== undefined) {
-        if (data.success) {
-          console.log("data", data.data);
-          setDevicesData(data.data);
+    if (isVisible) {
+      // Fetch devices data
+      getAll({ url: GET_ALL_VEHICLES_DROPDOWN_FOR_ALERT }).then((data: any) => {
+        if (data !== undefined) {
+          if (data.success) {
+            console.log("data", data.data);
+            setDevicesData(data.data);
+          }
         }
-      }
-    });
-  }, [dispatch]);
+      });
 
-  // Fetch geofences data
+      // Fetch geofences data
+      getAll({ url: GET_ALL_GEOFENCES }).then((data: any) => {
+        if (data !== undefined) {
+          if (data.success) {
+            console.log("geofences data", data.data);
+            setGeofencesData(data.data);
+          }
+        }
+      });
+    }
+  }, [isVisible]);
+
+  // Populate form when in update mode
   useEffect(() => {
-    getAll({ url: GET_ALL_GEOFENCES }).then((data: any) => {
-      if (data !== undefined) {
-        if (data.success) {
-          console.log("geofences data", data.data);
-          setGeofencesData(data.data);
+    if (
+      mode === "update" &&
+      selectedRule &&
+      devicesData.length > 0 &&
+      geofencesData.length > 0
+    ) {
+      // Set alert name
+      setValue("name", selectedRule.name);
+
+      // Set alert type
+      setType(selectedRule.alertType);
+
+      // Set threshold value based on alert type
+      if (selectedRule.threshold) {
+        if (selectedRule.threshold.speedThreshold) {
+          setThresholdValue(selectedRule.threshold.speedThreshold.speedValue);
+        } else if (selectedRule.threshold.powerThreshold) {
+          setThresholdValue(selectedRule.threshold.powerThreshold.powerValue);
+        }
+
+        // Set geofence if it's a geofence alert (ONLY for GEOFENCE_ENTER or GEOFENCE_EXIT)
+        if (
+          selectedRule.threshold.geofenceThreshold &&
+          (selectedRule.alertType === "GEOFENCE_ENTER" ||
+            selectedRule.alertType === "GEOFENCE_EXIT")
+        ) {
+          const geofence = geofencesData.find(
+            (g) => g._id === selectedRule.threshold.geofenceThreshold.geofenceId
+          );
+          if (geofence) {
+            setSelectedGeofence(geofence);
+
+            // In update mode, we don't auto-check devices with geofence
+            // This allows users to freely select/deselect any device
+            setAutoCheckedDevices([]);
+          }
         }
       }
-    });
-  }, []);
+
+      // Set selected devices from the rule's vehicle IDs
+      // Based on the API data structure, we need to fetch devices that have this alert rule
+      const ruleDevices = devicesData
+        .filter((device) => device.alertRules?.includes(selectedRule._id))
+        .map((device) => device._id);
+
+      setSelectedDevices(ruleDevices);
+    }
+  }, [mode, selectedRule, devicesData, geofencesData, setValue]);
 
   // --- GROUPING LOGIC ---
   const groupedDevices = useMemo(() => {
@@ -196,8 +258,8 @@ const AlertsModal: React.FC<AlertsModalProps> = ({
   };
 
   const handleDeviceToggle = (deviceId: string) => {
-    // Don't allow toggling if device is auto-checked (already has the geofence)
-    if (autoCheckedDevices.includes(deviceId)) return;
+    // Don't allow toggling if device is auto-checked (already has the geofence) in CREATE mode only
+    if (autoCheckedDevices.includes(deviceId) && mode === "create") return;
 
     setSelectedDevices((prev) =>
       prev.includes(deviceId)
@@ -386,57 +448,68 @@ const AlertsModal: React.FC<AlertsModalProps> = ({
       const payload = buildPayload(formData);
       console.log("Sending payload:", payload); // Debug log
 
-      await create(payload, { url: CREATE_ALERT_RULE }).then(
-        (response: any) => {
-          if (response !== undefined) {
-            if (!response.success) {
-              Swal.fire({
-                text: response.message || "Failed to create alert rule",
-                icon: "error",
-                timer: 2000,
-                showConfirmButton: false,
-              });
-            } else {
-              Swal.fire({
-                text: "Alert rule created successfully!",
-                icon: "success",
-                timer: 2000,
-                showConfirmButton: false,
-              });
-              // Reset form and close modal on success
-              resetForm();
+      // Determine if creating or updating
+      const apiCall =
+        mode === "update" && selectedRule
+          ? update(payload, { url: `${UPDATE_ALERT_RULE}/${selectedRule._id}` })
+          : create(payload, { url: CREATE_ALERT_RULE });
 
-              dispatch(setAlertRuleStart());
-              getAll({ url: GET_ALERT_RULES }).then((data: any) => {
-                if (data == undefined) {
-                  Swal.fire({
-                    text: "Failed to fetch due to connection refused",
-                    icon: "error",
-                    timer: 2000,
-                    showConfirmButton: false,
-                  });
-                  dispatch(setInActiveActiveAlertRules("All"));
-                  dispatch(setAlertRules([]));
-                  dispatch(setFilterAlertRules([]));
-                  return;
-                }
+      await apiCall.then((response: any) => {
+        if (response !== undefined) {
+          if (!response.success) {
+            Swal.fire({
+              text: response.message || `Failed to ${mode} alert rule`,
+              icon: "error",
+              timer: 2000,
+              showConfirmButton: false,
+            });
+          } else {
+            Swal.fire({
+              text: `Alert rule ${
+                mode === "update" ? "updated" : "created"
+              } successfully!`,
+              icon: "success",
+              timer: 2000,
+              showConfirmButton: false,
+            });
+            // Reset form and close modal on success
+            resetForm();
 
-                if (data !== undefined) {
-                  if (data.success) {
-                    dispatch(setAlertRules(data.data));
-                    dispatch(setFilterAlertRules(data.data));
-                  }
+            dispatch(setAlertRuleStart());
+            getAll({ url: GET_ALERT_RULES }).then((data: any) => {
+              if (data == undefined) {
+                Swal.fire({
+                  text: "Failed to fetch due to connection refused",
+                  icon: "error",
+                  timer: 2000,
+                  showConfirmButton: false,
+                });
+                dispatch(setInActiveActiveAlertRules("All"));
+                dispatch(setAlertRules([]));
+                dispatch(setFilterAlertRules([]));
+                return;
+              }
+
+              if (data !== undefined) {
+                if (data.success) {
+                  dispatch(setAlertRules(data.data));
+                  dispatch(setFilterAlertRules(data.data));
                 }
-              });
-              setIsVisible(false);
-            }
+              }
+            });
+            setIsVisible(false);
           }
         }
-      );
+      });
     } catch (error: any) {
-      console.error("Error creating alert rule:", error);
+      console.error(
+        `Error ${mode === "update" ? "updating" : "creating"} alert rule:`,
+        error
+      );
       Swal.fire({
-        text: "An error occurred while creating the alert rule",
+        text: `An error occurred while ${
+          mode === "update" ? "updating" : "creating"
+        } the alert rule`,
         icon: "error",
         timer: 2000,
         showConfirmButton: false,
@@ -449,7 +522,9 @@ const AlertsModal: React.FC<AlertsModalProps> = ({
   return (
     <Modal isOpen={isVisible} toggle={addToggle} size="lg" centered>
       <div className="modal-header">
-        <H4 className="modal-title">Create New Alert</H4>
+        <H4 className="modal-title">
+          {mode === "update" ? "Update Alert Rule" : "Create New Alert"}
+        </H4>
         <Button
           color="transprant"
           className="btn-close"
@@ -535,8 +610,8 @@ const AlertsModal: React.FC<AlertsModalProps> = ({
                     const geofence = geofencesData.find((g) => g._id === value);
                     setSelectedGeofence(geofence || null);
 
-                    // Auto-check devices that already have this geofence
-                    if (geofence) {
+                    // Auto-check devices that already have this geofence ONLY in create mode
+                    if (geofence && mode === "create") {
                       const matchedDeviceIds = devicesData
                         .filter((device) =>
                           device.geofences?.includes(geofence._id)
@@ -613,7 +688,7 @@ const AlertsModal: React.FC<AlertsModalProps> = ({
                         </strong>
                       </div>
                     )}
-                    {autoCheckedDevices.length > 0 && (
+                    {mode === "create" && autoCheckedDevices.length > 0 && (
                       <div
                         style={{
                           fontSize: "11px",
@@ -778,13 +853,13 @@ const AlertsModal: React.FC<AlertsModalProps> = ({
                                       padding: "4px 8px",
                                       // border: "1px solid #e0e0e0",
                                       borderRadius: "4px",
-                                      background: autoCheckedDevices.includes(
-                                        device._id
-                                      )
-                                        ? "#d1f7c4" // Green for already linked
-                                        : selectedDevices.includes(device._id)
-                                        ? "#e6f7ff" // Blue for newly selected
-                                        : "transparent",
+                                      background:
+                                        mode === "create" &&
+                                        autoCheckedDevices.includes(device._id)
+                                          ? "#d1f7c4" // Green for already linked (CREATE MODE ONLY)
+                                          : selectedDevices.includes(device._id)
+                                          ? "#e6f7ff" // Blue for newly selected
+                                          : "transparent",
                                     }}
                                   >
                                     <input
@@ -798,9 +873,14 @@ const AlertsModal: React.FC<AlertsModalProps> = ({
                                       }
                                       disabled={
                                         loading ||
-                                        autoCheckedDevices.includes(device._id)
+                                        (mode === "create" &&
+                                          autoCheckedDevices.includes(device._id))
                                       }
-                                      style={{ marginRight: "8px" }}
+                                      style={{
+                                        marginRight: "8px",
+                                        minHeight: "20px",
+                                        minWidth: "20px",
+                                      }}
                                     />
                                     <span
                                       style={{
@@ -811,26 +891,28 @@ const AlertsModal: React.FC<AlertsModalProps> = ({
                                         textOverflow: "ellipsis",
                                       }}
                                       title={
+                                        mode === "create" &&
                                         autoCheckedDevices.includes(device._id)
                                           ? `${device.registrationNo} (Already linked to this geofence)`
                                           : device.registrationNo
                                       }
                                     >
                                       {device.registrationNo}
-                                      {autoCheckedDevices.includes(
-                                        device._id
-                                      ) && (
-                                        <span
-                                          style={{
-                                            marginLeft: "5px",
-                                            fontSize: "10px",
-                                            color: "#52c41a",
-                                            fontWeight: "bold",
-                                          }}
-                                        >
-                                          ✓
-                                        </span>
-                                      )}
+                                      {mode === "create" &&
+                                        autoCheckedDevices.includes(
+                                          device._id
+                                        ) && (
+                                          <span
+                                            style={{
+                                              marginLeft: "5px",
+                                              fontSize: "10px",
+                                              color: "#52c41a",
+                                              fontWeight: "bold",
+                                            }}
+                                          >
+                                            ✓
+                                          </span>
+                                        )}
                                     </span>
                                   </div>
                                 ))}
@@ -863,7 +945,7 @@ const AlertsModal: React.FC<AlertsModalProps> = ({
 
           <div style={{ display: "flex", gap: "10px", marginTop: "20px" }}>
             <Button color="primary" type="submit" disabled={loading}>
-              {loading ? "Loading..." : "Save"}
+              {loading ? "Loading..." : mode === "update" ? "Update" : "Save"}
             </Button>
             <Button disabled={loading} color="secondary" onClick={addToggle}>
               {Cancel}

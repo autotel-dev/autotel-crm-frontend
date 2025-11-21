@@ -39,10 +39,10 @@ const CreateNewAlertManagement = () => {
 
   const items: MenuProps["items"] = [
     { label: "Alerts", key: "1" },
-    { label: "Geofence", key: "2" },
-    { label: "Notifications", key: "3" },
-    { label: "Send Command", key: "4" },
-    { label: "Schedule", key: "5" },
+    // { label: "Geofence", key: "2" },
+    { label: "Notifications", key: "2" },
+    { label: "Send Command", key: "3" },
+    { label: "Schedule", key: "4" },
   ];
 
   const handleMenuClick: MenuProps["onClick"] = (e) => {
@@ -50,17 +50,17 @@ const CreateNewAlertManagement = () => {
       addToggleForAlertModal();
     }
 
-    if (e.key === "2") {
-      addToggleForGeofenceModal();
-    }
+    // if (e.key === "2") {
+    //   addToggleForGeofenceModal();
+    // }
 
-    if (e.key === "3") {
+    if (e.key === "2") {
       addToggleForNotificationsModal();
     }
-    if (e.key === "4") {
+    if (e.key === "3") {
       addToggleForSendCommandModal();
     }
-    if (e.key === "5") {
+    if (e.key === "4") {
       addToggleForSchedulingModal();
     }
   };
@@ -93,12 +93,12 @@ const CreateNewAlertManagement = () => {
           />
         )}
 
-        {addModalForGeofence && (
+        {/* {addModalForGeofence && (
           <GeofenceModal
             isVisible={addModalForGeofence}
             setIsVisible={setAddModalForGeofence}
           />
-        )}
+        )} */}
 
         {addModalForScheduling && (
           <SchedulingModal

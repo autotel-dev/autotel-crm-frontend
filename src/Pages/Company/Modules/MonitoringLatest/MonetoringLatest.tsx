@@ -62,6 +62,8 @@ const MonitoringLatest = () => {
   const { devices, selectedSingleDevice, alertsEnabled } = useSelector(
     (state: any) => state.monitoring
   );
+  const { userData } = useSelector((state: any) => state.user);
+  console.log("userData", userData);
 
   const updatesBufferRef = React.useRef<any[]>([]);
 
@@ -88,64 +90,6 @@ const MonitoringLatest = () => {
 
   const now: any = new Date();
 
-  // const { expiredCount, inactiveCount, movingCount, idleCount, stoppedCount } =
-  //   useMemo(() => {
-  //     // Step 1: Find expired devices
-  //     const expiredDevices = devices.filter((d: any) => {
-  //       const renewalDate = d?.vehicle?.serviceRenewalDate
-  //         ? new Date(d.vehicle.serviceRenewalDate)
-  //         : null;
-
-  //       if (!renewalDate) return false;
-
-  //       return renewalDate < now; // expired if renewal date is before now
-  //     });
-
-  //     const nonExpiredDevices = devices.filter(
-  //       (d: any) => !expiredDevices.includes(d)
-  //     );
-
-  //     // Step 2: Find inactive devices (from non-expired)
-  //     const inactiveDevices = nonExpiredDevices.filter((d: any) => {
-  //       const deviceTime: any = d?.latestPosition?.deviceTime
-  //         ? new Date(d.latestPosition.deviceTime)
-  //         : null;
-
-  //       // No deviceTime = inactive
-  //       if (!deviceTime) return true;
-
-  //       const diffHours = (now - deviceTime) / (1000 * 60 * 60);
-
-  //       // Inactive if older than 24h
-  //       return diffHours > 24;
-  //     });
-
-  //     const activeDevices = nonExpiredDevices.filter(
-  //       (d: any) => !inactiveDevices.includes(d)
-  //     );
-
-  //     // Step 3: From remaining (active & non-expired) — check statuses
-  //     const movingCount = activeDevices.filter(
-  //       (d: any) => d.mainVehicleStatus?.toLowerCase() === "moving"
-  //     ).length;
-
-  //     const idleCount = activeDevices.filter(
-  //       (d: any) => d.mainVehicleStatus?.toLowerCase() === "idle"
-  //     ).length;
-
-  //     const stoppedCount = activeDevices.filter(
-  //       (d: any) => d.mainVehicleStatus?.toLowerCase() === "stopped"
-  //     ).length;
-
-  //     return {
-  //       expiredCount: expiredDevices.length,
-  //       inactiveCount: inactiveDevices.length,
-  //       movingCount,
-  //       idleCount,
-  //       stoppedCount,
-  //     };
-  //   }, [devices]);
-
   const {
     expiredCount,
     notConnectedCount,
@@ -154,6 +98,9 @@ const MonitoringLatest = () => {
     idleCount,
     stoppedCount,
   } = useMemo(() => {
+    // Get inactive time limit from userData (in minutes), default to 24 hours (1440 minutes) if not set
+    const inactiveTimeLimitMinutes = userData?.inactiveTimeLimit || 1440;
+
     // Step 1: Find expired devices
     const expiredDevices = devices.filter((d: any) => {
       const renewalDate = d?.vehicle?.serviceRenewalDate
@@ -181,10 +128,11 @@ const MonitoringLatest = () => {
 
       if (!deviceTime) return false; // handled by notConnectedDevices
 
-      const diffHours = (now - deviceTime) / (1000 * 60 * 60);
+      // Calculate difference in minutes
+      const diffMinutes = (now - deviceTime) / (1000 * 60);
 
-      // Inactive if older than 24h
-      return diffHours > 24;
+      // Inactive if older than the configured inactive time limit (in minutes)
+      return diffMinutes > inactiveTimeLimitMinutes;
     });
 
     // Step 3: From remaining (active & non-expired) — check statuses
@@ -213,7 +161,7 @@ const MonitoringLatest = () => {
       idleCount,
       stoppedCount,
     };
-  }, [devices]);
+  }, [devices, userData]);
 
   useEffect(() => {
     const interval = setInterval(() => {
