@@ -484,7 +484,7 @@ const MonitoringLatest = () => {
 
       // get latestPosition update
       const latestPosition = changes?.updatedFields?.latestPosition;
-      // console.log("update payload", payload);
+      console.log("update payload", payload);
 
       if (!latestPosition) return; // no position update
       // Push into buffer (not Redux yet)
@@ -496,7 +496,7 @@ const MonitoringLatest = () => {
 
       // get latestPosition update
       const latestPosition = changes?.updatedFields?.latestPosition;
-      // console.log("payload", payload);
+      console.log("payload", payload);
 
       if (!latestPosition) return; // no position update
       // Push into buffer (not Redux yet)
@@ -514,7 +514,7 @@ const MonitoringLatest = () => {
 
       // get latestPosition update
       const latestPosition = changes?.updatedFields?.latestPosition;
-      // console.log("payload", payload);
+      console.log("payload", payload);
 
       if (!latestPosition) return; // no position update
       // Push into buffer (not Redux yet)
@@ -525,9 +525,12 @@ const MonitoringLatest = () => {
       console.log("new_alert_event payload", payload);
 
       const { actualAlert } = payload || {};
+      const { formattedAlert } = payload || {};
       if (!actualAlert) return;
+      if (!formattedAlert) return;
 
       const { alertType, message } = actualAlert;
+      const { vehicle } = formattedAlert;
 
       // Only show toast if alerts are enabled
       if (alertsEnabled) {
@@ -535,7 +538,8 @@ const MonitoringLatest = () => {
           title: formatUnderscoredString(alertType),
           text: message,
           icon: alertType, // handles IGNITION_ON / IGNITION_OFF color & icon
-          duration: 3500,
+          duration: 3000,
+          registrationNo: vehicle?.registration,
         });
       }
     });

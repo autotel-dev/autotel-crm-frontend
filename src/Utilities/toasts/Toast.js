@@ -13,16 +13,19 @@ const speakAlert = (message) => {
     utterance.voice = femaleVoice || null;
     utterance.pitch = 1;
     utterance.rate = 1;
-    window.speechSynthesis.cancel(); // stop any previous speech
+    window.speechSynthesis.cancel();
     window.speechSynthesis.speak(utterance);
   }
 };
 
 // ✅ Glassmorphism Toast Component
-const GlassToast = ({ title, text, icon }) => {
-  const isOn = icon === "IGNITION_ON";
+const GlassToast = ({ title, text, icon, registrationNo }) => {
+  const isOn =
+    icon === "IGNITION_ON" ||
+    icon === "POWER_RESTORE" ||
+    icon === "GEOFENCE_ENTER";
 
-  const color = isOn ? "#4ade80" : "#f87171"; // green / red
+  const color = isOn ? "#4ade80" : "#f87171";
   const Icon = isOn ? CheckCircle2 : XCircle;
 
   return (
@@ -35,32 +38,31 @@ const GlassToast = ({ title, text, icon }) => {
         padding: "14px 20px",
         borderRadius: "16px",
         color,
-        fontSize: "15px",
-        fontWeight: 400,
-        backdropFilter: "blur(12px)",
-        boxShadow: "0 4px 25px rgba(0, 0, 0, 0.4)",
+        background: "black",
         border: `3px solid ${color}`,
-        background: "black", // 🔳 light black overlay
         minWidth: "260px",
-        maxWidth: "340px",
-        transition: "all 0.3s ease",
+        maxWidth: "360px",
       }}
     >
-      {/* <Icon size={24} strokeWidth={2.2} color={color} /> */}
       <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
         {title && (
           <span
             style={{
-              fontSize: "18px", // title 3px larger
+              fontSize: "18px",
               fontWeight: "bold",
-              lineHeight: "1.2",
               color,
-              fontWeight: "bold",
             }}
           >
             {title}
           </span>
         )}
+
+        {registrationNo && (
+          <div style={{ color, fontSize: "14px" }}>
+            <strong>Reg No:</strong> {registrationNo}
+          </div>
+        )}
+
         {text && (
           <div style={{ fontSize: "14px", lineHeight: "1.4", color }}>
             {text}
@@ -76,16 +78,27 @@ const Toast = ({
   title = "",
   text = "",
   icon,
+  registrationNo = "",
   duration = 3000,
   position = "top-right",
 }) => {
-  const voiceMessage = `${title ? title + ". " : ""}${text}`;
+  const voiceMessage = `${title ? title + ". " : ""}${text}${
+    registrationNo ? ". Registration number " + registrationNo : ""
+  }`;
+
   if (voiceMessage) speakAlert(voiceMessage);
 
-  toast.custom(() => <GlassToast title={title} text={text} icon={icon} />, {
-    duration,
-    position,
-  });
+  toast.custom(
+    () => (
+      <GlassToast
+        title={title}
+        text={text}
+        icon={icon}
+        registrationNo={registrationNo}
+      />
+    ),
+    { duration, position }
+  );
 };
 
 // ✅ Initialize global Toaster only once

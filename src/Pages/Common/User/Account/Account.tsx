@@ -7,7 +7,7 @@ import AddProjectsAndUpload from "./AddProjectsAndUpload/AddProjectsAndUpload";
 import SecuritySettings from "./SecuritySettings/SecuritySettings";
 import ServerPermissions from "./ServerPermissions.tsx/ServerPermissions";
 import { useEffect, useRef, useState } from "react";
-import {  getAll, getImage } from "../../../../Utilities/api";
+import { getAll, getImage } from "../../../../Utilities/api";
 import { useDispatch, useSelector } from "react-redux";
 import Skeleton from "../../../Utilities/Skeleton/Skeleton";
 import {
@@ -22,8 +22,13 @@ import AllowedModules from "./AllowedModules/AllowedModules";
 import NoInternetConnection from "../../../Utilities/NoInternetConnection/NoInternetConnection";
 import { ROLES } from "../../../../constants/roles";
 import ServerCredentials from "./ServerCredentials/ServerCredentials";
-import { GET_COMPANY_GIVEN_PERMISSION, GET_USER_BY_ID, IMAGE_BASE_URL } from "../../../../Utilities/api/apiEndpoints";
+import {
+  GET_COMPANY_GIVEN_PERMISSION,
+  GET_USER_BY_ID,
+  IMAGE_BASE_URL,
+} from "../../../../Utilities/api/apiEndpoints";
 import { ERROR_MESSAGE } from "../../../../Utilities/constants/constants";
+import InactiveTimeLimit from "./InactivetimeLimit/InactiveTimeLimit";
 
 const Account = () => {
   const { userPermissions } = useSelector(
@@ -92,10 +97,7 @@ const Account = () => {
 
     getAll({ url: GET_USER_BY_ID }).then((parentData: any) => {
       if (parentData !== undefined) {
-        if (
-          !parentData.success &&
-          parentData.message === ERROR_MESSAGE
-        ) {
+        if (!parentData.success && parentData.message === ERROR_MESSAGE) {
           setIsConnected(true);
         }
         if (!parentData.success) {
@@ -263,6 +265,7 @@ const Account = () => {
                   </div>
 
                   <SecuritySettings />
+                  <InactiveTimeLimit />
 
                   {/* <AddProjectsAndUpload /> */}
                   {/* <EditMyProfile isEdit={isEdit} setIsEdit={setIsEdit} />
@@ -402,13 +405,12 @@ const Account = () => {
                         borderRadius="10px"
                         marginRight="20px"
                       />
-                       <Skeleton
+                      <Skeleton
                         height="40px"
                         width="10%"
                         marginBottom="20px"
                         borderRadius="10px"
                         marginLeft="90%"
-                        
                       />
                     </div>
                   </div>

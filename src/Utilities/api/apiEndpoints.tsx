@@ -29,6 +29,7 @@ export const LOGIN = `${API_BASE_URL}/auth/user/login`;
 export const OTP_VERIFICATION = `${API_BASE_URL}/auth/user/security/verify-security-code`;
 export const CHANGE_LOGIN_STATUS = `${API_BASE_URL}/user/security/change-login-security-status`;
 export const RESENT_SECURITY_CODE = `${API_BASE_URL}/auth/user/security/resend-security-code`;
+export const UPDATE_INACTIVE_TIME_LIMIT = `${API_BASE_URL}/company/update-inactive-time-limit`;
 
 // Common - Email Gateway
 export const CREATE_EMAIL_GATEWAY = `${API_BASE_URL}/gateway/email-gateway/create-gateway`;
@@ -471,6 +472,7 @@ export const GET_PURCHASE_SUMMARY = `${API_BASE_URL}/sales-dashboard/purchase/ge
 // Company Alert Rules
 
 export const CREATE_ALERT_RULE = `${API_BASE_URL}/alert-events/rule/create-rule`;
+export const UPDATE_ALERT_RULE = `${API_BASE_URL}/alert-events/rule/update-rule`;
 export const GET_ALERT_RULES = `${API_BASE_URL}/alert-events/rule/get-all-rules`;
 export const DELETE_ALERT_RULE = `${API_BASE_URL}/alert-events/rule/delete-rule`;
 export const UPDATE_ALERT_RULE_ACTIVATION_STATUS = `${API_BASE_URL}/alert-events/rule/update-rule-activation-status`;
