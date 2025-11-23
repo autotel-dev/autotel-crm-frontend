@@ -125,7 +125,7 @@ const DevicesSidebar = ({ setOpen, open }: any) => {
 
   const handleDeviceClick = (device: any) => {
     dispatch(setSelectedSingleDevice(device));
-    setOpen(!open);
+    setOpen(false); // Always open the window (false = window is visible)
   };
 
   const toggleMenu = (e: React.MouseEvent, deviceId: string) => {

@@ -102,49 +102,49 @@ const AlertManagementList = () => {
           transition: "background-color 0.3s",
         }}
       >
-        <td>{row._id}</td>
+        {/* <td>{row._id}</td> */}
         <td>{row.name}</td>
 
         <td>{formatUnderscoredString(row.alertType)}</td>
-        <td>
+        {/* <td>
           <div className="d-flex" style={{ justifyContent: "center" }}>
             <Label className="switch mb-0">
               <Input
                 type="checkbox"
                 defaultChecked={row.isActive}
-                // onChange={async () => {
-                //   const changeStatus = { isActive: !row.isActive };
-                //   try {
-                //     const res = await patch(changeStatus, {
-                //       url: `${CHANGE_ALERT_RULE_STATUS}/${row._id}`,
-                //     });
-                //     if (res.success) {
-                //       // Refresh data
-                //       dispatch(setAlertRuleStart());
-                //       getAll({ url: GET_ALL_ALERT_RULES }).then((data) => {
-                //         dispatch(setAlertRuleEnd());
-                //         if (data?.success) {
-                //           dispatch(setAlertRules(data.data));
-                //           dispatch(setFilterAlertRules(data.data));
-                //         }
-                //       });
-                //     } else {
-                //       Swal.fire({
-                //         text: `${res.message}`,
-                //         icon: "error",
-                //         timer: 2000,
-                //         showConfirmButton: false,
-                //       });
-                //     }
-                //   } catch (error) {
-                //     Swal.fire({
-                //       text: `${error.message}`,
-                //       icon: "error",
-                //       timer: 2000,
-                //       showConfirmButton: false,
-                //     });
-                //   }
-                // }}
+                onChange={async () => {
+                  const changeStatus = { isActive: !row.isActive };
+                  try {
+                    const res = await patch(changeStatus, {
+                      url: `${CHANGE_ALERT_RULE_STATUS}/${row._id}`,
+                    });
+                    if (res.success) {
+                      // Refresh data
+                      dispatch(setAlertRuleStart());
+                      getAll({ url: GET_ALL_ALERT_RULES }).then((data) => {
+                        dispatch(setAlertRuleEnd());
+                        if (data?.success) {
+                          dispatch(setAlertRules(data.data));
+                          dispatch(setFilterAlertRules(data.data));
+                        }
+                      });
+                    } else {
+                      Swal.fire({
+                        text: `${res.message}`,
+                        icon: "error",
+                        timer: 2000,
+                        showConfirmButton: false,
+                      });
+                    }
+                  } catch (error) {
+                    Swal.fire({
+                      text: `${error.message}`,
+                      icon: "error",
+                      timer: 2000,
+                      showConfirmButton: false,
+                    });
+                  }
+                }}
               />
               <span
                 className="switch-state"
@@ -152,9 +152,11 @@ const AlertManagementList = () => {
               />
             </Label>
           </div>
-        </td>
+        </td> */}
         <td>
-          <div style={{ display: "flex", gap: "10px", justifyContent: "center" }}>
+          <div
+            style={{ display: "flex", gap: "10px", justifyContent: "center" }}
+          >
             <button
               className="global-table-edit-btn"
               onClick={() => {
@@ -209,10 +211,10 @@ const AlertManagementList = () => {
                   <table>
                     <thead>
                       <tr>
-                        <th>ID</th>
+                        {/* <th>ID</th> */}
                         <th>Name</th>
                         <th>Type</th>
-                        <th>Status</th>
+                        {/* <th>Status</th> */}
                         <th>Actions</th>
                       </tr>
                     </thead>

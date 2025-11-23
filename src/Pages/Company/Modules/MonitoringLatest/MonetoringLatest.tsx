@@ -554,11 +554,10 @@ const MonitoringLatest = () => {
       </div>
 
       {/* Google Map container with animation */}
-      <div style={{ maxWidth: "67%", minWidth: "67%" }}>
+      <div style={{ maxWidth: "67%", minWidth: "67%", position: "relative" }}>
         <motion.div
           initial={{ height: "87vh", opacity: 1 }}
-          // animate={{ height: open ? "87vh" : "75vh", opacity: open ? 1 : 0 }}
-          animate={{ height: open ? "87vh" : "55vh" }}
+          animate={{ height: "87vh" }}
           transition={{ duration: 0.2, ease: "easeInOut" }}
           style={{
             maxWidth: "100%",
@@ -679,35 +678,36 @@ const MonitoringLatest = () => {
             <GoogleMap />
           </div>
         </motion.div>
-
+        {/* Single detail window - Overlay on map with bottom-to-top opening, top-to-bottom closing */}
         <motion.div
-          initial={{ height: "0vh", opacity: 1 }}
-          // animate={{ height: open ? "87vh" : "75vh", opacity: open ? 1 : 0 }}
-          animate={{ height: open ? "0vh" : "30vh" }}
-          transition={{ duration: 0.2, ease: "easeInOut" }}
+          initial={{ y: "100%", opacity: 0 }}
+          animate={{
+            y: open ? "-120%" : "0%",
+            opacity: open ? 0 : 1,
+          }}
+          transition={{ duration: 0.35, ease: "easeInOut" }}
           style={{
-            maxWidth: "100%",
-            minWidth: "100%",
+            position: "absolute",
+            bottom: "35px",
+            left: "20px",
+            right: "20px",
+            height: "45%",
             background: "white",
             borderRadius: "10px",
-            // padding: "10px",
-            width: "100%",
-            position: "relative",
-            overflow: "visible", // ✅ Prevents map overflow
-            boxShadow: "0 4px 15px rgba(109, 191, 184, 0.4)", // ✅ Shadow
-            padding: open ? "0px" : "10px",
-            marginTop: "8px",
-            display: "flex",
+            overflow: "hidden",
+            boxShadow: "0 8px 25px rgba(0, 0, 0, 0.3)",
+            padding: "10px",
+            display: open ? "none" : "flex",
             gap: "20px",
             fontSize: "24px",
             fontWeight: "semibold",
+            zIndex: 10,
+            pointerEvents: open ? "none" : "auto",
           }}
         >
           <div
             style={{
-              // backgroundColor: "rgba(0, 0, 0, 0.6)",
-              // width: "90px",
-              maxHeight: "27vh",
+              maxHeight: "100%",
               display: "flex",
               flexDirection: "column",
               borderRadius: "4px",
@@ -776,20 +776,27 @@ const MonitoringLatest = () => {
           {selectedComponentIndex == 3 && <CustomerInfo />}
           {selectedComponentIndex == 4 && <Analytics />}
 
-          <div
+          <button
+            onClick={() => {
+              setOpen(!open);
+              dispatch(setSelectedSingleDevice(null));
+            }}
             style={{
               position: "absolute",
               top: "5px",
               right: "15px",
-              color: "green",
+              background: "transparent",
+              border: "none",
+              fontSize: "28px",
+              color: "black",
               cursor: "pointer",
-            }}
-            onClick={() => {
-              setOpen(!open);
+              fontWeight: "bold",
+              padding: "0 5px",
+              zIndex: 100,
             }}
           >
-            x
-          </div>
+            ×
+          </button>
           {/* Single Device Data */}
         </motion.div>
       </div>
