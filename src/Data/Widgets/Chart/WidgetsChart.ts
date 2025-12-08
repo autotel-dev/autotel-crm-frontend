@@ -1,372 +1,379 @@
-import { ApexOptions } from 'apexcharts';
-import ConfigDB from '../../../Config/ThemeConfig';
-const primary = "var(--theme-default)" ;
-const secondary = "var(--theme-secondary)" ;
-export const saleChart:ApexOptions = {
-    chart: {
-      toolbar: {
-        show: false,
-      },
-      height: 200,
-      type: "area",
-    },
-    dataLabels: {
-      enabled: false,
-    },
-    stroke: {
-      width: 3,
-      curve: "smooth",
-    },
-    xaxis: {
-    //   show: false,
-      type: "datetime",
-      categories: [
-        "2018-09-19T00:00:00",
-        "2018-09-19T01:30:00",
-        "2018-09-19T02:30:00",
-        "2018-09-19T03:30:00",
-        "2018-09-19T04:30:00",
-        "2018-09-19T05:30:00",
-        "2018-09-19T06:30:00",
-        "2018-09-19T07:30:00",
-        "2018-09-19T08:30:00",
-        "2018-09-19T09:30:00",
-        "2018-09-19T10:30:00",
-      ],
-      labels: {
-        show: false,
-      },
-      axisBorder: {
-        show: false,
-      },
-    },
-    yaxis: {
-      labels: {
-        show: false,
-      },
-    },
-    grid: {
+import { ApexOptions } from "apexcharts";
+import ConfigDB from "../../../Config/ThemeConfig";
+const primary = "var(--theme-default)";
+const secondary = "var(--theme-secondary)";
+export const saleChart: ApexOptions = {
+  chart: {
+    toolbar: {
       show: false,
-      padding: {
-        left: -10,
-        top: -25,
-        right: -60,
-        bottom: -40,
-      },
     },
-    fill: {
-      opacity: 0.2,
-    },
-    colors: ['#35bfbf'],
-    series: [
-      {
-        data: [70, 60, 82, 80, 60, 90, 70, 120, 50, 60, 0],
-      },
-    ],
-    tooltip: {
-      x: {
-        format: "dd/MM/yy HH:mm",
-      },
-    },
-    responsive: [
-      {
-        breakpoint: 576,
-        options: {
-          chart: {
-            height: 100,
-          }
-        }
-      }
-    ]
-  };
-
-export const projectChart:ApexOptions = {
-    chart: {
-      toolbar: {
-        show: false,
-      },
-      height: 200,
-      type: "area",
-    },
-    dataLabels: {
-      enabled: false,
-    },
-    stroke: {
-      width: 3,
-      curve: "smooth",
-    },
-    xaxis: {
+    height: 200,
+    type: "area",
+  },
+  dataLabels: {
+    enabled: false,
+  },
+  stroke: {
+    width: 3,
+    curve: "smooth",
+  },
+  xaxis: {
     //   show: false,
-      type: "datetime",
-      categories: [
-        "2018-09-19T00:00:00",
-        "2018-09-19T01:30:00",
-        "2018-09-19T02:30:00",
-        "2018-09-19T03:30:00",
-        "2018-09-19T04:30:00",
-        "2018-09-19T05:30:00",
-        "2018-09-19T06:30:00",
-        "2018-09-19T07:30:00",
-        "2018-09-19T08:30:00",
-        "2018-09-19T09:30:00",
-        "2018-09-19T10:30:00",
-      ],
-      labels: {
-        show: false,
-      },
-      axisBorder: {
-        show: false,
-      },
-    },
-    yaxis: {
-      show: false
-    },
-    grid: {
-      show: false,
-      padding: {
-        left: -10,
-        top: -25,
-        right: -60,
-        bottom: -40,
-      },
-    },
-    fill: {
-      opacity: 0.2,
-    },
-    colors: ['#ff6150'],
-    series: [
-      {
-        name: "series1",
-        data: [70, 60, 82, 80, 60, 90, 70, 120, 50, 60, 0],
-      },
+    type: "datetime",
+    categories: [
+      "2018-09-19T00:00:00",
+      "2018-09-19T01:30:00",
+      "2018-09-19T02:30:00",
+      "2018-09-19T03:30:00",
+      "2018-09-19T04:30:00",
+      "2018-09-19T05:30:00",
+      "2018-09-19T06:30:00",
+      "2018-09-19T07:30:00",
+      "2018-09-19T08:30:00",
+      "2018-09-19T09:30:00",
+      "2018-09-19T10:30:00",
     ],
-    tooltip: {
-      x: {
-        format: "dd/MM/yy HH:mm",
+    labels: {
+      show: false,
+    },
+    axisBorder: {
+      show: false,
+    },
+  },
+  yaxis: {
+    labels: {
+      show: false,
+    },
+  },
+  grid: {
+    show: false,
+    padding: {
+      left: -10,
+      top: -25,
+      right: -60,
+      bottom: -40,
+    },
+  },
+  fill: {
+    opacity: 0.2,
+  },
+  colors: ["#35bfbf"],
+  series: [
+    {
+      data: [70, 60, 82, 80, 60, 90, 70, 120, 50, 60, 0],
+    },
+  ],
+  tooltip: {
+    x: {
+      format: "dd/MM/yy HH:mm",
+    },
+  },
+  responsive: [
+    {
+      breakpoint: 576,
+      options: {
+        chart: {
+          height: 100,
+        },
       },
     },
-    responsive: [
-      {
-        breakpoint: 576,
-        options: {
-          chart: {
-            height: 100,
-          }
-        }
-      }
-    ]
-  };
+  ],
+};
 
-export const productChart:ApexOptions = {
-    chart: {
-      toolbar: {
-        show: false,
-      },
-      height: 200,
-      type: "area",
+export const projectChart: ApexOptions = {
+  chart: {
+    toolbar: {
+      show: false,
     },
-    dataLabels: {
-      enabled: false,
-    },
-    stroke: {
-      width: 3,
-      curve: "smooth",
-    },
-    xaxis: {
+    height: 200,
+    type: "area",
+  },
+  dataLabels: {
+    enabled: false,
+  },
+  stroke: {
+    width: 3,
+    curve: "smooth",
+  },
+  xaxis: {
     //   show: false,
-      type: "datetime",
-      categories: [
-        "2018-09-19T00:00:00",
-        "2018-09-19T01:30:00",
-        "2018-09-19T02:30:00",
-        "2018-09-19T03:30:00",
-        "2018-09-19T04:30:00",
-        "2018-09-19T05:30:00",
-        "2018-09-19T06:30:00",
-        "2018-09-19T07:30:00",
-        "2018-09-19T08:30:00",
-        "2018-09-19T09:30:00",
-        "2018-09-19T10:30:00",
-      ],
-      labels: {
-        show: false,
-      },
-      axisBorder: {
-        show: false,
-      },
-    },
-    yaxis: {
-      show: false
-    },
-    grid: {
+    type: "datetime",
+    categories: [
+      "2018-09-19T00:00:00",
+      "2018-09-19T01:30:00",
+      "2018-09-19T02:30:00",
+      "2018-09-19T03:30:00",
+      "2018-09-19T04:30:00",
+      "2018-09-19T05:30:00",
+      "2018-09-19T06:30:00",
+      "2018-09-19T07:30:00",
+      "2018-09-19T08:30:00",
+      "2018-09-19T09:30:00",
+      "2018-09-19T10:30:00",
+    ],
+    labels: {
       show: false,
-      padding: {
-        left: -10,
-        top: -25,
-        right: -60,
-        bottom: -40,
+    },
+    axisBorder: {
+      show: false,
+    },
+  },
+  yaxis: {
+    show: false,
+  },
+  grid: {
+    show: false,
+    padding: {
+      left: -10,
+      top: -25,
+      right: -60,
+      bottom: -40,
+    },
+  },
+  fill: {
+    opacity: 0.2,
+  },
+  colors: ["#ff6150"],
+  series: [
+    {
+      name: "series1",
+      data: [70, 60, 82, 80, 60, 90, 70, 120, 50, 60, 0],
+    },
+  ],
+  tooltip: {
+    x: {
+      format: "dd/MM/yy HH:mm",
+    },
+  },
+  responsive: [
+    {
+      breakpoint: 576,
+      options: {
+        chart: {
+          height: 100,
+        },
       },
     },
-    fill: {
-      opacity: 0.2,
-    },
-    colors: ["#63d5be"],
-    series: [
-      {
-        data: [70, 60, 82, 80, 60, 90, 70, 120, 50, 60, 0],
-      },
-    ],
-    tooltip: {
-      x: {
-        format: "dd/MM/yy HH:mm",
-      },
-    },
-    responsive: [
-      {
-        breakpoint: 576,
-        options: {
-          chart: {
-            height: 100,
-          }
-        }
-      }
-    ]
-  };
+  ],
+};
 
-  export var monthlyHistoryChart:ApexOptions = {
-    series: [
-      {
-        name: "Profit",
-        data: [100, 50, 25, 50, 30, 50, 70],
-      },
-      {
-        name: "Revenue",
-        data: [70, 20, 55, 45, 35, 110, 85],
-      },
-      {
-        name: "Cash Flow",
-        data: [85, 55, 100, 35, 90, 60, 80],
-      },
+export const productChart: ApexOptions = {
+  chart: {
+    toolbar: {
+      show: false,
+    },
+    height: 200,
+    type: "area",
+  },
+  dataLabels: {
+    enabled: false,
+  },
+  stroke: {
+    width: 3,
+    curve: "smooth",
+  },
+  xaxis: {
+    //   show: false,
+    type: "datetime",
+    categories: [
+      "2018-09-19T00:00:00",
+      "2018-09-19T01:30:00",
+      "2018-09-19T02:30:00",
+      "2018-09-19T03:30:00",
+      "2018-09-19T04:30:00",
+      "2018-09-19T05:30:00",
+      "2018-09-19T06:30:00",
+      "2018-09-19T07:30:00",
+      "2018-09-19T08:30:00",
+      "2018-09-19T09:30:00",
+      "2018-09-19T10:30:00",
     ],
-    chart: {
-      type: "bar",
-      height: 380,
-      toolbar: {
-        show: false,
-      },
+    labels: {
+      show: false,
     },
-    plotOptions: {
-      bar: {
-        horizontal: false,
-        columnWidth: "30%",
-        // endingShape: "rounded",
-      },
+    axisBorder: {
+      show: false,
     },
-    dataLabels: {
-      enabled: false,
+  },
+  yaxis: {
+    show: false,
+  },
+  grid: {
+    show: false,
+    padding: {
+      left: -10,
+      top: -25,
+      right: -60,
+      bottom: -40,
     },
-    stroke: {
-      show: true,
-      width: 1,
-      colors: ["transparent"],
-      curve: "smooth",
-      lineCap: "butt",
+  },
+  fill: {
+    opacity: 0.2,
+  },
+  colors: ["#63d5be"],
+  series: [
+    {
+      data: [70, 60, 82, 80, 60, 90, 70, 120, 50, 60, 0],
     },
-    xaxis: {
-      categories: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"],
-      floating: false,
-      axisTicks: {
-        show: false,
-      },
-      axisBorder: {
-        color: "#C4C4C4",
-      },
+  ],
+  tooltip: {
+    x: {
+      format: "dd/MM/yy HH:mm",
     },
-    yaxis: {
-      title: {
-        text: "Dollars in thounand",
-        style: {
-          fontSize: "14px",
-          fontFamily: "Roboto, sans-serif",
-          fontWeight: 500,
+  },
+  responsive: [
+    {
+      breakpoint: 576,
+      options: {
+        chart: {
+          height: 100,
         },
       },
     },
-    colors: ["#ff6150", "#63d5be", "#33BFBF"],
-    fill: {
-      type: "gradient",
-      gradient: {
-        shade: "light",
-        type: "vertical",
-        shadeIntensity: 0.1,
-        inverseColors: false,
-        opacityFrom: 1,
-        opacityTo: 0.9,
-        stops: [0, 100],
-      },
-    },
-    tooltip: {
-      y: {
-        formatter: function (val) {
-          return "$ " + val + " thousands";
-        },
-      },
-    },
-    responsive: [
-      {
-        breakpoint: 576,
-        options: {
-          chart: {
-            height: 200,
-          }
-        }
-      }
-    ]
-  };
+  ],
+};
 
-  export var skillChart:ApexOptions = {
-    chart: {
-      type: "radialBar",
-      height: 375,
-      offsetY: -30,
-      offsetX: 20,
+export var monthlyHistoryChart: ApexOptions = {
+  series: [
+    {
+      name: "Profit",
+      data: [100, 50, 25, 50, 30, 50, 70],
     },
-    plotOptions: {
-      radialBar: {
-        // size: undefined,
-        inverseOrder: false,
-        hollow: {
-          margin: 10,
-          size: "30%",
-          background: "transparent",
+    {
+      name: "Revenue",
+      data: [70, 20, 55, 45, 35, 110, 85],
+    },
+    {
+      name: "Cash Flow",
+      data: [85, 55, 100, 35, 90, 60, 80],
+    },
+  ],
+  chart: {
+    type: "bar",
+    height: 380,
+    toolbar: {
+      show: false,
+    },
+  },
+  plotOptions: {
+    bar: {
+      horizontal: false,
+      columnWidth: "30%",
+      // endingShape: "rounded",
+    },
+  },
+  dataLabels: {
+    enabled: false,
+  },
+  stroke: {
+    show: true,
+    width: 1,
+    colors: ["transparent"],
+    curve: "smooth",
+    lineCap: "butt",
+  },
+  xaxis: {
+    categories: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"],
+    floating: false,
+    axisTicks: {
+      show: false,
+    },
+    axisBorder: {
+      color: "#C4C4C4",
+    },
+  },
+  yaxis: {
+    title: {
+      text: "Dollars in thounand",
+      style: {
+        fontSize: "14px",
+        fontFamily: "Roboto, sans-serif",
+        fontWeight: 500,
+      },
+    },
+  },
+  colors: ["#ff6150", "#63d5be", "#33BFBF"],
+  fill: {
+    type: "gradient",
+    gradient: {
+      shade: "light",
+      type: "vertical",
+      shadeIntensity: 0.1,
+      inverseColors: false,
+      opacityFrom: 1,
+      opacityTo: 0.9,
+      stops: [0, 100],
+    },
+  },
+  tooltip: {
+    y: {
+      formatter: function (val) {
+        return "$ " + val + " thousands";
+      },
+    },
+  },
+  responsive: [
+    {
+      breakpoint: 576,
+      options: {
+        chart: {
+          height: 200,
         },
-        track: {
-          show: true,
-          background: "#f2f2f2",
-          strokeWidth: "10%",
-          opacity: 1,
-          margin: 3,
-        },
       },
     },
-    series: [90, 63, 50],
-    labels: ["Skill 01", "Skill 02", "Skill 03"],
-    legend: {
-      show: true,
-      fontSize: "16px",
-      fontFamily: "Roboto, sans-serif",
-      fontWeight: 500,
-      labels: {
-        colors: "#2C323F",
+  ],
+};
+
+export var skillChart: ApexOptions = {
+  chart: {
+    type: "radialBar",
+    height: 375,
+    offsetY: -30,
+    offsetX: 20,
+  },
+  plotOptions: {
+    radialBar: {
+      // size: undefined,
+      inverseOrder: false,
+      hollow: {
+        margin: 10,
+        size: "30%",
+        background: "transparent",
       },
-      markers: {
-        width: 86,
-        height: 18,
-        radius: 3,
+      track: {
+        show: true,
+        background: "#f2f2f2",
+        strokeWidth: "10%",
+        opacity: 1,
+        margin: 3,
       },
     },
-    colors: ["#ff6150", "#33BFBF", "#63d5be"],
-    responsive: [{
+  },
+  series: [90, 63, 50],
+  labels: ["Skill 01", "Skill 02", "Skill 03"],
+  legend: {
+    show: true,
+    fontSize: "16px",
+    fontFamily: "Roboto, sans-serif",
+    fontWeight: 500,
+    labels: {
+      colors: "#2C323F",
+    },
+    markers: {
+      size: 0,
+      customHTML: () => `
+    <div style="
+      width: 86px;
+      height: 18px;
+      background: #4A90E2;
+      border-radius: 3px;
+    "></div>
+  `,
+    },
+  },
+  colors: ["#ff6150", "#33BFBF", "#63d5be"],
+  responsive: [
+    {
       breakpoint: 767,
       options: {
         title: {
@@ -375,10 +382,11 @@ export const productChart:ApexOptions = {
           },
         },
       },
-    }]
-  };
-  
-export const liveProductChart:ApexOptions= {
+    },
+  ],
+};
+
+export const liveProductChart: ApexOptions = {
   chart: {
     height: 320,
     type: "area",
@@ -474,7 +482,7 @@ export const liveProductChart:ApexOptions= {
     },
   },
 };
-export const turnOverChart:ApexOptions = {
+export const turnOverChart: ApexOptions = {
   chart: {
     toolbar: {
       show: false,
@@ -534,12 +542,11 @@ export const turnOverChart:ApexOptions = {
   },
 };
 
-export const cryptoAnnotationChart:ApexOptions = {
+export const cryptoAnnotationChart: ApexOptions = {
   series: [
     {
-      data:[ 8107, 8300, 8260, 8400, 8350, 8500, 8350]
-    }
-   
+      data: [8107, 8300, 8260, 8400, 8350, 8500, 8350],
+    },
   ],
   chart: {
     height: 400,
@@ -624,7 +631,7 @@ export const cryptoAnnotationChart:ApexOptions = {
     },
   },
   colors: [ConfigDB.data.color.secondary_color],
-  labels:  [
+  labels: [
     "13 Nov 2017",
     "14 Nov 2017",
     "15 Nov 2017",
@@ -636,19 +643,21 @@ export const cryptoAnnotationChart:ApexOptions = {
   xaxis: {
     type: "datetime",
   },
-  responsive: [{
-    breakpoint: 576,
-    options: {
-      title: {
-        style: {
-          fontSize: "16px",
+  responsive: [
+    {
+      breakpoint: 576,
+      options: {
+        title: {
+          style: {
+            fontSize: "16px",
+          },
         },
       },
     },
-  }]
+  ],
 };
 
-export const cryptoCurrencyPrice:ApexOptions = {
+export const cryptoCurrencyPrice: ApexOptions = {
   chart: {
     toolbar: {
       show: false,
@@ -710,8 +719,8 @@ export const cryptoCurrencyPrice:ApexOptions = {
     {
       data: [
         20, 120, 15, 100, 120, 60, 150, 70, 100, 80, 105, 20, 70, 60, 10, 12,
-        10, 130, 60, 80, 40, 140, 110, 150, 30, 75, 20, 45, 15, 130, 10, 30,
-        15, 110, 65, 130, 0,
+        10, 130, 60, 80, 40, 140, 110, 150, 30, 75, 20, 45, 15, 130, 10, 30, 15,
+        110, 65, 130, 0,
       ],
     },
   ],
@@ -726,13 +735,13 @@ export const cryptoCurrencyPrice:ApexOptions = {
       options: {
         chart: {
           height: 200,
-        }
-      }
-    }
-  ]
+        },
+      },
+    },
+  ],
 };
 
-export var stockMarketChart:ApexOptions = {
+export var stockMarketChart: ApexOptions = {
   series: [
     {
       name: "line",
@@ -1006,25 +1015,25 @@ export var stockMarketChart:ApexOptions = {
   plotOptions: {
     candlestick: {
       colors: {
-        upward: '#33BFBF',
-        downward: '#ff6150'
-      }
-    }
+        upward: "#33BFBF",
+        downward: "#ff6150",
+      },
+    },
   },
   legend: {
     show: false,
   },
   fill: {
-    type: 'gradient',
+    type: "gradient",
     gradient: {
-      shade: 'dark',
-      type: 'vertical',
+      shade: "dark",
+      type: "vertical",
       shadeIntensity: 0.2,
       inverseColors: true,
       opacityFrom: 1,
       opacityTo: 1,
       stops: [0, 100],
-    }
+    },
   },
   chart: {
     height: 450,
@@ -1034,7 +1043,7 @@ export var stockMarketChart:ApexOptions = {
     },
   },
   stroke: {
-    curve: 'smooth',
+    curve: "smooth",
     width: [1, 1],
   },
   tooltip: {
@@ -1055,20 +1064,20 @@ export var stockMarketChart:ApexOptions = {
   xaxis: {
     type: "datetime",
     axisBorder: {
-      show: false
+      show: false,
     },
     axisTicks: {
-      show: false
-    }
+      show: false,
+    },
   },
   grid: {
     strokeDashArray: 3,
-    position: 'back',
+    position: "back",
     row: {
-      opacity: 0.5
+      opacity: 0.5,
     },
     column: {
-      opacity: 0.5
+      opacity: 0.5,
     },
   },
   responsive: [
@@ -1077,14 +1086,14 @@ export var stockMarketChart:ApexOptions = {
       options: {
         chart: {
           height: 250,
-        }
-      }
-    }
-  ]
+        },
+      },
+    },
+  ],
 };
 
 var trigoStrength = 3;
-function generateMinuteWiseTimeSeries(baseval:any, count:any, yrange:any) {
+function generateMinuteWiseTimeSeries(baseval: any, count: any, yrange: any) {
   var i = 0;
   var series = [];
   while (i < count) {
@@ -1101,10 +1110,10 @@ function generateMinuteWiseTimeSeries(baseval:any, count:any, yrange:any) {
   }
   return series;
 }
-export const financeChart:ApexOptions = {
+export const financeChart: ApexOptions = {
   chart: {
     height: 350,
-    type: 'line',
+    type: "line",
     toolbar: {
       show: false,
     },
@@ -1121,7 +1130,7 @@ export const financeChart:ApexOptions = {
   series: [
     {
       name: "Load Average",
-      type: 'column',
+      type: "column",
       data: generateMinuteWiseTimeSeries(
         new Date("12/12/2016 00:20:00").getTime(),
         12,
@@ -1132,10 +1141,10 @@ export const financeChart:ApexOptions = {
       ),
     },
     {
-      name: 'Social Media',
-      type: 'line',
-      data: [23, 42, 35, 27, 43, 22, 17, 31, 22, 22, 12, 16]
-    }
+      name: "Social Media",
+      type: "line",
+      data: [23, 42, 35, 27, 43, 22, 17, 31, 22, 22, 12, 16],
+    },
   ],
   title: {
     text: "Average",
@@ -1177,39 +1186,45 @@ export const financeChart:ApexOptions = {
   legend: {
     show: true,
   },
-  responsive: [{
-    breakpoint: 1366,
-    options: {
-      subtitle: {
-        style: {
-          fontSize: "18px",
+  responsive: [
+    {
+      breakpoint: 1366,
+      options: {
+        subtitle: {
+          style: {
+            fontSize: "18px",
+          },
         },
       },
     },
-  },
-  {
-    breakpoint: 992,
-    options: {
-      subtitle: {
-        style: {
-          fontSize: "16px",
+    {
+      breakpoint: 992,
+      options: {
+        subtitle: {
+          style: {
+            fontSize: "16px",
+          },
         },
       },
     },
-  }
-  ]
+  ],
 };
 
-export var orderStatusChart:ApexOptions = {
+export var orderStatusChart: ApexOptions = {
   chart: {
     height: 350,
     type: "line",
     stacked: true,
     animations: {
       enabled: true,
-      easing: "linear",
+      speed: 800,
+      animateGradually: {
+        enabled: true,
+        delay: 150,
+      },
       dynamicAnimation: {
-        speed: 1000,
+        enabled: true,
+        speed: 350,
       },
     },
     events: {
@@ -1229,7 +1244,6 @@ export var orderStatusChart:ApexOptions = {
                   data: newData2,
                 },
               ],
-              
             },
             false,
             false
@@ -1260,7 +1274,7 @@ export var orderStatusChart:ApexOptions = {
   fill: {
     opacity: 0.9,
   },
-  colors: [ConfigDB.data.color.primary_color, "#ff6150" ],
+  colors: [ConfigDB.data.color.primary_color, "#ff6150"],
   markers: {
     size: 0,
     hover: {
@@ -1316,30 +1330,31 @@ export var orderStatusChart:ApexOptions = {
     offsetY: -33,
     offsetX: 60,
   },
-  responsive: [{
-    breakpoint: 1366,
-    options: {
-      title: {
-        style: {
-          fontSize: "18px",
+  responsive: [
+    {
+      breakpoint: 1366,
+      options: {
+        title: {
+          style: {
+            fontSize: "18px",
+          },
         },
       },
     },
-  },
-  {
-    breakpoint: 992,
-    options: {
-      title: {
-        style: {
-          fontSize: "16px",
+    {
+      breakpoint: 992,
+      options: {
+        title: {
+          style: {
+            fontSize: "16px",
+          },
         },
       },
     },
-  }
-  ]
+  ],
 };
 
-export var monthlySalesChart:ApexOptions = {
+export var monthlySalesChart: ApexOptions = {
   fill: {
     type: "gradient",
     gradient: {
@@ -1385,7 +1400,7 @@ export var monthlySalesChart:ApexOptions = {
   labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
 };
 
-function generateData(baseval:any, count:any, yrange:any) {
+function generateData(baseval: any, count: any, yrange: any) {
   var i = 0;
   var series = [];
   while (i < count) {
@@ -1400,7 +1415,7 @@ function generateData(baseval:any, count:any, yrange:any) {
   }
   return series;
 }
-export var usesChart:ApexOptions = {
+export var usesChart: ApexOptions = {
   chart: {
     toolbar: {
       show: false,
@@ -1453,12 +1468,7 @@ export var usesChart:ApexOptions = {
       stops: [0, 100],
     },
   },
-  colors: [
-    ConfigDB.data.color.primary_color,
-    "#ff6150",
-    "#51bb25",
-    "#544fff",
-  ],
+  colors: [ConfigDB.data.color.primary_color, "#ff6150", "#51bb25", "#544fff"],
   title: {
     text: "Simple Bubble Chart",
   },
@@ -1471,7 +1481,7 @@ export var usesChart:ApexOptions = {
   },
 };
 
-export const progressChart1:ApexOptions = {
+export const progressChart1: ApexOptions = {
   chart: {
     height: 70,
     type: "bar",
@@ -1529,19 +1539,21 @@ export const progressChart1:ApexOptions = {
   yaxis: {
     max: 100,
   },
-  responsive: [{
-    breakpoint: 767,
-    options: {
-      title: {
-        style: {
-          fontSize: "16px",
+  responsive: [
+    {
+      breakpoint: 767,
+      options: {
+        title: {
+          style: {
+            fontSize: "16px",
+          },
         },
       },
     },
-  }]
+  ],
 };
 
-export var progressChart2:ApexOptions = {
+export var progressChart2: ApexOptions = {
   chart: {
     height: 70,
     type: "bar",
@@ -1608,19 +1620,21 @@ export var progressChart2:ApexOptions = {
       gradientToColors: ["#f73164"],
     },
   },
-  responsive: [{
-    breakpoint: 767,
-    options: {
-      title: {
-        style: {
-          fontSize: "16px",
+  responsive: [
+    {
+      breakpoint: 767,
+      options: {
+        title: {
+          style: {
+            fontSize: "16px",
+          },
         },
       },
     },
-  }]
+  ],
 };
 
-export var progressChart3:ApexOptions = {
+export var progressChart3: ApexOptions = {
   chart: {
     height: 70,
     type: "bar",
@@ -1686,19 +1700,21 @@ export var progressChart3:ApexOptions = {
   yaxis: {
     max: 100,
   },
-  responsive: [{
-    breakpoint: 767,
-    options: {
-      title: {
-        style: {
-          fontSize: "16px",
+  responsive: [
+    {
+      breakpoint: 767,
+      options: {
+        title: {
+          style: {
+            fontSize: "16px",
+          },
         },
       },
     },
-  }]
+  ],
 };
 
-export var progressChart4:ApexOptions = {
+export var progressChart4: ApexOptions = {
   chart: {
     height: 70,
     type: "bar",
@@ -1764,19 +1780,21 @@ export var progressChart4:ApexOptions = {
   yaxis: {
     max: 100,
   },
-  responsive: [{
-    breakpoint: 767,
-    options: {
-      title: {
-        style: {
-          fontSize: "16px",
+  responsive: [
+    {
+      breakpoint: 767,
+      options: {
+        title: {
+          style: {
+            fontSize: "16px",
+          },
         },
       },
     },
-  }]
+  ],
 };
 
-export var progressChart5:ApexOptions = {
+export var progressChart5: ApexOptions = {
   chart: {
     height: 70,
     type: "bar",
@@ -1842,14 +1860,16 @@ export var progressChart5:ApexOptions = {
   yaxis: {
     max: 100,
   },
-  responsive: [{
-    breakpoint: 767,
-    options: {
-      title: {
-        style: {
-          fontSize: "16px",
+  responsive: [
+    {
+      breakpoint: 767,
+      options: {
+        title: {
+          style: {
+            fontSize: "16px",
+          },
         },
       },
     },
-  }]
+  ],
 };

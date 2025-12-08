@@ -186,7 +186,7 @@ const ControlRoomAnalytics = () => {
             fillColor: "#ffffff",
             strokeColor: "#1F2F3E",
             strokeWidth: 2,
-            radius: 1,
+
             cssClass: "apexcharts-custom-class",
           },
         },
@@ -296,7 +296,7 @@ const ControlRoomAnalytics = () => {
             fillColor: "#ffffff",
             strokeColor: "#1F2F3E",
             strokeWidth: 2,
-            radius: 1,
+
             cssClass: "apexcharts-custom-class",
           },
         },

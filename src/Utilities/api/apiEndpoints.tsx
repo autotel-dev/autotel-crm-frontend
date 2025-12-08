@@ -280,6 +280,10 @@ export const GET_COMPLAINT_CENTER_STATISTICS = `${API_BASE_URL}/complaint-center
 export const GET_NR_DEVICES = `${API_BASE_URL}/complaint-center/get-nr-devices`;
 
 // Company -> Modules - ControlRoom
+
+export const GET_ALERT_EVENTS_V2 = `${API_BASE_URL}/alert-events/get-live-alerts`;
+export const ASSIGN_ALERT_EVENT_TO_ME_V2 = `${API_BASE_URL}/alert-events/assign-alert-event-to-me`;
+export const GET_ALERT_EVENT_BY_ID_v2 = `${API_BASE_URL}/alert-events/get-alert-event-by-id`;
 export const GET_ALERT_EVENTS = `${API_BASE_URL}/company/alert-events`;
 export const ASSIGN_ALERT_EVENT_TO_ME = `${API_BASE_URL}/company/assign-alert-event-to-me`;
 export const GET_ALL_ASSIGNED_ALERT_EVENTS = `${API_BASE_URL}/company/get-all-assigned-events`;
@@ -295,6 +299,7 @@ export const VERIFY_VEHICLE_BLOCK_STATUS = `${API_BASE_URL}/control-room/verify-
 export const VERIFY_AND_UPDATE_ALL_VEHICLE_BLOCK_STATUS = `${API_BASE_URL}/control-room/verify-and-update-all-block-status`;
 export const ADD_PRE_INFO_FOR_DEVICE = `${API_BASE_URL}/control-room/add-pre-info`;
 export const GET_ALL_VALID_PRE_INFOS = `${API_BASE_URL}/control-room/get-all-pre-infos`;
+export const GET_ALL_VEHICLES_DROPDOWN_CONTROL_ROOM = `${API_BASE_URL}/control-room/get-all-vehicles-dropdown`;
 export const GET_ALL_MERGED_ALERT_EVENTS = `${API_BASE_URL}/control-room/get-all-merged-alert-events-of-device`;
 
 // Company -> Modules - SAIO-Central - Customer

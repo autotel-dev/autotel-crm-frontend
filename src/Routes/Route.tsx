@@ -9,6 +9,7 @@ import CompanyTasks from "../Pages/Company/Tasks/Tasks";
 import CompanyUsers from "../Pages/Company/Users/Users";
 import Monitoring from "../Pages/Company/Modules/Monitoring/Monitoring";
 import ControlRoom from "../Pages/Company/Modules/ControlRoom/ControlRoom";
+import ControlRoomV2 from "../Pages/Company/Modules/ControlRoom copy/ControlRoomV2";
 import TicketDetails from "../Pages/Common/Support/TicketDetails";
 import Account from "../Pages/Common/User/Account/Account";
 import Settings from "../Pages/Common/User/Settings/Settings";
@@ -470,6 +471,14 @@ const routes = [
   },
 
   {
+    path: `${process.env.PUBLIC_URL}/company/modules/trip-management`,
+    Component: <MonitoringLatest />,
+    isProtected: true,
+    allowedUserRoles: [ROLES.COMPANY],
+    permissionValue: "Monitoring",
+  },
+
+  {
     path: `${process.env.PUBLIC_URL}/company/modules/monitoring-for-single-vehicle`,
     Component: <MonitoringForSingleVehicle />,
     isProtected: true,
@@ -483,9 +492,17 @@ const routes = [
     allowedUserRoles: [ROLES.COMPANY],
     permissionValue: "Monitoring",
   },
+  // {
+  //   path: `${process.env.PUBLIC_URL}/company/modules/control-room`,
+  //   Component: <ControlRoom />,
+  //   isProtected: true,
+  //   allowedUserRoles: [ROLES.COMPANY],
+  //   permissionValue: "Control Room",
+  // },
+
   {
     path: `${process.env.PUBLIC_URL}/company/modules/control-room`,
-    Component: <ControlRoom />,
+    Component: <ControlRoomV2 />,
     isProtected: true,
     allowedUserRoles: [ROLES.COMPANY],
     permissionValue: "Control Room",
@@ -571,9 +588,17 @@ const routes = [
     allowedUserRoles: [ROLES.OPERATOR],
     permissionValue: "Monitoring",
   },
+  // {
+  //   path: `${process.env.PUBLIC_URL}/operator/modules/control-room`,
+  //   Component: <ControlRoom />,
+  //   isProtected: true,
+  //   allowedUserRoles: [ROLES.OPERATOR],
+  //   permissionValue: "Control Room",
+  // },
+
   {
     path: `${process.env.PUBLIC_URL}/operator/modules/control-room`,
-    Component: <ControlRoom />,
+    Component: <ControlRoomV2 />,
     isProtected: true,
     allowedUserRoles: [ROLES.OPERATOR],
     permissionValue: "Control Room",

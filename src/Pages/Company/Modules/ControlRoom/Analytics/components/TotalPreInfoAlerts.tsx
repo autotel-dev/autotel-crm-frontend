@@ -30,7 +30,7 @@ const TotalPreInfoAlerts: React.FC<PropsTypes> = ({
     "Device Name",
     "User",
     "Company",
-    "server",
+    // "server",
     "Pre Info Message",
     "From Date",
     "To Date",
@@ -181,12 +181,12 @@ const TotalPreInfoAlerts: React.FC<PropsTypes> = ({
                             <td style={{ width: "10%" }}>
                               {data.addedByUser.fullName}
                             </td>
-                            <td style={{ width: "10%" }}>
+                            {/* <td style={{ width: "10%" }}>
                               {data?.company?.fullName}
-                            </td>
-                            <td style={{ width: "15%" }}>
+                            </td> */}
+                            {/* <td style={{ width: "15%" }}>
                               {data?.server?.companyName}
-                            </td>
+                            </td> */}
                             <td style={{ width: "15%" }}>
                               {data?.preInfoMessage}
                             </td>

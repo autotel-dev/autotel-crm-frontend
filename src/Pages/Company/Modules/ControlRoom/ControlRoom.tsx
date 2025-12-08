@@ -86,6 +86,7 @@ const ControlRoom = () => {
     dispatch(setLiveAlerts([]));
     dispatch(setLiveAlertsData(null));
     dispatch(setCompletedAlerts([]));
+
     getAll({ url: `${GET_ALERT_EVENTS}?pageNo=1` }).then((data: any) => {
       // // console.log("api call --- >", data);
       // // console.log("data,data");
