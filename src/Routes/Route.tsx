@@ -61,6 +61,7 @@ import Playback from "../Pages/Company/Modules/Playback/Playback";
 import AlertManagement from "../Pages/Company/AlertManagement/AlertManagement";
 import TripReports from "../Pages/Company/Modules/Monitoring/components/Reports/TripReports";
 import MonitoringLatest from "../Pages/Company/Modules/MonitoringLatest/MonetoringLatest";
+import TripManagementLayout from "../Pages/Company/Modules/TripManagement/TripManagementLayout";
 
 const routes = [
   // dashboard routes
@@ -472,10 +473,11 @@ const routes = [
 
   {
     path: `${process.env.PUBLIC_URL}/company/modules/trip-management`,
-    Component: <MonitoringLatest />,
+    Component: <TripManagementLayout />,
     isProtected: true,
     allowedUserRoles: [ROLES.COMPANY],
     permissionValue: "Monitoring",
+    isLayout: true,
   },
 
   {

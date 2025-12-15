@@ -40,6 +40,12 @@ import CreateNewCustomerLedger from "../Pages/Company/Modules/SAIO/components/Sa
 import VendorLedgerTable from "../Pages/Company/Modules/SAIO/components/Purchases/components/VendorLedger/VendorLedgerList";
 import CreateNewVendorLedger from "../Pages/Company/Modules/SAIO/components/Purchases/components/VendorLedger/CreateNewMakePayment/CreateNewVendorLedger";
 import CompanyLedgerTable from "../Pages/Company/Modules/SAIO/components/Accounts/components/AccountingLedgerReport/CompanyLedgerReport";
+import TripManagementDashboard from "../Pages/Company/Modules/TripManagement/components/Dashboard/Dashboard";
+import TripManagementPlanning from "../Pages/Company/Modules/TripManagement/components/Planning/Planning";
+import TripManagementAlerts from "../Pages/Company/Modules/TripManagement/components/Alerts/Alerts";
+import TripManagementReports from "../Pages/Company/Modules/TripManagement/components/Reports/Reports";
+import Trips from "../Pages/Company/Modules/TripManagement/components/Trips/Trips";
+import TripsList from "../Pages/Company/Modules/TripManagement/components/Trips/TripsList";
 
 const LayoutRoutes = () => {
   return (
@@ -73,15 +79,53 @@ const LayoutRoutes = () => {
                 <Route element={<Layout />} key={i}>
                   {isLayout == true ? (
                     <Route path={path} element={Component} key={i}>
-                      {/* <Route path={`${path}/sales`} element={<Sales />} /> */}
-                      <Route
-                        path={path}
-                        element={<Navigate to={`${path}/dashboard`} replace />}
-                      />
-                      <Route
-                        path={`${path}/dashboard`}
-                        element={<SalesDashboard />}
-                      />
+                      {/* SAIO Central Routes */}
+                      {path.includes('/saio-central') && (
+                        <>
+                          <Route
+                            path={path}
+                            element={<Navigate to={`${path}/dashboard`} replace />}
+                          />
+                          <Route
+                            path={`${path}/dashboard`}
+                            element={<SalesDashboard />}
+                          />
+                        </>
+                      )}
+                      {/* Trip Management Routes */}
+                      {path.includes('/trip-management') && (
+                        <>
+                          <Route
+                            path={path}
+                            element={<Navigate to={`${path}/dashboard`} replace />}
+                          />
+                          <Route
+                            path={`${path}/dashboard`}
+                            element={<TripManagementDashboard />}
+                          />
+                          <Route path={`${path}/trips`} element={<Trips />}>
+                            <Route
+                              path={`${path}/trips`}
+                              element={<TripsList />}
+                            />
+                          </Route>
+                          <Route
+                            path={`${path}/planning`}
+                            element={<TripManagementPlanning />}
+                          />
+                          <Route
+                            path={`${path}/alerts`}
+                            element={<TripManagementAlerts />}
+                          />
+                          <Route
+                            path={`${path}/reports`}
+                            element={<TripManagementReports />}
+                          />
+                        </>
+                      )}
+                      {/* SAIO Sales Routes */}
+                      {path.includes('/saio-central') && (
+                      <>
                       <Route path={`${path}/sales`} element={<Sales />}>
                         <Route
                           path={`${path}/sales`}
@@ -146,7 +190,6 @@ const LayoutRoutes = () => {
                           element={<CreateNewCustomerLedger />}
                         />
                       </Route>
-                      {/* Purchases */}
                       <Route path={`${path}/purchases`} element={<Purchases />}>
                         <Route
                           path={`${path}/purchases`}
@@ -195,8 +238,6 @@ const LayoutRoutes = () => {
                           element={<CreateNewVendorLedger />}
                         />
                       </Route>
-
-                      {/* Accounts */}
                       <Route path={`${path}/accounts`} element={<Accounts />}>
                         <Route
                           path={`${path}/accounts`}
@@ -297,6 +338,8 @@ const LayoutRoutes = () => {
                           element={<CreateNewActivity />}
                         />
                       </Route>
+                      </>
+                      )}
                     </Route>
                   ) : (
                     <Route path={path} element={Component} />
