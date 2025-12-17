@@ -482,3 +482,11 @@ export const GET_ALERT_RULES = `${API_BASE_URL}/alert-events/rule/get-all-rules`
 export const DELETE_ALERT_RULE = `${API_BASE_URL}/alert-events/rule/delete-rule`;
 export const UPDATE_ALERT_RULE_ACTIVATION_STATUS = `${API_BASE_URL}/alert-events/rule/update-rule-activation-status`;
 export const GET_ALL_VEHICLES_DROPDOWN_FOR_ALERT = `${API_BASE_URL}/alert-events/rule/get-all-vehicles-dropdown`;
+
+// Trip Management
+
+export const CREATE_TRIP_WAYPOINT = `${API_BASE_URL}/trip/way-point/create-waypoint`;
+export const GET_ALL_TRIP_WAYPOINTS = `${API_BASE_URL}/trip/way-point/get-all-waypoints`;
+export const UPDATE_TRIP_WAYPOINT = `${API_BASE_URL}/trip/way-point/update-waypoint`;
+export const UPDATE_TRIP_WAYPOINT_ACTIVATION_STATUS = `${API_BASE_URL}/trip/way-point/update-waypoint-activation-status`;
+export const GET_ALL_TRIP_WAYPOINTS_DROPDOWN = `${API_BASE_URL}/trip/way-point/get-all-waypoints-dropdown`;

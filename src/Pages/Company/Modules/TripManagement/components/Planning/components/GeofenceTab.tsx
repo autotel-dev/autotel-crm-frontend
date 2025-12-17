@@ -2,11 +2,9 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import GoogleMapTrip from "./GoogleMapTrip/GoogleMapTrip";
 import Swal from "sweetalert2";
-import { getAll, create, update } from "../../../../../../../Utilities/api";
+import { getAll } from "../../../../../../../Utilities/api";
 import {
-  GET_ALL_GEOFENCES,
-  CREATE_GEOFENCE,
-  UPDATE_GEOFENCE,
+  GET_ALL_TRIP_WAYPOINTS,
 } from "../../../../../../../Utilities/api/apiEndpoints";
 import {
   setType,
@@ -69,7 +67,7 @@ const GeofenceTab = () => {
 
   const fetchGeofences = () => {
     setLoading(true);
-    getAll({ url: GET_ALL_GEOFENCES })
+    getAll({ url: GET_ALL_TRIP_WAYPOINTS })
       .then((data: any) => {
         if (data === undefined) {
           Swal.fire({
@@ -84,20 +82,20 @@ const GeofenceTab = () => {
         }
 
         if (data.success) {
-          // Filter only ungrouped geofences and map with checked/edited flags
-          const ungroupedGeofences = data.data.map((item: any) => ({
+          // Map all trip waypoints with checked/edited flags
+          const waypoints = data.data.map((item: any) => ({
             ...item,
             checked: false,
             edited: false,
           }));
-          setGeofences(ungroupedGeofences);
+          setGeofences(waypoints);
         } else {
           setGeofences([]);
         }
         setLoading(false);
       })
       .catch((error) => {
-        console.error("Error fetching geofences:", error);
+        console.error("Error fetching waypoints:", error);
         setGeofences([]);
         setLoading(false);
       });

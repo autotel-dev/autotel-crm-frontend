@@ -9,15 +9,15 @@ import {
   setRectangle,
   setType,
 } from "../../../../../../../../ReaduxToolkit/Reducer/GeofenceSlice";
-import { create, update } from "../../../../../../../../Utilities/api";
+import { create, update, patch } from "../../../../../../../../Utilities/api";
 import Swal from "sweetalert2";
 import {
-  CREATE_GEOFENCE,
-  UPDATE_GEOFENCE,
-  IMPORT_GEOFENCE,
+  CREATE_TRIP_WAYPOINT,
+  UPDATE_TRIP_WAYPOINT,
+  UPDATE_TRIP_WAYPOINT_ACTIVATION_STATUS,
 } from "../../../../../../../../Utilities/api/apiEndpoints";
 import { FaRegEdit } from "react-icons/fa";
-import { MdDelete } from "react-icons/md";
+import { MdToggleOn, MdToggleOff } from "react-icons/md";
 
 interface PropTypes {
   isNewGeofence: boolean;
@@ -45,7 +45,7 @@ const GeofencesListTrip = ({
     (state: any) => state.geofence
   );
 
-  const [formData, setFormData] = useState({ title: "" });
+  const [formData, setFormData] = useState({ title: "", waypointType: "" });
   const [geofenceType, setGeofenceType] = useState("");
   const [editedGeofenceId, setEditedGeofenceId] = useState("");
   const [searchValue, setSearchValue] = useState("");
@@ -55,6 +55,7 @@ const GeofencesListTrip = ({
 
   const typeList = [
     { label: "Circle", value: "circle" },
+    { label: "Rectangle", value: "rectangle" },
     { label: "Polygon", value: "polygon" },
   ];
 
@@ -75,7 +76,7 @@ const GeofencesListTrip = ({
   };
 
   const createGeofence = async () => {
-    if (formData.title !== "" && type !== "" && geofenceType !== "") {
+    if (formData.title !== "" && formData.waypointType !== "" && type !== "" && geofenceType !== "") {
       const url = isEditGeofence
         ? update(
             {
@@ -84,12 +85,12 @@ const GeofencesListTrip = ({
               geofencePositions:
                 geofenceType === "circle"
                   ? circle
-                  : geofenceType === "polygon"
-                  ? { bounds: polygon }
-                  : rectangle,
+                  : geofenceType === "rectangle"
+                  ? rectangle
+                  : geofenceType === "polygon" && { bounds: polygon },
             },
             {
-              url: `${UPDATE_GEOFENCE}/${editedGeofenceId}`,
+              url: `${UPDATE_TRIP_WAYPOINT}/${editedGeofenceId}`,
             }
           )
         : create(
@@ -100,12 +101,12 @@ const GeofencesListTrip = ({
               geofencePositions:
                 geofenceType === "circle"
                   ? circle
-                  : geofenceType === "polygon"
-                  ? { bounds: polygon }
-                  : rectangle,
+                  : geofenceType === "rectangle"
+                  ? rectangle
+                  : geofenceType === "polygon" && { bounds: polygon },
             },
             {
-              url: CREATE_GEOFENCE,
+              url: CREATE_TRIP_WAYPOINT,
             }
           );
 
@@ -129,20 +130,29 @@ const GeofencesListTrip = ({
             if (data.success) {
               setIsNewGeofence(false);
               setIsEditGeofence(false);
-              setFormData({ title: "" });
+              setFormData({ title: "", waypointType: "" });
               setGeofenceType("");
               setEditedGeofenceId("");
               dispatch(setType(null));
+              dispatch(setCircle(null));
+              dispatch(setRectangle(null));
+              dispatch(setPolygon(null));
               fetchGeofences();
+              Swal.fire({
+                text: isEditGeofence ? "Waypoint updated successfully" : "Waypoint created successfully",
+                icon: "success",
+                timer: 2000,
+                showConfirmButton: false,
+              });
             }
           }
         });
       } catch (error: any) {
-        console.error("Error creating geofence:", error);
+        console.error("Error creating waypoint:", error);
       }
     } else {
       Swal.fire({
-        text: "Please fill all the required fields",
+        text: "Please fill all the required fields (Title, Waypoint Type, and draw a shape on the map)",
         icon: "info",
         timer: 2000,
         showCancelButton: false,
@@ -154,10 +164,13 @@ const GeofencesListTrip = ({
   const handleCancel = () => {
     setIsNewGeofence(false);
     setIsEditGeofence(false);
-    setFormData({ title: "" });
+    setFormData({ title: "", waypointType: "" });
     setGeofenceType("");
     setEditedGeofenceId("");
     dispatch(setType(null));
+    dispatch(setCircle(null));
+    dispatch(setRectangle(null));
+    dispatch(setPolygon(null));
     handleDeselectAll();
   };
 
@@ -228,17 +241,20 @@ const GeofencesListTrip = ({
       const updateFormData = {
         ...formData,
         title: selectedGeofence.title,
+        waypointType: selectedGeofence.waypointType || "",
       };
       setGeofenceType(selectedGeofence.type);
       setEditedGeofenceId(selectedGeofence._id);
-      dispatch(setCircle(selectedGeofence.geofencePositions));
-      dispatch(setRectangle(selectedGeofence.geofencePositions));
-      dispatch(
-        setPolygon(
-          selectedGeofence.geofencePositions?.bounds ||
-            selectedGeofence.geofencePositions
-        )
-      );
+
+      // Load shape data based on type
+      if (selectedGeofence.type === "circle") {
+        dispatch(setCircle(selectedGeofence.geofencePositions));
+      } else if (selectedGeofence.type === "rectangle") {
+        dispatch(setRectangle(selectedGeofence.geofencePositions));
+      } else if (selectedGeofence.type === "polygon") {
+        dispatch(setPolygon(selectedGeofence.geofencePositions?.bounds || selectedGeofence.geofencePositions));
+      }
+
       setFormData(updateFormData);
       setIsEditGeofence(true);
       setIsNewGeofence(false);
@@ -246,95 +262,46 @@ const GeofencesListTrip = ({
       setIsEditGeofence(false);
       setIsNewGeofence(false);
       dispatch(setType(null));
+      dispatch(setCircle(null));
+      dispatch(setRectangle(null));
+      dispatch(setPolygon(null));
     }
   };
 
-  const handleDeleteGeofence = (e: any, selectedGeofence: any) => {
+  const handleToggleStatus = async (e: any, selectedGeofence: any) => {
     e.preventDefault();
     e.stopPropagation();
 
-    Swal.fire({
-      title: "Are you sure?",
-      text: `Do you want to delete "${selectedGeofence.title}"?`,
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "green",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, delete it!",
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        try {
-          // Since there's no DELETE_GEOFENCE endpoint, we'll update the geofence to set isActive to false
-          const deleteResponse: any = await update(
-            { isActive: false },
-            { url: `${UPDATE_GEOFENCE}/${selectedGeofence._id}` }
-          );
+    try {
+      const newStatus = !selectedGeofence.isActive;
+      const statusResponse: any = await patch(
+        { isActive: newStatus },
+        { url: `${UPDATE_TRIP_WAYPOINT_ACTIVATION_STATUS}/${selectedGeofence._id}` }
+      );
 
-          if (deleteResponse.success) {
-            Swal.fire({
-              title: "Deleted!",
-              text: "Geofence has been deleted.",
-              icon: "success",
-              timer: 2000,
-              showConfirmButton: false,
-            });
-            fetchGeofences();
-          } else {
-            Swal.fire({
-              text: `${deleteResponse.message}`,
-              icon: "error",
-              timer: 2000,
-              showConfirmButton: false,
-            });
-          }
-        } catch (error: any) {
-          Swal.fire({
-            text: "Failed to delete geofence",
-            icon: "error",
-            timer: 2000,
-            showConfirmButton: false,
-          });
-        }
-      }
-    });
-  };
-
-  const handleImportGeofence = async (e: any) => {
-    const checked = e.target.checked;
-    if (checked) {
-      setIsImporting(true);
-      try {
-        await create({}, { url: IMPORT_GEOFENCE }).then((data: any) => {
-          if (data.success) {
-            Swal.fire({
-              text: "Geofences imported successfully",
-              icon: "success",
-              timer: 2000,
-              showConfirmButton: false,
-            });
-            fetchGeofences();
-          } else {
-            Swal.fire({
-              text: `${data.message}`,
-              icon: "error",
-              timer: 2000,
-              showConfirmButton: false,
-            });
-          }
-          setIsImporting(false);
-          // Reset the checkbox after import
-          e.target.checked = false;
-        });
-      } catch (error: any) {
+      if (statusResponse.success) {
         Swal.fire({
-          text: `${error.message}`,
+          text: `Waypoint ${newStatus ? "activated" : "deactivated"} successfully`,
+          icon: "success",
+          timer: 2000,
+          showConfirmButton: false,
+        });
+        fetchGeofences();
+      } else {
+        Swal.fire({
+          text: `${statusResponse.message}`,
           icon: "error",
           timer: 2000,
           showConfirmButton: false,
         });
-        setIsImporting(false);
-        e.target.checked = false;
       }
+    } catch (error: any) {
+      Swal.fire({
+        text: "Failed to update waypoint status",
+        icon: "error",
+        timer: 2000,
+        showConfirmButton: false,
+      });
     }
   };
 
@@ -368,6 +335,22 @@ const GeofencesListTrip = ({
                 name="title"
                 value={formData.title}
                 onChange={onChangeHandler}
+              />
+            </div>
+            <div
+              style={{
+                margin: "0px 10px",
+              }}
+            >
+              <P>Waypoint Type</P>
+              <input
+                className="form-control"
+                type="text"
+                placeholder="Enter Waypoint Type"
+                name="waypointType"
+                value={formData.waypointType}
+                onChange={onChangeHandler}
+                style={{ marginBottom: "15px" }}
               />
             </div>
             <div
@@ -615,7 +598,7 @@ const GeofencesListTrip = ({
                     </span>
                   </div>
                 </div>
-                <div style={{ display: "flex", gap: "5px" }}>
+                <div style={{ display: "flex", gap: "5px", alignItems: "center" }}>
                   <button
                     style={{
                       border: "none",
@@ -634,18 +617,22 @@ const GeofencesListTrip = ({
                   <button
                     style={{
                       border: "none",
-                      backgroundColor: "white",
-                      borderRadius: "5px",
+                      backgroundColor: "transparent",
                       cursor: "pointer",
-                      padding: "5px 8px",
-                      transition: "background-color 0.3s ease",
-                      color: "#d33",
+                      padding: "0",
+                      display: "flex",
+                      alignItems: "center",
                     }}
                     onClick={(e: any) => {
-                      handleDeleteGeofence(e, geofence);
+                      handleToggleStatus(e, geofence);
                     }}
+                    title={geofence.isActive ? "Deactivate waypoint" : "Activate waypoint"}
                   >
-                    <MdDelete />
+                    {geofence.isActive ? (
+                      <MdToggleOn size={28} color="#4CAF50" />
+                    ) : (
+                      <MdToggleOff size={28} color="#999" />
+                    )}
                   </button>
                 </div>
               </div>

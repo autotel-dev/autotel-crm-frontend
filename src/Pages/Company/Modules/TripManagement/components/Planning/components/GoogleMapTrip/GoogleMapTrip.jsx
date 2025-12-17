@@ -10,13 +10,14 @@ import {
 import "./googleMapTrip.css";
 
 const GoogleMapTrip = (props) => {
-  const { type, circle, polygon } = useSelector((state) => state.geofence);
+  const { type, circle, polygon, rectangle } = useSelector((state) => state.geofence);
   const dispatch = useDispatch();
   const [zoom, setZoom] = useState(12);
   const [drawingMode, setDrawingMode] = useState(null);
   const mapRef = useRef(null);
   const drawingManagerRef = useRef(null);
   const overlaysRef = useRef([]);
+  const rectangleOverlaysRef = useRef([]);
 
   // Get geofences from parent component
   const geofences = props.geofences || [];
@@ -54,6 +55,15 @@ const GoogleMapTrip = (props) => {
           fillColor: "green",
           fillOpacity: 0.35,
         },
+        rectangleOptions: {
+          editable: true,
+          draggable: true,
+          strokeColor: "red",
+          strokeOpacity: 0.8,
+          strokeWeight: 2,
+          fillColor: "red",
+          fillOpacity: 0.35,
+        },
         polygonOptions: {
           editable: true,
           draggable: true,
@@ -87,6 +97,19 @@ const GoogleMapTrip = (props) => {
                 radius: overlay.getRadius(),
               };
               dispatch(setCircle(updatedCircle));
+            } else if (event.type === "rectangle") {
+              const bounds = overlay.getBounds();
+              const ne = bounds.getNorthEast();
+              const sw = bounds.getSouthWest();
+              const updatedRectangle = {
+                bounds: {
+                  north: ne.lat(),
+                  south: sw.lat(),
+                  east: ne.lng(),
+                  west: sw.lng(),
+                },
+              };
+              dispatch(setRectangle(updatedRectangle));
             } else if (event.type === "polygon") {
               const updatedPath = overlay
                 .getPath()
@@ -100,7 +123,7 @@ const GoogleMapTrip = (props) => {
           };
 
           // Add event listeners for editing the shapes
-          if (event.type === "circle" || event.type === "polygon") {
+          if (event.type === "circle" || event.type === "rectangle" || event.type === "polygon") {
             google.maps.event.addListener(
               overlay,
               "radius_changed",
@@ -133,6 +156,19 @@ const GoogleMapTrip = (props) => {
               radius: overlay.getRadius(),
             };
             dispatch(setCircle(newCircle));
+          } else if (event.type === "rectangle") {
+            const bounds = overlay.getBounds();
+            const ne = bounds.getNorthEast();
+            const sw = bounds.getSouthWest();
+            const newRectangle = {
+              bounds: {
+                north: ne.lat(),
+                south: sw.lat(),
+                east: ne.lng(),
+                west: sw.lng(),
+              },
+            };
+            dispatch(setRectangle(newRectangle));
           } else if (event.type === "polygon") {
             const newPath = overlay
               .getPath()
@@ -174,6 +210,25 @@ const GoogleMapTrip = (props) => {
     }
   }, [circleRef, dispatch]);
 
+  const rectangleRef = useRef(null);
+  const handleRectangleChanged = useCallback(() => {
+    if (rectangleRef.current) {
+      const rectangleInstance = rectangleRef.current;
+      const bounds = rectangleInstance.getBounds();
+      const ne = bounds.getNorthEast();
+      const sw = bounds.getSouthWest();
+      const newRectangle = {
+        bounds: {
+          north: ne.lat(),
+          south: sw.lat(),
+          east: ne.lng(),
+          west: sw.lng(),
+        },
+      };
+      dispatch(setRectangle(newRectangle));
+    }
+  }, [rectangleRef, dispatch]);
+
   const polygonRef = useRef(null);
   const handlePolygonEdit = useCallback(() => {
     if (polygonRef.current && polygonRef.current.polygon) {
@@ -213,6 +268,58 @@ const GoogleMapTrip = (props) => {
     }
   }, [polygonRef.current, handlePolygonEdit]);
 
+  // Render rectangles imperatively since google-maps-react doesn't export Rectangle component
+  useEffect(() => {
+    if (!mapRef.current || !props.google) return;
+
+    // Clear existing rectangle overlays
+    rectangleOverlaysRef.current.forEach((rect) => rect.setMap(null));
+    rectangleOverlaysRef.current = [];
+
+    // Render checked rectangles
+    const checkedRectangles = geofences.filter(
+      (item) => item.checked && item.type === "rectangle"
+    );
+
+    checkedRectangles.forEach((geofenceItem) => {
+      if (geofenceItem.geofencePositions?.bounds) {
+        const rectangleInstance = new props.google.maps.Rectangle({
+          bounds: geofenceItem.geofencePositions.bounds,
+          editable: geofenceItem.edited,
+          draggable: geofenceItem.edited,
+          strokeColor: "red",
+          strokeOpacity: 0.8,
+          strokeWeight: 2,
+          fillColor: "red",
+          fillOpacity: 0.35,
+          map: mapRef.current.map,
+        });
+
+        rectangleOverlaysRef.current.push(rectangleInstance);
+
+        if (geofenceItem.edited) {
+          rectangleRef.current = rectangleInstance;
+
+          props.google.maps.event.addListener(
+            rectangleInstance,
+            "bounds_changed",
+            handleRectangleChanged
+          );
+          props.google.maps.event.addListener(
+            rectangleInstance,
+            "dragend",
+            handleRectangleChanged
+          );
+        }
+      }
+    });
+
+    return () => {
+      rectangleOverlaysRef.current.forEach((rect) => rect.setMap(null));
+      rectangleOverlaysRef.current = [];
+    };
+  }, [geofences, props.google, handleRectangleChanged]);
+
   if (!props.google) {
     return <div>Error: Google Maps API failed to load.</div>;
   }
@@ -221,45 +328,50 @@ const GoogleMapTrip = (props) => {
     return (
       type == null &&
       geofences
-        ?.filter((item) => item.checked)
+        ?.filter((item) => item.checked && item.type !== "rectangle") // Rectangles are rendered imperatively
         .map((geofenceItem, index) => {
           const key = `${geofenceItem._id}-${index}-${geofenceItem.edited}`;
 
-          return geofenceItem.type === "polygon" ? (
-            <Polygon
-              ref={polygonRef}
-              key={key}
-              paths={geofenceItem.geofencePositions.bounds}
-              editable={geofenceItem.edited}
-              draggable={geofenceItem.edited}
-              options={{
-                strokeColor: "blue",
-                strokeOpacity: 0.8,
-                strokeWeight: 2,
-                fillColor: "blue",
-                fillOpacity: 0.35,
-              }}
-              onClick={handlePolygonEdit}
-            />
-          ) : (
-            <Circle
-              ref={circleRef}
-              key={key}
-              center={geofenceItem.geofencePositions.center}
-              radius={geofenceItem.geofencePositions.radius}
-              editable={geofenceItem.edited}
-              draggable={geofenceItem.edited}
-              options={{
-                strokeColor: "black",
-                strokeOpacity: 0.8,
-                strokeWeight: 2,
-                fillColor: "black",
-                fillOpacity: 0.35,
-              }}
-              radius_changed={() => handleCircleChanged()}
-              center_changed={() => handleCircleChanged()}
-            />
-          );
+          if (geofenceItem.type === "polygon") {
+            return (
+              <Polygon
+                ref={polygonRef}
+                key={key}
+                paths={geofenceItem.geofencePositions.bounds}
+                editable={geofenceItem.edited}
+                draggable={geofenceItem.edited}
+                options={{
+                  strokeColor: "blue",
+                  strokeOpacity: 0.8,
+                  strokeWeight: 2,
+                  fillColor: "blue",
+                  fillOpacity: 0.35,
+                }}
+                onClick={handlePolygonEdit}
+              />
+            );
+          } else if (geofenceItem.type === "circle") {
+            return (
+              <Circle
+                ref={circleRef}
+                key={key}
+                center={geofenceItem.geofencePositions.center}
+                radius={geofenceItem.geofencePositions.radius}
+                editable={geofenceItem.edited}
+                draggable={geofenceItem.edited}
+                options={{
+                  strokeColor: "black",
+                  strokeOpacity: 0.8,
+                  strokeWeight: 2,
+                  fillColor: "black",
+                  fillOpacity: 0.35,
+                }}
+                radius_changed={() => handleCircleChanged()}
+                center_changed={() => handleCircleChanged()}
+              />
+            );
+          }
+          return null;
         })
     );
   };
