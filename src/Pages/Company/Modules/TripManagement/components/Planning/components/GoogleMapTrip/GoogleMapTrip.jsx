@@ -23,8 +23,24 @@ const GoogleMapTrip = (props) => {
   const geofences = props.geofences || [];
 
   useEffect(() => {
-    setDrawingMode(type);
-  }, [type]);
+    if (!props.google || !type) {
+      setDrawingMode(null);
+      return;
+    }
+
+    const google = props.google;
+    let mode = null;
+
+    if (type === "circle") {
+      mode = google.maps.drawing.OverlayType.CIRCLE;
+    } else if (type === "rectangle") {
+      mode = google.maps.drawing.OverlayType.RECTANGLE;
+    } else if (type === "polygon") {
+      mode = google.maps.drawing.OverlayType.POLYGON;
+    }
+
+    setDrawingMode(mode);
+  }, [type, props.google]);
 
   const zoomIn = () => {
     setZoom((prevZoom) => prevZoom + 1);
@@ -185,17 +201,14 @@ const GoogleMapTrip = (props) => {
   }, [props.google, dispatch, drawingMode]);
 
   useEffect(() => {
-    const selectedMode = type;
-    setDrawingMode(selectedMode === null ? null : selectedMode);
-
-    if (drawingManagerRef.current) {
-      drawingManagerRef.current.setDrawingMode(null);
+    if (drawingManagerRef.current && drawingMode !== undefined) {
+      drawingManagerRef.current.setDrawingMode(drawingMode);
     }
 
-    // Clear all overlays from the map
+    // Clear all overlays from the map when switching modes
     overlaysRef.current.forEach((overlay) => overlay.setMap(null));
     overlaysRef.current = [];
-  }, [type]);
+  }, [drawingMode]);
 
   const circleRef = useRef(null);
   const handleCircleChanged = useCallback(() => {

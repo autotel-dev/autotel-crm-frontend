@@ -1,8 +1,14 @@
 import { useSelector } from "react-redux";
-import GroupSvg from "../../../../../../src/assets/people (1).png";
 import { useLocation, useNavigate } from "react-router-dom";
-import P1 from "../../../../../CommonElements/Paragraph/P1Element";
 import { useEffect } from "react";
+import {
+  MdDashboard,
+  MdPointOfSale,
+  MdShoppingCart,
+  MdAccountBalance,
+  MdInventory,
+  MdSettings,
+} from "react-icons/md";
 
 interface SidebarProps {
   setDashboard: any;
@@ -38,32 +44,28 @@ const Sidebar: React.FC<SidebarProps> = ({
   const { userPermissions } = useSelector(
     (state: any) => state.userPermissions
   );
-  var saio_dashboard = userPermissions.find(
-    (item: any) => item.title === "SAIO Dashboard"
-  );
-  var saio_purchases = userPermissions.find(
+  const saio_purchases = userPermissions.find(
     (item: any) => item.title === "SAIO Purchases"
   );
-  var saio_sales = userPermissions.find(
+  const saio_sales = userPermissions.find(
     (item: any) => item.title === "SAIO Sales"
   );
-  var saio_accounts = userPermissions.find(
+  const saio_accounts = userPermissions.find(
     (item: any) => item.title === "SAIO Accounts"
   );
-  var saio_inventory = userPermissions.find(
+  const saio_inventory = userPermissions.find(
     (item: any) => item.title === "SAIO Inventory"
   );
-  var saio_operations = userPermissions.find(
+  const saio_operations = userPermissions.find(
     (item: any) => item.title === "SAIO Operations"
   );
 
   const navigate = useNavigate();
-  const location = useLocation(); // Access current route information
+  const location = useLocation();
 
+  // Auto-detect active menu based on URL
   useEffect(() => {
-    console.log(location.pathname.split("/"));
     const arr = location.pathname.split("/");
-    const route = arr[arr.length - 1];
 
     if (arr.includes("dashboard")) {
       setDashboard(true);
@@ -110,261 +112,125 @@ const Sidebar: React.FC<SidebarProps> = ({
     }
   }, [location.pathname]);
 
+  const handleNavigation = (menu: string) => {
+    navigate(`${process.env.PUBLIC_URL}/company/modules/saio-central/${menu}`);
+  };
+
+  const menuItems = [
+    {
+      id: "dashboard",
+      label: "Dashboard",
+      icon: <MdDashboard size={28} />,
+      isActive: dashboard,
+      onClick: () => handleNavigation("dashboard"),
+      hasPermission: true,
+    },
+    {
+      id: "sales",
+      label: "Sales",
+      icon: <MdPointOfSale size={28} />,
+      isActive: sales,
+      onClick: () => handleNavigation("sales/leads"),
+      hasPermission: saio_sales && saio_sales.read,
+    },
+    {
+      id: "purchases",
+      label: "Purchases",
+      icon: <MdShoppingCart size={28} />,
+      isActive: purchases,
+      onClick: () => handleNavigation("purchases"),
+      hasPermission: saio_purchases && saio_purchases.read,
+    },
+    {
+      id: "accounts",
+      label: "Accounts",
+      icon: <MdAccountBalance size={28} />,
+      isActive: accounts,
+      onClick: () => handleNavigation("accounts"),
+      hasPermission: saio_accounts && saio_accounts.read,
+    },
+    {
+      id: "inventory",
+      label: "Inventory",
+      icon: <MdInventory size={28} />,
+      isActive: inventory,
+      onClick: () => handleNavigation("inventory"),
+      hasPermission: saio_inventory && saio_inventory.read,
+    },
+    {
+      id: "operations",
+      label: "Operations",
+      icon: <MdSettings size={28} />,
+      isActive: operations,
+      onClick: () => handleNavigation("operations"),
+      hasPermission: saio_operations && saio_operations.read,
+    },
+  ];
+
   return (
-    <div style={{ display: "flex" }}>
-      <div
-        style={{
-          height: "94vh",
-          // backgroundColor: `${
-          //   userPersonalizationData &&
-          //   userPersonalizationData.buttonsAndBarsColor !== ""
-          //     ? userPersonalizationData.buttonsAndBarsColor
-          //     : "#1f2f3e"
-          // }`,
-          backgroundColor: "#1f2f3e",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          overflow: "unset",
-          width: "90px",
-          scrollbarWidth: "none",
-        }}
-      >
-        {/* saio_dashboard && saio_dashboard.read && ( */}
-
-        <div
-          title="Dashboard"
-          style={{
-            width: "100%",
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            height: "95px",
-            alignItems: "center",
-            cursor: "pointer",
-            borderBottom: "0.1px solid gray",
-            paddingTop: "15px",
-            backgroundColor: `${dashboard ? "#35bfbf" : "transparent"}`,
-          }}
-          onClick={() => {
-            navigate(
-              `${process.env.PUBLIC_URL}/company/modules/saio-central/dashboard`
-            );
-          }}
-        >
-          <img src={GroupSvg} alt="" height={22} width={26} id="Tooltip" />
-          <P1
-            style={{
-              color: "white",
-              marginTop: "5px",
-            }}
-          >
-            Dashboard
-          </P1>
-        </div>
-
-        {saio_sales && saio_sales.read && (
+    <div
+      style={{
+        width: "90px",
+        height: "94vh",
+        backgroundColor: "#1f2f3e",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        paddingTop: "20px",
+        marginTop: "13px",
+        gap: "10px",
+        position: "fixed",
+        left: 0,
+        top: "6vh",
+        zIndex: 100,
+      }}
+    >
+      {menuItems
+        .filter((item) => item.hasPermission)
+        .map((item) => (
           <div
-            title="Purchases"
+            key={item.id}
+            onClick={item.onClick}
             style={{
-              width: "100%",
+              width: "70px",
+              height: "70px",
               display: "flex",
               flexDirection: "column",
-              justifyContent: "center",
-              height: "80px",
               alignItems: "center",
+              justifyContent: "center",
+              gap: "5px",
               cursor: "pointer",
-              borderBottom: "0.1px solid gray",
-              paddingTop: "10px",
-              backgroundColor: `${sales ? "#35bfbf" : "transparent"}`,
-              // opacity: `${sales ? "0.6" : "1"}`
+              borderRadius: "8px",
+              backgroundColor: item.isActive ? "#35bfbf" : "transparent",
+              color: item.isActive ? "#fff" : "#a8b3c1",
+              transition: "all 0.3s ease",
             }}
-            onClick={() => {
-              setDashboard(false);
-              setPurchases(false);
-              setSales(true);
-              setAccounts(false);
-              setInventory(false);
-              setOperations(false);
-
-              navigate(
-                `${process.env.PUBLIC_URL}/company/modules/saio-central/sales/leads`
-              );
+            onMouseEnter={(e) => {
+              if (!item.isActive) {
+                e.currentTarget.style.backgroundColor =
+                  "rgba(53, 191, 191, 0.2)";
+                e.currentTarget.style.color = "#35bfbf";
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (!item.isActive) {
+                e.currentTarget.style.backgroundColor = "transparent";
+                e.currentTarget.style.color = "#a8b3c1";
+              }
             }}
           >
-            <img src={GroupSvg} alt="" height={22} width={26} id="Tooltip" />
-            <P1
+            {item.icon}
+            <span
               style={{
-                color: "white",
-                marginTop: "5px",
+                fontSize: "10px",
+                fontWeight: "600",
+                textAlign: "center",
               }}
             >
-              Sales
-            </P1>
+              {item.label}
+            </span>
           </div>
-        )}
-
-        {saio_purchases && saio_purchases.read && (
-          <div
-            title="Purchases"
-            style={{
-              width: "100%",
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-              height: "80px",
-              alignItems: "center",
-              cursor: "pointer",
-              borderBottom: "0.1px solid gray",
-              paddingTop: "10px",
-              backgroundColor: `${purchases ? "#35bfbf" : "transparent"}`,
-              // opacity: `${purchases ? "0.6" : "1"}`
-            }}
-            onClick={() => {
-              setDashboard(false);
-              setPurchases(true);
-              setSales(false);
-              setAccounts(false);
-              setInventory(false);
-              setOperations(false);
-
-              navigate(
-                `${process.env.PUBLIC_URL}/company/modules/saio-central/purchases`
-              );
-            }}
-          >
-            <img src={GroupSvg} alt="" height={22} width={26} id="Tooltip" />
-            <P1
-              style={{
-                color: "white",
-                marginTop: "5px",
-              }}
-            >
-              Purchases
-            </P1>
-          </div>
-        )}
-
-        {saio_accounts && saio_accounts.read && (
-          <div
-            title="Accounts"
-            style={{
-              width: "100%",
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-              height: "80px",
-              alignItems: "center",
-              cursor: "pointer",
-              borderBottom: "0.1px solid gray",
-              paddingTop: "10px",
-              backgroundColor: `${accounts ? "#35bfbf" : "transparent"}`,
-            }}
-            onClick={() => {
-              setDashboard(false);
-              setPurchases(false);
-              setSales(false);
-              setAccounts(true);
-              setInventory(false);
-              setOperations(false);
-
-              navigate(
-                `${process.env.PUBLIC_URL}/company/modules/saio-central/accounts`
-              );
-            }}
-          >
-            <img src={GroupSvg} alt="" height={22} width={26} id="Tooltip" />
-            <P1
-              style={{
-                color: "white",
-                marginTop: "5px",
-              }}
-            >
-              Accounts
-            </P1>
-          </div>
-        )}
-
-        {saio_inventory && saio_inventory.read && (
-          <div
-            title="Inventory"
-            style={{
-              width: "100%",
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-              height: "80px",
-              alignItems: "center",
-              cursor: "pointer",
-              borderBottom: "0.1px solid gray",
-              paddingTop: "10px",
-              backgroundColor: `${inventory ? "#35bfbf" : "transparent"}`,
-            }}
-            onClick={() => {
-              setDashboard(false);
-              setPurchases(false);
-              setSales(false);
-              setAccounts(false);
-              setInventory(true);
-              setOperations(false);
-
-              navigate(
-                `${process.env.PUBLIC_URL}/company/modules/saio-central/inventory`
-              );
-            }}
-          >
-            <img src={GroupSvg} alt="" height={22} width={26} id="Tooltip" />
-            <P1
-              style={{
-                color: "white",
-                marginTop: "5px",
-              }}
-            >
-              Inventory
-            </P1>
-          </div>
-        )}
-
-        {saio_operations && saio_operations.read && (
-          <div
-            title="Operation"
-            style={{
-              width: "100%",
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-              height: "80px",
-              alignItems: "center",
-              cursor: "pointer",
-              borderBottom: "0.1px solid gray",
-              paddingTop: "10px",
-              backgroundColor: `${operations ? "#35bfbf" : "transparent"}`,
-            }}
-            onClick={() => {
-              setDashboard(false);
-              setPurchases(false);
-              setSales(false);
-              setAccounts(false);
-              setInventory(false);
-              setOperations(true);
-
-              navigate(
-                `${process.env.PUBLIC_URL}/company/modules/saio-central/operations`
-              );
-            }}
-          >
-            <img src={GroupSvg} alt="" height={22} width={26} id="Tooltip" />
-            <P1
-              style={{
-                color: "white",
-                marginTop: "5px",
-              }}
-            >
-              Operations
-            </P1>
-          </div>
-        )}
-      </div>
+        ))}
     </div>
   );
 };
