@@ -9,15 +9,16 @@ import {
   setRectangle,
   setType,
 } from "../../../../../../../../ReaduxToolkit/Reducer/GeofenceSlice";
-import { create, update, patch } from "../../../../../../../../Utilities/api";
+import { create, update, patch, deleteSingle } from "../../../../../../../../Utilities/api";
 import Swal from "sweetalert2";
 import {
   CREATE_TRIP_WAYPOINT,
   UPDATE_TRIP_WAYPOINT,
   UPDATE_TRIP_WAYPOINT_ACTIVATION_STATUS,
+  DELETE_TRIP_WAYPOINT,
 } from "../../../../../../../../Utilities/api/apiEndpoints";
 import { FaRegEdit } from "react-icons/fa";
-import { MdToggleOn, MdToggleOff } from "react-icons/md";
+import { MdToggleOn, MdToggleOff, MdDelete } from "react-icons/md";
 
 interface PropTypes {
   isNewGeofence: boolean;
@@ -303,6 +304,59 @@ const GeofencesListTrip = ({
         showConfirmButton: false,
       });
     }
+  };
+
+  const handleDeleteGeofence = async (e: any, selectedGeofence: any) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    Swal.fire({
+      title: "Are you sure?",
+      text: "Once deleted, you will not be able to recover this waypoint",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, delete it!",
+      cancelButtonText: "Cancel",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          Swal.fire({
+            text: "Deleting...",
+            icon: "info",
+            showCancelButton: false,
+            showConfirmButton: false,
+          });
+
+          await deleteSingle({ url: `${DELETE_TRIP_WAYPOINT}/${selectedGeofence._id}` }).then(
+            (data: any) => {
+              if (data.success) {
+                Swal.fire({
+                  text: `${data.message}`,
+                  icon: "success",
+                  timer: 2000,
+                  showConfirmButton: false,
+                });
+                fetchGeofences();
+              } else {
+                Swal.fire({
+                  text: `${data.message}`,
+                  icon: "error",
+                  timer: 2000,
+                  showConfirmButton: false,
+                });
+              }
+            }
+          );
+        } catch (error: any) {
+          Swal.fire({
+            text: "Failed to delete waypoint",
+            icon: "error",
+            timer: 2000,
+            showConfirmButton: false,
+          });
+        }
+      }
+    });
   };
 
   const handleSearch = (e: any) => {
@@ -602,21 +656,6 @@ const GeofencesListTrip = ({
                   <button
                     style={{
                       border: "none",
-                      backgroundColor: geofence.edited ? "green" : "white",
-                      borderRadius: "5px",
-                      cursor: "pointer",
-                      padding: "5px 8px",
-                      transition: "background-color 0.3s ease",
-                    }}
-                    onClick={(e: any) => {
-                      handleEditGeofence(e, geofence);
-                    }}
-                  >
-                    <FaRegEdit />
-                  </button>
-                  <button
-                    style={{
-                      border: "none",
                       backgroundColor: "transparent",
                       cursor: "pointer",
                       padding: "0",
@@ -633,6 +672,38 @@ const GeofencesListTrip = ({
                     ) : (
                       <MdToggleOff size={28} color="#999" />
                     )}
+                  </button>
+                  <button
+                    style={{
+                      border: "none",
+                      backgroundColor: geofence.edited ? "green" : "white",
+                      borderRadius: "5px",
+                      cursor: "pointer",
+                      padding: "5px 8px",
+                      transition: "background-color 0.3s ease",
+                    }}
+                    onClick={(e: any) => {
+                      handleEditGeofence(e, geofence);
+                    }}
+                  >
+                    <FaRegEdit />
+                  </button>
+                  <button
+                    style={{
+                      border: "none",
+                      backgroundColor: "white",
+                      borderRadius: "5px",
+                      cursor: "pointer",
+                      padding: "5px 8px",
+                      transition: "background-color 0.3s ease",
+                      color: "#d33",
+                    }}
+                    onClick={(e: any) => {
+                      handleDeleteGeofence(e, geofence);
+                    }}
+                    title="Delete waypoint"
+                  >
+                    <MdDelete />
                   </button>
                 </div>
               </div>

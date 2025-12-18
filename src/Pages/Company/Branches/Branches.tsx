@@ -7,11 +7,12 @@ import { useDispatch, useSelector } from "react-redux";
 import "../../../CssConstaints/Style.css";
 import NoInternetConnection from "../../Utilities/NoInternetConnection/NoInternetConnection";
 
-import { setBranch ,setIsConnected } from "../../../ReaduxToolkit/Reducer/BranchSlice";
+import {
+  setBranch,
+  setIsConnected,
+} from "../../../ReaduxToolkit/Reducer/BranchSlice";
 import BranchesListNav from "./BranchesListNav";
 import BranchesList from "./BranchesList";
-
-
 
 const Branches = () => {
   const dispatch = useDispatch();
@@ -44,11 +45,7 @@ const Branches = () => {
         <NoInternetConnection />
       ) : (
         <div>
-          <Breadcrumbs
-            mainTitle="Branches List"
-            parent={setup}
-            title="Branches List"
-          />
+          <Breadcrumbs mainTitle="Branches" parent={setup} title="Branches" />
           <Container fluid>
             <Row className="project-card">
               <Col md={12} className="project-list">
@@ -56,7 +53,7 @@ const Branches = () => {
                   <BranchesListNav />
                   <Col md={12}>
                     <input
-                    className="global-search-field"
+                      className="global-search-field"
                       type="text"
                       placeholder="Type to Search.."
                       value={searchValue}

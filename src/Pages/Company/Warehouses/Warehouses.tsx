@@ -8,9 +8,10 @@ import "../../../CssConstaints/Style.css";
 import NoInternetConnection from "../../Utilities/NoInternetConnection/NoInternetConnection";
 import WarehousesList from "./WarehousesList";
 import WarehousesListNav from "./WarehousesListNav";
-import { setWarehouse , setIsConnected, } from "../../../ReaduxToolkit/Reducer/WarehouseSlice";
-
-
+import {
+  setWarehouse,
+  setIsConnected,
+} from "../../../ReaduxToolkit/Reducer/WarehouseSlice";
 
 const Warehouses = () => {
   const dispatch = useDispatch();
@@ -44,9 +45,9 @@ const Warehouses = () => {
       ) : (
         <div>
           <Breadcrumbs
-            mainTitle="Warehouses List"
+            mainTitle="Warehouses"
             parent={setup}
-            title="Warehouses List"
+            title="Warehouses"
           />
           <Container fluid>
             <Row className="project-card">
@@ -55,7 +56,7 @@ const Warehouses = () => {
                   <WarehousesListNav />
                   <Col md={12}>
                     <input
-                    className="global-search-field"
+                      className="global-search-field"
                       type="text"
                       placeholder="Type to Search.."
                       value={searchValue}

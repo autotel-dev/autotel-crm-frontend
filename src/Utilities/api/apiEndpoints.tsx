@@ -483,10 +483,20 @@ export const DELETE_ALERT_RULE = `${API_BASE_URL}/alert-events/rule/delete-rule`
 export const UPDATE_ALERT_RULE_ACTIVATION_STATUS = `${API_BASE_URL}/alert-events/rule/update-rule-activation-status`;
 export const GET_ALL_VEHICLES_DROPDOWN_FOR_ALERT = `${API_BASE_URL}/alert-events/rule/get-all-vehicles-dropdown`;
 
-// Trip Management
+// Trip Management - Planning - Trip Waypoints
 
 export const CREATE_TRIP_WAYPOINT = `${API_BASE_URL}/trip/way-point/create-waypoint`;
 export const GET_ALL_TRIP_WAYPOINTS = `${API_BASE_URL}/trip/way-point/get-all-waypoints`;
 export const UPDATE_TRIP_WAYPOINT = `${API_BASE_URL}/trip/way-point/update-waypoint`;
+export const DELETE_TRIP_WAYPOINT = `${API_BASE_URL}/trip/way-point/delete-waypoint`;
 export const UPDATE_TRIP_WAYPOINT_ACTIVATION_STATUS = `${API_BASE_URL}/trip/way-point/update-waypoint-activation-status`;
 export const GET_ALL_TRIP_WAYPOINTS_DROPDOWN = `${API_BASE_URL}/trip/way-point/get-all-waypoints-dropdown`;
+
+// Trip Management - Planning - Trip Waypoints
+
+export const CREATE_TRIP_DRIVER = `${API_BASE_URL}/trip/driver/create-driver`;
+export const GET_ALL_TRIP_DRIVERS = `${API_BASE_URL}/trip/driver/get-all-drivers`;
+export const UPDATE_TRIP_DRIVER = `${API_BASE_URL}/trip/driver/update-driver`;
+export const DELETE_TRIP_DRIVER = `${API_BASE_URL}/trip/driver/delete-driver`;
+export const UPDATE_DRIVER_ACTIVATION_STATUS = `${API_BASE_URL}/trip/driver/update-driver-activation-status`;
+export const GET_ALL_TRIP_DRIVERS_DROPDOWN = `${API_BASE_URL}/trip/driver/get-all-drivers-dropdown`;

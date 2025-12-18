@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Card,
   CardBody,
@@ -17,15 +17,29 @@ import {
 import { useSelector } from "react-redux";
 import { PlusCircle } from "react-feather";
 import Swal from "sweetalert2";
+import {
+  create,
+  update,
+  patch,
+  deleteSingle,
+  getAll,
+} from "../../../../../../../Utilities/api/index";
+import {
+  CREATE_TRIP_DRIVER,
+  GET_ALL_TRIP_DRIVERS,
+  UPDATE_TRIP_DRIVER,
+  DELETE_TRIP_DRIVER,
+  UPDATE_DRIVER_ACTIVATION_STATUS,
+} from "../../../../../../../Utilities/api/apiEndpoints";
 
 interface Driver {
-  id: string;
+  _id?: string;
   name: string;
   licenseNumber: string;
-  phone: string;
+  phoneNo: string;
   email: string;
   address: string;
-  status: "active" | "inactive";
+  isActive: boolean;
 }
 
 const DriversTab = () => {
@@ -44,53 +58,72 @@ const DriversTab = () => {
 
   const rgbColor = hexToRgb(userPersonalizationData?.buttonsAndBarsColor);
 
-  const [drivers, setDrivers] = useState<Driver[]>([
-    {
-      id: "1",
-      name: "John Doe",
-      licenseNumber: "DL-123456",
-      phone: "+92-300-1234567",
-      email: "john@example.com",
-      address: "Islamabad, Pakistan",
-      status: "active",
-    },
-    {
-      id: "2",
-      name: "Jane Smith",
-      licenseNumber: "DL-789012",
-      phone: "+92-300-9876543",
-      email: "jane@example.com",
-      address: "Lahore, Pakistan",
-      status: "active",
-    },
-  ]);
-
+  const [drivers, setDrivers] = useState<Driver[]>([]);
+  const [loading, setLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingDriver, setEditingDriver] = useState<Driver | null>(null);
   const [formData, setFormData] = useState<Driver>({
-    id: "",
     name: "",
     licenseNumber: "",
-    phone: "",
+    phoneNo: "",
     email: "",
     address: "",
-    status: "active",
+    isActive: true,
   });
   const [searchValue, setSearchValue] = useState("");
   const [isHovered, setIsHovered] = useState(false);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
 
+  // Fetch drivers on component mount
+  useEffect(() => {
+    fetchDrivers();
+  }, []);
+
+  const fetchDrivers = () => {
+    setLoading(true);
+    getAll({ url: GET_ALL_TRIP_DRIVERS })
+      .then((data: any) => {
+        if (data === undefined) {
+          Swal.fire({
+            text: "Failed to fetch drivers due to connection refused",
+            icon: "error",
+            timer: 2000,
+            showConfirmButton: false,
+          });
+          setDrivers([]);
+          setLoading(false);
+          return;
+        }
+        if (data.success) {
+          setDrivers(data.data || []);
+        } else {
+          Swal.fire({
+            text: data.message || "Failed to fetch drivers",
+            icon: "error",
+            timer: 2000,
+            showConfirmButton: false,
+          });
+          setDrivers([]);
+        }
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error fetching drivers:", error);
+        setDrivers([]);
+        setLoading(false);
+      });
+  };
+
   const toggleModal = () => {
     if (!isModalOpen) {
       // Opening modal
       setFormData({
-        id: "",
         name: "",
         licenseNumber: "",
-        phone: "",
+        phoneNo: "",
         email: "",
         address: "",
-        status: "active",
+        isActive: true,
       });
       setEditingDriver(null);
     }
@@ -106,69 +139,135 @@ const DriversTab = () => {
   const handleDeleteDriver = (id: string) => {
     Swal.fire({
       title: "Are you sure?",
-      text: "You want to delete this driver?",
+      text: "Once deleted, you will not be able to recover this driver",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: "#d33",
-      cancelButtonColor: "#3085d6",
       confirmButtonText: "Yes, delete it!",
-    }).then((result) => {
+      cancelButtonText: "Cancel",
+    }).then(async (result) => {
       if (result.isConfirmed) {
-        setDrivers(drivers.filter((driver) => driver.id !== id));
-        Swal.fire({
-          title: "Deleted!",
-          text: "Driver has been deleted.",
-          icon: "success",
-          timer: 2000,
-          showConfirmButton: false,
-        });
+        try {
+          Swal.fire({
+            text: "Deleting...",
+            icon: "info",
+            showCancelButton: false,
+            showConfirmButton: false,
+          });
+
+          await deleteSingle({ url: `${DELETE_TRIP_DRIVER}/${id}` }).then(
+            (data: any) => {
+              if (data.success) {
+                Swal.fire({
+                  text: data.message || "Driver deleted successfully",
+                  icon: "success",
+                  timer: 2000,
+                  showConfirmButton: false,
+                });
+                fetchDrivers();
+              } else {
+                Swal.fire({
+                  text: data.message || "Failed to delete driver",
+                  icon: "error",
+                  timer: 2000,
+                  showConfirmButton: false,
+                });
+              }
+            }
+          );
+        } catch (error: any) {
+          Swal.fire({
+            text: "Failed to delete driver",
+            icon: "error",
+            timer: 2000,
+            showConfirmButton: false,
+          });
+        }
       }
     });
   };
 
-  const handleSaveDriver = () => {
-    if (!formData.name || !formData.licenseNumber || !formData.phone) {
+  const handleSaveDriver = async () => {
+    if (!formData.name || !formData.licenseNumber || !formData.phoneNo) {
       Swal.fire({
-        title: "Error",
-        text: "Please fill in all required fields!",
-        icon: "error",
+        text: "Please fill in all required fields (Name, License Number, Phone)!",
+        icon: "info",
         timer: 2000,
-        showConfirmButton: false,
+        showConfirmButton: true,
       });
       return;
     }
 
-    if (editingDriver) {
-      // Update existing driver
-      setDrivers(
-        drivers.map((driver) =>
-          driver.id === editingDriver.id ? formData : driver
-        )
-      );
-      Swal.fire({
-        title: "Success!",
-        text: "Driver updated successfully",
-        icon: "success",
-        timer: 2000,
-        showConfirmButton: false,
-      });
-    } else {
-      // Add new driver
-      const newDriver = {
-        ...formData,
-        id: Date.now().toString(),
-      };
-      setDrivers([...drivers, newDriver]);
-      Swal.fire({
-        title: "Success!",
-        text: "Driver added successfully",
-        icon: "success",
-        timer: 2000,
-        showConfirmButton: false,
-      });
-    }
+    setLoading(true);
+    const driverData = {
+      name: formData.name,
+      licenseNumber: formData.licenseNumber,
+      phoneNo: formData.phoneNo,
+      email: formData.email,
+      address: formData.address,
+      isActive: formData.isActive,
+    };
 
-    toggleModal();
+    try {
+      if (editingDriver && editingDriver._id) {
+        // Update existing driver
+        await update(driverData, {
+          url: `${UPDATE_TRIP_DRIVER}/${editingDriver._id}`,
+        }).then((data: any) => {
+          if (data.success) {
+            Swal.fire({
+              text: "Driver updated successfully",
+              icon: "success",
+              timer: 2000,
+              showConfirmButton: false,
+            });
+            setLoading(false);
+            setIsModalOpen(false);
+            fetchDrivers();
+          } else {
+            Swal.fire({
+              text: data.message || "Failed to update driver",
+              icon: "error",
+              timer: 2000,
+              showConfirmButton: false,
+            });
+            setLoading(false);
+          }
+        });
+      } else {
+        // Add new driver
+        await create(driverData, { url: CREATE_TRIP_DRIVER }).then(
+          (data: any) => {
+            if (data.success) {
+              Swal.fire({
+                text: "Driver created successfully",
+                icon: "success",
+                timer: 2000,
+                showConfirmButton: false,
+              });
+              setLoading(false);
+              setIsModalOpen(false);
+              fetchDrivers();
+            } else {
+              Swal.fire({
+                text: data.message || "Failed to create driver",
+                icon: "error",
+                timer: 2000,
+                showConfirmButton: false,
+              });
+              setLoading(false);
+            }
+          }
+        );
+      }
+    } catch (error: any) {
+      Swal.fire({
+        text: "An error occurred while saving driver",
+        icon: "error",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+      setLoading(false);
+    }
   };
 
   const handleInputChange = (
@@ -181,25 +280,63 @@ const DriversTab = () => {
     });
   };
 
+  const handleStatusToggle = async (driver: Driver) => {
+    if (!driver._id) return;
+
+    try {
+      const newStatus = !driver.isActive;
+      const statusResponse: any = await patch(
+        { isActive: newStatus },
+        { url: `${UPDATE_DRIVER_ACTIVATION_STATUS}/${driver._id}` }
+      );
+
+      if (statusResponse.success) {
+        Swal.fire({
+          text: `Driver ${
+            newStatus ? "activated" : "deactivated"
+          } successfully`,
+          icon: "success",
+          timer: 2000,
+          showConfirmButton: false,
+        });
+        fetchDrivers();
+      } else {
+        Swal.fire({
+          text: statusResponse.message || "Failed to update driver status",
+          icon: "error",
+          timer: 2000,
+          showConfirmButton: false,
+        });
+      }
+    } catch (error: any) {
+      Swal.fire({
+        text: "Failed to update driver status",
+        icon: "error",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+    }
+  };
+
   const filteredDrivers = drivers.filter(
     (driver) =>
       driver.name.toLowerCase().includes(searchValue.toLowerCase()) ||
       driver.licenseNumber.toLowerCase().includes(searchValue.toLowerCase()) ||
-      driver.phone.toLowerCase().includes(searchValue.toLowerCase())
+      driver.phoneNo.toLowerCase().includes(searchValue.toLowerCase())
   );
 
   const renderTableRows = () => {
     return filteredDrivers.map((row: Driver, index: number) => (
       <tr
-        key={row.id}
+        key={row._id}
         onMouseEnter={() => {
           setIsHovered(true);
-          setHoveredId(row.id);
+          setHoveredId(row._id || "");
         }}
         onMouseLeave={() => setIsHovered(false)}
         style={{
           backgroundColor:
-            isHovered && hoveredId === row.id
+            isHovered && hoveredId === row._id
               ? userPersonalizationData == null
                 ? "#D6EEEE"
                 : `rgba(${rgbColor.r},${rgbColor.g},${rgbColor.b},0.2)`
@@ -207,10 +344,9 @@ const DriversTab = () => {
           transition: "background-color 0.3s",
         }}
       >
-        <td>{index + 1}</td>
         <td>{row.name}</td>
         <td>{row.licenseNumber}</td>
-        <td>{row.phone}</td>
+        <td>{row.phoneNo}</td>
         <td>{row.email}</td>
         <td>{row.address}</td>
         <td>
@@ -218,32 +354,22 @@ const DriversTab = () => {
             <Label className="switch mb-0">
               <Input
                 type="checkbox"
-                checked={row.status === "active"}
-                onChange={() => {
-                  setDrivers(
-                    drivers.map((driver) =>
-                      driver.id === row.id
-                        ? {
-                            ...driver,
-                            status:
-                              driver.status === "active" ? "inactive" : "active",
-                          }
-                        : driver
-                    )
-                  );
-                }}
+                checked={row.isActive}
+                onChange={() => handleStatusToggle(row)}
               />
               <span
                 className="switch-state"
                 style={{
-                  backgroundColor: row.status === "active" ? "green" : "red",
+                  backgroundColor: row.isActive ? "green" : "red",
                 }}
               />
             </Label>
           </div>
         </td>
         <td>
-          <div style={{ display: "flex", gap: "10px", justifyContent: "center" }}>
+          <div
+            style={{ display: "flex", gap: "10px", justifyContent: "center" }}
+          >
             <button
               className="global-table-edit-btn"
               onClick={() => handleEditDriver(row)}
@@ -252,7 +378,7 @@ const DriversTab = () => {
             </button>
             <button
               className="global-table-delete-btn"
-              onClick={() => handleDeleteDriver(row.id)}
+              onClick={() => handleDeleteDriver(row._id || "")}
             >
               Delete
             </button>
@@ -295,21 +421,30 @@ const DriversTab = () => {
         </Row>
 
         <div className="table-responsive">
-          <Table className="table-striped">
-            <thead>
-              <tr>
-                <th>S.No.</th>
-                <th>Name</th>
-                <th>License Number</th>
-                <th>Phone</th>
-                <th>Email</th>
-                <th>Address</th>
-                <th>Status</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>{renderTableRows()}</tbody>
-          </Table>
+          {loading ? (
+            <div style={{ textAlign: "center", padding: "20px" }}>
+              <p>Loading drivers...</p>
+            </div>
+          ) : filteredDrivers.length === 0 ? (
+            <div style={{ textAlign: "center", padding: "20px" }}>
+              <p>No drivers found</p>
+            </div>
+          ) : (
+            <Table className="table-striped">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>License Number</th>
+                  <th>Phone</th>
+                  <th>Email</th>
+                  <th>Address</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>{renderTableRows()}</tbody>
+            </Table>
+          )}
         </div>
 
         <Modal isOpen={isModalOpen} toggle={toggleModal} size="lg" centered>
@@ -352,15 +487,15 @@ const DriversTab = () => {
             <Row>
               <Col md="6">
                 <FormGroup>
-                  <Label for="phone">
+                  <Label for="phoneNo">
                     Phone <span style={{ color: "red" }}>*</span>
                   </Label>
                   <Input
                     type="text"
-                    name="phone"
-                    id="phone"
+                    name="phoneNo"
+                    id="phoneNo"
                     placeholder="Enter phone number"
-                    value={formData.phone}
+                    value={formData.phoneNo}
                     onChange={handleInputChange}
                   />
                 </FormGroup>
@@ -395,35 +530,44 @@ const DriversTab = () => {
               </Col>
               <Col md="6">
                 <FormGroup>
-                  <Label for="status">Status</Label>
-                  <Input
-                    type="select"
-                    name="status"
-                    id="status"
-                    value={formData.status}
-                    onChange={handleInputChange}
-                  >
-                    <option value="active">Active</option>
-                    <option value="inactive">Inactive</option>
-                  </Input>
+                  <Label for="isActive">Status</Label>
+                  <div className="d-flex align-items-center">
+                    <Label className="switch mb-0">
+                      <Input
+                        type="checkbox"
+                        checked={formData.isActive}
+                        onChange={(e) => {
+                          setFormData({
+                            ...formData,
+                            isActive: !formData.isActive,
+                          });
+                        }}
+                      />
+                      <span
+                        className="switch-state"
+                        style={{
+                          backgroundColor: formData.isActive ? "green" : "red",
+                        }}
+                      />
+                    </Label>
+                    <span style={{ marginLeft: "10px" }}>
+                      {formData.isActive ? "Active" : "Inactive"}
+                    </span>
+                  </div>
                 </FormGroup>
               </Col>
             </Row>
           </ModalBody>
           <ModalFooter>
-            <Button color="secondary" onClick={toggleModal}>
+            <Button color="secondary" onClick={toggleModal} disabled={loading}>
               Cancel
             </Button>
             <Button
               color="primary"
-              // style={{
-              //   backgroundColor:
-              //     userPersonalizationData?.buttonsAndBarsColor || "#63d5be",
-              //   border: "none",
-              // }}
               onClick={handleSaveDriver}
+              disabled={loading}
             >
-              {editingDriver ? "Update" : "Save"}
+              {loading ? "Loading..." : editingDriver ? "Update" : "Save"}
             </Button>
           </ModalFooter>
         </Modal>
