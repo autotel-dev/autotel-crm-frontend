@@ -618,7 +618,7 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
                               fontSize: "13px",
                             }}
                           >
-                            {t(data.title)}
+                            {data.title}
                           </span>
                         </Link>
                         {data.link ? (
@@ -714,7 +714,7 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
                               />
                             </span>
                             <span style={{ fontSize: "13px" }}>
-                              {t(data.title)}
+                              {data.title}
                             </span>
                           </div>
                         </Link>
@@ -780,9 +780,7 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
                               alt=""
                             />
                           </span>
-                          <span style={{ fontSize: "13px" }}>
-                            {t(data.title)}
-                          </span>
+                          <span style={{ fontSize: "13px" }}>{data.title}</span>
                         </Link>
                         {data.link ? (
                           <div></div>

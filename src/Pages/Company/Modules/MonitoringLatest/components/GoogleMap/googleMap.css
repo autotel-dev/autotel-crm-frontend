@@ -1,6 +1,6 @@
 .custom-zoom-control {
   position: absolute;
-  top: 40%;
+  top: 10%;
   left: 15px;
   width: 40px;
   transform: translateY(-50%);
@@ -13,7 +13,7 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
-.zoom-button {
+.zoom-buttonn {
   border-radius: 5px;
   height: 30px;
   width: 30px;

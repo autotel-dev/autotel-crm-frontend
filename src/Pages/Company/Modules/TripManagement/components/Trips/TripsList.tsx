@@ -80,8 +80,9 @@ const TripsList = () => {
   };
 
   const handleCreateTrip = () => {
-    // Navigate to create trip page or open modal
-    // navigate(`${process.env.PUBLIC_URL}/company/modules/trip-management/trips/create-trip`);
+    navigate(
+      `${process.env.PUBLIC_URL}/company/modules/trip-management/trips/create-trip`
+    );
   };
 
   const tripColumns = [

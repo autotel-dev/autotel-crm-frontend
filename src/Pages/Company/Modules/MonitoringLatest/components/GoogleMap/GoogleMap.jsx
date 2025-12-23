@@ -277,7 +277,7 @@ const GoogleMap = (props) => {
       >
         <button
           onClick={onClick}
-          className="zoom-button tooltip-button"
+          className="zoom-buttonn tooltip-button"
           style={{
             ...style,
             backgroundColor: isActive ? "red" : "#6dbfb8",
@@ -915,7 +915,7 @@ const GoogleMap = (props) => {
             alignItems: "center",
           }}
         >
-          <MdAdd size={20} />
+          <MdAdd size={16} />
         </TooltipButton>
 
         <TooltipButton
@@ -928,10 +928,10 @@ const GoogleMap = (props) => {
             alignItems: "center",
           }}
         >
-          <GrFormSubtract size={20} />
+          <GrFormSubtract size={16} />
         </TooltipButton>
 
-        <TooltipButton
+        {/* <TooltipButton
           onClick={() => {}}
           tooltip="Alternate Maps"
           style={{
@@ -942,9 +942,9 @@ const GoogleMap = (props) => {
           }}
         >
           <FaRegMap size={20} />
-        </TooltipButton>
+        </TooltipButton> */}
 
-        <TooltipButton
+        {/* <TooltipButton
           onClick={() => {}}
           tooltip="Objects"
           style={{
@@ -955,7 +955,7 @@ const GoogleMap = (props) => {
           }}
         >
           <FaLocationArrow size={20} />
-        </TooltipButton>
+        </TooltipButton> */}
 
         <TooltipButton
           onClick={toggleGeofences}
@@ -968,10 +968,11 @@ const GoogleMap = (props) => {
             alignItems: "center",
           }}
         >
-          <GrMapLocation size={20} />
+          <GrMapLocation size={16} />
         </TooltipButton>
+        <div style={{ height: "5px" }}></div>
 
-        <TooltipButton
+        {/* <TooltipButton
           onClick={() => {}}
           tooltip="Routes"
           style={{
@@ -982,9 +983,9 @@ const GoogleMap = (props) => {
           }}
         >
           <FaTrafficLight size={20} />
-        </TooltipButton>
+        </TooltipButton> */}
 
-        <TooltipButton
+        {/* <TooltipButton
           onClick={() => {}}
           tooltip="POI"
           style={{
@@ -995,9 +996,9 @@ const GoogleMap = (props) => {
           }}
         >
           <MdLocationOn size={20} />
-        </TooltipButton>
+        </TooltipButton> */}
 
-        <TooltipButton
+        {/* <TooltipButton
           onClick={() => {}}
           tooltip="Tail"
           style={{
@@ -1008,7 +1009,7 @@ const GoogleMap = (props) => {
           }}
         >
           <FaArrowTrendDown size={20} />
-        </TooltipButton>
+        </TooltipButton> */}
       </div>
     </Map>
   );
