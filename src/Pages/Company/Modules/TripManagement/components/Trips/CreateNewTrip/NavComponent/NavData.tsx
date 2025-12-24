@@ -2,7 +2,7 @@ export const NavData = [
   {
     activeTab: 1,
     iconName: "fa-info-circle",
-    tittle: "Details",
+    tittle: "Detailss",
   },
   {
     activeTab: 2,
