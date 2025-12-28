@@ -4,7 +4,10 @@ import { useSelector } from "react-redux";
 import { Select } from "antd";
 import Swal from "sweetalert2";
 import { getAll } from "../../../../../../../../../Utilities/api";
-import { GET_ALL_TRIP_DRIVERS_DROPDOWN } from "../../../../../../../../../Utilities/api/apiEndpoints";
+import {
+  GET_ALL_TRIP_DRIVERS_DROPDOWN,
+  GET_ALL_VEHICLES_DROPDOWN_FOR_ALERT,
+} from "../../../../../../../../../Utilities/api/apiEndpoints";
 import { P } from "../../../../../../../../../AbstractElements";
 import SelectDriverBox from "./components/SelectDriverBox";
 import SelectVehicleBox from "./components/SelectVehicleBox";
@@ -32,24 +35,17 @@ const TripDetails: React.FC<TripDetailsProps> = ({ callbackActive }) => {
 
   const [loading, setLoading] = useState(false);
   const [drivers, setDrivers] = useState<any[]>([]);
+  const [vehicles, setVehicles] = useState<any[]>([]);
   const [tripName, setTripName] = useState(tripData.tripName);
   const [tripType, setTripType] = useState(tripData.tripType);
   const [vehicleId, setVehicleId] = useState(tripData.vehicleId);
   const [driverId, setDriverId] = useState(tripData.driverId);
   const [notes, setNotes] = useState(tripData.notes);
 
-  // Dummy vehicles - will be replaced with actual API call later
-  const dummyVehicles = [
-    { _id: "1", name: "Vehicle 001 - ABC-123" },
-    { _id: "2", name: "Vehicle 002 - XYZ-456" },
-    { _id: "3", name: "Vehicle 003 - DEF-789" },
-    { _id: "4", name: "Vehicle 004 - GHI-012" },
-    { _id: "5", name: "Vehicle 005 - JKL-345" },
-  ];
-
-  // Fetch drivers from API
+  // Fetch drivers and vehicles from API
   useEffect(() => {
     fetchDrivers();
+    fetchVehicles();
   }, []);
 
   const fetchDrivers = () => {
@@ -72,6 +68,29 @@ const TripDetails: React.FC<TripDetailsProps> = ({ callbackActive }) => {
       .catch((error) => {
         console.error("Error fetching drivers:", error);
         setDrivers([]);
+      });
+  };
+
+  const fetchVehicles = () => {
+    getAll({ url: GET_ALL_VEHICLES_DROPDOWN_FOR_ALERT })
+      .then((data: any) => {
+        if (data === undefined) {
+          Swal.fire({
+            text: "Failed to fetch vehicles due to connection refused",
+            icon: "error",
+            timer: 2000,
+            showConfirmButton: false,
+          });
+          setVehicles([]);
+          return;
+        }
+        if (data.success) {
+          setVehicles(data.data || []);
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching vehicles:", error);
+        setVehicles([]);
       });
   };
 
@@ -158,7 +177,7 @@ const TripDetails: React.FC<TripDetailsProps> = ({ callbackActive }) => {
             placeholder="Select Vehicle"
             setVehicle={setVehicleId}
             vehicle={vehicleId}
-            vehicles={dummyVehicles}
+            vehicles={vehicles}
           />
         </Col>
 

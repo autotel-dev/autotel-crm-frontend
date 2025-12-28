@@ -47,6 +47,7 @@ import TripManagementReports from "../Pages/Company/Modules/TripManagement/compo
 import Trips from "../Pages/Company/Modules/TripManagement/components/Trips/Trips";
 import TripsList from "../Pages/Company/Modules/TripManagement/components/Trips/TripsList";
 import CreateNewTrip from "../Pages/Company/Modules/TripManagement/components/Trips/CreateNewTrip/CreateNewTrip";
+import TripDetails from "../Pages/Company/Modules/TripManagement/components/Trips/TripDetails/TripDetails";
 
 const LayoutRoutes = () => {
   return (
@@ -112,6 +113,10 @@ const LayoutRoutes = () => {
                             <Route
                               path={`${path}/trips/create-trip`}
                               element={<CreateNewTrip />}
+                            />
+                            <Route
+                              path={`${path}/trips/view/:tripId`}
+                              element={<TripDetails />}
                             />
                           </Route>
                           <Route

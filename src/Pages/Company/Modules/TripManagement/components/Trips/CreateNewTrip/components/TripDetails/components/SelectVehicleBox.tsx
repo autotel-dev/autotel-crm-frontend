@@ -21,7 +21,11 @@ const SelectVehicleBox: React.FC<SelectVehicleBoxProps> = ({
   useEffect(() => {
     const tempList: any = [];
     vehicles?.forEach((item: any) => {
-      tempList.push({ value: `${item?._id}`, label: `${item?.name}` });
+      // Vehicle data from GET_ALL_VEHICLES_DROPDOWN_FOR_ALERT has registrationNo
+      tempList.push({
+        value: `${item?._id}`,
+        label: `${item?.registrationNo || item?.name || "N/A"}`,
+      });
     });
     setVehicleList(tempList);
   }, [vehicles]);

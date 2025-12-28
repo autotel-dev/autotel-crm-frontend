@@ -1,16 +1,30 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Col, Row } from "reactstrap";
 import DataTable from "react-data-table-component";
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { PlusCircle } from "react-feather";
+import Swal from "sweetalert2";
+import { getAll } from "../../../../../../Utilities/api";
+import { GET_ALL_TRIPS } from "../../../../../../Utilities/api/apiEndpoints";
+import {
+  setTrips,
+  setFilterTrips,
+  setTripStart,
+  setTripEnd,
+} from "../../../../../../ReaduxToolkit/Reducer/TripSlice";
 
 const TripsList = () => {
   const [searchValue, setSearchValue] = useState("");
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const { userPersonalizationData } = useSelector(
     (state: any) => state.personalization
+  );
+
+  const { trips, filterTrips, loading } = useSelector(
+    (state: any) => state.trips
   );
 
   function hexToRgb(hex: any) {
@@ -24,59 +38,73 @@ const TripsList = () => {
 
   const rgbColor = hexToRgb(userPersonalizationData?.buttonsAndBarsColor);
 
-  // Mock trip data - same as Dashboard
-  const tripData = [
-    {
-      id: 1,
-      tripId: "TRIP-001",
-      vehicle: "ABC-123",
-      driver: "John Doe",
-      currentPoint: "Islamabad, Pakistan",
-      status: "ON_TIME",
-      eta: "2 hrs 30 mins",
-      date: "2025-12-12, 10:30:00 AM",
-    },
-    {
-      id: 2,
-      tripId: "TRIP-002",
-      vehicle: "XYZ-456",
-      driver: "Jane Smith",
-      currentPoint: "Lahore, Pakistan",
-      status: "DELAYED",
-      eta: "4 hrs 15 mins",
-      date: "2025-12-12, 09:15:00 AM",
-    },
-    {
-      id: 3,
-      tripId: "TRIP-003",
-      vehicle: "DEF-789",
-      driver: "Mike Johnson",
-      currentPoint: "Karachi, Pakistan",
-      status: "ON_TIME",
-      eta: "1 hr 45 mins",
-      date: "2025-12-12, 11:00:00 AM",
-    },
-  ];
+  // Fetch trips from API on component mount and every 15 seconds for real-time updates
+  useEffect(() => {
+    // Fetch immediately on mount
+    fetchTrips();
 
-  const [data, setData] = useState(tripData);
+    // // Set up interval to fetch every 15 seconds for real-time updates
+    // const interval = setInterval(() => {
+    //   fetchTrips();
+    // }, 15000); // 15 seconds
+
+    // // Cleanup interval on unmount
+    // return () => clearInterval(interval);
+  }, []);
+
+  const fetchTrips = () => {
+    dispatch(setTripStart());
+    getAll({ url: GET_ALL_TRIPS })
+      .then((data: any) => {
+        if (data === undefined) {
+          Swal.fire({
+            text: "Failed to fetch trips due to connection refused",
+            icon: "error",
+            timer: 2000,
+            showConfirmButton: false,
+          });
+          dispatch(setTripEnd());
+          dispatch(setTrips([]));
+          dispatch(setFilterTrips([]));
+          return;
+        }
+
+        if (data.success) {
+          dispatch(setTrips(data.data || []));
+          dispatch(setFilterTrips(data.data || []));
+        } else {
+          dispatch(setTrips([]));
+          dispatch(setFilterTrips([]));
+        }
+        dispatch(setTripEnd());
+      })
+      .catch((error) => {
+        console.error("Error fetching trips:", error);
+        dispatch(setTripEnd());
+        dispatch(setTrips([]));
+        dispatch(setFilterTrips([]));
+      });
+  };
 
   const handleSearch = (e: any) => {
     const searchKey = e.target.value.toLowerCase();
     setSearchValue(searchKey);
 
-    const filteredData = tripData.filter(
+    const filteredData = trips.filter(
       (item: any) =>
-        item?.tripId.toLowerCase().includes(searchKey) ||
-        item?.vehicle.toLowerCase().includes(searchKey) ||
-        item?.driver.toLowerCase().includes(searchKey) ||
-        item?.currentPoint.toLowerCase().includes(searchKey)
+        item?.title?.toLowerCase().includes(searchKey) ||
+        item?.vehicle?.registrationNo?.toLowerCase().includes(searchKey) ||
+        item?.driver?.name?.toLowerCase().includes(searchKey) ||
+        item?.status?.toLowerCase().includes(searchKey)
     );
-    setData(filteredData);
+    dispatch(setFilterTrips(filteredData));
   };
 
   const handleRowClicked = (row: any) => {
     // Navigate to trip details page
-    // navigate(`${process.env.PUBLIC_URL}/company/modules/trip-management/trips/${row.id}`);
+    navigate(
+      `${process.env.PUBLIC_URL}/company/modules/trip-management/trips/view/${row._id}`
+    );
   };
 
   const handleCreateTrip = () => {
@@ -85,42 +113,88 @@ const TripsList = () => {
     );
   };
 
+  const formatDateTime = (datetime: string) => {
+    if (!datetime) return "-";
+    const date = new Date(datetime);
+    return date.toLocaleString();
+  };
+
+  const calculateTripDuration = (checkPoints: any[]) => {
+    if (!checkPoints || checkPoints.length < 2) return "-";
+
+    // Find START and DESTINATION checkpoints
+    const startPoint = checkPoints.find((cp) => cp.stopType === "START");
+    const destinationPoint = checkPoints.find(
+      (cp) => cp.stopType === "DESTINATION"
+    );
+
+    if (!startPoint || !destinationPoint) return "-";
+
+    // Get start time
+    const startTime = new Date(startPoint.scheduledArrivalTime);
+
+    // Get end time (destination arrival + stay time)
+    const destinationArrival = new Date(destinationPoint.scheduledArrivalTime);
+    const endTime = new Date(
+      destinationArrival.getTime() + destinationPoint.stayTimeMin * 60000
+    );
+
+    // Calculate duration in milliseconds
+    const durationMs = endTime.getTime() - startTime.getTime();
+
+    // Convert to hours and minutes
+    const totalMinutes = Math.floor(durationMs / 60000);
+    const hours = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
+
+    if (hours > 0 && minutes > 0) {
+      return `${hours} hours, ${minutes} minutes`;
+    } else if (hours > 0) {
+      return `${hours} hours`;
+    } else if (minutes > 0) {
+      return `${minutes} minutes`;
+    }
+    return "-";
+  };
+
   const tripColumns = [
+    // {
+    //   name: "S.No.",
+    //   selector: (row: any, index?: number) =>
+    //     index !== undefined ? index + 1 : 0,
+    //   sortable: false,
+    //   width: "7%",
+    // },
     {
-      name: "S.No.",
-      selector: (row: any) => row.id,
+      name: "Trip Title",
+      selector: (row: any) => row.title,
       sortable: true,
-      width: "7%",
+      width: "20%",
     },
     {
-      name: "Date",
-      selector: (row: any) => row.date,
+      name: "Vehicle",
+      selector: (row: any) => row.vehicle?.registrationNo || "-",
       sortable: true,
       width: "15%",
     },
     {
-      name: "Trip ID",
-      selector: (row: any) => row.tripId,
-      sortable: true,
-      width: "10%",
-    },
-    {
-      name: "Vehicle",
-      selector: (row: any) => row.vehicle,
-      sortable: true,
-      width: "10%",
-    },
-    {
       name: "Driver",
-      selector: (row: any) => row.driver,
+      selector: (row: any) => row.driver?.name || "-",
       sortable: true,
+      width: "10%",
+    },
+    {
+      name: "Checkpoints",
+      selector: (row: any) => row.checkPoints?.length || 0,
+      sortable: true,
+      center: true,
       width: "12%",
     },
     {
-      name: "Current Point",
-      selector: (row: any) => row.currentPoint,
-      sortable: true,
-      width: "20%",
+      name: "Time Duration",
+      selector: (row: any) => calculateTripDuration(row.checkPoints),
+      sortable: false,
+      width: "12%",
     },
     {
       name: "Status",
@@ -135,13 +209,18 @@ const TripsList = () => {
             textAlign: "center",
             padding: "5px",
             borderRadius: "5px",
-            color: "black",
+            color: "white",
+            fontWeight: "600",
             backgroundColor:
-              row.status === "ON_TIME"
-                ? "rgba(0, 255, 0, 0.3)"
-                : row.status === "DELAYED"
-                ? "rgba(255, 200, 0, 0.3)"
-                : "rgba(255, 0, 0, 0.3)",
+              row.status === "COMPLETED"
+                ? "#28a745"
+                : row.status === "IN_PROGRESS"
+                ? "#007bff"
+                : row.status === "SCHEDULED"
+                ? "#ffc107"
+                : row.status === "CANCELLED"
+                ? "#dc3545"
+                : "#6c757d",
           }}
         >
           {row.status.replace("_", " ")}
@@ -149,10 +228,10 @@ const TripsList = () => {
       ),
     },
     {
-      name: "Dynamic ETA",
-      selector: (row: any) => row.eta,
+      name: "Created At",
+      selector: (row: any) => formatDateTime(row.createdAt),
       sortable: true,
-      width: "13%",
+      width: "15%",
     },
   ];
 
@@ -213,9 +292,9 @@ const TripsList = () => {
 
       <DataTable
         columns={tripColumns}
-        data={data}
+        data={filterTrips}
         pagination
-        selectableRows
+        progressPending={loading}
         onRowClicked={handleRowClicked}
         style={{
           cursor: "pointer",

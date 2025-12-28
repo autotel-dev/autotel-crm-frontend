@@ -6,6 +6,9 @@ import { useNavigate } from "react-router-dom";
 import { useTripContext } from "../../TripContext";
 import { P } from "../../../../../../../../../AbstractElements";
 
+import { CREATE_TRIP } from "../../../../../../../../../Utilities/api/apiEndpoints";
+import { create } from "../../../../../../../../../Utilities/api";
+
 interface ReviewProps {
   callbackActive: (tab: number | undefined) => void;
 }
@@ -30,22 +33,91 @@ const Review: React.FC<ReviewProps> = ({ callbackActive }) => {
   const handleCreate = () => {
     setLoading(true);
 
-    // Here you would integrate with API to create the trip
-    console.log("Creating trip with data:", tripData);
+    // Helper function to convert datetime-local to ISO format
+    const convertToISOFormat = (datetimeLocal: string): string => {
+      if (!datetimeLocal) return "";
+      const date = new Date(datetimeLocal);
+      return date.toISOString();
+    };
 
-    Swal.fire({
-      text: "Trip created successfully! (API integration pending)",
-      icon: "success",
-      timer: 2000,
-      showConfirmButton: false,
-    });
+    // Map checkpoint type to stopType
+    const mapStopType = (type: string): string => {
+      switch (type) {
+        case "origin":
+          return "START";
+        case "waypoint":
+          return "WAYPOINT";
+        case "destination":
+          return "DESTINATION";
+        default:
+          return "WAYPOINT";
+      }
+    };
 
-    setTimeout(() => {
-      setLoading(false);
-      navigate(
-        `${process.env.PUBLIC_URL}/company/modules/trip-management/trips`
-      );
-    }, 2000);
+    // Build the payload according to API requirements
+    const payload = {
+      title: tripData.tripName,
+      vehicleId: tripData.vehicleId,
+      driverId: tripData.driverId,
+      stops: tripData.checkpoints.map((checkpoint) => ({
+        geofenceId: checkpoint.geofenceId,
+        stopType: mapStopType(checkpoint.type),
+        scheduledArrivalTime: convertToISOFormat(
+          checkpoint.plannedArrival || ""
+        ),
+        stayTimeMin: checkpoint.stayTime || 0,
+        overstayBufferMin: checkpoint.overstayBuffer || 0,
+        travelTimeToNextMin: checkpoint.travelTimeToNext || 0,
+      })),
+    };
+
+    // Make API call to create trip
+    create(payload, { url: CREATE_TRIP })
+      .then((data: any) => {
+        setLoading(false);
+
+        if (data === undefined) {
+          Swal.fire({
+            text: "Failed to create trip due to connection refused",
+            icon: "error",
+            timer: 2000,
+            showConfirmButton: false,
+          });
+          return;
+        }
+
+        if (data.success) {
+          Swal.fire({
+            text: "Trip created successfully!",
+            icon: "success",
+            timer: 2000,
+            showConfirmButton: false,
+          });
+
+          setTimeout(() => {
+            navigate(
+              `${process.env.PUBLIC_URL}/company/modules/trip-management/trips`
+            );
+          }, 2000);
+        } else {
+          Swal.fire({
+            text: data.message || "Failed to create trip",
+            icon: "error",
+            timer: 2000,
+            showConfirmButton: true,
+          });
+        }
+      })
+      .catch((error: any) => {
+        console.error("Error creating trip:", error);
+        setLoading(false);
+        Swal.fire({
+          text: "An error occurred while creating the trip",
+          icon: "error",
+          timer: 2000,
+          showConfirmButton: true,
+        });
+      });
   };
 
   const formatDateTime = (datetime: string) => {
@@ -92,31 +164,66 @@ const Review: React.FC<ReviewProps> = ({ callbackActive }) => {
         </Col>
 
         <Col md={4} xs={12}>
-          <P style={{ marginBottom: "5px", fontWeight: "600", fontSize: "12px", color: "#6c757d" }}>
+          <P
+            style={{
+              marginBottom: "5px",
+              fontWeight: "600",
+              fontSize: "12px",
+              color: "#6c757d",
+            }}
+          >
             Trip Name
           </P>
           <p style={{ marginBottom: "15px" }}>{tripData.tripName || "-"}</p>
         </Col>
         <Col md={4} xs={12}>
-          <P style={{ marginBottom: "5px", fontWeight: "600", fontSize: "12px", color: "#6c757d" }}>
+          <P
+            style={{
+              marginBottom: "5px",
+              fontWeight: "600",
+              fontSize: "12px",
+              color: "#6c757d",
+            }}
+          >
             Trip Type
           </P>
           <p style={{ marginBottom: "15px" }}>{tripData.tripType || "-"}</p>
         </Col>
         <Col md={4} xs={12}>
-          <P style={{ marginBottom: "5px", fontWeight: "600", fontSize: "12px", color: "#6c757d" }}>
+          <P
+            style={{
+              marginBottom: "5px",
+              fontWeight: "600",
+              fontSize: "12px",
+              color: "#6c757d",
+            }}
+          >
             Vehicle ID
           </P>
           <p style={{ marginBottom: "15px" }}>{tripData.vehicleId || "-"}</p>
         </Col>
         <Col md={4} xs={12}>
-          <P style={{ marginBottom: "5px", fontWeight: "600", fontSize: "12px", color: "#6c757d" }}>
+          <P
+            style={{
+              marginBottom: "5px",
+              fontWeight: "600",
+              fontSize: "12px",
+              color: "#6c757d",
+            }}
+          >
             Driver ID
           </P>
           <p style={{ marginBottom: "15px" }}>{tripData.driverId || "-"}</p>
         </Col>
         <Col md={12} xs={12}>
-          <P style={{ marginBottom: "5px", fontWeight: "600", fontSize: "12px", color: "#6c757d" }}>
+          <P
+            style={{
+              marginBottom: "5px",
+              fontWeight: "600",
+              fontSize: "12px",
+              color: "#6c757d",
+            }}
+          >
             Notes
           </P>
           <p style={{ marginBottom: "15px" }}>{tripData.notes || "-"}</p>
@@ -210,16 +317,34 @@ const Review: React.FC<ReviewProps> = ({ callbackActive }) => {
               </Col>
 
               <Col md={6} xs={12}>
-                <P style={{ marginBottom: "5px", fontWeight: "600", fontSize: "12px", color: "#6c757d" }}>
+                <P
+                  style={{
+                    marginBottom: "5px",
+                    fontWeight: "600",
+                    fontSize: "12px",
+                    color: "#6c757d",
+                  }}
+                >
                   Geofence
                 </P>
-                <p style={{ marginBottom: "15px" }}>{checkpoint.geofenceName || "-"}</p>
+                <p style={{ marginBottom: "15px" }}>
+                  {checkpoint.geofenceName || "-"}
+                </p>
               </Col>
               <Col md={6} xs={12}>
-                <P style={{ marginBottom: "5px", fontWeight: "600", fontSize: "12px", color: "#6c757d" }}>
+                <P
+                  style={{
+                    marginBottom: "5px",
+                    fontWeight: "600",
+                    fontSize: "12px",
+                    color: "#6c757d",
+                  }}
+                >
                   Type
                 </P>
-                <p style={{ marginBottom: "15px", textTransform: "capitalize" }}>
+                <p
+                  style={{ marginBottom: "15px", textTransform: "capitalize" }}
+                >
                   {checkpoint.type === "origin"
                     ? "Start"
                     : checkpoint.type === "destination"
@@ -323,7 +448,14 @@ const Review: React.FC<ReviewProps> = ({ callbackActive }) => {
               </Col>
 
               <Col md={3} xs={12}>
-                <P style={{ marginBottom: "5px", fontWeight: "600", fontSize: "12px", color: "#6c757d" }}>
+                <P
+                  style={{
+                    marginBottom: "5px",
+                    fontWeight: "600",
+                    fontSize: "12px",
+                    color: "#6c757d",
+                  }}
+                >
                   Arrival Time
                 </P>
                 <p style={{ marginBottom: "15px" }}>
@@ -331,13 +463,29 @@ const Review: React.FC<ReviewProps> = ({ callbackActive }) => {
                 </p>
               </Col>
               <Col md={3} xs={12}>
-                <P style={{ marginBottom: "5px", fontWeight: "600", fontSize: "12px", color: "#6c757d" }}>
+                <P
+                  style={{
+                    marginBottom: "5px",
+                    fontWeight: "600",
+                    fontSize: "12px",
+                    color: "#6c757d",
+                  }}
+                >
                   Stay Time (min)
                 </P>
-                <p style={{ marginBottom: "15px" }}>{checkpoint.stayTime || "-"}</p>
+                <p style={{ marginBottom: "15px" }}>
+                  {checkpoint.stayTime || "-"}
+                </p>
               </Col>
               <Col md={3} xs={12}>
-                <P style={{ marginBottom: "5px", fontWeight: "600", fontSize: "12px", color: "#6c757d" }}>
+                <P
+                  style={{
+                    marginBottom: "5px",
+                    fontWeight: "600",
+                    fontSize: "12px",
+                    color: "#6c757d",
+                  }}
+                >
                   Departure Time
                 </P>
                 <p style={{ marginBottom: "15px" }}>
@@ -345,17 +493,35 @@ const Review: React.FC<ReviewProps> = ({ callbackActive }) => {
                 </p>
               </Col>
               <Col md={3} xs={12}>
-                <P style={{ marginBottom: "5px", fontWeight: "600", fontSize: "12px", color: "#6c757d" }}>
+                <P
+                  style={{
+                    marginBottom: "5px",
+                    fontWeight: "600",
+                    fontSize: "12px",
+                    color: "#6c757d",
+                  }}
+                >
                   Overstay Buffer (min)
                 </P>
-                <p style={{ marginBottom: "15px" }}>{checkpoint.overstayBuffer || "-"}</p>
+                <p style={{ marginBottom: "15px" }}>
+                  {checkpoint.overstayBuffer || "-"}
+                </p>
               </Col>
               {index < tripData.checkpoints.length - 1 && (
                 <Col md={3} xs={12}>
-                  <P style={{ marginBottom: "5px", fontWeight: "600", fontSize: "12px", color: "#6c757d" }}>
+                  <P
+                    style={{
+                      marginBottom: "5px",
+                      fontWeight: "600",
+                      fontSize: "12px",
+                      color: "#6c757d",
+                    }}
+                  >
                     Travel Time to Next (min)
                   </P>
-                  <p style={{ marginBottom: "15px" }}>{checkpoint.travelTimeToNext || "-"}</p>
+                  <p style={{ marginBottom: "15px" }}>
+                    {checkpoint.travelTimeToNext || "-"}
+                  </p>
                 </Col>
               )}
             </React.Fragment>

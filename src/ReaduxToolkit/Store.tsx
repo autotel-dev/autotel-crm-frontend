@@ -70,6 +70,7 @@ import CustomerLedgerSlice from "./Reducer/CustomerLedgerSlice";
 import VendorLedgerSlice from "./Reducer/VendorLedgerSlice";
 import CompanyLedgerSlice from "./Reducer/CompanyLedgerSlice";
 import AlertRuleSlice from "./Reducer/AlertRuleSlice";
+import TripSlice from "./Reducer/TripSlice";
 
 const Store = configureStore({
   reducer: {
@@ -144,6 +145,7 @@ const Store = configureStore({
     vendorLedgers: VendorLedgerSlice,
     companyLedgers: CompanyLedgerSlice,
     alertRules: AlertRuleSlice,
+    trips: TripSlice,
   },
 });
 

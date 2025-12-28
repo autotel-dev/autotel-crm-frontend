@@ -1,6 +1,16 @@
 import React, { useEffect, useRef } from "react";
 
-const CustomMarker = ({ map, google, position, icon, rotation, onClick }) => {
+const CustomMarker = ({
+  map,
+  google,
+  position,
+  icon,
+  rotation,
+  onClick,
+  label,
+  showLabel = true,
+  statusColor = "green",
+}) => {
   const markerRef = useRef(null);
   const divRef = useRef(null);
   const currentLatLngRef = useRef(position);
@@ -14,11 +24,41 @@ const CustomMarker = ({ map, google, position, icon, rotation, onClick }) => {
     div.style.height = "40px";
     div.style.transform = `rotate(${rotation}deg)`;
     div.style.transformOrigin = "center";
-    div.innerHTML = `<img src="${icon}" width="25" height="45" style="position: absolute" />`;
+
+    // Add marker icon and label
+    let innerHTML = `<img src="${icon}" width="25" height="45" style="position: absolute" />`;
+
+    if (showLabel && label) {
+      innerHTML += `
+        <div style="
+          position: absolute;
+          top: 50px;
+          left: 40%;
+          transform: translateX(-50%);
+          background: ${statusColor};
+          color: white;
+          padding: 3px 8px;
+          border-radius: 4px;
+          font-size: 12px;
+          font-weight: bold;
+          white-space: nowrap;
+          pointer-events: none;
+          box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+          z-index: 1000;
+        ">
+          ${label}
+        </div>
+      `;
+    }
+
+    div.innerHTML = innerHTML;
 
     if (onClick) {
       div.style.cursor = "pointer";
-      div.addEventListener("click", onClick);
+      div.addEventListener("click", (e) => {
+        e.stopPropagation(); // Prevent map click from firing
+        onClick(e);
+      });
     }
 
     const overlay = new google.maps.OverlayView();
@@ -55,7 +95,7 @@ const CustomMarker = ({ map, google, position, icon, rotation, onClick }) => {
     return () => {
       overlay.setMap(null);
     };
-  }, [map, google, icon, rotation, onClick]);
+  }, [map, google, icon, rotation, onClick, label, showLabel, statusColor]);
 
   // Animate position update
   useEffect(() => {

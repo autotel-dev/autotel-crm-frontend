@@ -492,7 +492,7 @@ export const DELETE_TRIP_WAYPOINT = `${API_BASE_URL}/trip/way-point/delete-waypo
 export const UPDATE_TRIP_WAYPOINT_ACTIVATION_STATUS = `${API_BASE_URL}/trip/way-point/update-waypoint-activation-status`;
 export const GET_ALL_TRIP_WAYPOINTS_DROPDOWN = `${API_BASE_URL}/trip/way-point/get-all-waypoints-dropdown`;
 
-// Trip Management - Planning - Trip Waypoints
+// Trip Management - Planning - Driver
 
 export const CREATE_TRIP_DRIVER = `${API_BASE_URL}/trip/driver/create-driver`;
 export const GET_ALL_TRIP_DRIVERS = `${API_BASE_URL}/trip/driver/get-all-drivers`;
@@ -500,3 +500,9 @@ export const UPDATE_TRIP_DRIVER = `${API_BASE_URL}/trip/driver/update-driver`;
 export const DELETE_TRIP_DRIVER = `${API_BASE_URL}/trip/driver/delete-driver`;
 export const UPDATE_DRIVER_ACTIVATION_STATUS = `${API_BASE_URL}/trip/driver/update-driver-activation-status`;
 export const GET_ALL_TRIP_DRIVERS_DROPDOWN = `${API_BASE_URL}/trip/driver/get-all-drivers-dropdown`;
+
+// Trip Management - Trips
+
+export const CREATE_TRIP = `${API_BASE_URL}/trip/create-trip`;
+export const GET_ALL_TRIPS = `${API_BASE_URL}/trip/get-all-trips`;
+export const VIEW_TRIP = `${API_BASE_URL}/trip/get-trip-details`;

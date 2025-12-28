@@ -43,6 +43,7 @@ import { HiDeviceMobile } from "react-icons/hi";
 import { FaPlay } from "react-icons/fa6";
 import { BsSendArrowUpFill } from "react-icons/bs";
 import { HiChartBar } from "react-icons/hi";
+import { FaChevronUp, FaChevronDown } from "react-icons/fa";
 import VehicleInfo from "./components/SingleVehiceDetail/VehicleInfo/VehicleInfo";
 import DeviceInfo from "./components/SingleVehiceDetail/DeviceInfo/DeviceInfo";
 import SensorInfo from "./components/SingleVehiceDetail/SensorInfo/SensorInfo";
@@ -68,8 +69,10 @@ const MonitoringLatest = () => {
   const updatesBufferRef = React.useRef<any[]>([]);
 
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const [open, setOpen] = useState(true); // ✅ control paper open/close
+  const [open, setOpen] = useState(true); // ✅ control paper open/close (true = hidden, false = visible)
+  const [isCollapsed, setIsCollapsed] = useState(true); // ✅ control collapsed/expanded state
   const [loading, setLoading] = useState(false);
+  const [selectedStatus, setSelectedStatus] = useState<string | null>(null); // null = show all
 
   const [openModal, setOpenModal] = useState(false);
 
@@ -82,6 +85,36 @@ const MonitoringLatest = () => {
       document.body.style.overflow = "unset";
     };
   }, []);
+
+  // Track previous selected device to detect when a NEW device is selected
+  const prevSelectedDeviceIdRef = React.useRef<string | null>(null);
+
+  // Handle selectedSingleDevice changes
+  useEffect(() => {
+    if (selectedSingleDevice) {
+      // Check if the selected device is still checked
+      const device = devices.find((d: any) => d._id === selectedSingleDevice._id);
+
+      if (device && device.checked) {
+        // Show the panel
+        setOpen(false);
+
+        // Only collapse if this is a NEW device selection (not just a device update)
+        if (prevSelectedDeviceIdRef.current !== selectedSingleDevice._id) {
+          setIsCollapsed(true);
+          prevSelectedDeviceIdRef.current = selectedSingleDevice._id;
+        }
+      } else {
+        // Hide the panel if device is unchecked
+        setOpen(true);
+        prevSelectedDeviceIdRef.current = null;
+      }
+    } else {
+      // No device selected, hide the panel
+      setOpen(true);
+      prevSelectedDeviceIdRef.current = null;
+    }
+  }, [selectedSingleDevice, devices]);
 
   // useEffect(() => {
   //   console.log("selectedSingleDevice", selectedSingleDevice);
@@ -294,25 +327,31 @@ const MonitoringLatest = () => {
     },
   ];
 
-  const StatusBox = ({ count, label, color, background }: any) => {
+  const StatusBox = ({ count, label, color, background, onClick, isSelected }: any) => {
     return (
       <div
         style={{
           width: "80px",
           height: "100%",
           borderRadius: "8px",
-          background: background,
+          background: isSelected ? color : background,
           display: "flex",
           flexDirection: "column",
           justifyContent: "center",
           alignItems: "center",
+          cursor: "pointer",
+          transition: "all 0.3s ease",
+          border: isSelected ? `2px solid ${color}` : "2px solid transparent",
+          transform: isSelected ? "scale(1.05)" : "scale(1)",
         }}
+        onClick={onClick}
       >
         <p
           style={{
             margin: "0px",
             fontSize: "14px",
             fontWeight: "bold",
+            color: isSelected ? "white" : "black",
           }}
         >
           {count}
@@ -323,7 +362,7 @@ const MonitoringLatest = () => {
             fontSize: "10px",
             fontWeight: "bold",
             marginTop: "-6px",
-            color: color,
+            color: isSelected ? "white" : color,
           }}
         >
           {label}
@@ -388,6 +427,59 @@ const MonitoringLatest = () => {
         )}
       </div>
     );
+  };
+
+  // Filter devices based on selected status
+  const filteredDevices = useMemo(() => {
+    if (!selectedStatus) return devices; // null means show all
+
+    const now: any = new Date();
+    const inactiveTimeLimitMinutes = userData?.inactiveTimeLimit || 1440;
+
+    return devices.filter((device: any) => {
+      // Check if expired
+      const renewalDate = device?.vehicle?.serviceRenewalDate
+        ? new Date(device.vehicle.serviceRenewalDate)
+        : null;
+      const isExpired = renewalDate && renewalDate < now;
+
+      // Check if not connected
+      const hasDeviceTime = device?.latestPosition?.deviceTime;
+
+      // Check if inactive
+      const deviceTime: any = device?.latestPosition?.deviceTime
+        ? new Date(device.latestPosition.deviceTime)
+        : null;
+      const diffMinutes = deviceTime ? (now - deviceTime) / (1000 * 60) : 0;
+      const isInactive = deviceTime && diffMinutes > inactiveTimeLimitMinutes;
+
+      // Check main vehicle status
+      const mainStatus = device.mainVehicleStatus?.toLowerCase();
+
+      // Match the selected status
+      switch (selectedStatus) {
+        case "moving":
+          return !isExpired && hasDeviceTime && !isInactive && mainStatus === "moving";
+        case "stopped":
+          return !isExpired && hasDeviceTime && !isInactive && mainStatus === "stopped";
+        case "idle":
+          return !isExpired && hasDeviceTime && !isInactive && mainStatus === "idle";
+        case "inactive":
+          return !isExpired && isInactive;
+        case "not_connected":
+          return !isExpired && !hasDeviceTime;
+        case "expired":
+          return isExpired;
+        case "total":
+          return true; // Show all
+        default:
+          return true;
+      }
+    });
+  }, [devices, selectedStatus, userData]);
+
+  const handleStatusClick = (status: string | null) => {
+    setSelectedStatus(status);
   };
 
   const [selectedComponentIndex, setSelectedComponentIndex] = useState(0);
@@ -603,24 +695,32 @@ const MonitoringLatest = () => {
                 label="Moving"
                 color="green"
                 background="rgba(0, 255, 0, 0.1)"
+                onClick={() => handleStatusClick("moving")}
+                isSelected={selectedStatus === "moving"}
               />
               <StatusBox
                 count={stoppedCount}
                 label="Stopped"
                 color="red"
                 background="rgba(255, 0, 0, 0.1)"
+                onClick={() => handleStatusClick("stopped")}
+                isSelected={selectedStatus === "stopped"}
               />
               <StatusBox
                 count={idleCount}
                 label="Idle"
                 color="orange"
                 background="rgba(255, 165, 0, 0.1)"
+                onClick={() => handleStatusClick("idle")}
+                isSelected={selectedStatus === "idle"}
               />
               <StatusBox
                 count={inactiveCount}
                 label="Inactive"
                 color="purple"
                 background="rgba(128, 0, 128, 0.1)"
+                onClick={() => handleStatusClick("inactive")}
+                isSelected={selectedStatus === "inactive"}
               />
 
               <StatusBox
@@ -628,12 +728,16 @@ const MonitoringLatest = () => {
                 label="Not Conn."
                 color="purple"
                 background="rgba(0, 0, 255, 0.3)"
+                onClick={() => handleStatusClick("not_connected")}
+                isSelected={selectedStatus === "not_connected"}
               />
               <StatusBox
                 count={expiredCount}
                 label="Expired"
                 color="gray"
                 background="rgba(128, 128, 128, 0.2)"
+                onClick={() => handleStatusClick("expired")}
+                isSelected={selectedStatus === "expired"}
               />
 
               <StatusBox
@@ -641,6 +745,8 @@ const MonitoringLatest = () => {
                 label="Total"
                 color="blue"
                 background="rgba(0, 0, 255, 0.1)"
+                onClick={() => handleStatusClick(null)}
+                isSelected={selectedStatus === null}
               />
 
               <div
@@ -683,7 +789,7 @@ const MonitoringLatest = () => {
         <motion.div
           initial={{ y: "100%", opacity: 0 }}
           animate={{
-            y: open ? "-120%" : "0%",
+            y: open ? "100%" : isCollapsed ? "calc(100% - 50px)" : "0%",
             opacity: open ? 0 : 1,
           }}
           transition={{ duration: 0.35, ease: "easeInOut" }}
@@ -695,10 +801,11 @@ const MonitoringLatest = () => {
             height: "45%",
             background: "white",
             borderRadius: "10px",
-            overflow: "hidden",
+            overflow: isCollapsed ? "visible" : "hidden",
             boxShadow: "0 8px 25px rgba(0, 0, 0, 0.3)",
             padding: "10px",
             display: open ? "none" : "flex",
+            flexDirection: "column",
             gap: "20px",
             fontSize: "24px",
             fontWeight: "semibold",
@@ -706,18 +813,113 @@ const MonitoringLatest = () => {
             pointerEvents: open ? "none" : "auto",
           }}
         >
+          {/* Collapse/Expand Bar */}
           <div
             style={{
-              maxHeight: "100%",
               display: "flex",
-              flexDirection: "column",
-              borderRadius: "4px",
-              overflowY: "auto",
-              overflowX: "hidden",
-              borderRight: "1px solid gray",
+              alignItems: "center",
+              justifyContent: "space-between",
+              padding: "10px 20px",
+              background: "white",
+              borderRadius: "10px 10px 0 0",
+              boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
+              position: "absolute",
+              top: 0,
+              left: 0,
+              right: 0,
+              zIndex: 100,
+              height: "50px",
             }}
-            className="scrollbar-hide"
           >
+            <div
+              onClick={() => setIsCollapsed(!isCollapsed)}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "15px",
+                flex: 1,
+                cursor: "pointer",
+              }}
+            >
+              <span
+                style={{
+                  fontSize: "16px",
+                  fontWeight: "600",
+                  color: "#333",
+                }}
+              >
+                {selectedSingleDevice?.vehicle?.registrationNo || "Vehicle Details"}
+              </span>
+            </div>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "15px",
+              }}
+            >
+              <button
+                onClick={() => setIsCollapsed(!isCollapsed)}
+                style={{
+                  background: "transparent",
+                  border: "none",
+                  cursor: "pointer",
+                  padding: "5px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                {isCollapsed ? (
+                  <FaChevronUp size={18} color="#6dbfb8" />
+                ) : (
+                  <FaChevronDown size={18} color="#6dbfb8" />
+                )}
+              </button>
+              <button
+                onClick={() => {
+                  setOpen(true);
+                  setIsCollapsed(true);
+                  dispatch(setSelectedSingleDevice(null));
+                }}
+                style={{
+                  background: "transparent",
+                  border: "none",
+                  fontSize: "24px",
+                  color: "#666",
+                  cursor: "pointer",
+                  fontWeight: "bold",
+                  padding: "0 5px",
+                  lineHeight: 1,
+                }}
+              >
+                ×
+              </button>
+            </div>
+          </div>
+
+          {/* Panel Content - Only visible when expanded */}
+          <div
+            style={{
+              marginTop: "50px",
+              display: isCollapsed ? "none" : "flex",
+              gap: "20px",
+              flex: 1,
+              overflow: "hidden",
+            }}
+          >
+            <div
+              style={{
+                maxHeight: "100%",
+                display: "flex",
+                flexDirection: "column",
+                borderRadius: "4px",
+                overflowY: "auto",
+                overflowX: "hidden",
+                borderRight: "1px solid gray",
+              }}
+              className="scrollbar-hide"
+            >
             <div style={{ height: "5px" }}></div>
             {sidebarMenusForSingleVehicle.map((menu, i: any) => {
               return (
@@ -770,34 +972,14 @@ const MonitoringLatest = () => {
                 </>
               );
             })}
+            </div>
+            {selectedComponentIndex == 0 && <Analytics />}
+            {selectedComponentIndex == 1 && <VehicleInfo />}
+            {selectedComponentIndex == 2 && <DeviceInfo />}
+            {selectedComponentIndex == 3 && <SensorInfo />}
+            {selectedComponentIndex == 4 && <CustomerInfo />}
           </div>
-          {selectedComponentIndex == 0 && <Analytics />}
-          {selectedComponentIndex == 1 && <VehicleInfo />}
-          {selectedComponentIndex == 2 && <DeviceInfo />}
-          {selectedComponentIndex == 3 && <SensorInfo />}
-          {selectedComponentIndex == 4 && <CustomerInfo />}
 
-          <button
-            onClick={() => {
-              setOpen(!open);
-              dispatch(setSelectedSingleDevice(null));
-            }}
-            style={{
-              position: "absolute",
-              top: "5px",
-              right: "15px",
-              background: "transparent",
-              border: "none",
-              fontSize: "28px",
-              color: "black",
-              cursor: "pointer",
-              fontWeight: "bold",
-              padding: "0 5px",
-              zIndex: 100,
-            }}
-          >
-            ×
-          </button>
           {/* Single Device Data */}
         </motion.div>
       </div>
@@ -811,7 +993,7 @@ const MonitoringLatest = () => {
           // height: "87vh",
         }}
       >
-        <DevicesSidebar setOpen={setOpen} open={open} />
+        <DevicesSidebar setOpen={setOpen} open={open} filteredDevices={filteredDevices} />
       </div>
 
       {openModal && (

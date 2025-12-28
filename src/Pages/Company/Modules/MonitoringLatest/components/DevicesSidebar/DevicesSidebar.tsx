@@ -10,6 +10,7 @@ import {
   Media,
 } from "reactstrap";
 import { useSelector, useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import "./DevicesSidebar.css";
 
 import { IoMdWifi } from "react-icons/io";
@@ -27,8 +28,10 @@ import {
 import { motion } from "framer-motion";
 import CustomerDetailsModal from "./CustomerDetailsModal";
 import PlaybackModal from "../SingleVehiceDetail/PlaybackModal/PlaybackModal";
+import { getAll } from "../../../../../../Utilities/api";
+import { GET_ALERT_EVENTS_V2 } from "../../../../../../Utilities/api/apiEndpoints";
 
-const DevicesSidebar = ({ setOpen, open }: any) => {
+const DevicesSidebar = ({ setOpen, open, filteredDevices }: any) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [expandedGroups, setExpandedGroups] = useState(new Set());
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
@@ -38,14 +41,20 @@ const DevicesSidebar = ({ setOpen, open }: any) => {
   const [historyType, setHistoryType] = useState<"today" | "yesterday" | null>(
     null
   );
+  const [liveAlerts, setLiveAlerts] = useState<any[]>([]);
+  const [alertsLoading, setAlertsLoading] = useState(false);
   const { devices } = useSelector((state: any) => state.monitoring);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  // Use filteredDevices from props if available, otherwise fall back to all devices
+  const displayDevices = filteredDevices || devices;
 
   // ✅ Group devices
   const groupedDevices = useMemo(() => {
-    if (!devices || devices.length === 0) return {};
+    if (!displayDevices || displayDevices.length === 0) return {};
 
-    const filtered = devices.filter(
+    const filtered = displayDevices.filter(
       (item: any) =>
         item.vehicle?.model?.name
           ?.toLowerCase()
@@ -70,7 +79,7 @@ const DevicesSidebar = ({ setOpen, open }: any) => {
       groups[groupId].devices.push(device);
       return groups;
     }, {});
-  }, [devices, searchTerm]);
+  }, [displayDevices, searchTerm]);
 
   // ✅ Handle single checkbox
   const handleCheckboxClick = (e: any, item: any) => {
@@ -95,6 +104,30 @@ const DevicesSidebar = ({ setOpen, open }: any) => {
     });
 
     dispatch(setDevices(updatedDevices || []));
+  };
+
+  // ✅ Handle Total checkbox - select/unselect all vehicles
+  const handleTotalCheckboxClick = (e: any) => {
+    e.stopPropagation();
+    const isChecked = e.target.checked;
+
+    const updatedDevices = devices.map((d: any) => ({
+      ...d,
+      checked: isChecked,
+    }));
+
+    dispatch(setDevices(updatedDevices || []));
+  };
+
+  // Check if all vehicles are checked
+  const isAllChecked = () => {
+    return devices.length > 0 && devices.every((device: any) => device.checked);
+  };
+
+  // Check if some vehicles are checked (for indeterminate state)
+  const isSomeChecked = () => {
+    const checkedCount = devices.filter((device: any) => device.checked).length;
+    return checkedCount > 0 && checkedCount < devices.length;
   };
 
   const isGroupFullyChecked = (groupId: string) => {
@@ -125,7 +158,8 @@ const DevicesSidebar = ({ setOpen, open }: any) => {
 
   const handleDeviceClick = (device: any) => {
     dispatch(setSelectedSingleDevice(device));
-    setOpen(false); // Always open the window (false = window is visible)
+    // Open the window when clicking device in sidebar (manual action by user)
+    setOpen(false); // false = window is visible
   };
 
   const toggleMenu = (e: React.MouseEvent, deviceId: string) => {
@@ -226,48 +260,42 @@ const DevicesSidebar = ({ setOpen, open }: any) => {
 
   const [selectedNav, setSelectedNav] = useState("Vehicles");
 
-  const alerts = [
-    {
-      device: "BIL-876",
-      message: "This device is zone in",
-      time: "2025-08-29T11:20:17.000Z",
-    },
-    {
-      device: "BIL-876",
-      message: "This device is zone in",
-      time: "2025-08-29T11:20:17.000Z",
-    },
-    {
-      device: "BIL-876",
-      message: "This device is zone out",
-      time: "2025-08-29T11:20:17.000Z",
-    },
-    {
-      device: "BIL-876",
-      message: "This device is zone in",
-      time: "2025-08-29T11:20:17.000Z",
-    },
-    {
-      device: "BIL-876",
-      message: "This device is zone in",
-      time: "2025-08-29T11:20:17.000Z",
-    },
-    {
-      device: "BIL-876",
-      message: "This device is zone in",
-      time: "2025-08-29T11:20:17.000Z",
-    },
-    {
-      device: "BIL-876",
-      message: "This device is zone out",
-      time: "2025-08-29T11:20:17.000Z",
-    },
-    {
-      device: "BIL-876",
-      message: "This device is zone in",
-      time: "2025-08-29T11:20:17.000Z",
-    },
-  ];
+  // Fetch live alerts on component mount and every 10 seconds
+  useEffect(() => {
+    const fetchLiveAlerts = async () => {
+      try {
+        setAlertsLoading(true);
+        const response: any = await getAll({
+          url: `${GET_ALERT_EVENTS_V2}?page=1&limit=50`,
+        });
+
+        if (response && response.success && response.data) {
+          setLiveAlerts(response.data?.rows || []);
+        } else {
+          setLiveAlerts([]);
+        }
+      } catch (error) {
+        console.error("Error fetching live alerts:", error);
+        setLiveAlerts([]);
+      } finally {
+        setAlertsLoading(false);
+      }
+    };
+
+    // Fetch immediately on mount
+    fetchLiveAlerts();
+
+    // Set up interval to fetch every 10 seconds
+    const interval = setInterval(fetchLiveAlerts, 10000);
+
+    // Cleanup interval on unmount
+    return () => clearInterval(interval);
+  }, []);
+
+  // Handle alert click - redirect to control room
+  const handleAlertClick = (alert: any) => {
+    navigate(`${process.env.PUBLIC_URL}/company/modules/control-room`);
+  };
 
   const formatDateTime = (isoString: string) => {
     const date = new Date(isoString);
@@ -286,7 +314,8 @@ const DevicesSidebar = ({ setOpen, open }: any) => {
     if (!deviceTime) return false;
     const deviceDate = new Date(deviceTime);
     const currentDate = new Date();
-    const timeDifferenceInMinutes = (currentDate.getTime() - deviceDate.getTime()) / (1000 * 60);
+    const timeDifferenceInMinutes =
+      (currentDate.getTime() - deviceDate.getTime()) / (1000 * 60);
     return timeDifferenceInMinutes >= 15;
   };
 
@@ -456,458 +485,566 @@ const DevicesSidebar = ({ setOpen, open }: any) => {
           }}
         >
           {selectedNav == "Alerts" ? (
-            <motion.ul
-              initial="hidden"
-              animate="visible"
-              variants={{
-                visible: {
-                  transition: {
-                    staggerChildren: 0.2, // delay between items
+            alertsLoading && liveAlerts.length === 0 ? (
+              <div
+                style={{ textAlign: "center", padding: "20px", color: "#666" }}
+              >
+                Loading alerts...
+              </div>
+            ) : liveAlerts.length === 0 ? (
+              <div
+                style={{ textAlign: "center", padding: "20px", color: "#666" }}
+              >
+                No live alerts available
+              </div>
+            ) : (
+              <motion.ul
+                initial="hidden"
+                animate="visible"
+                variants={{
+                  visible: {
+                    transition: {
+                      staggerChildren: 0.05, // delay between items
+                    },
                   },
-                },
-              }}
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                gap: "10px",
-                marginBottom: "20px",
-              }}
-            >
-              {alerts.map((alertt, index) => (
-                <motion.li
-                  key={index}
-                  variants={{
-                    hidden: { opacity: 0, y: 20 },
-                    visible: { opacity: 1, y: 0 },
-                  }}
-                  transition={{ duration: 0.2 }}
+                }}
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "10px",
+                  marginBottom: "20px",
+                }}
+              >
+                {liveAlerts.map((alert, index) => (
+                  <motion.li
+                    key={alert._id || index}
+                    variants={{
+                      hidden: { opacity: 0, y: 20 },
+                      visible: { opacity: 1, y: 0 },
+                    }}
+                    transition={{ duration: 0.2 }}
+                    onClick={() => handleAlertClick(alert)}
+                    style={{
+                      padding: "12px",
+                      borderRadius: "10px",
+                      border: "2px solid #F8F8F8",
+                      backgroundColor:
+                        alert.alertType === "OVER_SPEEDING" ||
+                        alert.alertType === "GEOFENCE_EXIT"
+                          ? "rgba(255,0,0,0.1)"
+                          : "transparent",
+                      cursor: "pointer",
+                      transition: "all 0.2s ease",
+                    }}
+                    onMouseEnter={(e: any) => {
+                      // e.currentTarget.style.backgroundColor = "#f0f8ff";
+                      e.currentTarget.style.transform = "scale(1.02)";
+                    }}
+                    onMouseLeave={(e: any) => {
+                      e.currentTarget.style.backgroundColor =
+                        alert.alertType === "OVER_SPEEDING" ||
+                        alert.alertType === "GEOFENCE_EXIT"
+                          ? "rgba(255,0,0,0.1)"
+                          : "transparent";
+                      e.currentTarget.style.transform = "scale(1)";
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                      }}
+                    >
+                      <div
+                        style={{
+                          fontWeight: "bold",
+                          fontSize: "14px",
+                          color: "#333",
+                        }}
+                      >
+                        {alert?.vehicle?.registrationNo ||
+                          alert.deviceId ||
+                          "Unknown Device"}
+                      </div>
+                      <div
+                        style={{
+                          fontWeight: "500",
+                          fontSize: "11px",
+                          color: "#999",
+                        }}
+                      >
+                        {new Date(
+                          alert.createdAt || alert.time
+                        ).toLocaleTimeString()}
+                      </div>
+                    </div>
+
+                    <div
+                      style={{
+                        marginTop: "8px",
+                        fontSize: "13px",
+                        color:
+                          alert.alertType === "OVER_SPEEDING" ||
+                          alert.alertType === "GEOFENCE_EXIT"
+                            ? "#d32f2f"
+                            : "#666",
+                        fontWeight:
+                          alert.type === "critical" ? "600" : "normal",
+                      }}
+                    >
+                      {alert.alert?.name || alert.message || "Alert triggered"}
+                    </div>
+
+                    {alert.address && (
+                      <div
+                        style={{
+                          marginTop: "6px",
+                          fontSize: "12px",
+                          color: "#888",
+                          fontStyle: "italic",
+                        }}
+                      >
+                        📍 {alert.address}
+                      </div>
+                    )}
+                  </motion.li>
+                ))}
+              </motion.ul>
+            )
+          ) : Object.keys(groupedDevices).length > 0 ? (
+            <>
+              {/* Total Checkbox */}
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  background: "#6dbfb8",
+                  padding: "10px",
+                  borderRadius: "6px",
+                  marginBottom: "15px",
+                  cursor: "pointer",
+                }}
+                onClick={handleTotalCheckboxClick}
+              >
+                <input
+                  type="checkbox"
                   style={{
-                    padding: "10px",
-                    borderRadius: "10px",
-                    // border: "2px solid gray",
-                    border: "2px solid #F8F8F8",
-                    backgroundColor: `${
-                      alertt.message == "This device is zone out"
-                        ? "rgba(255,0,0,0.7)"
-                        : "transparent"
-                    }`,
-                    color: `${
-                      alertt.message == "This device is zone out"
-                        ? "white"
-                        : "black"
-                    }`,
+                    marginRight: "10px",
+                    height: "18px",
+                    width: "18px",
+                    padding: "0px",
+                  }}
+                  checked={isAllChecked()}
+                  ref={(input) => {
+                    if (input) {
+                      input.indeterminate = isSomeChecked();
+                    }
+                  }}
+                  onChange={handleTotalCheckboxClick}
+                  onClick={(e) => e.stopPropagation()}
+                />
+                <span
+                  style={{
+                    color: "white",
+                    fontWeight: "bold",
+                    fontSize: "16px",
+                    flex: 1,
                   }}
                 >
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                    }}
-                  >
-                    <div style={{ fontWeight: "bold", fontSize: "16px" }}>
-                      {alertt.device}
-                    </div>
+                  Total ({devices.length})
+                </span>
+              </div>
+
+              {/* Groups */}
+              {Object.entries(groupedDevices).map(
+                ([groupId, group]: [string, any]) => (
+                  <div key={groupId} style={{ marginBottom: "10px" }}>
+                    {/* Group Header */}
                     <div
                       style={{
-                        fontWeight: "bold",
-                        fontSize: "12px",
-
-                        color: `${
-                          alertt.message == "This device is zone out"
-                            ? "white"
-                            : "gray"
-                        }`,
-                      }}
-                    >
-                      {formatDateTime(alertt.time)}
-                    </div>
-                  </div>
-
-                  <div>{alertt.message}</div>
-                </motion.li>
-              ))}
-            </motion.ul>
-          ) : Object.keys(groupedDevices).length > 0 ? (
-            Object.entries(groupedDevices).map(
-              ([groupId, group]: [string, any]) => (
-                <div key={groupId} style={{ marginBottom: "10px" }}>
-                  {/* Group Header */}
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      // backgroundColor: "#2a2f35",
-                      background: "#F8F8F8",
-                      padding: "8px",
-                      borderRadius: "4px",
-                      marginBottom: "5px",
-                      cursor: "pointer",
-                    }}
-                    onClick={() => toggleGroupExpansion(groupId)}
-                  >
-                    <input
-                      type="checkbox"
-                      style={{
-                        marginRight: "10px",
-                        height: "16px",
-                        width: "16px",
-                        padding: "0px",
-                      }}
-                      checked={isGroupFullyChecked(groupId)}
-                      ref={(input) => {
-                        if (input) {
-                          input.indeterminate =
-                            isGroupPartiallyChecked(groupId);
-                        }
-                      }}
-                      onChange={(e) => handleGroupCheckboxClick(e, groupId)}
-                      onClick={(e) => e.stopPropagation()}
-                    />
-                    <span
-                      style={{
-                        color: "black",
-                        fontWeight: "bold",
-                        fontSize: "16px",
-                        flex: 1,
-                      }}
-                    >
-                      {group.name} ({group.devices.length})
-                    </span>
-                    {expandedGroups.has(groupId) ? (
-                      <MdExpandLess color="black" size={20} />
-                    ) : (
-                      <MdExpandMore color="black" size={20} />
-                    )}
-                  </div>
-
-                  {/* Group Vehicles */}
-                  {expandedGroups.has(groupId) && (
-                    <div
-                      style={{
-                        paddingLeft: "10px",
-                        paddingRight: "8px",
                         display: "flex",
-                        flexDirection: "column",
-                        gap: "10px",
-                        margin: "10px 0px",
+                        alignItems: "center",
+                        // backgroundColor: "#2a2f35",
+                        background: "#F8F8F8",
+                        padding: "8px",
+                        borderRadius: "4px",
+                        marginBottom: "5px",
+                        cursor: "pointer",
                       }}
+                      onClick={() => toggleGroupExpansion(groupId)}
                     >
-                      {group.devices.map((item: any) => (
-                        <div
-                          key={item._id}
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            // background: `${
-                            //   item?.latestPosition?.attributes?.ignition === true
-                            //     ? "rgba(0,255,0,0.1)"
-                            //     : "rgba(255,0,0,0.1)"
-                            // }`,
+                      <input
+                        type="checkbox"
+                        style={{
+                          marginRight: "10px",
+                          height: "16px",
+                          width: "16px",
+                          padding: "0px",
+                        }}
+                        checked={isGroupFullyChecked(groupId)}
+                        ref={(input) => {
+                          if (input) {
+                            input.indeterminate =
+                              isGroupPartiallyChecked(groupId);
+                          }
+                        }}
+                        onChange={(e) => handleGroupCheckboxClick(e, groupId)}
+                        onClick={(e) => e.stopPropagation()}
+                      />
+                      <span
+                        style={{
+                          color: "black",
+                          fontWeight: "bold",
+                          fontSize: "16px",
+                          flex: 1,
+                        }}
+                      >
+                        {group.name} ({group.devices.length})
+                      </span>
+                      {expandedGroups.has(groupId) ? (
+                        <MdExpandLess color="black" size={20} />
+                      ) : (
+                        <MdExpandMore color="black" size={20} />
+                      )}
+                    </div>
 
-                            background: (() => {
-                              const renewalDate = item?.vehicle
-                                ?.serviceRenewalDate
-                                ? new Date(item.vehicle.serviceRenewalDate)
-                                : null;
-                              const deviceTime: any = item?.latestPosition
-                                ?.deviceTime
-                                ? new Date(item.latestPosition.deviceTime)
-                                : null;
-                              const now: any = new Date();
-
-                              if (renewalDate && renewalDate < now) {
-                                return "rgba(128, 128, 128, 0.2)"; // Expired
-                              }
-                              if (!deviceTime) {
-                                return "rgba(0, 0, 255, 0.3)"; // Not COnn.
-                              }
-                              if ((now - deviceTime) / (1000 * 60 * 60) > 24) {
-                                return "rgba(128, 0, 128, 0.1)"; // Inactive
-                              }
-
-                              switch (item?.mainVehicleStatus?.toLowerCase()) {
-                                case "moving":
-                                  return "rgba(0, 255, 0, 0.1)";
-                                case "stopped":
-                                  return "rgba(255, 0, 0, 0.1)";
-                                case "idle":
-                                  return "rgba(255, 165, 0, 0.1)";
-                                default:
-                                  return "rgba(240,240,240,0.4)";
-                              }
-                            })(),
-
-                            paddingLeft: "8px",
-                            paddingRight: "8px",
-                            borderRadius: "10px",
-                          }}
-                        >
-                          <input
-                            type="checkbox"
+                    {/* Group Vehicles */}
+                    {expandedGroups.has(groupId) && (
+                      <div
+                        style={{
+                          paddingLeft: "10px",
+                          paddingRight: "8px",
+                          display: "flex",
+                          flexDirection: "column",
+                          gap: "10px",
+                          margin: "10px 0px",
+                        }}
+                      >
+                        {group.devices.map((item: any) => (
+                          <div
+                            key={item._id}
                             style={{
-                              marginRight: "10px",
-                              height: "15px",
-                              width: "15px",
-                              padding: "0px",
+                              display: "flex",
+                              alignItems: "center",
+                              // background: `${
+                              //   item?.latestPosition?.attributes?.ignition === true
+                              //     ? "rgba(0,255,0,0.1)"
+                              //     : "rgba(255,0,0,0.1)"
+                              // }`,
+
+                              background: (() => {
+                                const renewalDate = item?.vehicle
+                                  ?.serviceRenewalDate
+                                  ? new Date(item.vehicle.serviceRenewalDate)
+                                  : null;
+                                const deviceTime: any = item?.latestPosition
+                                  ?.deviceTime
+                                  ? new Date(item.latestPosition.deviceTime)
+                                  : null;
+                                const now: any = new Date();
+
+                                if (renewalDate && renewalDate < now) {
+                                  return "rgba(128, 128, 128, 0.2)"; // Expired
+                                }
+                                if (!deviceTime) {
+                                  return "rgba(0, 0, 255, 0.3)"; // Not COnn.
+                                }
+                                if (
+                                  (now - deviceTime) / (1000 * 60 * 60) >
+                                  24
+                                ) {
+                                  return "rgba(128, 0, 128, 0.1)"; // Inactive
+                                }
+
+                                switch (
+                                  item?.mainVehicleStatus?.toLowerCase()
+                                ) {
+                                  case "moving":
+                                    return "rgba(0, 255, 0, 0.1)";
+                                  case "stopped":
+                                    return "rgba(255, 0, 0, 0.1)";
+                                  case "idle":
+                                    return "rgba(255, 165, 0, 0.1)";
+                                  default:
+                                    return "rgba(240,240,240,0.4)";
+                                }
+                              })(),
+
+                              paddingLeft: "8px",
+                              paddingRight: "8px",
+                              borderRadius: "10px",
                             }}
-                            checked={item.checked || false}
-                            onChange={(e) => handleCheckboxClick(e, item)}
-                          />
-                          <Media
-                            style={{
-                              margin: "2px 0px",
-                              padding: "5px 0px",
-                              width: "100%",
-                              // borderBottom: "2px solid lightGray",
-                              cursor: "pointer",
-                              transition: "background-color 0.3s",
-                            }}
-                            onClick={() => handleDeviceClick(item)}
                           >
-                            <Media>
-                              <div
-                                style={{
-                                  display: "flex",
-                                  alignItems: "center",
-                                  justifyContent: "space-between",
-                                }}
-                              >
-                                <div
-                                  style={{
-                                    display: "flex",
-                                    gap: "10px",
-                                    alignItems: "center",
-                                  }}
-                                >
-                                  <img
-                                    style={{
-                                      display: "flex",
-                                      alignItems: "center",
-                                      width: "15px",
-                                      height: "25px",
-                                    }}
-                                    src={carIcon}
-                                    alt="Vehicle"
-                                  />
-                                  <div>
-                                    <span
-                                      style={{
-                                        fontSize: "14px",
-                                        color: "black",
-                                        fontWeight: "bold",
-                                      }}
-                                    >
-                                      {item?.vehicle?.registrationNo || "N/A"}
-                                    </span>
-
-                                    <div
-                                      className="d-block"
-                                      style={{
-                                        fontSize: "10px",
-                                        fontWeight: "bold",
-                                        color: "gray",
-                                      }}
-                                    >
-                                      {formatDateTime(
-                                        item?.latestPosition?.deviceTime
-                                      )}
-                                      {isDeviceTimeDelayed(
-                                        item?.latestPosition?.deviceTime
-                                      ) && (
-                                        <img
-                                          src={delayIcon}
-                                          alt="Delay Icon"
-                                          height={15}
-                                          width={15}
-                                          style={{
-                                            marginLeft: "10px",
-                                          }}
-                                        />
-                                      )}
-                                      {/* {item?.latestPosition?.deviceTime || "N/A"} */}
-                                    </div>
-                                  </div>
-                                </div>
-
+                            <input
+                              type="checkbox"
+                              style={{
+                                marginRight: "10px",
+                                height: "15px",
+                                width: "15px",
+                                padding: "0px",
+                              }}
+                              checked={item.checked || false}
+                              onChange={(e) => handleCheckboxClick(e, item)}
+                            />
+                            <Media
+                              style={{
+                                margin: "2px 0px",
+                                padding: "5px 0px",
+                                width: "100%",
+                                // borderBottom: "2px solid lightGray",
+                                cursor: "pointer",
+                                transition: "background-color 0.3s",
+                              }}
+                              onClick={() => handleDeviceClick(item)}
+                            >
+                              <Media>
                                 <div
                                   style={{
                                     display: "flex",
                                     alignItems: "center",
-                                    gap: "8px",
+                                    justifyContent: "space-between",
                                   }}
                                 >
                                   <div
                                     style={{
                                       display: "flex",
-                                      flexDirection: "column",
+                                      gap: "10px",
                                       alignItems: "center",
                                     }}
                                   >
-                                    <div
+                                    <img
                                       style={{
-                                        fontSize: "11.5px",
-                                        color: "black",
-                                        fontWeight: "bold",
-                                      }}
-                                    >
-                                      {item?.latestPosition?.speed > 0
-                                        ? Number(
-                                            item?.latestPosition?.speed
-                                          ).toFixed(2)
-                                        : item?.latestPosition?.speed}
-                                    </div>
-                                    <div
-                                      style={{
-                                        fontSize: "9px",
-                                        color: "black",
-                                      }}
-                                    >
-                                      km/h
-                                    </div>
-                                  </div>
-                                  <div
-                                    style={{
-                                      display: "flex",
-                                      flexDirection: "column",
-                                      alignItems: "center",
-                                    }}
-                                  >
-                                    {item?.latestPosition?.attributes
-                                      ?.ignition === true ? (
-                                      <IoKey color="green" size={16} />
-                                    ) : (
-                                      <IoKey color="red" size={16} />
-                                    )}
-                                    <div style={{ fontSize: "9px" }}>IGN</div>
-                                  </div>
-                                  <div
-                                    style={{
-                                      position: "relative",
-                                      display: "flex",
-                                      alignItems: "center",
-                                    }}
-                                  >
-                                    <button
-                                      onClick={(e) => toggleMenu(e, item._id)}
-                                      style={{
-                                        background: "transparent",
-                                        border: "none",
-                                        cursor: "pointer",
-                                        padding: "4px",
                                         display: "flex",
                                         alignItems: "center",
-                                        justifyContent: "center",
-                                        borderRadius: "4px",
-                                        transition: "all 0.2s",
+                                        width: "15px",
+                                        height: "25px",
                                       }}
-                                      onMouseEnter={(e) => {
-                                        e.currentTarget.style.backgroundColor =
-                                          "#6dbfb8";
-                                        e.currentTarget.style.transform =
-                                          "scale(1.1)";
-                                      }}
-                                      onMouseLeave={(e) => {
-                                        e.currentTarget.style.backgroundColor =
-                                          "transparent";
-                                        e.currentTarget.style.transform =
-                                          "scale(1)";
-                                      }}
-                                    >
-                                      <BsThreeDotsVertical
-                                        color="black"
-                                        size={18}
-                                      />
-                                    </button>
-
-                                    {openMenuId === item._id && (
-                                      <div
+                                      src={carIcon}
+                                      alt="Vehicle"
+                                    />
+                                    <div>
+                                      <span
                                         style={{
-                                          position: "absolute",
-                                          right: "100%",
-                                          top: "0%",
-                                          transform: "translateY(-0%)",
-                                          marginRight: "8px",
-                                          backgroundColor: "white",
-                                          borderRadius: "8px",
-                                          boxShadow:
-                                            "0 4px 15px rgba(109, 191, 184, 0.8)",
-                                          zIndex: 1000,
-                                          minWidth: "200px",
-                                          overflow: "hidden",
-                                          border: "1px solid #6dbfb8",
+                                          fontSize: "14px",
+                                          color: "black",
+                                          fontWeight: "bold",
                                         }}
                                       >
-                                        {[
-                                          {
-                                            label: "Customer Details",
-                                            action: "customer-details",
-                                          },
-                                          {
-                                            label: "Show History (Yesterday)",
-                                            action: "history-yesterday",
-                                          },
-                                          {
-                                            label: "Show History (Today)",
-                                            action: "history-today",
-                                          },
-                                          {
-                                            label: "Send Command",
-                                            action: "send-command",
-                                          },
-                                          { label: "Alerts", action: "alerts" },
-                                        ].map((menuItem, idx) => (
-                                          <div
-                                            key={idx}
-                                            onClick={(e) =>
-                                              handleMenuAction(
-                                                e,
-                                                menuItem.action,
-                                                item
-                                              )
-                                            }
+                                        {item?.vehicle?.registrationNo || "N/A"}
+                                      </span>
+
+                                      <div
+                                        className="d-block"
+                                        style={{
+                                          fontSize: "10px",
+                                          fontWeight: "bold",
+                                          color: "gray",
+                                        }}
+                                      >
+                                        {formatDateTime(
+                                          item?.latestPosition?.deviceTime
+                                        )}
+                                        {isDeviceTimeDelayed(
+                                          item?.latestPosition?.deviceTime
+                                        ) && (
+                                          <img
+                                            src={delayIcon}
+                                            alt="Delay Icon"
+                                            height={15}
+                                            width={15}
                                             style={{
-                                              padding: "12px 16px",
-                                              cursor: "pointer",
-                                              fontSize: "13px",
-                                              fontWeight: "500",
-                                              color: "#333",
-                                              transition: "all 0.2s",
-                                              borderBottom:
-                                                idx < 4
-                                                  ? "1px solid #f0f0f0"
-                                                  : "none",
+                                              marginLeft: "10px",
                                             }}
-                                            onMouseEnter={(e) => {
-                                              e.currentTarget.style.backgroundColor =
-                                                "#6dbfb8";
-                                              e.currentTarget.style.color =
-                                                "white";
-                                            }}
-                                            onMouseLeave={(e) => {
-                                              e.currentTarget.style.backgroundColor =
-                                                "transparent";
-                                              e.currentTarget.style.color =
-                                                "#333";
-                                            }}
-                                          >
-                                            {menuItem.label}
-                                          </div>
-                                        ))}
+                                          />
+                                        )}
+                                        {/* {item?.latestPosition?.deviceTime || "N/A"} */}
                                       </div>
-                                    )}
+                                    </div>
+                                  </div>
+
+                                  <div
+                                    style={{
+                                      display: "flex",
+                                      alignItems: "center",
+                                      gap: "8px",
+                                    }}
+                                  >
+                                    <div
+                                      style={{
+                                        display: "flex",
+                                        flexDirection: "column",
+                                        alignItems: "center",
+                                      }}
+                                    >
+                                      <div
+                                        style={{
+                                          fontSize: "11.5px",
+                                          color: "black",
+                                          fontWeight: "bold",
+                                        }}
+                                      >
+                                        {item?.latestPosition?.speed > 0
+                                          ? Number(
+                                              item?.latestPosition?.speed
+                                            ).toFixed(2)
+                                          : item?.latestPosition?.speed}
+                                      </div>
+                                      <div
+                                        style={{
+                                          fontSize: "9px",
+                                          color: "black",
+                                        }}
+                                      >
+                                        km/h
+                                      </div>
+                                    </div>
+                                    <div
+                                      style={{
+                                        display: "flex",
+                                        flexDirection: "column",
+                                        alignItems: "center",
+                                      }}
+                                    >
+                                      {item?.latestPosition?.attributes
+                                        ?.ignition === true ? (
+                                        <IoKey color="green" size={16} />
+                                      ) : (
+                                        <IoKey color="red" size={16} />
+                                      )}
+                                      <div style={{ fontSize: "9px" }}>IGN</div>
+                                    </div>
+                                    <div
+                                      style={{
+                                        position: "relative",
+                                        display: "flex",
+                                        alignItems: "center",
+                                      }}
+                                    >
+                                      <button
+                                        onClick={(e) => toggleMenu(e, item._id)}
+                                        style={{
+                                          background: "transparent",
+                                          border: "none",
+                                          cursor: "pointer",
+                                          padding: "4px",
+                                          display: "flex",
+                                          alignItems: "center",
+                                          justifyContent: "center",
+                                          borderRadius: "4px",
+                                          transition: "all 0.2s",
+                                        }}
+                                        onMouseEnter={(e) => {
+                                          e.currentTarget.style.backgroundColor =
+                                            "#6dbfb8";
+                                          e.currentTarget.style.transform =
+                                            "scale(1.1)";
+                                        }}
+                                        onMouseLeave={(e) => {
+                                          e.currentTarget.style.backgroundColor =
+                                            "transparent";
+                                          e.currentTarget.style.transform =
+                                            "scale(1)";
+                                        }}
+                                      >
+                                        <BsThreeDotsVertical
+                                          color="black"
+                                          size={18}
+                                        />
+                                      </button>
+
+                                      {openMenuId === item._id && (
+                                        <div
+                                          style={{
+                                            position: "absolute",
+                                            right: "100%",
+                                            top: "0%",
+                                            transform: "translateY(-0%)",
+                                            marginRight: "8px",
+                                            backgroundColor: "white",
+                                            borderRadius: "8px",
+                                            boxShadow:
+                                              "0 4px 15px rgba(109, 191, 184, 0.8)",
+                                            zIndex: 1000,
+                                            minWidth: "200px",
+                                            overflow: "hidden",
+                                            border: "1px solid #6dbfb8",
+                                          }}
+                                        >
+                                          {[
+                                            {
+                                              label: "Customer Details",
+                                              action: "customer-details",
+                                            },
+                                            {
+                                              label: "Show History (Yesterday)",
+                                              action: "history-yesterday",
+                                            },
+                                            {
+                                              label: "Show History (Today)",
+                                              action: "history-today",
+                                            },
+                                            {
+                                              label: "Send Command",
+                                              action: "send-command",
+                                            },
+                                            {
+                                              label: "Alerts",
+                                              action: "alerts",
+                                            },
+                                          ].map((menuItem, idx) => (
+                                            <div
+                                              key={idx}
+                                              onClick={(e) =>
+                                                handleMenuAction(
+                                                  e,
+                                                  menuItem.action,
+                                                  item
+                                                )
+                                              }
+                                              style={{
+                                                padding: "12px 16px",
+                                                cursor: "pointer",
+                                                fontSize: "13px",
+                                                fontWeight: "500",
+                                                color: "#333",
+                                                transition: "all 0.2s",
+                                                borderBottom:
+                                                  idx < 4
+                                                    ? "1px solid #f0f0f0"
+                                                    : "none",
+                                              }}
+                                              onMouseEnter={(e) => {
+                                                e.currentTarget.style.backgroundColor =
+                                                  "#6dbfb8";
+                                                e.currentTarget.style.color =
+                                                  "white";
+                                              }}
+                                              onMouseLeave={(e) => {
+                                                e.currentTarget.style.backgroundColor =
+                                                  "transparent";
+                                                e.currentTarget.style.color =
+                                                  "#333";
+                                              }}
+                                            >
+                                              {menuItem.label}
+                                            </div>
+                                          ))}
+                                        </div>
+                                      )}
+                                    </div>
                                   </div>
                                 </div>
-                              </div>
+                              </Media>
                             </Media>
-                          </Media>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              )
-            )
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )
+              )}
+            </>
           ) : (
             <p
               style={{

@@ -36,6 +36,7 @@ const GoogleMap = (props) => {
   const mapRef = useRef(null);
   const [address, setAddress] = useState("Loading address...");
   const [isLoadingAddress, setIsLoadingAddress] = useState(false);
+  const markerClickedRef = useRef(false);
 
   const [deviceData, setDeviceData] = useState({ lat: 30.3753, lng: 69.3451 });
 
@@ -77,13 +78,30 @@ const GoogleMap = (props) => {
   };
 
   const handleMarkerClick = (device) => {
+    markerClickedRef.current = true; // Set flag to prevent map click from closing
+
+    // Only allow opening info window for checked devices
+    if (!device.checked) {
+      markerClickedRef.current = false;
+      return;
+    }
+
+    // Toggle info window if clicking the same marker
+    if (selectedDevice?._id === device._id && infoWindowVisible) {
+      setInfoWindowVisible(false);
+      setSelectedDevice(null);
+      markerClickedRef.current = false;
+      return;
+    }
+
     setSelectedDevice(device);
     setInfoWindowPosition({
       lat: device?.latestPosition?.latitude,
       lng: device?.latestPosition?.longitude,
     });
-    dispatch(setExpandedDevice(true));
-    setInfoWindowVisible(!infoWindowVisible);
+    // Don't automatically open the SingleVehicleDetail panel
+    // dispatch(setExpandedDevice(true));
+    setInfoWindowVisible(true); // Open info window on marker click
 
     // Fetch address when marker is clicked
     if (device?.latestPosition?.latitude && device?.latestPosition?.longitude) {
@@ -92,15 +110,59 @@ const GoogleMap = (props) => {
         device.latestPosition.longitude
       );
     }
+
+    // Reset flag after a short delay
+    setTimeout(() => {
+      markerClickedRef.current = false;
+    }, 100);
   };
 
   const closeInfoWindow = () => {
     setInfoWindowVisible(false);
+    setSelectedDevice(null);
     dispatch(setExpandedDevice(false));
   };
 
   const toggleGeofences = () => {
     setShowGeofences(!showGeofences);
+  };
+
+  // Get status color based on device status
+  const getStatusColor = (device) => {
+    const now = new Date();
+    const userData = { inactiveTimeLimit: 1440 }; // Default 24 hours
+
+    // Check if expired
+    const renewalDate = device?.vehicle?.serviceRenewalDate
+      ? new Date(device.vehicle.serviceRenewalDate)
+      : null;
+    const isExpired = renewalDate && renewalDate < now;
+
+    if (isExpired) return "gray";
+
+    // Check if not connected
+    const hasDeviceTime = device?.latestPosition?.deviceTime;
+    if (!hasDeviceTime) return "blue";
+
+    // Check if inactive
+    const deviceTime = new Date(device.latestPosition.deviceTime);
+    const diffMinutes = (now - deviceTime) / (1000 * 60);
+    const isInactive = diffMinutes > userData.inactiveTimeLimit;
+
+    if (isInactive) return "purple";
+
+    // Check main vehicle status
+    const mainStatus = device.mainVehicleStatus?.toLowerCase();
+    switch (mainStatus) {
+      case "moving":
+        return "green";
+      case "stopped":
+        return "red";
+      case "idle":
+        return "orange";
+      default:
+        return "gray";
+    }
   };
 
   // Update selected device data in real-time without blinking
@@ -109,6 +171,13 @@ const GoogleMap = (props) => {
       // Find the updated device from devices array
       const updatedDevice = devices?.find((d) => d._id === selectedDevice._id);
 
+      // If device is unchecked or not found, close the info window
+      if (!updatedDevice || !updatedDevice.checked) {
+        closeInfoWindow();
+        return;
+      }
+
+      // If device is still checked, update it
       if (updatedDevice && updatedDevice.checked) {
         // Check if position has changed
         const hasPositionChanged =
@@ -152,8 +221,37 @@ const GoogleMap = (props) => {
       };
       mapRef.current.map.panTo(latLng);
       setZoom(14);
+
+      // Also open info window for the selected device if it's checked
+      if (selectedSingleDevice.checked) {
+        setSelectedDevice(selectedSingleDevice);
+        setInfoWindowPosition(latLng);
+        setInfoWindowVisible(true);
+
+        // Fetch address
+        fetchAddress(latLng.lat, latLng.lng);
+      }
     }
   }, [selectedSingleDevice]);
+
+  // Add map click listener to close info window
+  useEffect(() => {
+    if (!mapRef.current?.map || !props.google) return;
+
+    const mapClickListener = mapRef.current.map.addListener("click", (e) => {
+      // Only close if clicking on the map itself, not on markers
+      // Check the flag to see if a marker was just clicked
+      if (infoWindowVisible && !markerClickedRef.current) {
+        closeInfoWindow();
+      }
+    });
+
+    return () => {
+      if (mapClickListener) {
+        props.google.maps.event.removeListener(mapClickListener);
+      }
+    };
+  }, [mapRef.current?.map, props.google, infoWindowVisible]);
 
   if (!props.google) {
     return <div>Error: Google Maps API failed to load.</div>;
@@ -314,273 +412,15 @@ const GoogleMap = (props) => {
               icon={carIcon}
               rotation={device?.latestPosition?.course}
               onClick={() => handleMarkerClick(device)}
+              label={device?.vehicle?.registrationNo || "N/A"}
+              showLabel={!(infoWindowVisible && selectedDevice?._id === device?._id)}
+              statusColor={getStatusColor(device)}
             />
           )
       )}
 
       {/* Render geofences */}
       {renderGeofences()}
-
-      {/* OLD COMMENTED INFOWINDOW - KEPT FOR REFERENCE
-      <InfoWindow
-        position={infoWindowPosition}
-        visible={infoWindowVisible}
-        onClose={closeInfoWindow}
-        options={{
-          disableAutoPan: false,
-          pixelOffset: new props.google.maps.Size(0, -40),
-          disableClose: true,
-          closeBoxMargin: "0",
-          closeBoxURL: "",
-          maxWidth: 400,
-        }}
-      >
-        <div
-          style={{
-            minWidth: "400px",
-            overflow: "hidden !important",
-            margin: "0px !important",
-            padding: "0px !important",
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              padding: "10px 25px",
-              borderBottom: "1px solid lightgray",
-            }}
-          >
-            <div style={{ display: "flex", alignItems: "center" }}>
-              <h2>VB 4285 </h2>
-              <span
-                style={{
-                  marginLeft: "16px",
-                  color: "gray",
-                  fontWeight: "bold",
-                }}
-              >
-                Van
-              </span>
-            </div>
-            <span style={{ fontWeight: "bold", color: "red" }}>on route</span>
-          </div>
-
-          <div
-            style={{
-              padding: "10px 25px",
-              borderBottom: "0.5px solid lightgray",
-            }}
-          >
-            <div
-              style={{
-                marginTop: "10px",
-                marginBottom: "5px",
-                fontSize: "15px",
-              }}
-            >
-              <strong style={{ width: "110px" }}>Device ID:</strong>{" "}
-              {selectedDevice?.id}
-            </div>
-            <div
-              style={{
-                marginBottom: "5px",
-                fontSize: "15px",
-              }}
-            >
-              <strong style={{ width: "110px" }}>Address:</strong>{" "}
-              {selectedDevice?.latestPosition?.speed} Makran Coastal Highway,
-              Lota Bazaar, Kund Malir, Liari Tehsil.
-            </div>
-            <div
-              style={{
-                marginBottom: "5px",
-                fontSize: "15px",
-              }}
-            >
-              <strong style={{ width: "110px" }}>Time:</strong>{" "}
-              {selectedDevice?.latestPosition?.speed} 07-05-2025 11:53:56 AM
-            </div>
-
-            <div
-              style={{
-                marginBottom: "5px",
-                fontSize: "15px",
-              }}
-            >
-              <strong style={{ width: "110px" }}>Stop Duration:</strong>{" "}
-              {selectedSingleDevice?.latestPosition?.speed} 1h 31min 6s
-            </div>
-            <div
-              style={{
-                marginBottom: "5px",
-                fontSize: "15px",
-              }}
-            >
-              <strong style={{ width: "110px" }}>Speed:</strong>{" "}
-              {selectedSingleDevice?.latestPosition?.speed == 0
-                ? "0"
-                : selectedSingleDevice?.latestPosition?.speed}{" "}
-              km/h
-            </div>
-            <div
-              style={{
-                marginBottom: "15px",
-                fontSize: "15px",
-              }}
-            >
-              <strong style={{ width: "110px" }}>Ignition:</strong>{" "}
-              {selectedSingleDevice?.latestPosition?.attributes?.ignition ===
-              false
-                ? "OFF"
-                : "ON"}
-            </div>
-          </div>
-
-          <div
-            style={{
-              padding: "0px 25px",
-              paddingBottom: "15px",
-              paddingTop: "20px",
-              display: "flex",
-              overflowX: "auto",
-              gap: "5px",
-              borderBottom: "0.5px solid lightgray",
-              scrollbarWidth: "none",
-              msOverflowStyle: "none",
-              "&::-webkit-scrollbar": {
-                display: "none",
-              },
-            }}
-          >
-            <div
-              style={{
-                border: "0.5px solid lightgray",
-                borderRadius: "5px",
-                padding: "12px 0px",
-                fontWeight: "400",
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-                alignItems: "center",
-                gap: "2px",
-                minWidth: "170px",
-                maxWidth: "170px",
-                flexShrink: 0,
-              }}
-              className="info-box"
-            >
-              <div style={{ color: "gray" }}>Vehicle Condition</div>
-              <div style={{ color: "red" }}>Critical</div>
-            </div>
-            <div
-              style={{
-                border: "0.5px solid lightgray",
-                borderRadius: "5px",
-                padding: "12px 0",
-                fontWeight: "400",
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-                alignItems: "center",
-                gap: "2px",
-                minWidth: "170px",
-                maxWidth: "170px",
-                flexShrink: 0,
-              }}
-              className="info-box"
-            >
-              <div style={{ color: "gray" }}>Number of Errors</div>
-              <div style={{ color: "red" }}>1</div>
-            </div>
-            <div
-              style={{
-                border: "0.5px solid lightgray",
-                borderRadius: "5px",
-                padding: "12px 0",
-                fontWeight: "400",
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-                alignItems: "center",
-                gap: "2px",
-                minWidth: "170px",
-                maxWidth: "170px",
-                flexShrink: 0,
-              }}
-              className="info-box"
-            >
-              <div style={{ color: "gray" }}>Average Speed</div>
-              <div style={{ color: "black", fontSize: "13px" }}>62.5 MPH</div>
-            </div>
-            <div
-              style={{
-                border: "0.5px solid lightgray",
-                borderRadius: "5px",
-                padding: "12px 0px",
-                fontWeight: "400",
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-                alignItems: "center",
-                gap: "2px",
-                minWidth: "170px",
-                maxWidth: "170px",
-                flexShrink: 0,
-              }}
-              className="info-box"
-            >
-              <div style={{ color: "gray" }}>Fuel Consumption</div>
-              <div style={{ color: "black", fontSize: "13px" }}>5.99 MPG</div>
-            </div>
-          </div>
-
-          <div
-            style={{
-              padding: "15px 25px",
-              paddingBottom: "15px",
-              display: "flex",
-              justifyContent: "space-between",
-              gap: "5px",
-            }}
-          >
-            <button
-              style={{
-                minWidth: "170px",
-                maxWidth: "170px",
-                border: "none",
-                outline: "none",
-                backgroundColor: "lightgray",
-                fontWeight: "600",
-                color: "black",
-                textAlign: "center",
-                padding: "15px",
-                borderRadius: "5px",
-              }}
-            >
-              ALL EVENTS
-            </button>
-            <button
-              style={{
-                minWidth: "170px",
-                maxWidth: "170px",
-                border: "none",
-                outline: "none",
-                backgroundColor: "lightgray",
-                fontWeight: "600",
-                color: "black",
-                textAlign: "center",
-                padding: "15px",
-                borderRadius: "5px",
-              }}
-            >
-              TRIP
-            </button>
-          </div>
-        </div>
-      </InfoWindow>
-      END OF OLD COMMENTED INFOWINDOW */}
 
       {/* ✨ COMPACT INFOWINDOW WITH REAL-TIME UPDATES ✨ */}
       <InfoWindow
@@ -901,8 +741,13 @@ const GoogleMap = (props) => {
       </InfoWindow>
 
       <div
-        className="custom-zoom-control"
-        style={{ backgroundColor: "rgba(0, 0, 0, 0.6)" }}
+        className="custom-zoom-controll"
+        style={{
+          backgroundColor: "rgba(0, 0, 0, 0.6)",
+          display: "flex",
+          flexDirection: "column",
+          gap: "6px",
+        }}
       >
         <div style={{ height: "5px" }}></div>
         <TooltipButton

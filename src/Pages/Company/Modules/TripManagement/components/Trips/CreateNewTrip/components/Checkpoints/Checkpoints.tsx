@@ -295,7 +295,7 @@ const Checkpoints: React.FC<CheckpointsProps> = ({ callbackActive }) => {
                 onChange={(value) => handleGeofenceChange(index, value)}
                 options={geofences.map((g) => ({
                   value: g._id,
-                  label: g.name,
+                  label: g.title,
                 }))}
               />
             </Col>
