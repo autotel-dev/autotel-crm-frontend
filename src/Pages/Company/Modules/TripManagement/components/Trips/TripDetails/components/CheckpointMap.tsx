@@ -85,6 +85,17 @@ class CheckpointMap extends Component<CheckpointMapProps, CheckpointMapState> {
         lat: (bounds.north + bounds.south) / 2,
         lng: (bounds.east + bounds.west) / 2,
       };
+    } else if (geofenceData.type === "circle") {
+      const center = geofenceData.geofencePositions.center;
+      if (!center) {
+        return { lat: 24.8607, lng: 67.0011 };
+      }
+
+      // Return center of circle
+      return {
+        lat: center.lat,
+        lng: center.lng,
+      };
     }
 
     return { lat: 24.8607, lng: 67.0011 };
@@ -93,7 +104,12 @@ class CheckpointMap extends Component<CheckpointMapProps, CheckpointMapState> {
   drawGeofence = () => {
     const { google, geofenceData } = this.props;
 
-    if (!this.mapRef || !google || !geofenceData || !geofenceData.geofencePositions) {
+    if (
+      !this.mapRef ||
+      !google ||
+      !geofenceData ||
+      !geofenceData.geofencePositions
+    ) {
       return;
     }
 
@@ -120,15 +136,33 @@ class CheckpointMap extends Component<CheckpointMapProps, CheckpointMapState> {
 
       const rectangle = new google.maps.Rectangle({
         bounds: bounds,
-        strokeColor: "#FF0000",
+        strokeColor: "#0000FF",
         strokeOpacity: 0.8,
         strokeWeight: 2,
-        fillColor: "#FF0000",
+        fillColor: "#0000FF",
         fillOpacity: 0.35,
       });
 
       rectangle.setMap(this.mapRef);
       this.overlays.push(rectangle);
+    } else if (geofenceData.type === "circle") {
+      const center = geofenceData.geofencePositions.center;
+      const radius = geofenceData.geofencePositions.radius;
+
+      if (!center || !radius) return;
+
+      const circle = new google.maps.Circle({
+        center: center,
+        radius: radius,
+        strokeColor: "#0000FF",
+        strokeOpacity: 0.8,
+        strokeWeight: 2,
+        fillColor: "#0000FF",
+        fillOpacity: 0.35,
+      });
+
+      circle.setMap(this.mapRef);
+      this.overlays.push(circle);
     }
   };
 
@@ -158,7 +192,7 @@ class CheckpointMap extends Component<CheckpointMapProps, CheckpointMapState> {
       <div style={{ position: "relative", height: "300px", width: "100%" }}>
         <Map
           google={google}
-          zoom={13}
+          zoom={16}
           style={{
             width: "100%",
             height: "100%",

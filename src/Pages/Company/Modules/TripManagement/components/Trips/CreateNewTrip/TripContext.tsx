@@ -17,6 +17,8 @@ interface TripData {
   tripName: string;
   tripType: string;
   vehicleId: string;
+  vehicleName?: string;
+  driverName?: string;
   driverId: string;
   notes: string;
   checkpoints: Checkpoint[];
@@ -41,6 +43,8 @@ export const TripProvider: React.FC<{ children: React.ReactNode }> = ({
     tripType: "",
     vehicleId: "",
     driverId: "",
+    vehicleName: "",
+    driverName: "",
     notes: "",
     checkpoints: [],
   });

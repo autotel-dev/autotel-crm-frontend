@@ -91,7 +91,7 @@ const Checkpoints: React.FC<CheckpointsProps> = ({ callbackActive }) => {
     updatedCheckpoints[index] = {
       ...updatedCheckpoints[index],
       geofenceId,
-      geofenceName: selectedGeofence?.name || "",
+      geofenceName: selectedGeofence?.title || "",
     };
     setCheckpoints(updatedCheckpoints);
   };
@@ -292,7 +292,9 @@ const Checkpoints: React.FC<CheckpointsProps> = ({ callbackActive }) => {
                     .toLowerCase()
                     .includes(input.toLowerCase())
                 }
-                onChange={(value) => handleGeofenceChange(index, value)}
+                onChange={(value, options) => {
+                  handleGeofenceChange(index, value);
+                }}
                 options={geofences.map((g) => ({
                   value: g._id,
                   label: g.title,

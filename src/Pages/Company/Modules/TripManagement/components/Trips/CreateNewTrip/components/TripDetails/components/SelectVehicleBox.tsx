@@ -4,6 +4,7 @@ import { Select } from "antd";
 interface SelectVehicleBoxProps {
   placeholder: string;
   setVehicle: (value: string) => void;
+  setVehicleName: (value: string) => void;
   vehicle: string;
   vehicles: any[];
   disabled?: boolean;
@@ -12,6 +13,7 @@ interface SelectVehicleBoxProps {
 const SelectVehicleBox: React.FC<SelectVehicleBoxProps> = ({
   placeholder,
   setVehicle,
+  setVehicleName,
   vehicle,
   vehicles,
   disabled = false,
@@ -45,8 +47,9 @@ const SelectVehicleBox: React.FC<SelectVehicleBoxProps> = ({
           .toLowerCase()
           .localeCompare((optionB?.label ?? "").toLowerCase())
       }
-      onChange={(e) => {
+      onChange={(e, options) => {
         setVehicle(e);
+        setVehicleName(options.label);
       }}
       options={vehicleList}
       disabled={disabled}

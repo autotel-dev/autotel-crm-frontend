@@ -57,9 +57,11 @@ const Review: React.FC<ReviewProps> = ({ callbackActive }) => {
     // Build the payload according to API requirements
     const payload = {
       title: tripData.tripName,
+      triptype: tripData.tripType,
       vehicleId: tripData.vehicleId,
       driverId: tripData.driverId,
       stops: tripData.checkpoints.map((checkpoint) => ({
+        stopName: checkpoint.checkpointName,
         geofenceId: checkpoint.geofenceId,
         stopType: mapStopType(checkpoint.type),
         scheduledArrivalTime: convertToISOFormat(
@@ -151,12 +153,18 @@ const Review: React.FC<ReviewProps> = ({ callbackActive }) => {
               borderBottom: "1px solid #e9ecef",
             }}
           >
-            <h6 style={{ margin: 0, fontWeight: "600" }}>Trip Details</h6>
+            <h6 style={{ margin: 0, fontWeight: "700", fontSize: "18px" }}>
+              Trip Details
+            </h6>
             <Button
               color="link"
-              size="sm"
+              size="lg"
               onClick={() => handleEdit(1)}
-              style={{ textDecoration: "none", padding: "0" }}
+              style={{
+                textDecoration: "none",
+                padding: "0",
+                fontWeight: "bold",
+              }}
             >
               Edit
             </Button>
@@ -164,68 +172,63 @@ const Review: React.FC<ReviewProps> = ({ callbackActive }) => {
         </Col>
 
         <Col md={4} xs={12}>
-          <P
+          <p
             style={{
               marginBottom: "5px",
-              fontWeight: "600",
-              fontSize: "12px",
-              color: "#6c757d",
+              fontWeight: "700",
+              fontSize: "16px",
             }}
           >
             Trip Name
-          </P>
+          </p>
           <p style={{ marginBottom: "15px" }}>{tripData.tripName || "-"}</p>
         </Col>
         <Col md={4} xs={12}>
-          <P
+          <p
             style={{
               marginBottom: "5px",
-              fontWeight: "600",
-              fontSize: "12px",
-              color: "#6c757d",
+              fontWeight: "700",
+              fontSize: "16px",
             }}
           >
             Trip Type
-          </P>
+          </p>
           <p style={{ marginBottom: "15px" }}>{tripData.tripType || "-"}</p>
         </Col>
         <Col md={4} xs={12}>
-          <P
+          <p
             style={{
               marginBottom: "5px",
-              fontWeight: "600",
-              fontSize: "12px",
-              color: "#6c757d",
+              fontWeight: "700",
+              fontSize: "16px",
             }}
           >
-            Vehicle ID
-          </P>
-          <p style={{ marginBottom: "15px" }}>{tripData.vehicleId || "-"}</p>
+            Vehicle
+          </p>
+          <p style={{ marginBottom: "15px" }}>{tripData.vehicleName || "-"}</p>
         </Col>
         <Col md={4} xs={12}>
-          <P
+          <p
             style={{
               marginBottom: "5px",
-              fontWeight: "600",
-              fontSize: "12px",
-              color: "#6c757d",
+              fontWeight: "700",
+              fontSize: "16px",
             }}
           >
-            Driver ID
-          </P>
-          <p style={{ marginBottom: "15px" }}>{tripData.driverId || "-"}</p>
+            Driver
+          </p>
+          <p style={{ marginBottom: "15px" }}>{tripData.driverName || "-"}</p>
         </Col>
         <Col md={12} xs={12}>
-          <P
+          <p
             style={{
               marginBottom: "5px",
-              fontWeight: "600",
-              fontSize: "12px",
-              color: "#6c757d",
+              fontWeight: "700",
+              fontSize: "16px",
             }}
           >
             Notes
-          </P>
+          </p>
           <p style={{ marginBottom: "15px" }}>{tripData.notes || "-"}</p>
         </Col>
 
@@ -241,12 +244,18 @@ const Review: React.FC<ReviewProps> = ({ callbackActive }) => {
               borderBottom: "1px solid #e9ecef",
             }}
           >
-            <h6 style={{ margin: 0, fontWeight: "600" }}>Route Checkpoints</h6>
+            <h6 style={{ margin: 0, fontWeight: "700", fontSize: "18px" }}>
+              Route Checkpoints
+            </h6>
             <Button
               color="link"
-              size="sm"
+              size="lg"
               onClick={() => handleEdit(2)}
-              style={{ textDecoration: "none", padding: "0" }}
+              style={{
+                textDecoration: "none",
+                padding: "0",
+                fontWeight: "bold",
+              }}
             >
               Edit
             </Button>
@@ -265,10 +274,22 @@ const Review: React.FC<ReviewProps> = ({ callbackActive }) => {
                     marginBottom: "10px",
                   }}
                 >
-                  <span style={{ fontWeight: "600", fontSize: "14px" }}>
+                  <span
+                    style={{
+                      marginBottom: "5px",
+                      fontWeight: "700",
+                      fontSize: "16px",
+                    }}
+                  >
                     {index + 1}.
                   </span>
-                  <span style={{ fontWeight: "600", fontSize: "14px" }}>
+                  <span
+                    style={{
+                      marginBottom: "5px",
+                      fontWeight: "700",
+                      fontSize: "16px",
+                    }}
+                  >
                     {checkpoint.checkpointName || `Point ${index + 1}`}
                   </span>
                   {checkpoint.type === "origin" && (
@@ -317,31 +338,29 @@ const Review: React.FC<ReviewProps> = ({ callbackActive }) => {
               </Col>
 
               <Col md={6} xs={12}>
-                <P
+                <p
                   style={{
                     marginBottom: "5px",
-                    fontWeight: "600",
-                    fontSize: "12px",
-                    color: "#6c757d",
+                    fontWeight: "700",
+                    fontSize: "14px",
                   }}
                 >
                   Geofence
-                </P>
+                </p>
                 <p style={{ marginBottom: "15px" }}>
                   {checkpoint.geofenceName || "-"}
                 </p>
               </Col>
               <Col md={6} xs={12}>
-                <P
+                <p
                   style={{
                     marginBottom: "5px",
-                    fontWeight: "600",
-                    fontSize: "12px",
-                    color: "#6c757d",
+                    fontWeight: "700",
+                    fontSize: "14px",
                   }}
                 >
                   Type
-                </P>
+                </p>
                 <p
                   style={{ marginBottom: "15px", textTransform: "capitalize" }}
                 >
@@ -374,12 +393,18 @@ const Review: React.FC<ReviewProps> = ({ callbackActive }) => {
               borderBottom: "1px solid #e9ecef",
             }}
           >
-            <h6 style={{ margin: 0, fontWeight: "600" }}>Time Schedules</h6>
+            <h6 style={{ margin: 0, fontWeight: "700", fontSize: "18px" }}>
+              Time Schedules
+            </h6>
             <Button
               color="link"
-              size="sm"
+              size="lg"
               onClick={() => handleEdit(3)}
-              style={{ textDecoration: "none", padding: "0" }}
+              style={{
+                textDecoration: "none",
+                padding: "0",
+                fontWeight: "bold",
+              }}
             >
               Edit
             </Button>
@@ -399,7 +424,7 @@ const Review: React.FC<ReviewProps> = ({ callbackActive }) => {
                     marginTop: index > 0 ? "15px" : "0px",
                   }}
                 >
-                  <span style={{ fontWeight: "600", fontSize: "14px" }}>
+                  <span style={{ fontWeight: "700", fontSize: "16px" }}>
                     {checkpoint.checkpointName || `Point ${index + 1}`}
                   </span>
                   {checkpoint.type === "origin" && (
@@ -448,77 +473,77 @@ const Review: React.FC<ReviewProps> = ({ callbackActive }) => {
               </Col>
 
               <Col md={3} xs={12}>
-                <P
+                <p
                   style={{
                     marginBottom: "5px",
-                    fontWeight: "600",
-                    fontSize: "12px",
-                    color: "#6c757d",
+                    fontWeight: "700",
+                    fontSize: "14px",
+                    // color: "#6c757d",
                   }}
                 >
                   Arrival Time
-                </P>
+                </p>
                 <p style={{ marginBottom: "15px" }}>
                   {formatDateTime(checkpoint.plannedArrival || "")}
                 </p>
               </Col>
               <Col md={3} xs={12}>
-                <P
+                <p
                   style={{
                     marginBottom: "5px",
-                    fontWeight: "600",
-                    fontSize: "12px",
-                    color: "#6c757d",
+                    fontWeight: "700",
+                    fontSize: "14px",
+                    // color: "#6c757d",
                   }}
                 >
                   Stay Time (min)
-                </P>
+                </p>
                 <p style={{ marginBottom: "15px" }}>
                   {checkpoint.stayTime || "-"}
                 </p>
               </Col>
               <Col md={3} xs={12}>
-                <P
+                <p
                   style={{
                     marginBottom: "5px",
-                    fontWeight: "600",
-                    fontSize: "12px",
-                    color: "#6c757d",
+                    fontWeight: "700",
+                    fontSize: "14px",
+                    // color: "#6c757d",
                   }}
                 >
                   Departure Time
-                </P>
+                </p>
                 <p style={{ marginBottom: "15px" }}>
                   {formatDateTime(checkpoint.plannedDeparture || "")}
                 </p>
               </Col>
               <Col md={3} xs={12}>
-                <P
+                <p
                   style={{
                     marginBottom: "5px",
-                    fontWeight: "600",
-                    fontSize: "12px",
-                    color: "#6c757d",
+                    fontWeight: "700",
+                    fontSize: "14px",
+                    // color: "#6c757d",
                   }}
                 >
                   Overstay Buffer (min)
-                </P>
+                </p>
                 <p style={{ marginBottom: "15px" }}>
                   {checkpoint.overstayBuffer || "-"}
                 </p>
               </Col>
               {index < tripData.checkpoints.length - 1 && (
                 <Col md={3} xs={12}>
-                  <P
+                  <p
                     style={{
                       marginBottom: "5px",
-                      fontWeight: "600",
-                      fontSize: "12px",
-                      color: "#6c757d",
+                      fontWeight: "700",
+                      fontSize: "14px",
+                      // color: "#6c757d",
                     }}
                   >
                     Travel Time to Next (min)
-                  </P>
+                  </p>
                   <p style={{ marginBottom: "15px" }}>
                     {checkpoint.travelTimeToNext || "-"}
                   </p>

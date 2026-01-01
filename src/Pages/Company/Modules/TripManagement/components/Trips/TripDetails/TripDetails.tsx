@@ -68,9 +68,7 @@ const TripDetails: React.FC = () => {
   };
 
   const handleBack = () => {
-    navigate(
-      `${process.env.PUBLIC_URL}/company/modules/trip-management/trips`
-    );
+    navigate(`${process.env.PUBLIC_URL}/company/modules/trip-management/trips`);
   };
 
   if (loading) {
@@ -85,10 +83,7 @@ const TripDetails: React.FC = () => {
           gap: "20px",
         }}
       >
-        <Spinner
-          color="primary"
-          style={{ width: "3rem", height: "3rem" }}
-        />
+        <Spinner color="primary" style={{ width: "3rem", height: "3rem" }} />
         <p style={{ color: "#6c757d", fontSize: "16px" }}>
           Loading trip details...
         </p>
@@ -189,9 +184,7 @@ const TripDetails: React.FC = () => {
           >
             Driver
           </P>
-          <p style={{ marginBottom: "15px" }}>
-            {tripData.driver?.name || "-"}
-          </p>
+          <p style={{ marginBottom: "15px" }}>{tripData.driver?.name || "-"}</p>
         </Col>
         <Col md={4} xs={12}>
           <P
@@ -285,7 +278,9 @@ const TripDetails: React.FC = () => {
                         color: "#495057",
                       }}
                     >
-                      {index + 1}. {checkpoint.geofenceId?.title || "Unknown Location"}
+                      {index + 1}. <span>{checkpoint.stopName || "N/A"}</span>
+                      &nbsp;-&nbsp;
+                      {checkpoint.geofenceId?.title || "N/A"}
                     </span>
                     <span
                       style={{

@@ -4,6 +4,7 @@ import { Select } from "antd";
 interface SelectDriverBoxProps {
   placeholder: string;
   setDriver: (value: string) => void;
+  setDriverName: (value: string) => void;
   driver: string;
   drivers: any[];
   disabled?: boolean;
@@ -12,6 +13,7 @@ interface SelectDriverBoxProps {
 const SelectDriverBox: React.FC<SelectDriverBoxProps> = ({
   placeholder,
   setDriver,
+  setDriverName,
   driver,
   drivers,
   disabled = false,
@@ -41,8 +43,9 @@ const SelectDriverBox: React.FC<SelectDriverBoxProps> = ({
           .toLowerCase()
           .localeCompare((optionB?.label ?? "").toLowerCase())
       }
-      onChange={(e) => {
+      onChange={(e, options) => {
         setDriver(e);
+        setDriverName(options.label);
       }}
       options={driverList}
       disabled={disabled}

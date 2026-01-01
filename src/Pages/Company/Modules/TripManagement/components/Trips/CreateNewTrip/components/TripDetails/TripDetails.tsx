@@ -40,6 +40,8 @@ const TripDetails: React.FC<TripDetailsProps> = ({ callbackActive }) => {
   const [tripType, setTripType] = useState(tripData.tripType);
   const [vehicleId, setVehicleId] = useState(tripData.vehicleId);
   const [driverId, setDriverId] = useState(tripData.driverId);
+  const [vehicleName, setVehicleName] = useState(tripData.vehicleName);
+  const [driverName, setDriverName] = useState(tripData.driverName);
   const [notes, setNotes] = useState(tripData.notes);
 
   // Fetch drivers and vehicles from API
@@ -114,6 +116,8 @@ const TripDetails: React.FC<TripDetailsProps> = ({ callbackActive }) => {
       tripType,
       vehicleId,
       driverId,
+      vehicleName,
+      driverName,
       notes,
     });
 
@@ -160,8 +164,8 @@ const TripDetails: React.FC<TripDetailsProps> = ({ callbackActive }) => {
             }
             onChange={(e) => setTripType(e)}
             options={[
-              { value: "Schedule", label: "Schedule" },
-              { value: "Recurring", label: "Recurring" },
+              { value: "SCHEDULED", label: "Schedule" },
+              { value: "RECURRING", label: "Recurring" },
             ]}
           />
         </Col>
@@ -176,6 +180,7 @@ const TripDetails: React.FC<TripDetailsProps> = ({ callbackActive }) => {
           <SelectVehicleBox
             placeholder="Select Vehicle"
             setVehicle={setVehicleId}
+            setVehicleName={setVehicleName}
             vehicle={vehicleId}
             vehicles={vehicles}
           />
@@ -191,6 +196,7 @@ const TripDetails: React.FC<TripDetailsProps> = ({ callbackActive }) => {
           <SelectDriverBox
             placeholder="Select Driver"
             setDriver={setDriverId}
+            setDriverName={setDriverName}
             driver={driverId}
             drivers={drivers}
           />
