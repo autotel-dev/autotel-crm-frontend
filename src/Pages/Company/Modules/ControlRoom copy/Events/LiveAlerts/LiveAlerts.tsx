@@ -759,9 +759,11 @@ const LiveAlerts = () => {
                                     data?.packetData?.serverTime?.slice(11, 19); // Get the time part "HH:MM:SS"
 
                                   // Convert to 12-hour format with AM/PM
-                                  const hours24 = parseInt(timeStr.slice(0, 2)); // Get the hours (0-23)
-                                  const minutes = timeStr.slice(3, 5); // Get the minutes (00-59)
-                                  const seconds = timeStr.slice(6, 8); // Get the seconds (00-59)
+                                  const hours24 = parseInt(
+                                    timeStr?.slice(0, 2)
+                                  ); // Get the hours (0-23)
+                                  const minutes = timeStr?.slice(3, 5); // Get the minutes (00-59)
+                                  const seconds = timeStr?.slice(6, 8); // Get the seconds (00-59)
 
                                   // Determine AM or PM
                                   const period = hours24 >= 12 ? "PM" : "AM";
