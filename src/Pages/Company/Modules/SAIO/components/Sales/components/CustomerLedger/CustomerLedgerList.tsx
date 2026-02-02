@@ -44,11 +44,11 @@ const CustomerLedgerTable = ({}) => {
   const dispatch = useDispatch();
   // Function to transform supportData into allBugReports format
   const { customerLedgers } = useSelector(
-    (state: any) => state.customerLedgers
+    (state: any) => state.customerLedgers,
   );
 
   const { userPersonalizationData } = useSelector(
-    (state: any) => state.personalization
+    (state: any) => state.personalization,
   );
   function hexToRgb(hex: any) {
     // Remove the hash sign if present
@@ -97,7 +97,7 @@ const CustomerLedgerTable = ({}) => {
 
   useEffect(() => {
     setData(vendorLedgerData());
-    console.log("customerLedgers", customerLedgers);
+    // console.log("customerLedgers", customerLedgers);
   }, [customerLedgers]);
 
   const navigate = useNavigate();
@@ -123,7 +123,7 @@ const CustomerLedgerTable = ({}) => {
   const [customer, setCustomer] = useState("");
   const [accountId, setAccountId] = useState("");
   const [startDate, setStartDate] = useState(
-    new Date().toISOString().slice(0, 10)
+    new Date().toISOString().slice(0, 10),
   );
   const [endDate, setEndDate] = useState(new Date().toISOString().slice(0, 10));
 
@@ -137,7 +137,7 @@ const CustomerLedgerTable = ({}) => {
           url: `${GET_ACCOUNT_STATEMENT}?accountId=${accountId}&startDate=${startDate}&endDate=${endDate}`,
         });
         if (response.success) {
-          console.log("data", response.data.statement);
+          // console.log("data", response.data.statement);
           setReportName(`${customer} Ledger`);
           dispatch(setCustomerLedgers(response.data.statement));
           setLoading(false);
@@ -498,7 +498,7 @@ const CustomerLedgerTable = ({}) => {
                           credit: item.credit,
                           balance: item.balance,
                         };
-                      }
+                      },
                     );
                     setHeader(columns);
                     setPdfData(rowData);

@@ -42,7 +42,7 @@ interface CustomerInfoProps {
 
 const CustomerInfo = ({ callbackActive }: CustomerInfoProps) => {
   const { userPersonalizationData } = useSelector(
-    (state: any) => state.personalization
+    (state: any) => state.personalization,
   );
   const { customer, saleLead } = useSelector((state: any) => state.sales);
   // // console.log("saleLeadId", saleLeadId);
@@ -88,7 +88,7 @@ const CustomerInfo = ({ callbackActive }: CustomerInfoProps) => {
   // // console.log("saleLeadId", saleLeadId);
 
   const [isEditCustomerInfo, setIsEditCustomerInfo] = useState(
-    saleLead?.customer !== null ? true : false
+    saleLead?.customer !== null ? true : false,
   );
 
   const createCustomer = async () => {
@@ -106,7 +106,7 @@ const CustomerInfo = ({ callbackActive }: CustomerInfoProps) => {
       try {
         await create(
           { ...personalDetailsForm, saleLeadId: saleLead?._id },
-          { url: CREATE_NEW_CUSTOMER }
+          { url: CREATE_NEW_CUSTOMER },
         ).then((data: any) => {
           if (data !== undefined) {
             if (!data.success && data.message === ERROR_MESSAGE) {
@@ -133,7 +133,7 @@ const CustomerInfo = ({ callbackActive }: CustomerInfoProps) => {
                       callbackActive(3);
                     }
                   }
-                }
+                },
               );
 
               getAll({ url: GET_ALL_SALELEADS }).then((data: any) => {
@@ -193,7 +193,7 @@ const CustomerInfo = ({ callbackActive }: CustomerInfoProps) => {
             city: saleLead?.city._id,
             saleLeadId: saleLead?._id,
           },
-          { url: `${UPDATE_CUSTOMER}/${saleLead?.customer?._id}` }
+          { url: `${UPDATE_CUSTOMER}/${saleLead?.customer?._id}` },
         ).then((data: any) => {
           if (data !== undefined) {
             if (!data.success && data.message === ERROR_MESSAGE) {
@@ -431,6 +431,7 @@ const CustomerInfo = ({ callbackActive }: CustomerInfoProps) => {
         </Col>
 
         {saleLead?.status == "INSTALLED" ? (
+          // {saleLead?.status == "COMPLETED" ? (
           <>
             <Col
               xs={12}
@@ -443,7 +444,7 @@ const CustomerInfo = ({ callbackActive }: CustomerInfoProps) => {
                   dispatch(setSaleLeadId(""));
                   dispatch(setSaleLead(null));
                   navigate(
-                    `${process.env.PUBLIC_URL}/company/modules/saio-central/sales/leads`
+                    `${process.env.PUBLIC_URL}/company/modules/saio-central/sales/leads`,
                   );
                 }}
               >
@@ -468,7 +469,7 @@ const CustomerInfo = ({ callbackActive }: CustomerInfoProps) => {
                     dispatch(setSaleLeadId(""));
                     dispatch(setSaleLead(null));
                     navigate(
-                      `${process.env.PUBLIC_URL}/company/modules/saio-central/sales/leads`
+                      `${process.env.PUBLIC_URL}/company/modules/saio-central/sales/leads`,
                     );
                   }}
                 >
@@ -492,7 +493,7 @@ const CustomerInfo = ({ callbackActive }: CustomerInfoProps) => {
                     dispatch(setSaleLeadId(""));
                     dispatch(setSaleLead(null));
                     navigate(
-                      `${process.env.PUBLIC_URL}/company/modules/saio-central/sales/leads`
+                      `${process.env.PUBLIC_URL}/company/modules/saio-central/sales/leads`,
                     );
                   }}
                 >
@@ -511,8 +512,8 @@ const CustomerInfo = ({ callbackActive }: CustomerInfoProps) => {
                   {loading
                     ? "Loading..."
                     : !isEditCustomerInfo
-                    ? "Save"
-                    : "Edit"}
+                      ? "Save"
+                      : "Edit"}
                 </Button>
               </Col>
             ) : (
@@ -529,7 +530,7 @@ const CustomerInfo = ({ callbackActive }: CustomerInfoProps) => {
                     dispatch(setSaleLeadId(""));
                     dispatch(setSaleLead(null));
                     navigate(
-                      `${process.env.PUBLIC_URL}/company/modules/saio-central/sales/leads`
+                      `${process.env.PUBLIC_URL}/company/modules/saio-central/sales/leads`,
                     );
                   }}
                 >

@@ -15,7 +15,7 @@ const Purchases = () => {
   const location = useLocation(); // Access current route information
   const [component, setComponent] = useState("Vendors");
   useEffect(() => {
-    console.log(location.pathname.split("/"));
+    // console.log(location.pathname.split("/"));
     const arr = location.pathname.split("/");
     const route = arr[arr.length - 1];
 
@@ -31,7 +31,7 @@ const Purchases = () => {
   }, [location.pathname]);
 
   const { purchaseInvoices, vendors } = useSelector(
-    (state: any) => state.purchaseInvoice
+    (state: any) => state.purchaseInvoice,
   );
   const { vendor } = useSelector((state: any) => state.vendor);
   const dispatch = useDispatch();

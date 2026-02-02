@@ -70,7 +70,7 @@ const SaleLeadsTable = () => {
   }, [saleLeads]);
 
   const { userPersonalizationData } = useSelector(
-    (state: any) => state.personalization
+    (state: any) => state.personalization,
   );
   function hexToRgb(hex: any) {
     // Remove the hash sign if present
@@ -94,7 +94,7 @@ const SaleLeadsTable = () => {
           item?.customerName
             .toLowerCase()
             .includes(searchValue.toLowerCase()) ||
-          item?.user?.fullName.toLowerCase().includes(searchValue)
+          item?.user?.fullName.toLowerCase().includes(searchValue),
       )
       .map((item: any, index: any) => ({
         index: index + 1,
@@ -116,7 +116,7 @@ const SaleLeadsTable = () => {
         discounted_service_charges: item?.discountedServiceCharges,
         isActive: item?.isActive ? "true" : "false",
         date: `${item?.updatedAt.toString().slice(0, 10)},  ${new Date(
-          item?.updatedAt
+          item?.updatedAt,
         )
           .toLocaleString("en-US", {
             hour: "2-digit",
@@ -155,7 +155,7 @@ const SaleLeadsTable = () => {
     dispatch(setSaleLead(row));
     dispatch(setCustomer(null));
     navigate(
-      `${process.env.PUBLIC_URL}/company/modules/saio-central/sales/leads/${row.id}`
+      `${process.env.PUBLIC_URL}/company/modules/saio-central/sales/leads/${row.id}`,
     );
     // setIscreateNewSaleLead(true)
   };
@@ -195,7 +195,7 @@ const SaleLeadsTable = () => {
         dispatch(setCustomer(null));
         dispatch(setSaleLead(null));
         navigate(
-          `${process.env.PUBLIC_URL}/company/modules/saio-central/sales/leads/sale-lead`
+          `${process.env.PUBLIC_URL}/company/modules/saio-central/sales/leads/sale-lead`,
         );
       } else if (result.isDenied) {
         Swal.fire({
@@ -220,10 +220,10 @@ const SaleLeadsTable = () => {
                 optionFilterProp="children"
                 filterOption={(input: any, option: any) =>
                   (option?.label.toLowerCase() ?? "").includes(
-                    input.toLowerCase()
+                    input.toLowerCase(),
                   ) ||
                   (option?.value.toLowerCase() ?? "").includes(
-                    input.toLowerCase()
+                    input.toLowerCase(),
                   ) ||
                   (option?.phoneNo ?? "").includes(input)
                 }
@@ -247,13 +247,13 @@ const SaleLeadsTable = () => {
           if (result.isConfirmed) {
             dispatch(setSaleLead(null));
             navigate(
-              `${process.env.PUBLIC_URL}/company/modules/saio-central/sales/leads/sale-lead`
+              `${process.env.PUBLIC_URL}/company/modules/saio-central/sales/leads/sale-lead`,
             );
             setCustomerId("");
           } else if (result.isDenied) {
             dispatch(setSaleLead(null));
             navigate(
-              `${process.env.PUBLIC_URL}/company/modules/saio-central/sales/leads`
+              `${process.env.PUBLIC_URL}/company/modules/saio-central/sales/leads`,
             );
             setCustomerId("");
           }
@@ -360,10 +360,10 @@ const SaleLeadsTable = () => {
               row.status === "NEW"
                 ? "rgba(0, 0, 255, 0.3)"
                 : row.status === "IN_PROGRESS"
-                ? "rgba(255, 200, 0, 0.3)"
-                : row.status === "REJECTED"
-                ? "rgba(255, 0, 0, 0.3)"
-                : "rgba(0, 255, 0, 0.3)",
+                  ? "rgba(255, 200, 0, 0.3)"
+                  : row.status === "REJECTED"
+                    ? "rgba(255, 0, 0, 0.3)"
+                    : "rgba(0, 255, 0, 0.3)",
           }}
           onClick={(e) => {
             e.stopPropagation(); // Prevent the click from propagating up
@@ -454,7 +454,7 @@ const SaleLeadsTable = () => {
             <span style={{ fontWeight: "bold" }}>Installed: </span>
             {
               row?.vehicles?.filter(
-                (item: any) => item?.installationStatus == "INSTALLED"
+                (item: any) => item?.installationStatus == "INSTALLED",
               ).length
             }
           </div>
@@ -468,10 +468,20 @@ const SaleLeadsTable = () => {
             <span style={{ fontWeight: "bold" }}>Pending: </span>
             {
               row?.vehicles?.filter(
-                (item: any) => item?.installationStatus == "IN_PROGRESS"
+                (item: any) => item?.installationStatus == "IN_PROGRESS",
               ).length
             }
           </div>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              color: "green",
+            }}
+          >
+            <span style={{ fontWeight: "bold" }}>Completed: </span>
+            {row?.status == "COMPLETED" ? "Yes" : "No"}
+          </div>{" "}
         </div>
       ),
     },
@@ -497,7 +507,7 @@ const SaleLeadsTable = () => {
               onClick={() => {
                 dispatch(setInvoiceData(row));
                 navigate(
-                  `${process.env.PUBLIC_URL}/company/modules/saio-central/sales/invoices/create-invoice`
+                  `${process.env.PUBLIC_URL}/company/modules/saio-central/sales/invoices/create-invoice`,
                 );
               }}
             >
@@ -537,11 +547,11 @@ const SaleLeadsTable = () => {
   ];
 
   const { userPermissions } = useSelector(
-    (state: any) => state.userPermissions
+    (state: any) => state.userPermissions,
   );
 
   var saio_sales = userPermissions.find(
-    (item: any) => item.title === "SAIO Sales"
+    (item: any) => item.title === "SAIO Sales",
   );
 
   return (

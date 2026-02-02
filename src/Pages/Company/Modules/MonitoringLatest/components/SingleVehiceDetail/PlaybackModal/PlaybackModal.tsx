@@ -31,7 +31,7 @@ const PlaybackModal: React.FC<PlaybackModalProps> = ({
   const location = useLocation(); // Add this hook
 
   // Now you can get the current URL pathname
-  console.log("Current URL:", location.pathname);
+  // console.log("Current URL:", location.pathname);
   const [loading, setLoading] = useState(false);
   const {
     register,
@@ -43,13 +43,13 @@ const PlaybackModal: React.FC<PlaybackModalProps> = ({
   // }, []);
 
   const { selectedSingleDevice, vehicleHistoryDateRange } = useSelector(
-    (state: any) => state.monitoring
+    (state: any) => state.monitoring,
   );
-  console.log("vehicleHistoryDateRange", vehicleHistoryDateRange);
+  // console.log("vehicleHistoryDateRange", vehicleHistoryDateRange);
 
   // Initialize filter based on saved date range or initialFilter prop
   const [selectedFilter, setSelectedFilter] = useState<string>(
-    initialFilter || "Today"
+    initialFilter || "Today",
   );
 
   function filterHistoryData(history: any[]) {
@@ -114,7 +114,7 @@ const PlaybackModal: React.FC<PlaybackModalProps> = ({
     if (timeDiffHours >= 23 && timeDiffHours <= 25) {
       // Check if end date is close to now (within a few hours) = "Today"
       const hoursDiffFromNow = Math.abs(
-        (endDate.getTime() - now.getTime()) / (1000 * 60 * 60)
+        (endDate.getTime() - now.getTime()) / (1000 * 60 * 60),
       );
 
       if (hoursDiffFromNow < 2) {
@@ -126,7 +126,7 @@ const PlaybackModal: React.FC<PlaybackModalProps> = ({
       const yesterday = new Date(now);
       yesterday.setDate(now.getDate() - 1);
       const hoursDiffFromYesterday = Math.abs(
-        (endDate.getTime() - yesterday.getTime()) / (1000 * 60 * 60)
+        (endDate.getTime() - yesterday.getTime()) / (1000 * 60 * 60),
       );
 
       if (hoursDiffFromYesterday < 2) {
@@ -151,16 +151,16 @@ const PlaybackModal: React.FC<PlaybackModalProps> = ({
     if (isVisible) {
       // Priority 1: Use initialFilter if provided (from quick actions)
       if (initialFilter) {
-        console.log("Setting filter from initialFilter:", initialFilter);
+        // console.log("Setting filter from initialFilter:", initialFilter);
         setSelectedFilter(initialFilter);
       }
       // Priority 2: Use saved date range from Redux
       else if (vehicleHistoryDateRange !== null) {
         const filterType = getFilterTypeFromDates(
           vehicleHistoryDateRange.start,
-          vehicleHistoryDateRange.end
+          vehicleHistoryDateRange.end,
         );
-        console.log("Setting filter from saved dates:", filterType);
+        // console.log("Setting filter from saved dates:", filterType);
         setSelectedFilter(filterType);
 
         if (filterType === "Custom") {
@@ -170,7 +170,7 @@ const PlaybackModal: React.FC<PlaybackModalProps> = ({
       }
       // Priority 3: Default to Today if not on monitoring page
       else if (location.pathname !== "/company/modules/monitoring") {
-        console.log("Setting default filter: Today");
+        // console.log("Setting default filter: Today");
         setSelectedFilter("Today");
       }
     }
@@ -178,7 +178,7 @@ const PlaybackModal: React.FC<PlaybackModalProps> = ({
 
   // ✅ Update fromDateTime & toDateTime whenever filter changes
   useEffect(() => {
-    console.log("Filter changed to:", selectedFilter);
+    // console.log("Filter changed to:", selectedFilter);
     const now = new Date();
 
     if (selectedFilter === "Today") {
@@ -187,10 +187,10 @@ const PlaybackModal: React.FC<PlaybackModalProps> = ({
       const startDate = new Date(now);
       startDate.setDate(now.getDate() - 1); // Go back 1 day (24 hours)
 
-      console.log("Setting Today dates:", {
-        start: startDate.toISOString().slice(0, 16),
-        end: endDate.toISOString().slice(0, 16),
-      });
+      // console.log("Setting Today dates:", {
+      //   start: startDate.toISOString().slice(0, 16),
+      //   end: endDate.toISOString().slice(0, 16),
+      // });
 
       setFromDateTime(startDate.toISOString().slice(0, 16));
       setToDateTime(endDate.toISOString().slice(0, 16));
@@ -202,10 +202,10 @@ const PlaybackModal: React.FC<PlaybackModalProps> = ({
       const startDate = new Date(now);
       startDate.setDate(now.getDate() - 2); // 2 days ago (48 hours back)
 
-      console.log("Setting Yesterday dates:", {
-        start: startDate.toISOString().slice(0, 16),
-        end: endDate.toISOString().slice(0, 16),
-      });
+      // console.log("Setting Yesterday dates:", {
+      //   start: startDate.toISOString().slice(0, 16),
+      //   end: endDate.toISOString().slice(0, 16),
+      // });
 
       setFromDateTime(startDate.toISOString().slice(0, 16));
       setToDateTime(endDate.toISOString().slice(0, 16));
@@ -252,11 +252,11 @@ const PlaybackModal: React.FC<PlaybackModalProps> = ({
         const filteredHistory = filterHistoryData(data?.data?.history);
         dispatch(setVehicleHistoryData(filteredHistory));
         dispatch(
-          setVehicleHistoryDateRange({ start: fromDateTime, end: toDateTime })
+          setVehicleHistoryDateRange({ start: fromDateTime, end: toDateTime }),
         );
         if (location.pathname == "/company/modules/monitoring") {
           navigate(
-            `${process.env.PUBLIC_URL}/company/modules/monitoring/playback`
+            `${process.env.PUBLIC_URL}/company/modules/monitoring/playback`,
           );
         } else {
           addToggle();
@@ -356,7 +356,7 @@ const PlaybackModal: React.FC<PlaybackModalProps> = ({
                 className="me-1"
                 onClick={() => {
                   fetchVehicleHistoryData();
-                  // console.log("From:", fromDateTime, "To:", toDateTime);
+                  // // console.log("From:", fromDateTime, "To:", toDateTime);
                 }}
               >
                 {loading ? "Loading ..." : `Start`}

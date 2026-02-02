@@ -71,7 +71,7 @@ const VehicleForm = ({
     // );
     const updatedServices = formData.additionalServices.map(
       (service: any, i: number) =>
-        i === index ? { ...service, isOffering: !service.isOffering } : service
+        i === index ? { ...service, isOffering: !service.isOffering } : service,
     );
     setFormData({ ...formData, additionalServices: updatedServices });
     onChange(index, { ...formData, additionalServices: updatedServices });
@@ -87,10 +87,10 @@ const VehicleForm = ({
   const dispatch = useDispatch();
   const [isCreated, setIsCreated] = useState(
     saleLead?.vehicles?.find(
-      (item: any, i: number) => formData.registrationNo == item.registrationNo
+      (item: any, i: number) => formData.registrationNo == item.registrationNo,
     )
       ? true
-      : false
+      : false,
   );
 
   const [selection, setSelection] = useState("Self"); // Added state for selection
@@ -201,14 +201,14 @@ const VehicleForm = ({
                         }
                       }
                     }
-                  }
+                  },
                 );
                 // setLoading(false);
 
                 // setLoading(false);
               }
             }
-          }
+          },
         );
         // Handle successful post creation (e.g., show a success message, redirect, etc.)
       } catch (error: any) {
@@ -293,7 +293,7 @@ const VehicleForm = ({
                       setIsCreated(true);
                     }
                   }
-                }
+                },
               );
 
               // setLoading(false);
@@ -337,7 +337,7 @@ const VehicleForm = ({
           try {
             await create(
               { saleLeadId: saleLead?._id },
-              { url: `${DELETE_VEHICLE}/${formData.vehicleData._id}` }
+              { url: `${DELETE_VEHICLE}/${formData.vehicleData._id}` },
             ).then((data: any) => {
               if (data !== undefined) {
                 if (!data.success && data.message === ERROR_MESSAGE) {
@@ -688,11 +688,11 @@ const VehicleForm = ({
             disabled={isCreated}
           />
         </Col>
-        <Col xl={4} xs={12}>
+        {/* <Col xl={4} xs={12}>
           <div>
             <P>
               Select Geofences
-              {/* <span className="txt-danger">*</span> */}
+             
             </P>
           </div>
           <SelectGeofenceBox
@@ -703,7 +703,7 @@ const VehicleForm = ({
             }
             disabled={isCreated}
           />
-        </Col>
+        </Col> */}
         <Col xl={4} xs={12}>
           <div>
             <P>
@@ -851,7 +851,7 @@ const VehicleForm = ({
                   handleDefaultServiceChange(
                     "defaultService",
                     "Control Room",
-                    index
+                    index,
                   )
                 }
                 style={{ display: "none" }}
@@ -975,25 +975,14 @@ const VehicleForm = ({
           })}
         </Row>
 
-        <Row className="g-3">
+        {/* <Row className="g-3">
           <Col xl={6} xs={12}>
-            {/* <div>
-              <P>
-                Select DeviceId
-                <span className="txt-danger">*</span>
-              </P>
-            </div>
-            <SelectBanksBox
-              placeholder="Select Bank"
-              bank={formData.bank}
-              setBank={(value: any) => handleSelectChange('bank', value)}
-              disabled={isCreated}
-            /> */}
+            
 
             <div>
               <P>
                 Enter Device Id
-                {/* <span className="txt-danger">*</span> */}
+                
               </P>
             </div>
             <Input
@@ -1009,7 +998,7 @@ const VehicleForm = ({
             <div>
               <P>
                 Select Server
-                {/* <span className="txt-danger">*</span> */}
+               
               </P>
             </div>
             <SelectServersBox
@@ -1019,9 +1008,7 @@ const VehicleForm = ({
               disabled={isCreated}
             />
           </Col>
-        </Row>
-        {/* {saleLead?.status == "INSTALLED" &&
-        formData?.vehicleData?.installationStatus == "INSTALLED" ? ( */}
+        </Row> */}
 
         {formData?.vehicleData?.installationStatus == "INSTALLED" ? (
           <Col
@@ -1040,7 +1027,7 @@ const VehicleForm = ({
           >
             {saleLead?.vehicles?.find(
               (item: any, i: number) =>
-                formData.registrationNo == item.registrationNo
+                formData.registrationNo == item.registrationNo,
             ) ? (
               <>
                 {!isCreated && (

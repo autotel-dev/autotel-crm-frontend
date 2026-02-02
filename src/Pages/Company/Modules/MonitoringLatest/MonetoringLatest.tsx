@@ -61,10 +61,10 @@ import { formatUnderscoredString } from "../../../../Utilities/globals/globals";
 const MonitoringLatest = () => {
   const dispatch = useDispatch();
   const { devices, selectedSingleDevice, alertsEnabled } = useSelector(
-    (state: any) => state.monitoring
+    (state: any) => state.monitoring,
   );
   const { userData } = useSelector((state: any) => state.user);
-  console.log("userData", userData);
+  // console.log("userData", userData);
 
   const updatesBufferRef = React.useRef<any[]>([]);
 
@@ -93,7 +93,9 @@ const MonitoringLatest = () => {
   useEffect(() => {
     if (selectedSingleDevice) {
       // Check if the selected device is still checked
-      const device = devices.find((d: any) => d._id === selectedSingleDevice._id);
+      const device = devices.find(
+        (d: any) => d._id === selectedSingleDevice._id,
+      );
 
       if (device && device.checked) {
         // Show the panel
@@ -146,7 +148,7 @@ const MonitoringLatest = () => {
     });
 
     const nonExpiredDevices = devices.filter(
-      (d: any) => !expiredDevices.includes(d)
+      (d: any) => !expiredDevices.includes(d),
     );
 
     // Step 2: Classify inactive and not connected devices (from non-expired)
@@ -171,19 +173,19 @@ const MonitoringLatest = () => {
     // Step 3: From remaining (active & non-expired) — check statuses
     const activeDevices = nonExpiredDevices.filter(
       (d: any) =>
-        !inactiveDevices.includes(d) && !notConnectedDevices.includes(d)
+        !inactiveDevices.includes(d) && !notConnectedDevices.includes(d),
     );
 
     const movingCount = activeDevices.filter(
-      (d: any) => d.mainVehicleStatus?.toLowerCase() === "moving"
+      (d: any) => d.mainVehicleStatus?.toLowerCase() === "moving",
     ).length;
 
     const idleCount = activeDevices.filter(
-      (d: any) => d.mainVehicleStatus?.toLowerCase() === "idle"
+      (d: any) => d.mainVehicleStatus?.toLowerCase() === "idle",
     ).length;
 
     const stoppedCount = activeDevices.filter(
-      (d: any) => d.mainVehicleStatus?.toLowerCase() === "stopped"
+      (d: any) => d.mainVehicleStatus?.toLowerCase() === "stopped",
     ).length;
 
     return {
@@ -327,7 +329,14 @@ const MonitoringLatest = () => {
     },
   ];
 
-  const StatusBox = ({ count, label, color, background, onClick, isSelected }: any) => {
+  const StatusBox = ({
+    count,
+    label,
+    color,
+    background,
+    onClick,
+    isSelected,
+  }: any) => {
     return (
       <div
         style={{
@@ -459,11 +468,23 @@ const MonitoringLatest = () => {
       // Match the selected status
       switch (selectedStatus) {
         case "moving":
-          return !isExpired && hasDeviceTime && !isInactive && mainStatus === "moving";
+          return (
+            !isExpired &&
+            hasDeviceTime &&
+            !isInactive &&
+            mainStatus === "moving"
+          );
         case "stopped":
-          return !isExpired && hasDeviceTime && !isInactive && mainStatus === "stopped";
+          return (
+            !isExpired &&
+            hasDeviceTime &&
+            !isInactive &&
+            mainStatus === "stopped"
+          );
         case "idle":
-          return !isExpired && hasDeviceTime && !isInactive && mainStatus === "idle";
+          return (
+            !isExpired && hasDeviceTime && !isInactive && mainStatus === "idle"
+          );
         case "inactive":
           return !isExpired && isInactive;
         case "not_connected":
@@ -518,14 +539,14 @@ const MonitoringLatest = () => {
 
   useEffect(() => {
     // 🔹 Check immediately (may be false if still connecting)
-    console.log("Initial connected state:", socketConnection.connected);
+    // console.log("Initial connected state:", socketConnection.connected);
 
     socketConnection.on("vehicle:updated", (payload) => {
       const { id, changes, vehicleStatus } = payload;
 
       // get latestPosition update
       const latestPosition = changes?.updatedFields?.latestPosition;
-      console.log("update payload", payload);
+      // console.log("update payload", payload);
 
       if (!latestPosition) return; // no position update
       // Push into buffer (not Redux yet)
@@ -537,7 +558,7 @@ const MonitoringLatest = () => {
 
       // get latestPosition update
       const latestPosition = changes?.updatedFields?.latestPosition;
-      console.log("payload", payload);
+      // console.log("payload", payload);
 
       if (!latestPosition) return; // no position update
       // Push into buffer (not Redux yet)
@@ -555,7 +576,7 @@ const MonitoringLatest = () => {
 
       // get latestPosition update
       const latestPosition = changes?.updatedFields?.latestPosition;
-      console.log("payload", payload);
+      // console.log("payload", payload);
 
       if (!latestPosition) return; // no position update
       // Push into buffer (not Redux yet)
@@ -563,7 +584,7 @@ const MonitoringLatest = () => {
     });
 
     socketConnection.on("new_alert_event", (payload) => {
-      console.log("new_alert_event payload", payload);
+      // console.log("new_alert_event payload", payload);
 
       const { actualAlert } = payload || {};
       const { formattedAlert } = payload || {};
@@ -848,7 +869,8 @@ const MonitoringLatest = () => {
                   color: "#333",
                 }}
               >
-                {selectedSingleDevice?.vehicle?.registrationNo || "Vehicle Details"}
+                {selectedSingleDevice?.vehicle?.registrationNo ||
+                  "Vehicle Details"}
               </span>
             </div>
             <div
@@ -920,58 +942,63 @@ const MonitoringLatest = () => {
               }}
               className="scrollbar-hide"
             >
-            <div style={{ height: "5px" }}></div>
-            {sidebarMenusForSingleVehicle.map((menu, i: any) => {
-              return (
-                <>
-                  <button
-                    data-tooltip-id={`tooltip-${i}`} // Use unique ID for each button
-                    data-tooltip-content={menu.tooltipName}
-                    onClick={() => {
-                      if (i == 5) {
-                        setOpenModal(true);
-                      } else {
-                        setSelectedComponentIndex(i);
-                      }
-                    }}
-                    style={{
-                      backgroundColor:
-                        selectedComponentIndex == i ? "#6dbfb8" : "transparent",
-                      color: selectedComponentIndex == i ? "white" : "#6dbfb8",
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      minWidth: "32px",
-                      minHeight: "32px",
-                      maxWidth: "32px",
-                      maxHeight: "32px",
-                      margin: "4px",
-                      marginRight: "8px",
-                      border: "2px solid #6dbfb8",
-                      borderRadius: "4px",
-                      cursor: "pointer",
-                    }}
-                  >
-                    <menu.icon
-                      size={18}
-                      color={selectedComponentIndex == i ? "white" : "#6dbfb8"}
-                    />
-                  </button>
+              <div style={{ height: "5px" }}></div>
+              {sidebarMenusForSingleVehicle.map((menu, i: any) => {
+                return (
+                  <>
+                    <button
+                      data-tooltip-id={`tooltip-${i}`} // Use unique ID for each button
+                      data-tooltip-content={menu.tooltipName}
+                      onClick={() => {
+                        if (i == 5) {
+                          setOpenModal(true);
+                        } else {
+                          setSelectedComponentIndex(i);
+                        }
+                      }}
+                      style={{
+                        backgroundColor:
+                          selectedComponentIndex == i
+                            ? "#6dbfb8"
+                            : "transparent",
+                        color:
+                          selectedComponentIndex == i ? "white" : "#6dbfb8",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        minWidth: "32px",
+                        minHeight: "32px",
+                        maxWidth: "32px",
+                        maxHeight: "32px",
+                        margin: "4px",
+                        marginRight: "8px",
+                        border: "2px solid #6dbfb8",
+                        borderRadius: "4px",
+                        cursor: "pointer",
+                      }}
+                    >
+                      <menu.icon
+                        size={18}
+                        color={
+                          selectedComponentIndex == i ? "white" : "#6dbfb8"
+                        }
+                      />
+                    </button>
 
-                  <Tooltip
-                    id={`tooltip-${i}`}
-                    place="right" // Position on the right
-                    style={{
-                      fontSize: "12px",
-                      padding: "4px 8px",
-                      borderRadius: "4px",
-                      backgroundColor: "#333",
-                      color: "white",
-                    }}
-                  />
-                </>
-              );
-            })}
+                    <Tooltip
+                      id={`tooltip-${i}`}
+                      place="right" // Position on the right
+                      style={{
+                        fontSize: "12px",
+                        padding: "4px 8px",
+                        borderRadius: "4px",
+                        backgroundColor: "#333",
+                        color: "white",
+                      }}
+                    />
+                  </>
+                );
+              })}
             </div>
             {selectedComponentIndex == 0 && <Analytics />}
             {selectedComponentIndex == 1 && <VehicleInfo />}
@@ -993,7 +1020,11 @@ const MonitoringLatest = () => {
           // height: "87vh",
         }}
       >
-        <DevicesSidebar setOpen={setOpen} open={open} filteredDevices={filteredDevices} />
+        <DevicesSidebar
+          setOpen={setOpen}
+          open={open}
+          filteredDevices={filteredDevices}
+        />
       </div>
 
       {openModal && (

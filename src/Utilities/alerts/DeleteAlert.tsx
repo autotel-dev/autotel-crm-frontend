@@ -175,7 +175,7 @@ const deleteAlert = (
   alertData: alertTypes,
   id: any,
   type: any,
-  dispatch: any
+  dispatch: any,
 ) => {
   var check = false;
   return Swal.fire({
@@ -862,7 +862,7 @@ const deleteAlert = (
                     });
 
                     const initialGroupGeofences = Object.keys(
-                      groupGeofencesObj
+                      groupGeofencesObj,
                     ).map((group) => ({
                       group,
                       checked: false,
@@ -893,7 +893,7 @@ const deleteAlert = (
                           }
                         }
                       }
-                      console.log("subGroups", subGroups);
+                      // console.log("subGroups", subGroups);
 
                       subGroups.forEach((geofenceSubGroup: any) => {
                         subGroupsGeofencesObj[geofenceSubGroup] =
@@ -919,10 +919,10 @@ const deleteAlert = (
                       });
 
                       // console.log(groups);
-                      console.log(
-                        "subGroupsGeofencesObj",
-                        subGroupsGeofencesObj
-                      );
+                      // console.log(
+                      //   "subGroupsGeofencesObj",
+                      //   subGroupsGeofencesObj
+                      // );
 
                       // Convert groupDevicesObj to initialGroupDevices array format
                       Object.keys(subGroupsGeofencesObj).forEach(
@@ -932,7 +932,7 @@ const deleteAlert = (
                             checked: false,
                             items: subGroupsGeofencesObj[group],
                           });
-                        }
+                        },
                       );
 
                       initialGroupGeofences[i] = {
@@ -1178,7 +1178,7 @@ export const deleteAlertForManyData = (
   alertData: alertTypes,
   url: any,
   dispatch: any,
-  body?: any
+  body?: any,
 ) => {
   return Swal.fire({
     title: alertData.title,
@@ -1195,10 +1195,10 @@ export const deleteAlertForManyData = (
           showCancelButton: false,
           showConfirmButton: false,
         });
-        console.log("caled");
+        // console.log("caled");
 
         await deleteMultiple({ url: url }, body).then((data: any) => {
-          console.log("called");
+          // console.log("called");
           if (data.success) {
             // console.log(data);
 
@@ -1241,7 +1241,7 @@ export const deleteAlertForManyData = (
                   });
 
                   const initialGroupGeofences = Object.keys(
-                    groupGeofencesObj
+                    groupGeofencesObj,
                   ).map((group) => ({
                     group,
                     checked: false,
@@ -1272,7 +1272,7 @@ export const deleteAlertForManyData = (
                         }
                       }
                     }
-                    console.log("subGroups", subGroups);
+                    // console.log("subGroups", subGroups);
 
                     subGroups.forEach((geofenceSubGroup: any) => {
                       subGroupsGeofencesObj[geofenceSubGroup] =
@@ -1297,7 +1297,7 @@ export const deleteAlertForManyData = (
                     });
 
                     // console.log(groups);
-                    console.log("subGroupsGeofencesObj", subGroupsGeofencesObj);
+                    // console.log("subGroupsGeofencesObj", subGroupsGeofencesObj);
 
                     // Convert groupDevicesObj to initialGroupDevices array format
                     Object.keys(subGroupsGeofencesObj).forEach((group: any) => {

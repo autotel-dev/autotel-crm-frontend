@@ -43,7 +43,7 @@ function SidebarMonitoring() {
         item.vehicle?.model == null ||
         item.vehicle?.registrationNo
           ?.toLowerCase()
-          .includes(searchTerm.toLowerCase())
+          .includes(searchTerm.toLowerCase()),
     );
 
     return filtered.reduce((groups: any, device: any) => {
@@ -67,10 +67,10 @@ function SidebarMonitoring() {
     e.stopPropagation();
 
     const updatedDevices = devices.map((d: any) =>
-      d._id === item._id ? { ...d, checked: e.target.checked } : d
+      d._id === item._id ? { ...d, checked: e.target.checked } : d,
     );
 
-    console.log("Updated devices:", updatedDevices);
+    // console.log("Updated devices:", updatedDevices);
     dispatch(setDevices(updatedDevices || []));
   };
 
@@ -87,7 +87,7 @@ function SidebarMonitoring() {
       return d;
     });
 
-    console.log("Updated devices (group):", updatedDevices);
+    // console.log("Updated devices (group):", updatedDevices);
     dispatch(setDevices(updatedDevices || []));
   };
 
@@ -104,7 +104,7 @@ function SidebarMonitoring() {
   const isGroupPartiallyChecked = (groupId: string) => {
     const groupDevices = groupedDevices[groupId]?.devices || [];
     const checkedCount = groupDevices.filter(
-      (device: any) => device.checked
+      (device: any) => device.checked,
     ).length;
     return checkedCount > 0 && checkedCount < groupDevices.length;
   };
@@ -330,7 +330,7 @@ function SidebarMonitoring() {
                                   >
                                     {item?.latestPosition?.speed > 0
                                       ? Number(
-                                          item?.latestPosition?.speed
+                                          item?.latestPosition?.speed,
                                         ).toFixed(2)
                                       : item?.latestPosition?.speed}
                                   </div>
@@ -375,7 +375,7 @@ function SidebarMonitoring() {
                   </div>
                 )}
               </div>
-            )
+            ),
           )
         ) : (
           <p style={{ color: "white" }}>No devices found.</p>

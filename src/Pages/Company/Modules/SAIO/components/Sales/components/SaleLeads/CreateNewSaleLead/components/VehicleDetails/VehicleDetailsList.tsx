@@ -105,8 +105,10 @@ const VehicleFormsManager = ({ callbackActive }: VehicleFormsManagerProps) => {
                 isOffering: service.isOffering, // Set isOffering to true by default
               })) || [],
             defaultService: "Self",
-            deviceId: "",
-            server: "",
+            // deviceId: "",
+            // server: "",
+            deviceId: "12345",
+            server: "61dd12a0cae2dc1c09c5166f",
             vehicleData: "",
           },
         ]);
@@ -197,8 +199,10 @@ const VehicleFormsManager = ({ callbackActive }: VehicleFormsManagerProps) => {
             isOffering: service.isOffering, // Set isOffering to true by default
           })) || [],
         defaultService: "Self",
-        deviceId: "",
-        server: "",
+        // deviceId: "",
+        // server: "",
+        deviceId: "12345",
+        server: "61dd12a0cae2dc1c09c5166f",
         vehicleData: "",
       },
     ]);
@@ -210,7 +214,7 @@ const VehicleFormsManager = ({ callbackActive }: VehicleFormsManagerProps) => {
 
   const handleFormDataChange = (index: number, newData: any) => {
     const updatedForms = vehicleForms.map((form: any, i: number) =>
-      i === index ? newData : form
+      i === index ? newData : form,
     );
     setVehicleForms(updatedForms);
     // console.log("vehicleForms", vehicleForms);
@@ -280,7 +284,7 @@ const VehicleFormsManager = ({ callbackActive }: VehicleFormsManagerProps) => {
             dispatch(setCustomer(null));
             dispatch(setSaleLeadId(""));
             navigate(
-              `${process.env.PUBLIC_URL}/company/modules/saio-central/sales/leads`
+              `${process.env.PUBLIC_URL}/company/modules/saio-central/sales/leads`,
             );
           }}
         >

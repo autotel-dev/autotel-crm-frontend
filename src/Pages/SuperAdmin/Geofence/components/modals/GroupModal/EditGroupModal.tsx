@@ -49,7 +49,7 @@ const EditGroupModal: React.FC<PropsTypes> = ({
   useEffect(() => {
     setUngroupedGeofencesList(() => {
       const ungroupedGeofence = geofences.find(
-        (geofence) => geofence.group === "Ungrouped"
+        (geofence) => geofence.group === "Ungrouped",
       );
 
       if (ungroupedGeofence) {
@@ -67,7 +67,7 @@ const EditGroupModal: React.FC<PropsTypes> = ({
   useEffect(() => {
     getAll({ url: `${GET_ALL_GEOFENCES_BY_GROUP_ID}/${group._id}` }).then(
       (data: any) => {
-        console.log("group-data", data);
+        // console.log("group-data", data);
 
         // console.log("api call --- >", data);
 
@@ -78,11 +78,11 @@ const EditGroupModal: React.FC<PropsTypes> = ({
                 label: item?.title,
                 value: item?._id,
                 checked: true,
-              }))
+              })),
             );
           }
         }
-      }
+      },
     );
   }, [group]);
 
@@ -105,7 +105,7 @@ const EditGroupModal: React.FC<PropsTypes> = ({
               ...allcheckedIngroupedGeofences,
             ],
           },
-          { url: `${UPDATE_GROUP}/${group._id}` }
+          { url: `${UPDATE_GROUP}/${group._id}` },
         ).then(async (data: any) => {
           if (data.success) {
             getAll({ url: GET_ALL_GROUPS }).then((data: any) => {
@@ -144,7 +144,7 @@ const EditGroupModal: React.FC<PropsTypes> = ({
                   checked: false,
                   items: groupGeofencesObj[group],
                   subgroups: [],
-                })
+                }),
               );
 
               for (let i = 0; i < initialGroupGeofences.length; i++) {
@@ -257,7 +257,7 @@ const EditGroupModal: React.FC<PropsTypes> = ({
   const [selectAll, setSelectAll] = useState(false);
   const [searchValue, setSearchValue] = useState("");
   const filteredGeofences = groupedGeofencesList.filter((geofence: any) =>
-    geofence.label.toLowerCase().includes(searchValue.toLowerCase())
+    geofence.label.toLowerCase().includes(searchValue.toLowerCase()),
   );
   useEffect(() => {
     const allChecked = groupedGeofencesList.every((item: any) => item.checked);
@@ -294,17 +294,17 @@ const EditGroupModal: React.FC<PropsTypes> = ({
   const [searchValue2, setSearchValue2] = useState("");
   const filteredUngroupedGeofences = ungroupedGeofencesList.filter(
     (geofence: any) =>
-      geofence.label.toLowerCase().includes(searchValue2.toLowerCase())
+      geofence.label.toLowerCase().includes(searchValue2.toLowerCase()),
   );
   useEffect(() => {
     const allChecked = ungroupedGeofencesList.every(
-      (item: any) => item.checked
+      (item: any) => item.checked,
     );
     setSelectAllUngroupedGeofences(allChecked);
   }, [ungroupedGeofencesList]);
 
   const handleSelectAllUngroupedGeofencesChange = (
-    e: React.ChangeEvent<HTMLInputElement>
+    e: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const checked = e.target.checked;
     setSelectAllUngroupedGeofences(checked);
@@ -316,7 +316,7 @@ const EditGroupModal: React.FC<PropsTypes> = ({
   };
 
   const handleUngroupedSearchChange = (
-    e: React.ChangeEvent<HTMLInputElement>
+    e: React.ChangeEvent<HTMLInputElement>,
   ) => {
     setSearchValue2(e.target.value);
   };
@@ -505,7 +505,7 @@ const EditGroupModal: React.FC<PropsTypes> = ({
                         />
                         {geofence.label}
                       </label>
-                    )
+                    ),
                   )}
                 </div>
               </div>

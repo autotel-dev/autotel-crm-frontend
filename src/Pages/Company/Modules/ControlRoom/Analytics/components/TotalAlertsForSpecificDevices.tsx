@@ -39,7 +39,7 @@ const TotalAlertsForSpecificDevices: React.FC<PropsTypes> = ({
     if (deviceSelecetdAlerts.length < 12) {
       setDataList(deviceSelecetdAlerts.slice(0, 12)); // Initially display the first 6 elements
     }
-    console.log("deviceSelecetdAlerts---", deviceSelecetdAlerts);
+    // console.log("deviceSelecetdAlerts---", deviceSelecetdAlerts);
   }, [deviceSelecetdAlerts]);
   useEffect(() => {
     setDataList(deviceSelecetdAlerts?.slice(0, 12)); // Initially display the first 6 elements
@@ -53,7 +53,7 @@ const TotalAlertsForSpecificDevices: React.FC<PropsTypes> = ({
       // If scrolled to the bottom
       const nextBatch = deviceSelecetdAlerts?.slice(
         dataList.length,
-        dataList.length + 6
+        dataList.length + 6,
       ); // Fetch the next 6 elements
       setDataList((prevData: any) => [...prevData, ...nextBatch]); // Append to the existing data
     }
@@ -199,7 +199,7 @@ const TotalAlertsForSpecificDevices: React.FC<PropsTypes> = ({
                               .includes(searchValue.toLowerCase()) ||
                             data?.message
                               .toLowerCase()
-                              .includes(searchValue.toLowerCase())
+                              .includes(searchValue.toLowerCase()),
                         )
                         .map(
                           (data: any, index: any) =>
@@ -236,7 +236,7 @@ const TotalAlertsForSpecificDevices: React.FC<PropsTypes> = ({
                                     : data?.address}
                                 </td>
                               </tr>
-                            )
+                            ),
                         )
                     )}
                   </tbody>

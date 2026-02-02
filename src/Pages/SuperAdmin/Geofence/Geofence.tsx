@@ -20,7 +20,7 @@ const Geofence = () => {
 
   const dispatch = useDispatch();
   const { geofences, isConnected } = useSelector(
-    (state: any) => state.geofence
+    (state: any) => state.geofence,
   );
   // console.log("devices", devices);
 
@@ -66,15 +66,15 @@ const Geofence = () => {
       }
 
       if (data.success) {
-        console.log("api call --- >", data);
-        console.log("length --- >", data.data.length);
+        // console.log("api call --- >", data);
+        // console.log("length --- >", data.data.length);
 
         const updatedData = data.data.map((item: any, index: any) => {
           return {
             ...item,
           };
         });
-        console.log("updatedData", updatedData);
+        // console.log("updatedData", updatedData);
 
         for (let i = 0; i < updatedData.length; i++) {
           var element = "";
@@ -88,7 +88,7 @@ const Geofence = () => {
             groups.push(element);
           }
         }
-        console.log(groups);
+        // console.log(groups);
 
         groups.forEach((geofenceGroup: any) => {
           groupGeofencesObj[geofenceGroup] = updatedData
@@ -103,7 +103,7 @@ const Geofence = () => {
         });
 
         // console.log(groups);
-        console.log(groupGeofencesObj);
+        // console.log(groupGeofencesObj);
 
         // Convert groupDevicesObj to initialGroupDevices array format
         Object.keys(groupGeofencesObj).forEach((group: any) => {
@@ -113,7 +113,7 @@ const Geofence = () => {
             items: groupGeofencesObj[group],
           });
         });
-        console.log("initialGroupDevices", initialGroupGeofences);
+        // console.log("initialGroupDevices", initialGroupGeofences);
 
         // -------------------------------------------------------------
 
@@ -132,7 +132,7 @@ const Geofence = () => {
               }
             }
           }
-          console.log("subGroups", subGroups);
+          // console.log("subGroups", subGroups);
 
           subGroups.forEach((geofenceSubGroup: any) => {
             subGroupsGeofencesObj[geofenceSubGroup] = initialGroupGeofences[
@@ -149,7 +149,7 @@ const Geofence = () => {
           });
 
           // console.log(groups);
-          console.log("subGroupsGeofencesObj", subGroupsGeofencesObj);
+          // console.log("subGroupsGeofencesObj", subGroupsGeofencesObj);
 
           // Convert groupDevicesObj to initialGroupDevices array format
           Object.keys(subGroupsGeofencesObj).forEach((group: any) => {
@@ -173,7 +173,7 @@ const Geofence = () => {
           initialSubGroupsGeofences = [];
         }
 
-        console.log("initialGroupDevicesFinalzied", initialGroupGeofences);
+        // console.log("initialGroupDevicesFinalzied", initialGroupGeofences);
 
         // Update state with initialGroupDevices
         setGeofencesGroup(initialGroupGeofences);
@@ -197,7 +197,7 @@ const Geofence = () => {
 
   useEffect(() => {
     getAll({ url: GET_ALL_GROUPS }).then((data: any) => {
-      console.log("group-data", data);
+      // console.log("group-data", data);
 
       // console.log("api call --- >", data);
       if (data == undefined) {

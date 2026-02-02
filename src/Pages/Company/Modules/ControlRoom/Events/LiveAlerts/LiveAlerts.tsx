@@ -35,17 +35,17 @@ import { ERROR_MESSAGE } from "../../../../../../Utilities/constants/constants";
 
 const LiveAlerts = () => {
   const { userPersonalizationData } = useSelector(
-    (state: any) => state.personalization
+    (state: any) => state.personalization,
   );
   const dispatch = useDispatch();
   const { liveAlerts, liveAlertsData } = useSelector(
-    (state: any) => state.alerts
+    (state: any) => state.alerts,
   );
   const { userPermissions } = useSelector(
-    (state: any) => state.userPermissions
+    (state: any) => state.userPermissions,
   );
   var allAlertsPreview = userPermissions.find(
-    (item: any) => item.title === "All Alerts Preview"
+    (item: any) => item.title === "All Alerts Preview",
   );
   // console.log("All Alerts Preview", allAlertsPreview);
 
@@ -206,10 +206,10 @@ const LiveAlerts = () => {
             {liveAlertsData == null
               ? 0
               : liveAlerts.length < 15
-              ? liveAlerts.length
-              : liveAlertsData.lastPage > 1
-              ? liveAlerts.length + (liveAlertsData.lastPage - 1) * 30
-              : liveAlerts.length}
+                ? liveAlerts.length
+                : liveAlertsData.lastPage > 1
+                  ? liveAlerts.length + (liveAlertsData.lastPage - 1) * 30
+                  : liveAlerts.length}
             )
           </div>
         </div>
@@ -262,7 +262,7 @@ const LiveAlerts = () => {
                     .filter((data: any) =>
                       data?.deviceName
                         .toLowerCase()
-                        .includes(searchValue.toLowerCase())
+                        .includes(searchValue.toLowerCase()),
                     )
                     .map((data: any, index: any) => (
                       <tr
@@ -293,7 +293,7 @@ const LiveAlerts = () => {
                               });
                             }
                             const serverInfo = serverCredentials(
-                              data.server._id
+                              data.server._id,
                             );
                             // console.log("serverInfo", serverInfo);
 
@@ -332,8 +332,8 @@ const LiveAlerts = () => {
                                     timer: 2000,
                                     showConfirmButton: false,
                                   });
-                                  console.log("Failed");
-                                  console.log("Data : ", dataa);
+                                  // console.log("Failed");
+                                  // console.log("Data : ", dataa);
 
                                   setAssignLoading(false);
                                 }
@@ -344,7 +344,7 @@ const LiveAlerts = () => {
                                   updatedAlerts.splice(index, 1); // Remove the item at the specified index
 
                                   setDataList(
-                                    updatedAlerts.slice(0, dataList.length)
+                                    updatedAlerts.slice(0, dataList.length),
                                   );
                                   // console.log("updatedAlerts", updatedAlerts);
                                   // console.log("dataList", dataList);
@@ -380,7 +380,7 @@ const LiveAlerts = () => {
                             var checkServer =
                               liveAlertsData?.connectedServers?.find(
                                 (item: any) =>
-                                  item.server._id === data.server._id
+                                  item.server._id === data.server._id,
                               );
                             if (checkServer?.isConnected) {
                               Swal.fire({
@@ -414,7 +414,7 @@ const LiveAlerts = () => {
                                     });
                                   }
                                   const serverInfo = serverCredentials(
-                                    data.server._id
+                                    data.server._id,
                                   );
                                   // console.log("serverInfo", serverInfo);
 
@@ -463,8 +463,8 @@ const LiveAlerts = () => {
                                         setDataList(
                                           updatedAlerts.slice(
                                             0,
-                                            dataList.length
-                                          )
+                                            dataList.length,
+                                          ),
                                         );
                                         // console.log("updatedAlerts", updatedAlerts);
                                         // console.log("dataList", dataList);
@@ -486,7 +486,7 @@ const LiveAlerts = () => {
                                               setAssignLoading(true);
                                               // console.log("length --- >", data.data.length);
                                               dispatch(
-                                                setAssignedAlerts(data.data)
+                                                setAssignedAlerts(data.data),
                                               );
                                             }
                                           }
@@ -509,7 +509,7 @@ const LiveAlerts = () => {
                                   });
 
                                   const serverInfo = serverCredentials(
-                                    data.server._id
+                                    data.server._id,
                                   );
                                   // console.log("serverInfo", serverInfo);
 
@@ -558,8 +558,8 @@ const LiveAlerts = () => {
                                         setDataList(
                                           updatedAlerts.slice(
                                             0,
-                                            dataList.length
-                                          )
+                                            dataList.length,
+                                          ),
                                         );
                                         // console.log("updatedAlerts", updatedAlerts);
                                         // console.log("dataList", dataList);
@@ -613,13 +613,13 @@ const LiveAlerts = () => {
                                                     // console.log("length --- >", data.data.length);
                                                     dispatch(
                                                       setAssignedAlerts(
-                                                        data.data
-                                                      )
+                                                        data.data,
+                                                      ),
                                                     );
                                                   }
                                                   if (data.statusCode === 404) {
                                                     dispatch(
-                                                      setAssignedAlerts([])
+                                                      setAssignedAlerts([]),
                                                     );
                                                   }
                                                 }
@@ -634,8 +634,8 @@ const LiveAlerts = () => {
                                                     // console.log("length --- >", data.data.length);
                                                     dispatch(
                                                       setCompletedAlerts(
-                                                        data.data
-                                                      )
+                                                        data.data,
+                                                      ),
                                                     );
                                                   }
                                                 }
@@ -717,8 +717,8 @@ const LiveAlerts = () => {
                           {data.address == null
                             ? "N/A"
                             : data.address.length > 10
-                            ? data.address.substring(0, 10) + "..."
-                            : data.address}
+                              ? data.address.substring(0, 10) + "..."
+                              : data.address}
                         </td>
                         {data.address != null && (
                           <UncontrolledPopover

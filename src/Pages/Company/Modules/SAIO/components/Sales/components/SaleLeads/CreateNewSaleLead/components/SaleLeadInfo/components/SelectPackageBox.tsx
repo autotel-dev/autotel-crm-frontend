@@ -26,7 +26,7 @@ const SelectPackageBox: React.FC<propTypes> = ({
 
   const tempList: any = [];
   useEffect(() => {
-    console.log("pakcgaes", packages);
+    // console.log("pakcgaes", packages);
 
     packages?.map((item: any, index: any) => {
       tempList.push({
@@ -56,7 +56,7 @@ const SelectPackageBox: React.FC<propTypes> = ({
           .localeCompare((optionB?.label ?? "").toLowerCase())
       }
       onChange={(e, options) => {
-        console.log("options", options);
+        // console.log("options", options);
 
         // // console.log(e);
         setPackage(e);

@@ -26,7 +26,6 @@ import {
 } from "../../../../../../ReaduxToolkit/Reducer/GeofenceSlice";
 import Loader from "../../../../../Utilities/Loader/Loader";
 
-
 interface PropsTypes {
   isVisible: boolean;
   setIsVisible: any;
@@ -37,10 +36,10 @@ const SubGroupListModal: React.FC<PropsTypes> = ({
   setIsVisible = () => {},
 }) => {
   const { userPersonalizationData } = useSelector(
-    (state: any) => state.personalization
+    (state: any) => state.personalization,
   );
   const { geofences, geofencesGroup } = useSelector(
-    (state: any) => state.geofence
+    (state: any) => state.geofence,
   );
 
   const dispatch = useDispatch();
@@ -91,7 +90,6 @@ const SubGroupListModal: React.FC<PropsTypes> = ({
   }, [geofences]);
 
   const fetchSubGroups = async (groupId: string) => {
-   
     const subGroupData: any = await getAll({
       url: `${GET_ALL_SUBGROUPS_BY_GROUP_ID}/${groupId}`,
     });
@@ -121,7 +119,7 @@ const SubGroupListModal: React.FC<PropsTypes> = ({
     const updatedCheckedSubGroups = checkedSubGroups.map((subGroup) =>
       subGroup._id === id
         ? { ...subGroup, checked: !subGroup.checked }
-        : subGroup
+        : subGroup,
     );
     setCheckedSubGroups(updatedCheckedSubGroups);
   };
@@ -147,7 +145,7 @@ const SubGroupListModal: React.FC<PropsTypes> = ({
   };
 
   const deleteSingleGroups = (body: any) => {
-    console.log("body", body);
+    // console.log("body", body);
 
     var alertData = {
       title: "Are you sure?",
@@ -187,7 +185,7 @@ const SubGroupListModal: React.FC<PropsTypes> = ({
     alertData: any,
     url: any,
     dispatch: any,
-    body?: any
+    body?: any,
   ) => {
     return Swal.fire({
       title: alertData.title,
@@ -204,10 +202,10 @@ const SubGroupListModal: React.FC<PropsTypes> = ({
             showCancelButton: false,
             showConfirmButton: false,
           });
-          console.log("caled");
+          // console.log("caled");
 
           await create(body, { url: url }).then((data: any) => {
-            console.log("called");
+            // console.log("called");
             if (data.success) {
               // console.log(data);
 
@@ -250,7 +248,7 @@ const SubGroupListModal: React.FC<PropsTypes> = ({
                     });
 
                     const initialGroupGeofences = Object.keys(
-                      groupGeofencesObj
+                      groupGeofencesObj,
                     ).map((group) => ({
                       group,
                       checked: false,
@@ -309,7 +307,7 @@ const SubGroupListModal: React.FC<PropsTypes> = ({
                       // console.log(groups);
                       console.log(
                         "subGroupsGeofencesObj",
-                        subGroupsGeofencesObj
+                        subGroupsGeofencesObj,
                       );
 
                       // Convert groupDevicesObj to initialGroupDevices array format
@@ -320,7 +318,7 @@ const SubGroupListModal: React.FC<PropsTypes> = ({
                             checked: false,
                             items: subGroupsGeofencesObj[group],
                           });
-                        }
+                        },
                       );
 
                       initialGroupGeofences[i] = {
@@ -483,11 +481,11 @@ const SubGroupListModal: React.FC<PropsTypes> = ({
                           type="checkbox"
                           id="selectAll"
                           checked={checkedSubGroups.every(
-                            (subGroup) => subGroup.checked
+                            (subGroup) => subGroup.checked,
                           )}
                           onChange={() => {
                             const allChecked = !checkedSubGroups.every(
-                              (subGroup) => subGroup.checked
+                              (subGroup) => subGroup.checked,
                             );
                             const updatedCheckedSubGroups =
                               checkedSubGroups.map((subGroup) => ({
@@ -519,7 +517,7 @@ const SubGroupListModal: React.FC<PropsTypes> = ({
                         </label>
                       </div>
                       {checkedSubGroups.some(
-                        (subGroup) => subGroup.checked
+                        (subGroup) => subGroup.checked,
                       ) && (
                         <div>
                           <button
@@ -534,7 +532,7 @@ const SubGroupListModal: React.FC<PropsTypes> = ({
                             onClick={deleteSubGroups}
                           >
                             {checkedSubGroups.every(
-                              (subGroup) => subGroup.checked
+                              (subGroup) => subGroup.checked,
                             )
                               ? "Delete All"
                               : "Delete"}
@@ -560,10 +558,10 @@ const SubGroupListModal: React.FC<PropsTypes> = ({
                             {isTransferDropdownVisible
                               ? "Cancel"
                               : checkedSubGroups.every(
-                                  (subGroup) => subGroup.checked
-                                )
-                              ? "Transfer All"
-                              : "Transfer"}
+                                    (subGroup) => subGroup.checked,
+                                  )
+                                ? "Transfer All"
+                                : "Transfer"}
                           </button>
                         </div>
                       )}

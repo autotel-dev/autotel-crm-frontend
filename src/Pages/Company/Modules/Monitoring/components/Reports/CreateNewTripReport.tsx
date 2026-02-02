@@ -40,7 +40,7 @@ import { ERROR_MESSAGE } from "../../../../../../Utilities/constants/constants";
 
 const CreateNewTripReport = ({ dropDownDevices }: any) => {
   const { userPersonalizationData } = useSelector(
-    (state: any) => state.personalization
+    (state: any) => state.personalization,
   );
   const { reports, reportsType } = useSelector((state: any) => state.reports);
   var tempReports: any = [...reports];
@@ -121,18 +121,18 @@ const CreateNewTripReport = ({ dropDownDevices }: any) => {
   }, []);
 
   const [operatorsForReportsList, setOperatorsForReportsList]: any = useState(
-    []
+    [],
   );
   const [productsForReportsList, setProductsForReportsList]: any = useState([]);
   const [productTypesForReportsList, setProductTypesForReportsList]: any =
     useState([]);
   const [branchesForReportsList, setBranchesForReportsList]: any = useState([]);
   const [warehousesForReportsList, setWarehousesForReportsList]: any = useState(
-    []
+    [],
   );
   const [vendorsForReportsList, setVendorsForReportsList]: any = useState([]);
   const [customersForReportsList, setCustomersForReportsList]: any = useState(
-    []
+    [],
   );
   const [availability, setAvailability] = useState(false);
   const [imei, setIMEI] = useState("");
@@ -177,7 +177,7 @@ const CreateNewTripReport = ({ dropDownDevices }: any) => {
                 }
                 return null; // Return null if condition doesn't match
               })
-              .filter((item: any) => item !== null) // Remove null values from the array
+              .filter((item: any) => item !== null), // Remove null values from the array
           );
         } else {
           setOperatorsForReportsList([]);
@@ -195,7 +195,7 @@ const CreateNewTripReport = ({ dropDownDevices }: any) => {
                 value: `${item.value}`,
                 label: `${item.title}`,
               };
-            })
+            }),
           );
         } else {
           setProductTypesForReportsList([]);
@@ -210,7 +210,7 @@ const CreateNewTripReport = ({ dropDownDevices }: any) => {
                 value: `${item._id}`,
                 label: `${item.name}`,
               };
-            })
+            }),
           );
         } else {
           setProductsForReportsList([]);
@@ -225,7 +225,7 @@ const CreateNewTripReport = ({ dropDownDevices }: any) => {
                 value: `${item._id}`,
                 label: `${item.name}`,
               };
-            })
+            }),
           );
         } else {
           setBranchesForReportsList([]);
@@ -241,7 +241,7 @@ const CreateNewTripReport = ({ dropDownDevices }: any) => {
                 value: `${item._id}`,
                 label: `${item.name}`,
               };
-            })
+            }),
           );
         } else {
           setWarehousesForReportsList([]);
@@ -259,7 +259,7 @@ const CreateNewTripReport = ({ dropDownDevices }: any) => {
                 value: `${item._id}`,
                 label: `${item.fullName}`,
               };
-            })
+            }),
           );
         } else {
           setCustomersForReportsList([]);
@@ -276,7 +276,7 @@ const CreateNewTripReport = ({ dropDownDevices }: any) => {
                 value: `${item._id}`,
                 label: `${item.vendorName}`,
               };
-            })
+            }),
           );
         } else {
           setVendorsForReportsList([]);
@@ -293,7 +293,7 @@ const CreateNewTripReport = ({ dropDownDevices }: any) => {
                 value: `${item._id}`,
                 label: `${item.fullName}`,
               };
-            })
+            }),
           );
         } else {
           setCustomersForOperationActivitiesReportsList([]);
@@ -310,7 +310,7 @@ const CreateNewTripReport = ({ dropDownDevices }: any) => {
                 value: `${item?._id}`,
                 label: `${item?.title}`,
               };
-            })
+            }),
           );
         } else {
           setComplaintTypesForReportsList([]);
@@ -326,8 +326,8 @@ const CreateNewTripReport = ({ dropDownDevices }: any) => {
                   value: `${item?.value}`,
                   label: `${item?.title}`,
                 };
-              }
-            )
+              },
+            ),
           );
         } else {
           setComplaintStatusForReportsList([]);
@@ -344,13 +344,13 @@ const CreateNewTripReport = ({ dropDownDevices }: any) => {
                     value: `${item?.value}`,
                     label: `${item?.title}`,
                   };
-                }
-              )
+                },
+              ),
             );
           } else {
             setComplaintPriorityForReportsList([]);
           }
-        }
+        },
       );
       getAll({ url: GET_ALL_ACTIVE_SUB_ROLES }).then((data: any) => {
         if (data?.success) {
@@ -361,7 +361,7 @@ const CreateNewTripReport = ({ dropDownDevices }: any) => {
                 value: `${item?._id}`,
                 label: `${item?.name}`,
               };
-            })
+            }),
           );
         } else {
           setComplaintDepartmentForReportsList([]);
@@ -412,7 +412,7 @@ const CreateNewTripReport = ({ dropDownDevices }: any) => {
                 value: `${item._id}`,
                 label: `${item.registrationNo}`,
               };
-            })
+            }),
           );
         } else {
           setvehiclesForOperationActivitiesReportsList([]);
@@ -422,7 +422,7 @@ const CreateNewTripReport = ({ dropDownDevices }: any) => {
   }, [customerForVehicleOperationActivity]);
 
   const addReportForAlertEvents: SubmitHandler<ReportsType> = async (
-    data: any
+    data: any,
   ) => {
     setLoading(true);
     if (
@@ -446,7 +446,7 @@ const CreateNewTripReport = ({ dropDownDevices }: any) => {
               deviceId: item.id,
               name: item.name,
               title: item.title,
-            }))
+            })),
           );
           // console.log("allItems", allItems);
 
@@ -466,7 +466,7 @@ const CreateNewTripReport = ({ dropDownDevices }: any) => {
           },
           {
             url: `${GET_REPORT_BASE_URL}${type}`,
-          }
+          },
         ).then((data: any) => {
           if (!data.success && data.message === ERROR_MESSAGE) {
             setLoading(false);
@@ -551,7 +551,7 @@ const CreateNewTripReport = ({ dropDownDevices }: any) => {
     }
   };
   const addReportForOperatorPerformance: SubmitHandler<ReportsType> = async (
-    data: any
+    data: any,
   ) => {
     setLoading(true);
     if (
@@ -658,7 +658,7 @@ const CreateNewTripReport = ({ dropDownDevices }: any) => {
     }
   };
   const addReportForInventoryReport: SubmitHandler<ReportsType> = async (
-    data: any
+    data: any,
   ) => {
     setLoading(true);
     if (
@@ -784,7 +784,7 @@ const CreateNewTripReport = ({ dropDownDevices }: any) => {
     }
   };
   const addReportForSaleInvoices: SubmitHandler<ReportsType> = async (
-    data: any
+    data: any,
   ) => {
     setLoading(true);
     if (
@@ -891,7 +891,7 @@ const CreateNewTripReport = ({ dropDownDevices }: any) => {
     }
   };
   const addReportForPurchaseInvoices: SubmitHandler<ReportsType> = async (
-    data: any
+    data: any,
   ) => {
     setLoading(true);
     if (
@@ -998,7 +998,7 @@ const CreateNewTripReport = ({ dropDownDevices }: any) => {
     }
   };
   const addReportForInventoryLifecycle: SubmitHandler<ReportsType> = async (
-    data: any
+    data: any,
   ) => {
     setLoading(true);
     if (
@@ -1105,7 +1105,7 @@ const CreateNewTripReport = ({ dropDownDevices }: any) => {
     }
   };
   const addReportForOperationActivity: SubmitHandler<ReportsType> = async (
-    data: any
+    data: any,
   ) => {
     setLoading(true);
     if (
@@ -1321,7 +1321,7 @@ const CreateNewTripReport = ({ dropDownDevices }: any) => {
     }
   };
   const addReportForInternalComplaint: SubmitHandler<ReportsType> = async (
-    data: any
+    data: any,
   ) => {
     setLoading(true);
     if (
@@ -1880,13 +1880,13 @@ const CreateNewTripReport = ({ dropDownDevices }: any) => {
                             .localeCompare((optionB?.P ?? "").toLowerCase())
                         }
                         onChange={(e: any, options) => {
-                          console.log("e", e);
+                          // console.log("e", e);
 
                           if (e.includes("All")) {
                             setOperatorIds(
                               operatorsForReportsList.map(
-                                (operator: any) => operator.value
-                              )
+                                (operator: any) => operator.value,
+                              ),
                             );
                           } else {
                             setOperatorIds(e);
@@ -1927,13 +1927,13 @@ const CreateNewTripReport = ({ dropDownDevices }: any) => {
                             .localeCompare((optionB?.P ?? "").toLowerCase())
                         }
                         onChange={(e: any, options) => {
-                          console.log("e", e);
+                          // console.log("e", e);
 
                           if (e.includes("All")) {
                             setProductTypes(
                               productTypesForReportsList.map(
-                                (pt: any) => pt.value
-                              )
+                                (pt: any) => pt.value,
+                              ),
                             );
                           } else {
                             setProductTypes(e);
@@ -1972,11 +1972,11 @@ const CreateNewTripReport = ({ dropDownDevices }: any) => {
                             .localeCompare((optionB?.P ?? "").toLowerCase())
                         }
                         onChange={(e: any, options) => {
-                          console.log("e", e);
+                          // console.log("e", e);
 
                           if (e.includes("All")) {
                             setVendorIds(
-                              vendorsForReportsList.map((v: any) => v.value)
+                              vendorsForReportsList.map((v: any) => v.value),
                             );
                           } else {
                             setVendorIds(e);
@@ -2016,11 +2016,11 @@ const CreateNewTripReport = ({ dropDownDevices }: any) => {
                             .localeCompare((optionB?.P ?? "").toLowerCase())
                         }
                         onChange={(e: any, options) => {
-                          console.log("e", e);
+                          // console.log("e", e);
 
                           if (e.includes("All")) {
                             setCustomerIds(
-                              customersForReportsList.map((c: any) => c.value)
+                              customersForReportsList.map((c: any) => c.value),
                             );
                           } else {
                             setCustomerIds(e);
@@ -2180,7 +2180,7 @@ const CreateNewTripReport = ({ dropDownDevices }: any) => {
 
                           if (e.includes("All")) {
                             setProducts(
-                              productsForReportsList.map((p: any) => p.value)
+                              productsForReportsList.map((p: any) => p.value),
                             );
                           } else {
                             setProducts(e);

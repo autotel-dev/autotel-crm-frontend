@@ -6,7 +6,7 @@ import { useSelector } from "react-redux";
 
 const ActivityTypes = () => {
   const { operationStatisticsData } = useSelector(
-    (state: any) => state.salesDashboard
+    (state: any) => state.salesDashboard,
   );
 
   // Create a ref to hold the chart instance
@@ -19,7 +19,7 @@ const ActivityTypes = () => {
 
       // Ensure the chart instance is valid
       if (chart) {
-        console.log("chart", chart);
+        // console.log("chart", chart);
       }
     }
   };

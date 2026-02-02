@@ -47,7 +47,7 @@ const AnimatedCarMarker = ({
       if (!projection) return;
 
       const point = projection.fromLatLngToDivPixel(
-        new google.maps.LatLng(position.lat, position.lng)
+        new google.maps.LatLng(position.lat, position.lng),
       );
 
       if (point) {
@@ -86,7 +86,7 @@ const AnimatedCarMarker = ({
 
 const GoogleMap = (props) => {
   const { selectedSingleDevice, vehicleHistoryData } = useSelector(
-    (state) => state.monitoring
+    (state) => state.monitoring,
   );
 
   const dispatch = useDispatch();
@@ -139,7 +139,7 @@ const GoogleMap = (props) => {
       return [];
     }
     return [...vehicleHistoryData].sort(
-      (a, b) => new Date(a.timestamp) - new Date(b.timestamp)
+      (a, b) => new Date(a.timestamp) - new Date(b.timestamp),
     );
   }, [vehicleHistoryData]);
 
@@ -164,16 +164,16 @@ const GoogleMap = (props) => {
       }
     }
 
-    console.log(
-      `Filtered out ${filteredCount} points with distance > 1.5 km. Remaining: ${filtered.length}/${sortedDataPoints.length}`
-    );
+    // console.log(
+    //   `Filtered out ${filteredCount} points with distance > 1.5 km. Remaining: ${filtered.length}/${sortedDataPoints.length}`
+    // );
 
     return filtered;
   }, [sortedDataPoints, filterLargeJumps, calculateDistance]);
 
   // Keep ALL points - no skipping for maximum accuracy
   const optimizedDataPoints = useMemo(() => {
-    console.log(`Using all ${filteredDataPoints.length} points for playback`);
+    // console.log(`Using all ${filteredDataPoints.length} points for playback`);
     return filteredDataPoints;
   }, [filteredDataPoints]);
 
@@ -380,7 +380,7 @@ const GoogleMap = (props) => {
 
         setCurrentSegmentIndex(currentSegment);
         setAnimationProgress(
-          (currentSegment + segmentProgress) / totalSegments
+          (currentSegment + segmentProgress) / totalSegments,
         );
 
         // Update refs
@@ -497,7 +497,7 @@ const GoogleMap = (props) => {
       const totalSegments = optimizedDataPoints.length - 1;
       const newSegment = Math.min(
         Math.floor(clickPosition * totalSegments),
-        totalSegments - 1
+        totalSegments - 1,
       );
       const segmentProgress = clickPosition * totalSegments - newSegment;
 
@@ -526,7 +526,7 @@ const GoogleMap = (props) => {
         segmentProgressRef.current = segmentProgress;
       }
     },
-    [optimizedDataPoints, calculateBearing]
+    [optimizedDataPoints, calculateBearing],
   );
 
   // Cleanup on unmount

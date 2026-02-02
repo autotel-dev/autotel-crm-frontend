@@ -10,6 +10,9 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import "./googleMap.css";
 import carIcon from "../../../monitoring-assets/deviceLocationArrow.png";
+import carIconIdle from "../../../monitoring-assets/idle-icon.png";
+import carIconOnline from "../../../monitoring-assets/online-icon.png";
+import carIconStop from "../../../monitoring-assets/stop-icon.png";
 
 import { MdAdd } from "react-icons/md";
 import { GrFormSubtract } from "react-icons/gr";
@@ -25,7 +28,7 @@ import CustomMarker from "./customMarker/CustomMarker";
 
 const GoogleMap = (props) => {
   const { devicesDetailData, devices, selectedSingleDevice } = useSelector(
-    (state) => state.monitoring
+    (state) => state.monitoring,
   );
   const dispatch = useDispatch();
   const [zoom, setZoom] = useState(8);
@@ -57,7 +60,7 @@ const GoogleMap = (props) => {
           headers: {
             "User-Agent": "AutotelCRM/1.0",
           },
-        }
+        },
       );
 
       if (!response.ok) {
@@ -107,7 +110,7 @@ const GoogleMap = (props) => {
     if (device?.latestPosition?.latitude && device?.latestPosition?.longitude) {
       fetchAddress(
         device.latestPosition.latitude,
-        device.latestPosition.longitude
+        device.latestPosition.longitude,
       );
     }
 
@@ -165,6 +168,24 @@ const GoogleMap = (props) => {
     }
   };
 
+  const getStatusIcon = (device) => {
+    const statusColor = getStatusColor(device);
+
+    switch (statusColor) {
+      case "green": // moving
+        return carIconOnline;
+
+      case "red": // stopped
+        return carIconStop;
+
+      case "orange": // idle
+        return carIconIdle;
+
+      default:
+        return carIcon; // expired, inactive, not connected
+    }
+  };
+
   // Update selected device data in real-time without blinking
   useEffect(() => {
     if (selectedDevice && infoWindowVisible) {
@@ -201,7 +222,7 @@ const GoogleMap = (props) => {
           });
           fetchAddress(
             updatedDevice.latestPosition.latitude,
-            updatedDevice.latestPosition.longitude
+            updatedDevice.latestPosition.longitude,
           );
         }
       }
@@ -264,7 +285,7 @@ const GoogleMap = (props) => {
         (device) =>
           device.checked &&
           device.vehicle?.geofences &&
-          device.vehicle.geofences.length > 0
+          device.vehicle.geofences.length > 0,
       ) || []
     );
   };
@@ -350,7 +371,7 @@ const GoogleMap = (props) => {
         }
 
         return null;
-      })
+      }),
     );
   };
 
@@ -409,14 +430,17 @@ const GoogleMap = (props) => {
                 lat: device?.latestPosition?.latitude,
                 lng: device?.latestPosition?.longitude,
               }}
-              icon={carIcon}
+              // icon={carIcon}
+              icon={getStatusIcon(device)}
               rotation={device?.latestPosition?.course}
               onClick={() => handleMarkerClick(device)}
               label={device?.vehicle?.registrationNo || "N/A"}
-              showLabel={!(infoWindowVisible && selectedDevice?._id === device?._id)}
+              showLabel={
+                !(infoWindowVisible && selectedDevice?._id === device?._id)
+              }
               statusColor={getStatusColor(device)}
             />
-          )
+          ),
       )}
 
       {/* Render geofences */}
@@ -534,7 +558,7 @@ const GoogleMap = (props) => {
                   value: address,
                   subValue: selectedDevice?.latestPosition?.deviceTime
                     ? new Date(
-                        selectedDevice.latestPosition.deviceTime
+                        selectedDevice.latestPosition.deviceTime,
                       ).toLocaleString("en-US", {
                         month: "2-digit",
                         day: "2-digit",
@@ -672,7 +696,7 @@ const GoogleMap = (props) => {
                   label: "Power",
                   value: `${
                     selectedDevice?.latestPosition?.attributes?.power?.toFixed(
-                      2
+                      2,
                     ) || 0
                   }%`,
                   color: "#4CAF50",
@@ -691,7 +715,7 @@ const GoogleMap = (props) => {
                   label: "Distance",
                   value: `${
                     selectedDevice?.latestPosition?.attributes?.distance?.toFixed(
-                      2
+                      2,
                     ) || 0
                   } km`,
                   color: "#9C27B0",

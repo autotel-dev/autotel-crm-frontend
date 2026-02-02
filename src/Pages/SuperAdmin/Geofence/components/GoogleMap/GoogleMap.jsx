@@ -31,7 +31,7 @@ const GoogleMap = (props) => {
 
   useEffect(() => {
     setDrawingMode(type);
-    // console.log("selectedPolygonPaths", selectedPolygonPaths);
+    // // console.log("selectedPolygonPaths", selectedPolygonPaths);
   }, [type]);
 
   const zoomIn = () => {
@@ -108,12 +108,12 @@ const GoogleMap = (props) => {
               };
               dispatch(setCircle(updatedCircle));
 
-              console.log("Circle updated:", updatedCircle);
+              // console.log("Circle updated:", updatedCircle);
             } else if (event.type === "rectangle") {
               const updatedBounds = overlay.getBounds().toJSON();
               dispatch(setRectangle({ bounds: updatedBounds }));
 
-              console.log("Rectangle updated:", updatedBounds);
+              // console.log("Rectangle updated:", updatedBounds);
             } else if (event.type === "polygon") {
               const updatedPath = overlay
                 .getPath()
@@ -124,7 +124,7 @@ const GoogleMap = (props) => {
                 }));
               dispatch(setPolygon(updatedPath));
 
-              console.log("Polygon updated:", updatedPath);
+              // console.log("Polygon updated:", updatedPath);
             }
           };
 
@@ -137,23 +137,23 @@ const GoogleMap = (props) => {
             google.maps.event.addListener(
               overlay,
               "radius_changed",
-              handleOverlayEdit
+              handleOverlayEdit,
             );
             google.maps.event.addListener(
               overlay,
               "bounds_changed",
-              handleOverlayEdit
+              handleOverlayEdit,
             );
             google.maps.event.addListener(
               overlay,
               "dragend",
-              handleOverlayEdit
+              handleOverlayEdit,
             );
             google.maps.event.addListener(overlay, "set_at", handleOverlayEdit);
             google.maps.event.addListener(
               overlay,
               "insert_at",
-              handleOverlayEdit
+              handleOverlayEdit,
             );
           }
 
@@ -166,11 +166,11 @@ const GoogleMap = (props) => {
               radius: overlay.getRadius(),
             };
             dispatch(setCircle(newCircle));
-            console.log("Circle created:", newCircle);
+            // console.log("Circle created:", newCircle);
           } else if (event.type === "rectangle") {
             const newBounds = overlay.getBounds().toJSON();
             dispatch(setRectangle({ bounds: newBounds }));
-            console.log("Rectangle created:", newBounds);
+            // console.log("Rectangle created:", newBounds);
           } else if (event.type === "polygon") {
             const newPath = overlay
               .getPath()
@@ -180,9 +180,9 @@ const GoogleMap = (props) => {
                 lng: latlng.lng(),
               }));
             dispatch(setPolygon(newPath));
-            console.log("Polygon created:", newPath);
+            // console.log("Polygon created:", newPath);
           }
-        }
+        },
       );
     }
   }, [props.google, dispatch, drawingMode]);
@@ -210,8 +210,8 @@ const GoogleMap = (props) => {
       };
       const newRadius = circleInstance.getRadius();
       dispatch(setCircle({ center: newCenter, radius: newRadius }));
-      console.log("Circle center updated:", newCenter);
-      console.log("Circle radius updated:", newRadius);
+      // console.log("Circle center updated:", newCenter);
+      // console.log("Circle radius updated:", newRadius);
     }
   }, [circleRef]);
 
@@ -221,7 +221,7 @@ const GoogleMap = (props) => {
       const rectangleInstance = rectangleRef.current.rectangle;
       const newBounds = rectangleInstance.getBounds().toJSON();
       dispatch(setRectangle({ bounds: newBounds }));
-      console.log("Rectangle bounds updated:", newBounds);
+      // console.log("Rectangle bounds updated:", newBounds);
     }
   }, [rectangleRef]);
 
@@ -237,7 +237,7 @@ const GoogleMap = (props) => {
           lng: latlng.lng(),
         }));
       dispatch(setPolygon(newPath));
-      console.log("Polygon path updated:", newPath);
+      // console.log("Polygon path updated:", newPath);
     }
   };
 
@@ -249,18 +249,18 @@ const GoogleMap = (props) => {
       window.google.maps.event.addListener(
         polygonInstance.getPath(),
         "set_at",
-        handlePolygonEdit
+        handlePolygonEdit,
       );
 
       window.google.maps.event.addListener(
         polygonInstance.getPath(),
         "insert_at",
-        handlePolygonEdit
+        handlePolygonEdit,
       );
       window.google.maps.event.addListener(
         polygonInstance.getPath(),
         "remove_at",
-        handlePolygonEdit
+        handlePolygonEdit,
       );
     }
   }, [polygonRef.current]);
@@ -329,7 +329,7 @@ const GoogleMap = (props) => {
                 center_changed={() => handleCircleChanged()}
               />
             );
-          })
+          }),
       )
     );
   };

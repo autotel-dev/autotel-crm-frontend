@@ -97,11 +97,11 @@ const DeviceSelecetdForAlerts: React.FC<PropsTypes> = ({
           }
           if (data.success) {
             if (data.data) {
-              console.log("Called in IF");
+              // console.log("Called in IF");
 
               dispatch(setDeviceSelecetdAlerts(data.data));
             } else {
-              console.log("Called in Else");
+              // console.log("Called in Else");
               dispatch(setDeviceSelecetdAlerts([]));
             }
 

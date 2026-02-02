@@ -38,8 +38,8 @@ const EditSubGroupModal: React.FC<PropsTypes> = ({
   subGroup,
 }) => {
   const dispatch = useDispatch();
-  console.log("get Options", group);
-  console.log("get subgroup", subGroup);
+  // console.log("get Options", group);
+  // console.log("get subgroup", subGroup);
 
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -53,7 +53,7 @@ const EditSubGroupModal: React.FC<PropsTypes> = ({
     }
   }, [subGroup]);
   const [subGroupedGeofencesList, setSubGroupedGeofencesList]: any = useState(
-    []
+    [],
   );
   const [groupedGeofencesList, setGroupedGeofencesList]: any = useState([]);
 
@@ -61,7 +61,7 @@ const EditSubGroupModal: React.FC<PropsTypes> = ({
     if (group) {
       getAll({ url: `${GET_ALL_GEOFENCES_BY_GROUP_ID}/${group.value}` }).then(
         (data: any) => {
-          console.log("group-data", data);
+          // console.log("group-data", data);
 
           if (data !== undefined) {
             if (data.success) {
@@ -70,11 +70,11 @@ const EditSubGroupModal: React.FC<PropsTypes> = ({
                   label: item?.title,
                   value: item?._id,
                   checked: false,
-                }))
+                })),
               );
             }
           }
-        }
+        },
       );
     }
   }, [isVisible]); // Removed dependencies to run only on mount
@@ -83,7 +83,7 @@ const EditSubGroupModal: React.FC<PropsTypes> = ({
     if (subGroup) {
       getAll({ url: `${GET_ALL_GEOFENCES_BY_SUBGROUP}/${subGroup._id}` }).then(
         (data: any) => {
-          console.log("subgroup-data", data);
+          // console.log("subgroup-data", data);
 
           if (data !== undefined) {
             if (data.success) {
@@ -92,11 +92,11 @@ const EditSubGroupModal: React.FC<PropsTypes> = ({
                   label: item?.title,
                   value: item?._id,
                   checked: true,
-                }))
+                })),
               );
             }
           }
-        }
+        },
       );
     }
   }, [isVisible]); // Removed dependencies to run only on mount
@@ -120,7 +120,7 @@ const EditSubGroupModal: React.FC<PropsTypes> = ({
               ...allcheckedIngroupedGeofences,
             ],
           },
-          { url: `${UPDATE_SUBGROUP}/${subGroup._id}` }
+          { url: `${UPDATE_SUBGROUP}/${subGroup._id}` },
         ).then(async (data: any) => {
           if (data.success) {
             getAll({ url: GET_ALL_GROUPS }).then((data: any) => {
@@ -159,7 +159,7 @@ const EditSubGroupModal: React.FC<PropsTypes> = ({
                   checked: false,
                   items: groupGeofencesObj[group],
                   subgroups: [],
-                })
+                }),
               );
 
               for (let i = 0; i < initialGroupGeofences.length; i++) {
@@ -183,7 +183,7 @@ const EditSubGroupModal: React.FC<PropsTypes> = ({
                     }
                   }
                 }
-                console.log("subGroups", subGroups);
+                // console.log("subGroups", subGroups);
 
                 subGroups.forEach((geofenceSubGroup: any) => {
                   subGroupsGeofencesObj[geofenceSubGroup] =
@@ -208,7 +208,7 @@ const EditSubGroupModal: React.FC<PropsTypes> = ({
                 });
 
                 // console.log(groups);
-                console.log("subGroupsGeofencesObj", subGroupsGeofencesObj);
+                // console.log("subGroupsGeofencesObj", subGroupsGeofencesObj);
 
                 // Convert groupDevicesObj to initialGroupDevices array format
                 Object.keys(subGroupsGeofencesObj).forEach((group: any) => {
@@ -273,7 +273,7 @@ const EditSubGroupModal: React.FC<PropsTypes> = ({
   const [selectAll, setSelectAll] = useState(false);
   const [searchValue, setSearchValue] = useState("");
   const filteredGeofences = groupedGeofencesList.filter((geofence: any) =>
-    geofence.label.toLowerCase().includes(searchValue.toLowerCase())
+    geofence.label.toLowerCase().includes(searchValue.toLowerCase()),
   );
   useEffect(() => {
     const allChecked = groupedGeofencesList.every((item: any) => item.checked);
@@ -310,17 +310,17 @@ const EditSubGroupModal: React.FC<PropsTypes> = ({
   const [searchValue2, setSearchValue2] = useState("");
   const filteredSubGroupedGeofences = subGroupedGeofencesList.filter(
     (geofence: any) =>
-      geofence.label.toLowerCase().includes(searchValue2.toLowerCase())
+      geofence.label.toLowerCase().includes(searchValue2.toLowerCase()),
   );
   useEffect(() => {
     const allChecked = subGroupedGeofencesList.every(
-      (item: any) => item.checked
+      (item: any) => item.checked,
     );
     setSelectAllUngroupedGeofences(allChecked);
   }, [subGroupedGeofencesList]);
 
   const handleSelectAllUngroupedGeofencesChange = (
-    e: React.ChangeEvent<HTMLInputElement>
+    e: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const checked = e.target.checked;
     setSelectAllUngroupedGeofences(checked);
@@ -332,7 +332,7 @@ const EditSubGroupModal: React.FC<PropsTypes> = ({
   };
 
   const handleUngroupedSearchChange = (
-    e: React.ChangeEvent<HTMLInputElement>
+    e: React.ChangeEvent<HTMLInputElement>,
   ) => {
     setSearchValue2(e.target.value);
   };
@@ -487,7 +487,7 @@ const EditSubGroupModal: React.FC<PropsTypes> = ({
                         />
                         {geofence.label}
                       </label>
-                    )
+                    ),
                   )}
                 </div>
               </div>

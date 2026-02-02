@@ -18,6 +18,9 @@ import { IoKey } from "react-icons/io5";
 import { MdExpandMore, MdExpandLess } from "react-icons/md";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import carIcon from "../../../monitoring-assets/deviceLocationArrow.png";
+import carIconIdle from "../../../monitoring-assets/idle-icon.png";
+import carIconOnline from "../../../monitoring-assets/online-icon.png";
+import carIconStop from "../../../monitoring-assets/stop-icon.png";
 import delayIcon from "../../../../../../assets/delay-icon.png";
 
 import {
@@ -39,7 +42,7 @@ const DevicesSidebar = ({ setOpen, open, filteredDevices }: any) => {
   const [playbackModal, setPlaybackModal] = useState(false);
   const [selectedDevice, setSelectedDevice] = useState<any>(null);
   const [historyType, setHistoryType] = useState<"today" | "yesterday" | null>(
-    null
+    null,
   );
   const [liveAlerts, setLiveAlerts] = useState<any[]>([]);
   const [alertsLoading, setAlertsLoading] = useState(false);
@@ -62,7 +65,7 @@ const DevicesSidebar = ({ setOpen, open, filteredDevices }: any) => {
         item.vehicle?.model == null ||
         item.vehicle?.registrationNo
           ?.toLowerCase()
-          .includes(searchTerm.toLowerCase())
+          .includes(searchTerm.toLowerCase()),
     );
 
     return filtered.reduce((groups: any, device: any) => {
@@ -85,7 +88,7 @@ const DevicesSidebar = ({ setOpen, open, filteredDevices }: any) => {
   const handleCheckboxClick = (e: any, item: any) => {
     e.stopPropagation();
     const updatedDevices = devices.map((d: any) =>
-      d._id === item._id ? { ...d, checked: e.target.checked } : d
+      d._id === item._id ? { ...d, checked: e.target.checked } : d,
     );
     dispatch(setDevices(updatedDevices || []));
   };
@@ -141,7 +144,7 @@ const DevicesSidebar = ({ setOpen, open, filteredDevices }: any) => {
   const isGroupPartiallyChecked = (groupId: string) => {
     const groupDevices = groupedDevices[groupId]?.devices || [];
     const checkedCount = groupDevices.filter(
-      (device: any) => device.checked
+      (device: any) => device.checked,
     ).length;
     return checkedCount > 0 && checkedCount < groupDevices.length;
   };
@@ -170,16 +173,16 @@ const DevicesSidebar = ({ setOpen, open, filteredDevices }: any) => {
   const handleMenuAction = (
     e: React.MouseEvent,
     action: string,
-    device: any
+    device: any,
   ) => {
     e.stopPropagation();
     setOpenMenuId(null);
 
-    console.log("Menu action triggered:", action, device);
+    // console.log("Menu action triggered:", action, device);
 
     switch (action) {
       case "customer-details":
-        console.log("Opening customer details modal");
+        // console.log("Opening customer details modal");
         // Open customer details modal
         setSelectedDevice(device);
         dispatch(setSelectedSingleDevice(device));
@@ -187,7 +190,7 @@ const DevicesSidebar = ({ setOpen, open, filteredDevices }: any) => {
         break;
 
       case "history-today":
-        console.log("Opening history today modal");
+        // console.log("Opening history today modal");
         // Open playback modal with Today filter
         setSelectedDevice(device);
         dispatch(setSelectedSingleDevice(device));
@@ -198,7 +201,7 @@ const DevicesSidebar = ({ setOpen, open, filteredDevices }: any) => {
         break;
 
       case "history-yesterday":
-        console.log("Opening history yesterday modal");
+        // console.log("Opening history yesterday modal");
         // Open playback modal with Yesterday filter
         setSelectedDevice(device);
         dispatch(setSelectedSingleDevice(device));
@@ -210,16 +213,16 @@ const DevicesSidebar = ({ setOpen, open, filteredDevices }: any) => {
 
       case "send-command":
         // TODO: Implement send command functionality
-        console.log("Send command for device:", device);
+        // console.log("Send command for device:", device);
         break;
 
       case "alerts":
         // TODO: Implement alerts functionality
-        console.log("Show alerts for device:", device);
+        // console.log("Show alerts for device:", device);
         break;
 
       default:
-        console.log(`Unknown action: ${action}`, device);
+      // console.log(`Unknown action: ${action}`, device);
     }
   };
 
@@ -250,12 +253,12 @@ const DevicesSidebar = ({ setOpen, open, filteredDevices }: any) => {
 
   // Debug modal states
   useEffect(() => {
-    console.log("Modal States:", {
-      customerDetailsModal,
-      playbackModal,
-      selectedDevice: selectedDevice ? "Device present" : "No device",
-      historyType,
-    });
+    // console.log("Modal States:", {
+    //   customerDetailsModal,
+    //   playbackModal,
+    //   selectedDevice: selectedDevice ? "Device present" : "No device",
+    //   historyType,
+    // });
   }, [customerDetailsModal, playbackModal, selectedDevice, historyType]);
 
   const [selectedNav, setSelectedNav] = useState("Vehicles");
@@ -322,7 +325,7 @@ const DevicesSidebar = ({ setOpen, open, filteredDevices }: any) => {
   const speechIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const [text] = useState(
-    "This device BLS-123 is zone out from Karachi to Islamabad"
+    "This device BLS-123 is zone out from Karachi to Islamabad",
   );
 
   const speakAfterDelay = () => {
@@ -344,7 +347,7 @@ const DevicesSidebar = ({ setOpen, open, filteredDevices }: any) => {
               v.name.toLowerCase().includes("woman") ||
               v.name.toLowerCase().includes("zira") || // Common female voice on Windows
               v.name.toLowerCase().includes("samantha") || // Common female voice on macOS
-              v.name.toLowerCase().includes("karen") // Common female voice on macOS
+              v.name.toLowerCase().includes("karen"), // Common female voice on macOS
           );
 
           if (femaleVoice) {
@@ -383,6 +386,69 @@ const DevicesSidebar = ({ setOpen, open, filteredDevices }: any) => {
   //     }
   //   };
   // }, []); // Empty dependency array ensures this runs only on mount/unmount
+
+  const getVehicleVisualState = (item: any) => {
+    const renewalDate = item?.vehicle?.serviceRenewalDate
+      ? new Date(item.vehicle.serviceRenewalDate)
+      : null;
+
+    const deviceTime = item?.latestPosition?.deviceTime
+      ? new Date(item.latestPosition.deviceTime)
+      : null;
+
+    const now = new Date();
+
+    // 🚫 Expired
+    if (renewalDate && renewalDate < now) {
+      return {
+        background: "rgba(128, 128, 128, 0.2)",
+        icon: carIcon,
+      };
+    }
+
+    // 🔵 Not connected
+    if (!deviceTime) {
+      return {
+        background: "rgba(0, 0, 255, 0.3)",
+        icon: carIcon,
+      };
+    }
+
+    // 🟣 Inactive (24+ hours)
+    if ((now.getTime() - deviceTime.getTime()) / (1000 * 60 * 60) > 24) {
+      return {
+        background: "rgba(128, 0, 128, 0.1)",
+        icon: carIcon,
+      };
+    }
+
+    // 🚗 Status-based
+    switch (item?.mainVehicleStatus?.toLowerCase()) {
+      case "moving":
+        return {
+          background: "rgba(0, 255, 0, 0.1)",
+          icon: carIconOnline, // ✅ moving
+        };
+
+      case "stopped":
+        return {
+          background: "rgba(255, 0, 0, 0.1)",
+          icon: carIconStop, // ⛔ stopped
+        };
+
+      case "idle":
+        return {
+          background: "rgba(255, 165, 0, 0.1)",
+          icon: carIconIdle, // 🟠 idle
+        };
+
+      default:
+        return {
+          background: "rgba(240,240,240,0.4)",
+          icon: carIcon,
+        };
+    }
+  };
 
   return (
     <>
@@ -575,7 +641,7 @@ const DevicesSidebar = ({ setOpen, open, filteredDevices }: any) => {
                         }}
                       >
                         {new Date(
-                          alert.createdAt || alert.time
+                          alert.createdAt || alert.time,
                         ).toLocaleTimeString()}
                       </div>
                     </div>
@@ -733,43 +799,47 @@ const DevicesSidebar = ({ setOpen, open, filteredDevices }: any) => {
                               //     : "rgba(255,0,0,0.1)"
                               // }`,
 
-                              background: (() => {
-                                const renewalDate = item?.vehicle
-                                  ?.serviceRenewalDate
-                                  ? new Date(item.vehicle.serviceRenewalDate)
-                                  : null;
-                                const deviceTime: any = item?.latestPosition
-                                  ?.deviceTime
-                                  ? new Date(item.latestPosition.deviceTime)
-                                  : null;
-                                const now: any = new Date();
+                              // background: (() => {
+                              //   const visualState = getVehicleVisualState(item);
 
-                                if (renewalDate && renewalDate < now) {
-                                  return "rgba(128, 128, 128, 0.2)"; // Expired
-                                }
-                                if (!deviceTime) {
-                                  return "rgba(0, 0, 255, 0.3)"; // Not COnn.
-                                }
-                                if (
-                                  (now - deviceTime) / (1000 * 60 * 60) >
-                                  24
-                                ) {
-                                  return "rgba(128, 0, 128, 0.1)"; // Inactive
-                                }
+                              //   const renewalDate = item?.vehicle
+                              //     ?.serviceRenewalDate
+                              //     ? new Date(item.vehicle.serviceRenewalDate)
+                              //     : null;
+                              //   const deviceTime: any = item?.latestPosition
+                              //     ?.deviceTime
+                              //     ? new Date(item.latestPosition.deviceTime)
+                              //     : null;
+                              //   const now: any = new Date();
 
-                                switch (
-                                  item?.mainVehicleStatus?.toLowerCase()
-                                ) {
-                                  case "moving":
-                                    return "rgba(0, 255, 0, 0.1)";
-                                  case "stopped":
-                                    return "rgba(255, 0, 0, 0.1)";
-                                  case "idle":
-                                    return "rgba(255, 165, 0, 0.1)";
-                                  default:
-                                    return "rgba(240,240,240,0.4)";
-                                }
-                              })(),
+                              //   if (renewalDate && renewalDate < now) {
+                              //     return "rgba(128, 128, 128, 0.2)"; // Expired
+                              //   }
+                              //   if (!deviceTime) {
+                              //     return "rgba(0, 0, 255, 0.3)"; // Not COnn.
+                              //   }
+                              //   if (
+                              //     (now - deviceTime) / (1000 * 60 * 60) >
+                              //     24
+                              //   ) {
+                              //     return "rgba(128, 0, 128, 0.1)"; // Inactive
+                              //   }
+
+                              //   switch (
+                              //     item?.mainVehicleStatus?.toLowerCase()
+                              //   ) {
+                              //     case "moving":
+                              //       return "rgba(0, 255, 0, 0.1)";
+                              //     case "stopped":
+                              //       return "rgba(255, 0, 0, 0.1)";
+                              //     case "idle":
+                              //       return "rgba(255, 165, 0, 0.1)";
+                              //     default:
+                              //       return "rgba(240,240,240,0.4)";
+                              //   }
+                              // })(),
+                              background:
+                                getVehicleVisualState(item).background,
 
                               paddingLeft: "8px",
                               paddingRight: "8px",
@@ -817,10 +887,10 @@ const DevicesSidebar = ({ setOpen, open, filteredDevices }: any) => {
                                       style={{
                                         display: "flex",
                                         alignItems: "center",
-                                        width: "15px",
+                                        width: "14px",
                                         height: "25px",
                                       }}
-                                      src={carIcon}
+                                      src={getVehicleVisualState(item).icon}
                                       alt="Vehicle"
                                     />
                                     <div>
@@ -843,10 +913,14 @@ const DevicesSidebar = ({ setOpen, open, filteredDevices }: any) => {
                                         }}
                                       >
                                         {formatDateTime(
-                                          item?.latestPosition?.deviceTime
-                                        )}
+                                          item?.latestPosition?.deviceTime,
+                                        ) == "Invalid Date"
+                                          ? "Not Connected"
+                                          : formatDateTime(
+                                              item?.latestPosition?.deviceTime,
+                                            )}
                                         {isDeviceTimeDelayed(
-                                          item?.latestPosition?.deviceTime
+                                          item?.latestPosition?.deviceTime,
                                         ) && (
                                           <img
                                             src={delayIcon}
@@ -886,7 +960,7 @@ const DevicesSidebar = ({ setOpen, open, filteredDevices }: any) => {
                                       >
                                         {item?.latestPosition?.speed > 0
                                           ? Number(
-                                              item?.latestPosition?.speed
+                                              item?.latestPosition?.speed,
                                             ).toFixed(2)
                                           : item?.latestPosition?.speed}
                                       </div>
@@ -999,7 +1073,7 @@ const DevicesSidebar = ({ setOpen, open, filteredDevices }: any) => {
                                                 handleMenuAction(
                                                   e,
                                                   menuItem.action,
-                                                  item
+                                                  item,
                                                 )
                                               }
                                               style={{
@@ -1042,7 +1116,7 @@ const DevicesSidebar = ({ setOpen, open, filteredDevices }: any) => {
                       </div>
                     )}
                   </div>
-                )
+                ),
               )}
             </>
           ) : (
@@ -1078,8 +1152,8 @@ const DevicesSidebar = ({ setOpen, open, filteredDevices }: any) => {
             historyType === "today"
               ? "Today"
               : historyType === "yesterday"
-              ? "Yesterday"
-              : undefined
+                ? "Yesterday"
+                : undefined
           }
         />
       )}

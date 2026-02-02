@@ -55,10 +55,10 @@ interface PropsTypes {
 }
 const UpdateCompanyForm = () => {
   const { userPersonalizationData } = useSelector(
-    (state: any) => state.personalization
+    (state: any) => state.personalization,
   );
   const { crmModules, servers, permissions } = useSelector(
-    (state: any) => state.companies
+    (state: any) => state.companies,
   );
   const [formData, setFormData]: any = useState({});
   const dispatch = useDispatch();
@@ -116,7 +116,7 @@ const UpdateCompanyForm = () => {
             permissions: permissions.map((permission: any) => {
               const matchingAdminPermission = data.data.permissions.find(
                 (adminPermission: any) =>
-                  adminPermission.value === permission.value
+                  adminPermission.value === permission.value,
               );
               if (matchingAdminPermission) {
                 return {
@@ -143,7 +143,7 @@ const UpdateCompanyForm = () => {
           setFormData(formDataWithChecked);
           const updatedCrmModules = crmModules?.map((module: any) => {
             const foundModule = data.data?.allowedModules?.find(
-              (allowedModule: any) => allowedModule._id === module?._id
+              (allowedModule: any) => allowedModule._id === module?._id,
             );
             return {
               ...module,
@@ -267,7 +267,7 @@ const UpdateCompanyForm = () => {
     index: any,
     field: any,
     value: any,
-    title: any
+    title: any,
   ) => {
     // Clone the permissions array from formData
     let updatedPermissions = [...formData?.permissions];
@@ -286,7 +286,7 @@ const UpdateCompanyForm = () => {
     index: any,
     field: any,
     value: any,
-    item: any
+    item: any,
   ) => {
     const updatedModules = [...removedModules];
 
@@ -306,10 +306,10 @@ const UpdateCompanyForm = () => {
         password: credential?.password,
         hostUrl: credential?.hostUrl,
         server: credential?.server?._id,
-      })
+      }),
     );
     const filteredPermissions = formData?.permissions?.filter(
-      (permission: any) => permission?.checked
+      (permission: any) => permission?.checked,
     );
 
     // Create a copy of the filtered permissions array without the checked key
@@ -320,7 +320,7 @@ const UpdateCompanyForm = () => {
     // console.log("updatedFormData", formData);
 
     const updatedRemoveModules = removedModules?.filter(
-      (module: any) => module.checked
+      (module: any) => module.checked,
     );
     const updatedModuless = updatedRemoveModules?.map((module: any) => {
       const { _id, ...rest } = module;
@@ -392,13 +392,13 @@ const UpdateCompanyForm = () => {
 
   const handleDeselect = (value: any, option: any) => {
     // Dispatch an action to remove the deselected item from the Redux state
-    console.log("value", value);
-    console.log("option", option);
+    // console.log("value", value);
+    // console.log("option", option);
 
     const updatedList = formData?.serverCredentials?.filter(
-      (item: any) => item?.server?._id !== value
+      (item: any) => item?.server?._id !== value,
     );
-    console.log("updatedList", updatedList);
+    // console.log("updatedList", updatedList);
 
     setFormData({ ...formData, serverCredentials: updatedList });
   };
@@ -474,7 +474,7 @@ const UpdateCompanyForm = () => {
 
   const handleClick = (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>,
-    file: any
+    file: any,
   ) => {
     event.preventDefault();
     window.open(file, "_blank");
@@ -803,7 +803,7 @@ const UpdateCompanyForm = () => {
                               onChange={(e) =>
                                 updateFormData(
                                   "contactPersonName",
-                                  e.target.value
+                                  e.target.value,
                                 )
                               }
                             />
@@ -851,7 +851,7 @@ const UpdateCompanyForm = () => {
                               onChange={(e) =>
                                 updateFormData(
                                   "contactPersonPhoneNo",
-                                  e.target.value
+                                  e.target.value,
                                 )
                               }
                             />
@@ -881,13 +881,13 @@ const UpdateCompanyForm = () => {
                               type="date"
                               value={formData?.packageExpirationDate?.slice(
                                 0,
-                                10
+                                10,
                               )}
                               name="packageExpirationDate"
                               onChange={(e) => {
                                 updateFormData(
                                   "packageExpirationDate",
-                                  e.target.value
+                                  e.target.value,
                                 );
                               }}
                             />
@@ -997,10 +997,10 @@ const UpdateCompanyForm = () => {
                         <Col md={6}>
                           <Select
                             defaultValue={formData?.serverCredentials.map(
-                              (server: any) => server?.server?.companyName
+                              (server: any) => server?.server?.companyName,
                             )}
                             value={formData?.serverCredentials?.map(
-                              (server: any) => server?.server._id
+                              (server: any) => server?.server._id,
                             )}
                             showSearch
                             mode="multiple"
@@ -1014,7 +1014,7 @@ const UpdateCompanyForm = () => {
                               (optionA?.label ?? "")
                                 .toLowerCase()
                                 .localeCompare(
-                                  (optionB?.label ?? "").toLowerCase()
+                                  (optionB?.label ?? "").toLowerCase(),
                                 )
                             }
                             onChange={(selectedValues, selectedOptions) => {
@@ -1029,8 +1029,8 @@ const UpdateCompanyForm = () => {
                                   (option: any) =>
                                     !formData.serverCredentials.some(
                                       (server: any) =>
-                                        server?.server?._id === option.server
-                                    )
+                                        server?.server?._id === option.server,
+                                    ),
                                 );
                               // console.log("selectedValues", selectedValues);
 
@@ -1049,7 +1049,7 @@ const UpdateCompanyForm = () => {
                                     companyName: option.label,
                                   },
                                   hostUrl: option.hostUrl,
-                                })
+                                }),
                               );
 
                               const updatedCredentials = [
@@ -1077,7 +1077,7 @@ const UpdateCompanyForm = () => {
                                     >
                                       {server?.server?.companyName}
                                     </Option>
-                                  )
+                                  ),
                                 )}
                               </div>
                             )}
@@ -1120,7 +1120,7 @@ const UpdateCompanyForm = () => {
                                           handleServerCredentialChange(
                                             index,
                                             "emailAddress",
-                                            e.target.value
+                                            e.target.value,
                                           )
                                         }
                                       />
@@ -1140,7 +1140,7 @@ const UpdateCompanyForm = () => {
                                           handleServerCredentialChange(
                                             index,
                                             "password",
-                                            e.target.value
+                                            e.target.value,
                                           )
                                         }
                                       />
@@ -1174,7 +1174,7 @@ const UpdateCompanyForm = () => {
                                   </Row>
                                 </div>
                               );
-                            }
+                            },
                           )}
                         </Form>
 
@@ -1213,7 +1213,7 @@ const UpdateCompanyForm = () => {
                                                 index,
                                                 "checked",
                                                 !item.checked,
-                                                item
+                                                item,
                                               )
                                             }
                                           />
@@ -1296,7 +1296,7 @@ const UpdateCompanyForm = () => {
                                                   index,
                                                   "checked",
                                                   e.target.checked,
-                                                  permission.title
+                                                  permission.title,
                                                 )
                                               }
                                               style={{ display: "none" }} // Hide the default checkbox
@@ -1335,7 +1335,7 @@ const UpdateCompanyForm = () => {
                                                     index,
                                                     "read",
                                                     e.target.checked,
-                                                    permission.title
+                                                    permission.title,
                                                   )
                                                 }
                                                 style={{ display: "none" }} // Hide the default checkbox
@@ -1370,7 +1370,7 @@ const UpdateCompanyForm = () => {
                                                     index,
                                                     "create",
                                                     e.target.checked,
-                                                    permission.title
+                                                    permission.title,
                                                   )
                                                 }
                                                 style={{ display: "none" }} // Hide the default checkbox
@@ -1405,7 +1405,7 @@ const UpdateCompanyForm = () => {
                                                     index,
                                                     "edit",
                                                     e.target.checked,
-                                                    permission.title
+                                                    permission.title,
                                                   )
                                                 }
                                                 style={{ display: "none" }} // Hide the default checkbox
@@ -1440,7 +1440,7 @@ const UpdateCompanyForm = () => {
                                                     index,
                                                     "delete",
                                                     e.target.checked,
-                                                    permission.title
+                                                    permission.title,
                                                   )
                                                 }
                                                 style={{ display: "none" }} // Hide the default checkbox
@@ -1459,7 +1459,7 @@ const UpdateCompanyForm = () => {
                                     </Row>
                                   </div>
                                 );
-                              }
+                              },
                             )}
                           </div>
                         </Form>
@@ -1499,12 +1499,12 @@ const UpdateCompanyForm = () => {
                                   {data.key === "cnicFront"
                                     ? "CNIC Front"
                                     : data.key === "cnicBack"
-                                    ? "CNIC Back"
-                                    : data.key === "ptaCertificate"
-                                    ? "PTA Certificate"
-                                    : data.key === "ntnCertificate"
-                                    ? "NTN Certificate"
-                                    : "Other Attachment"}
+                                      ? "CNIC Back"
+                                      : data.key === "ptaCertificate"
+                                        ? "PTA Certificate"
+                                        : data.key === "ntnCertificate"
+                                          ? "NTN Certificate"
+                                          : "Other Attachment"}
                                 </H5>
                                 <div
                                   style={{
@@ -1547,12 +1547,12 @@ const UpdateCompanyForm = () => {
                                     {data.key === "cnicFront"
                                       ? "CNIC Front"
                                       : data.key === "cnicBack"
-                                      ? "CNIC Back"
-                                      : data.key === "ptaCertificate"
-                                      ? "PTA Certificate"
-                                      : data.key === "ntnCertificate"
-                                      ? "NTN Certificate"
-                                      : "Other Attachment"}
+                                        ? "CNIC Back"
+                                        : data.key === "ptaCertificate"
+                                          ? "PTA Certificate"
+                                          : data.key === "ntnCertificate"
+                                            ? "NTN Certificate"
+                                            : "Other Attachment"}
                                   </div>
                                 </div>
                               </div>
@@ -1619,7 +1619,7 @@ const UpdateCompanyForm = () => {
                                   )}
                                 </div>
                               </div>
-                            )
+                            ),
                           )}
                           <Modal
                             isOpen={addModal}

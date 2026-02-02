@@ -96,7 +96,7 @@ const AlertsModal: React.FC<AlertsModalProps> = ({
   const [devicesData, setDevicesData] = useState<Device[]>([]);
   const [geofencesData, setGeofencesData] = useState<Geofence[]>([]);
   const [selectedGeofence, setSelectedGeofence] = useState<Geofence | null>(
-    null
+    null,
   );
   const [autoCheckedDevices, setAutoCheckedDevices] = useState<string[]>([]);
 
@@ -127,7 +127,7 @@ const AlertsModal: React.FC<AlertsModalProps> = ({
       getAll({ url: GET_ALL_VEHICLES_DROPDOWN_FOR_ALERT }).then((data: any) => {
         if (data !== undefined) {
           if (data.success) {
-            console.log("data", data.data);
+            // console.log("data", data.data);
             setDevicesData(data.data);
           }
         }
@@ -137,7 +137,7 @@ const AlertsModal: React.FC<AlertsModalProps> = ({
       getAll({ url: GET_ALL_GEOFENCES }).then((data: any) => {
         if (data !== undefined) {
           if (data.success) {
-            console.log("geofences data", data.data);
+            // console.log("geofences data", data.data);
             setGeofencesData(data.data);
           }
         }
@@ -174,7 +174,8 @@ const AlertsModal: React.FC<AlertsModalProps> = ({
             selectedRule.alertType === "GEOFENCE_EXIT")
         ) {
           const geofence = geofencesData.find(
-            (g) => g._id === selectedRule.threshold.geofenceThreshold.geofenceId
+            (g) =>
+              g._id === selectedRule.threshold.geofenceThreshold.geofenceId,
           );
           if (geofence) {
             setSelectedGeofence(geofence);
@@ -235,7 +236,7 @@ const AlertsModal: React.FC<AlertsModalProps> = ({
   const isGroupPartiallyChecked = (groupId: string) => {
     const group = groupedDevices[groupId]?.devices || [];
     const count = group.filter((d: Device) =>
-      selectedDevices.includes(d._id)
+      selectedDevices.includes(d._id),
     ).length;
     return count > 0 && count < group.length;
   };
@@ -264,7 +265,7 @@ const AlertsModal: React.FC<AlertsModalProps> = ({
     setSelectedDevices((prev) =>
       prev.includes(deviceId)
         ? prev.filter((d) => d !== deviceId)
-        : [...prev, deviceId]
+        : [...prev, deviceId],
     );
   };
 
@@ -392,7 +393,7 @@ const AlertsModal: React.FC<AlertsModalProps> = ({
   };
 
   const addAlertRule: SubmitHandler<AlertFormData> = async (
-    formData: AlertFormData
+    formData: AlertFormData,
   ) => {
     setLoading(true);
 
@@ -446,7 +447,7 @@ const AlertsModal: React.FC<AlertsModalProps> = ({
 
     try {
       const payload = buildPayload(formData);
-      console.log("Sending payload:", payload); // Debug log
+      // console.log("Sending payload:", payload); // Debug log
 
       // Determine if creating or updating
       const apiCall =
@@ -504,7 +505,7 @@ const AlertsModal: React.FC<AlertsModalProps> = ({
     } catch (error: any) {
       console.error(
         `Error ${mode === "update" ? "updating" : "creating"} alert rule:`,
-        error
+        error,
       );
       Swal.fire({
         text: `An error occurred while ${
@@ -614,12 +615,12 @@ const AlertsModal: React.FC<AlertsModalProps> = ({
                     if (geofence && mode === "create") {
                       const matchedDeviceIds = devicesData
                         .filter((device) =>
-                          device.geofences?.includes(geofence._id)
+                          device.geofences?.includes(geofence._id),
                         )
                         .map((device) => device._id);
                       setAutoCheckedDevices(matchedDeviceIds);
                       setSelectedDevices((prev) =>
-                        Array.from(new Set([...prev, ...matchedDeviceIds]))
+                        Array.from(new Set([...prev, ...matchedDeviceIds])),
                       );
                     } else {
                       setAutoCheckedDevices([]);
@@ -774,7 +775,7 @@ const AlertsModal: React.FC<AlertsModalProps> = ({
                       (device: Device) =>
                         device.registrationNo
                           .toLowerCase()
-                          .includes(searchTerm.toLowerCase())
+                          .includes(searchTerm.toLowerCase()),
                     );
 
                     // If no devices match, skip this group
@@ -807,7 +808,7 @@ const AlertsModal: React.FC<AlertsModalProps> = ({
                             onChange={(e) =>
                               handleGroupCheckboxClick(
                                 groupId,
-                                e.target.checked
+                                e.target.checked,
                               )
                             }
                             onClick={(e) => e.stopPropagation()}
@@ -858,15 +859,15 @@ const AlertsModal: React.FC<AlertsModalProps> = ({
                                         autoCheckedDevices.includes(device._id)
                                           ? "#d1f7c4" // Green for already linked (CREATE MODE ONLY)
                                           : selectedDevices.includes(device._id)
-                                          ? "#e6f7ff" // Blue for newly selected
-                                          : "transparent",
+                                            ? "#e6f7ff" // Blue for newly selected
+                                            : "transparent",
                                     }}
                                   >
                                     <input
                                       type="checkbox"
                                       className="custom-checkbox"
                                       checked={selectedDevices.includes(
-                                        device._id
+                                        device._id,
                                       )}
                                       onChange={() =>
                                         handleDeviceToggle(device._id)
@@ -874,7 +875,9 @@ const AlertsModal: React.FC<AlertsModalProps> = ({
                                       disabled={
                                         loading ||
                                         (mode === "create" &&
-                                          autoCheckedDevices.includes(device._id))
+                                          autoCheckedDevices.includes(
+                                            device._id,
+                                          ))
                                       }
                                       style={{
                                         marginRight: "8px",
@@ -900,7 +903,7 @@ const AlertsModal: React.FC<AlertsModalProps> = ({
                                       {device.registrationNo}
                                       {mode === "create" &&
                                         autoCheckedDevices.includes(
-                                          device._id
+                                          device._id,
                                         ) && (
                                           <span
                                             style={{
@@ -924,7 +927,7 @@ const AlertsModal: React.FC<AlertsModalProps> = ({
                                         key={`empty-${index}`}
                                         style={{ flex: "1" }}
                                       />
-                                    )
+                                    ),
                                   )}
                               </div>
                             ))}
@@ -932,7 +935,7 @@ const AlertsModal: React.FC<AlertsModalProps> = ({
                         )}
                       </div>
                     );
-                  }
+                  },
                 )}
               </div>
               {/* {selectedDevices.length === 0 && (

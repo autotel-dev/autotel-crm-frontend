@@ -27,7 +27,7 @@ const AddGroupModal: React.FC<PropsTypes> = ({
   geofences,
 }) => {
   const { userPersonalizationData } = useSelector(
-    (state: any) => state.personalization
+    (state: any) => state.personalization,
   );
   const dispatch = useDispatch();
 
@@ -51,7 +51,7 @@ const AddGroupModal: React.FC<PropsTypes> = ({
   useEffect(() => {
     setGeofencesList(() => {
       const ungroupedGeofence = geofences.find(
-        (geofence) => geofence.group === "Ungrouped"
+        (geofence) => geofence.group === "Ungrouped",
       );
 
       if (ungroupedGeofence) {
@@ -107,7 +107,7 @@ const AddGroupModal: React.FC<PropsTypes> = ({
             ...formData,
             geofences: allcheckedGeofences,
           },
-          { url: CREATE_GROUP }
+          { url: CREATE_GROUP },
         ).then(async (data: any) => {
           if (data.success) {
             Swal.fire({
@@ -153,7 +153,7 @@ const AddGroupModal: React.FC<PropsTypes> = ({
                   checked: false,
                   items: groupGeofencesObj[group],
                   subgroups: [],
-                })
+                }),
               );
 
               for (let i = 0; i < initialGroupGeofences.length; i++) {
@@ -177,7 +177,7 @@ const AddGroupModal: React.FC<PropsTypes> = ({
                     }
                   }
                 }
-                console.log("subGroups", subGroups);
+                // console.log("subGroups", subGroups);
 
                 subGroups.forEach((geofenceSubGroup: any) => {
                   subGroupsGeofencesObj[geofenceSubGroup] =
@@ -202,7 +202,7 @@ const AddGroupModal: React.FC<PropsTypes> = ({
                 });
 
                 // console.log(groups);
-                console.log("subGroupsGeofencesObj", subGroupsGeofencesObj);
+                // console.log("subGroupsGeofencesObj", subGroupsGeofencesObj);
 
                 // Convert groupDevicesObj to initialGroupDevices array format
                 Object.keys(subGroupsGeofencesObj).forEach((group: any) => {
@@ -273,10 +273,10 @@ const AddGroupModal: React.FC<PropsTypes> = ({
 
   // Filter geofences based on search query
   const filteredGeofences = geofencesList.filter((geofence: any) =>
-    geofence.label.toLowerCase().includes(searchValue.toLowerCase())
+    geofence.label.toLowerCase().includes(searchValue.toLowerCase()),
   );
-  console.log("checking data arry");
-  console.log(filteredGeofences);
+  // console.log("checking data arry");
+  // console.log(filteredGeofences);
 
   return (
     <Col md={6}>

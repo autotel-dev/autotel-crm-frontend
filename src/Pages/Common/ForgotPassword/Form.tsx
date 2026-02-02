@@ -28,7 +28,7 @@ const CommonForm = ({ alignLogo }: CommonFormPropsType) => {
   const navigate = useNavigate();
 
   const { userPersonalizationData } = useSelector(
-    (state: any) => state.personalization
+    (state: any) => state.personalization,
   );
 
   const {
@@ -51,7 +51,7 @@ const CommonForm = ({ alignLogo }: CommonFormPropsType) => {
         await create(userData, {
           url: VERIFY_EMAIL,
         }).then(async (userData: any) => {
-          console.log("response: ", data);
+          // console.log("response: ", data);
           setLoading(false);
 
           if (!userData.success) {
@@ -80,7 +80,7 @@ const CommonForm = ({ alignLogo }: CommonFormPropsType) => {
             await create(emailData, {
               url: SEND_OTP,
             }).then(async (data: any) => {
-              console.log("response: ", data);
+              // console.log("response: ", data);
 
               // setLoading(false);
 
@@ -109,7 +109,7 @@ const CommonForm = ({ alignLogo }: CommonFormPropsType) => {
                       emailAddress: emailData.emailAddress,
                       userId: emailData.userId,
                     },
-                  }
+                  },
                 );
               }
 
@@ -207,8 +207,8 @@ const CommonForm = ({ alignLogo }: CommonFormPropsType) => {
                   {loading
                     ? "Loading..."
                     : otpSendingLoading
-                    ? "Please Wait.. OTP is sending"
-                    : "Send OTP"}
+                      ? "Please Wait.. OTP is sending"
+                      : "Send OTP"}
                 </button>
               ) : (
                 <Button
@@ -222,8 +222,8 @@ const CommonForm = ({ alignLogo }: CommonFormPropsType) => {
                   {loading
                     ? "Loading..."
                     : otpSendingLoading
-                    ? "Please Wait.. OTP is sending"
-                    : "Send OTP"}
+                      ? "Please Wait.. OTP is sending"
+                      : "Send OTP"}
                 </Button>
               )}
             </div>

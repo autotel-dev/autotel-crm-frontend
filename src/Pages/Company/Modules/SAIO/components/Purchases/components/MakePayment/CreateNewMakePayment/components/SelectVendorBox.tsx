@@ -23,7 +23,7 @@ const SelectVendorBox: React.FC<propTypes> = ({
   // disabled,
 }) => {
   const { vendors, toAccounts } = useSelector(
-    (state: any) => state.makePayments
+    (state: any) => state.makePayments,
   );
   const [vendorsList, setVendorsList] = useState([]);
   const dispatch = useDispatch();
@@ -52,17 +52,17 @@ const SelectVendorBox: React.FC<propTypes> = ({
           .localeCompare((optionB?.label ?? "").toLowerCase())
       }
       onChange={(e, options) => {
-        console.log("toAccounts", toAccounts);
+        // console.log("toAccounts", toAccounts);
 
         const account = toAccounts?.find(
-          (item: any, index: any) => options.label == item?.name
+          (item: any, index: any) => options.label == item?.name,
         );
         setToAccount(account?._id);
         setVendorBalance(account?.vendor?.overPaymentBalance);
         setVendorPayables(account?.vendor?.payables);
         setVendor(e);
 
-        console.log("account", account);
+        // console.log("account", account);
       }}
       options={vendorsList}
     />

@@ -98,7 +98,7 @@ const GeofencesTreeViewAccordian = ({
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
 
-  // console.log("devices", devices);
+  // // console.log("devices", devices);
 
   useEffect(() => {
     if (searchValue.length >= 1) {
@@ -158,8 +158,8 @@ const GeofencesTreeViewAccordian = ({
   };
 
   const handleSubGroupCheckboxClick = (e: any, group: any, subGroup: any) => {
-    console.log("group", group);
-    console.log("subGroup", subGroup);
+    // console.log("group", group);
+    // console.log("subGroup", subGroup);
 
     const updatedGeofences = geofences.map((geofence: any) => {
       if (geofence.group === group.group) {
@@ -176,16 +176,16 @@ const GeofencesTreeViewAccordian = ({
         // );
 
         var subGroupToUpdate = geofence?.subgroups?.find(
-          (subgroup: any) => subGroup.subgroup == subgroup.subgroup
+          (subgroup: any) => subGroup.subgroup == subgroup.subgroup,
         );
 
-        console.log("subGroupToUpdate", subGroupToUpdate);
+        // console.log("subGroupToUpdate", subGroupToUpdate);
 
         var updatedSubGroupGeofences = subGroupToUpdate.items.map(
           (itemm: any) => ({
             ...itemm,
             checked: !subGroup.checked, // Set checked to the opposite of group.checked
-          })
+          }),
         );
         var updatedSubGroups = geofence?.subgroups?.map((subgroup: any) => {
           if (subgroup.subgroup == subGroup.subgroup) {
@@ -200,7 +200,7 @@ const GeofencesTreeViewAccordian = ({
             };
           }
         });
-        console.log("geofence.items", geofence.items);
+        // console.log("geofence.items", geofence.items);
 
         return {
           ...geofence,
@@ -234,7 +234,7 @@ const GeofencesTreeViewAccordian = ({
     e: any,
     group: any,
     selectedGeofence: any,
-    index: any
+    index: any,
   ) => {
     // Prevent the click event from propagating to the accordion
     e.stopPropagation();
@@ -242,9 +242,9 @@ const GeofencesTreeViewAccordian = ({
     // Find the device corresponding to the group title
 
     var geofenceToUpdate = geofences.find(
-      (geofence: any) => geofence.group === group.group
+      (geofence: any) => geofence.group === group.group,
     );
-    console.log(geofenceToUpdate);
+    // console.log(geofenceToUpdate);
 
     if (geofenceToUpdate && geofenceToUpdate.items[index]) {
       const lastIndex = geofenceToUpdate.items.length;
@@ -281,11 +281,11 @@ const GeofencesTreeViewAccordian = ({
       };
 
       const updatedGeofences = geofences.map((geofence: any) =>
-        geofence.group === group.group ? updatedGeofence : geofence
+        geofence.group === group.group ? updatedGeofence : geofence,
       );
       // Create a new array of devices with the updated device object at the same index
       dispatch(setGeofences(updatedGeofences));
-      console.log(updatedGeofences);
+      // console.log(updatedGeofences);
     }
   };
 
@@ -294,16 +294,16 @@ const GeofencesTreeViewAccordian = ({
     group: any,
     subGroup: any,
     selectedGeofence: any,
-    index: any
+    index: any,
   ) => {
     // Prevent the click event from propagating to the accordion
     e.stopPropagation();
-    console.log(e, group, subGroup, selectedGeofence, index);
+    // console.log(e, group, subGroup, selectedGeofence, index);
 
     var geofenceToUpdate = geofences.find(
-      (geofence: any) => geofence.group === group.group
+      (geofence: any) => geofence.group === group.group,
     );
-    console.log(geofenceToUpdate);
+    // console.log(geofenceToUpdate);
 
     if (geofenceToUpdate && geofenceToUpdate.items[index]) {
       const lastIndex = geofenceToUpdate.items.length;
@@ -339,9 +339,9 @@ const GeofencesTreeViewAccordian = ({
       // --------------------------------------------------------
 
       var subGroupGeofenceToUpdate = geofenceToUpdate.subgroups.find(
-        (subgroup: any) => subgroup.subgroup === subGroup.subgroup
+        (subgroup: any) => subgroup.subgroup === subGroup.subgroup,
       );
-      console.log(subGroupGeofenceToUpdate);
+      // console.log(subGroupGeofenceToUpdate);
 
       if (subGroupGeofenceToUpdate && subGroupGeofenceToUpdate.items[index]) {
         const lastIndex = subGroupGeofenceToUpdate.items.length;
@@ -378,23 +378,23 @@ const GeofencesTreeViewAccordian = ({
           (subgroup: any) =>
             subgroup.subgroup === subGroup.subgroup
               ? updatedSubgroupedGeofence
-              : subgroup
+              : subgroup,
         );
         const updatedGeofences = geofences.map((geofence: any) =>
           geofence.group === group.group
             ? { ...updatedGeofence, subgroups: updatedSubGroupGeofences }
-            : geofence
+            : geofence,
         );
         // Create a new array of devices with the updated device object at the same index
         dispatch(setGeofences(updatedGeofences));
-        console.log(updatedGeofences);
+        // console.log(updatedGeofences);
       } else {
         const updatedGeofences = geofences.map((geofence: any) =>
-          geofence.group === group.group ? updatedGeofence : geofence
+          geofence.group === group.group ? updatedGeofence : geofence,
         );
         // Create a new array of devices with the updated device object at the same index
         dispatch(setGeofences(updatedGeofences));
-        console.log(updatedGeofences);
+        // console.log(updatedGeofences);
       }
     }
   };
@@ -402,13 +402,13 @@ const GeofencesTreeViewAccordian = ({
   // var geofenceExists = geofencesDetailData.find(
   //   (geofence: any) => geofence._id === selectedGeofence._id
   // );
-  // console.log("deviceExists", deviceExists);
+  // // console.log("deviceExists", deviceExists);
 
   // if (geofenceExists) {
   //   const tempList = geofencesDetailData.filter(
   //     (geofence: any) => geofence._id !== geofenceExists._id
   //   );
-  //   // console.log("devicesDetailData by filter", devicesDetailData);
+  //   // // console.log("devicesDetailData by filter", devicesDetailData);
 
   //   dispatch(setGeofencesDetailData([...tempList]));
   // } else {
@@ -436,27 +436,27 @@ const GeofencesTreeViewAccordian = ({
       // Update geofences detail data for each item in the geofence group
       updatedItems.forEach((selectedGeofence: any) => {
         const geofenceExists = geofencesDetailData.find(
-          (geofence: any) => geofence._id === selectedGeofence._id
+          (geofence: any) => geofence._id === selectedGeofence._id,
         );
 
         if (!geofenceExists) {
           dispatch(
-            setGeofencesDetailData([...geofencesDetailData, selectedGeofence])
+            setGeofencesDetailData([...geofencesDetailData, selectedGeofence]),
           );
         }
       });
-      // console.log(updatedGeofences);
+      // // console.log(updatedGeofences);
 
       var updatedSubGroupItems;
 
       geofence.subgroups.map((subGroup: any) => {
-        console.log("subGroup", subGroup);
+        // console.log("subGroup", subGroup);
 
         updatedSubGroupItems = subGroup.items.map((item: any) => ({
           ...item,
           checked: true,
         }));
-        // console.log("updatedSubGroupItems",updatedSubGroupItems);
+        // // console.log("updatedSubGroupItems",updatedSubGroupItems);
 
         var subGroup = {
           ...subGroup,
@@ -481,7 +481,7 @@ const GeofencesTreeViewAccordian = ({
         //   };
         // }
       });
-      console.log("subGroups", subGroups);
+      // console.log("subGroups", subGroups);
       if (geofence.subgroups.length > 0) {
         finalGeofences.push({
           ...geofence,
@@ -498,8 +498,8 @@ const GeofencesTreeViewAccordian = ({
       }
     });
 
-    console.log(updatedGeofences);
-    console.log(finalGeofences);
+    // console.log(updatedGeofences);
+    // console.log(finalGeofences);
     dispatch(setGeofences(finalGeofences));
   };
 
@@ -519,20 +519,20 @@ const GeofencesTreeViewAccordian = ({
       // Update geofences detail data for each item in the geofence group
       updatedItems.forEach((selectedGeofence: any) => {
         const geofenceExists = geofencesDetailData.find(
-          (geofence: any) => geofence._id === selectedGeofence._id
+          (geofence: any) => geofence._id === selectedGeofence._id,
         );
       });
 
       var updatedSubGroupItems;
 
       geofence.subgroups.map((subGroup: any) => {
-        console.log("subGroup", subGroup);
+        // console.log("subGroup", subGroup);
 
         updatedSubGroupItems = subGroup.items.map((item: any) => ({
           ...item,
           checked: false,
         }));
-        // console.log("updatedSubGroupItems",updatedSubGroupItems);
+        // // console.log("updatedSubGroupItems",updatedSubGroupItems);
 
         var subGroup = {
           ...subGroup,
@@ -557,7 +557,7 @@ const GeofencesTreeViewAccordian = ({
         //   };
         // }
       });
-      console.log("subGroups", subGroups);
+      // console.log("subGroups", subGroups);
       if (geofence.subgroups.length > 0) {
         finalGeofences.push({
           ...geofence,
@@ -574,8 +574,8 @@ const GeofencesTreeViewAccordian = ({
       }
     });
     dispatch(setGeofencesDetailData([]));
-    console.log(updatedGeofences);
-    console.log(finalGeofences);
+    // console.log(updatedGeofences);
+    // console.log(finalGeofences);
     dispatch(setGeofences(finalGeofences));
   };
 
@@ -583,9 +583,9 @@ const GeofencesTreeViewAccordian = ({
     e: any,
     group: any,
     selectedGeofence: any,
-    index: any
+    index: any,
   ) => {
-    console.log("selectedGeofence", selectedGeofence);
+    // console.log("selectedGeofence", selectedGeofence);
 
     // Prevent the click event from propagating to the accordion
     e.stopPropagation();
@@ -593,9 +593,9 @@ const GeofencesTreeViewAccordian = ({
     // Find the device corresponding to the group title
 
     var geofenceToUpdate = geofences.find(
-      (geofence: any) => geofence.group === group.group
+      (geofence: any) => geofence.group === group.group,
     );
-    console.log(geofenceToUpdate);
+    // console.log(geofenceToUpdate);
 
     if (geofenceToUpdate && geofenceToUpdate.items[index]) {
       const lastIndex = geofenceToUpdate.items.length;
@@ -619,7 +619,7 @@ const GeofencesTreeViewAccordian = ({
         items: geofenceToUpdate.items.map((item: any) => {
           if (selectedGeofence._id === item._id) {
             var geofenceExists = geofencesDetailData.find(
-              (geofence: any) => geofence._id === selectedGeofence._id
+              (geofence: any) => geofence._id === selectedGeofence._id,
             );
 
             if (selectedGeofence.edited) {
@@ -658,7 +658,7 @@ const GeofencesTreeViewAccordian = ({
                   isEdit: false,
                 };
               }),
-            }
+            },
       );
       // Create a new array of devices with the updated device object at the same index
       dispatch(setGeofences(updatedGeofences));
@@ -695,7 +695,7 @@ const GeofencesTreeViewAccordian = ({
     setGroupList(() =>
       geofencesGroup.map((item: any) => {
         return { label: item?.title, value: item?._id };
-      })
+      }),
     );
   }, [geofencesGroup]);
 
@@ -721,12 +721,12 @@ const GeofencesTreeViewAccordian = ({
                 geofenceType == "circle"
                   ? circle
                   : geofenceType == "rectangle"
-                  ? rectangle
-                  : geofenceType == "polygon" && { bounds: polygon },
+                    ? rectangle
+                    : geofenceType == "polygon" && { bounds: polygon },
             },
             {
               url: `${UPDATE_GEOFENCE}/${editedItem._id}`,
-            }
+            },
           )
         : create(
             {
@@ -739,12 +739,12 @@ const GeofencesTreeViewAccordian = ({
                 geofenceType == "circle"
                   ? circle
                   : geofenceType == "rectangle"
-                  ? rectangle
-                  : geofenceType == "polygon" && { bounds: polygon },
+                    ? rectangle
+                    : geofenceType == "polygon" && { bounds: polygon },
             },
             {
               url: CREATE_GEOFENCE,
-            }
+            },
           );
       try {
         await url.then((data: any) => {
@@ -765,7 +765,7 @@ const GeofencesTreeViewAccordian = ({
               setLoading(false);
             }
             if (data.success) {
-              // console.log(data);
+              // // console.log(data);
 
               setIsNewGeofence(false);
               setIsEditGeofence(false);
@@ -777,7 +777,7 @@ const GeofencesTreeViewAccordian = ({
 
               // dispatch(setCountriesStart());
               getAll({ url: GET_ALL_GEOFENCES }).then((data: any) => {
-                // console.log("api call --- >", data);
+                // // console.log("api call --- >", data);
                 if (data == undefined) {
                   Swal.fire({
                     text: "Failed to fetch due to connection refused",
@@ -832,7 +832,7 @@ const GeofencesTreeViewAccordian = ({
                     });
 
                     const initialGroupGeofences = Object.keys(
-                      groupGeofencesObj
+                      groupGeofencesObj,
                     ).map((group) => ({
                       group,
                       checked: false,
@@ -841,7 +841,7 @@ const GeofencesTreeViewAccordian = ({
                     }));
 
                     for (let i = 0; i < initialGroupGeofences.length; i++) {
-                      // console.log("item.group -- >", initialGroupGeofences[i].group);
+                      // // console.log("item.group -- >", initialGroupGeofences[i].group);
                       for (
                         let j = 0;
                         j < initialGroupGeofences[i].items.length;
@@ -863,7 +863,7 @@ const GeofencesTreeViewAccordian = ({
                           }
                         }
                       }
-                      console.log("subGroups", subGroups);
+                      // console.log("subGroups", subGroups);
 
                       subGroups.forEach((geofenceSubGroup: any) => {
                         subGroupsGeofencesObj[geofenceSubGroup] =
@@ -888,11 +888,11 @@ const GeofencesTreeViewAccordian = ({
                             }));
                       });
 
-                      // console.log(groups);
-                      console.log(
-                        "subGroupsGeofencesObj",
-                        subGroupsGeofencesObj
-                      );
+                      // // console.log(groups);
+                      //  console.log(
+                      //   "subGroupsGeofencesObj",
+                      //   subGroupsGeofencesObj
+                      // );
 
                       // Convert groupDevicesObj to initialGroupDevices array format
                       Object.keys(subGroupsGeofencesObj).forEach(
@@ -902,7 +902,7 @@ const GeofencesTreeViewAccordian = ({
                             checked: false,
                             items: subGroupsGeofencesObj[group],
                           });
-                        }
+                        },
                       );
 
                       initialGroupGeofences[i] = {
@@ -998,7 +998,7 @@ const GeofencesTreeViewAccordian = ({
             setSubGroupList(() =>
               data.data.map((item: any) => {
                 return { label: item?.title, value: item?._id };
-              })
+              }),
             );
           } else {
             setSubGroupList([]);
@@ -1066,7 +1066,7 @@ const GeofencesTreeViewAccordian = ({
                     .localeCompare((optionB?.label ?? "").toLowerCase())
                 }
                 onChange={(e) => {
-                  // console.log(e);
+                  // // console.log(e);
                   dispatch(setType(e));
                   setGeofenceType(e);
                   // dispatch(setCountryId(e));
@@ -1096,7 +1096,7 @@ const GeofencesTreeViewAccordian = ({
                     setSubGroupList(() =>
                       subGroupData.data.map((item: any) => {
                         return { label: item?.title, value: item?._id };
-                      })
+                      }),
                     );
                   } else {
                     setSubGroupList([]);
@@ -1222,12 +1222,12 @@ const GeofencesTreeViewAccordian = ({
                     {},
                     {
                       url: `${IMPORT_GEOFENCE}`,
-                    }
+                    },
                   ).then((data: any) => {
                     if (data.success) {
-                      // // console.log(data);
+                      // // // console.log(data);
                       getAll({ url: GET_ALL_GEOFENCES }).then((data: any) => {
-                        // console.log("api call --- >", data);
+                        // // console.log("api call --- >", data);
                         if (data == undefined) {
                           Swal.fire({
                             text: "Failed to fetch due to connection refused",
@@ -1246,7 +1246,6 @@ const GeofencesTreeViewAccordian = ({
                             let subGroupsGeofencesObj: any = {};
                             let initialSubGroupsGeofences: any = [];
 
-                            
                             data.data.forEach((item: any) => {
                               const group = item.geofenceGroup
                                 ? item.geofenceGroup.title
@@ -1264,7 +1263,7 @@ const GeofencesTreeViewAccordian = ({
                             });
 
                             const initialGroupGeofences = Object.keys(
-                              groupGeofencesObj
+                              groupGeofencesObj,
                             ).map((group) => ({
                               group,
                               checked: false,
@@ -1277,7 +1276,7 @@ const GeofencesTreeViewAccordian = ({
                               i < initialGroupGeofences.length;
                               i++
                             ) {
-                              // console.log("item.group -- >", initialGroupGeofences[i].group);
+                              // // console.log("item.group -- >", initialGroupGeofences[i].group);
                               for (
                                 let j = 0;
                                 j < initialGroupGeofences[i].items.length;
@@ -1299,7 +1298,7 @@ const GeofencesTreeViewAccordian = ({
                                   }
                                 }
                               }
-                              console.log("subGroups", subGroups);
+                              // console.log("subGroups", subGroups);
 
                               subGroups.forEach((geofenceSubGroup: any) => {
                                 subGroupsGeofencesObj[geofenceSubGroup] =
@@ -1324,11 +1323,11 @@ const GeofencesTreeViewAccordian = ({
                                     }));
                               });
 
-                              // console.log(groups);
-                              console.log(
-                                "subGroupsGeofencesObj",
-                                subGroupsGeofencesObj
-                              );
+                              // // console.log(groups);
+                              //  console.log(
+                              //     "subGroupsGeofencesObj",
+                              //     subGroupsGeofencesObj
+                              //   );
 
                               // Convert groupDevicesObj to initialGroupDevices array format
                               Object.keys(subGroupsGeofencesObj).forEach(
@@ -1338,7 +1337,7 @@ const GeofencesTreeViewAccordian = ({
                                     checked: false,
                                     items: subGroupsGeofencesObj[group],
                                   });
-                                }
+                                },
                               );
 
                               initialGroupGeofences[i] = {
@@ -1450,7 +1449,7 @@ const GeofencesTreeViewAccordian = ({
             Select All (
             {geofences.reduce(
               (total: any, group: any) => total + group.items.length,
-              0
+              0,
             )}
             )
           </label>
@@ -1463,8 +1462,10 @@ const GeofencesTreeViewAccordian = ({
           {matchedGroups
             ?.filter((item: any) =>
               item.items.some((bodyItem: any) =>
-                bodyItem.title.toLowerCase().includes(searchValue.toLowerCase())
-              )
+                bodyItem.title
+                  .toLowerCase()
+                  .includes(searchValue.toLowerCase()),
+              ),
             )
             .sort((a: any, b: any) => {
               // Ensure "Ungrouped" comes first
@@ -1498,7 +1499,7 @@ const GeofencesTreeViewAccordian = ({
                             item.items.filter((bodyItem: any) =>
                               bodyItem.title
                                 .toLowerCase()
-                                .includes(searchValue.toLowerCase())
+                                .includes(searchValue.toLowerCase()),
                             ).length
                           }
                           )
@@ -1524,8 +1525,8 @@ const GeofencesTreeViewAccordian = ({
                             item.items.some((bodyItem: any) =>
                               bodyItem.title
                                 .toLowerCase()
-                                .includes(searchValue.toLowerCase())
-                            )
+                                .includes(searchValue.toLowerCase()),
+                            ),
                           )
                           .map((itemm: any, indexx: any) => {
                             const gradientId = `gradient-${indexx}`; // Generate a unique gradient ID for each item
@@ -1563,7 +1564,7 @@ const GeofencesTreeViewAccordian = ({
                                             handleSubGroupCheckboxClick(
                                               e,
                                               item,
-                                              itemm
+                                              itemm,
                                             )
                                           }
                                         />
@@ -1580,8 +1581,8 @@ const GeofencesTreeViewAccordian = ({
                                                 bodyItem.title
                                                   .toLowerCase()
                                                   .includes(
-                                                    searchValue.toLowerCase()
-                                                  )
+                                                    searchValue.toLowerCase(),
+                                                  ),
                                             ).length
                                           }
                                           )
@@ -1609,14 +1610,14 @@ const GeofencesTreeViewAccordian = ({
                                             bodyItemm.title
                                               .toLowerCase()
                                               .includes(
-                                                searchValue.toLowerCase()
-                                              )
+                                                searchValue.toLowerCase(),
+                                              ),
                                           )
                                           .slice(0, itemsLength)
                                           .map(
                                             (
                                               bodyItemm: any,
-                                              bodyindex: any
+                                              bodyindex: any,
                                             ) => {
                                               return (
                                                 <div
@@ -1679,7 +1680,7 @@ const GeofencesTreeViewAccordian = ({
                                                               item,
                                                               itemm,
                                                               bodyItemm,
-                                                              bodyindex
+                                                              bodyindex,
                                                             );
                                                           }}
                                                         />
@@ -1706,7 +1707,7 @@ const GeofencesTreeViewAccordian = ({
                                                             .length > 26
                                                             ? `${bodyItemm.title.slice(
                                                                 0,
-                                                                26
+                                                                26,
                                                               )}...`
                                                             : bodyItemm.title}
                                                         </span>
@@ -1729,7 +1730,7 @@ const GeofencesTreeViewAccordian = ({
                                                         }}
                                                         onMouseEnter={() => {
                                                           handleMouseEnter(
-                                                            bodyItemm._id
+                                                            bodyItemm._id,
                                                           );
                                                           setIsHovered(true);
                                                         }}
@@ -1750,34 +1751,34 @@ const GeofencesTreeViewAccordian = ({
                                                                 bodyItemm.title,
                                                             };
                                                           setGeofenceType(
-                                                            bodyItemm.type
+                                                            bodyItemm.type,
                                                           );
                                                           dispatch(
                                                             setEditedItem(
-                                                              bodyItemm
-                                                            )
+                                                              bodyItemm,
+                                                            ),
                                                           );
                                                           dispatch(
                                                             setCircle(
-                                                              bodyItemm.geofencePositions
-                                                            )
+                                                              bodyItemm.geofencePositions,
+                                                            ),
                                                           );
                                                           dispatch(
                                                             setRectangle(
-                                                              bodyItemm.geofencePositions
-                                                            )
+                                                              bodyItemm.geofencePositions,
+                                                            ),
                                                           );
                                                           dispatch(
                                                             setPolygon(
                                                               bodyItemm
                                                                 .geofencePositions
-                                                                .bounds
-                                                            )
+                                                                .bounds,
+                                                            ),
                                                           );
                                                           setGroup(
                                                             bodyItemm
                                                               ?.geofenceGroup
-                                                              ?._id
+                                                              ?._id,
                                                           );
 
                                                           if (
@@ -1787,36 +1788,36 @@ const GeofencesTreeViewAccordian = ({
                                                             setSubGroup(
                                                               bodyItemm
                                                                 ?.geofenceSubGroup
-                                                                ?._id
+                                                                ?._id,
                                                             );
                                                           }
 
                                                           setFormData(
-                                                            updateFormData
+                                                            updateFormData,
                                                           );
                                                           if (
                                                             bodyItemm.edited ==
                                                             false
                                                           ) {
                                                             setIsEditGeofence(
-                                                              true
+                                                              true,
                                                             );
                                                             setIsNewGeofence(
-                                                              false
+                                                              false,
                                                             );
                                                           } else {
                                                             setIsEditGeofence(
-                                                              false
+                                                              false,
                                                             );
                                                             setIsNewGeofence(
-                                                              false
+                                                              false,
                                                             );
                                                           }
                                                           handleEditGeofence(
                                                             e,
                                                             item,
                                                             bodyItemm,
-                                                            bodyindex
+                                                            bodyindex,
                                                           );
                                                         }}
                                                       >
@@ -1826,12 +1827,14 @@ const GeofencesTreeViewAccordian = ({
                                                   </div>
                                                 </div>
                                               );
-                                            }
+                                            },
                                           )}
                                         {item.items.filter((bodyItem: any) =>
                                           bodyItem.title
                                             .toLowerCase()
-                                            .includes(searchValue.toLowerCase())
+                                            .includes(
+                                              searchValue.toLowerCase(),
+                                            ),
                                         ).length >= 15 && (
                                           <div
                                             style={{
@@ -1847,7 +1850,7 @@ const GeofencesTreeViewAccordian = ({
                                                 itemsLength < item.items.length
                                               ) {
                                                 setItemsLength(
-                                                  itemsLength + 14
+                                                  itemsLength + 14,
                                                 );
                                               }
                                             }}
@@ -1868,7 +1871,7 @@ const GeofencesTreeViewAccordian = ({
                         .filter((bodyItem: any) =>
                           bodyItem.title
                             .toLowerCase()
-                            .includes(searchValue.toLowerCase())
+                            .includes(searchValue.toLowerCase()),
                         )
                         .slice(0, itemsLength)
                         .map((bodyItem: any, bodyindex: any) => {
@@ -1925,7 +1928,7 @@ const GeofencesTreeViewAccordian = ({
                                             e,
                                             item,
                                             bodyItem,
-                                            bodyindex
+                                            bodyindex,
                                           );
                                         }}
                                       />
@@ -1985,17 +1988,17 @@ const GeofencesTreeViewAccordian = ({
                                         setGeofenceType(bodyItem.type);
                                         dispatch(setEditedItem(bodyItem));
                                         dispatch(
-                                          setCircle(bodyItem.geofencePositions)
+                                          setCircle(bodyItem.geofencePositions),
                                         );
                                         dispatch(
                                           setRectangle(
-                                            bodyItem.geofencePositions
-                                          )
+                                            bodyItem.geofencePositions,
+                                          ),
                                         );
                                         dispatch(
                                           setPolygon(
-                                            bodyItem.geofencePositions.bounds
-                                          )
+                                            bodyItem.geofencePositions.bounds,
+                                          ),
                                         );
                                         setGroup(bodyItem?.geofenceGroup?._id);
 
@@ -2011,7 +2014,7 @@ const GeofencesTreeViewAccordian = ({
                                           e,
                                           item,
                                           bodyItem,
-                                          bodyindex
+                                          bodyindex,
                                         );
                                       }}
                                     >
@@ -2026,7 +2029,7 @@ const GeofencesTreeViewAccordian = ({
                       {item.items.filter((bodyItem: any) =>
                         bodyItem.title
                           .toLowerCase()
-                          .includes(searchValue.toLowerCase())
+                          .includes(searchValue.toLowerCase()),
                       ).length >= 15 && (
                         <div
                           style={{
