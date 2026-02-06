@@ -13,7 +13,7 @@ import "./reportsStyle.css";
 import Loader from "../../../../../Utilities/Loader/Loader";
 import xlsx from "json-as-xlsx";
 
-import { setReports } from "../../../../../../ReaduxToolkit/Reducer/ReportsSlice";
+import { setReports } from "../../../../../../ReaduxToolkit/Reducer/TripReportsSlice";
 import "jspdf-autotable";
 import { H4 } from "../../../../../../AbstractElements";
 import H7 from "../../../../../../CommonElements/Headings/H7Element";
@@ -37,7 +37,7 @@ import { IMAGE_BASE_URL } from "../../../../../../Utilities/api/apiEndpoints";
 import BackgroundImage from "../../../../../../assets/Background Image.png";
 
 const ReportsList = () => {
-  const { reports } = useSelector((state: any) => state.reports);
+  const { reports } = useSelector((state: any) => state.tripReports);
 
   // console.log("Reports in list", reports);
 
@@ -49,7 +49,7 @@ const ReportsList = () => {
     e: any,
     settings: any,
     excelData: any,
-    index: any
+    index: any,
   ) {
     xlsx(excelData, settings);
   }
@@ -136,24 +136,22 @@ const ReportsList = () => {
                     (item: any, index: any) => {
                       return {
                         ...item,
-                        alertEventCloseDate: `${
-                          item?.alertEventCloseDate == "Not Completed"
-                            ? "Not Completed"
-                            : item?.alertEventCloseDate.slice(0, 10)
-                        }, ${
-                          item?.alertEventCloseDate == "Not Completed"
+                        alertEventCloseDate: `${item?.alertEventCloseDate == "Not Completed"
+                          ? "Not Completed"
+                          : item?.alertEventCloseDate.slice(0, 10)
+                          }, ${item?.alertEventCloseDate == "Not Completed"
                             ? ""
                             : convertTo12HourFormat(
-                                item?.alertEventCloseDate,
-                                false
-                              )
-                        }`,
+                              item?.alertEventCloseDate,
+                              false,
+                            )
+                          }`,
                         serverTime: `${item?.serverDateAndTime.slice(
                           0,
-                          10
+                          10,
                         )}, ${convertTo12HourFormat(
                           item?.serverDateAndTime,
-                          true
+                          true,
                         )}`,
                         user:
                           item?.alertEventCloseDate == "Not Completed"
@@ -162,7 +160,7 @@ const ReportsList = () => {
                         latitude: Number(item.latitude).toFixed(7),
                         longitude: Number(item.longitude).toFixed(7),
                       };
-                    }
+                    },
                   );
                 } else if (row.type == "/get-operator-performance-report") {
                   columns = [
@@ -180,10 +178,10 @@ const ReportsList = () => {
                     row.data.data.length == 0
                       ? []
                       : row.data.data.map((item: any, index: any) => {
-                          return {
-                            ...item,
-                          };
-                        });
+                        return {
+                          ...item,
+                        };
+                      });
                 } else if (row.type == "/get-inventory-report") {
                   columns = [
                     // { label: "Id", value: "_id" },
@@ -200,18 +198,18 @@ const ReportsList = () => {
                     row.data.data.length == 0
                       ? []
                       : row.data.data.map((item: any, index: any) => {
-                          return {
-                            // _id: item._id,
-                            productName: item.productName,
-                            productType: item.productType,
-                            serialNumber: item.serialNumber,
-                            sku: item.sku,
-                            user: item.user.fullName,
-                            company: item.company.fullName,
-                            branch: item.branch.name,
-                            warehouse: item.warehouse.name,
-                          };
-                        });
+                        return {
+                          // _id: item._id,
+                          productName: item.productName,
+                          productType: item.productType,
+                          serialNumber: item.serialNumber,
+                          sku: item.sku,
+                          user: item.user.fullName,
+                          company: item.company.fullName,
+                          branch: item.branch.name,
+                          warehouse: item.warehouse.name,
+                        };
+                      });
                 } else if (row.type == "/get-sale-invoice-report") {
                   columns = [
                     // { label: "Id", value: "_id" },
@@ -228,18 +226,18 @@ const ReportsList = () => {
                     row.data.data.length == 0
                       ? []
                       : row.data.data.map((item: any, index: any) => {
-                          return {
-                            // _id: item._id,
-                            customerName: item.customerName,
-                            address: item.address,
-                            comments: item.comments,
-                            date: item.invoiceDate,
-                            dueDate: item.invoiceDueDate,
-                            status: item.status,
-                            netAmount: item.netAmount,
-                            grossAmount: item.grossAmount,
-                          };
-                        });
+                        return {
+                          // _id: item._id,
+                          customerName: item.customerName,
+                          address: item.address,
+                          comments: item.comments,
+                          date: item.invoiceDate,
+                          dueDate: item.invoiceDueDate,
+                          status: item.status,
+                          netAmount: item.netAmount,
+                          grossAmount: item.grossAmount,
+                        };
+                      });
                 } else if (row.type == "/get-purchase-invoice-report") {
                   columns = [
                     // { label: "Id", value: "_id" },
@@ -256,18 +254,18 @@ const ReportsList = () => {
                     row.data.data.length == 0
                       ? []
                       : row.data.data.map((item: any, index: any) => {
-                          return {
-                            // _id: item._id,
-                            vendor: item.vendor.vendorName,
-                            branch: item.branch.name,
-                            warehouse: item.warehouse.name,
-                            date: item.invoiceDate,
-                            dueDate: item.invoiceDueDate,
-                            status: item.status,
-                            shippingCharges: item.shippingCharges,
-                            netAmount: item.netAmount,
-                          };
-                        });
+                        return {
+                          // _id: item._id,
+                          vendor: item.vendor.vendorName,
+                          branch: item.branch.name,
+                          warehouse: item.warehouse.name,
+                          date: item.invoiceDate,
+                          dueDate: item.invoiceDueDate,
+                          status: item.status,
+                          shippingCharges: item.shippingCharges,
+                          netAmount: item.netAmount,
+                        };
+                      });
                 } else if (row.type == "/get-inventory-lifecycle-report") {
                   columns = [
                     // { label: "Id", value: "_id" },
@@ -283,34 +281,34 @@ const ReportsList = () => {
                     row.data.data.length == 0
                       ? []
                       : row.data.data[0].activities.map(
-                          (item: any, index: any) => {
-                            return {
-                              // _id: item._id,
-                              type: formatUnderscoredString(item.activityType),
-                              status: formatUnderscoredString(item.status),
-                              fromVehicle:
-                                item.fromVehicle == null
-                                  ? "N/A"
-                                  : item?.fromVehicle.registrationNo,
-                              toVehicle:
-                                item.toVehicle == null
-                                  ? "N/A"
-                                  : item?.toVehicle.registrationNo,
-                              fromCustomer:
-                                item.fromCustomer == null
-                                  ? "N/A"
-                                  : item?.fromCustomer?.fullName,
-                              toCustomer:
-                                item.toCustomer == null
-                                  ? "N/A"
-                                  : item?.toCustomer?.fullName,
-                              installer:
-                                item.installer == null
-                                  ? "N/A"
-                                  : item?.installer?.fullName,
-                            };
-                          }
-                        );
+                        (item: any, index: any) => {
+                          return {
+                            // _id: item._id,
+                            type: formatUnderscoredString(item.activityType),
+                            status: formatUnderscoredString(item.status),
+                            fromVehicle:
+                              item.fromVehicle == null
+                                ? "N/A"
+                                : item?.fromVehicle.registrationNo,
+                            toVehicle:
+                              item.toVehicle == null
+                                ? "N/A"
+                                : item?.toVehicle.registrationNo,
+                            fromCustomer:
+                              item.fromCustomer == null
+                                ? "N/A"
+                                : item?.fromCustomer?.fullName,
+                            toCustomer:
+                              item.toCustomer == null
+                                ? "N/A"
+                                : item?.toCustomer?.fullName,
+                            installer:
+                              item.installer == null
+                                ? "N/A"
+                                : item?.installer?.fullName,
+                          };
+                        },
+                      );
                 } else if (row.type == "/get-activity-report") {
                   columns = [
                     // { label: "Id", value: "_id" },
@@ -326,33 +324,33 @@ const ReportsList = () => {
                     row.data.data.length == 0
                       ? []
                       : row.data.data.map((item: any, index: any) => {
-                          return {
-                            // _id: item._id,
-                            type: formatUnderscoredString(item.activityType),
-                            status: formatUnderscoredString(item.status),
-                            fromVehicle:
-                              item.fromVehicle == null
-                                ? "N/A"
-                                : item?.fromVehicle.registrationNo,
-                            toVehicle:
-                              item.toVehicle == null
-                                ? "N/A"
-                                : item?.toVehicle.registrationNo,
-                            inventory:
-                              item?.inventoryItems?.length == 0
-                                ? "N/A"
-                                : `${item?.inventoryItems.map(
-                                    (inv: any, index: any) =>
-                                      `${inv.serialNumber} | `
-                                  )}`,
+                        return {
+                          // _id: item._id,
+                          type: formatUnderscoredString(item.activityType),
+                          status: formatUnderscoredString(item.status),
+                          fromVehicle:
+                            item.fromVehicle == null
+                              ? "N/A"
+                              : item?.fromVehicle.registrationNo,
+                          toVehicle:
+                            item.toVehicle == null
+                              ? "N/A"
+                              : item?.toVehicle.registrationNo,
+                          inventory:
+                            item?.inventoryItems?.length == 0
+                              ? "N/A"
+                              : `${item?.inventoryItems.map(
+                                (inv: any, index: any) =>
+                                  `${inv.serialNumber} | `,
+                              )}`,
 
-                            installer:
-                              item.installer == null
-                                ? "N/A"
-                                : item?.installer?.fullName,
-                            remarks: item.remarks == "" ? "N/A" : item?.remarks,
-                          };
-                        });
+                          installer:
+                            item.installer == null
+                              ? "N/A"
+                              : item?.installer?.fullName,
+                          remarks: item.remarks == "" ? "N/A" : item?.remarks,
+                        };
+                      });
                 } else if (row.type == "/get-amc-due-report") {
                   columns = [
                     { label: "Customer", value: "customer" },
@@ -400,34 +398,69 @@ const ReportsList = () => {
                     row.data.data.length == 0
                       ? []
                       : row.data.data.map((item: any, index: any) => {
-                          return {
-                            complaintId: item.complaintId,
-                            deviceName: item?.deviceName,
-                            description: item?.description,
-                            priorty: item?.priorty,
-                            status: item?.status,
-                            resolvingDate: `${
-                              item?.resolvingDate !== null
-                                ? item?.resolvingDate.slice(0, 10)
-                                : "N/A"
-                            }, ${
-                              item?.resolvingDate !== null
-                                ? convertTo12HourFormat(
-                                    item?.resolvingDate,
-                                    true
-                                  )
-                                : ""
+                        return {
+                          complaintId: item.complaintId,
+                          deviceName: item?.deviceName,
+                          description: item?.description,
+                          priorty: item?.priorty,
+                          status: item?.status,
+                          resolvingDate: `${item?.resolvingDate !== null
+                            ? item?.resolvingDate.slice(0, 10)
+                            : "N/A"
+                            }, ${item?.resolvingDate !== null
+                              ? convertTo12HourFormat(
+                                item?.resolvingDate,
+                                true,
+                              )
+                              : ""
                             }`,
-                            createdAt: `${item?.createdAt.slice(
-                              0,
-                              10
-                            )}, ${convertTo12HourFormat(
-                              item?.createdAt,
-                              true
-                            )}`,
-                          };
-                        });
+                          createdAt: `${item?.createdAt.slice(
+                            0,
+                            10,
+                          )}, ${convertTo12HourFormat(
+                            item?.createdAt,
+                            true,
+                          )}`,
+                        };
+                      });
+                } else if (row.type == "/get-trip-detail-report") {
+                  columns = [
+                    { label: "Seq", value: "sequence" },
+                    { label: "Location", value: "location" },
+                    { label: "Type", value: "stopType" },
+                    { label: "Sched. Arrival", value: "scheduledArrival" },
+                    { label: "Actual Arrival", value: "actualArrival" },
+                    { label: "Arrival Status", value: "arrivalStatus" },
+                    { label: "Delay (Min)", value: "arrivalDelayMin" },
+                    { label: "Departure", value: "departureTime" },
+                    { label: "Dep. Status", value: "departureStatus" },
+                    { label: "Stay (Min)", value: "stayDurationMin" },
+                    { label: "Overstayed", value: "overstayed" },
+                    { label: "Total Duration", value: "totalDuration" },
+                    { label: "Total Delay", value: "totalDelay" },
+                    { label: "Overstay Count", value: "overstayCount" },
+                    { label: "Compliance Rate", value: "complianceRate" },
+                  ];
+                  rowData = row.data.data.stops.map(
+                    (item: any, index: any) => {
+                      return {
+                        ...item,
+                        scheduledArrival: item.scheduledArrival ? `${item.scheduledArrival.slice(0, 10)}, ${convertTo12HourFormat(item.scheduledArrival, false)}` : "N/A",
+                        actualArrival: item.actualArrival ? `${item.actualArrival.slice(0, 10)}, ${convertTo12HourFormat(item.actualArrival, false)}` : "N/A",
+                        departureTime: item.departureTime ? `${item.departureTime.slice(0, 10)}, ${convertTo12HourFormat(item.departureTime, false)}` : "N/A",
+                        overstayed: item.overstayed ? "Yes" : "No",
+                        stopType: formatUnderscoredString(item.stopType),
+                        arrivalStatus: formatUnderscoredString(item.arrivalStatus),
+                        departureStatus: formatUnderscoredString(item.departureStatus),
+                        totalDuration: row.data.data.metrics.totalDurationMin + " Min",
+                        totalDelay: row.data.data.metrics.totalDelayMin + " Min",
+                        overstayCount: row.data.data.metrics.overstayCount,
+                        complianceRate: row.data.data.metrics.complianceRate,
+                      };
+                    },
+                  );
                 }
+
 
                 let data = [
                   {
@@ -483,24 +516,22 @@ const ReportsList = () => {
                     (item: any, index: any) => {
                       return {
                         ...item,
-                        alertEventCloseDate: `${
-                          item?.alertEventCloseDate == "Not Completed"
-                            ? "Not Completed"
-                            : item?.alertEventCloseDate.slice(0, 10)
-                        }, ${
-                          item?.alertEventCloseDate == "Not Completed"
+                        alertEventCloseDate: `${item?.alertEventCloseDate == "Not Completed"
+                          ? "Not Completed"
+                          : item?.alertEventCloseDate.slice(0, 10)
+                          }, ${item?.alertEventCloseDate == "Not Completed"
                             ? ""
                             : convertTo12HourFormat(
-                                item?.alertEventCloseDate,
-                                false
-                              )
-                        }`,
+                              item?.alertEventCloseDate,
+                              false,
+                            )
+                          }`,
                         serverTime: `${item?.serverDateAndTime.slice(
                           0,
-                          10
+                          10,
                         )}, ${convertTo12HourFormat(
                           item?.serverDateAndTime,
-                          true
+                          true,
                         )}`,
                         user:
                           item?.alertEventCloseDate == "Not Completed"
@@ -509,7 +540,7 @@ const ReportsList = () => {
                         latitude: Number(item.latitude).toFixed(7),
                         longitude: Number(item.longitude).toFixed(7),
                       };
-                    }
+                    },
                   );
                   setHeader(columns);
                   setPdfData(rowData);
@@ -529,10 +560,10 @@ const ReportsList = () => {
                     row.data.data.length == 0
                       ? []
                       : row.data.data.map((item: any, index: any) => {
-                          return {
-                            ...item,
-                          };
-                        });
+                        return {
+                          ...item,
+                        };
+                      });
                   setHeader(columns);
                   setPdfData(rowData);
                 } else if (row.type == "/get-inventory-report") {
@@ -551,18 +582,18 @@ const ReportsList = () => {
                     row.data.data.length == 0
                       ? []
                       : row.data.data.map((item: any, index: any) => {
-                          return {
-                            // _id: item._id,
-                            productName: item.productName,
-                            productType: item.productType,
-                            serialNumber: item.serialNumber,
-                            sku: item.sku,
-                            user: item.user.fullName,
-                            company: item.company.fullName,
-                            branch: item.branch.name,
-                            warehouse: item.warehouse.name,
-                          };
-                        });
+                        return {
+                          // _id: item._id,
+                          productName: item.productName,
+                          productType: item.productType,
+                          serialNumber: item.serialNumber,
+                          sku: item.sku,
+                          user: item.user.fullName,
+                          company: item.company.fullName,
+                          branch: item.branch.name,
+                          warehouse: item.warehouse.name,
+                        };
+                      });
                   setHeader(columns);
                   setPdfData(rowData);
                 } else if (row.type == "/get-sale-invoice-report") {
@@ -581,18 +612,18 @@ const ReportsList = () => {
                     row.data.data.length == 0
                       ? []
                       : row.data.data.map((item: any, index: any) => {
-                          return {
-                            // _id: item._id,
-                            customerName: item.customerName,
-                            address: item.address,
-                            comments: item.comments,
-                            date: item.invoiceDate,
-                            dueDate: item.invoiceDueDate,
-                            status: item.status,
-                            netAmount: item.netAmount,
-                            grossAmount: item.grossAmount,
-                          };
-                        });
+                        return {
+                          // _id: item._id,
+                          customerName: item.customerName,
+                          address: item.address,
+                          comments: item.comments,
+                          date: item.invoiceDate,
+                          dueDate: item.invoiceDueDate,
+                          status: item.status,
+                          netAmount: item.netAmount,
+                          grossAmount: item.grossAmount,
+                        };
+                      });
                   setHeader(columns);
                   setPdfData(rowData);
                 } else if (row.type == "/get-purchase-invoice-report") {
@@ -638,34 +669,34 @@ const ReportsList = () => {
                     row.data.data.length == 0
                       ? []
                       : row.data.data[0].activities.map(
-                          (item: any, index: any) => {
-                            return {
-                              // _id: item._id,
-                              type: formatUnderscoredString(item.activityType),
-                              status: formatUnderscoredString(item.status),
-                              fromVehicle:
-                                item.fromVehicle == null
-                                  ? "N/A"
-                                  : item?.fromVehicle.registrationNo,
-                              toVehicle:
-                                item.toVehicle == null
-                                  ? "N/A"
-                                  : item?.toVehicle.registrationNo,
-                              fromCustomer:
-                                item.fromCustomer == null
-                                  ? "N/A"
-                                  : item?.fromCustomer?.fullName,
-                              toCustomer:
-                                item.toCustomer == null
-                                  ? "N/A"
-                                  : item?.toCustomer?.fullName,
-                              installer:
-                                item.installer == null
-                                  ? "N/A"
-                                  : item?.installer?.fullName,
-                            };
-                          }
-                        );
+                        (item: any, index: any) => {
+                          return {
+                            // _id: item._id,
+                            type: formatUnderscoredString(item.activityType),
+                            status: formatUnderscoredString(item.status),
+                            fromVehicle:
+                              item.fromVehicle == null
+                                ? "N/A"
+                                : item?.fromVehicle.registrationNo,
+                            toVehicle:
+                              item.toVehicle == null
+                                ? "N/A"
+                                : item?.toVehicle.registrationNo,
+                            fromCustomer:
+                              item.fromCustomer == null
+                                ? "N/A"
+                                : item?.fromCustomer?.fullName,
+                            toCustomer:
+                              item.toCustomer == null
+                                ? "N/A"
+                                : item?.toCustomer?.fullName,
+                            installer:
+                              item.installer == null
+                                ? "N/A"
+                                : item?.installer?.fullName,
+                          };
+                        },
+                      );
                   setHeader(columns);
                   setPdfData(rowData);
                 } else if (row.type == "/get-activity-report") {
@@ -684,33 +715,33 @@ const ReportsList = () => {
                     row.data.data.length == 0
                       ? []
                       : row.data.data.map((item: any, index: any) => {
-                          return {
-                            // _id: item._id,
-                            type: formatUnderscoredString(item.activityType),
-                            status: formatUnderscoredString(item.status),
-                            fromVehicle:
-                              item.fromVehicle == null
-                                ? "N/A"
-                                : item?.fromVehicle.registrationNo,
-                            toVehicle:
-                              item.toVehicle == null
-                                ? "N/A"
-                                : item?.toVehicle.registrationNo,
-                            inventory:
-                              item?.inventoryItems?.length == 0
-                                ? "N/A"
-                                : `${item?.inventoryItems.map(
-                                    (inv: any, index: any) =>
-                                      `${inv.serialNumber} | `
-                                  )}`,
+                        return {
+                          // _id: item._id,
+                          type: formatUnderscoredString(item.activityType),
+                          status: formatUnderscoredString(item.status),
+                          fromVehicle:
+                            item.fromVehicle == null
+                              ? "N/A"
+                              : item?.fromVehicle.registrationNo,
+                          toVehicle:
+                            item.toVehicle == null
+                              ? "N/A"
+                              : item?.toVehicle.registrationNo,
+                          inventory:
+                            item?.inventoryItems?.length == 0
+                              ? "N/A"
+                              : `${item?.inventoryItems.map(
+                                (inv: any, index: any) =>
+                                  `${inv.serialNumber} | `,
+                              )}`,
 
-                            installer:
-                              item.installer == null
-                                ? "N/A"
-                                : item?.installer?.fullName,
-                            remarks: item.remarks == "" ? "N/A" : item?.remarks,
-                          };
-                        });
+                          installer:
+                            item.installer == null
+                              ? "N/A"
+                              : item?.installer?.fullName,
+                          remarks: item.remarks == "" ? "N/A" : item?.remarks,
+                        };
+                      });
                   setHeader(columns);
                   setPdfData(rowData);
                 } else if (row.type == "/get-amc-due-report") {
@@ -731,18 +762,18 @@ const ReportsList = () => {
                     row.data.data.length == 0
                       ? []
                       : row.data.data.map((item: any, index: any) => {
-                          return {
-                            customer: item.customer.fullName,
-                            registrationNo: item.registrationNo,
-                            serviceRenewalDate: item.serviceRenewalDate.slice(
-                              0,
-                              10
-                            ),
-                            servicePackageCharges: item.servicePackageCharges,
-                            servicePackageDiscountedCharges:
-                              item.servicePackageDiscountedCharges,
-                          };
-                        });
+                        return {
+                          customer: item.customer.fullName,
+                          registrationNo: item.registrationNo,
+                          serviceRenewalDate: item.serviceRenewalDate.slice(
+                            0,
+                            10,
+                          ),
+                          servicePackageCharges: item.servicePackageCharges,
+                          servicePackageDiscountedCharges:
+                            item.servicePackageDiscountedCharges,
+                        };
+                      });
                   setHeader(columns);
                   setPdfData(rowData);
                 } else if (row.type == "/get-complaint-report") {
@@ -768,37 +799,71 @@ const ReportsList = () => {
                     row.data.data.length == 0
                       ? []
                       : row.data.data.map((item: any, index: any) => {
-                          return {
-                            complaintId: item.complaintId,
-                            deviceName: item.deviceName,
-                            description: item.description,
-                            priorty: item.priorty,
-                            status: item.status,
-                            resolvingDate: `${
-                              item?.resolvingDate !== null
-                                ? item?.resolvingDate.slice(0, 10)
-                                : "N/A"
-                            }, ${
-                              item?.resolvingDate !== null
-                                ? convertTo12HourFormat(
-                                    item?.resolvingDate,
-                                    true
-                                  )
-                                : ""
+                        return {
+                          complaintId: item.complaintId,
+                          deviceName: item.deviceName,
+                          description: item.description,
+                          priorty: item.priorty,
+                          status: item.status,
+                          resolvingDate: `${item?.resolvingDate !== null
+                            ? item?.resolvingDate.slice(0, 10)
+                            : "N/A"
+                            }, ${item?.resolvingDate !== null
+                              ? convertTo12HourFormat(
+                                item?.resolvingDate,
+                                true,
+                              )
+                              : ""
                             }`,
-                            createdAt: `${item?.createdAt.slice(
-                              0,
-                              10
-                            )}, ${convertTo12HourFormat(
-                              item?.createdAt,
-                              true
-                            )}`,
-                          };
-                        });
+                          createdAt: `${item?.createdAt.slice(
+                            0,
+                            10,
+                          )}, ${convertTo12HourFormat(
+                            item?.createdAt,
+                            true,
+                          )}`,
+                        };
+                      });
+
+                  setHeader(columns);
+                  setPdfData(rowData);
+                } else if (row.type == "/get-trip-detail-report") {
+                  columns = [
+                    { label: "Seq", value: "sequence" },
+                    { label: "Location", value: "location" },
+                    { label: "Type", value: "stopType" },
+                    { label: "Sched. Arrival", value: "scheduledArrival" },
+                    { label: "Actual Arrival", value: "actualArrival" },
+                    { label: "Arrival Status", value: "arrivalStatus" },
+                    { label: "Delay (Min)", value: "arrivalDelayMin" },
+                    { label: "Departure", value: "departureTime" },
+                    { label: "Dep. Status", value: "departureStatus" },
+                    { label: "Stay (Min)", value: "stayDurationMin" },
+                    { label: "Overstayed", value: "overstayed" },
+                  ];
+                  rowData = row.data.data.stops.map(
+                    (item: any, index: any) => {
+                      return {
+                        ...item,
+                        scheduledArrival: item.scheduledArrival ? `${item.scheduledArrival.slice(0, 10)}, ${convertTo12HourFormat(item.scheduledArrival, false)}` : "N/A",
+                        actualArrival: item.actualArrival ? `${item.actualArrival.slice(0, 10)}, ${convertTo12HourFormat(item.actualArrival, false)}` : "N/A",
+                        departureTime: item.departureTime ? `${item.departureTime.slice(0, 10)}, ${convertTo12HourFormat(item.departureTime, false)}` : "N/A",
+                        overstayed: item.overstayed ? "Yes" : "No",
+                        stopType: formatUnderscoredString(item.stopType),
+                        arrivalStatus: formatUnderscoredString(item.arrivalStatus),
+                        departureStatus: formatUnderscoredString(item.departureStatus),
+                        totalDuration: row.data.data.metrics.totalDurationMin + " Min",
+                        totalDelay: row.data.data.metrics.totalDelayMin + " Min",
+                        overstayCount: row.data.data.metrics.overstayCount,
+                        complianceRate: row.data.data.metrics.complianceRate,
+                      };
+                    },
+                  );
 
                   setHeader(columns);
                   setPdfData(rowData);
                 }
+
 
                 setReportName(row.data.title);
                 toggleModal();
@@ -849,24 +914,22 @@ const ReportsList = () => {
                     (item: any, index: any) => {
                       return {
                         ...item,
-                        alertEventCloseDate: `${
-                          item?.alertEventCloseDate == "Not Completed"
-                            ? "Not Completed"
-                            : item?.alertEventCloseDate.slice(0, 10)
-                        }, ${
-                          item?.alertEventCloseDate == "Not Completed"
+                        alertEventCloseDate: `${item?.alertEventCloseDate == "Not Completed"
+                          ? "Not Completed"
+                          : item?.alertEventCloseDate.slice(0, 10)
+                          }, ${item?.alertEventCloseDate == "Not Completed"
                             ? ""
                             : convertTo12HourFormat(
-                                item?.alertEventCloseDate,
-                                false
-                              )
-                        }`,
+                              item?.alertEventCloseDate,
+                              false,
+                            )
+                          }`,
                         serverTime: `${item?.serverDateAndTime.slice(
                           0,
-                          10
+                          10,
                         )}, ${convertTo12HourFormat(
                           item?.serverDateAndTime,
-                          true
+                          true,
                         )}`,
                         user:
                           item?.alertEventCloseDate == "Not Completed"
@@ -875,7 +938,7 @@ const ReportsList = () => {
                         latitude: Number(item.latitude).toFixed(7),
                         longitude: Number(item.longitude).toFixed(7),
                       };
-                    }
+                    },
                   );
                   setHeader(columns);
                   setPdfData(rowData);
@@ -995,34 +1058,34 @@ const ReportsList = () => {
                     row.data.data.length == 0
                       ? []
                       : row.data.data[0].activities.map(
-                          (item: any, index: any) => {
-                            return {
-                              // _id: item._id,
-                              type: formatUnderscoredString(item.activityType),
-                              status: formatUnderscoredString(item.status),
-                              fromVehicle:
-                                item.fromVehicle == null
-                                  ? "N/A"
-                                  : item?.fromVehicle.registrationNo,
-                              toVehicle:
-                                item.toVehicle == null
-                                  ? "N/A"
-                                  : item?.toVehicle.registrationNo,
-                              fromCustomer:
-                                item.fromCustomer == null
-                                  ? "N/A"
-                                  : item?.fromCustomer?.fullName,
-                              toCustomer:
-                                item.toCustomer == null
-                                  ? "N/A"
-                                  : item?.toCustomer?.fullName,
-                              installer:
-                                item.installer == null
-                                  ? "N/A"
-                                  : item?.installer?.fullName,
-                            };
-                          }
-                        );
+                        (item: any, index: any) => {
+                          return {
+                            // _id: item._id,
+                            type: formatUnderscoredString(item.activityType),
+                            status: formatUnderscoredString(item.status),
+                            fromVehicle:
+                              item.fromVehicle == null
+                                ? "N/A"
+                                : item?.fromVehicle.registrationNo,
+                            toVehicle:
+                              item.toVehicle == null
+                                ? "N/A"
+                                : item?.toVehicle.registrationNo,
+                            fromCustomer:
+                              item.fromCustomer == null
+                                ? "N/A"
+                                : item?.fromCustomer?.fullName,
+                            toCustomer:
+                              item.toCustomer == null
+                                ? "N/A"
+                                : item?.toCustomer?.fullName,
+                            installer:
+                              item.installer == null
+                                ? "N/A"
+                                : item?.installer?.fullName,
+                          };
+                        },
+                      );
 
                   setHeader(columns);
                   setPdfData(rowData);
@@ -1055,8 +1118,9 @@ const ReportsList = () => {
                         item?.inventoryItems?.length == 0
                           ? "N/A"
                           : `${item?.inventoryItems.map(
-                              (inv: any, index: any) => `${inv.serialNumber} | `
-                            )}`,
+                            (inv: any, index: any) =>
+                              `${inv.serialNumber} | `,
+                          )}`,
 
                       installer:
                         item.installer == null
@@ -1116,37 +1180,71 @@ const ReportsList = () => {
                     row.data.data.length == 0
                       ? []
                       : row.data.data.map((item: any, index: any) => {
-                          return {
-                            complaintId: item.complaintId,
-                            deviceName: item.deviceName,
-                            description: item.description,
-                            priorty: item.priorty,
-                            status: item.status,
-                            resolvingDate: `${
-                              item?.resolvingDate !== null
-                                ? item?.resolvingDate.slice(0, 10)
-                                : "N/A"
-                            }, ${
-                              item?.resolvingDate !== null
-                                ? convertTo12HourFormat(
-                                    item?.resolvingDate,
-                                    true
-                                  )
-                                : ""
+                        return {
+                          complaintId: item.complaintId,
+                          deviceName: item.deviceName,
+                          description: item.description,
+                          priorty: item.priorty,
+                          status: item.status,
+                          resolvingDate: `${item?.resolvingDate !== null
+                            ? item?.resolvingDate.slice(0, 10)
+                            : "N/A"
+                            }, ${item?.resolvingDate !== null
+                              ? convertTo12HourFormat(
+                                item?.resolvingDate,
+                                true,
+                              )
+                              : ""
                             }`,
-                            createdAt: `${item?.createdAt.slice(
-                              0,
-                              10
-                            )}, ${convertTo12HourFormat(
-                              item?.createdAt,
-                              true
-                            )}`,
-                          };
-                        });
+                          createdAt: `${item?.createdAt.slice(
+                            0,
+                            10,
+                          )}, ${convertTo12HourFormat(
+                            item?.createdAt,
+                            true,
+                          )}`,
+                        };
+                      });
+
+                  setHeader(columns);
+                  setPdfData(rowData);
+                } else if (row.type == "/get-trip-detail-report") {
+                  columns = [
+                    { label: "Seq", value: "sequence" },
+                    { label: "Location", value: "location" },
+                    { label: "Type", value: "stopType" },
+                    { label: "Sched. Arrival", value: "scheduledArrival" },
+                    { label: "Actual Arrival", value: "actualArrival" },
+                    { label: "Arrival Status", value: "arrivalStatus" },
+                    { label: "Delay (Min)", value: "arrivalDelayMin" },
+                    { label: "Departure", value: "departureTime" },
+                    { label: "Dep. Status", value: "departureStatus" },
+                    { label: "Stay (Min)", value: "stayDurationMin" },
+                    { label: "Overstayed", value: "overstayed" },
+                  ];
+                  rowData = row.data.data.stops.map(
+                    (item: any, index: any) => {
+                      return {
+                        ...item,
+                        scheduledArrival: item.scheduledArrival ? `${item.scheduledArrival.slice(0, 10)}, ${convertTo12HourFormat(item.scheduledArrival, false)}` : "N/A",
+                        actualArrival: item.actualArrival ? `${item.actualArrival.slice(0, 10)}, ${convertTo12HourFormat(item.actualArrival, false)}` : "N/A",
+                        departureTime: item.departureTime ? `${item.departureTime.slice(0, 10)}, ${convertTo12HourFormat(item.departureTime, false)}` : "N/A",
+                        overstayed: item.overstayed ? "Yes" : "No",
+                        stopType: formatUnderscoredString(item.stopType),
+                        arrivalStatus: formatUnderscoredString(item.arrivalStatus),
+                        departureStatus: formatUnderscoredString(item.departureStatus),
+                        totalDuration: row.data.data.metrics.totalDurationMin + " Min",
+                        totalDelay: row.data.data.metrics.totalDelayMin + " Min",
+                        overstayCount: row.data.data.metrics.overstayCount,
+                        complianceRate: row.data.data.metrics.complianceRate,
+                      };
+                    },
+                  );
 
                   setHeader(columns);
                   setPdfData(rowData);
                 }
+
 
                 setReportName(row.data.title);
                 // downloadPDF();
@@ -1263,7 +1361,7 @@ const ReportsList = () => {
   });
 
   const { userPersonalizationData } = useSelector(
-    (state: any) => state.personalization
+    (state: any) => state.personalization,
   );
 
   const PDFDcoument = () => (
@@ -1274,7 +1372,7 @@ const ReportsList = () => {
             <Image
               src={
                 userPersonalizationData !== null &&
-                userPersonalizationData?.loginPageLogo.url !== ""
+                  userPersonalizationData?.loginPageLogo.url !== ""
                   ? `${IMAGE_BASE_URL}/${userPersonalizationData?.loginPageLogo.url}`
                   : BackgroundImage
               }

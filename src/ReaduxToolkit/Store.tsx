@@ -71,6 +71,7 @@ import VendorLedgerSlice from "./Reducer/VendorLedgerSlice";
 import CompanyLedgerSlice from "./Reducer/CompanyLedgerSlice";
 import AlertRuleSlice from "./Reducer/AlertRuleSlice";
 import TripSlice from "./Reducer/TripSlice";
+import TripReportsSlice from "./Reducer/TripReportsSlice";
 
 const Store = configureStore({
   reducer: {
@@ -146,6 +147,7 @@ const Store = configureStore({
     companyLedgers: CompanyLedgerSlice,
     alertRules: AlertRuleSlice,
     trips: TripSlice,
+    tripReports: TripReportsSlice,
   },
 });
 

@@ -17,9 +17,14 @@ import {
   setOperatorsForReport,
   setProductsForReport,
   setProductTypesForReport,
-  setReports,
   setWarehousesForReport,
 } from "../../../../../../ReaduxToolkit/Reducer/ReportsSlice";
+
+import {
+  setTripsForReport,
+  setReports
+} from "../../../../../../ReaduxToolkit/Reducer/TripReportsSlice";
+
 import CustomDropdown from "./CustomDropdown";
 import {
   GET_ALL_ACTIVE_SUB_ROLES,
@@ -30,6 +35,7 @@ import {
   GET_ALL_OPERATORS,
   GET_ALL_PRODUCT_TYPES,
   GET_ALL_PRODUCTS,
+  GET_ALL_TRIPS_DROPDOWN,
   GET_ALL_VENDORS,
   GET_ALL_WAREHOUSES,
   GET_COMPLAINT_CENTER_PRIORITY_STATUS,
@@ -42,7 +48,9 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
   const { userPersonalizationData } = useSelector(
     (state: any) => state.personalization,
   );
-  const { reports, reportsType } = useSelector((state: any) => state.reports);
+  const { reports, reportsType } = useSelector(
+    (state: any) => state.tripReports,
+  );
   var tempReports: any = [...reports];
   const [decodedToken, setDecodedToken]: any = useState(null);
   const authToken = localStorage.getItem("token");
@@ -89,12 +97,20 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
   // const typeList: any = [reportsType];
   const [type, setType] = useState("");
   const tempReportsTypeList: any = [];
+  // useEffect(() => {
+  //   reportsType.map((item: any, index: any) => {
+  //     tempReportsTypeList.push({
+  //       value: `${item.endPoint}`,
+  //       label: `${item.title}`,
+  //     });
+  //   });
+  //   setReportsType(tempReportsTypeList);
+  // }, [reportsType]);
+
   useEffect(() => {
-    reportsType.map((item: any, index: any) => {
-      tempReportsTypeList.push({
-        value: `${item.endPoint}`,
-        label: `${item.title}`,
-      });
+    tempReportsTypeList.push({
+      value: `/get-trip-detail-report`,
+      label: `Trip Detail`,
     });
     setReportsType(tempReportsTypeList);
   }, [reportsType]);
@@ -161,7 +177,32 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
     setComplaintDepartmentForReportsList,
   ]: any = useState([]);
 
+
+  const [tripsForReportsList, setTripsForReportsList]: any =
+    useState([]);
+  const [trip, setTrip]: any = useState("");
+
   useEffect(() => {
+    if (type == "/get-trip-detail-report") {
+      getAll({ url: GET_ALL_TRIPS_DROPDOWN }).then((data: any) => {
+        if (data?.success) {
+          console.log("data", data);
+          dispatch(setTripsForReport(data.data));
+          setTripsForReportsList(
+            data.data.map((item: any, index: any) => {
+              return {
+                value: `${item._id}`,
+                label: `${item.title}`,
+              };
+            }),
+          );
+        } else {
+          setTripsForReportsList([]);
+        }
+      });
+    }
+
+
     if (type == "/get-operator-performance-report") {
       getAll({ url: GET_ALL_OPERATORS }).then((data: any) => {
         if (data?.success) {
@@ -1439,6 +1480,85 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
       setLoading(false);
     }
   };
+  const addReportForTripDetail: SubmitHandler<ReportsType> = async (
+    data: any,
+  ) => {
+    setLoading(true);
+    if (
+      data.title !== "" &&
+      trip !== "" &&
+      type !== ""
+    ) {
+      const report = {
+        tripId: trip,
+      };
+
+      try {
+        await create(report, {
+          url: `${GET_REPORT_BASE_URL}${type}`,
+        }).then((data: any) => {
+          if (!data.success && data.message === ERROR_MESSAGE) {
+            setLoading(false);
+            addToggle();
+            setType("Select Type");
+            setTrip("");
+          }
+          if (!data.success) {
+            Swal.fire({
+              text: `${data.message}`,
+              icon: "error",
+              timer: 2000,
+              showConfirmButton: false,
+            });
+            setLoading(false);
+            addToggle();
+            setType("Select Type");
+          }
+          if (data.success) {
+            tempReports.push({
+              type: type,
+              data: {
+                title: data.data.tripInfo.title,
+                startDate: data.data.tripInfo.start,
+                endDate: data.data.tripInfo.end,
+                data: data.data,
+              },
+            });
+
+            dispatch(setReports(tempReports));
+            setLoading(false);
+            addToggle();
+            setType("Select Type");
+            setTrip("");
+          }
+        });
+      } catch (error: any) {
+        if (data == undefined) {
+          Swal.fire({
+            text: "Failed to create due to connection refused",
+            icon: "error",
+            timer: 2000,
+            showConfirmButton: false,
+          });
+
+          return;
+        }
+        setLoading(false);
+        addToggle();
+        setType("Select Type");
+        setTrip("");
+      }
+    } else {
+      Swal.fire({
+        text: "Required Fields are empty",
+        icon: "info",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+      setLoading(false);
+    }
+  };
+
 
   const getReport = (data: any) => {
     if (type == "/get-all-alert-events-report") {
@@ -1459,6 +1579,8 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
       addReportForAMCDue(data);
     } else if (type == "/get-complaint-report") {
       addReportForInternalComplaint(data);
+    } else if (type == "/get-trip-detail-report") {
+      addReportForTripDetail(data);
     }
   };
 
@@ -1530,17 +1652,15 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
     <Col md={6}>
       <div className="text-end">
         <button
-          className={`btn ${
-            userPersonalizationData?.buttonsAndBarsColor == null
-              ? "btn-primary"
-              : ""
-          }`}
+          className={`btn ${userPersonalizationData?.buttonsAndBarsColor == null
+            ? "btn-primary"
+            : ""
+            }`}
           style={{
             color: "white",
-            backgroundColor: `${
-              userPersonalizationData !== null &&
+            backgroundColor: `${userPersonalizationData !== null &&
               userPersonalizationData?.buttonsAndBarsColor
-            }`,
+              }`,
           }}
           onClick={addToggle}
         >
@@ -1569,8 +1689,8 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
 
           <ModalBody
             style={{
-              minHeight: "60vh",
-              maxHeight: "655vh",
+              // minHeight: "60vh",
+              // maxHeight: "655vh",
             }}
           >
             <form
@@ -1615,7 +1735,7 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
                   />
                 </FormGroup>
 
-                <FormGroup
+                {/* <FormGroup
                   className="col-md-6 create-group"
                   style={{
                     display: "flex",
@@ -1636,6 +1756,21 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
                       options={reportPeriodList}
                       onChange={handleReportTypeChange}
                     />
+                  </Col>
+                </FormGroup> */}
+
+
+                <FormGroup
+                  className="col-md-6 create-group"
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
+
+                  <Col md={12}>
+
                   </Col>
                 </FormGroup>
 
@@ -1700,7 +1835,7 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
                       />
                     </Col>
                   </FormGroup>
-                ) : type == "/get-inventory-report" ? (
+                ) : type == "/get-trip-detail-report" ? (
                   <FormGroup
                     className="col-md-6 create-group"
                     style={{
@@ -1709,13 +1844,14 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
                       alignItems: "center",
                     }}
                   >
-                    <div>Product Type:</div>
-                    <Col md={8}>
+                    <div>Trips:</div>
+                    <Col md={9}>
                       <Select
-                        mode="multiple"
+                        // mode="multiple"
+
                         showSearch
                         style={{ width: "100%" }}
-                        placeholder="Select Type"
+                        placeholder="Select Trips"
                         optionFilterProp="children"
                         filterOption={(input: any, option: any) =>
                           (option?.P ?? "").includes(input)
@@ -1726,21 +1862,10 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
                             .localeCompare((optionB?.P ?? "").toLowerCase())
                         }
                         onChange={(e: any, options) => {
-                          // console.log("e", e);
-
-                          if (e.includes("All")) {
-                            setProductTypes(
-                              productTypesForReportsList.map(
-                                (pt: any) => pt.value,
-                              ),
-                            );
-                          } else {
-                            setProductTypes(e);
-                          }
+                          setTrip(e);
                         }}
                         options={[
-                          { value: "All", label: "All" }, // Adding the 'All' option
-                          ...productTypesForReportsList,
+                          ...tripsForReportsList
                         ]}
                       />
                     </Col>
@@ -1847,12 +1972,10 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
                       <input
                         className="form-control"
                         type="text"
-                        // onChange={(e) => setIMEI(e.target.value)}
+
                         {...register("imei", { required: true })}
                       />
-                      {/* <span style={{ color: "red" }}>
-                        {errors.imei && "IMEI is required"}
-                      </span> */}
+
                     </Col>
                   </FormGroup>
                 ) : type == "/get-activity-report" ? (
@@ -1928,7 +2051,7 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
                 ) : (
                   <div className="col-md-6 create-group"></div>
                 )}
-                <FormGroup
+                {/* <FormGroup
                   className="col-md-6 create-group"
                   style={{
                     display: "flex",
@@ -2058,8 +2181,8 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
                   </FormGroup>
                 ) : (
                   <div></div>
-                )}
-                <FormGroup
+                )} */}
+                {/* <FormGroup
                   className="col-md-6 create-group"
                   style={{
                     display: "flex",
@@ -2225,21 +2348,21 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
                           setWarehouse(e);
                         }}
                         options={warehousesForReportsList}
-                        // onChange={(e: any, options) => {
-                        //   console.log("e", e);
+                      // onChange={(e: any, options) => {
+                      //   console.log("e", e);
 
-                        //   if (e.includes("All")) {
-                        //     setWarehouse(
-                        //       warehousesForReportsList.map((w: any) => w.value)
-                        //     );
-                        //   } else {
-                        //     setWarehouse(e);
-                        //   }
-                        // }}
-                        // options={[
-                        //   { value: "All", label: "All" }, // Adding the 'All' option
-                        //   ...warehousesForReportsList,
-                        // ]}
+                      //   if (e.includes("All")) {
+                      //     setWarehouse(
+                      //       warehousesForReportsList.map((w: any) => w.value)
+                      //     );
+                      //   } else {
+                      //     setWarehouse(e);
+                      //   }
+                      // }}
+                      // options={[
+                      //   { value: "All", label: "All" }, // Adding the 'All' option
+                      //   ...warehousesForReportsList,
+                      // ]}
                       />
                     </Col>
                   </FormGroup>
@@ -2363,13 +2486,13 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
                   </FormGroup>
                 ) : (
                   <div></div>
-                )}
+                )} */}
               </Row>
               <div
                 style={{
                   display: "flex",
                   justifyContent: "start",
-                  height: "150px",
+                  // height: "150px",
                   alignItems: "end",
                 }}
               >

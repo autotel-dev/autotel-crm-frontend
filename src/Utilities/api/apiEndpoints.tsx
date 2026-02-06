@@ -506,3 +506,6 @@ export const GET_ALL_TRIP_DRIVERS_DROPDOWN = `${API_BASE_URL}/trip/driver/get-al
 export const CREATE_TRIP = `${API_BASE_URL}/trip/create-trip`;
 export const GET_ALL_TRIPS = `${API_BASE_URL}/trip/get-all-trips`;
 export const VIEW_TRIP = `${API_BASE_URL}/trip/get-trip-details`;
+
+export const GET_ALL_TRIPS_DROPDOWN = `${API_BASE_URL}/trip/get-all-trips-dropdown`;
+export const GET_SINGLE_TRIP_DETIAL_REPORT = `${API_BASE_URL}/reports/get-trip-detail-report`;

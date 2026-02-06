@@ -11,7 +11,7 @@ import Loader from "../../../../../Utilities/Loader/Loader";
 import {
   setIsConnected,
   setReportstype,
-} from "../../../../../../ReaduxToolkit/Reducer/ReportsSlice";
+} from "../../../../../../ReaduxToolkit/Reducer/TripReportsSlice";
 import NoInternetConnection from "../../../../../Utilities/NoInternetConnection/NoInternetConnection";
 import { Flex } from "antd";
 import {
@@ -32,7 +32,7 @@ const Reports = () => {
   const [undefinedData, setUndefinedData] = useState(false);
   const [loading, setLoading] = useState(true);
   const [reportTypes, setReportTypes] = useState([]);
-  const { isConnected } = useSelector((state: any) => state.reports);
+  const { isConnected } = useSelector((state: any) => state.tripReports);
   const { devices } = useSelector((state: any) => state.monitoring);
 
   useEffect(() => {
@@ -211,15 +211,15 @@ const Reports = () => {
                       onChange={(e) => {
                         // filterCountriess(e);
                       }}
-                      // style={{
-                      //   backgroundColor: "#f1f1f1",
-                      //   borderRadius: "5px",
-                      //   padding: "15px",
-                      //   margin: "15px",
-                      //   width: "calc(100% - 30px)", // Adjusting width to accommodate padding and margin
-                      //   border: "none",
-                      //   outline: "none", // Removing default border outline
-                      // }}
+                    // style={{
+                    //   backgroundColor: "#f1f1f1",
+                    //   borderRadius: "5px",
+                    //   padding: "15px",
+                    //   margin: "15px",
+                    //   width: "calc(100% - 30px)", // Adjusting width to accommodate padding and margin
+                    //   border: "none",
+                    //   outline: "none", // Removing default border outline
+                    // }}
                     />
                   </Col>
                 </Card>
