@@ -4,6 +4,7 @@ const initialState = {
   reports: [],
   reportsType: [],
   tripsForReport: [],
+  vehiclesForTripReport: [],
   loading: false,
   error: null,
   isConnected: true,
@@ -34,6 +35,9 @@ const TripReportsSlice = createSlice({
     setTripsForReport: (state, action) => {
       state.tripsForReport = action.payload;
     },
+    setVehiclesForTripReport: (state, action) => {
+      state.vehiclesForTripReport = action.payload;
+    },
   },
 });
 export const {
@@ -42,7 +46,8 @@ export const {
   setReportstype,
   setReportsEnd,
   setIsConnected,
-  setTripsForReport
+  setTripsForReport,
+  setVehiclesForTripReport
 } = TripReportsSlice.actions;
 
 export default TripReportsSlice.reducer;

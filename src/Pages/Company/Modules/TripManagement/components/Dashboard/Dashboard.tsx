@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Card,
   CardBody,
@@ -19,6 +19,12 @@ import { H4, H5 } from "../../../../../../AbstractElements";
 import Breadcrumbs from "../../../../../../CommonElements/Breadcrumbs/Breadcrumbs";
 import DataTable from "react-data-table-component";
 import { useSelector } from "react-redux";
+import { getAll } from "../../../../../../Utilities/api";
+import {
+  GET_ACTIVE_TRIPS,
+  GET_LAST_TRIPS,
+  GET_TRIP_DASHBOARD_METRICS,
+} from "../../../../../../Utilities/api/apiEndpoints";
 
 const Dashboard = () => {
   const [activeFilter, setActiveFilter] = useState("All");
@@ -27,6 +33,39 @@ const Dashboard = () => {
   const { userPersonalizationData } = useSelector(
     (state: any) => state.personalization
   );
+
+  const [dashboardMetrics, setDashboardMetrics] = useState<any>(null);
+  const [activeViolationsList, setActiveViolationsList] = useState<any>([]);
+  const [allTripsList, setAllTripsList] = useState<any>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    setLoading(true);
+    const fetchDashboardData = async () => {
+      try {
+        const metricsRes: any = await getAll({ url: GET_TRIP_DASHBOARD_METRICS });
+        if (metricsRes?.success) {
+          setDashboardMetrics(metricsRes.data);
+        }
+
+        const activeRes: any = await getAll({ url: GET_ACTIVE_TRIPS });
+        if (activeRes?.success) {
+          setActiveViolationsList(activeRes.data);
+        }
+
+        const tripsRes: any = await getAll({ url: GET_LAST_TRIPS });
+        if (tripsRes?.success) {
+          setAllTripsList(tripsRes.data);
+        }
+      } catch (error) {
+        console.error("Error fetching dashboard data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDashboardData();
+  }, []);
 
   // Mock data
   const stats = {
@@ -84,7 +123,7 @@ const Dashboard = () => {
   const tripColumns = [
     {
       name: "S.No.",
-      selector: (row: any) => row.id,
+      selector: (row: any) => row.sNo,
       sortable: true,
       width: "7%",
     },
@@ -113,17 +152,11 @@ const Dashboard = () => {
       width: "12%",
     },
     {
-      name: "Current Point",
-      selector: (row: any) => row.currentPoint,
-      sortable: true,
-      width: "20%",
-    },
-    {
       name: "Status",
       selector: (row: any) => row.status,
       sortable: true,
       center: true,
-      width: "10%",
+      width: "12%",
       cell: (row: any) => (
         <div
           style={{
@@ -132,12 +165,15 @@ const Dashboard = () => {
             padding: "5px",
             borderRadius: "5px",
             color: "black",
+            fontSize: "12px",
             backgroundColor:
-              row.status === "ON_TIME"
+              row.status === "COMPLETED"
                 ? "rgba(0, 255, 0, 0.3)"
-                : row.status === "DELAYED"
-                ? "rgba(255, 200, 0, 0.3)"
-                : "rgba(255, 0, 0, 0.3)",
+                : row.status === "SCHEDULED"
+                  ? "rgba(0, 100, 255, 0.2)"
+                  : row.status === "ON_GOING"
+                    ? "rgba(0, 255, 0, 0.1)"
+                    : "rgba(255, 0, 0, 0.2)",
           }}
         >
           {row.status.replace("_", " ")}
@@ -146,7 +182,7 @@ const Dashboard = () => {
     },
     {
       name: "Dynamic ETA",
-      selector: (row: any) => row.eta,
+      selector: (row: any) => row.dynamicEta,
       sortable: true,
       width: "13%",
     },
@@ -155,41 +191,41 @@ const Dashboard = () => {
   const statsCards = [
     {
       title: "Total Active Trips",
-      value: stats.totalActiveTrips,
-      subtitle: `${stats.completedToday} completed today`,
+      value: dashboardMetrics?.totalActive ?? 0,
+      subtitle: "",
       badgeColor: "primary",
       icon: <TbRoute color="#35bfbf" size={18} />,
-      percentage: "+12.5",
+      percentage: "",
       percentageColor: "dark",
       arrowIcon: "arrow-up",
     },
     {
       title: "Trips In Compliance",
-      value: `${stats.tripsInCompliance} (${stats.compliancePercentage}%)`,
-      subtitle: stats.complianceTrend + " vs last week",
+      value: `${dashboardMetrics?.inCompliance ?? 0}`,
+      subtitle: "",
       badgeColor: "primary",
       icon: <MdCheckCircle color="#35bfbf" size={18} />,
-      percentage: "+8.2",
+      percentage: "",
       percentageColor: "dark",
       arrowIcon: "arrow-up",
     },
     {
       title: "Active Violations",
-      value: stats.activeViolations,
+      value: dashboardMetrics?.activeViolations ?? 0,
       subtitle: "",
       badgeColor: "primary",
       icon: <MdError color="#35bfbf" size={18} />,
-      percentage: "-15.3",
+      percentage: "",
       percentageColor: "success",
       arrowIcon: "arrow-down",
     },
     {
       title: "Pending Risks",
-      value: stats.pendingRisks,
+      value: dashboardMetrics?.pendingRisks ?? 0,
       subtitle: "",
       badgeColor: "primary",
       icon: <MdWarning color="#35bfbf" size={18} />,
-      percentage: "-22.7",
+      percentage: "",
       percentageColor: "success",
       arrowIcon: "arrow-down",
     },
@@ -359,7 +395,7 @@ const Dashboard = () => {
                       border: "1px solid #dee2e6",
                     }}
                   >
-                    <TripMap />
+                    <TripMap activeViolations={activeViolationsList} />
                   </div>
                 </CardBody>
               </Card>
@@ -387,7 +423,7 @@ const Dashboard = () => {
                   height: "100%",
                 }}
               >
-                <CardBody style={{ padding: "20px" }}>
+                <CardBody style={{ padding: "20px", paddingBottom: "0px" }}>
                   {/* Header matching stats cards style */}
                   <div className="d-flex" style={{ marginBottom: "15px" }}>
                     {/* <Badge
@@ -410,36 +446,77 @@ const Dashboard = () => {
                   {/* Content */}
                   <div
                     style={{
-                      textAlign: "center",
-                      padding: "150px 20px",
+                      padding: "10px",
+                      paddingBottom: "0px",
                       backgroundColor: "#f8f9fa",
                       borderRadius: "8px",
-                      height: "95%",
+                      height: "490px",
+                      overflowY: "auto",
+                      scrollbarWidth: "none",
                     }}
                   >
-                    <MdCheckCircle
-                      size={64}
-                      color="primary"
-                      style={{ opacity: 0.5 }}
-                    />
-                    <h4
-                      style={{
-                        color: "#4CAF50",
-                        marginTop: "15px",
-                        fontWeight: "600",
-                      }}
-                    >
-                      All Trips Compliant
-                    </h4>
-                    <p
-                      style={{
-                        color: "#6c757d",
-                        fontSize: "14px",
-                        margin: "10px 0 0 0",
-                      }}
-                    >
-                      No active violations at this time
-                    </p>
+                    {activeViolationsList.length === 0 ? (
+                      <div
+                        style={{
+                          textAlign: "center",
+                          padding: "150px 20px",
+                        }}
+                      >
+                        <MdCheckCircle
+                          size={64}
+                          color="#4CAF50"
+                          style={{ opacity: 0.5 }}
+                        />
+                        <h4
+                          style={{
+                            color: "#4CAF50",
+                            marginTop: "15px",
+                            fontWeight: "600",
+                          }}
+                        >
+                          All Trips Compliant
+                        </h4>
+                        <p
+                          style={{
+                            color: "#6c757d",
+                            fontSize: "14px",
+                            margin: "10px 0 0 0",
+                          }}
+                        >
+                          No active violations at this time
+                        </p>
+                      </div>
+                    ) : (
+                      <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                        {activeViolationsList.map((violation: any, idx: number) => (
+                          <div
+                            key={idx}
+                            style={{
+                              padding: "12px",
+                              backgroundColor: "white",
+                              borderRadius: "8px",
+                              borderLeft: "4px solid #F44336",
+                              boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
+                            }}
+                          >
+                            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "5px" }}>
+                              <span style={{ fontWeight: "600", color: "#333", fontSize: "14px" }}>
+                                {violation.registrationNo}
+                              </span>
+                              <span style={{ fontSize: "11px", color: "#6c757d" }}>
+                                {new Date(violation.time).toLocaleTimeString()}
+                              </span>
+                            </div>
+                            <div style={{ fontSize: "13px", color: "#F44336", marginBottom: "3px", fontWeight: "500" }}>
+                              {violation.violation}
+                            </div>
+                            <div style={{ fontSize: "12px", color: "#666" }}>
+                              Trip: {violation.tripTitle}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </CardBody>
               </Card>
@@ -457,7 +534,7 @@ const Dashboard = () => {
                   style={{ overflow: "auto", scrollbarWidth: "none" }}
                 >
                   {/* Create Trip Button - SAIO Style */}
-                  <Row>
+                  {/* <Row>
                     <div
                       style={{
                         display: "flex",
@@ -466,17 +543,15 @@ const Dashboard = () => {
                       }}
                     >
                       <button
-                        className={`btn ${
-                          userPersonalizationData?.buttonsAndBarsColor == null
-                            ? "btn-primary"
-                            : ""
-                        }`}
+                        className={`btn ${userPersonalizationData?.buttonsAndBarsColor == null
+                          ? "btn-primary"
+                          : ""
+                          }`}
                         style={{
                           color: "white",
-                          backgroundColor: `${
-                            userPersonalizationData !== null &&
+                          backgroundColor: `${userPersonalizationData !== null &&
                             userPersonalizationData?.buttonsAndBarsColor
-                          }`,
+                            }`,
                           display: "flex",
                           alignItems: "center",
                         }}
@@ -493,7 +568,7 @@ const Dashboard = () => {
                         Create Trip
                       </button>
                     </div>
-                  </Row>
+                  </Row> */}
 
                   {/* Search Input - SAIO Style */}
                   <Row style={{ display: "flex", alignItems: "center" }}>
@@ -511,9 +586,10 @@ const Dashboard = () => {
                   {/* DataTable - SAIO Style */}
                   <DataTable
                     columns={tripColumns}
-                    data={tripData}
+                    data={allTripsList}
                     pagination
                     selectableRows
+                    progressPending={loading}
                     style={{
                       cursor: "pointer",
                     }}

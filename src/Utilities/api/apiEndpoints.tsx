@@ -507,5 +507,14 @@ export const CREATE_TRIP = `${API_BASE_URL}/trip/create-trip`;
 export const GET_ALL_TRIPS = `${API_BASE_URL}/trip/get-all-trips`;
 export const VIEW_TRIP = `${API_BASE_URL}/trip/get-trip-details`;
 
+// Trip Management - Reports
+
 export const GET_ALL_TRIPS_DROPDOWN = `${API_BASE_URL}/trip/get-all-trips-dropdown`;
 export const GET_SINGLE_TRIP_DETIAL_REPORT = `${API_BASE_URL}/reports/get-trip-detail-report`;
+
+
+// Trip Management - Dashboard
+
+export const GET_TRIP_DASHBOARD_METRICS = `${API_BASE_URL}/trip/dashboard/metrics`;
+export const GET_ACTIVE_TRIPS = `${API_BASE_URL}/trip/dashboard/get-active-violations-list`;
+export const GET_LAST_TRIPS = `${API_BASE_URL}/trip/dashboard/get-last-trips`;
