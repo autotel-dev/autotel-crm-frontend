@@ -28,7 +28,7 @@ interface TripDetailsForm {
 
 const TripDetails: React.FC<TripDetailsProps> = ({ callbackActive }) => {
   const { userPersonalizationData } = useSelector(
-    (state: any) => state.personalization
+    (state: any) => state.personalization,
   );
   const navigate = useNavigate();
   const { tripData, updateTripDetails } = useTripContext();
@@ -165,7 +165,7 @@ const TripDetails: React.FC<TripDetailsProps> = ({ callbackActive }) => {
             onChange={(e) => setTripType(e)}
             options={[
               { value: "SCHEDULED", label: "Schedule" },
-              { value: "RECURRING", label: "Recurring" },
+              // { value: "RECURRING", label: "Recurring" },
             ]}
           />
         </Col>
@@ -226,7 +226,7 @@ const TripDetails: React.FC<TripDetailsProps> = ({ callbackActive }) => {
             disabled={loading}
             onClick={() => {
               navigate(
-                `${process.env.PUBLIC_URL}/company/modules/trip-management/trips`
+                `${process.env.PUBLIC_URL}/company/modules/trip-management/trips`,
               );
             }}
           >

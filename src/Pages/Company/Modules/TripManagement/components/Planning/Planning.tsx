@@ -17,14 +17,14 @@ import AlertManagementTab from "./components/AlertManagementTab";
 
 const Planning = () => {
   const { userPersonalizationData } = useSelector(
-    (state: any) => state.personalization
+    (state: any) => state.personalization,
   );
   const [activeTab, setActiveTab] = useState("1");
 
   const tabs = [
     { id: "1", label: "Geofence", component: <GeofenceTab /> },
     { id: "2", label: "Drivers", component: <DriversTab /> },
-    { id: "3", label: "Alert Management", component: <AlertManagementTab /> },
+    // { id: "3", label: "Alert Management", component: <AlertManagementTab /> },
   ];
 
   return (
