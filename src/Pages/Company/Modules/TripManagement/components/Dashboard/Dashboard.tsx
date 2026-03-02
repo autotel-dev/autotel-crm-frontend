@@ -38,6 +38,7 @@ const Dashboard = () => {
   const [activeViolationsList, setActiveViolationsList] = useState<any>([]);
   const [allTripsList, setAllTripsList] = useState<any>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedViolation, setSelectedViolation] = useState<any>(null);
 
   useEffect(() => {
     setLoading(true);
@@ -120,7 +121,7 @@ const Dashboard = () => {
   ];
 
   // Table columns
-  const tripColumns = [
+  const tripColumns: any = [
     {
       name: "S.No.",
       selector: (row: any) => row.sNo,
@@ -155,7 +156,7 @@ const Dashboard = () => {
       name: "Status",
       selector: (row: any) => row.status,
       sortable: true,
-      center: true,
+      center: "true",
       width: "12%",
       cell: (row: any) => (
         <div
@@ -395,7 +396,11 @@ const Dashboard = () => {
                       border: "1px solid #dee2e6",
                     }}
                   >
-                    <TripMap activeViolations={activeViolationsList} />
+                    <TripMap
+                      activeViolations={activeViolationsList}
+                      selectedViolation={selectedViolation}
+                      onMarkerClose={() => setSelectedViolation(null)}
+                    />
                   </div>
                 </CardBody>
               </Card>
@@ -497,7 +502,12 @@ const Dashboard = () => {
                               borderRadius: "8px",
                               borderLeft: "4px solid #F44336",
                               boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
+                              cursor: "pointer",
+                              transition: "transform 0.2s ease",
                             }}
+                            onClick={() => setSelectedViolation(violation)}
+                            onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.02)"}
+                            onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}
                           >
                             <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "5px" }}>
                               <span style={{ fontWeight: "600", color: "#333", fontSize: "14px" }}>

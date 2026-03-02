@@ -221,6 +221,12 @@ const DevicesSidebar = ({ setOpen, open, filteredDevices }: any) => {
         // console.log("Show alerts for device:", device);
         break;
 
+      case "live-monitoring":
+        navigate(
+          `${process.env.PUBLIC_URL}/company/modules/live-monitoring/${device?.vehicle?.registrationNo}`,
+        );
+        break;
+
       default:
       // console.log(`Unknown action: ${action}`, device);
     }
@@ -481,9 +487,8 @@ const DevicesSidebar = ({ setOpen, open, filteredDevices }: any) => {
                 borderRadius: "5px",
                 padding: "10px 20px",
                 cursor: "pointer",
-                background: `${`${
-                  selectedNav == "Vehicles" ? "#6dbfb8" : "transparent"
-                }`}`,
+                background: `${`${selectedNav == "Vehicles" ? "#6dbfb8" : "transparent"
+                  }`}`,
                 color: `${`${selectedNav == "Vehicles" ? "white" : "black"}`}`,
                 width: "47%",
               }}
@@ -503,9 +508,8 @@ const DevicesSidebar = ({ setOpen, open, filteredDevices }: any) => {
                 borderRadius: "5px",
                 padding: "10px 20px",
                 cursor: "pointer",
-                background: `${`${
-                  selectedNav == "Alerts" ? "#6dbfb8" : "transparent"
-                }`}`,
+                background: `${`${selectedNav == "Alerts" ? "#6dbfb8" : "transparent"
+                  }`}`,
                 color: `${`${selectedNav == "Alerts" ? "white" : "black"}`}`,
                 width: "47%",
               }}
@@ -596,7 +600,7 @@ const DevicesSidebar = ({ setOpen, open, filteredDevices }: any) => {
                       border: "2px solid #F8F8F8",
                       backgroundColor:
                         alert.alertType === "OVER_SPEEDING" ||
-                        alert.alertType === "GEOFENCE_EXIT"
+                          alert.alertType === "GEOFENCE_EXIT"
                           ? "rgba(255,0,0,0.1)"
                           : "transparent",
                       cursor: "pointer",
@@ -609,7 +613,7 @@ const DevicesSidebar = ({ setOpen, open, filteredDevices }: any) => {
                     onMouseLeave={(e: any) => {
                       e.currentTarget.style.backgroundColor =
                         alert.alertType === "OVER_SPEEDING" ||
-                        alert.alertType === "GEOFENCE_EXIT"
+                          alert.alertType === "GEOFENCE_EXIT"
                           ? "rgba(255,0,0,0.1)"
                           : "transparent";
                       e.currentTarget.style.transform = "scale(1)";
@@ -652,7 +656,7 @@ const DevicesSidebar = ({ setOpen, open, filteredDevices }: any) => {
                         fontSize: "13px",
                         color:
                           alert.alertType === "OVER_SPEEDING" ||
-                          alert.alertType === "GEOFENCE_EXIT"
+                            alert.alertType === "GEOFENCE_EXIT"
                             ? "#d32f2f"
                             : "#666",
                         fontWeight:
@@ -917,21 +921,21 @@ const DevicesSidebar = ({ setOpen, open, filteredDevices }: any) => {
                                         ) == "Invalid Date"
                                           ? "Not Connected"
                                           : formatDateTime(
-                                              item?.latestPosition?.deviceTime,
-                                            )}
+                                            item?.latestPosition?.deviceTime,
+                                          )}
                                         {isDeviceTimeDelayed(
                                           item?.latestPosition?.deviceTime,
                                         ) && (
-                                          <img
-                                            src={delayIcon}
-                                            alt="Delay Icon"
-                                            height={15}
-                                            width={15}
-                                            style={{
-                                              marginLeft: "10px",
-                                            }}
-                                          />
-                                        )}
+                                            <img
+                                              src={delayIcon}
+                                              alt="Delay Icon"
+                                              height={15}
+                                              width={15}
+                                              style={{
+                                                marginLeft: "10px",
+                                              }}
+                                            />
+                                          )}
                                         {/* {item?.latestPosition?.deviceTime || "N/A"} */}
                                       </div>
                                     </div>
@@ -960,8 +964,8 @@ const DevicesSidebar = ({ setOpen, open, filteredDevices }: any) => {
                                       >
                                         {item?.latestPosition?.speed > 0
                                           ? Number(
-                                              item?.latestPosition?.speed,
-                                            ).toFixed(2)
+                                            item?.latestPosition?.speed,
+                                          ).toFixed(2)
                                           : item?.latestPosition?.speed}
                                       </div>
                                       <div
@@ -1065,6 +1069,10 @@ const DevicesSidebar = ({ setOpen, open, filteredDevices }: any) => {
                                             {
                                               label: "Alerts",
                                               action: "alerts",
+                                            },
+                                            {
+                                              label: "Live Monitoring",
+                                              action: "live-monitoring",
                                             },
                                           ].map((menuItem, idx) => (
                                             <div

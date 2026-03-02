@@ -24,7 +24,7 @@ const CustomDropdown: React.FC<PropsTypes> = ({
     if (!isGroupSelected) {
       const newSelectedItems = [
         ...selectedItems,
-        ...group.items.map((item: any) => ({
+        ...(group?.items || []).map((item: any) => ({
           deviceId: item.id,
           name: item.name,
           title: item.title,
@@ -59,8 +59,8 @@ const CustomDropdown: React.FC<PropsTypes> = ({
     setSelectedItems([]);
   };
   const handleSelectAll = () => {
-    const allItems = data.flatMap((group: any) =>
-      group.items
+    const allItems = (Array.isArray(data) ? data : []).flatMap((group: any) =>
+      (group?.items || [])
         .filter(
           (item: any) =>
             !selectedItems.some(
@@ -104,17 +104,17 @@ const CustomDropdown: React.FC<PropsTypes> = ({
     setSearchValue("");
   };
 
-  const filteredData = data
+  const filteredData = (Array.isArray(data) ? data : [])
     .map((group: any) => {
-      const filteredItems = group.items.filter(
+      const filteredItems = (group?.items || []).filter(
         (item: any) =>
-          item.name.toLowerCase().includes(searchValue.toLowerCase()) ||
-          item.imei.includes(searchValue) ||
-          item.id == searchValue
+          item?.name?.toLowerCase().includes(searchValue.toLowerCase()) ||
+          item?.imei?.includes(searchValue) ||
+          item?.id == searchValue
       );
       return { ...group, items: filteredItems };
     })
-    .filter((group: any) => group.items.length > 0);
+    .filter((group: any) => (group?.items || []).length > 0);
 
   return (
     <div className="custom-dropdown">
@@ -156,7 +156,7 @@ const CustomDropdown: React.FC<PropsTypes> = ({
               <div className="group-header">
                 <input
                   type="checkbox"
-                  checked={group.items.every((item: any) =>
+                  checked={(group?.items || []).every((item: any) =>
                     selectedItems.some(
                       (selectedItem) => selectedItem.name === item.name
                     )
@@ -165,7 +165,7 @@ const CustomDropdown: React.FC<PropsTypes> = ({
                 />
                 <div className="group-title">{group.title}</div>
               </div>
-              {group.items
+              {(group?.items || [])
                 .filter(
                   (bodyItem: any) =>
                     bodyItem.name
@@ -178,13 +178,12 @@ const CustomDropdown: React.FC<PropsTypes> = ({
                 .map((item: any) => (
                   <div
                     key={item.id}
-                    className={`item ${
-                      selectedItems.some(
-                        (selectedItem) => selectedItem.name === item.name
-                      )
-                        ? "selected"
-                        : ""
-                    }`}
+                    className={`item ${selectedItems.some(
+                      (selectedItem) => selectedItem.name === item.name
+                    )
+                      ? "selected"
+                      : ""
+                      }`}
                     onClick={() => handleItemClick(item.id, item.name, group)}
                     style={{ padding: "10px" }}
                   >

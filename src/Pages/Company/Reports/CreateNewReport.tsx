@@ -1,14 +1,12 @@
+// Refactored by Antigravity - Logic Optimized, UI Preserved, New Reports Added
 import { PlusCircle } from "react-feather";
 import { Col, Input } from "reactstrap";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Button, FormGroup, Label, Modal, ModalBody, Row } from "reactstrap";
-import { CheckCircle } from "react-feather";
 import { useDispatch, useSelector } from "react-redux";
 import { H3, P } from "../../../AbstractElements";
 import { create, getAll } from "../../../Utilities/api";
-
-import { jwtDecode } from "jwt-decode";
 import { Select } from "antd";
 import Swal from "sweetalert2";
 import { ReportsType } from "./ReportsType/ReportsTypes";
@@ -35,39 +33,109 @@ import {
   GET_COMPLAINT_CENTER_PRIORITY_STATUS,
   GET_COMPLAINT_CENTER_STATUS_TYPES,
   GET_REPORT_BASE_URL,
+  GET_ALL_VEHICLES_DROPDOWN_FOR_ALERT,
+  GET_ALL_TRIPS_DROPDOWN,
+  GET_OPERATORS_DROPDOWN,
 } from "../../../Utilities/api/apiEndpoints";
 import { ERROR_MESSAGE } from "../../../Utilities/constants/constants";
 
 const CreateNewReport = ({ dropDownDevices }: any) => {
-  const { userPersonalizationData } = useSelector(
-    (state: any) => state.personalization,
-  );
+  const dispatch = useDispatch();
+  const { userPersonalizationData } = useSelector((state: any) => state.personalization);
   const { reports, reportsType } = useSelector((state: any) => state.reports);
-  var tempReports: any = [...reports];
-  const [decodedToken, setDecodedToken]: any = useState(null);
-  const authToken = localStorage.getItem("token");
-  useEffect(() => {
-    if (authToken !== null) {
-      const decodedToken = jwtDecode(authToken);
-      // console.log(decodedToken);
-      setDecodedToken(decodedToken);
+
+  const [loading, setLoading] = useState(false);
+  const [addModal, setAddModal] = useState(false);
+  const [type, setType] = useState("");
+  const [startDate, setStartDate] = useState<string>(new Date().toISOString());
+  const [endDate, setEndDate] = useState<string>(new Date().toISOString());
+  const [startDateTime, setStartDateTime] = useState<string>(new Date().toISOString());
+  const [endDateTime, setEndDateTime] = useState<string>(new Date().toISOString());
+
+  // Filter States
+  const [selectedItems, setSelectedItems] = useState<any[]>([]);
+  const [operatorIds, setOperatorIds] = useState<string[]>([]);
+  const [productTypes, setProductTypes] = useState<string[]>([]);
+  const [products, setProducts] = useState<string[]>([]);
+  const [branch, setBranch] = useState("");
+  const [warehouse, setWarehouse] = useState("");
+  const [vendorIds, setVendorIds] = useState<string[]>([]);
+  const [customerIds, setCustomerIds] = useState<string[]>([]);
+  const [customerForVehicleOperationActivity, setCustomerForVehicleOperationActivity] = useState("");
+  const [vehicleIdForActivities, setVehicleIdForActivities] = useState("");
+  const [activityStatus, setActivityStatus] = useState("");
+  const [activityType, setActivityType] = useState("");
+  const [complaintType, setComplaintType] = useState("");
+  const [complaintStatus, setComplaintStatus] = useState("");
+  const [complaintPriority, setComplaintPriority] = useState("");
+  const [complaintDepartment, setComplaintDepartment] = useState("");
+  const [availability, setAvailability] = useState(false);
+
+  // New Report States
+  const [vehicleId, setVehicleId] = useState("");
+  const [tripId, setTripId] = useState("");
+  const [operatorId, setOperatorId] = useState("ALL");
+
+  // List States for dropdowns
+  const [operatorsForReportsList, setOperatorsForReportsList] = useState<any[]>([]);
+  const [productTypesForReportsList, setProductTypesForReportsList] = useState<any[]>([]);
+  const [productsForReportsList, setProductsForReportsList] = useState<any[]>([]);
+  const [branchesForReportsList, setBranchesForReportsList] = useState<any[]>([]);
+  const [warehousesForReportsList, setWarehousesForReportsList] = useState<any[]>([]);
+  const [vendorsForReportsList, setVendorsForReportsList] = useState<any[]>([]);
+  const [customersForReportsList, setCustomersForReportsList] = useState<any[]>([]);
+  const [customersForOperationActivitiesReportsList, setCustomersForOperationActivitiesReportsList] = useState<any[]>([]);
+  const [vehiclesForOperationActivitiesReportsList, setVehiclesForOperationActivitiesReportsList] = useState<any[]>([]);
+  const [complaintTypesForReportsList, setComplaintTypesForReportsList] = useState<any[]>([]);
+  const [complaintStatusForReportsList, setComplaintStatusForReportsList] = useState<any[]>([]);
+  const [complaintPriorityForReportsList, setComplaintPriorityForReportsList] = useState<any[]>([]);
+  const [complaintDepartmentForReportsList, setComplaintDepartmentForReportsList] = useState<any[]>([]);
+
+  // New List States
+  const [vehiclesForReportsList, setVehiclesForReportsList] = useState<any[]>([]);
+  const [tripsForReportsList, setTripsForReportsList] = useState<any[]>([]);
+  const [operatorsDropdownList, setOperatorsDropdownList] = useState<any[]>([]);
+
+  const formattedDevicesForAlertEvent = useMemo(() => {
+    if (type === "/get-all-alert-events-report") {
+      return [{
+        title: "All Vehicles",
+        items: (vehiclesForReportsList || []).map(v => ({
+          id: v.deviceId,
+          name: v.label,
+          imei: v.imei || "",
+          title: "All Vehicles"
+        }))
+      }];
     }
+    return Array.isArray(dropDownDevices) ? dropDownDevices : [];
+  }, [type, vehiclesForReportsList, dropDownDevices]);
+
+  const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm<ReportsType>();
+
+  const resetFilters = useCallback(() => {
+    setOperatorIds([]);
+    setProductTypes([]);
+    setProducts([]);
+    setBranch("");
+    setWarehouse("");
+    setVendorIds([]);
+    setCustomerIds([]);
+    setCustomerForVehicleOperationActivity("");
+    setVehicleIdForActivities("");
+    setActivityStatus("");
+    setActivityType("");
+    setComplaintType("");
+    setComplaintStatus("");
+    setComplaintPriority("");
+    setComplaintDepartment("");
+    setAvailability(false);
+    setSelectedItems([]);
+    setVehicleId("");
+    setTripId("");
+    setOperatorId("ALL");
   }, []);
 
-  useEffect(() => {
-    tempReports = [...reports];
-  }, [reports]);
-  const dispatch = useDispatch();
-  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const {
-    register,
-    handleSubmit,
-    reset,
-    setValue,
-    formState: { errors },
-  } = useForm<ReportsType>();
-  const [addModal, setAddModal] = useState(false);
   const addToggle = () => {
     if (!loading) {
       setAddModal(!addModal);
@@ -77,1395 +145,40 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
         endDate: new Date().toISOString().slice(0, 10),
         imei: "",
       });
-      setRole("");
-      setLoading(false);
+      setType("");
+      resetFilters();
     }
   };
-  const [selectedItems, setSelectedItems]: any = useState([]);
 
-  const [reportsTypeList, setReportsType] = useState([]);
-  const [role, setRole] = useState("");
-
-  // const typeList: any = [reportsType];
-  const [type, setType] = useState("");
-  const tempReportsTypeList: any = [];
-  useEffect(() => {
-    reportsType.map((item: any, index: any) => {
-      tempReportsTypeList.push({
-        value: `${item.endPoint}`,
-        label: `${item.title}`,
-      });
+  const reportsTypeListMemo = useMemo(() => {
+    const existing = reportsType.map((item: any) => ({
+      value: item.endPoint,
+      label: item.title,
+      P: item.title,
+    }));
+    // Add new ones if not present
+    const extra = [
+      { value: "/get-live-alert-report", label: "Live Alert", P: "Live Alert" },
+      { value: "/get-vehicle-history-report", label: "Vehicle History", P: "Vehicle History" },
+      { value: "/get-event-agent-response-report", label: "Event Agent Response", P: "Event Agent Response" },
+      { value: "/get-trip-detail-report", label: "Trip Detail", P: "Trip Detail" }
+    ];
+    extra.forEach(e => {
+      if (!existing.find((x: any) => x.value === e.value)) {
+        existing.push(e);
+      }
     });
-    setReportsType(tempReportsTypeList);
+    return existing;
   }, [reportsType]);
 
-  const [reportPeriodList, setReportPeriodType] = useState([]);
-
-  const periodList: any = [
-    { _id: 1, name: "Today" },
-    { _id: 2, name: "Yesterday" },
-    { _id: 3, name: "This Week" },
-    { _id: 4, name: "Last Week" },
-    { _id: 5, name: "This Month" },
-    { _id: 6, name: "Last Month" },
-  ];
-  const tempReportPeriodList: any = [];
-  useEffect(() => {
-    periodList.map((item: any, index: any) => {
-      tempReportPeriodList.push({
-        value: `${item.name}`,
-        P: `${item.name}`,
-      });
-    });
-    setReportPeriodType(tempReportPeriodList);
-  }, []);
-
-  const [operatorsForReportsList, setOperatorsForReportsList]: any = useState(
-    [],
-  );
-  const [productsForReportsList, setProductsForReportsList]: any = useState([]);
-  const [productTypesForReportsList, setProductTypesForReportsList]: any =
-    useState([]);
-  const [branchesForReportsList, setBranchesForReportsList]: any = useState([]);
-  const [warehousesForReportsList, setWarehousesForReportsList]: any = useState(
-    [],
-  );
-  const [vendorsForReportsList, setVendorsForReportsList]: any = useState([]);
-  const [customersForReportsList, setCustomersForReportsList]: any = useState(
-    [],
-  );
-  const [availability, setAvailability] = useState(false);
-  const [imei, setIMEI] = useState("");
-
-  const [
-    customersForOperationActivitiesReportsList,
-    setCustomersForOperationActivitiesReportsList,
-  ]: any = useState([]);
-  const [
-    vehiclesForOperationActivitiesReportsList,
-    setvehiclesForOperationActivitiesReportsList,
-  ]: any = useState([]);
-
-  // Complaint Reports
-
-  const [complaintTypesForReportsList, setComplaintTypesForReportsList]: any =
-    useState([]);
-  const [
-    complaintPriorityForReportsList,
-    setComplaintPriorityForReportsList,
-  ]: any = useState([]);
-  const [complaintStatusForReportsList, setComplaintStatusForReportsList]: any =
-    useState([]);
-  const [
-    complaintDepartmentForReportsList,
-    setComplaintDepartmentForReportsList,
-  ]: any = useState([]);
-
-  useEffect(() => {
-    if (type == "/get-operator-performance-report") {
-      getAll({ url: GET_ALL_OPERATORS }).then((data: any) => {
-        if (data?.success) {
-          dispatch(setOperatorsForReport(data.data));
-          setOperatorsForReportsList(
-            data.data
-              .map((item: any) => {
-                if (item.subRole.name === "Control Room") {
-                  return {
-                    value: `${item._id}`,
-                    label: `${item.fullName}`,
-                  };
-                }
-                return null; // Return null if condition doesn't match
-              })
-              .filter((item: any) => item !== null), // Remove null values from the array
-          );
-        } else {
-          setOperatorsForReportsList([]);
-        }
-      });
-    }
-
-    if (type == "/get-inventory-report") {
-      getAll({ url: GET_ALL_PRODUCT_TYPES }).then((data: any) => {
-        if (data?.success) {
-          dispatch(setProductTypesForReport(data.data));
-          setProductTypesForReportsList(
-            data.data.allProductTypes.map((item: any, index: any) => {
-              return {
-                value: `${item.value}`,
-                label: `${item.title}`,
-              };
-            }),
-          );
-        } else {
-          setProductTypesForReportsList([]);
-        }
-      });
-      getAll({ url: GET_ALL_PRODUCTS }).then((data: any) => {
-        if (data?.success) {
-          dispatch(setProductsForReport(data.data));
-          setProductsForReportsList(
-            data.data.map((item: any, index: any) => {
-              return {
-                value: `${item._id}`,
-                label: `${item.name}`,
-              };
-            }),
-          );
-        } else {
-          setProductsForReportsList([]);
-        }
-      });
-      getAll({ url: GET_ALL_BRANCHES }).then((data: any) => {
-        if (data?.success) {
-          dispatch(setBranchesForReport(data.data));
-          setBranchesForReportsList(
-            data.data.map((item: any, index: any) => {
-              return {
-                value: `${item._id}`,
-                label: `${item.name}`,
-              };
-            }),
-          );
-        } else {
-          setBranchesForReportsList([]);
-        }
-      });
-
-      getAll({ url: GET_ALL_WAREHOUSES }).then((data: any) => {
-        if (data?.success) {
-          dispatch(setWarehousesForReport(data.data));
-          setWarehousesForReportsList(
-            data.data.map((item: any, index: any) => {
-              return {
-                value: `${item._id}`,
-                label: `${item.name}`,
-              };
-            }),
-          );
-        } else {
-          setWarehousesForReportsList([]);
-        }
-      });
-    }
-
-    if (type == "/get-sale-invoice-report") {
-      getAll({ url: GET_ALL_CUSTOMERS }).then((data: any) => {
-        if (data?.success) {
-          // dispatch(setProductTypesForReport(data.data));
-          setCustomersForReportsList(
-            data.data.map((item: any, index: any) => {
-              return {
-                value: `${item._id}`,
-                label: `${item.fullName}`,
-              };
-            }),
-          );
-        } else {
-          setCustomersForReportsList([]);
-        }
-      });
-    }
-    if (type == "/get-purchase-invoice-report") {
-      getAll({ url: GET_ALL_VENDORS }).then((data: any) => {
-        if (data?.success) {
-          // dispatch(setProductTypesForReport(data.data));
-          setVendorsForReportsList(
-            data.data.map((item: any, index: any) => {
-              return {
-                value: `${item._id}`,
-                label: `${item.vendorName}`,
-              };
-            }),
-          );
-        } else {
-          setVendorsForReportsList([]);
-        }
-      });
-    }
-    if (type == "/get-activity-report") {
-      getAll({ url: GET_ALL_CUSTOMERS }).then((data: any) => {
-        if (data?.success) {
-          // dispatch(setProductTypesForReport(data.data));
-          setCustomersForOperationActivitiesReportsList(
-            data.data.map((item: any, index: any) => {
-              return {
-                value: `${item._id}`,
-                label: `${item.fullName}`,
-              };
-            }),
-          );
-        } else {
-          setCustomersForOperationActivitiesReportsList([]);
-        }
-      });
-    }
-    if (type == "/get-complaint-report") {
-      getAll({ url: GET_ALL_ACTIVE_TYPES }).then((data: any) => {
-        if (data?.success) {
-          // dispatch(setProductTypesForReport(data.data));
-          setComplaintTypesForReportsList(
-            data?.data?.map((item: any, index: any) => {
-              return {
-                value: `${item?._id}`,
-                label: `${item?.title}`,
-              };
-            }),
-          );
-        } else {
-          setComplaintTypesForReportsList([]);
-        }
-      });
-      getAll({ url: GET_COMPLAINT_CENTER_STATUS_TYPES }).then((data: any) => {
-        if (data?.success) {
-          // dispatch(setProductTypesForReport(data.data));
-          setComplaintStatusForReportsList(
-            data?.data?.internalComplaintStatusTypes.map(
-              (item: any, index: any) => {
-                return {
-                  value: `${item?.value}`,
-                  label: `${item?.title}`,
-                };
-              },
-            ),
-          );
-        } else {
-          setComplaintStatusForReportsList([]);
-        }
-      });
-      getAll({ url: GET_COMPLAINT_CENTER_PRIORITY_STATUS }).then(
-        (data: any) => {
-          if (data?.success) {
-            // dispatch(setProductTypesForReport(data.data));
-            setComplaintPriorityForReportsList(
-              data?.data?.internalComplaintPriortyStatusTypes.map(
-                (item: any, index: any) => {
-                  return {
-                    value: `${item?.value}`,
-                    label: `${item?.title}`,
-                  };
-                },
-              ),
-            );
-          } else {
-            setComplaintPriorityForReportsList([]);
-          }
-        },
-      );
-      getAll({ url: GET_ALL_ACTIVE_SUB_ROLES }).then((data: any) => {
-        if (data?.success) {
-          // dispatch(setProductTypesForReport(data.data));
-          setComplaintDepartmentForReportsList(
-            data?.data?.map((item: any, index: any) => {
-              return {
-                value: `${item?._id}`,
-                label: `${item?.name}`,
-              };
-            }),
-          );
-        } else {
-          setComplaintDepartmentForReportsList([]);
-        }
-      });
-    }
-  }, [type]);
-
-  const [reportType, setReportType] = useState<string>("");
-  const [startDate, setStartDate] = useState<string>(new Date().toISOString());
-  const tomorrow = new Date();
-  tomorrow.setDate(tomorrow.getDate() + 1);
-  const [endDate, setEndDate] = useState<string>(tomorrow.toISOString());
-
-  // Data
-
-  const [operatorIds, setOperatorIds]: any = useState([]);
-  const [productTypes, setProductTypes]: any = useState([]);
-  const [products, setProducts]: any = useState([]);
-  const [branch, setBranch]: any = useState("");
-  const [warehouse, setWarehouse]: any = useState("");
-
-  const [vendorIds, setVendorIds]: any = useState([]);
-  const [customerIds, setCustomerIds]: any = useState([]);
-  const [
-    customerForVehicleOperationActivity,
-    setCustomerForVehicleOperationActivity,
-  ] = useState("");
-  const [vehicleIdForActivities, setVehicleIdForActivities]: any = useState("");
-  const [activityStatus, setActivityStatus]: any = useState("");
-  const [activityType, setActivityType]: any = useState("");
-
-  const [complaintType, setComplaintType]: any = useState("");
-  const [complaintStatus, setComplaintStatus]: any = useState("");
-  const [complaintPriority, setComplaintPriority]: any = useState("");
-  const [complaintDepartment, setComplaintDepartment]: any = useState("");
-
-  useEffect(() => {
-    if (customerForVehicleOperationActivity !== "") {
-      getAll({
-        url: `${GET_ALL_CUSTOMER_VEHICLES}/${customerForVehicleOperationActivity}`,
-      }).then((data: any) => {
-        if (data?.success) {
-          // dispatch(setProductTypesForReport(data.data));
-          setvehiclesForOperationActivitiesReportsList(
-            data.data.map((item: any, index: any) => {
-              return {
-                value: `${item._id}`,
-                label: `${item.registrationNo}`,
-              };
-            }),
-          );
-        } else {
-          setvehiclesForOperationActivitiesReportsList([]);
-        }
-      });
-    }
-  }, [customerForVehicleOperationActivity]);
-
-  const addReportForAlertEvents: SubmitHandler<ReportsType> = async (
-    data: any,
-  ) => {
-    setLoading(true);
-    if (
-      data.title !== "" &&
-      startDate !== null &&
-      endDate !== null &&
-      type !== ""
-    ) {
-      const report = {
-        id: 1,
-        title: data.title,
-        toDate: endDate,
-        fromDate: startDate,
-      };
-
-      try {
-        var deviceIds: number[];
-        if (selectedItems.length === 0) {
-          const allItems = await dropDownDevices.flatMap((group: any) =>
-            group.items.map((item: any) => ({
-              deviceId: item.id,
-              name: item.name,
-              title: item.title,
-            })),
-          );
-          // console.log("allItems", allItems);
-
-          await setSelectedItems([...allItems]);
-          deviceIds = await selectedItems.map((device: any) => device.deviceId);
-          // console.log(deviceIds);
-        } else {
-          deviceIds = await selectedItems.map((device: any) => device.deviceId);
-          // console.log(deviceIds);
-        }
-
-        await create(
-          {
-            toDate: endDate,
-            fromDate: startDate,
-            deviceIds: deviceIds,
-          },
-          {
-            url: `${GET_REPORT_BASE_URL}${type}`,
-          },
-        ).then((data: any) => {
-          if (!data.success && data.message === ERROR_MESSAGE) {
-            setLoading(false);
-            setSelectedItems([]);
-            const yesterday = new Date();
-            yesterday.setDate(yesterday.getDate() - 1); // Subtract one day
-            setStartDate(yesterday.toISOString());
-
-            setEndDate(new Date().toISOString());
-            addToggle();
-            setType("Select Type");
-          }
-          if (!data.success) {
-            Swal.fire({
-              text: `${data.message}`,
-              icon: "error",
-              timer: 2000,
-              showConfirmButton: false,
-            });
-            setLoading(false);
-            setSelectedItems([]);
-            const yesterday = new Date();
-            yesterday.setDate(yesterday.getDate() - 1); // Subtract one day
-            setStartDate(yesterday.toISOString());
-            // setStartDate(new Date().toISOString());
-            setEndDate(new Date().toISOString());
-            addToggle();
-            setType("Select Type");
-          }
-          if (data.success) {
-            tempReports.push({
-              type: type,
-              data: {
-                title: report.title,
-                startDate: startDate,
-                endDate: endDate,
-                data: data.data,
-              },
-            });
-
-            // console.log("Reports", reports);
-            dispatch(setReports(tempReports));
-            setSelectedItems([]);
-            const yesterday = new Date();
-            yesterday.setDate(yesterday.getDate() - 1); // Subtract one day
-            setStartDate(yesterday.toISOString());
-            setEndDate(new Date().toISOString());
-            setLoading(false);
-            addToggle();
-            setType("Select Type");
-          }
-        });
-        // Handle successful post creation (e.g., show a success message, redirect, etc.)
-      } catch (error: any) {
-        setSelectedItems([]);
-        const yesterday = new Date();
-        yesterday.setDate(yesterday.getDate() - 1); // Subtract one day
-        setStartDate(yesterday.toISOString());
-        setEndDate(new Date().toISOString());
-        if (data == undefined) {
-          Swal.fire({
-            text: "Failed to create due to connection refused",
-            icon: "error",
-            timer: 2000,
-            showConfirmButton: false,
-          });
-
-          return;
-        }
-        setLoading(false);
-        addToggle();
-        setType("Select Type");
-      }
-    } else {
-      Swal.fire({
-        text: "Required Fields are empty",
-        icon: "info",
-        timer: 2000,
-        showConfirmButton: false,
-      });
-      setLoading(false);
-    }
-  };
-  const addReportForOperatorPerformance: SubmitHandler<ReportsType> = async (
-    data: any,
-  ) => {
-    setLoading(true);
-    if (
-      data.title !== "" &&
-      startDate !== null &&
-      endDate !== null &&
-      type !== ""
-    ) {
-      const report = {
-        title: data.title,
-        toDate: endDate,
-        fromDate: startDate,
-        operatorIds: operatorIds,
-      };
-
-      try {
-        await create(report, {
-          url: `${GET_REPORT_BASE_URL}${type}`,
-        }).then((data: any) => {
-          // console.log("data", data);
-
-          if (!data.success && data.message === ERROR_MESSAGE) {
-            setLoading(false);
-            const yesterday = new Date();
-            yesterday.setDate(yesterday.getDate() - 1); // Subtract one day
-            setStartDate(yesterday.toISOString());
-            // setStartDate(new Date().toISOString());
-            setEndDate(new Date().toISOString());
-            addToggle();
-            setType("Select Type");
-            setOperatorIds([]);
-          }
-          if (!data.success) {
-            Swal.fire({
-              text: `${data.message}`,
-              icon: "error",
-              timer: 2000,
-              showConfirmButton: false,
-            });
-            setLoading(false);
-            const yesterday = new Date();
-            yesterday.setDate(yesterday.getDate() - 1); // Subtract one day
-            setStartDate(yesterday.toISOString());
-            // setStartDate(new Date().toISOString());
-            setEndDate(new Date().toISOString());
-            addToggle();
-            setType("Select Type");
-          }
-          if (data.success) {
-            // console.log(data);
-            tempReports.push({
-              type: type,
-              data: {
-                title: report.title,
-                startDate: startDate,
-                endDate: endDate,
-                data: data.data,
-              },
-            });
-
-            // console.log("Reports", reports);
-            dispatch(setReports(tempReports));
-            const yesterday = new Date();
-            yesterday.setDate(yesterday.getDate() - 1); // Subtract one day
-            setStartDate(yesterday.toISOString());
-            // setStartDate(new Date().toISOString());
-            setEndDate(new Date().toISOString());
-            setLoading(false);
-            addToggle();
-            setType("Select Type");
-            setOperatorIds([]);
-          }
-        });
-        // Handle successful post creation (e.g., show a success message, redirect, etc.)
-      } catch (error: any) {
-        const yesterday = new Date();
-        yesterday.setDate(yesterday.getDate() - 1); // Subtract one day
-        setStartDate(yesterday.toISOString());
-        // setStartDate(new Date().toISOString());
-        setEndDate(new Date().toISOString());
-        if (data == undefined) {
-          Swal.fire({
-            text: "Failed to create due to connection refused",
-            icon: "error",
-            timer: 2000,
-            showConfirmButton: false,
-          });
-
-          return;
-        }
-        setLoading(false);
-        addToggle();
-        setType("Select Type");
-        setOperatorIds([]);
-      }
-    } else {
-      Swal.fire({
-        text: "Required Fields are empty",
-        icon: "info",
-        timer: 2000,
-        showConfirmButton: false,
-      });
-      setLoading(false);
-    }
-  };
-  const addReportForInventoryReport: SubmitHandler<ReportsType> = async (
-    data: any,
-  ) => {
-    setLoading(true);
-    if (
-      data.title !== "" &&
-      startDate !== null &&
-      endDate !== null &&
-      type !== ""
-    ) {
-      const report = {
-        title: data.title,
-        toDate: endDate,
-        fromDate: startDate,
-        branch: branch !== "" ? branch : undefined,
-        warehouse: warehouse !== "" ? warehouse : undefined,
-        productId: products.length == 0 ? undefined : products,
-        productType: productTypes.length == 0 ? undefined : productTypes,
-        availability: availability,
-      };
-
-      try {
-        await create(report, {
-          url: `${GET_REPORT_BASE_URL}${type}`,
-        }).then((data: any) => {
-          // console.log("data", data);
-
-          if (!data.success && data.message === ERROR_MESSAGE) {
-            setLoading(false);
-            const yesterday = new Date();
-            yesterday.setDate(yesterday.getDate() - 1); // Subtract one day
-            setStartDate(yesterday.toISOString());
-            // setStartDate(new Date().toISOString());
-            setEndDate(new Date().toISOString());
-            addToggle();
-            setType("Select Type");
-            setProductTypes([]);
-            setProducts([]);
-            setBranch("");
-            setWarehouse("");
-          }
-          if (!data.success) {
-            Swal.fire({
-              text: `${data.message}`,
-              icon: "error",
-              timer: 2000,
-              showConfirmButton: false,
-            });
-            setLoading(false);
-
-            const yesterday = new Date();
-            yesterday.setDate(yesterday.getDate() - 1); // Subtract one day
-            setStartDate(yesterday.toISOString());
-            // setStartDate(new Date().toISOString());
-            setEndDate(new Date().toISOString());
-            addToggle();
-            setType("Select Type");
-            setProductTypes([]);
-            setProducts([]);
-            setBranch("");
-            setWarehouse("");
-          }
-          if (data.success) {
-            // console.log(data);
-            tempReports.push({
-              type: type,
-              data: {
-                title: report.title,
-                startDate: startDate,
-                endDate: endDate,
-                data: data.data,
-              },
-            });
-
-            // console.log("Reports", reports);
-            dispatch(setReports(tempReports));
-
-            const yesterday = new Date();
-            yesterday.setDate(yesterday.getDate() - 1); // Subtract one day
-            setStartDate(yesterday.toISOString());
-            // setStartDate(new Date().toISOString());
-            setEndDate(new Date().toISOString());
-            setLoading(false);
-            addToggle();
-            setType("Select Type");
-            setProductTypes([]);
-            setProducts([]);
-            setBranch("");
-            setWarehouse("");
-          }
-        });
-        // Handle successful post creation (e.g., show a success message, redirect, etc.)
-      } catch (error: any) {
-        const yesterday = new Date();
-        yesterday.setDate(yesterday.getDate() - 1); // Subtract one day
-        setStartDate(yesterday.toISOString());
-        // setStartDate(new Date().toISOString());
-        setEndDate(new Date().toISOString());
-        if (data == undefined) {
-          Swal.fire({
-            text: "Failed to create due to connection refused",
-            icon: "error",
-            timer: 2000,
-            showConfirmButton: false,
-          });
-
-          return;
-        }
-        setLoading(false);
-        addToggle();
-        setType("Select Type");
-        setProductTypes([]);
-        setProducts([]);
-        setBranch("");
-        setWarehouse("");
-      }
-    } else {
-      Swal.fire({
-        text: "Required Fields are empty",
-        icon: "info",
-        timer: 2000,
-        showConfirmButton: false,
-      });
-      setLoading(false);
-    }
-  };
-  const addReportForSaleInvoices: SubmitHandler<ReportsType> = async (
-    data: any,
-  ) => {
-    setLoading(true);
-    if (
-      data.title !== "" &&
-      startDate !== null &&
-      endDate !== null &&
-      type !== ""
-    ) {
-      const report = {
-        title: data.title,
-        toDate: endDate,
-        fromDate: startDate,
-        customerIds: customerIds,
-      };
-
-      try {
-        await create(report, {
-          url: `${GET_REPORT_BASE_URL}${type}`,
-        }).then((data: any) => {
-          // console.log("data", data);
-
-          if (!data.success && data.message === ERROR_MESSAGE) {
-            setLoading(false);
-            const yesterday = new Date();
-            yesterday.setDate(yesterday.getDate() - 1); // Subtract one day
-            setStartDate(yesterday.toISOString());
-            // setStartDate(new Date().toISOString());
-            setEndDate(new Date().toISOString());
-            addToggle();
-            setType("Select Type");
-            setCustomerIds([]);
-          }
-          if (!data.success) {
-            Swal.fire({
-              text: `${data.message}`,
-              icon: "error",
-              timer: 2000,
-              showConfirmButton: false,
-            });
-            setLoading(false);
-            const yesterday = new Date();
-            yesterday.setDate(yesterday.getDate() - 1); // Subtract one day
-            setStartDate(yesterday.toISOString());
-            // setStartDate(new Date().toISOString());
-            setEndDate(new Date().toISOString());
-            addToggle();
-            setType("Select Type");
-          }
-          if (data.success) {
-            // console.log(data);
-            tempReports.push({
-              type: type,
-              data: {
-                title: report.title,
-                startDate: startDate,
-                endDate: endDate,
-                data: data.data,
-              },
-            });
-
-            // console.log("Reports", reports);
-            dispatch(setReports(tempReports));
-            const yesterday = new Date();
-            yesterday.setDate(yesterday.getDate() - 1); // Subtract one day
-            setStartDate(yesterday.toISOString());
-            // setStartDate(new Date().toISOString());
-            setEndDate(new Date().toISOString());
-            setLoading(false);
-            addToggle();
-            setType("Select Type");
-            setCustomerIds([]);
-          }
-        });
-        // Handle successful post creation (e.g., show a success message, redirect, etc.)
-      } catch (error: any) {
-        const yesterday = new Date();
-        yesterday.setDate(yesterday.getDate() - 1); // Subtract one day
-        setStartDate(yesterday.toISOString());
-        // setStartDate(new Date().toISOString());
-        setEndDate(new Date().toISOString());
-        if (data == undefined) {
-          Swal.fire({
-            text: "Failed to create due to connection refused",
-            icon: "error",
-            timer: 2000,
-            showConfirmButton: false,
-          });
-
-          return;
-        }
-        setLoading(false);
-        addToggle();
-        setType("Select Type");
-        setCustomerIds([]);
-      }
-    } else {
-      Swal.fire({
-        text: "Required Fields are empty",
-        icon: "info",
-        timer: 2000,
-        showConfirmButton: false,
-      });
-      setLoading(false);
-    }
-  };
-  const addReportForPurchaseInvoices: SubmitHandler<ReportsType> = async (
-    data: any,
-  ) => {
-    setLoading(true);
-    if (
-      data.title !== "" &&
-      startDate !== null &&
-      endDate !== null &&
-      type !== ""
-    ) {
-      const report = {
-        title: data.title,
-        toDate: endDate,
-        fromDate: startDate,
-        vendorIds: vendorIds,
-      };
-
-      try {
-        await create(report, {
-          url: `${GET_REPORT_BASE_URL}${type}`,
-        }).then((data: any) => {
-          // console.log("data", data);
-
-          if (!data.success && data.message === ERROR_MESSAGE) {
-            setLoading(false);
-            const yesterday = new Date();
-            yesterday.setDate(yesterday.getDate() - 1); // Subtract one day
-            setStartDate(yesterday.toISOString());
-            // setStartDate(new Date().toISOString());
-            setEndDate(new Date().toISOString());
-            addToggle();
-            setType("Select Type");
-            setVendorIds([]);
-          }
-          if (!data.success) {
-            Swal.fire({
-              text: `${data.message}`,
-              icon: "error",
-              timer: 2000,
-              showConfirmButton: false,
-            });
-            setLoading(false);
-            const yesterday = new Date();
-            yesterday.setDate(yesterday.getDate() - 1); // Subtract one day
-            setStartDate(yesterday.toISOString());
-            // setStartDate(new Date().toISOString());
-            setEndDate(new Date().toISOString());
-            addToggle();
-            setType("Select Type");
-          }
-          if (data.success) {
-            // console.log(data);
-            tempReports.push({
-              type: type,
-              data: {
-                title: report.title,
-                startDate: startDate,
-                endDate: endDate,
-                data: data.data,
-              },
-            });
-
-            // console.log("Reports", reports);
-            dispatch(setReports(tempReports));
-            const yesterday = new Date();
-            yesterday.setDate(yesterday.getDate() - 1); // Subtract one day
-            setStartDate(yesterday.toISOString());
-            // setStartDate(new Date().toISOString());
-            setEndDate(new Date().toISOString());
-            setLoading(false);
-            addToggle();
-            setType("Select Type");
-            setVendorIds([]);
-          }
-        });
-        // Handle successful post creation (e.g., show a success message, redirect, etc.)
-      } catch (error: any) {
-        const yesterday = new Date();
-        yesterday.setDate(yesterday.getDate() - 1); // Subtract one day
-        setStartDate(yesterday.toISOString());
-        // setStartDate(new Date().toISOString());
-        setEndDate(new Date().toISOString());
-        if (data == undefined) {
-          Swal.fire({
-            text: "Failed to create due to connection refused",
-            icon: "error",
-            timer: 2000,
-            showConfirmButton: false,
-          });
-
-          return;
-        }
-        setLoading(false);
-        addToggle();
-        setType("Select Type");
-        setVendorIds([]);
-      }
-    } else {
-      Swal.fire({
-        text: "Required Fields are empty",
-        icon: "info",
-        timer: 2000,
-        showConfirmButton: false,
-      });
-      setLoading(false);
-    }
-  };
-  const addReportForInventoryLifecycle: SubmitHandler<ReportsType> = async (
-    data: any,
-  ) => {
-    setLoading(true);
-    if (
-      data.title !== "" &&
-      startDate !== null &&
-      endDate !== null &&
-      type !== ""
-    ) {
-      const report = {
-        title: data.title,
-        toDate: endDate,
-        fromDate: startDate,
-        serialNumber: data.imei,
-      };
-
-      try {
-        await create(report, {
-          url: `${GET_REPORT_BASE_URL}${type}`,
-        }).then((data: any) => {
-          // console.log("data", data);
-
-          if (!data.success && data.message === ERROR_MESSAGE) {
-            setLoading(false);
-            const yesterday = new Date();
-            yesterday.setDate(yesterday.getDate() - 1); // Subtract one day
-            setStartDate(yesterday.toISOString());
-            // setStartDate(new Date().toISOString());
-            setEndDate(new Date().toISOString());
-            addToggle();
-            setType("Select Type");
-            setIMEI("");
-          }
-          if (!data.success) {
-            Swal.fire({
-              text: `${data.message}`,
-              icon: "error",
-              timer: 2000,
-              showConfirmButton: false,
-            });
-            setLoading(false);
-            const yesterday = new Date();
-            yesterday.setDate(yesterday.getDate() - 1); // Subtract one day
-            setStartDate(yesterday.toISOString());
-            // setStartDate(new Date().toISOString());
-            setEndDate(new Date().toISOString());
-            addToggle();
-            setType("Select Type");
-          }
-          if (data.success) {
-            // console.log(data);
-            tempReports.push({
-              type: type,
-              data: {
-                title: report.title,
-                startDate: startDate,
-                endDate: endDate,
-                data: data.data,
-              },
-            });
-
-            // console.log("Reports", reports);
-            dispatch(setReports(tempReports));
-            const yesterday = new Date();
-            yesterday.setDate(yesterday.getDate() - 1); // Subtract one day
-            setStartDate(yesterday.toISOString());
-            // setStartDate(new Date().toISOString());
-            setEndDate(new Date().toISOString());
-            setLoading(false);
-            addToggle();
-            setType("Select Type");
-            setIMEI("");
-          }
-        });
-        // Handle successful post creation (e.g., show a success message, redirect, etc.)
-      } catch (error: any) {
-        const yesterday = new Date();
-        yesterday.setDate(yesterday.getDate() - 1); // Subtract one day
-        setStartDate(yesterday.toISOString());
-        // setStartDate(new Date().toISOString());
-        setEndDate(new Date().toISOString());
-        if (data == undefined) {
-          Swal.fire({
-            text: "Failed to create due to connection refused",
-            icon: "error",
-            timer: 2000,
-            showConfirmButton: false,
-          });
-
-          return;
-        }
-        setLoading(false);
-        addToggle();
-        setType("Select Type");
-        setIMEI("");
-      }
-    } else {
-      Swal.fire({
-        text: "Required Fields are empty",
-        icon: "info",
-        timer: 2000,
-        showConfirmButton: false,
-      });
-      setLoading(false);
-    }
-  };
-  const addReportForOperationActivity: SubmitHandler<ReportsType> = async (
-    data: any,
-  ) => {
-    setLoading(true);
-    if (
-      data.title !== "" &&
-      startDate !== null &&
-      endDate !== null &&
-      type !== ""
-    ) {
-      const report = {
-        title: data.title,
-        toDate: endDate,
-        fromDate: startDate,
-        vehicleId: vehicleIdForActivities,
-        activityType: activityType,
-        status: activityStatus,
-      };
-
-      try {
-        await create(report, {
-          url: `${GET_REPORT_BASE_URL}${type}`,
-        }).then((data: any) => {
-          // console.log("data", data);
-
-          if (!data.success && data.message === ERROR_MESSAGE) {
-            setLoading(false);
-            const yesterday = new Date();
-            yesterday.setDate(yesterday.getDate() - 1); // Subtract one day
-            setStartDate(yesterday.toISOString());
-            // setStartDate(new Date().toISOString());
-            setEndDate(new Date().toISOString());
-            addToggle();
-            setType("Select Type");
-            setVehicleIdForActivities("");
-            setActivityStatus("");
-            setActivityType("");
-          }
-          if (!data.success) {
-            Swal.fire({
-              text: `${data.message}`,
-              icon: "error",
-              timer: 2000,
-              showConfirmButton: false,
-            });
-            setLoading(false);
-            const yesterday = new Date();
-            yesterday.setDate(yesterday.getDate() - 1); // Subtract one day
-            setStartDate(yesterday.toISOString());
-            // setStartDate(new Date().toISOString());
-            setEndDate(new Date().toISOString());
-            addToggle();
-            setType("Select Type");
-          }
-          if (data.success) {
-            // console.log(data);
-            tempReports.push({
-              type: type,
-              data: {
-                title: report.title,
-                startDate: startDate,
-                endDate: endDate,
-                data: data.data,
-              },
-            });
-
-            // console.log("Reports", reports);
-            dispatch(setReports(tempReports));
-            const yesterday = new Date();
-            yesterday.setDate(yesterday.getDate() - 1); // Subtract one day
-            setStartDate(yesterday.toISOString());
-            // setStartDate(new Date().toISOString());
-            setEndDate(new Date().toISOString());
-            setLoading(false);
-            addToggle();
-            setType("Select Type");
-            setVehicleIdForActivities("");
-            setActivityStatus("");
-            setActivityType("");
-          }
-        });
-        // Handle successful post creation (e.g., show a success message, redirect, etc.)
-      } catch (error: any) {
-        const yesterday = new Date();
-        yesterday.setDate(yesterday.getDate() - 1); // Subtract one day
-        setStartDate(yesterday.toISOString());
-        // setStartDate(new Date().toISOString());
-        setEndDate(new Date().toISOString());
-        if (data == undefined) {
-          Swal.fire({
-            text: "Failed to create due to connection refused",
-            icon: "error",
-            timer: 2000,
-            showConfirmButton: false,
-          });
-
-          return;
-        }
-        setLoading(false);
-        addToggle();
-        setType("Select Type");
-        setVehicleIdForActivities("");
-        setActivityStatus("");
-        setActivityType("");
-      }
-    } else {
-      Swal.fire({
-        text: "Required Fields are empty",
-        icon: "info",
-        timer: 2000,
-        showConfirmButton: false,
-      });
-      setLoading(false);
-    }
-  };
-  const addReportForAMCDue: SubmitHandler<ReportsType> = async (data: any) => {
-    setLoading(true);
-    if (
-      data.title !== "" &&
-      startDate !== null &&
-      endDate !== null &&
-      type !== ""
-    ) {
-      const report = {
-        title: data.title,
-        toDate: endDate,
-        fromDate: startDate,
-      };
-
-      try {
-        await create(report, {
-          url: `${GET_REPORT_BASE_URL}${type}`,
-        }).then((data: any) => {
-          // console.log("data", data);
-
-          if (!data.success && data.message === ERROR_MESSAGE) {
-            setLoading(false);
-            const yesterday = new Date();
-            yesterday.setDate(yesterday.getDate() - 1); // Subtract one day
-            setStartDate(yesterday.toISOString());
-            // setStartDate(new Date().toISOString());
-            setEndDate(new Date().toISOString());
-            addToggle();
-            setType("Select Type");
-          }
-          if (!data.success) {
-            Swal.fire({
-              text: `${data.message}`,
-              icon: "error",
-              timer: 2000,
-              showConfirmButton: false,
-            });
-            setLoading(false);
-            const yesterday = new Date();
-            yesterday.setDate(yesterday.getDate() - 1); // Subtract one day
-            setStartDate(yesterday.toISOString());
-            // setStartDate(new Date().toISOString());
-            setEndDate(new Date().toISOString());
-            addToggle();
-            setType("Select Type");
-          }
-          if (data.success) {
-            // console.log(data);
-            tempReports.push({
-              type: type,
-              data: {
-                title: report.title,
-                startDate: startDate,
-                endDate: endDate,
-                data: data.data,
-              },
-            });
-
-            // console.log("Reports", reports);
-            dispatch(setReports(tempReports));
-            const yesterday = new Date();
-            yesterday.setDate(yesterday.getDate() - 1); // Subtract one day
-            setStartDate(yesterday.toISOString());
-            // setStartDate(new Date().toISOString());
-            setEndDate(new Date().toISOString());
-            setLoading(false);
-            addToggle();
-            setType("Select Type");
-          }
-        });
-        // Handle successful post creation (e.g., show a success message, redirect, etc.)
-      } catch (error: any) {
-        const yesterday = new Date();
-        yesterday.setDate(yesterday.getDate() - 1); // Subtract one day
-        setStartDate(yesterday.toISOString());
-        // setStartDate(new Date().toISOString());
-        setEndDate(new Date().toISOString());
-        if (data == undefined) {
-          Swal.fire({
-            text: "Failed to create due to connection refused",
-            icon: "error",
-            timer: 2000,
-            showConfirmButton: false,
-          });
-
-          return;
-        }
-        setLoading(false);
-        addToggle();
-        setType("Select Type");
-      }
-    } else {
-      Swal.fire({
-        text: "Required Fields are empty",
-        icon: "info",
-        timer: 2000,
-        showConfirmButton: false,
-      });
-      setLoading(false);
-    }
-  };
-  const addReportForInternalComplaint: SubmitHandler<ReportsType> = async (
-    data: any,
-  ) => {
-    setLoading(true);
-    if (
-      data.title !== "" &&
-      startDate !== null &&
-      endDate !== null &&
-      type !== ""
-    ) {
-      const report = {
-        title: data.title,
-        toDate: endDate,
-        fromDate: startDate,
-        status: complaintStatus,
-        priority: complaintPriority,
-        type: complaintType,
-        subRole: complaintDepartment,
-      };
-
-      try {
-        await create(report, {
-          url: `${GET_REPORT_BASE_URL}${type}`,
-        }).then((data: any) => {
-          // console.log("data", data);
-
-          if (!data.success && data.message === ERROR_MESSAGE) {
-            setLoading(false);
-            const yesterday = new Date();
-            yesterday.setDate(yesterday.getDate() - 1); // Subtract one day
-            setStartDate(yesterday.toISOString());
-            // setStartDate(new Date().toISOString());
-            setEndDate(new Date().toISOString());
-            addToggle();
-            setType("Select Type");
-            setComplaintDepartment("");
-            setComplaintPriority("");
-            setComplaintStatus("");
-            setComplaintType("");
-          }
-          if (!data.success) {
-            Swal.fire({
-              text: `${data.message}`,
-              icon: "error",
-              timer: 2000,
-              showConfirmButton: false,
-            });
-            setLoading(false);
-            const yesterday = new Date();
-            yesterday.setDate(yesterday.getDate() - 1); // Subtract one day
-            setStartDate(yesterday.toISOString());
-            // setStartDate(new Date().toISOString());
-            setEndDate(new Date().toISOString());
-            addToggle();
-            setType("Select Type");
-          }
-          if (data.success) {
-            // console.log(data);
-            tempReports.push({
-              type: type,
-              data: {
-                title: report.title,
-                startDate: startDate,
-                endDate: endDate,
-                data: data.data,
-              },
-            });
-
-            // console.log("Reports", reports);
-            dispatch(setReports(tempReports));
-            const yesterday = new Date();
-            yesterday.setDate(yesterday.getDate() - 1); // Subtract one day
-            setStartDate(yesterday.toISOString());
-            // setStartDate(new Date().toISOString());
-            setEndDate(new Date().toISOString());
-            setLoading(false);
-            addToggle();
-            setType("Select Type");
-            setComplaintDepartment("");
-            setComplaintPriority("");
-            setComplaintStatus("");
-            setComplaintType("");
-          }
-        });
-        // Handle successful post creation (e.g., show a success message, redirect, etc.)
-      } catch (error: any) {
-        const yesterday = new Date();
-        yesterday.setDate(yesterday.getDate() - 1); // Subtract one day
-        setStartDate(yesterday.toISOString());
-        // setStartDate(new Date().toISOString());
-        setEndDate(new Date().toISOString());
-        if (data == undefined) {
-          Swal.fire({
-            text: "Failed to create due to connection refused",
-            icon: "error",
-            timer: 2000,
-            showConfirmButton: false,
-          });
-
-          return;
-        }
-        setLoading(false);
-        addToggle();
-        setType("Select Type");
-        setComplaintDepartment("");
-        setComplaintPriority("");
-        setComplaintStatus("");
-        setComplaintType("");
-      }
-    } else {
-      Swal.fire({
-        text: "Required Fields are empty",
-        icon: "info",
-        timer: 2000,
-        showConfirmButton: false,
-      });
-      setLoading(false);
-    }
-  };
-
-  const getReport = (data: any) => {
-    if (type == "/get-all-alert-events-report") {
-      addReportForAlertEvents(data);
-    } else if (type == "/get-operator-performance-report") {
-      addReportForOperatorPerformance(data);
-    } else if (type == "/get-inventory-report") {
-      addReportForInventoryReport(data);
-    } else if (type == "/get-sale-invoice-report") {
-      addReportForSaleInvoices(data);
-    } else if (type == "/get-purchase-invoice-report") {
-      addReportForPurchaseInvoices(data);
-    } else if (type == "/get-inventory-lifecycle-report") {
-      addReportForInventoryLifecycle(data);
-    } else if (type == "/get-activity-report") {
-      addReportForOperationActivity(data);
-    } else if (type == "/get-amc-due-report") {
-      addReportForAMCDue(data);
-    } else if (type == "/get-complaint-report") {
-      addReportForInternalComplaint(data);
-    }
-  };
-
-  const handleReportTypeChange = (selectedOption: any) => {
-    setReportType(selectedOption);
-    handleDateSelection(selectedOption);
-  };
+  const periodList = useMemo(() => [
+    { value: "Today", label: "Today", P: "Today" },
+    { value: "Yesterday", label: "Yesterday", P: "Yesterday" },
+    { value: "This Week", label: "This Week", P: "This Week" },
+    { value: "Last Week", label: "Last Week", P: "Last Week" },
+    { value: "This Month", label: "This Month", P: "This Month" },
+    { value: "Last Month", label: "Last Month", P: "Last Month" },
+  ], []);
 
   const handleDateSelection = (selectedType: string) => {
     const today = new Date();
@@ -1477,7 +190,6 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
         start = new Date(today);
         start.setDate(today.getDate() - 1);
         end = new Date(today);
-        end.setDate(today.getDate());
         break;
       case "Yesterday":
         start = new Date(today);
@@ -1487,21 +199,19 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
         break;
       case "Last Week":
         start = new Date(today);
-        start.setDate(today.getDate() - today.getDay() - 6 - 7); // Previous Monday
+        start.setDate(today.getDate() - today.getDay() - 6 - 7);
         end = new Date(today);
-        end.setDate(today.getDate() - today.getDay() - 7); // Previous Sunday
+        end.setDate(today.getDate() - today.getDay() - 7);
         break;
       case "This Week":
         start = new Date(today);
-        start.setDate(today.getDate() - today.getDay()); // This Monday
+        start.setDate(today.getDate() - today.getDay());
         end = new Date(today);
-        break; // Today is the end of the week
-
+        break;
       case "Last Month":
         start = new Date(today.getFullYear(), today.getMonth() - 1, 1);
         end = new Date(today.getFullYear(), today.getMonth(), 0);
         break;
-
       case "This Month":
         start = new Date(today.getFullYear(), today.getMonth(), 1);
         end = new Date(today.getFullYear(), today.getMonth() + 1, 0);
@@ -1510,880 +220,476 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
         start = new Date();
         end = new Date();
     }
-
     setStartDate(start.toISOString());
     setEndDate(end.toISOString());
+    setStartDateTime(start.toISOString().slice(0, 16));
+    setEndDateTime(end.toISOString().slice(0, 16));
   };
 
   useEffect(() => {
-    handleDateSelection("Yesterday"); // Default selection
+    handleDateSelection("Yesterday");
   }, []);
-  const data = [
-    { title: "LHR", items: [] }, // Fill in your data here
-    { title: "Ungrouped", items: [] },
-    { title: "NLC", items: [] },
-    { title: "ISB", items: [] },
-    { title: "Testing Lynkworld", items: [] },
-  ];
+
+  useEffect(() => {
+    if (!type) return;
+
+    const fetchData = async () => {
+      try {
+        if (type === "/get-operator-performance-report") {
+          const data: any = await getAll({ url: GET_ALL_OPERATORS });
+          if (data?.success) {
+            dispatch(setOperatorsForReport(data.data));
+            setOperatorsForReportsList(data.data
+              .filter((item: any) => item.subRole?.name === "Control Room")
+              .map((item: any) => ({ value: item._id, label: item.fullName, P: item.fullName })));
+          }
+        } else if (type === "/get-inventory-report") {
+          const [ptData, pData, bData, wData]: any = await Promise.all([
+            getAll({ url: GET_ALL_PRODUCT_TYPES }),
+            getAll({ url: GET_ALL_PRODUCTS }),
+            getAll({ url: GET_ALL_BRANCHES }),
+            getAll({ url: GET_ALL_WAREHOUSES })
+          ]);
+          if (ptData?.success) {
+            dispatch(setProductTypesForReport(ptData.data));
+            setProductTypesForReportsList(ptData.data.allProductTypes.map((item: any) => ({ value: item.value, label: item.title, P: item.title })));
+          }
+          if (pData?.success) {
+            dispatch(setProductsForReport(pData.data));
+            setProductsForReportsList(pData.data.map((item: any) => ({ value: item._id, label: item.name, P: item.name })));
+          }
+          if (bData?.success) {
+            dispatch(setBranchesForReport(bData.data));
+            setBranchesForReportsList(bData.data.map((item: any) => ({ value: item._id, label: item.name, P: item.name })));
+          }
+          if (wData?.success) {
+            dispatch(setWarehousesForReport(wData.data));
+            setWarehousesForReportsList(wData.data.map((item: any) => ({ value: item._id, label: item.name, P: item.name })));
+          }
+        } else if (type === "/get-sale-invoice-report") {
+          const data: any = await getAll({ url: GET_ALL_CUSTOMERS });
+          if (data?.success) setCustomersForReportsList(data.data.map((item: any) => ({ value: item._id, label: item.fullName, P: item.fullName })));
+        } else if (type === "/get-purchase-invoice-report") {
+          const data: any = await getAll({ url: GET_ALL_VENDORS });
+          if (data?.success) setVendorsForReportsList(data.data.map((item: any) => ({ value: item._id, label: item.vendorName, P: item.vendorName })));
+        } else if (type === "/get-activity-report") {
+          const data: any = await getAll({ url: GET_ALL_CUSTOMERS });
+          if (data?.success) setCustomersForOperationActivitiesReportsList(data.data.map((item: any) => ({ value: item._id, label: item.fullName, P: item.fullName })));
+        } else if (type === "/get-complaint-report") {
+          const [ctData, csData, cpData, cdData]: any = await Promise.all([
+            getAll({ url: GET_ALL_ACTIVE_TYPES }),
+            getAll({ url: GET_COMPLAINT_CENTER_STATUS_TYPES }),
+            getAll({ url: GET_COMPLAINT_CENTER_PRIORITY_STATUS }),
+            getAll({ url: GET_ALL_ACTIVE_SUB_ROLES })
+          ]);
+          if (ctData?.success) setComplaintTypesForReportsList(ctData.data.map((item: any) => ({ value: item?._id, label: item?.title, P: item?.title })));
+          if (csData?.success) setComplaintStatusForReportsList(csData.data.internalComplaintStatusTypes.map((item: any) => ({ value: item.value, label: item.title, P: item.title })));
+          if (cpData?.success) setComplaintPriorityForReportsList(cpData.data.internalComplaintPriortyStatusTypes.map((item: any) => ({ value: item.value, label: item.title, P: item.title })));
+          if (cdData?.success) setComplaintDepartmentForReportsList(cdData.data.map((item: any) => ({ value: item._id, label: item.name, P: item.name })));
+        } else if (type === "/get-all-alert-events-report" || type === "/get-live-alert-report" || type === "/get-vehicle-history-report" || type === "/get-trip-detail-report") {
+          const data: any = await getAll({ url: GET_ALL_VEHICLES_DROPDOWN_FOR_ALERT });
+          if (data?.success) setVehiclesForReportsList(data.data.map((item: any) => ({ value: item._id, label: item.registrationNo, deviceId: item.traccarDeviceId || item.deviceId, imei: item.imei || "", P: item.registrationNo })));
+        } else if (type === "/get-event-agent-response-report") {
+          const data: any = await getAll({ url: GET_OPERATORS_DROPDOWN });
+          if (data?.success) setOperatorsDropdownList(data.data.map((item: any) => ({ value: item._id, label: item.fullName, P: item.fullName })));
+        }
+      } catch (error) {
+        console.error("Error fetching report options:", error);
+      }
+    };
+
+    fetchData();
+  }, [type, dispatch]);
+
+  useEffect(() => {
+    if (customerForVehicleOperationActivity) {
+      getAll({ url: `${GET_ALL_CUSTOMER_VEHICLES}/${customerForVehicleOperationActivity}` }).then((data: any) => {
+        if (data?.success) {
+          setVehiclesForOperationActivitiesReportsList(data.data.map((item: any) => ({ value: item._id, label: item.registrationNo, P: item.registrationNo })));
+        } else {
+          setVehiclesForOperationActivitiesReportsList([]);
+        }
+      });
+    }
+  }, [customerForVehicleOperationActivity]);
+
+  useEffect(() => {
+    if (type === "/get-trip-detail-report" && vehicleId) {
+      getAll({ url: `${GET_ALL_TRIPS_DROPDOWN}?vehicleId=${vehicleId}` }).then((data: any) => {
+        if (data?.success) {
+          setTripsForReportsList(data.data.map((item: any) => ({ value: item._id, label: item.title, P: item.title })));
+        } else {
+          setTripsForReportsList([]);
+        }
+      });
+    }
+  }, [type, vehicleId]);
+
+  const handleCreateReport: SubmitHandler<ReportsType> = async (formData) => {
+    if (!formData.title || !type) {
+      Swal.fire({ text: "Required Fields are empty", icon: "info", timer: 2000, showConfirmButton: false });
+      return;
+    }
+
+    setLoading(true);
+    let payload: any = {
+      title: formData.title,
+      fromDate: startDate,
+      toDate: endDate,
+    };
+
+    switch (type) {
+      case "/get-all-alert-events-report":
+        payload.deviceIds = selectedItems.length > 0
+          ? selectedItems.map(d => d.deviceId)
+          : formattedDevicesForAlertEvent.flatMap((g: any) => g.items.map((i: any) => i.id));
+        break;
+      case "/get-operator-performance-report":
+        payload.operatorIds = operatorIds;
+        break;
+      case "/get-inventory-report":
+        payload = { ...payload, branch: branch || undefined, warehouse: warehouse || undefined, productId: products.length ? products : undefined, productType: productTypes.length ? productTypes : undefined, availability };
+        break;
+      case "/get-sale-invoice-report":
+        payload.customerIds = customerIds;
+        break;
+      case "/get-purchase-invoice-report":
+        payload.vendorIds = vendorIds;
+        break;
+      case "/get-inventory-lifecycle-report":
+        payload.serialNumber = formData.imei;
+        break;
+      case "/get-activity-report":
+        payload = { ...payload, vehicleId: vehicleIdForActivities, activityType, status: activityStatus };
+        break;
+      case "/get-complaint-report":
+        payload = { ...payload, status: complaintStatus, priority: complaintPriority, type: complaintType, subRole: complaintDepartment };
+        break;
+      case "/get-live-alert-report":
+        payload.vehicleId = vehicleId;
+        break;
+      case "/get-vehicle-history-report":
+        payload = {
+          title: formData.title,
+          fromDateTime: new Date(startDateTime).toISOString(),
+          toDateTime: new Date(endDateTime).toISOString(),
+          deviceId: vehiclesForReportsList.find(v => v.value === vehicleId)?.deviceId || ""
+        };
+        break;
+      case "/get-event-agent-response-report":
+        payload.operatorId = operatorId;
+        break;
+      case "/get-trip-detail-report":
+        payload = { tripId: tripId };
+        break;
+    }
+
+    try {
+      const response: any = await create(payload, { url: `${GET_REPORT_BASE_URL}${type}` });
+      if (response.success) {
+        let newReport: any;
+        if (type === "/get-trip-detail-report") {
+          newReport = {
+            type: type,
+            data: {
+              title: formData.title,
+              startDate: response.data.tripInfo.start,
+              endDate: response.data.tripInfo.end,
+              data: response.data,
+            }
+          };
+        } else {
+          newReport = {
+            type: type,
+            data: {
+              title: payload.title || formData.title,
+              startDate: payload.fromDate || payload.fromDateTime || startDate,
+              endDate: payload.toDate || payload.toDateTime || endDate,
+              data: response.data,
+            },
+          };
+        }
+        dispatch(setReports([...reports, newReport]));
+        Swal.fire({ text: "Report Generated Successfully", icon: "success", timer: 2000, showConfirmButton: false });
+        addToggle();
+      } else {
+        Swal.fire({ text: response.message || "Failed to create report", icon: "error", timer: 2000, showConfirmButton: false });
+      }
+    } catch (error) {
+      Swal.fire({ text: "Failed to create report due to connection error", icon: "error", timer: 2000, showConfirmButton: false });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleMultiSelect = (setter: Function, list: any[]) => (values: string[]) => {
+    if (values.includes("All")) {
+      setter(list.map(item => item.value));
+    } else {
+      setter(values);
+    }
+  };
 
   return (
     <Col md={6}>
       <div className="text-end">
         <button
-          className={`btn ${
-            userPersonalizationData?.buttonsAndBarsColor == null
-              ? "btn-primary"
-              : ""
-          }`}
-          style={{
-            color: "white",
-            backgroundColor: `${
-              userPersonalizationData !== null &&
-              userPersonalizationData?.buttonsAndBarsColor
-            }`,
-          }}
+          className={`btn ${userPersonalizationData?.buttonsAndBarsColor == null ? "btn-primary" : ""}`}
+          style={{ color: "white", backgroundColor: `${userPersonalizationData?.buttonsAndBarsColor || ""}` }}
           onClick={addToggle}
         >
-          <PlusCircle />
-          Create New Report
+          <PlusCircle /> Create New Report
         </button>
-        <Modal
-          isOpen={addModal}
-          toggle={addToggle}
-          size="lg"
-          centered
-          style={
-            {
-              // he
-            }
-          }
-        >
+        <Modal isOpen={addModal} toggle={addToggle} size="lg" centered>
           <div className="modal-header">
             <H3 className="modal-title">Create Report</H3>
-            <Button
-              color="transprant"
-              className="btn-close"
-              onClick={addToggle}
-            ></Button>
+            <Button color="transparent" className="btn-close" onClick={addToggle}></Button>
           </div>
-
-          <ModalBody
-            style={{
-              minHeight: "60vh",
-              maxHeight: "655vh",
-            }}
-          >
-            <form
-              className="form-bookmark needs-validation"
-              onSubmit={handleSubmit(getReport)}
-            >
+          <ModalBody style={{ minHeight: "60vh", maxHeight: "655vh" }}>
+            <form className="form-bookmark needs-validation" onSubmit={handleSubmit(handleCreateReport)}>
               <Row>
                 <FormGroup className="col-md-6 create-group">
                   <P>Title</P>
-                  <input
-                    className="form-control"
-                    type="text"
-                    {...register("title", { required: true })}
-                  />
-                  <span style={{ color: "red" }}>
-                    {errors.title && "Report title is required"}
-                  </span>
+                  <input className="form-control" type="text" {...register("title", { required: true })} />
+                  <span style={{ color: "red" }}>{errors.title && "Report title is required"}</span>
                 </FormGroup>
+
                 <FormGroup className="col-md-6 create-group">
-                  <div>
-                    <P>Report Type</P>
-                  </div>
+                  <div><P>Report Type</P></div>
                   <Select
-                    showSearch
-                    style={{ width: "100%" }}
-                    placeholder="Select Type"
-                    optionFilterProp="children"
-                    filterOption={(input: any, option: any) =>
-                      (option?.P ?? "").includes(input)
-                    }
-                    filterSort={(optionA: any, optionB: any) =>
-                      (optionA?.P ?? "")
-                        .toLowerCase()
-                        .localeCompare((optionB?.P ?? "").toLowerCase())
-                    }
-                    onChange={(e: any, options) => {
-                      setValue("title", options.label);
-                      // console.log(e);
-                      setType(e);
+                    showSearch style={{ width: "100%" }} placeholder="Select Type" optionFilterProp="children"
+                    filterOption={(input, option) => (option?.P ?? "").toString().toLowerCase().includes(input.toLowerCase())}
+                    onChange={(val, opt: any) => {
+                      setType(val);
+                      setValue("title", opt.label);
                     }}
-                    options={reportsTypeList}
+                    options={reportsTypeListMemo}
                   />
                 </FormGroup>
 
-                <FormGroup
-                  className="col-md-6 create-group"
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                  }}
-                >
+                <FormGroup className="col-md-6 create-group" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                   <div>Period:</div>
                   <Col md={8}>
-                    <Select
-                      showSearch
-                      style={{ width: "100%" }}
-                      placeholder="Select Period"
-                      optionFilterProp="children"
-                      filterOption={(input: any, option: any) =>
-                        (option?.P ?? "").includes(input)
-                      }
-                      options={reportPeriodList}
-                      onChange={handleReportTypeChange}
-                    />
+                    <Select showSearch style={{ width: "100%" }} placeholder="Select Period" optionFilterProp="children" options={periodList} onChange={handleDateSelection} />
                   </Col>
                 </FormGroup>
 
-                {type == "/get-all-alert-events-report" ? (
-                  <FormGroup
-                    className="col-md-6 create-group"
-                    style={{ marginTop: "-25px" }}
-                  >
-                    <div>
-                      <P>Devices</P>
-                    </div>
-                    <CustomDropdown
-                      data={dropDownDevices}
-                      selectedItems={selectedItems}
-                      setSelectedItems={setSelectedItems}
-                    />
+                {type === "/get-all-alert-events-report" ? (
+                  <FormGroup className="col-md-6 create-group" style={{ marginTop: "-25px" }}>
+                    <div><P>Devices</P></div>
+                    <CustomDropdown data={formattedDevicesForAlertEvent} selectedItems={selectedItems} setSelectedItems={setSelectedItems} />
                   </FormGroup>
-                ) : type == "/get-operator-performance-report" ? (
-                  <FormGroup
-                    className="col-md-6 create-group"
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                    }}
-                  >
+                ) : type === "/get-operator-performance-report" ? (
+                  <FormGroup className="col-md-6 create-group" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                     <div>Operator:</div>
                     <Col md={8}>
                       <Select
-                        mode="multiple"
-                        showSearch
-                        style={{ width: "100%" }}
-                        placeholder="Select Operator"
-                        optionFilterProp="children"
-                        filterOption={(input: any, option: any) =>
-                          (option?.P ?? "").includes(input)
-                        }
-                        filterSort={(optionA: any, optionB: any) =>
-                          (optionA?.P ?? "")
-                            .toLowerCase()
-                            .localeCompare((optionB?.P ?? "").toLowerCase())
-                        }
-                        onChange={(e: any, options) => {
-                          // console.log("e", e);
-
-                          if (e.includes("All")) {
-                            setOperatorIds(
-                              operatorsForReportsList.map(
-                                (operator: any) => operator.value,
-                              ),
-                            );
-                          } else {
-                            setOperatorIds(e);
-                          }
-                        }}
-                        // options={operatorsForReportsList}
-                        options={[
-                          { value: "All", label: "All" }, // Adding the 'All' option
-                          ...operatorsForReportsList,
-                        ]}
+                        mode="multiple" showSearch style={{ width: "100%" }} placeholder="Select Operator" optionFilterProp="children"
+                        onChange={handleMultiSelect(setOperatorIds, operatorsForReportsList)}
+                        options={[{ value: "All", label: "All" }, ...operatorsForReportsList]}
                         value={operatorIds}
                       />
                     </Col>
                   </FormGroup>
-                ) : type == "/get-inventory-report" ? (
-                  <FormGroup
-                    className="col-md-6 create-group"
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                    }}
-                  >
+                ) : type === "/get-inventory-report" ? (
+                  <FormGroup className="col-md-6 create-group" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                     <div>Product Type:</div>
                     <Col md={8}>
                       <Select
-                        mode="multiple"
-                        showSearch
-                        style={{ width: "100%" }}
-                        placeholder="Select Type"
-                        optionFilterProp="children"
-                        filterOption={(input: any, option: any) =>
-                          (option?.P ?? "").includes(input)
-                        }
-                        filterSort={(optionA: any, optionB: any) =>
-                          (optionA?.P ?? "")
-                            .toLowerCase()
-                            .localeCompare((optionB?.P ?? "").toLowerCase())
-                        }
-                        onChange={(e: any, options) => {
-                          // console.log("e", e);
-
-                          if (e.includes("All")) {
-                            setProductTypes(
-                              productTypesForReportsList.map(
-                                (pt: any) => pt.value,
-                              ),
-                            );
-                          } else {
-                            setProductTypes(e);
-                          }
-                        }}
-                        options={[
-                          { value: "All", label: "All" }, // Adding the 'All' option
-                          ...productTypesForReportsList,
-                        ]}
+                        mode="multiple" showSearch style={{ width: "100%" }} placeholder="Select Type" optionFilterProp="children"
+                        onChange={handleMultiSelect(setProductTypes, productTypesForReportsList)}
+                        options={[{ value: "All", label: "All" }, ...productTypesForReportsList]}
+                        value={productTypes}
                       />
                     </Col>
                   </FormGroup>
-                ) : type == "/get-purchase-invoice-report" ? (
-                  <FormGroup
-                    className="col-md-6 create-group"
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                    }}
-                  >
+                ) : type === "/get-purchase-invoice-report" ? (
+                  <FormGroup className="col-md-6 create-group" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                     <div>Vendors:</div>
                     <Col md={8}>
                       <Select
-                        mode="multiple"
-                        showSearch
-                        style={{ width: "100%" }}
-                        placeholder="Select Vendors"
-                        optionFilterProp="children"
-                        filterOption={(input: any, option: any) =>
-                          (option?.P ?? "").includes(input)
-                        }
-                        filterSort={(optionA: any, optionB: any) =>
-                          (optionA?.P ?? "")
-                            .toLowerCase()
-                            .localeCompare((optionB?.P ?? "").toLowerCase())
-                        }
-                        onChange={(e: any, options) => {
-                          // console.log("e", e);
-
-                          if (e.includes("All")) {
-                            setVendorIds(
-                              vendorsForReportsList.map((v: any) => v.value),
-                            );
-                          } else {
-                            setVendorIds(e);
-                          }
-                        }}
-                        options={[
-                          { value: "All", label: "All" }, // Adding the 'All' option
-                          ...vendorsForReportsList,
-                        ]}
+                        mode="multiple" showSearch style={{ width: "100%" }} placeholder="Select Vendors" optionFilterProp="children"
+                        onChange={handleMultiSelect(setVendorIds, vendorsForReportsList)}
+                        options={[{ value: "All", label: "All" }, ...vendorsForReportsList]}
                         value={vendorIds}
                       />
                     </Col>
                   </FormGroup>
-                ) : type == "/get-sale-invoice-report" ? (
-                  <FormGroup
-                    className="col-md-6 create-group"
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                    }}
-                  >
+                ) : type === "/get-sale-invoice-report" ? (
+                  <FormGroup className="col-md-6 create-group" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                     <div>Customers:</div>
                     <Col md={8}>
                       <Select
-                        mode="multiple"
-                        showSearch
-                        style={{ width: "100%" }}
-                        placeholder="Select Customers"
-                        optionFilterProp="children"
-                        filterOption={(input: any, option: any) =>
-                          (option?.P ?? "").includes(input)
-                        }
-                        filterSort={(optionA: any, optionB: any) =>
-                          (optionA?.P ?? "")
-                            .toLowerCase()
-                            .localeCompare((optionB?.P ?? "").toLowerCase())
-                        }
-                        onChange={(e: any, options) => {
-                          // console.log("e", e);
-
-                          if (e.includes("All")) {
-                            setCustomerIds(
-                              customersForReportsList.map((c: any) => c.value),
-                            );
-                          } else {
-                            setCustomerIds(e);
-                          }
-                        }}
-                        options={[
-                          { value: "All", label: "All" }, // Adding the 'All' option
-                          ...customersForReportsList,
-                        ]}
+                        mode="multiple" showSearch style={{ width: "100%" }} placeholder="Select Customers" optionFilterProp="children"
+                        onChange={handleMultiSelect(setCustomerIds, customersForReportsList)}
+                        options={[{ value: "All", label: "All" }, ...customersForReportsList]}
                         value={customerIds}
                       />
                     </Col>
                   </FormGroup>
-                ) : type == "/get-inventory-lifecycle-report" ? (
-                  <FormGroup
-                    className="col-md-6 create-group"
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                    }}
-                  >
+                ) : type === "/get-inventory-lifecycle-report" ? (
+                  <FormGroup className="col-md-6 create-group" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                     <div>IMEI:</div>
-                    <Col md={9}>
-                      <input
-                        className="form-control"
-                        type="text"
-                        // onChange={(e) => setIMEI(e.target.value)}
-                        {...register("imei", { required: true })}
-                      />
-                      {/* <span style={{ color: "red" }}>
-                        {errors.imei && "IMEI is required"}
-                      </span> */}
-                    </Col>
+                    <Col md={9}><input className="form-control" type="text" {...register("imei", { required: true })} /></Col>
                   </FormGroup>
-                ) : type == "/get-activity-report" ? (
-                  <FormGroup
-                    className="col-md-6 create-group"
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                    }}
-                  >
+                ) : type === "/get-activity-report" ? (
+                  <FormGroup className="col-md-6 create-group" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                     <div>Customer:</div>
                     <Col md={8}>
-                      <Select
-                        // mode="multiple"
-                        showSearch
-                        style={{ width: "100%" }}
-                        placeholder="Select Customer"
-                        optionFilterProp="children"
-                        filterOption={(input: any, option: any) =>
-                          (option?.P ?? "").includes(input)
-                        }
-                        filterSort={(optionA: any, optionB: any) =>
-                          (optionA?.P ?? "")
-                            .toLowerCase()
-                            .localeCompare((optionB?.P ?? "").toLowerCase())
-                        }
-                        onChange={(e: any, options) => {
-                          setCustomerForVehicleOperationActivity(e);
-                        }}
-                        options={customersForOperationActivitiesReportsList}
-                        value={
-                          customerForVehicleOperationActivity !== ""
-                            ? customerForVehicleOperationActivity
-                            : null
-                        }
-                      />
+                      <Select showSearch style={{ width: "100%" }} placeholder="Select Customer" optionFilterProp="children" onChange={setCustomerForVehicleOperationActivity} options={customersForOperationActivitiesReportsList} value={customerForVehicleOperationActivity || null} />
                     </Col>
                   </FormGroup>
-                ) : type == "/get-complaint-report" ? (
-                  <FormGroup
-                    className="col-md-6 create-group"
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                    }}
-                  >
+                ) : type === "/get-complaint-report" ? (
+                  <FormGroup className="col-md-6 create-group" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                     <div>Complaint Type:</div>
                     <Col md={8}>
-                      <Select
-                        // mode="multiple"
-                        showSearch
-                        style={{ width: "100%" }}
-                        placeholder="Select Type"
-                        optionFilterProp="children"
-                        filterOption={(input: any, option: any) =>
-                          (option?.P ?? "").includes(input)
-                        }
-                        filterSort={(optionA: any, optionB: any) =>
-                          (optionA?.P ?? "")
-                            .toLowerCase()
-                            .localeCompare((optionB?.P ?? "").toLowerCase())
-                        }
-                        onChange={(e: any, options) => {
-                          setComplaintType(e);
-                        }}
-                        options={complaintTypesForReportsList}
-                        value={complaintType !== "" ? complaintType : null}
-                      />
+                      <Select showSearch style={{ width: "100%" }} placeholder="Select Type" optionFilterProp="children" onChange={setComplaintType} options={complaintTypesForReportsList} value={complaintType || null} />
                     </Col>
                   </FormGroup>
+                ) : type === "/get-live-alert-report" || type === "/get-vehicle-history-report" || type === "/get-trip-detail-report" ? (
+                  <FormGroup className="col-md-6 create-group" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <div>Vehicle:</div>
+                    <Col md={8}>
+                      <Select showSearch style={{ width: "100%" }} placeholder="Select Vehicle" optionFilterProp="children" onChange={setVehicleId} options={vehiclesForReportsList} value={vehicleId || null} />
+                    </Col>
+                  </FormGroup>
+                ) : type === "/get-event-agent-response-report" ? (
+                  <FormGroup className="col-md-6 create-group" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <div>Operator:</div>
+                    <Col md={8}>
+                      <Select showSearch style={{ width: "100%" }} placeholder="Select Operator" optionFilterProp="children" onChange={setOperatorId} options={[{ value: "ALL", label: "All", P: "All" }, ...operatorsDropdownList]} value={operatorId} />
+                    </Col>
+                  </FormGroup>
+                ) : <div className="col-md-6 create-group"></div>}
+
+                {type === "/get-vehicle-history-report" ? (
+                  <FormGroup className="col-md-6 create-group" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <div>Date From:</div>
+                    <Col md={8}><input className="form-control" type="datetime-local" value={startDateTime} onChange={(e) => setStartDateTime(e.target.value)} /></Col>
+                  </FormGroup>
                 ) : (
-                  <div className="col-md-6 create-group"></div>
+                  <FormGroup className="col-md-6 create-group" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <div>Date From:</div>
+                    <Col md={8}><input className="form-control" type="date" value={startDate.slice(0, 10)} onChange={(e) => setStartDate(new Date(e.target.value).toISOString())} /></Col>
+                  </FormGroup>
                 )}
-                <FormGroup
-                  className="col-md-6 create-group"
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                  }}
-                >
-                  <div>Date From:</div>
-                  <Col md={8}>
-                    <input
-                      className="form-control"
-                      type="date"
-                      value={startDate.slice(0, 10)}
-                      onChange={(e) => {
-                        setStartDate(new Date(e.target.value).toISOString());
-                        // console.log("e", e.target.value);
-                      }}
-                    />
-                  </Col>
-                </FormGroup>
-                {type == "/get-inventory-report" ? (
-                  <FormGroup
-                    className="col-md-6 create-group"
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                    }}
-                  >
+
+                {type === "/get-inventory-report" ? (
+                  <FormGroup className="col-md-6 create-group" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                     <div>Product:</div>
                     <Col md={8}>
                       <Select
-                        mode="multiple"
-                        showSearch
-                        style={{ width: "100%" }}
-                        placeholder="Select Product"
-                        optionFilterProp="children"
-                        filterOption={(input: any, option: any) =>
-                          (option?.P ?? "").includes(input)
-                        }
-                        filterSort={(optionA: any, optionB: any) =>
-                          (optionA?.P ?? "")
-                            .toLowerCase()
-                            .localeCompare((optionB?.P ?? "").toLowerCase())
-                        }
-                        onChange={(e: any, options) => {
-                          // console.log("e", e);
-
-                          if (e.includes("All")) {
-                            setProducts(
-                              productsForReportsList.map((p: any) => p.value),
-                            );
-                          } else {
-                            setProducts(e);
-                          }
-                        }}
-                        options={[
-                          { value: "All", label: "All" }, // Adding the 'All' option
-                          ...productsForReportsList,
-                        ]}
+                        mode="multiple" showSearch style={{ width: "100%" }} placeholder="Select Product" optionFilterProp="children"
+                        onChange={handleMultiSelect(setProducts, productsForReportsList)}
+                        options={[{ value: "All", label: "All" }, ...productsForReportsList]}
+                        value={products}
                       />
                     </Col>
                   </FormGroup>
-                ) : type == "/get-activity-report" ? (
-                  <FormGroup
-                    className="col-md-6 create-group"
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                    }}
-                  >
+                ) : type === "/get-activity-report" ? (
+                  <FormGroup className="col-md-6 create-group" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                     <div>Vehicle:</div>
                     <Col md={8}>
-                      <Select
-                        // mode="multiple"
-                        showSearch
-                        style={{ width: "100%" }}
-                        placeholder="Select Vehicle"
-                        optionFilterProp="children"
-                        filterOption={(input: any, option: any) =>
-                          (option?.P ?? "").includes(input)
-                        }
-                        filterSort={(optionA: any, optionB: any) =>
-                          (optionA?.P ?? "")
-                            .toLowerCase()
-                            .localeCompare((optionB?.P ?? "").toLowerCase())
-                        }
-                        onChange={(e: any, options) => {
-                          setVehicleIdForActivities(e);
-                        }}
-                        options={vehiclesForOperationActivitiesReportsList}
-                      />
+                      <Select showSearch style={{ width: "100%" }} placeholder="Select Vehicle" optionFilterProp="children" onChange={setVehicleIdForActivities} options={vehiclesForOperationActivitiesReportsList} value={vehicleIdForActivities || null} />
                     </Col>
                   </FormGroup>
-                ) : type == "/get-complaint-report" ? (
-                  <FormGroup
-                    className="col-md-6 create-group"
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                    }}
-                  >
+                ) : type === "/get-complaint-report" ? (
+                  <FormGroup className="col-md-6 create-group" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                     <div>Department:</div>
                     <Col md={8}>
-                      <Select
-                        // mode="multiple"
-                        showSearch
-                        style={{ width: "100%" }}
-                        placeholder="Select Department"
-                        optionFilterProp="children"
-                        filterOption={(input: any, option: any) =>
-                          (option?.P ?? "").includes(input)
-                        }
-                        filterSort={(optionA: any, optionB: any) =>
-                          (optionA?.P ?? "")
-                            .toLowerCase()
-                            .localeCompare((optionB?.P ?? "").toLowerCase())
-                        }
-                        onChange={(e: any, options) => {
-                          setComplaintDepartment(e);
-                        }}
-                        options={complaintDepartmentForReportsList}
-                      />
+                      <Select showSearch style={{ width: "100%" }} placeholder="Select Department" optionFilterProp="children" onChange={setComplaintDepartment} options={complaintDepartmentForReportsList} value={complaintDepartment || null} />
                     </Col>
+                  </FormGroup>
+                ) : type === "/get-trip-detail-report" ? (
+                  <FormGroup className="col-md-6 create-group" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <div>Trips:</div>
+                    <Col md={8}>
+                      <Select showSearch style={{ width: "100%" }} placeholder="Select Trips" optionFilterProp="children" onChange={setTripId} options={tripsForReportsList} value={tripId || null} />
+                    </Col>
+                  </FormGroup>
+                ) : <div></div>}
+
+                {type === "/get-vehicle-history-report" ? (
+                  <FormGroup className="col-md-6 create-group" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <div>Date To:</div>
+                    <Col md={8}><input className="form-control" type="datetime-local" value={endDateTime} onChange={(e) => setEndDateTime(e.target.value)} /></Col>
                   </FormGroup>
                 ) : (
-                  <div></div>
+                  <FormGroup className="col-md-6 create-group" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <div>Date To:</div>
+                    <Col md={8}><input className="form-control" type="date" value={endDate.slice(0, 10)} onChange={(e) => setEndDate(new Date(e.target.value).toISOString())} /></Col>
+                  </FormGroup>
                 )}
-                <FormGroup
-                  className="col-md-6 create-group"
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                  }}
-                >
-                  <div>Date To:</div>
-                  <Col md={8}>
-                    <input
-                      className="form-control"
-                      type="date"
-                      value={endDate.slice(0, 10)}
-                      onChange={(e) => {
-                        setEndDate(new Date(e.target.value).toISOString());
-                        // console.log("e", e.target.value);
-                      }}
-                    />
-                  </Col>
-                </FormGroup>
-                {type == "/get-inventory-report" ? (
-                  <FormGroup
-                    className="col-md-6 create-group"
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                    }}
-                  >
+
+                {type === "/get-inventory-report" ? (
+                  <FormGroup className="col-md-6 create-group" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                     <div>Branch:</div>
                     <Col md={8}>
-                      <Select
-                        // mode="multiple"
-                        showSearch
-                        style={{ width: "100%" }}
-                        placeholder="Select Branch"
-                        optionFilterProp="children"
-                        filterOption={(input: any, option: any) =>
-                          (option?.P ?? "").includes(input)
-                        }
-                        filterSort={(optionA: any, optionB: any) =>
-                          (optionA?.P ?? "")
-                            .toLowerCase()
-                            .localeCompare((optionB?.P ?? "").toLowerCase())
-                        }
-                        onChange={(e: any, options) => {
-                          setBranch(e);
-                        }}
-                        options={branchesForReportsList}
-                      />
+                      <Select showSearch style={{ width: "100%" }} placeholder="Select Branch" optionFilterProp="children" onChange={setBranch} options={branchesForReportsList} value={branch || null} />
                     </Col>
                   </FormGroup>
-                ) : type == "/get-activity-report" ? (
-                  <FormGroup
-                    className="col-md-6 create-group"
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                    }}
-                  >
+                ) : type === "/get-activity-report" ? (
+                  <FormGroup className="col-md-6 create-group" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                     <div>Type:</div>
                     <Col md={8}>
                       <Select
-                        // mode="multiple"
-                        showSearch
-                        style={{ width: "100%" }}
-                        placeholder="Select Activity Type"
-                        optionFilterProp="children"
-                        filterOption={(input: any, option: any) =>
-                          (option?.P ?? "").includes(input)
-                        }
-                        filterSort={(optionA: any, optionB: any) =>
-                          (optionA?.P ?? "")
-                            .toLowerCase()
-                            .localeCompare((optionB?.P ?? "").toLowerCase())
-                        }
-                        onChange={(e: any, options) => {
-                          setActivityType(e);
-                        }}
+                        showSearch style={{ width: "100%" }} placeholder="Select Activity Type" optionFilterProp="children" onChange={setActivityType} value={activityType || null}
                         options={[
-                          { label: "Remove", value: "REMOVE" },
-                          { label: "Transfer", value: "TRANSFER" },
-                          {
-                            label: "Temporary Remove",
-                            value: "TEMPORARY_REMOVE",
-                          },
-                          {
-                            label: "Ownership Change",
-                            value: "OWNERSHIP_CHANGE",
-                          },
-                          { label: "Redo", value: "REDO" },
-                          {
-                            label: "Customer Data Update",
-                            value: "CUSTOMER_DATA_UPDATE",
-                          },
+                          { label: "Remove", value: "REMOVE" }, { label: "Transfer", value: "TRANSFER" }, { label: "Temporary Remove", value: "TEMPORARY_REMOVE" },
+                          { label: "Ownership Change", value: "OWNERSHIP_CHANGE" }, { label: "Redo", value: "REDO" }, { label: "Customer Data Update", value: "CUSTOMER_DATA_UPDATE" },
                         ]}
                       />
                     </Col>
                   </FormGroup>
-                ) : type == "/get-complaint-report" ? (
-                  <FormGroup
-                    className="col-md-6 create-group"
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                    }}
-                  >
+                ) : type === "/get-complaint-report" ? (
+                  <FormGroup className="col-md-6 create-group" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                     <div>Status:</div>
                     <Col md={8}>
-                      <Select
-                        // mode="multiple"
-                        showSearch
-                        style={{ width: "100%" }}
-                        placeholder="Select Status"
-                        optionFilterProp="children"
-                        filterOption={(input: any, option: any) =>
-                          (option?.P ?? "").includes(input)
-                        }
-                        filterSort={(optionA: any, optionB: any) =>
-                          (optionA?.P ?? "")
-                            .toLowerCase()
-                            .localeCompare((optionB?.P ?? "").toLowerCase())
-                        }
-                        onChange={(e: any, options) => {
-                          setComplaintStatus(e);
-                        }}
-                        options={complaintStatusForReportsList}
-                      />
+                      <Select showSearch style={{ width: "100%" }} placeholder="Select Status" optionFilterProp="children" onChange={setComplaintStatus} options={complaintStatusForReportsList} value={complaintStatus || null} />
                     </Col>
                   </FormGroup>
-                ) : (
-                  <div></div>
-                )}
-                <FormGroup className="col-md-6 create-group"></FormGroup>
-                {type == "/get-inventory-report" ? (
-                  <FormGroup
-                    className="col-md-6 create-group"
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                    }}
-                  >
-                    <div>Warehouse:</div>
-                    <Col md={8}>
-                      <Select
-                        // mode="multiple"
-                        showSearch
-                        style={{ width: "100%" }}
-                        placeholder="Select Warehouse"
-                        optionFilterProp="children"
-                        filterOption={(input: any, option: any) =>
-                          (option?.P ?? "").includes(input)
-                        }
-                        filterSort={(optionA: any, optionB: any) =>
-                          (optionA?.P ?? "")
-                            .toLowerCase()
-                            .localeCompare((optionB?.P ?? "").toLowerCase())
-                        }
-                        onChange={(e: any, options) => {
-                          setWarehouse(e);
-                        }}
-                        options={warehousesForReportsList}
-                        // onChange={(e: any, options) => {
-                        //   console.log("e", e);
+                ) : <div></div>}
 
-                        //   if (e.includes("All")) {
-                        //     setWarehouse(
-                        //       warehousesForReportsList.map((w: any) => w.value)
-                        //     );
-                        //   } else {
-                        //     setWarehouse(e);
-                        //   }
-                        // }}
-                        // options={[
-                        //   { value: "All", label: "All" }, // Adding the 'All' option
-                        //   ...warehousesForReportsList,
-                        // ]}
-                      />
-                    </Col>
-                  </FormGroup>
-                ) : type == "/get-activity-report" ? (
-                  <FormGroup
-                    className="col-md-6 create-group"
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                    }}
-                  >
+                {type === "/get-inventory-report" ? (
+                  <>
+                    <FormGroup className="col-md-6 create-group" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                      <div>Warehouse:</div>
+                      <Col md={8}>
+                        <Select showSearch style={{ width: "100%" }} placeholder="Select Warehouse" optionFilterProp="children" onChange={setWarehouse} options={warehousesForReportsList} value={warehouse || null} />
+                      </Col>
+                    </FormGroup>
+                    <FormGroup className="col-md-6 create-group" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                      <div>Availability:</div>
+                      <Col md={8}>
+                        <Label className="switch mb-0">
+                          <Input type="checkbox" checked={availability} onChange={() => setAvailability(!availability)} />
+                          <span className="switch-state" style={{ backgroundColor: availability ? "green" : "red" }} />
+                        </Label>
+                      </Col>
+                    </FormGroup>
+                  </>
+                ) : type === "/get-activity-report" ? (
+                  <FormGroup className="col-md-6 create-group" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                     <div>Status:</div>
                     <Col md={8}>
                       <Select
-                        // mode="multiple"
-                        showSearch
-                        style={{ width: "100%" }}
-                        placeholder="Select Activity Status"
-                        optionFilterProp="children"
-                        filterOption={(input: any, option: any) =>
-                          (option?.P ?? "").includes(input)
-                        }
-                        filterSort={(optionA: any, optionB: any) =>
-                          (optionA?.P ?? "")
-                            .toLowerCase()
-                            .localeCompare((optionB?.P ?? "").toLowerCase())
-                        }
-                        onChange={(e: any, options) => {
-                          setActivityStatus(e);
-                        }}
-                        options={[
-                          {
-                            value: "ASSIGNED",
-                            label: "Assigned",
-                          },
-                          {
-                            value: "INSTALLATION",
-                            label: "Performed",
-                          },
-                          {
-                            value: "COMPLETED",
-                            label: "Completed",
-                          },
-                        ]}
+                        showSearch style={{ width: "100%" }} placeholder="Select Activity Status" optionFilterProp="children" onChange={setActivityStatus} value={activityStatus || null}
+                        options={[{ value: "ASSIGNED", label: "Assigned" }, { value: "INSTALLATION", label: "Performed" }, { value: "COMPLETED", label: "Completed" }]}
                       />
                     </Col>
                   </FormGroup>
-                ) : type == "/get-complaint-report" ? (
-                  <FormGroup
-                    className="col-md-6 create-group"
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                    }}
-                  >
+                ) : type === "/get-complaint-report" ? (
+                  <FormGroup className="col-md-6 create-group" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                     <div>Priority:</div>
                     <Col md={8}>
-                      <Select
-                        // mode="multiple"
-                        showSearch
-                        style={{ width: "100%" }}
-                        placeholder="Select Priority"
-                        optionFilterProp="children"
-                        filterOption={(input: any, option: any) =>
-                          (option?.P ?? "").includes(input)
-                        }
-                        filterSort={(optionA: any, optionB: any) =>
-                          (optionA?.P ?? "")
-                            .toLowerCase()
-                            .localeCompare((optionB?.P ?? "").toLowerCase())
-                        }
-                        onChange={(e: any, options) => {
-                          setComplaintPriority(e);
-                        }}
-                        options={complaintPriorityForReportsList}
-                      />
+                      <Select showSearch style={{ width: "100%" }} placeholder="Select Priority" optionFilterProp="children" onChange={setComplaintPriority} options={complaintPriorityForReportsList} value={complaintPriority || null} />
                     </Col>
                   </FormGroup>
-                ) : (
-                  <div></div>
-                )}
-                <FormGroup className="col-md-6 create-group"></FormGroup>
-                {type == "/get-inventory-report" ? (
-                  <FormGroup
-                    className="col-md-6 create-group"
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                    }}
-                  >
-                    <div>Availability:</div>
-                    <Col md={8}>
-                      <div
-                        className={`flex-shrink-0 icon-state 
-                            }`}
-                      >
-                        <Label className="switch mb-0">
-                          <Input
-                            type="checkbox"
-                            defaultChecked={availability}
-                            checked={availability}
-                            onChange={async (e: any) => {
-                              setAvailability(!availability);
-                            }}
-                          />
-                          <span
-                            // className={`switch-state ${
-                            //   row.isActive ? "bg-primary" : "bg-secondary"
-                            // }`}
-                            className="switch-state"
-                            style={{
-                              backgroundColor: availability ? "green" : "red",
-                            }}
-                          />
-                        </Label>
-                      </div>
-                    </Col>
-                  </FormGroup>
-                ) : (
-                  <div></div>
-                )}
+                ) : null}
               </Row>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "start",
-                  height: "150px",
-                  alignItems: "end",
-                }}
-              >
-                <Button color="primary" className="me-1">
-                  {loading ? "Loading ..." : `Generate`}
-                </Button>
-                &nbsp;&nbsp;
-                <Button
-                  disabled={loading ? true : false}
-                  color="secondary"
-                  onClick={addToggle}
-                >
-                  Cancel
-                </Button>
+              <div style={{ display: "flex", justifyContent: "start", height: "150px", alignItems: "end" }}>
+                <Button color="primary" className="me-1" disabled={loading}>{loading ? "Loading ..." : "Generate"}</Button>
+                <Button color="secondary" onClick={addToggle} disabled={loading}>Cancel</Button>
               </div>
             </form>
           </ModalBody>

@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Label, Input } from "reactstrap";
+import { useNavigate } from "react-router-dom";
 import { ImClock } from "react-icons/im";
 import { motion } from "framer-motion"; // ✅ Import Framer Motion
 import GoogleMap from "./components/GoogleMap/GoogleMap";
@@ -60,6 +61,7 @@ import { formatUnderscoredString } from "../../../../Utilities/globals/globals";
 
 const MonitoringLatest = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { devices, selectedSingleDevice, alertsEnabled } = useSelector(
     (state: any) => state.monitoring,
   );
@@ -294,10 +296,12 @@ const MonitoringLatest = () => {
     {
       icon: LuLayoutDashboard,
       tooltipName: "Dashboard",
+      path: `${process.env.PUBLIC_URL}/dashboard`,
     },
     {
       icon: ImStatsBars2,
       tooltipName: "Reports",
+      path: `${process.env.PUBLIC_URL}/company/reports`,
     },
     {
       icon: SlArrowRight,
@@ -644,7 +648,12 @@ const MonitoringLatest = () => {
           return (
             <TooltipButton
               key={i}
-              onClick={() => setSelectedIndex(i)}
+              onClick={() => {
+                setSelectedIndex(i);
+                if (menu.path) {
+                  navigate(menu.path);
+                }
+              }}
               tooltip={menu.tooltipName}
               style={{
                 width: "45px",

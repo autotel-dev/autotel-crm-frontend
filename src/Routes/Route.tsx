@@ -61,6 +61,7 @@ import Playback from "../Pages/Company/Modules/Playback/Playback";
 import AlertManagement from "../Pages/Company/AlertManagement/AlertManagement";
 import TripReports from "../Pages/Company/Modules/Monitoring/components/Reports/TripReports";
 import MonitoringLatest from "../Pages/Company/Modules/MonitoringLatest/MonetoringLatest";
+import LiveVehicleMonitoring from "../Pages/Company/Modules/MonitoringLatest/components/LiveVehicleMonitoring/LiveVehicleMonitoring";
 import TripManagementLayout from "../Pages/Company/Modules/TripManagement/TripManagementLayout";
 
 const routes = [
@@ -466,6 +467,13 @@ const routes = [
   {
     path: `${process.env.PUBLIC_URL}/company/modules/monitoring`,
     Component: <MonitoringLatest />,
+    isProtected: true,
+    allowedUserRoles: [ROLES.COMPANY],
+    permissionValue: "Monitoring",
+  },
+  {
+    path: `${process.env.PUBLIC_URL}/company/modules/live-monitoring/:registration`,
+    Component: <LiveVehicleMonitoring />,
     isProtected: true,
     allowedUserRoles: [ROLES.COMPANY],
     permissionValue: "Monitoring",

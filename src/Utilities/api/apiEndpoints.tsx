@@ -439,6 +439,7 @@ export const GET_DEVICES = `${API_BASE_URL}/company/devices`;
 // Company -> Operators
 export const CREATE_OPERATOR = `${API_BASE_URL}/operator/create-operator`;
 export const GET_ALL_OPERATORS = `${API_BASE_URL}/operator/get-all-operators`;
+export const GET_OPERATORS_DROPDOWN = `${API_BASE_URL}/operator/get-operators-dropdown`;
 export const UPDATE_OPERATOR = `${API_BASE_URL}/operator/update-operator`;
 export const DELETE_OPERATOR = `${API_BASE_URL}/operator/delete-operator`;
 
