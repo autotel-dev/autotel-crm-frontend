@@ -34,6 +34,8 @@ interface ViewPDFModalTypes {
   data: any;
   header: any;
   reportName: String;
+  fromDate?: string;
+  toDate?: string;
 }
 
 const ViewPDFModalForReports: React.FC<ViewPDFModalTypes> = ({
@@ -42,31 +44,29 @@ const ViewPDFModalForReports: React.FC<ViewPDFModalTypes> = ({
   data,
   header,
   reportName,
+  fromDate,
+  toDate,
 }) => {
   const { userData } = useSelector((state: any) => state.user);
 
   // Function to calculate the max width of each column or distribute evenly
   const getColumnWidths = () => {
     const totalColumns = header?.length;
-    if (data?.length === 0) {
-      return Array(totalColumns).fill(100); // If no data, make each column equal width
+    if (!data || data.length === 0) {
+      return Array(totalColumns || 0).fill(100);
     }
-    const widths = header?.map((headerItem: any) => {
-      let maxLength = headerItem.label.length; // Initialize with the label length
-      // Check max length from data values for each column
-      data?.forEach((item: any) => {
+    // Optimization: Sample only up to first 200 rows for width calculation
+    const sampledData = data.slice(0, 200);
+    const widths = header.map((headerItem: any) => {
+      let maxLength = headerItem.label.length;
+      sampledData.forEach((item: any) => {
         const itemLength = String(item[headerItem.value] || "").length;
-        if (itemLength > maxLength) {
-          maxLength = itemLength;
-        }
+        if (itemLength > maxLength) maxLength = itemLength;
       });
-      return maxLength * 7; // Multiply by a factor to ensure enough space for text (7px per character)
+      return Math.min(maxLength * 7, 300);
     });
-    // If there is less data, distribute columns evenly across the page
-    const totalWidth = widths?.reduce((sum: any, width: any) => sum + width, 0);
-    if (totalWidth < 800) {
-      return Array(totalColumns).fill(800 / totalColumns); // Distribute evenly if total width is too small
-    }
+    const totalWidth = widths.reduce((sum: any, w: any) => sum + w, 0);
+    if (totalWidth < 800 && totalColumns) return Array(totalColumns).fill(800 / totalColumns);
     return widths;
   };
 
@@ -89,13 +89,13 @@ const ViewPDFModalForReports: React.FC<ViewPDFModalTypes> = ({
       fontSize: 16,
     },
     companyDetails: {
-      fontSize: 12,
-      minWidth: "230px",
+      fontSize: 8,
+      maxWidth: "200px",
     },
     detailsRow: {
       flexDirection: "row",
       justifyContent: "flex-start",
-      paddingVertical: 3,
+      paddingVertical: 1,
     },
     tableContainer: {
       width: "100%",
@@ -141,111 +141,104 @@ const ViewPDFModalForReports: React.FC<ViewPDFModalTypes> = ({
     (state: any) => state.personalization
   );
 
-  const body = () => (
-    <Document>
-      <Page size={[842.89, 555.28]} style={styles2.page}>
-        <View style={styles2.section}>
-          <View style={styles2.header}>
-            {/* <Image
-              src={
-                userPersonalizationData !== null &&
-                userPersonalizationData?.loginPageLogo.url !== ""
-                  ? `${IMAGE_BASE_URL}/${userPersonalizationData?.loginPageLogo.url}`
-                  : BackgroundImage
-              }
-              style={styles2.image}
-            /> */}
-            {userPersonalizationData !== null &&
-            userPersonalizationData?.loginPageLogo.url !== "" ? (
-              <Image
-                src={`${IMAGE_BASE_URL}/${userPersonalizationData?.loginPageLogo.url}`}
-                style={styles2.image}
-              />
-            ) : (
-              <View style={styles2.image}></View>
-            )}
-            <View style={styles2.reportName}>
-              <View>
-                <Text style={styles2.titleName}>Report Name:</Text>
-              </View>
-              <View>
-                <Text style={styles2.titleText}>{reportName}</Text>
-              </View>
-            </View>
-            <View style={styles2.companyDetails}>
-              <View style={styles2.detailsRow}>
-                <Text style={styles2.titleName}> Name: &nbsp;</Text>
-                <Text style={styles2.titleName}>
-                  {userData.fullName}
-                  {userPersonalizationData?.user?.emailAddress}
-                </Text>
-              </View>
-              <View style={styles2.detailsRow}>
-                <Text style={styles2.titleName}> Email: &nbsp;</Text>
-                <Text style={styles2.titleName}>
-                  {userData.emailAddress}
-                  {userPersonalizationData?.user?.emailAddress}
-                </Text>
-              </View>
-              {/* <View style={styles2.detailsRow}>
-                <Text style={styles2.titleName}> Address: &nbsp;</Text>
-                <Text style={styles2.titleName}>
-                  abc address
-                  {userPersonalizationData?.user?.emailAddress}
-                </Text>
-              </View> */}
-              <View style={styles2.detailsRow}>
-                <Text style={styles2.titleName}> Phone: &nbsp;</Text>
-                <Text style={styles2.titleName}>
-                  {userData.phoneNo}
-                  {userPersonalizationData?.user?.emailAddress}
-                </Text>
-              </View>
-            </View>
-          </View>
-          <Text style={styles2.text}></Text>
-          <br />
+  const body = () => {
+    const chunkSize = 200; // Optimization: Chunk data per page to avoid browser hang
+    const chunks = [];
+    if (data && data.length > 0) {
+      for (let i = 0; i < data.length; i += chunkSize) {
+        chunks.push(data.slice(i, i + chunkSize));
+      }
+    } else {
+      chunks.push([]);
+    }
 
-          <br />
-          <View style={styles2.tableContainer}>
-            {/* Table Header */}
-            <View style={styles2.tableRowForHeader}>
-              {header &&
-                Array.isArray(header) &&
-                header?.map((item: any, index: any) => (
-                  <Text
-                    style={[styles2.headerCell, { width: columnWidths[index] }]}
-                    key={index}
-                  >
-                    {item.label}
-                  </Text>
-                ))}
-            </View>
+    return (
+      <Document title={reportName as string}>
+        {chunks.map((chunk, chunkIndex) => (
+          <Page key={chunkIndex} size={[842.89, 555.28]} style={styles2.page}>
+            <View style={styles2.section}>
+              {chunkIndex === 0 && (
+                <View style={styles2.header}>
+                  {userPersonalizationData !== null &&
+                    userPersonalizationData?.loginPageLogo.url !== "" ? (
+                    <Image
+                      src={`${IMAGE_BASE_URL}/${userPersonalizationData?.loginPageLogo.url}`}
+                      style={styles2.image}
+                    />
+                  ) : (
+                    <Image src={BackgroundImage} style={styles2.image} />
+                  )}
+                  <View style={styles2.reportName}>
+                    <View>
+                      <Text style={styles2.titleName}>Report Name:</Text>
+                    </View>
+                    <View>
+                      <Text style={styles2.titleText}>{reportName}</Text>
+                    </View>
+                  </View>
+                  <View style={styles2.companyDetails}>
+                    <View style={styles2.detailsRow}>
+                      <Text style={{ fontSize: 8, fontFamily: "Helvetica-Bold" }}> Name: &nbsp;</Text>
+                      <Text style={{ fontSize: 8 }}>{userData?.fullName || "N/A"}</Text>
+                    </View>
+                    <View style={styles2.detailsRow}>
+                      <Text style={{ fontSize: 8, fontFamily: "Helvetica-Bold" }}> Email: &nbsp;</Text>
+                      <Text style={{ fontSize: 8 }}>{userData?.emailAddress || "N/A"}</Text>
+                    </View>
+                    <View style={styles2.detailsRow}>
+                      <Text style={{ fontSize: 8, fontFamily: "Helvetica-Bold" }}> Phone: &nbsp;</Text>
+                      <Text style={{ fontSize: 8 }}>{userData?.phoneNo || "N/A"}</Text>
+                    </View>
+                    <View style={{ marginTop: 5 }}>
+                      <View style={styles2.detailsRow}>
+                        <Text style={{ fontSize: 8, fontFamily: "Helvetica-Bold" }}>From: &nbsp;</Text>
+                        <Text style={{ fontSize: 8 }}>{fromDate || "N/A"}</Text>
+                      </View>
+                      <View style={styles2.detailsRow}>
+                        <Text style={{ fontSize: 8, fontFamily: "Helvetica-Bold" }}>To: &nbsp;</Text>
+                        <Text style={{ fontSize: 8 }}>{toDate || "N/A"}</Text>
+                      </View>
+                    </View>
+                  </View>
+                </View>
+              )}
 
-            {/* Table Data */}
-            {data?.map((item: any, index: any) => (
-              <View style={styles2.tableRow} key={index}>
-                {header?.map((headerItem: any, headerIndex: number) => {
-                  const value = item[headerItem.value];
-                  return (
+              <View style={styles2.tableContainer}>
+                {/* Table Header */}
+                <View style={styles2.tableRowForHeader} fixed>
+                  {header?.map((item: any, hIndex: any) => (
                     <Text
-                      style={[
-                        styles2.tableCell,
-                        { width: columnWidths[headerIndex] },
-                      ]}
-                      key={headerIndex}
+                      style={[styles2.headerCell, { width: columnWidths[hIndex] }]}
+                      key={hIndex}
                     >
-                      {value || "N/A"}
+                      {item.label}
                     </Text>
-                  );
-                })}
+                  ))}
+                </View>
+
+                {/* Table Data */}
+                {chunk.map((item: any, rIndex: any) => (
+                  <View style={styles2.tableRow} key={rIndex}>
+                    {header?.map((headerItem: any, headerIndex: number) => (
+                      <Text
+                        style={[
+                          styles2.tableCell,
+                          { width: columnWidths[headerIndex] },
+                        ]}
+                        key={headerIndex}
+                      >
+                        {item[headerItem.value] ?? "N/A"}
+                      </Text>
+                    ))}
+                  </View>
+                ))}
               </View>
-            ))}
-          </View>
-        </View>
-      </Page>
-    </Document>
-  );
+            </View>
+          </Page>
+        ))}
+      </Document>
+    );
+  };
 
   return (
     <div>

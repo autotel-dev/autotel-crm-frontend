@@ -7,8 +7,9 @@ import {
   // Button,
 } from "reactstrap";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { Spinner } from "reactstrap";
 import "./reportsStyle.css";
 import Loader from "../../Utilities/Loader/Loader";
 import xlsx from "json-as-xlsx";
@@ -25,16 +26,114 @@ import { FaEye } from "react-icons/fa";
 import {
   Document,
   Page,
-  PDFViewer,
   Text,
   View,
   StyleSheet,
   Image,
   pdf,
-  PDFDownloadLink,
 } from "@react-pdf/renderer";
 import { IMAGE_BASE_URL } from "../../../Utilities/api/apiEndpoints";
 import BackgroundImage from "../../../assets/Background Image.png";
+
+const pdfStyles = StyleSheet.create({
+  page: { padding: 20 },
+  section: { marginBottom: 10 },
+  text: { fontSize: 8 },
+  reportName: { justifyContent: "center", alignItems: "center" },
+  titleName: { fontSize: 12 },
+  titleText: { fontSize: 16 },
+  companyDetails: { fontSize: 8, maxWidth: "200px" },
+  detailsRow: { flexDirection: "row", justifyContent: "flex-start", paddingVertical: 1 },
+  tableContainer: { width: "100%", height: "auto", border: "2px solid black" },
+  tableRowForHeader: { flexDirection: "row", borderBottom: "2px solid black" },
+  tableRow: { flexDirection: "row", borderBottom: "1px solid black", borderColor: "gray" },
+  tableCell: { paddingVertical: 7, paddingLeft: 7, fontSize: "7.5px", margin: -1, fontWeight: "extrabold" },
+  headerCell: { paddingVertical: 10, paddingLeft: 7, margin: -1, fontFamily: "Helvetica-Bold", fontSize: "9.5px" },
+  image: { minWidth: "150px", maxWidth: "160px", height: "80px" },
+  header: { flexDirection: "row", marginBottom: 10, justifyContent: "space-between" },
+});
+
+const PDFDocumentContent = ({ header, pdfData, reportName, columnWidths, userPersonalizationData, userData, fromDate, toDate }: any) => {
+  const chunkSize = 200; // Optimization: Chunk data to avoid browser freeze
+  const chunks = [];
+  if (pdfData && pdfData.length > 0) {
+    for (let i = 0; i < pdfData.length; i += chunkSize) {
+      chunks.push(pdfData.slice(i, i + chunkSize));
+    }
+  } else {
+    chunks.push([]);
+  }
+
+  return (
+    <Document>
+      {chunks.map((chunk, chunkIndex) => (
+        <Page key={chunkIndex} size={[842.89, 555.28]} style={pdfStyles.page}>
+          <View style={pdfStyles.section}>
+            {chunkIndex === 0 && (
+              <View style={pdfStyles.header}>
+                <Image
+                  src={
+                    userPersonalizationData !== null && userPersonalizationData?.loginPageLogo.url !== ""
+                      ? `${IMAGE_BASE_URL}/${userPersonalizationData?.loginPageLogo.url}`
+                      : BackgroundImage
+                  }
+                  style={pdfStyles.image}
+                />
+                <View style={pdfStyles.reportName}>
+                  <View><Text style={pdfStyles.titleName}>Report Name:</Text></View>
+                  <View><Text style={pdfStyles.titleText}>{reportName}</Text></View>
+                </View>
+                <View style={pdfStyles.companyDetails}>
+                  <View style={pdfStyles.detailsRow}>
+                    <Text style={{ fontSize: 8, fontFamily: "Helvetica-Bold" }}> Name: &nbsp;</Text>
+                    <Text style={{ fontSize: 8 }}>{userData?.fullName || "N/A"}</Text>
+                  </View>
+                  <View style={pdfStyles.detailsRow}>
+                    <Text style={{ fontSize: 8, fontFamily: "Helvetica-Bold" }}> Email: &nbsp;</Text>
+                    <Text style={{ fontSize: 8 }}>{userData?.emailAddress || "N/A"}</Text>
+                  </View>
+                  <View style={pdfStyles.detailsRow}>
+                    <Text style={{ fontSize: 8, fontFamily: "Helvetica-Bold" }}> Phone: &nbsp;</Text>
+                    <Text style={{ fontSize: 8 }}>{userData?.phoneNo || "N/A"}</Text>
+                  </View>
+                  <View style={{ marginTop: 5 }}>
+                    <View style={pdfStyles.detailsRow}>
+                      <Text style={{ fontSize: 8, fontFamily: "Helvetica-Bold" }}>From: &nbsp;</Text>
+                      <Text style={{ fontSize: 8 }}>{fromDate || "N/A"}</Text>
+                    </View>
+                    <View style={pdfStyles.detailsRow}>
+                      <Text style={{ fontSize: 8, fontFamily: "Helvetica-Bold" }}>To: &nbsp;</Text>
+                      <Text style={{ fontSize: 8 }}>{toDate || "N/A"}</Text>
+                    </View>
+                  </View>
+                </View>
+              </View>
+            )}
+
+            <View style={pdfStyles.tableContainer}>
+              <View style={pdfStyles.tableRowForHeader} fixed>
+                {header?.map((item: any, index: any) => (
+                  <Text style={[pdfStyles.headerCell, { width: columnWidths[index] }]} key={index}>
+                    {item.label}
+                  </Text>
+                ))}
+              </View>
+              {chunk.map((item: any, index: any) => (
+                <View style={pdfStyles.tableRow} key={index}>
+                  {header?.map((headerItem: any, headerIndex: number) => (
+                    <Text style={[pdfStyles.tableCell, { width: columnWidths[headerIndex] }]} key={headerIndex}>
+                      {item[headerItem.value] ?? "N/A"}
+                    </Text>
+                  ))}
+                </View>
+              ))}
+            </View>
+          </View>
+        </Page>
+      ))}
+    </Document>
+  );
+};
 
 const ReportsList = () => {
   const { reports } = useSelector((state: any) => state.reports);
@@ -56,10 +155,15 @@ const ReportsList = () => {
   }
 
   const [loading, setLoading] = useState(false);
+  const [header, setHeader] = useState<any[]>([]);
+  const [pdfData, setPdfData] = useState<any[]>([]);
+  const [reportName, setReportName] = useState<string>("");
+  const [fromDate, setFromDate] = useState<string>("");
+  const [toDate, setToDate] = useState<string>("");
+  const [generatingPdfId, setGeneratingPdfId] = useState<number | null>(null);
+  const [isPreparingView, setIsPreparingView] = useState<number | null>(null);
 
-  const [header, setHeader]: any = useState([]);
-  const [pdfData, setPdfData] = useState([]);
-  const [reportName, setReportName]: any = useState("");
+  const { userPersonalizationData } = useSelector((state: any) => state.personalization);
 
   // Function to convert 24-hour time to 12-hour with AM/PM
   const convertTo12HourFormat = (timeString: any, serverTime: any) => {
@@ -75,6 +179,18 @@ const ReportsList = () => {
     const secondsFormatted = seconds < 10 ? "0" + seconds : seconds;
 
     return `${hours}:${minutesFormatted}:${secondsFormatted} ${ampm}`;
+  };
+
+  // Helper to process large arrays in chunks to avoid blocking the UI
+  const chunkedTransform = async (data: any[], transformFn: (item: any, index: number) => any, chunkSize = 1000) => {
+    const result = [];
+    for (let i = 0; i < data.length; i += chunkSize) {
+      const chunk = data.slice(i, i + chunkSize);
+      result.push(...chunk.map((item, index) => transformFn(item, i + index)));
+      // Yield to the main thread
+      await new Promise((resolve) => setTimeout(resolve, 0));
+    }
+    return result;
   };
 
   const renderTableRows = () => {
@@ -377,21 +493,32 @@ const ReportsList = () => {
                     };
                   });
                 } else if (row.type == "/get-live-alert-report" || row.type == "/get-live-alerts-report" || row.type == "/get-vehicle-history-report" || row.type == "/get-event-agent-response-report") {
+                  const unwantedKeys = ["packetId", "isAcknowledged"];
                   if (row.data.data.reportTableHeaders) {
-                    columns = row.data.data.reportTableHeaders.map((h: string) => ({
-                      label: h,
-                      value: h.charAt(0).toLowerCase() + h.slice(1).replace(/ /g, "")
-                    }));
+                    columns = row.data.data.reportTableHeaders
+                      .filter((h: string) => !unwantedKeys.includes(h.charAt(0).toLowerCase() + h.slice(1).replace(/ /g, "")))
+                      .map((h: string) => ({
+                        label: h,
+                        value: h.charAt(0).toLowerCase() + h.slice(1).replace(/ /g, "")
+                      }));
                     rowData = row.data.data.reportData?.map((item: any) => {
                       const newItem = { ...item };
                       if (newItem.metadata && typeof newItem.metadata === 'object') {
                         newItem.metadata = JSON.stringify(newItem.metadata);
                       }
+                      unwantedKeys.forEach(key => delete newItem[key]);
                       return newItem;
                     }) || [];
                   } else {
-                    rowData = Array.isArray(row.data.data) ? row.data.data : [row.data.data.reportData || row.data.data];
-                    columns = Object.keys(rowData[0] || {}).map(k => ({ label: formatUnderscoredString(k), value: k }));
+                    const tempRawData = Array.isArray(row.data.data) ? row.data.data : [row.data.data.reportData || row.data.data];
+                    columns = Object.keys(tempRawData[0] || {})
+                      .filter(k => !unwantedKeys.includes(k))
+                      .map(k => ({ label: formatUnderscoredString(k), value: k }));
+                    rowData = tempRawData.map((item: any) => {
+                      const newItem = { ...item };
+                      unwantedKeys.forEach(key => delete newItem[key]);
+                      return newItem;
+                    });
                   }
                 } else if (row.type == "/get-trip-detail-report") {
                   const { tripInfo, metrics, stops } = row.data.data;
@@ -469,361 +596,97 @@ const ReportsList = () => {
                 marginLeft: "10px",
                 backgroundColor: "transparent",
               }}
-              onClick={() => {
-                // console.log("reports", reports);
-                var rowData;
-                var columns;
-                if (row.type == "/get-all-alert-events-report") {
-                  columns = [
-                    // { label: "Id", value: "_id" },
-                    // { label: "Event Id", value: "eventId" },
-                    // { label: "Device Id", value: "deviceId" },
-                    { label: "Device Name", value: "deviceName" },
-                    { label: "Latitude", value: "latitude" },
-                    { label: "Longitude", value: "longitude" },
-                    { label: "Speed", value: "speed" },
-                    { label: "Type", value: "type" },
-                    { label: "Message", value: "message" },
-                    { label: "User", value: "user" },
-                    {
-                      label: "Completion Response",
-                      value: "completionResponse",
-                    },
-                    {
-                      label: "Alert Event Close Date",
-                      value: "alertEventCloseDate",
-                    },
-                    { label: "Server Time", value: "serverTime" },
-                  ];
-                  rowData = row.data.data.reportData.map(
-                    (item: any, index: any) => {
-                      return {
-                        ...item,
-                        alertEventCloseDate: `${item?.alertEventCloseDate == "Not Completed"
-                          ? "Not Completed"
-                          : item?.alertEventCloseDate.slice(0, 10)
-                          }, ${item?.alertEventCloseDate == "Not Completed"
-                            ? ""
-                            : convertTo12HourFormat(
-                              item?.alertEventCloseDate,
-                              false
-                            )
-                          }`,
-                        serverTime: `${item?.serverDateAndTime.slice(
-                          0,
-                          10
-                        )}, ${convertTo12HourFormat(
-                          item?.serverDateAndTime,
-                          true
-                        )}`,
-                        user:
-                          item?.alertEventCloseDate == "Not Completed"
-                            ? item?.assignedTo?.fullName
-                            : item?.completedByUser?.fullName,
-                        latitude: Number(item.latitude).toFixed(7),
-                        longitude: Number(item.longitude).toFixed(7),
-                      };
-                    }
-                  );
-                  setHeader(columns);
-                  setPdfData(rowData);
-                } else if (row.type == "/get-operator-performance-report") {
-                  columns = [
-                    { label: "Name", value: "name" },
-                    { label: "Limit", value: "limit" },
-                    { label: "Alerts Catered", value: "totalAlertsHandled" },
-                    {
-                      label: "Average Sec in Alert",
-                      value: "averageAlertDifferenceTime",
-                    },
-                    { label: "Rating", value: "rating" },
-                  ];
+              onClick={async () => {
+                if (isPreparingView !== null) return;
+                setIsPreparingView(index);
+                // Allow UI to render the spinner before heavy work
+                await new Promise((resolve) => setTimeout(resolve, 100));
 
-                  rowData =
-                    row.data.data.length == 0
-                      ? []
-                      : row.data.data.map((item: any, index: any) => {
-                        return {
-                          ...item,
-                        };
-                      });
-                  setHeader(columns);
-                  setPdfData(rowData);
-                } else if (row.type == "/get-inventory-report") {
-                  columns = [
-                    // { label: "Id", value: "_id" },
-                    { label: "Product Name", value: "productName" },
-                    { label: "Product Type", value: "productType" },
-                    { label: "Serial Number", value: "serialNumber" },
-                    { label: "Sku", value: "sku" },
-                    { label: "User", value: "user" },
-                    { label: "Company", value: "company" },
-                    { label: "Branch", value: "branch" },
-                    { label: "Warehouse", value: "warehouse" },
-                  ];
-                  rowData =
-                    row.data.data.length == 0
-                      ? []
-                      : row.data.data.map((item: any, index: any) => {
-                        return {
-                          // _id: item._id,
-                          productName: item.productName,
-                          productType: item.productType,
-                          serialNumber: item.serialNumber,
-                          sku: item.sku,
-                          user: item.user.fullName,
-                          company: item.company.fullName,
-                          branch: item.branch.name,
-                          warehouse: item.warehouse.name,
-                        };
-                      });
-                  setHeader(columns);
-                  setPdfData(rowData);
-                } else if (row.type == "/get-sale-invoice-report") {
-                  columns = [
-                    // { label: "Id", value: "_id" },
-                    { label: "Customer", value: "customerName" },
-                    { label: "Address", value: "address" },
-                    { label: "Comments", value: "comments" },
-                    { label: "Date", value: "date" },
-                    { label: "Due Date", value: "dueDate" },
-                    { label: "Status", value: "status" },
-                    { label: "Net Amount", value: "netAmount" },
-                    { label: "Gross Amount", value: "grossAmount" },
-                  ];
-                  rowData =
-                    row.data.data.length == 0
-                      ? []
-                      : row.data.data.map((item: any, index: any) => {
-                        return {
-                          // _id: item._id,
-                          customerName: item.customerName,
-                          address: item.address,
-                          comments: item.comments,
-                          date: item.invoiceDate,
-                          dueDate: item.invoiceDueDate,
-                          status: item.status,
-                          netAmount: item.netAmount,
-                          grossAmount: item.grossAmount,
-                        };
-                      });
-                  setHeader(columns);
-                  setPdfData(rowData);
-                } else if (row.type == "/get-purchase-invoice-report") {
-                  columns = [
-                    // { label: "Id", value: "_id" },
-                    { label: "Vendor", value: "vendor" },
-                    { label: "Branch", value: "branch" },
-                    { label: "Warehouse", value: "warehouse" },
-                    { label: "Date", value: "date" },
-                    { label: "Due Date", value: "dueDate" },
-                    { label: "Status", value: "status" },
-                    { label: "Shipping Details", value: "shippingCharges" },
-                    { label: "Net Amount", value: "netAmount" },
-                  ];
-                  rowData = row.data.data.map((item: any, index: any) => {
-                    return {
-                      // _id: item._id,
-                      vendor: item.vendor.vendorName,
-                      branch: item.branch.name,
-                      warehouse: item.warehouse.name,
-                      date: item.invoiceDate,
-                      dueDate: item.invoiceDueDate,
-                      status: item.status,
-                      shippingCharges: item.shippingCharges,
-                      netAmount: item.netAmount,
-                    };
-                  });
+                try {
+                  const unwantedKeys = ["packetId", "isAcknowledged"];
+                  let rd: any[] = [];
+                  let columns: any[] = [];
+                  const rawData = row.data.data.reportData || row.data.data;
 
-                  setHeader(columns);
-                  setPdfData(rowData);
-                } else if (row.type == "/get-inventory-lifecycle-report") {
-                  columns = [
-                    // { label: "Id", value: "_id" },
-                    { label: "Type", value: "vendor" },
-                    { label: "Status", value: "branch" },
-                    { label: "From Vehicle", value: "fromVehicle" },
-                    { label: "To Vehicle", value: "toVehicle" },
-                    { label: "From Customer", value: "fromCustomer" },
-                    { label: "To Customer", value: "toCustomer" },
-                    { label: "Installer", value: "installer" },
-                  ];
-                  rowData =
-                    row.data.data.length == 0
-                      ? []
-                      : row.data.data[0].activities.map(
-                        (item: any, index: any) => {
-                          return {
-                            // _id: item._id,
-                            type: formatUnderscoredString(item.activityType),
-                            status: formatUnderscoredString(item.status),
-                            fromVehicle:
-                              item.fromVehicle == null
-                                ? "N/A"
-                                : item?.fromVehicle.registrationNo,
-                            toVehicle:
-                              item.toVehicle == null
-                                ? "N/A"
-                                : item?.toVehicle.registrationNo,
-                            fromCustomer:
-                              item.fromCustomer == null
-                                ? "N/A"
-                                : item?.fromCustomer?.fullName,
-                            toCustomer:
-                              item.toCustomer == null
-                                ? "N/A"
-                                : item?.toCustomer?.fullName,
-                            installer:
-                              item.installer == null
-                                ? "N/A"
-                                : item?.installer?.fullName,
-                          };
-                        }
-                      );
-                  setHeader(columns);
-                  setPdfData(rowData);
-                } else if (row.type == "/get-activity-report") {
-                  columns = [
-                    // { label: "Id", value: "_id" },
-                    { label: "Type", value: "type" },
-                    { label: "Status", value: "status" },
-                    { label: "From Vehicle", value: "fromVehicle" },
-                    { label: "To Vehicle", value: "toVehicle" },
-                    { label: "Inventory", value: "inventory" },
-
-                    { label: "Installer", value: "installer" },
-                    { label: "Remarks", value: "remarks" },
-                  ];
-                  rowData =
-                    row.data.data.length == 0
-                      ? []
-                      : row.data.data.map((item: any, index: any) => {
-                        return {
-                          // _id: item._id,
-                          type: formatUnderscoredString(item.activityType),
-                          status: formatUnderscoredString(item.status),
-                          fromVehicle:
-                            item.fromVehicle == null
-                              ? "N/A"
-                              : item?.fromVehicle.registrationNo,
-                          toVehicle:
-                            item.toVehicle == null
-                              ? "N/A"
-                              : item?.toVehicle.registrationNo,
-                          inventory:
-                            item?.inventoryItems?.length == 0
-                              ? "N/A"
-                              : `${item?.inventoryItems.map(
-                                (inv: any, index: any) =>
-                                  `${inv.serialNumber} | `
-                              )}`,
-
-                          installer:
-                            item.installer == null
-                              ? "N/A"
-                              : item?.installer?.fullName,
-                          remarks: item.remarks == "" ? "N/A" : item?.remarks,
-                        };
-                      });
-                  setHeader(columns);
-                  setPdfData(rowData);
-                } else if (row.type == "/get-amc-due-report") {
-                  columns = [
-                    { label: "Customer", value: "customer" },
-                    { label: "Registration No", value: "registrationNo" },
-                    { label: "Renewal Date", value: "serviceRenewalDate" },
-                    {
-                      label: "Service Charges",
-                      value: "servicePackageCharges",
-                    },
-                    {
-                      label: "Discounted Charges",
-                      value: "servicePackageDiscountedCharges",
-                    },
-                  ];
-                  rowData =
-                    row.data.data.length == 0
-                      ? []
-                      : row.data.data.map((item: any, index: any) => {
-                        return {
-                          customer: item.customer.fullName,
-                          registrationNo: item.registrationNo,
-                          serviceRenewalDate: item.serviceRenewalDate.slice(
-                            0,
-                            10
-                          ),
-                          servicePackageCharges: item.servicePackageCharges,
-                          servicePackageDiscountedCharges:
-                            item.servicePackageDiscountedCharges,
-                        };
-                      });
-                  setHeader(columns);
-                  setPdfData(rowData);
-                } else if (row.type == "/get-live-alert-report" || row.type == "/get-live-alerts-report" || row.type == "/get-vehicle-history-report" || row.type == "/get-event-agent-response-report") {
-                  if (row.data.data.reportTableHeaders) {
-                    columns = row.data.data.reportTableHeaders.map((h: string) => ({
-                      label: h,
-                      value: h.charAt(0).toLowerCase() + h.slice(1).replace(/ /g, "")
+                  if (row.type == "/get-all-alert-events-report") {
+                    columns = [{ label: "Device Name", value: "deviceName" }, { label: "Latitude", value: "latitude" }, { label: "Longitude", value: "longitude" }, { label: "Speed", value: "speed" }, { label: "Type", value: "type" }, { label: "Message", value: "message" }, { label: "User", value: "user" }, { label: "Completion Response", value: "completionResponse" }, { label: "Alert Event Close Date", value: "alertEventCloseDate" }, { label: "Server Time", value: "serverTime" }];
+                    rd = await chunkedTransform(rawData, (item: any) => ({
+                      ...item,
+                      alertEventCloseDate: `${item?.alertEventCloseDate == "Not Completed" ? "Not Completed" : item?.alertEventCloseDate.slice(0, 10)}, ${item?.alertEventCloseDate == "Not Completed" ? "" : convertTo12HourFormat(item?.alertEventCloseDate, false)}`,
+                      serverTime: `${item?.serverDateAndTime.slice(0, 10)}, ${convertTo12HourFormat(item?.serverDateAndTime, true)}`,
+                      user: item?.alertEventCloseDate == "Not Completed" ? item?.assignedTo?.fullName : item?.completedByUser?.fullName,
+                      latitude: Number(item.latitude).toFixed(7),
+                      longitude: Number(item.longitude).toFixed(7)
                     }));
-                    rowData = row.data.data.reportData?.map((item: any) => {
-                      const newItem = { ...item };
-                      if (newItem.metadata && typeof newItem.metadata === 'object') {
-                        newItem.metadata = JSON.stringify(newItem.metadata);
-                      }
-                      return newItem;
-                    }) || [];
+                  } else if (row.type == "/get-operator-performance-report") {
+                    columns = [{ label: "Name", value: "name" }, { label: "Limit", value: "limit" }, { label: "Alerts Catered", value: "totalAlertsHandled" }, { label: "Average Sec in Alert", value: "averageAlertDifferenceTime" }, { label: "Rating", value: "rating" }];
+                    rd = await chunkedTransform(rawData, (item: any) => ({ ...item }));
+                  } else if (row.type == "/get-inventory-report") {
+                    columns = [{ label: "Product Name", value: "productName" }, { label: "Product Type", value: "productType" }, { label: "Serial Number", value: "serialNumber" }, { label: "Sku", value: "sku" }, { label: "User", value: "user" }, { label: "Company", value: "company" }, { label: "Branch", value: "branch" }, { label: "Warehouse", value: "warehouse" }];
+                    rd = await chunkedTransform(rawData, (item: any) => ({ productName: item.productName, productType: item.productType, serialNumber: item.serialNumber, sku: item.sku, user: item.user.fullName, company: item.company.fullName, branch: item.branch.name, warehouse: item.warehouse.name }));
+                  } else if (row.type == "/get-sale-invoice-report") {
+                    columns = [{ label: "Customer", value: "customerName" }, { label: "Address", value: "address" }, { label: "Comments", value: "comments" }, { label: "Date", value: "date" }, { label: "Due Date", value: "dueDate" }, { label: "Status", value: "status" }, { label: "Net Amount", value: "netAmount" }, { label: "Gross Amount", value: "grossAmount" }];
+                    rd = await chunkedTransform(rawData, (item: any) => ({ customerName: item.customerName, address: item.address, comments: item.comments, date: item.invoiceDate, dueDate: item.invoiceDueDate, status: item.status, netAmount: item.netAmount, grossAmount: item.grossAmount }));
+                  } else if (row.type == "/get-purchase-invoice-report") {
+                    columns = [{ label: "Vendor", value: "vendor" }, { label: "Branch", value: "branch" }, { label: "Warehouse", value: "warehouse" }, { label: "Date", value: "date" }, { label: "Due Date", value: "dueDate" }, { label: "Status", value: "status" }, { label: "Shipping Details", value: "shippingCharges" }, { label: "Net Amount", value: "netAmount" }];
+                    rd = await chunkedTransform(rawData, (item: any) => ({ vendor: item.vendor.vendorName, branch: item.branch.name, warehouse: item.warehouse.name, date: item.invoiceDate, dueDate: item.invoiceDueDate, status: item.status, shippingCharges: item.shippingCharges, netAmount: item.netAmount }));
+                  } else if (row.type == "/get-amc-due-report") {
+                    columns = [{ label: "Customer", value: "customer" }, { label: "Registration No", value: "registrationNo" }, { label: "Renewal Date", value: "serviceRenewalDate" }, { label: "Service Charges", value: "servicePackageCharges" }, { label: "Discounted Charges", value: "servicePackageDiscountedCharges" }];
+                    rd = await chunkedTransform(rawData, (item: any) => ({ customer: item.customer.fullName, registrationNo: item.registrationNo, serviceRenewalDate: item.serviceRenewalDate.slice(0, 10), servicePackageCharges: item.servicePackageCharges, servicePackageDiscountedCharges: item.servicePackageDiscountedCharges }));
+                  } else if (row.type == "/get-trip-detail-report") {
+                    columns = [{ label: "Seq", value: "sequence" }, { label: "Location", value: "location" }, { label: "Stop Type", value: "stopType" }, { label: "Sched. Arrival", value: "scheduledArrival" }, { label: "Actual Arrival", value: "actualArrival" }, { label: "Arrival Status", value: "arrivalStatus" }, { label: "Stay (Min)", value: "stayDurationMin" }];
+                    rd = await chunkedTransform(row.data.data.stops, (s: any) => ({ ...s, scheduledArrival: s.scheduledArrival?.slice(0, 16), actualArrival: s.actualArrival?.slice(0, 16) }));
+                  } else if (row.type == "/get-live-alert-report" || row.type == "/get-live-alerts-report" || row.type == "/get-vehicle-history-report" || row.type == "/get-event-agent-response-report") {
+                    if (row.data.data.reportTableHeaders) {
+                      columns = row.data.data.reportTableHeaders
+                        .filter((h: string) => !unwantedKeys.includes(h.charAt(0).toLowerCase() + h.slice(1).replace(/ /g, "")))
+                        .map((h: string) => ({ label: h, value: h.charAt(0).toLowerCase() + h.slice(1).replace(/ /g, "") }));
+                      rd = await chunkedTransform(rawData, (item: any) => {
+                        const newItem = {
+                          ...item,
+                          metadata: item.metadata && typeof item.metadata === 'object' ? JSON.stringify(item.metadata) : item.metadata
+                        };
+                        unwantedKeys.forEach(key => delete newItem[key]);
+                        return newItem;
+                      });
+                    } else {
+                      const baseData = Array.isArray(rawData) ? rawData : [rawData];
+                      columns = Object.keys(baseData[0] || {})
+                        .filter(k => !unwantedKeys.includes(k))
+                        .map(k => ({ label: formatUnderscoredString(k), value: k }));
+                      rd = await chunkedTransform(baseData, (item: any) => {
+                        const newItem = { ...item };
+                        unwantedKeys.forEach(key => delete newItem[key]);
+                        return newItem;
+                      });
+                    }
+                  } else if (row.type == "/get-complaint-report") {
+                    columns = [{ label: "Complaint Id", value: "complaintId" }, { label: "Device Name", value: "deviceName" }, { label: "Description", value: "description" }, { label: "Priorty", value: "priorty" }, { label: "Status", value: "status" }, { label: "Resolving Date", value: "resolvingDate" }, { label: "Created At", value: "createdAt" }];
+                    rd = await chunkedTransform(rawData, (item: any) => ({ complaintId: item.complaintId, deviceName: item.deviceName, description: item.description, priorty: item.priorty, status: item.status, resolvingDate: `${item?.resolvingDate !== null ? item?.resolvingDate.slice(0, 10) : "N/A"}, ${item?.resolvingDate !== null ? convertTo12HourFormat(item?.resolvingDate, true) : ""}`, createdAt: `${item?.createdAt.slice(0, 10)}, ${convertTo12HourFormat(item?.createdAt, true)}` }));
                   } else {
-                    rowData = Array.isArray(row.data.data) ? row.data.data : [row.data.data.reportData || row.data.data];
-                    columns = Object.keys(rowData[0] || {}).map(k => ({ label: formatUnderscoredString(k), value: k }));
+                    const baseData = Array.isArray(rawData) ? rawData : [];
+                    columns = baseData.length > 0 ? Object.keys(baseData[0] || {}).map(k => ({ label: k, value: k })) : [];
+                    rd = await chunkedTransform(baseData, (item: any) => ({ ...item }));
                   }
-                  setHeader(columns);
-                  setPdfData(rowData);
-                } else if (row.type == "/get-trip-detail-report") {
-                  const { stops } = row.data.data;
-                  columns = [
-                    { label: "Seq", value: "sequence" },
-                    { label: "Location", value: "location" },
-                    { label: "Stop Type", value: "stopType" },
-                    { label: "Sched. Arrival", value: "scheduledArrival" },
-                    { label: "Actual Arrival", value: "actualArrival" },
-                    { label: "Arrival Status", value: "arrivalStatus" },
-                    { label: "Stay (Min)", value: "stayDurationMin" },
-                  ];
-                  rowData = stops.map((s: any) => ({
-                    ...s,
-                    scheduledArrival: s.scheduledArrival?.slice(0, 16),
-                    actualArrival: s.actualArrival?.slice(0, 16),
-                  }));
-                  setHeader(columns);
-                  setPdfData(rowData);
-                } else if (row.type == "/get-complaint-report") {
-                  columns = [
-                    { label: "Complaint Id", value: "complaintId" },
-                    { label: "Device Name", value: "deviceName" },
-                    { label: "Description", value: "description" },
-                    { label: "Priorty", value: "priorty" },
-                    { label: "Status", value: "status" },
-                    { label: "Resolving Date", value: "resolvingDate" },
-                    { label: "Created At", value: "createdAt" },
-                  ];
-                  rowData = row.data.data.length == 0 ? [] : row.data.data.map((item: any) => ({
-                    complaintId: item.complaintId,
-                    deviceName: item.deviceName,
-                    description: item.description,
-                    priorty: item.priorty,
-                    status: item.status,
-                    resolvingDate: `${item?.resolvingDate !== null ? item?.resolvingDate.slice(0, 10) : "N/A"}, ${item?.resolvingDate !== null ? convertTo12HourFormat(item?.resolvingDate, true) : ""}`,
-                    createdAt: `${item?.createdAt.slice(0, 10)}, ${convertTo12HourFormat(item?.createdAt, true)}`,
-                  }));
-                  setHeader(columns);
-                  setPdfData(rowData);
-                }
 
-                setReportName(row.data.title);
-                toggleModal();
+                  setHeader(columns);
+                  setPdfData(rd);
+                  setReportName(row.data.title);
+                  setFromDate(row.data.startDate.slice(0, 10));
+                  setToDate(row.data.endDate.slice(0, 10));
+                  toggleModal();
+                } catch (error) {
+                  console.error("View PDF Error", error);
+                } finally {
+                  setIsPreparingView(null);
+                }
               }}
             >
-              <FaEye size={22} color="blue" />
+              {isPreparingView === index ? (
+                <Spinner size="sm" color="primary" />
+              ) : (
+                <FaEye size={22} color="blue" />
+              )}
             </button>
             <button
               style={{
@@ -838,552 +701,128 @@ const ReportsList = () => {
                 backgroundColor: "transparent",
                 paddingTop: "5px",
               }}
-              onClick={() => {
-                // console.log("reports", reports);
-                var rowData;
-                var columns;
-                if (row.type == "/get-all-alert-events-report") {
-                  columns = [
-                    // { label: "Id", value: "_id" },
-                    // { label: "Event Id", value: "eventId" },
-                    // { label: "Device Id", value: "deviceId" },
-                    { label: "Device Name", value: "deviceName" },
-                    { label: "Latitude", value: "latitude" },
-                    { label: "Longitude", value: "longitude" },
-                    { label: "Speed", value: "speed" },
-                    { label: "Type", value: "type" },
-                    { label: "Message", value: "message" },
-                    { label: "User", value: "user" },
-                    {
-                      label: "Completion Response",
-                      value: "completionResponse",
-                    },
-                    {
-                      label: "Alert Event Close Date",
-                      value: "alertEventCloseDate",
-                    },
-                    { label: "Server Time", value: "serverTime" },
-                  ];
-                  rowData = row.data.data.reportData.map(
-                    (item: any, index: any) => {
-                      return {
-                        ...item,
-                        alertEventCloseDate: `${item?.alertEventCloseDate == "Not Completed"
-                          ? "Not Completed"
-                          : item?.alertEventCloseDate.slice(0, 10)
-                          }, ${item?.alertEventCloseDate == "Not Completed"
-                            ? ""
-                            : convertTo12HourFormat(
-                              item?.alertEventCloseDate,
-                              false
-                            )
-                          }`,
-                        serverTime: `${item?.serverDateAndTime.slice(
-                          0,
-                          10
-                        )}, ${convertTo12HourFormat(
-                          item?.serverDateAndTime,
-                          true
-                        )}`,
-                        user:
-                          item?.alertEventCloseDate == "Not Completed"
-                            ? item?.assignedTo?.fullName
-                            : item?.completedByUser?.fullName,
-                        latitude: Number(item.latitude).toFixed(7),
-                        longitude: Number(item.longitude).toFixed(7),
-                      };
+              onClick={async () => {
+                if (generatingPdfId !== null) return;
+                setGeneratingPdfId(index);
+                // Allow UI to render the spinner before heavy work
+                await new Promise((resolve) => setTimeout(resolve, 100));
+
+                try {
+                  const unwantedKeys = ["packetId", "isAcknowledged"];
+                  let columns: any[] = [];
+                  let rd: any[] = [];
+                  const rawData = row.data.data.reportData || row.data.data;
+
+                  // Reusing chunked transformation logic
+                  if (row.type == "/get-all-alert-events-report") {
+                    columns = [{ label: "Device Name", value: "deviceName" }, { label: "Latitude", value: "latitude" }, { label: "Longitude", value: "longitude" }, { label: "Speed", value: "speed" }, { label: "Type", value: "type" }, { label: "Message", value: "message" }, { label: "User", value: "user" }, { label: "Completion Response", value: "completionResponse" }, { label: "Alert Event Close Date", value: "alertEventCloseDate" }, { label: "Server Time", value: "serverTime" }];
+                    rd = await chunkedTransform(rawData, (item: any) => ({ ...item, alertEventCloseDate: `${item?.alertEventCloseDate == "Not Completed" ? "Not Completed" : item?.alertEventCloseDate.slice(0, 10)}, ${item?.alertEventCloseDate == "Not Completed" ? "" : convertTo12HourFormat(item?.alertEventCloseDate, false)}`, serverTime: `${item?.serverDateAndTime.slice(0, 10)}, ${convertTo12HourFormat(item?.serverDateAndTime, true)}`, user: item?.alertEventCloseDate == "Not Completed" ? item?.assignedTo?.fullName : item?.completedByUser?.fullName, latitude: Number(item.latitude).toFixed(7), longitude: Number(item.longitude).toFixed(7) }));
+                  } else if (row.type == "/get-operator-performance-report") {
+                    columns = [{ label: "Name", value: "name" }, { label: "Limit", value: "limit" }, { label: "Alerts Catered", value: "totalAlertsHandled" }, { label: "Average Sec in Alert", value: "averageAlertDifferenceTime" }, { label: "Rating", value: "rating" }];
+                    rd = await chunkedTransform(rawData, (item: any) => ({ ...item }));
+                  } else if (row.type == "/get-inventory-report") {
+                    columns = [{ label: "Product Name", value: "productName" }, { label: "Product Type", value: "productType" }, { label: "Serial Number", value: "serialNumber" }, { label: "Sku", value: "sku" }, { label: "User", value: "user" }, { label: "Company", value: "company" }, { label: "Branch", value: "branch" }, { label: "Warehouse", value: "warehouse" }];
+                    rd = await chunkedTransform(rawData, (item: any) => ({ productName: item.productName, productType: item.productType, serialNumber: item.serialNumber, sku: item.sku, user: item.user.fullName, company: item.company.fullName, branch: item.branch.name, warehouse: item.warehouse.name }));
+                  } else if (row.type == "/get-sale-invoice-report") {
+                    columns = [{ label: "Customer", value: "customerName" }, { label: "Address", value: "address" }, { label: "Comments", value: "comments" }, { label: "Date", value: "date" }, { label: "Due Date", value: "dueDate" }, { label: "Status", value: "status" }, { label: "Net Amount", value: "netAmount" }, { label: "Gross Amount", value: "grossAmount" }];
+                    rd = await chunkedTransform(rawData, (item: any) => ({ customerName: item.customerName, address: item.address, comments: item.comments, date: item.invoiceDate, dueDate: item.invoiceDueDate, status: item.status, netAmount: item.netAmount, grossAmount: item.grossAmount }));
+                  } else if (row.type == "/get-purchase-invoice-report") {
+                    columns = [{ label: "Vendor", value: "vendor" }, { label: "Branch", value: "branch" }, { label: "Warehouse", value: "warehouse" }, { label: "Date", value: "date" }, { label: "Due Date", value: "dueDate" }, { label: "Status", value: "status" }, { label: "Shipping Details", value: "shippingCharges" }, { label: "Net Amount", value: "netAmount" }];
+                    rd = await chunkedTransform(rawData, (item: any) => ({ vendor: item.vendor.vendorName, branch: item.branch.name, warehouse: item.warehouse.name, date: item.invoiceDate, dueDate: item.invoiceDueDate, status: item.status, shippingCharges: item.shippingCharges, netAmount: item.netAmount }));
+                  } else if (row.type == "/get-amc-due-report") {
+                    columns = [{ label: "Customer", value: "customer" }, { label: "Registration No", value: "registrationNo" }, { label: "Renewal Date", value: "serviceRenewalDate" }, { label: "Service Charges", value: "servicePackageCharges" }, { label: "Discounted Charges", value: "servicePackageDiscountedCharges" }];
+                    rd = await chunkedTransform(rawData, (item: any) => ({ customer: item.customer.fullName, registrationNo: item.registrationNo, serviceRenewalDate: item.serviceRenewalDate.slice(0, 10), servicePackageCharges: item.servicePackageCharges, servicePackageDiscountedCharges: item.servicePackageDiscountedCharges }));
+                  } else if (row.type == "/get-live-alert-report" || row.type == "/get-live-alerts-report" || row.type == "/get-vehicle-history-report" || row.type == "/get-event-agent-response-report") {
+                    if (row.data.data.reportTableHeaders) {
+                      columns = row.data.data.reportTableHeaders
+                        .filter((h: string) => !unwantedKeys.includes(h.charAt(0).toLowerCase() + h.slice(1).replace(/ /g, "")))
+                        .map((h: string) => ({ label: h, value: h.charAt(0).toLowerCase() + h.slice(1).replace(/ /g, "") }));
+                      rd = await chunkedTransform(rawData, (item: any) => {
+                        const newItem = {
+                          ...item,
+                          metadata: item.metadata && typeof item.metadata === 'object' ? JSON.stringify(item.metadata) : item.metadata
+                        };
+                        unwantedKeys.forEach(key => delete newItem[key]);
+                        return newItem;
+                      });
+                    } else {
+                      const baseData = Array.isArray(rawData) ? rawData : [rawData];
+                      columns = Object.keys(baseData[0] || {})
+                        .filter(k => !unwantedKeys.includes(k))
+                        .map(k => ({ label: formatUnderscoredString(k), value: k }));
+                      rd = await chunkedTransform(baseData, (item: any) => {
+                        const newItem = { ...item };
+                        unwantedKeys.forEach(key => delete newItem[key]);
+                        return newItem;
+                      });
                     }
-                  );
-                  setHeader(columns);
-                  setPdfData(rowData);
-                } else if (row.type == "/get-operator-performance-report") {
-                  columns = [
-                    { label: "Name", value: "name" },
-                    { label: "Limit", value: "limit" },
-                    { label: "Alerts Catered", value: "totalAlertsHandled" },
-                    {
-                      label: "Average Sec in Alert",
-                      value: "averageAlertDifferenceTime",
-                    },
-                    { label: "Rating", value: "rating" },
-                  ];
-
-                  rowData = row.data.data.map((item: any, index: any) => {
-                    return {
-                      ...item,
-                    };
-                  });
-                  setHeader(columns);
-                  setPdfData(rowData);
-                } else if (row.type == "/get-inventory-report") {
-                  columns = [
-                    // { label: "Id", value: "_id" },
-                    { label: "Product Name", value: "productName" },
-                    { label: "Product Type", value: "productType" },
-                    { label: "Serial Number", value: "serialNumber" },
-                    { label: "Sku", value: "sku" },
-                    { label: "User", value: "user" },
-                    { label: "Company", value: "company" },
-                    { label: "Branch", value: "branch" },
-                    { label: "Warehouse", value: "warehouse" },
-                  ];
-                  rowData = row.data.data.map((item: any, index: any) => {
-                    return {
-                      // _id: item._id,
-                      productName: item.productName,
-                      productType: item.productType,
-                      serialNumber: item.serialNumber,
-                      sku: item.sku,
-                      user: item.user.fullName,
-                      company: item.company.fullName,
-                      branch: item.branch.name,
-                      warehouse: item.warehouse.name,
-                    };
-                  });
-                  setHeader(columns);
-                  setPdfData(rowData);
-                } else if (row.type == "/get-sale-invoice-report") {
-                  columns = [
-                    // { label: "Id", value: "_id" },
-                    { label: "Customer", value: "customerName" },
-                    { label: "Address", value: "address" },
-                    { label: "Comments", value: "comments" },
-                    { label: "Date", value: "date" },
-                    { label: "Due Date", value: "dueDate" },
-                    { label: "Status", value: "status" },
-                    { label: "Net Amount", value: "netAmount" },
-                    { label: "Gross Amount", value: "grossAmount" },
-                  ];
-                  rowData = row.data.data.map((item: any, index: any) => {
-                    return {
-                      // _id: item._id,
-                      customerName: item.customerName,
-                      address: item.address,
-                      comments: item.comments,
-                      date: item.invoiceDate,
-                      dueDate: item.invoiceDueDate,
-                      status: item.status,
-                      netAmount: item.netAmount,
-                      grossAmount: item.grossAmount,
-                    };
-                  });
-                  setHeader(columns);
-                  setPdfData(rowData);
-                } else if (row.type == "/get-purchase-invoice-report") {
-                  columns = [
-                    // { label: "Id", value: "_id" },
-                    { label: "Vendor", value: "vendor" },
-                    { label: "Branch", value: "branch" },
-                    { label: "Warehouse", value: "warehouse" },
-                    { label: "Date", value: "date" },
-                    { label: "Due Date", value: "dueDate" },
-                    { label: "Status", value: "status" },
-                    { label: "Shipping Details", value: "shippingCharges" },
-                    { label: "Net Amount", value: "netAmount" },
-                  ];
-                  rowData = row.data.data.map((item: any, index: any) => {
-                    return {
-                      // _id: item._id,
-                      vendor: item.vendor.vendorName,
-                      branch: item.branch.name,
-                      warehouse: item.warehouse.name,
-                      date: item.invoiceDate,
-                      dueDate: item.invoiceDueDate,
-                      status: item.status,
-                      shippingCharges: item.shippingCharges,
-                      netAmount: item.netAmount,
-                    };
-                  });
-
-                  setHeader(columns);
-                  setPdfData(rowData);
-                } else if (row.type == "/get-inventory-lifecycle-report") {
-                  columns = [
-                    // { label: "Id", value: "_id" },
-                    { label: "Type", value: "vendor" },
-                    { label: "Status", value: "branch" },
-                    { label: "From Vehicle", value: "fromVehicle" },
-                    { label: "To Vehicle", value: "toVehicle" },
-                    { label: "From Customer", value: "fromCustomer" },
-                    { label: "To Customer", value: "toCustomer" },
-                    { label: "Installer", value: "installer" },
-                  ];
-                  rowData =
-                    row.data.data.length == 0
-                      ? []
-                      : row.data.data[0].activities.map(
-                        (item: any, index: any) => {
-                          return {
-                            // _id: item._id,
-                            type: formatUnderscoredString(item.activityType),
-                            status: formatUnderscoredString(item.status),
-                            fromVehicle:
-                              item.fromVehicle == null
-                                ? "N/A"
-                                : item?.fromVehicle.registrationNo,
-                            toVehicle:
-                              item.toVehicle == null
-                                ? "N/A"
-                                : item?.toVehicle.registrationNo,
-                            fromCustomer:
-                              item.fromCustomer == null
-                                ? "N/A"
-                                : item?.fromCustomer?.fullName,
-                            toCustomer:
-                              item.toCustomer == null
-                                ? "N/A"
-                                : item?.toCustomer?.fullName,
-                            installer:
-                              item.installer == null
-                                ? "N/A"
-                                : item?.installer?.fullName,
-                          };
-                        }
-                      );
-
-                  setHeader(columns);
-                  setPdfData(rowData);
-                } else if (row.type == "/get-activity-report") {
-                  columns = [
-                    // { label: "Id", value: "_id" },
-                    { label: "Type", value: "type" },
-                    { label: "Status", value: "status" },
-                    { label: "From Vehicle", value: "fromVehicle" },
-                    { label: "To Vehicle", value: "toVehicle" },
-                    { label: "Inventory", value: "inventory" },
-
-                    { label: "Installer", value: "installer" },
-                    { label: "Remarks", value: "remarks" },
-                  ];
-                  rowData = row.data.data.map((item: any, index: any) => {
-                    return {
-                      // _id: item._id,
-                      type: formatUnderscoredString(item.activityType),
-                      status: formatUnderscoredString(item.status),
-                      fromVehicle:
-                        item.fromVehicle == null
-                          ? "N/A"
-                          : item?.fromVehicle.registrationNo,
-                      toVehicle:
-                        item.toVehicle == null
-                          ? "N/A"
-                          : item?.toVehicle.registrationNo,
-                      inventory:
-                        item?.inventoryItems?.length == 0
-                          ? "N/A"
-                          : `${item?.inventoryItems.map(
-                            (inv: any, index: any) => `${inv.serialNumber} | `
-                          )}`,
-
-                      installer:
-                        item.installer == null
-                          ? "N/A"
-                          : item?.installer?.fullName,
-                      remarks: item.remarks == "" ? "N/A" : item?.remarks,
-                    };
-                  });
-                  setHeader(columns);
-                  setPdfData(rowData);
-                } else if (row.type == "/get-amc-due-report") {
-                  columns = [
-                    { label: "Customer", value: "customer" },
-                    { label: "Registration No", value: "registrationNo" },
-                    { label: "Renewal Date", value: "serviceRenewalDate" },
-                    {
-                      label: "Service Charges",
-                      value: "servicePackageCharges",
-                    },
-                    {
-                      label: "Discounted Charges",
-                      value: "servicePackageDiscountedCharges",
-                    },
-                  ];
-                  rowData = row.data.data.map((item: any, index: any) => {
-                    return {
-                      customer: item.customer.fullName,
-                      registrationNo: item.registrationNo,
-                      serviceRenewalDate: item.serviceRenewalDate.slice(0, 10),
-                      servicePackageCharges: item.servicePackageCharges,
-                      servicePackageDiscountedCharges:
-                        item.servicePackageDiscountedCharges,
-                    };
-                  });
-                  setHeader(columns);
-                  setPdfData(rowData);
-                } else if (row.type == "/get-live-alert-report" || row.type == "/get-live-alerts-report" || row.type == "/get-vehicle-history-report" || row.type == "/get-event-agent-response-report") {
-                  if (row.data.data.reportTableHeaders) {
-                    columns = row.data.data.reportTableHeaders.map((h: string) => ({
-                      label: h,
-                      value: h.charAt(0).toLowerCase() + h.slice(1).replace(/ /g, "")
-                    }));
-                    rowData = row.data.data.reportData?.map((item: any) => {
-                      const newItem = { ...item };
-                      if (newItem.metadata && typeof newItem.metadata === 'object') {
-                        newItem.metadata = JSON.stringify(newItem.metadata);
-                      }
-                      return newItem;
-                    }) || [];
                   } else {
-                    rowData = Array.isArray(row.data.data) ? row.data.data : [row.data.data.reportData || row.data.data];
-                    columns = Object.keys(rowData[0] || {}).map(k => ({ label: formatUnderscoredString(k), value: k }));
+                    const baseData = Array.isArray(rawData) ? rawData : [];
+                    rd = await chunkedTransform(baseData, (item: any) => ({ ...item }));
+                    columns = rd.length > 0 ? Object.keys(rd[0] || {}).map(k => ({ label: k, value: k })) : [];
                   }
-                  setHeader(columns);
-                  setPdfData(rowData);
-                } else if (row.type == "/get-trip-detail-report") {
-                  const { stops } = row.data.data;
-                  columns = [
-                    { label: "Seq", value: "sequence" },
-                    { label: "Location", value: "location" },
-                    { label: "Stop Type", value: "stopType" },
-                    { label: "Sched. Arrival", value: "scheduledArrival" },
-                    { label: "Actual Arrival", value: "actualArrival" },
-                    { label: "Arrival Status", value: "arrivalStatus" },
-                    { label: "Stay (Min)", value: "stayDurationMin" },
-                  ];
-                  rowData = stops.map((s: any) => ({
-                    ...s,
-                    scheduledArrival: s.scheduledArrival?.slice(0, 16),
-                    actualArrival: s.actualArrival?.slice(0, 16),
-                  }));
-                  setHeader(columns);
-                  setPdfData(rowData);
-                } else if (row.type == "/get-complaint-report") {
-                  columns = [
-                    { label: "Complaint Id", value: "complaintId" },
-                    { label: "Device Name", value: "deviceName" },
-                    { label: "Description", value: "description" },
-                    { label: "Priorty", value: "priorty" },
-                    { label: "Status", value: "status" },
-                    { label: "Resolving Date", value: "resolvingDate" },
-                    { label: "Created At", value: "createdAt" },
-                  ];
-                  rowData = row.data.data.length == 0 ? [] : row.data.data.map((item: any) => ({
-                    complaintId: item.complaintId,
-                    deviceName: item.deviceName,
-                    description: item.description,
-                    priorty: item.priorty,
-                    status: item.status,
-                    resolvingDate: `${item?.resolvingDate !== null ? item?.resolvingDate.slice(0, 10) : "N/A"}, ${item?.resolvingDate !== null ? convertTo12HourFormat(item?.resolvingDate, true) : ""}`,
-                    createdAt: `${item?.createdAt.slice(0, 10)}, ${convertTo12HourFormat(item?.createdAt, true)}`,
-                  }));
-                  setHeader(columns);
-                  setPdfData(rowData);
-                }
 
-                setReportName(row.data.title);
-                // downloadPDF();
+                  const blob = await pdf(
+                    <PDFDocumentContent
+                      header={columns}
+                      pdfData={rd}
+                      reportName={row.data.title}
+                      fromDate={row.data.startDate.slice(0, 10)}
+                      toDate={row.data.endDate.slice(0, 10)}
+                      columnWidths={columns.map(() => 100)}
+                      userPersonalizationData={userPersonalizationData}
+                      userData={userData}
+                    />
+                  ).toBlob();
+
+                  const url = URL.createObjectURL(blob);
+                  const a = document.createElement("a");
+                  a.href = url;
+                  a.download = `${row.data.title}.pdf`;
+                  a.click();
+                  URL.revokeObjectURL(url);
+                } catch (err) {
+                  console.error("PDF Generate Fail", err);
+                } finally {
+                  setGeneratingPdfId(null);
+                }
               }}
             >
-              <PDFDownloadLink
-                document={<PDFDcoument />} // PDF content to be downloaded
-                fileName={`${reportName}.pdf`} // Name of the file to be downloaded
-              >
+              {generatingPdfId === index ? (
+                <Spinner size="sm" color="danger" />
+              ) : (
                 <BiSolidFilePdf size={22} color="red" />
-              </PDFDownloadLink>
+              )}
             </button>
           </div>
         </td>
-      </tr>
+      </tr >
     ));
   };
-
   useEffect(() => {
     dispatch(setReports([]));
-    // toggleModal();
   }, []);
 
-  // Function to calculate the max width of each column or distribute evenly
-  const getColumnWidths = () => {
+  const columnWidths = useMemo(() => {
     const totalColumns = header?.length;
-    if (pdfData?.length === 0) {
-      return Array(totalColumns).fill(100); // If no data, make each column equal width
+    if (!header || !pdfData || pdfData.length === 0) {
+      return Array(totalColumns || 0).fill(100);
     }
-    const widths = header?.map((headerItem: any) => {
-      let maxLength = headerItem.label.length; // Initialize with the label length
-      // Check max length from data values for each column
-      pdfData?.forEach((item: any) => {
+    // Optimization: Sample only up to first 200 rows for width calculation
+    const sampledData = pdfData.slice(0, 200);
+    const widths = header.map((headerItem: any) => {
+      let maxLength = headerItem.label.length;
+      sampledData.forEach((item: any) => {
         const itemLength = String(item[headerItem.value] || "").length;
-        if (itemLength > maxLength) {
-          maxLength = itemLength;
-        }
+        if (itemLength > maxLength) maxLength = itemLength;
       });
-      return maxLength * 7; // Multiply by a factor to ensure enough space for text (7px per character)
+      return Math.min(maxLength * 7, 300);
     });
-    // If there is less data, distribute columns evenly across the page
-    const totalWidth = widths?.reduce((sum: any, width: any) => sum + width, 0);
-    if (totalWidth < 800) {
-      return Array(totalColumns).fill(800 / totalColumns); // Distribute evenly if total width is too small
-    }
+    const totalWidth = widths.reduce((sum: any, w: any) => sum + w, 0);
+    if (totalWidth < 800 && totalColumns) return Array(totalColumns).fill(800 / totalColumns);
     return widths;
-  };
+  }, [header, pdfData]);
 
-  const columnWidths = getColumnWidths(); // Get dynamic column widths
-
-  const styles2 = StyleSheet.create({
-    page: { padding: 20 },
-    section: { marginBottom: 10 },
-    text: {
-      fontSize: 8,
-    },
-    reportName: {
-      justifyContent: "center",
-      alignItems: "center",
-    },
-    titleName: {
-      fontSize: 12,
-    },
-    titleText: {
-      fontSize: 16,
-    },
-    companyDetails: {
-      fontSize: 12,
-      maxWidth: "200px",
-    },
-    detailsRow: {
-      flexDirection: "row",
-      justifyContent: "flex-start",
-      paddingVertical: 3,
-    },
-    tableContainer: {
-      width: "100%",
-      height: "auto",
-      border: "2px solid black",
-    },
-    tableRowForHeader: {
-      flexDirection: "row",
-      borderBottom: "2px solid black",
-    },
-    tableRow: {
-      flexDirection: "row",
-      borderBottom: "1px solid black",
-      borderColor: "gray",
-    },
-    tableCell: {
-      paddingVertical: 7,
-      paddingLeft: 7,
-      fontSize: "7.5px",
-      margin: -1,
-      fontWeight: "extrabold",
-    },
-    headerCell: {
-      paddingVertical: 10,
-      paddingLeft: 7,
-      margin: -1,
-      fontFamily: "Helvetica-Bold",
-      fontSize: "9.5px",
-    },
-    image: {
-      minWidth: "150px",
-      maxWidth: "160px",
-      height: "80px",
-    },
-    header: {
-      flexDirection: "row",
-      marginBottom: 10,
-      justifyContent: "space-between",
-    },
-  });
-
-  const { userPersonalizationData } = useSelector(
-    (state: any) => state.personalization
-  );
-
-  const PDFDcoument = () => (
-    <Document>
-      <Page size={[842.89, 555.28]} style={styles2.page}>
-        <View style={styles2.section}>
-          <View style={styles2.header}>
-            <Image
-              src={
-                userPersonalizationData !== null &&
-                  userPersonalizationData?.loginPageLogo.url !== ""
-                  ? `${IMAGE_BASE_URL}/${userPersonalizationData?.loginPageLogo.url}`
-                  : BackgroundImage
-              }
-              style={styles2.image}
-            />
-            <View style={styles2.reportName}>
-              <View>
-                <Text style={styles2.titleName}>Report Name:</Text>
-              </View>
-              <View>
-                <Text style={styles2.titleText}>{reportName}</Text>
-              </View>
-            </View>
-            <View style={styles2.companyDetails}>
-              <View style={styles2.detailsRow}>
-                <Text style={styles2.titleName}> Name: &nbsp;</Text>
-                <Text style={styles2.titleName}>
-                  abc@gmail.com
-                  {userPersonalizationData?.user?.emailAddress}
-                </Text>
-              </View>
-              <View style={styles2.detailsRow}>
-                <Text style={styles2.titleName}> Email: &nbsp;</Text>
-                <Text style={styles2.titleName}>
-                  abc@gmail.com
-                  {userPersonalizationData?.user?.emailAddress}
-                </Text>
-              </View>
-              <View style={styles2.detailsRow}>
-                <Text style={styles2.titleName}> Address: &nbsp;</Text>
-                <Text style={styles2.titleName}>
-                  abc address
-                  {userPersonalizationData?.user?.emailAddress}
-                </Text>
-              </View>
-              <View style={styles2.detailsRow}>
-                <Text style={styles2.titleName}> Phone: &nbsp;</Text>
-                <Text style={styles2.titleName}>
-                  021-36215572
-                  {userPersonalizationData?.user?.emailAddress}
-                </Text>
-              </View>
-            </View>
-          </View>
-          <Text style={styles2.text}></Text>
-          <br />
-
-          <br />
-          <View style={styles2.tableContainer}>
-            {/* Table Header */}
-            <View style={styles2.tableRowForHeader}>
-              {header &&
-                Array.isArray(header) &&
-                header?.map((item: any, index: any) => (
-                  <Text
-                    style={[styles2.headerCell, { width: columnWidths[index] }]}
-                    key={index}
-                  >
-                    {item.label}
-                  </Text>
-                ))}
-            </View>
-
-            {/* Table Data */}
-            {pdfData?.map((item: any, index: any) => (
-              <View style={styles2.tableRow} key={index}>
-                {header?.map((headerItem: any, headerIndex: number) => {
-                  const value = item[headerItem.value];
-                  return (
-                    <Text
-                      style={[
-                        styles2.tableCell,
-                        { width: columnWidths[headerIndex] },
-                      ]}
-                      key={headerIndex}
-                    >
-                      {value || "N/A"}
-                    </Text>
-                  );
-                })}
-              </View>
-            ))}
-          </View>
-        </View>
-      </Page>
-    </Document>
-  );
 
   return (
     <>
@@ -1425,6 +864,8 @@ const ReportsList = () => {
                   header={header}
                   data={pdfData}
                   reportName={reportName}
+                  fromDate={fromDate}
+                  toDate={toDate}
                 />
               )}
             </CardBody>
