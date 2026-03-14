@@ -10,6 +10,8 @@ const CustomMarker = ({
   label,
   showLabel = true,
   statusColor = "green",
+  isCluster = false,
+  count = 0,
 }) => {
   const markerRef = useRef(null);
   const divRef = useRef(null);
@@ -20,43 +22,52 @@ const CustomMarker = ({
 
     const div = document.createElement("div");
     div.style.position = "absolute";
-    div.style.width = "40px";
-    div.style.height = "40px";
-    div.style.transform = `rotate(${rotation}deg)`;
-    div.style.transformOrigin = "center";
 
-    // Add marker icon and label
-    let innerHTML = `<img src="${icon}" width="25" height="45" style="position: absolute" />`;
-
-    if (showLabel && label) {
-      innerHTML += `
-        <div style="
-          position: absolute;
-          top: 50px;
-          left: 40%;
-          transform: translateX(-50%);
-          background: ${statusColor};
-          color: white;
-          padding: 3px 8px;
-          border-radius: 4px;
-          font-size: 12px;
-          font-weight: bold;
-          white-space: nowrap;
-          pointer-events: none;
-          box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-          z-index: 1000;
-        ">
-          ${label}
-        </div>
+    // Style and content based on type (Marker vs Cluster)
+    if (isCluster) {
+      div.className = "cluster-marker";
+      const size = Math.min(60, 45 + count * 0.5); // Scalable size
+      div.style.width = `${size}px`;
+      div.style.height = `${size}px`;
+      div.style.transform = "none"; // No rotation for clusters
+      div.innerHTML = `
+        <div class="cluster-glow"></div>
+        ${count}
       `;
-    }
+    } else {
+      div.style.transform = `rotate(${rotation}deg)`;
+      div.style.transformOrigin = "center";
 
-    div.innerHTML = innerHTML;
+      let innerHTML = `<img src="${icon}" width="25" height="45" style="position: absolute" />`;
+      if (showLabel && label) {
+        innerHTML += `
+          <div style="
+            position: absolute;
+            top: 50px;
+            left: 40%;
+            transform: translateX(-50%);
+            background: ${statusColor};
+            color: white;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            white-space: nowrap;
+            pointer-events: none;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            z-index: 1000;
+          ">
+            ${label}
+          </div>
+        `;
+      }
+      div.innerHTML = innerHTML;
+    }
 
     if (onClick) {
       div.style.cursor = "pointer";
       div.addEventListener("click", (e) => {
-        e.stopPropagation(); // Prevent map click from firing
+        e.stopPropagation();
         onClick(e);
       });
     }
@@ -71,16 +82,15 @@ const CustomMarker = ({
       const projection = this.getProjection();
       if (!projection) return;
 
+      const pos = currentLatLngRef.current;
       const point = projection.fromLatLngToDivPixel(
-        new google.maps.LatLng(
-          currentLatLngRef.current.lat,
-          currentLatLngRef.current.lng
-        )
+        new google.maps.LatLng(pos.lat, pos.lng)
       );
 
       if (point) {
-        div.style.left = `${point.x - 20}px`;
-        div.style.top = `${point.y - 20}px`;
+        const offset = isCluster ? parseInt(div.style.width) / 2 : 20;
+        div.style.left = `${point.x - offset}px`;
+        div.style.top = `${point.y - offset}px`;
       }
     };
 
@@ -95,7 +105,7 @@ const CustomMarker = ({
     return () => {
       overlay.setMap(null);
     };
-  }, [map, google, icon, rotation, onClick, label, showLabel, statusColor]);
+  }, [map, google, icon, rotation, onClick, label, showLabel, statusColor, isCluster, count]);
 
   // Animate position update
   useEffect(() => {

@@ -8,6 +8,7 @@ const initialState = {
   devicesDetailData: [],
   vehicleHistoryData: null,
   vehicleHistoryDateRange: null,
+  deviceAnalytics: null,
   noDevicesFound: "",
   loading: false,
   error: null,
@@ -65,6 +66,9 @@ const MonitoringSlice = createSlice({
     setVehicleHistoryDateRange: (state, action) => {
       state.vehicleHistoryDateRange = action.payload;
     },
+    setDeviceAnalytics: (state, action) => {
+      state.deviceAnalytics = action.payload;
+    },
     setDevicesEnd: (state) => {
       state.loading = false;
     },
@@ -91,6 +95,7 @@ export const {
   setDevicesStatuses,
   setDevicesDetailData,
   setVehicleHistoryDateRange,
+  setDeviceAnalytics,
   setExpandedDevice,
   setItem,
   setIsConnected,

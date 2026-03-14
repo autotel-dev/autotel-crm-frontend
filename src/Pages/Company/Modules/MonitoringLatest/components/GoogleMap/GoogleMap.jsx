@@ -40,6 +40,8 @@ const GoogleMap = (props) => {
   const [address, setAddress] = useState("Loading address...");
   const [isLoadingAddress, setIsLoadingAddress] = useState(false);
   const markerClickedRef = useRef(false);
+  const [clusters, setClusters] = useState([]);
+  const [map, setMap] = useState(null);
 
   const [deviceData, setDeviceData] = useState({ lat: 30.3753, lng: 69.3451 });
 
@@ -203,9 +205,9 @@ const GoogleMap = (props) => {
         // Check if position has changed
         const hasPositionChanged =
           updatedDevice.latestPosition?.latitude !==
-            selectedDevice.latestPosition?.latitude ||
+          selectedDevice.latestPosition?.latitude ||
           updatedDevice.latestPosition?.longitude !==
-            selectedDevice.latestPosition?.longitude;
+          selectedDevice.latestPosition?.longitude;
 
         // Update selected device with new data
         setSelectedDevice(updatedDevice);
@@ -229,6 +231,80 @@ const GoogleMap = (props) => {
     }
   }, [devices, devicesDetailData]);
 
+  // Manual Grid-based clustering logic
+  useEffect(() => {
+    if (!devices || devices.length === 0) {
+      setClusters([]);
+      return;
+    }
+
+    const checkedDevices = devices.filter((d) => d.checked && d.latestPosition);
+
+    // If zoomed in far enough, don't cluster at all
+    if (zoom >= 16) {
+      setClusters(checkedDevices.map(d => ({ isCluster: false, device: d, id: d._id })));
+      return;
+    }
+
+    // Grid size depends on zoom - larger grid when zoomed out for better "chunking"
+    const gridSize = zoom < 5 ? 120 : zoom < 10 ? 90 : 70;
+    const worldSize = 256 * Math.pow(2, zoom);
+
+    const latRad = (lat) => {
+      const sin = Math.sin((lat * Math.PI) / 180);
+      const rad = Math.log((1 + sin) / (1 - sin)) / 2;
+      return Math.max(Math.min(rad, Math.PI), -Math.PI) / 2;
+    };
+
+    const latToY = (lat) => 0.5 - latRad(lat) / Math.PI;
+    const lngToX = (lng) => lng / 360 + 0.5;
+
+    const grid = {};
+
+    checkedDevices.forEach((device) => {
+      const lat = device.latestPosition.latitude;
+      const lng = device.latestPosition.longitude;
+
+      const px = lngToX(lng) * worldSize;
+      const py = latToY(lat) * worldSize;
+
+      const gx = Math.floor(px / gridSize);
+      const gy = Math.floor(py / gridSize);
+      const key = `${gx}-${gy}`;
+
+      if (!grid[key]) {
+        grid[key] = [];
+      }
+      grid[key].push(device);
+    });
+
+    const newClusters = [];
+    Object.values(grid).forEach((group) => {
+      if (group.length === 1) {
+        newClusters.push({
+          isCluster: false,
+          device: group[0],
+          id: group[0]._id,
+        });
+      } else {
+        // Calculate average position for the cluster
+        const avgLat = group.reduce((sum, d) => sum + d.latestPosition.latitude, 0) / group.length;
+        const avgLng = group.reduce((sum, d) => sum + d.latestPosition.longitude, 0) / group.length;
+
+        newClusters.push({
+          isCluster: true,
+          count: group.length,
+          position: { lat: avgLat, lng: avgLng },
+          id: `cluster-${group[0]._id}-${group.length}`,
+          devices: group,
+        });
+      }
+    });
+
+    setClusters(newClusters);
+  }, [devices, zoom]);
+
+  // Handle zooming to selected device
   useEffect(() => {
     if (
       selectedSingleDevice &&
@@ -241,15 +317,12 @@ const GoogleMap = (props) => {
         lng: selectedSingleDevice.latestPosition.longitude,
       };
       mapRef.current.map.panTo(latLng);
-      setZoom(14);
+      setZoom(16); // Zoom in closer when selecting a specific device to break clusters
 
-      // Also open info window for the selected device if it's checked
       if (selectedSingleDevice.checked) {
         setSelectedDevice(selectedSingleDevice);
         setInfoWindowPosition(latLng);
         setInfoWindowVisible(true);
-
-        // Fetch address
         fetchAddress(latLng.lat, latLng.lng);
       }
     }
@@ -418,29 +491,46 @@ const GoogleMap = (props) => {
       ref={mapRef}
       gestureHandling="greedy"
       disableDefaultUI={true}
+      onReady={(mapProps, mapInstance) => {
+        setMap(mapInstance);
+      }}
+      onZoomChanged={(mapProps, mapInstance) => {
+        setZoom(mapInstance.getZoom());
+      }}
     >
-      {devices?.map(
-        (device) =>
-          device.checked && (
-            <CustomMarker
-              key={device?._id}
-              map={mapRef.current?.map}
-              google={props.google}
-              position={{
-                lat: device?.latestPosition?.latitude,
-                lng: device?.latestPosition?.longitude,
-              }}
-              // icon={carIcon}
-              icon={getStatusIcon(device)}
-              rotation={device?.latestPosition?.course}
-              onClick={() => handleMarkerClick(device)}
-              label={device?.vehicle?.registrationNo || "N/A"}
-              showLabel={
-                !(infoWindowVisible && selectedDevice?._id === device?._id)
-              }
-              statusColor={getStatusColor(device)}
-            />
-          ),
+      {map && clusters.map((item) =>
+        item.isCluster ? (
+          <CustomMarker
+            key={item.id}
+            map={map}
+            google={props.google}
+            position={item.position}
+            isCluster={true}
+            count={item.count}
+            onClick={() => {
+              setZoom(zoom + 2);
+              map.panTo(item.position);
+            }}
+          />
+        ) : (
+          <CustomMarker
+            key={item.id}
+            map={map}
+            google={props.google}
+            position={{
+              lat: item.device?.latestPosition?.latitude,
+              lng: item.device?.latestPosition?.longitude,
+            }}
+            icon={getStatusIcon(item.device)}
+            rotation={item.device?.latestPosition?.course}
+            onClick={() => handleMarkerClick(item.device)}
+            label={item.device?.vehicle?.registrationNo || "N/A"}
+            showLabel={
+              !(infoWindowVisible && selectedDevice?._id === item.device?._id)
+            }
+            statusColor={getStatusColor(item.device)}
+          />
+        ),
       )}
 
       {/* Render geofences */}
@@ -558,25 +648,24 @@ const GoogleMap = (props) => {
                   value: address,
                   subValue: selectedDevice?.latestPosition?.deviceTime
                     ? new Date(
-                        selectedDevice.latestPosition.deviceTime,
-                      ).toLocaleString("en-US", {
-                        month: "2-digit",
-                        day: "2-digit",
-                        year: "numeric",
-                        hour: "2-digit",
-                        minute: "2-digit",
-                        second: "2-digit",
-                        hour12: true,
-                      })
+                      selectedDevice.latestPosition.deviceTime,
+                    ).toLocaleString("en-US", {
+                      month: "2-digit",
+                      day: "2-digit",
+                      year: "numeric",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      second: "2-digit",
+                      hour12: true,
+                    })
                     : "N/A",
                   icon: "📍",
                   isLoading: isLoadingAddress,
                 },
                 {
                   label: "Speed",
-                  value: `${
-                    selectedDevice?.latestPosition?.speed?.toFixed(2) || 0
-                  } km/h`,
+                  value: `${selectedDevice?.latestPosition?.speed?.toFixed(2) || 0
+                    } km/h`,
                   icon: "🚗",
                   highlight: true,
                 },
@@ -694,11 +783,10 @@ const GoogleMap = (props) => {
                 },
                 {
                   label: "Power",
-                  value: `${
-                    selectedDevice?.latestPosition?.attributes?.power?.toFixed(
-                      2,
-                    ) || 0
-                  }%`,
+                  value: `${selectedDevice?.latestPosition?.attributes?.power?.toFixed(
+                    2,
+                  ) || 0
+                    }%`,
                   color: "#4CAF50",
                 },
                 {
@@ -713,11 +801,10 @@ const GoogleMap = (props) => {
                 },
                 {
                   label: "Distance",
-                  value: `${
-                    selectedDevice?.latestPosition?.attributes?.distance?.toFixed(
-                      2,
-                    ) || 0
-                  } km`,
+                  value: `${selectedDevice?.latestPosition?.attributes?.distance?.toFixed(
+                    2,
+                  ) || 0
+                    } km`,
                   color: "#9C27B0",
                 },
               ].map((stat, idx) => (

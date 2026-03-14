@@ -27,12 +27,13 @@ import {
   setDevices,
   setSelectedSingleDevice,
   setVehicleHistoryDateRange,
+  setDeviceAnalytics,
 } from "../../../../../../ReaduxToolkit/Reducer/MonitoringSlice";
 import { motion } from "framer-motion";
 import CustomerDetailsModal from "./CustomerDetailsModal";
 import PlaybackModal from "../SingleVehiceDetail/PlaybackModal/PlaybackModal";
 import { getAll } from "../../../../../../Utilities/api";
-import { GET_ALERT_EVENTS_V2 } from "../../../../../../Utilities/api/apiEndpoints";
+import { GET_ALERT_EVENTS_V2, GET_DEVICE_ANALYTICS } from "../../../../../../Utilities/api/apiEndpoints";
 
 const DevicesSidebar = ({ setOpen, open, filteredDevices }: any) => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -159,10 +160,45 @@ const DevicesSidebar = ({ setOpen, open, filteredDevices }: any) => {
     setExpandedGroups(newExpandedGroups);
   };
 
-  const handleDeviceClick = (device: any) => {
+  const handleDeviceClick = async (device: any) => {
     dispatch(setSelectedSingleDevice(device));
     // Open the window when clicking device in sidebar (manual action by user)
     setOpen(false); // false = window is visible
+
+    const zeroAnalytics = {
+      vehicleId: device?._id,
+      date: new Date().toISOString(),
+      movingDuration: "0h 0m",
+      idleDuration: "0h 0m",
+      stoppedDuration: "0h 0m",
+      inactiveDuration: "0h 0m",
+      distanceForDay: "0 km",
+      avgSpeed: "0 km/h",
+      maxSpeed: "0 km/h",
+      raw: {
+        movingDurationMs: 0,
+        idleDurationMs: 0,
+        stopDurationMs: 0,
+        inactiveDurationMs: 0,
+        distanceMeters: 0,
+        avgSpeedKmH: 0,
+        maxSpeedKmH: 0,
+      },
+    };
+
+    try {
+      const response: any = await getAll({
+        url: `${GET_DEVICE_ANALYTICS}?vehicleId=${device?._id}`,
+      });
+      if (response && response.success && response.data) {
+        dispatch(setDeviceAnalytics(response.data));
+      } else {
+        dispatch(setDeviceAnalytics(zeroAnalytics));
+      }
+    } catch (error) {
+      // console.error("Error fetching device analytics:", error);
+      dispatch(setDeviceAnalytics(zeroAnalytics));
+    }
   };
 
   const toggleMenu = (e: React.MouseEvent, deviceId: string) => {

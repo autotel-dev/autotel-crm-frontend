@@ -41,26 +41,44 @@ const cardVariants = {
 };
 
 const Analytics = () => {
-  const { selectedSingleDevice } = useSelector(
+  const { selectedSingleDevice, deviceAnalytics } = useSelector(
     (state: any) => state.monitoring
   );
 
-  // Mock analytics data - replace with actual data from your API
+  // Extract analytics from Redux state
+  const analytics = deviceAnalytics?.data || deviceAnalytics;
+
   const analyticsData = {
-    movingTime: "6.5h",
-    idleTime: "2.3h",
-    stoppedTime: "4.8h",
-    inactiveTime: "10.4h",
-    totalDistance: "245km",
+    movingTime: analytics?.movingDuration || "6.5h",
+    idleTime: analytics?.idleDuration || "2.3h",
+    stoppedTime: analytics?.stoppedDuration || "4.8h",
+    inactiveTime: analytics?.inactiveDuration || "10.4h",
+    totalDistance: analytics?.distanceForDay || "245km",
     avgDistance: "15.3km",
     totalTrips: 16,
-    maxSpeed: "98",
-    avgSpeed: "45",
+    maxSpeed: analytics?.maxSpeed ? analytics.maxSpeed.split(" ")[0] : "98",
+    avgSpeed: analytics?.avgSpeed ? analytics.avgSpeed.split(" ")[0] : "45",
     currentSpeed: selectedSingleDevice?.latestPosition?.speed
       ? Number(selectedSingleDevice.latestPosition.speed).toFixed(0)
       : "0",
     fuelRemaining: "32L",
     fuelAvg: "8.5",
+  };
+
+  // Activity distribution data (in hours) - converting from raw ms if available
+  const activityData = {
+    moving: analytics?.raw?.movingDurationMs
+      ? analytics.raw.movingDurationMs / (1000 * 3600)
+      : 6.5,
+    idle: analytics?.raw?.idleDurationMs
+      ? analytics.raw.idleDurationMs / (1000 * 3600)
+      : 2.3,
+    stopped: analytics?.raw?.stopDurationMs
+      ? analytics.raw.stopDurationMs / (1000 * 3600)
+      : 4.8,
+    inactive: analytics?.raw?.inactiveDurationMs
+      ? analytics.raw.inactiveDurationMs / (1000 * 3600)
+      : 10.4,
   };
 
   // 8 Compact Stats Cards
@@ -120,15 +138,28 @@ const Analytics = () => {
   const timeLabels = ['0m', '5m', '10m', '15m', '20m', '25m', '30m', '35m', '40m', '45m', '50m', '55m', '60m'];
   const fleetUsageData = [12, 25, 18, 32, 28, 15, 22, 35, 28, 20, 16, 24];
 
-  // Activity distribution data (in hours)
-  const activityData = {
-    moving: 6.5,
-    idle: 2.3,
-    stopped: 4.8,
-    inactive: 10.4,
+  const totalMs = (analytics?.raw?.movingDurationMs || 0) +
+                  (analytics?.raw?.idleDurationMs || 0) +
+                  (analytics?.raw?.stopDurationMs || 0) +
+                  (analytics?.raw?.inactiveDurationMs || 0);
+
+  const formatMs = (ms: number) => {
+    if (ms <= 0) return "0h 0m";
+    const totalSeconds = Math.floor(ms / 1000);
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+    
+    let result = "";
+    if (hours > 0) result += `${hours}h `;
+    if (minutes > 0) result += `${minutes}m `;
+    if (seconds > 0 || (hours === 0 && minutes === 0)) result += `${seconds}s`;
+    return result.trim() || "0s";
   };
 
-  const totalHours = Object.values(activityData).reduce((a, b) => a + b, 0);
+  const totalHoursSum = Object.values(activityData).reduce((a, b) => a + b, 0);
+  const formattedTotalDuration = totalMs > 0 ? formatMs(totalMs) : (totalHoursSum > 0 ? `${totalHoursSum.toFixed(1)} hrs` : "0h 0m");
+  const totalHours = totalHoursSum || 1;
 
   // Fuel data
   const fuelData = {
@@ -466,7 +497,7 @@ const Analytics = () => {
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
-                        fontSize: "9px",
+                        fontSize: "8px",
                         color: "white",
                         fontWeight: "700",
                       }}
@@ -512,7 +543,7 @@ const Analytics = () => {
                         {key}
                       </div>
                       <div style={{ fontSize: "11px", fontWeight: "bold", color: colors[key] }}>
-                        {value}h
+                        {analyticsData[`${key}Time` as keyof typeof analyticsData]}
                       </div>
                     </div>
                   </div>
@@ -531,7 +562,7 @@ const Analytics = () => {
             >
               <div style={{ fontSize: "8px", color: "#999" }}>Total Duration</div>
               <div style={{ fontSize: "15px", fontWeight: "bold", color: "#333" }}>
-                {totalHours.toFixed(1)} hrs
+                {formattedTotalDuration}
               </div>
             </div>
           </motion.div>

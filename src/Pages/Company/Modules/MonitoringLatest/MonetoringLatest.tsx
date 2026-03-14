@@ -187,7 +187,7 @@ const MonitoringLatest = () => {
     ).length;
 
     const stoppedCount = activeDevices.filter(
-      (d: any) => d.mainVehicleStatus?.toLowerCase() === "stopped",
+      (d: any) => d.mainVehicleStatus?.toLowerCase() === "stopped" || d.mainVehicleStatus?.toLowerCase() === "stop",
     ).length;
 
     return {

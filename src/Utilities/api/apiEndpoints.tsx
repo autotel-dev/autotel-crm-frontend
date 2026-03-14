@@ -435,6 +435,7 @@ export const UPDATE_OPERATION_STATUS = `${API_BASE_URL}/operations/operation-act
 
 // Company -> Modules - Monitoring
 export const GET_DEVICES = `${API_BASE_URL}/company/devices`;
+export const GET_DEVICE_ANALYTICS = `${API_BASE_URL}/vehicle/get-vehicle-daily-stats`;
 
 // Company -> Operators
 export const CREATE_OPERATOR = `${API_BASE_URL}/operator/create-operator`;
@@ -519,3 +520,7 @@ export const GET_SINGLE_TRIP_DETIAL_REPORT = `${API_BASE_URL}/reports/get-trip-d
 export const GET_TRIP_DASHBOARD_METRICS = `${API_BASE_URL}/trip/dashboard/metrics`;
 export const GET_ACTIVE_TRIPS = `${API_BASE_URL}/trip/dashboard/get-active-violations-list`;
 export const GET_LAST_TRIPS = `${API_BASE_URL}/trip/dashboard/get-last-trips`;
+
+
+
+// 
