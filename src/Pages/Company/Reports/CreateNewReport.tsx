@@ -399,12 +399,19 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
             }
           };
         } else {
+          // Find registrationNo for relevant reports
+          let regNo = "";
+          if (type === "/get-live-alert-report" || type === "/get-vehicle-history-report") {
+            regNo = vehiclesForReportsList.find((v: any) => v.value === vehicleId)?.label || "";
+          }
+
           newReport = {
             type: type,
             data: {
               title: payload.title || formData.title,
               startDate: payload.fromDate || payload.fromDateTime || startDate,
               endDate: payload.toDate || payload.toDateTime || endDate,
+              registrationNo: regNo,
               data: response.data,
             },
           };

@@ -36,6 +36,7 @@ interface ViewPDFModalTypes {
   reportName: String;
   fromDate?: string;
   toDate?: string;
+  registrationNo?: string;
 }
 
 const ViewPDFModalForReports: React.FC<ViewPDFModalTypes> = ({
@@ -46,6 +47,7 @@ const ViewPDFModalForReports: React.FC<ViewPDFModalTypes> = ({
   reportName,
   fromDate,
   toDate,
+  registrationNo,
 }) => {
   const { userData } = useSelector((state: any) => state.user);
 
@@ -181,6 +183,16 @@ const ViewPDFModalForReports: React.FC<ViewPDFModalTypes> = ({
                       <Text style={{ fontSize: 8, fontFamily: "Helvetica-Bold" }}> Name: &nbsp;</Text>
                       <Text style={{ fontSize: 8 }}>{userData?.fullName || "N/A"}</Text>
                     </View>
+                    <View style={styles2.detailsRow}>
+                      <Text style={{ fontSize: 8, fontFamily: "Helvetica-Bold" }}> Generated On: &nbsp;</Text>
+                      <Text style={{ fontSize: 8 }}>{new Date().toISOString().slice(0, 10)} {new Date().toLocaleTimeString()}</Text>
+                    </View>
+                    {registrationNo && (
+                      <View style={styles2.detailsRow}>
+                        <Text style={{ fontSize: 8, fontFamily: "Helvetica-Bold" }}> Registration No: &nbsp;</Text>
+                        <Text style={{ fontSize: 8 }}>{registrationNo}</Text>
+                      </View>
+                    )}
                     <View style={styles2.detailsRow}>
                       <Text style={{ fontSize: 8, fontFamily: "Helvetica-Bold" }}> Email: &nbsp;</Text>
                       <Text style={{ fontSize: 8 }}>{userData?.emailAddress || "N/A"}</Text>

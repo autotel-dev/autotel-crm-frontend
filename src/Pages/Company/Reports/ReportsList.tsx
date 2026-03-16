@@ -4,6 +4,8 @@ import {
   Col,
   Container,
   CardHeader,
+  Modal,
+  ModalBody,
   // Button,
 } from "reactstrap";
 
@@ -16,7 +18,7 @@ import xlsx from "json-as-xlsx";
 
 import { setReports } from "../../../ReaduxToolkit/Reducer/ReportsSlice";
 import "jspdf-autotable";
-import { H4 } from "../../../AbstractElements";
+import { H4, P } from "../../../AbstractElements";
 import H7 from "../../../CommonElements/Headings/H7Element";
 import { FaFileExcel } from "react-icons/fa6";
 import { BiSolidFilePdf } from "react-icons/bi";
@@ -53,7 +55,7 @@ const pdfStyles = StyleSheet.create({
   header: { flexDirection: "row", marginBottom: 10, justifyContent: "space-between" },
 });
 
-const PDFDocumentContent = ({ header, pdfData, reportName, columnWidths, userPersonalizationData, userData, fromDate, toDate }: any) => {
+const PDFDocumentContent = ({ header, pdfData, reportName, columnWidths, userPersonalizationData, userData, fromDate, toDate, registrationNo }: any) => {
   const chunkSize = 200; // Optimization: Chunk data to avoid browser freeze
   const chunks = [];
   if (pdfData && pdfData.length > 0) {
@@ -88,6 +90,16 @@ const PDFDocumentContent = ({ header, pdfData, reportName, columnWidths, userPer
                     <Text style={{ fontSize: 8, fontFamily: "Helvetica-Bold" }}> Name: &nbsp;</Text>
                     <Text style={{ fontSize: 8 }}>{userData?.fullName || "N/A"}</Text>
                   </View>
+                  <View style={pdfStyles.detailsRow}>
+                    <Text style={{ fontSize: 8, fontFamily: "Helvetica-Bold" }}> Generated On: &nbsp;</Text>
+                    <Text style={{ fontSize: 8 }}>{new Date().toISOString().slice(0, 10)} {new Date().toLocaleTimeString()}</Text>
+                  </View>
+                  {registrationNo && (
+                    <View style={pdfStyles.detailsRow}>
+                      <Text style={{ fontSize: 8, fontFamily: "Helvetica-Bold" }}> Registration No: &nbsp;</Text>
+                      <Text style={{ fontSize: 8 }}>{registrationNo}</Text>
+                    </View>
+                  )}
                   <View style={pdfStyles.detailsRow}>
                     <Text style={{ fontSize: 8, fontFamily: "Helvetica-Bold" }}> Email: &nbsp;</Text>
                     <Text style={{ fontSize: 8 }}>{userData?.emailAddress || "N/A"}</Text>
@@ -160,6 +172,7 @@ const ReportsList = () => {
   const [reportName, setReportName] = useState<string>("");
   const [fromDate, setFromDate] = useState<string>("");
   const [toDate, setToDate] = useState<string>("");
+  const [registrationNo, setRegistrationNo] = useState<string>("");
   const [generatingPdfId, setGeneratingPdfId] = useState<number | null>(null);
   const [isPreparingView, setIsPreparingView] = useState<number | null>(null);
 
@@ -181,14 +194,16 @@ const ReportsList = () => {
     return `${hours}:${minutesFormatted}:${secondsFormatted} ${ampm}`;
   };
 
-  // Helper to process large arrays in chunks to avoid blocking the UI
-  const chunkedTransform = async (data: any[], transformFn: (item: any, index: number) => any, chunkSize = 1000) => {
+  // Improved chunkedTransform with more frequent yielding to keep the UI responsive
+  const chunkedTransform = async (data: any[], transformFn: (item: any, index: number) => any, chunkSize = 150) => {
     const result = [];
+    if (!data || !Array.isArray(data)) return [];
+
     for (let i = 0; i < data.length; i += chunkSize) {
       const chunk = data.slice(i, i + chunkSize);
       result.push(...chunk.map((item, index) => transformFn(item, i + index)));
-      // Yield to the main thread
-      await new Promise((resolve) => setTimeout(resolve, 0));
+      // Yield to the main thread more frequently
+      await new Promise((resolve) => setTimeout(resolve, 10));
     }
     return result;
   };
@@ -674,6 +689,7 @@ const ReportsList = () => {
                   setReportName(row.data.title);
                   setFromDate(row.data.startDate.slice(0, 10));
                   setToDate(row.data.endDate.slice(0, 10));
+                  setRegistrationNo(row.data.registrationNo || "");
                   toggleModal();
                 } catch (error) {
                   console.error("View PDF Error", error);
@@ -769,6 +785,7 @@ const ReportsList = () => {
                       reportName={row.data.title}
                       fromDate={row.data.startDate.slice(0, 10)}
                       toDate={row.data.endDate.slice(0, 10)}
+                      registrationNo={row.data.registrationNo || ""}
                       columnWidths={columns.map(() => 100)}
                       userPersonalizationData={userPersonalizationData}
                       userData={userData}
@@ -857,6 +874,31 @@ const ReportsList = () => {
                 )}
               </div>
 
+              {/* Lightweight Processing Overlay instead of Reactstrap Modal to avoid heavy portal logic during processing */}
+              {(isPreparingView !== null || generatingPdfId !== null) && (
+                <div style={{
+                  position: 'fixed',
+                  top: 0,
+                  left: 0,
+                  width: '100%',
+                  height: '100%',
+                  backgroundColor: 'rgba(0,0,0,0.5)',
+                  zIndex: 9999,
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  flexDirection: 'column',
+                  color: 'white',
+                  borderRadius: '0px'
+                }}>
+                  <div style={{ backgroundColor: 'white', padding: '40px', borderRadius: '8px', textAlign: 'center', boxShadow: '0 4px 15px rgba(0,0,0,0.2)' }}>
+                    <Loader />
+
+                    <P style={{ color: '#666', marginTop: '10px' }}>Please wait while we prepare your report...</P>
+                  </div>
+                </div>
+              )}
+
               {modal && (
                 <ViewPDFModalForReports
                   modal={modal}
@@ -866,6 +908,7 @@ const ReportsList = () => {
                   reportName={reportName}
                   fromDate={fromDate}
                   toDate={toDate}
+                  registrationNo={registrationNo}
                 />
               )}
             </CardBody>

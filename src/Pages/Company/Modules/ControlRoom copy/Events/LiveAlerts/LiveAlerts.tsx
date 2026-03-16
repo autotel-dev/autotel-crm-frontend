@@ -187,7 +187,7 @@ const LiveAlerts = () => {
           style={{
             backgroundColor:
               userPersonalizationData !== null &&
-              userPersonalizationData?.buttonsAndBarsColor !== null
+                userPersonalizationData?.buttonsAndBarsColor !== null
                 ? userPersonalizationData?.buttonsAndBarsColor
                 : "#63d5be",
             height: "40px",
@@ -772,7 +772,7 @@ const LiveAlerts = () => {
                                   const hours12 = hours24 % 12 || 12; // Convert 0 to 12 (midnight), 13-23 to 1-11 PM
 
                                   // Format time in 12-hour format with AM/PM
-                                  return `${hours12}:${minutes}:${seconds} ${period}`;
+                                  return `${hours12 + 5}:${minutes}:${seconds} ${period}`;
                                 })()}
                               </div>
                             </div>
@@ -791,8 +791,8 @@ const LiveAlerts = () => {
                           {data.address == null
                             ? "N/A"
                             : data.address.length > 10
-                            ? data.address.substring(0, 10) + "..."
-                            : data.address}
+                              ? data.address.substring(0, 10) + "..."
+                              : data.address}
                         </td>
                         {data.address != null && (
                           <UncontrolledPopover
