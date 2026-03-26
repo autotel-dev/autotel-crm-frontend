@@ -139,9 +139,9 @@ const Analytics = () => {
   const fleetUsageData = [12, 25, 18, 32, 28, 15, 22, 35, 28, 20, 16, 24];
 
   const totalMs = (analytics?.raw?.movingDurationMs || 0) +
-                  (analytics?.raw?.idleDurationMs || 0) +
-                  (analytics?.raw?.stopDurationMs || 0) +
-                  (analytics?.raw?.inactiveDurationMs || 0);
+    (analytics?.raw?.idleDurationMs || 0) +
+    (analytics?.raw?.stopDurationMs || 0) +
+    (analytics?.raw?.inactiveDurationMs || 0);
 
   const formatMs = (ms: number) => {
     if (ms <= 0) return "0h 0m";
@@ -149,7 +149,7 @@ const Analytics = () => {
     const hours = Math.floor(totalSeconds / 3600);
     const minutes = Math.floor((totalSeconds % 3600) / 60);
     const seconds = totalSeconds % 60;
-    
+
     let result = "";
     if (hours > 0) result += `${hours}h `;
     if (minutes > 0) result += `${minutes}m `;
@@ -263,8 +263,8 @@ const Analytics = () => {
         }}
       >
         {/* Row 1: Speed Overview & Fleet Usage */}
-        <div style={{ display: "flex", gap: "12px" }}>
-          {/* Speed Overview Chart - Line Chart */}
+        {/* <div style={{ display: "flex", gap: "12px" }}>
+         
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -290,7 +290,7 @@ const Analytics = () => {
             </div>
 
             <div style={{ position: "relative", height: "100px", paddingLeft: "25px", paddingBottom: "15px" }}>
-              {/* Y-axis labels */}
+              
               <div style={{ position: "absolute", left: 0, top: 0, height: "100px", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
                 {[80, 60, 40, 20, 0].map((speed, i) => (
                   <div key={i} style={{ fontSize: "8px", color: "#999", textAlign: "right", width: "20px" }}>
@@ -300,7 +300,7 @@ const Analytics = () => {
               </div>
 
               <svg width="calc(100% - 25px)" height="100" style={{ overflow: "visible", marginLeft: "0px" }}>
-                {/* Grid lines */}
+               
                 {[0, 1, 2, 3, 4].map((i) => (
                   <line
                     key={i}
@@ -313,7 +313,7 @@ const Analytics = () => {
                   />
                 ))}
 
-                {/* Area fill */}
+                
                 <motion.polygon
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 0.2 }}
@@ -328,7 +328,7 @@ const Analytics = () => {
                     .join(" ")} 100%,100`}
                 />
 
-                {/* Line chart */}
+                
                 <motion.polyline
                   initial={{ pathLength: 0 }}
                   animate={{ pathLength: 1 }}
@@ -345,7 +345,7 @@ const Analytics = () => {
                     .join(" ")}
                 />
 
-                {/* Data points */}
+                
                 {speedData.map((speed, i) => {
                   const x = (i / (speedData.length - 1)) * 100;
                   const y = 100 - (speed / 80) * 80;
@@ -366,7 +366,7 @@ const Analytics = () => {
                 })}
               </svg>
 
-              {/* X-axis labels (time) */}
+              
               <div style={{ display: "flex", justifyContent: "space-between", marginTop: "5px", paddingLeft: "0px" }}>
                 {timeLabels.filter((_, i) => i % 3 === 0).map((label, i) => (
                   <div key={i} style={{ fontSize: "8px", color: "#999", textAlign: "center" }}>
@@ -382,7 +382,7 @@ const Analytics = () => {
             </div>
           </motion.div>
 
-          {/* Fleet Usage Chart */}
+        
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -418,7 +418,7 @@ const Analytics = () => {
                 </div>
               </div>
             </div>
-            {/* Bar chart */}
+           
             <div style={{ display: "flex", alignItems: "flex-end", gap: "3px", height: "70px" }}>
               {fleetUsageData.map((value, i) => {
                 const height = (value / Math.max(...fleetUsageData)) * 100;
@@ -443,7 +443,7 @@ const Analytics = () => {
               12-hour duration breakdown
             </div>
           </motion.div>
-        </div>
+        </div> */}
 
         {/* Row 2: Total Activity & Trip Performance */}
         <div style={{ display: "flex", gap: "12px" }}>
@@ -657,7 +657,7 @@ const Analytics = () => {
         </div>
 
         {/* Row 3: Fuel Usage Chart - Full Width */}
-        <motion.div
+        {/* <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.7 }}
@@ -676,9 +676,9 @@ const Analytics = () => {
           </div>
 
           <div style={{ display: "flex", gap: "15px" }}>
-            {/* Fuel Tank Visualization */}
+
             <div style={{ flex: "0 0 200px", display: "flex", flexDirection: "column", gap: "10px" }}>
-              {/* Digital Fuel Tank */}
+
               <div
                 style={{
                   position: "relative",
@@ -727,7 +727,7 @@ const Analytics = () => {
               </div>
             </div>
 
-            {/* Fuel Stats Grid */}
+            
             <div style={{ flex: 1, display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "10px" }}>
               {[
                 {
@@ -803,7 +803,7 @@ const Analytics = () => {
             </div>
           </div>
 
-          {/* Fuel Efficiency Indicator */}
+          
           <div
             style={{
               marginTop: "12px",
@@ -823,7 +823,7 @@ const Analytics = () => {
               {((fuelData.totalCapacity - fuelData.remaining) / (parseFloat(analyticsData.totalDistance) / 100)).toFixed(1)}L/100km
             </div>
           </div>
-        </motion.div>
+        </motion.div> */}
       </div>
     </div>
   );

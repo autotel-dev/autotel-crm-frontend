@@ -289,10 +289,10 @@ const MonitoringLatest = () => {
   }
 
   const sidebarMenus = [
-    {
-      icon: TbSettingsPlus,
-      tooltipName: "Admin",
-    },
+    // {
+    //   icon: TbSettingsPlus,
+    //   tooltipName: "Admin",
+    // },
     {
       icon: LuLayoutDashboard,
       tooltipName: "Dashboard",
@@ -307,30 +307,30 @@ const MonitoringLatest = () => {
       icon: SlArrowRight,
       tooltipName: "Send Command",
     },
-    {
-      icon: PiMapPinLineBold,
-      tooltipName: "Show Point",
-    },
-    {
-      icon: MdOutlineCameraAlt,
-      tooltipName: "Camera",
-    },
-    {
-      icon: FaTasks,
-      tooltipName: "Tasks",
-    },
-    {
-      icon: GrHostMaintenance,
-      tooltipName: "Maintenance",
-    },
-    {
-      icon: FiSettings,
-      tooltipName: "Setup",
-    },
-    {
-      icon: MdAddCall,
-      tooltipName: "Call Actions",
-    },
+    // {
+    //   icon: PiMapPinLineBold,
+    //   tooltipName: "Show Point",
+    // },
+    // {
+    //   icon: MdOutlineCameraAlt,
+    //   tooltipName: "Camera",
+    // },
+    // {
+    //   icon: FaTasks,
+    //   tooltipName: "Tasks",
+    // },
+    // {
+    //   icon: GrHostMaintenance,
+    //   tooltipName: "Maintenance",
+    // },
+    // {
+    //   icon: FiSettings,
+    //   tooltipName: "Setup",
+    // },
+    // {
+    //   icon: MdAddCall,
+    //   tooltipName: "Call Actions",
+    // },
   ];
 
   const StatusBox = ({
@@ -639,6 +639,7 @@ const MonitoringLatest = () => {
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
+          justifyContent: "center",
           gap: "5px",
           paddingTop: "20px",
         }}

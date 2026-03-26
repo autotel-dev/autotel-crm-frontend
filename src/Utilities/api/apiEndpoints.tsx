@@ -7,8 +7,8 @@ export const IMAGE_BASE_URL = "http://163.61.91.52:81";
 // export const API_BASE_URL = "https://crmapi.autotel.pk/api/v1";
 // export const IMAGE_BASE_URL = "https://crmapi.autotel.pk";
 
-// export const API_BASE_URL = "http://localhost:81/api/v1";
-// export const IMAGE_BASE_URL = "http://localhost:81";
+// export const API_BASE_URL = "http://localhost:8081/api/v1";
+// export const IMAGE_BASE_URL = "http://localhost:8081";
 
 export const IMAGE_BASE_URL_RENTAL = `${API_BASE_URL}/company/server-credentials/test-connection`;
 export const GET_PARSER_DEVICES = `${API_BASE_URL}/company/get-parser-devices`;

@@ -524,17 +524,15 @@ const ControlRoomAnalytics = () => {
             height: "30px",
             transition: "width 0.5s",
             color: "white",
-            backgroundColor: `${
-              userPersonalizationData !== null &&
+            backgroundColor: `${userPersonalizationData !== null &&
               userPersonalizationData?.buttonsAndBarsColor
-            }`,
+              }`,
             borderRadius: "5px",
           }}
-          className={`${
-            userPersonalizationData?.buttonsAndBarsColor == null
-              ? "btn-primary"
-              : ""
-          }`}
+          className={`${userPersonalizationData?.buttonsAndBarsColor == null
+            ? "btn-primary"
+            : ""
+            }`}
         >
           <div
             style={{
@@ -590,8 +588,8 @@ const ControlRoomAnalytics = () => {
                 onClick={(e: any) => {
                   toggleDropdown(e);
                 }}
-                // onMouseOver={toggleDropdown}
-                // onMouseOut={toggleDropdown}
+              // onMouseOver={toggleDropdown}
+              // onMouseOut={toggleDropdown}
               >
                 <div
                   style={{
@@ -724,7 +722,7 @@ const ControlRoomAnalytics = () => {
             }}
           >
             <Row>
-              <Col xl="3" lg="6" md="6" sm="12">
+              <Col xl="4" lg="6" md="6" sm="12">
                 <Card className="total-earning">
                   <CardBody style={{ maxHeight: "160px", padding: "1em" }}>
                     <Row style={{ height: "115px" }}>
@@ -760,22 +758,20 @@ const ControlRoomAnalytics = () => {
                         </div>
                         <div>
                           <button
-                            className={`${
-                              userPersonalizationData?.buttonsAndBarsColor ==
+                            className={`${userPersonalizationData?.buttonsAndBarsColor ==
                               null
-                                ? "btn-primary"
-                                : ""
-                            }`}
+                              ? "btn-primary"
+                              : ""
+                              }`}
                             style={{
                               borderRadius: "5px",
                               padding: "5px 15px",
                               outline: "none",
                               border: "none",
                               color: "white",
-                              backgroundColor: `${
-                                userPersonalizationData !== null &&
+                              backgroundColor: `${userPersonalizationData !== null &&
                                 userPersonalizationData?.buttonsAndBarsColor
-                              }`,
+                                }`,
 
                               // marginTop: "3vh",
                             }}
@@ -831,7 +827,7 @@ const ControlRoomAnalytics = () => {
                 toDate={toDate}
               />
               {/*  */}
-              <Col xl="3" lg="6" md="6" sm="12" className="box-col-3">
+              {/* <Col xl="3" lg="6" md="6" sm="12" className="box-col-3">
                 <Card
                   className="total-earning"
                   style={{ position: "relative" }}
@@ -868,7 +864,7 @@ const ControlRoomAnalytics = () => {
                           style={{
                             overflow: "auto",
                             height: "55%",
-                            scrollbarWidth: "none" /* Firefox */,
+                            scrollbarWidth: "none"
                           }}
                         >
                           {liveAlertsData?.connectedServers?.map(
@@ -907,7 +903,7 @@ const ControlRoomAnalytics = () => {
 
                                     <div
                                       style={{
-                                        // marginLeft: "90px",
+
                                         display: "flex",
                                         alignItems: "center",
                                         width: "45%",
@@ -918,11 +914,10 @@ const ControlRoomAnalytics = () => {
                                           height: "10px",
                                           width: "10px",
                                           borderRadius: "50px",
-                                          backgroundColor: `${
-                                            server?.isConnected
-                                              ? "green"
-                                              : "red"
-                                          }`,
+                                          backgroundColor: `${server?.isConnected
+                                            ? "green"
+                                            : "red"
+                                            }`,
                                           marginRight: "5px",
                                         }}
                                       ></div>
@@ -954,7 +949,7 @@ const ControlRoomAnalytics = () => {
                                   <div
                                     style={{
                                       position: "relative",
-                                      // display: "inline-block",
+
                                     }}
                                     id="threeDotsLoading"
                                   >
@@ -976,12 +971,12 @@ const ControlRoomAnalytics = () => {
                                       onMouseEnter={() => {
                                         setId(server?.server._id);
                                         setIsHovered(true);
-                                        // toggleConnectedServersDropdown();
+
                                       }}
                                       onMouseLeave={() => {
-                                        // setId("");
+
                                         setIsHovered(false);
-                                        // toggleConnectedServersDropdown();
+
                                       }}
                                       onClick={(e) => {
                                         if (devices.length > 0) {
@@ -1067,20 +1062,12 @@ const ControlRoomAnalytics = () => {
                           )}
                         </div>
 
-                        {/* {liveAlertsData?.connectedServers?.map(
-                          (server: any, index: any) => (
-                            <ServerItem
-                              key={index}
-                              server={server}
-                              index={index}
-                            />
-                          )
-                        )} */}
+
                       </Col>
                     </Row>
                   </CardBody>
                 </Card>
-              </Col>
+              </Col> */}
               <DeviceSelecetdForAlerts
                 addModal={isUpdateModalOpenForDeviceSelecetdForAlerts}
                 setAddModal={setIsUpdateModalOpenForDeviceSelecetdForAlerts}
@@ -1090,7 +1077,7 @@ const ControlRoomAnalytics = () => {
               />
 
               {/*  */}
-              <Col xl="3" lg="6" md="6" sm="12" className="box-col-3">
+              <Col xl="4" lg="6" md="6" sm="12" className="box-col-3">
                 <Card className="total-earning">
                   <CardBody style={{ maxHeight: "160px", padding: "1em" }}>
                     <Row style={{ height: "115px" }}>
@@ -1128,22 +1115,20 @@ const ControlRoomAnalytics = () => {
                         <div>
                           <div style={{ display: "flex" }}>
                             <button
-                              className={`${
-                                userPersonalizationData?.buttonsAndBarsColor ==
+                              className={`${userPersonalizationData?.buttonsAndBarsColor ==
                                 null
-                                  ? "btn-primary"
-                                  : ""
-                              }`}
+                                ? "btn-primary"
+                                : ""
+                                }`}
                               style={{
                                 borderRadius: "5px",
                                 padding: "5px 15px",
                                 outline: "none",
                                 border: "none",
                                 color: "white",
-                                backgroundColor: `${
-                                  userPersonalizationData !== null &&
+                                backgroundColor: `${userPersonalizationData !== null &&
                                   userPersonalizationData?.buttonsAndBarsColor
-                                }`,
+                                  }`,
                                 // marginTop: "3vh",
                               }}
                               onClick={() => {
@@ -1168,22 +1153,20 @@ const ControlRoomAnalytics = () => {
                               </UncontrolledPopover>
                             )}
                             <button
-                              className={`${
-                                userPersonalizationData?.buttonsAndBarsColor ==
+                              className={`${userPersonalizationData?.buttonsAndBarsColor ==
                                 null
-                                  ? "btn-primary"
-                                  : ""
-                              }`}
+                                ? "btn-primary"
+                                : ""
+                                }`}
                               style={{
                                 borderRadius: "5px",
                                 padding: "5px 15px",
                                 outline: "none",
                                 border: "none",
                                 color: "white",
-                                backgroundColor: `${
-                                  userPersonalizationData !== null &&
+                                backgroundColor: `${userPersonalizationData !== null &&
                                   userPersonalizationData?.buttonsAndBarsColor
-                                }`,
+                                  }`,
                                 // marginTop: "3vh",
                                 marginLeft: "10px",
                               }}
@@ -1241,7 +1224,7 @@ const ControlRoomAnalytics = () => {
                 setIsVisible={setIsUpdateModalOpenForGetSendCommands}
               />
               {/*  */}
-              <Col xl="3" lg="6" md="6" sm="12" className="box-col-3">
+              <Col xl="4" lg="6" md="6" sm="12" className="box-col-3">
                 <Card className="total-earning">
                   <CardBody
                     style={{
@@ -1283,23 +1266,21 @@ const ControlRoomAnalytics = () => {
                         </div>
                         <div style={{ display: "flex" }}>
                           <button
-                            className={`${
-                              userPersonalizationData?.buttonsAndBarsColor ==
+                            className={`${userPersonalizationData?.buttonsAndBarsColor ==
                               null
-                                ? "btn-primary"
-                                : ""
-                            }`}
+                              ? "btn-primary"
+                              : ""
+                              }`}
                             style={{
                               borderRadius: "5px",
                               padding: "5px 15px",
                               outline: "none",
                               border: "none",
                               color: "white",
-                              backgroundColor: `${
-                                userPersonalizationData !== null &&
+                              backgroundColor: `${userPersonalizationData !== null &&
                                 userPersonalizationData?.buttonsAndBarsColor
-                              }`,
-                              // marginTop: "3vh",
+                                }`,
+
                             }}
                             onClick={() => {
                               setIsUpdateModalOpenForPreAlertinfo(true);
@@ -1323,23 +1304,21 @@ const ControlRoomAnalytics = () => {
                             </UncontrolledPopover>
                           )}
                           <button
-                            className={`${
-                              userPersonalizationData?.buttonsAndBarsColor ==
+                            className={`${userPersonalizationData?.buttonsAndBarsColor ==
                               null
-                                ? "btn-primary"
-                                : ""
-                            }`}
+                              ? "btn-primary"
+                              : ""
+                              }`}
                             style={{
                               borderRadius: "5px",
                               padding: "5px 15px",
                               outline: "none",
                               border: "none",
                               color: "white",
-                              backgroundColor: `${
-                                userPersonalizationData !== null &&
+                              backgroundColor: `${userPersonalizationData !== null &&
                                 userPersonalizationData?.buttonsAndBarsColor
-                              }`,
-                              // marginTop: "3vh",
+                                }`,
+
                               marginLeft: "10px",
                             }}
                             onClick={() => {
