@@ -89,9 +89,10 @@ const AMCDueTable = () => {
                   cursor="pointer"
                   onClick={() => {
                     const updatedData = {
-                      vehicles: [data.registratioNo],
+                      vehicles: [data?.registrationNo],
                       ...data,
                     };
+                    console.log("updatedData", updatedData);
                     dispatch(setInvoiceData(updatedData));
                     dispatch(setIsInvoiceRenwed(true));
                     navigate(

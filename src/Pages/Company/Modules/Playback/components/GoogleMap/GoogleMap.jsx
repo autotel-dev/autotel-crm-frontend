@@ -85,7 +85,7 @@ const AnimatedCarMarker = ({
 };
 
 const GoogleMap = (props) => {
-  const { selectedSingleDevice, vehicleHistoryData } = useSelector(
+  const {  vehicleHistoryData } = useSelector(
     (state) => state.monitoring,
   );
 

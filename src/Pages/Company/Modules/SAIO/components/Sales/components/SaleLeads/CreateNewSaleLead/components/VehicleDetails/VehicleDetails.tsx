@@ -1,6 +1,6 @@
 // src/components/VehicleForm.js
 import React, { useState, useEffect } from "react";
-import { Button, Col, Row, Form, Input } from "reactstrap";
+import { Button, Col, Row, Form, Input, Modal, ModalBody } from "reactstrap";
 import SelectBanksBox from "./components/SelectBanksBox";
 import SelectInsuranceBox from "./components/SelectInsuranceBox";
 import SelectGroupsBox from "./components/SelectGroupsBox";
@@ -15,6 +15,8 @@ import {
   deleteSingle,
   getAll,
   update,
+  createWithMultipart,
+  updateWithMultipart,
 } from "../../../../../../../../../../../Utilities/api";
 import {
   CREATE_NEW_SALELEAD_VEHICLE,
@@ -22,6 +24,7 @@ import {
   GET_ALL_SALELEADS,
   GET_SINGLE_SALELEAD,
   UPDATE_VEHICLE,
+  IMAGE_BASE_URL,
 } from "../../../../../../../../../../../Utilities/api/apiEndpoints";
 import { ERROR_MESSAGE } from "../../../../../../../../../../../Utilities/constants/constants";
 import { useDispatch } from "react-redux";
@@ -37,6 +40,7 @@ import { Select } from "antd";
 import { formatUnderscoredString } from "../../../../../../../../../../../Utilities/globals/globals";
 import P2 from "../../../../../../../../../../../CommonElements/Paragraph/P2Element";
 import SelectGeofenceBox from "./components/SelectGeofenceBox";
+import FileAttachementComponent from "../Installation/components/FileAttachementComponent";
 
 const VehicleForm = ({
   onRemove,
@@ -96,6 +100,20 @@ const VehicleForm = ({
   const [selection, setSelection] = useState("Self"); // Added state for selection
 
   const [renewalDate, setRenewalDate] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
+  const [hoverStates, setHoverStates] = useState<any>({
+    vehicleIconOffline: false,
+    vehicleIconIdle: false,
+    vehicleIconOnline: false,
+    vehicleIconStopped: false,
+  });
+  const [addModal, setAddModal] = useState(false);
+  const addToggle = () => {
+    setAddModal(!addModal);
+  };
+  const handleHover = (category: string, state: boolean) => {
+    setHoverStates((prev: any) => ({ ...prev, [category]: state }));
+  };
 
   useEffect(() => {
     if (saleLead?.package?.days) {
@@ -109,7 +127,7 @@ const VehicleForm = ({
 
       // Set the ISO string date to the state
       setRenewalDate(isoString);
-      console.log("ISO String Date:", isoString);
+      // console.log("ISO String Date:", isoString);
     }
   }, [saleLead]);
 
@@ -123,93 +141,119 @@ const VehicleForm = ({
       formData.vehicleMake !== "" &&
       formData.vehicleModel !== "" &&
       formData.year !== "" &&
-      formData.transmission !== "" &&
+      formData.transmissionType !== "" &&
       formData.fuelType !== ""
     ) {
-      const body = {
-        ...formData,
-        additionalServices: formData.additionalServices,
-        saleLeadId: saleLead?._id,
-        customer: saleLead?.customer._id,
-        servicePackage: saleLead?.package?._id,
-        servicePackageDiscountedCharges: saleLead?.discountedServiceCharges,
-        serviceRenewalDate: new Date(renewalDate).toISOString(),
-      };
+      const bodyData = new FormData();
+      Object.keys(formData).forEach((key) => {
+        if (key === "additionalServices") {
+          bodyData.append(key, JSON.stringify(formData[key]));
+        } else if (
+          key !== "vehicleIconOffline" &&
+          key !== "vehicleIconIdle" &&
+          key !== "vehicleIconOnline" &&
+          key !== "vehicleIconStopped" &&
+          key !== "vehicleData"
+        ) {
+          bodyData.append(key, formData[key]);
+        }
+      });
+
+      [
+        "vehicleIconOffline",
+        "vehicleIconIdle",
+        "vehicleIconOnline",
+        "vehicleIconStopped",
+      ].forEach((iconKey) => {
+        if (formData[iconKey] instanceof File) {
+          bodyData.append(iconKey, formData[iconKey]);
+        }
+      });
+      bodyData.append("saleLeadId", saleLead?._id);
+      bodyData.append("customer", saleLead?.customer._id);
+      bodyData.append("servicePackage", saleLead?.package?._id);
+      bodyData.append(
+        "servicePackageDiscountedCharges",
+        saleLead?.discountedServiceCharges,
+      );
+      bodyData.append(
+        "serviceRenewalDate",
+        new Date(renewalDate).toISOString(),
+      );
 
       try {
-        await create(body, { url: CREATE_NEW_SALELEAD_VEHICLE }).then(
-          (data: any) => {
-            if (data !== undefined) {
-              if (!data.success && data.message === ERROR_MESSAGE) {
-                setLoading(false);
-              }
-              if (!data.success) {
-                Swal.fire({
-                  text: `${data.message}`,
-                  icon: "error",
-                  timer: 2000,
-                  showConfirmButton: false,
-                });
-                setLoading(false);
-              }
-              if (data.success) {
-                // getAll({ url: GET_ALL_SALELEADS }).then((data: any) => {
-                //   if (data !== undefined) {
-                //     if (!data.success) {
-                //       // setIscreateNewSaleLead(false);
-                //       setLoading(false);
-                //     }
-                //     if (data.success) {
+        await createWithMultipart(bodyData, {
+          url: CREATE_NEW_SALELEAD_VEHICLE,
+        }).then((data: any) => {
+          if (data !== undefined) {
+            if (!data.success && data.message === ERROR_MESSAGE) {
+              setLoading(false);
+            }
+            if (!data.success) {
+              Swal.fire({
+                text: `${data.message}`,
+                icon: "error",
+                timer: 2000,
+                showConfirmButton: false,
+              });
+              setLoading(false);
+            }
+            if (data.success) {
+              // getAll({ url: GET_ALL_SALELEADS }).then((data: any) => {
+              //   if (data !== undefined) {
+              //     if (!data.success) {
+              //       // setIscreateNewSaleLead(false);
+              //       setLoading(false);
+              //     }
+              //     if (data.success) {
 
-                //       dispatch(setSaleLeads(data.data));
+              //       dispatch(setSaleLeads(data.data));
 
-                //       getAll({ url: `${GET_SINGLE_SALELEAD}/${saleLead._id}` }).then((data: any) => {
-                //         if (data !== undefined) {
-                //           if (data.success) {
-                //             dispatch(setSaleLead(data.data));
-                //             if (data.data.vehicles.length == data.data.totalNoOfVehicles) {
-                //               setIsCreated(true);
-                //               callbackActive(4)
-                //             } else {
-                //               setIsCreated(true);
-                //             }
-                //           }
-                //         }
-                //       });
-                //       setLoading(false);
-                //     }
-                //   }
-                // });
+              //       getAll({ url: `${GET_SINGLE_SALELEAD}/${saleLead._id}` }).then((data: any) => {
+              //         if (data !== undefined) {
+              //           if (data.success) {
+              //             dispatch(setSaleLead(data.data));
+              //             if (data.data.vehicles.length == data.data.totalNoOfVehicles) {
+              //               setIsCreated(true);
+              //               callbackActive(4)
+              //             } else {
+              //               setIsCreated(true);
+              //             }
+              //           }
+              //         }
+              //       });
+              //       setLoading(false);
+              //     }
+              //   }
+              // });
 
-                getAll({ url: `${GET_SINGLE_SALELEAD}/${saleLead?._id}` }).then(
-                  (data: any) => {
-                    if (data !== undefined) {
-                      if (!data.success) {
-                        setLoading(false);
-                      }
-                      if (data.success) {
-                        dispatch(setSaleLead(data.data));
-                        setLoading(false);
-                        if (
-                          data.data.vehicles.length ==
-                          data.data.totalNoOfVehicles
-                        ) {
-                          setIsCreated(true);
-                          callbackActive(4);
-                        } else {
-                          setIsCreated(true);
-                        }
+              getAll({ url: `${GET_SINGLE_SALELEAD}/${saleLead?._id}` }).then(
+                (data: any) => {
+                  if (data !== undefined) {
+                    if (!data.success) {
+                      setLoading(false);
+                    }
+                    if (data.success) {
+                      dispatch(setSaleLead(data.data));
+                      setLoading(false);
+                      if (
+                        data.data.vehicles.length == data.data.totalNoOfVehicles
+                      ) {
+                        setIsCreated(true);
+                        callbackActive(4);
+                      } else {
+                        setIsCreated(true);
                       }
                     }
-                  },
-                );
-                // setLoading(false);
+                  }
+                },
+              );
+              // setLoading(false);
 
-                // setLoading(false);
-              }
+              // setLoading(false);
             }
-          },
-        );
+          }
+        });
         // Handle successful post creation (e.g., show a success message, redirect, etc.)
       } catch (error: any) {
         // Handle error (e.g., show an error message)
@@ -232,26 +276,56 @@ const VehicleForm = ({
       formData.vehicleMake !== "" &&
       formData.vehicleModel !== "" &&
       formData.year !== "" &&
-      formData.transmission !== "" &&
+      formData.transmissionType !== "" &&
       formData.fuelType !== ""
     ) {
-      const body = {
-        ...formData,
-        // additionalServices: [
-        //   ...formData.additionalServices
-        //     .filter((service: any) => service.checked)
-        //     .map((service: any) => service.value),
-        // ],
-        additionalServices: formData.additionalServices,
-        saleLeadId: saleLead?._id,
-        customer: saleLead?.customer._id,
-        servicePackage: saleLead?.package?._id,
-        servicePackageDiscountedCharges: saleLead?.discountedServiceCharges,
-        serviceRenewalDate: new Date(renewalDate).toISOString(),
-      };
+      const bodyData = new FormData();
+      Object.keys(formData).forEach((key) => {
+        if (key === "additionalServices") {
+          bodyData.append(key, JSON.stringify(formData[key]));
+        } else if (
+          key !== "vehicleIconOffline" &&
+          key !== "vehicleIconIdle" &&
+          key !== "vehicleIconOnline" &&
+          key !== "vehicleIconStopped" &&
+          key !== "vehicleData"
+        ) {
+          bodyData.append(key, formData[key]);
+        }
+      });
+
+      // ["vehicleIconOffline", "vehicleIconIdle", "vehicleIconOnline", "vehicleIconStopped"].forEach((iconKey) => {
+      //   if (formData[iconKey] instanceof File) {
+      //     // Using 'new' prefix for backend to know it's a new upload
+      //     const newKey = `${iconKey.charAt(0).toUpperCase() + iconKey.slice(1)}`;
+      //     bodyData.append(newKey, formData[iconKey]);
+      //   }
+      // });
+
+      [
+        "vehicleIconOffline",
+        "vehicleIconIdle",
+        "vehicleIconOnline",
+        "vehicleIconStopped",
+      ].forEach((iconKey) => {
+        if (formData[iconKey] instanceof File) {
+          bodyData.append(iconKey, formData[iconKey]);
+        }
+      });
+      bodyData.append("saleLeadId", saleLead?._id);
+      bodyData.append("customer", saleLead?.customer._id);
+      bodyData.append("servicePackage", saleLead?.package?._id);
+      bodyData.append(
+        "servicePackageDiscountedCharges",
+        saleLead?.discountedServiceCharges,
+      );
+      bodyData.append(
+        "serviceRenewalDate",
+        new Date(renewalDate).toISOString(),
+      );
 
       try {
-        await update(body, {
+        await updateWithMultipart(bodyData, {
           url: `${UPDATE_VEHICLE}/${formData.vehicleData._id}`,
         }).then((data: any) => {
           if (data !== undefined) {
@@ -666,6 +740,83 @@ const VehicleForm = ({
             disabled={true}
           />
         </Col>
+        <Row
+          style={{
+            marginTop: "20px",
+          }}
+        >
+          {[
+            { label: "Vehicle Icon (Offline)", key: "vehicleIconOffline" },
+            { label: "Vehicle Icon (Idle)", key: "vehicleIconIdle" },
+            { label: "Vehicle Icon (Online)", key: "vehicleIconOnline" },
+            { label: "Vehicle Icon (Stopped)", key: "vehicleIconStopped" },
+          ].map((icon) =>
+            formData[icon.key] !== "" && isCreated ? (
+              <Col xl={3} md={6} key={icon.key}>
+                <div
+                  style={{
+                    position: "relative",
+                    marginRight: "20px",
+                    width: "180px",
+                  }}
+                  onMouseEnter={() => handleHover(icon.key, true)}
+                  onMouseLeave={() => handleHover(icon.key, false)}
+                  onClick={() => {
+                    setImageUrl(
+                      `${IMAGE_BASE_URL}/${formData[icon.key]?.url || formData[icon.key]}`,
+                    );
+                    addToggle();
+                  }}
+                >
+                  <P>{icon.label}</P>
+                  {formData[icon.key]?.url == "" ? (
+                    <div style={{ fontSize: "12px" }}>Not Uploaded</div>
+                  ) : (
+                    <img
+                      src={`${IMAGE_BASE_URL}/${formData[icon.key]?.url || formData[icon.key]}`}
+                      alt=""
+                      height={50}
+                      width={35}
+                      style={{
+                        borderRadius: "10px",
+                        border: "0.5px solid lightgray",
+                      }}
+                    />
+                  )}
+                  {/* {hoverStates[icon.key] && (
+                    <div
+                      style={{
+                        position: "absolute",
+                        top: "30px",
+                        left: 0,
+                        width: "100px",
+                        height: "100px",
+                        background: "rgba(0, 0, 0, 0.7)",
+                        borderRadius: "10px",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        cursor: "pointer",
+                      }}
+                    >
+                      <span style={{ fontSize: "12px", color: "white" }}>
+                        View
+                      </span>
+                    </div>
+                  )} */}
+                </div>
+              </Col>
+            ) : (
+              <FileAttachementComponent
+                key={icon.key}
+                heading={icon.label}
+                category={icon.key}
+                handleChange={handleSelectChange}
+                installationStatus={isCreated}
+              />
+            ),
+          )}
+        </Row>
       </Row>
 
       <Row
@@ -1080,6 +1231,14 @@ const VehicleForm = ({
           </Col>
         )}
       </Row>
+      <Modal isOpen={addModal} toggle={addToggle} size="lg" centered>
+        <ModalBody>
+          <div>
+            <div className="modal-header"></div>
+            <img src={imageUrl} alt="" height={500} width="100%" />
+          </div>
+        </ModalBody>
+      </Modal>
     </Form>
   );
 };

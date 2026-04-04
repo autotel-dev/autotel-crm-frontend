@@ -56,6 +56,17 @@ const FileAttachementComponent: React.FC<propTypes> = ({
       } else if (status === "removed") {
         handleChange(category, null);
       }
+    } else if (
+      category === "vehicleIconOffline" ||
+      category === "vehicleIconIdle" ||
+      category === "vehicleIconOnline" ||
+      category === "vehicleIconStopped"
+    ) {
+      if (status === "done") {
+        handleChange(category, file);
+      } else if (status === "removed") {
+        handleChange(category, null);
+      }
     }
   };
 

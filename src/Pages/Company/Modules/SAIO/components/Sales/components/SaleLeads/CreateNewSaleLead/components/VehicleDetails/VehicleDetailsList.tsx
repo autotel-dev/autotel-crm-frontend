@@ -24,7 +24,7 @@ const VehicleFormsManager = ({ callbackActive }: VehicleFormsManagerProps) => {
 
   useEffect(() => {
     if (saleLead !== null) {
-      console.log("salelead", saleLead);
+      // console.log("salelead", saleLead);
 
       if (saleLead?.vehicles.length < saleLead?.totalNoOfVehicles) {
         setVehicleForms([
@@ -37,10 +37,10 @@ const VehicleFormsManager = ({ callbackActive }: VehicleFormsManagerProps) => {
               instructions: item?.instructions,
               remarks: item?.remarks,
               bank: item?.bank?._id,
-              geofenceIds:
-                item?.geofences?.length > 0
-                  ? [...item?.geofences?.map((g: any) => g)]
-                  : [],
+              // geofenceIds:
+              //   item?.geofences?.length > 0
+              //     ? [...item?.geofences?.map((g: any) => g)]
+              //     : [],
               insurance: item?.insurance?._id,
               group: item?.group?._id,
               vehicleMake: item?.make?._id,
@@ -48,6 +48,10 @@ const VehicleFormsManager = ({ callbackActive }: VehicleFormsManagerProps) => {
               year: item?.year,
               transmissionType: item?.transmissionType,
               fuelType: item?.fuelType,
+              vehicleIconOffline: item?.vehicleIconOffline || "",
+              vehicleIconIdle: item?.vehicleIconIdle || "",
+              vehicleIconOnline: item?.vehicleIconOnline || "",
+              vehicleIconStopped: item?.vehicleIconStopped || "",
               // additionalServices: [
               //   ...services?.map((service: any, i: number) => {
               //     return {
@@ -57,14 +61,16 @@ const VehicleFormsManager = ({ callbackActive }: VehicleFormsManagerProps) => {
               //     };
               //   }),
               // ],
-              additionalServices:
-                item?.additionalServices?.map((service: any) => ({
-                  service: {
-                    title: service.service.title,
-                    value: service.service.value,
-                  },
-                  isOffering: service.isOffering, // Set isOffering to true by default
-                })) || [],
+              additionalServices: (Array.isArray(item?.additionalServices) && typeof item?.additionalServices[0] === "string"
+                ? JSON.parse(item?.additionalServices[0])
+                : item?.additionalServices || []
+              ).map((service: any) => ({
+                service: {
+                  title: service?.service?.title,
+                  value: service?.service?.value,
+                },
+                isOffering: service?.isOffering,
+              })) || [],
               defaultService: item?.defaultService,
               deviceId: item?.deviceId !== null ? item?.deviceId : null,
               server: item?.server !== null ? item?.server : null,
@@ -79,7 +85,7 @@ const VehicleFormsManager = ({ callbackActive }: VehicleFormsManagerProps) => {
             instructions: "",
             remarks: "",
             bank: "",
-            geofenceIds: [],
+            // geofenceIds: [],
             insurance: "",
             group: "",
             vehicleMake: "",
@@ -87,6 +93,10 @@ const VehicleFormsManager = ({ callbackActive }: VehicleFormsManagerProps) => {
             year: "",
             transmissionType: "",
             fuelType: "",
+            vehicleIconOffline: "",
+            vehicleIconIdle: "",
+            vehicleIconOnline: "",
+            vehicleIconStopped: "",
             // additionalServices: [
             //   ...services?.map((service: any, i: number) => {
             //     return {
@@ -99,10 +109,10 @@ const VehicleFormsManager = ({ callbackActive }: VehicleFormsManagerProps) => {
             additionalServices:
               saleLead?.services?.map((service: any) => ({
                 service: {
-                  title: service.service.title,
-                  value: service.service.value,
+                  title: service?.service?.title,
+                  value: service?.service?.value,
                 },
-                isOffering: service.isOffering, // Set isOffering to true by default
+                isOffering: service?.isOffering, // Set isOffering to true by default
               })) || [],
             defaultService: "Self",
             // deviceId: "",
@@ -123,10 +133,10 @@ const VehicleFormsManager = ({ callbackActive }: VehicleFormsManagerProps) => {
               instructions: item?.instructions,
               remarks: item?.remarks,
               bank: item?.bank?._id,
-              geofenceIds:
-                item?.geofences?.length > 0
-                  ? [...item?.geofences?.map((g: any) => g)]
-                  : [],
+              // geofenceIds:
+              //   item?.geofences?.length > 0
+              //     ? [...item?.geofences?.map((g: any) => g)]
+              //     : [],
               insurance: item?.insurance?._id,
               group: item?.group?._id,
               vehicleMake: item?.make?._id,
@@ -134,6 +144,10 @@ const VehicleFormsManager = ({ callbackActive }: VehicleFormsManagerProps) => {
               year: item?.year,
               transmissionType: item?.transmissionType,
               fuelType: item?.fuelType,
+              vehicleIconOffline: item?.vehicleIconOffline || "",
+              vehicleIconIdle: item?.vehicleIconIdle || "",
+              vehicleIconOnline: item?.vehicleIconOnline || "",
+              vehicleIconStopped: item?.vehicleIconStopped || "",
               // additionalServices: [
               //   ...services?.map((service: any, i: number) => {
               //     return {
@@ -143,14 +157,16 @@ const VehicleFormsManager = ({ callbackActive }: VehicleFormsManagerProps) => {
               //     };
               //   }),
               // ],
-              additionalServices:
-                item?.additionalServices?.map((service: any) => ({
-                  service: {
-                    title: service.service.title,
-                    value: service.service.value,
-                  },
-                  isOffering: service.isOffering, // Set isOffering to true by default
-                })) || [],
+              additionalServices: (Array.isArray(item?.additionalServices) && typeof item?.additionalServices[0] === "string"
+                ? JSON.parse(item?.additionalServices[0])
+                : item?.additionalServices || []
+              ).map((service: any) => ({
+                service: {
+                  title: service?.service?.title,
+                  value: service?.service?.value,
+                },
+                isOffering: service?.isOffering,
+              })) || [],
               defaultService: item?.defaultService,
               deviceId: item?.deviceId !== null ? item?.deviceId : null,
               server: item?.server !== null ? item?.server : null,
@@ -173,14 +189,18 @@ const VehicleFormsManager = ({ callbackActive }: VehicleFormsManagerProps) => {
         instructions: "",
         remarks: "",
         bank: "",
-        geofenceIds: [],
+        // geofenceIds: [],
         insurance: "",
         group: "",
         vehicleMake: "",
         vehicleModel: "",
         year: "",
-        transmission: "",
+        transmissionType: "",
         fuelType: "",
+        vehicleIconOffline: "",
+        vehicleIconIdle: "",
+        vehicleIconOnline: "",
+        vehicleIconStopped: "",
         // additionalServices: [
         //   ...services?.map((service: any, i: number) => {
         //     return {
@@ -193,10 +213,10 @@ const VehicleFormsManager = ({ callbackActive }: VehicleFormsManagerProps) => {
         additionalServices:
           saleLead?.services?.map((service: any) => ({
             service: {
-              title: service.service.title,
-              value: service.service.value,
+              title: service?.service?.title,
+              value: service?.service?.value,
             },
-            isOffering: service.isOffering, // Set isOffering to true by default
+            isOffering: service?.isOffering, // Set isOffering to true by default
           })) || [],
         defaultService: "Self",
         // deviceId: "",

@@ -55,7 +55,7 @@ import {
   setIsInvoiceRenwed,
 } from "../../../../../../../../../ReaduxToolkit/Reducer/SalesSlice";
 
-const CreateNewSaleInvoice = ({}) => {
+const CreateNewSaleInvoice = ({ }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
@@ -84,7 +84,7 @@ const CreateNewSaleInvoice = ({}) => {
         ? isInvoiceRenwed
           ? invoiceData?.servicePackageDiscountedCharges * 1
           : invoiceData?.discounted_service_charges *
-            invoiceData?.vehicles?.length
+          invoiceData?.vehicles?.length
         : "",
     netAmount:
       invoiceData !== null
@@ -98,7 +98,7 @@ const CreateNewSaleInvoice = ({}) => {
         ? isInvoiceRenwed
           ? invoiceData?.servicePackageDiscountedCharges * 1
           : invoiceData?.discounted_service_charges *
-            invoiceData?.vehicles?.length
+          invoiceData?.vehicles?.length
         : "",
     customer: invoiceData !== null ? invoiceData?.customer?._id : "",
     customerName: invoiceData !== null ? invoiceData?.customer?.fullName : "",
@@ -172,7 +172,7 @@ const CreateNewSaleInvoice = ({}) => {
   const addAndUpdateSaleInvoice: SubmitHandler<any> = async (data) => {
     setLoading(true);
     if (invoiceDate !== "" && invoiceDueDate !== "" && grossAmount !== "") {
-      const saleInvoiceData = {
+      const saleInvoiceData: any = {
         invoiceDate,
         invoiceDueDate,
         reference,
@@ -193,6 +193,9 @@ const CreateNewSaleInvoice = ({}) => {
           ? [invoiceData._id]
           : [...invoiceData?.vehicles?.map((item: any) => item._id)],
       };
+      if (isInvoiceRenwed) {
+        saleInvoiceData.noOfDays = 30
+      }
 
       try {
         const response: any = await create(saleInvoiceData, {
@@ -671,6 +674,17 @@ const CreateNewSaleInvoice = ({}) => {
             noValidate
           >
             <Row className="g-3">
+              {isInvoiceRenwed && <Col lg={3} xs={12}>
+                <P>Vehicle Registration No</P>
+                <Input
+                  type="text"
+                  placeholder="Enter Vehicle Registration No"
+                  value={invoiceData?.registrationNo}
+                  name="registrationNo"
+                  disabled
+                  onChange={getUserData}
+                />
+              </Col>}
               <Col lg={3} xs={12}>
                 <P>Customer Name</P>
                 <Input
@@ -1110,7 +1124,7 @@ const CreateNewSaleInvoice = ({}) => {
                   </Button>
                 )}
                 {saleInvoice !== null && saleInvoice.status == "APPROVED" && (
-                  <Button disabled={true} color="primary" onClick={() => {}}>
+                  <Button disabled={true} color="primary" onClick={() => { }}>
                     {loading ? "Loading..." : "Approved"}
                   </Button>
                 )}

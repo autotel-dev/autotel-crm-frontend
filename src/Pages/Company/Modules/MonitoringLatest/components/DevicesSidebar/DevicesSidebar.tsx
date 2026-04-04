@@ -34,6 +34,7 @@ import CustomerDetailsModal from "./CustomerDetailsModal";
 import PlaybackModal from "../SingleVehiceDetail/PlaybackModal/PlaybackModal";
 import { getAll } from "../../../../../../Utilities/api";
 import { GET_ALERT_EVENTS_V2, GET_DEVICE_ANALYTICS } from "../../../../../../Utilities/api/apiEndpoints";
+import { setInvoiceData, setIsInvoiceRenwed } from "../../../../../../ReaduxToolkit/Reducer/SalesSlice";
 
 const DevicesSidebar = ({ setOpen, open, filteredDevices }: any) => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -63,8 +64,29 @@ const DevicesSidebar = ({ setOpen, open, filteredDevices }: any) => {
         item.vehicle?.model?.name
           ?.toLowerCase()
           .includes(searchTerm.toLowerCase()) ||
+          item.vehicle?.make?.name
+          ?.toLowerCase()
+          .includes(searchTerm.toLowerCase()) ||
         item.vehicle?.model == null ||
         item.vehicle?.registrationNo
+          ?.toLowerCase()
+          .includes(searchTerm.toLowerCase()) ||
+        item.vehicle?.customer?.fullName
+          ?.toLowerCase()
+          .includes(searchTerm.toLowerCase())|| 
+          item.vehicle?.imei
+          ?.toLowerCase()
+          .includes(searchTerm.toLowerCase()) ||
+          item.vehicle?.chasisNo
+          ?.toLowerCase()
+          .includes(searchTerm.toLowerCase()) ||
+          item.vehicle?.engineNo
+          ?.toLowerCase()
+          .includes(searchTerm.toLowerCase()) ||
+          item.vehicle?.customer?.phoneNo
+          ?.toLowerCase()
+          .includes(searchTerm.toLowerCase()) ||
+          item.vehicle?.customer?.emailAddress
           ?.toLowerCase()
           .includes(searchTerm.toLowerCase()),
     );
@@ -217,6 +239,20 @@ const DevicesSidebar = ({ setOpen, open, filteredDevices }: any) => {
     // console.log("Menu action triggered:", action, device);
 
     switch (action) {
+      case "renewal-expiry":
+
+        const updatedData = {
+          vehicles: [device?.vehicle?.registrationNo],
+          ...device?.vehicle,
+        };
+
+        dispatch(setInvoiceData(updatedData));
+        dispatch(setIsInvoiceRenwed(true));
+        navigate(
+          `${process.env.PUBLIC_URL}/company/modules/saio-central/sales/invoices/create-invoice`
+        );
+        break;
+
       case "customer-details":
         // console.log("Opening customer details modal");
         // Open customer details modal
@@ -429,6 +465,36 @@ const DevicesSidebar = ({ setOpen, open, filteredDevices }: any) => {
   //   };
   // }, []); // Empty dependency array ensures this runs only on mount/unmount
 
+  const highlightMatch = (text: string, term: string) => {
+    if (!term || !text) return text;
+    const parts = text.split(new RegExp(`(${term.replace(/[-\/\\^$*+?.()|[\]{}]/g, "\\$&")})`, "gi"));
+    return parts.map((part, index) =>
+      part.toLowerCase() === term.toLowerCase() ? (
+        <strong key={index} style={{ color: "#000" }}>{part}</strong>
+      ) : (
+        part
+      ),
+    );
+  };
+
+  const getMatchedFields = (item: any, term: string) => {
+    if (!term) return [];
+    const lowerTerm = term.toLowerCase();
+    const fields = [
+      { label: "Make", value: item.vehicle?.make?.name },
+      { label: "Model", value: item.vehicle?.model?.name },
+      { label: "Reg No", value: item.vehicle?.registrationNo },
+      { label: "Customer", value: item.vehicle?.customer?.fullName },
+      { label: "IMEI", value: item.vehicle?.imei },
+      { label: "Chasis No", value: item.vehicle?.chasisNo },
+      { label: "Engine No", value: item.vehicle?.engineNo },
+      { label: "Phone No", value: item.vehicle?.customer?.phoneNo },
+      { label: "Email", value: item.vehicle?.customer?.emailAddress },
+    ].filter(f => f.value && typeof f.value === 'string');
+
+    return fields.filter(f => f.value.toLowerCase().includes(lowerTerm));
+  };
+
   const getVehicleVisualState = (item: any) => {
     const renewalDate = item?.vehicle?.serviceRenewalDate
       ? new Date(item.vehicle.serviceRenewalDate)
@@ -486,7 +552,7 @@ const DevicesSidebar = ({ setOpen, open, filteredDevices }: any) => {
 
       default:
         return {
-          background: "rgba(240,240,240,0.4)",
+          background: "rgba(255, 0, 0, 0.1)",
           icon: carIcon,
         };
     }
@@ -886,6 +952,8 @@ const DevicesSidebar = ({ setOpen, open, filteredDevices }: any) => {
                               borderRadius: "10px",
                             }}
                           >
+
+                          
                             <input
                               type="checkbox"
                               style={{
@@ -897,6 +965,7 @@ const DevicesSidebar = ({ setOpen, open, filteredDevices }: any) => {
                               checked={item.checked || false}
                               onChange={(e) => handleCheckboxClick(e, item)}
                             />
+
                             <Media
                               style={{
                                 margin: "2px 0px",
@@ -1087,6 +1156,10 @@ const DevicesSidebar = ({ setOpen, open, filteredDevices }: any) => {
                                         >
                                           {[
                                             {
+                                              label: "Renewal Expiry",
+                                              action: "renewal-expiry",
+                                            },
+                                            {
                                               label: "Customer Details",
                                               action: "customer-details",
                                             },
@@ -1110,7 +1183,16 @@ const DevicesSidebar = ({ setOpen, open, filteredDevices }: any) => {
                                               label: "Live Monitoring",
                                               action: "live-monitoring",
                                             },
-                                          ].map((menuItem, idx) => (
+                                          ].filter(menuItem => {
+                                            if (menuItem.action === "renewal-expiry") {
+                                              const renewalDate = item?.vehicle?.serviceRenewalDate
+                                                ? new Date(item.vehicle.serviceRenewalDate)
+                                                : null;
+                                              const now = new Date();
+                                              return renewalDate && renewalDate < now;
+                                            }
+                                            return true;
+                                          }).map((menuItem, idx) => (
                                             <div
                                               key={idx}
                                               onClick={(e) =>
@@ -1152,7 +1234,34 @@ const DevicesSidebar = ({ setOpen, open, filteredDevices }: any) => {
                                       )}
                                     </div>
                                   </div>
+
+
+
+
                                 </div>
+
+                                {searchTerm && (
+                                  <div
+                                    style={{
+                                      fontSize: "11px",
+                                      marginTop: "10px",
+                                      marginLeft: "20px",
+                                      color: "#555",
+                                      padding: "4px 8px",
+                                      backgroundColor: "rgba(255,255,255,0.5)",
+                                      borderRadius: "4px",
+                                      // border: "1px dashed rgba(0,0,0,0.1)"
+                                    }}
+                                  >
+
+                                    {getMatchedFields(item, searchTerm).map((field, idx) => (
+                                      <div key={idx} style={{ marginBottom: "2px" }}>
+                                        <span style={{ fontWeight: "bold", color: "#333" }}>{field.label} : </span>
+                                        &nbsp;{highlightMatch(field.value, searchTerm)}
+                                      </div>
+                                    ))}
+                                  </div>
+                                )}
                               </Media>
                             </Media>
                           </div>

@@ -4,16 +4,20 @@ import Trips from "./components/Trips/Trips";
 import Events from "./components/Events/Events";
 import Datalog from "./components/Datalog/Datalog";
 import Speed from "./components/Speed/Speed";
+import Datalogs from "./components/Datalogs/Datalogs";
+import Speeds from "./components/Speeds/Speeds";
 import Fuels from "./components/Fuels/Fuels";
 import Temperature from "./components/Temperature/Temperature";
+import { useSelector } from "react-redux";
 
 const PlaybackDetails = () => {
-  const [activeTab, setActiveTab] = useState("Trips");
+  const [activeTab, setActiveTab] = useState("Datalog");
   const [isExpanded, setIsExpanded] = useState(true);
+  const { vehicleHistoryData } = useSelector((state: any) => state.monitoring);
 
   const navItems = [
-    "Trips",
-    "Events",
+    // "Trips",
+    // "Events",
     "Datalog",
     "Speed",
     // "Fuel",
@@ -99,11 +103,9 @@ const PlaybackDetails = () => {
           minHeight: isExpanded ? "30vh" : 0,
           maxHeight: isExpanded ? "30vh" : 0,
           maxWidth: "100%",
-          overflowX: "scroll",
-          overflowY: "hidden",
-          msOverflowStyle: "none", // IE and Edge overflowY: "scroll",
+          overflowX: "auto",
+          overflowY: "auto",
           WebkitOverflowScrolling: "touch", // Smooth scrolling on mobile
-          scrollbarWidth: "none", // Firefox
           transition: "min-height 0.3s ease-in-out",
         }}
         className="hide-scrollbar"
@@ -114,16 +116,10 @@ const PlaybackDetails = () => {
         ) : activeTab == "Events" ? (
           <Events />
         ) : activeTab == "Datalog" ? (
-          <Datalog />
+          <Datalogs vehicleHistoryData={vehicleHistoryData} />
         ) : activeTab == "Speed" ? (
-          <Speed />
+          <Speeds vehicleHistoryData={vehicleHistoryData} />
         ) : (
-          // : activeTab == "Fuel" ? (
-          //   <Fuels />
-          // ) : activeTab == "Temperature" ? (
-          //   <Temperature />
-          // )
-
           <></>
         )}
       </div>

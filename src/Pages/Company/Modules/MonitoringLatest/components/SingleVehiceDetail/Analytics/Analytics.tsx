@@ -15,7 +15,7 @@ import {
   FaMapMarkerAlt,
   FaGasPump,
   FaRoute,
-  FaCarSide
+  FaCarSide,
 } from "react-icons/fa";
 import { MdSpeed, MdLocalGasStation } from "react-icons/md";
 import { IoSpeedometerOutline } from "react-icons/io5";
@@ -42,7 +42,7 @@ const cardVariants = {
 
 const Analytics = () => {
   const { selectedSingleDevice, deviceAnalytics } = useSelector(
-    (state: any) => state.monitoring
+    (state: any) => state.monitoring,
   );
 
   // Extract analytics from Redux state
@@ -135,10 +135,25 @@ const Analytics = () => {
 
   // Mock chart data - Speed over time
   const speedData = [0, 25, 45, 38, 52, 68, 55, 42, 58, 72, 48, 35, 20];
-  const timeLabels = ['0m', '5m', '10m', '15m', '20m', '25m', '30m', '35m', '40m', '45m', '50m', '55m', '60m'];
+  const timeLabels = [
+    "0m",
+    "5m",
+    "10m",
+    "15m",
+    "20m",
+    "25m",
+    "30m",
+    "35m",
+    "40m",
+    "45m",
+    "50m",
+    "55m",
+    "60m",
+  ];
   const fleetUsageData = [12, 25, 18, 32, 28, 15, 22, 35, 28, 20, 16, 24];
 
-  const totalMs = (analytics?.raw?.movingDurationMs || 0) +
+  const totalMs =
+    (analytics?.raw?.movingDurationMs || 0) +
     (analytics?.raw?.idleDurationMs || 0) +
     (analytics?.raw?.stopDurationMs || 0) +
     (analytics?.raw?.inactiveDurationMs || 0);
@@ -158,7 +173,12 @@ const Analytics = () => {
   };
 
   const totalHoursSum = Object.values(activityData).reduce((a, b) => a + b, 0);
-  const formattedTotalDuration = totalMs > 0 ? formatMs(totalMs) : (totalHoursSum > 0 ? `${totalHoursSum.toFixed(1)} hrs` : "0h 0m");
+  const formattedTotalDuration =
+    totalMs > 0
+      ? formatMs(totalMs)
+      : totalHoursSum > 0
+        ? `${totalHoursSum.toFixed(1)} hrs`
+        : "0h 0m";
   const totalHours = totalHoursSum || 1;
 
   // Fuel data
@@ -460,9 +480,23 @@ const Analytics = () => {
               boxShadow: "0 2px 10px rgba(0,0,0,0.08)",
             }}
           >
-            <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "12px" }}>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "8px",
+                marginBottom: "12px",
+              }}
+            >
               <FaClock size={16} color="#FF9800" />
-              <h4 style={{ margin: 0, fontSize: "13px", fontWeight: "600", color: "#333" }}>
+              <h4
+                style={{
+                  margin: 0,
+                  fontSize: "13px",
+                  fontWeight: "600",
+                  color: "#333",
+                }}
+              >
                 Activity Distribution
               </h4>
             </div>
@@ -510,7 +544,13 @@ const Analytics = () => {
             </div>
 
             {/* Legend */}
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "6px" }}>
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "1fr 1fr",
+                gap: "6px",
+              }}
+            >
               {Object.entries(activityData).map(([key, value]) => {
                 const colors: any = {
                   moving: "#4CAF50",
@@ -539,11 +579,27 @@ const Analytics = () => {
                   >
                     <Icon size={11} color={colors[key]} />
                     <div style={{ flex: 1 }}>
-                      <div style={{ fontSize: "8px", color: "#666", textTransform: "capitalize" }}>
+                      <div
+                        style={{
+                          fontSize: "8px",
+                          color: "#666",
+                          textTransform: "capitalize",
+                        }}
+                      >
                         {key}
                       </div>
-                      <div style={{ fontSize: "11px", fontWeight: "bold", color: colors[key] }}>
-                        {analyticsData[`${key}Time` as keyof typeof analyticsData]}
+                      <div
+                        style={{
+                          fontSize: "11px",
+                          fontWeight: "bold",
+                          color: colors[key],
+                        }}
+                      >
+                        {
+                          analyticsData[
+                            `${key}Time` as keyof typeof analyticsData
+                          ]
+                        }
                       </div>
                     </div>
                   </div>
@@ -560,14 +616,19 @@ const Analytics = () => {
                 textAlign: "center",
               }}
             >
-              <div style={{ fontSize: "8px", color: "#999" }}>Total Duration</div>
-              <div style={{ fontSize: "15px", fontWeight: "bold", color: "#333" }}>
+              <div style={{ fontSize: "8px", color: "#999" }}>
+                Total Duration
+              </div>
+              <div
+                style={{ fontSize: "15px", fontWeight: "bold", color: "#333" }}
+              >
                 {formattedTotalDuration}
               </div>
             </div>
           </motion.div>
 
           {/* Trip Performance Chart */}
+
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -580,19 +641,44 @@ const Analytics = () => {
               boxShadow: "0 2px 10px rgba(0,0,0,0.08)",
             }}
           >
-            <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "12px" }}>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "8px",
+                marginBottom: "12px",
+              }}
+            >
               <MdSpeed size={16} color="#E91E63" />
-              <h4 style={{ margin: 0, fontSize: "13px", fontWeight: "600", color: "#333" }}>
+              <h4
+                style={{
+                  margin: 0,
+                  fontSize: "13px",
+                  fontWeight: "600",
+                  color: "#333",
+                }}
+              >
                 Trip Performance
               </h4>
             </div>
 
-            {/* Key metrics */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+            <div
+              style={{ display: "flex", flexDirection: "column", gap: "8px" }}
+            >
               {[
-                { label: "Average Speed", value: `${analyticsData.avgSpeed}km/h`, color: "#2196F3", icon: MdSpeed },
-                { label: "Max Speed", value: `${analyticsData.maxSpeed}km/h`, color: "#F44336", icon: FaTachometerAlt },
-                { label: "Total Trips", value: analyticsData.totalTrips, color: "#4CAF50", icon: BiTrip },
+                {
+                  label: "Average Speed",
+                  value: `${analyticsData.avgSpeed}km/h`,
+                  color: "#2196F3",
+                  icon: MdSpeed,
+                },
+                {
+                  label: "Max Speed",
+                  value: `${analyticsData.maxSpeed}km/h`,
+                  color: "#F44336",
+                  icon: FaTachometerAlt,
+                },
+                // { label: "Total Trips", value: analyticsData.totalTrips, color: "#4CAF50", icon: BiTrip },
               ].map((metric, i) => (
                 <motion.div
                   key={i}
@@ -609,7 +695,13 @@ const Analytics = () => {
                     borderLeft: `3px solid ${metric.color}`,
                   }}
                 >
-                  <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "8px",
+                    }}
+                  >
                     <div
                       style={{
                         width: "28px",
@@ -623,19 +715,30 @@ const Analytics = () => {
                     >
                       <metric.icon size={14} color="white" />
                     </div>
-                    <div style={{ fontSize: "10px", color: "#666", fontWeight: "500" }}>
+                    <div
+                      style={{
+                        fontSize: "10px",
+                        color: "#666",
+                        fontWeight: "500",
+                      }}
+                    >
                       {metric.label}
                     </div>
                   </div>
-                  <div style={{ fontSize: "15px", fontWeight: "bold", color: metric.color }}>
+                  <div
+                    style={{
+                      fontSize: "15px",
+                      fontWeight: "bold",
+                      color: metric.color,
+                    }}
+                  >
                     {metric.value}
                   </div>
                 </motion.div>
               ))}
             </div>
 
-            {/* Efficiency Score */}
-            <div
+            {/* <div
               style={{
                 marginTop: "12px",
                 padding: "10px",
@@ -645,14 +748,16 @@ const Analytics = () => {
                 color: "white",
               }}
             >
-              <div style={{ fontSize: "9px", opacity: 0.9, marginBottom: "3px" }}>
+              <div
+                style={{ fontSize: "9px", opacity: 0.9, marginBottom: "3px" }}
+              >
                 Efficiency Score
               </div>
               <div style={{ fontSize: "22px", fontWeight: "bold" }}>85%</div>
               <div style={{ fontSize: "8px", opacity: 0.8, marginTop: "2px" }}>
                 Speed • Distance • Activity
               </div>
-            </div>
+            </div> */}
           </motion.div>
         </div>
 
