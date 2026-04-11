@@ -23,18 +23,23 @@ import carIconOnline from "../../../monitoring-assets/online-icon.png";
 import carIconStop from "../../../monitoring-assets/stop-icon.png";
 import delayIcon from "../../../../../../assets/delay-icon.png";
 
-import {
+import { motion } from "framer-motion";
+import CustomerDetailsModal from "./CustomerDetailsModal";
+import PlaybackModal from "../SingleVehiceDetail/PlaybackModal/PlaybackModal";
+import { getAll, create } from "../../../../../../Utilities/api";
+import { 
+  GET_ALERT_EVENTS_V2, 
+  GET_DEVICE_ANALYTICS,
+  GET_SINGLE_VEHICLE_START
+} from "../../../../../../Utilities/api/apiEndpoints";
+import { setInvoiceData, setIsInvoiceRenwed } from "../../../../../../ReaduxToolkit/Reducer/SalesSlice";
+import { 
   setDevices,
   setSelectedSingleDevice,
   setVehicleHistoryDateRange,
   setDeviceAnalytics,
+  setMonitoringSession
 } from "../../../../../../ReaduxToolkit/Reducer/MonitoringSlice";
-import { motion } from "framer-motion";
-import CustomerDetailsModal from "./CustomerDetailsModal";
-import PlaybackModal from "../SingleVehiceDetail/PlaybackModal/PlaybackModal";
-import { getAll } from "../../../../../../Utilities/api";
-import { GET_ALERT_EVENTS_V2, GET_DEVICE_ANALYTICS } from "../../../../../../Utilities/api/apiEndpoints";
-import { setInvoiceData, setIsInvoiceRenwed } from "../../../../../../ReaduxToolkit/Reducer/SalesSlice";
 
 const DevicesSidebar = ({ setOpen, open, filteredDevices }: any) => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -294,9 +299,34 @@ const DevicesSidebar = ({ setOpen, open, filteredDevices }: any) => {
         break;
 
       case "live-monitoring":
-        navigate(
-          `${process.env.PUBLIC_URL}/company/modules/live-monitoring/${device?.vehicle?.registrationNo}`,
-        );
+        const startMonitoring = async () => {
+          try {
+            const vehicleId = device?.vehicle?._id;
+            const res: any = await create(
+              { vehicleId },
+              { url: GET_SINGLE_VEHICLE_START },
+            );
+            if (res?.success && res?.data) {
+              const activeData = res.data;
+              dispatch(setMonitoringSession(activeData.session));
+              dispatch(
+                setSelectedSingleDevice({
+                  ...activeData.vehicle,
+                  traccarDevice: activeData.traccarDevice,
+                  latestPosition: activeData.latestPosition,
+                  mainVehicleStatus: activeData.vehicleStatus,
+                }),
+              );
+            }
+          } catch (error) {
+            console.error("Error starting live monitoring:", error);
+          } finally {
+            navigate(
+              `${process.env.PUBLIC_URL}/company/modules/monitoring-for-single-vehicle/${device?.vehicle?._id}`,
+            );
+          }
+        };
+        startMonitoring();
         break;
 
       default:

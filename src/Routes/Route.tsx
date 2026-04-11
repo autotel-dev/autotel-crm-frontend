@@ -489,7 +489,7 @@ const routes = [
   },
 
   {
-    path: `${process.env.PUBLIC_URL}/company/modules/monitoring-for-single-vehicle`,
+    path: `${process.env.PUBLIC_URL}/company/modules/monitoring-for-single-vehicle/:vehicleId`,
     Component: <MonitoringForSingleVehicle />,
     isProtected: true,
     allowedUserRoles: [ROLES.COMPANY],

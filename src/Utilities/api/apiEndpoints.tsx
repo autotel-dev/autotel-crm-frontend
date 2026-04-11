@@ -514,13 +514,14 @@ export const VIEW_TRIP = `${API_BASE_URL}/trip/get-trip-details`;
 export const GET_ALL_TRIPS_DROPDOWN = `${API_BASE_URL}/trip/get-all-trips-dropdown`;
 export const GET_SINGLE_TRIP_DETIAL_REPORT = `${API_BASE_URL}/reports/get-trip-detail-report`;
 
-
 // Trip Management - Dashboard
 
 export const GET_TRIP_DASHBOARD_METRICS = `${API_BASE_URL}/trip/dashboard/metrics`;
 export const GET_ACTIVE_TRIPS = `${API_BASE_URL}/trip/dashboard/get-active-violations-list`;
 export const GET_LAST_TRIPS = `${API_BASE_URL}/trip/dashboard/get-last-trips`;
 
+// single vehicleMonitoring
 
-
-// 
+export const GET_SINGLE_VEHICLE_START = `${API_BASE_URL}/control-room/vehicle-monitoring/start`;
+export const GET_SINGLE_VEHICLE_STOP = `${API_BASE_URL}/control-room/vehicle-monitoring/stop`;
+export const GET_SINGLE_VEHICLE_STATUS = `${API_BASE_URL}/control-room/vehicle-monitoring/:vehicleId`;
