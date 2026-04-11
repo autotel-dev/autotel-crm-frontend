@@ -187,7 +187,9 @@ const MonitoringLatest = () => {
     ).length;
 
     const stoppedCount = activeDevices.filter(
-      (d: any) => d.mainVehicleStatus?.toLowerCase() === "stopped" || d.mainVehicleStatus?.toLowerCase() === "stop",
+      (d: any) =>
+        d.mainVehicleStatus?.toLowerCase() === "stopped" ||
+        d.mainVehicleStatus?.toLowerCase() === "stop",
     ).length;
 
     return {
@@ -483,7 +485,9 @@ const MonitoringLatest = () => {
             !isExpired &&
             hasDeviceTime &&
             !isInactive &&
-            mainStatus === "stopped"
+            (mainStatus === "stopped" ||
+              mainStatus === "stop" ||
+              mainStatus === "unknown")
           );
         case "idle":
           return (

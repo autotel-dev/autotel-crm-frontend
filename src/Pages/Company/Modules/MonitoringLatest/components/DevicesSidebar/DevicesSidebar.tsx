@@ -27,18 +27,21 @@ import { motion } from "framer-motion";
 import CustomerDetailsModal from "./CustomerDetailsModal";
 import PlaybackModal from "../SingleVehiceDetail/PlaybackModal/PlaybackModal";
 import { getAll, create } from "../../../../../../Utilities/api";
-import { 
-  GET_ALERT_EVENTS_V2, 
+import {
+  GET_ALERT_EVENTS_V2,
   GET_DEVICE_ANALYTICS,
-  GET_SINGLE_VEHICLE_START
+  GET_SINGLE_VEHICLE_START,
 } from "../../../../../../Utilities/api/apiEndpoints";
-import { setInvoiceData, setIsInvoiceRenwed } from "../../../../../../ReaduxToolkit/Reducer/SalesSlice";
-import { 
+import {
+  setInvoiceData,
+  setIsInvoiceRenwed,
+} from "../../../../../../ReaduxToolkit/Reducer/SalesSlice";
+import {
   setDevices,
   setSelectedSingleDevice,
   setVehicleHistoryDateRange,
   setDeviceAnalytics,
-  setMonitoringSession
+  setMonitoringSession,
 } from "../../../../../../ReaduxToolkit/Reducer/MonitoringSlice";
 
 const DevicesSidebar = ({ setOpen, open, filteredDevices }: any) => {
@@ -69,7 +72,7 @@ const DevicesSidebar = ({ setOpen, open, filteredDevices }: any) => {
         item.vehicle?.model?.name
           ?.toLowerCase()
           .includes(searchTerm.toLowerCase()) ||
-          item.vehicle?.make?.name
+        item.vehicle?.make?.name
           ?.toLowerCase()
           .includes(searchTerm.toLowerCase()) ||
         item.vehicle?.model == null ||
@@ -78,20 +81,18 @@ const DevicesSidebar = ({ setOpen, open, filteredDevices }: any) => {
           .includes(searchTerm.toLowerCase()) ||
         item.vehicle?.customer?.fullName
           ?.toLowerCase()
-          .includes(searchTerm.toLowerCase())|| 
-          item.vehicle?.imei
+          .includes(searchTerm.toLowerCase()) ||
+        item.vehicle?.imei?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        item.vehicle?.chasisNo
           ?.toLowerCase()
           .includes(searchTerm.toLowerCase()) ||
-          item.vehicle?.chasisNo
+        item.vehicle?.engineNo
           ?.toLowerCase()
           .includes(searchTerm.toLowerCase()) ||
-          item.vehicle?.engineNo
+        item.vehicle?.customer?.phoneNo
           ?.toLowerCase()
           .includes(searchTerm.toLowerCase()) ||
-          item.vehicle?.customer?.phoneNo
-          ?.toLowerCase()
-          .includes(searchTerm.toLowerCase()) ||
-          item.vehicle?.customer?.emailAddress
+        item.vehicle?.customer?.emailAddress
           ?.toLowerCase()
           .includes(searchTerm.toLowerCase()),
     );
@@ -245,7 +246,6 @@ const DevicesSidebar = ({ setOpen, open, filteredDevices }: any) => {
 
     switch (action) {
       case "renewal-expiry":
-
         const updatedData = {
           vehicles: [device?.vehicle?.registrationNo],
           ...device?.vehicle,
@@ -254,7 +254,7 @@ const DevicesSidebar = ({ setOpen, open, filteredDevices }: any) => {
         dispatch(setInvoiceData(updatedData));
         dispatch(setIsInvoiceRenwed(true));
         navigate(
-          `${process.env.PUBLIC_URL}/company/modules/saio-central/sales/invoices/create-invoice`
+          `${process.env.PUBLIC_URL}/company/modules/saio-central/sales/invoices/create-invoice`,
         );
         break;
 
@@ -321,9 +321,8 @@ const DevicesSidebar = ({ setOpen, open, filteredDevices }: any) => {
           } catch (error) {
             console.error("Error starting live monitoring:", error);
           } finally {
-            navigate(
-              `${process.env.PUBLIC_URL}/company/modules/monitoring-for-single-vehicle/${device?.vehicle?._id}`,
-            );
+            const url = `${window.location.origin}${process.env.PUBLIC_URL}/company/modules/monitoring-for-single-vehicle/${device?.vehicle?._id}`;
+            window.open(url, "_blank");
           }
         };
         startMonitoring();
@@ -497,10 +496,14 @@ const DevicesSidebar = ({ setOpen, open, filteredDevices }: any) => {
 
   const highlightMatch = (text: string, term: string) => {
     if (!term || !text) return text;
-    const parts = text.split(new RegExp(`(${term.replace(/[-\/\\^$*+?.()|[\]{}]/g, "\\$&")})`, "gi"));
+    const parts = text.split(
+      new RegExp(`(${term.replace(/[-\/\\^$*+?.()|[\]{}]/g, "\\$&")})`, "gi"),
+    );
     return parts.map((part, index) =>
       part.toLowerCase() === term.toLowerCase() ? (
-        <strong key={index} style={{ color: "#000" }}>{part}</strong>
+        <strong key={index} style={{ color: "#000" }}>
+          {part}
+        </strong>
       ) : (
         part
       ),
@@ -520,9 +523,9 @@ const DevicesSidebar = ({ setOpen, open, filteredDevices }: any) => {
       { label: "Engine No", value: item.vehicle?.engineNo },
       { label: "Phone No", value: item.vehicle?.customer?.phoneNo },
       { label: "Email", value: item.vehicle?.customer?.emailAddress },
-    ].filter(f => f.value && typeof f.value === 'string');
+    ].filter((f) => f.value && typeof f.value === "string");
 
-    return fields.filter(f => f.value.toLowerCase().includes(lowerTerm));
+    return fields.filter((f) => f.value.toLowerCase().includes(lowerTerm));
   };
 
   const getVehicleVisualState = (item: any) => {
@@ -573,6 +576,16 @@ const DevicesSidebar = ({ setOpen, open, filteredDevices }: any) => {
           background: "rgba(255, 0, 0, 0.1)",
           icon: carIconStop, // ⛔ stopped
         };
+      case "unknown":
+        return {
+          background: "rgba(255, 0, 0, 0.1)",
+          icon: carIconStop, // ⛔ stopped
+        };
+      case "stop":
+        return {
+          background: "rgba(255, 0, 0, 0.1)",
+          icon: carIconStop, // ⛔ stopped
+        };
 
       case "idle":
         return {
@@ -619,8 +632,9 @@ const DevicesSidebar = ({ setOpen, open, filteredDevices }: any) => {
                 borderRadius: "5px",
                 padding: "10px 20px",
                 cursor: "pointer",
-                background: `${`${selectedNav == "Vehicles" ? "#6dbfb8" : "transparent"
-                  }`}`,
+                background: `${`${
+                  selectedNav == "Vehicles" ? "#6dbfb8" : "transparent"
+                }`}`,
                 color: `${`${selectedNav == "Vehicles" ? "white" : "black"}`}`,
                 width: "47%",
               }}
@@ -640,8 +654,9 @@ const DevicesSidebar = ({ setOpen, open, filteredDevices }: any) => {
                 borderRadius: "5px",
                 padding: "10px 20px",
                 cursor: "pointer",
-                background: `${`${selectedNav == "Alerts" ? "#6dbfb8" : "transparent"
-                  }`}`,
+                background: `${`${
+                  selectedNav == "Alerts" ? "#6dbfb8" : "transparent"
+                }`}`,
                 color: `${`${selectedNav == "Alerts" ? "white" : "black"}`}`,
                 width: "47%",
               }}
@@ -732,7 +747,7 @@ const DevicesSidebar = ({ setOpen, open, filteredDevices }: any) => {
                       border: "2px solid #F8F8F8",
                       backgroundColor:
                         alert.alertType === "OVER_SPEEDING" ||
-                          alert.alertType === "GEOFENCE_EXIT"
+                        alert.alertType === "GEOFENCE_EXIT"
                           ? "rgba(255,0,0,0.1)"
                           : "transparent",
                       cursor: "pointer",
@@ -745,7 +760,7 @@ const DevicesSidebar = ({ setOpen, open, filteredDevices }: any) => {
                     onMouseLeave={(e: any) => {
                       e.currentTarget.style.backgroundColor =
                         alert.alertType === "OVER_SPEEDING" ||
-                          alert.alertType === "GEOFENCE_EXIT"
+                        alert.alertType === "GEOFENCE_EXIT"
                           ? "rgba(255,0,0,0.1)"
                           : "transparent";
                       e.currentTarget.style.transform = "scale(1)";
@@ -788,7 +803,7 @@ const DevicesSidebar = ({ setOpen, open, filteredDevices }: any) => {
                         fontSize: "13px",
                         color:
                           alert.alertType === "OVER_SPEEDING" ||
-                            alert.alertType === "GEOFENCE_EXIT"
+                          alert.alertType === "GEOFENCE_EXIT"
                             ? "#d32f2f"
                             : "#666",
                         fontWeight:
@@ -982,8 +997,6 @@ const DevicesSidebar = ({ setOpen, open, filteredDevices }: any) => {
                               borderRadius: "10px",
                             }}
                           >
-
-                          
                             <input
                               type="checkbox"
                               style={{
@@ -1056,21 +1069,21 @@ const DevicesSidebar = ({ setOpen, open, filteredDevices }: any) => {
                                         ) == "Invalid Date"
                                           ? "Not Connected"
                                           : formatDateTime(
-                                            item?.latestPosition?.deviceTime,
-                                          )}
+                                              item?.latestPosition?.deviceTime,
+                                            )}
                                         {isDeviceTimeDelayed(
                                           item?.latestPosition?.deviceTime,
                                         ) && (
-                                            <img
-                                              src={delayIcon}
-                                              alt="Delay Icon"
-                                              height={15}
-                                              width={15}
-                                              style={{
-                                                marginLeft: "10px",
-                                              }}
-                                            />
-                                          )}
+                                          <img
+                                            src={delayIcon}
+                                            alt="Delay Icon"
+                                            height={15}
+                                            width={15}
+                                            style={{
+                                              marginLeft: "10px",
+                                            }}
+                                          />
+                                        )}
                                         {/* {item?.latestPosition?.deviceTime || "N/A"} */}
                                       </div>
                                     </div>
@@ -1099,8 +1112,8 @@ const DevicesSidebar = ({ setOpen, open, filteredDevices }: any) => {
                                       >
                                         {item?.latestPosition?.speed > 0
                                           ? Number(
-                                            item?.latestPosition?.speed,
-                                          ).toFixed(2)
+                                              item?.latestPosition?.speed,
+                                            ).toFixed(2)
                                           : item?.latestPosition?.speed}
                                       </div>
                                       <div
@@ -1213,61 +1226,69 @@ const DevicesSidebar = ({ setOpen, open, filteredDevices }: any) => {
                                               label: "Live Monitoring",
                                               action: "live-monitoring",
                                             },
-                                          ].filter(menuItem => {
-                                            if (menuItem.action === "renewal-expiry") {
-                                              const renewalDate = item?.vehicle?.serviceRenewalDate
-                                                ? new Date(item.vehicle.serviceRenewalDate)
-                                                : null;
-                                              const now = new Date();
-                                              return renewalDate && renewalDate < now;
-                                            }
-                                            return true;
-                                          }).map((menuItem, idx) => (
-                                            <div
-                                              key={idx}
-                                              onClick={(e) =>
-                                                handleMenuAction(
-                                                  e,
-                                                  menuItem.action,
-                                                  item,
-                                                )
+                                          ]
+                                            .filter((menuItem) => {
+                                              if (
+                                                menuItem.action ===
+                                                "renewal-expiry"
+                                              ) {
+                                                const renewalDate = item
+                                                  ?.vehicle?.serviceRenewalDate
+                                                  ? new Date(
+                                                      item.vehicle
+                                                        .serviceRenewalDate,
+                                                    )
+                                                  : null;
+                                                const now = new Date();
+                                                return (
+                                                  renewalDate &&
+                                                  renewalDate < now
+                                                );
                                               }
-                                              style={{
-                                                padding: "12px 16px",
-                                                cursor: "pointer",
-                                                fontSize: "13px",
-                                                fontWeight: "500",
-                                                color: "#333",
-                                                transition: "all 0.2s",
-                                                borderBottom:
-                                                  idx < 4
-                                                    ? "1px solid #f0f0f0"
-                                                    : "none",
-                                              }}
-                                              onMouseEnter={(e) => {
-                                                e.currentTarget.style.backgroundColor =
-                                                  "#6dbfb8";
-                                                e.currentTarget.style.color =
-                                                  "white";
-                                              }}
-                                              onMouseLeave={(e) => {
-                                                e.currentTarget.style.backgroundColor =
-                                                  "transparent";
-                                                e.currentTarget.style.color =
-                                                  "#333";
-                                              }}
-                                            >
-                                              {menuItem.label}
-                                            </div>
-                                          ))}
+                                              return true;
+                                            })
+                                            .map((menuItem, idx) => (
+                                              <div
+                                                key={idx}
+                                                onClick={(e) =>
+                                                  handleMenuAction(
+                                                    e,
+                                                    menuItem.action,
+                                                    item,
+                                                  )
+                                                }
+                                                style={{
+                                                  padding: "12px 16px",
+                                                  cursor: "pointer",
+                                                  fontSize: "13px",
+                                                  fontWeight: "500",
+                                                  color: "#333",
+                                                  transition: "all 0.2s",
+                                                  borderBottom:
+                                                    idx < 4
+                                                      ? "1px solid #f0f0f0"
+                                                      : "none",
+                                                }}
+                                                onMouseEnter={(e) => {
+                                                  e.currentTarget.style.backgroundColor =
+                                                    "#6dbfb8";
+                                                  e.currentTarget.style.color =
+                                                    "white";
+                                                }}
+                                                onMouseLeave={(e) => {
+                                                  e.currentTarget.style.backgroundColor =
+                                                    "transparent";
+                                                  e.currentTarget.style.color =
+                                                    "#333";
+                                                }}
+                                              >
+                                                {menuItem.label}
+                                              </div>
+                                            ))}
                                         </div>
                                       )}
                                     </div>
                                   </div>
-
-
-
-
                                 </div>
 
                                 {searchTerm && (
@@ -1283,13 +1304,28 @@ const DevicesSidebar = ({ setOpen, open, filteredDevices }: any) => {
                                       // border: "1px dashed rgba(0,0,0,0.1)"
                                     }}
                                   >
-
-                                    {getMatchedFields(item, searchTerm).map((field, idx) => (
-                                      <div key={idx} style={{ marginBottom: "2px" }}>
-                                        <span style={{ fontWeight: "bold", color: "#333" }}>{field.label} : </span>
-                                        &nbsp;{highlightMatch(field.value, searchTerm)}
-                                      </div>
-                                    ))}
+                                    {getMatchedFields(item, searchTerm).map(
+                                      (field, idx) => (
+                                        <div
+                                          key={idx}
+                                          style={{ marginBottom: "2px" }}
+                                        >
+                                          <span
+                                            style={{
+                                              fontWeight: "bold",
+                                              color: "#333",
+                                            }}
+                                          >
+                                            {field.label} :{" "}
+                                          </span>
+                                          &nbsp;
+                                          {highlightMatch(
+                                            field.value,
+                                            searchTerm,
+                                          )}
+                                        </div>
+                                      ),
+                                    )}
                                   </div>
                                 )}
                               </Media>
