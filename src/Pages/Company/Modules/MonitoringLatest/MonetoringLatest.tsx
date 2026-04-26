@@ -52,6 +52,7 @@ import CustomerInfo from "./components/SingleVehiceDetail/CustomerInfo/CustomerI
 import Analytics from "./components/SingleVehiceDetail/Analytics/Analytics";
 import PlaybackModal from "./components/SingleVehiceDetail/PlaybackModal/PlaybackModal";
 import { Tooltip } from "react-tooltip";
+import SendCommand from "../ControlRoom copy/Analytics/components/SendCommand";
 
 import "./MonitoringLatest.css";
 import { socketConnection } from "../../../../sockets/socket";
@@ -77,6 +78,12 @@ const MonitoringLatest = () => {
   const [selectedStatus, setSelectedStatus] = useState<string | null>(null); // null = show all
 
   const [openModal, setOpenModal] = useState(false);
+  const [sendCommandModal, setSendCommandModal] = useState(false);
+  const [selectedDeviceForCommand, setSelectedDeviceForCommand] = useState<any>("");
+  const toggleSendCommandModal = (item: any = "") => {
+    setSelectedDeviceForCommand(item);
+    setSendCommandModal(!sendCommandModal);
+  };
 
   useEffect(() => {
     dispatch(setIsConnected(false));
@@ -657,6 +664,8 @@ const MonitoringLatest = () => {
                 setSelectedIndex(i);
                 if (menu.path) {
                   navigate(menu.path);
+                } else if (menu.tooltipName === "Send Command") {
+                  toggleSendCommandModal("");
                 }
               }}
               tooltip={menu.tooltipName}
@@ -966,6 +975,18 @@ const MonitoringLatest = () => {
                       onClick={() => {
                         if (i == 5) {
                           setOpenModal(true);
+                        } else if (menu.tooltipName === "Send Command") {
+                          const mappedDevice = {
+                            ...selectedSingleDevice,
+                            id:
+                              selectedSingleDevice?.traccarDeviceId ||
+                              selectedSingleDevice?.deviceId,
+                            value: selectedSingleDevice?._id,
+                            name:
+                              selectedSingleDevice?.vehicle?.registrationNo ||
+                              selectedSingleDevice?.registrationNo,
+                          };
+                          toggleSendCommandModal(mappedDevice);
                         } else {
                           setSelectedComponentIndex(i);
                         }
@@ -1043,6 +1064,13 @@ const MonitoringLatest = () => {
 
       {openModal && (
         <PlaybackModal isVisible={openModal} setIsVisible={setOpenModal} />
+      )}
+      {sendCommandModal && (
+        <SendCommand
+          addModal={sendCommandModal}
+          setAddModal={toggleSendCommandModal}
+          prevItem={selectedDeviceForCommand}
+        />
       )}
     </div>
   );

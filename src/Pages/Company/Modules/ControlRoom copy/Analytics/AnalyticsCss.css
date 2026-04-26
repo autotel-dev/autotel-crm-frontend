@@ -146,3 +146,6 @@
 .connected-servers-dropdown-item:hover {
   background-color: #e5e5e5;
 }
+.custom-command-tabs .ant-tabs-tab-active .ant-tabs-tab-btn { color: #35bfbf !important; }
+.custom-command-tabs .ant-tabs-ink-bar { background-color: #35bfbf !important; }
+.custom-command-tabs .ant-tabs-tab:hover { color: #35bfbf !important; }

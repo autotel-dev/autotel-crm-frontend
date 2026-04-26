@@ -11,7 +11,6 @@ import { Select } from "antd";
 import Swal from "sweetalert2";
 import { AddPreInfoAlertType, SendCommandType } from "./Type/SendCommandType";
 import { H3 } from "../../../../../../AbstractElements";
-import DevicesDropdown from "./DevicesDropdown/DevicesDropdown";
 import { create, getAll } from "../../../../../../Utilities/api";
 import {
   setDashboardStatistics,
@@ -21,7 +20,7 @@ import {
   ADD_PRE_INFO_FOR_DEVICE,
   CONTROLROOM_DASHBOARD_STATISTICS,
   GET_ALL_VALID_PRE_INFOS,
-  GET_ALL_VEHICLES_DROPDOWN_CONTROL_ROOM,
+  GET_ALL_VEHICLES_DROPDOWN_FOR_ALERT,
 } from "../../../../../../Utilities/api/apiEndpoints";
 import { ERROR_MESSAGE } from "../../../../../../Utilities/constants/constants";
 
@@ -64,18 +63,6 @@ const AddPreAlertInfo: React.FC<PropsTypes> = ({
     formState: { errors },
   } = useForm<AddPreInfoAlertType>();
 
-  const [dropdownDevicess, setDropDownDevices] = useState([]);
-
-  useEffect(() => {
-    getAll({
-      url: `${GET_ALL_VEHICLES_DROPDOWN_CONTROL_ROOM}?page=1&limit=30`,
-    }).then((data: any) => {
-      if (data.success) {
-        setDropDownDevices(data.data);
-      }
-    });
-  }, []);
-
   const addToggle = () => {
     if (!loading) {
       setAddModal(!addModal);
@@ -89,6 +76,26 @@ const AddPreAlertInfo: React.FC<PropsTypes> = ({
     }
   };
   const [selectedItems, setSelectedItems]: any = useState([]);
+  const [vehiclesList, setVehiclesList] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (addModal) {
+      getAll({ url: GET_ALL_VEHICLES_DROPDOWN_FOR_ALERT }).then((data: any) => {
+        if (data?.success) {
+          setVehiclesList(
+            data.data.map((item: any) => ({
+              ...item,
+              value: item._id,
+              label: item.registrationNo,
+              deviceId: item.traccarDeviceId || item.deviceId,
+              imei: item.imei || "",
+              P: item.registrationNo,
+            })),
+          );
+        }
+      });
+    }
+  }, [addModal]);
 
   const [startDate, setStartDate] = useState<string>(new Date().toISOString());
   const tomorrow = new Date();
@@ -106,20 +113,49 @@ const AddPreAlertInfo: React.FC<PropsTypes> = ({
   const [endTime, setEndTime] = useState<string>(initialEndTime);
 
   const addPreInfoAlertHandler: SubmitHandler<AddPreInfoAlertType> = async (
-    data: any
+    data: any,
   ) => {
     setLoading(true);
     if (selectedItems.length !== 0 && data.message !== "") {
       const selectedEndDate = new Date(endDate.slice(0, 10) + "T" + endTime);
       const selectedstartDate = new Date(
-        startDate.slice(0, 10) + "T" + startTime
+        startDate.slice(0, 10) + "T" + startTime,
       );
+
+      // let adjustedEndDate = selectedEndDate;
+
+      // if (
+      //   selectedEndDate.toDateString() === currentDateTime.toDateString() &&
+      //   selectedEndDate > currentDateTime
+      // ) {
+      //   // console.log(
+      //     "selectedEndDate.toDateString()",
+      //     selectedEndDate.toDateString()
+      //   );
+      //   // console.log(
+      //     "currentDateTime.toDateString()",
+      //     currentDateTime.toDateString()
+      //   );
+      //   // console.log("selectedEndDate", selectedEndDate);
+      //   // console.log("currentDateTime", currentDateTime);
+
+      //   adjustedEndDate.setDate(selectedEndDate.getDate() - 1);
+      // }
+      // // console.log(
+      //   "adjustedEndTime",
+      //   `${adjustedEndDate.getHours()}:
+      //     ${adjustedEndDate.getMinutes()}:
+      //    ${adjustedEndDate.getSeconds()}`
+      // );
+      // // console.log("adjustedEndDate", `${adjustedEndDate}`);
+      // console.log("selectedstartDate -- ", `${selectedstartDate}`);
+      // console.log("selectedEndDate -- ", `${selectedEndDate}`);
 
       const addPreInfoData = {
         preInfoMessage: data.message,
         fromDate: selectedstartDate,
         toDate: selectedEndDate,
-        vehicle: selectedItems[0].id,
+        deviceData: selectedItems[0],
       };
       // console.log("addPreInfoData -- ", addPreInfoData);
 
@@ -219,11 +255,37 @@ const AddPreAlertInfo: React.FC<PropsTypes> = ({
               <div>
                 <Label>Devices</Label>
               </div>
-              <DevicesDropdown
-                data={dropdownDevicess}
-                selectedItems={selectedItems}
-                setSelectedItems={setSelectedItems}
-                serverID=""
+              <Select
+                showSearch
+                style={{ width: "100%" }}
+                placeholder="Select Vehicle"
+                optionFilterProp="children"
+                filterOption={(input, option) =>
+                  (option?.P ?? "")
+                    .toString()
+                    .toLowerCase()
+                    .includes(input.toLowerCase())
+                }
+                onChange={(val) => {
+                  const selected = vehiclesList.find((v) => v.value === val);
+                  if (selected && !selected.server) {
+                    const flattened = (dropDownDevices || []).flatMap(
+                      (g: any) => g.items || [],
+                    );
+                    const matched = flattened.find(
+                      (d: any) =>
+                        d._id === selected._id ||
+                        d.id ===
+                          (selected.traccarDeviceId || selected.deviceId),
+                    );
+                    if (matched) {
+                      selected.server = matched.server;
+                    }
+                  }
+                  setSelectedItems(selected ? [selected] : []);
+                }}
+                options={vehiclesList}
+                value={selectedItems[0]?.value || selectedItems[0]?._id || null}
               />
             </FormGroup>
 
