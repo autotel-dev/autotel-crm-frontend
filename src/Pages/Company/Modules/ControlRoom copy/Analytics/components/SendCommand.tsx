@@ -30,9 +30,10 @@ import {
   GET_ALL_COMMANDED_DEVICES,
   GET_ALL_KILLED_DEVICES,
   GET_DEVICE_COMMANDS,
-  SEND_COMMAND_TO_DEVICE,
   VERIFY_VEHICLE_BLOCK_STATUS,
   GET_ALL_VEHICLES_DROPDOWN_FOR_ALERT,
+  GET_COMMAND_TYPES,
+  SEND_GPRS_COMMAND,
 } from "../../../../../../Utilities/api/apiEndpoints";
 import { ERROR_MESSAGE } from "../../../../../../Utilities/constants/constants";
 
@@ -143,9 +144,9 @@ const SendCommand: React.FC<PropsTypes> = ({
     sendCommandsType.map((item: any, index: any) => {
       tempCommandsTypeList.push({
         value: `${item.type}`,
-        label: `${item.title}`,
+        label: `${item.type}`,
         type: `${item.type}`,
-        title: `${item.title}`,
+        title: `${item.type}`,
         attributes: `${JSON.stringify(item.attributes)}`,
       });
     });
@@ -153,22 +154,13 @@ const SendCommand: React.FC<PropsTypes> = ({
   }, [sendCommandsType]);
 
   useEffect(() => {
-    const serverInfo = serverCredentials(selectedItems[0]?.server?._id);
     if (selectedItems?.length !== 0) {
-      create(
-        {
-          deviceId: selectedItems[0].id,
-          serverId: serverInfo?.serverId,
-          serverHashKey: serverInfo?.serverHashKey,
-        },
-        { url: GET_DEVICE_COMMANDS },
-      ).then((data: any) => {
-        // // console.log("api call --- >", data);
-
+      getAll({
+        url: `${GET_COMMAND_TYPES}/${selectedItems[0].id}`,
+      }).then((data: any) => {
         if (data !== undefined) {
           if (data.success) {
-            // // console.log("length --- >", data.data);
-            dispatch(setSendCommandsType(data.data.deviceCommands));
+            dispatch(setSendCommandsType(data.data));
           }
         }
       });
@@ -226,23 +218,16 @@ const SendCommand: React.FC<PropsTypes> = ({
     }
 
     if (selectedItems.length !== 0 && type !== "") {
-      const serverInfo = serverCredentials(selectedItems[0]?.server?._id);
       const commandData = {
-        deviceId: selectedItems[0].id,
-        serverId: serverInfo?.serverId,
-        serverHashKey: serverInfo?.serverHashKey,
+        vehicleId: selectedItems[0]._id || selectedItems[0].value,
         commandType: type,
-        commandData: {
-          ...singleCommandData,
-          messageData: type === "custom" ? data.message : null,
-        },
-        deviceData: selectedItems[0],
+        customData: type === "custom" ? data.customData : undefined,
+        description: data.description || "Sent from Control Room",
       };
-      // // console.log(commandData);
 
       try {
         await create(commandData, {
-          url: SEND_COMMAND_TO_DEVICE,
+          url: SEND_GPRS_COMMAND,
         }).then(async (data: any) => {
           // console.log("data send command", data);
 
@@ -274,48 +259,6 @@ const SendCommand: React.FC<PropsTypes> = ({
               });
               addToggle();
             } else {
-              let intervalId: any; // Declare variable to store interval ID
-              // // console.log("Setting up interval...");
-              intervalId = setTimeout(async () => {
-                setcommandedVehicleDeviceId(data.data.commandedDeviceId);
-
-                const serverInfo = serverCredentials(
-                  selectedItems[0]?.server?._id,
-                );
-                const verifyData = {
-                  deviceId: selectedItems[0].id,
-                  serverId: serverInfo?.serverId,
-                  serverHashKey: serverInfo?.serverHashKey,
-                  commandedVehicleDeviceId: data.data.commandedDeviceId,
-                };
-
-                await create(verifyData, {
-                  url: VERIFY_VEHICLE_BLOCK_STATUS,
-                }).then((data: any) => {
-                  // // console.log("data", data);
-                  setLoading(false);
-                  if (!data.success && data.message === ERROR_MESSAGE) {
-                    setLoading(false);
-                    addToggle();
-                  }
-                  if (!data.success) {
-                    Swal.fire({
-                      text: `${data.message}`,
-                      icon: "error",
-                      timer: 2000,
-                      showConfirmButton: false,
-                    });
-                    setLoading(false);
-                    addToggle();
-                  }
-                  if (data.success) {
-                    // // console.log(data);
-                    setLoading(false);
-                    addToggle();
-                  }
-                });
-              }, 30000);
-
               Swal.fire({
                 text: `${data.message}`,
                 icon: "success",
@@ -366,12 +309,6 @@ const SendCommand: React.FC<PropsTypes> = ({
                 }
               });
               addToggle();
-
-              // Cleanup function to clear interval when component unmounts or when loading becomes true
-              return () => {
-                // // console.log("Clearing interval...");
-                clearInterval(intervalId);
-              };
             }
           }
         });
@@ -482,27 +419,41 @@ const SendCommand: React.FC<PropsTypes> = ({
                             attributes: "{}",
                           });
                         }}
-                        options={commonCommands}
+                        options={commandsType}
                         value={type || null}
                       />
                     </FormGroup>
-                    {type !== "" && (
+                    {type === "custom" && (
                       <FormGroup className="col-md-12 create-group">
-                        <Label>Message</Label>
+                        <Label>Custom Data</Label>
                         <textarea
                           className="form-control"
-                          rows={3}
+                          rows={2}
                           style={{
                             maxHeight: "70px",
                             resize: "vertical",
                           }}
-                          {...register("message", {
+                          {...register("customData", {
                             required: type === "custom",
                           })}
                         />
                         <span style={{ color: "red" }}>
-                          {errors.message && "Message is required"}
+                          {errors.customData && "Custom Data is required"}
                         </span>
+                      </FormGroup>
+                    )}
+                    {type !== "" && (
+                      <FormGroup className="col-md-12 create-group">
+                        <Label>Description</Label>
+                        <textarea
+                          className="form-control"
+                          rows={2}
+                          style={{
+                            maxHeight: "70px",
+                            resize: "vertical",
+                          }}
+                          {...register("description")}
+                        />
                       </FormGroup>
                     )}
                   </Row>
@@ -554,25 +505,41 @@ const SendCommand: React.FC<PropsTypes> = ({
                             attributes: "{}",
                           });
                         }}
-                        options={commonCommands}
+                        options={commandsType}
                         value={type || null}
                       />
                     </FormGroup>
-                    {type !== "" && (
+                    {type === "custom" && (
                       <FormGroup className="col-md-12 create-group">
-                        <Label>Message</Label>
+                        <Label>Custom Data</Label>
                         <textarea
                           className="form-control"
-                          rows={3}
+                          rows={2}
                           style={{
                             maxHeight: "70px",
                             resize: "vertical",
                           }}
-                          {...register("message", { required: true })}
+                          {...register("customData", {
+                            required: type === "custom",
+                          })}
                         />
                         <span style={{ color: "red" }}>
-                          {errors.message && "Message is required"}
+                          {errors.customData && "Custom Data is required"}
                         </span>
+                      </FormGroup>
+                    )}
+                    {type !== "" && (
+                      <FormGroup className="col-md-12 create-group">
+                        <Label>Description</Label>
+                        <textarea
+                          className="form-control"
+                          rows={2}
+                          style={{
+                            maxHeight: "70px",
+                            resize: "vertical",
+                          }}
+                          {...register("description")}
+                        />
                       </FormGroup>
                     )}
                   </Row>

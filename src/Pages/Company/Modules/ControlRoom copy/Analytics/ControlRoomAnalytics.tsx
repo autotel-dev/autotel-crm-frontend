@@ -28,7 +28,7 @@ import AddPreAlertinfo from "./components/AddPreAlertInfo";
 import { useDispatch, useSelector } from "react-redux";
 
 import { ImArrowUp, ImArrowDown } from "react-icons/im";
-import SelfSendCommands from "./components/SelfSendCommands";
+import VehicleCommandHistory from "./components/VehicleCommandHistory";
 import { getAll } from "../../../../../Utilities/api";
 import { setDashboardStatistics } from "../../../../../ReaduxToolkit/Reducer/AlertsSlice";
 import { ApexOptions } from "apexcharts";
@@ -1227,7 +1227,7 @@ const ControlRoomAnalytics = () => {
                 fromDate={fromDate}
                 toDate={toDate}
               />
-              <SelfSendCommands
+              <VehicleCommandHistory
                 isVisible={isUpdateModalOpenForGetSendCommands}
                 setIsVisible={setIsUpdateModalOpenForGetSendCommands}
               />

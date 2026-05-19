@@ -525,3 +525,8 @@ export const GET_LAST_TRIPS = `${API_BASE_URL}/trip/dashboard/get-last-trips`;
 export const GET_SINGLE_VEHICLE_START = `${API_BASE_URL}/control-room/vehicle-monitoring/start`;
 export const GET_SINGLE_VEHICLE_STOP = `${API_BASE_URL}/control-room/vehicle-monitoring/stop`;
 export const GET_SINGLE_VEHICLE_STATUS = `${API_BASE_URL}/control-room/vehicle-monitoring/:vehicleId`;
+
+// Vehicle Commands - Traccar Platform Integration
+export const SEND_GPRS_COMMAND = `${API_BASE_URL}/commands`;
+export const GET_COMMAND_TYPES = `${API_BASE_URL}/commands/supported-types`;
+export const GET_COMMANDS_BY_VEHICLE_ID = `${API_BASE_URL}/commands`;

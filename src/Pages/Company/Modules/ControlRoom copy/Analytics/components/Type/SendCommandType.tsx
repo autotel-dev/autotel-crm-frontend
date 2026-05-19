@@ -1,6 +1,8 @@
 export interface SendCommandType {
   id: any;
   message: string;
+  customData: string;
+  description: string;
   startDate: string;
   endDate: string;
 }
