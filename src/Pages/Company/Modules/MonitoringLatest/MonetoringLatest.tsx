@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Label, Input } from "reactstrap";
+import { Label, Input, Modal, ModalBody, Button, Row, Col, FormGroup, Form } from "reactstrap";
 import { useNavigate } from "react-router-dom";
 import { ImClock } from "react-icons/im";
 import { motion } from "framer-motion"; // ✅ Import Framer Motion
@@ -53,6 +53,7 @@ import Analytics from "./components/SingleVehiceDetail/Analytics/Analytics";
 import PlaybackModal from "./components/SingleVehiceDetail/PlaybackModal/PlaybackModal";
 import { Tooltip } from "react-tooltip";
 import SendCommand from "../ControlRoom copy/Analytics/components/SendCommand";
+import { AddDeviceModal } from "./components/AddDeviceModal";
 
 import "./MonitoringLatest.css";
 import { socketConnection } from "../../../../sockets/socket";
@@ -84,6 +85,8 @@ const MonitoringLatest = () => {
     setSelectedDeviceForCommand(item);
     setSendCommandModal(!sendCommandModal);
   };
+
+  const [addNewDeviceModal, setAddNewDeviceModal] = useState(false);
 
   useEffect(() => {
     dispatch(setIsConnected(false));
@@ -315,6 +318,10 @@ const MonitoringLatest = () => {
     {
       icon: SlArrowRight,
       tooltipName: "Send Command",
+    },
+    {
+      icon: MdAdd,
+      tooltipName: "Add New Device",
     },
     // {
     //   icon: PiMapPinLineBold,
@@ -666,6 +673,8 @@ const MonitoringLatest = () => {
                   navigate(menu.path);
                 } else if (menu.tooltipName === "Send Command") {
                   toggleSendCommandModal("");
+                } else if (menu.tooltipName === "Add New Device") {
+                  setAddNewDeviceModal(true);
                 }
               }}
               tooltip={menu.tooltipName}
@@ -1072,461 +1081,15 @@ const MonitoringLatest = () => {
           prevItem={selectedDeviceForCommand}
         />
       )}
+      {addNewDeviceModal && (
+        <AddDeviceModal
+          isOpen={addNewDeviceModal}
+          toggle={() => setAddNewDeviceModal(false)}
+        />
+      )}
     </div>
   );
 };
 
 export default MonitoringLatest;
 
-//
-
-{
-  /* <StatusBox
-                count={118}
-                label="Not Conn."
-                color="gray"
-                background="rgba(128, 128, 128, 0.2)"
-              /> */
-}
-
-// import React from "react";
-// import "./Analytics.css";
-// import { useSelector } from "react-redux";
-// import { motion } from "framer-motion";
-// import { FaRoad, FaClock, FaGasPump, FaTachometerAlt } from "react-icons/fa";
-// import { IoSpeedometerOutline } from "react-icons/io5";
-// import { MdSpeed } from "react-icons/md";
-
-// const containerVariants = {
-//   hidden: { opacity: 0 },
-//   visible: {
-//     opacity: 1,
-//     transition: {
-//       staggerChildren: 0.1,
-//     },
-//   },
-// };
-
-// const cardVariants = {
-//   hidden: { scale: 0, opacity: 0, rotate: -10 },
-//   visible: {
-//     scale: 1,
-//     opacity: 1,
-//     rotate: 0,
-//     transition: { duration: 0.5, type: "spring", stiffness: 100 },
-//   },
-// };
-
-// const chartVariants = {
-//   hidden: { x: 100, opacity: 0 },
-//   visible: {
-//     x: 0,
-//     opacity: 1,
-//     transition: { duration: 0.6, ease: "easeOut" },
-//   },
-// };
-
-// const Analytics = () => {
-//   const { selectedSingleDevice } = useSelector(
-//     (state: any) => state.monitoring
-//   );
-
-//   // Mock analytics data - replace with actual data from your API
-//   const analyticsData = {
-//     totalDistance: "1,245 km",
-//     totalTrips: 48,
-//     avgSpeed: selectedSingleDevice?.latestPosition?.speed
-//       ? Number(selectedSingleDevice.latestPosition.speed).toFixed(1)
-//       : "0",
-//     currentSpeed: selectedSingleDevice?.latestPosition?.speed
-//       ? Number(selectedSingleDevice.latestPosition.speed).toFixed(1)
-//       : "0",
-//     engineHours: "124.5 hrs",
-//     fuelEfficiency: "12.5 km/L",
-//     idleTime: "4.2 hrs",
-//     maxSpeed: "120 km/h",
-//   };
-
-//   const statsCards = [
-//     {
-//       icon: FaRoad,
-//       label: "Total Distance",
-//       value: analyticsData.totalDistance,
-//       color: "#6dbfb8",
-//       bgColor: "rgba(109, 191, 184, 0.1)",
-//     },
-//     {
-//       icon: FaTachometerAlt,
-//       label: "Total Trips",
-//       value: analyticsData.totalTrips,
-//       color: "#4CAF50",
-//       bgColor: "rgba(76, 175, 80, 0.1)",
-//     },
-//     {
-//       icon: MdSpeed,
-//       label: "Avg Speed",
-//       value: `${analyticsData.avgSpeed} km/h`,
-//       color: "#FF9800",
-//       bgColor: "rgba(255, 152, 0, 0.1)",
-//     },
-//     {
-//       icon: FaClock,
-//       label: "Engine Hours",
-//       value: analyticsData.engineHours,
-//       color: "#9C27B0",
-//       bgColor: "rgba(156, 39, 176, 0.1)",
-//     },
-//   ];
-
-//   const secondaryStats = [
-//     {
-//       icon: IoSpeedometerOutline,
-//       label: "Current Speed",
-//       value: `${analyticsData.currentSpeed} km/h`,
-//       color: "#2196F3",
-//     },
-//     {
-//       icon: FaGasPump,
-//       label: "Fuel Efficiency",
-//       value: analyticsData.fuelEfficiency,
-//       color: "#E91E63",
-//     },
-//     {
-//       icon: FaClock,
-//       label: "Idle Time",
-//       value: analyticsData.idleTime,
-//       color: "#FF5722",
-//     },
-//     {
-//       icon: FaTachometerAlt,
-//       label: "Max Speed",
-//       value: analyticsData.maxSpeed,
-//       color: "#795548",
-//     },
-//   ];
-
-//   // Mock chart data for speed over time
-//   const speedData = [20, 45, 60, 35, 50, 75, 55, 40, 65, 80, 45, 30];
-//   const maxChartHeight = 80;
-
-//   return (
-//     <div className="analytics-container">
-//       {/* Primary Stats Cards */}
-//       <motion.div
-//         className="stats-grid"
-//         variants={containerVariants}
-//         initial="hidden"
-//         animate="visible"
-//       >
-//         {statsCards.map((stat, index) => (
-//           <motion.div
-//             key={index}
-//             className="stat-card"
-//             variants={cardVariants}
-//             style={{
-//               backgroundColor: stat.bgColor,
-//               borderLeft: `4px solid ${stat.color}`,
-//             }}
-//             whileHover={{ scale: 1.05, y: -5 }}
-//           >
-//             <div className="stat-icon" style={{ color: stat.color }}>
-//               <stat.icon size={24} />
-//             </div>
-//             <div className="stat-content">
-//               <div className="stat-label">{stat.label}</div>
-//               <div className="stat-value" style={{ color: stat.color }}>
-//                 {stat.value}
-//               </div>
-//             </div>
-//           </motion.div>
-//         ))}
-//       </motion.div>
-
-//       {/* Speed Chart */}
-//       <motion.div
-//         className="chart-container"
-//         variants={chartVariants}
-//         initial="hidden"
-//         animate="visible"
-//       >
-//         <div className="chart-header">
-//           <h3>Speed Overview (Last 12 Data Points)</h3>
-//         </div>
-//         <div className="chart-content">
-//           {speedData.map((speed, index) => {
-//             const barHeight = (speed / Math.max(...speedData)) * maxChartHeight;
-//             return (
-//               <motion.div
-//                 key={index}
-//                 className="chart-bar-wrapper"
-//                 initial={{ height: 0 }}
-//                 animate={{ height: `${maxChartHeight}px` }}
-//                 transition={{ delay: index * 0.1, duration: 0.4 }}
-//               >
-//                 <motion.div
-//                   className="chart-bar"
-//                   initial={{ height: 0 }}
-//                   animate={{ height: `${barHeight}px` }}
-//                   transition={{ delay: index * 0.1 + 0.2, duration: 0.5 }}
-//                   style={{
-//                     backgroundColor:
-//                       speed > 70
-//                         ? "#FF5722"
-//                         : speed > 40
-//                         ? "#6dbfb8"
-//                         : "#4CAF50",
-//                   }}
-//                 >
-//                   <span className="bar-value">{speed}</span>
-//                 </motion.div>
-//               </motion.div>
-//             );
-//           })}
-//         </div>
-//       </motion.div>
-
-//       {/* Secondary Stats */}
-//       <motion.div
-//         className="secondary-stats"
-//         variants={containerVariants}
-//         initial="hidden"
-//         animate="visible"
-//       >
-//         {secondaryStats.map((stat, index) => (
-//           <motion.div
-//             key={index}
-//             className="secondary-stat-item"
-//             variants={cardVariants}
-//             whileHover={{ scale: 1.03 }}
-//           >
-//             <div
-//               className="secondary-stat-icon"
-//               style={{ backgroundColor: `${stat.color}20` }}
-//             >
-//               <stat.icon size={20} color={stat.color} />
-//             </div>
-//             <div className="secondary-stat-content">
-//               <div className="secondary-stat-label">{stat.label}</div>
-//               <div className="secondary-stat-value" style={{ color: stat.color }}>
-//                 {stat.value}
-//               </div>
-//             </div>
-//           </motion.div>
-//         ))}
-//       </motion.div>
-//     </div>
-//   );
-// };
-
-// export default Analytics;
-
-// .analytics-container {
-//   width: 100%;
-//   height: 100%;
-//   max-height: 37vh;
-//   overflow-y: auto;
-//   overflow-x: hidden;
-//   padding: 10px 15px;
-//   display: flex;
-//   flex-direction: column;
-//   gap: 12px;
-//   scrollbar-width: thin;
-//   scrollbar-color: #6dbfb8 #f0f0f0;
-// }
-
-// .analytics-container::-webkit-scrollbar {
-//   width: 6px;
-// }
-
-// .analytics-container::-webkit-scrollbar-track {
-//   background: #f0f0f0;
-//   border-radius: 10px;
-// }
-
-// .analytics-container::-webkit-scrollbar-thumb {
-//   background: #6dbfb8;
-//   border-radius: 10px;
-// }
-
-// /* Primary Stats Grid */
-// .stats-grid {
-//   display: grid;
-//   grid-template-columns: repeat(2, 1fr);
-//   gap: 10px;
-// }
-
-// .stat-card {
-//   background: white;
-//   border-radius: 8px;
-//   padding: 12px;
-//   display: flex;
-//   align-items: center;
-//   gap: 12px;
-//   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-//   transition: all 0.3s ease;
-//   cursor: pointer;
-// }
-
-// .stat-card:hover {
-//   box-shadow: 0 4px 12px rgba(109, 191, 184, 0.3);
-// }
-
-// .stat-icon {
-//   display: flex;
-//   align-items: center;
-//   justify-content: center;
-//   width: 45px;
-//   height: 45px;
-//   border-radius: 8px;
-//   background: rgba(255, 255, 255, 0.8);
-// }
-
-// .stat-content {
-//   flex: 1;
-//   display: flex;
-//   flex-direction: column;
-//   gap: 2px;
-// }
-
-// .stat-label {
-//   font-size: 11px;
-//   font-weight: 600;
-//   color: #666;
-//   text-transform: uppercase;
-//   letter-spacing: 0.5px;
-// }
-
-// .stat-value {
-//   font-size: 18px;
-//   font-weight: bold;
-// }
-
-// /* Chart Container */
-// .chart-container {
-//   background: white;
-//   border-radius: 8px;
-//   padding: 12px;
-//   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-//   border: 1px solid #f0f0f0;
-// }
-
-// .chart-header {
-//   margin-bottom: 10px;
-//   padding-bottom: 8px;
-//   border-bottom: 2px solid #6dbfb8;
-// }
-
-// .chart-header h3 {
-//   margin: 0;
-//   font-size: 12px;
-//   font-weight: 600;
-//   color: #333;
-//   text-transform: uppercase;
-//   letter-spacing: 0.5px;
-// }
-
-// .chart-content {
-//   display: flex;
-//   justify-content: space-between;
-//   align-items: flex-end;
-//   gap: 4px;
-//   height: 80px;
-//   padding: 0 5px;
-// }
-
-// .chart-bar-wrapper {
-//   flex: 1;
-//   display: flex;
-//   align-items: flex-end;
-//   justify-content: center;
-// }
-
-// .chart-bar {
-//   width: 100%;
-//   max-width: 20px;
-//   border-radius: 4px 4px 0 0;
-//   position: relative;
-//   display: flex;
-//   align-items: flex-start;
-//   justify-content: center;
-//   transition: all 0.3s ease;
-//   cursor: pointer;
-// }
-
-// .chart-bar:hover {
-//   opacity: 0.8;
-//   transform: scaleY(1.05);
-// }
-
-// .bar-value {
-//   position: absolute;
-//   top: -18px;
-//   font-size: 9px;
-//   font-weight: bold;
-//   color: #333;
-//   white-space: nowrap;
-// }
-
-// /* Secondary Stats */
-// .secondary-stats {
-//   display: grid;
-//   grid-template-columns: repeat(2, 1fr);
-//   gap: 8px;
-// }
-
-// .secondary-stat-item {
-//   background: white;
-//   border-radius: 6px;
-//   padding: 10px;
-//   display: flex;
-//   align-items: center;
-//   gap: 10px;
-//   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
-//   transition: all 0.3s ease;
-//   cursor: pointer;
-//   border: 1px solid #f5f5f5;
-// }
-
-// .secondary-stat-item:hover {
-//   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.12);
-// }
-
-// .secondary-stat-icon {
-//   display: flex;
-//   align-items: center;
-//   justify-content: center;
-//   width: 35px;
-//   height: 35px;
-//   border-radius: 6px;
-// }
-
-// .secondary-stat-content {
-//   flex: 1;
-//   display: flex;
-//   flex-direction: column;
-//   gap: 1px;
-// }
-
-// .secondary-stat-label {
-//   font-size: 10px;
-//   font-weight: 600;
-//   color: #777;
-//   text-transform: uppercase;
-//   letter-spacing: 0.3px;
-// }
-
-// .secondary-stat-value {
-//   font-size: 14px;
-//   font-weight: bold;
-// }
-
-// /* Responsive adjustments */
-// @media (max-width: 1200px) {
-//   .stats-grid {
-//     grid-template-columns: 1fr;
-//   }
-
-//   .secondary-stats {
-//     grid-template-columns: 1fr;
-//   }
-// }

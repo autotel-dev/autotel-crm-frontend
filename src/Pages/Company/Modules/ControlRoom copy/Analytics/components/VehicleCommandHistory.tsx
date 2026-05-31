@@ -23,7 +23,7 @@ interface PropsTypes {
 
 const VehicleCommandHistory: React.FC<PropsTypes> = ({
   isVisible,
-  setIsVisible = () => {},
+  setIsVisible = () => { },
 }) => {
   const { devices } = useSelector((state: any) => state.monitoring);
   const [vehiclesList, setVehiclesList] = useState([]);
@@ -60,7 +60,7 @@ const VehicleCommandHistory: React.FC<PropsTypes> = ({
   const fetchCommands = (vehicleId: string) => {
     setLoading(true);
     getAll({
-      url: `${GET_COMMANDS_BY_VEHICLE_ID}?vehicleId=${vehicleId}&status=EXECUTED&page=1&limit=20`,
+      url: `${GET_COMMANDS_BY_VEHICLE_ID}?vehicleId=${vehicleId}&status=ALL&page=1&limit=20`,
     }).then((data: any) => {
       if (data?.success) {
         setCommandsList(data.data.commands || []);
