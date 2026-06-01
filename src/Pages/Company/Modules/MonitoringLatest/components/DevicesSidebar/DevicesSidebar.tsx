@@ -1214,14 +1214,14 @@ const DevicesSidebar = ({ setOpen, open, filteredDevices }: any) => {
                                               label: "Show History (Today)",
                                               action: "history-today",
                                             },
-                                            {
-                                              label: "Send Command",
-                                              action: "send-command",
-                                            },
-                                            {
-                                              label: "Alerts",
-                                              action: "alerts",
-                                            },
+                                            // {
+                                            //   label: "Send Command",
+                                            //   action: "send-command",
+                                            // },
+                                            // {
+                                            //   label: "Alerts",
+                                            //   action: "alerts",
+                                            // },
                                             {
                                               label: "Live Monitoring",
                                               action: "live-monitoring",
