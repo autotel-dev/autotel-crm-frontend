@@ -37,7 +37,7 @@ import { FaArrowTrendDown } from "react-icons/fa6";
 import { FaRegMap } from "react-icons/fa6";
 
 // Single Device Detail
-import { FaUserAlt } from "react-icons/fa";
+import { FaUserAlt, FaUserPlus } from "react-icons/fa";
 import { FaCar } from "react-icons/fa";
 import { MdOutlineSensors } from "react-icons/md";
 import { HiDeviceMobile } from "react-icons/hi";
@@ -54,6 +54,7 @@ import PlaybackModal from "./components/SingleVehiceDetail/PlaybackModal/Playbac
 import { Tooltip } from "react-tooltip";
 import SendCommand from "../ControlRoom copy/Analytics/components/SendCommand";
 import { AddDeviceModal } from "./components/AddDeviceModal";
+import CreateNewCustomer from "../SAIO/components/Sales/components/Customer/CreateNewCustomer/CreateNewCustomer";
 
 import "./MonitoringLatest.css";
 import { socketConnection } from "../../../../sockets/socket";
@@ -87,6 +88,7 @@ const MonitoringLatest = () => {
   };
 
   const [addNewDeviceModal, setAddNewDeviceModal] = useState(false);
+  const [addNewCustomerModal, setAddNewCustomerModal] = useState(false);
 
   useEffect(() => {
     dispatch(setIsConnected(false));
@@ -322,6 +324,10 @@ const MonitoringLatest = () => {
     {
       icon: MdAdd,
       tooltipName: "Add New Device",
+    },
+    {
+      icon: FaUserPlus,
+      tooltipName: "Add New Customer",
     },
     // {
     //   icon: PiMapPinLineBold,
@@ -675,6 +681,8 @@ const MonitoringLatest = () => {
                   toggleSendCommandModal("");
                 } else if (menu.tooltipName === "Add New Device") {
                   setAddNewDeviceModal(true);
+                } else if (menu.tooltipName === "Add New Customer") {
+                  setAddNewCustomerModal(true);
                 }
               }}
               tooltip={menu.tooltipName}
@@ -1086,6 +1094,22 @@ const MonitoringLatest = () => {
           isOpen={addNewDeviceModal}
           toggle={() => setAddNewDeviceModal(false)}
         />
+      )}
+      {addNewCustomerModal && (
+        <Modal
+          isOpen={addNewCustomerModal}
+          toggle={() => setAddNewCustomerModal(false)}
+          size="xl"
+          centered
+        >
+          <div style={{ background: "#f8f9fa", padding: "15px", borderBottom: "1px solid #dee2e6", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <h4 style={{ margin: 0 }}>Add New Customer</h4>
+            <button onClick={() => setAddNewCustomerModal(false)} style={{ background: "transparent", border: "none", fontSize: "1.5rem", cursor: "pointer" }}>&times;</button>
+          </div>
+          <ModalBody style={{ padding: "10px", maxHeight: "80vh", overflowY: "auto", overflowX: "hidden" }}>
+            <CreateNewCustomer isModal={true} onClose={() => setAddNewCustomerModal(false)} />
+          </ModalBody>
+        </Modal>
       )}
     </div>
   );

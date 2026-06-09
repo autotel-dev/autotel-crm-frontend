@@ -15,6 +15,8 @@ import {
 } from "reactstrap";
 import Swal from "sweetalert2";
 import { MdCloudUpload, MdCheckCircle, MdDelete, MdAdd } from "react-icons/md";
+import { getAll } from "../../../../../Utilities/api";
+import { GET_ALL_CUSTOMERS } from "../../../../../Utilities/api/apiEndpoints";
 
 interface AddDeviceModalProps {
   isOpen: boolean;
@@ -22,13 +24,23 @@ interface AddDeviceModalProps {
 }
 
 export const AddDeviceModal: React.FC<AddDeviceModalProps> = ({ isOpen, toggle }) => {
+  const [customersList, setCustomersList] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (isOpen) {
+      getAll({ url: GET_ALL_CUSTOMERS })
+        .then((data: any) => {
+          if (data && data.success && data.data) {
+            setCustomersList(data.data);
+          }
+        })
+        .catch((err):any => console.error("Error fetching customers", err));
+    }
+  }, [isOpen]);
+
   // Customer Info State
-  const [customerInfo, setCustomerInfo] = useState({
-    customerName: "",
-    customerContactNo: "",
-    customerAdditionalNo: "",
-    customerAddress: "",
-    city: "",
+  const [customerInfo, setCustomerInfo] = useState<any>({
+    customerId: "",
     numberOfVehicles: 0,
   });
 
@@ -90,7 +102,7 @@ export const AddDeviceModal: React.FC<AddDeviceModalProps> = ({ isOpen, toggle }
   // Handle Customer Info change
   const handleCustomerChange = (e: React.ChangeEvent<any>) => {
     const { name, value } = e.target;
-    setCustomerInfo((prev) => ({
+    setCustomerInfo((prev:any) => ({
       ...prev,
       [name]: value,
     }));
@@ -169,9 +181,7 @@ export const AddDeviceModal: React.FC<AddDeviceModalProps> = ({ isOpen, toggle }
     e.preventDefault();
 
     if (
-      !customerInfo.customerName ||
-      !customerInfo.customerContactNo ||
-      !customerInfo.city ||
+      !customerInfo.customerId ||
       customerInfo.numberOfVehicles <= 0
     ) {
       Swal.fire({
@@ -205,11 +215,7 @@ export const AddDeviceModal: React.FC<AddDeviceModalProps> = ({ isOpen, toggle }
 
     // Reset states and close modal
     setCustomerInfo({
-      customerName: "",
-      customerContactNo: "",
-      customerAdditionalNo: "",
-      customerAddress: "",
-      city: "",
+      customerId: "",
       numberOfVehicles: 0,
     });
     setVehicles([]);
@@ -247,93 +253,29 @@ export const AddDeviceModal: React.FC<AddDeviceModalProps> = ({ isOpen, toggle }
             </CardHeader>
             <CardBody>
               <Row>
-                <Col md={4} className="mb-3">
+                <Col md={6} className="mb-3">
                   <FormGroup>
-                    <Label htmlFor="customerName" style={{ fontWeight: "600", fontSize: "13px", color: "#555" }}>
-                      Customer Name <span style={{ color: "red" }}>*</span>
-                    </Label>
-                    <Input
-                      type="text"
-                      name="customerName"
-                      id="customerName"
-                      placeholder="Enter Customer Name"
-                      value={customerInfo.customerName}
-                      onChange={handleCustomerChange}
-                      required
-                    />
-                  </FormGroup>
-                </Col>
-                <Col md={4} className="mb-3">
-                  <FormGroup>
-                    <Label htmlFor="customerContactNo" style={{ fontWeight: "600", fontSize: "13px", color: "#555" }}>
-                      Customer Contact No <span style={{ color: "red" }}>*</span>
-                    </Label>
-                    <Input
-                      type="text"
-                      name="customerContactNo"
-                      id="customerContactNo"
-                      placeholder="Enter Contact No"
-                      value={customerInfo.customerContactNo}
-                      onChange={handleCustomerChange}
-                      required
-                    />
-                  </FormGroup>
-                </Col>
-                <Col md={4} className="mb-3">
-                  <FormGroup>
-                    <Label htmlFor="customerAdditionalNo" style={{ fontWeight: "600", fontSize: "13px", color: "#555" }}>
-                      Customer Additional No
-                    </Label>
-                    <Input
-                      type="text"
-                      name="customerAdditionalNo"
-                      id="customerAdditionalNo"
-                      placeholder="Enter Additional Contact No"
-                      value={customerInfo.customerAdditionalNo}
-                      onChange={handleCustomerChange}
-                    />
-                  </FormGroup>
-                </Col>
-              </Row>
-              <Row>
-                <Col md={4} className="mb-3">
-                  <FormGroup>
-                    <Label htmlFor="customerAddress" style={{ fontWeight: "600", fontSize: "13px", color: "#555" }}>
-                      Customer Address
-                    </Label>
-                    <Input
-                      type="text"
-                      name="customerAddress"
-                      id="customerAddress"
-                      placeholder="Enter Customer Address"
-                      value={customerInfo.customerAddress}
-                      onChange={handleCustomerChange}
-                    />
-                  </FormGroup>
-                </Col>
-                <Col md={4} className="mb-3">
-                  <FormGroup>
-                    <Label htmlFor="city" style={{ fontWeight: "600", fontSize: "13px", color: "#555" }}>
-                      Select City <span style={{ color: "red" }}>*</span>
+                    <Label style={{ fontWeight: "600", fontSize: "13px", color: "#555" }}>
+                      Select Customer <span style={{ color: "red" }}>*</span>
                     </Label>
                     <Input
                       type="select"
-                      name="city"
-                      id="city"
-                      value={customerInfo.city}
+                      name="customerId"
+                      id="customerId"
+                      value={customerInfo.customerId}
                       onChange={handleCustomerChange}
                       required
                     >
-                      <option value="">Select City</option>
-                      {cities.map((city) => (
-                        <option key={city} value={city}>
-                          {city}
+                      <option value="">Select Customer</option>
+                      {customersList.map((c: any) => (
+                        <option key={c._id || c.id} value={c._id || c.id}>
+                          {c.fullName || c.customerName}
                         </option>
                       ))}
                     </Input>
                   </FormGroup>
                 </Col>
-                <Col md={4} className="mb-3">
+                <Col md={6} className="mb-3">
                   <FormGroup>
                     <Label htmlFor="numberOfVehicles" style={{ fontWeight: "600", fontSize: "13px", color: "#555" }}>
                       Number of Vehicles <span style={{ color: "red" }}>*</span>

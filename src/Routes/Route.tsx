@@ -63,6 +63,8 @@ import TripReports from "../Pages/Company/Modules/Monitoring/components/Reports/
 import MonitoringLatest from "../Pages/Company/Modules/MonitoringLatest/MonetoringLatest";
 import LiveVehicleMonitoring from "../Pages/Company/Modules/MonitoringLatest/components/LiveVehicleMonitoring/LiveVehicleMonitoring";
 import TripManagementLayout from "../Pages/Company/Modules/TripManagement/TripManagementLayout";
+import CustomersSetup from "../Pages/Company/Customers/CustomersSetup";
+import DevicesSetup from "../Pages/Company/Devices/DevicesSetup";
 
 const routes = [
   // dashboard routes
@@ -452,6 +454,20 @@ const routes = [
     allowedUserRoles: [ROLES.COMPANY],
     isProtected: true,
     permissionValue: "Geofence",
+  },
+  {
+    path: `${process.env.PUBLIC_URL}/company/setup/customers`,
+    Component: <CustomersSetup />,
+    allowedUserRoles: [ROLES.COMPANY],
+    isProtected: true,
+    permissionValue: "Customers",
+  },
+  {
+    path: `${process.env.PUBLIC_URL}/company/setup/devices`,
+    Component: <DevicesSetup />,
+    allowedUserRoles: [ROLES.COMPANY],
+    isProtected: true,
+    permissionValue: "Devices",
   },
 
   // Modules

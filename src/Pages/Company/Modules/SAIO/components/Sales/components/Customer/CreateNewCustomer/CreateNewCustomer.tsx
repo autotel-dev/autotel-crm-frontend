@@ -38,7 +38,7 @@ import {
 import Skeleton from "../../../../../../../../Utilities/Skeleton/Skeleton";
 import { useNavigate } from "react-router-dom";
 
-const CreateNewCustomer = () => {
+const CreateNewCustomer = ({ isModal = false, onClose }: { isModal?: boolean; onClose?: () => void } = {}) => {
   const { customer } = useSelector((state: any) => state.sales);
   // console.log("customer", customer);
   const dispatch = useDispatch();
@@ -50,7 +50,7 @@ const CreateNewCustomer = () => {
 
   const [city, setCity] = useState("");
   const [loading, setLoading] = useState(false);
-  const [isEdit, setIsEdit] = useState(customer !== null ? true : false);
+  const [isEdit, setIsEdit] = useState(customer !== null ? (isModal ? false : true) : false);
 
   const [customerInfoForm, setCustomerInfoForm] = useState({
     customerName: "",
@@ -133,9 +133,13 @@ const CreateNewCustomer = () => {
                   }
                   if (data.success) {
                     dispatch(setCustomers(data.data));
-                    navigate(
-                      `${process.env.PUBLIC_URL}/company/modules/saio-central/sales/customers`
-                    );
+                    if (isModal && onClose) {
+                      onClose();
+                    } else {
+                      navigate(
+                        `${process.env.PUBLIC_URL}/company/modules/saio-central/sales/customers`
+                      );
+                    }
                     dispatch(setCustomer(null));
                     // // // console.log("hhg");
                   }
@@ -172,7 +176,7 @@ const CreateNewCustomer = () => {
       try {
         await update(
           { ...customerInfoForm, city: city, saleLeadId: null },
-          { url: `${UPDATE_CUSTOMER}/${customer.id}` }
+          { url: `${UPDATE_CUSTOMER}/${customer.id || customer._id}` }
         ).then((data: any) => {
           if (data !== undefined) {
             if (!data.success && data.message === ERROR_MESSAGE) {
@@ -206,7 +210,12 @@ const CreateNewCustomer = () => {
                   }
                   if (data.success) {
                     dispatch(setCustomers(data.data));
-                    setIsEdit(!isEdit);
+                    setLoading(false);
+                    if (isModal && onClose) {
+                      onClose();
+                    } else {
+                      setIsEdit(!isEdit);
+                    }
                   }
                 }
               });
@@ -227,7 +236,7 @@ const CreateNewCustomer = () => {
 
   useEffect(() => {
     if (customer !== null) {
-      getAll({ url: `${GET_SINGLE_CUSTOMERS}/${customer.id}` }).then(
+      getAll({ url: `${GET_SINGLE_CUSTOMERS}/${customer.id || customer._id}` }).then(
         (data: any) => {
           if (data !== undefined) {
             if (!data.success && data.message === ERROR_MESSAGE) {
@@ -644,9 +653,13 @@ const CreateNewCustomer = () => {
                   <Button
                     color="primary"
                     onClick={() => {
-                      navigate(
-                        `${process.env.PUBLIC_URL}/company/modules/saio-central/sales/customers`
-                      );
+                      if (isModal && onClose) {
+                        onClose();
+                      } else {
+                        navigate(
+                          `${process.env.PUBLIC_URL}/company/modules/saio-central/sales/customers`
+                        );
+                      }
                     }}
                   >
                     Cancel

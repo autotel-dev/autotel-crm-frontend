@@ -289,6 +289,16 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
       // svgIcon: "home",
       svgIcon: `${SetupIcon}`,
       subMenu: [
+         {
+          svgIcon: `${UserIcon}`,
+          title: "Customers",
+          link: `${process.env.PUBLIC_URL}/company/setup/customers`,
+        },
+        {
+          svgIcon: `${MonitorIcon}`,
+          title: "Devices",
+          link: `${process.env.PUBLIC_URL}/company/setup/devices`,
+        },
         {
           // svgIcon: "bonus-kit",
           svgIcon: `${DepartmentIcon}`,
@@ -307,18 +317,18 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
           title: "Groups",
           link: `${process.env.PUBLIC_URL}/company/setup/groups`,
         },
-        {
-          // svgIcon: "bonus-kit",
-          svgIcon: `${WarehouseIcon}`,
-          title: "Warehouses",
-          link: `${process.env.PUBLIC_URL}/company/setup/warehouses`,
-        },
-        {
-          // svgIcon: "bonus-kit",
-          svgIcon: `${BranchIcon}`,
-          title: "Branches",
-          link: `${process.env.PUBLIC_URL}/company/setup/branches`,
-        },
+        // {
+        //   // svgIcon: "bonus-kit",
+        //   svgIcon: `${WarehouseIcon}`,
+        //   title: "Warehouses",
+        //   link: `${process.env.PUBLIC_URL}/company/setup/warehouses`,
+        // },
+        // {
+        //   // svgIcon: "bonus-kit",
+        //   svgIcon: `${BranchIcon}`,
+        //   title: "Branches",
+        //   link: `${process.env.PUBLIC_URL}/company/setup/branches`,
+        // },
 
         {
           // svgIcon: "bonus-kit",
@@ -344,24 +354,24 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
           title: "Vehicle Model",
           link: `${process.env.PUBLIC_URL}/company/setup/vehicle-model`,
         },
-        {
-          // svgIcon: "bonus-kit",
-          title: "Email Gateway",
-          svgIcon: `${EmailgatewayIcon}`,
-          link: `${process.env.PUBLIC_URL}/company/setup/email-gateway`,
-        },
+        // {
+        //   // svgIcon: "bonus-kit",
+        //   title: "Email Gateway",
+        //   svgIcon: `${EmailgatewayIcon}`,
+        //   link: `${process.env.PUBLIC_URL}/company/setup/email-gateway`,
+        // },
         // {
         //   // svgIcon: "bonus-kit",
         //   svgIcon: `${WhatsappGatewayIcon}`,
         //   title: "WhatsApp Gateway",
         //   link: `${process.env.PUBLIC_URL}/company/setup/whatsApp-gateway`,
         // },
-        {
-          // svgIcon: "bonus-kit",
-          svgIcon: `${EmailtemplateIcon}`,
-          title: "Email Templates",
-          link: `${process.env.PUBLIC_URL}/company/setup/email-template`,
-        },
+        // {
+        //   // svgIcon: "bonus-kit",
+        //   svgIcon: `${EmailtemplateIcon}`,
+        //   title: "Email Templates",
+        //   link: `${process.env.PUBLIC_URL}/company/setup/email-template`,
+        // },
 
         // {
         //   // svgIcon: "bonus-kit",
@@ -374,6 +384,7 @@ const SidebarMain = ({ setOpen, open }: PropsTypes) => {
           title: "Geofence",
           link: `${process.env.PUBLIC_URL}/company/setup/geofence`,
         },
+       
       ],
     },
     // {
