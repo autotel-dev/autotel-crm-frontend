@@ -83,7 +83,7 @@ const CustomersListNav = () => {
               <button onClick={addToggle} style={{ background: "transparent", border: "none", fontSize: "1.5rem", cursor: "pointer" }}>&times;</button>
             </div>
             <ModalBody style={{ padding: "10px", maxHeight: "80vh", overflowY: "auto", overflowX: "hidden" }}>
-              <CreateNewCustomer isModal={true} onClose={() => setAddModal(false)} />
+              <CreateNewCustomer isModal={true} isNew={true} onClose={() => setAddModal(false)} />
             </ModalBody>
           </Modal>
         </div>

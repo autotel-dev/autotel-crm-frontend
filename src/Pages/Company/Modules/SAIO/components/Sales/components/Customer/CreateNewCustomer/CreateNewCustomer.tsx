@@ -23,6 +23,7 @@ import {
 import {
   CREATE_NEW_CUSTOMER,
   GET_ALL_CUSTOMERS,
+  GET_ALL_ACTIVE_CITIES,
   GET_SINGLE_CUSTOMERS,
   UPDATE_CUSTOMER,
 } from "../../../../../../../../../Utilities/api/apiEndpoints";
@@ -33,19 +34,52 @@ import SelectCitiesBox from "./components/SelectCitiesBox";
 import {
   setCustomer,
   setCustomers,
+  setCities,
   setIsConnected,
 } from "../../../../../../../../../ReaduxToolkit/Reducer/SalesSlice";
 import Skeleton from "../../../../../../../../Utilities/Skeleton/Skeleton";
 import { useNavigate } from "react-router-dom";
 
-const CreateNewCustomer = ({ isModal = false, onClose }: { isModal?: boolean; onClose?: () => void } = {}) => {
-  const { customer } = useSelector((state: any) => state.sales);
+const CreateNewCustomer = ({
+  isModal = false,
+  isNew = false,
+  onClose,
+}: {
+  isModal?: boolean;
+  // force a blank "create" form, ignoring any customer currently in Redux
+  isNew?: boolean;
+  onClose?: () => void;
+} = {}) => {
+  const { customer, cities } = useSelector((state: any) => state.sales);
   // console.log("customer", customer);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  // "Add New Customer" modal: start fresh by clearing any customer left in
+  // Redux from a previous view/edit, so the form is blank and in create mode.
+  useEffect(() => {
+    if (isNew && customer !== null) {
+      dispatch(setCustomer(null));
+    }
+  }, []);
+
+  // Cities are normally loaded by the Sales page; when this form is used on its
+  // own (e.g. the "Add New Customer" modal in Monitoring), fetch them here so
+  // the "Select City" dropdown is populated.
+  useEffect(() => {
+    if (!cities || cities.length === 0) {
+      getAll({ url: GET_ALL_ACTIVE_CITIES }).then((data: any) => {
+        if (data !== undefined && data.success) {
+          dispatch(setCities(data.data));
+        }
+      });
+    }
+  }, []);
+
+  // For a brand-new customer (isNew) start blank; otherwise show the loading
+  // skeleton while the existing customer is fetched for editing.
   const [customerLoading, setCustomerLoading] = useState(
-    customer !== null ? true : false
+    !isNew && customer !== null ? true : false
   );
 
   const [city, setCity] = useState("");
@@ -115,6 +149,13 @@ const CreateNewCustomer = ({ isModal = false, onClose }: { isModal?: boolean; on
             }
             if (data.success) {
               // setLoading(false);
+              Swal.fire({
+                title: "Success!",
+                text: "Customer added successfully!",
+                icon: "success",
+                timer: 2000,
+                showConfirmButton: false,
+              });
               getAll({ url: GET_ALL_CUSTOMERS }).then((data: any) => {
                 if (data !== undefined) {
                   if (!data.success && data.message === ERROR_MESSAGE) {
@@ -235,7 +276,7 @@ const CreateNewCustomer = ({ isModal = false, onClose }: { isModal?: boolean; on
   };
 
   useEffect(() => {
-    if (customer !== null) {
+    if (!isNew && customer !== null) {
       getAll({ url: `${GET_SINGLE_CUSTOMERS}/${customer.id || customer._id}` }).then(
         (data: any) => {
           if (data !== undefined) {
@@ -664,7 +705,7 @@ const CreateNewCustomer = ({ isModal = false, onClose }: { isModal?: boolean; on
                   >
                     Cancel
                   </Button>
-                  {customer == null ? (
+                  {customer == null || isNew ? (
                     <Button
                       disabled={loading}
                       color="primary"

@@ -873,8 +873,12 @@ const DevicesSidebar = ({ setOpen, open, filteredDevices }: any) => {
                 </span>
               </div>
 
-              {/* Groups */}
-              {Object.entries(groupedDevices).map(
+              {/* Groups (Ungrouped pinned to the top when present) */}
+              {Object.entries(groupedDevices)
+                .sort(([a]: [string, any], [b]: [string, any]) =>
+                  a === "ungrouped" ? -1 : b === "ungrouped" ? 1 : 0
+                )
+                .map(
                 ([groupId, group]: [string, any]) => (
                   <div key={groupId} style={{ marginBottom: "10px" }}>
                     {/* Group Header */}

@@ -73,7 +73,6 @@ const MonitoringLatest = () => {
 
   const updatesBufferRef = React.useRef<any[]>([]);
 
-  const [selectedIndex, setSelectedIndex] = useState(0);
   const [open, setOpen] = useState(true); // ✅ control paper open/close (true = hidden, false = visible)
   const [isCollapsed, setIsCollapsed] = useState(true); // ✅ control collapsed/expanded state
   const [loading, setLoading] = useState(false);
@@ -669,12 +668,10 @@ const MonitoringLatest = () => {
         }}
       >
         {sidebarMenus.map((menu, i: any) => {
-          const isSelected = selectedIndex === i;
           return (
             <TooltipButton
               key={i}
               onClick={() => {
-                setSelectedIndex(i);
                 if (menu.path) {
                   navigate(menu.path);
                 } else if (menu.tooltipName === "Send Command") {
@@ -694,14 +691,13 @@ const MonitoringLatest = () => {
                 justifyContent: "center",
                 borderRadius: "8px",
                 cursor: "pointer",
-                backgroundColor: isSelected
-                  ? "rgba(109, 191, 184, 0.3)"
-                  : "transparent",
+                // these actions are not "tabs" - never show a selected highlight
+                backgroundColor: "transparent",
                 transition: "all 0.2s ease-in-out",
                 border: "none",
               }}
             >
-              <menu.icon size={19} color={isSelected ? "#6dbfb8" : "black"} />
+              <menu.icon size={19} color="black" />
             </TooltipButton>
           );
         })}
@@ -1093,6 +1089,7 @@ const MonitoringLatest = () => {
         <AddDeviceModal
           isOpen={addNewDeviceModal}
           toggle={() => setAddNewDeviceModal(false)}
+          onDeviceAdded={fetchDevices}
         />
       )}
       {addNewCustomerModal && (
@@ -1107,7 +1104,7 @@ const MonitoringLatest = () => {
             <button onClick={() => setAddNewCustomerModal(false)} style={{ background: "transparent", border: "none", fontSize: "1.5rem", cursor: "pointer" }}>&times;</button>
           </div>
           <ModalBody style={{ padding: "10px", maxHeight: "80vh", overflowY: "auto", overflowX: "hidden" }}>
-            <CreateNewCustomer isModal={true} onClose={() => setAddNewCustomerModal(false)} />
+            <CreateNewCustomer isModal={true} isNew={true} onClose={() => setAddNewCustomerModal(false)} />
           </ModalBody>
         </Modal>
       )}

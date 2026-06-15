@@ -14,17 +14,35 @@ import {
   CardHeader,
 } from "reactstrap";
 import Swal from "sweetalert2";
+import { Select } from "antd";
 import { MdCloudUpload, MdCheckCircle, MdDelete, MdAdd } from "react-icons/md";
-import { getAll } from "../../../../../Utilities/api";
-import { GET_ALL_CUSTOMERS } from "../../../../../Utilities/api/apiEndpoints";
+import { getAll, create } from "../../../../../Utilities/api";
+import {
+  GET_ALL_CUSTOMERS,
+  GET_ALL_VEHICLES_MAKE,
+  GET_ALL_VEHICLES_MODEL,
+  GET_ALL_ACTIVE_SERVICE_PACKAGES,
+  GET_ALL_COMPANY_INSTALLERS,
+  ADD_NEW_DEVICE,
+} from "../../../../../Utilities/api/apiEndpoints";
 
 interface AddDeviceModalProps {
   isOpen: boolean;
   toggle: () => void;
+  // called after a vehicle/device is successfully onboarded so the parent can refetch
+  onDeviceAdded?: () => void;
 }
 
-export const AddDeviceModal: React.FC<AddDeviceModalProps> = ({ isOpen, toggle }) => {
+export const AddDeviceModal: React.FC<AddDeviceModalProps> = ({ isOpen, toggle, onDeviceAdded }) => {
   const [customersList, setCustomersList] = useState<any[]>([]);
+  const [vehicleMakesList, setVehicleMakesList] = useState<any[]>([]);
+  const [vehicleModelsList, setVehicleModelsList] = useState<any[]>([]);
+  const [packagesList, setPackagesList] = useState<any[]>([]);
+  const [installersList, setInstallersList] = useState<any[]>([]);
+  // index of the vehicle currently being submitted to the API (-1 = none)
+  const [installingIndex, setInstallingIndex] = useState<number>(-1);
+  // whether at least one device was onboarded during this session (drives refetch on close)
+  const [hasOnboarded, setHasOnboarded] = useState<boolean>(false);
 
   useEffect(() => {
     if (isOpen) {
@@ -35,6 +53,38 @@ export const AddDeviceModal: React.FC<AddDeviceModalProps> = ({ isOpen, toggle }
           }
         })
         .catch((err):any => console.error("Error fetching customers", err));
+
+      getAll({ url: GET_ALL_VEHICLES_MAKE })
+        .then((data: any) => {
+          if (data && data.success && data.data) {
+            setVehicleMakesList(data.data);
+          }
+        })
+        .catch((err): any => console.error("Error fetching vehicle makes", err));
+
+      getAll({ url: GET_ALL_VEHICLES_MODEL })
+        .then((data: any) => {
+          if (data && data.success && data.data) {
+            setVehicleModelsList(data.data);
+          }
+        })
+        .catch((err): any => console.error("Error fetching vehicle models", err));
+
+      getAll({ url: GET_ALL_ACTIVE_SERVICE_PACKAGES })
+        .then((data: any) => {
+          if (data && data.success && data.data) {
+            setPackagesList(data.data);
+          }
+        })
+        .catch((err): any => console.error("Error fetching packages", err));
+
+      getAll({ url: GET_ALL_COMPANY_INSTALLERS })
+        .then((data: any) => {
+          if (data && data.success && data.data) {
+            setInstallersList(data.data);
+          }
+        })
+        .catch((err): any => console.error("Error fetching installers", err));
     }
   }, [isOpen]);
 
@@ -66,8 +116,8 @@ export const AddDeviceModal: React.FC<AddDeviceModalProps> = ({ isOpen, toggle }
             vehicleColor: "",
             engineNo: "",
             chasisNo: "",
-            selectedPackage: "Quarterly",
-            packagePrice: "10000",
+            selectedPackage: "",
+            packagePrice: "",
             discountedServiceCharges: "",
 
             // Icons Files
@@ -136,111 +186,248 @@ export const AddDeviceModal: React.FC<AddDeviceModalProps> = ({ isOpen, toggle }
     });
   };
 
-  // Trigger "Installed" status for a vehicle block
-  const handleVehicleInstall = (index: number) => {
-    const vehicle = vehicles[index];
-    if (!vehicle.registrationNo) {
-      Swal.fire({
-        text: "Please enter a Registration Number for this vehicle first.",
-        icon: "warning",
-        timer: 2000,
-        showConfirmButton: false,
+  // Build the ADD_NEW_DEVICE payload for a single vehicle (per the simplified-onboard schema)
+  const buildVehiclePayload = (vehicle: any) => {
+    // "Package price charged to customer": discounted amount if entered, else the package price
+    const chargedAmount = Number(
+      vehicle.discountedServiceCharges !== "" && vehicle.discountedServiceCharges != null
+        ? vehicle.discountedServiceCharges
+        : vehicle.packagePrice
+    );
+
+    const inventoryItems: any[] = [];
+    if (vehicle.imei) {
+      inventoryItems.push({
+        serialNumber: `${vehicle.imei}`.trim(),
+        type: "DEVICES",
+        autoCreate: true,
       });
-      return;
     }
-    if (!vehicle.vehicleFront || !vehicle.vehicleBack || !vehicle.trackerLocation || !vehicle.otherEvidence) {
-      Swal.fire({
-        text: "Please upload all installation images.",
-        icon: "warning",
-        timer: 2000,
-        showConfirmButton: false,
+    if (vehicle.sim) {
+      inventoryItems.push({
+        serialNumber: `${vehicle.sim}`.trim(),
+        type: "SIM",
+        autoCreate: true,
       });
-      return;
     }
 
-    setVehicles((prev) => {
-      const next = [...prev];
-      next[index] = {
-        ...next[index],
-        isInstalled: true,
-      };
-      return next;
-    });
+    const vehiclePayload: any = {
+      // required
+      registrationNo: vehicle.registrationNo,
+      engineNo: vehicle.engineNo,
+      servicePackage: vehicle.selectedPackage,
+      servicePackageDiscountedCharges: chargedAmount,
+      inventoryItems,
+    };
 
-    Swal.fire({
-      title: "Installed!",
-      text: `Vehicle ${vehicle.registrationNo} marked as installed.`,
-      icon: "success",
-      timer: 2000,
-      showConfirmButton: false,
-    });
+    // optional fields - only sent when provided
+    if (vehicle.chasisNo) vehiclePayload.chasisNo = vehicle.chasisNo;
+    if (vehicle.vehicleColor) vehiclePayload.color = vehicle.vehicleColor;
+    if (vehicle.modelYear) vehiclePayload.year = Number(vehicle.modelYear);
+    if (vehicle.fuelType) vehiclePayload.fuelType = vehicle.fuelType;
+    if (vehicle.transmission) vehiclePayload.transmissionType = vehicle.transmission;
+    if (vehicle.vehicleMake) vehiclePayload.vehicleMake = vehicle.vehicleMake;
+    if (vehicle.vehicleModel) vehiclePayload.vehicleModel = vehicle.vehicleModel;
+
+    // optional installer details (installerInfo)
+    const installerInfo: any = {};
+    if (vehicle.installer) installerInfo.installerId = vehicle.installer;
+    if (vehicle.remarks) installerInfo.installationRemarks = vehicle.remarks;
+    if (Object.keys(installerInfo).length > 0) {
+      vehiclePayload.installerInfo = installerInfo;
+    }
+
+    return vehiclePayload;
   };
 
-  // Main Submit Handler
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  // Trigger "Installed" status for a vehicle block -> calls ADD_NEW_DEVICE
+  const handleVehicleInstall = async (index: number) => {
+    const vehicle = vehicles[index];
 
-    if (
-      !customerInfo.customerId ||
-      customerInfo.numberOfVehicles <= 0
-    ) {
-      Swal.fire({
-        text: "Please fill in all required customer details and set vehicles count.",
-        icon: "warning",
-        timer: 2000,
-        showConfirmButton: false,
-      });
+    // ---- Required field validation (per simplified-onboard schema) ----
+    if (!customerInfo.customerId) {
+      Swal.fire({ text: "Please select a Customer first.", icon: "warning", timer: 5000, showConfirmButton: false });
+      return;
+    }
+    if (!vehicle.registrationNo) {
+      Swal.fire({ text: "Please enter a Registration Number for this vehicle.", icon: "warning", timer: 5000, showConfirmButton: false });
+      return;
+    }
+    if (!vehicle.selectedPackage) {
+      Swal.fire({ text: "Please select a Service Package for this vehicle.", icon: "warning", timer: 5000, showConfirmButton: false });
+      return;
+    }
+    if (vehicle.packagePrice === "" || vehicle.packagePrice == null) {
+      Swal.fire({ text: "Please enter the Package Price for this vehicle.", icon: "warning", timer: 5000, showConfirmButton: false });
+      return;
+    }
+    if (vehicle.discountedServiceCharges === "" || vehicle.discountedServiceCharges == null) {
+      Swal.fire({ text: "Please enter the Discounted Service Charges for this vehicle.", icon: "warning", timer: 5000, showConfirmButton: false });
+      return;
+    }
+    if (!vehicle.imei) {
+      Swal.fire({ text: "Please add the Tracker (IMEI) device for this vehicle.", icon: "warning", timer: 5000, showConfirmButton: false });
+      return;
+    }
+    if (!vehicle.sim) {
+      Swal.fire({ text: "Please add the SIM number for this vehicle.", icon: "warning", timer: 5000, showConfirmButton: false });
       return;
     }
 
-    // Verify all vehicles are installed
-    const allInstalled = vehicles.every((v) => v.isInstalled);
-    if (!allInstalled) {
-      Swal.fire({
-        text: "Please complete installation for all vehicles before saving.",
-        icon: "warning",
-        timer: 2500,
-        showConfirmButton: false,
-      });
-      return;
+    const payload = {
+      customerInfo: { id: customerInfo.customerId },
+      vehicles: [buildVehiclePayload(vehicle)],
+    };
+
+    setInstallingIndex(index);
+    try {
+      const data: any = await create(payload, { url: ADD_NEW_DEVICE });
+
+      if (data === undefined) {
+        setInstallingIndex(-1);
+        return;
+      }
+
+      if (!data.success) {
+        Swal.fire({ text: `${data.message}`, icon: "error", timer: 5000, showConfirmButton: false });
+        setInstallingIndex(-1);
+        return;
+      }
+
+      // Success: mark this vehicle as installed
+      const updatedVehicles = vehicles.map((v, i) =>
+        i === index ? { ...v, isInstalled: true } : v
+      );
+      setVehicles(updatedVehicles);
+      setInstallingIndex(-1);
+
+      // mark that something was onboarded; parser devices are refetched when the modal closes
+      setHasOnboarded(true);
+
+      const allInstalled = updatedVehicles.every((v) => v.isInstalled);
+
+      if (allInstalled) {
+        // All vehicles installed -> notify only. The modal stays open and is
+        // closed manually by the user (Close button / X icon).
+        await Swal.fire({
+          title: "Success!",
+          text: "Device(s) onboarded and installed successfully!",
+          icon: "success",
+          timer: 2500,
+          showConfirmButton: false,
+        });
+      } else {
+        // More vehicles remain -> notify and move to the next vehicle to install
+        await Swal.fire({
+          title: "Installed!",
+          text: `Vehicle ${vehicle.registrationNo} installed. Proceed with the next vehicle.`,
+          icon: "success",
+          timer: 2000,
+          showConfirmButton: false,
+        });
+        const nextIndex = updatedVehicles.findIndex((v) => !v.isInstalled);
+        if (nextIndex !== -1) {
+          setTimeout(() => {
+            document
+              .getElementById(`vehicle-card-${nextIndex}`)
+              ?.scrollIntoView({ behavior: "smooth", block: "start" });
+          }, 200);
+        }
+      }
+    } catch (error: any) {
+      Swal.fire({ text: "Something went wrong while onboarding the device.", icon: "error", timer: 5000, showConfirmButton: false });
+      setInstallingIndex(-1);
     }
+  };
 
-    Swal.fire({
-      title: "Success!",
-      text: "Customer and vehicle details saved successfully!",
-      icon: "success",
-      timer: 3000,
-      showConfirmButton: false,
-    });
-
-    // Reset states and close modal
-    setCustomerInfo({
-      customerId: "",
-      numberOfVehicles: 0,
-    });
+  // Reset state and close the modal
+  const handleClose = () => {
+    // refetch parser devices on close if any device was onboarded in this session
+    if (hasOnboarded) {
+      onDeviceAdded?.();
+    }
+    setCustomerInfo({ customerId: "", numberOfVehicles: 0 });
     setVehicles([]);
+    setInstallingIndex(-1);
+    setHasOnboarded(false);
     toggle();
   };
 
-  // Lists for dropdown options
-  const cities = ["Lahore", "Karachi", "Islamabad", "Faisalabad", "Rawalpindi", "Peshawar", "Multan", "Quetta"];
-  const vehicleMakes = ["Toyota", "Honda", "Suzuki", "Hyundai", "Kia", "Changan", "MG"];
-  const vehicleModels = ["Corolla", "Civic", "Swift", "Cultus", "WagonR", "Tucson", "Sportage", "Alsvin", "HS"];
-  const modelYears = Array.from({ length: 27 }, (_, i) => (2000 + i).toString());
-  const fuelTypes = ["Petrol", "Diesel", "Hybrid", "Electric", "CNG", "LPG"];
-  const transmissions = ["Automatic", "Manual"];
-  const packages = ["Quarterly", "Bi-Annual", "Annual", "Monthly"];
-  const installers = ["Installer A", "Installer B", "Installer C", "Installer D"];
-  const vehicleColors = ["Super White", "Attitude Black", "Graphite Grey", "Silver Metallic", "Phantom Brown", "Strong Blue", "Red"];
+  // Each vehicle is onboarded/installed individually via its "Mark as Installed"
+  // button (calls ADD_NEW_DEVICE). The form submit simply prevents a page reload.
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+  };
+
+  // Dropdown options (antd Select format: { value, label }) matching VehicleDetails
+  const modelYearOptions = Array.from({ length: 26 }, (_, i) => {
+    const year = (2000 + i).toString();
+    return { value: year, label: year };
+  });
+  // Fuel enum accepted by ADD_NEW_DEVICE (simplified-onboard)
+  const fuelTypeOptions = [
+    { value: "PETROL", label: "Petrol" },
+    { value: "DIESEL", label: "Diesel" },
+    { value: "CNG", label: "CNG" },
+    { value: "LPG", label: "LPG" },
+    { value: "HYBRID", label: "Hybrid" },
+    { value: "ELECTRIC", label: "Electric" },
+  ];
+  const transmissionOptions = [
+    { value: "AUTOMATIC", label: "Automatic" },
+    { value: "MANUAL", label: "Manual" },
+  ];
+  // Backend-driven package options (same source as SaleLeadInfo / SelectPackageBox).
+  // Each option carries the package price/days so we can auto-fill on select.
+  const packageOptions = packagesList.map((item: any) => ({
+    value: `${item?._id}`,
+    label: `${item?.title}`,
+    price: `${item?.price}`,
+    days: `${item?.days}`,
+    duration: `${item?.duration}`,
+  }));
+  // Backend-driven installer options (same source as Installation / SelectInstallerBox)
+  const installerOptions = installersList.map((item: any) => ({
+    value: `${item?._id}`,
+    label: `${item?.fullName}`,
+  }));
+  const vehicleColorOptions = [
+    "Super White", "Attitude Black", "Graphite Grey", "Silver Metallic",
+    "Phantom Brown", "Strong Blue", "Oxford Blue", "Black Diamond Metallic",
+    "Polar White", "Fiery Red", "Aqua Silver", "Teal Blue", "Pearl Red",
+    "Cerulean Blue", "Silky Silver", "Super Pearl Black", "Pearl White",
+    "Solid White", "Pearl Black", "Clear White", "Sparkling Silver",
+    "Mineral Blue", "Cherry Black", "Steel Grey", "Milky Beige", "Mercury Blue",
+    "Lime Light", "Graphite", "Crimson Spark Red", "Dark Teal Mica",
+    "Carnelian Red", "Urban Titanium", "Crystal Black", "Lunar Silver",
+    "Taffeta White", "Modern Steel", "Lunar Silver Metallic",
+    "Modern Steel Metallic", "Crystal Black Pearl", "Carnelian Red Pearl",
+    "Galaxy Black", "Space Grey", "Stellar White", "Cosmic Red",
+  ].map((c) => ({ value: c, label: c }));
+
+  // Backend-driven options (same source as VehicleDetails)
+  const vehicleMakeOptions = vehicleMakesList.map((item: any) => ({
+    value: `${item?._id}`,
+    label: `${item?.name}`,
+  }));
+  const getVehicleModelOptions = (selectedMakeId: string) =>
+    vehicleModelsList
+      .filter((item: any) => item?.vehicleMake?._id == selectedMakeId)
+      .map((item: any) => ({ value: `${item?._id}`, label: `${item?.name}` }));
+
+  // Shared antd Select styling to match VehicleDetails
+  const antSelectStyle = { width: "100%", height: 38 } as const;
+  const antFilterOption = (input: any, option: any) =>
+    (option?.label ?? "").toLowerCase().includes(input.toLowerCase());
 
   return (
-    <Modal isOpen={isOpen} toggle={toggle} size="xl" centered>
+    <Modal isOpen={isOpen} toggle={handleClose} size="xl" centered backdrop="static" keyboard={false}>
       <div className="modal-header" style={{ borderBottom: "1px solid #dee2e6" }}>
         <h4 className="modal-title" style={{ color: "#333", fontWeight: "bold" }}>Add New Device</h4>
         <Button
           color="transparent"
           className="btn-close"
-          onClick={toggle}
+          onClick={handleClose}
           style={{ fontSize: "1.2rem", fontWeight: "bold", opacity: 0.5, border: "none" }}
         ></Button>
       </div>
@@ -258,21 +445,21 @@ export const AddDeviceModal: React.FC<AddDeviceModalProps> = ({ isOpen, toggle }
                     <Label style={{ fontWeight: "600", fontSize: "13px", color: "#555" }}>
                       Select Customer <span style={{ color: "red" }}>*</span>
                     </Label>
-                    <Input
-                      type="select"
-                      name="customerId"
-                      id="customerId"
-                      value={customerInfo.customerId}
-                      onChange={handleCustomerChange}
-                      required
-                    >
-                      <option value="">Select Customer</option>
-                      {customersList.map((c: any) => (
-                        <option key={c._id || c.id} value={c._id || c.id}>
-                          {c.fullName || c.customerName}
-                        </option>
-                      ))}
-                    </Input>
+                    <Select
+                      showSearch
+                      style={antSelectStyle}
+                      placeholder="Select Customer"
+                      optionFilterProp="children"
+                      filterOption={antFilterOption}
+                      value={customerInfo.customerId || null}
+                      onChange={(value) =>
+                        setCustomerInfo((prev: any) => ({ ...prev, customerId: value }))
+                      }
+                      options={customersList.map((c: any) => ({
+                        value: c._id || c.id,
+                        label: c.fullName || c.customerName,
+                      }))}
+                    />
                   </FormGroup>
                 </Col>
                 <Col md={6} className="mb-3">
@@ -298,7 +485,7 @@ export const AddDeviceModal: React.FC<AddDeviceModalProps> = ({ isOpen, toggle }
 
           {/* Dynamic Vehicle Details Blocks */}
           {vehicles.map((vehicle, index) => (
-            <Card key={index} className="mb-4" style={{ boxShadow: "0 2px 10px rgba(0,0,0,0.06)", borderLeft: "4px solid #6dbfb8" }}>
+            <Card key={index} id={`vehicle-card-${index}`} className="mb-4" style={{ boxShadow: "0 2px 10px rgba(0,0,0,0.06)", borderLeft: "4px solid #6dbfb8" }}>
               <CardHeader className="d-flex justify-content-between align-items-center" style={{ backgroundColor: "#f8f9fa" }}>
                 <h5 className="mb-0" style={{ color: "#333", fontWeight: "600" }}>
                   Vehicle #{index + 1} Details {vehicle.isInstalled && <MdCheckCircle color="green" size={20} className="ms-2" />}
@@ -331,131 +518,57 @@ export const AddDeviceModal: React.FC<AddDeviceModalProps> = ({ isOpen, toggle }
                   <Col md={3} className="mb-3">
                     <FormGroup>
                       <Label style={{ fontWeight: "600", fontSize: "12px", color: "#666" }}>
-                        Select Vehicle Make <span style={{ color: "red" }}>*</span>
+                        Select Vehicle Make
                       </Label>
-                      <Input
-                        type="select"
-                        value={vehicle.vehicleMake}
-                        onChange={(e) => handleVehicleChange(index, "vehicleMake", e.target.value)}
-                        required
+                      <Select
+                        showSearch
+                        style={antSelectStyle}
+                        placeholder="Select Vehicle Make"
+                        optionFilterProp="children"
+                        filterOption={antFilterOption}
+                        value={vehicle.vehicleMake || null}
+                        onChange={(value) => {
+                          // reset model when make changes (model list depends on make)
+                          handleVehicleChange(index, "vehicleMake", value);
+                          handleVehicleChange(index, "vehicleModel", "");
+                        }}
+                        options={vehicleMakeOptions}
                         disabled={vehicle.isInstalled}
-                      >
-                        <option value="">Select Make</option>
-                        {vehicleMakes.map((make) => (
-                          <option key={make} value={make}>{make}</option>
-                        ))}
-                      </Input>
+                      />
                     </FormGroup>
                   </Col>
                   <Col md={3} className="mb-3">
                     <FormGroup>
                       <Label style={{ fontWeight: "600", fontSize: "12px", color: "#666" }}>
-                        Select Vehicle Model <span style={{ color: "red" }}>*</span>
+                        Select Vehicle Model
                       </Label>
-                      <Input
-                        type="select"
-                        value={vehicle.vehicleModel}
-                        onChange={(e) => handleVehicleChange(index, "vehicleModel", e.target.value)}
-                        required
+                      <Select
+                        showSearch
+                        style={antSelectStyle}
+                        placeholder="Select Vehicle Model"
+                        optionFilterProp="children"
+                        filterOption={antFilterOption}
+                        value={vehicle.vehicleModel || null}
+                        onChange={(value) => handleVehicleChange(index, "vehicleModel", value)}
+                        options={getVehicleModelOptions(vehicle.vehicleMake)}
                         disabled={vehicle.isInstalled}
-                      >
-                        <option value="">Select Model</option>
-                        {vehicleModels.map((model) => (
-                          <option key={model} value={model}>{model}</option>
-                        ))}
-                      </Input>
+                      />
                     </FormGroup>
                   </Col>
                   <Col md={3} className="mb-3">
                     <FormGroup>
                       <Label style={{ fontWeight: "600", fontSize: "12px", color: "#666" }}>
-                        Select Model Year <span style={{ color: "red" }}>*</span>
+                        Select Model Year
                       </Label>
-                      <Input
-                        type="select"
-                        value={vehicle.modelYear}
-                        onChange={(e) => handleVehicleChange(index, "modelYear", e.target.value)}
-                        required
-                        disabled={vehicle.isInstalled}
-                      >
-                        <option value="">Select Year</option>
-                        {modelYears.map((year) => (
-                          <option key={year} value={year}>{year}</option>
-                        ))}
-                      </Input>
-                    </FormGroup>
-                  </Col>
-                </Row>
-
-                <Row>
-                  <Col md={3} className="mb-3">
-                    <FormGroup>
-                      <Label style={{ fontWeight: "600", fontSize: "12px", color: "#666" }}>
-                        Select Fuel Type <span style={{ color: "red" }}>*</span>
-                      </Label>
-                      <Input
-                        type="select"
-                        value={vehicle.fuelType}
-                        onChange={(e) => handleVehicleChange(index, "fuelType", e.target.value)}
-                        required
-                        disabled={vehicle.isInstalled}
-                      >
-                        <option value="">Select Fuel Type</option>
-                        {fuelTypes.map((fuel) => (
-                          <option key={fuel} value={fuel}>{fuel}</option>
-                        ))}
-                      </Input>
-                    </FormGroup>
-                  </Col>
-                  <Col md={3} className="mb-3">
-                    <FormGroup>
-                      <Label style={{ fontWeight: "600", fontSize: "12px", color: "#666" }}>
-                        Select Transmissions <span style={{ color: "red" }}>*</span>
-                      </Label>
-                      <Input
-                        type="select"
-                        value={vehicle.transmission}
-                        onChange={(e) => handleVehicleChange(index, "transmission", e.target.value)}
-                        required
-                        disabled={vehicle.isInstalled}
-                      >
-                        <option value="">Select Transmission</option>
-                        {transmissions.map((t) => (
-                          <option key={t} value={t}>{t}</option>
-                        ))}
-                      </Input>
-                    </FormGroup>
-                  </Col>
-                  <Col md={3} className="mb-3">
-                    <FormGroup>
-                      <Label style={{ fontWeight: "600", fontSize: "12px", color: "#666" }}>
-                        Select Vehicle Color <span style={{ color: "red" }}>*</span>
-                      </Label>
-                      <Input
-                        type="select"
-                        value={vehicle.vehicleColor}
-                        onChange={(e) => handleVehicleChange(index, "vehicleColor", e.target.value)}
-                        required
-                        disabled={vehicle.isInstalled}
-                      >
-                        <option value="">Select Color</option>
-                        {vehicleColors.map((color) => (
-                          <option key={color} value={color}>{color}</option>
-                        ))}
-                      </Input>
-                    </FormGroup>
-                  </Col>
-                  <Col md={3} className="mb-3">
-                    <FormGroup>
-                      <Label style={{ fontWeight: "600", fontSize: "12px", color: "#666" }}>
-                        Enter Engine Number <span style={{ color: "red" }}>*</span>
-                      </Label>
-                      <Input
-                        type="text"
-                        placeholder="e.g. 35654758676"
-                        value={vehicle.engineNo}
-                        onChange={(e) => handleVehicleChange(index, "engineNo", e.target.value)}
-                        required
+                      <Select
+                        showSearch
+                        style={antSelectStyle}
+                        placeholder="Select Model Year"
+                        optionFilterProp="children"
+                        filterOption={antFilterOption}
+                        value={vehicle.modelYear || null}
+                        onChange={(value) => handleVehicleChange(index, "modelYear", value)}
+                        options={modelYearOptions}
                         disabled={vehicle.isInstalled}
                       />
                     </FormGroup>
@@ -466,14 +579,84 @@ export const AddDeviceModal: React.FC<AddDeviceModalProps> = ({ isOpen, toggle }
                   <Col md={3} className="mb-3">
                     <FormGroup>
                       <Label style={{ fontWeight: "600", fontSize: "12px", color: "#666" }}>
-                        Enter Chasis Number <span style={{ color: "red" }}>*</span>
+                        Select Fuel Type
+                      </Label>
+                      <Select
+                        showSearch
+                        style={antSelectStyle}
+                        placeholder="Select Fuel Type"
+                        optionFilterProp="children"
+                        filterOption={antFilterOption}
+                        value={vehicle.fuelType || null}
+                        onChange={(value) => handleVehicleChange(index, "fuelType", value)}
+                        options={fuelTypeOptions}
+                        disabled={vehicle.isInstalled}
+                      />
+                    </FormGroup>
+                  </Col>
+                  <Col md={3} className="mb-3">
+                    <FormGroup>
+                      <Label style={{ fontWeight: "600", fontSize: "12px", color: "#666" }}>
+                        Select Transmissions
+                      </Label>
+                      <Select
+                        showSearch
+                        style={antSelectStyle}
+                        placeholder="Select Transmission"
+                        optionFilterProp="children"
+                        filterOption={antFilterOption}
+                        value={vehicle.transmission || null}
+                        onChange={(value) => handleVehicleChange(index, "transmission", value)}
+                        options={transmissionOptions}
+                        disabled={vehicle.isInstalled}
+                      />
+                    </FormGroup>
+                  </Col>
+                  <Col md={3} className="mb-3">
+                    <FormGroup>
+                      <Label style={{ fontWeight: "600", fontSize: "12px", color: "#666" }}>
+                        Select Vehicle Color
+                      </Label>
+                      <Select
+                        showSearch
+                        style={antSelectStyle}
+                        placeholder="Select Vehicle Color"
+                        optionFilterProp="children"
+                        filterOption={antFilterOption}
+                        value={vehicle.vehicleColor || null}
+                        onChange={(value) => handleVehicleChange(index, "vehicleColor", value)}
+                        options={vehicleColorOptions}
+                        disabled={vehicle.isInstalled}
+                      />
+                    </FormGroup>
+                  </Col>
+                  <Col md={3} className="mb-3">
+                    <FormGroup>
+                      <Label style={{ fontWeight: "600", fontSize: "12px", color: "#666" }}>
+                        Enter Engine Number
+                      </Label>
+                      <Input
+                        type="text"
+                        placeholder="e.g. 35654758676"
+                        value={vehicle.engineNo}
+                        onChange={(e) => handleVehicleChange(index, "engineNo", e.target.value)}
+                        disabled={vehicle.isInstalled}
+                      />
+                    </FormGroup>
+                  </Col>
+                </Row>
+
+                <Row>
+                  <Col md={3} className="mb-3">
+                    <FormGroup>
+                      <Label style={{ fontWeight: "600", fontSize: "12px", color: "#666" }}>
+                        Enter Chasis Number
                       </Label>
                       <Input
                         type="text"
                         placeholder="e.g. 543564586987"
                         value={vehicle.chasisNo}
                         onChange={(e) => handleVehicleChange(index, "chasisNo", e.target.value)}
-                        required
                         disabled={vehicle.isInstalled}
                       />
                     </FormGroup>
@@ -483,17 +666,24 @@ export const AddDeviceModal: React.FC<AddDeviceModalProps> = ({ isOpen, toggle }
                       <Label style={{ fontWeight: "600", fontSize: "12px", color: "#666" }}>
                         Selected Package <span style={{ color: "red" }}>*</span>
                       </Label>
-                      <Input
-                        type="select"
-                        value={vehicle.selectedPackage}
-                        onChange={(e) => handleVehicleChange(index, "selectedPackage", e.target.value)}
-                        required
+                      <Select
+                        showSearch
+                        style={antSelectStyle}
+                        placeholder="Select Package"
+                        optionFilterProp="children"
+                        filterOption={antFilterOption}
+                        value={vehicle.selectedPackage || null}
+                        onChange={(value, option: any) => {
+                          handleVehicleChange(index, "selectedPackage", value);
+                          // auto-fill the package price AND discounted service charges from the selected package
+                          if (option?.price !== undefined) {
+                            handleVehicleChange(index, "packagePrice", option.price);
+                            handleVehicleChange(index, "discountedServiceCharges", option.price);
+                          }
+                        }}
+                        options={packageOptions}
                         disabled={vehicle.isInstalled}
-                      >
-                        {packages.map((pkg) => (
-                          <option key={pkg} value={pkg}>{pkg}</option>
-                        ))}
-                      </Input>
+                      />
                     </FormGroup>
                   </Col>
                   <Col md={3} className="mb-3">
@@ -506,7 +696,6 @@ export const AddDeviceModal: React.FC<AddDeviceModalProps> = ({ isOpen, toggle }
                         placeholder="e.g. 10000"
                         value={vehicle.packagePrice}
                         onChange={(e) => handleVehicleChange(index, "packagePrice", e.target.value)}
-                        required
                         disabled={vehicle.isInstalled}
                       />
                     </FormGroup>
@@ -514,11 +703,11 @@ export const AddDeviceModal: React.FC<AddDeviceModalProps> = ({ isOpen, toggle }
                   <Col md={3} className="mb-3">
                     <FormGroup>
                       <Label style={{ fontWeight: "600", fontSize: "12px", color: "#666" }}>
-                        Discounted Service Charges
+                        Discounted Service Charges <span style={{ color: "red" }}>*</span>
                       </Label>
                       <Input
                         type="number"
-                        placeholder="Enter discount if any"
+                        placeholder="e.g. 10000"
                         value={vehicle.discountedServiceCharges}
                         onChange={(e) => handleVehicleChange(index, "discountedServiceCharges", e.target.value)}
                         disabled={vehicle.isInstalled}
@@ -527,7 +716,7 @@ export const AddDeviceModal: React.FC<AddDeviceModalProps> = ({ isOpen, toggle }
                   </Col>
                 </Row>
 
-                {/* 2. Vehicle Icon Uploads */}
+                {/* TEMP: Vehicle Icons Customization hidden
                 <h6 className="mt-4" style={{ color: "#666", textTransform: "uppercase", fontSize: "11px", letterSpacing: "1px", borderBottom: "1px solid #eee", paddingBottom: "5px", marginBottom: "15px" }}>
                   Vehicle Icons Customization
                 </h6>
@@ -601,6 +790,7 @@ export const AddDeviceModal: React.FC<AddDeviceModalProps> = ({ isOpen, toggle }
                     </Col>
                   ))}
                 </Row>
+                */}
 
                 {/* 3. Inventory Details Block */}
                 <h6 className="mt-4" style={{ color: "#666", textTransform: "uppercase", fontSize: "11px", letterSpacing: "1px", borderBottom: "1px solid #eee", paddingBottom: "5px", marginBottom: "15px" }}>
@@ -610,30 +800,29 @@ export const AddDeviceModal: React.FC<AddDeviceModalProps> = ({ isOpen, toggle }
                   <Col md={3} className="mb-3">
                     <FormGroup>
                       <Label style={{ fontWeight: "600", fontSize: "12px", color: "#666" }}>
-                        Select Installer <span style={{ color: "red" }}>*</span>
+                        Select Installer
                       </Label>
-                      <Input
-                        type="select"
-                        value={vehicle.installer}
-                        onChange={(e) => handleVehicleChange(index, "installer", e.target.value)}
-                        required
+                      <Select
+                        showSearch
+                        style={antSelectStyle}
+                        placeholder="Select Installer"
+                        optionFilterProp="children"
+                        filterOption={antFilterOption}
+                        value={vehicle.installer || null}
+                        onChange={(value) => handleVehicleChange(index, "installer", value)}
+                        options={installerOptions}
                         disabled={vehicle.isInstalled}
-                      >
-                        <option value="">Select Installer</option>
-                        {installers.map((inst) => (
-                          <option key={inst} value={inst}>{inst}</option>
-                        ))}
-                      </Input>
+                      />
                     </FormGroup>
                   </Col>
                   <Col md={3} className="mb-3">
                     <FormGroup>
                       <Label style={{ fontWeight: "600", fontSize: "12px", color: "#666" }}>
-                        Add IMEI
+                        Add IMEI <span style={{ color: "red" }}>*</span>
                       </Label>
                       <Input
                         type="text"
-                        placeholder="Type IMEI details"
+                        placeholder="e.g. 860987654321"
                         value={vehicle.imei}
                         onChange={(e) => handleVehicleChange(index, "imei", e.target.value)}
                         disabled={vehicle.isInstalled}
@@ -643,11 +832,11 @@ export const AddDeviceModal: React.FC<AddDeviceModalProps> = ({ isOpen, toggle }
                   <Col md={3} className="mb-3">
                     <FormGroup>
                       <Label style={{ fontWeight: "600", fontSize: "12px", color: "#666" }}>
-                        Add SIM
+                        Add SIM <span style={{ color: "red" }}>*</span>
                       </Label>
                       <Input
                         type="text"
-                        placeholder="Type SIM number"
+                        placeholder="e.g. 899211998877"
                         value={vehicle.sim}
                         onChange={(e) => handleVehicleChange(index, "sim", e.target.value)}
                         disabled={vehicle.isInstalled}
@@ -670,7 +859,7 @@ export const AddDeviceModal: React.FC<AddDeviceModalProps> = ({ isOpen, toggle }
                   </Col>
                 </Row>
 
-                {/* 4. Installation Block */}
+                {/* TEMP: Installation Verification hidden
                 <h6 className="mt-4" style={{ color: "#666", textTransform: "uppercase", fontSize: "11px", letterSpacing: "1px", borderBottom: "1px solid #eee", paddingBottom: "5px", marginBottom: "15px" }}>
                   Installation Verification
                 </h6>
@@ -755,6 +944,7 @@ export const AddDeviceModal: React.FC<AddDeviceModalProps> = ({ isOpen, toggle }
                     </Col>
                   ))}
                 </Row>
+                */}
 
                 <Row>
                   <Col md={12} className="mb-3">
@@ -775,7 +965,7 @@ export const AddDeviceModal: React.FC<AddDeviceModalProps> = ({ isOpen, toggle }
                 <div className="text-end">
                   <Button
                     color="primary"
-                    disabled={vehicle.isInstalled}
+                    disabled={vehicle.isInstalled || installingIndex === index}
                     onClick={() => handleVehicleInstall(index)}
                     style={{
                       backgroundColor: vehicle.isInstalled ? "#28a745" : "#6dbfb8",
@@ -784,7 +974,11 @@ export const AddDeviceModal: React.FC<AddDeviceModalProps> = ({ isOpen, toggle }
                       fontWeight: "600",
                     }}
                   >
-                    {vehicle.isInstalled ? "Installed ✅" : "Mark as Installed"}
+                    {vehicle.isInstalled
+                      ? "Installed ✅"
+                      : installingIndex === index
+                      ? "Installing..."
+                      : "Mark as Installed"}
                   </Button>
                 </div>
               </CardBody>
@@ -796,23 +990,10 @@ export const AddDeviceModal: React.FC<AddDeviceModalProps> = ({ isOpen, toggle }
             <Button
               color="secondary"
               className="me-2"
-              onClick={toggle}
+              onClick={handleClose}
               style={{ borderRadius: "6px" }}
             >
-              Cancel
-            </Button>
-            <Button
-              type="submit"
-              style={{
-                backgroundColor: "#6dbfb8",
-                borderColor: "#6dbfb8",
-                color: "white",
-                borderRadius: "6px",
-                fontWeight: "600",
-                padding: "8px 24px",
-              }}
-            >
-              Save Device
+              Close
             </Button>
           </div>
         </Form>

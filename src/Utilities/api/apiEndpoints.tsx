@@ -530,3 +530,6 @@ export const GET_SINGLE_VEHICLE_STATUS = `${API_BASE_URL}/control-room/vehicle-m
 export const SEND_GPRS_COMMAND = `${API_BASE_URL}/commands`;
 export const GET_COMMAND_TYPES = `${API_BASE_URL}/commands/supported-types`;
 export const GET_COMMANDS_BY_VEHICLE_ID = `${API_BASE_URL}/commands`;
+
+
+export const ADD_NEW_DEVICE = `${API_BASE_URL}/vehicle/simplified-onboard`; 
