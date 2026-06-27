@@ -26,6 +26,7 @@ import delayIcon from "../../../../../../assets/delay-icon.png";
 import { motion } from "framer-motion";
 import CustomerDetailsModal from "./CustomerDetailsModal";
 import PlaybackModal from "../SingleVehiceDetail/PlaybackModal/PlaybackModal";
+import { EditDeviceModal } from "../EditDeviceModal";
 import { getAll, create } from "../../../../../../Utilities/api";
 import {
   GET_ALERT_EVENTS_V2,
@@ -50,6 +51,7 @@ const DevicesSidebar = ({ setOpen, open, filteredDevices }: any) => {
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
   const [customerDetailsModal, setCustomerDetailsModal] = useState(false);
   const [playbackModal, setPlaybackModal] = useState(false);
+  const [editDeviceModalOpen, setEditDeviceModalOpen] = useState(false);
   const [selectedDevice, setSelectedDevice] = useState<any>(null);
   const [historyType, setHistoryType] = useState<"today" | "yesterday" | null>(
     null,
@@ -245,6 +247,12 @@ const DevicesSidebar = ({ setOpen, open, filteredDevices }: any) => {
     // console.log("Menu action triggered:", action, device);
 
     switch (action) {
+      case "edit-device":
+        setSelectedDevice(device);
+        dispatch(setSelectedSingleDevice(device));
+        setEditDeviceModalOpen(true);
+        break;
+
       case "renewal-expiry":
         const updatedData = {
           vehicles: [device?.vehicle?.registrationNo],
@@ -1203,6 +1211,10 @@ const DevicesSidebar = ({ setOpen, open, filteredDevices }: any) => {
                                         >
                                           {[
                                             {
+                                              label: "Edit Device",
+                                              action: "edit-device",
+                                            },
+                                            {
                                               label: "Renewal Expiry",
                                               action: "renewal-expiry",
                                             },
@@ -1378,6 +1390,14 @@ const DevicesSidebar = ({ setOpen, open, filteredDevices }: any) => {
                 ? "Yesterday"
                 : undefined
           }
+        />
+      )}
+      {/* Edit Device Modal */}
+      {editDeviceModalOpen && selectedDevice && (
+        <EditDeviceModal
+          isOpen={editDeviceModalOpen}
+          toggle={() => setEditDeviceModalOpen(!editDeviceModalOpen)}
+          device={selectedDevice}
         />
       )}
     </>
