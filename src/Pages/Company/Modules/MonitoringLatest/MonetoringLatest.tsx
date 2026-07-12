@@ -1072,6 +1072,7 @@ const MonitoringLatest = () => {
           setOpen={setOpen}
           open={open}
           filteredDevices={filteredDevices}
+          onDeviceUpdated={fetchDevices}
         />
       </div>
 

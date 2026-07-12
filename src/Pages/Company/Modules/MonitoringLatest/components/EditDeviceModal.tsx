@@ -16,28 +16,44 @@ import {
 import Swal from "sweetalert2";
 import { Select } from "antd";
 import { MdCloudUpload, MdCheckCircle, MdDelete, MdAdd } from "react-icons/md";
-import { getAll, update } from "../../../../../Utilities/api";
+import { getAll, update, create } from "../../../../../Utilities/api";
 import {
   GET_ALL_CUSTOMERS,
   GET_ALL_VEHICLES_MAKE,
   GET_ALL_VEHICLES_MODEL,
   GET_ALL_ACTIVE_SERVICE_PACKAGES,
   GET_ALL_COMPANY_INSTALLERS,
-  UPDATE_VEHICLE,
+  VEHICLE_BILLING_ACTIONS,
+  EDIT_VEHICLE,
+  SWAP_DEVICE,
+  MIGRATE_PACKAGE,
+  TRANSFER_OWNER,
 } from "../../../../../Utilities/api/apiEndpoints";
 
 interface EditDeviceModalProps {
   isOpen: boolean;
   toggle: () => void;
   device: any;
+  onDeviceUpdated?: () => void;
 }
 
-export const EditDeviceModal: React.FC<EditDeviceModalProps> = ({ isOpen, toggle, device }) => {
+export const EditDeviceModal: React.FC<EditDeviceModalProps> = ({ isOpen, toggle, device, onDeviceUpdated }) => {
   const [customersList, setCustomersList] = useState<any[]>([]);
   const [vehicleMakesList, setVehicleMakesList] = useState<any[]>([]);
   const [vehicleModelsList, setVehicleModelsList] = useState<any[]>([]);
   const [packagesList, setPackagesList] = useState<any[]>([]);
   const [installersList, setInstallersList] = useState<any[]>([]);
+  const [billingActionsList, setBillingActionsList] = useState<any[]>([]);
+  // Snapshot of the originally loaded values used to detect real changes
+  // (IMEI, SIM, package, discounted charges). A field that is changed and then
+  // reverted back to this snapshot will NOT trigger its API call.
+  const [original, setOriginal] = useState<any>({
+    imei: "",
+    sim: "",
+    selectedPackage: "",
+    discountedServiceCharges: "",
+    customerId: "",
+  });
   // index of the vehicle currently being submitted to the API (-1 = none)
   const [installingIndex, setInstallingIndex] = useState<number>(-1);
   // whether at least one device was onboarded during this session (drives refetch on close)
@@ -84,6 +100,14 @@ export const EditDeviceModal: React.FC<EditDeviceModalProps> = ({ isOpen, toggle
           }
         })
         .catch((err): any => console.error("Error fetching installers", err));
+
+      getAll({ url: VEHICLE_BILLING_ACTIONS })
+        .then((data: any) => {
+          if (data && data.success && data.data) {
+            setBillingActionsList(data.data);
+          }
+        })
+        .catch((err): any => console.error("Error fetching billing actions", err));
     }
   }, [isOpen]);
 
@@ -91,6 +115,7 @@ export const EditDeviceModal: React.FC<EditDeviceModalProps> = ({ isOpen, toggle
   const [customerInfo, setCustomerInfo] = useState<any>({
     customerId: "",
     numberOfVehicles: 1, // Fixed to 1 for edit
+    billingAction: "", // Required only when the package / discounted charges change
   });
 
   // Dynamic list of vehicles
@@ -102,7 +127,17 @@ export const EditDeviceModal: React.FC<EditDeviceModalProps> = ({ isOpen, toggle
       setCustomerInfo({
         customerId: device.vehicle.customer?._id || "",
         numberOfVehicles: 1,
+        billingAction: "",
       });
+
+      const prefilledImei = device.vehicle.imei || "";
+      // SIM lives in the inventory array as the item whose productType is "SIM"
+      const simInventory = (device.vehicle.inventory || []).find(
+        (item: any) => item?.productType === "SIM"
+      );
+      const prefilledSim = simInventory?.serialNumber || "";
+      const prefilledPackage = device.vehicle.servicePackage || "";
+      const prefilledDiscount = device.vehicle.servicePackageDiscountedCharges?.toString() || "";
 
       setVehicles([
         {
@@ -115,21 +150,33 @@ export const EditDeviceModal: React.FC<EditDeviceModalProps> = ({ isOpen, toggle
           vehicleColor: device.vehicle.color || "",
           engineNo: device.vehicle.engineNo || "",
           chasisNo: device.vehicle.chasisNo || "",
-          selectedPackage: device.vehicle.servicePackage || "",
+          selectedPackage: prefilledPackage,
           packagePrice: device.vehicle.servicePackageCharges?.toString() || "",
-          discountedServiceCharges: device.vehicle.servicePackageDiscountedCharges?.toString() || "",
-          imei: device.vehicle.imei || "",
-          sim: "", // The backend device object might not provide the SIM easily, leave empty or fetch if available
+          discountedServiceCharges: prefilledDiscount,
+          imei: prefilledImei,
+          sim: prefilledSim,
+          deviceSwapReason: "", // Reason for device (IMEI) swap; shown only when IMEI changes
+          simSwapReason: "", // Reason for SIM swap; shown only when SIM changes
           installer: device.vehicle.installer?._id || "",
           remarks: device.vehicle.installationRemarks || "",
           isInstalled: false, // Allows the user to click update
         },
       ]);
+
+      // Snapshot originals so we only fire swap/migrate/transfer APIs when values truly change
+      setOriginal({
+        imei: prefilledImei,
+        sim: prefilledSim,
+        selectedPackage: prefilledPackage,
+        discountedServiceCharges: prefilledDiscount,
+        customerId: device.vehicle.customer?._id || "",
+      });
     } else if (!isOpen) {
       // Reset state on close
-      setCustomerInfo({ customerId: "", numberOfVehicles: 1 });
+      setCustomerInfo({ customerId: "", numberOfVehicles: 1, billingAction: "" });
       setVehicles([]);
       setInstallingIndex(-1);
+      setOriginal({ imei: "", sim: "", selectedPackage: "", discountedServiceCharges: "", customerId: "" });
     }
   }, [isOpen, device]);
 
@@ -170,68 +217,48 @@ export const EditDeviceModal: React.FC<EditDeviceModalProps> = ({ isOpen, toggle
     });
   };
 
-  // Build the ADD_NEW_DEVICE payload for a single vehicle (per the simplified-onboard schema)
-  const buildVehiclePayload = (vehicle: any) => {
-    // "Package price charged to customer": discounted amount if entered, else the package price
-    const chargedAmount = Number(
-      vehicle.discountedServiceCharges !== "" && vehicle.discountedServiceCharges != null
-        ? vehicle.discountedServiceCharges
-        : vehicle.packagePrice
-    );
-
-    const inventoryItems: any[] = [];
-    if (vehicle.imei) {
-      inventoryItems.push({
-        serialNumber: `${vehicle.imei}`.trim(),
-        type: "DEVICES",
-        autoCreate: true,
-      });
-    }
-    if (vehicle.sim) {
-      inventoryItems.push({
-        serialNumber: `${vehicle.sim}`.trim(),
-        type: "SIM",
-        autoCreate: true,
-      });
-    }
-
-    const vehiclePayload: any = {
-      // required
+  // Build the EDIT_VEHICLE (metadata) payload. NOTE: billing / inventory fields
+  // (imei, inventory, servicePackage, serviceRenewalDate, servicePackageCharges,
+  // servicePackageDiscountedCharges, customer) are BLOCKED by this endpoint and
+  // must never be sent here — they return a 400. Those are handled by the
+  // swap-device / migrate-package endpoints instead.
+  const buildMetadataPayload = (vehicle: any) => {
+    const payload: any = {
       registrationNo: vehicle.registrationNo,
-      engineNo: vehicle.engineNo,
-      servicePackage: vehicle.selectedPackage,
-      servicePackageDiscountedCharges: chargedAmount,
-      inventoryItems,
     };
 
-    // optional fields - only sent when provided
-    if (vehicle.chasisNo) vehiclePayload.chasisNo = vehicle.chasisNo;
-    if (vehicle.vehicleColor) vehiclePayload.color = vehicle.vehicleColor;
-    if (vehicle.modelYear) vehiclePayload.year = Number(vehicle.modelYear);
-    if (vehicle.fuelType) vehiclePayload.fuelType = vehicle.fuelType;
-    if (vehicle.transmission) vehiclePayload.transmissionType = vehicle.transmission;
-    if (vehicle.vehicleMake) vehiclePayload.vehicleMake = vehicle.vehicleMake;
-    if (vehicle.vehicleModel) vehiclePayload.vehicleModel = vehicle.vehicleModel;
+    if (vehicle.engineNo) payload.engineNo = vehicle.engineNo;
+    if (vehicle.chasisNo) payload.chasisNo = vehicle.chasisNo;
+    if (vehicle.vehicleColor) payload.color = vehicle.vehicleColor;
+    if (vehicle.modelYear) payload.year = Number(vehicle.modelYear);
+    if (vehicle.fuelType) payload.fuelType = vehicle.fuelType;
+    if (vehicle.transmission) payload.transmissionType = vehicle.transmission;
+    if (vehicle.vehicleMake) payload.vehicleMake = vehicle.vehicleMake;
+    if (vehicle.vehicleModel) payload.vehicleModel = vehicle.vehicleModel;
+    if (vehicle.remarks) payload.remarks = vehicle.remarks;
 
-    // optional installer details (installerInfo)
-    const installerInfo: any = {};
-    if (vehicle.installer) installerInfo.installerId = vehicle.installer;
-    if (vehicle.remarks) installerInfo.installationRemarks = vehicle.remarks;
-    if (Object.keys(installerInfo).length > 0) {
-      vehiclePayload.installerInfo = installerInfo;
-    }
-
-    // Add customer mapping for update payload
-    vehiclePayload.customer = customerInfo.customerId;
-    
-    return vehiclePayload;
+    return payload;
   };
 
-  // Trigger "Installed" status for a vehicle block -> calls ADD_NEW_DEVICE
+  // Extract a readable message from an API result / rejection
+  const messageFrom = (res: any) =>
+    res?.message || res?.description || res?.error || "Request failed";
+
+  // Update a vehicle. Fires up to three endpoints in parallel:
+  //  1. EDIT_VEHICLE   (metadata)      -> always
+  //  2. SWAP_DEVICE    (IMEI / SIM)    -> only when the serial actually changed
+  //  3. MIGRATE_PACKAGE(package/price) -> only when package or discount changed
+  // A single combined alert is shown if any of them fail.
   const handleVehicleInstall = async (index: number) => {
     const vehicle = vehicles[index];
+    const vehicleId = device?.vehicle?._id;
 
-    // ---- Required field validation (per simplified-onboard schema) ----
+    if (!vehicleId) {
+      Swal.fire({ text: "Vehicle reference is missing. Please reopen and try again.", icon: "error" });
+      return;
+    }
+
+    // ---- Required field validation ----
     if (!customerInfo.customerId) {
       Swal.fire({ text: "Please select a Customer first.", icon: "warning", timer: 5000, showConfirmButton: false });
       return;
@@ -244,49 +271,151 @@ export const EditDeviceModal: React.FC<EditDeviceModalProps> = ({ isOpen, toggle
       Swal.fire({ text: "Please select a Service Package for this vehicle.", icon: "warning", timer: 5000, showConfirmButton: false });
       return;
     }
-    if (vehicle.packagePrice === "" || vehicle.packagePrice == null) {
-      Swal.fire({ text: "Please enter the Package Price for this vehicle.", icon: "warning", timer: 5000, showConfirmButton: false });
-      return;
-    }
-    if (vehicle.discountedServiceCharges === "" || vehicle.discountedServiceCharges == null) {
-      Swal.fire({ text: "Please enter the Discounted Service Charges for this vehicle.", icon: "warning", timer: 5000, showConfirmButton: false });
-      return;
-    }
-    if (!vehicle.imei) {
-      Swal.fire({ text: "Please add the Tracker (IMEI) device for this vehicle.", icon: "warning", timer: 5000, showConfirmButton: false });
-      return;
-    }
-    if (!vehicle.sim) {
-      Swal.fire({ text: "Please add the SIM number for this vehicle.", icon: "warning", timer: 5000, showConfirmButton: false });
+
+    // ---- Change detection (trimmed string comparison against the snapshot) ----
+    const newImei = `${vehicle.imei ?? ""}`.trim();
+    const newSim = `${vehicle.sim ?? ""}`.trim();
+    const imeiChanged = newImei !== `${original.imei ?? ""}`.trim();
+    const simChanged = newSim !== `${original.sim ?? ""}`.trim();
+    const packageChanged = `${vehicle.selectedPackage ?? ""}` !== `${original.selectedPackage ?? ""}`;
+    const discountChanged =
+      `${vehicle.discountedServiceCharges ?? ""}`.trim() !== `${original.discountedServiceCharges ?? ""}`.trim();
+    const packageMigration = packageChanged || discountChanged;
+    const customerChanged = `${customerInfo.customerId ?? ""}` !== `${original.customerId ?? ""}`;
+
+    // Billing action is only required when a package migration will happen
+    if (packageMigration && !customerInfo.billingAction) {
+      Swal.fire({
+        text: "Please select a Billing Action for the package/price change.",
+        icon: "warning",
+        timer: 5000,
+        showConfirmButton: false,
+      });
       return;
     }
 
-    const payload = buildVehiclePayload(vehicle);
+    // ---- Build the task list (label + promise) ----
+    const tasks: { label: string; promise: Promise<any> }[] = [];
+
+    // 1. Metadata update — always
+    tasks.push({
+      label: "Vehicle details",
+      promise: update(buildMetadataPayload(vehicle), {
+        url: EDIT_VEHICLE.replace(":vehicleId", vehicleId),
+      }) as Promise<any>,
+    });
+
+    // 2. Swap device / SIM — a single call that carries only whichever changed.
+    //    { device: {...} } when the IMEI changed, { sim: {...} } when the SIM
+    //    changed, both when both changed. Each carries its OWN reason.
+    const swapDevice = imeiChanged && newImei;
+    const swapSim = simChanged && newSim;
+    if (swapDevice || swapSim) {
+      const swapPayload: any = {};
+      if (swapDevice) {
+        const deviceReason = `${vehicle.deviceSwapReason ?? ""}`.trim();
+        swapPayload.device = {
+          serialNumber: newImei,
+          autoCreate: true,
+          ...(deviceReason ? { reason: deviceReason } : {}),
+        };
+      }
+      if (swapSim) {
+        const simReason = `${vehicle.simSwapReason ?? ""}`.trim();
+        swapPayload.sim = {
+          serialNumber: newSim,
+          autoCreate: true,
+          ...(simReason ? { reason: simReason } : {}),
+        };
+      }
+
+      tasks.push({
+        label:
+          swapDevice && swapSim
+            ? "Device & SIM swap"
+            : swapDevice
+            ? "Tracker (IMEI) swap"
+            : "SIM swap",
+        promise: create(swapPayload, {
+          url: SWAP_DEVICE.replace(":vehicleId", vehicleId),
+        }) as Promise<any>,
+      });
+    }
+
+    // 3. Package migration — only when package or discounted charges changed
+    if (packageMigration) {
+      const migratePayload: any = {
+        newServicePackageId: vehicle.selectedPackage,
+        billingAction: customerInfo.billingAction,
+      };
+      if (vehicle.discountedServiceCharges !== "" && vehicle.discountedServiceCharges != null) {
+        migratePayload.servicePackageDiscountedCharges = Number(vehicle.discountedServiceCharges);
+      }
+      tasks.push({
+        label: "Package migration",
+        promise: create(migratePayload, {
+          url: MIGRATE_PACKAGE.replace(":vehicleId", vehicleId),
+        }) as Promise<any>,
+      });
+    }
+
+    // 4. Transfer owner — only when the selected customer changed
+    if (customerChanged && customerInfo.customerId) {
+      tasks.push({
+        label: "Owner transfer",
+        promise: create(
+          { newCustomerId: customerInfo.customerId },
+          { url: TRANSFER_OWNER.replace(":vehicleId", vehicleId) }
+        ) as Promise<any>,
+      });
+    }
 
     setInstallingIndex(index);
     try {
-      const result:any = await update(payload, { url: `${UPDATE_VEHICLE}/${device.vehicle._id}` });
+      const settled = await Promise.allSettled(tasks.map((t) => t.promise));
 
-      if (result && result.success) {
-        Swal.fire({
-          text: `Device updated successfully!`,
-          icon: "success",
-          timer: 2000,
-          showConfirmButton: false,
-        });
+      const errors: string[] = [];
+      settled.forEach((s, i) => {
+        if (s.status === "fulfilled") {
+          const res = s.value;
+          if (!res || !res.success) {
+            errors.push(`• ${tasks[i].label}: ${messageFrom(res)}`);
+          }
+        } else {
+          errors.push(`• ${tasks[i].label}: ${messageFrom(s.reason)}`);
+        }
+      });
 
-        setVehicles((prev) => {
-          const next = [...prev];
-          next[index] = { ...next[index], isInstalled: true };
-          return next;
-        });
-        setHasOnboarded(true);
-      } else {
+      if (errors.length > 0) {
+        // One combined alert for any/all failures
         Swal.fire({
-          text: result?.message || "Failed to update device.",
+          title: "Some updates failed",
+          html: errors.join("<br/>"),
           icon: "error",
         });
+        return;
       }
+
+      // All succeeded
+      Swal.fire({
+        text: "Device updated successfully",
+        icon: "success",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+
+      // Refresh the snapshot so re-clicking without further edits won't re-fire swap/migrate/transfer.
+      // The form stays editable (fields are NOT disabled) and in the same position after updating.
+      setOriginal({
+        imei: newImei,
+        sim: newSim,
+        selectedPackage: vehicle.selectedPackage,
+        discountedServiceCharges: vehicle.discountedServiceCharges,
+        customerId: customerInfo.customerId,
+      });
+      setHasOnboarded(true);
+      // Refetch the parser devices (GET_PARSER_DEVICES) so the sidebar reflects the update
+      onDeviceUpdated?.();
     } catch (err: any) {
       console.error("Update error:", err);
       Swal.fire({
@@ -311,32 +440,10 @@ export const EditDeviceModal: React.FC<EditDeviceModalProps> = ({ isOpen, toggle
     toggle();
   };
 
-  // Each vehicle is onboarded/installed individually via its "Mark as Installed"
-  // button (calls ADD_NEW_DEVICE). The form submit simply prevents a page reload.
+  // Each vehicle is updated individually via its "Update Device" button.
+  // The form submit simply prevents a page reload.
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
-    // Verify device is updated
-    const allInstalled = vehicles.every((v) => v.isInstalled);
-    if (!allInstalled) {
-      Swal.fire({
-        text: "Please update the device details before saving.",
-        icon: "warning",
-        timer: 2500,
-        showConfirmButton: false,
-      });
-      return;
-    }
-
-    Swal.fire({
-      title: "Success!",
-      text: "Device updated successfully!",
-      icon: "success",
-      timer: 3000,
-      showConfirmButton: false,
-    });
-
-    handleClose();
   };
 
   // Dropdown options (antd Select format: { value, label }) matching VehicleDetails
@@ -370,6 +477,13 @@ export const EditDeviceModal: React.FC<EditDeviceModalProps> = ({ isOpen, toggle
   const installerOptions = installersList.map((item: any) => ({
     value: `${item?._id}`,
     label: `${item?.fullName}`,
+  }));
+  // Backend-driven billing action options (VEHICLE_BILLING_ACTIONS). Value is the
+  // action `type`; the description is shown to the user for context.
+  const billingActionOptions = billingActionsList.map((item: any) => ({
+    value: `${item?.type}`,
+    label: `${item?.type}`,
+    description: `${item?.description ?? ""}`,
   }));
   const vehicleColorOptions = [
     "Super White", "Attitude Black", "Graphite Grey", "Silver Metallic",
@@ -460,6 +574,38 @@ export const EditDeviceModal: React.FC<EditDeviceModalProps> = ({ isOpen, toggle
                     />
                   </FormGroup>
                 </Col>
+                <Col md={6} className="mb-3">
+                  <FormGroup>
+                    <Label style={{ fontWeight: "600", fontSize: "13px", color: "#555" }}>
+                      Billing Action
+                    </Label>
+                    <Select
+                      showSearch
+                      style={antSelectStyle}
+                      placeholder="Select Billing Action"
+                      optionFilterProp="label"
+                      filterOption={antFilterOption}
+                      value={customerInfo.billingAction || null}
+                      onChange={(value) =>
+                        setCustomerInfo((prev: any) => ({ ...prev, billingAction: value }))
+                      }
+                      options={billingActionOptions}
+                      optionRender={(option) => (
+                        <div>
+                          <div style={{ fontWeight: 600 }}>{option.data.label}</div>
+                          {option.data.description && (
+                            <div style={{ fontSize: "11px", color: "#888", whiteSpace: "normal" }}>
+                              {option.data.description}
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    />
+                    <small style={{ color: "#999", fontSize: "11px" }}>
+                      Required only when the package or discounted charges are changed.
+                    </small>
+                  </FormGroup>
+                </Col>
               </Row>
             </CardBody>
           </Card>
@@ -469,11 +615,8 @@ export const EditDeviceModal: React.FC<EditDeviceModalProps> = ({ isOpen, toggle
             <Card key={index} id={`vehicle-card-${index}`} className="mb-4" style={{ boxShadow: "0 2px 10px rgba(0,0,0,0.06)", borderLeft: "4px solid #6dbfb8" }}>
               <CardHeader className="d-flex justify-content-between align-items-center" style={{ backgroundColor: "#f8f9fa" }}>
                 <h5 className="mb-0" style={{ color: "#333", fontWeight: "600" }}>
-                  Vehicle #{index + 1} Details {vehicle.isInstalled && <MdCheckCircle color="green" size={20} className="ms-2" />}
+                  Vehicle #{index + 1} Details
                 </h5>
-                {vehicle.isInstalled && (
-                  <span className="badge bg-success">Installation Confirmed</span>
-                )}
               </CardHeader>
               <CardBody>
                 {/* 1. Vehicle Details Fields */}
@@ -840,6 +983,45 @@ export const EditDeviceModal: React.FC<EditDeviceModalProps> = ({ isOpen, toggle
                   </Col>
                 </Row>
 
+                {/* Swap reasons — each appears only when its serial is changed */}
+                {(`${vehicle.imei ?? ""}`.trim() !== `${original.imei ?? ""}`.trim() ||
+                  `${vehicle.sim ?? ""}`.trim() !== `${original.sim ?? ""}`.trim()) && (
+                  <Row>
+                    {`${vehicle.imei ?? ""}`.trim() !== `${original.imei ?? ""}`.trim() && (
+                      <Col md={6} className="mb-3">
+                        <FormGroup>
+                          <Label style={{ fontWeight: "600", fontSize: "12px", color: "#666" }}>
+                            Device (IMEI) Swap Reason
+                          </Label>
+                          <Input
+                            type="text"
+                            placeholder="e.g. Faulty internal GPS module"
+                            value={vehicle.deviceSwapReason}
+                            onChange={(e) => handleVehicleChange(index, "deviceSwapReason", e.target.value)}
+                            disabled={vehicle.isInstalled}
+                          />
+                        </FormGroup>
+                      </Col>
+                    )}
+                    {`${vehicle.sim ?? ""}`.trim() !== `${original.sim ?? ""}`.trim() && (
+                      <Col md={6} className="mb-3">
+                        <FormGroup>
+                          <Label style={{ fontWeight: "600", fontSize: "12px", color: "#666" }}>
+                            SIM Swap Reason
+                          </Label>
+                          <Input
+                            type="text"
+                            placeholder="e.g. SIM no longer active"
+                            value={vehicle.simSwapReason}
+                            onChange={(e) => handleVehicleChange(index, "simSwapReason", e.target.value)}
+                            disabled={vehicle.isInstalled}
+                          />
+                        </FormGroup>
+                      </Col>
+                    )}
+                  </Row>
+                )}
+
                 {/* TEMP: Installation Verification hidden
                 <h6 className="mt-4" style={{ color: "#666", textTransform: "uppercase", fontSize: "11px", letterSpacing: "1px", borderBottom: "1px solid #eee", paddingBottom: "5px", marginBottom: "15px" }}>
                   Installation Verification
@@ -946,20 +1128,16 @@ export const EditDeviceModal: React.FC<EditDeviceModalProps> = ({ isOpen, toggle
                 <div className="text-end">
                   <Button
                     color="primary"
-                    disabled={vehicle.isInstalled || installingIndex === index}
+                    disabled={installingIndex === index}
                     onClick={() => handleVehicleInstall(index)}
                     style={{
-                      backgroundColor: vehicle.isInstalled ? "#28a745" : "#6dbfb8",
-                      borderColor: vehicle.isInstalled ? "#28a745" : "#6dbfb8",
+                      backgroundColor: "#6dbfb8",
+                      borderColor: "#6dbfb8",
                       color: "white",
                       fontWeight: "600",
                     }}
                   >
-                    {vehicle.isInstalled
-                      ? "Installed ✅"
-                      : installingIndex === index
-                      ? "Installing..."
-                      : "Mark as Installed"}
+                    {installingIndex === index ? "Updating..." : "Update Device"}
                   </Button>
                 </div>
               </CardBody>

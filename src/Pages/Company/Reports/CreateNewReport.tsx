@@ -75,6 +75,7 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
   const [vehicleId, setVehicleId] = useState("");
   const [tripId, setTripId] = useState("");
   const [operatorId, setOperatorId] = useState("ALL");
+  const [travelVehicleIds, setTravelVehicleIds] = useState<string[]>([]);
 
   // List States for dropdowns
   const [operatorsForReportsList, setOperatorsForReportsList] = useState<any[]>([]);
@@ -134,6 +135,7 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
     setVehicleId("");
     setTripId("");
     setOperatorId("ALL");
+    setTravelVehicleIds([]);
   }, []);
 
   const addToggle = () => {
@@ -161,7 +163,9 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
       { value: "/get-live-alert-report", label: "Live Alert", P: "Live Alert" },
       { value: "/get-vehicle-history-report", label: "Vehicle History", P: "Vehicle History" },
       { value: "/get-event-agent-response-report", label: "Event Agent Response", P: "Event Agent Response" },
-      { value: "/get-trip-detail-report", label: "Trip Detail", P: "Trip Detail" }
+      { value: "/get-trip-detail-report", label: "Trip Detail", P: "Trip Detail" },
+      { value: "/get-travel-summary-report", label: "Travel Summary", P: "Travel Summary" },
+      { value: "/get-daily-travel-report", label: "Daily Travel", P: "Daily Travel" }
     ];
     extra.forEach(e => {
       if (!existing.find((x: any) => x.value === e.value)) {
@@ -286,7 +290,7 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
           if (csData?.success) setComplaintStatusForReportsList(csData.data.internalComplaintStatusTypes.map((item: any) => ({ value: item.value, label: item.title, P: item.title })));
           if (cpData?.success) setComplaintPriorityForReportsList(cpData.data.internalComplaintPriortyStatusTypes.map((item: any) => ({ value: item.value, label: item.title, P: item.title })));
           if (cdData?.success) setComplaintDepartmentForReportsList(cdData.data.map((item: any) => ({ value: item._id, label: item.name, P: item.name })));
-        } else if (type === "/get-all-alert-events-report" || type === "/get-live-alert-report" || type === "/get-vehicle-history-report" || type === "/get-trip-detail-report") {
+        } else if (type === "/get-all-alert-events-report" || type === "/get-live-alert-report" || type === "/get-vehicle-history-report" || type === "/get-trip-detail-report" || type === "/get-travel-summary-report" || type === "/get-daily-travel-report") {
           const data: any = await getAll({ url: GET_ALL_VEHICLES_DROPDOWN_FOR_ALERT });
           if (data?.success) setVehiclesForReportsList(data.data.map((item: any) => ({ value: item._id, label: item.registrationNo, deviceId: item.traccarDeviceId || item.deviceId, imei: item.imei || "", P: item.registrationNo })));
         } else if (type === "/get-event-agent-response-report") {
@@ -328,6 +332,11 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
   const handleCreateReport: SubmitHandler<ReportsType> = async (formData) => {
     if (!formData.title || !type) {
       Swal.fire({ text: "Required Fields are empty", icon: "info", timer: 2000, showConfirmButton: false });
+      return;
+    }
+
+    if ((type === "/get-travel-summary-report" || type === "/get-daily-travel-report") && travelVehicleIds.length === 0) {
+      Swal.fire({ text: "Please select at least one vehicle", icon: "info", timer: 2000, showConfirmButton: false });
       return;
     }
 
@@ -381,6 +390,16 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
         break;
       case "/get-trip-detail-report":
         payload = { tripId: tripId };
+        break;
+      case "/get-travel-summary-report":
+      case "/get-daily-travel-report":
+        payload = {
+          title: formData.title,
+          vehicleIds: travelVehicleIds,
+          // fromDate -> start of day (12:00 AM), toDate -> end of day (11:59 PM)
+          fromDate: `${startDate.slice(0, 10)}T00:00:00.000Z`,
+          toDate: `${endDate.slice(0, 10)}T23:59:59.999Z`,
+        };
         break;
     }
 
@@ -565,6 +584,18 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
                     <div>Operator:</div>
                     <Col md={8}>
                       <Select showSearch style={{ width: "100%" }} placeholder="Select Operator" optionFilterProp="children" onChange={setOperatorId} options={[{ value: "ALL", label: "All", P: "All" }, ...operatorsDropdownList]} value={operatorId} />
+                    </Col>
+                  </FormGroup>
+                ) : type === "/get-travel-summary-report" || type === "/get-daily-travel-report" ? (
+                  <FormGroup className="col-md-6 create-group" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <div>Vehicles:</div>
+                    <Col md={8}>
+                      <Select
+                        mode="multiple" showSearch style={{ width: "100%" }} placeholder="Select Vehicles" optionFilterProp="children"
+                        onChange={handleMultiSelect(setTravelVehicleIds, vehiclesForReportsList)}
+                        options={[{ value: "All", label: "All" }, ...vehiclesForReportsList]}
+                        value={travelVehicleIds}
+                      />
                     </Col>
                   </FormGroup>
                 ) : <div className="col-md-6 create-group"></div>}

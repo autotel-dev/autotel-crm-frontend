@@ -45,7 +45,7 @@ import {
   setMonitoringSession,
 } from "../../../../../../ReaduxToolkit/Reducer/MonitoringSlice";
 
-const DevicesSidebar = ({ setOpen, open, filteredDevices }: any) => {
+const DevicesSidebar = ({ setOpen, open, filteredDevices, onDeviceUpdated }: any) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [expandedGroups, setExpandedGroups] = useState(new Set());
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
@@ -1398,6 +1398,7 @@ const DevicesSidebar = ({ setOpen, open, filteredDevices }: any) => {
           isOpen={editDeviceModalOpen}
           toggle={() => setEditDeviceModalOpen(!editDeviceModalOpen)}
           device={selectedDevice}
+          onDeviceUpdated={onDeviceUpdated}
         />
       )}
     </>

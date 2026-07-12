@@ -15,6 +15,7 @@ import { Font } from "@react-pdf/renderer";
 import { IMAGE_BASE_URL } from "../../../Utilities/api/apiEndpoints";
 import { useSelector } from "react-redux";
 import BackgroundImage from "../../../assets/Background Image.png";
+import { TravelSummaryDocument, DailyTravelDocument } from "./TravelReportDocuments";
 
 // Register local Helvetica fonts
 Font.register({
@@ -37,6 +38,10 @@ interface ViewPDFModalTypes {
   fromDate?: string;
   toDate?: string;
   registrationNo?: string;
+  reportType?: string;
+  travelData?: any[];
+  periodStart?: string;
+  periodEnd?: string;
 }
 
 const ViewPDFModalForReports: React.FC<ViewPDFModalTypes> = ({
@@ -48,6 +53,10 @@ const ViewPDFModalForReports: React.FC<ViewPDFModalTypes> = ({
   fromDate,
   toDate,
   registrationNo,
+  reportType,
+  travelData,
+  periodStart,
+  periodEnd,
 }) => {
   const { userData } = useSelector((state: any) => state.user);
 
@@ -270,7 +279,25 @@ const ViewPDFModalForReports: React.FC<ViewPDFModalTypes> = ({
             width="100%"
             height="100vh"
           >
-            {body()}
+            {reportType === "/get-travel-summary-report" ? (
+              <TravelSummaryDocument
+                reportData={travelData}
+                reportName={reportName}
+                userData={userData}
+                userPersonalizationData={userPersonalizationData}
+              />
+            ) : reportType === "/get-daily-travel-report" ? (
+              <DailyTravelDocument
+                reportData={travelData}
+                reportName={reportName}
+                userData={userData}
+                userPersonalizationData={userPersonalizationData}
+                periodStart={periodStart}
+                periodEnd={periodEnd}
+              />
+            ) : (
+              body()
+            )}
           </PDFViewer>
         </ModalBody>
       </Modal>

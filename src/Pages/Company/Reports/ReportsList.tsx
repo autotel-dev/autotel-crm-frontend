@@ -36,6 +36,13 @@ import {
 } from "@react-pdf/renderer";
 import { IMAGE_BASE_URL } from "../../../Utilities/api/apiEndpoints";
 import BackgroundImage from "../../../assets/Background Image.png";
+import {
+  TravelSummaryDocument,
+  DailyTravelDocument,
+  formatReportDateTime,
+} from "./TravelReportDocuments";
+
+const TRAVEL_REPORT_TYPES = ["/get-travel-summary-report", "/get-daily-travel-report"];
 
 const pdfStyles = StyleSheet.create({
   page: { padding: 20 },
@@ -175,6 +182,12 @@ const ReportsList = () => {
   const [registrationNo, setRegistrationNo] = useState<string>("");
   const [generatingPdfId, setGeneratingPdfId] = useState<number | null>(null);
   const [isPreparingView, setIsPreparingView] = useState<number | null>(null);
+
+  // Travel Summary / Daily Travel use a dedicated card layout instead of the generic table
+  const [travelReportType, setTravelReportType] = useState<string>("");
+  const [travelData, setTravelData] = useState<any[]>([]);
+  const [periodStart, setPeriodStart] = useState<string>("");
+  const [periodEnd, setPeriodEnd] = useState<string>("");
 
   const { userPersonalizationData } = useSelector((state: any) => state.personalization);
 
@@ -585,6 +598,55 @@ const ReportsList = () => {
                     resolvingDate: `${item?.resolvingDate !== null ? item?.resolvingDate.slice(0, 10) : "N/A"}, ${item?.resolvingDate !== null ? convertTo12HourFormat(item?.resolvingDate, true) : ""}`,
                     createdAt: `${item?.createdAt.slice(0, 10)}, ${convertTo12HourFormat(item?.createdAt, true)}`,
                   }));
+                } else if (row.type == "/get-travel-summary-report") {
+                  columns = [
+                    { label: "Device", value: "deviceLabel" },
+                    { label: "Route Start", value: "routeStart" },
+                    { label: "Route End", value: "routeEnd" },
+                    { label: "Route Length", value: "routeLength" },
+                    { label: "Move Duration", value: "moveDuration" },
+                    { label: "Stop Duration", value: "stopDuration" },
+                    { label: "Top Speed", value: "topSpeed" },
+                    { label: "Average Speed", value: "averageSpeed" },
+                    { label: "Overspeed Count", value: "overspeedCount" },
+                    { label: "Engine Hours", value: "engineHours" },
+                    { label: "Engine Work", value: "engineWork" },
+                    { label: "Engine Idle", value: "engineIdle" },
+                    { label: "Odometer", value: "odometer" },
+                  ];
+                  rowData = (row.data.data?.reportData || []).map((item: any) => ({
+                    ...item,
+                    routeStart: formatReportDateTime(item.routeStart),
+                    routeEnd: formatReportDateTime(item.routeEnd),
+                  }));
+                } else if (row.type == "/get-daily-travel-report") {
+                  columns = [
+                    { label: "Device", value: "device" },
+                    { label: "Date", value: "date" },
+                    { label: "Travel start time", value: "travelStartTime" },
+                    { label: "Travel end time", value: "travelEndTime" },
+                    { label: "Travel time", value: "travelTime" },
+                    { label: "Distance travelled", value: "distanceTravelled" },
+                    { label: "Move duration", value: "moveDuration" },
+                  ];
+                  rowData = (row.data.data?.reportData || []).flatMap((v: any) =>
+                    (v.dailyData || []).map((d: any) => ({
+                      device: v.deviceLabel || v.registrationNo,
+                      date: d.date,
+                      travelStartTime: formatReportDateTime(d.travelStartTime),
+                      travelEndTime: formatReportDateTime(d.travelEndTime),
+                      travelTime: d.travelTime,
+                      distanceTravelled: d.distanceTravelled,
+                      moveDuration: d.moveDuration,
+                    }))
+                  );
+                } else {
+                  // Generic fallback (e.g. other unmapped report types)
+                  const rawData = row.data.data?.reportData || row.data.data;
+                  rowData = Array.isArray(rawData) ? rawData : rawData ? [rawData] : [];
+                  columns = rowData.length > 0
+                    ? Object.keys(rowData[0] || {}).map((k) => ({ label: formatUnderscoredString(k), value: k }))
+                    : [];
                 }
 
                 let data = [
@@ -613,11 +675,24 @@ const ReportsList = () => {
               }}
               onClick={async () => {
                 if (isPreparingView !== null) return;
+
+                // Travel Summary / Daily Travel -> dedicated card layout (no table build needed)
+                if (TRAVEL_REPORT_TYPES.includes(row.type)) {
+                  setTravelReportType(row.type);
+                  setTravelData(row.data.data?.reportData || []);
+                  setReportName(row.data.title);
+                  setPeriodStart(row.data.startDate);
+                  setPeriodEnd(row.data.endDate);
+                  toggleModal();
+                  return;
+                }
+
                 setIsPreparingView(index);
                 // Allow UI to render the spinner before heavy work
                 await new Promise((resolve) => setTimeout(resolve, 100));
 
                 try {
+                  setTravelReportType(""); // ensure table layout for non-travel reports
                   const unwantedKeys = ["packetId", "isAcknowledged"];
                   let rd: any[] = [];
                   let columns: any[] = [];
@@ -679,8 +754,8 @@ const ReportsList = () => {
                     columns = [{ label: "Complaint Id", value: "complaintId" }, { label: "Device Name", value: "deviceName" }, { label: "Description", value: "description" }, { label: "Priorty", value: "priorty" }, { label: "Status", value: "status" }, { label: "Resolving Date", value: "resolvingDate" }, { label: "Created At", value: "createdAt" }];
                     rd = await chunkedTransform(rawData, (item: any) => ({ complaintId: item.complaintId, deviceName: item.deviceName, description: item.description, priorty: item.priorty, status: item.status, resolvingDate: `${item?.resolvingDate !== null ? item?.resolvingDate.slice(0, 10) : "N/A"}, ${item?.resolvingDate !== null ? convertTo12HourFormat(item?.resolvingDate, true) : ""}`, createdAt: `${item?.createdAt.slice(0, 10)}, ${convertTo12HourFormat(item?.createdAt, true)}` }));
                   } else {
-                    const baseData = Array.isArray(rawData) ? rawData : [];
-                    columns = baseData.length > 0 ? Object.keys(baseData[0] || {}).map(k => ({ label: k, value: k })) : [];
+                    const baseData = Array.isArray(rawData) ? rawData : rawData ? [rawData] : [];
+                    columns = baseData.length > 0 ? Object.keys(baseData[0] || {}).map(k => ({ label: formatUnderscoredString(k), value: k })) : [];
                     rd = await chunkedTransform(baseData, (item: any) => ({ ...item }));
                   }
 
@@ -722,6 +797,42 @@ const ReportsList = () => {
                 setGeneratingPdfId(index);
                 // Allow UI to render the spinner before heavy work
                 await new Promise((resolve) => setTimeout(resolve, 100));
+
+                // Travel Summary / Daily Travel -> dedicated card PDF
+                if (TRAVEL_REPORT_TYPES.includes(row.type)) {
+                  try {
+                    const travelDoc =
+                      row.type === "/get-travel-summary-report" ? (
+                        <TravelSummaryDocument
+                          reportData={row.data.data?.reportData || []}
+                          reportName={row.data.title}
+                          userData={userData}
+                          userPersonalizationData={userPersonalizationData}
+                        />
+                      ) : (
+                        <DailyTravelDocument
+                          reportData={row.data.data?.reportData || []}
+                          reportName={row.data.title}
+                          userData={userData}
+                          userPersonalizationData={userPersonalizationData}
+                          periodStart={row.data.startDate}
+                          periodEnd={row.data.endDate}
+                        />
+                      );
+                    const blob = await pdf(travelDoc).toBlob();
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement("a");
+                    a.href = url;
+                    a.download = `${row.data.title}.pdf`;
+                    a.click();
+                    URL.revokeObjectURL(url);
+                  } catch (err) {
+                    console.error("PDF Generate Fail", err);
+                  } finally {
+                    setGeneratingPdfId(null);
+                  }
+                  return;
+                }
 
                 try {
                   const unwantedKeys = ["packetId", "isAcknowledged"];
@@ -773,9 +884,9 @@ const ReportsList = () => {
                       });
                     }
                   } else {
-                    const baseData = Array.isArray(rawData) ? rawData : [];
+                    const baseData = Array.isArray(rawData) ? rawData : rawData ? [rawData] : [];
                     rd = await chunkedTransform(baseData, (item: any) => ({ ...item }));
-                    columns = rd.length > 0 ? Object.keys(rd[0] || {}).map(k => ({ label: k, value: k })) : [];
+                    columns = rd.length > 0 ? Object.keys(rd[0] || {}).map(k => ({ label: formatUnderscoredString(k), value: k })) : [];
                   }
 
                   const blob = await pdf(
@@ -909,6 +1020,10 @@ const ReportsList = () => {
                   fromDate={fromDate}
                   toDate={toDate}
                   registrationNo={registrationNo}
+                  reportType={travelReportType}
+                  travelData={travelData}
+                  periodStart={periodStart}
+                  periodEnd={periodEnd}
                 />
               )}
             </CardBody>
