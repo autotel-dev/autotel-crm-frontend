@@ -75,7 +75,7 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
   const [vehicleId, setVehicleId] = useState("");
   const [tripId, setTripId] = useState("");
   const [operatorId, setOperatorId] = useState("ALL");
-  const [travelVehicleIds, setTravelVehicleIds] = useState<string[]>([]);
+  const [reportVehicleIds, setReportVehicleIds] = useState<string[]>([]);
 
   // List States for dropdowns
   const [operatorsForReportsList, setOperatorsForReportsList] = useState<any[]>([]);
@@ -135,7 +135,7 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
     setVehicleId("");
     setTripId("");
     setOperatorId("ALL");
-    setTravelVehicleIds([]);
+    setReportVehicleIds([]);
   }, []);
 
   const addToggle = () => {
@@ -294,8 +294,12 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
           const data: any = await getAll({ url: GET_ALL_VEHICLES_DROPDOWN_FOR_ALERT });
           if (data?.success) setVehiclesForReportsList(data.data.map((item: any) => ({ value: item._id, label: item.registrationNo, deviceId: item.traccarDeviceId || item.deviceId, imei: item.imei || "", P: item.registrationNo })));
         } else if (type === "/get-event-agent-response-report") {
-          const data: any = await getAll({ url: GET_OPERATORS_DROPDOWN });
-          if (data?.success) setOperatorsDropdownList(data.data.map((item: any) => ({ value: item._id, label: item.fullName, P: item.fullName })));
+          const [opData, vData]: any = await Promise.all([
+            getAll({ url: GET_OPERATORS_DROPDOWN }),
+            getAll({ url: GET_ALL_VEHICLES_DROPDOWN_FOR_ALERT }),
+          ]);
+          if (opData?.success) setOperatorsDropdownList(opData.data.map((item: any) => ({ value: item._id, label: item.fullName, P: item.fullName })));
+          if (vData?.success) setVehiclesForReportsList(vData.data.map((item: any) => ({ value: item._id, label: item.registrationNo, deviceId: item.traccarDeviceId || item.deviceId, imei: item.imei || "", P: item.registrationNo })));
         }
       } catch (error) {
         console.error("Error fetching report options:", error);
@@ -335,7 +339,7 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
       return;
     }
 
-    if ((type === "/get-travel-summary-report" || type === "/get-daily-travel-report") && travelVehicleIds.length === 0) {
+    if ((type === "/get-travel-summary-report" || type === "/get-daily-travel-report") && reportVehicleIds.length === 0) {
       Swal.fire({ text: "Please select at least one vehicle", icon: "info", timer: 2000, showConfirmButton: false });
       return;
     }
@@ -386,7 +390,14 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
         };
         break;
       case "/get-event-agent-response-report":
-        payload.operatorId = operatorId;
+        payload = {
+          title: formData.title,
+          vehicleIds: reportVehicleIds,
+          operatorId: operatorId,
+          // fromDate -> start of day (12:00 AM), toDate -> end of day (11:59 PM)
+          fromDate: `${startDate.slice(0, 10)}T00:00:00.000Z`,
+          toDate: `${endDate.slice(0, 10)}T23:59:59.000Z`,
+        };
         break;
       case "/get-trip-detail-report":
         payload = { tripId: tripId };
@@ -395,7 +406,7 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
       case "/get-daily-travel-report":
         payload = {
           title: formData.title,
-          vehicleIds: travelVehicleIds,
+          vehicleIds: reportVehicleIds,
           // fromDate -> start of day (12:00 AM), toDate -> end of day (11:59 PM)
           fromDate: `${startDate.slice(0, 10)}T00:00:00.000Z`,
           toDate: `${endDate.slice(0, 10)}T23:59:59.999Z`,
@@ -592,9 +603,9 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
                     <Col md={8}>
                       <Select
                         mode="multiple" showSearch style={{ width: "100%" }} placeholder="Select Vehicles" optionFilterProp="children"
-                        onChange={handleMultiSelect(setTravelVehicleIds, vehiclesForReportsList)}
+                        onChange={handleMultiSelect(setReportVehicleIds, vehiclesForReportsList)}
                         options={[{ value: "All", label: "All" }, ...vehiclesForReportsList]}
-                        value={travelVehicleIds}
+                        value={reportVehicleIds}
                       />
                     </Col>
                   </FormGroup>
@@ -643,6 +654,18 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
                     <div>Trips:</div>
                     <Col md={8}>
                       <Select showSearch style={{ width: "100%" }} placeholder="Select Trips" optionFilterProp="children" onChange={setTripId} options={tripsForReportsList} value={tripId || null} />
+                    </Col>
+                  </FormGroup>
+                ) : type === "/get-event-agent-response-report" ? (
+                  <FormGroup className="col-md-6 create-group" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <div>Vehicles:</div>
+                    <Col md={8}>
+                      <Select
+                        mode="multiple" showSearch style={{ width: "100%" }} placeholder="Select Vehicles" optionFilterProp="children"
+                        onChange={handleMultiSelect(setReportVehicleIds, vehiclesForReportsList)}
+                        options={[{ value: "All", label: "All" }, ...vehiclesForReportsList]}
+                        value={reportVehicleIds}
+                      />
                     </Col>
                   </FormGroup>
                 ) : <div></div>}

@@ -15,7 +15,12 @@ import { Font } from "@react-pdf/renderer";
 import { IMAGE_BASE_URL } from "../../../Utilities/api/apiEndpoints";
 import { useSelector } from "react-redux";
 import BackgroundImage from "../../../assets/Background Image.png";
-import { TravelSummaryDocument, DailyTravelDocument } from "./TravelReportDocuments";
+import {
+  TravelSummaryDocument,
+  DailyTravelDocument,
+  EventAgentResponseDocument,
+  VehicleHistoryDocument,
+} from "./TravelReportDocuments";
 
 // Register local Helvetica fonts
 Font.register({
@@ -292,6 +297,25 @@ const ViewPDFModalForReports: React.FC<ViewPDFModalTypes> = ({
                 reportName={reportName}
                 userData={userData}
                 userPersonalizationData={userPersonalizationData}
+                periodStart={periodStart}
+                periodEnd={periodEnd}
+              />
+            ) : reportType === "/get-event-agent-response-report" ? (
+              <EventAgentResponseDocument
+                reportData={travelData}
+                reportName={reportName}
+                userData={userData}
+                userPersonalizationData={userPersonalizationData}
+                periodStart={periodStart}
+                periodEnd={periodEnd}
+              />
+            ) : reportType === "/get-vehicle-history-report" ? (
+              <VehicleHistoryDocument
+                reportData={travelData}
+                reportName={reportName}
+                userData={userData}
+                userPersonalizationData={userPersonalizationData}
+                deviceLabel={registrationNo}
                 periodStart={periodStart}
                 periodEnd={periodEnd}
               />

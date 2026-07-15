@@ -39,10 +39,18 @@ import BackgroundImage from "../../../assets/Background Image.png";
 import {
   TravelSummaryDocument,
   DailyTravelDocument,
+  EventAgentResponseDocument,
+  VehicleHistoryDocument,
   formatReportDateTime,
 } from "./TravelReportDocuments";
 
-const TRAVEL_REPORT_TYPES = ["/get-travel-summary-report", "/get-daily-travel-report"];
+// Report types that use a dedicated card layout for View/PDF instead of the generic table
+const CARD_REPORT_TYPES = [
+  "/get-travel-summary-report",
+  "/get-daily-travel-report",
+  "/get-event-agent-response-report",
+  "/get-vehicle-history-report",
+];
 
 const pdfStyles = StyleSheet.create({
   page: { padding: 20 },
@@ -520,7 +528,7 @@ const ReportsList = () => {
                         item.servicePackageDiscountedCharges,
                     };
                   });
-                } else if (row.type == "/get-live-alert-report" || row.type == "/get-live-alerts-report" || row.type == "/get-vehicle-history-report" || row.type == "/get-event-agent-response-report") {
+                } else if (row.type == "/get-live-alert-report" || row.type == "/get-live-alerts-report") {
                   const unwantedKeys = ["packetId", "isAcknowledged"];
                   if (row.data.data.reportTableHeaders) {
                     columns = row.data.data.reportTableHeaders
@@ -597,6 +605,51 @@ const ReportsList = () => {
                     status: item?.status,
                     resolvingDate: `${item?.resolvingDate !== null ? item?.resolvingDate.slice(0, 10) : "N/A"}, ${item?.resolvingDate !== null ? convertTo12HourFormat(item?.resolvingDate, true) : ""}`,
                     createdAt: `${item?.createdAt.slice(0, 10)}, ${convertTo12HourFormat(item?.createdAt, true)}`,
+                  }));
+                } else if (row.type == "/get-vehicle-history-report") {
+                  columns = [
+                    { label: "Time", value: "timestamp" },
+                    { label: "Latitude", value: "latitude" },
+                    { label: "Longitude", value: "longitude" },
+                    { label: "Address", value: "address" },
+                    { label: "Altitude", value: "altitude" },
+                    { label: "Speed", value: "speed" },
+                    { label: "Course", value: "course" },
+                    { label: "Ignition", value: "ignition" },
+                    { label: "Motion", value: "motion" },
+                  ];
+                  rowData = (row.data.data?.reportData || []).map((item: any) => ({
+                    timestamp: formatReportDateTime(item.timestamp),
+                    latitude: item.latitude,
+                    longitude: item.longitude,
+                    address: item.address,
+                    altitude: `${item.altitude ?? 0} m`,
+                    speed: `${Math.round(Number(item.speed) || 0)} kph`,
+                    course: item.course,
+                    ignition: item.ignition ? "on" : "off",
+                    motion: item.motion ? "on" : "off",
+                  }));
+                } else if (row.type == "/get-event-agent-response-report") {
+                  columns = [
+                    { label: "Registration No", value: "registrationNo" },
+                    { label: "Alert Generation Time", value: "alertGenerationTime" },
+                    { label: "Assigned Time", value: "assignedTime" },
+                    { label: "Creation to Assignment Duration", value: "creationToAssignDuration" },
+                    { label: "Response Time", value: "responseTime" },
+                    { label: "Agent Response Time", value: "agentResponseTime" },
+                    { label: "Event", value: "event" },
+                    { label: "Position", value: "position" },
+                    { label: "Description", value: "description" },
+                    { label: "Operator", value: "operator" },
+                  ];
+                  rowData = (row.data.data?.reportData || []).map((item: any) => ({
+                    ...item,
+                    // alertGenerationTime is ISO (UTC); assignedTime/responseTime are already
+                    // pre-formatted strings from the API, so leave them raw to avoid tz shifts.
+                    alertGenerationTime: formatReportDateTime(item.alertGenerationTime),
+                    position:
+                      item.position?.address ||
+                      (typeof item.position === "string" ? item.position : "N/A"),
                   }));
                 } else if (row.type == "/get-travel-summary-report") {
                   columns = [
@@ -677,10 +730,11 @@ const ReportsList = () => {
                 if (isPreparingView !== null) return;
 
                 // Travel Summary / Daily Travel -> dedicated card layout (no table build needed)
-                if (TRAVEL_REPORT_TYPES.includes(row.type)) {
+                if (CARD_REPORT_TYPES.includes(row.type)) {
                   setTravelReportType(row.type);
                   setTravelData(row.data.data?.reportData || []);
                   setReportName(row.data.title);
+                  setRegistrationNo(row.data.registrationNo || ""); // vehicle history device label
                   setPeriodStart(row.data.startDate);
                   setPeriodEnd(row.data.endDate);
                   toggleModal();
@@ -726,7 +780,7 @@ const ReportsList = () => {
                   } else if (row.type == "/get-trip-detail-report") {
                     columns = [{ label: "Seq", value: "sequence" }, { label: "Location", value: "location" }, { label: "Stop Type", value: "stopType" }, { label: "Sched. Arrival", value: "scheduledArrival" }, { label: "Actual Arrival", value: "actualArrival" }, { label: "Arrival Status", value: "arrivalStatus" }, { label: "Stay (Min)", value: "stayDurationMin" }];
                     rd = await chunkedTransform(row.data.data.stops, (s: any) => ({ ...s, scheduledArrival: s.scheduledArrival?.slice(0, 16), actualArrival: s.actualArrival?.slice(0, 16) }));
-                  } else if (row.type == "/get-live-alert-report" || row.type == "/get-live-alerts-report" || row.type == "/get-vehicle-history-report" || row.type == "/get-event-agent-response-report") {
+                  } else if (row.type == "/get-live-alert-report" || row.type == "/get-live-alerts-report") {
                     if (row.data.data.reportTableHeaders) {
                       columns = row.data.data.reportTableHeaders
                         .filter((h: string) => !unwantedKeys.includes(h.charAt(0).toLowerCase() + h.slice(1).replace(/ /g, "")))
@@ -799,7 +853,7 @@ const ReportsList = () => {
                 await new Promise((resolve) => setTimeout(resolve, 100));
 
                 // Travel Summary / Daily Travel -> dedicated card PDF
-                if (TRAVEL_REPORT_TYPES.includes(row.type)) {
+                if (CARD_REPORT_TYPES.includes(row.type)) {
                   try {
                     const travelDoc =
                       row.type === "/get-travel-summary-report" ? (
@@ -808,6 +862,25 @@ const ReportsList = () => {
                           reportName={row.data.title}
                           userData={userData}
                           userPersonalizationData={userPersonalizationData}
+                        />
+                      ) : row.type === "/get-event-agent-response-report" ? (
+                        <EventAgentResponseDocument
+                          reportData={row.data.data?.reportData || []}
+                          reportName={row.data.title}
+                          userData={userData}
+                          userPersonalizationData={userPersonalizationData}
+                          periodStart={row.data.startDate}
+                          periodEnd={row.data.endDate}
+                        />
+                      ) : row.type === "/get-vehicle-history-report" ? (
+                        <VehicleHistoryDocument
+                          reportData={row.data.data?.reportData || []}
+                          reportName={row.data.title}
+                          userData={userData}
+                          userPersonalizationData={userPersonalizationData}
+                          deviceLabel={row.data.registrationNo}
+                          periodStart={row.data.startDate}
+                          periodEnd={row.data.endDate}
                         />
                       ) : (
                         <DailyTravelDocument
@@ -859,7 +932,7 @@ const ReportsList = () => {
                   } else if (row.type == "/get-amc-due-report") {
                     columns = [{ label: "Customer", value: "customer" }, { label: "Registration No", value: "registrationNo" }, { label: "Renewal Date", value: "serviceRenewalDate" }, { label: "Service Charges", value: "servicePackageCharges" }, { label: "Discounted Charges", value: "servicePackageDiscountedCharges" }];
                     rd = await chunkedTransform(rawData, (item: any) => ({ customer: item.customer.fullName, registrationNo: item.registrationNo, serviceRenewalDate: item.serviceRenewalDate.slice(0, 10), servicePackageCharges: item.servicePackageCharges, servicePackageDiscountedCharges: item.servicePackageDiscountedCharges }));
-                  } else if (row.type == "/get-live-alert-report" || row.type == "/get-live-alerts-report" || row.type == "/get-vehicle-history-report" || row.type == "/get-event-agent-response-report") {
+                  } else if (row.type == "/get-live-alert-report" || row.type == "/get-live-alerts-report") {
                     if (row.data.data.reportTableHeaders) {
                       columns = row.data.data.reportTableHeaders
                         .filter((h: string) => !unwantedKeys.includes(h.charAt(0).toLowerCase() + h.slice(1).replace(/ /g, "")))
