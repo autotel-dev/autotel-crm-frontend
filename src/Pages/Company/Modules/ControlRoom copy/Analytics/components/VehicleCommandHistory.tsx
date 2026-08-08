@@ -43,6 +43,9 @@ const VehicleCommandHistory: React.FC<PropsTypes> = ({
 
   useEffect(() => {
     if (isVisible) {
+      // Reset any previously selected vehicle and its command data on open
+      setSelectedVehicle(null);
+      setCommandsList([]);
       getAll({ url: GET_ALL_VEHICLES_DROPDOWN_FOR_ALERT }).then((data: any) => {
         if (data?.success) {
           setVehiclesList(
@@ -99,7 +102,10 @@ const VehicleCommandHistory: React.FC<PropsTypes> = ({
                   showSearch
                   style={{ width: "100%" }}
                   placeholder="Select Vehicle"
-                  optionFilterProp="children"
+                  optionFilterProp="label"
+                  filterOption={(input, option: any) =>
+                    (option?.label ?? "").toLowerCase().includes(input.toLowerCase())
+                  }
                   onChange={(val) => {
                     setSelectedVehicle(val);
                     fetchCommands(val);

@@ -494,7 +494,7 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
                 <FormGroup className="col-md-6 create-group">
                   <div><P>Report Type</P></div>
                   <Select
-                    showSearch style={{ width: "100%" }} placeholder="Select Type" optionFilterProp="children"
+                    showSearch style={{ width: "100%" }} placeholder="Select Type" optionFilterProp="label"
                     filterOption={(input, option) => (option?.P ?? "").toString().toLowerCase().includes(input.toLowerCase())}
                     onChange={(val, opt: any) => {
                       setType(val);
@@ -507,7 +507,7 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
                 <FormGroup className="col-md-6 create-group" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                   <div>Period:</div>
                   <Col md={8}>
-                    <Select showSearch style={{ width: "100%" }} placeholder="Select Period" optionFilterProp="children" options={periodList} onChange={handleDateSelection} />
+                    <Select showSearch style={{ width: "100%" }} placeholder="Select Period" optionFilterProp="label" options={periodList} onChange={handleDateSelection} />
                   </Col>
                 </FormGroup>
 
@@ -521,7 +521,7 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
                     <div>Operator:</div>
                     <Col md={8}>
                       <Select
-                        mode="multiple" showSearch style={{ width: "100%" }} placeholder="Select Operator" optionFilterProp="children"
+                        mode="multiple" showSearch style={{ width: "100%" }} placeholder="Select Operator" optionFilterProp="label"
                         onChange={handleMultiSelect(setOperatorIds, operatorsForReportsList)}
                         options={[{ value: "All", label: "All" }, ...operatorsForReportsList]}
                         value={operatorIds}
@@ -533,7 +533,7 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
                     <div>Product Type:</div>
                     <Col md={8}>
                       <Select
-                        mode="multiple" showSearch style={{ width: "100%" }} placeholder="Select Type" optionFilterProp="children"
+                        mode="multiple" showSearch style={{ width: "100%" }} placeholder="Select Type" optionFilterProp="label"
                         onChange={handleMultiSelect(setProductTypes, productTypesForReportsList)}
                         options={[{ value: "All", label: "All" }, ...productTypesForReportsList]}
                         value={productTypes}
@@ -545,7 +545,7 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
                     <div>Vendors:</div>
                     <Col md={8}>
                       <Select
-                        mode="multiple" showSearch style={{ width: "100%" }} placeholder="Select Vendors" optionFilterProp="children"
+                        mode="multiple" showSearch style={{ width: "100%" }} placeholder="Select Vendors" optionFilterProp="label"
                         onChange={handleMultiSelect(setVendorIds, vendorsForReportsList)}
                         options={[{ value: "All", label: "All" }, ...vendorsForReportsList]}
                         value={vendorIds}
@@ -557,7 +557,7 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
                     <div>Customers:</div>
                     <Col md={8}>
                       <Select
-                        mode="multiple" showSearch style={{ width: "100%" }} placeholder="Select Customers" optionFilterProp="children"
+                        mode="multiple" showSearch style={{ width: "100%" }} placeholder="Select Customers" optionFilterProp="label"
                         onChange={handleMultiSelect(setCustomerIds, customersForReportsList)}
                         options={[{ value: "All", label: "All" }, ...customersForReportsList]}
                         value={customerIds}
@@ -573,28 +573,28 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
                   <FormGroup className="col-md-6 create-group" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                     <div>Customer:</div>
                     <Col md={8}>
-                      <Select showSearch style={{ width: "100%" }} placeholder="Select Customer" optionFilterProp="children" onChange={setCustomerForVehicleOperationActivity} options={customersForOperationActivitiesReportsList} value={customerForVehicleOperationActivity || null} />
+                      <Select showSearch style={{ width: "100%" }} placeholder="Select Customer" optionFilterProp="label" onChange={setCustomerForVehicleOperationActivity} options={customersForOperationActivitiesReportsList} value={customerForVehicleOperationActivity || null} />
                     </Col>
                   </FormGroup>
                 ) : type === "/get-complaint-report" ? (
                   <FormGroup className="col-md-6 create-group" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                     <div>Complaint Type:</div>
                     <Col md={8}>
-                      <Select showSearch style={{ width: "100%" }} placeholder="Select Type" optionFilterProp="children" onChange={setComplaintType} options={complaintTypesForReportsList} value={complaintType || null} />
+                      <Select showSearch style={{ width: "100%" }} placeholder="Select Type" optionFilterProp="label" onChange={setComplaintType} options={complaintTypesForReportsList} value={complaintType || null} />
                     </Col>
                   </FormGroup>
                 ) : type === "/get-live-alert-report" || type === "/get-vehicle-history-report" || type === "/get-trip-detail-report" ? (
                   <FormGroup className="col-md-6 create-group" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                     <div>Vehicle:</div>
                     <Col md={8}>
-                      <Select showSearch style={{ width: "100%" }} placeholder="Select Vehicle" optionFilterProp="children" onChange={setVehicleId} options={vehiclesForReportsList} value={vehicleId || null} />
+                      <Select showSearch style={{ width: "100%" }} placeholder="Select Vehicle" optionFilterProp="label" onChange={setVehicleId} options={vehiclesForReportsList} value={vehicleId || null} />
                     </Col>
                   </FormGroup>
                 ) : type === "/get-event-agent-response-report" ? (
                   <FormGroup className="col-md-6 create-group" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                     <div>Operator:</div>
                     <Col md={8}>
-                      <Select showSearch style={{ width: "100%" }} placeholder="Select Operator" optionFilterProp="children" onChange={setOperatorId} options={[{ value: "ALL", label: "All", P: "All" }, ...operatorsDropdownList]} value={operatorId} />
+                      <Select showSearch style={{ width: "100%" }} placeholder="Select Operator" optionFilterProp="label" onChange={setOperatorId} options={[{ value: "ALL", label: "All", P: "All" }, ...operatorsDropdownList]} value={operatorId} />
                     </Col>
                   </FormGroup>
                 ) : type === "/get-travel-summary-report" || type === "/get-daily-travel-report" ? (
@@ -602,7 +602,7 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
                     <div>Vehicles:</div>
                     <Col md={8}>
                       <Select
-                        mode="multiple" showSearch style={{ width: "100%" }} placeholder="Select Vehicles" optionFilterProp="children"
+                        mode="multiple" showSearch style={{ width: "100%" }} placeholder="Select Vehicles" optionFilterProp="label"
                         onChange={handleMultiSelect(setReportVehicleIds, vehiclesForReportsList)}
                         options={[{ value: "All", label: "All" }, ...vehiclesForReportsList]}
                         value={reportVehicleIds}
@@ -628,7 +628,7 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
                     <div>Product:</div>
                     <Col md={8}>
                       <Select
-                        mode="multiple" showSearch style={{ width: "100%" }} placeholder="Select Product" optionFilterProp="children"
+                        mode="multiple" showSearch style={{ width: "100%" }} placeholder="Select Product" optionFilterProp="label"
                         onChange={handleMultiSelect(setProducts, productsForReportsList)}
                         options={[{ value: "All", label: "All" }, ...productsForReportsList]}
                         value={products}
@@ -639,21 +639,21 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
                   <FormGroup className="col-md-6 create-group" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                     <div>Vehicle:</div>
                     <Col md={8}>
-                      <Select showSearch style={{ width: "100%" }} placeholder="Select Vehicle" optionFilterProp="children" onChange={setVehicleIdForActivities} options={vehiclesForOperationActivitiesReportsList} value={vehicleIdForActivities || null} />
+                      <Select showSearch style={{ width: "100%" }} placeholder="Select Vehicle" optionFilterProp="label" onChange={setVehicleIdForActivities} options={vehiclesForOperationActivitiesReportsList} value={vehicleIdForActivities || null} />
                     </Col>
                   </FormGroup>
                 ) : type === "/get-complaint-report" ? (
                   <FormGroup className="col-md-6 create-group" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                     <div>Department:</div>
                     <Col md={8}>
-                      <Select showSearch style={{ width: "100%" }} placeholder="Select Department" optionFilterProp="children" onChange={setComplaintDepartment} options={complaintDepartmentForReportsList} value={complaintDepartment || null} />
+                      <Select showSearch style={{ width: "100%" }} placeholder="Select Department" optionFilterProp="label" onChange={setComplaintDepartment} options={complaintDepartmentForReportsList} value={complaintDepartment || null} />
                     </Col>
                   </FormGroup>
                 ) : type === "/get-trip-detail-report" ? (
                   <FormGroup className="col-md-6 create-group" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                     <div>Trips:</div>
                     <Col md={8}>
-                      <Select showSearch style={{ width: "100%" }} placeholder="Select Trips" optionFilterProp="children" onChange={setTripId} options={tripsForReportsList} value={tripId || null} />
+                      <Select showSearch style={{ width: "100%" }} placeholder="Select Trips" optionFilterProp="label" onChange={setTripId} options={tripsForReportsList} value={tripId || null} />
                     </Col>
                   </FormGroup>
                 ) : type === "/get-event-agent-response-report" ? (
@@ -661,7 +661,7 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
                     <div>Vehicles:</div>
                     <Col md={8}>
                       <Select
-                        mode="multiple" showSearch style={{ width: "100%" }} placeholder="Select Vehicles" optionFilterProp="children"
+                        mode="multiple" showSearch style={{ width: "100%" }} placeholder="Select Vehicles" optionFilterProp="label"
                         onChange={handleMultiSelect(setReportVehicleIds, vehiclesForReportsList)}
                         options={[{ value: "All", label: "All" }, ...vehiclesForReportsList]}
                         value={reportVehicleIds}
@@ -686,7 +686,7 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
                   <FormGroup className="col-md-6 create-group" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                     <div>Branch:</div>
                     <Col md={8}>
-                      <Select showSearch style={{ width: "100%" }} placeholder="Select Branch" optionFilterProp="children" onChange={setBranch} options={branchesForReportsList} value={branch || null} />
+                      <Select showSearch style={{ width: "100%" }} placeholder="Select Branch" optionFilterProp="label" onChange={setBranch} options={branchesForReportsList} value={branch || null} />
                     </Col>
                   </FormGroup>
                 ) : type === "/get-activity-report" ? (
@@ -694,7 +694,7 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
                     <div>Type:</div>
                     <Col md={8}>
                       <Select
-                        showSearch style={{ width: "100%" }} placeholder="Select Activity Type" optionFilterProp="children" onChange={setActivityType} value={activityType || null}
+                        showSearch style={{ width: "100%" }} placeholder="Select Activity Type" optionFilterProp="label" onChange={setActivityType} value={activityType || null}
                         options={[
                           { label: "Remove", value: "REMOVE" }, { label: "Transfer", value: "TRANSFER" }, { label: "Temporary Remove", value: "TEMPORARY_REMOVE" },
                           { label: "Ownership Change", value: "OWNERSHIP_CHANGE" }, { label: "Redo", value: "REDO" }, { label: "Customer Data Update", value: "CUSTOMER_DATA_UPDATE" },
@@ -706,7 +706,7 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
                   <FormGroup className="col-md-6 create-group" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                     <div>Status:</div>
                     <Col md={8}>
-                      <Select showSearch style={{ width: "100%" }} placeholder="Select Status" optionFilterProp="children" onChange={setComplaintStatus} options={complaintStatusForReportsList} value={complaintStatus || null} />
+                      <Select showSearch style={{ width: "100%" }} placeholder="Select Status" optionFilterProp="label" onChange={setComplaintStatus} options={complaintStatusForReportsList} value={complaintStatus || null} />
                     </Col>
                   </FormGroup>
                 ) : <div></div>}
@@ -716,7 +716,7 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
                     <FormGroup className="col-md-6 create-group" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                       <div>Warehouse:</div>
                       <Col md={8}>
-                        <Select showSearch style={{ width: "100%" }} placeholder="Select Warehouse" optionFilterProp="children" onChange={setWarehouse} options={warehousesForReportsList} value={warehouse || null} />
+                        <Select showSearch style={{ width: "100%" }} placeholder="Select Warehouse" optionFilterProp="label" onChange={setWarehouse} options={warehousesForReportsList} value={warehouse || null} />
                       </Col>
                     </FormGroup>
                     <FormGroup className="col-md-6 create-group" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
@@ -734,7 +734,7 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
                     <div>Status:</div>
                     <Col md={8}>
                       <Select
-                        showSearch style={{ width: "100%" }} placeholder="Select Activity Status" optionFilterProp="children" onChange={setActivityStatus} value={activityStatus || null}
+                        showSearch style={{ width: "100%" }} placeholder="Select Activity Status" optionFilterProp="label" onChange={setActivityStatus} value={activityStatus || null}
                         options={[{ value: "ASSIGNED", label: "Assigned" }, { value: "INSTALLATION", label: "Performed" }, { value: "COMPLETED", label: "Completed" }]}
                       />
                     </Col>
@@ -743,7 +743,7 @@ const CreateNewReport = ({ dropDownDevices }: any) => {
                   <FormGroup className="col-md-6 create-group" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                     <div>Priority:</div>
                     <Col md={8}>
-                      <Select showSearch style={{ width: "100%" }} placeholder="Select Priority" optionFilterProp="children" onChange={setComplaintPriority} options={complaintPriorityForReportsList} value={complaintPriority || null} />
+                      <Select showSearch style={{ width: "100%" }} placeholder="Select Priority" optionFilterProp="label" onChange={setComplaintPriority} options={complaintPriorityForReportsList} value={complaintPriority || null} />
                     </Col>
                   </FormGroup>
                 ) : null}

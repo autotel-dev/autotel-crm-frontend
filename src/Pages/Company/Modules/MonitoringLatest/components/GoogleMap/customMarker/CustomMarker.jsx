@@ -35,16 +35,20 @@ const CustomMarker = ({
         ${count}
       `;
     } else {
+      // Fixed-size box so rotation pivots predictably around the bottom-center
+      // (the actual location point) instead of an image corner.
+      div.style.width = "28px";
+      div.style.height = "56px";
       div.style.transform = `rotate(${rotation}deg)`;
-      div.style.transformOrigin = "center";
+      div.style.transformOrigin = "center bottom";
 
-      let innerHTML = `<img src="${icon}" width="25" height="45" style="position: absolute" />`;
+      let innerHTML = `<img src="${icon}" width="28" height="56" style="position: absolute; top: 0; left: 0;" />`;
       if (showLabel && label) {
         innerHTML += `
           <div style="
             position: absolute;
-            top: 50px;
-            left: 40%;
+            top: 60px;
+            left: 50%;
             transform: translateX(-50%);
             background: ${statusColor};
             color: white;
@@ -88,9 +92,15 @@ const CustomMarker = ({
       );
 
       if (point) {
-        const offset = isCluster ? parseInt(div.style.width) / 2 : 20;
-        div.style.left = `${point.x - offset}px`;
-        div.style.top = `${point.y - offset}px`;
+        if (isCluster) {
+          const offset = parseInt(div.style.width) / 2;
+          div.style.left = `${point.x - offset}px`;
+          div.style.top = `${point.y - offset}px`;
+        } else {
+          // Anchor the car image by its bottom-center at the location
+          div.style.left = `${point.x - 14}px`; // half of image width (28)
+          div.style.top = `${point.y - 56}px`; // image height (56)
+        }
       }
     };
 

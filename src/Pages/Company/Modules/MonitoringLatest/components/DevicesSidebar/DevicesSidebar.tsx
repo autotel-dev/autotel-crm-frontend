@@ -17,10 +17,12 @@ import { IoMdWifi } from "react-icons/io";
 import { IoKey } from "react-icons/io5";
 import { MdExpandMore, MdExpandLess } from "react-icons/md";
 import { BsThreeDotsVertical } from "react-icons/bs";
-import carIcon from "../../../monitoring-assets/deviceLocationArrow.png";
-import carIconIdle from "../../../monitoring-assets/idle-icon.png";
-import carIconOnline from "../../../monitoring-assets/online-icon.png";
-import carIconStop from "../../../monitoring-assets/stop-icon.png";
+import carBlue from "../../../monitoring-assets/car_blue.png";
+import carGreen from "../../../monitoring-assets/car_green.png";
+import carRed from "../../../monitoring-assets/car_red.png";
+import carYellow from "../../../monitoring-assets/car_yellow.png";
+import carGray from "../../../monitoring-assets/car_gray.png";
+import carPurple from "../../../monitoring-assets/car_purple.png";
 import delayIcon from "../../../../../../assets/delay-icon.png";
 
 import { motion } from "framer-motion";
@@ -551,7 +553,7 @@ const DevicesSidebar = ({ setOpen, open, filteredDevices, onDeviceUpdated }: any
     if (renewalDate && renewalDate < now) {
       return {
         background: "rgba(128, 128, 128, 0.2)",
-        icon: carIcon,
+        icon: carGray, // ⚪ expired
       };
     }
 
@@ -559,7 +561,7 @@ const DevicesSidebar = ({ setOpen, open, filteredDevices, onDeviceUpdated }: any
     if (!deviceTime) {
       return {
         background: "rgba(0, 0, 255, 0.3)",
-        icon: carIcon,
+        icon: carPurple, // 🟣 not connected
       };
     }
 
@@ -567,7 +569,7 @@ const DevicesSidebar = ({ setOpen, open, filteredDevices, onDeviceUpdated }: any
     if ((now.getTime() - deviceTime.getTime()) / (1000 * 60 * 60) > 24) {
       return {
         background: "rgba(128, 0, 128, 0.1)",
-        icon: carIcon,
+        icon: carPurple, // 🟣 inactive
       };
     }
 
@@ -576,35 +578,35 @@ const DevicesSidebar = ({ setOpen, open, filteredDevices, onDeviceUpdated }: any
       case "moving":
         return {
           background: "rgba(0, 255, 0, 0.1)",
-          icon: carIconOnline, // ✅ moving
+          icon: carGreen, // ✅ moving
         };
 
       case "stopped":
         return {
           background: "rgba(255, 0, 0, 0.1)",
-          icon: carIconStop, // ⛔ stopped
+          icon: carRed, // ⛔ stopped
         };
       case "unknown":
         return {
           background: "rgba(255, 0, 0, 0.1)",
-          icon: carIconStop, // ⛔ stopped
+          icon: carRed, // ⛔ stopped
         };
       case "stop":
         return {
           background: "rgba(255, 0, 0, 0.1)",
-          icon: carIconStop, // ⛔ stopped
+          icon: carRed, // ⛔ stopped
         };
 
       case "idle":
         return {
           background: "rgba(255, 165, 0, 0.1)",
-          icon: carIconIdle, // 🟠 idle
+          icon: carYellow, // 🟠 idle
         };
 
       default:
         return {
           background: "rgba(255, 0, 0, 0.1)",
-          icon: carIcon,
+          icon: carBlue, // 🔵 offline / anything else
         };
     }
   };

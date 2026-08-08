@@ -9,10 +9,12 @@ import {
 } from "google-maps-react";
 import { useDispatch, useSelector } from "react-redux";
 import "./googleMap.css";
-import carIcon from "../../../monitoring-assets/deviceLocationArrow.png";
-import carIconIdle from "../../../monitoring-assets/idle-icon.png";
-import carIconOnline from "../../../monitoring-assets/online-icon.png";
-import carIconStop from "../../../monitoring-assets/stop-icon.png";
+import carBlue from "../../../monitoring-assets/car_blue.png";
+import carGreen from "../../../monitoring-assets/car_green.png";
+import carRed from "../../../monitoring-assets/car_red.png";
+import carYellow from "../../../monitoring-assets/car_yellow.png";
+import carGray from "../../../monitoring-assets/car_gray.png";
+import carPurple from "../../../monitoring-assets/car_purple.png";
 
 import { MdAdd } from "react-icons/md";
 import { GrFormSubtract } from "react-icons/gr";
@@ -172,19 +174,31 @@ const GoogleMap = (props) => {
 
   const getStatusIcon = (device) => {
     const statusColor = getStatusColor(device);
+    const v = device?.vehicle || {};
 
+    // Prefer the icon uploaded via the API (if its url is present) for the
+    // relevant status, otherwise fall back to the default color image.
     switch (statusColor) {
       case "green": // moving
-        return carIconOnline;
+        return v?.vehicleIconOnline?.url || carGreen;
 
       case "red": // stopped
-        return carIconStop;
+        return v?.vehicleIconStopped?.url || carRed;
 
       case "orange": // idle
-        return carIconIdle;
+        return v?.vehicleIconIdle?.url || carYellow;
 
-      default:
-        return carIcon; // expired, inactive, not connected
+      case "gray": // expired
+        return carGray;
+
+      case "purple": // inactive
+        return carPurple;
+
+      case "blue": // not connected
+        return carPurple;
+
+      default: // offline / anything else
+        return v?.vehicleIconOffline?.url || carBlue;
     }
   };
 
@@ -543,7 +557,7 @@ const GoogleMap = (props) => {
         onClose={closeInfoWindow}
         options={{
           disableAutoPan: false,
-          pixelOffset: new props.google.maps.Size(0, -40),
+          pixelOffset: new props.google.maps.Size(0, -30),
           disableClose: true,
           closeBoxMargin: "0",
           closeBoxURL: "",
