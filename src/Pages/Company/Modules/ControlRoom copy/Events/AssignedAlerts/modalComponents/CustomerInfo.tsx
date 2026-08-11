@@ -1,28 +1,27 @@
-import { PlusCircle } from "react-feather";
 import { Col } from "reactstrap";
-import { useState } from "react";
-import { SubmitHandler, useForm } from "react-hook-form";
-import { Button, FormGroup, Label, Modal, ModalBody, Row } from "reactstrap";
-import { useDispatch, useSelector } from "react-redux";
-import { H3, P } from "../../../../../../../AbstractElements";
+import { FormGroup, Row } from "reactstrap";
+import { useSelector } from "react-redux";
+import { P } from "../../../../../../../AbstractElements";
 
 const CustomerInfo = () => {
-  const dispatch = useDispatch();
   const { modalData } = useSelector((state: any) => state.alerts);
+
+  const alertEvent = modalData?.alertEvent;
+  const vehicle = alertEvent?.vehicle || {};
+  const customer = vehicle?.customer || {};
+
+  const dob = customer?.dob ? `${customer.dob}`.slice(0, 10) : "";
 
   return (
     <Col md={12}>
-      <form
-        className="form-bookmark needs-validation"
-        //   onSubmit={handleSubmit(addCountry)}
-      >
+      <form className="form-bookmark needs-validation">
         <Row style={{ paddingTop: "20px" }}>
           <FormGroup className="col-md-6 create-group">
             <P>Customer Name</P>
             <input
               className="form-control"
               type="text"
-              defaultValue={modalData?.customerInfo?.customerName}
+              defaultValue={customer?.fullName}
               disabled
             />
           </FormGroup>
@@ -31,7 +30,7 @@ const CustomerInfo = () => {
             <input
               className="form-control"
               type="text"
-              defaultValue={modalData?.customerInfo?.mobile1}
+              defaultValue={customer?.phoneNo}
               disabled
             />
           </FormGroup>
@@ -40,34 +39,16 @@ const CustomerInfo = () => {
             <input
               className="form-control"
               type="text"
-              defaultValue={modalData?.customerInfo?.mobile2}
+              defaultValue={customer?.additionalContactNo}
               disabled
             />
           </FormGroup>
           <FormGroup className="col-md-6 create-group">
-            <P>Secondary Mobile Number</P>
+            <P>Email Address</P>
             <input
               className="form-control"
               type="text"
-              defaultValue={modalData?.customerInfo?.secondaryMobileNo}
-              disabled
-            />
-          </FormGroup>
-          <FormGroup className="col-md-6 create-group">
-            <P>Emergency Contact 1</P>
-            <input
-              className="form-control"
-              type="text"
-              defaultValue={modalData?.customerInfo?.emergencyMobileNo_1}
-              disabled
-            />
-          </FormGroup>
-          <FormGroup className="col-md-6 create-group">
-            <P>Emergency Contact 2</P>
-            <input
-              className="form-control"
-              type="text"
-              defaultValue={modalData?.customerInfo?.emergencyMobileNo_2}
+              defaultValue={customer?.emailAddress}
               disabled
             />
           </FormGroup>
@@ -76,25 +57,7 @@ const CustomerInfo = () => {
             <input
               className="form-control"
               type="text"
-              defaultValue={modalData?.customerInfo?.nicNo}
-              disabled
-            />
-          </FormGroup>
-          <FormGroup className="col-md-6 create-group">
-            <P>Address</P>
-            <input
-              className="form-control"
-              type="text"
-              defaultValue={modalData?.customerInfo?.address}
-              disabled
-            />
-          </FormGroup>
-          <FormGroup className="col-md-6 create-group">
-            <P>Mother Name</P>
-            <input
-              className="form-control"
-              type="text"
-              defaultValue={modalData?.customerInfo?.motherName}
+              defaultValue={customer?.cnic}
               disabled
             />
           </FormGroup>
@@ -103,7 +66,16 @@ const CustomerInfo = () => {
             <input
               className="form-control"
               type="text"
-              defaultValue={modalData?.customerInfo?.dateOfBirth}
+              defaultValue={dob}
+              disabled
+            />
+          </FormGroup>
+          <FormGroup className="col-md-6 create-group">
+            <P>Mother Name</P>
+            <input
+              className="form-control"
+              type="text"
+              defaultValue={customer?.motherName}
               disabled
             />
           </FormGroup>
@@ -112,7 +84,7 @@ const CustomerInfo = () => {
             <input
               className="form-control"
               type="text"
-              defaultValue={modalData?.customerInfo?.normalPassword}
+              defaultValue={customer?.normalPassword}
               disabled
             />
           </FormGroup>
@@ -121,7 +93,7 @@ const CustomerInfo = () => {
             <input
               className="form-control"
               type="text"
-              defaultValue={modalData?.customerInfo?.emergencyPassword}
+              defaultValue={customer?.emergencyPassword}
               disabled
             />
           </FormGroup>
@@ -130,16 +102,7 @@ const CustomerInfo = () => {
             <input
               className="form-control"
               type="text"
-              defaultValue={modalData?.customerInfo?.instructions}
-              disabled
-            />
-          </FormGroup>
-          <FormGroup className="col-md-6 create-group">
-            <P>Value Added Services</P>
-            <input
-              className="form-control"
-              type="text"
-              defaultValue={modalData?.customerInfo?.simNumber}
+              defaultValue={vehicle?.instructions}
               disabled
             />
           </FormGroup>

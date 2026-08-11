@@ -15,6 +15,7 @@ import carRed from "../../../monitoring-assets/car_red.png";
 import carYellow from "../../../monitoring-assets/car_yellow.png";
 import carGray from "../../../monitoring-assets/car_gray.png";
 import carPurple from "../../../monitoring-assets/car_purple.png";
+import carBlack from "../../../monitoring-assets/car_black.png";
 
 import { MdAdd } from "react-icons/md";
 import { GrFormSubtract } from "react-icons/gr";
@@ -26,7 +27,18 @@ import { FaArrowTrendDown } from "react-icons/fa6";
 import { FaRegMap } from "react-icons/fa6";
 
 import { setExpandedDevice } from "../../../../../../ReaduxToolkit/Reducer/MonitoringSlice";
+import { IMAGE_BASE_URL } from "../../../../../../Utilities/api/apiEndpoints";
 import CustomMarker from "./customMarker/CustomMarker";
+
+// Build a usable src from an uploaded icon object ({ url: "vehicleIcons/..." }).
+// Returns null when no icon is set so callers can fall back to a default asset.
+const apiIconUrl = (iconObj) => {
+  const url = iconObj?.url;
+  if (!url) return null;
+  return /^https?:\/\//i.test(url)
+    ? url
+    : `${IMAGE_BASE_URL}/${url}`.replace(/([^:]\/)\/+/g, "$1");
+};
 
 const GoogleMap = (props) => {
   const { devicesDetailData, devices, selectedSingleDevice } = useSelector(
@@ -151,7 +163,12 @@ const GoogleMap = (props) => {
     const hasDeviceTime = device?.latestPosition?.deviceTime;
     if (!hasDeviceTime) return "blue";
 
-    // Check if inactive
+    // Offline — backend flagged the device as inactive (checked before the
+    // time-based inactive heuristic so these devices are shown as offline)
+    const mainStatus = device.mainVehicleStatus?.toLowerCase();
+    if (mainStatus === "inactive") return "black";
+
+    // Check if inactive (time-based)
     const deviceTime = new Date(device.latestPosition.deviceTime);
     const diffMinutes = (now - deviceTime) / (1000 * 60);
     const isInactive = diffMinutes > userData.inactiveTimeLimit;
@@ -159,11 +176,12 @@ const GoogleMap = (props) => {
     if (isInactive) return "purple";
 
     // Check main vehicle status
-    const mainStatus = device.mainVehicleStatus?.toLowerCase();
     switch (mainStatus) {
       case "moving":
         return "green";
       case "stopped":
+        return "red";
+      case "stop":
         return "red";
       case "idle":
         return "orange";
@@ -180,25 +198,32 @@ const GoogleMap = (props) => {
     // relevant status, otherwise fall back to the default color image.
     switch (statusColor) {
       case "green": // moving
-        return v?.vehicleIconOnline?.url || carGreen;
+        return (
+          apiIconUrl(v?.vehicleIconMoving) ||
+          apiIconUrl(v?.vehicleIconOnline) || // legacy
+          carGreen
+        );
 
       case "red": // stopped
-        return v?.vehicleIconStopped?.url || carRed;
+        return apiIconUrl(v?.vehicleIconStopped) || carRed;
 
       case "orange": // idle
-        return v?.vehicleIconIdle?.url || carYellow;
+        return apiIconUrl(v?.vehicleIconIdle) || carYellow;
 
       case "gray": // expired
-        return carGray;
+        return apiIconUrl(v?.vehicleIconExpired) || carGray;
 
-      case "purple": // inactive
-        return carPurple;
+      case "purple": // inactive (time-based)
+        return apiIconUrl(v?.vehicleIconInactive) || carPurple;
 
       case "blue": // not connected
-        return carPurple;
+        return apiIconUrl(v?.vehicleIconNotConnected) || carPurple;
 
-      default: // offline / anything else
-        return v?.vehicleIconOffline?.url || carBlue;
+      case "black": // offline (mainVehicleStatus === "inactive")
+        return apiIconUrl(v?.vehicleIconOffline) || carBlack;
+
+      default: // anything else
+        return apiIconUrl(v?.vehicleIconOffline) || carBlue;
     }
   };
 

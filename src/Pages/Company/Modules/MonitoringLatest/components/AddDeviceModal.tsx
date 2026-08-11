@@ -108,6 +108,7 @@ export const AddDeviceModal: React.FC<AddDeviceModalProps> = ({ isOpen, toggle, 
           nextVehicles.push({
             // Vehicle Details
             registrationNo: "",
+            vrn: "",
             vehicleMake: "",
             vehicleModel: "",
             modelYear: "",
@@ -221,6 +222,7 @@ export const AddDeviceModal: React.FC<AddDeviceModalProps> = ({ isOpen, toggle, 
     };
 
     // optional fields - only sent when provided
+    if (vehicle.vrn) vehiclePayload.vrn = vehicle.vrn;
     if (vehicle.chasisNo) vehiclePayload.chasisNo = vehicle.chasisNo;
     if (vehicle.vehicleColor) vehiclePayload.color = vehicle.vehicleColor;
     if (vehicle.modelYear) vehiclePayload.year = Number(vehicle.modelYear);
@@ -518,6 +520,20 @@ export const AddDeviceModal: React.FC<AddDeviceModalProps> = ({ isOpen, toggle, 
                   <Col md={3} className="mb-3">
                     <FormGroup>
                       <Label style={{ fontWeight: "600", fontSize: "12px", color: "#666" }}>
+                        Enter VRN
+                      </Label>
+                      <Input
+                        type="text"
+                        placeholder="e.g. LED-9999"
+                        value={vehicle.vrn}
+                        onChange={(e) => handleVehicleChange(index, "vrn", e.target.value)}
+                        disabled={vehicle.isInstalled}
+                      />
+                    </FormGroup>
+                  </Col>
+                  <Col md={3} className="mb-3">
+                    <FormGroup>
+                      <Label style={{ fontWeight: "600", fontSize: "12px", color: "#666" }}>
                         Select Vehicle Make
                       </Label>
                       <Select
@@ -555,6 +571,9 @@ export const AddDeviceModal: React.FC<AddDeviceModalProps> = ({ isOpen, toggle, 
                       />
                     </FormGroup>
                   </Col>
+                </Row>
+
+                <Row>
                   <Col md={3} className="mb-3">
                     <FormGroup>
                       <Label style={{ fontWeight: "600", fontSize: "12px", color: "#666" }}>
@@ -573,9 +592,6 @@ export const AddDeviceModal: React.FC<AddDeviceModalProps> = ({ isOpen, toggle, 
                       />
                     </FormGroup>
                   </Col>
-                </Row>
-
-                <Row>
                   <Col md={3} className="mb-3">
                     <FormGroup>
                       <Label style={{ fontWeight: "600", fontSize: "12px", color: "#666" }}>
@@ -630,6 +646,9 @@ export const AddDeviceModal: React.FC<AddDeviceModalProps> = ({ isOpen, toggle, 
                       />
                     </FormGroup>
                   </Col>
+                </Row>
+
+                <Row>
                   <Col md={3} className="mb-3">
                     <FormGroup>
                       <Label style={{ fontWeight: "600", fontSize: "12px", color: "#666" }}>
@@ -644,9 +663,6 @@ export const AddDeviceModal: React.FC<AddDeviceModalProps> = ({ isOpen, toggle, 
                       />
                     </FormGroup>
                   </Col>
-                </Row>
-
-                <Row>
                   <Col md={3} className="mb-3">
                     <FormGroup>
                       <Label style={{ fontWeight: "600", fontSize: "12px", color: "#666" }}>
@@ -661,6 +677,9 @@ export const AddDeviceModal: React.FC<AddDeviceModalProps> = ({ isOpen, toggle, 
                       />
                     </FormGroup>
                   </Col>
+                </Row>
+
+                <Row>
                   <Col md={3} className="mb-3">
                     <FormGroup>
                       <Label style={{ fontWeight: "600", fontSize: "12px", color: "#666" }}>

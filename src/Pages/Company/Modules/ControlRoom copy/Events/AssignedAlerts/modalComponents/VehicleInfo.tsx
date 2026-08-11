@@ -1,28 +1,32 @@
-import { PlusCircle } from "react-feather";
 import { Col } from "reactstrap";
-import { useState } from "react";
-import { SubmitHandler, useForm } from "react-hook-form";
-import { Button, FormGroup, Label, Modal, ModalBody, Row } from "reactstrap";
-import { useDispatch, useSelector } from "react-redux";
-import { H3, P } from "../../../../../../../AbstractElements";
+import { FormGroup, Row } from "reactstrap";
+import { useSelector } from "react-redux";
+import { P } from "../../../../../../../AbstractElements";
 
 const VehicleInfo = () => {
-  const dispatch = useDispatch();
   const { modalData } = useSelector((state: any) => state.alerts);
+
+  const alertEvent = modalData?.alertEvent;
+  const vehicle = alertEvent?.vehicle || {};
+  const inventory = vehicle?.inventory || [];
+
+  const simItem = inventory.find((i: any) => i?.productType === "SIM");
+  const deviceItem = inventory.find((i: any) => i?.productType === "DEVICES");
+  const geofenceNames = (vehicle?.geofences || [])
+    .map((g: any) => g?.title || g?.name)
+    .filter(Boolean)
+    .join(", ");
 
   return (
     <Col md={12}>
-      <form
-        className="form-bookmark needs-validation"
-        //   onSubmit={handleSubmit(addCountry)}
-      >
+      <form className="form-bookmark needs-validation">
         <Row style={{ paddingTop: "20px" }}>
           <FormGroup className="col-md-6 create-group">
             <P>Object Owner</P>
             <input
               className="form-control"
               type="text"
-              defaultValue={modalData?.vehicleInfo?.objectOwner}
+              defaultValue={vehicle?.customer?.fullName}
               disabled
             />
           </FormGroup>
@@ -31,7 +35,7 @@ const VehicleInfo = () => {
             <input
               className="form-control"
               type="text"
-              defaultValue={modalData?.vehicleInfo?.make}
+              defaultValue={vehicle?.make?.name}
               disabled
             />
           </FormGroup>
@@ -40,7 +44,7 @@ const VehicleInfo = () => {
             <input
               className="form-control"
               type="text"
-              defaultValue={modalData?.vehicleInfo?.model}
+              defaultValue={vehicle?.model?.name}
               disabled
             />
           </FormGroup>
@@ -49,16 +53,34 @@ const VehicleInfo = () => {
             <input
               className="form-control"
               type="text"
-              defaultValue={modalData?.vehicleInfo?.color}
+              defaultValue={vehicle?.color}
               disabled
             />
           </FormGroup>
           <FormGroup className="col-md-6 create-group">
-            <P>Type</P>
+            <P>Fuel Type</P>
             <input
               className="form-control"
               type="text"
-              defaultValue={modalData?.vehicleInfo?.type}
+              defaultValue={vehicle?.fuelType}
+              disabled
+            />
+          </FormGroup>
+          <FormGroup className="col-md-6 create-group">
+            <P>Transmission</P>
+            <input
+              className="form-control"
+              type="text"
+              defaultValue={vehicle?.transmissionType}
+              disabled
+            />
+          </FormGroup>
+          <FormGroup className="col-md-6 create-group">
+            <P>Year</P>
+            <input
+              className="form-control"
+              type="text"
+              defaultValue={vehicle?.year}
               disabled
             />
           </FormGroup>
@@ -67,7 +89,7 @@ const VehicleInfo = () => {
             <input
               className="form-control"
               type="text"
-              defaultValue={modalData?.vehicleInfo?.engine}
+              defaultValue={vehicle?.engineNo}
               disabled
             />
           </FormGroup>
@@ -76,7 +98,7 @@ const VehicleInfo = () => {
             <input
               className="form-control"
               type="text"
-              defaultValue={modalData?.vehicleInfo?.chasisNo}
+              defaultValue={vehicle?.chasisNo}
               disabled
             />
           </FormGroup>
@@ -85,7 +107,7 @@ const VehicleInfo = () => {
             <input
               className="form-control"
               type="text"
-              defaultValue={modalData?.vehicleInfo?.vrn}
+              defaultValue={vehicle?.vrn ?? vehicle?.registrationNo}
               disabled
             />
           </FormGroup>
@@ -94,7 +116,7 @@ const VehicleInfo = () => {
             <input
               className="form-control"
               type="text"
-              defaultValue={modalData?.vehicleInfo?.simNumer}
+              defaultValue={simItem?.serialNumber}
               disabled
             />
           </FormGroup>
@@ -103,7 +125,7 @@ const VehicleInfo = () => {
             <input
               className="form-control"
               type="text"
-              defaultValue={modalData?.vehicleInfo?.insuranceName}
+              defaultValue={vehicle?.insurance?.name}
               disabled
             />
           </FormGroup>
@@ -112,25 +134,7 @@ const VehicleInfo = () => {
             <input
               className="form-control"
               type="text"
-              defaultValue={modalData?.vehicleInfo?.bankName}
-              disabled
-            />
-          </FormGroup>
-          <FormGroup className="col-md-6 create-group">
-            <P>Corporate Name</P>
-            <input
-              className="form-control"
-              type="text"
-              defaultValue={modalData?.vehicleInfo?.corporateName}
-              disabled
-            />
-          </FormGroup>
-          <FormGroup className="col-md-6 create-group">
-            <P>City</P>
-            <input
-              className="form-control"
-              type="text"
-              defaultValue={modalData?.vehicleInfo?.city}
+              defaultValue={vehicle?.bank?.name}
               disabled
             />
           </FormGroup>
@@ -139,7 +143,7 @@ const VehicleInfo = () => {
             <input
               className="form-control"
               type="text"
-              defaultValue={modalData?.vehicleInfo?.geofence}
+              defaultValue={geofenceNames}
               disabled
             />
           </FormGroup>
@@ -148,7 +152,7 @@ const VehicleInfo = () => {
             <input
               className="form-control"
               type="text"
-              defaultValue={modalData?.vehicleInfo?.deviceModel}
+              defaultValue={deviceItem?.productName}
               disabled
             />
           </FormGroup>
@@ -157,7 +161,7 @@ const VehicleInfo = () => {
             <input
               className="form-control"
               type="text"
-              defaultValue={modalData?.vehicleInfo?.imei}
+              defaultValue={vehicle?.imei}
               disabled
             />
           </FormGroup>

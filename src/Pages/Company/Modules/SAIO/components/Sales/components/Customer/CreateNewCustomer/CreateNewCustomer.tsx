@@ -96,6 +96,10 @@ const CreateNewCustomer = ({
     emailAddress: "",
     residentialNo: "",
     homeAddress: "",
+    // Optional security-verification fields
+    normalPassword: "",
+    emergencyPassword: "",
+    motherName: "",
   });
   const {
     customerName,
@@ -107,7 +111,27 @@ const CreateNewCustomer = ({
     emailAddress,
     residentialNo,
     homeAddress,
+    normalPassword,
+    emergencyPassword,
+    motherName,
   } = customerInfoForm;
+
+  // Build the API payload. Required fields are always sent; the optional
+  // security fields are included only when filled so an empty value never
+  // overwrites an existing one.
+  const buildCustomerPayload = () => {
+    const {
+      normalPassword: np,
+      emergencyPassword: ep,
+      motherName: mn,
+      ...required
+    } = customerInfoForm;
+    const payload: any = { ...required, city: city, saleLeadId: null };
+    if (np) payload.normalPassword = np;
+    if (ep) payload.emergencyPassword = ep;
+    if (mn) payload.motherName = mn;
+    return payload;
+  };
   const getUserData = (event: ChangeEvent<HTMLInputElement>) => {
     let name = event.target.name;
     let value =
@@ -130,7 +154,7 @@ const CreateNewCustomer = ({
     ) {
       try {
         await create(
-          { ...customerInfoForm, city: city, saleLeadId: null },
+          buildCustomerPayload(),
           { url: CREATE_NEW_CUSTOMER }
         ).then((data: any) => {
           if (data !== undefined) {
@@ -216,7 +240,7 @@ const CreateNewCustomer = ({
     ) {
       try {
         await update(
-          { ...customerInfoForm, city: city, saleLeadId: null },
+          buildCustomerPayload(),
           { url: `${UPDATE_CUSTOMER}/${customer.id || customer._id}` }
         ).then((data: any) => {
           if (data !== undefined) {
@@ -305,6 +329,9 @@ const CreateNewCustomer = ({
                 residentialNo:
                   data.data !== null ? data.data.residentialNo : "",
                 homeAddress: data.data !== null ? data.data.homeAddress : "",
+                normalPassword: data.data?.normalPassword || "",
+                emergencyPassword: data.data?.emergencyPassword || "",
+                motherName: data.data?.motherName || "",
               });
               setCity(data.data !== null ? data.data.city._id : city);
 
@@ -683,6 +710,39 @@ const CreateNewCustomer = ({
                     placeholder="Enter Home Address"
                     value={homeAddress}
                     name="homeAddress"
+                    onChange={getUserData}
+                    disabled={isEdit}
+                  />
+                </Col>
+                <Col xl={4} xs={12}>
+                  <P>Normal Password</P>
+                  <Input
+                    type="text"
+                    placeholder="Enter Normal Password"
+                    value={normalPassword}
+                    name="normalPassword"
+                    onChange={getUserData}
+                    disabled={isEdit}
+                  />
+                </Col>
+                <Col xl={4} xs={12}>
+                  <P>Emergency Password</P>
+                  <Input
+                    type="text"
+                    placeholder="Enter Emergency Password"
+                    value={emergencyPassword}
+                    name="emergencyPassword"
+                    onChange={getUserData}
+                    disabled={isEdit}
+                  />
+                </Col>
+                <Col xl={4} xs={12}>
+                  <P>Mother's Name</P>
+                  <Input
+                    type="text"
+                    placeholder="Enter Mother's Name"
+                    value={motherName}
+                    name="motherName"
                     onChange={getUserData}
                     disabled={isEdit}
                   />

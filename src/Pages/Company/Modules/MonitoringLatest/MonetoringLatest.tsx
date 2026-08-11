@@ -145,6 +145,7 @@ const MonitoringLatest = () => {
     movingCount,
     idleCount,
     stoppedCount,
+    offlineCount,
   } = useMemo(() => {
     // Get inactive time limit from userData (in minutes), default to 24 hours (1440 minutes) if not set
     const inactiveTimeLimitMinutes = userData?.inactiveTimeLimit || 1440;
@@ -164,9 +165,18 @@ const MonitoringLatest = () => {
       (d: any) => !expiredDevices.includes(d),
     );
 
-    // Step 2: Classify inactive and not connected devices (from non-expired)
+    // Step 2: Classify not connected devices (from non-expired)
     const notConnectedDevices = nonExpiredDevices.filter((d: any) => {
       return !d?.latestPosition?.deviceTime; // No deviceTime at all
+    });
+
+    // Offline — backend flagged the device as inactive (has a deviceTime but
+    // mainVehicleStatus === "inactive"). Checked before the time-based inactive.
+    const offlineDevices = nonExpiredDevices.filter((d: any) => {
+      return (
+        !!d?.latestPosition?.deviceTime &&
+        d.mainVehicleStatus?.toLowerCase() === "inactive"
+      );
     });
 
     const inactiveDevices = nonExpiredDevices.filter((d: any) => {
@@ -175,6 +185,7 @@ const MonitoringLatest = () => {
         : null;
 
       if (!deviceTime) return false; // handled by notConnectedDevices
+      if (offlineDevices.includes(d)) return false; // handled by offlineDevices
 
       // Calculate difference in minutes
       const diffMinutes = (now - deviceTime) / (1000 * 60);
@@ -186,7 +197,9 @@ const MonitoringLatest = () => {
     // Step 3: From remaining (active & non-expired) — check statuses
     const activeDevices = nonExpiredDevices.filter(
       (d: any) =>
-        !inactiveDevices.includes(d) && !notConnectedDevices.includes(d),
+        !inactiveDevices.includes(d) &&
+        !notConnectedDevices.includes(d) &&
+        !offlineDevices.includes(d),
     );
 
     const movingCount = activeDevices.filter(
@@ -210,6 +223,7 @@ const MonitoringLatest = () => {
       movingCount,
       idleCount,
       stoppedCount,
+      offlineCount: offlineDevices.length,
     };
   }, [devices, userData]);
 
@@ -365,7 +379,7 @@ const MonitoringLatest = () => {
     return (
       <div
         style={{
-          width: "80px",
+          width: "58px",
           height: "100%",
           borderRadius: "8px",
           background: isSelected ? color : background,
@@ -383,7 +397,7 @@ const MonitoringLatest = () => {
         <p
           style={{
             margin: "0px",
-            fontSize: "14px",
+            fontSize: "13px",
             fontWeight: "bold",
             color: isSelected ? "white" : "black",
           }}
@@ -393,9 +407,9 @@ const MonitoringLatest = () => {
         <p
           style={{
             margin: "0px",
-            fontSize: "10px",
+            fontSize: "9px",
             fontWeight: "bold",
-            marginTop: "-6px",
+            marginTop: "-4px",
             color: isSelected ? "white" : color,
           }}
         >
@@ -512,8 +526,12 @@ const MonitoringLatest = () => {
           return (
             !isExpired && hasDeviceTime && !isInactive && mainStatus === "idle"
           );
+        case "offline":
+          return (
+            !isExpired && hasDeviceTime && mainStatus === "inactive"
+          );
         case "inactive":
-          return !isExpired && isInactive;
+          return !isExpired && isInactive && mainStatus !== "inactive";
         case "not_connected":
           return !isExpired && !hasDeviceTime;
         case "expired":
@@ -770,6 +788,14 @@ const MonitoringLatest = () => {
                 background="rgba(255, 165, 0, 0.1)"
                 onClick={() => handleStatusClick("idle")}
                 isSelected={selectedStatus === "idle"}
+              />
+              <StatusBox
+                count={offlineCount}
+                label="Offline"
+                color="black"
+                background="rgba(0, 0, 0, 0.08)"
+                onClick={() => handleStatusClick("offline")}
+                isSelected={selectedStatus === "offline"}
               />
               <StatusBox
                 count={inactiveCount}

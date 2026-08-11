@@ -540,3 +540,4 @@ export const EDIT_VEHICLE = `${API_BASE_URL}/vehicle/edit-vehicle/:vehicleId`;
 export const SWAP_DEVICE = `${API_BASE_URL}/vehicle/swap-device/:vehicleId`;
 export const MIGRATE_PACKAGE = `${API_BASE_URL}/vehicle/migrate-package/:vehicleId`;
 export const TRANSFER_OWNER = `${API_BASE_URL}/vehicle/transfer-owner/:vehicleId`;
+export const UPDATE_VEHICLE_ICONS = `${API_BASE_URL}/vehicle/update-vehicle-icons/:vehicleId`;

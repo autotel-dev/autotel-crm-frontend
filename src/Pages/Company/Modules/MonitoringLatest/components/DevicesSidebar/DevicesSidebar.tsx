@@ -23,17 +23,20 @@ import carRed from "../../../monitoring-assets/car_red.png";
 import carYellow from "../../../monitoring-assets/car_yellow.png";
 import carGray from "../../../monitoring-assets/car_gray.png";
 import carPurple from "../../../monitoring-assets/car_purple.png";
+import carBlack from "../../../monitoring-assets/car_black.png";
 import delayIcon from "../../../../../../assets/delay-icon.png";
 
 import { motion } from "framer-motion";
 import CustomerDetailsModal from "./CustomerDetailsModal";
 import PlaybackModal from "../SingleVehiceDetail/PlaybackModal/PlaybackModal";
 import { EditDeviceModal } from "../EditDeviceModal";
+import { EditDeviceIconsModal } from "../EditDeviceIconsModal";
 import { getAll, create } from "../../../../../../Utilities/api";
 import {
   GET_ALERT_EVENTS_V2,
   GET_DEVICE_ANALYTICS,
   GET_SINGLE_VEHICLE_START,
+  IMAGE_BASE_URL,
 } from "../../../../../../Utilities/api/apiEndpoints";
 import {
   setInvoiceData,
@@ -47,6 +50,16 @@ import {
   setMonitoringSession,
 } from "../../../../../../ReaduxToolkit/Reducer/MonitoringSlice";
 
+// Build a usable src from an uploaded icon object ({ url: "vehicleIcons/..." }).
+// Returns null when no icon is set so callers can fall back to a default asset.
+const apiIconUrl = (iconObj: any): string | null => {
+  const url = iconObj?.url;
+  if (!url) return null;
+  return /^https?:\/\//i.test(url)
+    ? url
+    : `${IMAGE_BASE_URL}/${url}`.replace(/([^:]\/)\/+/g, "$1");
+};
+
 const DevicesSidebar = ({ setOpen, open, filteredDevices, onDeviceUpdated }: any) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [expandedGroups, setExpandedGroups] = useState(new Set());
@@ -54,6 +67,7 @@ const DevicesSidebar = ({ setOpen, open, filteredDevices, onDeviceUpdated }: any
   const [customerDetailsModal, setCustomerDetailsModal] = useState(false);
   const [playbackModal, setPlaybackModal] = useState(false);
   const [editDeviceModalOpen, setEditDeviceModalOpen] = useState(false);
+  const [editIconsModalOpen, setEditIconsModalOpen] = useState(false);
   const [selectedDevice, setSelectedDevice] = useState<any>(null);
   const [historyType, setHistoryType] = useState<"today" | "yesterday" | null>(
     null,
@@ -253,6 +267,12 @@ const DevicesSidebar = ({ setOpen, open, filteredDevices, onDeviceUpdated }: any
         setSelectedDevice(device);
         dispatch(setSelectedSingleDevice(device));
         setEditDeviceModalOpen(true);
+        break;
+
+      case "edit-device-icons":
+        setSelectedDevice(device);
+        dispatch(setSelectedSingleDevice(device));
+        setEditIconsModalOpen(true);
         break;
 
       case "renewal-expiry":
@@ -539,6 +559,7 @@ const DevicesSidebar = ({ setOpen, open, filteredDevices, onDeviceUpdated }: any
   };
 
   const getVehicleVisualState = (item: any) => {
+    const v = item?.vehicle || {};
     const renewalDate = item?.vehicle?.serviceRenewalDate
       ? new Date(item.vehicle.serviceRenewalDate)
       : null;
@@ -553,7 +574,7 @@ const DevicesSidebar = ({ setOpen, open, filteredDevices, onDeviceUpdated }: any
     if (renewalDate && renewalDate < now) {
       return {
         background: "rgba(128, 128, 128, 0.2)",
-        icon: carGray, // ⚪ expired
+        icon: apiIconUrl(v.vehicleIconExpired) || carGray, // ⚪ expired
       };
     }
 
@@ -561,7 +582,16 @@ const DevicesSidebar = ({ setOpen, open, filteredDevices, onDeviceUpdated }: any
     if (!deviceTime) {
       return {
         background: "rgba(0, 0, 255, 0.3)",
-        icon: carPurple, // 🟣 not connected
+        icon: apiIconUrl(v.vehicleIconNotConnected) || carPurple, // 🟣 not connected
+      };
+    }
+
+    // ⚫ Offline — backend flagged the device as inactive (checked before the
+    // time-based inactive heuristic so these devices are shown as offline)
+    if (item?.mainVehicleStatus?.toLowerCase() === "inactive") {
+      return {
+        background: "rgba(0, 0, 0, 0.08)",
+        icon: apiIconUrl(v.vehicleIconOffline) || carBlack, // ⚫ offline
       };
     }
 
@@ -569,7 +599,7 @@ const DevicesSidebar = ({ setOpen, open, filteredDevices, onDeviceUpdated }: any
     if ((now.getTime() - deviceTime.getTime()) / (1000 * 60 * 60) > 24) {
       return {
         background: "rgba(128, 0, 128, 0.1)",
-        icon: carPurple, // 🟣 inactive
+        icon: apiIconUrl(v.vehicleIconInactive) || carPurple, // 🟣 inactive
       };
     }
 
@@ -578,35 +608,44 @@ const DevicesSidebar = ({ setOpen, open, filteredDevices, onDeviceUpdated }: any
       case "moving":
         return {
           background: "rgba(0, 255, 0, 0.1)",
-          icon: carGreen, // ✅ moving
+          icon:
+            apiIconUrl(v.vehicleIconMoving) ||
+            apiIconUrl(v.vehicleIconOnline) || // legacy
+            carGreen, // ✅ moving
         };
 
       case "stopped":
         return {
           background: "rgba(255, 0, 0, 0.1)",
-          icon: carRed, // ⛔ stopped
+          icon: apiIconUrl(v.vehicleIconStopped) || carRed, // ⛔ stopped
         };
       case "unknown":
         return {
           background: "rgba(255, 0, 0, 0.1)",
-          icon: carRed, // ⛔ stopped
+          icon: apiIconUrl(v.vehicleIconStopped) || carRed, // ⛔ stopped
         };
       case "stop":
         return {
           background: "rgba(255, 0, 0, 0.1)",
-          icon: carRed, // ⛔ stopped
+          icon: apiIconUrl(v.vehicleIconStopped) || carRed, // ⛔ stopped
         };
 
       case "idle":
         return {
           background: "rgba(255, 165, 0, 0.1)",
-          icon: carYellow, // 🟠 idle
+          icon: apiIconUrl(v.vehicleIconIdle) || carYellow, // 🟠 idle
+        };
+
+      case "inactive":
+        return {
+          background: "rgba(0, 0, 0, 0.08)",
+          icon: apiIconUrl(v.vehicleIconOffline) || carBlack, // ⚫ offline
         };
 
       default:
         return {
           background: "rgba(255, 0, 0, 0.1)",
-          icon: carBlue, // 🔵 offline / anything else
+          icon: apiIconUrl(v.vehicleIconOffline) || carBlue, // 🔵 anything else
         };
     }
   };
@@ -1217,6 +1256,10 @@ const DevicesSidebar = ({ setOpen, open, filteredDevices, onDeviceUpdated }: any
                                               action: "edit-device",
                                             },
                                             {
+                                              label: "Edit Device Icons",
+                                              action: "edit-device-icons",
+                                            },
+                                            {
                                               label: "Renewal Expiry",
                                               action: "renewal-expiry",
                                             },
@@ -1401,6 +1444,15 @@ const DevicesSidebar = ({ setOpen, open, filteredDevices, onDeviceUpdated }: any
           toggle={() => setEditDeviceModalOpen(!editDeviceModalOpen)}
           device={selectedDevice}
           onDeviceUpdated={onDeviceUpdated}
+        />
+      )}
+      {/* Edit Device Icons Modal */}
+      {editIconsModalOpen && selectedDevice && (
+        <EditDeviceIconsModal
+          isOpen={editIconsModalOpen}
+          toggle={() => setEditIconsModalOpen(!editIconsModalOpen)}
+          device={selectedDevice}
+          onIconsUpdated={onDeviceUpdated}
         />
       )}
     </>
