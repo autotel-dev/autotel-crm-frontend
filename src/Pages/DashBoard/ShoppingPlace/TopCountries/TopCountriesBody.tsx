@@ -15,7 +15,7 @@ const TopCountriesBody = () => {
   const { isLoaded } = useJsApiLoader({
     id: "google-map-script",
     googleMapsApiKey:
-      "https://maps.googleapis.com/maps/api/js?key=AIzaSyBkNaAGLEVq0YLQMi-PYEMabFeREadYe1Q&v=3.exp&libraries=geometry,drawing,places",
+      process.env.REACT_APP_GOOGLE_MAPS_API_KEY || "",
   });
   return (
     <>
@@ -57,7 +57,7 @@ const TopCountriesBody = () => {
 
 export default TopCountriesBody;
 
-// AIzaSyBkNaAGLEVq0YLQMi-PYEMabFeREadYe1Q
+
 //  {/* Marker with rotation of 60 degrees */}
 {/* <Marker position={center} />
 </GoogleMap> */}

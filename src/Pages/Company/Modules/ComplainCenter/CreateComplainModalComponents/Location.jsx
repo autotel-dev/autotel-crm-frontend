@@ -128,7 +128,7 @@ const Location = (props) => {
 };
 
 export default GoogleApiWrapper({
-  apiKey: "AIzaSyDI3fB-ItM1LpMOyMg_P8UxTUuxHCyQS34",
+  apiKey: (process.env.REACT_APP_GOOGLE_MAPS_API_KEY || ""),
 })(Location);
 
 // ------------------------------------------

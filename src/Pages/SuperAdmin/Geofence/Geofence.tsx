@@ -16,7 +16,7 @@ import {
   GET_ALL_GROUPS,
 } from "../../../Utilities/api/apiEndpoints";
 const Geofence = () => {
-  // const apiKey = "AIzaSyDI3fB-ItM1LpMOyMg_P8UxTUuxHCyQS34"; // Replace with your actual API key
+  // const apiKey = (process.env.REACT_APP_GOOGLE_MAPS_API_KEY || ""); // Replace with your actual API key
 
   const dispatch = useDispatch();
   const { geofences, isConnected } = useSelector(

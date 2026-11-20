@@ -1,14 +1,10 @@
-// socket.js
 import { io } from "socket.io-client";
 
-// your backend server URL
-const SOCKET_URL = "http://163.61.91.52:8080";
-
-// get token from localStorage (or Redux, etc.)
-const token = localStorage.getItem("token");
+// Socket server address comes from .env at build time (see .env.example).
+const SOCKET_URL = process.env.REACT_APP_SOCKET_URL || "";
 
 export const socketConnection = io(SOCKET_URL, {
-  auth: {
-    token, // pass JWT or session token
-  },
+  // Read the token on every (re)connect, not once when this file loads,
+  // so a login or logout after page load is picked up.
+  auth: (cb) => cb({ token: localStorage.getItem("token") }),
 });

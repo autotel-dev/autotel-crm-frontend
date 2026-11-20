@@ -1,41 +1,30 @@
 import { useEffect } from "react";
 import { Navigate, Outlet, useParams } from "react-router-dom";
+import { getLoginPath, isTokenExpired } from "../Utilities/auth/session";
 
 const PrivateRoute = () => {
   const token = localStorage.getItem("token");
-  // console.log(token);
-
   const { companyId } = useParams();
 
   useEffect(() => {
-    // Save companyId to localStorage
-    // console.log("userId except IF", companyId);
+    // Remember which company login page this user came from.
     if (companyId) {
-      // console.log("userId in IF", companyId);
       localStorage.setItem("userId", companyId);
     }
   }, [companyId]);
 
-  // Check if companyId is saved in localStorage
-  const storedCompanyId = localStorage.getItem("userId");
+  if (token === null) {
+    return <Navigate to="/login" />;
+  }
 
-  return token !== null ? (
-    <Outlet />
-  ) : // <Navigate
-  //   to={`${process.env.PUBLIC_URL}${
-  //     localStorage.getItem("userId") !== null ||
-  //     localStorage.getItem("userId") !== undefined
-  //       ? `/login/${localStorage.getItem("userId")}`
-  //       : "/login"
-  //   }`}
-  // />
-  storedCompanyId ? (
-    // <Outlet />
-    <Navigate to="/login" />
+  if (isTokenExpired(token)) {
+    // Work out the right login page before the token (and its role) is gone.
+    const loginPath = getLoginPath();
+    localStorage.removeItem("token");
+    return <Navigate to={loginPath} replace />;
+  }
 
-  ) : (
-    <Navigate to="/login" />
-  );
+  return <Outlet />;
 };
 
 export default PrivateRoute;

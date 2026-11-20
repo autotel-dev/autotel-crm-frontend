@@ -1,7 +1,6 @@
 import { useSelector } from "react-redux";
 import Store from "../../ReaduxToolkit/Store";
 import { jwtDecode } from "jwt-decode";
-import { decryptData, encryptData } from "../encryption/encryption";
 import { getUserRole } from "../globals/globals";
 
 // Retrieve the current state from the Redux store

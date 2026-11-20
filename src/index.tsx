@@ -5,6 +5,9 @@ import './i18n'
 import { Provider } from "react-redux";
 import App from "./App";
 import Store from "./ReaduxToolkit/Store";
+import { installSessionInterceptor } from "./Utilities/auth/session";
+
+installSessionInterceptor();
 
 const root = ReactDOM.createRoot(
    document.getElementById("root") as HTMLElement

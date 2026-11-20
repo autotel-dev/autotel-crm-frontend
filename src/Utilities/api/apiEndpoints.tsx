@@ -1,14 +1,20 @@
-// export const API_BASE_URL = "http://192.168.18.122:81/api/v1";
-// export const IMAGE_BASE_URL = "http://192.168.18.122:81";
+// Server addresses come from .env at build time (see .env.example):
+//   REACT_APP_API_BASE_URL   e.g. https://crmapi.autotel.pk/api/v1
+//   REACT_APP_IMAGE_BASE_URL e.g. https://crmapi.autotel.pk (defaults to the API host)
+export const API_BASE_URL = (process.env.REACT_APP_API_BASE_URL || "").replace(
+  /\/+$/,
+  ""
+);
+export const IMAGE_BASE_URL = (
+  process.env.REACT_APP_IMAGE_BASE_URL || API_BASE_URL.replace(/\/api\/v1$/, "")
+).replace(/\/+$/, "");
 
-export const API_BASE_URL = "http://163.61.91.52:81/api/v1";
-export const IMAGE_BASE_URL = "http://163.61.91.52:81";
-
-// export const API_BASE_URL = "https://crmapi.autotel.pk/api/v1";
-// export const IMAGE_BASE_URL = "https://crmapi.autotel.pk";
-
-// export const API_BASE_URL = "http://localhost:8081/api/v1";
-// export const IMAGE_BASE_URL = "http://localhost:8081";
+if (!API_BASE_URL) {
+  // eslint-disable-next-line no-console
+  console.error(
+    "REACT_APP_API_BASE_URL is not set; copy .env.example to .env and rebuild."
+  );
+}
 
 export const IMAGE_BASE_URL_RENTAL = `${API_BASE_URL}/company/server-credentials/test-connection`;
 export const GET_PARSER_DEVICES = `${API_BASE_URL}/company/get-parser-devices`;

@@ -8,6 +8,18 @@ import successAlert from "../alerts/SuccessAlert";
 import { LOGIN, OTP_VERIFICATION } from "./apiEndpoints";
 import { ERROR_MESSAGE, ERROR_TEXT } from "../constants/constants";
 const api = `${process.env.PUBLIC_URL}/api`;
+
+// Turn an axios error into the { success, statusCode, message } shape callers
+// expect, even when there was no server response (network down, timeout, CORS).
+// A 401 also ends the session; see Utilities/auth/session.ts.
+const requestErrorResult = (error: any): any => {
+  if (error?.response?.data) return requestErrorResult(error);
+  return {
+    success: false,
+    statusCode: error?.response?.status || 0,
+    message: error?.message || ERROR_TEXT,
+  };
+};
 export const ChatMemberApi = `${api}/chatMember.json`;
 export const ChatApi = `${api}/chats.json`;
 
@@ -167,7 +179,7 @@ export const create = async (postData: any, url: URLTypes): Promise<void> => {
     return result;
   } catch (error: any) {
     // console.error("Error creating:", error.message);
-    return error.response.data;
+    return requestErrorResult(error);
   }
 };
 export const otpEnabled = async (
@@ -205,7 +217,7 @@ export const otpEnabled = async (
     return result;
   } catch (error: any) {
     // console.error("Error OTPEnabled:", error.message);
-    return error.response.data;
+    return requestErrorResult(error);
   }
 };
 
@@ -241,7 +253,7 @@ export const resendOTP = async (userId: any, url: URLTypes): Promise<void> => {
     return result;
   } catch (error: any) {
     // console.error("Error resendOTP:", error.message);
-    return error.response.data;
+    return requestErrorResult(error);
   }
 };
 
@@ -277,7 +289,7 @@ export const createCom = async (
     return result;
   } catch (error: any) {
     // console.error("Error creatingCompany:", error.message);
-    return error.response.data;
+    return requestErrorResult(error);
   }
 };
 
@@ -309,7 +321,7 @@ export const update = async (postData: any, url: URLTypes): Promise<void> => {
     return result;
   } catch (error: any) {
     // console.error("Error updating:", error.message);
-    return error.response.data;
+    return requestErrorResult(error);
   }
 };
 
@@ -344,7 +356,7 @@ export const updateWithMultipart = async (
     return result;
   } catch (error: any) {
     // console.error("Error updatingMultipart:", error.message);
-    return error.response.data;
+    return requestErrorResult(error);
   }
 };
 
@@ -378,7 +390,7 @@ export const createWithMultipart = async (
     return result;
   } catch (error: any) {
     // console.error("Error creatingMultipart:", error.response.data);
-    return error.response.data;
+    return requestErrorResult(error);
   }
 };
 
@@ -412,7 +424,7 @@ export const patchWithMultipart = async (
     return result;
   } catch (error: any) {
     // console.error("Error creatingMultipart:", error.response.data);
-    return error.response.data;
+    return requestErrorResult(error);
   }
 };
 
@@ -443,7 +455,7 @@ export const patch = async (postData: any, url: URLTypes): Promise<void> => {
     return result;
   } catch (error: any) {
     // console.error("Error when Patching:", error.message);
-    return error.response.data;
+    return requestErrorResult(error);
   }
 };
 
@@ -476,7 +488,7 @@ export const deleteSingle = async (url: URLTypes): Promise<void> => {
     return result;
   } catch (error: any) {
     // console.error("Error deleting:", error.message);
-    return error.response.data;
+    return requestErrorResult(error);
   }
 };
 
@@ -510,7 +522,7 @@ export const deleteMultiple = async (
     return result;
   } catch (error: any) {
     // console.error("Error deleting:", error.message);
-    return error.response.data;
+    return requestErrorResult(error);
   }
 };
 
@@ -532,15 +544,7 @@ export const getAll = async (url: URLTypes): Promise<void> => {
 
     return result;
   } catch (error: any) {
-    if (error.response.data.statusCode == 401) {
-      Swal.fire({
-        text: `${error.response.data.message}`,
-        icon: "error",
-        showConfirmButton: true,
-      });
-    } else {
-      return error.response.data;
-    }
+    return requestErrorResult(error);
   }
 };
 
@@ -570,7 +574,7 @@ export const getAll = async (url: URLTypes): Promise<void> => {
 //           showConfirmButton: true,
 //         });
 //       } else {
-//         return error.response.data;
+//         return requestErrorResult(error);
 //       }
 //     } else if (error.code === "ECONNABORTED") {
 //       // Handle timeout error
@@ -582,7 +586,7 @@ export const getAll = async (url: URLTypes): Promise<void> => {
 //     } else {
 //       // Handle other errors
 //       console.error(error);
-//       return error.response.data;
+//       return requestErrorResult(error);
 //     }
 //   }
 // };
@@ -619,15 +623,7 @@ export const getAllByBodyData = async (
 
     return result;
   } catch (error: any) {
-    if (error.response.data.statusCode == 401) {
-      Swal.fire({
-        text: `${error.response.data.message}`,
-        icon: "error",
-        showConfirmButton: true,
-      });
-    } else {
-      return error.response.data;
-    }
+    return requestErrorResult(error);
   }
 };
 

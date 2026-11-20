@@ -45,11 +45,19 @@ const ProtectedRoute: React.FC<PropTypes> = ({
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const getLastEndpoint = (pathname: any) => {
-      // Split the pathname by '/'
-      var pathSegments = pathname.split("/");
-      // Get the last segment
-      return pathSegments[pathSegments.length - 1];
+    // Route segments that belong to a module but don't share its slug.
+    const MODULE_ROUTE_ALIASES: Record<string, string> = {
+      "complain-center": "complaint-center",
+      "live-monitoring": "monitoring",
+      "monitoring-for-single-vehicle": "monitoring",
+    };
+
+    // The module a page belongs to is the path segment right after "modules",
+    // e.g. /company/modules/saio-central/sales/invoices -> "saio-central".
+    const getModuleSlug = (pathname: string) => {
+      const segments = pathname.toLowerCase().split("/");
+      const slug = segments[segments.indexOf("modules") + 1] || "";
+      return MODULE_ROUTE_ALIASES[slug] || slug;
     };
 
     const validatePermissions = () => {
@@ -57,7 +65,7 @@ const ProtectedRoute: React.FC<PropTypes> = ({
 
       if (allowedUserRoles.includes(userRole)) {
         const pathname = window.location.pathname;
-        const lastEndpoint = getLastEndpoint(pathname);
+        const moduleSlug = getModuleSlug(pathname);
 
         if (pathname.includes("modules")) {
           if (userRole === "COMPANY" || userRole === "OPERATOR") {
@@ -85,22 +93,14 @@ const ProtectedRoute: React.FC<PropTypes> = ({
                 if (data.success) {
                   // console.log("pathname.includes(modules)", data.data);
                   for (const item of data.data) {
-                    const extractedChars = item.route
-                      .substring(1)
+                    const allowedSlug = (item.route || "")
+                      .replace(/^\//, "")
                       .toLowerCase();
-                    // console.log("extractedChars", extractedChars);
-                    if (extractedChars == "saio-central") {
+                    if (allowedSlug && allowedSlug === moduleSlug) {
                       setLoading(false);
                       setIsConnected(false);
                       setHasPermission(true);
                       return;
-                    } else {
-                      if (extractedChars === lastEndpoint.toLowerCase()) {
-                        setLoading(false);
-                        setIsConnected(false);
-                        setHasPermission(true);
-                        return;
-                      }
                     }
                   }
                   setLoading(false);

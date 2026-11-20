@@ -6,7 +6,6 @@ import ProfileBox from "./ProfileBox";
 import { useSelector } from "react-redux";
 import { decode } from "jwt-js-decode";
 import { jwtDecode } from "jwt-decode";
-import { decryptData } from "../../../Utilities/encryption/encryption";
 import Logo from "../../../assets/Logo.png";
 
 const UserProfile = () => {
