@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Map, GoogleApiWrapper, Circle, Polygon } from "google-maps-react";
-import { GOOGLE_MAPS_OPTIONS } from "../../../../../../../../utils/googleMapsOptions";
+import { GOOGLE_MAPS_OPTIONS, canUseDrawingManager } from "../../../../../../../../utils/googleMapsOptions";
 import { useDispatch, useSelector } from "react-redux";
 import {
   setCircle,
@@ -24,7 +24,7 @@ const GoogleMapTrip = (props) => {
   const geofences = props.geofences || [];
 
   useEffect(() => {
-    if (!props.google || !type) {
+    if (!props.google || !type || !props.google.maps?.drawing?.OverlayType) {
       setDrawingMode(null);
       return;
     }
@@ -59,6 +59,8 @@ const GoogleMapTrip = (props) => {
       mapRef.current
     ) {
       const google = props.google;
+
+      if (!canUseDrawingManager(google)) return;
 
       const drawingManager = new google.maps.drawing.DrawingManager({
         drawingMode: drawingMode,
