@@ -13,7 +13,7 @@ const api = `${process.env.PUBLIC_URL}/api`;
 // expect, even when there was no server response (network down, timeout, CORS).
 // A 401 also ends the session; see Utilities/auth/session.ts.
 const requestErrorResult = (error: any): any => {
-  if (error?.response?.data) return requestErrorResult(error);
+  if (error?.response?.data) return error.response.data;
   return {
     success: false,
     statusCode: error?.response?.status || 0,
