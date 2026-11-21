@@ -1,6 +1,7 @@
 
 
 import { Map, Marker, GoogleApiWrapper, InfoWindow } from "google-maps-react";
+import { GOOGLE_MAPS_OPTIONS } from "../../../../../utils/googleMapsOptions";
 import { useEffect, useState, useRef } from "react";
 import { useSelector } from "react-redux";
 import LocationArrow from "../../../../../assets/deviceLocationArrow.png";
@@ -127,9 +128,7 @@ const Location = (props) => {
   );
 };
 
-export default GoogleApiWrapper({
-  apiKey: (process.env.REACT_APP_GOOGLE_MAPS_API_KEY || ""),
-})(Location);
+export default GoogleApiWrapper(GOOGLE_MAPS_OPTIONS)(Location);
 
 // ------------------------------------------
 

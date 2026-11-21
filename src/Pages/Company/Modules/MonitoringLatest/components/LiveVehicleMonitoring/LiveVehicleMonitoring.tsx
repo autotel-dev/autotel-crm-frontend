@@ -2,6 +2,7 @@ import React, { useEffect, useState, useMemo, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { Map, GoogleApiWrapper, InfoWindow } from "google-maps-react";
+import { GOOGLE_MAPS_OPTIONS } from "../../../../../../utils/googleMapsOptions";
 import "../GoogleMap/googleMap.css";
 import { Card, Button } from "reactstrap";
 import { FaArrowLeft, FaMapMarkerAlt, FaCar, FaClock, FaTachometerAlt } from "react-icons/fa";
@@ -195,6 +196,4 @@ const LiveVehicleMonitoring = ({ google }: any) => {
     );
 };
 
-export default GoogleApiWrapper({
-    apiKey: (process.env.REACT_APP_GOOGLE_MAPS_API_KEY || ""),
-})(LiveVehicleMonitoring);
+export default GoogleApiWrapper(GOOGLE_MAPS_OPTIONS)(LiveVehicleMonitoring);

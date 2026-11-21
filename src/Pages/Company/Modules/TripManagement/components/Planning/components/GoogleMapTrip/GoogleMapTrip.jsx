@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Map, GoogleApiWrapper, Circle, Polygon } from "google-maps-react";
+import { GOOGLE_MAPS_OPTIONS } from "../../../../../../../../utils/googleMapsOptions";
 import { useDispatch, useSelector } from "react-redux";
 import {
   setCircle,
@@ -416,7 +417,4 @@ const GoogleMapTrip = (props) => {
   );
 };
 
-export default GoogleApiWrapper({
-  apiKey: (process.env.REACT_APP_GOOGLE_MAPS_API_KEY || ""),
-  libraries: ["drawing"],
-})(GoogleMapTrip);
+export default GoogleApiWrapper(GOOGLE_MAPS_OPTIONS)(GoogleMapTrip);

@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Map, GoogleApiWrapper } from "google-maps-react";
+import { GOOGLE_MAPS_OPTIONS } from "../../../../../../../../utils/googleMapsOptions";
 
 interface CheckpointMapProps {
   google: any;
@@ -208,6 +209,4 @@ class CheckpointMap extends Component<CheckpointMapProps, CheckpointMapState> {
   }
 }
 
-export default GoogleApiWrapper({
-  apiKey: (process.env.REACT_APP_GOOGLE_MAPS_API_KEY || ""),
-})(CheckpointMap);
+export default GoogleApiWrapper(GOOGLE_MAPS_OPTIONS)(CheckpointMap);

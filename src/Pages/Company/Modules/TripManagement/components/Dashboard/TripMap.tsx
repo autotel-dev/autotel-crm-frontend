@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Map, GoogleApiWrapper, Marker, InfoWindow } from "google-maps-react";
+import { GOOGLE_MAPS_OPTIONS } from "../../../../../../utils/googleMapsOptions";
 import "../../../MonitoringLatest/components/GoogleMap/googleMap.css";
 
 interface TripMapProps {
@@ -209,6 +210,4 @@ const TripMap = ({ google, activeViolations = [], selectedViolation, onMarkerClo
   );
 };
 
-export default GoogleApiWrapper({
-  apiKey: (process.env.REACT_APP_GOOGLE_MAPS_API_KEY || ""),
-})(TripMap);
+export default GoogleApiWrapper(GOOGLE_MAPS_OPTIONS)(TripMap);

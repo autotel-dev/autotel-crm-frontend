@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Map, GoogleApiWrapper, InfoWindow } from "google-maps-react";
+import { GOOGLE_MAPS_OPTIONS } from "../../../../../../utils/googleMapsOptions";
 import { useDispatch, useSelector } from "react-redux";
 import "./googleMap.css";
 // import carIcon from "../../../monitoring-assets/carIcon.png";
@@ -510,6 +511,4 @@ const GoogleMap = (props) => {
   );
 };
 
-export default GoogleApiWrapper({
-  apiKey: (process.env.REACT_APP_GOOGLE_MAPS_API_KEY || ""),
-})(GoogleMap);
+export default GoogleApiWrapper(GOOGLE_MAPS_OPTIONS)(GoogleMap);
