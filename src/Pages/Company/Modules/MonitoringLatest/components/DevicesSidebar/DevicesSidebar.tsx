@@ -11,6 +11,7 @@ import {
 } from "reactstrap";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { getUserRole } from "../../../../../../Utilities/globals/globals";
 import "./DevicesSidebar.css";
 
 import { IoMdWifi } from "react-icons/io";
@@ -434,7 +435,7 @@ const DevicesSidebar = ({ setOpen, open, filteredDevices, onDeviceUpdated }: any
 
   // Handle alert click - redirect to control room
   const handleAlertClick = (alert: any) => {
-    navigate(`${process.env.PUBLIC_URL}/company/modules/control-room`);
+    navigate(`${process.env.PUBLIC_URL}/${getUserRole() === "OPERATOR" ? "operator" : "company"}/modules/control-room`);
   };
 
   const formatDateTime = (isoString: string) => {

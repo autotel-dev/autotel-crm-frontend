@@ -12,7 +12,6 @@ const Support = lazy(() => import("../Pages/Common/Support/Support"));
 const VerifyOTP = lazy(() => import("../Pages/Common/VerifyOTP/VerifyOTP"));
 const CompanyTasks = lazy(() => import("../Pages/Company/Tasks/Tasks"));
 const CompanyUsers = lazy(() => import("../Pages/Company/Users/Users"));
-const Monitoring = lazy(() => import("../Pages/Company/Modules/Monitoring/Monitoring"));
 const ControlRoom = lazy(() => import("../Pages/Company/Modules/ControlRoom/ControlRoom"));
 const ControlRoomV2 = lazy(() => import("../Pages/Company/Modules/ControlRoom copy/ControlRoomV2"));
 const TicketDetails = lazy(() => import("../Pages/Common/Support/TicketDetails"));
@@ -494,7 +493,7 @@ const routes = [
     path: `${process.env.PUBLIC_URL}/company/modules/live-monitoring/:registration`,
     Component: <LiveVehicleMonitoring />,
     isProtected: true,
-    allowedUserRoles: [ROLES.COMPANY],
+    allowedUserRoles: [ROLES.COMPANY, ROLES.OPERATOR],
     permissionValue: "Monitoring",
   },
 
@@ -511,14 +510,14 @@ const routes = [
     path: `${process.env.PUBLIC_URL}/company/modules/monitoring-for-single-vehicle/:vehicleId`,
     Component: <MonitoringForSingleVehicle />,
     isProtected: true,
-    allowedUserRoles: [ROLES.COMPANY],
+    allowedUserRoles: [ROLES.COMPANY, ROLES.OPERATOR],
     permissionValue: "Monitoring",
   },
   {
     path: `${process.env.PUBLIC_URL}/company/modules/monitoring/playback`,
     Component: <Playback />,
     isProtected: true,
-    allowedUserRoles: [ROLES.COMPANY],
+    allowedUserRoles: [ROLES.COMPANY, ROLES.OPERATOR],
     permissionValue: "Monitoring",
   },
   // {
@@ -612,7 +611,9 @@ const routes = [
   },
   {
     path: `${process.env.PUBLIC_URL}/operator/modules/monitoring`,
-    Component: <Monitoring />,
+    // Same page as the company (the old Monitoring page showed sample alerts).
+    // The backend limits operators to their assigned vehicles.
+    Component: <MonitoringLatest />,
     isProtected: true,
     allowedUserRoles: [ROLES.OPERATOR],
     permissionValue: "Monitoring",

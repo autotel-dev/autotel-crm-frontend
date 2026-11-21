@@ -664,8 +664,11 @@ const Dashboard = () => {
         setComponentOrder(JSON.parse(storedOrder));
       }
     } else {
+      // Operators always get their own layout: the company layout includes the
+      // alerts-overview chart, which only loads for companies, so it stayed on
+      // its loading placeholder forever.
       if (getUserRole() === "OPERATOR") {
-        setOperatorComponentOrder(initialOrder);
+        setOperatorComponentOrder(initialOrderForOperator);
       } else {
         setComponentOrder(initialOrder);
       }

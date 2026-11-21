@@ -365,6 +365,13 @@ const LayoutRoutes = () => {
               </Route>
             )
         )}
+        {/* Any address that matches no page (a mistyped link, or a module menu
+            item with no page for this role, such as Trip Management for
+            operators) used to render nothing and break the app. */}
+        <Route
+          path="*"
+          element={<Navigate to={`${process.env.PUBLIC_URL}/not-accessible`} replace />}
+        />
       </Routes>
 
       {/* <Routes>
