@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { Outlet } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../ReaduxToolkit/Hooks";
 import Footer from "./Footer/Footer";
@@ -102,7 +102,10 @@ const Layout = () => {
                   // maxHeight:"93.vh"
                 }}
               >
-                <Outlet />
+                {/* Shows the loader while a page's code downloads; header and sidebar stay. */}
+                <Suspense fallback={<Loader />}>
+                  <Outlet />
+                </Suspense>
               </div>
               {/* <Footer /> */}
             </div>

@@ -6,15 +6,18 @@ import {
   useParams,
 } from "react-router-dom";
 import PrivateRoute from "./PrivateRoute";
+import Loader from "../Pages/Utilities/Loader/Loader";
 import LayoutRoutes from "./LayoutRoutes";
 // import { authRoutes } from "./AuthRoutes";
 
-import VerifyOTP from "../Pages/Common/VerifyOTP/VerifyOTP";
-import { useEffect } from "react";
-import LoginForm from "../Pages/Common/Auth/Auth";
-import ForgotPassword from "../Pages/Common/ForgotPassword/ForgotPassword";
-import ResetPassword from "../Pages/Common/ResetPassword/ResetPassword";
-import VerifyOTPForForgotPassword from "../Pages/Common/VerifyOTPForForgotPassword/VerifyOTPForForgotPassword";
+import { lazy, Suspense, useEffect } from "react";
+
+// Pages load on demand: each page's code downloads the first time it is opened.
+const VerifyOTP = lazy(() => import("../Pages/Common/VerifyOTP/VerifyOTP"));
+const LoginForm = lazy(() => import("../Pages/Common/Auth/Auth"));
+const ForgotPassword = lazy(() => import("../Pages/Common/ForgotPassword/ForgotPassword"));
+const ResetPassword = lazy(() => import("../Pages/Common/ResetPassword/ResetPassword"));
+const VerifyOTPForForgotPassword = lazy(() => import("../Pages/Common/VerifyOTPForForgotPassword/VerifyOTPForForgotPassword"));
 
 const Routers = () => {
   useEffect(() => {
@@ -32,6 +35,7 @@ const Routers = () => {
 
   return (
     <BrowserRouter basename={"/"}>
+      <Suspense fallback={<Loader />}>
       <Routes>
         {token !== null ? (
           <>
@@ -84,6 +88,7 @@ const Routers = () => {
           element={<VerifyOTP />}
         /> */}
       </Routes>
+      </Suspense>
     </BrowserRouter>
   );
 };
