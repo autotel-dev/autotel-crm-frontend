@@ -16,6 +16,7 @@ import NoInternetConnection from "../../../Utilities/NoInternetConnection/NoInte
 import { ROLES } from "../../../../constants/roles";
 import ComplainList from "./ComplainList";
 import ComplainTable from "./ComplainTable";
+import ComplaintBoard from "./ComplaintBoard";
 import {
   setAllComplains,
   setComplainCenterRoles,
@@ -123,12 +124,15 @@ const ComplainCenter = () => {
           dispatch(setIsConnected(true));
         }
         if (!data.success) {
-          Swal.fire({
-            text: `${data.message}`,
-            icon: "error",
-            timer: 2000,
-            showConfirmButton: false,
-          });
+          // An empty list comes back as "not found": the board shows its own empty state.
+          if (!/not found/i.test(String(data.message))) {
+            Swal.fire({
+              text: `${data.message}`,
+              icon: "error",
+              timer: 2000,
+              showConfirmButton: false,
+            });
+          }
           dispatch(setAllComplains([]));
           setComplaintsLoading(false);
           setStatisticsLoading(false);
@@ -361,37 +365,8 @@ const ComplainCenter = () => {
                 <div>
                   {!statisticsloading && !complaintsLoading ? (
                     <>
-                      {supportStatistics == null &&
-                      getUserRole() === ROLES.SUPER_ADMIN ? (
-                        <div
-                          style={{
-                            display: "flex",
-                            justifyContent: "center",
-                            height: "15vh",
-                            backgroundColor: "white",
-                            alignItems: "center",
-                          }}
-                        >
-                          <div
-                            style={{
-                              textAlign: "center",
-                              fontSize: "25px",
-                              fontWeight: "bold",
-                            }}
-                          >
-                            No Complains Found
-                          </div>
-                        </div>
-                      ) : (
-                        getUserRole() !== ROLES.SUPER_ADMIN && <ComplainList />
-                      )}
-                      {/* {getUserRole() !== ROLES.SUPER_ADMIN && <ComplainList />} */}
-
-                      <Card>
-                        <CardBody>
-                          <ComplainTable />
-                        </CardBody>
-                      </Card>
+                      {/* Redesigned page (ComplaintBoard). The previous ComplainList / ComplainTable stay in the folder. */}
+                      <ComplaintBoard />
                     </>
                   ) : (
                     <Card>

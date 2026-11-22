@@ -29,6 +29,21 @@ const RailNav = ({ items, theme, onToggleTheme }: Props) => {
   const [open, setOpen] = useState<string | null>(null);
   const [tip, setTip] = useState<{ text: string; top: number; left: number } | null>(null);
   const flyoutRef = useRef<HTMLDivElement>(null);
+  // Module icons scroll on short screens: show a fade + arrow while more are below
+  const itemsRef = useRef<HTMLDivElement>(null);
+  const [moreBelow, setMoreBelow] = useState(false);
+  useEffect(() => {
+    const el = itemsRef.current;
+    if (!el) return;
+    const check = () => setMoreBelow(el.scrollHeight - el.scrollTop - el.clientHeight > 4);
+    check();
+    el.addEventListener("scroll", check);
+    window.addEventListener("resize", check);
+    return () => {
+      el.removeEventListener("scroll", check);
+      window.removeEventListener("resize", check);
+    };
+  }, [items.length]);
 
   // Close the flyout on navigation, Escape or a click outside it.
   useEffect(() => setOpen(null), [pathname]);
@@ -104,7 +119,17 @@ const RailNav = ({ items, theme, onToggleTheme }: Props) => {
           A
         </Link>
         {/* Module icons scroll on short screens; Setup and the theme switch stay pinned. */}
-        <div className="at-rail__items">{top.map(renderItem)}</div>
+        <div className={`at-rail__items${moreBelow ? " has-more" : ""}`} ref={itemsRef}>{top.map(renderItem)}</div>
+        {moreBelow && (
+          <button
+            type="button"
+            className="at-rail__more"
+            aria-label="Show more menu items"
+            onClick={() => itemsRef.current?.scrollBy({ top: 120, behavior: "smooth" })}
+          >
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth={2.4} strokeLinecap="round" aria-hidden="true"><path d="M6 9l6 6 6-6" /></svg>
+          </button>
+        )}
         <div className="at-rail__bottom">
           {bottom.map(renderItem)}
           <button
