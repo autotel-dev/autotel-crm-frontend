@@ -47,6 +47,16 @@
     <title>Autotel CRM</title>
   </head>
   <body>
+    <!-- Apply the saved light/dark theme before the app draws, so dark mode
+         doesn't flash white on page load (see src/Layout/Rail/useAtTheme.ts). -->
+    <script>
+      try {
+        if (localStorage.getItem("at-theme") === "dark") {
+          document.documentElement.classList.add("at-dark");
+          document.body.classList.add("at-dark");
+        }
+      } catch (e) {}
+    </script>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
     <!--

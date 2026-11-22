@@ -296,6 +296,191 @@ body.at-shell-on {
 @media (max-width: 767px) { :root { --at-chrome-h: 160px; } }
 .at-shell .page-title { padding-top: 0; }
 
+/* ---------- No white flash ---------- */
+// public/index.html adds `at-dark` to <html>/<body> before React starts.
+html.at-dark, html.at-dark body { background: #0a0a12 !important; }
+html.at-dark .loader-wrapper, html.at-dark .loader-wrapper-edited,
+body.at-dark .loader-wrapper, body.at-dark .loader-wrapper-edited {
+  background: #0a0a12 !important;
+}
+.loader-wrapper, .loader-wrapper-edited { background: var(--at-bg) !important; }
+
+/* ---------- Template pages skinned to C1 / C4 ---------- */
+// Older pages are built from the design template with inline colours
+// (personalisation blue, green Edit, red Delete, teal). These rules restyle
+// them to the chosen theme without touching each page. Used for page
+// content and for pop-up windows (which render outside the shell).
+@mixin at-skin {
+  font-family: var(--at-font);
+
+  h1, h2, h3, h4, h5, h6 { font-family: var(--at-font-display); letter-spacing: normal; }
+
+  .card {
+    border-radius: var(--at-radius) !important;
+    box-shadow: none !important;
+    border: 1px solid var(--at-line) !important;
+    background-color: var(--at-panel);
+  }
+  .card-header {
+    background-color: var(--at-panel);
+    border-bottom: 1px solid var(--at-line) !important;
+    border-radius: var(--at-radius) var(--at-radius) 0 0 !important;
+  }
+
+  // Buttons: everything becomes the theme's primary button...
+  .btn:not(.btn-close):not(.btn-link) {
+    border-radius: 12px !important;
+    border: 0 !important;
+    font: 600 13px var(--at-font) !important;
+    letter-spacing: normal !important;
+    min-height: 38px;
+    padding: 9px 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    box-shadow: none !important;
+    svg { stroke: currentColor; }
+  }
+  .btn:not(.btn-close):not(.btn-link):not(.btn-secondary):not(.btn-light):not(.btn-danger):not(.btn-success):not([class*="btn-outline"]) {
+    background-color: var(--at-primary) !important;
+    color: var(--at-on-primary) !important;
+  }
+  // ...except edit / secondary (soft) and delete (soft red).
+  .global-table-edit-btn, .global-table-delete-btn {
+    width: auto !important;
+    min-width: 56px;
+    padding: 6px 12px !important;
+    border-radius: 10px !important;
+    font: 600 12px var(--at-font) !important;
+    letter-spacing: normal !important;
+    border: 0 !important;
+  }
+  .global-table-edit-btn, button[style*="background-color: green"], .btn.btn-success,
+  .btn.btn-secondary, .btn.btn-light, button[style*="background-color: gray"] {
+    background-color: var(--at-soft) !important;
+    color: var(--at-text) !important;
+  }
+  .global-table-delete-btn, button[style*="background-color: red"], .btn.btn-danger {
+    background-color: rgba(220, 38, 38, 0.12) !important;
+    color: var(--at-stopped) !important;
+  }
+  .btn[class*="btn-outline"] {
+    background-color: transparent !important;
+    border: 1px solid var(--at-line) !important;
+    color: var(--at-text) !important;
+  }
+
+  // Form fields
+  .form-control, .form-select, .global-search-field, textarea,
+  input[type="text"], input[type="number"], input[type="email"], input[type="password"],
+  input[type="date"], input[type="search"], input[type="tel"], input[type="time"],
+  input[type="datetime-local"], select {
+    border-radius: 12px !important;
+    border: 1px solid var(--at-line) !important;
+    background-color: var(--at-soft) !important;
+    color: var(--at-text) !important;
+    font-family: var(--at-font) !important;
+    font-size: 14px !important;
+    letter-spacing: normal !important;
+    box-shadow: none !important;
+    &::placeholder { color: var(--at-muted) !important; }
+    &:focus { border-color: var(--at-primary) !important; outline: none; }
+    &:disabled, &[readonly] { opacity: 1 !important; color: var(--at-muted) !important; }
+  }
+  label, .form-label { font-family: var(--at-font); font-weight: 600; letter-spacing: normal; }
+
+  // Filter tabs (All / Inactive / Active) become a segmented control
+  .nav-tabs.border-tab {
+    display: inline-flex;
+    gap: 4px;
+    padding: 4px;
+    border: 0 !important;
+    border-radius: 14px;
+    background: var(--at-soft);
+  }
+  .nav-tabs.border-tab .nav-item { margin: 0 !important; }
+  .nav-tabs.border-tab .nav-link {
+    border: 0 !important;
+    border-radius: 10px !important;
+    padding: 8px 14px !important;
+    margin: 0 !important;
+    background: transparent !important;
+    color: var(--at-text) !important;
+    font: 600 13px var(--at-font);
+    letter-spacing: normal;
+    svg { stroke: currentColor; }
+    &::after, &::before { display: none !important; }
+  }
+  .nav-tabs.border-tab .nav-link.active {
+    background: var(--at-text) !important;
+    color: var(--at-panel) !important;
+  }
+
+  // Wizard steps (Create / Update company)
+  .horizontal-options .nav-link, .horizontal-options .nav-item > a {
+    background-color: var(--at-soft) !important;
+    color: var(--at-text) !important;
+    border: 0 !important;
+    border-radius: 12px !important;
+    .horizontal-wizard, i { color: inherit !important; }
+  }
+  .horizontal-options .nav-link.active {
+    background-color: var(--at-primary) !important;
+    color: var(--at-on-primary) !important;
+  }
+
+  // Switches and checkboxes
+  .switch input:checked + .switch-state,
+  .form-check-input:checked,
+  .form-switch .form-check-input:checked {
+    background-color: var(--at-primary) !important;
+    border-color: var(--at-primary) !important;
+  }
+
+  // Template teal used inline
+  [style*="color: rgb(53, 191, 191)"], [style*="color: rgb(51, 191, 191)"] { color: var(--at-primary) !important; }
+  [style*="background-color: rgb(53, 191, 191)"], [style*="background-color: rgb(51, 191, 191)"],
+  [style*="background-color: rgb(109, 191, 184)"] {
+    background-color: var(--at-primary) !important;
+    color: var(--at-on-primary) !important;
+  }
+
+  // Heavy grey drop shadows from the template; the new look is flat.
+  [style*="box-shadow: lightgray"], [style*="box-shadow: gray"], [style*="box-shadow: rgb(211, 211, 211)"] {
+    box-shadow: none !important;
+    border: 1px solid var(--at-line);
+    border-radius: var(--at-radius) !important;
+  }
+
+  .badge { border-radius: 999px; font-family: var(--at-font); letter-spacing: normal; }
+  .modal-content { border-radius: var(--at-radius) !important; border: 1px solid var(--at-line) !important; }
+}
+
+.at-shell .page-body, .modal { @include at-skin; }
+
+// Dark only: inline white / black from the template
+@mixin at-skin-dark {
+  [style*="background-color: white"], [style*="background: white"],
+  [style*="background-color: rgb(255, 255, 255)"], [style*="background: rgb(255, 255, 255)"] {
+    background-color: var(--at-panel) !important;
+  }
+  [style*="background-color: rgb(241, 241, 241)"], [style*="background-color: rgb(248, 249, 250)"],
+  [style*="background-color: rgb(248, 250, 250)"] {
+    background-color: var(--at-soft) !important;
+  }
+  [style^="color: black"], [style*=" color: black"], [style*=";color: black"],
+  [style^="color: rgb(0, 0, 0)"], [style*=" color: rgb(0, 0, 0)"],
+  [style*=" color: rgb(51, 51, 51)"], [style^="color: rgb(51, 51, 51)"] {
+    color: var(--at-text) !important;
+  }
+  [style*=" color: rgb(102, 102, 102)"], [style^="color: rgb(102, 102, 102)"],
+  [style*=" color: gray"], [style^="color: gray"], [style*=" color: rgb(108, 117, 125)"] {
+    color: var(--at-muted) !important;
+  }
+}
+body.at-dark .at-shell .page-body, body.at-dark .modal { @include at-skin-dark; }
+
 /* ---------- Dark theme for older template pages ---------- */
 // Older pages keep their layout; these rules only recolour the common
 // Bootstrap / reactstrap / antd pieces so text stays readable in C4.

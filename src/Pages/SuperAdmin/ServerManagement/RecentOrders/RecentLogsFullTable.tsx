@@ -231,7 +231,7 @@ const RecentLogsFullTable = () => {
   const [idd, setIdd] = useState("");
 
   return (
-    <div style={{ marginTop: "170px" }}>
+    <div style={{ marginTop: 0 }}>
       <Row className="project-card">
         <Card className="invoice-card">
           <CardHeader className="pb-0">

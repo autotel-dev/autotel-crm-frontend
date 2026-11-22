@@ -18,6 +18,7 @@ const apply = (t: AtTheme) => {
   // (dark text on dark tables), so older pages use our overrides in
   // theme/autotel.scss instead.
   b.toggle("at-dark", t === "dark");
+  document.documentElement.classList.toggle("at-dark", t === "dark");
   b.remove("dark-only");
 };
 

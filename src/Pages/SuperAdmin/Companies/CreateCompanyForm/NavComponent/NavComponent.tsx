@@ -30,13 +30,7 @@ const NavComponent = ({
                   : "white"
               }`,
             }}
-            className={`b-r-0 ${
-              activeTab === index + 1
-                ? userPersonalizationData &&
-                  userPersonalizationData?.buttonsAndBarsColor == null &&
-                  "active"
-                : ""
-            }`}
+            className={`b-r-0 ${activeTab === index + 1 ? "active" : ""}`}
             onClick={() => handleTab(data.activeTab)}
           >
             <div
