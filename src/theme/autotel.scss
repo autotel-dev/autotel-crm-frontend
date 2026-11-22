@@ -242,7 +242,9 @@ body.at-shell-on {
   color: var(--at-text);
   border: 1px solid var(--at-line);
   border-radius: var(--at-radius);
-  box-shadow: var(--at-shadow);
+  // Second shadow paints the page colour into the 16px gap above the bar,
+  // so content scrolling underneath doesn't show there.
+  box-shadow: var(--at-shadow), 0 -16px 0 16px var(--at-bg);
   padding: 8px 12px 8px 20px;
   margin-bottom: 16px;
   font-family: var(--at-font);

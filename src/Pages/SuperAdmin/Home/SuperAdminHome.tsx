@@ -115,13 +115,19 @@ const SuperAdminHome = () => {
 
         {/* Companies */}
         <section className="at-tile" aria-label="Companies">
-          <span className="at-tile__label">Companies</span>
+          <span className="at-tile__label">Active companies</span>
           <span className="at-tile__big">{data ? fmtNum(data.companies.active) : "…"}</span>
-          <span className="at-tile__sub">
-            {data
-              ? `active · ${data.companies.inactive} inactive${data.companies.expired ? ` · ${data.companies.expired} package expired` : ""}`
-              : ""}
-          </span>
+          {data && (
+            <span className="at-tile__sub">
+              {data.companies.inactive} switched off
+              {data.companies.expired ? (
+                <>
+                  {" · "}
+                  <span style={{ color: "var(--at-stopped)", fontWeight: 600 }}>{data.companies.expired} with expired package</span>
+                </>
+              ) : null}
+            </span>
+          )}
           <div className="at-tile__spacer" />
           {data && (
             <span className="at-tile__sub" style={{ color: data.companies.expiringIn30Days ? "var(--at-idle)" : undefined }}>
