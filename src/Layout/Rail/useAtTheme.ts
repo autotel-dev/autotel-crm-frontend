@@ -14,10 +14,11 @@ const read = (): AtTheme => {
 
 const apply = (t: AtTheme) => {
   const b = document.body.classList;
-  // `dark-only` switches the template's own dark styles for older pages.
+  // The template's own `dark-only` styles are incomplete in this project
+  // (dark text on dark tables), so older pages use our overrides in
+  // theme/autotel.scss instead.
   b.toggle("at-dark", t === "dark");
-  b.toggle("dark-only", t === "dark");
-  b.toggle("light", t !== "dark");
+  b.remove("dark-only");
 };
 
 export const useAtTheme = () => {

@@ -27,9 +27,12 @@ export const ICONS: Record<string, ReactElement> = {
   users: S([<circle key="a" cx="9" cy="8" r="3.5" />, <path key="b" d="M2 20c0-3.5 3-6 7-6s7 2.5 7 6M16 4.5a3.5 3.5 0 0 1 0 7M22 20c0-3-2-5.2-5-5.8" />]),
   support: S([<circle key="a" cx="12" cy="12" r="9" />, <path key="b" d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.7.3-1 1-1 1.7M12 17h.01" />]),
   companies: S([<path key="a" d="M3 21V7l7-4v18M10 21h11V11l-11-4" />, <path key="b" d="M14 14h3M14 17h3" />]),
+  // Sliders, so Setup doesn't look like the sun (theme) button.
   setup: S([
-    <circle key="a" cx="12" cy="12" r="3" />,
-    <path key="b" d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M5 19l2-2M17 7l2-2" />,
+    <path key="a" d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0" />,
+    <circle key="b" cx="16" cy="6" r="2" />,
+    <circle key="c" cx="10" cy="12" r="2" />,
+    <circle key="d" cx="18" cy="18" r="2" />,
   ]),
   sun: S([
     <circle key="a" cx="12" cy="12" r="4" />,

@@ -236,11 +236,34 @@ body.at-shell-on {
 
   &__spacer { flex: 1; }
 
-  // The template's right header (clock, notifications, profile) sits here.
+  // The template's right header (clock, notifications, profile) sits here,
+  // inside .page-header so its own rules apply; undo the fixed positioning.
+  .page-header.at-topbar__hdr {
+    position: static !important;
+    width: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    z-index: auto !important;
+    flex: 0 0 auto;
+  }
+  .header-wrapper { padding: 0 !important; background: transparent !important; }
   .nav-right { margin-left: 0 !important; }
   .nav-menus { align-items: center; margin: 0; }
-  .nav-menus p { color: var(--at-muted); }
+  .nav-menus p { color: var(--at-muted); margin: 0 !important; }
+  .notification-box svg { width: 20px !important; height: 20px !important; }
 }
+
+// New-design elements use normal letter spacing (the template adds 1px).
+.at-rail, .at-rail *, .at-flyout, .at-flyout *, .at-topbar__title,
+.at-page, .at-page *, .at-panel, .at-panel *, .at-btn, .at-pill {
+  letter-spacing: normal;
+}
+
+// The top bar already names the page, so hide the old page-title row
+// (title + breadcrumb with the large house icon).
+.at-shell .page-body .page-title { display: none; }
 
 .at-icon-btn {
   width: 40px;
@@ -265,6 +288,59 @@ body.at-shell-on {
   background: transparent !important;
 }
 .at-shell .page-title { padding-top: 0; }
+
+/* ---------- Dark theme for older template pages ---------- */
+// Older pages keep their layout; these rules only recolour the common
+// Bootstrap / reactstrap / antd pieces so text stays readable in C4.
+body.at-dark {
+  color: var(--at-text);
+
+  .at-shell .page-body {
+    color: var(--at-text);
+    h1, h2, h3, h4, h5, h6, p, label, th, td, li, small, .text-muted { color: inherit; }
+  }
+
+  .card, .card-header, .card-body, .card-footer,
+  .modal-content, .modal-header, .modal-body, .modal-footer,
+  .dropdown-menu, .list-group-item, .accordion-item, .accordion-button,
+  .ant-card, .ant-modal-content, .ant-modal-header, .ant-table, .ant-table-container {
+    background-color: var(--at-panel) !important;
+    color: var(--at-text) !important;
+    border-color: var(--at-line) !important;
+  }
+  .modal-title, .ant-modal-title, .card-header h5, .card-header h4 { color: var(--at-text) !important; }
+
+  .table, .table > :not(caption) > * > *, .ant-table-thead > tr > th, .ant-table-tbody > tr > td {
+    background-color: transparent !important;
+    color: var(--at-text) !important;
+    border-color: var(--at-line) !important;
+    --bs-table-bg: transparent;
+    --bs-table-color: var(--at-text);
+  }
+  .ant-table-tbody > tr:hover > td, .table-hover > tbody > tr:hover > * { background-color: var(--at-soft) !important; }
+
+  .form-control, .form-select, input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+  select, textarea, .ant-input, .ant-select-selector, .ant-picker {
+    background-color: var(--at-soft) !important;
+    color: var(--at-text) !important;
+    border-color: var(--at-line) !important;
+    &::placeholder { color: var(--at-muted) !important; }
+  }
+  .ant-select-dropdown, .ant-picker-dropdown .ant-picker-panel-container {
+    background-color: var(--at-panel) !important;
+    color: var(--at-text) !important;
+  }
+  .ant-select-item { color: var(--at-text) !important; }
+  .ant-select-item-option-active, .ant-select-item-option-selected { background: var(--at-soft) !important; }
+
+  .nav-tabs .nav-link, .nav-link { color: var(--at-muted) !important; opacity: 1 !important; }
+  .nav-link.active { color: var(--at-text) !important; background: var(--at-soft) !important; }
+  .at-topbar .notification-box svg { stroke: var(--at-text) !important; fill: none; }
+  .swal2-popup { background: var(--at-panel) !important; color: var(--at-text) !important; }
+  .swal2-title, .swal2-html-container { color: var(--at-text) !important; }
+  .profile-dropdown, .onhover-show-div { background: var(--at-panel) !important; }
+  .profile-dropdown a, .profile-dropdown span { color: var(--at-text) !important; }
+}
 
 /* ---------- Shared UI components ---------- */
 

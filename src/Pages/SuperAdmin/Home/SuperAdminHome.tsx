@@ -17,7 +17,7 @@ const LINKS = [
 ];
 
 const SuperAdminHome = () => (
-  <div style={{ display: "flex", flexDirection: "column", gap: 16, fontFamily: "var(--at-font)", color: "var(--at-text)" }}>
+  <div className="at-page" style={{ display: "flex", flexDirection: "column", gap: 16, fontFamily: "var(--at-font)", color: "var(--at-text)" }}>
     <div>
       <div style={{ fontSize: 13, color: "var(--at-muted)" }}>Super-admin</div>
       <h2 style={{ margin: 0, font: "700 30px var(--at-font-display)" }}>Platform overview</h2>

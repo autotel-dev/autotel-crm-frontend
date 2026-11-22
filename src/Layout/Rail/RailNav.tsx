@@ -72,7 +72,10 @@ const RailNav = ({ items, theme, onToggleTheme }: Props) => {
           className={cls}
           aria-label={item.title}
           aria-expanded={open === item.key}
-          onClick={() => setOpen(open === item.key ? null : item.key)}
+          onClick={() => {
+            hideTip();
+            setOpen(open === item.key ? null : item.key);
+          }}
           {...tipProps}
         >
           {ICONS[item.icon] || ICONS.module}
@@ -104,7 +107,10 @@ const RailNav = ({ items, theme, onToggleTheme }: Props) => {
             type="button"
             className="at-rail__btn"
             aria-label={theme === "dark" ? "Switch to light theme" : "Switch to dark theme"}
-            onClick={onToggleTheme}
+            onClick={() => {
+              hideTip();
+              onToggleTheme();
+            }}
             onMouseEnter={showTip(theme === "dark" ? "Light theme" : "Dark theme")}
             onMouseLeave={hideTip}
           >

@@ -28,7 +28,13 @@ const TopBar = ({ items }: { items: NavItem[] }) => {
     <header className="at-topbar">
       <h1 className="at-topbar__title">{titleFor(items, pathname.replace(U, ""))}</h1>
       <div className="at-topbar__spacer" />
-      <RightHeader />
+      {/* Wrapped in the template's header classes so the bell and profile
+          menu keep their original sizes and hover behaviour. */}
+      <div className="page-header at-topbar__hdr">
+        <div className="header-wrapper row m-0">
+          <RightHeader />
+        </div>
+      </div>
     </header>
   );
 };
