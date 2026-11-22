@@ -58,6 +58,9 @@ const COMPANY_SETUP: NavLink[] = [
   ["Geofence", "geofence"],
 ].map(([title, slug]) => ({ title, link: `${U}/company/setup/${slug}` }));
 
+// Module routes that exist under /operator/modules (see Routes/Route.tsx).
+const OPERATOR_MODULE_ROUTES = ["/monitoring", "/control-room", "/complaint-center", "/saio-central"];
+
 export const useNavItems = (): NavItem[] => {
   const { crmActiveModules } = useSelector((state: any) => state.crmModules);
   const { userPermissions } = useSelector((state: any) => state.userPermissions);
@@ -92,7 +95,12 @@ export const useNavItems = (): NavItem[] => {
     if (role === ROLES.OPERATOR) {
       // The old menu hid Support when the operator had no Support permission entry.
       const showSupport = support !== undefined && support.read;
-      return [dashboard, ...moduleItems("/operator/modules"), ...(showSupport ? [supportItem] : [])];
+      // Only modules that have an operator page (Routes/Route.tsx); others,
+      // such as Trip Management, led to "Not Accessible".
+      const operatorModules = moduleItems("/operator/modules").filter((m) =>
+        OPERATOR_MODULE_ROUTES.some((r) => m.key === `module:${r}`)
+      );
+      return [dashboard, ...operatorModules, ...(showSupport ? [supportItem] : [])];
     }
 
     // Company (default, as in the old menu)
