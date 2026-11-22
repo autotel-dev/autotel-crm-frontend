@@ -1,0 +1,66 @@
+/* Login page live map — theme C1 (light) / C4 (dark) */
+.al-map {
+  --sea: #cfe0f5; --land: #e9ecf2; --pak: #ffffff; --border: #aeb6c8; --pakline: rgba(79, 70, 229, .65);
+  --road: #d5dae6; --roadhi: #ffffff; --label: #7a8197; --pklabel: #c7cbf5; --city: #1e1b4b; --cityring: #ffffff;
+  --ok: #65a30d; --over: #dc2626; --warn: #d97706; --geo: #4f46e5; --idle: #6b7280;
+  position: absolute; inset: 0; overflow: hidden; background: var(--sea);
+}
+.al-map--dark {
+  --sea: #0b0a16; --land: #18172a; --pak: #221f44; --border: #38345e; --pakline: rgba(163, 230, 53, .75);
+  --road: #3a3670; --roadhi: #4a4590; --label: #6e6a96; --pklabel: #3e3a73; --city: #e8e6ff; --cityring: #221f44;
+  --ok: #a3e635; --over: #f87171; --warn: #fbbf24; --geo: #a5b4fc; --idle: #9ca3af;
+}
+.al-map svg { width: 100%; height: 100%; display: block; }
+/* the template sets a centre transform-origin on SVG elements; rotations here must pivot on the vehicle point */
+.al-map svg g { transform-origin: 0 0 !important; transform-box: view-box !important; }
+.al-sea { fill: var(--sea); }
+.al-land { fill: var(--land); stroke: var(--border); stroke-width: 1; stroke-linejoin: round; }
+.al-pak { fill: var(--pak); }
+.al-pakline { fill: none; stroke: var(--pakline); stroke-width: 1.6; stroke-linejoin: round; }
+.al-country { fill: var(--label); font: 700 11px "Inter", system-ui, sans-serif; text-anchor: middle; dominant-baseline: middle; letter-spacing: .06em; }
+.al-country--pk { fill: var(--pklabel); font-size: 22px; letter-spacing: 0; }
+.al-road { fill: none; stroke: var(--road); stroke-width: 4.5; stroke-linecap: round; stroke-linejoin: round; }
+.al-road-hi { fill: none; stroke: var(--roadhi); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.al-fence { fill: rgba(79, 70, 229, .12); fill: color-mix(in srgb, var(--geo) 12%, transparent); stroke: var(--geo); stroke-width: 2; stroke-dasharray: 5 4; }
+.al-city circle { fill: var(--city); stroke: var(--cityring); stroke-width: 1; }
+.al-city text { fill: var(--city); opacity: .85; font: 700 10px "Inter", system-ui, sans-serif; dominant-baseline: middle; }
+
+/* Vehicles */
+.al-veh { --c: var(--ok); }
+.al-veh[data-st="over"] { --c: var(--over); }
+.al-veh[data-st="border"] { --c: var(--warn); }
+.al-veh[data-st="geo"] { --c: var(--geo); }
+.al-veh[data-st="idle"] { --c: var(--idle); }
+.al-body { fill: var(--c); }
+.al-edge { stroke: #fff; stroke-width: 1.4; }
+.al-tyre { fill: #1e1e28; }
+.al-glass { fill: rgba(20, 24, 45, .6); }
+.al-cargo { fill: #f5f6fa; stroke: var(--c); stroke-width: 2.4; }
+.al-rib { stroke: var(--c); stroke-opacity: .5; stroke-width: 1; }
+.al-roof { fill: rgba(255, 255, 255, .28); }
+.al-bar { stroke: #1e1e28; stroke-width: 2; stroke-linecap: round; }
+.al-helmet { fill: #fff; }
+.al-pulse { fill: none; stroke: var(--c); stroke-width: 2.2; opacity: 0; transform-box: fill-box; transform-origin: center; }
+.al-veh:not([data-st="ok"]) .al-pulse { animation: al-pulse 1.4s ease-out infinite; }
+@keyframes al-pulse { from { transform: scale(.8); opacity: .9; } to { transform: scale(1.9); opacity: 0; } }
+
+.al-plate rect { fill: #fff; stroke: var(--c); stroke-width: 1.5; }
+.al-plate text { fill: #111127; font: 700 9px "Inter", system-ui, sans-serif; text-anchor: middle; dominant-baseline: middle; }
+.al-bubble { display: none; }
+.al-bubble rect, .al-bubble path { fill: var(--c); }
+.al-bubble text { fill: #fff; font: 700 10px "Inter", system-ui, sans-serif; text-anchor: middle; dominant-baseline: middle; }
+.al-map--dark .al-bubble text { fill: #0a0a12; }
+.al-veh[data-st="over"] .al-bubble--over,
+.al-veh[data-st="border"] .al-bubble--border,
+.al-veh[data-st="geo"] .al-bubble--geo { display: block; }
+.al-veh--idle .al-bubble--idle { display: block; animation: al-blink 6s steps(1) infinite; }
+@keyframes al-blink { 0%, 50% { opacity: 1; } 50.01%, 100% { opacity: 0; } }
+
+/* Small panels (phones): keep it clean — no plates or small labels, alerts only */
+.al-map.is-compact .al-plate,
+.al-map.is-compact .al-city text,
+.al-map.is-compact .al-country:not(.al-country--pk) { display: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .al-pulse, .al-veh--idle .al-bubble--idle { animation: none !important; }
+}

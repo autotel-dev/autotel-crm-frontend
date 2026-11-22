@@ -1,7 +1,5 @@
 import { useState } from "react";
-import Logo from "./Logo";
-import { H3, P } from "../../../AbstractElements";
-import { Button, Form, FormGroup, Label } from "reactstrap";
+import { Form, FormGroup, Label } from "reactstrap";
 import { EmailAddress, Password } from "../../../utils/Constant";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
@@ -268,144 +266,69 @@ const CommonForm = ({ alignLogo }: CommonFormPropsType) => {
       }
     }
   };
+  const brand =
+    userPersonalizationData && userPersonalizationData.buttonsAndBarsColor
+      ? String(userPersonalizationData.buttonsAndBarsColor).trim()
+      : "";
   return (
-    <div className="login-card login-dark">
-      <div>
-        {/* <div>
-          <Logo alignLogo={alignLogo} />
-        </div> */}
-        <div className="login-main">
-          <Form className="theme-form" onSubmit={handleSubmit(loginData)}>
-            <H3>{header}</H3>
-            <P>{"Enter your email & password to login"}</P>
-            <FormGroup>
-              <Label className="col-form-label">{EmailAddress}</Label>
-              <input
-                className="form-control"
-                type="email"
-                required
-                placeholder="Test@gmail.com"
-                {...register("emailAddress", { required: true })}
-              />
-
-              <span style={{ color: "red" }}>
-                {errors.emailAddress && "Email is required"}
-              </span>
-            </FormGroup>
-            <FormGroup>
-              <Label className="col-form-label">{Password}</Label>
-              <div className="form-input position-relative">
-                <input
-                  //     style={{
-                  //       backgroundColor: `${userPersonalizationData &&
-                  //         userPersonalizationData.buttonsAndBarsColor !== "" && userPersonalizationData.buttonsAndBarsColor
-                  //         }
-
-                  // `,
-
-                  // }}
-                  className="form-control"
-                  type={showPassWord ? "text" : "password"}
-                  placeholder="*********"
-                  required
-                  {...register("password", { required: true })}
-                />
-
-                <div className="show-hide">
-                  <span
-                    style={{
-                      color: `${
-                        userPersonalizationData &&
-                        userPersonalizationData.buttonsAndBarsColor !== "" &&
-                        userPersonalizationData.buttonsAndBarsColor
-                      }
-              `,
-                    }}
-                    onClick={() => setShowPassWord(!showPassWord)}
-                    className={!showPassWord ? "show" : ""}
-                  />
-                </div>
-              </div>
-              <span style={{ color: "red" }}>
-                {errors.password && "Paswword is required"}
-              </span>
-            </FormGroup>
-            <FormGroup
-              className="mb-0 form-group"
-              style={{
-                display: "flex",
-                justifyContent: "end",
-                alignItems: "start",
-                marginTop: "-30px",
-              }}
-            >
-              <Link
-                style={{
-                  color: `${
-                    userPersonalizationData &&
-                    userPersonalizationData.buttonsAndBarsColor !== "" &&
-                    userPersonalizationData.buttonsAndBarsColor
-                  }
-        `,
-                }}
-                // className="link"
-                to={`${process.env.PUBLIC_URL}/forgot-password`}
-              >
-                Forgot Password
-              </Link>
-            </FormGroup>
-            <FormGroup className="mb-0 form-group">
-              {/* <Link
-                className="link"
-                to={`${process.env.PUBLIC_URL}/pages/authentication/forgetpassword`}
-              >
-                {ForgotPassword}
-              </Link> */}
-              <div className="text-end mt-2">
-                {/* <Button
-                  disabled={loading}
-                  color="primary"
-                  className="btn-block w-100"
-                >
-                  {loading ? "Loading..." : "Sign In"}
-                </Button> */}
-                {userPersonalizationData &&
-                userPersonalizationData.buttonsAndBarsColor !== "" ? (
-                  <button
-                    disabled={loading}
-                    style={{
-                      fontWeight: "bold",
-                      backgroundColor: `${userPersonalizationData.buttonsAndBarsColor}
-                  `,
-                      padding: "10px 10px",
-                      borderRadius: "5px",
-                      color: "white",
-                      outline: "none",
-                      border: `${
-                        userPersonalizationData &&
-                        userPersonalizationData.buttonsAndBarsColor
-                      }
-                  `,
-                    }}
-                    className="btn-block w-100"
-                  >
-                    {loading ? "Loading..." : "Sign In"}
-                  </button>
-                ) : (
-                  <Button
-                    disabled={loading}
-                    color="primary"
-                    className="btn-block w-100"
-                  >
-                    {loading ? "Loading..." : "Sign In"}
-                  </Button>
-                )}
-              </div>
-            </FormGroup>
-          </Form>
+    <Form className="al-form" onSubmit={handleSubmit(loginData)} noValidate={false}>
+      <h2 className="al-form__title">{header.trim()}</h2>
+      <p className="al-form__hint">Enter your email and password to continue.</p>
+      <FormGroup className="al-field">
+        <Label htmlFor="al-email">{EmailAddress}</Label>
+        <input
+          id="al-email"
+          className="al-input"
+          type="email"
+          required
+          autoComplete="username"
+          placeholder="you@company.com"
+          {...register("emailAddress", { required: true })}
+        />
+        {errors.emailAddress && <span className="al-error">Email is required</span>}
+      </FormGroup>
+      <FormGroup className="al-field">
+        <Label htmlFor="al-password">{Password}</Label>
+        <div className="al-input-wrap">
+          <input
+            id="al-password"
+            className="al-input"
+            type={showPassWord ? "text" : "password"}
+            placeholder="••••••••"
+            required
+            autoComplete="current-password"
+            {...register("password", { required: true })}
+          />
+          <button
+            type="button"
+            className="al-eye"
+            aria-label={showPassWord ? "Hide password" : "Show password"}
+            aria-pressed={showPassWord}
+            onClick={() => setShowPassWord(!showPassWord)}
+          >
+            {showPassWord ? (
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" aria-hidden="true"><path d="M3 3l18 18M10.6 10.6a2 2 0 002.8 2.8M9.9 5.1A9.8 9.8 0 0112 5c5 0 9 4.5 10 7-.4 1-1.3 2.4-2.6 3.7M6.2 6.2C4.1 7.6 2.6 9.8 2 12c1 2.5 5 7 10 7 1.8 0 3.4-.5 4.8-1.3" /></svg>
+            ) : (
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" aria-hidden="true"><path d="M2 12c1-2.5 5-7 10-7s9 4.5 10 7c-1 2.5-5 7-10 7S3 14.5 2 12z" /><circle cx="12" cy="12" r="3" /></svg>
+            )}
+          </button>
         </div>
+        {errors.password && <span className="al-error">Password is required</span>}
+      </FormGroup>
+      <div className="al-row">
+        <Link className="al-link" style={brand ? { color: brand } : undefined} to={`${process.env.PUBLIC_URL}/forgot-password`}>
+          Forgot password?
+        </Link>
       </div>
-    </div>
+      <button
+        type="submit"
+        disabled={loading}
+        className="al-submit"
+        style={brand ? { backgroundColor: brand, borderColor: brand } : undefined}
+      >
+        {loading ? "Signing in…" : "Sign in"}
+      </button>
+    </Form>
   );
 };
 

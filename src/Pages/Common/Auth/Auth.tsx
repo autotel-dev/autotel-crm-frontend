@@ -1,215 +1,108 @@
-import { Col, Container, Row } from "reactstrap";
-import CommonForm from "./Form";
-import BcakgroundImage from "../../../assets/Background Image.png";
+// Login page (redesign): live fleet map on the left, sign-in panel on the right.
+// On phones the map becomes a banner above the form. Sign-in logic lives in Form.tsx (unchanged).
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import Swal from "sweetalert2";
+import CommonForm from "./Form";
+import LoginMap, { ALERTS } from "./loginMap/LoginMap";
 import { getAll } from "../../../Utilities/api";
-import Loader from "../../Utilities/Loader/Loader";
 import { setUserPersonalizationData } from "../../../ReaduxToolkit/Reducer/PersonalizationSlice";
 import {
   GET_COMPANY_PERSONALIZATION,
   GET_SUPERADMIN_PERSONALIZATION,
   IMAGE_BASE_URL,
 } from "../../../Utilities/api/apiEndpoints";
+import "./login.css";
+
+const DEFAULT_HEADER = "Welcome to Autotel";
+const DEFAULT_SUB = "The best tracking platform in the tracking industry";
+const ICON: Record<string, string> = { over: "!", border: "↗", geo: "◎", idle: "Ⅱ" };
+
 const LoginForm = () => {
-  const [loading, setLoading] = useState<any>(true);
-  const { userPersonalizationData } = useSelector(
-    (state: any) => state.personalization
-  );
-
   const dispatch = useDispatch();
-
-  useEffect(() => {
-    const userId = localStorage.getItem("userId");
-
-    getAll({
-      url:
-        userId == null || userId == undefined
-          ? GET_SUPERADMIN_PERSONALIZATION
-          : `${GET_COMPANY_PERSONALIZATION}/${userId}`,
-
-      // url: GET_SUPERADMIN_PERSONALIZATION,
-    })
-      .then((parentData: any) => {
-        // console.log("api call --- >", parentData);
-        // console.log("undenid");
-        if (parentData == undefined) {
-          Swal.fire({
-            text: "Failed to Fetch the personalization",
-            icon: "error",
-            timer: 2000,
-            showConfirmButton: false,
-          });
-          setLoading(false);
-          dispatch(setUserPersonalizationData(null));
-        }
-
-        if (parentData !== undefined) {
-          if (parentData.success) {
-            dispatch(setUserPersonalizationData(parentData.data));
-            setLoading(false);
-          }
-          if (!parentData.success) {
-            setLoading(false);
-            dispatch(setUserPersonalizationData(null));
-          }
-        }
-      })
-      .catch((error) => {
-        // console.log("error== >", error);
-      });
-  }, []);
-
-  const [defaultText, setDefaultText] = useState(
-    "The best tracking platform in the tracking industry"
-  );
+  const { userPersonalizationData: p } = useSelector((state: any) => state.personalization);
+  const [loading, setLoading] = useState(true);
+  const [alertIdx, setAlertIdx] = useState(0);
   const [text, setText] = useState("");
   const [typing, setTyping] = useState(true);
 
+  // Company (white-label) or super-admin personalization: logo and texts.
   useEffect(() => {
-    const interval = setInterval(() => {
-      const targetText =
-        userPersonalizationData !== null &&
-        userPersonalizationData?.subHeaderText.length !== 0
-          ? userPersonalizationData?.subHeaderText
-          : defaultText;
+    const userId = localStorage.getItem("userId");
+    getAll({
+      url: userId == null ? GET_SUPERADMIN_PERSONALIZATION : `${GET_COMPANY_PERSONALIZATION}/${userId}`,
+    })
+      .then((res: any) => {
+        dispatch(setUserPersonalizationData(res?.success ? res.data : null));
+      })
+      .catch(() => dispatch(setUserPersonalizationData(null)))
+      .finally(() => setLoading(false));
+  }, [dispatch]);
 
-      if (typing) {
-        // Animate forward (typing effect)
-        setText((prevText) =>
-          prevText.length < targetText.length
-            ? targetText.slice(0, prevText.length + 1)
-            : prevText
-        );
+  const header = p?.headerText || DEFAULT_HEADER;
+  const sub = p?.subHeaderText || DEFAULT_SUB;
+  const logo = p?.accountLogo?.url ? `${IMAGE_BASE_URL}/${p.accountLogo.url}` : "";
 
-        if (text === targetText) {
-          setTyping(false); // Start erasing after the full text is displayed
-        }
-      } else {
-        // Animate backward (erasing effect)
-        setText((prevText) =>
-          prevText.length > 3
-            ? prevText.slice(0, prevText.length - 1)
-            : targetText.slice(0, 3)
-        );
+  // Typing effect for the sub-header (types, pauses, erases to 3 letters, repeats).
+  useEffect(() => {
+    if (loading) return;
+    const id = setTimeout(
+      () => {
+        if (typing) {
+          if (text.length < sub.length) setText(sub.slice(0, text.length + 1));
+          else setTyping(false);
+        } else if (text.length > 3) setText(text.slice(0, -1));
+        else setTyping(true);
+      },
+      typing && text.length === sub.length ? 2200 : typing ? 55 : 25
+    );
+    return () => clearTimeout(id);
+  }, [text, typing, sub, loading]);
 
-        if (text === targetText.slice(0, 3)) {
-          setTyping(true); // Start typing again once the text is erased to 3 chars
-        }
-      }
-    }, 70);
-
-    return () => clearInterval(interval);
-  }, [typing, text, userPersonalizationData, defaultText]);
+  const feed = [0, 1, 2].map((k) => (alertIdx - k + ALERTS.length) % ALERTS.length);
 
   return (
-    <Container fluid>
-      {loading ? (
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            height: "100vh",
-            backgroundColor: "white",
-            alignItems: "center",
-          }}
-        >
-          <div style={{ textAlign: "center" }}>
-            <Loader />
-          </div>
+    <div className="al-page">
+      <section className="al-hero">
+        <LoginMap onAlert={setAlertIdx} />
+        <div className="al-hero__top">
+          <span className="al-live">
+            <i /> LIVE
+          </span>
+          <span className="al-chip">13 vehicles · 5 countries · tracking on</span>
         </div>
-      ) : (
-        <Row
-          style={{
-            backgroundColor: `${
-              userPersonalizationData !== null &&
-              userPersonalizationData?.loginPageBackgroundType == "SOLID" &&
-              userPersonalizationData &&
-              userPersonalizationData?.loginPageBackgroundColor
-            }`,
-            backgroundImage: `${
-              userPersonalizationData !== null &&
-              userPersonalizationData?.loginPageBackgroundType == "GRADIENT" &&
-              `linear-gradient(to ${userPersonalizationData?.gradient?.direction}, ${userPersonalizationData?.gradient.color1}, ${userPersonalizationData?.gradient.color2})`
-            }`,
-          }}
-        >
-          <Col
-            xl={5}
-            className="b-center bg-size p-0"
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-              alignItems: "center",
-              // backgroundColor: `${
-              //   userPersonalizationData &&
-              //   userPersonalizationData.backgroundColor
-              // }`,
-            }}
-          >
-            {/* <Image
-            className="bg-img-cover bg-center w-100 vh-100"
-            src={dynamicImage("login/3.jpg")}
-            alt="looginpage"
-          /> */}
+        <div className="al-feed" aria-hidden="true">
+          {feed.map((ai, k) => {
+            const a = ALERTS[ai];
+            return (
+              <div key={`${ai}-${k === 0 ? alertIdx : "old"}`} className={`al-card al-card--${a.st}${k === 0 ? " is-new" : ""}`}>
+                <span className="al-card__icon">{ICON[a.st]}</span>
+                <span className="al-card__text">
+                  <strong>{a.title}</strong>
+                  <small>{a.sub}</small>
+                </span>
+                {k === 0 && <em>now</em>}
+              </div>
+            );
+          })}
+        </div>
+      </section>
 
-            <div
-              style={{
-                width: "80%",
-                fontWeight: "bold",
-                fontSize: "25px",
-                textAlign: "center",
-                color:
-                  userPersonalizationData !== null
-                    ? `${userPersonalizationData?.loginPageTextColor1}`
-                    : "black",
-              }}
-              className="lilita-one-regular"
-            >
-              {userPersonalizationData !== null
-                ? userPersonalizationData.headerText
-                : "Welcome To the Autotel"}
-            </div>
-            <div
-              style={{
-                width: "80%",
-                // fontWeight: "bold",
-                fontSize: "20px",
-                textAlign: "center",
-                marginBottom: "60px",
-                color:
-                  userPersonalizationData !== null
-                    ? `${userPersonalizationData?.loginPageTextColor2}`
-                    : "black",
-              }}
-              className="pacifico-regular"
-            >
-              {userPersonalizationData !== null ? text : text}
-              {/* {userPersonalizationData !== null
-                ? userPersonalizationData.subHeaderText
-                : "The best tracking platform in the tracking industry"} */}
-            </div>
-
-            <img
-              src={
-                userPersonalizationData !== null &&
-                userPersonalizationData?.loginPageLogo.url !== ""
-                  ? `${IMAGE_BASE_URL}/${userPersonalizationData?.loginPageLogo.url}`
-                  : BcakgroundImage
-              }
-              alt=""
-              width={360}
-              height={320}
-            />
-          </Col>
-          <Col xl={7} className="p-0">
-            <CommonForm alignLogo="text-start" />
-          </Col>
-        </Row>
-      )}
-    </Container>
+      <main className="al-side">
+        <div className="al-side__inner">
+          <div className="al-brand">
+            {logo ? <img src={logo} alt="" className="al-brand__logo" /> : <span className="al-brand__mark">A</span>}
+            {!logo && <span className="al-brand__name">Autotel</span>}
+          </div>
+          <h1 className={`al-title${loading ? " is-loading" : ""}`}>{loading ? " " : header}</h1>
+          <p className="al-sub" aria-label={sub}>
+            {text}
+            <span className="al-caret" />
+          </p>
+          <CommonForm />
+          <p className="al-foot">© {new Date().getFullYear()} Autotel · Live vehicle tracking</p>
+        </div>
+      </main>
+    </div>
   );
 };
 
