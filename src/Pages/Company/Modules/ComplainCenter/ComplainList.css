@@ -179,3 +179,36 @@
   max-height: 250px;
   overflow-y: auto;
 }
+
+/* Status tiles (redesign): icon badge + number + label, wraps on small screens */
+.cc-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.cc-stat {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: var(--at-soft, #eef0f7);
+  min-width: 0;
+}
+.cc-stat__icon {
+  width: 42px;
+  height: 42px;
+  flex: 0 0 42px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.cc-stat__text { display: flex; flex-direction: column; min-width: 0; }
+.cc-stat__num { font: 700 22px var(--at-font-display, "Space Grotesk", sans-serif); line-height: 1.1; color: var(--at-text, #1e1b4b); }
+.cc-stat__label { font-size: 12px; color: var(--at-muted, #4b5563); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: normal; }
+@media (max-width: 480px) {
+  .cc-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .cc-stat { padding: 10px; gap: 10px; }
+}

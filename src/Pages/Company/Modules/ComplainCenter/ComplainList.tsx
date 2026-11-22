@@ -11,6 +11,20 @@ import { useEffect, useRef, useState } from "react";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa6";
 import { setFilteredRole } from "../../../../ReaduxToolkit/Reducer/ComplainCenterSlice";
 
+// Complaint status tiles: label, colour and icon per status key from the API.
+const ccIcon = (d: string) => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+    <path d={d} />
+  </svg>
+);
+const CC_STAT_META: Record<string, { label: string; color: string; soft: string; icon: JSX.Element }> = {
+  InternalComplaints: { label: "Total", color: "var(--at-primary)", soft: "var(--at-primary-soft)", icon: ccIcon("M4 6h16M4 12h16M4 18h10") },
+  New: { label: "New", color: "#2563EB", soft: "rgba(37,99,235,.14)", icon: ccIcon("M12 5v14M5 12h14") },
+  InProgress: { label: "In progress", color: "#D97706", soft: "rgba(217,119,6,.15)", icon: ccIcon("M12 7v5l3 2M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18z") },
+  Pending: { label: "Pending", color: "#DC2626", soft: "rgba(220,38,38,.13)", icon: ccIcon("M10 8v8M14 8v8M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18z") },
+  Resolved: { label: "Resolved", color: "#65A30D", soft: "rgba(101,163,13,.15)", icon: ccIcon("M8 12.5l2.5 2.5L16 9.5M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18z") },
+};
+
 const ComplainList = () => {
 
 
@@ -289,91 +303,23 @@ const ComplainList = () => {
                 <Col xl="10"
                 //  className="widget-sell"
                 >
-                  <Row>
-                    {complainCenterStatistics.map((data: any, index: any) => (
-                      <Col
-                        // xl={2.5}
-                        // lg={2.5}
-                        // md="4"
-                        // sm="12"
-                        key={index}
-                        style={{
-                          marginBottom: "10px",
-                          height: "80px",
-                          position: "relative",
-                        }}
-                      >
-                        <div className="sale" style={{
-                          display: "flex",
-                          alignItems: "center",
-                          padding: "0px 15px",
-                          // backgroundColor:
-                          //   data.key === "New"
-                          //     ? "rgba(0, 0, 255, 0.3)"
-                          //     : data.key == "InProgress"
-                          //       ? "rgba(255, 165, 0, 0.3)"
-                          //       : data.key === "Pending"
-                          //         ? "rgba(255, 0, 0, 0.3)" :
-                          //         data.key === "Resolved"
-                          //           ? "rgba(0, 255, 0, 0.3)" : "rgb(245, 246, 249)",
-                          boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)", // Example box shadow
-                          height: "60px",
-                          width: "92%"
-                        }}>
-                          <H4>{data.key !== "InternalComplaints" ? (data.key == "InProgress" ? "In Progress" : data.key) : "Total"}</H4>
-
-                          {/* <H6>{data.value}</H6> */}
-                          {/* <P className="d-flex">
-                          <span className={`bg-light-${data.color} me-2`}>
-                            <SVG iconId={data.svgIcon} />
+                  {/* Status tiles (redesign): icon badge + number + label; wraps on small screens */}
+                  <div className="cc-stats">
+                    {complainCenterStatistics.map((data: any, index: any) => {
+                      const meta = CC_STAT_META[data.key] || CC_STAT_META.InternalComplaints;
+                      return (
+                        <div className="cc-stat" key={index}>
+                          <span className="cc-stat__icon" style={{ background: meta.soft, color: meta.color }} aria-hidden="true">
+                            {meta.icon}
                           </span>
-                          <span className={`font-${data.color}`}>
-                            {data.percentage}
+                          <span className="cc-stat__text">
+                            <strong className="cc-stat__num">{data.value}</strong>
+                            <span className="cc-stat__label">{meta.label}</span>
                           </span>
-                        </P>
-                        <span className="sale-title">{data.time}</span> */}
                         </div>
-                        <div style={{
-                          backgroundColor: "white",
-                          border: `4px solid ${data.key === "New"
-                            ? "rgba(0, 0, 255, 0.3)"
-                            : data.key == "InProgress"
-                              ? "rgba(255, 165, 0, 0.3)"
-                              : data.key === "Pending"
-                                ? "rgba(255, 0, 0, 0.3)" :
-                                data.key === "Resolved"
-                                  ? "rgba(0, 255, 0, 0.3)" : "rgb(245, 246, 249)"}`,
-                          height: '45px',
-                          width: "45px",
-                          borderRadius: "100px",
-                          position: "absolute",
-                          top: "0",
-                          right: "0",
-                          marginTop: "8px",
-                          marginRight: "5px",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          textAlign: "center"
-                        }}>
-                          <div style={{
-                            backgroundColor: "white",
-                            border: `3px solid lightgray`,
-                            height: '34px',
-                            width: "34px",
-                            borderRadius: "100px",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            textAlign: "center"
-                          }}>
-                            <H5>{data.value}</H5>
-                          </div>
-                        </div>
-                      </Col>
-                    ))}
-
-                  </Row>
+                      );
+                    })}
+                  </div>
 
                   <Row>
                     <div

@@ -469,6 +469,16 @@ body.at-dark .loader-wrapper, body.at-dark .loader-wrapper-edited {
     [style*="border-color: #{$t}"], [style*="solid #{$t}"] { border-color: var(--at-primary) !important; }
   }
 
+  // Row highlight / hover colours set inline by older tables (#d6eeee, #f0f8ff,
+  // teal 20%) → the theme's soft highlight, readable in light and dark
+  @each $h in "rgb(214, 238, 238)", "rgb(240, 248, 255)", "rgba(53, 191, 191, 0.2)" {
+    [style*="background-color: #{$h}"], [style*="background: #{$h}"] {
+      background: var(--at-primary-soft) !important;
+      color: var(--at-text) !important;
+    }
+  }
+  tr[style*="rgb(214, 238, 238)"] > td, tr[style*="rgb(240, 248, 255)"] > td { color: var(--at-text) !important; }
+
   // The template's own primary (teal) classes
   .btn-primary { background-color: var(--at-primary) !important; border-color: var(--at-primary) !important; color: var(--at-on-primary) !important; border-radius: 12px !important; }
   .bg-primary { background-color: var(--at-primary) !important; color: var(--at-on-primary) !important; }
