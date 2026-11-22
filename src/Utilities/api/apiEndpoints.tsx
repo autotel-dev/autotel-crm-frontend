@@ -456,6 +456,8 @@ export const GET_ALL_REPORT_TYPES = `${API_BASE_URL}/reports/get-all-report-type
 
 // Dashboard
 export const GET_GENERAL_DASHBOARD_STATISTICS = `${API_BASE_URL}/company/dashboard/general`;
+export const GET_SUPER_ADMIN_OVERVIEW = `${API_BASE_URL}/overview/super-admin`;
+export const GET_COMPANY_OVERVIEW = `${API_BASE_URL}/overview/company`;
 export const GET_OPERATOR_PERFORMANCE = `${API_BASE_URL}/company/dashboard/operators-performance`;
 export const GET_COMPANY_ALERTS_OVERVIEW = `${API_BASE_URL}/company/dashboard/alerts-overview`;
 

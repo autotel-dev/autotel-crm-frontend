@@ -46,8 +46,8 @@ import {
   setComplainCenterStatistics,
 } from "../../ReaduxToolkit/Reducer/ComplainCenterSlice";
 import Skeleton from "../Utilities/Skeleton/Skeleton";
-import StickyBar from "./StickyBar/StickyBar";
 import SuperAdminHome from "../SuperAdmin/Home/SuperAdminHome";
+import CompanyOverview from "../Company/Overview/CompanyOverview";
 
 const Dashboard = () => {
   const dispatch = useDispatch();
@@ -684,45 +684,14 @@ const Dashboard = () => {
 
   return (
     <>
-      {getUserRole() === ROLES.COMPANY && (
-        <StickyBar
-          toggleSection={toggleSection}
-          visibleSections={visibleSections}
-        />
-      )}
+      {/* Company: the redesigned dashboard replaced the movable widgets and their side bar. */}
       <Breadcrumbs mainTitle="Dashboard" parent="Dashboard" title="Dashboard" />
       {getUserRole() === ROLES.SUPER_ADMIN ? (
         <SuperAdminHome />
       ) : dashboard !== undefined &&
         dashboard?.read &&
         getUserRole() === ROLES.COMPANY ? (
-        <Container fluid className="crm_dashboard">
-          <Row className="widget-grid">
-            <DragDropContext onDragEnd={onDragEnd}>
-              <Droppable droppableId="dashboard">
-                {(provided) => (
-                  <div {...provided.droppableProps} ref={provided.innerRef}>
-                    {componentOrder.map((id: any, index) => (
-                      <Draggable key={id} draggableId={id} index={index}>
-                        {(provided) => (
-                          <div
-                            ref={provided.innerRef}
-                            {...provided.draggableProps}
-                            {...provided.dragHandleProps}
-                          >
-                            {/* {componentMap[id]} */}
-                            {visibleSections[id] && componentMap[id]}
-                          </div>
-                        )}
-                      </Draggable>
-                    ))}
-                    {provided.placeholder}
-                  </div>
-                )}
-              </Droppable>
-            </DragDropContext>
-          </Row>
-        </Container>
+        <CompanyOverview />
       ) : (
         // <div
         //   style={{
