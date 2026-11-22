@@ -47,6 +47,7 @@ import {
   UPDATE_COMPANY,
 } from "../../../../Utilities/api/apiEndpoints";
 import { ERROR_MESSAGE } from "../../../../Utilities/constants/constants";
+import { useCompanyFormLists } from "../useCompanyFormLists";
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
 
@@ -74,6 +75,7 @@ const UpdateCompanyForm = () => {
   const { companyId } = useParams();
   const [serverList, setServerList] = useState([]);
   const { Option } = Select;
+  const listsReady = useCompanyFormLists();
 
   const tempList: any = [];
   useEffect(() => {
@@ -91,6 +93,8 @@ const UpdateCompanyForm = () => {
     setServerList(tempList);
   }, [servers]);
   useEffect(() => {
+    // Wait for the dropdown and permission lists (see useCompanyFormLists).
+    if (!listsReady) return;
     getAll({ url: `${GET_COMPANY_BY_ID}/${companyId}` }).then((data: any) => {
       // console.log("api call --- >", data);
 
@@ -231,7 +235,7 @@ const UpdateCompanyForm = () => {
         }
       }
     });
-  }, []);
+  }, [listsReady]);
 
   const [showPassword, setShowPassword] = useState(false);
   const [firebaseShowPassword, setFireaseShowPassword] = useState(false);
