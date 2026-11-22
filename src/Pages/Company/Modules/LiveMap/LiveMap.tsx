@@ -9,7 +9,6 @@ import { Link, useNavigate } from "react-router-dom";
 import FleetMap from "./FleetMap";
 import { useFleet } from "./useFleet";
 import { deriveStatus, FleetStatus, isOnline, plateOf, searchText, STATUS_INFO, STATUS_ORDER, timeAgo } from "./fleetStatus";
-import { CarMarker } from "../../../../components/ui";
 import { getAll, create } from "../../../../Utilities/api";
 import { GET_DEVICE_ANALYTICS, GET_SINGLE_VEHICLE_START } from "../../../../Utilities/api/apiEndpoints";
 import {
@@ -44,8 +43,16 @@ const DETAIL_TABS = [
   { key: "customer", label: "Customer", C: CustomerInfo },
 ];
 
-const markerStatus = (s: FleetStatus) =>
-  s === "moving" ? "moving" : s === "idle" ? "idle" : s === "stopped" ? "stopped" : "offline";
+/** Small M3 car (square, turned to heading) as an image — immune to page SVG styles. */
+const carIcon = (hex: string, heading = 0) =>
+  "data:image/svg+xml;charset=UTF-8," +
+  encodeURIComponent(
+    `<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="-8 0 40 40">` +
+      `<g transform="rotate(${Math.round(heading)} 12 20)">` +
+      `<rect x="3" y="1" width="18" height="38" rx="7" fill="${hex}" stroke="#fff" stroke-width="1.8"/>` +
+      `<rect x="6" y="9" width="12" height="7" rx="2" fill="#000" opacity=".38"/>` +
+      `<rect x="6" y="28" width="12" height="5" rx="2" fill="#000" opacity=".3"/></g></svg>`
+  );
 
 const LiveMap = () => {
   const dispatch = useDispatch();
@@ -80,6 +87,16 @@ const LiveMap = () => {
   useEffect(() => {
     const t = setInterval(() => setTick((n) => n + 1), 30000);
     return () => clearInterval(t);
+  }, []);
+
+  // Side panels start below the top bar, whatever its height
+  const topRef = useRef<HTMLDivElement>(null);
+  const [topH, setTopH] = useState(60);
+  useEffect(() => {
+    if (!topRef.current || typeof ResizeObserver === "undefined") return;
+    const ro = new ResizeObserver(() => setTopH(topRef.current?.offsetHeight || 60));
+    ro.observe(topRef.current);
+    return () => ro.disconnect();
   }, []);
 
   useEffect(() => {
@@ -239,7 +256,7 @@ const LiveMap = () => {
   const DetailComp = DETAIL_TABS.find((t) => t.key === details)?.C;
 
   return (
-    <div className="lm-root">
+    <div className="lm-root" style={{ ["--lm-top" as any]: `${topH + 24}px` }}>
       <FleetMap
         items={items}
         selectedId={selectedId}
@@ -250,7 +267,7 @@ const LiveMap = () => {
       />
 
       {/* Top bar: search + status chips */}
-      <div className="lm-panel lm-top">
+      <div className="lm-panel lm-top" ref={topRef}>
         <label htmlFor="lm-search" className="visually-hidden">Search vehicles</label>
         <input
           id="lm-search"
@@ -323,7 +340,7 @@ const LiveMap = () => {
                     <div key={d._id} className={`lm-row${d._id === selectedId ? " is-sel" : ""}`}>
                       <button type="button" className="lm-row__main" onClick={() => select(d._id)}>
                         <span className="lm-row__icon" style={{ background: `${STATUS_INFO[s].hex}22` }}>
-                          <CarMarker status={markerStatus(s)} size={13} heading={Number(d?.latestPosition?.course) || 0} />
+                          <img src={carIcon(STATUS_INFO[s].hex, Number(d?.latestPosition?.course) || 0)} width={26} height={26} alt="" />
                         </span>
                         <span className="lm-row__text">
                           <strong>{plateOf(d)}</strong>
@@ -367,7 +384,7 @@ const LiveMap = () => {
 
       {/* Selected vehicle */}
       {selected && (
-        <article className="lm-panel lm-card" aria-label={`Vehicle ${plateOf(selected.d)}`}>
+        <article className={`lm-panel lm-card${details ? " is-wide" : ""}`} aria-label={`Vehicle ${plateOf(selected.d)}`}>
           <div className="lm-card__head">
             <div style={{ minWidth: 0 }}>
               <div className="lm-card__plate">{plateOf(selected.d)}</div>
@@ -376,7 +393,8 @@ const LiveMap = () => {
                 {selected.d?.vehicle?.customer?.fullName ? ` · ${selected.d.vehicle.customer.fullName}` : ""}
               </div>
             </div>
-            <span className="lm-status" style={{ background: `${STATUS_INFO[selected.s].hex}26`, color: STATUS_INFO[selected.s].color }}>
+            <span className="lm-status">
+              <i style={{ background: STATUS_INFO[selected.s].hex }} />
               {STATUS_INFO[selected.s].label}
             </span>
             <button type="button" className="lm-icon-btn" aria-label="Close vehicle panel" onClick={() => select(null)}>
@@ -384,10 +402,16 @@ const LiveMap = () => {
             </button>
           </div>
           <div className="lm-speed">
-            <span>{isOnline(selected.s) ? speed : "—"}</span> <small>km/h</small>
+            {isOnline(selected.s) ? (
+              <>
+                <span>{speed}</span> <small>km/h</small>
+              </>
+            ) : (
+              <small style={{ fontSize: 15 }}>Not reporting live — last known details below</small>
+            )}
           </div>
           <div className="lm-facts">
-            <div><span className="lm-muted">Ignition</span><strong>{ign === true ? "On" : ign === false ? "Off" : "—"}</strong></div>
+            <div><span className="lm-muted">{isOnline(selected.s) ? "Ignition" : "Last ignition"}</span><strong>{ign === true ? "On" : ign === false ? "Off" : "—"}</strong></div>
             <div><span className="lm-muted">Today</span><strong>{deviceAnalytics?.distanceForDay || "—"}</strong></div>
             <div><span className="lm-muted">Satellites</span><strong>{pos?.attributes?.sat ?? "—"}</strong></div>
           </div>

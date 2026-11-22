@@ -305,7 +305,7 @@ body.at-shell-on {
 // position: relative so full-screen map pages (position: absolute) fill this
 // area instead of sliding under the rail. --at-chrome-h is the space taken by
 // the top bar and outer padding; map pages use calc(100vh - var(--at-chrome-h)).
-:root { --at-chrome-h: 104px; }
+:root { --at-chrome-h: 112px; } // top bar (16 + 64) + gap 16 + bottom padding 16
 .at-shell .page-body {
   position: relative;
   margin: 0 !important;
