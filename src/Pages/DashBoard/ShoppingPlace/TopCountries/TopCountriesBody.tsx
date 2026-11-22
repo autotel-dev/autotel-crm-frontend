@@ -2,7 +2,11 @@ import { H5, H6, Image, LI, UL } from "../../../../AbstractElements";
 import { dynamicImage } from "../../../../Service";
 import { topCountriesData } from "../../../../Data/Dashboard/ShoppingPlace/TopCountries";
 import { Col } from "reactstrap";
-import { GoogleMap, useJsApiLoader, Marker } from "@react-google-maps/api";
+// Use the app's one Maps loader (google-maps-react + GOOGLE_MAPS_OPTIONS).
+// A second loader here (@react-google-maps/api) put two copies of Google Maps
+// on the page once another map was opened, e.g. dashboard -> Geofence.
+import { GoogleApiWrapper, Map } from "google-maps-react";
+import { GOOGLE_MAPS_OPTIONS } from "../../../../utils/googleMapsOptions";
 const containerStyle = {
   height: "200px",
 };
@@ -11,12 +15,7 @@ const center = {
   lat: -3.745,
   lng: -38.523,
 };
-const TopCountriesBody = () => {
-  const { isLoaded } = useJsApiLoader({
-    id: "google-map-script",
-    googleMapsApiKey:
-      process.env.REACT_APP_GOOGLE_MAPS_API_KEY || "",
-  });
+const TopCountriesBody = ({ google }: any) => {
   return (
     <>
       <UL className="d-flex simple-list flex-row">
@@ -38,16 +37,13 @@ const TopCountriesBody = () => {
       </UL>
       <Col xl="12" className="mt-4">
         <div className="map-js-height">
-          <div id="gmap-simple" className="map-block">
-            {isLoaded ? (
-              <GoogleMap
-                mapContainerStyle={containerStyle}
-                center={center}
-                zoom={10}
-              />
-            ) : (
-              "Loading"
-            )}
+          <div id="gmap-simple" className="map-block" style={{ ...containerStyle, position: "relative" }}>
+            <Map
+              google={google}
+              initialCenter={center}
+              zoom={10}
+              containerStyle={{ position: "absolute", width: "100%", ...containerStyle }}
+            />
           </div>
         </div>
       </Col>
@@ -55,7 +51,7 @@ const TopCountriesBody = () => {
   );
 };
 
-export default TopCountriesBody;
+export default GoogleApiWrapper(GOOGLE_MAPS_OPTIONS)(TopCountriesBody) as any;
 
 
 //  {/* Marker with rotation of 60 degrees */}
