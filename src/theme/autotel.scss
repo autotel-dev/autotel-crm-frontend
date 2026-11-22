@@ -787,5 +787,20 @@ body.at-dark .at-pill--bad { color: #fca5a5; }
   .at-rail__spacer { display: none; }
   .at-flyout { left: 8px; right: 8px; width: auto; top: auto; bottom: 72px; max-height: 70vh; }
   .at-main { margin-left: 0; padding: 8px 8px 80px; }
-  .at-topbar { top: 8px; }
+  // Phone top bar: page name + bell + profile only (the clock and the name
+  // text pushed the profile menu off the screen).
+  .at-topbar { top: 8px; padding: 6px 8px 6px 14px; gap: 6px; }
+  .at-topbar__title { flex: 1; min-width: 0; font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .at-topbar__spacer { display: none; }
+  .at-topbar .nav-menus > div:first-child { display: none; }       // clock
+  .at-topbar .profile-media .user { display: none; }              // name + role text
+  .at-topbar .profile-media::after {                               // small person icon instead
+    content: ""; width: 34px; height: 34px; border-radius: 50%; display: inline-block;
+    background: var(--at-soft) url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round'><circle cx='12' cy='8' r='4'/><path d='M4 21c0-4 4-6 8-6s8 2 8 6'/></svg>") center / 18px no-repeat;
+  }
+  .at-topbar__hdr, .at-topbar .nav-right { min-width: 0; }
+  .at-topbar .nav-menus { gap: 4px; }
+  // Content never wider than the screen; wide tables scroll inside their card
+  .at-shell .page-body { max-width: 100%; overflow-x: auto; }   // old fixed-width pages scroll instead of being cut off
+  .at-shell .page-body .table-responsive, .at-shell .page-body .rdt_TableWrapper, .at-shell .page-body table { max-width: 100%; }
 }

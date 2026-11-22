@@ -18,9 +18,9 @@ const Layout = () => {
   const items = useNavItems();
   const { theme, toggle } = useAtTheme();
 
+  // Added once and kept (each route remounts Layout; AuthThemeGuard removes it on sign-in pages).
   useEffect(() => {
     document.body.classList.add("at-shell-on");
-    return () => document.body.classList.remove("at-shell-on");
   }, []);
 
   if (getUserRole() !== ROLES.SUPER_ADMIN && userPermissions.length < 0) {
