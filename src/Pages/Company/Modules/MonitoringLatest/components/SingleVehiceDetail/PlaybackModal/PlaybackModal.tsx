@@ -254,7 +254,11 @@ const PlaybackModal: React.FC<PlaybackModalProps> = ({
         dispatch(
           setVehicleHistoryDateRange({ start: fromDateTime, end: toDateTime }),
         );
-        if (location.pathname == "/company/modules/monitoring") {
+        // The playback page allows companies and operators (Routes/Route.tsx).
+        if (
+          location.pathname == "/company/modules/monitoring" ||
+          location.pathname == "/operator/modules/monitoring"
+        ) {
           navigate(
             `${process.env.PUBLIC_URL}/company/modules/monitoring/playback`,
           );
