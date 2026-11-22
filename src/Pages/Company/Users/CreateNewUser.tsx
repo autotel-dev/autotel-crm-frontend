@@ -342,11 +342,12 @@ const CreateNewUser = () => {
                   <P>Password</P>
                   <input
                     className="form-control"
-                    type="text"
+                    type="password"
+                    autoComplete="new-password"
                     {...register("password", { required: true })}
                   />
                   <span style={{ color: "red" }}>
-                    {errors.emailAddress && "Password is required"}
+                    {errors.password && "Password is required"}
                   </span>
                 </FormGroup>
                 <FormGroup className="col-md-12 create-group">

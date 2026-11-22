@@ -27,10 +27,10 @@ const PurchaseSummary = () => {
     };
   }
 
-  const months = purchasesSummaryData?.map(
+  const months = (purchasesSummaryData || []).map(
     (summary: any, index: any) => summary.month
   );
-  const amounts = purchasesSummaryData?.map(
+  const amounts = (purchasesSummaryData || []).map(
     (summary: any, index: any) => summary.totalPurchases
   );
   const purchaseSummaryChart: any = {

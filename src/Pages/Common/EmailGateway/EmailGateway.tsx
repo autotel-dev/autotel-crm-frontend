@@ -819,7 +819,8 @@ const EmailGateway = () => {
                           <FormGroup>
                             <P>SMTP Password</P>
                             <Input
-                              type="text"
+                              type="password"
+                              autoComplete="new-password"
                               placeholder="Enter Password here"
                               defaultValue={smtpPassword}
                               value={smtpPassword}

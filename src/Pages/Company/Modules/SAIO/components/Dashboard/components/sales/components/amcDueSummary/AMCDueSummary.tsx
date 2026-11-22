@@ -8,13 +8,13 @@ const AMCDueSummary = () => {
   const { vehiclesSummaryData } = useSelector(
     (state: any) => state.salesDashboard
   );
-  const months = vehiclesSummaryData?.map(
+  const months = (vehiclesSummaryData || []).map(
     (summary: any, index: any) => summary.month
   );
   const vehicles = vehiclesSummaryData?.map(
     (summary: any, index: any) => summary.totalVehicles
   );
-  const amounts = vehiclesSummaryData?.map(
+  const amounts = (vehiclesSummaryData || []).map(
     (summary: any, index: any) => summary.totalServiceCharges
   );
 

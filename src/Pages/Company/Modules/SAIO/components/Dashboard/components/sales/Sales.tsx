@@ -475,15 +475,16 @@ const Sales = () => {
         percentage: weeklySummaryData?.salesAnalytics,
         chartId: "expensesChart",
         charts: {
+          ...totalSalesChart,
+          // Real series last, so the template chart settings above can't replace it
           series: [
             {
               name: "Sales",
-              data: weeklySummaryData?.weeklyAnalytics.map(
-                (item: any, index: any) => item?.totalSales
+              data: (weeklySummaryData?.weeklyAnalytics || []).map(
+                (item: any) => item?.totalSales ?? 0
               ),
             },
           ],
-          ...totalSalesChart,
         },
         type: "bar",
       },
@@ -506,15 +507,16 @@ const Sales = () => {
         percentage: weeklySummaryData?.vehiclesAnalytics,
         chartId: "totalLikesAreaChart",
         charts: {
+          ...totalVehiclesChart,
+          // Real series last, so the template chart settings above can't replace it
           series: [
             {
               name: "Vehicles",
-              data: weeklySummaryData?.weeklyAnalytics.map(
-                (item: any, index: any) => item?.totalVehicles
+              data: (weeklySummaryData?.weeklyAnalytics || []).map(
+                (item: any) => item?.totalVehicles ?? 0
               ),
             },
           ],
-          ...totalVehiclesChart,
         },
         type: "area",
       },
@@ -536,15 +538,16 @@ const Sales = () => {
         percentage: weeklySummaryData?.customerAnalytics,
         chartId: "expensesChart",
         charts: {
+          ...totalCustomersChart,
+          // Real series last, so the template chart settings above can't replace it
           series: [
             {
               name: "Customers",
-              data: weeklySummaryData?.weeklyAnalytics.map(
-                (item: any, index: any) => item?.totalCustomers
+              data: (weeklySummaryData?.weeklyAnalytics || []).map(
+                (item: any) => item?.totalCustomers ?? 0
               ),
             },
           ],
-          ...totalCustomersChart,
         },
         type: "bar",
       },

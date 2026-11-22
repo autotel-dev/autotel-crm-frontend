@@ -9,28 +9,30 @@ const Header = () => {
     (state: any) => state.monitoring
   );
 
-  console.log("selectedSingleDevice", selectedSingleDevice);
   const carName = selectedSingleDevice?.vehicle?.registrationNo;
 
+  const { userData } = useSelector((state: any) => state.user);
+
+  // Date and time both shown in the user's timezone (was: +5 h added, then the
+  // date read in UTC but the time in local time, so the date could be a day off).
   function formatDateWithOffset(dateString: any) {
     if (!dateString) return "Invalid date";
 
     const date = new Date(dateString);
     if (isNaN(date.getTime())) return "Invalid date";
 
-    date.setHours(date.getHours() + 5);
-
-    const datePart = date.toISOString().split("T")[0];
-    const timePart = date
-      .toLocaleString("en-US", {
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit",
-        hour12: true,
-      })
-      .toLowerCase();
-
-    return `${datePart}, ${timePart}`;
+    const timeZone = userData?.timezone || undefined;
+    try {
+      const datePart = new Intl.DateTimeFormat("en-CA", {
+        timeZone, year: "numeric", month: "2-digit", day: "2-digit",
+      }).format(date);
+      const timePart = new Intl.DateTimeFormat("en-US", {
+        timeZone, hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: true,
+      }).format(date).toLowerCase();
+      return `${datePart}, ${timePart}`;
+    } catch (e) {
+      return date.toLocaleString();
+    }
   }
 
   const startTime = vehicleHistoryDateRange

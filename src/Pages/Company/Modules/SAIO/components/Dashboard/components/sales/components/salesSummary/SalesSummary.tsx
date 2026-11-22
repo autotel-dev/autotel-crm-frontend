@@ -26,10 +26,10 @@ const SalesSummary = () => {
   const { salesSummaryData } = useSelector(
     (state: any) => state.salesDashboard
   );
-  const months = salesSummaryData?.map(
+  const months = (salesSummaryData || []).map(
     (summary: any, index: any) => summary.month
   );
-  const amounts = salesSummaryData?.map(
+  const amounts = (salesSummaryData || []).map(
     (summary: any, index: any) => summary.totalSales
   );
   const salesSummaryChart: any = {

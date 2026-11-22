@@ -178,9 +178,12 @@ import { H2, H3, H4, Image } from "../../../../AbstractElements";
 import { dynamicImage } from "../../../../Service/index";
 import { Link } from "react-router-dom";
 import { Href } from "../../../../utils/Constant";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useRef, useState } from "react";
 import { formatUnderscoredString } from "../../../../Utilities/globals/globals";
+import { getAll } from "../../../../Utilities/api";
+import { GET_ALL_SYSTEM_LOG } from "../../../../Utilities/api/apiEndpoints";
+import { setRecentLogs } from "../../../../ReaduxToolkit/Reducer/ServerManagementSlice";
 
 const RecentLogsFullTable = () => {
   const { recentLogs } = useSelector((state: any) => state.serverManagement);
@@ -210,6 +213,17 @@ const RecentLogsFullTable = () => {
 
   const hexColor = "#ff0000"; // Example hex color
   const rgbColor = hexToRgb(userPersonalizationData?.buttonsAndBarsColor); // Convert hex to RGB
+
+  const dispatch = useDispatch();
+  // Opened directly (or after a refresh) the logs aren't in the store yet:
+  // load them here instead of showing an empty table.
+  useEffect(() => {
+    if (recentLogs && recentLogs.length > 0) return;
+    getAll({ url: GET_ALL_SYSTEM_LOG }).then((data: any) => {
+      if (data && data.success) dispatch(setRecentLogs(data.data));
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     setDataList(recentLogs.slice(0, 12));
