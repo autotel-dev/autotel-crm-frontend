@@ -28,9 +28,9 @@ const Playback = () => {
     <div
       style={{
         width: "100%",
-        height: "91vh",
-        top: "2vh",
-        marginLeft: "-35px",
+        height: "calc(100vh - var(--at-chrome-h, 104px))",
+        top: 0,
+        marginLeft: 0,
         position: "absolute",
         overflow: "hidden", // prevent scrollbars
       }}

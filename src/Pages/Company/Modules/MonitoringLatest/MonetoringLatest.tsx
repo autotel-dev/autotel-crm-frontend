@@ -662,11 +662,11 @@ const MonitoringLatest = () => {
   return (
     <div
       style={{
-        marginLeft: "-25px",
-        marginRight: "-25px",
-        marginTop: "100px",
+        marginLeft: 0,
+        marginRight: 0,
+        marginTop: 0,
         display: "flex",
-        height: "89vh",
+        height: "calc(100vh - var(--at-chrome-h, 104px))",
         justifyContent: "space-between",
         overflowY: "hidden",
         overflowX: "hidden",

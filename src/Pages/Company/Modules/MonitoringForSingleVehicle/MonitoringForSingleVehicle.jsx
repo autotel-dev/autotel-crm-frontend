@@ -153,9 +153,9 @@ const MonitoringForSingleVehicle = () => {
       style={{
         display: "flex",
         width: "100%",
-        height: "90vh",
-        top: "2vh",
-        marginLeft: "-35px",
+        height: "calc(100vh - var(--at-chrome-h, 104px))",
+        top: 0,
+        marginLeft: 0,
         position: "absolute",
         overflowY: "hidden",
       }}

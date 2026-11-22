@@ -281,12 +281,19 @@ body.at-shell-on {
 }
 
 // Existing pages inside the new shell: drop the template's fixed-header offsets.
+// position: relative so full-screen map pages (position: absolute) fill this
+// area instead of sliding under the rail. --at-chrome-h is the space taken by
+// the top bar and outer padding; map pages use calc(100vh - var(--at-chrome-h)).
+:root { --at-chrome-h: 104px; }
 .at-shell .page-body {
+  position: relative;
   margin: 0 !important;
   padding: 0 !important;
-  min-height: 0 !important;
+  min-height: calc(100vh - var(--at-chrome-h)) !important;
   background: transparent !important;
+  border-radius: var(--at-radius);
 }
+@media (max-width: 767px) { :root { --at-chrome-h: 160px; } }
 .at-shell .page-title { padding-top: 0; }
 
 /* ---------- Dark theme for older template pages ---------- */
@@ -298,6 +305,7 @@ body.at-dark {
   .at-shell .page-body {
     color: var(--at-text);
     h1, h2, h3, h4, h5, h6, p, label, th, td, li, small, .text-muted { color: inherit; }
+    h1 a, h2 a, h3 a, h4 a, h5 a, h6 a { color: inherit; }
   }
 
   .card, .card-header, .card-body, .card-footer,
@@ -317,6 +325,17 @@ body.at-dark {
     --bs-table-bg: transparent;
     --bs-table-color: var(--at-text);
   }
+  // react-data-table-component (used by most list pages)
+  .rdt_Table, .rdt_TableHead, .rdt_TableHeadRow, .rdt_TableBody, .rdt_TableRow,
+  .rdt_TableCol, .rdt_TableCell, .rdt_Pagination, .rdt_TableCol_Sortable {
+    background-color: var(--at-panel) !important;
+    color: var(--at-text) !important;
+    border-color: var(--at-line) !important;
+  }
+  .rdt_TableRow:hover { background-color: var(--at-soft) !important; }
+  .rdt_Pagination svg, .rdt_Pagination select { fill: var(--at-text) !important; color: var(--at-text) !important; }
+  .total-num, .counter, .total-num *, .counter * { color: var(--at-text) !important; }
+
   .ant-table-tbody > tr:hover > td, .table-hover > tbody > tr:hover > * { background-color: var(--at-soft) !important; }
 
   .form-control, .form-select, input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),

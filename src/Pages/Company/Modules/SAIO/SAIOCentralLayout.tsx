@@ -58,7 +58,7 @@ const SAIOCentralLayout = () => {
       style={{
         width: "100%",
         display: "flex",
-        marginLeft: "-35px",
+        marginLeft: 0,
         overflow: "unset",
       }}
     >

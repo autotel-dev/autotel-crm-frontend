@@ -227,14 +227,14 @@ const Geofence = () => {
     <>
       <div
         style={{
-          marginLeft: "-35px",
-          marginTop: "80px",
+          marginLeft: 0,
+          marginTop: 0,
           // marginTop: "130px",
-          height: "92.5vh",
+          height: "calc(100vh - var(--at-chrome-h, 104px))",
           display: "flex",
           overflow: "hidden",
           scrollbarWidth: "none",
-          marginRight: "-35px",
+          marginRight: 0,
           // paddingLeft:"50px",
         }}
       >

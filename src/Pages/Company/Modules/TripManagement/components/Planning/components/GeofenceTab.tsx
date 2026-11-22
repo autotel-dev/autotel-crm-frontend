@@ -111,7 +111,7 @@ const GeofenceTab = () => {
           display: "flex",
           overflow: "hidden",
           scrollbarWidth: "none",
-          marginRight: "-35px",
+          marginRight: 0,
         }}
       >
         <GoogleMapTrip
