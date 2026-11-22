@@ -5,7 +5,6 @@ import { useDispatch, useSelector } from "react-redux";
 import SVG from "../../../../utils/CommonSvgIcon/SVG";
 import "./ComplainList.css";
 import Chart from "react-google-charts";
-import UserProfile from "../../../../assets/companyProfile.png";
 import { MdFilterList } from "react-icons/md";
 import { useEffect, useRef, useState } from "react";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa6";
@@ -23,6 +22,25 @@ const CC_STAT_META: Record<string, { label: string; color: string; soft: string;
   InProgress: { label: "In progress", color: "#D97706", soft: "rgba(217,119,6,.15)", icon: ccIcon("M12 7v5l3 2M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18z") },
   Pending: { label: "Pending", color: "#DC2626", soft: "rgba(220,38,38,.13)", icon: ccIcon("M10 8v8M14 8v8M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18z") },
   Resolved: { label: "Resolved", color: "#65A30D", soft: "rgba(101,163,13,.15)", icon: ccIcon("M8 12.5l2.5 2.5L16 9.5M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18z") },
+};
+
+// Department chip icons (by name; anything else gets the people icon)
+const ccRoleIcon = (name: string = "") => {
+  const n = name.toLowerCase();
+  const d = n.includes("sale")
+    ? "M3 12V4h8l10 10-8 8L3 12zM7.5 7.5h.01" // tag
+    : n === "cro" || n.includes("support") || n.includes("call")
+    ? "M4 13v-1a8 8 0 0 1 16 0v1M4 13h3v5H5a1 1 0 0 1-1-1v-4zM20 13h-3v5h2a1 1 0 0 0 1-1v-4z" // headset
+    : n.includes("install") || n.includes("tech") || n.includes("maint")
+    ? "M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2.4-.6-.6-2.4 2.6-2.6z" // wrench
+    : n.includes("account") || n.includes("finance") || n.includes("bill")
+    ? "M4 7h16v12H4zM4 11h16M8 15h3" // card
+    : "M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM2 21c0-4 3-6 7-6s7 2 7 6M17 3.5a4 4 0 0 1 0 7.5M22 21c0-3-2-5-5-5.5"; // people
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+      <path d={d} />
+    </svg>
+  );
 };
 
 const ComplainList = () => {
@@ -328,238 +346,32 @@ const ComplainList = () => {
                         // padding:"0px 12px"
                       }}
                     >
-                      {/* Left angle bracket */}
-                      <div>
-                        <div
-                          style={{
-                            position: "absolute",
-                            top: "50%",
-                            left: "15px",
-                            transform: "translate(-50%, -50%)",
-                            zIndex: "1",
-                            cursor: "pointer",
-                            fontSize: "13px",
-                            backgroundColor: "lightgray",
-                            padding: "10px 10px",
-                            borderRadius: "50%",
-                            display: "flex",
-                            alignItems: "center",
-                            marginRight: "10px", // Margin added
-                            marginLeft: "10px",
-                          }}
-                          onClick={scrollLeft}
-                        >
+                      {/* Department filter (redesign): arrows + chips with icon and count */}
+                      <div className="cc-roles">
+                        <button type="button" className="cc-roles__arrow" aria-label="Scroll departments left" onClick={scrollLeft}>
                           <FaArrowLeft />
-                        </div>
-                      </div>
-
-                      {/* Code block with scroll */}
-                      <div
-                        id="scrollContainer"
-                        style={{
-                          display: "flex",
-                          margin: "20px 50px",
-                          overflowX: "scroll",
-                          scrollbarWidth: "none" /* Firefox */,
-                          width:
-                            "calc(100% - 100px)" /* Adjust width to accommodate brackets */,
-                          paddingLeft:
-                            "24px" /* Add left padding to make space for left bracket */,
-                          paddingRight:
-                            "24px" /* Add right padding to make space for right bracket */,
-                        }}
-                      // onScroll={(e) => setScrollPosition(e.target.scrollLeft)}
-                      >
-                        <li
-                          style={{
-                            backgroundColor: `${filteredRole == "All" ? "black" : "white"}`,
-
-                            // boxShadow: "0px 3.5px 7px rgba(0, 0, 0, 0.2)",
-                            border: "2px solid lightgray",
-                            borderRadius: "8px",
-                            padding: "0px 10px",
-                            height: "40px",
-                            marginRight: "8px",
-                            listStyle: "none",
-                            display: "flex",
-                            alignItems: "center",
-                            cursor: "pointer",
-                            marginBottom: "4.5px",
-                            marginTop: "3.5px"
-                          }}
-
-                          onClick={() => {
-                            dispatch(setFilteredRole("All"))
-                          }}
-                        >
-                          <div
-                            style={{
-                              width: "24px",
-                              height: "24px",
-                              borderRadius: "100px",
-                            }}
-                          >
-                            <img
-                              height="100%"
-                              width="100%"
-                              src={UserProfile}
-                              alt="user"
-                              style={{
-                                borderRadius: "100px",
-                              }}
-                            />
-                          </div>
-                          <div
-                            className="Countries"
-                            style={{
-                              marginLeft: "10px",
-
-                              // width: "180px",
-                              display: "flex",
-                              justifyContent: "space-between",
-                              alignItems: "center"
-                            }}
-                          >
-                            <H5>
-                              <span style={{
-                                color: `${filteredRole == "All" ? "white" : "black"}`,
-                              }}>
-                                All
-                              </span>
-                            </H5>
-                            <div
-                              style={{
-                                padding: "6px",
-                                width: "22px",
-                                height: "22px",
-                                borderRadius: "100px",
-                                backgroundColor: `${filteredRole == "All" ? "white" : "black"}`,
-                                color: `${filteredRole == "All" ? "black" : "white"}`,
-                                display: "flex",
-                                justifyContent: "center",
-                                alignItems: "center",
-                                marginLeft: "20px",
-                                fontSize: "12px",
-                                // fontFamily: "Sedan, serif",
-                                // fontWeight: "400",
-                                // fontStyle: "normal",
-                              }}
-                            >
-                              {complainCenterStatistics[0]?.value}
-                            </div>
-                            {/* <H6 className="mt-1 mb-0">{data.percentage}</H6> */}
-                          </div>
-                        </li>
-                        {complainCenterRoles.map((data: any, index: any) => (
-                          <li
-                            style={{
-                              backgroundColor: `${filteredRole == data.name ? "black" : "white"}`,
-                              // boxShadow: "0px 3.5px 7px rgba(0, 0, 0, 0.2)",
-                              border: "2px solid lightgray",
-                              borderRadius: "8px",
-                              padding: "0px 10px",
-                              height: "40px",
-                              marginRight: "8px",
-                              listStyle: "none",
-                              display: "flex",
-                              alignItems: "center",
-                              cursor: "pointer",
-                              marginBottom: "4.5px",
-                              marginTop: "3.5px",
-
-                              // width: "auto", // Remove or keep it as auto
-
-                            }}
-                            key={index}
-                            onClick={() => {
-                              dispatch(setFilteredRole(data.name));
-                            }}
-                          >
-                            <div
-                              style={{
-                                width: "24px",
-                                height: "24px",
-                                borderRadius: "100px",
-                                flexShrink: 0, // Prevent shrinking
-                              }}
-                            >
-                              <img
-                                height="100%"
-                                width="100%"
-                                src={UserProfile}
-                                alt="user"
-                                style={{
-                                  borderRadius: "100px",
-                                }}
-                              />
-                            </div>
-                            <div
-                              className="Countries"
-                              style={{
-                                marginLeft: "10px",
-                                display: "flex",
-                                justifyContent: "space-between",
-                                alignItems: "center",
-                              }}
-                            >
-                              {/* Remove or increase the maxWidth and minWidth properties */}
-                              <div style={{ minWidth: data.name.length < 10 ? "80px" : data.name.length < 10 ? "100px" : data.name.length < 14 ? "120px" : data.name.length < 20 ? "170px" : "180px", flexShrink: 0 }}>
-                                <H5>
-                                  <span style={{
-                                    color: `${filteredRole == data.name ? "white" : "black"}`,
-                                  }}>
-                                    {data.name}
-                                  </span>
-                                </H5>
-                              </div>
-
-                              <div
-                                style={{
-                                  padding: "6px",
-                                  width: "22px",
-                                  height: "22px",
-                                  borderRadius: "100px",
-                                  backgroundColor: `${filteredRole == data.name ? "white" : "black"}`,
-                                  color: `${filteredRole == data.name ? "black" : "white"}`,
-                                  display: "flex",
-                                  fontSize: "12px",
-                                  justifyContent: "center",
-                                  alignItems: "center",
-                                  marginLeft: "20px",
-                                  flexShrink: 0, // Prevent shrinking
-                                }}
+                        </button>
+                        <div id="scrollContainer" className="cc-roles__list" role="group" aria-label="Filter by department">
+                          {[{ name: "All", count: complainCenterStatistics[0]?.value }, ...complainCenterRoles].map((data: any, index: any) => {
+                            const on = filteredRole == data.name;
+                            return (
+                              <button
+                                type="button"
+                                key={index}
+                                className={`cc-role${on ? " is-on" : ""}`}
+                                aria-pressed={on}
+                                onClick={() => dispatch(setFilteredRole(data.name))}
                               >
-                                {data.count}
-                              </div>
-                              {/* <H6 className="mt-1 mb-0">{data.percentage}</H6> */}
-                            </div>
-                          </li>
-                        ))}
-
-
-                      </div>
-
-                      {/* Right angle bracket */}
-                      <div
-                        style={{
-                          position: "absolute",
-                          top: "50%",
-                          right: "-15px",
-                          transform: "translate(-50%, -50%)",
-                          zIndex: "1",
-                          cursor: "pointer",
-                          fontSize: "13px",
-                          backgroundColor: "lightgray",
-                          padding: "10px 10px",
-                          borderRadius: "50%",
-                          display: "flex",
-                          alignItems: "center",
-                          // marginRight: "10px", // Margin added
-                          marginLeft: "5px",
-                        }}
-                        onClick={scrollRight}
-                      >
-                        <FaArrowRight />
+                                <span className="cc-role__icon" aria-hidden="true">{ccRoleIcon(data.name)}</span>
+                                <span className="cc-role__name">{data.name}</span>
+                                <span className="cc-role__count">{data.count ?? 0}</span>
+                              </button>
+                            );
+                          })}
+                        </div>
+                        <button type="button" className="cc-roles__arrow" aria-label="Scroll departments right" onClick={scrollRight}>
+                          <FaArrowRight />
+                        </button>
                       </div>
                     </div>
                   </Row>
