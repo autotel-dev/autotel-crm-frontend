@@ -106,6 +106,25 @@ body.at-shell-on {
 
 .at-rail__spacer { flex: 1; }
 
+.at-rail__bottom {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding-top: 8px;
+  margin-top: 6px;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  width: 100%;
+}
+
+// Short screens (laptops at 125% zoom etc.): tighter rail so more icons fit.
+@media (max-height: 640px) {
+  .at-rail { gap: 2px; padding: 10px 0; }
+  .at-rail__logo { width: 36px; height: 36px; margin-bottom: 6px; }
+  .at-rail__items, .at-rail__bottom { gap: 2px; }
+  .at-rail__btn { width: 40px; height: 40px; flex-basis: 40px; }
+}
+
 .at-rail__btn {
   position: relative;
   width: 44px;
@@ -438,13 +457,47 @@ body.at-dark .loader-wrapper, body.at-dark .loader-wrapper-edited {
     border-color: var(--at-primary) !important;
   }
 
-  // Template teal used inline
-  [style*="color: rgb(53, 191, 191)"], [style*="color: rgb(51, 191, 191)"] { color: var(--at-primary) !important; }
-  [style*="background-color: rgb(53, 191, 191)"], [style*="background-color: rgb(51, 191, 191)"],
-  [style*="background-color: rgb(109, 191, 184)"] {
-    background-color: var(--at-primary) !important;
-    color: var(--at-on-primary) !important;
+  // Template teals used inline (#33bfbf, #35bfbf, #63d5be, #6dbfb8) → primary
+  @each $t in "rgb(51, 191, 191)", "rgb(53, 191, 191)", "rgb(99, 213, 190)", "rgb(109, 191, 184)" {
+    [style*="background-color: #{$t}"], [style*="background: #{$t}"] {
+      background: var(--at-primary) !important;
+      color: var(--at-on-primary) !important;
+    }
+    [style^="color: #{$t}"], [style*=" color: #{$t}"], [style*=";color: #{$t}"] { color: var(--at-primary) !important; }
+    [style*="border-color: #{$t}"], [style*="solid #{$t}"] { border-color: var(--at-primary) !important; }
   }
+
+  // The template's own primary (teal) classes
+  .btn-primary { background-color: var(--at-primary) !important; border-color: var(--at-primary) !important; color: var(--at-on-primary) !important; border-radius: 12px !important; }
+  .bg-primary { background-color: var(--at-primary) !important; color: var(--at-on-primary) !important; }
+  .text-primary { color: var(--at-primary) !important; }
+  .border-primary { border-color: var(--at-primary) !important; }
+  .badge-primary, .badge.bg-primary { background-color: var(--at-primary) !important; color: var(--at-on-primary) !important; }
+  .nav-tabs:not(.border-tab) .nav-link.active, .nav-pills:not(.horizontal-options) .nav-link.active {
+    color: var(--at-primary) !important;
+    border-color: var(--at-primary) !important;
+  }
+  .progress-bar { background-color: var(--at-primary); }
+
+  // Old dark navy side strips (#1f2f3e) → rail colour
+  [style*="background-color: rgb(31, 47, 62)"] { background-color: var(--at-rail) !important; }
+
+  // Ant Design pieces (Alert Management and others)
+  .ant-btn-primary:not(:disabled) {
+    background: var(--at-primary) !important;
+    color: var(--at-on-primary) !important;
+    border-color: var(--at-primary) !important;
+    box-shadow: none !important;
+  }
+  .ant-btn { border-radius: 12px !important; font-family: var(--at-font); }
+  .ant-switch.ant-switch-checked { background: var(--at-primary) !important; }
+  .ant-checkbox-checked .ant-checkbox-inner, .ant-radio-checked .ant-radio-inner {
+    background-color: var(--at-primary) !important;
+    border-color: var(--at-primary) !important;
+  }
+  .ant-tabs-ink-bar { background: var(--at-primary) !important; }
+  .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn { color: var(--at-primary) !important; }
+  .ant-pagination-item-active { border-color: var(--at-primary) !important; a { color: var(--at-primary) !important; } }
 
   // Heavy grey drop shadows from the template; the new look is flat.
   [style*="box-shadow: lightgray"], [style*="box-shadow: gray"], [style*="box-shadow: rgb(211, 211, 211)"] {
@@ -465,9 +518,10 @@ body.at-dark .loader-wrapper, body.at-dark .loader-wrapper-edited {
   [style*="background-color: rgb(255, 255, 255)"], [style*="background: rgb(255, 255, 255)"] {
     background-color: var(--at-panel) !important;
   }
-  [style*="background-color: rgb(241, 241, 241)"], [style*="background-color: rgb(248, 249, 250)"],
-  [style*="background-color: rgb(248, 250, 250)"] {
-    background-color: var(--at-soft) !important;
+  @each $g in "rgb(241, 241, 241)", "rgb(248, 249, 250)", "rgb(248, 250, 250)", "rgb(248, 248, 248)",
+    "rgb(245, 245, 245)", "rgb(240, 240, 240)", "rgb(250, 250, 250)", "rgb(242, 242, 242)",
+    "rgb(238, 238, 238)", "rgb(211, 211, 211)", "rgb(244, 244, 244)", "rgb(246, 246, 246)" {
+    [style*="background-color: #{$g}"], [style*="background: #{$g}"] { background: var(--at-soft) !important; }
   }
   [style^="color: black"], [style*=" color: black"], [style*=";color: black"],
   [style^="color: rgb(0, 0, 0)"], [style*=" color: rgb(0, 0, 0)"],
@@ -537,7 +591,9 @@ body.at-dark {
   .ant-select-item { color: var(--at-text) !important; }
   .ant-select-item-option-active, .ant-select-item-option-selected { background: var(--at-soft) !important; }
 
-  .nav-tabs .nav-link, .nav-link { color: var(--at-muted) !important; opacity: 1 !important; }
+  // Tabs take their colour from where they sit (panel or an indigo header bar).
+  .nav-tabs .nav-link, .nav-link { color: inherit !important; opacity: 0.85; }
+  .rdt_Table > div { background-color: var(--at-panel) !important; color: var(--at-text) !important; }
   .nav-link.active { color: var(--at-text) !important; background: var(--at-soft) !important; }
   .at-topbar .notification-box svg { stroke: var(--at-text) !important; fill: none; }
   .swal2-popup { background: var(--at-panel) !important; color: var(--at-text) !important; }
@@ -639,6 +695,7 @@ body.at-dark {
   }
   .at-rail__logo { display: none; }
   .at-rail__items { flex-direction: row; overflow-x: auto; overflow-y: hidden; }
+  .at-rail__bottom { flex-direction: row; width: auto; margin: 0 0 0 6px; padding: 0 0 0 6px; border-top: 0; border-left: 1px solid rgba(255, 255, 255, 0.12); }
   .at-rail__spacer { display: none; }
   .at-flyout { left: 8px; right: 8px; width: auto; top: auto; bottom: 72px; max-height: 70vh; }
   .at-main { margin-left: 0; padding: 8px 8px 80px; }

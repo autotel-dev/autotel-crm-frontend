@@ -32,6 +32,10 @@ const RailNav = ({ items, theme, onToggleTheme }: Props) => {
 
   // Close the flyout on navigation, Escape or a click outside it.
   useEffect(() => setOpen(null), [pathname]);
+  // On short screens the module icons scroll; keep the current one visible.
+  useEffect(() => {
+    document.querySelector(".at-rail__items .is-active")?.scrollIntoView({ block: "nearest" });
+  }, [pathname, items.length]);
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(null);
@@ -99,9 +103,9 @@ const RailNav = ({ items, theme, onToggleTheme }: Props) => {
         <Link to={`${U}/dashboard`} className="at-rail__logo" aria-label="Autotel home">
           A
         </Link>
-        <div className="at-rail__items">
-          {top.map(renderItem)}
-          <div className="at-rail__spacer" />
+        {/* Module icons scroll on short screens; Setup and the theme switch stay pinned. */}
+        <div className="at-rail__items">{top.map(renderItem)}</div>
+        <div className="at-rail__bottom">
           {bottom.map(renderItem)}
           <button
             type="button"

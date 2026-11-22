@@ -170,19 +170,23 @@ const Sidebar: React.FC<SidebarProps> = ({
   return (
     <div
       style={{
+        // Floating panel beside the app's icon rail (redesign Phase 1).
         width: "90px",
-        height: "94vh",
-        backgroundColor: "#1f2f3e",
+        height: "calc(100vh - var(--at-chrome-h, 104px))",
+        backgroundColor: "var(--at-rail)",
+        borderRadius: "var(--at-radius, 20px)",
+        border: "1px solid var(--at-line)",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
         paddingTop: "20px",
-        marginTop: "13px",
+        marginTop: 0,
         gap: "10px",
         position: "fixed",
-        left: 0,
-        top: "6vh",
+        left: "96px",
+        top: "88px",
         zIndex: 100,
+        overflowY: "auto",
       }}
     >
       {menuItems

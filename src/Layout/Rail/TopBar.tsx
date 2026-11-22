@@ -17,6 +17,11 @@ const SPECIAL: [string, string][] = [
   ["/super-admin/setup/server-details/update-server", "Update server"],
   ["/support/ticketDetails", "Ticket"],
   ["/company/trip-reports", "Trip reports"],
+  ["/company/modules/monitoring/playback", "Trip playback"],
+  ["/company/modules/monitoring-for-single-vehicle", "Vehicle"],
+  ["/company/modules/live-monitoring", "Live monitoring"],
+  ["/company/modules/complain-center/complainDetails", "Complaint"],
+  ["/operator/modules/complain-center/complainDetails", "Complaint"],
 ];
 
 const titleFor = (items: NavItem[], path: string): string => {
