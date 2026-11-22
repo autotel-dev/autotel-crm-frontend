@@ -34,6 +34,16 @@ export const useAtTheme = () => {
     }
   }, [theme]);
 
+  // Leaving the app (e.g. logout to the login page): drop the dark classes so
+  // sign-in pages keep their own design.
+  useEffect(
+    () => () => {
+      document.body.classList.remove("at-dark");
+      document.documentElement.classList.remove("at-dark");
+    },
+    []
+  );
+
   const toggle = useCallback(() => setTheme((t) => (t === "dark" ? "light" : "dark")), []);
   return { theme, toggle };
 };

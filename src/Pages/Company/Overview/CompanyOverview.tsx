@@ -100,6 +100,7 @@ const CompanyOverview = () => {
           <span className="at-tile__big" style={{ fontSize: 60 }}>{data ? fmtNum(data.alarms.assignedOpen) : "…"}</span>
           {data && (
             <span className="at-tile__sub">
+              {typeof data.alarms.assignedOpenToMe === "number" && `${fmtNum(data.alarms.assignedOpenToMe)} assigned to you · `}
               {fmtNum(data.alarms.today)} alarms today · {fmtNum(data.alarms.completedToday)} closed today
             </span>
           )}
@@ -125,6 +126,7 @@ const CompanyOverview = () => {
         {/* Alarms by hour */}
         <section className="at-tile at-span-2" aria-label="Alarms today by hour">
           <h3 className="at-tile__title">Alarms today, by hour</h3>
+          {data && data.alarms.today === 0 && <span className="at-tile__sub">No alarms so far today.</span>}
           <div className="at-bars" style={{ height: 110 }} role="img" aria-label={`${data?.alarms?.today ?? 0} alarms today`}>
             {byHour.map((h) => (
               <span key={h.hour} style={{ height: `${Math.max(2, (h.count / hourMax) * 100)}%`, opacity: h.count ? 0.9 : 0.25 }} title={`${h.hour}:00 — ${h.count}`} />

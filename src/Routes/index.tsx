@@ -3,6 +3,7 @@ import {
   Navigate,
   Route,
   Routes,
+  useLocation,
   useParams,
 } from "react-router-dom";
 import PrivateRoute from "./PrivateRoute";
@@ -18,6 +19,20 @@ const LoginForm = lazy(() => import("../Pages/Common/Auth/Auth"));
 const ForgotPassword = lazy(() => import("../Pages/Common/ForgotPassword/ForgotPassword"));
 const ResetPassword = lazy(() => import("../Pages/Common/ResetPassword/ResetPassword"));
 const VerifyOTPForForgotPassword = lazy(() => import("../Pages/Common/VerifyOTPForForgotPassword/VerifyOTPForForgotPassword"));
+
+// Sign-in pages keep their own light design: drop the app's dark theme there
+// (e.g. a session that expired and redirected straight to /login).
+const AUTH_PAGE = /^\/(login|verifyOTP|forgot-password|verifyOTPForForgotPassword|reset-password)(\/|$)/;
+const AuthThemeGuard = () => {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    if (AUTH_PAGE.test(pathname)) {
+      document.body.classList.remove("at-dark", "at-shell-on");
+      document.documentElement.classList.remove("at-dark");
+    }
+  }, [pathname]);
+  return null;
+};
 
 const Routers = () => {
   useEffect(() => {
@@ -35,6 +50,7 @@ const Routers = () => {
 
   return (
     <BrowserRouter basename={"/"}>
+      <AuthThemeGuard />
       <Suspense fallback={<Loader />}>
       <Routes>
         {token !== null ? (
