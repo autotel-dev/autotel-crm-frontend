@@ -5,17 +5,17 @@ export const SidebarMenu: SidebarMenuTypes[] = [
   {
     title: "Dashboard",
     svgIcon: "home",
-    link: `${process.env.PUBLIC_URL}/dashboards/shoppingplace`,
+    link: `${process.env.PUBLIC_URL}/dashboard`,
     // subMenu: [
     //   {
     //     svgIcon: "bonus-kit",
     //     title: "Shopping Place",
-    //     link: `${process.env.PUBLIC_URL}/dashboards/shoppingplace`,
+    //     link: `${process.env.PUBLIC_URL}/dashboard`,
     //   },
     //   {
     //     svgIcon: "bonus-kit",
     //     title: "CRM Dashboard",
-    //     link: `${process.env.PUBLIC_URL}/dashboards/crmdashboard`,
+    //     link: `${process.env.PUBLIC_URL}/dashboard`,
     //   },
     // ],
   },
@@ -51,12 +51,12 @@ export const SidebarMenu: SidebarMenuTypes[] = [
       {
         svgIcon: "bonus-kit",
         title: "Email Templates",
-        link: `${process.env.PUBLIC_URL}/dashboards/crmdashboard`,
+        link: `${process.env.PUBLIC_URL}/dashboard`,
       },
       {
         svgIcon: "bonus-kit",
         title: "WhatsApp templates",
-        link: `${process.env.PUBLIC_URL}/dashboards/crmdashboard`,
+        link: `${process.env.PUBLIC_URL}/dashboard`,
       },
       {
         svgIcon: "bonus-kit",
@@ -77,12 +77,12 @@ export const SidebarMenu: SidebarMenuTypes[] = [
       {
         svgIcon: "bonus-kit",
         title: "Module 1",
-        link: `${process.env.PUBLIC_URL}/dashboards/shoppingplace`,
+        link: `${process.env.PUBLIC_URL}/dashboard`,
       },
       {
         svgIcon: "bonus-kit",
         title: "Module 2",
-        link: `${process.env.PUBLIC_URL}/dashboards/shoppingplace`,
+        link: `${process.env.PUBLIC_URL}/dashboard`,
       },
     ],
   },
@@ -101,7 +101,7 @@ export const SidebarMenu: SidebarMenuTypes[] = [
     //   {
     //     svgIcon: "bonus-kit",
     //     title: "All Companies",
-    //     link: `${process.env.PUBLIC_URL}/dashboards/shoppingplace`,
+    //     link: `${process.env.PUBLIC_URL}/dashboard`,
     //   },
     // ],
   },

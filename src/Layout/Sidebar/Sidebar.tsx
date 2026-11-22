@@ -16,7 +16,7 @@ const Sidebar = ({ setOpen, open }: PropsTypes) => {
        {/* <div className={`sidebar-wrapper`}> */}
       <div>
         <div className="logo-wrapper">
-          <Link to={`${process.env.PUBLIC_URL}/dashboards/shoppingplace`}>
+          <Link to={`${process.env.PUBLIC_URL}/dashboard`}>
             <Image
               className="img-fluid"
               src={dynamicImage("logo/logo.png")}

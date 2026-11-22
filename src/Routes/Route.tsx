@@ -6,8 +6,6 @@ import { ROLES } from "../constants/roles";
 import { PERMISSION_VALUES } from "../constants/permissions";
 
 // Pages load on demand: each page's code downloads the first time it is opened.
-const ShoppingPlace = lazy(() => import("../Pages/DashBoard/ShoppingPlace/ShoppingPlace"));
-const CRMDashboard = lazy(() => import("../Pages/DashBoard/CRMDashboard/CRMDashboard"));
 const Support = lazy(() => import("../Pages/Common/Support/Support"));
 const VerifyOTP = lazy(() => import("../Pages/Common/VerifyOTP/VerifyOTP"));
 const CompanyTasks = lazy(() => import("../Pages/Company/Tasks/Tasks"));
@@ -69,15 +67,6 @@ const CustomersSetup = lazy(() => import("../Pages/Company/Customers/CustomersSe
 const DevicesSetup = lazy(() => import("../Pages/Company/Devices/DevicesSetup"));
 
 const routes = [
-  // dashboard routes
-  {
-    path: `${process.env.PUBLIC_URL}/dashboards/shoppingplace`,
-    Component: <ShoppingPlace />,
-  },
-  {
-    path: `${process.env.PUBLIC_URL}/dashboards/crmdashboard`,
-    Component: <CRMDashboard />,
-  },
 
   // --------------------------------------------------
 

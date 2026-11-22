@@ -1,0 +1,366 @@
+// Autotel design system: theme C1 (light) and C4 "Midnight" (dark).
+// Every new component reads these variables. Dark mode adds `at-dark`
+// (plus the template's own `dark-only`) to <body>.
+
+:root {
+  --at-bg: #eef0f7;
+  --at-panel: #ffffff;
+  --at-soft: #eef0f7;
+  --at-line: #e5e7eb;
+  --at-text: #1e1b4b;
+  --at-muted: #4b5563;
+  --at-rail: #1e1b4b;
+  --at-rail-icon: #c7d2fe;
+  --at-rail-hover: #312e81;
+  --at-primary: #4f46e5;
+  --at-on-primary: #ffffff;
+  --at-primary-soft: rgba(79, 70, 229, 0.14);
+  --at-highlight: #a3e635;
+  --at-on-highlight: #1a2e05;
+  --at-moving: #65a30d;
+  --at-idle: #d97706;
+  --at-stopped: #dc2626;
+  --at-offline: #6b7280;
+  --at-shadow: 0 12px 40px rgba(30, 27, 75, 0.12);
+  --at-radius: 20px;
+  --at-font: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --at-font-display: "Space Grotesk", "Inter", system-ui, sans-serif;
+}
+
+body.at-dark {
+  --at-bg: #0a0a12;
+  --at-panel: #171628;
+  --at-soft: #23213f;
+  --at-line: #2a2850;
+  --at-text: #ededfa;
+  --at-muted: #a1a1c2;
+  --at-rail: #15132b;
+  --at-rail-icon: #a5b4fc;
+  --at-rail-hover: #262449;
+  --at-primary: #818cf8;
+  --at-on-primary: #0a0a12;
+  --at-primary-soft: rgba(129, 140, 248, 0.2);
+  --at-moving: #a3e635;
+  --at-idle: #fcd34d;
+  --at-stopped: #f87171;
+  --at-offline: #71717a;
+  --at-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+}
+
+/* ---------- Shell: icon rail + top bar + content ---------- */
+
+body.at-shell-on {
+  background: var(--at-bg);
+}
+
+.at-shell {
+  min-height: 100vh;
+  background: var(--at-bg);
+  color: var(--at-text);
+}
+
+.at-rail {
+  position: fixed;
+  z-index: 1030;
+  left: 16px;
+  top: 16px;
+  bottom: 16px;
+  width: 64px;
+  background: var(--at-rail);
+  border-radius: var(--at-radius);
+  border: 1px solid var(--at-line);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 14px 0;
+  box-sizing: border-box;
+  font-family: var(--at-font);
+}
+
+.at-rail__logo {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: var(--at-highlight);
+  color: var(--at-on-highlight);
+  font: 700 18px var(--at-font-display);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+  text-decoration: none;
+  &:hover { color: var(--at-on-highlight); }
+}
+
+.at-rail__items {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  overflow-y: auto;
+  scrollbar-width: none;
+  flex: 1;
+  width: 100%;
+}
+
+.at-rail__spacer { flex: 1; }
+
+.at-rail__btn {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  flex: 0 0 44px;
+  border-radius: 12px;
+  border: 0;
+  background: transparent;
+  color: var(--at-rail-icon);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.15s ease, color 0.15s ease;
+
+  &:hover,
+  &:focus-visible {
+    background: var(--at-rail-hover);
+    color: #ffffff;
+    outline: none;
+  }
+
+  &.is-active {
+    background: var(--at-highlight);
+    color: var(--at-on-highlight);
+  }
+
+  &.is-open {
+    background: var(--at-rail-hover);
+    color: #ffffff;
+  }
+
+  svg { width: 20px; height: 20px; }
+}
+
+// Name label that appears next to an icon on hover / keyboard focus.
+.at-rail__tip {
+  position: fixed;
+  z-index: 1060;
+  pointer-events: none;
+  background: var(--at-text);
+  color: var(--at-panel);
+  font: 600 12px var(--at-font);
+  padding: 6px 10px;
+  border-radius: 8px;
+  white-space: nowrap;
+  transform: translateY(-50%);
+}
+
+.at-flyout {
+  position: fixed;
+  z-index: 1050;
+  left: 92px;
+  top: 16px;
+  bottom: 16px;
+  width: 260px;
+  background: var(--at-panel);
+  color: var(--at-text);
+  border: 1px solid var(--at-line);
+  border-radius: var(--at-radius);
+  box-shadow: var(--at-shadow);
+  padding: 16px 12px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-family: var(--at-font);
+
+  &__title {
+    font: 700 18px var(--at-font-display);
+    padding: 4px 10px 10px;
+    margin: 0;
+    color: var(--at-text);
+  }
+
+  &__list {
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  &__link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 12px;
+    color: var(--at-text);
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+
+    &:hover { background: var(--at-soft); color: var(--at-text); }
+    &.is-active { background: var(--at-primary-soft); color: var(--at-text); font-weight: 700; }
+  }
+}
+
+.at-main {
+  margin-left: 96px;
+  padding: 16px 16px 16px 0;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+.at-topbar {
+  position: sticky;
+  top: 16px;
+  z-index: 1020;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--at-panel);
+  color: var(--at-text);
+  border: 1px solid var(--at-line);
+  border-radius: var(--at-radius);
+  box-shadow: var(--at-shadow);
+  padding: 8px 12px 8px 20px;
+  margin-bottom: 16px;
+  font-family: var(--at-font);
+
+  &__title {
+    margin: 0;
+    font: 600 18px var(--at-font-display);
+    color: var(--at-text);
+  }
+
+  &__spacer { flex: 1; }
+
+  // The template's right header (clock, notifications, profile) sits here.
+  .nav-right { margin-left: 0 !important; }
+  .nav-menus { align-items: center; margin: 0; }
+  .nav-menus p { color: var(--at-muted); }
+}
+
+.at-icon-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  border: 0;
+  background: var(--at-soft);
+  color: var(--at-text);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  svg { width: 18px; height: 18px; }
+  &:hover { background: var(--at-primary-soft); }
+}
+
+// Existing pages inside the new shell: drop the template's fixed-header offsets.
+.at-shell .page-body {
+  margin: 0 !important;
+  padding: 0 !important;
+  min-height: 0 !important;
+  background: transparent !important;
+}
+.at-shell .page-title { padding-top: 0; }
+
+/* ---------- Shared UI components ---------- */
+
+.at-panel {
+  background: var(--at-panel);
+  color: var(--at-text);
+  border: 1px solid var(--at-line);
+  border-radius: var(--at-radius);
+  padding: 18px;
+}
+.at-panel--floating { box-shadow: var(--at-shadow); }
+
+.at-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 10px 16px;
+  border: 0;
+  border-radius: 12px;
+  font: 600 13px var(--at-font);
+  cursor: pointer;
+  text-decoration: none;
+  background: var(--at-soft);
+  color: var(--at-text);
+  &:hover { filter: brightness(0.97); }
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  &--primary { background: var(--at-primary); color: var(--at-on-primary); }
+  &--highlight { background: var(--at-highlight); color: var(--at-on-highlight); font-weight: 700; }
+  &--danger { background: var(--at-stopped); color: #ffffff; }
+}
+
+.at-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 999px;
+  padding: 3px 10px;
+  font: 700 12px var(--at-font);
+  background: var(--at-soft);
+  color: var(--at-text);
+}
+
+.at-stat {
+  &__label { font-size: 13px; color: var(--at-muted); }
+  &__value { font: 700 32px var(--at-font-display); line-height: 1.15; }
+}
+
+.at-quick-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 14px;
+}
+
+.at-quick-link {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px;
+  border-radius: 18px;
+  background: var(--at-panel);
+  border: 1px solid var(--at-line);
+  color: var(--at-text);
+  text-decoration: none;
+  font-family: var(--at-font);
+  &:hover { border-color: var(--at-primary); color: var(--at-text); }
+  &__icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    background: var(--at-primary-soft);
+    color: var(--at-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 42px;
+    svg { width: 20px; height: 20px; }
+  }
+  &__name { font-weight: 700; font-size: 15px; }
+  &__desc { font-size: 12px; color: var(--at-muted); }
+}
+
+@media (max-width: 767px) {
+  .at-rail {
+    left: 0; right: 0; top: auto; bottom: 0;
+    width: auto; height: 64px;
+    flex-direction: row;
+    border-radius: 16px 16px 0 0;
+    padding: 0 10px;
+  }
+  .at-rail__logo { display: none; }
+  .at-rail__items { flex-direction: row; overflow-x: auto; overflow-y: hidden; }
+  .at-rail__spacer { display: none; }
+  .at-flyout { left: 8px; right: 8px; width: auto; top: auto; bottom: 72px; max-height: 70vh; }
+  .at-main { margin-left: 0; padding: 8px 8px 80px; }
+  .at-topbar { top: 8px; }
+}

@@ -5,16 +5,6 @@ import { ROLES } from "../../constants/roles";
 import Breadcrumbs from "../../CommonElements/Breadcrumbs/Breadcrumbs";
 import General from "./General/General";
 import AlertsOverview from "./Control Room/AlertsOverview";
-import TotalEarning from "./ShoppingPlace/TotalEarning/TotalEarning";
-import RecentOrders from "./ShoppingPlace/RecentOrders/RecentOrders";
-import TopSeller from "./ShoppingPlace/TopSeller/TopSeller";
-import NewProduct from "./ShoppingPlace/NewProduct/NewProduct";
-import TopCountries from "./ShoppingPlace/TopCountries/TopCountries";
-import ActivityTimeline from "./ShoppingPlace/ActivityTimeline/ActivityTimeline";
-import SalesSummary from "./ShoppingPlace/SalesSummary/SalesSummary";
-import WeekendSale from "./ShoppingPlace/WeekendSale/WeekendSale";
-import Invoice from "./ShoppingPlace/Invoice/Invoice";
-import ProductSales from "./ShoppingPlace/ProductSales/ProductSales";
 import KilledVehicles from "./Control Room/KilledVehicles";
 import { useEffect, useState } from "react";
 import "react-loading-skeleton/dist/skeleton.css";
@@ -57,6 +47,7 @@ import {
 } from "../../ReaduxToolkit/Reducer/ComplainCenterSlice";
 import Skeleton from "../Utilities/Skeleton/Skeleton";
 import StickyBar from "./StickyBar/StickyBar";
+import SuperAdminHome from "../SuperAdmin/Home/SuperAdminHome";
 
 const Dashboard = () => {
   const dispatch = useDispatch();
@@ -701,20 +692,7 @@ const Dashboard = () => {
       )}
       <Breadcrumbs mainTitle="Dashboard" parent="Dashboard" title="Dashboard" />
       {getUserRole() === ROLES.SUPER_ADMIN ? (
-        <Container fluid className="dashboard_default">
-          <Row className="widget-grid">
-            <TotalEarning />
-            <RecentOrders />
-            <TopSeller />
-            <NewProduct />
-            <TopCountries />
-            <ActivityTimeline />
-            <SalesSummary />
-            <WeekendSale />
-            <Invoice />
-            <ProductSales />
-          </Row>
-        </Container>
+        <SuperAdminHome />
       ) : dashboard !== undefined &&
         dashboard?.read &&
         getUserRole() === ROLES.COMPANY ? (

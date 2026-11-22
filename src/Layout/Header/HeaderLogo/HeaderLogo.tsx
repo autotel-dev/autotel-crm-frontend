@@ -17,7 +17,7 @@ const HeaderLogo = () => {
   return (
     <>
       <div className="logo-wrapper">
-        <Link to={`${process.env.PUBLIC_URL}/dashboards/shoppingplace`}>
+        <Link to={`${process.env.PUBLIC_URL}/dashboard`}>
           <img
             src={
               userPersonalizationData !== null && userPersonalizationData.accountLogo.url !== ""
