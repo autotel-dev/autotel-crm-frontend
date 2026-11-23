@@ -51,18 +51,19 @@ const UpdateServerForm = () => {
     ipAddress: server.ipAddress,
     multiCloudWebLogin: server.multiCloudWebLogin,
     loginUserSoftware: server.loginUserSoftware,
-    loginPasswordSoftware: server.loginPasswordSoftware,
+    // Stored passwords are no longer sent to the browser; blank = keep current.
+    loginPasswordSoftware: "",
     operatingSystem: server.operatingSystem,
     loginUserServer: server.loginUserServer,
     sshPort: server.sshPort,
     serverSpecifications: server.serverSpecifications,
     googleAccount: {
       emailAddress: server.googleAccount.emailAddress,
-      password: server.googleAccount.password,
+      password: "",
     },
     firebaseAccount: {
       emailAddress: server.firebaseAccount.emailAddress,
-      password: server.firebaseAccount.password,
+      password: "",
     },
     googleMapApiKey: server.googleMapApiKey,
   });
@@ -391,7 +392,7 @@ const UpdateServerForm = () => {
                         <InputGroup>
                           <Input
                             type={showPassword ? "text" : "password"}
-                            placeholder="Enter Login Password Software"
+                            placeholder={server?.secretsSet?.loginPasswordSoftware ? "Saved — leave blank to keep" : "Enter Login Password Software"}
                             defaultValue={formData.loginPasswordSoftware}
                             name="loginPasswordSoftware"
                             onChange={(e) =>
@@ -459,9 +460,9 @@ const UpdateServerForm = () => {
                         <InputGroup>
                           <Input
                             defaultValue={formData.googleAccount.password}
+                            placeholder={server?.secretsSet?.["googleAccount.password"] ? "Saved — leave blank to keep" : "Enter Password"}
                             name="password"
                             type={googleShowPassword ? "text" : "password"}
-                            placeholder="Enter Password"
                             onChange={(e) =>
                               updateNestedValue(
                                 "googleAccount",
@@ -527,9 +528,9 @@ const UpdateServerForm = () => {
                         <InputGroup>
                           <Input
                             defaultValue={formData.firebaseAccount.password}
+                            placeholder={server?.secretsSet?.["firebaseAccount.password"] ? "Saved — leave blank to keep" : "Enter Password"}
                             name="password"
                             type={firebaseShowPassword ? "text" : "password"}
-                            placeholder="Enter Password"
                             onChange={(e) =>
                               updateNestedValue(
                                 "firebaseAccount",

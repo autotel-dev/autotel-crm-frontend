@@ -1136,10 +1136,11 @@ const UpdateCompanyForm = () => {
                                         <span className="txt-danger">*</span>
                                       </P>
                                       <Input
-                                        value={item?.password}
+                                        value={item?.password || ""}
                                         name="password"
-                                        type="email"
-                                        placeholder="Enter Password"
+                                        type="password"
+                                        autoComplete="new-password"
+                                        placeholder={item?.passwordSet ? "Saved — leave blank to keep" : "Enter Password"}
                                         onChange={(e) =>
                                           handleServerCredentialChange(
                                             index,
