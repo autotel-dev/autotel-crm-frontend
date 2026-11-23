@@ -115,3 +115,32 @@
 @media (prefers-reduced-motion: reduce) {
   .al-live i, .al-caret, .al-card.is-new { animation: none; }
 }
+
+/* Theme toggle (top-right of the sign-in panel) */
+.al-theme {
+  position: absolute; top: 18px; right: 18px; width: 40px; height: 40px; border-radius: 12px;
+  border: 1px solid var(--line); background: var(--soft); color: var(--ink);
+  display: inline-flex; align-items: center; justify-content: center; cursor: pointer; z-index: 4;
+}
+.al-theme:hover { border-color: var(--primary); }
+.al-theme:focus-visible { outline: 3px solid rgba(79, 70, 229, .4); outline-offset: 2px; }
+
+/* Dark (C4 Midnight) */
+body.at-dark .al-page {
+  --ink: #ececf7; --muted: #a1a1c2; --line: #2b2a4a; --soft: #1c1b33; --primary: #818cf8;
+  background: #0a0a12;
+}
+body.at-dark .al-side { background: #12121f; box-shadow: -20px 0 60px rgba(0, 0, 0, .45); }
+body.at-dark .al-live { background: #1c1b33; color: #ececf7; border: 1px solid #2b2a4a; }
+body.at-dark .al-chip { background: #12121f; color: #ececf7; border: 1px solid #2b2a4a; }
+body.at-dark .al-card { background: rgba(18, 18, 31, .94); box-shadow: 0 8px 24px rgba(0, 0, 0, .4); }
+body.at-dark .al-card__icon { background: color-mix(in srgb, var(--c) 22%, #12121f); }
+body.at-dark .al-card--idle { --c: #a1a1c2; }
+body.at-dark .al-card--geo { --c: #818cf8; }
+body.at-dark .al-brand__mark { color: #0a0a12; }
+body.at-dark .al-input { background: #12121f !important; border-color: var(--line) !important; color: var(--ink) !important; }
+body.at-dark .al-input::placeholder { color: #6e6e92 !important; }
+body.at-dark .al-input:focus { border-color: var(--primary) !important; box-shadow: 0 0 0 4px rgba(129, 140, 248, .18) !important; }
+body.at-dark .al-submit { color: #0a0a12; }
+body.at-dark .al-error { color: #f87171; }
+body.at-dark .al-title.is-loading { background: var(--soft); }

@@ -51,9 +51,10 @@
          doesn't flash white on page load (see src/Layout/Rail/useAtTheme.ts). -->
     <script>
       try {
-        // Sign-in pages keep their own light design.
-        var authPage = /^\/(login|verifyOTP|forgot-password|verifyOTPForForgotPassword|reset-password)(\/|$)/.test(location.pathname);
-        if (!authPage && localStorage.getItem("at-theme") === "dark") {
+        // Dark is the default until someone picks light. The login page follows
+        // the theme; the older OTP / password-reset pages keep their light design.
+        var lightOnlyPage = /^\/(verifyOTP|forgot-password|verifyOTPForForgotPassword|reset-password)(\/|$)/.test(location.pathname);
+        if (!lightOnlyPage && localStorage.getItem("at-theme") !== "light") {
           document.documentElement.classList.add("at-dark");
           document.body.classList.add("at-dark");
         }

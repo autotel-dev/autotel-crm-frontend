@@ -4,11 +4,12 @@ import { useCallback, useEffect, useState } from "react";
 export type AtTheme = "light" | "dark";
 const KEY = "at-theme";
 
+// Dark (C4) is the default until someone picks light.
 const read = (): AtTheme => {
   try {
-    return localStorage.getItem(KEY) === "dark" ? "dark" : "light";
+    return localStorage.getItem(KEY) === "light" ? "light" : "dark";
   } catch {
-    return "light";
+    return "dark";
   }
 };
 

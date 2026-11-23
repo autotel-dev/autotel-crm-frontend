@@ -27,8 +27,13 @@ const AuthThemeGuard = () => {
   const { pathname } = useLocation();
   useEffect(() => {
     if (AUTH_PAGE.test(pathname)) {
-      document.body.classList.remove("at-dark", "at-shell-on");
-      document.documentElement.classList.remove("at-dark");
+      document.body.classList.remove("at-shell-on");
+      // The login page follows the light/dark theme (it has its own toggle);
+      // the older OTP / password-reset pages only have a light design.
+      if (!/^\/login(\/|$)/.test(pathname)) {
+        document.body.classList.remove("at-dark");
+        document.documentElement.classList.remove("at-dark");
+      }
     }
   }, [pathname]);
   return null;

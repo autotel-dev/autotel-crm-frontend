@@ -11,6 +11,7 @@ import {
   GET_SUPERADMIN_PERSONALIZATION,
   IMAGE_BASE_URL,
 } from "../../../Utilities/api/apiEndpoints";
+import { useAtTheme } from "../../../Layout/Rail/useAtTheme";
 import "./login.css";
 
 const DEFAULT_HEADER = "Welcome to Autotel";
@@ -18,6 +19,7 @@ const DEFAULT_SUB = "The best tracking platform in the tracking industry";
 const ICON: Record<string, string> = { over: "!", border: "↗", geo: "◎", idle: "Ⅱ" };
 
 const LoginForm = () => {
+  const { theme, toggle } = useAtTheme();
   const dispatch = useDispatch();
   const { userPersonalizationData: p } = useSelector((state: any) => state.personalization);
   const [loading, setLoading] = useState(true);
@@ -63,7 +65,7 @@ const LoginForm = () => {
   return (
     <div className="al-page">
       <section className="al-hero">
-        <LoginMap onAlert={setAlertIdx} />
+        <LoginMap theme={theme} onAlert={setAlertIdx} />
         <div className="al-hero__top">
           <span className="al-live">
             <i /> LIVE
@@ -88,6 +90,19 @@ const LoginForm = () => {
       </section>
 
       <main className="al-side">
+        <button
+          type="button"
+          className="al-theme"
+          onClick={toggle}
+          aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+          title={theme === "dark" ? "Light mode" : "Dark mode"}
+        >
+          {theme === "dark" ? (
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="4" /><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" /></svg>
+          ) : (
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" /></svg>
+          )}
+        </button>
         <div className="al-side__inner">
           <div className="al-brand">
             {logo ? <img src={logo} alt="" className="al-brand__logo" /> : <span className="al-brand__mark">A</span>}
