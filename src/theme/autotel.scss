@@ -830,3 +830,7 @@ body.at-dark .at-pill--bad { color: #fca5a5; }
 // The old template sets `* { scrollbar-color: #f1e6f5 #ffffff }`, which shows a
 // white scrollbar on dark pages. Dark mode gets a dark thumb on a clear track.
 body.at-dark, body.at-dark * { scrollbar-color: #3a3760 transparent; }
+
+// Loading placeholders: dark mode uses dark greys instead of light ones
+// (the shared .skeleton-component handles its own; this covers react-loading-skeleton).
+body.at-dark .react-loading-skeleton { --base-color: #1e1c36; --highlight-color: #2c2950; }

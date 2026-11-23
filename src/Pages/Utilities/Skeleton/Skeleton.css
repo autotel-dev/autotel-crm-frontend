@@ -1,21 +1,19 @@
+/* Loading placeholder. Colours come from variables so dark mode can swap them
+   (see the at-dark override below); previously it was always light grey. */
 .skeleton-component {
-
-    background-color: #f2f2f2;
-    /* Gray background color */
+    --sk-a: #f2f2f2;
+    --sk-b: #d2d2d2;
+    background-color: var(--sk-a);
     border-radius: 4px;
-    /* Optional: Add border radius for rounded corners */
     animation: skeleton-component-animation 1.5s linear infinite alternate;
-    /* Animation */
+}
+
+body.at-dark .skeleton-component {
+    --sk-a: #1e1c36;
+    --sk-b: #2c2950;
 }
 
 @keyframes skeleton-component-animation {
-    0% {
-        background-color: #f2f2f2;
-        /* Initial gray color */
-    }
-
-    100% {
-        background-color: #d2d2d2;
-        /* Lighter gray color */
-    }
+    0% { background-color: var(--sk-a); }
+    100% { background-color: var(--sk-b); }
 }
