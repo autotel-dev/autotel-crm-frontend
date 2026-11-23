@@ -97,6 +97,7 @@ const TotalPreInfoAlerts: React.FC<PropsTypes> = ({
         setIsVisible(!isVisible);
       }}
       size="xl"
+      className="at-modal"
       onClosed={() => {
         // setValue("")
         setIsVisible(false);

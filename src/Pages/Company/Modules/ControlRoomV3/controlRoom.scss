@@ -30,6 +30,23 @@ body.at-dark .cr-root {
   div[style*="background-color: rgb(229, 227, 223)"] { background-color: var(--cr-map-bg) !important; }
 }
 body.at-dark .cr-mapbox { --cr-map-bg: #1b1a2e; }
+.cr-zoom {
+  position: absolute; right: 16px; bottom: 28px; z-index: 2;
+  display: flex; flex-direction: column;
+  background: var(--at-panel); border: 1px solid var(--at-line); border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, .25); overflow: hidden;
+  button {
+    width: 38px; height: 38px; display: grid; place-items: center;
+    border: 0; background: transparent; color: var(--at-text); cursor: pointer;
+    &:hover { background: var(--at-soft); }
+    &:focus-visible { outline: 2px solid var(--at-primary); outline-offset: -2px; }
+  }
+  button + button { border-top: 1px solid var(--at-line); }
+}
+// Keep the zoom buttons clear of the alarm panel when it is open.
+@media (min-width: 761px) { .cr-root.has-detail .cr-zoom { right: 468px; } }
+@media (min-width: 761px) and (max-width: 1280px) { .cr-root.has-detail .cr-zoom { right: 428px; } }
+@media (min-width: 761px) and (max-width: 1100px) { .cr-root.has-detail .cr-zoom { display: none; } }
 .cr-panel {
   background: var(--at-panel); color: var(--at-text);
   border: 1px solid var(--at-line); border-radius: 18px; box-shadow: var(--at-shadow);
@@ -287,6 +304,7 @@ body.at-dark .cr-sla.is-over { color: #0a0a12; small { color: #0a0a12; } }
   // Phone sheet: keep the live map visible as a strip above the alarm.
   .cr-root.has-detail {
     .cr-mapbox { position: fixed; inset: 0 0 auto 0; height: 30vh; min-height: 180px; border-radius: 0; z-index: 1050; }
+    .cr-zoom { bottom: 12px; right: 12px; }
     .cr-detail { top: max(30vh, 180px); border-radius: 16px 16px 0 0; box-shadow: 0 -8px 24px rgba(0, 0, 0, .35); }
   }
   .cr-facts { grid-template-columns: 1fr; }

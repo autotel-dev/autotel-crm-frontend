@@ -1,5 +1,4 @@
 import { PlusCircle } from "react-feather";
-import { Col } from "reactstrap";
 import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Button, FormGroup, Label, Modal, ModalBody, Row } from "reactstrap";
@@ -237,7 +236,7 @@ const AddPreAlertInfo: React.FC<PropsTypes> = ({
   };
 
   return (
-    <Modal isOpen={addModal} toggle={addToggle} size="lg" centered>
+    <Modal isOpen={addModal} toggle={addToggle} size="lg" centered className="at-modal">
       <div className="modal-header">
         <H3 className="modal-title">Pre Alert Info</H3>
         <Button
@@ -293,14 +292,9 @@ const AddPreAlertInfo: React.FC<PropsTypes> = ({
 
             <FormGroup
               className="col-md-6 create-group"
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-              }}
             >
-              <div>Date From:</div>
-              <Col md={8}>
+              <Label>Date From</Label>
+              <div>
                 <input
                   className="form-control"
                   type="date"
@@ -310,18 +304,13 @@ const AddPreAlertInfo: React.FC<PropsTypes> = ({
                     // console.log("e", e.target.value);
                   }}
                 />
-              </Col>
+              </div>
             </FormGroup>
             <FormGroup
               className="col-md-6 create-group"
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-              }}
             >
-              <div>Time From:</div>
-              <Col md={8}>
+              <Label>Time From</Label>
+              <div>
                 <input
                   className="form-control"
                   type="time"
@@ -331,18 +320,13 @@ const AddPreAlertInfo: React.FC<PropsTypes> = ({
                     setStartTime(e.target.value);
                   }}
                 />
-              </Col>
+              </div>
             </FormGroup>
             <FormGroup
               className="col-md-6 create-group"
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-              }}
             >
-              <div>Date To:</div>
-              <Col md={8}>
+              <Label>Date To</Label>
+              <div>
                 <input
                   className="form-control"
                   type="date"
@@ -352,18 +336,13 @@ const AddPreAlertInfo: React.FC<PropsTypes> = ({
                     // console.log("e", e.target.value);
                   }}
                 />
-              </Col>
+              </div>
             </FormGroup>
             <FormGroup
               className="col-md-6 create-group"
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-              }}
             >
-              <div>Time To:</div>
-              <Col md={8}>
+              <Label>Time To</Label>
+              <div>
                 <input
                   className="form-control"
                   type="time"
@@ -373,7 +352,7 @@ const AddPreAlertInfo: React.FC<PropsTypes> = ({
                     setEndTime(e.target.value);
                   }}
                 />
-              </Col>
+              </div>
             </FormGroup>
             <FormGroup className="col-md-12 create-group">
               <Label>Message</Label>

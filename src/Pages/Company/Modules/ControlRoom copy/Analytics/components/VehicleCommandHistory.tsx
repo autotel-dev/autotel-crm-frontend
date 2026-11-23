@@ -83,6 +83,7 @@ const VehicleCommandHistory: React.FC<PropsTypes> = ({
       isOpen={isVisible}
       toggle={() => setIsVisible(!isVisible)}
       size="xl"
+      className="at-modal"
     >
       <div className="modal-header">
         <H3 className="modal-title">Vehicle Command History</H3>

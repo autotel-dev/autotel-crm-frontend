@@ -68,7 +68,7 @@ const DeviceSelecetdForNewComplain: React.FC<PropsTypes> = ({
   }, [addModal])
 
   return (
-    <Modal isOpen={addModal} toggle={addToggle} size="md" centered>
+    <Modal isOpen={addModal} toggle={addToggle} size="md" centered className="at-modal">
       <div className="modal-header">
         <H3 className="modal-title">Select Device For Complain</H3>
         <Button
@@ -78,7 +78,7 @@ const DeviceSelecetdForNewComplain: React.FC<PropsTypes> = ({
         ></Button>
       </div>
 
-      <ModalBody style={{ height: "50vh" }}>
+      <ModalBody style={{ height: "min(50vh, 360px)", minHeight: 300 }}>
         <form
           className="form-bookmark needs-validation"
         //   onSubmit={handleSubmit(deviceAlerts)}

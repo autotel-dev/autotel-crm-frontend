@@ -164,14 +164,17 @@ const AlarmMap = ({ google, items, selectedId, onSelect, fitKey }) => {
     if (map) map.setOptions({ styles: dark ? DARK_STYLES : null });
   }, [map, dark]);
 
+  const zoomBy = (d) => map && map.setZoom((map.getZoom() || 6) + d);
+
   if (!google) return null;
   return (
+    <>
     <Map
       google={google}
       initialCenter={{ lat: 30.3753, lng: 69.3451 }}
       zoom={6}
       disableDefaultUI
-      zoomControl
+      zoomControl={false}
       gestureHandling="greedy"
       // Start with the right theme so the map never paints light first.
       styles={dark ? DARK_STYLES : null}
@@ -179,6 +182,16 @@ const AlarmMap = ({ google, items, selectedId, onSelect, fitKey }) => {
       containerStyle={{ position: "absolute", inset: 0, width: "100%", height: "100%" }}
       style={{ width: "100%", height: "100%" }}
     />
+    {/* Themed zoom buttons (Google's own control is always white). */}
+    <div className="cr-zoom" role="group" aria-label="Map zoom">
+      <button type="button" onClick={() => zoomBy(1)} aria-label="Zoom in" title="Zoom in">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><path d="M12 5v14M5 12h14" /></svg>
+      </button>
+      <button type="button" onClick={() => zoomBy(-1)} aria-label="Zoom out" title="Zoom out">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><path d="M5 12h14" /></svg>
+      </button>
+    </div>
+    </>
   );
 };
 

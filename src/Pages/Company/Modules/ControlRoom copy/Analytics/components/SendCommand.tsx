@@ -332,7 +332,7 @@ const SendCommand: React.FC<PropsTypes> = ({
   };
 
   return (
-    <Modal isOpen={addModal} toggle={addToggle} size="lg" centered scrollable>
+    <Modal isOpen={addModal} toggle={addToggle} size="lg" centered scrollable className="at-modal">
       <ModalHeader toggle={addToggle}>Send Command</ModalHeader>
       <form
         className="form-bookmark needs-validation"

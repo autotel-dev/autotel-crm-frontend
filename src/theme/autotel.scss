@@ -834,3 +834,167 @@ body.at-dark, body.at-dark * { scrollbar-color: #3a3760 transparent; }
 // Loading placeholders: dark mode uses dark greys instead of light ones
 // (the shared .skeleton-component handles its own; this covers react-loading-skeleton).
 body.at-dark .react-loading-skeleton { --base-color: #1e1c36; --highlight-color: #2c2950; }
+
+/* ---------- Pop-up design (.at-modal) ---------- */
+// Shared look for the tool pop-ups (Control Room: Send command, Pre-alert info,
+// Command history, Pre-informed list; Complaint Center: Create New, NR Status).
+// Add className="at-modal" to a reactstrap <Modal> to use it.
+.modal-dialog.at-modal {
+  .modal-content {
+    border-radius: 20px !important;
+    border: 1px solid var(--at-line) !important;
+    background: var(--at-panel) !important;
+    color: var(--at-text) !important;
+    box-shadow: 0 24px 64px rgba(10, 10, 30, .35);
+    overflow: hidden;
+  }
+  .modal-header {
+    padding: 18px 22px !important;
+    border-bottom: 1px solid var(--at-line) !important;
+    align-items: center;
+    .modal-title, h3, h5 {
+      font: 700 18px/1.3 var(--at-font-display) !important;
+      color: var(--at-text) !important;
+      margin: 0;
+    }
+  }
+  // Close: a soft round button with a visible cross in both themes.
+  .btn-close {
+    width: 34px; height: 34px; padding: 0 !important; margin: 0 0 0 auto !important;
+    border-radius: 999px !important; opacity: 1;
+    background: var(--at-soft) url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%237a7a99' stroke-width='2.2' stroke-linecap='round'%3e%3cpath d='M6 6l12 12M18 6L6 18'/%3e%3c/svg%3e") center / 16px no-repeat !important;
+    filter: none !important; box-shadow: none !important;
+    &:hover { background-color: var(--at-line) !important; }
+  }
+  .modal-body { padding: 20px 22px !important; }
+  .modal-footer { padding: 14px 22px !important; border-top: 1px solid var(--at-line) !important; gap: 8px; }
+
+  // Old pages wrap the body in a card; drop the second frame.
+  .modal-body > .card, .modal-body > form > .card {
+    border: 0 !important; background: transparent !important; margin: 0; box-shadow: none !important;
+    > .card-body { padding: 0 !important; }
+  }
+  .form-bookmark > .row, .modal-body > .row { --bs-gutter-x: 16px; }
+  .create-group, .form-group, .mb-3 { margin-bottom: 14px; }
+
+  // Field labels (Label or <p> used as a label)
+  label, .form-label, .create-group p, .modal-body .card-body > .row p, .form-group > p {
+    display: block;
+    font: 600 12px/1.4 var(--at-font) !important;
+    color: var(--at-muted) !important;
+    letter-spacing: .02em;
+    margin: 0 0 6px !important;
+  }
+
+  // Inputs and antd selects: one 42px box, no box inside a box.
+  .form-control, input[type="text"], input[type="date"], input[type="time"], input[type="number"],
+  input[type="search"], .global-search-field, textarea {
+    min-height: 42px;
+    border-radius: 12px !important;
+    border: 1px solid var(--at-line) !important;
+    background-color: var(--at-soft) !important;
+    color: var(--at-text) !important;
+    padding: 9px 12px !important;
+    font-size: 14px !important;
+    &:focus { border-color: var(--at-primary) !important; box-shadow: 0 0 0 3px color-mix(in srgb, var(--at-primary) 22%, transparent) !important; }
+  }
+  textarea { min-height: 96px; }
+  .ant-select { width: 100%; font-family: var(--at-font); }
+  .ant-select:not(.ant-select-multiple) .ant-select-selector { height: 42px !important; align-items: center; }
+  .ant-select-multiple .ant-select-selector { min-height: 42px !important; padding: 4px 8px !important; }
+  .ant-select .ant-select-selector {
+    border-radius: 12px !important;
+    border: 1px solid var(--at-line) !important;
+    background-color: var(--at-soft) !important;
+    color: var(--at-text) !important;
+    box-shadow: none !important;
+  }
+  .ant-select-focused .ant-select-selector { border-color: var(--at-primary) !important; box-shadow: 0 0 0 3px color-mix(in srgb, var(--at-primary) 22%, transparent) !important; }
+  // (extra classes beat the dark theme's general `input:not(...)` rule)
+  .ant-select .ant-select-selection-search input.ant-select-selection-search-input, .ant-select .ant-select-selector input {
+    background: transparent !important; border: 0 !important; box-shadow: none !important;
+    min-height: 0 !important; padding: 0 !important; height: 100% !important;
+  }
+  .ant-select-selection-placeholder { color: var(--at-muted) !important; }
+  .ant-select-selection-item { color: var(--at-text) !important; }
+  .ant-select-multiple .ant-select-selection-item { background: var(--at-panel) !important; border: 1px solid var(--at-line) !important; border-radius: 8px !important; }
+  .ant-select-arrow, .ant-select-clear { color: var(--at-muted) !important; background: transparent; }
+
+  // antd tabs (Send command: GPRS / SMS / Schedule) as a segmented control
+  .ant-tabs-nav { margin-bottom: 18px !important; &::before { display: none; } }
+  .ant-tabs-nav-list { background: var(--at-soft); border-radius: 12px; padding: 4px; gap: 2px; }
+  .ant-tabs-tab {
+    margin: 0 !important; padding: 7px 16px !important; border-radius: 9px;
+    font: 600 13px var(--at-font); color: var(--at-muted);
+    .ant-tabs-tab-btn { color: inherit !important; }
+  }
+  .ant-tabs-tab-active { background: var(--at-panel); color: var(--at-text); box-shadow: 0 1px 3px rgba(0, 0, 0, .15); }
+  .ant-tabs-ink-bar { display: none; }
+
+  // Tables
+  .table-responsive { border: 1px solid var(--at-line); border-radius: 14px; }
+  .table { margin: 0; }
+  .table thead th, .rdt_TableCol {
+    font: 600 11px/1.3 var(--at-font) !important; text-transform: uppercase; letter-spacing: .05em;
+    color: var(--at-muted) !important; background: var(--at-soft) !important;
+    padding: 10px 12px !important; border-bottom: 1px solid var(--at-line) !important; white-space: nowrap;
+  }
+  .table td { padding: 10px 12px !important; font-size: 13px; border-color: var(--at-line) !important; vertical-align: middle; }
+  .table tbody tr:last-child td { border-bottom: 0 !important; }
+  .rdt_Table { border: 1px solid var(--at-line); border-radius: 14px; overflow: hidden; }
+  .ant-table-wrapper .ant-table { background: transparent !important; border: 1px solid var(--at-line); border-radius: 14px; overflow: hidden; }
+  .ant-table-thead > tr > th {
+    font: 600 11px/1.3 var(--at-font) !important; text-transform: uppercase; letter-spacing: .05em;
+    color: var(--at-muted) !important; background: var(--at-soft) !important; border-bottom: 1px solid var(--at-line) !important;
+    &::before { display: none; }
+  }
+  .ant-table-tbody > tr > td { font-size: 13px; border-bottom: 1px solid var(--at-line) !important; }
+
+  // Buttons: primary is filled; Cancel / secondary stays soft.
+  .btn:not(.btn-close) { min-height: 40px; border-radius: 12px !important; padding: 9px 18px !important; }
+}
+
+// Date / time picker icons follow the theme.
+.modal-dialog.at-modal input[type="date"], .modal-dialog.at-modal input[type="time"] { color-scheme: light; }
+body.at-dark .modal-dialog.at-modal input[type="date"], body.at-dark .modal-dialog.at-modal input[type="time"] { color-scheme: dark; }
+
+/* ---------- Device picker (DevicesDropdown, used on 6 screens) ---------- */
+// Was hard-coded white with grey borders, so in dark mode the list was white
+// with near-invisible text. Now it follows the theme in both modes.
+.custom-dropdown {
+  .dropdown-toggle {
+    height: auto; min-height: 42px; padding: 9px 12px;
+    border: 1px solid var(--at-line); border-radius: 12px;
+    background: var(--at-soft); color: var(--at-text); font-size: 14px;
+    &::after { border-top-color: var(--at-muted); }
+  }
+  .arrow-icon { border-top-color: var(--at-muted); }
+  .dropdown-options {
+    background: var(--at-panel); color: var(--at-text);
+    border: 1px solid var(--at-line); border-radius: 12px;
+    box-shadow: 0 12px 32px rgba(10, 10, 30, .3);
+    padding: 4px;
+  }
+  .search-input {
+    width: calc(100% - 12px); min-height: 38px; padding: 8px 10px; margin: 6px;
+    border: 1px solid var(--at-line) !important; border-radius: 10px !important;
+    background: var(--at-soft) !important; color: var(--at-text) !important;
+  }
+  .group-header {
+    background: var(--at-soft) !important; color: var(--at-text) !important;
+    font-size: 13px; border-radius: 10px;
+  }
+  .item { color: var(--at-text); border-radius: 8px; font-size: 13px; }
+  .item:hover { background: var(--at-soft); }
+  .selected { background: color-mix(in srgb, var(--at-primary) 18%, transparent); }
+  .dropdown-options button { background: var(--at-soft); color: var(--at-text); border-radius: 10px; }
+  .dropdown-options button:hover { background: var(--at-line); }
+}
+// NR Status: search box spacing, table header, compact row buttons, Excel button.
+.modal-dialog.at-modal {
+  .global-search-field { margin-top: 12px; }
+  .rdt_TableCol .rdt_TableCol_Sortable, .rdt_TableCol > div { background: transparent !important; }
+  .rdt_TableHeadRow { background: var(--at-soft) !important; min-height: 40px; }
+  .rdt_TableCell .btn:not(.btn-close) { min-height: 30px; padding: 5px 12px !important; font-size: 12px !important; border-radius: 9px !important; }
+  div[style*="background-color: green"] { width: 42px; border-radius: 12px !important; background-color: #16a34a !important; }
+}

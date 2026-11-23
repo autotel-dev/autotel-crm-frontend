@@ -171,6 +171,7 @@ const SelectFilterNRDevicesModal: React.FC<PropsTypes> = ({
     <Modal
       isOpen={addModal}
       size="xl"
+      className="at-modal"
       toggle={addToggle}
       centered
       style={{
@@ -216,7 +217,7 @@ const SelectFilterNRDevicesModal: React.FC<PropsTypes> = ({
                     style={{
                       marginLeft: "10px",
                       marginTop: "0px",
-                      height: "36px",
+                      height: "42px",
                     }}
                     color="primary"
                     // disabled={loading || data.length > 0}
@@ -242,7 +243,7 @@ const SelectFilterNRDevicesModal: React.FC<PropsTypes> = ({
                         color: "white",
                         backgroundColor: "green",
                         fontSize: "18px",
-                        height: "36px",
+                        height: "42px",
                         marginRight: "10px",
                         marginLeft: "10px",
                         cursor: "pointer",
