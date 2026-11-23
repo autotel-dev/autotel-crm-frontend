@@ -30,7 +30,6 @@ import { FaRegFileExcel } from "react-icons/fa6";
 import { FaRegFilePdf } from "react-icons/fa6";
 import { setNRReport } from "../../../../ReaduxToolkit/Reducer/NRSlice";
 import { formatUnderscoredString } from "../../../../Utilities/globals/globals";
-import xlsx from "json-as-xlsx";
 // import TotalAlertsForSpecificDevices from "./TotalAlertsForSpecificDevices";
 
 interface PropsTypes {
@@ -68,8 +67,9 @@ const SelectFilterNRDevicesModal: React.FC<PropsTypes> = ({
   const [hour, selectedHour] = useState("");
   const [checked, setChecked] = useState("Total");
 
+  // The Excel library is ~1.3 MB, so it is only downloaded when someone exports.
   function handleButtonClick(e: any, settings: any, excelData: any) {
-    xlsx(excelData, settings);
+    import("json-as-xlsx").then(({ default: xlsx }) => xlsx(excelData, settings));
   }
 
   const getNRData = () => {
