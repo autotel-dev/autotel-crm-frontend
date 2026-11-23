@@ -192,6 +192,7 @@ const DeviceSelecetdForNewComplain: React.FC<PropsTypes> = ({
           setIsDeviceSelectedModalVisible={setAddModal}
           selectedItems={selectedItems}
           tab={basicTab}
+          onCreated={() => setAddModal(false)}
         />
       )}
     </Modal>

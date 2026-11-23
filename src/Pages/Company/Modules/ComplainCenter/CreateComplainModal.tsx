@@ -29,6 +29,7 @@ interface PropsTypes {
   setIsDeviceSelectedModalVisible: any;
   selectedItems: any;
   tab: string;
+  onCreated?: () => void;
 }
 
 const CreateComplainModal: React.FC<PropsTypes> = ({
@@ -38,6 +39,7 @@ const CreateComplainModal: React.FC<PropsTypes> = ({
   setIsDeviceSelectedModalVisible = () => {},
   selectedItems,
   tab,
+  onCreated,
 }) => {
   const { report } = useSelector((state: any) => state.nrReport);
   const dispatch = useDispatch();
@@ -93,6 +95,7 @@ const CreateComplainModal: React.FC<PropsTypes> = ({
           setIsDeviceSelectedModalVisible={setIsDeviceSelectedModalVisible}
           selectedItems={selectedItems}
           setBasicTab={setBasicTab}
+          onCreated={onCreated}
         />
       ),
     },

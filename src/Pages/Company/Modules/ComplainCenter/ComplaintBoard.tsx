@@ -13,7 +13,7 @@ import {
   setComplainCenterStatistics,
   setFilteredRole,
 } from "../../../../ReaduxToolkit/Reducer/ComplainCenterSlice";
-import { getUserRole } from "../../../../Utilities/globals/globals";
+import { getUserRole, formatUnderscoredString } from "../../../../Utilities/globals/globals";
 import { ROLES } from "../../../../constants/roles";
 import CreateNewComplain from "./CreateNewComplain";
 import "./complaintBoard.css";
@@ -211,7 +211,7 @@ const ComplaintBoard = () => {
           <span className="cb-muted">{c?.complaintId}</span>
           <span className={`cb-age${old ? " is-old" : ""}`}>{age(c?.createdAt)}</span>
         </span>
-        <strong className="cb-card__title">{c?.type?.value || "Complaint"}</strong>
+        <strong className="cb-card__title">{c?.type?.value ? formatUnderscoredString(c.type.value) : "Complaint"}</strong>
         <span className="cb-muted cb-ellipsis">{[c?.deviceName, c?.subRole?.name].filter(Boolean).join(" · ") || "—"}</span>
         {c?.description && <span className="cb-card__desc">{c.description}</span>}
         <span className="cb-card__foot">
@@ -311,7 +311,7 @@ const ComplaintBoard = () => {
                     return (
                       <tr key={c._id} className={openId === c._id ? "is-open" : ""} onClick={() => setOpenId(c._id)}>
                         <td><strong>{c?.complaintId}</strong></td>
-                        <td>{c?.type?.value || "—"}</td>
+                        <td>{c?.type?.value ? formatUnderscoredString(c.type.value) : "—"}</td>
                         <td>{c?.deviceName || "—"}</td>
                         <td>{c?.subRole?.name || "—"}</td>
                         <td>{p ? <span className={`cb-prio ${p.cls}`}>{p.label}</span> : "—"}</td>
@@ -337,7 +337,7 @@ const ComplaintBoard = () => {
             <div className="cb-panel__head">
               <div>
                 <div className="cb-muted">{opened.complaintId}</div>
-                <h2>{opened?.type?.value || "Complaint"}</h2>
+                <h2>{opened?.type?.value ? formatUnderscoredString(opened.type.value) : "Complaint"}</h2>
               </div>
               <button type="button" className="cb-x" aria-label="Close" onClick={() => setOpenId(null)}>✕</button>
             </div>

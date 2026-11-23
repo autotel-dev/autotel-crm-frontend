@@ -42,6 +42,7 @@ interface PropsTypes {
   setIsDeviceSelectedModalVisible: any;
   selectedItems: any;
   setBasicTab: any;
+  onCreated?: () => void;
 }
 
 const ResponseForm: React.FC<PropsTypes> = ({
@@ -51,6 +52,7 @@ const ResponseForm: React.FC<PropsTypes> = ({
   setIsDeviceSelectedModalVisible = () => {},
   selectedItems,
   setBasicTab = () => {},
+  onCreated,
 }) => {
   const { report } = useSelector((state: any) => state.nrReport);
   const { modalData } = useSelector((state: any) => state.alerts);
@@ -144,7 +146,7 @@ const ResponseForm: React.FC<PropsTypes> = ({
             // // console.log(data);
             setLoading(false);
             setIsVisible(!isVisible);
-            // setIsDeviceSelectedModalVisible(!isDeviceSelectedModalVisible);
+            onCreated?.(); // e.g. close the "Select Device" pop-up behind it
             reset({
               response: "",
             });
@@ -253,7 +255,7 @@ const ResponseForm: React.FC<PropsTypes> = ({
                 />
               </FormGroup>
               <FormGroup className="col-md-6 create-group">
-                <P>Departmemnt</P>
+                <P>Department</P>
                 <SelectComplainRole
                   priority={priority}
                   role={role}

@@ -150,15 +150,17 @@ const ComplainDetails = () => {
   const [statusLoading, setStatusLoading] = useState(true);
 
   useEffect(() => {
-    // Send the initial state to other tabs when UserDetail mounts
-    window.opener.postMessage(isUpdate, window.location.origin);
+    // Tell the Complaint Center tab that opened this one (if any) to refresh.
+    // Without an opener (link pasted / bookmarked / opened directly) this used
+    // to throw and leave a blank page.
+    window.opener?.postMessage(isUpdate, window.location.origin);
   }, [isUpdate]);
 
   const handleChangeUpdatedStatus = (newValue: any) => {
     setIsUpdate(newValue);
     // Send the updated state to other tabs
 
-    window.opener.postMessage(newValue, window.location.origin);
+    window.opener?.postMessage(newValue, window.location.origin);
   };
 
   useEffect(() => {
@@ -564,7 +566,7 @@ const ComplainDetails = () => {
         parent="Complaint Center"
         title="Complaint Details"
       />
-      <Container fluid>
+      <Container fluid className="cc-details">
         <Card>
           <Row>
             <Col sm={9} md={9} lg={9} xl={9} xxl={7}>
@@ -573,26 +575,9 @@ const ComplainDetails = () => {
                   padding: "20px 25px",
                 }}
               >
-                <div
-                  style={{
-                    color: "black",
-                    fontWeight: "bold",
-                    fontSize: "24px",
-                  }}
-                >
-                  Device Name -&nbsp;
-                  <span
-                    style={{
-                      color: `${
-                        userPersonalizationData !== null &&
-                        userPersonalizationData?.buttonsAndBarsColor !== null
-                          ? userPersonalizationData?.buttonsAndBarsColor
-                          : "#35bfbf"
-                      }`,
-                    }}
-                  >
-                    {complainDetails?.deviceName}
-                  </span>
+                <div className="cc-head">
+                  <span className="cc-head__label">Complaint</span>
+                  <span className="cc-head__title">{complainDetails?.deviceName}</span>
                 </div>
               </div>
             </Col>
@@ -601,7 +586,7 @@ const ComplainDetails = () => {
           {!loading ? (
             <CardBody>
               <Row>
-                <Col sm={12} md={12} lg={12} xl={12} xxl={9}>
+                <Col sm={12} md={12} lg={7} xl={8} xxl={8} className="cc-thread">
                   <div
                     style={{
                       padding: "10px",
@@ -1297,9 +1282,9 @@ const ComplainDetails = () => {
                     <Col
                       sm={12}
                       md={12}
-                      lg={12}
-                      xl={12}
-                      xxl={3}
+                      lg={5}
+                      xl={4}
+                      xxl={4}
                       style={{
                         marginBottom: "20px",
                         // marginRight: "20px",
@@ -1330,9 +1315,9 @@ const ComplainDetails = () => {
                     <Col
                       sm={12}
                       md={12}
-                      lg={12}
-                      xl={12}
-                      xxl={3}
+                      lg={5}
+                      xl={4}
+                      xxl={4}
                       style={{
                         borderTopLeftRadius: "15px",
                         borderTopRightRadius: "15px",
@@ -1345,53 +1330,24 @@ const ComplainDetails = () => {
                         }}
                       >
                         <div>
-                          <div
-                            style={{
-                              backgroundColor: `${
-                                userPersonalizationData !== null &&
-                                userPersonalizationData?.buttonsAndBarsColor !==
-                                  null
-                                  ? userPersonalizationData?.buttonsAndBarsColor
-                                  : "#35bfbf"
-                              }`,
-                              color: "white",
-                              fontWeight: "bold",
-                              padding: "10px",
-                              fontSize: "18px",
-                            }}
+                          <div className="cc-sec-title"
                             // className="btn-primary"
                           >
                             Vehicle Info
                           </div>
                           <div
-                            style={{
-                              backgroundColor: "white",
-                              color: "gray",
-                              padding: "15px",
-                            }}
+                            className="cc-sec-body"
                           >
                             <div
-                              style={{
-                                borderBottom: "1px solid #e1e1e1",
-                                display: "flex",
-                                justifyContent: "space-between",
-                                padding: "8px 0px",
-                              }}
+                              className="cc-row"
                             >
                               <div
-                                style={{
-                                  fontSize: "16px",
-                                  color: "gray",
-                                  fontWeight: "bold",
-                                }}
+                                className="cc-row__k"
                               >
                                 Customer Name
                               </div>
                               <div
-                                style={{
-                                  fontSize: "16px",
-                                  color: "black",
-                                }}
+                                className="cc-row__v"
                               >
                                 {complainDetails.deviceInfo.customerName == ""
                                   ? "N/A"
@@ -1399,27 +1355,15 @@ const ComplainDetails = () => {
                               </div>
                             </div>
                             <div
-                              style={{
-                                borderBottom: "1px solid #e1e1e1",
-                                display: "flex",
-                                justifyContent: "space-between",
-                                padding: "8px 0px",
-                              }}
+                              className="cc-row"
                             >
                               <div
-                                style={{
-                                  fontSize: "16px",
-                                  color: "gray",
-                                  fontWeight: "bold",
-                                }}
+                                className="cc-row__k"
                               >
                                 Mobile No 1
                               </div>
                               <div
-                                style={{
-                                  fontSize: "16px",
-                                  color: "black",
-                                }}
+                                className="cc-row__v"
                               >
                                 {complainDetails.deviceInfo.mobileNo1 == ""
                                   ? "N/A"
@@ -1427,27 +1371,15 @@ const ComplainDetails = () => {
                               </div>
                             </div>
                             <div
-                              style={{
-                                borderBottom: "1px solid #e1e1e1",
-                                display: "flex",
-                                justifyContent: "space-between",
-                                padding: "8px 0px",
-                              }}
+                              className="cc-row"
                             >
                               <div
-                                style={{
-                                  fontSize: "16px",
-                                  color: "gray",
-                                  fontWeight: "bold",
-                                }}
+                                className="cc-row__k"
                               >
                                 Mobile No 2
                               </div>
                               <div
-                                style={{
-                                  fontSize: "16px",
-                                  color: "black",
-                                }}
+                                className="cc-row__v"
                               >
                                 {complainDetails.deviceInfo.mobileNo2 == ""
                                   ? "N/A"
@@ -1455,27 +1387,15 @@ const ComplainDetails = () => {
                               </div>
                             </div>
                             <div
-                              style={{
-                                borderBottom: "1px solid #e1e1e1",
-                                display: "flex",
-                                justifyContent: "space-between",
-                                padding: "8px 0px",
-                              }}
+                              className="cc-row"
                             >
                               <div
-                                style={{
-                                  fontSize: "16px",
-                                  color: "gray",
-                                  fontWeight: "bold",
-                                }}
+                                className="cc-row__k"
                               >
-                                Vehcile Name
+                                Vehicle Name
                               </div>
                               <div
-                                style={{
-                                  fontSize: "16px",
-                                  color: "black",
-                                }}
+                                className="cc-row__v"
                               >
                                 {complainDetails.deviceInfo.vehicleName == ""
                                   ? "N/A"
@@ -1483,27 +1403,15 @@ const ComplainDetails = () => {
                               </div>
                             </div>
                             <div
-                              style={{
-                                borderBottom: "1px solid #e1e1e1",
-                                display: "flex",
-                                justifyContent: "space-between",
-                                padding: "8px 0px",
-                              }}
+                              className="cc-row"
                             >
                               <div
-                                style={{
-                                  fontSize: "16px",
-                                  color: "gray",
-                                  fontWeight: "bold",
-                                }}
+                                className="cc-row__k"
                               >
                                 Sim Number
                               </div>
                               <div
-                                style={{
-                                  fontSize: "16px",
-                                  color: "black",
-                                }}
+                                className="cc-row__v"
                               >
                                 {complainDetails.deviceInfo.simNumber == ""
                                   ? "N/A"
@@ -1512,27 +1420,15 @@ const ComplainDetails = () => {
                             </div>
 
                             <div
-                              style={{
-                                borderBottom: "1px solid #e1e1e1",
-                                display: "flex",
-                                justifyContent: "space-between",
-                                padding: "8px 0px",
-                              }}
+                              className="cc-row"
                             >
                               <div
-                                style={{
-                                  fontSize: "16px",
-                                  color: "gray",
-                                  fontWeight: "bold",
-                                }}
+                                className="cc-row__k"
                               >
                                 IMEI
                               </div>
                               <div
-                                style={{
-                                  fontSize: "16px",
-                                  color: "black",
-                                }}
+                                className="cc-row__v"
                               >
                                 {complainDetails.deviceInfo.imei == ""
                                   ? "N/A"
@@ -1540,27 +1436,15 @@ const ComplainDetails = () => {
                               </div>
                             </div>
                             <div
-                              style={{
-                                borderBottom: "1px solid #e1e1e1",
-                                display: "flex",
-                                justifyContent: "space-between",
-                                padding: "8px 0px",
-                              }}
+                              className="cc-row"
                             >
                               <div
-                                style={{
-                                  fontSize: "16px",
-                                  color: "gray",
-                                  fontWeight: "bold",
-                                }}
+                                className="cc-row__k"
                               >
                                 Device Model
                               </div>
                               <div
-                                style={{
-                                  fontSize: "16px",
-                                  color: "black",
-                                }}
+                                className="cc-row__v"
                               >
                                 {complainDetails.deviceInfo.deviceModel == ""
                                   ? "N/A"
@@ -1572,81 +1456,39 @@ const ComplainDetails = () => {
                         {/* -----------------------------------Vehicle Info-------------------- */}
 
                         <div>
-                          <div
-                            style={{
-                              backgroundColor: `${
-                                userPersonalizationData !== null &&
-                                userPersonalizationData?.buttonsAndBarsColor !==
-                                  null
-                                  ? userPersonalizationData?.buttonsAndBarsColor
-                                  : "#35bfbf"
-                              }`,
-                              color: "white",
-                              fontWeight: "bold",
-                              padding: "10px",
-                              marginTop: "10px",
-                              fontSize: "18px",
-                            }}
+                          <div className="cc-sec-title"
                             // className="btn-primary"
                           >
-                            Complain Info
+                            Complaint Info
                           </div>
                           <div
-                            style={{
-                              backgroundColor: "white",
-                              color: "gray",
-                              padding: "15px",
-                            }}
+                            className="cc-sec-body"
                           >
                             <div
-                              style={{
-                                borderBottom: "1px solid #e1e1e1",
-                                display: "flex",
-                                justifyContent: "space-between",
-                                padding: "8px 0px",
-                              }}
+                              className="cc-row"
                             >
                               <div
-                                style={{
-                                  fontSize: "16px",
-                                  color: "gray",
-                                  fontWeight: "bold",
-                                }}
+                                className="cc-row__k"
                               >
-                                Complain Id
+                                Complaint ID
                               </div>
                               <div
-                                style={{
-                                  fontSize: "16px",
-                                  color: "black",
-                                }}
+                                className="cc-row__v"
                               >
                                 {complainDetails.complaintId}
                               </div>
                             </div>
 
                             <div
-                              style={{
-                                borderBottom: "1px solid #e1e1e1",
-                                display: "flex",
-                                justifyContent: "space-between",
-                                padding: "8px 0px",
-                              }}
+                              className="cc-row"
                             >
                               <div
-                                style={{
-                                  fontSize: "16px",
-                                  color: "gray",
-                                  fontWeight: "bold",
-                                }}
+                                className="cc-row__k"
                               >
                                 Date
                               </div>
                               <div
-                                style={{
-                                  fontSize: "16px",
-                                  color: "black",
-                                }}
+                                className="cc-row__v"
                               >
                                 {convertDateForComplainInfo(
                                   complainDetails.createdAt
@@ -1654,27 +1496,15 @@ const ComplainDetails = () => {
                               </div>
                             </div>
                             <div
-                              style={{
-                                borderBottom: "1px solid #e1e1e1",
-                                display: "flex",
-                                justifyContent: "space-between",
-                                padding: "8px 0px",
-                              }}
+                              className="cc-row"
                             >
                               <div
-                                style={{
-                                  fontSize: "16px",
-                                  color: "gray",
-                                  fontWeight: "bold",
-                                }}
+                                className="cc-row__k"
                               >
                                 Time
                               </div>
                               <div
-                                style={{
-                                  fontSize: "16px",
-                                  color: "black",
-                                }}
+                                className="cc-row__v"
                               >
                                 {convertTimeForComplainInfo(
                                   complainDetails.createdAt
@@ -1682,45 +1512,24 @@ const ComplainDetails = () => {
                               </div>
                             </div>
                             <div
-                              style={{
-                                borderBottom: "1px solid #e1e1e1",
-                                display: "flex",
-                                justifyContent: "space-between",
-                                padding: "8px 0px",
-                              }}
+                              className="cc-row"
                             >
                               <div
-                                style={{
-                                  fontSize: "16px",
-                                  color: "gray",
-                                  fontWeight: "bold",
-                                }}
+                                className="cc-row__k"
                               >
                                 Type
                               </div>
                               <div
-                                style={{
-                                  fontSize: "16px",
-                                  color: "black",
-                                }}
+                                className="cc-row__v"
                               >
                                 {complainDetails.type.title}
                               </div>
                             </div>
                             <div
-                              style={{
-                                borderBottom: "1px solid #e1e1e1",
-                                display: "flex",
-                                justifyContent: "space-between",
-                                padding: "8px 0px",
-                              }}
+                              className="cc-row"
                             >
                               <div
-                                style={{
-                                  fontSize: "16px",
-                                  color: "gray",
-                                  fontWeight: "bold",
-                                }}
+                                className="cc-row__k"
                               >
                                 Priority
                               </div>
@@ -1768,19 +1577,10 @@ const ComplainDetails = () => {
                             </div>
 
                             <div
-                              style={{
-                                borderBottom: "1px solid #e1e1e1",
-                                display: "flex",
-                                justifyContent: "space-between",
-                                padding: "8px 0px",
-                              }}
+                              className="cc-row"
                             >
                               <div
-                                style={{
-                                  fontSize: "16px",
-                                  color: "gray",
-                                  fontWeight: "bold",
-                                }}
+                                className="cc-row__k"
                               >
                                 Status
                               </div>
@@ -1831,27 +1631,15 @@ const ComplainDetails = () => {
                             </div>
                             {complainDetails.resolvingDate !== null && (
                               <div
-                                style={{
-                                  borderBottom: "1px solid #e1e1e1",
-                                  display: "flex",
-                                  justifyContent: "space-between",
-                                  padding: "8px 0px",
-                                }}
+                                className="cc-row"
                               >
                                 <div
-                                  style={{
-                                    fontSize: "16px",
-                                    color: "gray",
-                                    fontWeight: "bold",
-                                  }}
+                                  className="cc-row__k"
                                 >
                                   Resolving Date
                                 </div>
                                 <div
-                                  style={{
-                                    fontSize: "16px",
-                                    color: "black",
-                                  }}
+                                  className="cc-row__v"
                                 >
                                   {complainDetails.resolvingDate
                                     .toString()
@@ -1868,11 +1656,7 @@ const ComplainDetails = () => {
                               }}
                             >
                               <div
-                                style={{
-                                  fontSize: "16px",
-                                  color: "gray",
-                                  fontWeight: "bold",
-                                }}
+                                className="cc-row__k"
                               >
                                 Response
                               </div>

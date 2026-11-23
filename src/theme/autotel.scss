@@ -1117,3 +1117,90 @@ body.at-dark .modal-dialog.at-modal {
   .nr-actions { align-items: center; .btn { margin: 0 !important; } }
 }
 @media (max-width: 760px) { .modal-dialog.at-modal .nr-search { width: 100%; } }
+
+/* ---------- Complaint details page (.cc-details) ---------- */
+// The page is built from inline styles; classes were added to the main
+// blocks and the rest is scaled / recoloured here.
+.cc-details {
+  > .card { background: transparent !important; border: 0 !important; }
+  .cc-head { display: flex; flex-direction: column; gap: 2px; }
+  .cc-head__label { font: 600 12px var(--at-font); color: var(--at-muted); text-transform: uppercase; letter-spacing: .06em; }
+  .cc-head__title { font: 700 24px/1.2 var(--at-font-display); color: var(--at-text); }
+
+  // Thread column
+  .cc-thread > div {
+    background: var(--at-panel); border: 1px solid var(--at-line); border-radius: var(--at-radius);
+    padding: 20px 22px !important;
+  }
+  .cc-thread [style*="font-size: 24px"] { font-size: 16px !important; color: var(--at-text) !important; }
+  .cc-thread [style*="font-size: 20px"] { font-size: 15px !important; line-height: 1.55; }
+  .cc-thread [style*="font-size: 18px"] { font-size: 14px !important; }
+  .cc-thread hr { border-color: var(--at-line); opacity: 1; }
+  // Message bubbles: mine (light blue) and others (whitesmoke)
+  .cc-thread [style*="background-color: rgb(222, 244, 251)"] {
+    background: color-mix(in srgb, var(--at-primary) 14%, var(--at-panel)) !important;
+    border: 1px solid color-mix(in srgb, var(--at-primary) 30%, transparent); border-radius: 14px !important;
+  }
+  .cc-thread [style*="background-color: whitesmoke"] { background: var(--at-soft) !important; border-radius: 14px !important; }
+  .cc-thread [style*="background-color: black"] { background: var(--at-primary) !important; color: var(--at-on-primary) !important; }
+  // Reply composer
+  .cc-thread [style*="border: 1px solid lightgray"] {
+    border: 1px solid var(--at-line) !important; border-radius: 14px; overflow: hidden; background: var(--at-soft);
+  }
+  .cc-thread .replyText {
+    font-size: 15px !important; background: transparent !important; border: 0 !important; color: var(--at-text) !important;
+    padding: 14px 16px !important; min-height: 90px;
+    &::placeholder { font-size: 14px !important; color: var(--at-muted) !important; }
+  }
+  .cc-thread [style*="border: 1px solid lightgray"] > div[style*="background-color"] {
+    background: transparent !important; padding: 10px 12px !important; border-top: 1px solid var(--at-line);
+  }
+
+  // Side column: Vehicle info / Complaint info cards
+  .cc-sec-title {
+    background: transparent !important; color: var(--at-text);
+    font: 700 15px var(--at-font-display); padding: 16px 18px 10px;
+    border: 1px solid var(--at-line); border-bottom: 0; border-radius: var(--at-radius) var(--at-radius) 0 0;
+    background-color: var(--at-panel) !important; margin-top: 0;
+  }
+  .cc-sec-title ~ .cc-sec-title, .cc-sec-body + div .cc-sec-title { margin-top: 14px; }
+  .cc-sec-body {
+    background: var(--at-panel); padding: 4px 18px 14px;
+    border: 1px solid var(--at-line); border-top: 0; border-radius: 0 0 var(--at-radius) var(--at-radius);
+  }
+  .cc-row {
+    display: flex; justify-content: space-between; align-items: center; gap: 12px;
+    padding: 9px 0; border-bottom: 1px solid var(--at-line);
+    &:last-of-type { border-bottom: 0; }
+  }
+  .cc-row__k { font: 600 12px var(--at-font); color: var(--at-muted); }
+  .cc-row__v { font: 500 13px var(--at-font); color: var(--at-text); text-align: right; word-break: break-word; }
+  .cc-sec-body [style*="font-size: 16px"] { font-size: 13px !important; }
+  .cc-sec-body select, .cc-sec-body .form-control, .cc-sec-body .ant-select-selector { min-height: 36px; border-radius: 10px !important; }
+
+  // Buttons on this page had fixed 50px heights / widths
+  .btn:not(.btn-close) { height: auto !important; min-height: 40px; width: auto !important; min-width: 110px; padding: 9px 18px !important; font-size: 13px !important; margin: 0 !important; }
+  .cc-sec-body .btn + .btn, .cc-sec-body button + button { margin-left: 8px !important; }
+  [style*="background-color: white"][style*="height: 80vh"] { background: transparent !important; }
+}
+@media (max-width: 991px) { .cc-details .cc-thread { margin-bottom: 16px; } }
+
+// Back-to-top button (all pages): theme colours instead of the old teal.
+.tap-top {
+  background: var(--at-primary) !important; color: var(--at-on-primary) !important;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, .25) !important; border-radius: 12px !important;
+  svg { stroke: currentColor !important; }
+}
+// Complaint details: space between Complete and Send in the reply bar.
+.cc-details .cc-thread [style*="border: 1px solid lightgray"] div[style*="display: flex"] { gap: 8px; }
+// Complaint details: the replies list scrolled sideways (bubble + date too wide)
+// and had a light inline scrollbar.
+.cc-details .cc-thread {
+  [style*="max-height: 32vh"] {
+    overflow-x: hidden !important; padding-right: 6px;
+    scrollbar-color: var(--at-line) transparent !important;
+    > div { box-sizing: border-box; max-width: 100%; }
+    * { min-width: 0; overflow-wrap: anywhere; }
+  }
+  textarea { scrollbar-color: var(--at-line) transparent !important; }
+}
