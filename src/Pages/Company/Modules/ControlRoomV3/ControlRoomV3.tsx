@@ -232,7 +232,7 @@ const ControlRoomV3 = () => {
   };
 
   return (
-    <div className="cr-root" style={{ ["--cr-top" as any]: `${topH + 24}px` }}>
+    <div className={`cr-root${shownAlarm && selected ? " has-detail" : ""}`} style={{ ["--cr-top" as any]: `${topH + 24}px` }}>
       <div className="cr-mapbox">
         <AlarmMap items={mapItems} selectedId={shownAlarm?._id || null} onSelect={(id: string) => setSelected({ mode: modeFor(tab), id })} fitKey={`${tab}|${priorities}|${sinceHours}|${search}|${rows.length > 0}`} />
       </div>

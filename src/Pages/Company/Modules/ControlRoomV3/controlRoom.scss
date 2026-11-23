@@ -284,6 +284,11 @@ body.at-dark .cr-sla.is-over { color: #0a0a12; small { color: #0a0a12; } }
   .cr-tools { margin-left: 0; order: 4; flex-basis: 100%; .cr-btn { flex: 1 1 auto; } }
   .cr-queue { position: static; order: 2; width: auto; max-width: none; max-height: 60vh; }
   .cr-detail { position: fixed; inset: 0; width: auto; max-width: none; border-radius: 0; z-index: 1050; }
+  // Phone sheet: keep the live map visible as a strip above the alarm.
+  .cr-root.has-detail {
+    .cr-mapbox { position: fixed; inset: 0 0 auto 0; height: 30vh; min-height: 180px; border-radius: 0; z-index: 1050; }
+    .cr-detail { top: max(30vh, 180px); border-radius: 16px 16px 0 0; box-shadow: 0 -8px 24px rgba(0, 0, 0, .35); }
+  }
   .cr-facts { grid-template-columns: 1fr; }
   .cr-dl { grid-template-columns: 110px 1fr; }
   .cr-sheet { position: fixed; z-index: 1050; }

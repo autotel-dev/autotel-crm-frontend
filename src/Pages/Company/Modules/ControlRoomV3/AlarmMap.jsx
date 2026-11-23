@@ -143,6 +143,23 @@ const AlarmMap = ({ google, items, selectedId, onSelect, fitKey }) => {
     if ((map.getZoom() || 0) < 14) map.setZoom(15);
   }, [map, items, selectedId]);
 
+  // When the map box changes size (phone sheet opens/closes), re-centre on the selected alarm.
+  const selRef = useRef(null);
+  selRef.current = items.find((i) => i.id === selectedId) || null;
+  useEffect(() => {
+    if (!map || !window.ResizeObserver) return;
+    const el = map.getDiv();
+    let last = el.clientHeight;
+    const ro = new ResizeObserver(() => {
+      if (el.clientHeight === last) return;
+      last = el.clientHeight;
+      const it = selRef.current;
+      if (it) map.panTo({ lat: it.lat, lng: it.lng });
+    });
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [map]);
+
   useEffect(() => {
     if (map) map.setOptions({ styles: dark ? DARK_STYLES : null });
   }, [map, dark]);
