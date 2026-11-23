@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { H3, P } from "../../../AbstractElements";
-import { Button, Form, FormGroup, Label } from "reactstrap";
+import { Form, FormGroup, Label } from "reactstrap";
+import { useBrandColor } from "../Auth/AuthShell";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import { useDispatch, useSelector } from "react-redux";
 import Swal from "sweetalert2";
@@ -117,125 +117,82 @@ const CommonForm = ({ alignLogo, state }: CommonFormPropsType) => {
       });
     }
   };
-  return (
-    <div className="login-card login-dark">
-      <div>
-        {/* <div>
-          <Logo alignLogo={alignLogo} />
-        </div> */}
-        <div className="login-main">
-          <Form className="theme-form" onSubmit={handleSubmit(resetPassword)}>
-            <H3>Reset Password</H3>
-            <P>{"Enter your New Password"}</P>
-            <FormGroup>
-              <Label className="col-form-label">New Password</Label>
-              <div className="form-input position-relative">
-                <input
-                  className="form-control"
-                  type={showPassWord ? "text" : "password"}
-                  placeholder="*********"
-                  required
-                  {...register("password", {
-                    required: true,
-                    // pattern: {
-                    //   value:
-                    //     /^(?=.*[@|!|#|$|%|^|&|*|.|,|?||-|_])(?=.*[A-Z])(?=.*[a-z])(?=.*\d).+$/,
-                    //   message:
-                    //     "Password contain special Char, Uppercase, lowercase and digit",
-                    // },
-                  })}
-                />
+  const brand = useBrandColor();
 
-                <div className="show-hide">
-                  <span
-                    onClick={() => setShowPassWord(!showPassWord)}
-                    className={!showPassWord ? "show" : ""}
-                  />
-                </div>
-              </div>
-              <span style={{ color: "red" }}>
-                {errors.password && errors.password.message}
-              </span>
-            </FormGroup>
-            <FormGroup
-              style={{
-                marginTop: "-20px",
-              }}
-            >
-              <Label className="col-form-label">Confirm New Password</Label>
-              <div className="form-input position-relative">
-                <input
-                  className="form-control"
-                  type={showConfirmPassWord ? "text" : "password"}
-                  placeholder="*********"
-                  required
-                  {...register("confirmpassword", {
-                    required: true,
-                    // pattern: {
-                    //   value: /^(?=.*[@])(?=.*[A])(?=.*[a])(?=.*\d).+$/,
-                    //   message:
-                    //     "Password contain special Char, Uppercase, lowercase and digit",
-                    // },
-                  })}
-                />
-
-                <div className="show-hide">
-                  <span
-                    onClick={() => setShowConfirmPassWord(!showConfirmPassWord)}
-                    className={!showConfirmPassWord ? "show" : ""}
-                  />
-                </div>
-              </div>
-              <span style={{ color: "red" }}>
-                {errors.confirmpassword && errors.confirmpassword.message}
-              </span>
-            </FormGroup>
-
-            <div className="text-end mt-2">
-              {/* <Button
-                disabled={loading}
-                color="primary"
-                className="btn-block w-100"
-              >
-                {loading ? "Loading..." : "Reset"}
-              </Button> */}
-
-              {userPersonalizationData &&
-              userPersonalizationData.buttonsAndBarsColor !== "" ? (
-                <button
-                  disabled={loading}
-                  style={{
-                    fontWeight: "bold",
-                    backgroundColor: `${userPersonalizationData.buttonsAndBarsColor}
-                  `,
-                    padding: "10px 10px",
-                    borderRadius: "5px",
-                    color: "white",
-                    outline: "none",
-                    border: `${
-                      userPersonalizationData &&
-                      userPersonalizationData.buttonsAndBarsColor
-                    }
-                  `,
-                  }}
-                  className="btn-block w-100"
-                >
-                  {loading ? "Loading..." : "Reset Password"}
-                </button>
-              ) : (
-                <Button
-                  disabled={loading}
-                  color="primary"
-                  className="btn-block w-100"
-                >
-                  {loading ? "Loading..." : "Reset Password"}
-                </Button>
-              )}
-            </div>
-          </Form>
-        </div>
+  // Opened directly (no verified email from step 2).
+  if (!state?.userId) {
+    return (
+      <div className="al-form">
+        <h2 className="al-form__title">Start again</h2>
+        <p className="al-form__hint">This page opens after you verify the code from your email.</p>
+        <Link className="al-submit" to={`${process.env.PUBLIC_URL}/forgot-password`} style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", textDecoration: "none", ...(brand ? { backgroundColor: brand, borderColor: brand } : {}) }}>
+          Go to Forgot password
+        </Link>
       </div>
-    </div>
+    );
+  }
+
+  return (
+    <Form className="al-form" onSubmit={handleSubmit(resetPassword)}>
+      <h2 className="al-form__title">Set a new password</h2>
+      <p className="al-form__hint">Choose a new password for {state?.emailAddress || "your account"}.</p>
+      <FormGroup className="al-field">
+        <Label for="rp-new">New password</Label>
+        <div className="al-input-wrap">
+          <input
+            id="rp-new"
+            className="al-input"
+            type={showPassWord ? "text" : "password"}
+            autoComplete="new-password"
+            placeholder="New password"
+            required
+            {...register("password", { required: true })}
+          />
+          <button
+            type="button"
+            className="al-eye"
+            aria-label={showPassWord ? "Hide password" : "Show password"}
+            aria-pressed={showPassWord}
+            onClick={() => setShowPassWord(!showPassWord)}
+          >
+            {showPassWord ? (<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" aria-hidden="true"><path d="M3 3l18 18M10.6 10.6a2 2 0 002.8 2.8M9.9 5.1A9.8 9.8 0 0112 5c5 0 9 4.5 10 7-.4 1-1.3 2.4-2.6 3.7M6.2 6.2C4.1 7.6 2.6 9.8 2 12c1 2.5 5 7 10 7 1.8 0 3.4-.5 4.8-1.3" /></svg>) : (<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" aria-hidden="true"><path d="M2 12c1-2.5 5-7 10-7s9 4.5 10 7c-1 2.5-5 7-10 7S3 14.5 2 12z" /><circle cx="12" cy="12" r="3" /></svg>)}
+          </button>
+        </div>
+        {errors.password && <span className="al-error">{errors.password.message || "This field is required"}</span>}
+      </FormGroup>
+      <FormGroup className="al-field">
+        <Label for="rp-confirm">Confirm new password</Label>
+        <div className="al-input-wrap">
+          <input
+            id="rp-confirm"
+            className="al-input"
+            type={showConfirmPassWord ? "text" : "password"}
+            autoComplete="new-password"
+            placeholder="Type it again"
+            required
+            {...register("confirmpassword", { required: true })}
+          />
+          <button
+            type="button"
+            className="al-eye"
+            aria-label={showConfirmPassWord ? "Hide password" : "Show password"}
+            aria-pressed={showConfirmPassWord}
+            onClick={() => setShowConfirmPassWord(!showConfirmPassWord)}
+          >
+            {showConfirmPassWord ? (<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" aria-hidden="true"><path d="M3 3l18 18M10.6 10.6a2 2 0 002.8 2.8M9.9 5.1A9.8 9.8 0 0112 5c5 0 9 4.5 10 7-.4 1-1.3 2.4-2.6 3.7M6.2 6.2C4.1 7.6 2.6 9.8 2 12c1 2.5 5 7 10 7 1.8 0 3.4-.5 4.8-1.3" /></svg>) : (<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" aria-hidden="true"><path d="M2 12c1-2.5 5-7 10-7s9 4.5 10 7c-1 2.5-5 7-10 7S3 14.5 2 12z" /><circle cx="12" cy="12" r="3" /></svg>)}
+          </button>
+        </div>
+        {errors.confirmpassword && <span className="al-error">{errors.confirmpassword.message || "This field is required"}</span>}
+      </FormGroup>
+      <button
+        type="submit"
+        className="al-submit"
+        disabled={loading}
+        style={brand ? { backgroundColor: brand, borderColor: brand } : undefined}
+      >
+        {loading ? "Saving…" : "Reset password"}
+      </button>
+    </Form>
   );
 };
 

@@ -42,7 +42,10 @@ const LoginForm = () => {
 
   const header = p?.headerText || DEFAULT_HEADER;
   const sub = p?.subHeaderText || DEFAULT_SUB;
-  const logo = p?.accountLogo?.url ? `${IMAGE_BASE_URL}/${p.accountLogo.url}` : "";
+  const logoUrl = p?.accountLogo?.url ? `${IMAGE_BASE_URL}/${p.accountLogo.url}` : "";
+  // Fall back to the Autotel mark if the uploaded logo is missing or broken.
+  const [logoFailed, setLogoFailed] = useState(false);
+  const logo = logoUrl && !logoFailed ? logoUrl : "";
 
   // Typing effect for the sub-header (types, pauses, erases to 3 letters, repeats).
   useEffect(() => {
@@ -105,7 +108,7 @@ const LoginForm = () => {
         </button>
         <div className="al-side__inner">
           <div className="al-brand">
-            {logo ? <img src={logo} alt="" className="al-brand__logo" /> : <span className="al-brand__mark">A</span>}
+            {logo ? <img src={logo} alt="" className="al-brand__logo" onError={() => setLogoFailed(true)} /> : <span className="al-brand__mark">A</span>}
             {!logo && <span className="al-brand__name">Autotel</span>}
           </div>
           <h1 className={`al-title${loading ? " is-loading" : ""}`}>{loading ? " " : header}</h1>

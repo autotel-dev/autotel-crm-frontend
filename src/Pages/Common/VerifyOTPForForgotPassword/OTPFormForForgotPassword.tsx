@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
-import Logo from "./Logo";
-import { H1, H4 } from "../../../AbstractElements";
-import { Button, Form, FormGroup, Input, Label } from "reactstrap";
-import { useNavigate } from "react-router-dom";
+import { Form } from "reactstrap";
+import { useBrandColor } from "../Auth/AuthShell";
+import { Link, useNavigate } from "react-router-dom";
 import {
   create,
   getAll,
@@ -12,7 +11,6 @@ import {
 } from "../../../Utilities/api";
 
 import OTPInput from "react-otp-input";
-import "./otpstyles.css";
 import Swal from "sweetalert2";
 import { useDispatch } from "react-redux";
 
@@ -159,83 +157,64 @@ const OTPFormForForgotPassword = ({
       // console.error("Error creating post:", error);
     }
   };
-  return (
-    <div className="login-card login-dark">
-      <div>
-        <div>
-          <Logo alignLogo={alignLogo} />
-        </div>
+  const brand = useBrandColor();
 
-        <div className="login-main">
-          <Form
-            onSubmit={(e) => {
-              verifyOTP(e);
-            }}
-          >
-            <H1>{header}</H1>
-            <div style={{ margin: "15px 0px" }}>
-              <H4>{"Enter your OTP Verification Code"}</H4>
-            </div>
-
-            <div style={{ margin: "35px 0px" }}>
-              <OTPInput
-                containerStyle={{ display: "flex", justifyContent: "center" }} // Add container styles if needed
-                value={otp}
-                onChange={(e) => handleChange(e)}
-                numInputs={4}
-                renderSeparator={<span>-</span>}
-                inputStyle="otp-input"
-                renderInput={(props) => <input {...props} />}
-                shouldAutoFocus={true}
-              />
-            </div>
-
-            <FormGroup className="mb-0 form-group">
-              <div className="text-end mt-3">
-                <Button
-                  disabled={loading || resendOTPLoading}
-                  color="primary"
-                  className="btn-block w-100"
-                >
-                  {loading ? "Loading..." : "Verify"}
-                </Button>
-              </div>
-            </FormGroup>
-          </Form>
-          <div style={{ display: "flex", justifyContent: "space-between" }}>
-            <div style={{ display: "flex", justifyContent: "center" }}>
-              <H4> This OTP will expire after </H4>
-              <H4>
-                <span
-                  style={{
-                    color: "#33BFBF",
-                    marginLeft: "3px",
-                    marginRight: "3px",
-                  }}
-                >
-                  {" "}
-                  {formatTime(timer)}{" "}
-                </span>
-              </H4>
-            </div>
-            {timer === 0 && (
-              <H4>
-                <span
-                  style={{
-                    color: "#33BFBF",
-                    fontWeight: "bold",
-                    cursor: "pointer",
-                  }}
-                  onClick={resendOTPCode}
-                >
-                  {resendOTPLoading ? "Loading..." : "Resend"}
-                </span>
-              </H4>
-            )}
-          </div>
-        </div>
+  // Opened directly (no email from step 1): nothing to verify against.
+  if (!state?.userId) {
+    return (
+      <div className="al-form">
+        <h2 className="al-form__title">Start again</h2>
+        <p className="al-form__hint">This page needs the email from step 1. Please request a new code.</p>
+        <Link className="al-submit" to={`${process.env.PUBLIC_URL}/forgot-password`} style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", textDecoration: "none", ...(brand ? { backgroundColor: brand, borderColor: brand } : {}) }}>
+          Go to Forgot password
+        </Link>
       </div>
-    </div>
+    );
+  }
+
+  return (
+    <Form className="al-form" onSubmit={(e) => verifyOTP(e)}>
+      <h2 className="al-form__title">Enter the code</h2>
+      <p className="al-form__hint">We sent a 4-digit code to {state?.emailAddress || "your email"}.</p>
+      <div className="al-otp">
+        <OTPInput
+          value={otp}
+          onChange={(e) => handleChange(e)}
+          numInputs={4}
+          renderSeparator={<span>-</span>}
+          renderInput={(props, i) => <input {...props} inputMode="numeric" aria-label={`Code digit ${i + 1}`} />}
+          shouldAutoFocus={true}
+        />
+      </div>
+      <button
+        type="submit"
+        className="al-submit"
+        disabled={loading || resendOTPLoading || String(otp).length < 4}
+        style={brand ? { backgroundColor: brand, borderColor: brand } : undefined}
+      >
+        {loading ? "Verifying…" : "Verify code"}
+      </button>
+      <div className="al-timer">
+        {timer > 0 ? (
+          <span>
+            Code expires in <b>{formatTime(timer)}</b>
+          </span>
+        ) : (
+          <span>The code has expired.</span>
+        )}
+        {timer === 0 && (
+          <button
+            type="button"
+            className="al-textbtn"
+            onClick={resendOTPCode}
+            disabled={resendOTPLoading}
+            style={brand ? { color: brand } : undefined}
+          >
+            {resendOTPLoading ? "Sending…" : "Resend code"}
+          </button>
+        )}
+      </div>
+    </Form>
   );
 };
 

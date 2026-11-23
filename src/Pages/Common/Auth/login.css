@@ -144,3 +144,22 @@ body.at-dark .al-input:focus { border-color: var(--primary) !important; box-shad
 body.at-dark .al-submit { color: #0a0a12; }
 body.at-dark .al-error { color: #f87171; }
 body.at-dark .al-title.is-loading { background: var(--soft); }
+
+/* Sign-in flow pages (AuthShell): step label, back link, OTP boxes */
+.al-step { margin: 0 0 10px; font: 600 12px "Inter", system-ui, sans-serif; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+.al-back { margin: 16px 0 0; text-align: center; }
+.al-otp { display: flex; justify-content: center; gap: 10px; margin: 6px 0 18px; }
+.al-otp input {
+  width: 56px !important; height: 60px; border-radius: 14px; border: 1px solid var(--line); background: #fff;
+  font: 700 24px "Space Grotesk", "Inter", sans-serif; color: var(--ink); text-align: center; outline: none;
+}
+.al-otp input:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(79, 70, 229, .14); }
+.al-otp span { display: none; }
+.al-timer { display: flex; justify-content: space-between; align-items: center; margin-top: 14px; font-size: 13px; color: var(--muted); }
+.al-timer b { color: var(--ink); font-variant-numeric: tabular-nums; }
+.al-textbtn { border: 0; background: none; padding: 0; font: 600 13px "Inter", system-ui, sans-serif; color: var(--primary); cursor: pointer; }
+.al-textbtn:disabled { opacity: .6; cursor: wait; }
+.al-textbtn:focus-visible { outline: 3px solid rgba(79, 70, 229, .4); outline-offset: 2px; border-radius: 4px; }
+body.at-dark .al-otp input { background: #12121f !important; border-color: var(--line) !important; color: var(--ink) !important; }
+body.at-dark .al-otp input:focus { border-color: var(--primary) !important; box-shadow: 0 0 0 4px rgba(129, 140, 248, .18) !important; }
+.al-otp > div { gap: 10px; } /* react-otp-input wraps the boxes in its own flex row */
