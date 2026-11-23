@@ -37,6 +37,7 @@ const makeLayer = (google) =>
       this.onEvent = null;
     }
     onAdd() {
+      this._evKey = null; // force a fresh draw of the event marks
       this.root = document.createElement("div");
       this.root.style.position = "absolute";
       this.getPanes().overlayMouseTarget.appendChild(this.root);
@@ -101,6 +102,9 @@ const PlaybackMap = ({ google, pts, segments, events, car, card, fitKey, follow,
   const onSeekRef = useRef(onSeek);
   onSeekRef.current = onSeek;
   const dark = useIsDark();
+  // Latest overlay data, so a layer created after the data arrived still gets it.
+  const latest = useRef({});
+  latest.current = { events: events || [], evKey: (events || []).map((e) => e.key).join("|") + (dark ? "d" : "l"), car, card };
 
   useEffect(() => {
     if (!map || !google) return;
@@ -109,6 +113,7 @@ const PlaybackMap = ({ google, pts, segments, events, car, card, fitKey, follow,
     layer.onEvent = (t) => onSeekRef.current && onSeekRef.current(t);
     layer.setMap(map);
     layerRef.current = layer;
+    layer.update(latest.current); // drawn once the overlay is added
     return () => { layer.setMap(null); layerRef.current = null; };
   }, [map, google]);
 
