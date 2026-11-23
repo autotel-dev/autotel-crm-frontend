@@ -12,6 +12,7 @@ const CompanyTasks = lazy(() => import("../Pages/Company/Tasks/Tasks"));
 const CompanyUsers = lazy(() => import("../Pages/Company/Users/Users"));
 const ControlRoom = lazy(() => import("../Pages/Company/Modules/ControlRoom/ControlRoom"));
 const ControlRoomV2 = lazy(() => import("../Pages/Company/Modules/ControlRoom copy/ControlRoomV2"));
+const ControlRoomV3 = lazy(() => import("../Pages/Company/Modules/ControlRoomV3/ControlRoomV3"));
 const TicketDetails = lazy(() => import("../Pages/Common/Support/TicketDetails"));
 const Account = lazy(() => import("../Pages/Common/User/Account/Account"));
 const Settings = lazy(() => import("../Pages/Common/User/Settings/Settings"));
@@ -521,7 +522,7 @@ const routes = [
 
   {
     path: `${process.env.PUBLIC_URL}/company/modules/control-room`,
-    Component: <ControlRoomV2 />,
+    Component: <ControlRoomV3 />,
     isProtected: true,
     allowedUserRoles: [ROLES.COMPANY],
     permissionValue: "Control Room",
@@ -619,7 +620,7 @@ const routes = [
 
   {
     path: `${process.env.PUBLIC_URL}/operator/modules/control-room`,
-    Component: <ControlRoomV2 />,
+    Component: <ControlRoomV3 />,
     isProtected: true,
     allowedUserRoles: [ROLES.OPERATOR],
     permissionValue: "Control Room",

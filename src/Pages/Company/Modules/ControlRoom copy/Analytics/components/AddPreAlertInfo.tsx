@@ -155,6 +155,8 @@ const AddPreAlertInfo: React.FC<PropsTypes> = ({
         preInfoMessage: data.message,
         fromDate: selectedstartDate,
         toDate: selectedEndDate,
+        // the backend expects the vehicle id in "vehicle"; sending only deviceData made every request fail
+        vehicle: selectedItems[0]?.value || selectedItems[0]?._id,
         deviceData: selectedItems[0],
       };
       // console.log("addPreInfoData -- ", addPreInfoData);

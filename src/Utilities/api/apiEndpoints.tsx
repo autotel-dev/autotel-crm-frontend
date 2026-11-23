@@ -307,6 +307,10 @@ export const ADD_PRE_INFO_FOR_DEVICE = `${API_BASE_URL}/control-room/add-pre-inf
 export const GET_ALL_VALID_PRE_INFOS = `${API_BASE_URL}/control-room/get-all-pre-infos`;
 export const GET_ALL_VEHICLES_DROPDOWN_CONTROL_ROOM = `${API_BASE_URL}/control-room/get-all-vehicles-dropdown`;
 export const GET_ALL_MERGED_ALERT_EVENTS = `${API_BASE_URL}/control-room/get-all-merged-alert-events-of-device`;
+// Control Room v3 (alarm workflow)
+export const CR_ALARMS = `${API_BASE_URL}/alert-events/control-room/alarms`;
+export const CR_OVERVIEW = `${API_BASE_URL}/alert-events/control-room/overview`;
+export const CR_LOG_STEP = `${API_BASE_URL}/alert-events/log-step`;
 
 // Company -> Modules - SAIO-Central - Customer
 
