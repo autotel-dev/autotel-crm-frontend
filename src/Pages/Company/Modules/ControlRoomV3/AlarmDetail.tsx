@@ -478,7 +478,8 @@ const AlarmDetail = ({ alarm, mode, canAct, onClose, onTaken, onChanged, onEngin
             <button type="button" className="cr-btn cr-btn--red" disabled={!vehicle?._id} onClick={() => onEngineCut(vehicle)}>
               Engine cut
             </button>
-            <span className="cr-spacer" />
+          </div>
+          <div className="cr-row cr-row--fill">
             {OUTCOMES.map((o) => (
               <button key={o.key} type="button" className={`cr-btn ${o.cls}`} disabled={!!busy} onClick={() => closeAlarm(o.key)}>
                 {busy === o.key ? "Closing…" : o.label}

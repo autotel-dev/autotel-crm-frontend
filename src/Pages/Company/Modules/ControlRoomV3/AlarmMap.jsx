@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { GoogleApiWrapper, Map } from "google-maps-react";
 import { GOOGLE_MAPS_OPTIONS } from "../../../../utils/googleMapsOptions";
 
+// Keep in sync with --cr-map-bg in controlRoom.scss (shown while tiles load).
 const DARK_STYLES = [
   { elementType: "geometry", stylers: [{ color: "#1b1a2e" }] },
   { elementType: "labels.text.fill", stylers: [{ color: "#b4b4d4" }] },
@@ -155,6 +156,8 @@ const AlarmMap = ({ google, items, selectedId, onSelect, fitKey }) => {
       disableDefaultUI
       zoomControl
       gestureHandling="greedy"
+      // Start with the right theme so the map never paints light first.
+      styles={dark ? DARK_STYLES : null}
       onReady={(_, m) => setMap(m)}
       containerStyle={{ position: "absolute", inset: 0, width: "100%", height: "100%" }}
       style={{ width: "100%", height: "100%" }}

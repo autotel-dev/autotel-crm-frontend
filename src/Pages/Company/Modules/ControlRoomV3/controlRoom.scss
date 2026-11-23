@@ -21,7 +21,15 @@ body.at-dark .cr-root {
   --p1-soft: rgba(248, 113, 113, .18); --p2-soft: rgba(251, 146, 60, .18); --p3-soft: rgba(250, 204, 21, .16); --p4-soft: rgba(156, 163, 175, .16);
 }
 
-.cr-mapbox { position: absolute; inset: 0; }
+.cr-mapbox {
+  position: absolute; inset: 0;
+  --cr-map-bg: #e5e3df;
+  background: var(--cr-map-bg);
+  // Google paints its default light grey under tiles that are still loading;
+  // use the theme colour instead so panning / refreshing doesn't flash white.
+  div[style*="background-color: rgb(229, 227, 223)"] { background-color: var(--cr-map-bg) !important; }
+}
+body.at-dark .cr-mapbox { --cr-map-bg: #1b1a2e; }
 .cr-panel {
   background: var(--at-panel); color: var(--at-text);
   border: 1px solid var(--at-line); border-radius: 18px; box-shadow: var(--at-shadow);
@@ -192,6 +200,7 @@ body.at-dark .cr-sla.is-over { color: #0a0a12; small { color: #0a0a12; } }
   p { margin: 0 0 2px; font-size: 13px; }
   small { font-size: 11px; color: var(--at-muted); }
 }
+.cr-row--fill > .cr-btn { flex: 1 1 0; min-width: 0; }
 .cr-closed-note p { margin: 2px 0 0; font-size: 13px; }
 .cr-dl { display: grid; grid-template-columns: 130px 1fr; gap: 6px 10px; margin: 0; font-size: 13px;
   dt { color: var(--at-muted); font-weight: 500; }

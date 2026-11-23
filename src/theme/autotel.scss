@@ -826,3 +826,7 @@ body.at-dark .at-pill--bad { color: #fca5a5; }
   .at-shell .page-body { max-width: 100%; overflow-x: auto; }   // old fixed-width pages scroll instead of being cut off
   .at-shell .page-body .table-responsive, .at-shell .page-body .rdt_TableWrapper, .at-shell .page-body table { max-width: 100%; }
 }
+
+// The old template sets `* { scrollbar-color: #f1e6f5 #ffffff }`, which shows a
+// white scrollbar on dark pages. Dark mode gets a dark thumb on a clear track.
+body.at-dark, body.at-dark * { scrollbar-color: #3a3760 transparent; }
