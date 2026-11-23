@@ -108,6 +108,7 @@ const CreateComplainModal: React.FC<PropsTypes> = ({
         setBasicTab("1");
       }}
       size="xl"
+      className="at-modal at-modal--complaint"
       onClosed={() => {
         // setValue("")
         setIsVisible(false);
@@ -116,7 +117,10 @@ const CreateComplainModal: React.FC<PropsTypes> = ({
       }}
     >
       <div className="modal-header">
-        <H4 className="modal-title">Device Name : {selectedItems[0].name}</H4>
+        <H4 className="modal-title">
+          New complaint
+          <span className="at-modal__sub">Device {selectedItems[0].name}</span>
+        </H4>
         <Button
           color="transprant"
           className="btn-close"
@@ -136,7 +140,6 @@ const CreateComplainModal: React.FC<PropsTypes> = ({
                 display: "flex",
                 justifyContent: "center",
                 height: "70vh",
-                backgroundColor: "white",
                 alignItems: "center",
               }}
             >
@@ -150,47 +153,28 @@ const CreateComplainModal: React.FC<PropsTypes> = ({
                 display: "flex",
                 justifyContent: "center",
                 height: "70vh",
-                backgroundColor: "white",
                 alignItems: "center",
               }}
             >
               <div
                 style={{
                   textAlign: "center",
-                  fontSize: "25px",
-                  fontWeight: "bold",
+                  fontSize: "16px",
+                  fontWeight: 600,
                 }}
               >
                 No Data Found
               </div>
             </div>
           ) : (
-            <div style={{ backgroundColor: "white" }}>
-              <Nav
-                tabs
-                className="simple-wrapper"
-                style={{
-                  backgroundColor: "#63d5be",
-                  borderTopLeftRadius: "10px",
-                  borderTopRightRadius: "10px",
-                }}
-              >
+            <div>
+              <Nav className="at-tabs" role="tablist">
                 {modalTabs.map((item, index) => (
-                  <NavItem
-                    key={index}
-                    style={{
-                      width: "20%",
-                      height: "40px",
-                      textAlign: "center",
-                      fontSize: "18px",
-                      cursor: "pointer",
-                    }}
-                  >
+                  <NavItem key={index}>
                     <NavLink
-                      className={` ${basicTab === item.id ? "active" : ""}`}
-                      style={{
-                        color: `${basicTab === item.id ? "#63d5be" : "white"}`,
-                      }}
+                      className={basicTab === item.id ? "active" : ""}
+                      role="tab"
+                      aria-selected={basicTab === item.id}
                       onClick={() => setBasicTab(item.id)}
                     >
                       {item.id === "1"
@@ -208,7 +192,8 @@ const CreateComplainModal: React.FC<PropsTypes> = ({
               </Nav>
               <TabContent
                 activeTab={basicTab}
-                style={{ height: "70vh", overflowY: "auto" }}
+                className="at-tabs__body"
+                style={{ height: "68vh", overflowY: "auto", overflowX: "hidden" }}
               >
                 {modalTabs &&
                   modalTabs.map((item, index) => (
@@ -216,7 +201,7 @@ const CreateComplainModal: React.FC<PropsTypes> = ({
                       className="fade show"
                       tabId={item.id}
                       key={index}
-                      style={{ height: "70vh" }}
+                      style={{ height: "100%" }}
                     >
                       {item.element}
                     </TabPane>

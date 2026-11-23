@@ -998,3 +998,66 @@ body.at-dark .modal-dialog.at-modal input[type="date"], body.at-dark .modal-dial
   .rdt_TableCell .btn:not(.btn-close) { min-height: 30px; padding: 5px 12px !important; font-size: 12px !important; border-radius: 9px !important; }
   div[style*="background-color: green"] { width: 42px; border-radius: 12px !important; background-color: #16a34a !important; }
 }
+
+/* ---------- Pop-up tabs (.at-tabs) + New complaint pop-up ---------- */
+.modal-dialog.at-modal {
+  .modal-title .at-modal__sub {
+    display: block; margin-top: 2px;
+    font: 500 12px var(--at-font); color: var(--at-muted); letter-spacing: .02em;
+  }
+  .at-tabs {
+    display: flex; flex-wrap: nowrap; gap: 2px; padding: 4px; margin: 0 0 16px;
+    background: var(--at-soft) !important; border: 0 !important; border-radius: 12px;
+    overflow-x: auto; scrollbar-width: none;
+    .nav-item { flex: 1 1 0; min-width: max-content; }
+    .nav-link {
+      display: block; width: 100%; text-align: center; white-space: nowrap; cursor: pointer;
+      padding: 9px 14px !important; border: 0 !important; border-radius: 9px !important;
+      font: 600 13px var(--at-font) !important; letter-spacing: normal;
+      color: var(--at-muted) !important; background: transparent !important; opacity: 1 !important;
+      &:hover { color: var(--at-text) !important; }
+      &.active { background: var(--at-panel) !important; color: var(--at-text) !important; box-shadow: 0 1px 3px rgba(0, 0, 0, .18); }
+    }
+  }
+  .at-tabs__body { padding-right: 2px; }
+  .at-tabs__body > .tab-pane > .row, .at-tabs__body .tab-pane > div > .row { margin-left: 0; margin-right: 0; }
+}
+
+// Location tab of the New complaint pop-up
+.cc-loc-map {
+  position: relative; height: min(60vh, 560px); min-height: 320px;
+  border-radius: 14px; overflow: hidden; border: 1px solid var(--at-line);
+  background: #e5e3df;
+}
+body.at-dark .cc-loc-map { background: #1b1a2e; }
+.cc-loc-link {
+  position: absolute; left: 12px; top: 12px; z-index: 2;
+  max-width: calc(100% - 76px); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  padding: 7px 12px; border-radius: 10px; font: 600 12px var(--at-font);
+  background: var(--at-panel); color: var(--at-text) !important; border: 1px solid var(--at-line);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, .2); text-decoration: none;
+  &:hover { color: var(--at-primary) !important; }
+}
+.cc-loc-empty {
+  height: min(60vh, 560px); min-height: 320px; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 8px; text-align: center; padding: 24px;
+  border: 1px dashed var(--at-line); border-radius: 14px; color: var(--at-muted);
+  strong { color: var(--at-text); font: 700 16px var(--at-font-display); }
+  span { max-width: 360px; font-size: 13px; }
+}
+
+/* ---------- Google Maps controls in dark mode ---------- */
+// Google's zoom / fullscreen buttons are always white; recolour them.
+body.at-dark .gm-style {
+  .gm-bundled-control .gmnoprint > div,
+  button.gm-control-active, button.gm-fullscreen-control {
+    background-color: var(--at-panel) !important;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, .3) !important;
+  }
+  .gm-bundled-control .gmnoprint > div > div { background-color: var(--at-line) !important; } // divider
+  button.gm-control-active img, button.gm-fullscreen-control img { filter: invert(1) brightness(1.4); }
+  .gm-style-iw-c { background: var(--at-panel) !important; color: var(--at-text) !important; }
+  .gm-style-iw-d { color: var(--at-text) !important; overflow: auto !important; }
+  .gm-style-iw-tc::after { background: var(--at-panel) !important; }
+  .gm-ui-hover-effect > span { background-color: var(--at-text) !important; }
+}

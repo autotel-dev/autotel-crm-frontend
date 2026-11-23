@@ -5,6 +5,16 @@ import { GOOGLE_MAPS_OPTIONS } from "../../../../../utils/googleMapsOptions";
 import { useEffect, useState, useRef } from "react";
 import { useSelector } from "react-redux";
 import LocationArrow from "../../../../../assets/deviceLocationArrow.png";
+import { DARK_MAP_STYLES, isDarkTheme } from "../../../../../utils/mapDarkStyles";
+
+// A device that has never had a GPS fix reports 0,0 (middle of the Atlantic).
+const validPosition = (info) => {
+  const lat = parseFloat(info?.lat);
+  const lng = parseFloat(info?.lng);
+  if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
+  if (Math.abs(lat) < 0.0001 && Math.abs(lng) < 0.0001) return null;
+  return { lat, lng };
+};
 
 const Location = (props) => {
   const { createComplainModalData } = useSelector((state) => state.complainCenter);
@@ -32,7 +42,10 @@ const Location = (props) => {
     }
   }, [createComplainModalData]);
 
+  const position = validPosition(createComplainModalData?.vehicleInfo);
+
   useEffect(() => {
+    if (!position || !window.google) return;
     const canvas = document.createElement("canvas");
     const context = canvas.getContext("2d");
 
@@ -67,6 +80,7 @@ const Location = (props) => {
       // Convert canvas to data URL
       const rotatedIconUrl = canvas.toDataURL();
 
+      if (!mapRef.current?.map) return;
       const markerInstance = new window.google.maps.Marker({
         position: {
           lat: parseFloat(createComplainModalData.vehicleInfo.lat),
@@ -111,19 +125,40 @@ const Location = (props) => {
     );
   }
 
+  if (!position) {
+    return (
+      <div className="cc-loc-empty">
+        <svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z" /><circle cx="12" cy="9.5" r="2.5" /><path d="M4 4l16 16" /></svg>
+        <strong>No location yet</strong>
+        <span>This device hasn't sent a valid GPS position, so there is nothing to show on the map.</span>
+      </div>
+    );
+  }
+
+  const dark = isDarkTheme();
   return (
-    <div className="map-container">
+    <div className="cc-loc-map">
       <Map
         google={props.google}
-        zoom={14}
-        initialCenter={{
-          lat: parseFloat(createComplainModalData?.vehicleInfo?.lat),
-          lng: parseFloat(createComplainModalData?.vehicleInfo?.lng),
-        }}
-        disableDefaultUI={false} // Enable default UI controls
-        style={{ height: "88%", width: "97%", overflow: "unset" }}
-        ref={mapRef} // Set ref for the map
+        zoom={15}
+        initialCenter={position}
+        styles={dark ? DARK_MAP_STYLES : null}
+        mapTypeControl={false}
+        streetViewControl={false}
+        fullscreenControl
+        zoomControl
+        containerStyle={{ position: "absolute", inset: 0 }}
+        style={{ width: "100%", height: "100%" }}
+        ref={mapRef}
       ></Map>
+      <a
+        className="cc-loc-link"
+        href={`https://www.google.com/maps/search/?api=1&query=${position.lat},${position.lng}`}
+        target="_blank"
+        rel="noreferrer"
+      >
+        {position.lat.toFixed(5)}, {position.lng.toFixed(5)} · Open in Google Maps
+      </a>
     </div>
   );
 };

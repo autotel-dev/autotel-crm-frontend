@@ -69,7 +69,7 @@ const ComplainHistory = () => {
               <tbody>
                 {dataList.length === 0 ? (
                   <tr>
-                    <td colSpan={7} style={{ fontSize: "25px" }}>
+                    <td colSpan={7} className="text-center" style={{ fontSize: "14px", padding: "28px 12px", opacity: 0.75 }}>
                       No Previous Complains Found
                     </td>
                   </tr>
