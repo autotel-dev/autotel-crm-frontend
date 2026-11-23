@@ -58,7 +58,8 @@ const Languages = lazy(() => import("../Pages/SuperAdmin/Languages/Languages"));
 const SAIOCentralLayout = lazy(() => import("../Pages/Company/Modules/SAIO/SAIOCentralLayout"));
 const ServicePackages = lazy(() => import("../Pages/Company/Packages/Packages"));
 const MonitoringForSingleVehicle = lazy(() => import("../Pages/Company/Modules/MonitoringForSingleVehicle/MonitoringForSingleVehicle"));
-const Playback = lazy(() => import("../Pages/Company/Modules/Playback/Playback"));
+// Phase 5 redesign; the old page stays in Modules/Playback for reference.
+const Playback = lazy(() => import("../Pages/Company/Modules/PlaybackV2/PlaybackV2"));
 const AlertManagement = lazy(() => import("../Pages/Company/AlertManagement/AlertManagement"));
 const TripReports = lazy(() => import("../Pages/Company/Modules/Monitoring/components/Reports/TripReports"));
 const MonitoringLatest = lazy(() => import("../Pages/Company/Modules/MonitoringLatest/MonetoringLatest"));
