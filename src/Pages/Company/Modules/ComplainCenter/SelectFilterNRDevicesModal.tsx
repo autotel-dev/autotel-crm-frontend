@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import {
   Button,
-  Col,
   FormGroup,
   Modal,
   ModalBody,
@@ -406,28 +405,26 @@ const SelectFilterNRDevicesModal: React.FC<PropsTypes> = ({
                 </div>
               )}
 
-              <Row style={{ display: "flex", alignItems: "center" }}>
-                <Col sm={12}>
+              <div className="nr-toolbar">
+                <label className="nr-search">
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="M20 20l-3.5-3.5" /></svg>
                   <input
-                    style={{
-                      width: "100%",
-                      marginLeft: "0px",
-                    }}
                     className="global-search-field"
-                    type="text"
-                    placeholder="Type to Search.."
+                    type="search"
+                    placeholder="Search vehicle, IMEI or customer"
+                    aria-label="Search NR devices"
                     value={searchValue}
                     onChange={handleSearch}
                   />
-                </Col>
-              </Row>
+                </label>
+                {report.length > 0 && (
+                  <span className="nr-count">
+                    Showing {data?.length || 0} of {report.length}
+                  </span>
+                )}
+              </div>
 
-              <div
-                style={{
-                  height: "50vh",
-                  overflow: "auto",
-                }}
-              >
+              <div className="nr-table">
                 <DataTable
                   columns={[
                     {
