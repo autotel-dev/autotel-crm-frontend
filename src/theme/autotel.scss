@@ -1061,3 +1061,41 @@ body.at-dark .gm-style {
   .gm-style-iw-tc::after { background: var(--at-panel) !important; }
   .gm-ui-hover-effect > span { background-color: var(--at-text) !important; }
 }
+
+/* ---------- NR Status pop-up ---------- */
+.modal-dialog.at-modal {
+  .nr-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin: 16px 0 4px; }
+  .nr-stat {
+    display: flex; flex-direction: column; align-items: flex-start; gap: 2px;
+    padding: 12px 16px; border-radius: 14px; cursor: pointer; text-align: left;
+    border: 1px solid var(--at-line); background: var(--at-soft); color: var(--at-text);
+    strong { font: 700 22px/1.1 var(--at-font-display); }
+    span { font: 600 12px var(--at-font); color: var(--at-muted); }
+    &:hover { border-color: var(--at-primary); }
+    &.is-on { border-color: var(--at-primary); box-shadow: 0 0 0 3px color-mix(in srgb, var(--at-primary) 22%, transparent); }
+    &--pending strong { color: #f59e0b; }
+    &--forwarded strong { color: #22c55e; }
+  }
+  .nr-badge {
+    display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px;
+    font: 600 12px var(--at-font); white-space: nowrap;
+    &::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+    &--pending { color: #d97706; background: rgba(245, 158, 11, .14); }
+    &--fwd { color: #16a34a; background: rgba(34, 197, 94, .14); }
+  }
+  .nr-mono { font: 500 12px ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .01em; white-space: nowrap; }
+  .nr-actions { display: flex; gap: 6px; flex-wrap: nowrap; }
+  .custom-data-table .rdt_TableRow { min-height: 52px; font-size: 13px; }
+  .custom-data-table .rdt_TableCell { padding-left: 12px; padding-right: 8px; }
+  .custom-data-table .rdt_TableCol { padding-left: 12px; }
+}
+body.at-dark .modal-dialog.at-modal {
+  .nr-badge--pending { color: #fbbf24; }
+  .nr-badge--fwd { color: #4ade80; }
+}
+@media (max-width: 760px) {
+  .modal-dialog.at-modal .nr-stats { gap: 6px; }
+  .modal-dialog.at-modal .nr-stat { padding: 10px 12px; strong { font-size: 18px; } }
+  // Phone: keep the table at full width and let it scroll sideways.
+  .modal-dialog.at-modal .custom-data-table .rdt_Table { min-width: 900px; }
+}

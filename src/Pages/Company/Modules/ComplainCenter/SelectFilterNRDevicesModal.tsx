@@ -4,7 +4,6 @@ import {
   Button,
   Col,
   FormGroup,
-  Label,
   Modal,
   ModalBody,
   Row,
@@ -248,6 +247,9 @@ const SelectFilterNRDevicesModal: React.FC<PropsTypes> = ({
                         marginLeft: "10px",
                         cursor: "pointer",
                       }}
+                      role="button"
+                      title="Download Excel"
+                      aria-label="Download Excel"
                       onClick={(e: any) => {
                         let settings = {
                           fileName: `NR Report list (${new Date()})`, // Name of the resulting spreadsheet
@@ -384,146 +386,24 @@ const SelectFilterNRDevicesModal: React.FC<PropsTypes> = ({
               </div>
 
               {report.length > 0 && (
-                <Row
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    paddingTop: "10px",
-                    fontSize: "16px",
-                    fontWeight: "bold",
-                  }}
-                >
-                  <Col
-                    md="4"
-                    sm="12"
-                    style={{
-                      display: "flex",
-                      gap: "3px",
-                      justifyContent: "flex-start",
-                      alignItems: "center",
-                    }}
-                  >
-                    <div>
-                      <Label
-                        style={{
-                          display: "inline-block",
-                          position: "relative",
-                          cursor: "pointer",
-                          marginBottom: "5px",
-                          fontSize: "18px",
-                        }}
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        <input
-                          type="checkbox"
-                          name="key"
-                          value="value"
-                          checked={checked == "Total"}
-                          onChange={() => {
-                            setChecked("Total");
-                          }}
-                          style={{ display: "none" }} // Hide the default checkbox
-                        />
-                        <span
-                          onClick={(e) => e.stopPropagation()}
-                          className="green"
-                        ></span>
-                      </Label>
-                    </div>
-                    Total&nbsp;: &nbsp;{report.length}
-                  </Col>
-                  <Col
-                    md="4"
-                    sm="12"
-                    style={{
-                      display: "flex",
-                      gap: "3px",
-                      justifyContent: "flex-start",
-                      alignItems: "center",
-                    }}
-                  >
-                    <div>
-                      <Label
-                        style={{
-                          display: "inline-block",
-                          position: "relative",
-                          cursor: "pointer",
-                          marginBottom: "5px",
-                          fontSize: "18px",
-                        }}
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        <input
-                          type="checkbox"
-                          name="key"
-                          value="value"
-                          checked={checked == "Pending"}
-                          onChange={() => {
-                            setChecked("Pending");
-                          }}
-                          style={{ display: "none" }} // Hide the default checkbox
-                        />
-                        <span
-                          onClick={(e) => e.stopPropagation()}
-                          className="green"
-                        ></span>
-                      </Label>
-                    </div>
-                    Pending&nbsp;: &nbsp;
-                    {
-                      report.filter((item: any) => item?.hasComplaint == false)
-                        ?.length
-                    }
-                  </Col>
-                  {/* <Col md="3" sm="6">
-                    In Progress &nbsp;: &nbsp;
-                    {
-                      report.filter(
-                        (item: any) => item.status === "IN PROGRESS"
-                      )?.length
-                    }
-                  </Col> */}
-                  <Col
-                    md="4"
-                    sm="12"
-                    style={{
-                      display: "flex",
-                      gap: "3px",
-                      justifyContent: "flex-start",
-                      alignItems: "center",
-                    }}
-                  >
-                    <div>
-                      <Label
-                        style={{
-                          display: "inline-block",
-                          position: "relative",
-                          cursor: "pointer",
-                          marginBottom: "5px",
-                          fontSize: "18px",
-                        }}
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        <input
-                          type="checkbox"
-                          name="key"
-                          value="value"
-                          checked={checked == "Forwarded"}
-                          onChange={() => {
-                            setChecked("Forwarded");
-                          }}
-                          style={{ display: "none" }} // Hide the default checkbox
-                        />
-                        <span
-                          onClick={(e) => e.stopPropagation()}
-                          className="green"
-                        ></span>
-                      </Label>
-                    </div>
-                    Forward &nbsp;: &nbsp;
-                    {report.filter((item: any) => item?.hasComplaint)?.length}
-                  </Col>
-                </Row>
+                <div className="nr-stats" role="group" aria-label="Filter by status">
+                  {[
+                    { key: "Total", label: "Total", value: report.length },
+                    { key: "Pending", label: "Pending", value: report.filter((item: any) => item?.hasComplaint == false)?.length },
+                    { key: "Forwarded", label: "Forwarded", value: report.filter((item: any) => item?.hasComplaint)?.length },
+                  ].map((st) => (
+                    <button
+                      key={st.key}
+                      type="button"
+                      className={`nr-stat nr-stat--${st.key.toLowerCase()}${checked === st.key ? " is-on" : ""}`}
+                      aria-pressed={checked === st.key}
+                      onClick={() => setChecked(st.key)}
+                    >
+                      <strong>{st.value}</strong>
+                      <span>{st.label}</span>
+                    </button>
+                  ))}
+                </div>
               )}
 
               <Row style={{ display: "flex", alignItems: "center" }}>
@@ -554,11 +434,10 @@ const SelectFilterNRDevicesModal: React.FC<PropsTypes> = ({
                       name: "Vehicle Name",
                       selector: (row: any) => row?.name,
                       sortable: true,
-                      width: "14%",
-                      center: true,
+                      width: "13%",
                     },
                     {
-                      name: "Customer Name",
+                      name: "Customer",
                       selector: (row: any) =>
                         `${
                           row?.customerInfo?.name !== ""
@@ -566,8 +445,7 @@ const SelectFilterNRDevicesModal: React.FC<PropsTypes> = ({
                             : "N/A"
                         }`,
                       sortable: true,
-                      width: "13%",
-                      center: true,
+                      width: "12%",
                     },
 
                     {
@@ -575,19 +453,18 @@ const SelectFilterNRDevicesModal: React.FC<PropsTypes> = ({
                       selector: (row: any) =>
                         `${row?.imei !== "" ? row?.imei : "N/A"}`,
                       sortable: true,
-                      width: "12%",
-                      center: true,
+                      width: "14%",
+                      cell: (row: any) => <span className="nr-mono" title={row?.imei}>{row?.imei || "N/A"}</span>,
                     },
                     {
                       name: "Last Packet",
                       selector: (row: any) =>
-                        `${row?.time?.slice(0, 10)} , ${row?.time?.slice(11)}`,
+                        `${row?.time?.slice(0, 10)} · ${row?.time?.slice(11)}`,
                       sortable: true,
-                      width: "20%",
-                      center: true,
+                      width: "19%",
                     },
                     {
-                      name: "Last Complaint",
+                      name: "Complaint",
                       selector: (row: any) =>
                         `${
                           row?.latestComplaint !== null
@@ -597,62 +474,31 @@ const SelectFilterNRDevicesModal: React.FC<PropsTypes> = ({
                             : "N/A"
                         }`,
                       sortable: true,
-                      width: "15%",
-                      center: true,
+                      width: "13%",
                     },
 
                     {
                       name: "Status",
                       selector: (row: any) => "",
                       sortable: true,
-                      width: "10%",
-                      center: true,
+                      width: "11%",
                       cell: (row: any) => (
-                        <div
-                          style={{
-                            // width: "100px",
-                            textAlign: "center",
-                            padding: "2px",
-                            borderRadius: "5px",
-                            fontWeight: "bold",
-                            fontSize: "16px",
-                            color: `${
-                              row?.hasComplaint
-                                ? "rgba(0,128,0)"
-                                : "rgba(255, 0, 0)"
-                            }`,
-                          }}
-                        >
+                        <span className={`nr-badge ${row?.hasComplaint ? "nr-badge--fwd" : "nr-badge--pending"}`}>
                           {formatUnderscoredString(
                             row?.hasComplaint ? "Forwarded" : "Pending"
                           )}
-                        </div>
+                        </span>
                       ),
                     },
                     {
                       name: "Actions",
                       selector: (row: any) => row["actions"],
                       sortable: true,
-                      center: true,
-                      width: "20%", // Set the width for this column
+                      width: "17%", // Set the width for this column
                       cell: (row: any) => (
-                        <div
-                          style={{
-                            // width: "100px",
-                            textAlign: "center",
-                            padding: "2px",
-                            borderRadius: "5px",
-                            color: "black",
-                            display: "flex",
-                            gap: "3px",
-                          }}
-                        >
+                        <div className="nr-actions">
                           <Button
                             color="primary"
-                            style={{
-                              padding: "5px 20px",
-                              margin: "0px",
-                            }}
                             disabled={row?.hasComplaint}
                             onClick={async (e) => {
                               e.preventDefault();
@@ -705,11 +551,7 @@ const SelectFilterNRDevicesModal: React.FC<PropsTypes> = ({
                             {row?.hasComplaint ? "Forwarded" : "Forward"}
                           </Button>
                           <Button
-                            color="primary"
-                            style={{
-                              padding: "5px 20px",
-                              margin: "0px",
-                            }}
+                            color="secondary"
                             // disabled={row?.hasComplaint}
                             onClick={async (e) => {
                               e.preventDefault();
