@@ -1204,3 +1204,32 @@ body.at-dark .modal-dialog.at-modal {
   }
   textarea { scrollbar-color: var(--at-line) transparent !important; }
 }
+
+/* Account menu opens on tap/click too (UserProfile.tsx adds .is-open);
+   the template only had :hover, which phones don't have. */
+.onhover-dropdown.is-open .onhover-show-div {
+  opacity: 1 !important; visibility: visible !important; transform: translateY(0) !important; pointer-events: auto;
+}
+.profile-media[role="button"] { cursor: pointer; border-radius: 12px; }
+.profile-media[role="button"]:focus-visible { outline: 2px solid var(--at-primary); outline-offset: 2px; }
+@media (max-width: 767px) {
+  .at-topbar .profile-dropdown { right: 0 !important; left: auto !important; min-width: 180px; }
+}
+
+/* Login fields: Chrome's autofill paints them light blue; keep the theme colours. */
+.al-input:-webkit-autofill, .al-input:-webkit-autofill:hover, .al-input:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--ink);
+  caret-color: var(--ink);
+  -webkit-box-shadow: 0 0 0 1000px #fff inset !important;
+  box-shadow: 0 0 0 1000px #fff inset !important;
+  transition: background-color 9999s ease-out 0s;
+}
+body.at-dark .al-input:-webkit-autofill, body.at-dark .al-input:-webkit-autofill:hover, body.at-dark .al-input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 1000px #12121f inset !important;
+  box-shadow: 0 0 0 1000px #12121f inset !important;
+}
+body.at-dark .al-input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 1000px #12121f inset, 0 0 0 4px rgba(129, 140, 248, .18) !important;
+}
+.profile-dropdown li a svg { stroke: var(--at-muted) !important; color: var(--at-muted) !important; }
+.profile-dropdown li a:hover svg { stroke: var(--at-text) !important; }

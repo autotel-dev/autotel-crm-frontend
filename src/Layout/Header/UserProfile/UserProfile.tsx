@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useLocation } from "react-router-dom";
 import { Image, LI, P } from "../../../AbstractElements";
 import { dynamicImage } from "../../../Service";
 import { Admin, HelenWalter } from "../../../utils/Constant";
@@ -33,11 +34,41 @@ const UserProfile = () => {
     return pascalCaseWords.join(" ");
   }
 
+  // The template only opens this menu on mouse hover, so on phones (no hover)
+  // there was no way to reach Account / Settings / Log Out. Tap or click
+  // toggles it too; it closes on an outside tap, Escape or page change.
+  const [open, setOpen] = useState(false);
+  const wrapRef = useRef<HTMLDivElement | null>(null);
+  const { pathname } = useLocation();
+  useEffect(() => setOpen(false), [pathname]);
+  useEffect(() => {
+    if (!open) return;
+    const onDown = (e: PointerEvent) => {
+      if (wrapRef.current && !wrapRef.current.contains(e.target as Node)) setOpen(false);
+    };
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setOpen(false); };
+    document.addEventListener("pointerdown", onDown);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("pointerdown", onDown);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [open]);
+
   return (
     <>
       {decodedToken !== null && (
-        <div className="profile-nav onhover-dropdown pe-0 py-0">
-          <div className="d-flex align-items-center profile-media">
+        <div ref={wrapRef} className={`profile-nav onhover-dropdown pe-0 py-0${open ? " is-open" : ""}`}>
+          <div
+            className="d-flex align-items-center profile-media"
+            role="button"
+            tabIndex={0}
+            aria-haspopup="menu"
+            aria-expanded={open}
+            aria-label="Account menu"
+            onClick={() => setOpen((o) => !o)}
+            onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setOpen((o) => !o); } }}
+          >
             {/* <div
               className="logo-wrapper"
               style={{ height: "50px !important", width: "50px !important", padding: "0px 15px" }}
