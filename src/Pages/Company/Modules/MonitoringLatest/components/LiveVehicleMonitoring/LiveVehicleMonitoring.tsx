@@ -11,6 +11,7 @@ import carIconStop from "../../../monitoring-assets/stop-icon.png";
 import carIconIdle from "../../../monitoring-assets/idle-icon.png";
 import carIcon from "../../../monitoring-assets/deviceLocationArrow.png";
 import CustomMarker from "../GoogleMap/customMarker/CustomMarker";
+import { formatKmh } from "../../../../../../utils/speed";
 
 const LiveVehicleMonitoring = ({ google }: any) => {
     const { registration } = useParams();
@@ -126,7 +127,7 @@ const LiveVehicleMonitoring = ({ google }: any) => {
                     <div style={{ textAlign: "center" }}>
                         <div style={{ fontSize: "10px", opacity: 0.8, textTransform: "uppercase" }}>Speed</div>
                         <div style={{ fontWeight: "bold", display: "flex", alignItems: "center", gap: "4px" }}>
-                            <FaTachometerAlt size={12} /> {Number(device.latestPosition?.speed || 0).toFixed(1)} km/h
+                            <FaTachometerAlt size={12} /> {formatKmh(device.latestPosition?.speed)} km/h
                         </div>
                     </div>
                     <div style={{ textAlign: "center" }}>
@@ -181,7 +182,7 @@ const LiveVehicleMonitoring = ({ google }: any) => {
                                     borderTop: "1px solid #eee",
                                     paddingTop: "8px"
                                 }}>
-                                    <span><strong>Speed:</strong> {Number(device.latestPosition?.speed || 0).toFixed(1)} km/h</span>
+                                    <span><strong>Speed:</strong> {formatKmh(device.latestPosition?.speed)} km/h</span>
                                     <span><strong>Direction:</strong> {Math.round(device.latestPosition?.course || 0)}°</span>
                                 </div>
                                 <div style={{ fontSize: "11px", color: "#999" }}>

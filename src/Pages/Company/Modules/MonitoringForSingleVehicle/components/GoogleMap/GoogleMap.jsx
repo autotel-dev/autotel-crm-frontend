@@ -8,6 +8,7 @@ import carIconStop from "../../../monitoring-assets/stop-icon.png";
 import carIconIdle from "../../../monitoring-assets/idle-icon.png";
 import carIcon from "../../../monitoring-assets/deviceLocationArrow.png";
 import CustomMarker from "./customMarker/CustomMarker";
+import { formatKmh } from "../../../../../../utils/speed";
 
 const GoogleMap = (props) => {
   const { selectedSingleDevice } = useSelector((state) => state.monitoring);
@@ -232,9 +233,7 @@ const GoogleMap = (props) => {
                   },
                   {
                     label: "Speed",
-                    value: `${
-                      selectedSingleDevice?.latestPosition?.speed?.toFixed(2) || 0
-                    } km/h`,
+                    value: `${formatKmh(selectedSingleDevice?.latestPosition?.speed)} km/h`,
                     icon: "🚗",
                     highlight: true,
                   },

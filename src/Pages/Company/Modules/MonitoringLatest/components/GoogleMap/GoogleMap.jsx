@@ -30,6 +30,7 @@ import { FaRegMap } from "react-icons/fa6";
 import { setExpandedDevice } from "../../../../../../ReaduxToolkit/Reducer/MonitoringSlice";
 import { IMAGE_BASE_URL } from "../../../../../../Utilities/api/apiEndpoints";
 import CustomMarker from "./customMarker/CustomMarker";
+import { formatKmh } from "../../../../../../utils/speed";
 
 // Build a usable src from an uploaded icon object ({ url: "vehicleIcons/..." }).
 // Returns null when no icon is set so callers can fall back to a default asset.
@@ -704,8 +705,7 @@ const GoogleMap = (props) => {
                 },
                 {
                   label: "Speed",
-                  value: `${selectedDevice?.latestPosition?.speed?.toFixed(2) || 0
-                    } km/h`,
+                  value: `${formatKmh(selectedDevice?.latestPosition?.speed)} km/h`,
                   icon: "🚗",
                   highlight: true,
                 },

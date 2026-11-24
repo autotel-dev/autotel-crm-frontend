@@ -20,6 +20,7 @@ import { GET_SINGLE_VEHICLE_STOP } from "../../../../../../Utilities/api/apiEndp
 import { setMonitoringSession } from "../../../../../../ReaduxToolkit/Reducer/MonitoringSlice";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+import { formatKmh } from "../../../../../../utils/speed";
 
 const VehicleDetails = () => {
   const dispatch = useDispatch();
@@ -187,7 +188,7 @@ const VehicleDetails = () => {
             <InfoRow 
               icon={<FaTachometerAlt color="#6dbfb8" />} 
               label="Current Speed" 
-              value={`${Number(latestPosition?.speed || 0).toFixed(1)} km/h`} 
+              value={`${formatKmh(latestPosition?.speed)} km/h`} 
               boldValue={true}
               valueColor="#6dbfb8"
             />

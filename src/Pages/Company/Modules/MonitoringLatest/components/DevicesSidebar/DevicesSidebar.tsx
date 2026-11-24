@@ -50,6 +50,7 @@ import {
   setDeviceAnalytics,
   setMonitoringSession,
 } from "../../../../../../ReaduxToolkit/Reducer/MonitoringSlice";
+import { formatKmh } from "../../../../../../utils/speed";
 
 // Build a usable src from an uploaded icon object ({ url: "vehicleIcons/..." }).
 // Returns null when no icon is set so callers can fall back to a default asset.
@@ -1164,11 +1165,7 @@ const DevicesSidebar = ({ setOpen, open, filteredDevices, onDeviceUpdated }: any
                                           fontWeight: "bold",
                                         }}
                                       >
-                                        {item?.latestPosition?.speed > 0
-                                          ? Number(
-                                              item?.latestPosition?.speed,
-                                            ).toFixed(2)
-                                          : item?.latestPosition?.speed}
+                                        {formatKmh(item?.latestPosition?.speed)}
                                       </div>
                                       <div
                                         style={{

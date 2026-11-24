@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 import { motion } from "framer-motion";
 import { HiDeviceMobile } from "react-icons/hi";
 import { FaMapMarkerAlt, FaClock } from "react-icons/fa";
+import { formatKmh } from "../../../../../../../utils/speed";
 
 const DeviceInfo = () => {
   const { selectedSingleDevice } = useSelector(
@@ -180,7 +181,7 @@ const DeviceInfo = () => {
               <div style={{ marginBottom: "6px", display: "flex", gap: "4px" }}>
                 <span style={{ color: "#666", whiteSpace: "nowrap" }}>Speed:</span>
                 <span style={{ color: "#000", fontWeight: "500", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                  {Number(selectedSingleDevice?.latestPosition?.speed).toFixed(2)} km/h
+                  {formatKmh(selectedSingleDevice?.latestPosition?.speed)} km/h
                 </span>
               </div>
               <div style={{ marginBottom: "6px", display: "flex", gap: "4px" }}>

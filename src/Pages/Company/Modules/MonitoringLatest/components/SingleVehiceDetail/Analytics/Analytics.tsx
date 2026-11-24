@@ -20,6 +20,7 @@ import {
 import { MdSpeed, MdLocalGasStation } from "react-icons/md";
 import { IoSpeedometerOutline } from "react-icons/io5";
 import { BiTrip } from "react-icons/bi";
+import { formatKmh } from "../../../../../../../utils/speed";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -59,7 +60,7 @@ const Analytics = () => {
     maxSpeed: analytics?.maxSpeed ? analytics.maxSpeed.split(" ")[0] : "98",
     avgSpeed: analytics?.avgSpeed ? analytics.avgSpeed.split(" ")[0] : "45",
     currentSpeed: selectedSingleDevice?.latestPosition?.speed
-      ? Number(selectedSingleDevice.latestPosition.speed).toFixed(0)
+      ? formatKmh(selectedSingleDevice.latestPosition.speed)
       : "0",
     fuelRemaining: "32L",
     fuelAvg: "8.5",
