@@ -94,6 +94,22 @@ const makeLayer = (google) =>
     }
   };
 
+// Map area (container pixels) not covered by the top bar, trips panel and controls.
+const visibleBox = (map) => {
+  const div = map.getDiv?.();
+  if (!div) return null;
+  const m = div.getBoundingClientRect();
+  const box = { l: 0, t: 0, r: m.width, b: m.height };
+  const over = (r) => r.width > 0 && r.height > 0 && r.right > m.left && r.left < m.right && r.bottom > m.top && r.top < m.bottom;
+  const get = (sel) => { const el = document.querySelector(sel); return el ? el.getBoundingClientRect() : null; };
+  const top = get(".pb-top"), ctrl = get(".pb-ctrl"), trips = get(".pb-feed") || get(".pb-trips");
+  if (top && over(top)) box.t = Math.max(box.t, top.bottom - m.top);
+  if (ctrl && over(ctrl)) box.b = Math.min(box.b, ctrl.top - m.top);
+  if (trips && over(trips) && trips.right - m.left < m.width / 2) box.l = Math.max(box.l, trips.right - m.left);
+  if (box.r - box.l < 160 || box.b - box.t < 120) return { l: 0, t: 0, r: m.width, b: m.height };
+  return box;
+};
+
 const PlaybackMap = ({ google, pts, segments, events, car, card, fitKey, follow, onSeek }) => {
   const [map, setMap] = useState(null);
   const layerRef = useRef(null);
@@ -141,14 +157,25 @@ const PlaybackMap = ({ google, pts, segments, events, car, card, fitKey, follow,
     const b = new google.maps.LatLngBounds();
     pts.forEach((p) => b.extend({ lat: p.lat, lng: p.lng }));
     const narrow = window.innerWidth <= 760;
-    map.fitBounds(b, narrow ? { top: 40, left: 30, right: 30, bottom: 40 } : { top: 110, left: 340, right: 60, bottom: 200 });
+    map.fitBounds(b, narrow ? { top: 40, left: 30, right: 30, bottom: 40 } : { top: 50, left: 450, right: 80, bottom: 130 });
   }, [map, google, pts, fitKey]);
 
-  // Keep the car in view while playing
+  // Follow the car: keep it inside the part of the map not covered by the
+  // floating panels; once it leaves the middle of that area, re-centre on it.
   useEffect(() => {
     if (!map || !google || !car || !follow) return;
-    const b = map.getBounds();
-    if (b && !b.contains(new google.maps.LatLng(car.lat, car.lng))) map.panTo({ lat: car.lat, lng: car.lng });
+    const proj = layerRef.current?.getProjection?.();
+    const box = visibleBox(map);
+    if (!proj || !box) {
+      const b = map.getBounds();
+      if (b && !b.contains(new google.maps.LatLng(car.lat, car.lng))) map.panTo({ lat: car.lat, lng: car.lng });
+      return;
+    }
+    const p = proj.fromLatLngToContainerPixel(new google.maps.LatLng(car.lat, car.lng));
+    if (!p) return;
+    const mx = (box.r - box.l) * 0.25, my = (box.b - box.t) * 0.25;
+    const inside = p.x >= box.l + mx && p.x <= box.r - mx && p.y >= box.t + my && p.y <= box.b - my;
+    if (!inside) map.panBy(Math.round(p.x - (box.l + box.r) / 2), Math.round(p.y - (box.t + box.b) / 2));
   }, [map, google, car, follow]);
 
   useEffect(() => { if (map) map.setOptions({ styles: dark ? DARK_MAP_STYLES : null }); }, [map, dark]);

@@ -89,7 +89,8 @@ export const findTrips = (pts: Pt[], limit: number): Trip[] => {
     // skip standing points
     while (i < pts.length && pts[i].speed < STOP_SPEED) i++;
     if (i >= pts.length) break;
-    let from = Math.max(0, i - 1);
+    // include the standing point just before, unless a data gap separates them
+    let from = i > 0 && pts[i].t - pts[i - 1].t <= GAP_MS ? i - 1 : i;
     let j = i;
     let lastMoving = i;
     while (j + 1 < pts.length) {
@@ -99,7 +100,8 @@ export const findTrips = (pts: Pt[], limit: number): Trip[] => {
       else if (next.t - pts[lastMoving].t >= STOP_MIN_MS) break;
       j++;
     }
-    const to = Math.min(pts.length - 1, lastMoving + 1);
+    // include the first standing point after, unless a data gap separates them
+    const to = lastMoving + 1 < pts.length && pts[lastMoving + 1].t - pts[lastMoving].t <= GAP_MS ? lastMoving + 1 : lastMoving;
     const seg = pts.slice(from, to + 1);
     let km = 0, max = 0, move = 0, fast = 0, over = 0;
     for (let k = 1; k < seg.length; k++) {
@@ -213,4 +215,69 @@ export const toCsv = (pts: Pt[], plate: string) => {
   const head = "time,latitude,longitude,speed_kmh,course,ignition,address";
   const rows = pts.map((p) => [new Date(p.t).toISOString(), p.lat.toFixed(6), p.lng.toFixed(6), p.speed.toFixed(1), Math.round(p.course), p.ignition ? "on" : "off", `"${(p.address || "").replace(/"/g, '""')}"`].join(","));
   return `# ${plate}\n${head}\n${rows.join("\n")}\n`;
+};
+
+// Journey feed (design B): the day's events in time order.
+export type FeedKind = "ign" | "stop" | "start" | "fast" | "over" | "end";
+export type FeedItem = { key: string; t: number; kind: FeedKind; icon: string; title: string; sub: string };
+
+const IGN_MIN_MS = 60 * 1000; // ignore ignition flips shorter than this
+const RUN_MIN_MS = 20 * 1000; // fast / over-limit stretches shorter than this are noise
+
+const placeOf = (p?: Pt) => (p ? shortAddr(p.address) || `${p.lat.toFixed(4)}, ${p.lng.toFixed(4)}` : "");
+
+export const buildFeed = (pts: Pt[], trips: Trip[], stops: Stop[], limit: number): FeedItem[] => {
+  const out: FeedItem[] = [];
+  if (!pts.length) return out;
+
+  // Ignition changes; on/off spells shorter than a minute are ignored
+  const spells: { on: boolean; k: number }[] = [];
+  for (let k = 0; k < pts.length; k++) {
+    if (!spells.length || spells[spells.length - 1].on !== pts[k].ignition) spells.push({ on: pts[k].ignition, k });
+  }
+  const kept: { on: boolean; k: number }[] = [];
+  spells.forEach((sp, i) => {
+    const endT = i + 1 < spells.length ? pts[spells[i + 1].k].t : pts[pts.length - 1].t;
+    const short = i > 0 && i + 1 < spells.length && endT - pts[sp.k].t < IGN_MIN_MS;
+    if (short) return;
+    if (kept.length && kept[kept.length - 1].on === sp.on) return;
+    kept.push(sp);
+  });
+  kept.slice(1).forEach((sp) =>
+    out.push({ key: `I${sp.k}`, t: pts[sp.k].t, kind: "ign", icon: sp.on ? "I" : "O", title: sp.on ? "Ignition on" : "Ignition off", sub: placeOf(pts[sp.k]) })
+  );
+
+  stops.forEach((s, i) =>
+    out.push({ key: `P${i}`, t: s.start, kind: "stop", icon: "P", title: `Stop · ${fmtDur(s.end - s.start)}`, sub: shortAddr(s.address) || `${s.lat.toFixed(4)}, ${s.lng.toFixed(4)}` })
+  );
+
+  trips.forEach((tr) => {
+    const a = pts[tr.from], b = pts[tr.to];
+    const route = [shortAddr(tr.fromAddress), shortAddr(tr.toAddress)].filter(Boolean).join(" → ");
+    out.push({ key: `A${tr.id}`, t: a.t, kind: "start", icon: "A", title: `Trip ${tr.id} started`, sub: route || placeOf(a) });
+    out.push({ key: `B${tr.id}`, t: b.t, kind: "end", icon: "B", title: `Trip ${tr.id} ended · ${tr.km.toFixed(1)} km`, sub: placeOf(b) });
+  });
+
+  // Fast and over-limit stretches (one item per run, at its fastest point)
+  const runs = (test: (sp: number) => boolean, kind: "fast" | "over") => {
+    let k = 0;
+    while (k < pts.length) {
+      if (!test(pts[k].speed)) { k++; continue; }
+      let j = k, best = k;
+      while (j + 1 < pts.length && test(pts[j + 1].speed) && pts[j + 1].t - pts[j].t < GAP_MS) { j++; if (pts[j].speed > pts[best].speed) best = j; }
+      const dur = pts[j].t - pts[k].t;
+      if (kind === "over" || dur >= RUN_MIN_MS) {
+        const p = pts[best], secs = Math.max(1, Math.round(dur / 1000));
+        out.push(kind === "over"
+          ? { key: `S${best}`, t: p.t, kind, icon: "S", title: `Over limit · ${Math.round(p.speed)} km/h`, sub: `${placeOf(p)} · ${secs < 60 ? `${secs} s` : fmtDur(dur)}` }
+          : { key: `F${best}`, t: p.t, kind, icon: "↑", title: `Fast stretch · ${Math.round(p.speed)} km/h`, sub: placeOf(p) });
+      }
+      k = j + 1;
+    }
+  };
+  runs((sp) => sp > limit * 0.8 && sp <= limit, "fast");
+  runs((sp) => sp > limit, "over");
+
+  const order: Record<FeedKind, number> = { ign: 0, end: 1, stop: 2, start: 3, fast: 4, over: 5 };
+  return out.sort((x, y) => x.t - y.t || order[x.kind] - order[y.kind]);
 };

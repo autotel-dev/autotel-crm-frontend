@@ -8,12 +8,12 @@ import { getAll } from "../../../../Utilities/api";
 import { GET_PARSER_DEVICES, GET_VEHICLE_HISTORY } from "../../../../Utilities/api/apiEndpoints";
 import PlaybackMap from "./PlaybackMap";
 import {
-  Pt, Trip, bandOf, dayLabel, dayRange, findEvents, findStops, findTrips, fmtClock, fmtDur, fmtHM,
-  hasAddr, positionAt, shiftDay, shortAddr, toCsv, toPoints, todayStr, trailSegments,
+  Pt, Trip, bandOf, buildFeed, dayLabel, dayRange, findEvents, findStops, findTrips, fmtClock, fmtDur, fmtHM,
+  positionAt, shiftDay, shortAddr, toCsv, toPoints, todayStr, trailSegments,
 } from "./playbackUtils";
 import "./playback.scss";
 
-const SPEEDS = [1, 4, 8, 16, 32, 64];
+const SPEEDS = [1, 8, 16, 64];
 const LIMITS = [60, 80, 100, 120];
 const readLimit = () => {
   try { const v = Number(localStorage.getItem("pb-limit")); return LIMITS.includes(v) ? v : 80; } catch { return 80; }
@@ -44,6 +44,10 @@ const PlaybackV2 = () => {
   const [playing, setPlaying] = useState(false);
   const [mult, setMult] = useState(16);
   const [showCard, setShowCard] = useState(true);
+  const [followCar, setFollowCar] = useState(() => {
+    try { return localStorage.getItem("pb-follow") !== "0"; } catch { return true; }
+  });
+  useEffect(() => { try { localStorage.setItem("pb-follow", followCar ? "1" : "0"); } catch { /* private mode */ } }, [followCar]);
 
   // Device list
   useEffect(() => {
@@ -101,7 +105,12 @@ const PlaybackV2 = () => {
     const all = findEvents(pts, trips, stops, limit);
     return trip ? all.filter((e) => e.t >= trip.start && e.t <= trip.end) : all;
   }, [pts, trips, stops, limit, trip]);
+  const feed = useMemo(() => {
+    const all = buildFeed(pts, trips, stops, limit);
+    return trip ? all.filter((e) => e.t >= trip.start && e.t <= trip.end) : all;
+  }, [pts, trips, stops, limit, trip]);
   const start = range.length ? range[0].t : 0;
+  const feedRef = useRef<HTMLOListElement | null>(null);
   const end = range.length ? range[range.length - 1].t : 0;
 
   const totals = useMemo(() => {
@@ -151,6 +160,15 @@ const PlaybackV2 = () => {
     return () => window.removeEventListener("keydown", onKey);
   }, [togglePlay, seek, t]);
 
+  const overCount = feed.filter((e) => e.kind === "over").length;
+  let nowIdx = -1;
+  for (let i = 0; i < feed.length && feed[i].t <= t; i++) nowIdx = i;
+  // Keep the current event visible in the feed
+  useEffect(() => {
+    const el = feedRef.current?.querySelector(".pb-fi.is-now");
+    if (el && "scrollIntoView" in el) (el as HTMLElement).scrollIntoView({ block: "nearest" });
+  }, [nowIdx]);
+
   const pos = useMemo(() => (range.length ? positionAt(range, t) : null), [range, t]);
   const band = pos ? bandOf(pos.speed, limit) : "stop";
   const car = pos ? { lat: pos.lat, lng: pos.lng, course: pos.course, band } : null;
@@ -172,23 +190,9 @@ const PlaybackV2 = () => {
     setTimeout(() => URL.revokeObjectURL(a.href), 1000);
   };
 
-  // Speed chart geometry (viewBox 1000 × 70)
-  const W = 1000, H = 70;
-  const maxY = Math.max(limit * 1.25, totals.max * 1.05, 40);
+  // Progress bar geometry (viewBox 1000 wide)
+  const W = 1000;
   const xOf = (time: number) => (end > start ? ((time - start) / (end - start)) * W : 0);
-  const yOf = (sp: number) => H - (sp / maxY) * (H - 4);
-  const chart = useMemo(() => {
-    if (range.length < 2) return [] as { band: string; d: string }[];
-    const out: { band: string; d: string }[] = [];
-    for (let k = 1; k < range.length; k++) {
-      const b = bandOf(range[k].speed, limit);
-      const piece = `M${xOf(range[k - 1].t).toFixed(1)} ${yOf(range[k - 1].speed).toFixed(1)} L${xOf(range[k].t).toFixed(1)} ${yOf(range[k].speed).toFixed(1)}`;
-      const last = out[out.length - 1];
-      if (last && last.band === b) last.d += ` L${xOf(range[k].t).toFixed(1)} ${yOf(range[k].speed).toFixed(1)}`;
-      else out.push({ band: b, d: piece });
-    }
-    return out;
-  }, [range, limit, maxY]); // eslint-disable-line react-hooks/exhaustive-deps
   const strip = useMemo(() => {
     const out: { band: string; x: number; w: number }[] = [];
     for (let k = 1; k < range.length; k++) {
@@ -222,106 +226,94 @@ const PlaybackV2 = () => {
           car={car}
           card={card}
           fitKey={`${deviceId}|${day}|${tripId ?? "all"}|${range.length > 0}`}
-          follow={playing}
+          follow={followCar && playing}
           onSeek={(time: number) => { setPlaying(false); seek(time); }}
         />
       </div>
 
-      {/* Top bar */}
-      <header className="pb-panel pb-top">
-        <h1 className="pb-title">Playback</h1>
-        <label className="pb-hidden" htmlFor="pb-device">Vehicle</label>
-        <select id="pb-device" className="pb-select" value={deviceId} onChange={(e) => setDeviceId(e.target.value)}>
-          {!devices.length && <option value="">Loading vehicles…</option>}
-          {devices.map((d) => (
-            <option key={d.id} value={String(d.id)}>{deviceLabel(d)}</option>
-          ))}
-        </select>
-        <div className="pb-day" role="group" aria-label="Day">
-          <button type="button" className="pb-btn pb-btn--icon" onClick={() => setDay((d) => shiftDay(d, -1))} aria-label="Previous day">‹</button>
-          <label className="pb-day__label">
-            <span>{dayLabel(day)}</span>
-            <input type="date" value={day} max={today} onChange={(e) => e.target.value && setDay(e.target.value)} aria-label="Pick a day" />
-          </label>
-          <button type="button" className="pb-btn pb-btn--icon" onClick={() => setDay((d) => shiftDay(d, 1))} disabled={day >= today} aria-label="Next day">›</button>
-        </div>
-        <div className="pb-spacer" />
-        <span className="pb-sum">
-          {loading ? "Loading…" : pts.length
-            ? <>{totals.km.toFixed(1)} km · {fmtDur(totals.driving)} driving · max {Math.round(totals.max)} km/h · {totals.alerts} over-limit</>
-            : "No movement recorded"}
-        </span>
-        <label className="pb-hidden" htmlFor="pb-limit">Speed limit</label>
-        <select id="pb-limit" className="pb-select pb-select--sm" value={limit} onChange={(e) => setLimit(Number(e.target.value))} title="Speed limit used for colours and over-limit marks">
-          {LIMITS.map((l) => <option key={l} value={l}>Limit {l}</option>)}
-        </select>
-        <button type="button" className="pb-btn" onClick={exportCsv} disabled={!range.length}>Export</button>
-      </header>
-
-      {/* Trips */}
-      <section className="pb-panel pb-trips" aria-label="Trips">
-        <div className="pb-trips__head">
-          <strong>Trips</strong>
-          <span>{trips.length ? `${trips.length} on ${day === today ? "today" : "this day"}` : ""}</span>
+      {/* Journey feed (design B) */}
+      <aside className="pb-panel pb-feed" aria-label="Journey">
+        <div className="pb-feed__head">
+          <div className="pb-feed__row">
+            <h1 className="pb-title">Playback</h1>
+            <div className="pb-feed__tools">
+              <label className="pb-hidden" htmlFor="pb-limit">Speed limit</label>
+              <select id="pb-limit" className="pb-select pb-select--sm" value={limit} onChange={(e) => setLimit(Number(e.target.value))} title="Speed limit used for colours and over-limit marks">
+                {LIMITS.map((l) => <option key={l} value={l}>Limit {l}</option>)}
+              </select>
+              <button type="button" className="pb-btn" onClick={exportCsv} disabled={!range.length}>Export</button>
+            </div>
+          </div>
+          <div className="pb-feed__row">
+            <label className="pb-hidden" htmlFor="pb-device">Vehicle</label>
+            <select id="pb-device" className="pb-select pb-select--grow" value={deviceId} onChange={(e) => setDeviceId(e.target.value)}>
+              {!devices.length && <option value="">Loading vehicles…</option>}
+              {devices.map((d) => (
+                <option key={d.id} value={String(d.id)}>{deviceLabel(d)}</option>
+              ))}
+            </select>
+            <div className="pb-day" role="group" aria-label="Day">
+              <button type="button" className="pb-btn pb-btn--icon" onClick={() => setDay((d) => shiftDay(d, -1))} aria-label="Previous day">‹</button>
+              <label className="pb-day__label">
+                <span>{dayLabel(day).replace(/, \d{4}$/, "")}</span>
+                <input type="date" value={day} max={today} onChange={(e) => e.target.value && setDay(e.target.value)} aria-label="Pick a day" />
+              </label>
+              <button type="button" className="pb-btn pb-btn--icon" onClick={() => setDay((d) => shiftDay(d, 1))} disabled={day >= today} aria-label="Next day">›</button>
+            </div>
+          </div>
+          <div className="pb-tiles">
+            <div className="pb-tile"><b>{(trip ? trip.km : totals.km).toFixed(1)}</b><span>km</span></div>
+            <div className="pb-tile"><b>{fmtDur(trip ? trip.drivingMs : totals.driving).replace(" min", "m")}</b><span>driving</span></div>
+            <div className="pb-tile"><b>{Math.round(trip ? trip.maxSpeed : totals.max)}</b><span>max km/h</span></div>
+            <div className={`pb-tile${overCount ? " pb-tile--over" : ""}`}><b>{overCount}</b><span>over-limit</span></div>
+          </div>
+          {trips.length > 0 && (
+            <div className="pb-chips" role="group" aria-label="Trip">
+              <button type="button" className={`pb-chip${tripId === null ? " is-on" : ""}`} aria-pressed={tripId === null} onClick={() => { setTripId(null); setPlaying(false); setT(pts[0].t); }}>Whole day</button>
+              {trips.map((tr) => (
+                <button type="button" key={tr.id} className={`pb-chip${tripId === tr.id ? " is-on" : ""}`} aria-pressed={tripId === tr.id} onClick={() => { setTripId(tr.id); setPlaying(false); setT(tr.start); }} title={`${tr.km.toFixed(1)} km · max ${Math.round(tr.maxSpeed)} km/h`}>
+                  Trip {tr.id} · {fmtHM(tr.start)}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
         {loading ? (
-          <div className="pb-skel" aria-hidden="true"><i /><i /><i /></div>
+          <div className="pb-skel pb-feed__pad" aria-hidden="true"><i /><i /><i /></div>
         ) : error ? (
-          <p className="pb-empty">{error}</p>
+          <p className="pb-empty pb-feed__pad">{error}</p>
         ) : !pts.length ? (
-          <p className="pb-empty">No positions for {dev ? deviceLabel(dev) : "this vehicle"} on {dayLabel(day)}. Try another day.</p>
+          <p className="pb-empty pb-feed__pad">No positions for {dev ? deviceLabel(dev) : "this vehicle"} on {dayLabel(day)}. Try another day.</p>
         ) : (
-          <div className="pb-trips__list">
-            <button type="button" className={`pb-trip${tripId === null ? " is-on" : ""}`} onClick={() => { setTripId(null); setPlaying(false); setT(pts[0].t); }}>
-              <div className="pb-trip__row"><strong>Whole day</strong><span>{totals.km.toFixed(1)} km</span></div>
-              <div className="pb-trip__sub">{fmtHM(pts[0].t)} – {fmtHM(pts[pts.length - 1].t)} · {pts.length} points</div>
-            </button>
-            {trips.map((tr) => (
-              <button type="button" key={tr.id} className={`pb-trip${tripId === tr.id ? " is-on" : ""}`} onClick={() => { setTripId(tr.id); setPlaying(false); setT(tr.start); }}>
-                <div className="pb-trip__row"><strong>{fmtHM(tr.start)} – {fmtHM(tr.end)}</strong><span>{tr.km.toFixed(1)} km</span></div>
-                {hasAddr(tr.fromAddress) || hasAddr(tr.toAddress) ? (
-                  <div className="pb-trip__sub" title={`${tr.fromAddress} → ${tr.toAddress}`}>{shortAddr(tr.fromAddress) || "Unknown"} → {shortAddr(tr.toAddress) || "Unknown"}</div>
-                ) : null}
-                <div className="pb-trip__bar" aria-label={`Normal ${Math.round(tr.share.move * 100)}%, fast ${Math.round(tr.share.fast * 100)}%, over limit ${Math.round(tr.share.over * 100)}%`}>
-                  <i className="pb-b--move" style={{ width: `${tr.share.move * 100}%` }} />
-                  <i className="pb-b--fast" style={{ width: `${tr.share.fast * 100}%` }} />
-                  <i className="pb-b--over" style={{ width: `${tr.share.over * 100}%` }} />
-                </div>
-                <div className="pb-trip__sub">max {Math.round(tr.maxSpeed)} km/h · {fmtDur(tr.drivingMs)} driving</div>
-              </button>
+          <ol className="pb-feed__list" aria-label="Events in order" ref={feedRef}>
+            {feed.map((e, i) => (
+              <li key={e.key}>
+                <button type="button" className={`pb-fi${i === nowIdx ? " is-now" : ""}${i > nowIdx ? " is-ahead" : ""}`} aria-current={i === nowIdx ? "step" : undefined} onClick={() => { setPlaying(false); seek(e.t); }}>
+                  <span className="pb-fi__time">{fmtHM(e.t)}</span>
+                  <span className={`pb-fi__icon pb-fi__icon--${e.kind}`} aria-hidden="true">{e.icon}</span>
+                  <span className="pb-fi__text"><strong>{e.title}</strong>{e.sub && <span title={e.sub}>{e.sub}</span>}</span>
+                </button>
+              </li>
             ))}
-            {!trips.length && <p className="pb-empty">The vehicle didn't move this day (positions only).</p>}
-          </div>
+            {!feed.length && <li className="pb-empty">No events this day (positions only).</li>}
+          </ol>
         )}
-        <div className="pb-legend">
+        <div className="pb-legend pb-feed__pad">
           <span><i className="pb-b--move" /> Normal</span>
           <span><i className="pb-b--fast" /> Fast</span>
           <span><i className="pb-b--over" /> Over {limit}</span>
         </div>
-      </section>
+      </aside>
 
-      {/* Controls + speed chart */}
+      {/* Slim playback bar */}
       <section className="pb-panel pb-ctrl" aria-label="Playback controls">
-        <div className="pb-ctrl__row">
-          <button type="button" className="pb-play" onClick={togglePlay} disabled={!range.length} aria-label={playing ? "Pause" : "Play"} title="Space">
-            {playing ? (
-              <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1" /><rect x="14" y="5" width="4" height="14" rx="1" /></svg>
-            ) : (
-              <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M8 5.5v13l10.5-6.5z" /></svg>
-            )}
-          </button>
-          <button type="button" className="pb-btn" onClick={() => seek(t - 30000)} disabled={!range.length} title="Left arrow">−30s</button>
-          <button type="button" className="pb-btn" onClick={() => seek(t + 30000)} disabled={!range.length} title="Right arrow">+30s</button>
-          <div className="pb-speeds" role="group" aria-label="Playback speed">
-            {SPEEDS.map((s) => (
-              <button type="button" key={s} className={`pb-speed${mult === s ? " is-on" : ""}`} aria-pressed={mult === s} onClick={() => setMult(s)}>{s}×</button>
-            ))}
-          </div>
-          <label className="pb-check"><input type="checkbox" checked={showCard} onChange={(e) => setShowCard(e.target.checked)} /> Info card</label>
-          <div className="pb-spacer" />
-          <span className="pb-clock">{range.length ? fmtClock(t) : "--:--:--"}</span>
-          <span className="pb-clock__end">/ {range.length ? fmtClock(end) : "--:--:--"}</span>
-        </div>
+        <button type="button" className="pb-play" onClick={togglePlay} disabled={!range.length} aria-label={playing ? "Pause" : "Play"} title="Space">
+          {playing ? (
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1" /><rect x="14" y="5" width="4" height="14" rx="1" /></svg>
+          ) : (
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M8 5.5v13l10.5-6.5z" /></svg>
+          )}
+        </button>
         <div
           className="pb-scrub"
           ref={scrubRef}
@@ -337,18 +329,26 @@ const PlaybackV2 = () => {
           onPointerUp={() => { dragging.current = false; }}
           onKeyDown={(e) => { if (e.key === "ArrowRight") seek(t + 30000); if (e.key === "ArrowLeft") seek(t - 30000); }}
         >
-          <svg className="pb-chart" viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" aria-hidden="true">
-            <line x1="0" x2={W} y1={yOf(limit)} y2={yOf(limit)} className="pb-chart__limit" />
-            {chart.map((c, i) => <path key={i} d={c.d} className={`pb-chart__line pb-chart__line--${c.band}`} />)}
-            {range.length > 0 && <line x1={xOf(t)} x2={xOf(t)} y1="0" y2={H} className="pb-chart__cursor" />}
-          </svg>
-          <svg className="pb-strip" viewBox={`0 0 ${W} 10`} preserveAspectRatio="none" aria-hidden="true">
-            {strip.map((s, i) => <rect key={i} x={s.x} y="0" width={Math.max(0.5, s.w)} height="10" className={`pb-strip--${s.band}`} />)}
-          </svg>
+          <div className="pb-bar">
+            <svg className="pb-strip" viewBox={`0 0 ${W} 10`} preserveAspectRatio="none" aria-hidden="true">
+              {strip.map((sg, i) => <rect key={i} x={sg.x} y="0" width={Math.max(0.5, sg.w)} height="10" className={`pb-strip--${sg.band}`} />)}
+            </svg>
+            {range.length > 0 && <i className="pb-bar__cursor" style={{ left: `${(xOf(t) / W) * 100}%` }} />}
+          </div>
           <div className="pb-ticks">
-            {range.length ? <><span>{fmtHM(start)}</span><span>{fmtHM(start + (end - start) / 2)}</span><span>{fmtHM(end)}</span></> : <span>&nbsp;</span>}
+            {range.length ? <><span>{fmtHM(start)}</span><span>{fmtHM(t)} now</span><span>{fmtHM(end)}</span></> : <span>&nbsp;</span>}
           </div>
         </div>
+        <div className="pb-speeds" role="group" aria-label="Playback speed">
+          {SPEEDS.map((sp) => (
+            <button type="button" key={sp} className={`pb-speed${mult === sp ? " is-on" : ""}`} aria-pressed={mult === sp} onClick={() => setMult(sp)}>{sp}×</button>
+          ))}
+        </div>
+        <div className="pb-toggles">
+          <label className="pb-check" title="Show the info card next to the car"><input type="checkbox" checked={showCard} onChange={(e) => setShowCard(e.target.checked)} /> Card</label>
+          <label className="pb-check" title="Keep the car in view while playing"><input type="checkbox" checked={followCar} onChange={(e) => setFollowCar(e.target.checked)} /> Follow</label>
+        </div>
+        <span className="pb-clock">{range.length ? fmtClock(t) : "--:--:--"}</span>
       </section>
     </div>
   );
