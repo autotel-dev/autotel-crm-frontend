@@ -13,11 +13,10 @@ import { BottomStrip, CameraBar, CamMode, FocusCard, kmFromTrack, readLimit, use
 import { todayStr } from "../PlaybackV2/playbackUtils";
 import { useFleet } from "./useFleet";
 import { deriveStatus, FleetStatus, isOnline, plateOf, searchText, STATUS_INFO, STATUS_ORDER, timeAgo } from "./fleetStatus";
-import { getAll, create } from "../../../../Utilities/api";
-import { GET_DEVICE_ANALYTICS, GET_SINGLE_VEHICLE_START } from "../../../../Utilities/api/apiEndpoints";
+import { create } from "../../../../Utilities/api";
+import { GET_SINGLE_VEHICLE_START } from "../../../../Utilities/api/apiEndpoints";
 import {
   setAlertsEnabled,
-  setDeviceAnalytics,
   setMonitoringSession,
   setSelectedSingleDevice,
   setVehicleHistoryDateRange,
@@ -32,21 +31,10 @@ import { EditDeviceModal } from "../MonitoringLatest/components/EditDeviceModal"
 import { EditDeviceIconsModal } from "../MonitoringLatest/components/EditDeviceIconsModal";
 import { AddDeviceModal } from "../MonitoringLatest/components/AddDeviceModal";
 import SendCommand from "../ControlRoom copy/Analytics/components/SendCommand";
-import Analytics from "../MonitoringLatest/components/SingleVehiceDetail/Analytics/Analytics";
-import VehicleInfo from "../MonitoringLatest/components/SingleVehiceDetail/VehicleInfo/VehicleInfo";
-import DeviceInfo from "../MonitoringLatest/components/SingleVehiceDetail/DeviceInfo/DeviceInfo";
-import SensorInfo from "../MonitoringLatest/components/SingleVehiceDetail/SensorInfo/SensorInfo";
-import CustomerInfo from "../MonitoringLatest/components/SingleVehiceDetail/CustomerInfo/CustomerInfo";
+import { DetailTab, FocusDetails } from "./FocusDetails";
 import "./liveMap.scss";
 
 const U = process.env.PUBLIC_URL || "";
-const DETAIL_TABS = [
-  { key: "analytics", label: "Today", C: Analytics },
-  { key: "vehicle", label: "Vehicle", C: VehicleInfo },
-  { key: "device", label: "Device", C: DeviceInfo },
-  { key: "sensors", label: "Sensors", C: SensorInfo },
-  { key: "customer", label: "Customer", C: CustomerInfo },
-];
 
 /** Small M3 car (square, turned to heading) as an image — immune to page SVG styles. */
 const carIcon = (hex: string, heading = 0) =>
@@ -66,7 +54,7 @@ const LiveMap = () => {
   const isCompany = role === ROLES.COMPANY;
   const base = role === ROLES.OPERATOR ? "/operator" : "/company";
   const { userData } = useSelector((state: any) => state.user);
-  const { alertsEnabled, deviceAnalytics } = useSelector((state: any) => state.monitoring);
+  const { alertsEnabled } = useSelector((state: any) => state.monitoring);
   const { devices, loading, failed, fetchDevices, lastAlert } = useFleet();
   const limit = userData?.inactiveTimeLimit || 1440;
 
@@ -91,7 +79,7 @@ const LiveMap = () => {
   const [collapsed, setCollapsed] = useState<Set<string>>(new Set());
   const [menuFor, setMenuFor] = useState<string | null>(null);
   const [fitKey, setFitKey] = useState(0);
-  const [details, setDetails] = useState<string | null>(null);
+  const [details, setDetails] = useState<DetailTab | null>(null);
   const [address, setAddress] = useState<string>("");
   const [listOpen, setListOpen] = useState(true);
 
@@ -221,7 +209,7 @@ const LiveMap = () => {
     if (selected) dispatch(setSelectedSingleDevice(selected.d));
   }, [selected, dispatch]);
 
-  const select = async (id: string | null) => {
+  const select = (id: string | null) => {
     setSelectedId(id);
     setLimitKmh(readLimit());
     setDetails(null);
@@ -229,12 +217,6 @@ const LiveMap = () => {
     if (!id) return;
     const d = devices.find((x) => x._id === id);
     if (d) dispatch(setSelectedSingleDevice(d));
-    try {
-      const res: any = await getAll({ url: `${GET_DEVICE_ANALYTICS}?vehicleId=${id}` });
-      dispatch(setDeviceAnalytics(res?.success && res?.data ? res.data : null));
-    } catch (e) {
-      dispatch(setDeviceAnalytics(null));
-    }
   };
 
   // Address of the selected vehicle (same OpenStreetMap lookup as before), only
@@ -310,7 +292,6 @@ const LiveMap = () => {
 
   const commandItem = (d: any) => ({ ...d, id: d?.traccarDeviceId || d?.deviceId, value: d?._id, name: d?.vehicle?.registrationNo });
 
-  const DetailComp = DETAIL_TABS.find((t) => t.key === details)?.C;
 
   return (
     <div className="lm-root" style={{ ["--lm-top" as any]: `${topH + 24}px` }}>
@@ -456,18 +437,19 @@ const LiveMap = () => {
             onPlayback={() => openPlayback(selected.d)}
             onCommand={() => openModal("command", selected.d)}
             detailsOpen={!!details}
-            onToggleDetails={() => setDetails(details ? null : "analytics")}
+            onToggleDetails={() => setDetails(details ? null : "today")}
             details={
-              <div className="lm-details">
-                <div className="lm-tabs" role="tablist">
-                  {DETAIL_TABS.map((t) => (
-                    <button key={t.key} type="button" role="tab" aria-selected={details === t.key} className={`lm-tab${details === t.key ? " is-on" : ""}`} onClick={() => setDetails(t.key)}>
-                      {t.label}
-                    </button>
-                  ))}
-                </div>
-                <div className="lm-details__body">{DetailComp && <DetailComp />}</div>
-              </div>
+              details && (
+                <FocusDetails
+                  tab={details}
+                  onTab={setDetails}
+                  d={selected.d}
+                  pts={track.pts}
+                  loaded={track.loaded}
+                  limit={limitKmh}
+                  onOpenPlayback={() => openPlayback(selected.d)}
+                />
+              )
             }
           />
           <CameraBar
