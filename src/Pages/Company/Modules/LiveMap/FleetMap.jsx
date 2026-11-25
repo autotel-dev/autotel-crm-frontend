@@ -194,26 +194,46 @@ const makeLayerClass = (google) =>
   };
 
 // Map area (container pixels) not covered by the floating panels.
+// Each panel blocks one side: left/right panels (list, card, focus card) and
+// top/bottom bars. A side panel that spans most of the width (phones) blocks
+// the top or bottom instead.
+const SIDES = [
+  [".lm-top", "top"],
+  [".lm-list", "left"],
+  [".lm-focus", "left"],
+  [".lm-card", "right"],
+  [".lm-pulse", "bottom"],
+  [".lm-strip", "bottom"],
+];
 const visibleBox = (map) => {
   const div = map.getDiv?.();
   if (!div) return null;
   const m = div.getBoundingClientRect();
   const box = { l: 0, t: 0, r: m.width, b: m.height };
-  const rect = (sel) => { const el = document.querySelector(sel); const r = el && el.getBoundingClientRect(); return r && r.width > 0 && r.height > 0 && r.right > m.left && r.left < m.right && r.bottom > m.top && r.top < m.bottom ? r : null; };
-  const top = rect(".lm-top"), list = rect(".lm-list"), card = rect(".lm-card"), pulse = rect(".lm-pulse");
-  if (top) box.t = Math.max(box.t, top.bottom - m.top);
-  if (list && list.right - m.left < m.width / 2) box.l = Math.max(box.l, list.right - m.left);
-  if (card && card.left - m.left > m.width / 2) box.r = Math.min(box.r, card.left - m.left);
-  if (pulse && pulse.top - m.top > m.height / 2) box.b = Math.min(box.b, pulse.top - m.top);
+  for (const [sel, side] of SIDES) {
+    document.querySelectorAll(sel).forEach((el) => {
+      const r = el.getBoundingClientRect();
+      if (!(r.width > 0 && r.height > 0 && r.right > m.left && r.left < m.right && r.bottom > m.top && r.top < m.bottom)) return;
+      const L = r.left - m.left, R = r.right - m.left, T = r.top - m.top, B = r.bottom - m.top;
+      let s = side;
+      if ((s === "left" && R > m.width / 2) || (s === "right" && L < m.width / 2)) s = T + (B - T) / 2 < m.height / 2 ? "top" : "bottom";
+      if (s === "left") box.l = Math.max(box.l, R);
+      else if (s === "right") box.r = Math.min(box.r, L);
+      else if (s === "top" && B < m.height / 2 + 1) box.t = Math.max(box.t, B);
+      else if (s === "bottom" && T > m.height / 2 - 1) box.b = Math.min(box.b, T);
+    });
+  }
   if (box.r - box.l < 160 || box.b - box.t < 120) return { l: 0, t: 0, r: m.width, b: m.height };
   return box;
 };
 
-const FleetMap = ({ google, items, selectedId, follow, onSelect, onHover, fitKey }) => {
+const FleetMap = ({ google, items, selectedId, follow, onSelect, onHover, fitKey, trail, centerKey, onMap, onUserMove }) => {
   const [map, setMap] = useState(null);
   const layerRef = useRef(null);
-  const handlersRef = useRef({ onSelect, onHover });
-  handlersRef.current = { onSelect, onHover };
+  const handlersRef = useRef({ onSelect, onHover, onUserMove });
+  handlersRef.current = { onSelect, onHover, onUserMove };
+  const trailRef = useRef(null);
+  const centerRef = useRef(centerKey);
   const fittedRef = useRef(null);
   const lastSelRef = useRef(null);
   const dark = useIsDark();
@@ -229,8 +249,11 @@ const FleetMap = ({ google, items, selectedId, follow, onSelect, onHover, fitKey
     layer.setMap(map);
     layerRef.current = layer;
     const idle = map.addListener("zoom_changed", () => handlersRef.current.onHover(null));
+    const drag = map.addListener("dragstart", () => handlersRef.current.onUserMove?.());
+    onMap?.(map);
     return () => {
       idle.remove();
+      drag.remove();
       layer.setMap(null);
       layerRef.current = null;
     };
@@ -264,12 +287,14 @@ const FleetMap = ({ google, items, selectedId, follow, onSelect, onHover, fitKey
     }
     const it = items.find((i) => i.id === selectedId);
     if (!it) return;
+    const recentre = centerRef.current !== centerKey;
+    centerRef.current = centerKey;
     const fresh = lastSelRef.current !== selectedId;
     if (fresh) {
       lastSelRef.current = selectedId;
       if ((map.getZoom() || 0) < 14) map.setZoom(15);
     }
-    if (!fresh && !follow) return;
+    if (!fresh && !recentre && !follow) return;
     const proj = layerRef.current?.getProjection?.();
     const box = visibleBox(map);
     const p = proj && box ? proj.fromLatLngToContainerPixel(new google.maps.LatLng(it.lat, it.lng)) : null;
@@ -277,8 +302,26 @@ const FleetMap = ({ google, items, selectedId, follow, onSelect, onHover, fitKey
     const cx = (box.l + box.r) / 2, cy = (box.t + box.b) / 2;
     const mx = (box.r - box.l) * 0.25, my = (box.b - box.t) * 0.25;
     const inside = p.x >= box.l + mx && p.x <= box.r - mx && p.y >= box.t + my && p.y <= box.b - my;
-    if (fresh || !inside) map.panBy(Math.round(p.x - cx), Math.round(p.y - cy));
-  }, [map, google, items, selectedId, follow]);
+    if (fresh || recentre || !inside) map.panBy(Math.round(p.x - cx), Math.round(p.y - cy));
+  }, [map, google, items, selectedId, follow, centerKey]);
+
+  // Trail of the focused vehicle (last 30 minutes)
+  useEffect(() => {
+    if (!map || !google) return;
+    if (!trailRef.current) {
+      trailRef.current = new google.maps.Polyline({
+        map,
+        clickable: false,
+        strokeColor: dark ? "#A3E635" : "#65A30D",
+        strokeOpacity: 0.95,
+        strokeWeight: 5,
+        zIndex: 2,
+      });
+    }
+    trailRef.current.setOptions({ strokeColor: dark ? "#A3E635" : "#65A30D" });
+    trailRef.current.setPath(trail || []);
+  }, [map, google, trail, dark]);
+  useEffect(() => () => { trailRef.current?.setMap(null); trailRef.current = null; }, []);
 
   useEffect(() => {
     if (map) map.setOptions({ styles: dark ? DARK_STYLES : null });

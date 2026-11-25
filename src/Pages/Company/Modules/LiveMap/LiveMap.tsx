@@ -1,12 +1,16 @@
 // Live Monitoring (redesign Phase 3, design "C1/C4 · Map-first · Live").
-// Full-screen map with floating panels: filters on top, vehicle list on the
-// left, the selected vehicle on the right, fleet pulse at the bottom.
+// Overview: full-screen map with floating panels: filters on top, vehicle list
+// on the left, fleet pulse at the bottom.
+// Selecting a vehicle opens design B "Camera focus" (FocusView.tsx): the camera
+// locks on it, with a live panel, camera modes and a bottom strip.
 // Data and the existing pop-ups (edit device, icons, customer, playback,
 // send command, add device) are reused from the old page (MonitoringLatest).
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import FleetMap from "./FleetMap";
+import { BottomStrip, CameraBar, CamMode, FocusCard, kmFromTrack, readLimit, useTodayTrack } from "./FocusView";
+import { todayStr } from "../PlaybackV2/playbackUtils";
 import { useFleet } from "./useFleet";
 import { deriveStatus, FleetStatus, isOnline, plateOf, searchText, STATUS_INFO, STATUS_ORDER, timeAgo } from "./fleetStatus";
 import { getAll, create } from "../../../../Utilities/api";
@@ -21,7 +25,7 @@ import {
 import { setInvoiceData, setIsInvoiceRenwed } from "../../../../ReaduxToolkit/Reducer/SalesSlice";
 import { getUserRole } from "../../../../Utilities/globals/globals";
 import { ROLES } from "../../../../constants/roles";
-import { formatKmh, knotsToKmh } from "../../../../utils/speed";
+import { formatKmh } from "../../../../utils/speed";
 import PlaybackModal from "../MonitoringLatest/components/SingleVehiceDetail/PlaybackModal/PlaybackModal";
 import CustomerDetailsModal from "../MonitoringLatest/components/DevicesSidebar/CustomerDetailsModal";
 import { EditDeviceModal } from "../MonitoringLatest/components/EditDeviceModal";
@@ -69,11 +73,20 @@ const LiveMap = () => {
   const [status, setStatus] = useState<FleetStatus | null>(null);
   const [query, setQuery] = useState("");
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  // Camera follows the selected vehicle (on by default, remembered per browser)
-  const [follow, setFollow] = useState<boolean>(() => {
-    try { return localStorage.getItem("lm-follow") !== "0"; } catch { return true; }
+  // Camera: "follow" keeps the selected vehicle in view; "free" leaves the map
+  // where the user puts it (dragging the map switches to free). Remembered per browser.
+  const [camMode, setCamModeState] = useState<CamMode>(() => {
+    try { return localStorage.getItem("lm-follow") === "0" ? "free" : "follow"; } catch { return "follow"; }
   });
-  useEffect(() => { try { localStorage.setItem("lm-follow", follow ? "1" : "0"); } catch { /* private mode */ } }, [follow]);
+  useEffect(() => { try { localStorage.setItem("lm-follow", camMode === "follow" ? "1" : "0"); } catch { /* private mode */ } }, [camMode]);
+  const follow = camMode === "follow";
+  const [centerKey, setCenterKey] = useState(0);
+  const mapRef = useRef<any>(null);
+  const [limitKmh, setLimitKmh] = useState<number>(readLimit);
+  const setCamMode = (m: CamMode) => {
+    setCamModeState(m);
+    if (m === "follow") setCenterKey((k) => k + 1);
+  };
   const [hover, setHover] = useState<{ id: string; rect: DOMRect } | null>(null);
   const [collapsed, setCollapsed] = useState<Set<string>>(new Set());
   const [menuFor, setMenuFor] = useState<string | null>(null);
@@ -141,10 +154,11 @@ const LiveMap = () => {
     return Array.from(m.entries()).sort((a, b) => (a[0] === "ungrouped" ? -1 : b[0] === "ungrouped" ? 1 : a[1].name.localeCompare(b[1].name)));
   }, [visible]);
 
-  // Map items: visible vehicles that have a position
+  // Map items: visible vehicles that have a position, plus the selected one
+  // even when the filter hides it (the fleet strip can pick any vehicle)
   const items = useMemo(
     () =>
-      visible
+      (selectedId && !visible.some((r) => r.d._id === selectedId) ? [...visible, ...rows.filter((r) => r.d._id === selectedId)] : visible)
         .filter((r) => r.d?.latestPosition?.latitude && r.d?.latestPosition?.longitude)
         .map((r) => ({
           id: r.d._id,
@@ -155,10 +169,51 @@ const LiveMap = () => {
           plate: plateOf(r.d),
           statusLabel: STATUS_INFO[r.s].label,
         })),
-    [visible]
+    [visible, rows, selectedId]
   );
 
   const selected = useMemo(() => rows.find((r) => r.d._id === selectedId) || null, [rows, selectedId]);
+  // Focus view data
+  const track = useTodayTrack(selected?.d || null);
+  const trail = useMemo(() => {
+    const from = Date.now() - 30 * 60 * 1000;
+    return track.pts.filter((p) => p.t >= from).map((p) => ({ lat: p.lat, lng: p.lng }));
+  }, [track.pts]);
+  const kmToday = useMemo(() => (track.loaded ? kmFromTrack(track.pts, limitKmh) : null), [track, limitKmh]);
+  const others = useMemo(() => {
+    if (!selected) return [];
+    const rank: Record<string, number> = { moving: 0, idle: 1, stopped: 2 };
+    const rest = rows
+      .filter((r) => r.d._id !== selected.d._id && isOnline(r.s))
+      // stable order (status, then plate) so cards don't jump under the cursor
+      .sort((a, b) => rank[a.s] - rank[b.s] || plateOf(a.d).localeCompare(plateOf(b.d)))
+      .slice(0, 15);
+    return [{ d: selected.d, s: selected.s }, ...rest];
+  }, [rows, selected]);
+
+  // Esc leaves the focus view
+  useEffect(() => {
+    if (!selectedId) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && !modal) select(null);
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const zoom = (dir: 1 | -1) => {
+    const m = mapRef.current;
+    const g = (window as any).google;
+    if (!m) return;
+    m.setZoom(Math.max(3, Math.min(20, (m.getZoom() || 12) + dir)));
+    if (follow && g?.maps?.event) g.maps.event.addListenerOnce(m, "idle", () => setCenterKey((k) => k + 1));
+  };
+  const openPlayback = (d: any) => {
+    const id = d?.id ?? d?.vehicle?.traccarDeviceId;
+    if (id == null) return openModal("playback", d, "Today");
+    navigate(`${U}/company/modules/monitoring/playback?device=${id}&date=${todayStr()}`);
+  };
+
   const hovered = useMemo(() => (hover ? rows.find((r) => r.d._id === hover.id) || null : null), [rows, hover]);
 
   // Keep the shared "selected vehicle" (used by the reused tabs and pop-ups) live
@@ -168,6 +223,7 @@ const LiveMap = () => {
 
   const select = async (id: string | null) => {
     setSelectedId(id);
+    setLimitKmh(readLimit());
     setDetails(null);
     setHover(null);
     if (!id) return;
@@ -254,9 +310,6 @@ const LiveMap = () => {
 
   const commandItem = (d: any) => ({ ...d, id: d?.traccarDeviceId || d?.deviceId, value: d?._id, name: d?.vehicle?.registrationNo });
 
-  const pos = selected?.d?.latestPosition;
-  const ign = pos?.attributes?.ignition;
-  const speed = Math.round(knotsToKmh(pos?.speed));
   const DetailComp = DETAIL_TABS.find((t) => t.key === details)?.C;
 
   return (
@@ -266,12 +319,16 @@ const LiveMap = () => {
         selectedId={selectedId}
         follow={follow}
         fitKey={fitKey}
+        trail={selected ? trail : null}
+        centerKey={centerKey}
+        onMap={(m: any) => (mapRef.current = m)}
+        onUserMove={() => selectedId && follow && setCamModeState("free")}
         onSelect={(id: string) => select(id)}
         onHover={(id: string | null, rect?: DOMRect) => setHover(id && rect ? { id, rect } : null)}
       />
 
-      {/* Top bar: search + status chips */}
-      <div className="lm-panel lm-top" ref={topRef}>
+      {/* Top bar: search + status chips (overview only) */}
+      <div className="lm-panel lm-top" ref={topRef} hidden={!!selected}>
         <label htmlFor="lm-search" className="visually-hidden">Search vehicles</label>
         <input
           id="lm-search"
@@ -306,7 +363,7 @@ const LiveMap = () => {
       </div>
 
       {/* Vehicle list */}
-      <section className={`lm-panel lm-list${listOpen ? "" : " is-closed"}`} aria-label="Vehicles">
+      <section className={`lm-panel lm-list${listOpen ? "" : " is-closed"}`} aria-label="Vehicles" hidden={!!selected}>
         <div className="lm-list__head">
           <strong>Vehicles</strong>
           <span className="lm-muted">{visible.length === devices.length ? devices.length : `${visible.length} of ${devices.length}`}</span>
@@ -386,71 +443,48 @@ const LiveMap = () => {
         )}
       </section>
 
-      {/* Selected vehicle */}
+      {/* Design B · Camera focus */}
       {selected && (
-        <article className={`lm-panel lm-card${details ? " is-wide" : ""}`} aria-label={`Vehicle ${plateOf(selected.d)}`}>
-          <div className="lm-card__head">
-            <div style={{ minWidth: 0 }}>
-              <div className="lm-card__plate">{plateOf(selected.d)}</div>
-              <div className="lm-muted">
-                {[selected.d?.vehicle?.make?.name, selected.d?.vehicle?.model?.name].filter(Boolean).join(" ") || "—"}
-                {selected.d?.vehicle?.customer?.fullName ? ` · ${selected.d.vehicle.customer.fullName}` : ""}
+        <>
+          <FocusCard
+            d={selected.d}
+            s={selected.s}
+            address={address}
+            limit={limitKmh}
+            kmToday={kmToday}
+            onClose={() => select(null)}
+            onPlayback={() => openPlayback(selected.d)}
+            onCommand={() => openModal("command", selected.d)}
+            detailsOpen={!!details}
+            onToggleDetails={() => setDetails(details ? null : "analytics")}
+            details={
+              <div className="lm-details">
+                <div className="lm-tabs" role="tablist">
+                  {DETAIL_TABS.map((t) => (
+                    <button key={t.key} type="button" role="tab" aria-selected={details === t.key} className={`lm-tab${details === t.key ? " is-on" : ""}`} onClick={() => setDetails(t.key)}>
+                      {t.label}
+                    </button>
+                  ))}
+                </div>
+                <div className="lm-details__body">{DetailComp && <DetailComp />}</div>
               </div>
-            </div>
-            <span className="lm-status">
-              <i style={{ background: STATUS_INFO[selected.s].hex }} />
-              {STATUS_INFO[selected.s].label}
-            </span>
-            <button type="button" className="lm-icon-btn" aria-label="Close vehicle panel" onClick={() => select(null)}>
-              ✕
-            </button>
-          </div>
-          <div className="lm-speed">
-            {isOnline(selected.s) ? (
-              <>
-                <span>{speed}</span> <small>km/h</small>
-              </>
-            ) : (
-              <small style={{ fontSize: 15 }}>Not reporting live — last known details below</small>
-            )}
-          </div>
-          <div className="lm-facts">
-            <div><span className="lm-muted">{isOnline(selected.s) ? "Ignition" : "Last ignition"}</span><strong>{ign === true ? "On" : ign === false ? "Off" : "—"}</strong></div>
-            <div><span className="lm-muted">Today</span><strong>{deviceAnalytics?.distanceForDay || "—"}</strong></div>
-            <div><span className="lm-muted">Satellites</span><strong>{pos?.attributes?.sat ?? "—"}</strong></div>
-          </div>
-          <div className="lm-muted" style={{ fontSize: 13 }}>
-            {address || (pos?.latitude ? `${Number(pos.latitude).toFixed(5)}, ${Number(pos.longitude).toFixed(5)}` : "No position yet")}
-            {" · "}updated {timeAgo(pos?.deviceTime)}
-          </div>
-          <div className="lm-actions">
-            <button type="button" className="at-btn at-btn--primary" onClick={() => openModal("playback", selected.d, "Today")}>Playback</button>
-            <button type="button" className={`at-btn${follow ? " at-btn--highlight" : ""}`} aria-pressed={follow} onClick={() => setFollow(!follow)}>
-              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true" style={{ marginRight: 6, verticalAlign: "-2px" }}><circle cx="12" cy="12" r="3" /><path d="M12 2v3M12 19v3M2 12h3M19 12h3" /></svg>
-              {follow ? "Following" : "Follow"}
-            </button>
-            <button type="button" className="at-btn" onClick={() => openModal("command", selected.d)}>Send command</button>
-            <button type="button" className="at-btn" aria-expanded={!!details} onClick={() => setDetails(details ? null : "analytics")}>
-              {details ? "Hide details" : "More details"}
-            </button>
-          </div>
-          {details && (
-            <div className="lm-details">
-              <div className="lm-tabs" role="tablist">
-                {DETAIL_TABS.map((t) => (
-                  <button key={t.key} type="button" role="tab" aria-selected={details === t.key} className={`lm-tab${details === t.key ? " is-on" : ""}`} onClick={() => setDetails(t.key)}>
-                    {t.label}
-                  </button>
-                ))}
-              </div>
-              <div className="lm-details__body">{DetailComp && <DetailComp />}</div>
-            </div>
-          )}
-        </article>
+            }
+          />
+          <CameraBar
+            mode={camMode}
+            onMode={setCamMode}
+            onFitAll={() => {
+              setCamModeState("free");
+              setFitKey((k) => k + 1);
+            }}
+            onZoom={zoom}
+          />
+          <BottomStrip pts={track.pts} loaded={track.loaded} limit={limitKmh} others={others} selectedId={selected.d._id} onPick={(id) => select(id)} />
+        </>
       )}
 
       {/* Fleet pulse */}
-      <div className="lm-panel lm-pulse" aria-label="Fleet summary">
+      <div className="lm-panel lm-pulse" aria-label="Fleet summary" hidden={!!selected}>
         <div><span className="lm-muted">Online</span><strong>{online}<small> / {devices.length}</small></strong></div>
         <div><span className="lm-muted">Moving</span><strong>{counts.moving}</strong></div>
         <div className="lm-hide-sm"><span className="lm-muted">Not reporting</span><strong>{counts.offline + counts.inactive + counts.not_connected}</strong></div>
