@@ -193,6 +193,22 @@ const makeLayerClass = (google) =>
     }
   };
 
+// Map area (container pixels) not covered by the floating panels.
+const visibleBox = (map) => {
+  const div = map.getDiv?.();
+  if (!div) return null;
+  const m = div.getBoundingClientRect();
+  const box = { l: 0, t: 0, r: m.width, b: m.height };
+  const rect = (sel) => { const el = document.querySelector(sel); const r = el && el.getBoundingClientRect(); return r && r.width > 0 && r.height > 0 && r.right > m.left && r.left < m.right && r.bottom > m.top && r.top < m.bottom ? r : null; };
+  const top = rect(".lm-top"), list = rect(".lm-list"), card = rect(".lm-card"), pulse = rect(".lm-pulse");
+  if (top) box.t = Math.max(box.t, top.bottom - m.top);
+  if (list && list.right - m.left < m.width / 2) box.l = Math.max(box.l, list.right - m.left);
+  if (card && card.left - m.left > m.width / 2) box.r = Math.min(box.r, card.left - m.left);
+  if (pulse && pulse.top - m.top > m.height / 2) box.b = Math.min(box.b, pulse.top - m.top);
+  if (box.r - box.l < 160 || box.b - box.t < 120) return { l: 0, t: 0, r: m.width, b: m.height };
+  return box;
+};
+
 const FleetMap = ({ google, items, selectedId, follow, onSelect, onHover, fitKey }) => {
   const [map, setMap] = useState(null);
   const layerRef = useRef(null);
@@ -238,7 +254,9 @@ const FleetMap = ({ google, items, selectedId, follow, onSelect, onHover, fitKey
     } else map.fitBounds(b, 80);
   }, [map, google, items, fitKey]);
 
-  // Selecting a vehicle centres on it; "Follow" keeps it centred as it moves
+  // Selecting a vehicle centres it in the clear part of the map (between the
+  // panels); "Follow" keeps it there as it moves, re-centring once it leaves
+  // the middle half of that area.
   useEffect(() => {
     if (!map || !selectedId) {
       lastSelRef.current = selectedId;
@@ -246,14 +264,21 @@ const FleetMap = ({ google, items, selectedId, follow, onSelect, onHover, fitKey
     }
     const it = items.find((i) => i.id === selectedId);
     if (!it) return;
-    if (lastSelRef.current !== selectedId) {
+    const fresh = lastSelRef.current !== selectedId;
+    if (fresh) {
       lastSelRef.current = selectedId;
-      map.panTo({ lat: it.lat, lng: it.lng });
       if ((map.getZoom() || 0) < 14) map.setZoom(15);
-    } else if (follow) {
-      map.panTo({ lat: it.lat, lng: it.lng });
     }
-  }, [map, items, selectedId, follow]);
+    if (!fresh && !follow) return;
+    const proj = layerRef.current?.getProjection?.();
+    const box = visibleBox(map);
+    const p = proj && box ? proj.fromLatLngToContainerPixel(new google.maps.LatLng(it.lat, it.lng)) : null;
+    if (!p) { map.panTo({ lat: it.lat, lng: it.lng }); return; }
+    const cx = (box.l + box.r) / 2, cy = (box.t + box.b) / 2;
+    const mx = (box.r - box.l) * 0.25, my = (box.b - box.t) * 0.25;
+    const inside = p.x >= box.l + mx && p.x <= box.r - mx && p.y >= box.t + my && p.y <= box.b - my;
+    if (fresh || !inside) map.panBy(Math.round(p.x - cx), Math.round(p.y - cy));
+  }, [map, google, items, selectedId, follow]);
 
   useEffect(() => {
     if (map) map.setOptions({ styles: dark ? DARK_STYLES : null });

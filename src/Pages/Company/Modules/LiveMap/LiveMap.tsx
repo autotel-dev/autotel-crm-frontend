@@ -69,7 +69,11 @@ const LiveMap = () => {
   const [status, setStatus] = useState<FleetStatus | null>(null);
   const [query, setQuery] = useState("");
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [follow, setFollow] = useState(false);
+  // Camera follows the selected vehicle (on by default, remembered per browser)
+  const [follow, setFollow] = useState<boolean>(() => {
+    try { return localStorage.getItem("lm-follow") !== "0"; } catch { return true; }
+  });
+  useEffect(() => { try { localStorage.setItem("lm-follow", follow ? "1" : "0"); } catch { /* private mode */ } }, [follow]);
   const [hover, setHover] = useState<{ id: string; rect: DOMRect } | null>(null);
   const [collapsed, setCollapsed] = useState<Set<string>>(new Set());
   const [menuFor, setMenuFor] = useState<string | null>(null);
@@ -164,7 +168,6 @@ const LiveMap = () => {
 
   const select = async (id: string | null) => {
     setSelectedId(id);
-    setFollow(false);
     setDetails(null);
     setHover(null);
     if (!id) return;
@@ -423,6 +426,7 @@ const LiveMap = () => {
           <div className="lm-actions">
             <button type="button" className="at-btn at-btn--primary" onClick={() => openModal("playback", selected.d, "Today")}>Playback</button>
             <button type="button" className={`at-btn${follow ? " at-btn--highlight" : ""}`} aria-pressed={follow} onClick={() => setFollow(!follow)}>
+              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true" style={{ marginRight: 6, verticalAlign: "-2px" }}><circle cx="12" cy="12" r="3" /><path d="M12 2v3M12 19v3M2 12h3M19 12h3" /></svg>
               {follow ? "Following" : "Follow"}
             </button>
             <button type="button" className="at-btn" onClick={() => openModal("command", selected.d)}>Send command</button>
