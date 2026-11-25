@@ -3,7 +3,7 @@
 // Every value is real: "Today" is worked out from today's track with the same
 // trip rules as Trip Playback; the other tabs show only fields that have data.
 import { useMemo } from "react";
-import { findTrips, fmtDur, fmtHM, Pt } from "../PlaybackV2/playbackUtils";
+import { findTrips, fmtDur, fmtHM, Pt, shortAddr } from "../PlaybackV2/playbackUtils";
 import { timeAgo } from "./fleetStatus";
 
 export type DetailTab = "today" | "vehicle" | "device" | "customer";
@@ -62,6 +62,52 @@ const fmtDate = (iso?: string) => (iso ? new Date(iso).toLocaleDateString([], { 
 const fmtDateTime = (iso?: string) =>
   iso ? new Date(iso).toLocaleString([], { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false }) : "";
 
+// Line icons (24×24) for the Today tab, design D3 "Ring"
+const ICONS = {
+  play: "M7 4l13 8-13 8z",
+  pause: "M8 5v14M16 5v14",
+  power: "M12 2v10M5.6 6.6a9 9 0 1 0 12.8 0",
+  nosignal: "M2 2l20 20M8.5 16.4a5 5 0 0 1 7 0M5 12.9a10 10 0 0 1 5.2-2.8M19 12.9a10 10 0 0 0-2.5-1.8M12 20h.01",
+  flag: "M4 22V4M4 4h12l-2 4 2 4H4",
+  avg: "M3 12h4l3-8 4 16 3-8h4",
+  gauge: "M12 14l4-4M3.3 19a10 10 0 1 1 17.4 0",
+  alert: "M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h16.9a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0zM12 9v4M12 17h.01",
+  check: "M12 3a9 9 0 1 0 0.01 0M8 12l3 3 5-6",
+};
+const Icon = ({ d, size = 16, width = 2.2 }: { d: string; size?: number; width?: number }) => (
+  <svg aria-hidden="true" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={width} strokeLinecap="round" strokeLinejoin="round">
+    <path d={d} />
+  </svg>
+);
+
+/** Donut of the day so far, km in the middle. */
+const DayRing = ({ parts, km }: { parts: { key: string; label: string; ms: number; color: string }[]; km: number }) => {
+  const R = 70;
+  const C = 2 * Math.PI * R;
+  const total = parts.reduce((s, p) => s + p.ms, 0) || 1;
+  let acc = 0;
+  // inline transform: a site-wide rule sets transform-origin on every circle
+  const ring = { transform: "rotate(-90deg)", transformBox: "view-box" as const, transformOrigin: "85px 85px", animation: "none" };
+  return (
+    <div className="lm-ring">
+      <svg viewBox="0 0 170 170" width="150" height="150" role="img" aria-label={parts.map((p) => `${p.label} ${fmtDur(p.ms)}`).join(", ")}>
+        <circle cx="85" cy="85" r={R} fill="none" stroke="var(--at-soft)" strokeWidth="18" style={{ animation: "none" }} />
+        {parts.map((p) => {
+          const len = (p.ms / total) * C;
+          const off = -acc;
+          acc += len;
+          if (len < 1) return null;
+          return <circle key={p.key} cx="85" cy="85" r={R} fill="none" stroke={p.color} strokeWidth="18" strokeDasharray={`${Math.max(0.5, len - 3)} ${C}`} strokeDashoffset={off} style={ring} />;
+        })}
+      </svg>
+      <div className="lm-ring__mid">
+        <strong>{km.toFixed(1)}</strong>
+        <span>km today</span>
+      </div>
+    </div>
+  );
+};
+
 const TodayTab = ({ pts, loaded, limit, onOpenPlayback }: { pts: Pt[]; loaded: boolean; limit: number; onOpenPlayback: () => void }) => {
   const trips = useMemo(() => findTrips(pts, limit), [pts, limit]);
   const split = useMemo(() => daySplit(pts, limit), [pts, limit]);
@@ -69,58 +115,78 @@ const TodayTab = ({ pts, loaded, limit, onOpenPlayback }: { pts: Pt[]; loaded: b
   if (!pts.length) return <div className="lm-empty">No data from this vehicle today.</div>;
   const km = trips.reduce((s, t) => s + t.km, 0);
   const driving = trips.reduce((s, t) => s + t.drivingMs, 0);
-  const max = pts.reduce((m, p) => Math.max(m, p.speed), 0);
+  const top = pts.reduce((m, p) => (p.speed > m.speed ? p : m), pts[0]);
   const avg = driving > 0 ? km / (driving / 3600000) : 0;
+  const total = Math.max(1, split.drive + split.idle + split.off + split.none);
   const parts = [
-    { key: "drive", label: "Driving", ms: split.drive, color: "var(--at-moving)" },
-    { key: "idle", label: "Idle", ms: split.idle, color: "var(--at-idle)" },
-    { key: "off", label: "Engine off", ms: split.off, color: "var(--at-stopped)" },
-    { key: "none", label: "No data", ms: split.none, color: "var(--at-line)" },
+    { key: "drive", label: "Driving", ms: split.drive, color: "var(--at-moving)", icon: ICONS.play },
+    { key: "idle", label: "Idle", ms: split.idle, color: "var(--at-idle)", icon: ICONS.pause },
+    { key: "off", label: "Engine off", ms: split.off, color: "var(--at-stopped)", icon: ICONS.power },
+    { key: "none", label: "No data", ms: split.none, color: "var(--at-offline)", icon: ICONS.nosignal },
   ];
+  const where = shortAddr(top.address);
   return (
     <div className="lm-today">
-      <div className="lm-tiles">
-        <div><span className="lm-muted">Driven</span><strong>{km.toFixed(1)} km</strong></div>
-        <div><span className="lm-muted">Trips</span><strong>{trips.length}</strong></div>
-        <div><span className="lm-muted">Driving time</span><strong>{fmtDur(split.drive)}</strong></div>
-        <div><span className="lm-muted">Top speed</span><strong className={max > limit ? "is-over" : ""}>{Math.round(max)} km/h</strong></div>
-      </div>
-
-      <div className="lm-split" aria-label="How today was spent">
-        <div className="lm-split__bar" role="img" aria-label={parts.map((p) => `${p.label} ${fmtDur(p.ms)}`).join(", ")}>
-          {parts.map((p) => (p.ms > 0 ? <span key={p.key} style={{ flexGrow: p.ms, background: p.color }} /> : null))}
-        </div>
-        <ul className="lm-split__legend">
+      <div className="lm-today__top">
+        <DayRing parts={parts} km={km} />
+        <ul className="lm-states">
           {parts.map((p) => (
-            <li key={p.key}><i style={{ background: p.color }} />{p.label}<b>{fmtDur(p.ms)}</b></li>
+            <li key={p.key} style={{ ["--c" as any]: p.color }}>
+              <span className="lm-states__icon"><Icon d={p.icon} size={15} width={2.3} /></span>
+              <span className="lm-states__text">
+                <strong>{fmtDur(p.ms)}</strong>
+                <span>{p.label} · {Math.round((p.ms / total) * 100)}%</span>
+              </span>
+            </li>
           ))}
         </ul>
       </div>
 
-      <KV
-        rows={[
-          ["Average while driving", avg ? `${Math.round(avg)} km/h` : ""],
-          ["Over the limit", split.overRuns ? `${split.overRuns} time${split.overRuns === 1 ? "" : "s"} · ${fmtDur(split.over)} above ${limit} km/h` : `Never above ${limit} km/h`],
-          ["First movement", trips[0] ? fmtHM(trips[0].start) : ""],
-          ["Last stop", trips.length ? fmtHM(trips[trips.length - 1].end) : ""],
-        ]}
-      />
+      <div className="lm-chips3">
+        <div style={{ ["--c" as any]: "var(--at-primary)" }}><span><Icon d={ICONS.flag} size={15} />Trips</span><strong>{trips.length}</strong></div>
+        <div style={{ ["--c" as any]: "var(--at-primary)" }}><span><Icon d={ICONS.avg} size={15} />Average</span><strong>{avg ? `${Math.round(avg)} km/h` : "—"}</strong></div>
+        <div className={top.speed > limit ? "is-bad" : ""} style={{ ["--c" as any]: top.speed > limit ? "var(--at-stopped)" : "var(--at-primary)" }}>
+          <span><Icon d={ICONS.gauge} size={15} />Top speed</span><strong>{Math.round(top.speed)}</strong>
+        </div>
+      </div>
+
+      {split.overRuns > 0 ? (
+        <div className="lm-callout is-bad" role="note">
+          <Icon d={ICONS.alert} size={22} width={2} />
+          <span>
+            <strong>{split.overRuns} time{split.overRuns === 1 ? "" : "s"} over {limit} km/h</strong>
+            <small>{fmtDur(split.over)} in total · top {Math.round(top.speed)} km/h at {fmtHM(top.t)}{where ? ` near ${where}` : ""}</small>
+          </span>
+        </div>
+      ) : (
+        <div className="lm-callout is-good" role="note">
+          <Icon d={ICONS.check} size={22} width={2} />
+          <span>
+            <strong>Never above {limit} km/h today</strong>
+            <small>Top speed {Math.round(top.speed)} km/h{avg ? ` · average ${Math.round(avg)} km/h while driving` : ""}</small>
+          </span>
+        </div>
+      )}
 
       {trips.length > 0 && (
         <div className="lm-trips">
           <div className="lm-trips__head">
-            <strong>Trips</strong>
-            <button type="button" className="lm-link" onClick={onOpenPlayback}>Open in Playback</button>
+            <strong>Trips · first {fmtHM(trips[0].start)} · last stop {fmtHM(trips[trips.length - 1].end)}</strong>
+            <button type="button" className="lm-link" onClick={onOpenPlayback}>Playback</button>
           </div>
           <ol>
-            {[...trips].reverse().map((t) => (
-              <li key={t.id}>
-                <span className="lm-trips__time">{fmtHM(t.start)}–{fmtHM(t.end)}</span>
-                <span>{t.km.toFixed(1)} km</span>
-                <span className="lm-muted">{fmtDur(t.end - t.start)}</span>
-                <span className={t.maxSpeed > limit ? "is-over" : "lm-muted"}>max {Math.round(t.maxSpeed)}</span>
-              </li>
-            ))}
+            {[...trips].reverse().map((t) => {
+              const over = t.maxSpeed > limit;
+              return (
+                <li key={t.id}>
+                  <i className="lm-trips__bar" style={{ background: over ? "var(--at-stopped)" : "var(--at-moving)" }} />
+                  <span className="lm-trips__time">{fmtHM(t.start)}–{fmtHM(t.end)}</span>
+                  <span>{t.km.toFixed(1)} km</span>
+                  <span className="lm-muted">{fmtDur(t.end - t.start)}</span>
+                  <span className={over ? "is-over" : "lm-muted"}>{Math.round(t.maxSpeed)} km/h</span>
+                </li>
+              );
+            })}
           </ol>
         </div>
       )}
