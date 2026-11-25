@@ -162,7 +162,7 @@ body.at-dark .pb-root { --b-move: #a3e635; --b-fast: #fcd34d; --b-over: #f87171;
 .pb-ev--P { background: var(--b-fast); color: #1f1300; }
 .pb-ev--S { background: var(--b-over); }
 .pb-car { position: absolute; transform: translate(-50%, -50%); pointer-events: none; z-index: 5; filter: drop-shadow(0 3px 6px rgba(0, 0, 0, .35));
-  svg { display: block; transition: transform .25s linear; } }
+  svg { display: block; transition: transform .25s linear; animation: none; rect { animation: none; } } }
 .pb-car::before { content: ""; position: absolute; left: 50%; top: 50%; width: 58px; height: 58px; transform: translate(-50%, -50%);
   border-radius: 50%; background: color-mix(in srgb, var(--at-primary) 16%, transparent); border: 2px solid var(--at-primary); z-index: -1; }
 .pb-car__body { stroke: var(--at-panel); stroke-width: 1.6; }

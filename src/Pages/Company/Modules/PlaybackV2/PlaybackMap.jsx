@@ -80,11 +80,18 @@ const makeLayer = (google) =>
       // car + card
       if (this.car) {
         this.carEl.style.display = "";
-        this.carEl.innerHTML = carSvg(this.car.band, this.car.course);
+        // Rebuild the car only when its colour changes; otherwise just turn it.
+        // (Rebuilding it ~60 times a second made it blink during playback.)
+        if (this._carBand !== this.car.band || !this._carSvg) {
+          this.carEl.innerHTML = carSvg(this.car.band, this.car.course);
+          this._carSvg = this.carEl.firstElementChild;
+          this._carBand = this.car.band;
+        }
+        this._carSvg.style.transform = `rotate(${Math.round(this.car.course)}deg)`;
         this.place(this.carEl, this.car.lat, this.car.lng);
         if (this.card) {
           this.cardEl.style.display = "";
-          this.cardEl.innerHTML = this.card;
+          if (this._card !== this.card) { this.cardEl.innerHTML = this.card; this._card = this.card; }
           this.place(this.cardEl, this.car.lat, this.car.lng);
         } else this.cardEl.style.display = "none";
       } else {
@@ -182,9 +189,17 @@ const PlaybackMap = ({ google, pts, segments, events, car, card, fitKey, follow,
     }
     const p = proj.fromLatLngToContainerPixel(new google.maps.LatLng(car.lat, car.lng));
     if (!p) return;
-    const mx = (box.r - box.l) * 0.25, my = (box.b - box.t) * 0.25;
-    const inside = p.x >= box.l + mx && p.x <= box.r - mx && p.y >= box.t + my && p.y <= box.b - my;
-    if (!inside) map.panBy(Math.round(p.x - (box.l + box.r) / 2), Math.round(p.y - (box.t + box.b) / 2));
+    // While playing, keep the car at the middle of the clear area every frame,
+    // so the map glides with it instead of jumping half a screen at a time
+    // (which looked like blinking when zoomed in at 16x / 64x).
+    const dx = p.x - (box.l + box.r) / 2;
+    const dy = p.y - (box.t + box.b) / 2;
+    if (Math.abs(dx) < 1 && Math.abs(dy) < 1) return;
+    const div = map.getDiv();
+    const far = Math.abs(dx) > (box.r - box.l) / 2 || Math.abs(dy) > (box.b - box.t) / 2;
+    if (far || !div) { map.panBy(Math.round(dx), Math.round(dy)); return; }
+    const c = proj.fromContainerPixelToLatLng(new google.maps.Point(div.clientWidth / 2 + dx, div.clientHeight / 2 + dy));
+    if (c) map.setCenter(c);
   }, [map, google, car, follow]);
 
   useEffect(() => { if (map) map.setOptions({ styles: dark ? DARK_MAP_STYLES : null }); }, [map, dark]);
