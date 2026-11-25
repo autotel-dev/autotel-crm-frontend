@@ -110,6 +110,7 @@ body.at-dark .pb-root { --b-move: #a3e635; --b-fast: #fcd34d; --b-over: #f87171;
   span { font-size: 12px; color: var(--at-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 }
 .pb-b--move { background: var(--b-move); } .pb-b--fast { background: var(--b-fast); } .pb-b--over { background: var(--b-over); }
+.pb-b--gap { background: repeating-linear-gradient(90deg, var(--at-muted) 0 4px, transparent 4px 7px) !important; }
 .pb-legend { display: flex; gap: 12px; flex-wrap: wrap; font-size: 12px; color: var(--at-muted); border-top: 1px solid var(--at-line);
   span { display: inline-flex; align-items: center; gap: 5px; } i { width: 14px; height: 4px; border-radius: 2px; display: inline-block; } }
 .pb-empty { margin: 0; font-size: 13px; color: var(--at-muted); }

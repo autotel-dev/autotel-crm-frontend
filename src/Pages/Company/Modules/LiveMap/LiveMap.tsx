@@ -10,7 +10,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import FleetMap from "./FleetMap";
 import { BottomStrip, CameraBar, CamMode, FocusCard, kmFromTrack, readLimit, useTodayTrack } from "./FocusView";
-import { todayStr } from "../PlaybackV2/playbackUtils";
+import { isSignalGap, todayStr } from "../PlaybackV2/playbackUtils";
 import { useFleet } from "./useFleet";
 import { deriveStatus, FleetStatus, isOnline, plateOf, searchText, STATUS_INFO, STATUS_ORDER, timeAgo } from "./fleetStatus";
 import { create } from "../../../../Utilities/api";
@@ -163,9 +163,24 @@ const LiveMap = () => {
   const selected = useMemo(() => rows.find((r) => r.d._id === selectedId) || null, [rows, selectedId]);
   // Focus view data
   const track = useTodayTrack(selected?.d || null);
+  // Last 30 minutes, split into solid runs and dashed "no signal" gaps
   const trail = useMemo(() => {
     const from = Date.now() - 30 * 60 * 1000;
-    return track.pts.filter((p) => p.t >= from).map((p) => ({ lat: p.lat, lng: p.lng }));
+    const pts = track.pts.filter((p) => p.t >= from);
+    const solid: { lat: number; lng: number }[][] = [];
+    const gaps: { lat: number; lng: number }[][] = [];
+    let run: { lat: number; lng: number }[] = [];
+    pts.forEach((p, i) => {
+      const ll = { lat: p.lat, lng: p.lng };
+      if (i > 0 && isSignalGap(pts[i - 1], p)) {
+        if (run.length > 1) solid.push(run);
+        gaps.push([{ lat: pts[i - 1].lat, lng: pts[i - 1].lng }, ll]);
+        run = [];
+      }
+      run.push(ll);
+    });
+    if (run.length > 1) solid.push(run);
+    return { solid, gaps };
   }, [track.pts]);
   const kmToday = useMemo(() => (track.loaded ? kmFromTrack(track.pts, limitKmh) : null), [track, limitKmh]);
   const others = useMemo(() => {

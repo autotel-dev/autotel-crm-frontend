@@ -302,6 +302,7 @@ const PlaybackV2 = () => {
           <span><i className="pb-b--move" /> Normal</span>
           <span><i className="pb-b--fast" /> Fast</span>
           <span><i className="pb-b--over" /> Over {limit}</span>
+          <span><i className="pb-b--gap" /> No signal</span>
         </div>
       </aside>
 

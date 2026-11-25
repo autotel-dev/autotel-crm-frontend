@@ -305,23 +305,24 @@ const FleetMap = ({ google, items, selectedId, follow, onSelect, onHover, fitKey
     if (fresh || recentre || !inside) map.panBy(Math.round(p.x - cx), Math.round(p.y - cy));
   }, [map, google, items, selectedId, follow, centerKey]);
 
-  // Trail of the focused vehicle (last 30 minutes)
+  // Trail of the focused vehicle (last 30 minutes): solid runs, plus dashed
+  // grey "no signal" gaps where the tracker sent nothing while moving.
   useEffect(() => {
     if (!map || !google) return;
-    if (!trailRef.current) {
-      trailRef.current = new google.maps.Polyline({
-        map,
-        clickable: false,
-        strokeColor: dark ? "#A3E635" : "#65A30D",
-        strokeOpacity: 0.95,
-        strokeWeight: 5,
-        zIndex: 2,
-      });
-    }
-    trailRef.current.setOptions({ strokeColor: dark ? "#A3E635" : "#65A30D" });
-    trailRef.current.setPath(trail || []);
+    (trailRef.current || []).forEach((l) => l.setMap(null));
+    const color = dark ? "#A3E635" : "#65A30D";
+    const solid = (trail?.solid || []).map((path) =>
+      new google.maps.Polyline({ map, path, clickable: false, strokeColor: color, strokeOpacity: 0.95, strokeWeight: 5, zIndex: 2 })
+    );
+    const gaps = (trail?.gaps || []).map((path) =>
+      new google.maps.Polyline({
+        map, path, clickable: false, strokeOpacity: 0, zIndex: 1,
+        icons: [{ icon: { path: "M 0,-1 0,1", strokeOpacity: 0.9, strokeColor: dark ? "#8B8BA8" : "#6B7280", strokeWeight: 3, scale: 3 }, offset: "0", repeat: "14px" }],
+      })
+    );
+    trailRef.current = [...solid, ...gaps];
   }, [map, google, trail, dark]);
-  useEffect(() => () => { trailRef.current?.setMap(null); trailRef.current = null; }, []);
+  useEffect(() => () => { (trailRef.current || []).forEach((l) => l.setMap(null)); trailRef.current = null; }, []);
 
   useEffect(() => {
     if (map) map.setOptions({ styles: dark ? DARK_STYLES : null });

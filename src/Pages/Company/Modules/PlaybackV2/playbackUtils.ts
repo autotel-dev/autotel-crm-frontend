@@ -124,10 +124,33 @@ export const findTrips = (pts: Pt[], limit: number): Trip[] => {
   return trips;
 };
 
-// Coloured trail pieces: consecutive points with the same band.
+// Straight-line distance in km between two points.
+export const kmBetween = (a: { lat: number; lng: number }, b: { lat: number; lng: number }) => {
+  const r = (x: number) => (x * Math.PI) / 180;
+  const dLat = r(b.lat - a.lat);
+  const dLng = r(b.lng - a.lng);
+  const h = Math.sin(dLat / 2) ** 2 + Math.cos(r(a.lat)) * Math.cos(r(b.lat)) * Math.sin(dLng / 2) ** 2;
+  return 2 * 6371 * Math.asin(Math.sqrt(h));
+};
+
+// A "no signal" gap: no point for over 2.5 minutes while the vehicle moved
+// more than 500 m (e.g. lost mobile data). Drawn dashed, since the real road
+// between the two points is unknown. (Shorter limits flag normal data: some
+// trackers report once a minute, and days over 1,500 points are thinned.)
+export const SIGNAL_GAP_MS = 150 * 1000;
+export const SIGNAL_GAP_KM = 0.5;
+export const isSignalGap = (a: { t: number; lat: number; lng: number }, b: { t: number; lat: number; lng: number }) =>
+  b.t - a.t > SIGNAL_GAP_MS && kmBetween(a, b) > SIGNAL_GAP_KM;
+
+// Coloured trail pieces: consecutive points with the same band; signal gaps
+// become their own "gap" pieces.
 export const trailSegments = (pts: Pt[], limit: number) => {
-  const segs: { band: Band; path: { lat: number; lng: number }[] }[] = [];
+  const segs: { band: Band | "gap"; path: { lat: number; lng: number }[] }[] = [];
   for (let k = 1; k < pts.length; k++) {
+    if (isSignalGap(pts[k - 1], pts[k])) {
+      segs.push({ band: "gap", path: [{ lat: pts[k - 1].lat, lng: pts[k - 1].lng }, { lat: pts[k].lat, lng: pts[k].lng }] });
+      continue;
+    }
     const b = bandOf(Math.max(pts[k].speed, pts[k - 1].speed), limit);
     const band = b === "stop" ? "move" : b;
     const last = segs[segs.length - 1];

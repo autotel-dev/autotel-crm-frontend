@@ -110,6 +110,13 @@ const visibleBox = (map) => {
   return box;
 };
 
+/** Dashed grey line for "no signal" gaps (the real road is unknown). */
+export const gapLine = (google, dark) => ({
+  clickable: false,
+  strokeOpacity: 0,
+  icons: [{ icon: { path: "M 0,-1 0,1", strokeOpacity: 0.9, strokeColor: dark ? "#8B8BA8" : "#6B7280", strokeWeight: 3, scale: 3 }, offset: "0", repeat: "14px" }],
+});
+
 const PlaybackMap = ({ google, pts, segments, events, car, card, fitKey, follow, onSeek }) => {
   const [map, setMap] = useState(null);
   const layerRef = useRef(null);
@@ -139,7 +146,9 @@ const PlaybackMap = ({ google, pts, segments, events, car, card, fitKey, follow,
     linesRef.current.forEach((l) => l.setMap(null));
     const colors = dark ? TRAIL.dark : TRAIL.light;
     linesRef.current = (segments || []).map((s) =>
-      new google.maps.Polyline({ map, path: s.path, strokeColor: colors[s.band], strokeOpacity: 0.95, strokeWeight: 5, clickable: false, zIndex: s.band === "over" ? 3 : s.band === "fast" ? 2 : 1 })
+      s.band === "gap"
+        ? new google.maps.Polyline({ map, path: s.path, ...gapLine(google, dark), zIndex: 0 })
+        : new google.maps.Polyline({ map, path: s.path, strokeColor: colors[s.band], strokeOpacity: 0.95, strokeWeight: 5, clickable: false, zIndex: s.band === "over" ? 3 : s.band === "fast" ? 2 : 1 })
     );
     return () => { linesRef.current.forEach((l) => l.setMap(null)); linesRef.current = []; };
   }, [map, google, segments, dark]);
