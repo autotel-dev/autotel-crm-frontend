@@ -236,6 +236,8 @@ const FleetMap = ({ google, items, selectedId, follow, onSelect, onHover, fitKey
   const centerRef = useRef(centerKey);
   const fittedRef = useRef(null);
   const lastSelRef = useRef(null);
+  const itemsRef = useRef(items);
+  itemsRef.current = items;
   const dark = useIsDark();
 
   // Create the layer once the map is ready
@@ -304,6 +306,16 @@ const FleetMap = ({ google, items, selectedId, follow, onSelect, onHover, fitKey
     if (fresh) {
       lastSelRef.current = selectedId;
       if ((map.getZoom() || 0) < 14) map.setZoom(15);
+      // A fleet-wide fitBounds still finishing (first load, e.g. back from
+      // Playback) can undo that zoom; check again once the map settles.
+      const sel = selectedId;
+      google.maps.event.addListenerOnce(map, "idle", () => {
+        if (lastSelRef.current !== sel || (map.getZoom() || 0) >= 14) return;
+        const cur = itemsRef.current.find((i) => i.id === sel);
+        if (!cur) return;
+        map.setZoom(15);
+        map.setCenter({ lat: cur.lat, lng: cur.lng });
+      });
     }
     if (!fresh && !recentre && !follow) return;
     const proj = layerRef.current?.getProjection?.();
