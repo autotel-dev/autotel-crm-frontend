@@ -21,6 +21,7 @@ import {
 import { setInvoiceData, setIsInvoiceRenwed } from "../../../../ReaduxToolkit/Reducer/SalesSlice";
 import { getUserRole } from "../../../../Utilities/globals/globals";
 import { ROLES } from "../../../../constants/roles";
+import { formatKmh, knotsToKmh } from "../../../../utils/speed";
 import PlaybackModal from "../MonitoringLatest/components/SingleVehiceDetail/PlaybackModal/PlaybackModal";
 import CustomerDetailsModal from "../MonitoringLatest/components/DevicesSidebar/CustomerDetailsModal";
 import { EditDeviceModal } from "../MonitoringLatest/components/EditDeviceModal";
@@ -252,7 +253,7 @@ const LiveMap = () => {
 
   const pos = selected?.d?.latestPosition;
   const ign = pos?.attributes?.ignition;
-  const speed = Math.round(Number(pos?.speed) || 0);
+  const speed = Math.round(knotsToKmh(pos?.speed));
   const DetailComp = DETAIL_TABS.find((t) => t.key === details)?.C;
 
   return (
@@ -348,7 +349,7 @@ const LiveMap = () => {
                             {STATUS_INFO[s].label} · {timeAgo(d?.latestPosition?.deviceTime)}
                           </span>
                         </span>
-                        <span className="lm-row__speed">{isOnline(s) ? `${Math.round(Number(d?.latestPosition?.speed) || 0)}` : "—"}</span>
+                        <span className="lm-row__speed">{isOnline(s) ? formatKmh(d?.latestPosition?.speed) : "—"}</span>
                       </button>
                       <button
                         type="button"
@@ -476,7 +477,7 @@ const LiveMap = () => {
             {[hovered.d?.vehicle?.customer?.fullName, [hovered.d?.vehicle?.make?.name, hovered.d?.vehicle?.model?.name].filter(Boolean).join(" ")].filter(Boolean).join(" · ") || "—"}
           </div>
           <div className="lm-hover__facts">
-            <span><b>{isOnline(hovered.s) ? Math.round(Number(hovered.d?.latestPosition?.speed) || 0) : "—"}</b> km/h</span>
+            <span><b>{isOnline(hovered.s) ? formatKmh(hovered.d?.latestPosition?.speed) : "—"}</b> km/h</span>
             <span>Ignition {hovered.d?.latestPosition?.attributes?.ignition ? "on" : "off"}</span>
             <span style={{ color: STATUS_INFO[hovered.s].color, fontWeight: 700 }}>{STATUS_INFO[hovered.s].label}</span>
           </div>

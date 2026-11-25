@@ -63,8 +63,8 @@ const Playback = lazy(() => import("../Pages/Company/Modules/PlaybackV2/Playback
 const AlertManagement = lazy(() => import("../Pages/Company/AlertManagement/AlertManagement"));
 const TripReports = lazy(() => import("../Pages/Company/Modules/Monitoring/components/Reports/TripReports"));
 const MonitoringLatest = lazy(() => import("../Pages/Company/Modules/MonitoringLatest/MonetoringLatest"));
-// Redesign Phase 3 Live Monitoring (Pages/Company/Modules/LiveMap) is parked until the
-// owner and team choose a layout; the routes below still use MonitoringLatest.
+// Redesign Phase 3: new Live Monitoring page (the old one stays at /company/modules/monitoring-classic)
+const LiveMap = lazy(() => import("../Pages/Company/Modules/LiveMap/LiveMap"));
 const LiveVehicleMonitoring = lazy(() => import("../Pages/Company/Modules/MonitoringLatest/components/LiveVehicleMonitoring/LiveVehicleMonitoring"));
 const TripManagementLayout = lazy(() => import("../Pages/Company/Modules/TripManagement/TripManagementLayout"));
 const CustomersSetup = lazy(() => import("../Pages/Company/Customers/CustomersSetup"));
@@ -477,9 +477,17 @@ const routes = [
 
   {
     path: `${process.env.PUBLIC_URL}/company/modules/monitoring`,
-    Component: <MonitoringLatest />,
+    Component: <LiveMap />,
     isProtected: true,
     allowedUserRoles: [ROLES.COMPANY],
+    permissionValue: "Monitoring",
+  },
+  {
+    // The previous Live Monitoring page, kept for comparison / fallback.
+    path: `${process.env.PUBLIC_URL}/company/modules/monitoring-classic`,
+    Component: <MonitoringLatest />,
+    isProtected: true,
+    allowedUserRoles: [ROLES.COMPANY, ROLES.OPERATOR],
     permissionValue: "Monitoring",
   },
   {
@@ -606,7 +614,7 @@ const routes = [
     path: `${process.env.PUBLIC_URL}/operator/modules/monitoring`,
     // Same page as the company (the old Monitoring page showed sample alerts).
     // The backend limits operators to their assigned vehicles.
-    Component: <MonitoringLatest />,
+    Component: <LiveMap />,
     isProtected: true,
     allowedUserRoles: [ROLES.OPERATOR],
     permissionValue: "Monitoring",
