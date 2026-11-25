@@ -50,6 +50,9 @@ body.at-dark .pb-root { --b-move: #a3e635; --b-fast: #fcd34d; --b-over: #f87171;
 
 /* Journey feed (design B): left column */
 .pb-title { margin: 0; font: 700 20px var(--at-font-display); }
+.pb-back { align-self: flex-start; display: inline-flex; align-items: center; gap: 4px; margin: -4px 0 -2px -4px; padding: 4px 8px 4px 4px; border-radius: 8px;
+  color: var(--at-primary); font: 600 13px var(--at-font); text-decoration: none;
+  &:hover { background: var(--at-primary-soft); color: var(--at-primary); } &:focus-visible { outline: 2px solid var(--at-primary); outline-offset: 2px; } }
 .pb-day { display: inline-flex; align-items: center; gap: 4px; flex-shrink: 0; }
 .pb-day__label {
   position: relative; display: inline-flex; align-items: center; height: 38px; padding: 0 10px; border-radius: 12px;

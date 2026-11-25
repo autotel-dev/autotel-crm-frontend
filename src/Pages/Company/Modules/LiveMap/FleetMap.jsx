@@ -268,6 +268,16 @@ const FleetMap = ({ google, items, selectedId, follow, onSelect, onHover, fitKey
   useEffect(() => {
     if (!map || !google || items.length === 0) return;
     if (fittedRef.current === fitKey) return;
+    // First load with a vehicle already selected (e.g. back from Playback):
+    // start on that vehicle instead of fitting the whole fleet.
+    if (fittedRef.current === null && selectedId) {
+      const it = items.find((i) => i.id === selectedId);
+      if (!it) return;
+      fittedRef.current = fitKey;
+      map.setZoom(15);
+      map.setCenter({ lat: it.lat, lng: it.lng });
+      return;
+    }
     fittedRef.current = fitKey;
     const b = new google.maps.LatLngBounds();
     items.forEach((i) => b.extend({ lat: i.lat, lng: i.lng }));
@@ -275,13 +285,14 @@ const FleetMap = ({ google, items, selectedId, follow, onSelect, onHover, fitKey
       map.panTo({ lat: items[0].lat, lng: items[0].lng });
       map.setZoom(15);
     } else map.fitBounds(b, 80);
-  }, [map, google, items, fitKey]);
+  }, [map, google, items, fitKey, selectedId]);
 
   // Selecting a vehicle centres it in the clear part of the map (between the
   // panels); "Follow" keeps it there as it moves, re-centring once it leaves
   // the middle half of that area.
   useEffect(() => {
-    if (!map || !selectedId) {
+    if (!map) return; // keep "fresh" until the map exists
+    if (!selectedId) {
       lastSelRef.current = selectedId;
       return;
     }

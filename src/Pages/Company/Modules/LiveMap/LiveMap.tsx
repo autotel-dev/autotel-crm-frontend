@@ -7,7 +7,7 @@
 // send command, add device) are reused from the old page (MonitoringLatest).
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import FleetMap from "./FleetMap";
 import { BottomStrip, CameraBar, CamMode, FocusCard, kmFromTrack, readLimit, useTodayTrack } from "./FocusView";
 import { isSignalGap, todayStr } from "../PlaybackV2/playbackUtils";
@@ -95,15 +95,6 @@ const LiveMap = () => {
     return () => clearInterval(t);
   }, []);
 
-  // Side panels start below the top bar, whatever its height
-  const topRef = useRef<HTMLDivElement>(null);
-  const [topH, setTopH] = useState(60);
-  useEffect(() => {
-    if (!topRef.current || typeof ResizeObserver === "undefined") return;
-    const ro = new ResizeObserver(() => setTopH(topRef.current?.offsetHeight || 60));
-    ro.observe(topRef.current);
-    return () => ro.disconnect();
-  }, []);
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
@@ -193,6 +184,18 @@ const LiveMap = () => {
       .slice(0, 15);
     return [{ d: selected.d, s: selected.s }, ...rest];
   }, [rows, selected]);
+
+  // Coming back from Playback (?focus=<device id>): open that vehicle in focus
+  const [params, setParams] = useSearchParams();
+  const focusParam = params.get("focus");
+  useEffect(() => {
+    if (!focusParam || !devices.length) return;
+    const d = devices.find((x: any) => String(x?.id) === focusParam || x?._id === focusParam);
+    if (d) select(d._id);
+    const next = new URLSearchParams(params);
+    next.delete("focus");
+    setParams(next, { replace: true });
+  }, [focusParam, devices.length]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Esc leaves the focus view
   useEffect(() => {
@@ -309,7 +312,7 @@ const LiveMap = () => {
 
 
   return (
-    <div className="lm-root" style={{ ["--lm-top" as any]: `${topH + 24}px` }}>
+    <div className="lm-root">
       <FleetMap
         items={items}
         selectedId={selectedId}
@@ -323,50 +326,58 @@ const LiveMap = () => {
         onHover={(id: string | null, rect?: DOMRect) => setHover(id && rect ? { id, rect } : null)}
       />
 
-      {/* Top bar: search + status chips (overview only) */}
-      <div className="lm-panel lm-top" ref={topRef} hidden={!!selected}>
-        <label htmlFor="lm-search" className="visually-hidden">Search vehicles</label>
-        <input
-          id="lm-search"
-          className="lm-search"
-          placeholder="Search plate, IMEI, customer, make…"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-        />
-        <div className="lm-chips" role="group" aria-label="Filter by status">
-          <button type="button" className={`lm-chip${!status ? " is-on" : ""}`} onClick={() => setStatus(null)}>
-            All <b>{devices.length}</b>
-          </button>
-          {STATUS_ORDER.map((s) =>
-            counts[s] ? (
-              <button key={s} type="button" className={`lm-chip${status === s ? " is-on" : ""}`} onClick={() => setStatus(status === s ? null : s)}>
-                <i style={{ background: STATUS_INFO[s].color }} />
-                {STATUS_INFO[s].label} <b>{counts[s]}</b>
-              </button>
-            ) : null
-          )}
-        </div>
-        <div className="lm-top__end">
-          <button type="button" className={`lm-toggle${alertsEnabled ? " is-on" : ""}`} aria-pressed={alertsEnabled} onClick={() => dispatch(setAlertsEnabled(!alertsEnabled))}>
-            Alert pop-ups {alertsEnabled ? "on" : "off"}
-          </button>
-          {isCompany && (
-            <button type="button" className="at-btn at-btn--primary" onClick={() => openModal("add", null)}>
-              + Add device
-            </button>
-          )}
-        </div>
-      </div>
-
       {/* Vehicle list */}
       <section className={`lm-panel lm-list${listOpen ? "" : " is-closed"}`} aria-label="Vehicles" hidden={!!selected}>
         <div className="lm-list__head">
           <strong>Vehicles</strong>
           <span className="lm-muted">{visible.length === devices.length ? devices.length : `${visible.length} of ${devices.length}`}</span>
+          <button
+            type="button"
+            className={`lm-icon-btn lm-bell${alertsEnabled ? " is-on" : ""}`}
+            aria-pressed={alertsEnabled}
+            aria-label={alertsEnabled ? "Alert pop-ups on (click to mute)" : "Alert pop-ups off (click to turn on)"}
+            title={alertsEnabled ? "Alert pop-ups on" : "Alert pop-ups off"}
+            onClick={() => dispatch(setAlertsEnabled(!alertsEnabled))}
+          >
+            <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.94 1.94 0 0 0 3.4 0" />
+              {!alertsEnabled && <path d="M2 2l20 20" />}
+            </svg>
+          </button>
+          {isCompany && (
+            <button type="button" className="lm-icon-btn lm-add" aria-label="Add device" title="Add device" onClick={() => openModal("add", null)}>
+              <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>
+            </button>
+          )}
           <button type="button" className="lm-icon-btn" aria-label={listOpen ? "Hide list" : "Show list"} onClick={() => setListOpen(!listOpen)}>
             {listOpen ? "‹" : "›"}
           </button>
         </div>
+        {listOpen && (
+          <div className="lm-filters">
+            <label htmlFor="lm-search" className="visually-hidden">Search vehicles</label>
+            <div className="lm-search-wrap">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><path d="M11 4a7 7 0 1 0 0.01 0M20 20l-4-4" /></svg>
+              <input id="lm-search" className="lm-search" placeholder="Search plate, IMEI, customer…" value={query} onChange={(e) => setQuery(e.target.value)} />
+              {query && <button type="button" className="lm-search-clear" aria-label="Clear search" onClick={() => setQuery("")}>✕</button>}
+            </div>
+            <div className="lm-mix" role="img" aria-label={STATUS_ORDER.filter((s) => counts[s]).map((s) => `${STATUS_INFO[s].label} ${counts[s]}`).join(", ")}>
+              {STATUS_ORDER.map((s) => (counts[s] ? <span key={s} style={{ flexGrow: counts[s], background: STATUS_INFO[s].color }} /> : null))}
+            </div>
+            <div className="lm-stat-grid" role="group" aria-label="Filter by status">
+              <button type="button" className={`lm-stat${!status ? " is-on" : ""}`} aria-pressed={!status} onClick={() => setStatus(null)}>
+                <span>All</span><b>{devices.length}</b>
+              </button>
+              {STATUS_ORDER.map((s) =>
+                counts[s] ? (
+                  <button key={s} type="button" className={`lm-stat${status === s ? " is-on" : ""}`} aria-pressed={status === s} onClick={() => setStatus(status === s ? null : s)}>
+                    <span><i style={{ background: STATUS_INFO[s].color }} />{STATUS_INFO[s].label}</span><b>{counts[s]}</b>
+                  </button>
+                ) : null
+              )}
+            </div>
+          </div>
+        )}
         {listOpen && (
           <div className="lm-list__body">
             {loading && devices.length === 0 && <div className="lm-empty">Loading vehicles…</div>}

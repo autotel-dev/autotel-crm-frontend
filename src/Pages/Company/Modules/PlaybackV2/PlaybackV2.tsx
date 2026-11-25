@@ -3,7 +3,9 @@
 // device list: GET /company/get-parser-devices.
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSelector } from "react-redux";
-import { useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
+import { getUserRole } from "../../../../Utilities/globals/globals";
+import { ROLES } from "../../../../constants/roles";
 import { getAll } from "../../../../Utilities/api";
 import { GET_PARSER_DEVICES, GET_VEHICLE_HISTORY } from "../../../../Utilities/api/apiEndpoints";
 import PlaybackMap from "./PlaybackMap";
@@ -234,6 +236,10 @@ const PlaybackV2 = () => {
       {/* Journey feed (design B) */}
       <aside className="pb-panel pb-feed" aria-label="Journey">
         <div className="pb-feed__head">
+          <Link className="pb-back" to={`${process.env.PUBLIC_URL || ""}${getUserRole() === ROLES.OPERATOR ? "/operator" : "/company"}/modules/monitoring${deviceId ? `?focus=${encodeURIComponent(deviceId)}` : ""}`}>
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6" /></svg>
+            Back to live monitoring
+          </Link>
           <div className="pb-feed__row">
             <h1 className="pb-title">Playback</h1>
             <div className="pb-feed__tools">
