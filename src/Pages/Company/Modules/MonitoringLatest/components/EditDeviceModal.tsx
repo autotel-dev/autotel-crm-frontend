@@ -512,34 +512,34 @@ export const EditDeviceModal: React.FC<EditDeviceModalProps> = ({ isOpen, toggle
       .map((item: any) => ({ value: `${item?._id}`, label: `${item?.name}` }));
 
   // Shared antd Select styling to match VehicleDetails
-  const antSelectStyle = { width: "100%", height: 38 } as const;
+  const antSelectStyle = { width: "100%" } as const;
   const antFilterOption = (input: any, option: any) =>
     (option?.label ?? "").toLowerCase().includes(input.toLowerCase());
 
   return (
-    <Modal isOpen={isOpen} toggle={handleClose} size="xl" centered backdrop="static" keyboard={false}>
-      <div className="modal-header" style={{ borderBottom: "1px solid #dee2e6" }}>
-        <h4 className="modal-title" style={{ color: "#333", fontWeight: "bold" }}>Edit Device</h4>
+    <Modal isOpen={isOpen} toggle={handleClose} size="xl" centered className="at-modal at-devform" backdrop="static" keyboard={false}>
+      <div className="modal-header">
+        <h4 className="modal-title">Edit Device</h4>
         <Button
           color="transparent"
           className="btn-close"
+          aria-label="Close"
           onClick={handleClose}
-          style={{ fontSize: "1.2rem", fontWeight: "bold", opacity: 0.5, border: "none" }}
         ></Button>
       </div>
-      <ModalBody style={{ maxHeight: "80vh", overflowY: "auto", padding: "24px" }} className="theme-scrollbar">
+      <ModalBody style={{ maxHeight: "80vh", overflowY: "auto" }} className="theme-scrollbar">
         <Form onSubmit={handleSubmit}>
           {/* Customer Details Block */}
-          <Card className="mb-4" style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}>
-            <CardHeader style={{ backgroundColor: "rgba(109, 191, 184, 0.1)", borderBottom: "1px solid rgba(109, 191, 184, 0.2)" }}>
-              <h5 className="mb-0" style={{ color: "#6dbfb8", fontWeight: "600" }}>Customer Information</h5>
+          <Card className="at-df-card">
+            <CardHeader>
+              <h5 className="mb-0">Customer Information</h5>
             </CardHeader>
             <CardBody>
               <Row>
                 <Col md={6} className="mb-3">
                   <FormGroup>
-                    <Label style={{ fontWeight: "600", fontSize: "13px", color: "#555" }}>
-                      Select Customer <span style={{ color: "red" }}>*</span>
+                    <Label>
+                      Select Customer <span className="at-df-req">*</span>
                     </Label>
                     <Select
                       showSearch
@@ -560,8 +560,8 @@ export const EditDeviceModal: React.FC<EditDeviceModalProps> = ({ isOpen, toggle
                 </Col>
                 <Col md={6} className="mb-3">
                   <FormGroup>
-                    <Label htmlFor="numberOfVehicles" style={{ fontWeight: "600", fontSize: "13px", color: "#555" }}>
-                      Number of Vehicles <span style={{ color: "red" }}>*</span>
+                    <Label htmlFor="numberOfVehicles">
+                      Number of Vehicles <span className="at-df-req">*</span>
                     </Label>
                     <Input
                       type="number"
@@ -578,7 +578,7 @@ export const EditDeviceModal: React.FC<EditDeviceModalProps> = ({ isOpen, toggle
                 </Col>
                 <Col md={6} className="mb-3">
                   <FormGroup>
-                    <Label style={{ fontWeight: "600", fontSize: "13px", color: "#555" }}>
+                    <Label>
                       Billing Action
                     </Label>
                     <Select
@@ -603,7 +603,7 @@ export const EditDeviceModal: React.FC<EditDeviceModalProps> = ({ isOpen, toggle
                         </div>
                       )}
                     />
-                    <small style={{ color: "#999", fontSize: "11px" }}>
+                    <small className="at-df-help">
                       Required only when the package or discounted charges are changed.
                     </small>
                   </FormGroup>
@@ -614,22 +614,22 @@ export const EditDeviceModal: React.FC<EditDeviceModalProps> = ({ isOpen, toggle
 
           {/* Dynamic Vehicle Details Blocks */}
           {vehicles.map((vehicle, index) => (
-            <Card key={index} id={`vehicle-card-${index}`} className="mb-4" style={{ boxShadow: "0 2px 10px rgba(0,0,0,0.06)", borderLeft: "4px solid #6dbfb8" }}>
-              <CardHeader className="d-flex justify-content-between align-items-center" style={{ backgroundColor: "#f8f9fa" }}>
-                <h5 className="mb-0" style={{ color: "#333", fontWeight: "600" }}>
+            <Card key={index} id={`vehicle-card-${index}`} className="at-df-card at-df-card--vehicle">
+              <CardHeader className="d-flex justify-content-between align-items-center">
+                <h5 className="mb-0">
                   Vehicle #{index + 1} Details
                 </h5>
               </CardHeader>
               <CardBody>
                 {/* 1. Vehicle Details Fields */}
-                <h6 style={{ color: "#666", textTransform: "uppercase", fontSize: "11px", letterSpacing: "1px", borderBottom: "1px solid #eee", paddingBottom: "5px", marginBottom: "15px" }}>
+                <h6 className="at-df-section at-df-section--first">
                   Vehicle Attributes
                 </h6>
                 <Row>
                   <Col md={3} className="mb-3">
                     <FormGroup>
-                      <Label style={{ fontWeight: "600", fontSize: "12px", color: "#666" }}>
-                        Enter Registration Number <span style={{ color: "red" }}>*</span>
+                      <Label>
+                        Enter Registration Number <span className="at-df-req">*</span>
                       </Label>
                       <Input
                         type="text"
@@ -643,7 +643,7 @@ export const EditDeviceModal: React.FC<EditDeviceModalProps> = ({ isOpen, toggle
                   </Col>
                   <Col md={3} className="mb-3">
                     <FormGroup>
-                      <Label style={{ fontWeight: "600", fontSize: "12px", color: "#666" }}>
+                      <Label>
                         Enter VRN
                       </Label>
                       <Input
@@ -657,7 +657,7 @@ export const EditDeviceModal: React.FC<EditDeviceModalProps> = ({ isOpen, toggle
                   </Col>
                   <Col md={3} className="mb-3">
                     <FormGroup>
-                      <Label style={{ fontWeight: "600", fontSize: "12px", color: "#666" }}>
+                      <Label>
                         Select Vehicle Make
                       </Label>
                       <Select
@@ -679,7 +679,7 @@ export const EditDeviceModal: React.FC<EditDeviceModalProps> = ({ isOpen, toggle
                   </Col>
                   <Col md={3} className="mb-3">
                     <FormGroup>
-                      <Label style={{ fontWeight: "600", fontSize: "12px", color: "#666" }}>
+                      <Label>
                         Select Vehicle Model
                       </Label>
                       <Select
@@ -700,7 +700,7 @@ export const EditDeviceModal: React.FC<EditDeviceModalProps> = ({ isOpen, toggle
                 <Row>
                   <Col md={3} className="mb-3">
                     <FormGroup>
-                      <Label style={{ fontWeight: "600", fontSize: "12px", color: "#666" }}>
+                      <Label>
                         Select Model Year
                       </Label>
                       <Select
@@ -718,7 +718,7 @@ export const EditDeviceModal: React.FC<EditDeviceModalProps> = ({ isOpen, toggle
                   </Col>
                   <Col md={3} className="mb-3">
                     <FormGroup>
-                      <Label style={{ fontWeight: "600", fontSize: "12px", color: "#666" }}>
+                      <Label>
                         Select Fuel Type
                       </Label>
                       <Select
@@ -736,7 +736,7 @@ export const EditDeviceModal: React.FC<EditDeviceModalProps> = ({ isOpen, toggle
                   </Col>
                   <Col md={3} className="mb-3">
                     <FormGroup>
-                      <Label style={{ fontWeight: "600", fontSize: "12px", color: "#666" }}>
+                      <Label>
                         Select Transmissions
                       </Label>
                       <Select
@@ -754,7 +754,7 @@ export const EditDeviceModal: React.FC<EditDeviceModalProps> = ({ isOpen, toggle
                   </Col>
                   <Col md={3} className="mb-3">
                     <FormGroup>
-                      <Label style={{ fontWeight: "600", fontSize: "12px", color: "#666" }}>
+                      <Label>
                         Select Vehicle Color
                       </Label>
                       <Select
@@ -775,7 +775,7 @@ export const EditDeviceModal: React.FC<EditDeviceModalProps> = ({ isOpen, toggle
                 <Row>
                   <Col md={3} className="mb-3">
                     <FormGroup>
-                      <Label style={{ fontWeight: "600", fontSize: "12px", color: "#666" }}>
+                      <Label>
                         Enter Engine Number
                       </Label>
                       <Input
@@ -789,7 +789,7 @@ export const EditDeviceModal: React.FC<EditDeviceModalProps> = ({ isOpen, toggle
                   </Col>
                   <Col md={3} className="mb-3">
                     <FormGroup>
-                      <Label style={{ fontWeight: "600", fontSize: "12px", color: "#666" }}>
+                      <Label>
                         Enter Chasis Number
                       </Label>
                       <Input
@@ -806,8 +806,8 @@ export const EditDeviceModal: React.FC<EditDeviceModalProps> = ({ isOpen, toggle
                 <Row>
                   <Col md={3} className="mb-3">
                     <FormGroup>
-                      <Label style={{ fontWeight: "600", fontSize: "12px", color: "#666" }}>
-                        Selected Package <span style={{ color: "red" }}>*</span>
+                      <Label>
+                        Selected Package <span className="at-df-req">*</span>
                       </Label>
                       <Select
                         showSearch
@@ -831,8 +831,8 @@ export const EditDeviceModal: React.FC<EditDeviceModalProps> = ({ isOpen, toggle
                   </Col>
                   <Col md={3} className="mb-3">
                     <FormGroup>
-                      <Label style={{ fontWeight: "600", fontSize: "12px", color: "#666" }}>
-                        Package Price <span style={{ color: "red" }}>*</span>
+                      <Label>
+                        Package Price <span className="at-df-req">*</span>
                       </Label>
                       <Input
                         type="number"
@@ -845,8 +845,8 @@ export const EditDeviceModal: React.FC<EditDeviceModalProps> = ({ isOpen, toggle
                   </Col>
                   <Col md={3} className="mb-3">
                     <FormGroup>
-                      <Label style={{ fontWeight: "600", fontSize: "12px", color: "#666" }}>
-                        Discounted Service Charges <span style={{ color: "red" }}>*</span>
+                      <Label>
+                        Discounted Service Charges <span className="at-df-req">*</span>
                       </Label>
                       <Input
                         type="number"
@@ -860,7 +860,7 @@ export const EditDeviceModal: React.FC<EditDeviceModalProps> = ({ isOpen, toggle
                 </Row>
 
                 {/* TEMP: Vehicle Icons Customization hidden
-                <h6 className="mt-4" style={{ color: "#666", textTransform: "uppercase", fontSize: "11px", letterSpacing: "1px", borderBottom: "1px solid #eee", paddingBottom: "5px", marginBottom: "15px" }}>
+                <h6 className="at-df-section">
                   Vehicle Icons Customization
                 </h6>
                 <Row className="g-3 mb-3">
@@ -936,13 +936,13 @@ export const EditDeviceModal: React.FC<EditDeviceModalProps> = ({ isOpen, toggle
                 */}
 
                 {/* 3. Inventory Details Block */}
-                <h6 className="mt-4" style={{ color: "#666", textTransform: "uppercase", fontSize: "11px", letterSpacing: "1px", borderBottom: "1px solid #eee", paddingBottom: "5px", marginBottom: "15px" }}>
+                <h6 className="at-df-section">
                   Inventory Configuration
                 </h6>
                 <Row>
                   <Col md={3} className="mb-3">
                     <FormGroup>
-                      <Label style={{ fontWeight: "600", fontSize: "12px", color: "#666" }}>
+                      <Label>
                         Select Installer
                       </Label>
                       <Select
@@ -960,8 +960,8 @@ export const EditDeviceModal: React.FC<EditDeviceModalProps> = ({ isOpen, toggle
                   </Col>
                   <Col md={3} className="mb-3">
                     <FormGroup>
-                      <Label style={{ fontWeight: "600", fontSize: "12px", color: "#666" }}>
-                        Add IMEI <span style={{ color: "red" }}>*</span>
+                      <Label>
+                        Add IMEI <span className="at-df-req">*</span>
                       </Label>
                       <Input
                         type="text"
@@ -974,8 +974,8 @@ export const EditDeviceModal: React.FC<EditDeviceModalProps> = ({ isOpen, toggle
                   </Col>
                   <Col md={3} className="mb-3">
                     <FormGroup>
-                      <Label style={{ fontWeight: "600", fontSize: "12px", color: "#666" }}>
-                        Add SIM <span style={{ color: "red" }}>*</span>
+                      <Label>
+                        Add SIM <span className="at-df-req">*</span>
                       </Label>
                       <Input
                         type="text"
@@ -988,7 +988,7 @@ export const EditDeviceModal: React.FC<EditDeviceModalProps> = ({ isOpen, toggle
                   </Col>
                   <Col md={3} className="mb-3">
                     <FormGroup>
-                      <Label style={{ fontWeight: "600", fontSize: "12px", color: "#666" }}>
+                      <Label>
                         Add Accessory
                       </Label>
                       <Input
@@ -1009,7 +1009,7 @@ export const EditDeviceModal: React.FC<EditDeviceModalProps> = ({ isOpen, toggle
                     {`${vehicle.imei ?? ""}`.trim() !== `${original.imei ?? ""}`.trim() && (
                       <Col md={6} className="mb-3">
                         <FormGroup>
-                          <Label style={{ fontWeight: "600", fontSize: "12px", color: "#666" }}>
+                          <Label>
                             Device (IMEI) Swap Reason
                           </Label>
                           <Input
@@ -1025,7 +1025,7 @@ export const EditDeviceModal: React.FC<EditDeviceModalProps> = ({ isOpen, toggle
                     {`${vehicle.sim ?? ""}`.trim() !== `${original.sim ?? ""}`.trim() && (
                       <Col md={6} className="mb-3">
                         <FormGroup>
-                          <Label style={{ fontWeight: "600", fontSize: "12px", color: "#666" }}>
+                          <Label>
                             SIM Swap Reason
                           </Label>
                           <Input
@@ -1042,7 +1042,7 @@ export const EditDeviceModal: React.FC<EditDeviceModalProps> = ({ isOpen, toggle
                 )}
 
                 {/* TEMP: Installation Verification hidden
-                <h6 className="mt-4" style={{ color: "#666", textTransform: "uppercase", fontSize: "11px", letterSpacing: "1px", borderBottom: "1px solid #eee", paddingBottom: "5px", marginBottom: "15px" }}>
+                <h6 className="at-df-section">
                   Installation Verification
                 </h6>
                 <div className="mb-3" style={{ fontWeight: "bold", fontSize: "14px", color: "#333" }}>
@@ -1131,7 +1131,7 @@ export const EditDeviceModal: React.FC<EditDeviceModalProps> = ({ isOpen, toggle
                 <Row>
                   <Col md={12} className="mb-3">
                     <FormGroup>
-                      <Label style={{ fontWeight: "600", fontSize: "12px", color: "#666" }}>Enter Remarks</Label>
+                      <Label>Enter Remarks</Label>
                       <Input
                         type="textarea"
                         placeholder="Enter installation notes and remarks"
@@ -1149,12 +1149,6 @@ export const EditDeviceModal: React.FC<EditDeviceModalProps> = ({ isOpen, toggle
                     color="primary"
                     disabled={installingIndex === index}
                     onClick={() => handleVehicleInstall(index)}
-                    style={{
-                      backgroundColor: "#6dbfb8",
-                      borderColor: "#6dbfb8",
-                      color: "white",
-                      fontWeight: "600",
-                    }}
                   >
                     {installingIndex === index ? "Updating..." : "Update Device"}
                   </Button>
@@ -1169,7 +1163,6 @@ export const EditDeviceModal: React.FC<EditDeviceModalProps> = ({ isOpen, toggle
               color="secondary"
               className="me-2"
               onClick={handleClose}
-              style={{ borderRadius: "6px" }}
             >
               Close
             </Button>
