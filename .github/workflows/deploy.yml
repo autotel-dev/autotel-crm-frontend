@@ -1,16 +1,16 @@
 name: CI/CD Frontend Deploy
 
-# Deploys to VM1 on every push to frontend/bilal.
+# Deploys to VM1 on every push to main.
 # The SSH key in DEPLOY_KEY is locked on the server (authorized_keys
 # "restrict,command=...") so it can only start /root/deploy.sh, which pulls
-# frontend/bilal from autotel-dev, builds, and publishes to /var/www/frontend-bilal.
+# main from autotel-dev, builds, and publishes to /var/www/frontend-bilal.
 # Needed repo secrets: DEPLOY_HOST, DEPLOY_USER, DEPLOY_KEY.
 # Deploy log on the server: /var/log/frontend-deploy.log
 
 on:
   push:
     branches:
-      - frontend/bilal
+      - main
   workflow_dispatch:
 
 jobs:
