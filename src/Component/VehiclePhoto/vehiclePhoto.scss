@@ -1,0 +1,43 @@
+// Vehicle catalog photo (see VehiclePhoto.tsx). Theme tokens from theme/autotel.scss.
+.at-vphoto {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+
+  &__frame {
+    position: relative;
+    overflow: hidden;
+    border-radius: 14px;
+    background: var(--at-soft, #eef0f7);
+    border: 1px solid var(--at-line, #e5e7eb);
+    img { display: block; width: 100%; height: 100%; object-fit: cover; }
+  }
+  &--card &__frame { aspect-ratio: 16 / 9; width: 100%; }
+  &--thumb &__frame { width: 56px; height: 40px; border-radius: 10px; }
+
+  &__empty {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    color: var(--at-muted, #4b5563);
+    font-size: 12px;
+  }
+  &--thumb &__empty svg { width: 32px; height: 16px; }
+
+  &__credit {
+    font-size: 11px;
+    line-height: 1.35;
+    color: var(--at-muted, #4b5563);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    a { color: inherit; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+  }
+}

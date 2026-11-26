@@ -25,12 +25,15 @@ import { setNoDataFound } from "../../../ReaduxToolkit/Reducer/NoDataFoundSlice"
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import H7 from "../../../CommonElements/Headings/H7Element";
-import { getAll } from "../../../Utilities/api";
+import { deleteSingle, getAll, updateWithMultipart } from "../../../Utilities/api";
+import VehiclePhoto from "../../../Component/VehiclePhoto/VehiclePhoto";
 import deleteAlert from "../../../Utilities/alerts/DeleteAlert";
 import Skeleton from "../../Utilities/Skeleton/Skeleton";
 import {
   GET_ALL_VEHICLES_MAKE,
   GET_ALL_VEHICLES_MODEL,
+  UPLOAD_VEHICLE_MODEL_IMAGE,
+  REMOVE_VEHICLE_MODEL_IMAGE,
 } from "../../../Utilities/api/apiEndpoints";
 import { ERROR_MESSAGE } from "../../../Utilities/constants/constants";
 import UpdateVehicleModel from "./UpdateVehicleModel";
@@ -122,6 +125,39 @@ const VehiclesModelList = () => {
   }, []);
   const [isHovered, setIsHovered] = useState(false);
   const [idd, setIdd] = useState("");
+
+  // Vehicle catalog photo: the weekly sync fills photos from Wikimedia
+  // Commons; an uploaded photo replaces it for that model.
+  const [photoBusy, setPhotoBusy] = useState<string | null>(null);
+  const replaceRow = (updated: any) => {
+    if (!updated?._id) return;
+    const list = vehicleModel.map((m: any) =>
+      m._id === updated._id ? { ...m, ...updated, vehicleMake: m.vehicleMake } : m
+    );
+    dispatch(setVehicleModel(list));
+    dispatch(setFilterVehiclesModel(list));
+  };
+  const uploadPhoto = async (row: any, file?: File | null) => {
+    if (!file) return;
+    if (file.size > 3 * 1024 * 1024) {
+      Swal.fire({ text: "The image is larger than 3 MB.", icon: "error", timer: 2500, showConfirmButton: false });
+      return;
+    }
+    const form = new FormData();
+    form.append("image", file);
+    setPhotoBusy(row._id);
+    const res: any = await updateWithMultipart(form, { url: `${UPLOAD_VEHICLE_MODEL_IMAGE}/${row._id}` });
+    setPhotoBusy(null);
+    if (res?.success) replaceRow(res.data);
+    else Swal.fire({ text: res?.message || "Upload failed.", icon: "error", timer: 2500, showConfirmButton: false });
+  };
+  const removePhoto = async (row: any) => {
+    setPhotoBusy(row._id);
+    const res: any = await deleteSingle({ url: `${REMOVE_VEHICLE_MODEL_IMAGE}/${row._id}` });
+    setPhotoBusy(null);
+    if (res?.success) replaceRow(res.data);
+    else Swal.fire({ text: res?.message || "Could not remove the photo.", icon: "error", timer: 2500, showConfirmButton: false });
+  };
   const renderTableRows = () => {
     return vehicleModel.map((row: any) => (
       <tr
@@ -142,6 +178,13 @@ const VehiclesModelList = () => {
         }}
       >
         <td>{row._id}</td>
+        <td>
+          <VehiclePhoto
+            model={row}
+            variant="thumb"
+            label={[row?.vehicleMake?.name, row?.name].filter(Boolean).join(" ")}
+          />
+        </td>
         <td>{row?.name}</td>
         <td>{row?.vehicleMake?.name}</td>
         {/* <td>
@@ -194,6 +237,33 @@ const VehiclesModelList = () => {
             >
               Delete
             </button>
+            <label
+              className="global-table-edit-btn"
+              style={{ cursor: photoBusy === row._id ? "wait" : "pointer", marginBottom: 0 }}
+              title="Upload your own photo for this model (JPG, PNG or WebP, up to 3 MB)"
+            >
+              {photoBusy === row._id ? "Saving…" : row?.customImageUrl ? "Change photo" : "Upload photo"}
+              <input
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                style={{ display: "none" }}
+                disabled={photoBusy === row._id}
+                onChange={(e) => {
+                  uploadPhoto(row, e.target.files?.[0]);
+                  e.target.value = "";
+                }}
+              />
+            </label>
+            {row?.customImageUrl && (
+              <button
+                className="global-table-delete-btn"
+                disabled={photoBusy === row._id}
+                title="Remove your photo and go back to the synced one"
+                onClick={() => removePhoto(row)}
+              >
+                Remove photo
+              </button>
+            )}
             <button
               className="global-table-edit-btn"
               // style={{
@@ -285,6 +355,7 @@ const VehiclesModelList = () => {
                         <thead>
                           <tr>
                             <th>ID</th>
+                            <th>Photo</th>
                             <th>Name</th>
                             <th>Vehicle Make</th>
                             {/* <th>Status</th> */}

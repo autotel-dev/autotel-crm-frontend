@@ -13,6 +13,7 @@ import {
   CardBody,
   CardHeader,
 } from "reactstrap";
+import VehiclePhoto, { vehiclePhotoUrl } from "../../../../../Component/VehiclePhoto/VehiclePhoto";
 import Swal from "sweetalert2";
 import { Select } from "antd";
 import { MdCloudUpload, MdCheckCircle, MdDelete, MdAdd } from "react-icons/md";
@@ -696,6 +697,21 @@ export const EditDeviceModal: React.FC<EditDeviceModalProps> = ({ isOpen, toggle
                     </FormGroup>
                   </Col>
                 </Row>
+                {/* Vehicle catalog photo for the chosen make/model */}
+                {vehicle.vehicleModel &&
+                  vehiclePhotoUrl(vehicleModelsList.find((m: any) => String(m?._id) === String(vehicle.vehicleModel))) && (
+                  <Row>
+                    <Col md={6} lg={4} className="mb-3">
+                      <VehiclePhoto
+                        model={vehicleModelsList.find((m: any) => String(m?._id) === String(vehicle.vehicleModel))}
+                        label={[
+                          vehicleMakesList.find((m: any) => String(m?._id) === String(vehicle.vehicleMake))?.name,
+                          vehicleModelsList.find((m: any) => String(m?._id) === String(vehicle.vehicleModel))?.name,
+                        ].filter(Boolean).join(" ")}
+                      />
+                    </Col>
+                  </Row>
+                )}
 
                 <Row>
                   <Col md={3} className="mb-3">

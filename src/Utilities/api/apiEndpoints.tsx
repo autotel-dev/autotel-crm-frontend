@@ -180,6 +180,9 @@ export const CREATE_VEHICLE_MODEL = `${API_BASE_URL}/setup/vehicle-model/create-
 export const GET_ALL_VEHICLES_MODEL = `${API_BASE_URL}/setup/vehicle-model/get-all-vehicle-models`;
 export const UPDATE_VEHICLE_MODEL = `${API_BASE_URL}/setup/vehicle-model/update-vehicle-model`;
 export const DELETE_VEHICLE_MODEL = `${API_BASE_URL}/setup/vehicle-model/delete-vehicle-model`;
+// Vehicle catalog photo (PUT multipart field "image" / DELETE), + "/<modelId>"
+export const UPLOAD_VEHICLE_MODEL_IMAGE = `${API_BASE_URL}/setup/vehicle-model/upload-vehicle-model-image`;
+export const REMOVE_VEHICLE_MODEL_IMAGE = `${API_BASE_URL}/setup/vehicle-model/remove-vehicle-model-image`;
 
 // SuperAdmin -> Network Provider..
 export const CREATE_NETWORK_PROVIDER = `${API_BASE_URL}/setup/network-provider/create-network-provider`;

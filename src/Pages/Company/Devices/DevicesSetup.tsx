@@ -15,6 +15,7 @@ import { AddDeviceModal } from "../Modules/MonitoringLatest/components/AddDevice
 import SendCommand from "../Modules/ControlRoom copy/Analytics/components/SendCommand";
 import { FleetStatus, STATUS_INFO, timeAgo } from "../Modules/LiveMap/fleetStatus";
 import { DeviceRow, engineCutOf, fmtDate, healthOf, protocolOf, toRow, warningOf } from "./deviceInfo";
+import VehiclePhoto, { vehiclePhotoUrl } from "../../../Component/VehiclePhoto/VehiclePhoto";
 import "./devices.scss";
 
 const U = process.env.PUBLIC_URL || "";
@@ -251,6 +252,12 @@ const DevicesSetup = () => {
           const cut = engineCutOf(d);
           return (
             <>
+              {vehiclePhotoUrl(d?.vehicle?.model) && (
+                <VehiclePhoto
+                  model={d.vehicle.model}
+                  label={[d?.vehicle?.make?.name, d?.vehicle?.model?.name].filter(Boolean).join(" ")}
+                />
+              )}
               <div>
                 <div className="dv-eyebrow">DEVICE</div>
                 <h2 className="dv-h2">{selected.plate}</h2>
