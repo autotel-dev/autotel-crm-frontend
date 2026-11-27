@@ -16,6 +16,7 @@ import SendCommand from "../Modules/ControlRoom copy/Analytics/components/SendCo
 import { FleetStatus, STATUS_INFO, timeAgo } from "../Modules/LiveMap/fleetStatus";
 import { DeviceRow, engineCutOf, fmtDate, healthOf, protocolOf, toRow, warningOf } from "./deviceInfo";
 import VehiclePhoto, { vehiclePhotoUrl } from "../../../Component/VehiclePhoto/VehiclePhoto";
+import { hasOwnPhoto } from "../../../Component/VehiclePhoto/vehiclePhotoData";
 import "./devices.scss";
 
 const U = process.env.PUBLIC_URL || "";
@@ -252,8 +253,9 @@ const DevicesSetup = () => {
           const cut = engineCutOf(d);
           return (
             <>
-              {vehiclePhotoUrl(d?.vehicle?.model) && (
+              {(hasOwnPhoto(d?.vehicle) || vehiclePhotoUrl(d?.vehicle?.model)) && (
                 <VehiclePhoto
+                  vehicle={d.vehicle}
                   model={d.vehicle.model}
                   label={[d?.vehicle?.make?.name, d?.vehicle?.model?.name].filter(Boolean).join(" ")}
                 />

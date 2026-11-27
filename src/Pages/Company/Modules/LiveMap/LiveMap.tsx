@@ -147,6 +147,7 @@ const LiveMap = () => {
           color: STATUS_INFO[r.s].hex,
           plate: plateOf(r.d),
           statusLabel: STATUS_INFO[r.s].label,
+          vehicle: r.d.vehicle || null, // for the photo marker
         })),
     [visible, rows, selectedId]
   );

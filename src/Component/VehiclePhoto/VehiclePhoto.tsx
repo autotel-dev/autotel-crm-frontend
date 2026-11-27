@@ -5,6 +5,7 @@
 // With no photo, a plain car outline is shown instead.
 import { useEffect, useState } from "react";
 import { IMAGE_BASE_URL } from "../../Utilities/api/apiEndpoints";
+import { hasOwnPhoto, loadOwnPhoto } from "./vehiclePhotoData";
 import "./vehiclePhoto.scss";
 
 export interface CatalogModel {
@@ -25,6 +26,8 @@ export const vehiclePhotoUrl = (m?: CatalogModel | null): string | null => {
 
 interface Props {
   model?: CatalogModel | null;
+  /** The vehicle; when it has its own photo, that is shown instead */
+  vehicle?: any;
   /** e.g. "Suzuki Mehran"; used for the alt text */
   label?: string;
   /** "card" (16:9, used in panels) or "thumb" (small square, used in lists) */
@@ -32,12 +35,21 @@ interface Props {
   className?: string;
 }
 
-const VehiclePhoto = ({ model, label, variant = "card", className = "" }: Props) => {
-  const url = vehiclePhotoUrl(model);
+const VehiclePhoto = ({ model, vehicle, label, variant = "card", className = "" }: Props) => {
+  const [ownUrl, setOwnUrl] = useState<string | null>(null);
+  const ownId = hasOwnPhoto(vehicle) ? String(vehicle._id) : null;
+  const ownVer = vehicle?.photoUpdatedAt || null;
+  useEffect(() => {
+    let live = true;
+    setOwnUrl(null);
+    if (ownId) loadOwnPhoto(ownId, variant === "thumb" ? "marker" : "full", ownVer).then((u) => live && setOwnUrl(u));
+    return () => { live = false; };
+  }, [ownId, ownVer, variant]);
+  const url = ownUrl || vehiclePhotoUrl(model);
   const [failed, setFailed] = useState(false);
   useEffect(() => setFailed(false), [url]);
 
-  const own = !!model?.customImageUrl;
+  const own = !!ownUrl || !!model?.customImageUrl;
   const name = label || model?.name || "Vehicle";
   const show = url && !failed;
 

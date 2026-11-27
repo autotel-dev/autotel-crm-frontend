@@ -168,6 +168,9 @@ body.at-dark .pb-root { --b-move: #a3e635; --b-fast: #fcd34d; --b-over: #f87171;
   svg { display: block; transition: transform .25s linear; animation: none; rect { animation: none; } } }
 .pb-car::before { content: ""; position: absolute; left: 50%; top: 50%; width: 58px; height: 58px; transform: translate(-50%, -50%);
   border-radius: 50%; background: color-mix(in srgb, var(--at-primary) 16%, transparent); border: 2px solid var(--at-primary); z-index: -1; }
+// Photo marker (design A): bigger halo; the arrow turns smoothly like the car did
+.pb-car--photo::before { width: 76px; height: 76px; }
+.pb-car--photo .at-pmk__dir { transition: transform .25s linear; }
 .pb-car__body { stroke: var(--at-panel); stroke-width: 1.6; }
 .pb-car__body--move { fill: var(--b-move); } .pb-car__body--fast { fill: var(--b-fast); }
 .pb-car__body--over { fill: var(--b-over); } .pb-car__body--stop { fill: var(--b-stop); }
@@ -203,4 +206,4 @@ body.at-dark .pb-badge--move { color: #0a0a12; }
   .pb-speed { min-width: 36px; }
   .pb-card__in { width: 180px; }
 }
-@media (prefers-reduced-motion: reduce) { .pb-car svg { transition: none; } .pb-skel i { animation: none; } }
+@media (prefers-reduced-motion: reduce) { .pb-car svg, .pb-car--photo .at-pmk__dir { transition: none; } .pb-skel i { animation: none; } }

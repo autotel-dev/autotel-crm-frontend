@@ -13,7 +13,7 @@ import {
   CardBody,
   CardHeader,
 } from "reactstrap";
-import VehiclePhoto, { vehiclePhotoUrl } from "../../../../../Component/VehiclePhoto/VehiclePhoto";
+import VehiclePhotoField, { uploadVehiclePhoto } from "../../../../../Component/VehiclePhoto/VehiclePhotoField";
 import Swal from "sweetalert2";
 import { Select } from "antd";
 import { MdCloudUpload, MdCheckCircle, MdDelete, MdAdd } from "react-icons/md";
@@ -297,6 +297,16 @@ export const AddDeviceModal: React.FC<AddDeviceModalProps> = ({ isOpen, toggle, 
         return;
       }
 
+      // The user's own photo, picked before the vehicle existed
+      const newVehicleId = data?.data?.vehicles?.[0]?._id;
+      if (vehicle.pendingPhoto && newVehicleId) {
+        try {
+          await uploadVehiclePhoto(String(newVehicleId), vehicle.pendingPhoto);
+        } catch (e: any) {
+          await Swal.fire({ text: `Vehicle ${vehicle.registrationNo} was added, but its photo didn't upload. Add it again from Edit device.`, icon: "warning" });
+        }
+      }
+
       // Success: mark this vehicle as installed
       const updatedVehicles = vehicles.map((v, i) =>
         i === index ? { ...v, isInstalled: true } : v
@@ -573,21 +583,21 @@ export const AddDeviceModal: React.FC<AddDeviceModalProps> = ({ isOpen, toggle, 
                     </FormGroup>
                   </Col>
                 </Row>
-                {/* Vehicle catalog photo for the chosen make/model */}
-                {vehicle.vehicleModel &&
-                  vehiclePhotoUrl(vehicleModelsList.find((m: any) => String(m?._id) === String(vehicle.vehicleModel))) && (
-                  <Row>
-                    <Col md={6} lg={4} className="mb-3">
-                      <VehiclePhoto
-                        model={vehicleModelsList.find((m: any) => String(m?._id) === String(vehicle.vehicleModel))}
-                        label={[
-                          vehicleMakesList.find((m: any) => String(m?._id) === String(vehicle.vehicleMake))?.name,
-                          vehicleModelsList.find((m: any) => String(m?._id) === String(vehicle.vehicleModel))?.name,
-                        ].filter(Boolean).join(" ")}
-                      />
-                    </Col>
-                  </Row>
-                )}
+                {/* Vehicle photo: the user's own photo (uploaded after the vehicle is added), else the catalog photo */}
+                <Row>
+                  <Col md={6} lg={4} className="mb-3">
+                    <VehiclePhotoField
+                      model={vehicle.vehicleModel ? vehicleModelsList.find((m: any) => String(m?._id) === String(vehicle.vehicleModel)) : null}
+                      label={[
+                        vehicleMakesList.find((m: any) => String(m?._id) === String(vehicle.vehicleMake))?.name,
+                        vehicleModelsList.find((m: any) => String(m?._id) === String(vehicle.vehicleModel))?.name,
+                      ].filter(Boolean).join(" ")}
+                      disabled={vehicle.isInstalled}
+                      pending={vehicle.pendingPhoto || null}
+                      onPending={(p) => handleVehicleChange(index, "pendingPhoto", p)}
+                    />
+                  </Col>
+                </Row>
 
                 <Row>
                   <Col md={3} className="mb-3">

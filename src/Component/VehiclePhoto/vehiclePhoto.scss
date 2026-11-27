@@ -41,3 +41,20 @@
     a:hover { text-decoration: underline; }
   }
 }
+
+// Photo block in the Add / Edit device pop-ups (VehiclePhotoField.tsx)
+.at-vphoto-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    label.btn { margin: 0; cursor: pointer; }
+    label.btn.disabled { pointer-events: none; opacity: .6; }
+  }
+  &__remove { color: var(--at-danger, #dc2626) !important; padding-left: 0; padding-right: 0; }
+  &__help { margin: 0; font-size: 12px; color: var(--at-muted, #4b5563); }
+}

@@ -5,6 +5,9 @@ import React, { useEffect, useRef, useState } from "react";
 import { GoogleApiWrapper, Map } from "google-maps-react";
 import { GOOGLE_MAPS_OPTIONS } from "../../../../utils/googleMapsOptions";
 import { DARK_MAP_STYLES } from "../../../../utils/mapDarkStyles";
+import { photoMarkerHtml } from "../../../../Component/VehiclePhoto/vehiclePhotoData";
+
+const PHOTO = 52; // photo marker size (design A)
 
 const TRAIL = {
   light: { move: "#65A30D", fast: "#D97706", over: "#DC2626" },
@@ -80,12 +83,25 @@ const makeLayer = (google) =>
       // car + card
       if (this.car) {
         this.carEl.style.display = "";
-        // Rebuild the car only when its colour changes; otherwise just turn it.
-        // (Rebuilding it ~60 times a second made it blink during playback.)
-        if (this._carBand !== this.car.band || !this._carSvg) {
-          this.carEl.innerHTML = carSvg(this.car.band, this.car.course);
-          this._carSvg = this.carEl.firstElementChild;
+        // Rebuild the car only when its colour or photo changes; otherwise just
+        // turn it. (Rebuilding it ~60 times a second made it blink during playback.)
+        const photo = this.photo && !this._badPhoto?.has(this.photo) ? this.photo : null;
+        if (this._carBand !== this.car.band || this._carPhoto !== photo || !this._carSvg) {
           this._carBand = this.car.band;
+          this._carPhoto = photo;
+          if (photo) {
+            this.carEl.classList.add("pb-car--photo");
+            this.carEl.style.width = this.carEl.style.height = `${PHOTO}px`;
+            this.carEl.innerHTML = photoMarkerHtml(photo, `var(--b-${this.car.band})`, this.car.course, PHOTO);
+            this._carSvg = this.carEl.querySelector(".at-pmk__dir");
+            const img = this.carEl.querySelector("img");
+            if (img) img.onerror = () => { (this._badPhoto = this._badPhoto || new Set()).add(photo); this._carSvg = null; this.draw(); };
+          } else {
+            this.carEl.classList.remove("pb-car--photo");
+            this.carEl.style.width = this.carEl.style.height = "";
+            this.carEl.innerHTML = carSvg(this.car.band, this.car.course);
+            this._carSvg = this.carEl.firstElementChild;
+          }
         }
         this._carSvg.style.transform = `rotate(${Math.round(this.car.course)}deg)`;
         this.place(this.carEl, this.car.lat, this.car.lng);
@@ -124,7 +140,7 @@ export const gapLine = (google, dark) => ({
   icons: [{ icon: { path: "M 0,-1 0,1", strokeOpacity: 0.9, strokeColor: dark ? "#8B8BA8" : "#6B7280", strokeWeight: 3, scale: 3 }, offset: "0", repeat: "14px" }],
 });
 
-const PlaybackMap = ({ google, pts, segments, events, car, card, fitKey, follow, onSeek }) => {
+const PlaybackMap = ({ google, pts, segments, events, car, card, photo, fitKey, follow, onSeek }) => {
   const [map, setMap] = useState(null);
   const layerRef = useRef(null);
   const linesRef = useRef([]);
@@ -134,7 +150,7 @@ const PlaybackMap = ({ google, pts, segments, events, car, card, fitKey, follow,
   const dark = useIsDark();
   // Latest overlay data, so a layer created after the data arrived still gets it.
   const latest = useRef({});
-  latest.current = { events: events || [], evKey: (events || []).map((e) => e.key).join("|") + (dark ? "d" : "l"), car, card };
+  latest.current = { events: events || [], evKey: (events || []).map((e) => e.key).join("|") + (dark ? "d" : "l"), car, card, photo: photo || null };
 
   useEffect(() => {
     if (!map || !google) return;
@@ -164,7 +180,7 @@ const PlaybackMap = ({ google, pts, segments, events, car, card, fitKey, follow,
     layerRef.current?.update({ events: events || [], evKey: (events || []).map((e) => e.key).join("|") + (dark ? "d" : "l") });
   }, [events, map, dark]);
 
-  useEffect(() => { layerRef.current?.update({ car, card }); }, [car, card]);
+  useEffect(() => { layerRef.current?.update({ car, card, photo: photo || null }); }, [car, card, photo]);
 
   // Fit the trail when the selection changes
   useEffect(() => {

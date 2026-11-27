@@ -9,6 +9,7 @@ import { ROLES } from "../../../../constants/roles";
 import { getAll } from "../../../../Utilities/api";
 import { GET_PARSER_DEVICES, GET_VEHICLE_HISTORY } from "../../../../Utilities/api/apiEndpoints";
 import PlaybackMap from "./PlaybackMap";
+import { markerPhotoFor } from "../../../../Component/VehiclePhoto/vehiclePhotoData";
 import {
   Pt, Trip, bandOf, buildFeed, dayLabel, dayRange, findEvents, findStops, findTrips, fmtClock, fmtDur, fmtHM,
   positionAt, shiftDay, shortAddr, toCsv, toPoints, todayStr, trailSegments,
@@ -217,6 +218,9 @@ const PlaybackV2 = () => {
 
   const dev = devices.find((d) => String(d.id) === deviceId);
   const today = todayStr();
+  // Vehicle photo for the car marker; re-render once a private photo has loaded.
+  const [, setPhotoTick] = useState(0);
+  const carPhoto = markerPhotoFor(dev?.vehicle, () => setPhotoTick((n) => n + 1));
 
   return (
     <div className="pb-root">
@@ -227,6 +231,7 @@ const PlaybackV2 = () => {
           events={events}
           car={car}
           card={card}
+          photo={carPhoto}
           fitKey={`${deviceId}|${day}|${tripId ?? "all"}|${range.length > 0}`}
           follow={followCar && playing}
           onSeek={(time: number) => { setPlaying(false); seek(time); }}

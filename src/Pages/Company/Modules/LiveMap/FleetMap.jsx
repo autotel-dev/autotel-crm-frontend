@@ -5,12 +5,21 @@
 //   its heading, coloured by status) and the clusters, reusing DOM nodes
 //   between updates instead of creating one overlay per vehicle.
 // - Hover → onHover(id, rect) for the L3 card; click → onSelect(id).
+// - Vehicle photos (design A): from zoom 14, and always for the selected
+//   vehicle, a vehicle with a photo is drawn as a round photo with a status
+//   ring and a heading arrow (see vehiclePhotoData.ts). Zoomed out, every
+//   vehicle stays the small car icon so a big fleet never loads many photos.
 import React, { useEffect, useRef, useState } from "react";
 import { GoogleApiWrapper, Map } from "google-maps-react";
 import { GOOGLE_MAPS_OPTIONS } from "../../../../utils/googleMapsOptions";
+import { markerPhotoFor, photoMarkerHtml } from "../../../../Component/VehiclePhoto/vehiclePhotoData";
 
 const CAR_W = 22;
 const CAR_H = 36;
+const PHOTO = 44; // photo marker size
+const PHOTO_SEL = 56; // selected
+const PHOTO_ZOOM = 14; // photos from this zoom up
+const badPhotos = new Set(); // photo URLs that failed to load → car icon
 
 const carSvg = (color, selected) => {
   const w = selected ? 28 : CAR_W;
@@ -78,7 +87,7 @@ const makeLayerClass = (google) =>
       this.draw();
     }
 
-    carNode(item) {
+    carNode(item, photos) {
       let el = this.nodes.get(item.id);
       if (!el) {
         el = document.createElement("div");
@@ -100,19 +109,46 @@ const makeLayerClass = (google) =>
       }
       el.dataset.id = item.id;
       const sel = item.id === this.selectedId;
-      const key = `${item.color}|${sel}|${Math.round(item.heading || 0)}`;
-      if (el.dataset.key !== key) {
-        el.dataset.key = key;
-        const w = sel ? 28 : CAR_W;
-        const h = sel ? 46 : CAR_H;
-        el.style.width = `${w}px`;
-        el.style.height = `${h}px`;
-        el.style.zIndex = sel ? "5" : "1";
-        el.innerHTML =
-          (sel
-            ? `<span style="position:absolute;left:50%;top:50%;width:64px;height:64px;margin:-32px 0 0 -32px;border-radius:50%;background:rgba(129,140,248,.2);border:2px solid var(--at-primary)"></span>`
-            : "") +
-          `<span style="position:absolute;inset:0;transform:rotate(${item.heading || 0}deg);transform-origin:50% 50%">${carSvg(item.color, sel)}</span>`;
+      let photo = (photos || sel) && item.vehicle ? markerPhotoFor(item.vehicle, () => this.draw()) : null;
+      if (photo && badPhotos.has(photo)) photo = null;
+      const heading = Math.round(item.heading || 0);
+      if (photo) {
+        const size = sel ? PHOTO_SEL : PHOTO;
+        const key = `p|${item.color}|${sel}|${photo}`;
+        if (el.dataset.key !== key) {
+          el.dataset.key = key;
+          el.style.width = `${size}px`;
+          el.style.height = `${size}px`;
+          el.style.zIndex = sel ? "5" : "2";
+          el.innerHTML =
+            (sel
+              ? `<span style="position:absolute;left:50%;top:50%;width:${size + 22}px;height:${size + 22}px;margin:-${(size + 22) / 2}px 0 0 -${(size + 22) / 2}px;border-radius:50%;background:rgba(129,140,248,.2);border:2px solid var(--at-primary)"></span>`
+              : "") + photoMarkerHtml(photo, item.color, heading, size);
+          const img = el.querySelector("img");
+          if (img) img.onerror = () => { badPhotos.add(photo); el.dataset.key = ""; this.draw(); };
+          el.dataset.heading = "";
+        }
+        // Turning only moves the arrow; the photo is never reloaded.
+        if (el.dataset.heading !== String(heading)) {
+          el.dataset.heading = String(heading);
+          const dir = el.querySelector(".at-pmk__dir");
+          if (dir) dir.style.transform = `rotate(${heading}deg)`;
+        }
+      } else {
+        const key = `c|${item.color}|${sel}|${heading}`;
+        if (el.dataset.key !== key) {
+          el.dataset.key = key;
+          const w = sel ? 28 : CAR_W;
+          const h = sel ? 46 : CAR_H;
+          el.style.width = `${w}px`;
+          el.style.height = `${h}px`;
+          el.style.zIndex = sel ? "5" : "1";
+          el.innerHTML =
+            (sel
+              ? `<span style="position:absolute;left:50%;top:50%;width:64px;height:64px;margin:-32px 0 0 -32px;border-radius:50%;background:rgba(129,140,248,.2);border:2px solid var(--at-primary)"></span>`
+              : "") +
+            `<span style="position:absolute;inset:0;transform:rotate(${heading}deg);transform-origin:50% 50%">${carSvg(item.color, sel)}</span>`;
+        }
       }
       el.setAttribute("aria-label", `${item.plate}, ${item.statusLabel}`);
       return el;
@@ -149,8 +185,9 @@ const makeLayerClass = (google) =>
 
       // Cars
       const seen = new Set();
+      const photos = zoom >= PHOTO_ZOOM;
       for (const { it, p } of singles) {
-        const el = this.carNode(it);
+        const el = this.carNode(it, photos);
         seen.add(it.id);
         const w = parseInt(el.style.width, 10);
         const h = parseInt(el.style.height, 10);

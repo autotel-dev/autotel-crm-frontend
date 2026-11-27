@@ -25,6 +25,9 @@ import { setNoDataFound } from "../../../ReaduxToolkit/Reducer/NoDataFoundSlice"
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import H7 from "../../../CommonElements/Headings/H7Element";
+import { photoFormData, preparePhoto } from "../../../Component/VehiclePhoto/vehiclePhotoData";
+import { getUserRole } from "../../../Utilities/globals/globals";
+import { ROLES } from "../../../constants/roles";
 import { deleteSingle, getAll, updateWithMultipart } from "../../../Utilities/api";
 import VehiclePhoto from "../../../Component/VehiclePhoto/VehiclePhoto";
 import deleteAlert from "../../../Utilities/alerts/DeleteAlert";
@@ -137,15 +140,23 @@ const VehiclesModelList = () => {
     dispatch(setVehicleModel(list));
     dispatch(setFilterVehiclesModel(list));
   };
+  const isSuperAdmin = getUserRole() === ROLES.SUPER_ADMIN;
   const uploadPhoto = async (row: any, file?: File | null) => {
     if (!file) return;
-    if (file.size > 3 * 1024 * 1024) {
-      Swal.fire({ text: "The image is larger than 3 MB.", icon: "error", timer: 2500, showConfirmButton: false });
+    if (file.size > 15 * 1024 * 1024) {
+      Swal.fire({ text: "That photo is larger than 15 MB. Choose a smaller one.", icon: "error", timer: 2500, showConfirmButton: false });
       return;
     }
-    const form = new FormData();
-    form.append("image", file);
     setPhotoBusy(row._id);
+    let form: FormData;
+    try {
+      // Resized in the browser (max 1280 px + a 160 px map copy)
+      form = photoFormData(await preparePhoto(file), "image");
+    } catch (e: any) {
+      setPhotoBusy(null);
+      Swal.fire({ text: e?.message || "That file isn't a photo we can read.", icon: "error", timer: 2500, showConfirmButton: false });
+      return;
+    }
     const res: any = await updateWithMultipart(form, { url: `${UPLOAD_VEHICLE_MODEL_IMAGE}/${row._id}` });
     setPhotoBusy(null);
     if (res?.success) replaceRow(res.data);
@@ -237,10 +248,13 @@ const VehiclesModelList = () => {
             >
               Delete
             </button>
+            {/* Model photos are shared by every company: super admin only. Companies add photos to their own vehicles. */}
+            {isSuperAdmin && (
+              <>
             <label
               className="global-table-edit-btn"
               style={{ cursor: photoBusy === row._id ? "wait" : "pointer", marginBottom: 0 }}
-              title="Upload your own photo for this model (JPG, PNG or WebP, up to 3 MB)"
+              title="Upload a photo for this model (JPG, PNG or WebP). Every company sees it."
             >
               {photoBusy === row._id ? "Saving…" : row?.customImageUrl ? "Change photo" : "Upload photo"}
               <input
@@ -263,6 +277,8 @@ const VehiclesModelList = () => {
               >
                 Remove photo
               </button>
+            )}
+              </>
             )}
             <button
               className="global-table-edit-btn"
