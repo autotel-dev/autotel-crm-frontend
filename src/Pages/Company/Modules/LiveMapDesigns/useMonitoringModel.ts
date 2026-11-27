@@ -236,12 +236,18 @@ export const dayStats = (pts: Pt[], limit: number) => {
   }
   if (now > cursor) ms.none += now - cursor;
   const trips = findTrips(pts, limit);
-  const events = findEvents(pts, trips, findStops(pts), limit);
+  // A trip still under way (last point recent and moving) has no end yet
+  const lastPt = pts[pts.length - 1];
+  const ongoing = !!lastPt && now - lastPt.t < GAP_MS && lastPt.speed >= STOP_KMH && trips.length > 0;
+  const lastTripId = trips.length ? trips[trips.length - 1].id : null;
+  const events = findEvents(pts, trips, findStops(pts), limit).filter((e) => !(ongoing && e.key === `B${lastTripId}`));
   const km = trips.reduce((s, t) => s + t.km, 0);
   const maxKmh = pts.reduce((m, p) => Math.max(m, p.speed), 0);
   const overs = events.filter((e) => e.kind === "S").length;
-  return { ms, bar, trips: trips.length, km, maxKmh, overs, events, nowFrac: (now - t0) / DAY };
+  return { ms, bar, trips: trips.length, ongoing, km, maxKmh, overs, events, nowFrac: (now - t0) / DAY };
 };
+
+export const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? "" : "s"}`;
 
 export const fmtHrs = (ms: number) => {
   const m = Math.round(ms / 60000);
@@ -250,9 +256,12 @@ export const fmtHrs = (ms: number) => {
 };
 
 /** Live readings, each null when the tracker doesn't send it. */
-export const readings = (d: any, s: FleetStatus) => {
+export const readings = (d: any, s: FleetStatus, lastKnown: Record<string, any> = {}) => {
   const p = d?.latestPosition || {};
-  const a = p.attributes || {};
+  const live = p.attributes || {};
+  // Live values win; status-packet readings fall back to today's last known value
+  const a: Record<string, any> = { ...lastKnown };
+  Object.keys(live).forEach((k) => { if (live[k] !== undefined && live[k] !== null) a[k] = live[k]; });
   const online = isOnline(s);
   const speed = Math.round(knotsToKmh(p.speed));
   const sat = a.sat != null ? Number(a.sat) : null;
@@ -289,7 +298,11 @@ export const vehicleLine = (d: any) => [d?.vehicle?.make?.name, d?.vehicle?.mode
 export const customerName = (d: any) => d?.vehicle?.customer?.fullName || "";
 export const customerPhone = (d: any) => d?.vehicle?.customer?.phoneNo || "";
 export const imeiOf = (d: any) => d?.vehicle?.imei || d?.uniqueId || "";
-export const simOf = (d: any) => d?.vehicle?.sim || d?.vehicle?.simNo || "";
+/** SIM: saved on the vehicle, else the ICCID the tracker reports (status packets). */
+export const simOf = (d: any, lastKnown: Record<string, any> = {}) => {
+  const iccid = d?.latestPosition?.attributes?.iccid || lastKnown.iccid;
+  return d?.vehicle?.sim || d?.vehicle?.simNo || (iccid ? String(iccid).replace(/[^0-9]/g, "") : "");
+};
 export const renewsOn = (d: any) =>
   d?.vehicle?.serviceRenewalDate ? new Date(d.vehicle.serviceRenewalDate).toLocaleDateString([], { day: "numeric", month: "short", year: "numeric" }) : "";
 export const mapsLink = (lat: number | null, lng: number | null) => (lat != null && lng != null ? `https://www.google.com/maps?q=${lat},${lng}` : "");

@@ -190,7 +190,9 @@
 .d2-row__bar { flex: 0 0 10px; height: 30px; border-radius: 6px; }
 .d2-row__main { flex: 1; min-width: 0; display: flex; flex-direction: column; strong { font-size: 16px; } span { font-size: 13px; color: var(--at-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } }
 .d2-filters {
-  top: 16px; left: 50%; transform: translateX(-50%); display: flex; gap: 4px; padding: 6px; border-radius: 999px;
+  // centred in the map area between the list and the vehicle panel; wraps when narrow
+  top: 16px; left: 372px; right: 16px; width: fit-content; max-width: calc(100% - 388px); margin: 0 auto;
+  display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; padding: 6px; border-radius: 26px;
   button {
     display: inline-flex; align-items: center; gap: 8px; height: 42px; padding: 0 16px; border: 0; border-radius: 999px;
     background: transparent; color: var(--at-text); font-weight: 600; font-size: 15px; cursor: pointer; white-space: nowrap;
@@ -199,8 +201,9 @@
     &.is-on { background: var(--at-primary-soft); }
   }
 }
+.d2.has-sel .d2-filters { right: 492px; max-width: calc(100% - 864px); }
 .d2-panel { right: 16px; top: 16px; bottom: 16px; width: 460px; border-radius: 24px; padding: 20px; display: flex; flex-direction: column; gap: 16px; overflow-y: auto; }
-.d2-head { display: flex; align-items: flex-start; gap: 12px; h2 { font: 700 30px var(--at-font-display); line-height: 1.1; } }
+.d2-head { display: flex; align-items: flex-start; gap: 12px; h2 { font: 700 30px var(--at-font-display); line-height: 1.1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } }
 .d2-head__tile { flex: 0 0 64px; height: 64px; border-radius: 16px; display: grid; place-items: center; background: var(--at-soft); }
 .d2-rings {
   display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; text-align: center;
@@ -229,12 +232,14 @@
 @media (max-width: 1350px) {
   .d2-list { width: 290px; }
   .d2-panel { width: 400px; }
-  .d2-filters { left: 322px; right: 432px; transform: none; overflow-x: auto; border-radius: 20px; }
+  .d2-head h2 { font-size: 26px; }
+  .d2-filters { left: 322px; max-width: calc(100% - 338px); button { height: 36px; padding: 0 11px; font-size: 14px; } }
+  .d2.has-sel .d2-filters { right: 432px; max-width: calc(100% - 754px); }
 }
 @media (max-width: 1000px) {
   .d2-list { width: 260px; }
   .d2-panel { left: 16px; width: auto; top: auto; max-height: 70%; }
-  .d2-filters { left: 292px; right: 16px; }
+  .d2-filters, .d2.has-sel .d2-filters { left: 292px; right: 16px; max-width: calc(100% - 308px); }
 }
 
 // ---------- design 3: map on top, cards below ----------

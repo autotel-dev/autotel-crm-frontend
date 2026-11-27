@@ -3,7 +3,7 @@
 import { useMemo } from "react";
 import { FleetStatus, plateOf, STATUS_INFO, timeAgo } from "../LiveMap/fleetStatus";
 import { compass } from "../LiveMap/FocusView";
-import { customerName, customerPhone, fmtHrs, imeiOf, Model, NOT_REPORTING, readings, renewsOn, Row, useMonitoringModel, vehicleLine } from "./useMonitoringModel";
+import { customerName, customerPhone, fmtHrs, plural, imeiOf, Model, NOT_REPORTING, readings, renewsOn, Row, useMonitoringModel, vehicleLine } from "./useMonitoringModel";
 import { CallButton, CamBar, CarTile, CommandHost, DayBar, EventList, FleetMap, ListStates, Ring, SearchBox, ShareButton, speedColor } from "./parts";
 import "./designs.scss";
 
@@ -30,7 +30,7 @@ const I = {
 
 const ListRow = ({ r, on, onPick }: { r: Row; on: boolean; onPick: () => void }) => {
   const v = readings(r.d, r.s);
-  const right = r.s === "moving" ? `${v.speed} km/h` : v.deviceTime ? timeAgo(v.deviceTime).replace(" ago", "") : "—";
+  const right = r.s === "moving" ? `${v.speed} km/h` : v.deviceTime ? timeAgo(v.deviceTime).replace(" ago", "") : "No data";
   return (
     <button type="button" className={`d2-row${on ? " is-on" : ""}`} aria-pressed={on} onClick={onPick}>
       <i className="d2-row__bar" style={{ background: STATUS_INFO[r.s].color }} aria-label={STATUS_INFO[r.s].label} />
@@ -45,7 +45,7 @@ const ListRow = ({ r, on, onPick }: { r: Row; on: boolean; onPick: () => void })
 
 const Panel = ({ m }: { m: Model }) => {
   const { d, s } = m.selected!;
-  const v = readings(d, s);
+  const v = readings(d, s, m.track.attrs);
   const t = m.today;
   return (
     <aside className="d2-panel lmd-over-right" aria-label={`Vehicle ${plateOf(d)}`}>
@@ -76,7 +76,7 @@ const Panel = ({ m }: { m: Model }) => {
 
       <div className="d2-today">
         <div className="d2-today__head">
-          <strong>Today · {m.track.loaded ? `${t.km.toFixed(1)} km` : "…"} · {t.trips} trip{t.trips === 1 ? "" : "s"}</strong>
+          <strong>Today · {m.track.loaded ? `${t.km.toFixed(1)} km` : "…"} · {plural(t.trips, "trip")}</strong>
           <span className="lmd-muted">max {Math.round(t.maxKmh)} km/h</span>
         </div>
         <DayBar bar={t.bar} nowFrac={t.nowFrac} height={12} />
@@ -127,11 +127,15 @@ const Design2 = () => {
       if (!g.has(k)) g.set(k, []);
       g.get(k)!.push(r);
     });
-    return Array.from(g.entries()).sort((a, b) => (a[0] === "No customer" ? 1 : b[0] === "No customer" ? -1 : a[0].localeCompare(b[0])));
+    // Customers with vehicles reporting first (most first), then by name
+    const live = (rs: Row[]) => rs.filter((r) => r.s === "moving" || r.s === "idle" || r.s === "stopped").length;
+    return Array.from(g.entries()).sort(
+      (a, b) => (a[0] === "No customer" ? 1 : 0) - (b[0] === "No customer" ? 1 : 0) || live(b[1]) - live(a[1]) || a[0].localeCompare(b[0])
+    );
   }, [m.visible]);
 
   return (
-    <div className="lmd-root d2">
+    <div className={`lmd-root d2${sel ? " has-sel" : ""}`}>
       <FleetMap {...m.mapProps} />
 
       <aside className="d2-list lmd-over-left" aria-label="Vehicles">

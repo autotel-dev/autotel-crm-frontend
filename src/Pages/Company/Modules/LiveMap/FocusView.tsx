@@ -27,6 +27,18 @@ export const readLimit = () => {
 const COMPASS = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
 export const compass = (deg: number) => `${COMPASS[Math.round((((deg % 360) + 360) % 360) / 45) % 8]} ${Math.round(((deg % 360) + 360) % 360)}°`;
 
+// Readings some trackers (e.g. GT06) send only in separate status packets, so
+// the live position often lacks them; the last value from today's history fills in.
+const STATUS_KEYS = ["rssi", "batteryLevel", "battery", "power", "sat", "iccid"];
+const lastAttrs = (history: any[]) => {
+  const out: Record<string, any> = {};
+  for (let i = (history || []).length - 1; i >= 0 && Object.keys(out).length < STATUS_KEYS.length; i--) {
+    const a = history[i]?.attributes || {};
+    STATUS_KEYS.forEach((k) => { if (out[k] === undefined && a[k] !== undefined && a[k] !== null) out[k] = a[k]; });
+  }
+  return out;
+};
+
 /**
  * Today's track for the focused vehicle: loaded from the history API, refreshed
  * every minute, with the live position appended in between.
@@ -35,10 +47,12 @@ export const useTodayTrack = (device: any | null) => {
   const histId = device?.id ?? device?.vehicle?.traccarDeviceId ?? null;
   const [pts, setPts] = useState<Pt[]>([]);
   const [loaded, setLoaded] = useState(false);
+  const [attrs, setAttrs] = useState<Record<string, any>>({});
 
   useEffect(() => {
     setPts([]);
     setLoaded(false);
+    setAttrs({});
     if (histId == null) return;
     let alive = true;
     const load = () => {
@@ -46,7 +60,10 @@ export const useTodayTrack = (device: any | null) => {
       getAll({ url: `${GET_VEHICLE_HISTORY}/${histId}?fromDateTime=${encodeURIComponent(from)}&toDateTime=${encodeURIComponent(to)}` })
         .then((res: any) => {
           if (!alive) return;
-          if (res && res.success !== false) setPts(toPoints(res?.data?.history));
+          if (res && res.success !== false) {
+            setPts(toPoints(res?.data?.history));
+            setAttrs(lastAttrs(res?.data?.history));
+          }
           setLoaded(true);
         })
         .catch(() => alive && setLoaded(true));
@@ -67,15 +84,16 @@ export const useTodayTrack = (device: any | null) => {
     const lng = Number(p?.longitude);
     const last = pts[pts.length - 1];
     const sameDay = Number.isFinite(t) && todayStr(new Date(t)) === todayStr();
-    if (!sameDay || !Number.isFinite(lat) || !Number.isFinite(lng) || (last && t <= last.t)) return { pts, loaded };
+    if (!sameDay || !Number.isFinite(lat) || !Number.isFinite(lng) || (last && t <= last.t)) return { pts, loaded, attrs };
     return {
       pts: [
         ...pts,
         { t, lat, lng, speed: knotsToKmh(p.speed), course: Number(p.course) || 0, ignition: Boolean(p?.attributes?.ignition), address: "", km: 0 },
       ],
       loaded,
+      attrs,
     };
-  }, [pts, loaded, p]);
+  }, [pts, loaded, attrs, p]);
 };
 
 /** Speed dial (ring fills up to 125 % of the limit). */

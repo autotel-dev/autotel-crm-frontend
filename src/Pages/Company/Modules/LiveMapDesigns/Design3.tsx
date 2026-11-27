@@ -5,7 +5,7 @@ import { FleetStatus, plateOf, STATUS_INFO, timeAgo } from "../LiveMap/fleetStat
 import { compass } from "../LiveMap/FocusView";
 import { Pt } from "../PlaybackV2/playbackUtils";
 import {
-  customerName, customerPhone, fmtHrs, imeiOf, Model, NOT_REPORTING, PART_COLOR, readings, renewsOn, Row, simOf, streetViewLink, useMonitoringModel, vehicleLine,
+  customerName, customerPhone, fmtHrs, plural, imeiOf, Model, NOT_REPORTING, PART_COLOR, readings, renewsOn, Row, simOf, streetViewLink, useMonitoringModel, vehicleLine,
 } from "./useMonitoringModel";
 import { CallButton, CamBar, CarTile, CommandHost, EventList, FleetMap, ListStates, SearchBox, ShareButton, speedColor } from "./parts";
 import "./designs.scss";
@@ -107,7 +107,7 @@ const Donut = ({ ms }: { ms: Record<string, number> }) => {
 
 const Cards = ({ m }: { m: Model }) => {
   const { d, s } = m.selected!;
-  const v = readings(d, s);
+  const v = readings(d, s, m.track.attrs);
   const t = m.today;
   return (
     <div className="d3-cards">
@@ -126,7 +126,7 @@ const Cards = ({ m }: { m: Model }) => {
         </div>
         <dl className="d3-kv">
           <div><dt>Tracker</dt><dd>{[v.protocol, imeiOf(d)].filter(Boolean).join(" · ") || "—"}</dd></div>
-          <div><dt>SIM</dt><dd>{simOf(d) || "—"}</dd></div>
+          <div><dt>SIM</dt><dd>{simOf(d, m.track.attrs) || "—"}</dd></div>
           <div><dt>Odometer</dt><dd>{v.odometer || "—"}</dd></div>
           <div><dt>Renews</dt><dd>{renewsOn(d) || "—"}</dd></div>
         </dl>
@@ -157,7 +157,7 @@ const Cards = ({ m }: { m: Model }) => {
           <Donut ms={t.ms} />
           <div>
             <strong>{m.track.loaded ? `${t.km.toFixed(1)} km` : "…"}</strong>
-            <div className="lmd-muted">{t.trips} trip{t.trips === 1 ? "" : "s"} · {t.overs} over limit</div>
+            <div className="lmd-muted">{plural(t.trips, "trip")} · {t.overs} over limit</div>
           </div>
         </div>
         <div className="d3-today__split">

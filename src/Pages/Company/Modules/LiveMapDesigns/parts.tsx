@@ -5,6 +5,8 @@ import CommandPanel from "../../../../Component/Commands/CommandPanel";
 import { EventMark, fmtHM } from "../PlaybackV2/playbackUtils";
 import { FleetStatus, STATUS_INFO } from "../LiveMap/fleetStatus";
 import { CamMode, DayPart, Model, PART_COLOR, mapsLink } from "./useMonitoringModel";
+// Map marker, cluster and hover styles live with the current Live Monitoring page
+import "../LiveMap/liveMap.scss";
 
 export { FleetMap };
 

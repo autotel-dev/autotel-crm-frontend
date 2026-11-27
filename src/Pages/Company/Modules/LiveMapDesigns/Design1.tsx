@@ -2,7 +2,7 @@
 import { FleetStatus, plateOf, STATUS_INFO, STATUS_ORDER, timeAgo } from "../LiveMap/fleetStatus";
 import { compass } from "../LiveMap/FocusView";
 import {
-  customerName, customerPhone, fmtHrs, imeiOf, Model, readings, renewsOn, Row, simOf, useMonitoringModel, vehicleLine,
+  customerName, customerPhone, fmtHrs, plural, imeiOf, Model, readings, renewsOn, Row, simOf, useMonitoringModel, vehicleLine,
 } from "./useMonitoringModel";
 import { CallButton, CamBar, CarTile, CommandHost, DayBar, EventList, FleetMap, ListStates, SearchBox, ShareButton, SpeedDial } from "./parts";
 import "./designs.scss";
@@ -25,9 +25,9 @@ const ListRow = ({ r, on, onPick }: { r: Row; on: boolean; onPick: () => void })
         <span className="d1-row__top"><strong>{plateOf(r.d)}</strong><b style={{ color: right.color }}>{right.text}</b></span>
         <span className="d1-row__meta">{meta}</span>
         <span className="d1-row__bottom">
-          <span>Key {v.ignition ? v.ignition.toLowerCase() : "—"}</span>
-          <span>GSM {v.gsm ? v.gsm.toLowerCase() : "—"}</span>
-          <span>Batt {v.battery || "—"}</span>
+          {v.ignition && <span>Key {v.ignition.toLowerCase()}</span>}
+          {v.gsm && <span>GSM {v.gsm.toLowerCase()}</span>}
+          {v.battery && <span>Batt {v.battery}</span>}
           <time>{v.deviceTime ? timeAgo(v.deviceTime).replace(" ago", "") : "never"}</time>
         </span>
       </span>
@@ -42,7 +42,7 @@ const Fact = ({ k, v }: { k: string; v: React.ReactNode }) => (
 const Detail = ({ m }: { m: Model }) => {
   const sel = m.selected!;
   const { d, s } = sel;
-  const v = readings(d, s);
+  const v = readings(d, s, m.track.attrs);
   const t = m.today;
   const sub = [vehicleLine(d), v.protocol, imeiOf(d) && `IMEI ${imeiOf(d)}`].filter(Boolean).join(" · ");
   return (
@@ -82,7 +82,7 @@ const Detail = ({ m }: { m: Model }) => {
       <div className="d1-cards">
         <section className="d1-card">
           <h3>Today</h3>
-          <div className="d1-km"><strong>{m.track.loaded ? t.km.toFixed(1) : "…"}</strong> km · {t.trips} trip{t.trips === 1 ? "" : "s"}</div>
+          <div className="d1-km"><strong>{m.track.loaded ? t.km.toFixed(1) : "…"}</strong> km · {plural(t.trips, "trip")}{t.ongoing ? " · driving now" : ""}</div>
           <DayBar bar={t.bar} nowFrac={t.nowFrac} height={8} />
           <div className="d1-split">
             <span>Run<b>{fmtHrs(t.ms.drive)}</b></span>
@@ -114,7 +114,7 @@ const Detail = ({ m }: { m: Model }) => {
       </div>
 
       <div className="d1-sim">
-        <span>{simOf(d) ? `SIM ${simOf(d)}` : ""}</span>
+        <span>{simOf(d, m.track.attrs) ? `SIM ${simOf(d, m.track.attrs)}` : ""}</span>
         <span>{renewsOn(d) ? `Renews ${renewsOn(d)}` : ""}</span>
       </div>
 
@@ -199,7 +199,7 @@ const Design1 = () => {
           <section className="d1-today lmd-over-bottom" aria-label="Today">
             <div className="d1-today__head">
               <strong>Today · {plateOf(sel.d)}</strong>
-              <span className="lmd-muted">{m.track.loaded ? `${m.today.trips} trips · ${m.today.km.toFixed(1)} km · ${m.today.overs} over limit` : "loading…"}</span>
+              <span className="lmd-muted">{m.track.loaded ? `${plural(m.today.trips, "trip")} · ${m.today.km.toFixed(1)} km · ${m.today.overs} over limit` : "loading…"}</span>
             </div>
             <DayBar bar={m.today.bar} nowFrac={m.today.nowFrac} axis height={16} />
           </section>
