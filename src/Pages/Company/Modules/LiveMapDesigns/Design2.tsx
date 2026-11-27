@@ -50,7 +50,7 @@ const Panel = ({ m }: { m: Model }) => {
   return (
     <aside className="d2-panel lmd-over-right" aria-label={`Vehicle ${plateOf(d)}`}>
       <header className="d2-head">
-        <span className="d2-head__tile"><CarTile s={s} size={46} /></span>
+        <span className="d2-head__tile"><CarTile s={s} size={30} /></span>
         <div style={{ minWidth: 0, flex: 1 }}>
           <h2>{plateOf(d)}</h2>
           <div className="lmd-muted">{[vehicleLine(d), customerName(d), v.protocol].filter(Boolean).join(" · ") || "—"}</div>
@@ -60,10 +60,10 @@ const Panel = ({ m }: { m: Model }) => {
       </header>
 
       <div className="d2-rings">
-        <div><Ring frac={v.online ? v.speed / (m.limitKmh * 1.25) : null} color={speedColor(v.speed, m.limitKmh)} size={78} stroke={8} label="Speed"><b>{v.online ? v.speed : "—"}</b><small>km/h</small></Ring><span>Speed</span></div>
-        <div><Ring frac={v.satFrac} color="var(--at-moving)" size={78} stroke={8} label="GPS satellites"><b>{v.sat ?? "—"}</b><small>sats</small></Ring><span>GPS sats</span></div>
-        <div><Ring frac={v.gsmFrac} color="var(--at-moving)" size={78} stroke={8} label="GSM signal"><b className="d2-ring__word">{v.gsm || "—"}</b></Ring><span>GSM</span></div>
-        <div><Ring frac={v.battFrac} color="var(--at-moving)" size={78} stroke={8} label="Battery"><b className="d2-ring__word">{v.battery || "—"}</b></Ring><span>Battery</span></div>
+        <div><Ring frac={v.online ? v.speed / (m.limitKmh * 1.25) : null} color={speedColor(v.speed, m.limitKmh)} size={54} stroke={6} label="Speed"><b>{v.online ? v.speed : "—"}</b><small>km/h</small></Ring><span>Speed</span></div>
+        <div><Ring frac={v.satFrac} color="var(--at-moving)" size={54} stroke={6} label="GPS satellites"><b>{v.sat ?? "—"}</b><small>sats</small></Ring><span>GPS sats</span></div>
+        <div><Ring frac={v.gsmFrac} color="var(--at-moving)" size={54} stroke={6} label="GSM signal"><b className="d2-ring__word">{v.gsm || "—"}</b></Ring><span>GSM</span></div>
+        <div><Ring frac={v.battFrac} color="var(--at-moving)" size={54} stroke={6} label="Battery"><b className="d2-ring__word">{v.battery || "—"}</b></Ring><span>Battery</span></div>
       </div>
 
       <div className="d2-where">

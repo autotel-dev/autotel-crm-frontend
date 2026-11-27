@@ -40,7 +40,7 @@ const Gauge = ({ speed, limit, online }: { speed: number; limit: number; online:
   const arc = `M ${cx - r} ${cy} A ${r} ${r} 0 0 1 ${cx + r} ${cy}`;
   return (
     <div className="d3-gauge" role="img" aria-label={online ? `${speed} km/h, limit ${limit}` : "Not reporting"}>
-      <svg viewBox="0 0 200 110" width="200" height="110" aria-hidden="true">
+      <svg viewBox="0 0 200 110" aria-hidden="true">
         <path d={arc} fill="none" stroke="var(--at-soft)" strokeWidth="14" strokeLinecap="round" />
         {f > 0 && <path d={arc} fill="none" stroke={speedColor(speed, limit)} strokeWidth="14" strokeLinecap="round" strokeDasharray={`${f * len} ${len}`} style={{ transition: "stroke-dasharray .6s ease" }} />}
       </svg>
@@ -90,7 +90,7 @@ const Donut = ({ ms }: { ms: Record<string, number> }) => {
   const r = 40, c = 2 * Math.PI * r;
   let acc = 0;
   return (
-    <svg viewBox="0 0 100 100" width="110" height="110" role="img" aria-label="Today's time split">
+    <svg viewBox="0 0 100 100" role="img" aria-label="Today's time split">
       <circle cx="50" cy="50" r={r} fill="none" stroke="var(--at-soft)" strokeWidth="12" />
       {total > 0 && parts.map((p) => {
         const len = (p.v / total) * c;
@@ -118,7 +118,7 @@ const Cards = ({ m }: { m: Model }) => {
           <button type="button" className="lmd-close" aria-label="Close vehicle" onClick={() => m.select(null)}>✕</button>
         </div>
         <div className="d3-sel__id">
-          <CarTile s={s} size={56} />
+          <CarTile s={s} size={30} />
           <div style={{ minWidth: 0 }}>
             <h2>{plateOf(d)}</h2>
             <div className="lmd-muted">{[vehicleLine(d), customerName(d)].filter(Boolean).join(" · ") || "—"}</div>
@@ -133,7 +133,7 @@ const Cards = ({ m }: { m: Model }) => {
         <div className="d3-sel__btns">
           <button type="button" className="lmd-btn lmd-btn--primary" onClick={() => m.openPlayback(d)}>Playback</button>
           <button type="button" className="lmd-btn" onClick={m.openReports}>Reports</button>
-          <CallButton phone={customerPhone(d)} name={customerName(d)} className="lmd-btn">{customerName(d) ? `Call ${customerName(d).split(" ")[0]}` : "Call"}</CallButton>
+          <CallButton phone={customerPhone(d)} name={customerName(d)} className="lmd-btn">Call</CallButton>
           <button type="button" className="lmd-btn lmd-btn--danger" onClick={() => m.openCommand(d, "engineStop")}>Cut engine</button>
         </div>
       </section>

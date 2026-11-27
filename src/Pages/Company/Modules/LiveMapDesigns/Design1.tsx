@@ -20,7 +20,7 @@ const ListRow = ({ r, on, onPick }: { r: Row; on: boolean; onPick: () => void })
   const meta = [customerName(r.d), vehicleLine(r.d)].filter(Boolean).join(" · ") || "—";
   return (
     <button type="button" className={`d1-row${on ? " is-on" : ""}`} aria-pressed={on} onClick={onPick}>
-      <span className="d1-row__icon"><CarTile s={r.s} size={34} /></span>
+      <span className="d1-row__icon"><CarTile s={r.s} size={24} /></span>
       <span className="d1-row__main">
         <span className="d1-row__top"><strong>{plateOf(r.d)}</strong><b style={{ color: right.color }}>{right.text}</b></span>
         <span className="d1-row__meta">{meta}</span>
@@ -58,7 +58,7 @@ const Detail = ({ m }: { m: Model }) => {
       </header>
 
       <div className="d1-live">
-        <SpeedDial speed={v.speed} limit={m.limitKmh} online={v.online} size={136} stroke={12} />
+        <SpeedDial speed={v.speed} limit={m.limitKmh} online={v.online} size={92} stroke={8} />
         <div className="d1-facts">
           <Fact k={v.online ? "Ignition" : "Last ignition"} v={v.ignition} />
           <Fact k="Heading" v={v.heading != null ? compass(v.heading) : null} />
@@ -101,8 +101,8 @@ const Detail = ({ m }: { m: Model }) => {
         </section>
         <section className="d1-card">
           <div className="d1-card__row"><h3>Engine</h3><span className="lmd-muted">{v.ignition ? `Ignition ${v.ignition.toLowerCase()}` : ""}</span></div>
-          <button type="button" className="lmd-btn lmd-btn--danger d1-wide" onClick={() => m.openCommand(d, "engineStop")}>Cut engine</button>
-          <div className="d1-two">
+          <div className="d1-engine">
+            <button type="button" className="lmd-btn lmd-btn--danger" onClick={() => m.openCommand(d, "engineStop")}>Cut engine</button>
             <button type="button" className="lmd-btn" onClick={() => m.openCommand(d, "engineResume")}>Resume</button>
             <button type="button" className="lmd-btn" onClick={() => m.openCommand(d)}>More…</button>
           </div>
@@ -127,40 +127,13 @@ const Detail = ({ m }: { m: Model }) => {
   );
 };
 
-const Overview = ({ m }: { m: Model }) => {
-  const online = m.counts.moving + m.counts.idle + m.counts.stopped;
-  return (
-    <div className="d1-detail d1-overview">
-      <span className="lmd-kicker">Fleet now</span>
-      <h2 className="d1-plate">{online} <small>of {m.devices.length} online</small></h2>
-      <div className="d1-ov-grid">
-        {STATUS_ORDER.map((s) => (
-          <button key={s} type="button" className="d1-ov" onClick={() => m.setFilter([s])}>
-            <i style={{ background: STATUS_INFO[s].color }} />
-            <span>{STATUS_INFO[s].label}</span>
-            <b>{m.counts[s]}</b>
-          </button>
-        ))}
-      </div>
-      <p className="lmd-muted">Pick a vehicle in the list or on the map to see its live speed, today's driving, device health and engine controls.</p>
-      {m.lastAlert && (
-        <div className="d1-card">
-          <h3>Latest alert</h3>
-          <div>{m.lastAlert.message || m.lastAlert.type}</div>
-          <div className="lmd-muted">{m.lastAlert.plate} · {timeAgo(new Date(m.lastAlert.at).toISOString())}</div>
-        </div>
-      )}
-    </div>
-  );
-};
-
 const CHIPS: (FleetStatus | null)[] = [null, ...STATUS_ORDER];
 
 const Design1 = () => {
   const m = useMonitoringModel();
   const sel = m.selected;
   return (
-    <div className="lmd-root d1">
+    <div className={`lmd-root d1${sel ? " has-sel" : ""}`}>
       <aside className="d1-list" aria-label="Vehicles">
         <div className="d1-list__head">
           <h1>Live monitoring</h1>
@@ -213,9 +186,12 @@ const Design1 = () => {
         )}
       </main>
 
-      <aside className="d1-side" aria-label={sel ? `Vehicle ${plateOf(sel.d)}` : "Fleet"}>
-        {sel ? <Detail m={m} /> : <Overview m={m} />}
-      </aside>
+      {/* Vehicle panel only while a vehicle is selected, so the map gets the room otherwise */}
+      {sel && (
+        <aside className="d1-side" aria-label={`Vehicle ${plateOf(sel.d)}`}>
+          <Detail m={m} />
+        </aside>
+      )}
       <CommandHost m={m} />
     </div>
   );
