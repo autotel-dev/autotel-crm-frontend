@@ -1050,11 +1050,8 @@ const GeofencesTreeViewAccordian = ({
               <Select
                 showSearch
                 style={{ width: "100%", height: 36, marginBottom: "15px" }}
-                value={
-                  type == null && geofenceType == ""
-                    ? "Select Type"
-                    : geofenceType
-                }
+                // empty → antd shows the placeholder ("Select type")
+                value={geofenceType || undefined}
                 placeholder="Select type"
                 optionFilterProp="children"
                 filterOption={(input: any, option: any) =>
