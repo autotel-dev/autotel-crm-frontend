@@ -56,7 +56,47 @@ export const toPoints = (history: any[]): Pt[] =>
       km: Number(p.distanceFromPreviousKm) || 0,
     }))
     .filter((p) => Number.isFinite(p.t) && Number.isFinite(p.lat) && Number.isFinite(p.lng) && !(Math.abs(p.lat) < 1e-4 && Math.abs(p.lng) < 1e-4))
-    .sort((a, b) => a.t - b.t);
+    .sort((a, b) => a.t - b.t)
+    .reduce(removeDrift(), [] as Pt[]);
+
+// GPS drift while parked (same rules as the parser's utils/driftFilter.js, so
+// days saved before that filter look the same): while the vehicle stands,
+// positions within 50 m snap to the parking spot and short speed spikes count
+// as 0, until it is more than 50 m away or 3 packets in a row are fast.
+const DRIFT_KMH = 5;
+const DRIFT_M = 50;
+const DRIFT_FAST = 3;
+const DRIFT_SILENCE_MS = 10 * 60 * 1000;
+function removeDrift() {
+  let st: { lat: number; lng: number; t: number; moving: boolean; fast: number } | null = null;
+  return (out: Pt[], p: Pt) => {
+    const fast = p.speed > DRIFT_KMH;
+    if (!st || p.t - st.t > DRIFT_SILENCE_MS) {
+      st = { lat: p.lat, lng: p.lng, t: p.t, moving: fast, fast: 0 };
+      out.push(p);
+      return out;
+    }
+    if (st.moving) {
+      st = { lat: p.lat, lng: p.lng, t: p.t, moving: fast, fast: 0 };
+      out.push(p);
+      return out;
+    }
+    if (kmBetween(st, p) * 1000 > DRIFT_M) {
+      st = { lat: p.lat, lng: p.lng, t: p.t, moving: fast, fast: 0 };
+      out.push(p);
+      return out;
+    }
+    st.fast = fast ? st.fast + 1 : 0;
+    if (st.fast >= DRIFT_FAST) {
+      st = { lat: p.lat, lng: p.lng, t: p.t, moving: true, fast: 0 };
+      out.push(p);
+      return out;
+    }
+    st.t = p.t;
+    out.push({ ...p, lat: st.lat, lng: st.lng, speed: 0, km: 0 });
+    return out;
+  };
+}
 
 export const bandOf = (speed: number, limit: number): Band => {
   if (speed < STOP_SPEED) return "stop";

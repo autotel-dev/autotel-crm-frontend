@@ -47,6 +47,11 @@ const PlaybackV2 = () => {
   const [playing, setPlaying] = useState(false);
   const [mult, setMult] = useState(16);
   const [showCard, setShowCard] = useState(true);
+  // Skip stops: while playing, jump over parking / waiting / no-data spans
+  const [skipStops, setSkipStops] = useState(() => {
+    try { return localStorage.getItem("pb-skip-stops") === "1"; } catch { return false; }
+  });
+  useEffect(() => { try { localStorage.setItem("pb-skip-stops", skipStops ? "1" : "0"); } catch { /* private mode */ } }, [skipStops]);
   const [followCar, setFollowCar] = useState(() => {
     try { return localStorage.getItem("pb-follow") !== "0"; } catch { return true; }
   });
@@ -133,7 +138,11 @@ const PlaybackV2 = () => {
       const prev = lastFrame.current ?? now;
       lastFrame.current = now;
       setT((cur) => {
-        const next = cur + (now - prev) * mult;
+        let next = cur + (now - prev) * mult;
+        if (skipStops) {
+          const span = stops.find((x) => next >= x.start && next < x.end);
+          if (span) next = span.end;
+        }
         if (next >= end) { setPlaying(false); return end; }
         return next;
       });
@@ -141,7 +150,7 @@ const PlaybackV2 = () => {
     };
     raf = requestAnimationFrame(step);
     return () => cancelAnimationFrame(raf);
-  }, [playing, mult, end]);
+  }, [playing, mult, end, skipStops, stops]);
 
   const seek = useCallback((to: number) => setT(Math.min(end, Math.max(start, to))), [start, end]);
   const togglePlay = useCallback(() => {
@@ -359,6 +368,7 @@ const PlaybackV2 = () => {
         <div className="pb-toggles">
           <label className="pb-check" title="Show the info card next to the car"><input type="checkbox" checked={showCard} onChange={(e) => setShowCard(e.target.checked)} /> Card</label>
           <label className="pb-check" title="Keep the car in view while playing"><input type="checkbox" checked={followCar} onChange={(e) => setFollowCar(e.target.checked)} /> Follow</label>
+          <label className="pb-check" title="While playing, jump over stops (parking, waiting, no data) to where the vehicle moves again"><input type="checkbox" checked={skipStops} onChange={(e) => setSkipStops(e.target.checked)} /> Skip stops</label>
         </div>
         <span className="pb-clock">{range.length ? fmtClock(t) : "--:--:--"}</span>
       </section>
