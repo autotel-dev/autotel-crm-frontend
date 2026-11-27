@@ -12,7 +12,7 @@ import { GET_COMMANDS_BY_VEHICLE_ID, GET_PARSER_DEVICES } from "../../../Utiliti
 import { setDevices, setSelectedSingleDevice } from "../../../ReaduxToolkit/Reducer/MonitoringSlice";
 import { EditDeviceModal } from "../Modules/MonitoringLatest/components/EditDeviceModal";
 import { AddDeviceModal } from "../Modules/MonitoringLatest/components/AddDeviceModal";
-import SendCommand from "../Modules/ControlRoom copy/Analytics/components/SendCommand";
+import CommandPanel from "../../../Component/Commands/CommandPanel";
 import { FleetStatus, STATUS_INFO, timeAgo } from "../Modules/LiveMap/fleetStatus";
 import { DeviceRow, engineCutOf, fmtDate, healthOf, protocolOf, toRow, warningOf } from "./deviceInfo";
 import VehiclePhoto, { vehiclePhotoUrl } from "../../../Component/VehiclePhoto/VehiclePhoto";
@@ -161,7 +161,6 @@ const DevicesSetup = () => {
     if (selected) dispatch(setSelectedSingleDevice(selected.d));
     setModal(kind);
   };
-  const commandItem = (d: any) => ({ ...d, id: d?.traccarDeviceId || d?.deviceId, value: d?._id, name: d?.vehicle?.registrationNo });
 
   return (
     <div className="dv-root">
@@ -290,7 +289,7 @@ const DevicesSetup = () => {
                     : !history.items.length ? <li className="dv-sub">No commands sent yet.</li>
                     : history.items.map((c) => (
                       <li key={c._id}>
-                        <span>{COMMAND_LABEL[c.commandType] || c.commandType}{c.commandType === "custom" && c.customData ? `: ${c.customData}` : ""}</span>
+                        <span>{c.label || COMMAND_LABEL[c.commandType] || c.commandType}{!c.label && c.commandType === "custom" && c.customData ? `: ${c.customData}` : ""}</span>
                         <span className={`dv-tone--${COMMAND_TONE[c.status] || "plain"}`}>{COMMAND_STATUS_LABEL[c.status] || String(c.status || "").toLowerCase()}</span>
                         <span className="dv-sub">{timeAgo(c.createdAt)}</span>
                       </li>
@@ -325,7 +324,9 @@ const DevicesSetup = () => {
         <EditDeviceModal isOpen toggle={() => setModal(null)} device={selected.d} onDeviceUpdated={fetchDevices} />
       )}
       {modal === "command" && selected && (
-        <SendCommand addModal setAddModal={() => setModal(null)} prevItem={commandItem(selected.d)} />
+        selected.d?.vehicle?._id ? (
+          <CommandPanel vehicleId={String(selected.d.vehicle._id)} plate={selected.plate} onClose={() => setModal(null)} />
+        ) : null
       )}
     </div>
   );

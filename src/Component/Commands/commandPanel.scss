@@ -1,0 +1,185 @@
+// Commands panel (CommandPanel.tsx). Theme tokens from theme/autotel.scss.
+.modal-dialog.at-modal.at-cmd {
+  max-width: 860px;
+
+  .modal-body { display: flex; flex-direction: column; gap: 14px; }
+
+  code {
+    font-size: 12px;
+    padding: 1px 6px;
+    border-radius: 6px;
+    background: var(--at-soft);
+    color: var(--at-text);
+  }
+
+  .at-cmd__state { display: flex; flex-wrap: wrap; gap: 6px; }
+  .at-cmd__pill {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: var(--at-soft);
+    color: var(--at-text);
+    &.is-good { background: color-mix(in srgb, var(--at-moving, #16a34a) 16%, transparent); color: var(--at-moving, #15803d); }
+    &.is-bad { background: color-mix(in srgb, var(--at-stopped, #dc2626) 14%, transparent); color: var(--at-stopped, #b91c1c); }
+  }
+
+  .at-cmd__note, .at-cmd__help { margin: 0; font-size: 13px; color: var(--at-muted); }
+  .at-cmd__warn, .at-cmd__confirm, .at-cmd__error {
+    margin: 0;
+    font-size: 13px;
+    padding: 8px 12px;
+    border-radius: 10px;
+  }
+  .at-cmd__warn { background: color-mix(in srgb, var(--at-idle, #d97706) 14%, transparent); color: var(--at-text); }
+  .at-cmd__confirm, .at-cmd__error { background: color-mix(in srgb, var(--at-stopped, #dc2626) 12%, transparent); color: var(--at-text); }
+
+  // Last sent command
+  .at-cmd__current {
+    border: 1px solid var(--at-line);
+    border-radius: 14px;
+    padding: 12px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .at-cmd__current-head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+  .at-cmd__progress {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    ol { display: flex; flex-wrap: wrap; gap: 4px 18px; margin: 0; padding: 0; list-style: none; }
+    li {
+      position: relative;
+      padding-left: 18px;
+      font-size: 12px;
+      color: var(--at-muted);
+      &::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 50%;
+        width: 10px;
+        height: 10px;
+        margin-top: -5px;
+        border-radius: 50%;
+        border: 2px solid var(--at-line);
+      }
+      &.is-done { color: var(--at-text); font-weight: 600; }
+      &.is-done::before { background: var(--at-moving, #16a34a); border-color: var(--at-moving, #16a34a); }
+      &.is-failed::before { background: var(--at-stopped, #dc2626); border-color: var(--at-stopped, #dc2626); }
+    }
+  }
+
+  // Groups + commands
+  .at-cmd__layout { display: grid; grid-template-columns: 190px minmax(0, 1fr); gap: 14px; align-items: start; }
+  .at-cmd__layout:has(> .at-cmd__list:only-child) { grid-template-columns: minmax(0, 1fr); }
+  .at-cmd__groups {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    button {
+      text-align: left;
+      border: 0;
+      background: transparent;
+      color: var(--at-text);
+      font-size: 13px;
+      padding: 8px 10px;
+      border-radius: 10px;
+      &:hover { background: var(--at-soft); }
+      &.is-active { background: var(--at-primary-soft, var(--at-soft)); color: var(--at-primary); font-weight: 600; }
+    }
+  }
+  .at-cmd__list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+  .at-cmd__item {
+    border: 1px solid var(--at-line);
+    border-radius: 12px;
+    overflow: hidden;
+    &.is-open { border-color: var(--at-primary); }
+    &.is-danger .at-cmd__label { color: var(--at-stopped, #b91c1c); }
+  }
+  .at-cmd__row {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    border: 0;
+    background: transparent;
+    padding: 10px 12px;
+    text-align: left;
+    color: var(--at-text);
+    &:hover:not(:disabled) { background: var(--at-soft); }
+    &:disabled { opacity: .55; cursor: not-allowed; }
+  }
+  .at-cmd__label { font-size: 14px; font-weight: 600; }
+  .at-cmd__kind { font-size: 11px; color: var(--at-muted); text-transform: uppercase; letter-spacing: .04em; }
+  .at-cmd__form {
+    padding: 4px 12px 12px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 10px 14px;
+    > .at-cmd__help, > .at-cmd__preview, > .at-cmd__confirm, > .at-cmd__error, > .at-cmd__actions { grid-column: 1 / -1; }
+  }
+  .at-cmd__field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin: 0;
+    > span:first-child { font-size: 12px; font-weight: 600; color: var(--at-text); }
+    small { font-size: 11px; color: var(--at-muted); }
+  }
+  .at-cmd__input {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    em { font-style: normal; font-size: 12px; color: var(--at-muted); white-space: nowrap; }
+  }
+  .at-cmd__preview { margin: 0; font-size: 12px; color: var(--at-muted); }
+  .at-cmd__actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+
+  // Replies
+  .at-cmd__reply { display: flex; flex-direction: column; gap: 6px; }
+  .at-cmd__maplink { font-size: 13px; font-weight: 600; color: var(--at-primary); }
+  .at-cmd__chips {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    li { font-size: 12px; padding: 3px 9px; border-radius: 8px; background: var(--at-soft); color: var(--at-text); }
+    span { color: var(--at-muted); }
+  }
+  .at-cmd__raw {
+    font-size: 12px;
+    color: var(--at-muted);
+    summary { cursor: pointer; }
+    code { display: block; margin-top: 4px; white-space: pre-wrap; word-break: break-all; }
+  }
+
+  // History
+  .at-cmd__history {
+    border-top: 1px solid var(--at-line);
+    padding-top: 12px;
+    h3 { font-size: 14px; font-weight: 700; margin: 0 0 8px; color: var(--at-text); }
+    ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+  }
+  .at-cmd__hist-head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 13px; color: var(--at-text); }
+  .at-cmd__when { font-size: 12px; color: var(--at-muted); margin-left: auto; }
+  .at-cmd__status {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: var(--at-soft);
+    color: var(--at-muted);
+    &.s-EXECUTED { color: var(--at-moving, #15803d); }
+    &.s-FAILED { color: var(--at-stopped, #b91c1c); }
+  }
+
+  @media (max-width: 640px) {
+    .at-cmd__layout { grid-template-columns: minmax(0, 1fr); }
+    .at-cmd__groups { flex-direction: row; overflow-x: auto; button { white-space: nowrap; } }
+  }
+}

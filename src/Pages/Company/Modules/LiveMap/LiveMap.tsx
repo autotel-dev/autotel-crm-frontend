@@ -30,7 +30,7 @@ import CustomerDetailsModal from "../MonitoringLatest/components/DevicesSidebar/
 import { EditDeviceModal } from "../MonitoringLatest/components/EditDeviceModal";
 import { EditDeviceIconsModal } from "../MonitoringLatest/components/EditDeviceIconsModal";
 import { AddDeviceModal } from "../MonitoringLatest/components/AddDeviceModal";
-import SendCommand from "../ControlRoom copy/Analytics/components/SendCommand";
+import CommandPanel from "../../../../Component/Commands/CommandPanel";
 import { DetailTab, FocusDetails } from "./FocusDetails";
 import "./liveMap.scss";
 
@@ -309,7 +309,6 @@ const LiveMap = () => {
     }
   };
 
-  const commandItem = (d: any) => ({ ...d, id: d?.traccarDeviceId || d?.deviceId, value: d?._id, name: d?.vehicle?.registrationNo });
 
 
   return (
@@ -545,7 +544,9 @@ const LiveMap = () => {
         <EditDeviceIconsModal isOpen toggle={() => setModal(null)} device={modalDevice} onIconsUpdated={fetchDevices} />
       )}
       {modal === "command" && modalDevice && (
-        <SendCommand addModal setAddModal={() => setModal(null)} prevItem={commandItem(modalDevice)} />
+        modalDevice?.vehicle?._id ? (
+          <CommandPanel vehicleId={String(modalDevice.vehicle._id)} plate={modalDevice?.vehicle?.registrationNo} onClose={() => setModal(null)} />
+        ) : null
       )}
       {modal === "add" && <AddDeviceModal isOpen toggle={() => setModal(null)} onDeviceAdded={fetchDevices} />}
     </div>
