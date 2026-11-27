@@ -50,6 +50,11 @@ const ProtectedRoute: React.FC<PropTypes> = ({
       "complain-center": "complaint-center",
       "live-monitoring": "monitoring",
       "monitoring-for-single-vehicle": "monitoring",
+      "monitoring-classic": "monitoring",
+      // monitoring design trials (team picks one, the rest get removed)
+      "monitoring-design-1": "monitoring",
+      "monitoring-design-2": "monitoring",
+      "monitoring-design-3": "monitoring",
     };
 
     // The module a page belongs to is the path segment right after "modules",
