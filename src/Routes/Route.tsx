@@ -65,6 +65,10 @@ const TripReports = lazy(() => import("../Pages/Company/Modules/Monitoring/compo
 const MonitoringLatest = lazy(() => import("../Pages/Company/Modules/MonitoringLatest/MonetoringLatest"));
 // Redesign Phase 3: new Live Monitoring page (the old one stays at /company/modules/monitoring-classic)
 const LiveMap = lazy(() => import("../Pages/Company/Modules/LiveMap/LiveMap"));
+// Three monitoring design trials for the team to compare; keep one, remove the rest.
+const MonitoringDesign1 = lazy(() => import("../Pages/Company/Modules/LiveMapDesigns/Design1"));
+const MonitoringDesign2 = lazy(() => import("../Pages/Company/Modules/LiveMapDesigns/Design2"));
+const MonitoringDesign3 = lazy(() => import("../Pages/Company/Modules/LiveMapDesigns/Design3"));
 const LiveVehicleMonitoring = lazy(() => import("../Pages/Company/Modules/MonitoringLatest/components/LiveVehicleMonitoring/LiveVehicleMonitoring"));
 const TripManagementLayout = lazy(() => import("../Pages/Company/Modules/TripManagement/TripManagementLayout"));
 const CustomersSetup = lazy(() => import("../Pages/Company/Customers/CustomersSetup"));
@@ -478,6 +482,27 @@ const routes = [
   {
     path: `${process.env.PUBLIC_URL}/company/modules/monitoring`,
     Component: <LiveMap />,
+    isProtected: true,
+    allowedUserRoles: [ROLES.COMPANY],
+    permissionValue: "Monitoring",
+  },
+  {
+    path: `${process.env.PUBLIC_URL}/company/modules/monitoring-design-1`,
+    Component: <MonitoringDesign1 />,
+    isProtected: true,
+    allowedUserRoles: [ROLES.COMPANY],
+    permissionValue: "Monitoring",
+  },
+  {
+    path: `${process.env.PUBLIC_URL}/company/modules/monitoring-design-2`,
+    Component: <MonitoringDesign2 />,
+    isProtected: true,
+    allowedUserRoles: [ROLES.COMPANY],
+    permissionValue: "Monitoring",
+  },
+  {
+    path: `${process.env.PUBLIC_URL}/company/modules/monitoring-design-3`,
+    Component: <MonitoringDesign3 />,
     isProtected: true,
     allowedUserRoles: [ROLES.COMPANY],
     permissionValue: "Monitoring",

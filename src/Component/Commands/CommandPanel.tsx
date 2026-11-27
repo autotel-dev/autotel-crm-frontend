@@ -106,9 +106,11 @@ interface Props {
   vehicleId: string;
   plate?: string;
   onClose: () => void;
+  /** Open this command's form straight away (e.g. "engineStop" from a Cut engine button). */
+  initialKey?: string;
 }
 
-const CommandPanel = ({ vehicleId, plate, onClose }: Props) => {
+const CommandPanel = ({ vehicleId, plate, onClose, initialKey }: Props) => {
   const [cat, setCat] = useState<Catalog | null>(null);
   const [loadError, setLoadError] = useState("");
   const [group, setGroup] = useState("quick");
@@ -173,6 +175,17 @@ const CommandPanel = ({ vehicleId, plate, onClose }: Props) => {
     c.params.forEach((p) => { v[p.name] = p.default ?? ""; });
     setValues(v);
   };
+
+  // Open the requested command once the catalog has loaded (if this user may send it)
+  const openedInitial = useRef(false);
+  useEffect(() => {
+    if (!initialKey || openedInitial.current || !cat) return;
+    openedInitial.current = true;
+    const c = cat.commands.find((x) => x.key === initialKey);
+    if (!c) return;
+    setGroup(c.group);
+    choose(c);
+  }, [cat, initialKey]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const send = async (c: Cmd, confirmMoving = false) => {
     setSending(true);

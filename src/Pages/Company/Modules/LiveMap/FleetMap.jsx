@@ -241,6 +241,11 @@ const SIDES = [
   [".lm-card", "right"],
   [".lm-pulse", "bottom"],
   [".lm-strip", "bottom"],
+  // monitoring design trials (LiveMapDesigns/)
+  [".lmd-over-top", "top"],
+  [".lmd-over-left", "left"],
+  [".lmd-over-right", "right"],
+  [".lmd-over-bottom", "bottom"],
 ];
 const visibleBox = (map) => {
   const div = map.getDiv?.();
