@@ -16,6 +16,7 @@ import {
   setType,
 } from "../../../../../ReaduxToolkit/Reducer/GeofenceSlice";
 import "./googleMap.css";
+import { DARK_MAP_STYLES } from "../../../../../utils/mapDarkStyles";
 import { polygon } from "leaflet";
 
 const GoogleMap = (props) => {
@@ -25,6 +26,17 @@ const GoogleMap = (props) => {
   const [zoom, setZoom] = useState(12); // State to manage zoom level
   const [drawingMode, setDrawingMode] = useState(null); // State to manage drawing mode
   const mapRef = useRef(null);
+
+  // Follow the app's light / dark theme (google-maps-react only reads styles at start)
+  const [dark, setDark] = useState(() => document.body.classList.contains("at-dark"));
+  useEffect(() => {
+    const obs = new MutationObserver(() => setDark(document.body.classList.contains("at-dark")));
+    obs.observe(document.body, { attributes: true, attributeFilter: ["class"] });
+    return () => obs.disconnect();
+  }, []);
+  useEffect(() => {
+    mapRef.current?.map?.setOptions({ styles: dark ? DARK_MAP_STYLES : null });
+  }, [dark, geofences]);
   const drawingManagerRef = useRef(null);
   const overlaysRef = useRef([]);
   const [selectedPolygon, setSelectedPolygon] = useState(null); // State to manage selected polygon
@@ -345,6 +357,7 @@ const GoogleMap = (props) => {
           zoom={zoom}
           initialCenter={{ lat: 24.8607, lng: 67.0011 }}
           disableDefaultUI={true} // Disable default UI controls
+          styles={dark ? DARK_MAP_STYLES : null}
           ref={mapRef}
         >
           {renderGeofences()}

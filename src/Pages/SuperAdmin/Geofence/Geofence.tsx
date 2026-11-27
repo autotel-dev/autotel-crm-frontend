@@ -4,13 +4,14 @@ import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import GeofencesSidebar from "./components/Sidebar/GeofenceSidebar";
+import { SetupTabs } from "../../../Component/Setup/SetupShell";
+import "./geofence.scss";
 import {
   setGeofences,
   setGeofencesGroup,
   setIsConnected,
 } from "../../../ReaduxToolkit/Reducer/GeofenceSlice";
 import { getAll } from "../../../Utilities/api";
-import { log } from "console";
 import {
   GET_ALL_GEOFENCES,
   GET_ALL_GROUPS,
@@ -223,38 +224,25 @@ const Geofence = () => {
   const [undefinedData, setUndefinedData] = useState<any>(false);
   const [isEditGeofence, setIsEditGeofence] = useState(false);
 
+  // Setup frame (title + section tabs) above a rounded map card; the list
+  // panel floats over the map's left side.
   return (
-    <>
-      <div
-        style={{
-          marginLeft: 0,
-          marginTop: 0,
-          // marginTop: "130px",
-          height: "calc(100vh - var(--at-chrome-h, 104px))",
-          display: "flex",
-          overflow: "hidden",
-          scrollbarWidth: "none",
-          marginRight: 0,
-          // paddingLeft:"50px",
-        }}
-      >
+    <div className="gf-page">
+      <header className="st-head">
+        <h1 className="st-title">Setup</h1>
+        <SetupTabs />
+      </header>
+      <div className="gf-map">
         <GoogleMap
           isEditGeofence={isEditGeofence}
           setIsEditGeofence={setIsEditGeofence}
         />
-
-        <div
-          style={{
-            position: "absolute",
-          }}
-        >
-          <GeofencesSidebar
-            isEditGeofence={isEditGeofence}
-            setIsEditGeofence={setIsEditGeofence}
-          />
-        </div>
+        <GeofencesSidebar
+          isEditGeofence={isEditGeofence}
+          setIsEditGeofence={setIsEditGeofence}
+        />
       </div>
-    </>
+    </div>
   );
 };
 

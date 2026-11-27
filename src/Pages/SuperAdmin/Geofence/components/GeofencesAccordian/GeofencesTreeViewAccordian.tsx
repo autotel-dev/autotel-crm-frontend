@@ -1206,12 +1206,13 @@ const GeofencesTreeViewAccordian = ({
           className={`text-end flex-shrink-0 icon-state 
                             }`}
         >
-          <Label className="switch mb-0">
-            <Input
-              type="checkbox"
+          {/* Copies the geofences Autotel shares (made by the super admin) into this account; existing ones are skipped. */}
+            <button
+              type="button"
+              className="gf-import"
               // defaultChecked={row.isActive}
               // value={row.isActive}
-              onChange={async (e: any) => {
+              onClick={async (e: any) => {
                 //  --------------------------
                 // const changeStatus = {
                 //   isActive: !row.isActive,
@@ -1372,15 +1373,9 @@ const GeofencesTreeViewAccordian = ({
                   });
                 }
               }}
-            />
-            <span
-              // className={`switch-state ${
-              //   row.isActive ? "bg-primary" : "bg-secondary"
-              // }`}
-              className="switch-state bg-primary"
-              // style={{ backgroundColor: row.isActive ? "green" : "red" }}
-            />
-          </Label>
+            >
+              Import shared geofences
+            </button>
         </div>
       </div>
 

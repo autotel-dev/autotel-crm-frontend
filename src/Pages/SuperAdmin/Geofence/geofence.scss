@@ -1,0 +1,124 @@
+// Setup · Geofences (redesign). Setup header + rounded map card with a
+// floating list panel. The list / form markup inside the panel is older code
+// with inline styles; the rules under .gf-panel__body theme it.
+// Colours from theme/autotel.scss (C1 light / C4 dark).
+
+.gf-page {
+  display: flex; flex-direction: column; gap: 12px;
+  height: calc(100vh - var(--at-chrome-h, 112px));
+  min-height: 420px;
+  font-family: var(--at-font); color: var(--at-text);
+  * { letter-spacing: normal; }
+}
+.gf-map {
+  position: relative; flex: 1; min-height: 0;
+  border-radius: 16px; overflow: hidden; border: 1px solid var(--at-line); background: var(--at-soft);
+}
+.gf-muted { color: var(--at-muted); font-size: 12px; }
+
+// Zoom buttons (from GoogleMap.jsx)
+.gf-map .custom-zoom-control {
+  right: 12px; top: 12px; transform: none; padding: 0; gap: 0; overflow: hidden;
+  background: var(--at-panel); border: 1px solid var(--at-line); border-radius: 10px; box-shadow: var(--at-shadow);
+  .zoom-button {
+    width: 32px; height: 32px; margin: 0; padding: 0; border: 0; border-radius: 0;
+    background: transparent; color: var(--at-text); font-size: 16px; line-height: 1;
+    &:hover { background: var(--at-soft); }
+    & + .zoom-button { border-top: 1px solid var(--at-line); }
+  }
+}
+
+// ---------- floating panel ----------
+.gf-panel {
+  position: absolute; z-index: 5; left: 10px; top: 10px; bottom: 10px; width: 320px;
+  display: flex; flex-direction: column; gap: 8px; padding: 10px 10px 0;
+  background: color-mix(in srgb, var(--at-panel) 96%, transparent);
+  border: 1px solid var(--at-line); border-radius: 14px; box-shadow: var(--at-shadow);
+  backdrop-filter: blur(6px);
+  &.is-closed { bottom: auto; width: auto; padding-bottom: 10px; }
+}
+.gf-panel__head {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  strong { font: 700 16px var(--at-font-display); margin-right: 6px; }
+}
+.gf-icon {
+  flex: 0 0 28px; width: 28px; height: 28px; border: 0; border-radius: 8px;
+  background: var(--at-soft); color: var(--at-text); font-size: 16px; line-height: 1; cursor: pointer;
+  &:hover { background: var(--at-line); }
+}
+.gf-panel__actions { display: flex; gap: 6px; }
+.gf-btn {
+  flex: 0 0 auto; height: 30px; padding: 0 11px; border: 0; border-radius: 9px;
+  background: var(--at-soft); color: var(--at-text); font: 600 12.5px var(--at-font); cursor: pointer; white-space: nowrap;
+  &:hover { filter: brightness(.96); }
+  &--primary { flex: 1; background: var(--at-primary); color: var(--at-on-primary); }
+}
+.gf-hint { margin: 0; font-size: 12px; color: var(--at-muted); }
+
+// ---------- list + form inside the panel (older markup) ----------
+.gf-panel__body {
+  flex: 1; min-height: 0; overflow-y: auto; margin: 0 -10px; padding: 0 10px 10px;
+  font-size: 13px; color: var(--at-text);
+  scrollbar-width: thin;
+
+  // form (new / edit geofence)
+  form > div { margin: 0 0 8px !important; }
+  form p, form .P { margin: 0 0 4px !important; font-size: 12px; font-weight: 600; color: var(--at-text); }
+  hr { display: none; }
+  .ant-select { height: 34px !important; margin-bottom: 0 !important; }
+  .ant-select-selector {
+    border-radius: 10px !important; border: 1px solid var(--at-line) !important;
+    background: var(--at-soft) !important; color: var(--at-text) !important;
+  }
+  .ant-select-selection-item, .ant-select-selection-placeholder { line-height: 32px !important; color: inherit; }
+  form > div[style*="display: flex"] {
+    gap: 8px; margin-bottom: 10px !important;
+    button { margin: 0 !important; height: 34px; border-radius: 10px !important; font: 600 13px var(--at-font); }
+    button:first-child { background: var(--at-soft) !important; color: var(--at-text) !important; }
+    button:last-child { background: var(--at-primary) !important; color: var(--at-on-primary) !important; }
+  }
+
+  // "Import shared geofences" (was an unlabelled switch)
+  > .d-flex:first-of-type { justify-content: flex-start !important; margin: 0 0 8px !important; }
+  .gf-import {
+    border: 1px dashed var(--at-line); background: transparent; color: var(--at-primary);
+    border-radius: 9px; padding: 4px 10px; font: 600 12px var(--at-font); cursor: pointer;
+    &:hover { background: var(--at-primary-soft); }
+  }
+
+  // search box
+  > input[type="text"] {
+    width: 100% !important; height: 34px !important; margin: 0 0 8px !important; padding: 0 12px 0 32px !important;
+    border-radius: 10px !important; font-size: 13px !important;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M11 4a7 7 0 1 0 .01 0M20 20l-4-4'/%3E%3C/svg%3E") !important;
+    background-repeat: no-repeat !important; background-position: 10px 50% !important;
+  }
+
+  // "Select all" row and the group / sub-group / geofence rows
+  input[type="checkbox"] { accent-color: var(--at-primary); width: 15px !important; height: 15px !important; cursor: pointer; }
+  label { font-weight: 500 !important; font-size: 13px !important; color: var(--at-text) !important; cursor: pointer; }
+  .dark-accordion, .accordion, .accordion-item, .accordion-body, .accordion-collapse {
+    background: transparent !important; border: 0 !important; color: var(--at-text) !important; box-shadow: none !important;
+  }
+  .accordion-item { border-top: 1px solid var(--at-line) !important; border-radius: 0 !important; }
+  .custom-accordion-header {
+    display: flex !important; align-items: center; gap: 8px; padding: 8px 4px !important;
+    background: transparent !important; color: var(--at-text) !important; cursor: pointer; border-radius: 8px;
+    &:hover { background: var(--at-soft) !important; }
+    span { font-size: 13px !important; color: var(--at-text) !important; }
+    .svg-color { margin-left: auto; color: var(--at-muted) !important; stroke: currentColor; width: 16px; height: 16px; }
+  }
+  // rows set colours inline (white / grey backgrounds, dark text)
+  div[style*="background-color: white"], div[style*="background-color: rgb(255, 255, 255)"], div[style*="background: white"] { background-color: transparent !important; }
+  div[style*="cursor: pointer"]:hover { background-color: var(--at-soft) !important; border-radius: 8px; }
+  span[style*="color: black"], div[style*="color: black"], p[style*="color: black"] { color: var(--at-text) !important; }
+  svg { color: var(--at-muted); }
+  // geofence rows: flat, no outlined boxes
+  div[style*="box-shadow"], div[style*="border: 1px solid"] {
+    border: 0 !important; border-radius: 8px !important; box-shadow: none !important;
+    margin: 1px 0 !important; padding: 6px 8px !important; background: transparent !important;
+    &:hover { background: var(--at-soft) !important; }
+  }
+  .accordion-body span[style*="bold"], .accordion-collapse span[style*="bold"] { font-weight: 500 !important; }
+  button[style*="background-color: green"], button[style*="backgroundColor: green"] { border-radius: 8px !important; }
+}
