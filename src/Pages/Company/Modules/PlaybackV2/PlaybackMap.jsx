@@ -86,6 +86,16 @@ const makeLayer = (google) =>
         // Rebuild the car only when its colour or photo changes; otherwise just
         // turn it. (Rebuilding it ~60 times a second made it blink during playback.)
         const photo = this.photo && !this._badPhoto?.has(this.photo) ? this.photo : null;
+        // Photo marker: a speed-colour change only recolours the ring and arrow,
+        // so the photo isn't reloaded (which flashed the frame white).
+        if (photo && this._carPhoto === photo && this._carSvg && this._carBand !== this.car.band) {
+          this._carBand = this.car.band;
+          const color = `var(--b-${this.car.band})`;
+          const ring = this.carEl.querySelector(".at-pmk");
+          const tip = this._carSvg.firstElementChild;
+          if (ring) ring.style.borderColor = color;
+          if (tip) tip.style.borderBottomColor = color;
+        }
         if (this._carBand !== this.car.band || this._carPhoto !== photo || !this._carSvg) {
           this._carBand = this.car.band;
           this._carPhoto = photo;
@@ -192,30 +202,46 @@ const PlaybackMap = ({ google, pts, segments, events, car, card, photo, fitKey, 
     map.fitBounds(b, narrow ? { top: 40, left: 30, right: 30, bottom: 40 } : { top: 50, left: 450, right: 80, bottom: 130 });
   }, [map, google, pts, fitKey]);
 
-  // Follow the car: keep it inside the part of the map not covered by the
-  // floating panels; once it leaves the middle of that area, re-centre on it.
+  // Map is moving because of a pan we started; don't start another until it settles.
+  const panningRef = useRef(false);
+  useEffect(() => {
+    if (!map || !google) return;
+    const l = map.addListener("idle", () => { panningRef.current = false; });
+    return () => l.remove();
+  }, [map, google]);
+
+  // Follow the car inside the part of the map not covered by the floating
+  // panels. The map stays still while the car is in the middle of that area;
+  // when it nears the edge, the map glides (panTo) to put it back in the middle.
+  // Re-centring on every frame (~40 times a second) made Google redraw labels
+  // and icons constantly and the map looked like it was blinking.
   useEffect(() => {
     if (!map || !google || !car || !follow) return;
     const proj = layerRef.current?.getProjection?.();
     const box = visibleBox(map);
-    if (!proj || !box) {
+    const div = map.getDiv?.();
+    if (!proj || !box || !div) {
       const b = map.getBounds();
       if (b && !b.contains(new google.maps.LatLng(car.lat, car.lng))) map.panTo({ lat: car.lat, lng: car.lng });
       return;
     }
     const p = proj.fromLatLngToContainerPixel(new google.maps.LatLng(car.lat, car.lng));
     if (!p) return;
-    // While playing, keep the car at the middle of the clear area every frame,
-    // so the map glides with it instead of jumping half a screen at a time
-    // (which looked like blinking when zoomed in at 16x / 64x).
+    const w = box.r - box.l, h = box.b - box.t;
     const dx = p.x - (box.l + box.r) / 2;
     const dy = p.y - (box.t + box.b) / 2;
-    if (Math.abs(dx) < 1 && Math.abs(dy) < 1) return;
-    const div = map.getDiv();
-    const far = Math.abs(dx) > (box.r - box.l) / 2 || Math.abs(dy) > (box.b - box.t) / 2;
-    if (far || !div) { map.panBy(Math.round(dx), Math.round(dy)); return; }
+    // Off the clear area (seek, new trip, very fast playback): jump straight there.
+    if (Math.abs(dx) > w / 2 || Math.abs(dy) > h / 2) {
+      map.panBy(Math.round(dx), Math.round(dy));
+      panningRef.current = true;
+      return;
+    }
+    // Still in the middle 60%: leave the map alone.
+    if (panningRef.current || (Math.abs(dx) < w * 0.3 && Math.abs(dy) < h * 0.3)) return;
     const c = proj.fromContainerPixelToLatLng(new google.maps.Point(div.clientWidth / 2 + dx, div.clientHeight / 2 + dy));
-    if (c) map.setCenter(c);
+    if (!c) return;
+    panningRef.current = true;
+    map.panTo(c);
   }, [map, google, car, follow]);
 
   useEffect(() => { if (map) map.setOptions({ styles: dark ? DARK_MAP_STYLES : null }); }, [map, dark]);
