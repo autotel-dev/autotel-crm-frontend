@@ -1,0 +1,110 @@
+// Setup pages (SetupShell.tsx). Restyles the older template pages inside
+// .st-page so they match Setup · Devices: one toolbar row (filter chips,
+// search, create button), one table card, left-aligned compact rows.
+// Colours come from theme/autotel.scss (C1 light / C4 dark).
+
+.st-page {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  font-family: var(--at-font);
+  color: var(--at-text);
+  * { letter-spacing: normal; }
+}
+
+// ---------- header + tabs ----------
+.st-head { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.st-title { margin: 0; font: 700 22px var(--at-font-display); color: var(--at-text); }
+.st-tabs {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 2px;
+  background: var(--at-panel); border: 1px solid var(--at-line); border-radius: 12px; padding: 3px;
+  a, .st-more > button {
+    text-decoration: none; border: 0; background: transparent; border-radius: 9px; padding: 5px 10px;
+    font: 600 12.5px var(--at-font); color: var(--at-text); cursor: pointer; white-space: nowrap;
+    &:hover { background: var(--at-soft); color: var(--at-text); }
+    &.is-on { background: var(--at-text); color: var(--at-panel); }
+  }
+}
+.st-more { position: relative; }
+.st-more__menu {
+  position: absolute; z-index: 30; top: calc(100% + 6px); right: 0; min-width: 230px; max-height: 70vh; overflow-y: auto;
+  padding: 8px; background: var(--at-panel); border: 1px solid var(--at-line); border-radius: 14px; box-shadow: var(--at-shadow);
+}
+.st-more__group {
+  display: flex; flex-direction: column; padding: 4px 0;
+  & + & { border-top: 1px solid var(--at-line); }
+  > span { padding: 4px 10px; font-size: 10.5px; font-weight: 700; letter-spacing: .06em !important; text-transform: uppercase; color: var(--at-muted); }
+  a { display: block; padding: 6px 10px; border-radius: 8px; font: 500 13px var(--at-font); color: var(--at-text); text-decoration: none;
+    &:hover { background: var(--at-soft); }
+    &.is-on { background: var(--at-primary-soft); color: var(--at-primary); font-weight: 700; }
+  }
+}
+
+// ---------- the template page inside ----------
+.st-body {
+  // old page title + breadcrumb: the top bar and tabs already say where you are
+  .page-title { display: none !important; }
+  .container-fluid { padding-left: 0 !important; padding-right: 0 !important; }
+  .row { --bs-gutter-x: 0; margin-left: 0; margin-right: 0; }
+  .project-card, .project-card > [class*="col"] { margin: 0 !important; padding: 0 !important; }
+  .card { margin-bottom: 12px !important; }
+
+  // Toolbar card: filter chips | search | create button, on one row
+  .project-list > .card {
+    display: flex !important; flex-direction: row !important; flex-wrap: wrap; align-items: center; gap: 8px;
+    padding: 8px !important; border-radius: 16px !important;
+    > .row, > .row > [class*="col"], > .card-body, > .card-body > .row, > .card-body > .row > [class*="col"] { display: contents !important; }
+    .nav { order: 1; }
+    > [class*="col"], .card-body > [class*="col"] { order: 2; flex: 1 1 220px; min-width: 180px; padding: 0 !important; }
+    // create / action buttons: last, pushed to the right
+    > .row > *:not([class*="col"]):not(.nav),
+    > .row > [class*="col"] > *:not(.nav),
+    > .card-body .row > [class*="col"] > *:not(.nav) { order: 3; margin-top: 0 !important; margin-bottom: 0 !important; margin-left: auto !important; }
+  }
+  .global-search-field {
+    width: 100% !important; height: 36px !important; margin: 0 !important; padding: 0 12px 0 34px !important;
+    border-radius: 10px !important; font-size: 13px !important;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='15' height='15' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M11 4a7 7 0 1 0 .01 0M20 20l-4-4'/%3E%3C/svg%3E") !important;
+    background-repeat: no-repeat !important; background-position: 11px 50% !important;
+  }
+  .nav-tabs.border-tab {
+    padding: 3px !important; border-radius: 11px !important;
+    .nav-link { padding: 5px 11px !important; font-size: 12.5px !important; svg { width: 14px; height: 14px; margin-right: 4px; } }
+  }
+  .btn:not(.btn-close):not(.btn-link) { min-height: 34px; padding: 6px 14px; }
+
+  // Table card
+  .card-header { padding: 12px 16px 10px !important; h4, h5 { margin: 0; font: 700 15px var(--at-font-display) !important; } }
+  .card-body { padding: 4px 8px 8px !important; }
+  .table-responsive { margin: 0 !important; }
+  table { width: 100%; border-collapse: separate; border-spacing: 0; }
+  thead th {
+    position: sticky; top: 0; z-index: 1; background: var(--at-panel);
+    padding: 10px 12px !important; border-bottom: 1px solid var(--at-line) !important;
+    font: 700 11px var(--at-font) !important; text-transform: uppercase; letter-spacing: .05em !important;
+    color: var(--at-muted) !important; text-align: left !important; white-space: nowrap; width: auto !important;
+  }
+  tbody td {
+    padding: 9px 12px !important; border-bottom: 1px solid var(--at-line) !important;
+    font-size: 13.5px !important; color: var(--at-text) !important; text-align: left !important; vertical-align: middle; width: auto !important;
+  }
+  tbody tr { background: transparent !important; transition: background-color .15s; }
+  tbody tr:hover { background: var(--at-soft) !important; }
+  tbody tr:last-child td { border-bottom: 0 !important; }
+  td > .d-flex, td > div[style*="center"] { justify-content: flex-start !important; }
+  // actions on the right, side by side
+  thead th:last-child, tbody td:last-child { text-align: right !important; }
+  tbody td:last-child > div { display: inline-flex !important; flex-wrap: wrap; justify-content: flex-end !important; gap: 6px; }
+  tbody td:last-child button { margin: 0 !important; }
+  .global-table-edit-btn, .global-table-delete-btn { min-width: 0 !important; padding: 4px 10px !important; font-size: 12px !important; min-height: 28px; }
+  .global-table-delete-btn:disabled { opacity: .35; cursor: not-allowed; }
+  // status switch: themed, whatever inline colour the page sets
+  .switch .switch-state { background-color: var(--at-line) !important; }
+  .switch input:checked + .switch-state { background-color: var(--at-primary) !important; }
+
+  // Form pages (gateways, templates)
+  form .form-label, form label { font-size: 12.5px; color: var(--at-text); }
+  .form-control, .form-select, input[type="text"], input[type="email"], input[type="number"], input[type="password"], select, textarea {
+    min-height: 36px; font-size: 13px !important; border-radius: 10px !important;
+  }
+}

@@ -1,4 +1,5 @@
 import { lazy } from "react";
+import SetupShell from "../Component/Setup/SetupShell";
 
 // Company
 
@@ -689,4 +690,16 @@ const routes = [
   },
 ];
 
-export default routes;
+// Setup pages share one frame (title + section tabs + restyle, see
+// Component/Setup/SetupShell). Devices has its own header with the same tabs;
+// Geofence is a full-screen map, so both are left as they are.
+const inSetupShell = (path: string) => {
+  const p = path.replace(process.env.PUBLIC_URL || "", "").toLowerCase();
+  if (p === "/company/users") return true;
+  if (!p.includes("/setup/")) return false;
+  return !p.endsWith("/setup/devices") && !p.endsWith("/setup/geofence");
+};
+
+export default routes.map((r) =>
+  inSetupShell(r.path) ? { ...r, Component: <SetupShell>{r.Component}</SetupShell> } : r
+);

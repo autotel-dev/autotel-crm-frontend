@@ -130,7 +130,6 @@ const ServersList = () => {
           transition: "background-color 0.3s",
         }}
       >
-        <td style={{ width: "10%" }}>{row._id}</td>
         <td style={{ width: "15%" }}>{row.companyName}</td>
         <td style={{ width: "10%" }}>{row.serviceProvider}</td>
         <td style={{ width: "15%" }}>{row.ipAddress}</td>
@@ -343,7 +342,6 @@ const ServersList = () => {
                       <table>
                         <thead>
                           <tr>
-                            <th style={{ width: "10%" }}>ID</th>
                             <th style={{ width: "15%" }}>Company Name</th>
                             <th style={{ width: "10%" }}>Service Provider</th>
                             <th style={{ width: "15%" }}>IP Address</th>

@@ -78,7 +78,6 @@ const EmailTemplatesList = () => {
   const renderTableRows = () => {
     return emailTemplates?.map((row: any) => (
       <tr key={row.id}>
-        <td>{row._id}</td>
         <td>{row.subject}</td>
         <td>{formatUnderscoredString(row.type)}</td>
         <td>
@@ -133,7 +132,6 @@ const EmailTemplatesList = () => {
                     <table>
                       <thead>
                         <tr>
-                          <th>ID</th>
                           <th>Subject</th>
                           <th>Type</th>
                           <th>Actions</th>

@@ -161,7 +161,6 @@ const UsersList = () => {
           transition: "background-color 0.3s",
         }}
       >
-        <td style={{ width: "10%" }}>{row?._id}</td>
         <td style={{ width: "15%" }}>{row?.fullName}</td>
         <td style={{ width: "10%" }}>
           {formatUnderscoredString(row?.subRole?.name)}
@@ -351,7 +350,6 @@ const UsersList = () => {
                     <table>
                       <thead>
                         <tr>
-                          <th style={{ width: "10%" }}>ID</th>
                           <th style={{ width: "15%" }}>Name</th>
                           <th style={{ width: "10%" }}>Department</th>
                           <th style={{ width: "10%" }}>Branch</th>

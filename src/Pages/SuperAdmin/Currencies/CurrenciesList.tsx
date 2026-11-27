@@ -120,7 +120,6 @@ const CurrenciesList = () => {
               : "transparent",
           transition: "background-color 0.3s",
         }}>
-        <td>{row._id}</td>
         <td>{row.name}</td>
         <td>{row.symbol}</td>
         {/* <td>
@@ -267,7 +266,6 @@ const CurrenciesList = () => {
                     <table>
                       <thead>
                         <tr>
-                          <th>ID</th>
                           <th>Name</th>
                           <th>Symbol</th>
                           {/* <th>Status</th> */}

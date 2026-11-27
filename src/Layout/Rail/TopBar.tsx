@@ -3,6 +3,7 @@
 import { useLocation } from "react-router-dom";
 import RightHeader from "../Header/RightHeader/RightHeader";
 import { NavItem } from "./useNavItems";
+import { SETUP_TITLES } from "../../Component/Setup/SetupShell";
 
 const U = process.env.PUBLIC_URL || "";
 
@@ -36,6 +37,9 @@ const titleFor = (items: NavItem[], path: string): string => {
       if (path === l || path.startsWith(l + "/")) return item.title;
     }
   }
+  // Setup pages the menu doesn't list (Branches, Warehouses, templates, gateways…)
+  const p = path.toLowerCase();
+  for (const [l, t] of SETUP_TITLES) if (p === l.toLowerCase() || p.startsWith(l.toLowerCase() + "/")) return t;
   return "Autotel";
 };
 

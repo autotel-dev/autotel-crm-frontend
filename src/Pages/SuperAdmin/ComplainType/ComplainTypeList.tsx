@@ -125,7 +125,6 @@ const ComplainTypeList = () => {
           transition: "background-color 0.3s",
         }}
       >
-        <td>{row._id}</td>
         <td>{row.title}</td>
         <td>{formatUnderscoredString(row.priorty)}</td>
         <td>
@@ -295,7 +294,6 @@ const ComplainTypeList = () => {
                     <table>
                       <thead>
                         <tr>
-                          <th>ID</th>
                           <th>Title</th>
                           <th>Priority</th>
                           <th>Status</th>

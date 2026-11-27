@@ -127,7 +127,6 @@ const ProvinceList = () => {
           transition: "background-color 0.3s",
         }}
       >
-        <td>{row._id}</td>
         <td>{row?.name}</td>
         <td>{row?.country?.name}</td>
         {/* <td>
@@ -241,7 +240,6 @@ const ProvinceList = () => {
                         <table>
                           <thead>
                             <tr>
-                              <th>ID</th>
                               <th>Name</th>
                               <th>Country</th>
                               {/* <th>Status</th> */}

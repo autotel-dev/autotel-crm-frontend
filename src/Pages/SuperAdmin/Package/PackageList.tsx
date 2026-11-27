@@ -135,7 +135,6 @@ const PackageList = () => {
         transition: "background-color 0.3s",
       }}
     >
-        <td style={{ width: "10%" }}>{row._id}</td>
         <td style={{ width: "15%" }}>{row.title}</td>
         <td style={{ width: "15%" }}>{row.price}</td>
         <td style={{ width: "10%" }}>{row.days}</td>
@@ -296,7 +295,6 @@ const PackageList = () => {
                       <table>
                         <thead>
                           <tr>
-                            <th style={{ width: "10%" }}>ID</th>
                             <th style={{ width: "15%" }}>Title</th>
                             <th style={{ width: "15%" }}>Price</th>
                             <th style={{ width: "10%" }}>Days</th>

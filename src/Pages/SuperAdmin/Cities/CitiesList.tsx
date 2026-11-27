@@ -138,7 +138,6 @@ const CitiesList = () => {
           transition: "background-color 0.3s",
         }}
       >
-        <td style={{ width: "10%" }}>{row._id}</td>
         <td style={{ width: "15%" }}>{row.name}</td>
         <td style={{ width: "15%" }}>{row.province?.name}</td>
         <td style={{ width: "15%" }}>{row.country?.name}</td>
@@ -297,7 +296,6 @@ const CitiesList = () => {
                       <table>
                         <thead>
                           <tr>
-                            <th style={{ width: "10%" }}>ID</th>
                             <th style={{ width: "15%" }}>Name</th>
                             <th style={{ width: "15%" }}>Province</th>
                             <th style={{ width: "15%" }}>Country</th>

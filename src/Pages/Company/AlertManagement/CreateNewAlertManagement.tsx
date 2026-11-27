@@ -74,7 +74,6 @@ const CreateNewAlertManagement = () => {
           style={{
             display: "flex",
             justifyContent: "flex-end",
-            paddingLeft: "80%",
           }}
         >
           <Dropdown.Button
@@ -82,7 +81,7 @@ const CreateNewAlertManagement = () => {
             type="primary"
             style={{ color: "black" }}
           >
-            Select Option
+            New alert rule
           </Dropdown.Button>
         </div>
 

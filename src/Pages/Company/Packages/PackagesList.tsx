@@ -114,7 +114,6 @@ const PackagesList = () => {
           transition: "background-color 0.3s",
         }}
       >
-        <td>{row._id}</td>
         <td>{row.title}</td>
         <td>{formatUnderscoredString(row.duration)}</td>
         <td>{row.days}</td>
@@ -215,7 +214,6 @@ const PackagesList = () => {
                     <table>
                       <thead>
                         <tr>
-                          <th>ID</th>
                           <th>Title</th>
                           <th>Duration</th>
                           <th>Days</th>

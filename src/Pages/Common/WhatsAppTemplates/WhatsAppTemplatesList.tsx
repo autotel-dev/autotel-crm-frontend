@@ -107,7 +107,6 @@ const EmailTemplatesList = () => {
   const renderTableRows = () => {
     return whatsAppTemplates?.map((row: any) => (
       <tr key={row.id}>
-        <td>{row._id}</td>
         <td>{formatUnderscoredString(row.type)}</td>
         <td>
           <div>
@@ -183,7 +182,6 @@ const EmailTemplatesList = () => {
                     <table>
                       <thead>
                         <tr>
-                          <th>ID</th>
                           <th>Type</th>
                           <th>Actions</th>
                         </tr>

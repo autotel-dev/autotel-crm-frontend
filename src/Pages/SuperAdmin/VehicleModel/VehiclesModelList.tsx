@@ -188,7 +188,6 @@ const VehiclesModelList = () => {
           transition: "background-color 0.3s",
         }}
       >
-        <td>{row._id}</td>
         <td>
           <VehiclePhoto
             model={row}
@@ -370,7 +369,6 @@ const VehiclesModelList = () => {
                       <table>
                         <thead>
                           <tr>
-                            <th>ID</th>
                             <th>Photo</th>
                             <th>Name</th>
                             <th>Vehicle Make</th>

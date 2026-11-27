@@ -138,7 +138,6 @@ const WarehousesList = () => {
           transition: "background-color 0.3s",
         }}
       >
-        <td>{row._id}</td>
         <td>{row.name}</td>
         <td>
           <div className="d-flex" style={{ justifyContent: "center" }}>
@@ -307,7 +306,6 @@ const WarehousesList = () => {
                     <table>
                       <thead>
                         <tr>
-                          <th>ID</th>
                           <th>Name</th>
                           <th>Status</th>
                           <th>Actions</th>

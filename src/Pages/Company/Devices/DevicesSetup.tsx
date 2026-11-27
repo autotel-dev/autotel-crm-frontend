@@ -6,7 +6,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { getAll } from "../../../Utilities/api";
 import { GET_COMMANDS_BY_VEHICLE_ID, GET_PARSER_DEVICES } from "../../../Utilities/api/apiEndpoints";
 import { setDevices, setSelectedSingleDevice } from "../../../ReaduxToolkit/Reducer/MonitoringSlice";
@@ -17,20 +17,11 @@ import { FleetStatus, STATUS_INFO, timeAgo } from "../Modules/LiveMap/fleetStatu
 import { DeviceRow, engineCutOf, fmtDate, healthOf, protocolOf, toRow, warningOf } from "./deviceInfo";
 import VehiclePhoto, { vehiclePhotoUrl } from "../../../Component/VehiclePhoto/VehiclePhoto";
 import { hasOwnPhoto } from "../../../Component/VehiclePhoto/vehiclePhotoData";
+import { SetupTabs } from "../../../Component/Setup/SetupShell";
 import "./devices.scss";
 
 const U = process.env.PUBLIC_URL || "";
 
-const TABS: { label: string; to: string }[] = [
-  { label: "Devices", to: "/company/setup/devices" },
-  { label: "Customers", to: "/company/setup/customers" },
-  { label: "Groups", to: "/company/setup/groups" },
-  { label: "Branches", to: "/company/setup/branches" },
-  { label: "Users", to: "/company/users" },
-  { label: "Alert rules", to: "/company/setup/alert-management" },
-  { label: "Geofences", to: "/company/setup/geofence" },
-  { label: "Gateways", to: "/company/setup/email-gateway" },
-];
 
 type Filter = "all" | "online" | "offline" | "attention";
 const FILTERS: { key: Filter; label: string; test: (s: FleetStatus) => boolean }[] = [
@@ -167,13 +158,7 @@ const DevicesSetup = () => {
       <section className="dv-main" aria-label="Devices">
         <header className="dv-head">
           <h1 className="dv-title">Setup</h1>
-          <nav className="dv-tabs" aria-label="Setup sections">
-            {TABS.map((t) => (
-              <Link key={t.to} to={`${U}${t.to}`} className={t.label === "Devices" ? "is-on" : ""} aria-current={t.label === "Devices" ? "page" : undefined}>
-                {t.label}
-              </Link>
-            ))}
-          </nav>
+          <SetupTabs />
         </header>
 
         <div className="dv-tools">
