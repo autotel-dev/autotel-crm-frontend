@@ -75,6 +75,13 @@ body.at-dark .pb-root { --b-move: #a3e635; --b-fast: #fcd34d; --b-over: #f87171;
   b { display: block; font: 700 17px var(--at-font-display); font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   span { font-size: 11px; color: var(--at-muted); }
 }
+.pb-fuel {
+  display: flex; align-items: center; gap: 6px; margin: 0; padding: 6px 10px; border-radius: 10px;
+  background: var(--at-soft); font-size: 12.5px; color: var(--at-text);
+  svg { flex: 0 0 auto; color: var(--at-muted); }
+  b { font-variant-numeric: tabular-nums; }
+}
+.pb-fuel__idle { margin-left: auto; color: var(--at-muted); font-size: 11.5px; white-space: nowrap; }
 .pb-tile--over { background: color-mix(in srgb, var(--b-over) 16%, transparent); color: var(--b-over); span { color: inherit; } }
 .pb-chips { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; &::-webkit-scrollbar { display: none; } }
 .pb-chip {

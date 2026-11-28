@@ -1,0 +1,48 @@
+// Setup · Fuel (FuelSettings.tsx). Theme tokens from theme/autotel.scss.
+.fs-page { display: flex; flex-direction: column; gap: 12px; font-family: var(--at-font); color: var(--at-text); max-width: 980px; }
+.fs-intro { margin: 0; font-size: 13px; color: var(--at-muted); b { color: var(--at-text); } }
+.fs-muted { color: var(--at-muted); font-size: 12.5px; }
+.fs-card {
+  display: flex; flex-direction: column; gap: 12px; padding: 16px;
+  background: var(--at-panel); border: 1px solid var(--at-line); border-radius: 16px;
+}
+.fs-card__head { display: flex; flex-direction: column; gap: 2px; h2 { margin: 0; font: 700 16px var(--at-font-display); color: var(--at-text); } }
+.fs-now { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 8px; }
+.fs-now__item {
+  display: flex; flex-direction: column; gap: 2px; padding: 10px 12px; border-radius: 12px; background: var(--at-soft);
+  span { font-size: 12px; color: var(--at-muted); font-weight: 600; }
+  strong { font: 700 18px var(--at-font-display); }
+  small { font-size: 11.5px; color: var(--at-muted); }
+}
+.fs-add {
+  display: flex; flex-wrap: wrap; align-items: flex-end; gap: 10px;
+  label, .fs-field { display: flex; flex-direction: column; gap: 4px; font-size: 12px; font-weight: 600; color: var(--at-text); }
+}
+.fs-add input, .fs-add select, .fs-table input, .fs-md select {
+  height: 36px; padding: 0 10px; border-radius: 10px; border: 1px solid var(--at-line);
+  background: var(--at-panel); color: var(--at-text); font: 400 13px var(--at-font);
+}
+.fs-add input[type="number"] { width: 150px; }
+.fs-md { display: flex; gap: 6px; select { min-width: 64px; } }
+.fs-btn {
+  height: 36px; padding: 0 14px; border: 0; border-radius: 10px; cursor: pointer;
+  font: 600 13px var(--at-font); background: var(--at-soft); color: var(--at-text);
+  &:disabled { opacity: .55; cursor: default; }
+  &--primary { background: var(--at-primary); color: var(--at-on-primary, #fff); }
+  &--ghost { height: 28px; padding: 0 10px; font-size: 12px; background: transparent; border: 1px solid var(--at-line); }
+}
+.fs-table {
+  width: 100%; border-collapse: separate; border-spacing: 0;
+  th { padding: 8px 10px; border-bottom: 1px solid var(--at-line); font: 700 11px var(--at-font); text-transform: uppercase; letter-spacing: .05em; color: var(--at-muted); text-align: left; small { text-transform: none; letter-spacing: normal; font-weight: 500; } }
+  td { padding: 8px 10px; border-bottom: 1px solid var(--at-line); font-size: 13px; }
+  tr:last-child td { border-bottom: 0; }
+  td:last-child, th:last-child { text-align: right; }
+  &--rates td:last-child, &--rates th:last-child { text-align: left; }
+  input { width: 110px; }
+}
+.fs-note { margin: 0; }
+.fs-actions { display: flex; justify-content: flex-end; }
+@media (max-width: 600px) {
+  .fs-table--rates input { width: 72px; }
+  .fs-add input[type="number"] { width: 120px; }
+}

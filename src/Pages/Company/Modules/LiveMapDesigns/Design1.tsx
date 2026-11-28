@@ -1,5 +1,6 @@
 // Monitoring design 1: three columns. Vehicle list | map | selected vehicle.
 import { useState } from "react";
+import { estimateFuel, fmtLitres, fmtPkr } from "../../../../Utilities/fuelEstimate";
 import { FleetStatus, plateOf, STATUS_INFO, STATUS_ORDER, timeAgo } from "../LiveMap/fleetStatus";
 import { compass } from "../LiveMap/FocusView";
 import {
@@ -45,6 +46,7 @@ const Detail = ({ m }: { m: Model }) => {
   const { d, s } = sel;
   const v = readings(d, s, m.track.attrs);
   const t = m.today;
+  const fuel = m.track.loaded ? estimateFuel({ distanceKm: t.km, movingMs: t.ms.drive, idleMs: t.ms.idle }, (m.track as any).fuelCtx) : null;
   const sub = [vehicleLine(d), v.protocol, imeiOf(d) && `IMEI ${imeiOf(d)}`].filter(Boolean).join(" · ");
   return (
     <div className="d1-detail">
@@ -90,6 +92,12 @@ const Detail = ({ m }: { m: Model }) => {
             <span>Idle<b>{fmtHrs(t.ms.idle)}</b></span>
             <span>Stop<b>{fmtHrs(t.ms.off)}</b></span>
           </div>
+          {fuel && fuel.litres > 0 && (
+            <div className="d1-fuel" title="Estimated from distance, speed and idling (Setup → Fuel)">
+              <span>Fuel ≈ <b>{fmtLitres(fuel.litres)}</b>{fuel.cost ? <> · <b>{fmtPkr(fuel.cost)}</b></> : null}</span>
+              {fuel.idleLitres >= 0.1 && <span>idling {fmtLitres(fuel.idleLitres)}</span>}
+            </div>
+          )}
         </section>
         <section className="d1-card">
           <h3>Device health</h3>

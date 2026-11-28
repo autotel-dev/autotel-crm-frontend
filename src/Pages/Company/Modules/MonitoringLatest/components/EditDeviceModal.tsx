@@ -30,6 +30,7 @@ import {
   MIGRATE_PACKAGE,
   TRANSFER_OWNER,
 } from "../../../../../Utilities/api/apiEndpoints";
+import { FUEL_TYPE_OPTIONS } from "../../../../../Utilities/fuelEstimate";
 
 interface EditDeviceModalProps {
   isOpen: boolean;
@@ -148,6 +149,9 @@ export const EditDeviceModal: React.FC<EditDeviceModalProps> = ({ isOpen, toggle
           vehicleModel: device.vehicle.model?._id || "",
           modelYear: device.vehicle.year?.toString() || "",
           fuelType: device.vehicle.fuelType || "",
+          fuelCity: device.vehicle.fuelProfile?.cityKmPerL?.toString() || "",
+          fuelHighway: device.vehicle.fuelProfile?.highwayKmPerL?.toString() || "",
+          fuelIdle: device.vehicle.fuelProfile?.idleLPerHour?.toString() || "",
           transmission: device.vehicle.transmissionType || "",
           vehicleColor: device.vehicle.color || "",
           engineNo: device.vehicle.engineNo || "",
@@ -235,6 +239,12 @@ export const EditDeviceModal: React.FC<EditDeviceModalProps> = ({ isOpen, toggle
     if (vehicle.vehicleColor) payload.color = vehicle.vehicleColor;
     if (vehicle.modelYear) payload.year = Number(vehicle.modelYear);
     if (vehicle.fuelType) payload.fuelType = vehicle.fuelType;
+    // always sent, so emptying a field goes back to the company default
+    payload.fuelProfile = {
+      cityKmPerL: vehicle.fuelCity ? Number(vehicle.fuelCity) : null,
+      highwayKmPerL: vehicle.fuelHighway ? Number(vehicle.fuelHighway) : null,
+      idleLPerHour: vehicle.fuelIdle ? Number(vehicle.fuelIdle) : null,
+    };
     if (vehicle.transmission) payload.transmissionType = vehicle.transmission;
     if (vehicle.vehicleMake) payload.vehicleMake = vehicle.vehicleMake;
     if (vehicle.vehicleModel) payload.vehicleModel = vehicle.vehicleModel;
@@ -454,15 +464,9 @@ export const EditDeviceModal: React.FC<EditDeviceModalProps> = ({ isOpen, toggle
     const year = (2000 + i).toString();
     return { value: year, label: year };
   });
-  // Fuel enum accepted by ADD_NEW_DEVICE (simplified-onboard)
-  const fuelTypeOptions = [
-    { value: "PETROL", label: "Petrol" },
-    { value: "DIESEL", label: "Diesel" },
-    { value: "CNG", label: "CNG" },
-    { value: "LPG", label: "LPG" },
-    { value: "HYBRID", label: "Hybrid" },
-    { value: "ELECTRIC", label: "Electric" },
-  ];
+  // Fuel types the backend accepts (FUEL_TYPES_ENUM); the old list also had
+  // CNG, LPG, Hybrid and Electric, which made saving fail.
+  const fuelTypeOptions = FUEL_TYPE_OPTIONS;
   const transmissionOptions = [
     { value: "AUTOMATIC", label: "Automatic" },
     { value: "MANUAL", label: "Manual" },
@@ -748,6 +752,18 @@ export const EditDeviceModal: React.FC<EditDeviceModalProps> = ({ isOpen, toggle
                         options={fuelTypeOptions}
                         disabled={vehicle.isInstalled}
                       />
+                    </FormGroup>
+                  </Col>
+                  <Col md={3} className="mb-3">
+                    <FormGroup>
+                      <Label title="Estimated fuel. Leave empty to use the company defaults (Setup → Fuel).">
+                        Fuel use <small className="text-muted">city · highway km/L · idle L/h</small>
+                      </Label>
+                      <div style={{ display: "flex", gap: 6 }}>
+                        <Input type="number" min="0" step="0.1" aria-label="City km per litre" placeholder="City" value={vehicle.fuelCity || ""} onChange={(e) => handleVehicleChange(index, "fuelCity", e.target.value)} />
+                        <Input type="number" min="0" step="0.1" aria-label="Highway km per litre" placeholder="Hwy" value={vehicle.fuelHighway || ""} onChange={(e) => handleVehicleChange(index, "fuelHighway", e.target.value)} />
+                        <Input type="number" min="0" step="0.1" aria-label="Idle litres per hour" placeholder="Idle" value={vehicle.fuelIdle || ""} onChange={(e) => handleVehicleChange(index, "fuelIdle", e.target.value)} />
+                      </div>
                     </FormGroup>
                   </Col>
                   <Col md={3} className="mb-3">

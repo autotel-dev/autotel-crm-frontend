@@ -15,6 +15,7 @@ import {
   positionAt, shiftDay, shortAddr, toCsv, toPoints, todayStr, trailSegments,
 } from "./playbackUtils";
 import "./playback.scss";
+import { estimateFuel, fmtLitres, fmtPkr, FuelContext } from "../../../../Utilities/fuelEstimate";
 
 const SPEEDS = [1, 8, 16, 64];
 const LIMITS = [60, 80, 100, 120];
@@ -39,6 +40,8 @@ const PlaybackV2 = () => {
     return s && !isNaN(s.getTime()) ? todayStr(s) : todayStr();
   });
   const [limit, setLimit] = useState<number>(readLimit);
+  const [fuelCtx, setFuelCtx] = useState<FuelContext | null>(null);
+  const [dayFuel, setDayFuel] = useState<any>(null);
   const [pts, setPts] = useState<Pt[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -92,6 +95,8 @@ const PlaybackV2 = () => {
         if (!res || res.success === false) { setError(res?.message || "Couldn't load the history."); setPts([]); return; }
         const p = toPoints(res?.data?.history);
         setPts(p);
+        setFuelCtx(res?.data?.fuelContext || null);
+        setDayFuel(res?.data?.summary?.fuel || null);
         // Open on the first trip (the day view squeezes short trips); "Whole day" stays one click away.
         const first = findTrips(p, readLimit())[0];
         setTripId(first ? first.id : null);
@@ -120,6 +125,19 @@ const PlaybackV2 = () => {
   const start = range.length ? range[0].t : 0;
   const feedRef = useRef<HTMLOListElement | null>(null);
   const end = range.length ? range[range.length - 1].t : 0;
+
+  // Estimated fuel: the day from the backend (same as the reports); a trip
+  // with the same formula from its km, driving time and engine-on standing time.
+  const fuel = useMemo(() => {
+    if (!trip) return dayFuel ? { litres: dayFuel.litres, idleLitres: dayFuel.idleLitres, cost: dayFuel.cost } : null;
+    let idleMs = 0;
+    for (let i = trip.from + 1; i <= trip.to; i++) {
+      const a = pts[i - 1];
+      const dt = pts[i].t - a.t;
+      if (a.ignition && a.speed < 3 && dt > 0 && dt <= 10 * 60000) idleMs += dt;
+    }
+    return estimateFuel({ distanceKm: trip.km, movingMs: trip.drivingMs, idleMs }, fuelCtx);
+  }, [trip, pts, fuelCtx, dayFuel]);
 
   const totals = useMemo(() => {
     const km = trips.reduce((s, x) => s + x.km, 0);
@@ -287,6 +305,13 @@ const PlaybackV2 = () => {
             <div className="pb-tile"><b>{Math.round(trip ? trip.maxSpeed : totals.max)}</b><span>max km/h</span></div>
             <div className={`pb-tile${overCount ? " pb-tile--over" : ""}`}><b>{overCount}</b><span>over-limit</span></div>
           </div>
+          {fuel && fuel.litres > 0 && (
+            <p className="pb-fuel" title="Estimated from distance, speed and idling (Setup → Fuel)">
+              <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 21V5a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2v16M3 21h13M15 9h2a2 2 0 0 1 2 2v6a1.5 1.5 0 0 0 3 0V8l-3-3" /><path d="M7 7h5v4H7z" /></svg>
+              <span>Fuel ≈ <b>{fmtLitres(fuel.litres)}</b>{fuel.cost ? <> · <b>{fmtPkr(fuel.cost)}</b></> : null}</span>
+              {fuel.idleLitres >= 0.1 && <span className="pb-fuel__idle">idling {fmtLitres(fuel.idleLitres)}</span>}
+            </p>
+          )}
           {trips.length > 0 && (
             <div className="pb-chips" role="group" aria-label="Trip">
               <button type="button" className={`pb-chip${tripId === null ? " is-on" : ""}`} aria-pressed={tripId === null} onClick={() => { setTripId(null); setPlaying(false); setT(pts[0].t); }}>Whole day</button>

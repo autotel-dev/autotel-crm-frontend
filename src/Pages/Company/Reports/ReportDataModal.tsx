@@ -164,6 +164,10 @@ const TravelSummaryFields: React.FC<{ item: any }> = ({ item }) => {
     ["Engine work", item.engineWork],
     ["Engine idle", item.engineIdle],
     ["Odometer", item.odometer],
+    ["Fuel (estimated)", item.fuelLitres ?? "N/A"],
+    ["Idle fuel", item.fuelIdleLitres ?? "N/A"],
+    ["Fuel cost", item.fuelCost ?? "N/A"],
+    ["Fuel economy", item.fuelKmPerLitre ?? "N/A"],
   ];
   const col = (fields: Array<[string, any]>) => (
     <div className="rpt-fcol">

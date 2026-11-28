@@ -36,6 +36,7 @@ export const OTP_VERIFICATION = `${API_BASE_URL}/auth/user/security/verify-secur
 export const CHANGE_LOGIN_STATUS = `${API_BASE_URL}/user/security/change-login-security-status`;
 export const RESENT_SECURITY_CODE = `${API_BASE_URL}/auth/user/security/resend-security-code`;
 export const UPDATE_INACTIVE_TIME_LIMIT = `${API_BASE_URL}/company/update-inactive-time-limit`;
+export const FUEL_SETTINGS = `${API_BASE_URL}/company/fuel-settings`; // GET (company/operator) + PATCH (company)
 
 // Common - Email Gateway
 export const CREATE_EMAIL_GATEWAY = `${API_BASE_URL}/gateway/email-gateway/create-gateway`;

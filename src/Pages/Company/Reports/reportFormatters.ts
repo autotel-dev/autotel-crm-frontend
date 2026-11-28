@@ -90,6 +90,11 @@ const TRAVEL_SUMMARY_COLS: ReportCol[] = [
   { label: "Engine Work", width: 90, get: (r) => val(r.engineWork) },
   { label: "Engine Idle", width: 90, get: (r) => val(r.engineIdle) },
   { label: "Odometer", width: 90, get: (r) => val(r.odometer) },
+  // Estimated fuel (backend utils/fuelEstimate.js); N/A for reports made before it
+  { label: "Fuel (est.)", width: 80, get: (r) => val(r.fuelLitres) },
+  { label: "Idle Fuel", width: 80, get: (r) => val(r.fuelIdleLitres) },
+  { label: "Fuel Cost", width: 100, get: (r) => val(r.fuelCost) },
+  { label: "km/L", width: 70, get: (r) => val(r.fuelKmPerLitre) },
 ];
 
 const DAILY_TRAVEL_COLS: ReportCol[] = [
@@ -100,6 +105,10 @@ const DAILY_TRAVEL_COLS: ReportCol[] = [
   { label: "Travel time", width: 110, get: (r) => val(r.travelTime) },
   { label: "Distance travelled", width: 120, get: (r) => val(r.distanceTravelled) },
   { label: "Move duration", width: 110, get: (r) => val(r.moveDuration) },
+  { label: "Engine idle", width: 100, get: (r) => val(r.engineIdle) },
+  { label: "Fuel (est.)", width: 80, get: (r) => val(r.fuelLitres) },
+  { label: "Idle fuel", width: 80, get: (r) => val(r.fuelIdleLitres) },
+  { label: "Fuel cost", width: 100, get: (r) => val(r.fuelCost) },
 ];
 
 // responseTime / agentResponseTime arrive pre-formatted from the API - never re-parse them.
