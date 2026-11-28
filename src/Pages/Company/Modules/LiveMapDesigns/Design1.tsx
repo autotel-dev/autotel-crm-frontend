@@ -1,4 +1,5 @@
 // Monitoring design 1: three columns. Vehicle list | map | selected vehicle.
+import { useState } from "react";
 import { FleetStatus, plateOf, STATUS_INFO, STATUS_ORDER, timeAgo } from "../LiveMap/fleetStatus";
 import { compass } from "../LiveMap/FocusView";
 import {
@@ -132,12 +133,15 @@ const CHIPS: (FleetStatus | null)[] = [null, ...STATUS_ORDER];
 const Design1 = () => {
   const m = useMonitoringModel();
   const sel = m.selected;
+  // Phones (CSS below 700 px): the map fills the screen and the list opens over it.
+  const [mview, setMview] = useState<"map" | "list">("map");
   return (
-    <div className={`lmd-root d1${sel ? " has-sel" : ""}`}>
+    <div className={`lmd-root d1 d1--${mview}${sel ? " has-sel" : ""}`}>
       <aside className="d1-list" aria-label="Vehicles">
         <div className="d1-list__head">
           <h1>Live monitoring</h1>
           <span className="lmd-muted">{m.devices.length} vehicles</span>
+          <button type="button" className="d1-mtoggle" onClick={() => setMview("map")}>Map</button>
         </div>
         <SearchBox m={m} id="d1-search" placeholder="Plate, IMEI, customer…" />
         <div className="lmd-mix" aria-hidden="true">
@@ -157,12 +161,15 @@ const Design1 = () => {
         </div>
         <div className="d1-list__body">
           <ListStates m={m} />
-          {m.visible.map((r) => <ListRow key={r.d._id} r={r} on={r.d._id === sel?.d._id} onPick={() => m.select(r.d._id)} />)}
+          {m.visible.map((r) => <ListRow key={r.d._id} r={r} on={r.d._id === sel?.d._id} onPick={() => { m.select(r.d._id); setMview("map"); }} />)}
         </div>
       </aside>
 
       <main className="d1-map">
         <FleetMap {...m.mapProps} />
+        <button type="button" className="d1-mtoggle d1-mtoggle--float lmd-over-top" onClick={() => setMview("list")}>
+          Vehicles <b>{m.devices.length}</b>
+        </button>
         <CamBar mode={m.camMode} onMode={m.setCamMode} onFitAll={m.fitAll} className="d1-cam lmd-over-top" />
         <div className="d1-zoom lmd-over-right" role="group" aria-label="Zoom">
           <button type="button" aria-label="Zoom in" onClick={() => m.zoom(1)}>+</button>
@@ -188,7 +195,7 @@ const Design1 = () => {
 
       {/* Vehicle panel only while a vehicle is selected, so the map gets the room otherwise */}
       {sel && (
-        <aside className="d1-side" aria-label={`Vehicle ${plateOf(sel.d)}`}>
+        <aside className="d1-side lmd-over-right" aria-label={`Vehicle ${plateOf(sel.d)}`}>
           <Detail m={m} />
         </aside>
       )}

@@ -93,7 +93,8 @@
   padding: 12px 0 0; border-right: 1px solid var(--at-line); background: var(--at-panel);
   > :not(.d1-list__body) { margin: 0 12px; }
 }
-.d1-list__head { display: flex; align-items: baseline; justify-content: space-between; h1 { font: 700 17px var(--at-font-display); } }
+.d1-list__head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; h1 { font: 700 17px var(--at-font-display); margin-right: auto; } }
+.d1-mtoggle { display: none; } // phones only (below)
 .d1-chips { display: flex; flex-wrap: wrap; gap: 4px; }
 .d1-chip {
   display: inline-flex; align-items: center; gap: 5px; height: 24px; padding: 0 8px;
@@ -167,4 +168,24 @@
 @media (max-width: 1000px) {
   .d1, .d1.has-sel { grid-template-columns: 240px minmax(0, 1fr); }
   .d1-side { position: absolute; z-index: 6; right: 0; top: 0; bottom: 0; width: min(320px, 100%); box-shadow: var(--at-shadow); }
+}
+// Phones: map full screen; "Vehicles" opens the list over it; the vehicle
+// panel is a bottom sheet; pinch to zoom instead of the +/- buttons.
+@media (max-width: 700px) {
+  .d1, .d1.has-sel { position: relative; grid-template-columns: minmax(0, 1fr); }
+  .d1-list { position: absolute; z-index: 7; inset: 0; border-right: 0; }
+  .d1--map .d1-list { display: none; }
+  .d1-mtoggle {
+    display: inline-flex; align-items: center; gap: 6px; min-height: 32px; padding: 0 12px;
+    border: 1px solid var(--at-line); border-radius: 999px; background: var(--at-panel); color: var(--at-text);
+    font: 600 12.5px var(--at-font); cursor: pointer; align-self: center;
+    b { color: var(--at-muted); font-weight: 600; }
+  }
+  .d1-mtoggle--float { position: absolute; z-index: 5; left: 10px; top: 10px; min-height: 36px; box-shadow: var(--at-shadow); }
+  .d1-zoom { display: none; }
+  .d1-side {
+    position: absolute; z-index: 6; left: 0; right: 0; top: auto; bottom: 0; width: auto; max-height: 50%; // 50 %: the map keeps the car above it
+    border-left: 0; border-top: 1px solid var(--at-line); border-radius: 16px 16px 0 0; box-shadow: var(--at-shadow);
+  }
+  .d1.has-sel .d1-today { display: none; }
 }
