@@ -70,6 +70,7 @@ const MonitoringLatest = lazy(() => import("../Pages/Company/Modules/MonitoringL
 const LiveMonitoring = lazy(() => import("../Pages/Company/Modules/LiveMapDesigns/Design1"));
 const LiveVehicleMonitoring = lazy(() => import("../Pages/Company/Modules/MonitoringLatest/components/LiveVehicleMonitoring/LiveVehicleMonitoring"));
 const TripManagementLayout = lazy(() => import("../Pages/Company/Modules/TripManagement/TripManagementLayout"));
+const FuelSettings = lazy(() => import("../Pages/Company/FuelSettings/FuelSettings"));
 const CustomersSetup = lazy(() => import("../Pages/Company/Customers/CustomersSetup"));
 const DevicesSetup = lazy(() => import("../Pages/Company/Devices/DevicesSetup"));
 
@@ -463,6 +464,14 @@ const routes = [
   {
     path: `${process.env.PUBLIC_URL}/company/setup/devices`,
     Component: <DevicesSetup />,
+    allowedUserRoles: [ROLES.COMPANY],
+    isProtected: true,
+    permissionValue: "Devices",
+  },
+  {
+    // Estimated fuel: prices, typical consumption, summer extra
+    path: `${process.env.PUBLIC_URL}/company/setup/fuel`,
+    Component: <FuelSettings />,
     allowedUserRoles: [ROLES.COMPANY],
     isProtected: true,
     permissionValue: "Devices",

@@ -200,6 +200,10 @@ function drawTravelSummary(doc: jsPDF, reportData: any[], y: number) {
       ["Engine work", item.engineWork],
       ["Engine idle", item.engineIdle],
       ["Odometer", item.odometer],
+      ["Fuel (estimated)", item.fuelLitres ?? "N/A"],
+      ["Idle fuel", item.fuelIdleLitres ?? "N/A"],
+      ["Fuel cost", item.fuelCost ?? "N/A"],
+      ["Fuel economy", item.fuelKmPerLitre ?? "N/A"],
     ];
     const body = left.map((l, i) => [
       `${l[0]}:`,

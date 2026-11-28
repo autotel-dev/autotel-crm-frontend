@@ -48,6 +48,7 @@ export const useTodayTrack = (device: any | null) => {
   const [pts, setPts] = useState<Pt[]>([]);
   const [loaded, setLoaded] = useState(false);
   const [attrs, setAttrs] = useState<Record<string, any>>({});
+  const [fuelCtx, setFuelCtx] = useState<any>(null); // estimated fuel (backend fuelContext)
 
   useEffect(() => {
     setPts([]);
@@ -63,6 +64,7 @@ export const useTodayTrack = (device: any | null) => {
           if (res && res.success !== false) {
             setPts(toPoints(res?.data?.history));
             setAttrs(lastAttrs(res?.data?.history));
+            setFuelCtx(res?.data?.fuelContext || null);
           }
           setLoaded(true);
         })
@@ -84,7 +86,7 @@ export const useTodayTrack = (device: any | null) => {
     const lng = Number(p?.longitude);
     const last = pts[pts.length - 1];
     const sameDay = Number.isFinite(t) && todayStr(new Date(t)) === todayStr();
-    if (!sameDay || !Number.isFinite(lat) || !Number.isFinite(lng) || (last && t <= last.t)) return { pts, loaded, attrs };
+    if (!sameDay || !Number.isFinite(lat) || !Number.isFinite(lng) || (last && t <= last.t)) return { pts, loaded, attrs, fuelCtx };
     return {
       pts: [
         ...pts,
@@ -92,8 +94,9 @@ export const useTodayTrack = (device: any | null) => {
       ],
       loaded,
       attrs,
+      fuelCtx,
     };
-  }, [pts, loaded, attrs, p]);
+  }, [pts, loaded, attrs, fuelCtx, p]);
 };
 
 /** Speed dial (ring fills up to 125 % of the limit). */

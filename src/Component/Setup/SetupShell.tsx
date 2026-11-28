@@ -27,7 +27,7 @@ const COMPANY: { main: Tab[]; more: Group[] } = {
   ],
   more: [
     { title: "Organisation", tabs: [c("Branches", "branches"), c("Departments", "deparments"), c("Warehouses", "warehouses"), c("Service packages", "packages")] },
-    { title: "Vehicles", tabs: [c("Vehicle makes", "vehicle-make"), c("Vehicle models", "vehicle-model")] },
+    { title: "Vehicles", tabs: [c("Fuel", "fuel"), c("Vehicle makes", "vehicle-make"), c("Vehicle models", "vehicle-model")] },
     { title: "Complaints", tabs: [c("Complaint types", "complain-types")] },
     { title: "Messages", tabs: [c("Email templates", "email-template"), c("WhatsApp templates", "whatsapp-template"), c("Email gateway", "email-gateway"), c("WhatsApp gateway", "whatsApp-gateway")] },
   ],
