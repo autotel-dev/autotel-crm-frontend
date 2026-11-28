@@ -1,4 +1,4 @@
-// Small pieces shared by the three monitoring designs.
+// Small pieces used by Live Monitoring (Design1.tsx).
 import { useState } from "react";
 import FleetMap from "../LiveMap/FleetMap";
 import CommandPanel from "../../../../Component/Commands/CommandPanel";

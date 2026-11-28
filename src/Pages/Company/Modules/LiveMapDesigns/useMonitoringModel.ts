@@ -1,7 +1,6 @@
-// Shared state for the three Live Monitoring design trials
-// (/company/modules/monitoring-design-1, -2, -3). Same live data, statuses,
-// today's track and pop-ups as the current page (LiveMap.tsx); each design only
-// lays it out differently. The team picks one; the others get removed.
+// State for Live Monitoring (/company/modules/monitoring, Design1.tsx; the
+// team picked design 1 of three trials on 28 Nov 2026). Same live data,
+// statuses, today's track and pop-ups as the earlier LiveMap.tsx page.
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";

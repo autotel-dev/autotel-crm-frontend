@@ -1,4 +1,5 @@
 import { lazy } from "react";
+import { Navigate } from "react-router-dom";
 import SetupShell from "../Component/Setup/SetupShell";
 
 // Company
@@ -64,12 +65,9 @@ const Playback = lazy(() => import("../Pages/Company/Modules/PlaybackV2/Playback
 const AlertManagement = lazy(() => import("../Pages/Company/AlertManagement/AlertManagement"));
 const TripReports = lazy(() => import("../Pages/Company/Modules/Monitoring/components/Reports/TripReports"));
 const MonitoringLatest = lazy(() => import("../Pages/Company/Modules/MonitoringLatest/MonetoringLatest"));
-// Redesign Phase 3: new Live Monitoring page (the old one stays at /company/modules/monitoring-classic)
-const LiveMap = lazy(() => import("../Pages/Company/Modules/LiveMap/LiveMap"));
-// Three monitoring design trials for the team to compare; keep one, remove the rest.
-const MonitoringDesign1 = lazy(() => import("../Pages/Company/Modules/LiveMapDesigns/Design1"));
-const MonitoringDesign2 = lazy(() => import("../Pages/Company/Modules/LiveMapDesigns/Design2"));
-const MonitoringDesign3 = lazy(() => import("../Pages/Company/Modules/LiveMapDesigns/Design3"));
+// Live Monitoring: design 1 (list | map | vehicle), picked by the team on 28 Nov 2026.
+// The previous page stays at /company/modules/monitoring-classic.
+const LiveMonitoring = lazy(() => import("../Pages/Company/Modules/LiveMapDesigns/Design1"));
 const LiveVehicleMonitoring = lazy(() => import("../Pages/Company/Modules/MonitoringLatest/components/LiveVehicleMonitoring/LiveVehicleMonitoring"));
 const TripManagementLayout = lazy(() => import("../Pages/Company/Modules/TripManagement/TripManagementLayout"));
 const CustomersSetup = lazy(() => import("../Pages/Company/Customers/CustomersSetup"));
@@ -482,28 +480,31 @@ const routes = [
 
   {
     path: `${process.env.PUBLIC_URL}/company/modules/monitoring`,
-    Component: <LiveMap />,
+    Component: <LiveMonitoring />,
     isProtected: true,
     allowedUserRoles: [ROLES.COMPANY],
     permissionValue: "Monitoring",
   },
   {
+    // design trial URL shared with the team: now goes to Live Monitoring
     path: `${process.env.PUBLIC_URL}/company/modules/monitoring-design-1`,
-    Component: <MonitoringDesign1 />,
+    Component: <Navigate to={`${process.env.PUBLIC_URL}/company/modules/monitoring`} replace />,
     isProtected: true,
     allowedUserRoles: [ROLES.COMPANY],
     permissionValue: "Monitoring",
   },
   {
+    // design trial URL shared with the team: now goes to Live Monitoring
     path: `${process.env.PUBLIC_URL}/company/modules/monitoring-design-2`,
-    Component: <MonitoringDesign2 />,
+    Component: <Navigate to={`${process.env.PUBLIC_URL}/company/modules/monitoring`} replace />,
     isProtected: true,
     allowedUserRoles: [ROLES.COMPANY],
     permissionValue: "Monitoring",
   },
   {
+    // design trial URL shared with the team: now goes to Live Monitoring
     path: `${process.env.PUBLIC_URL}/company/modules/monitoring-design-3`,
-    Component: <MonitoringDesign3 />,
+    Component: <Navigate to={`${process.env.PUBLIC_URL}/company/modules/monitoring`} replace />,
     isProtected: true,
     allowedUserRoles: [ROLES.COMPANY],
     permissionValue: "Monitoring",
@@ -640,7 +641,7 @@ const routes = [
     path: `${process.env.PUBLIC_URL}/operator/modules/monitoring`,
     // Same page as the company (the old Monitoring page showed sample alerts).
     // The backend limits operators to their assigned vehicles.
-    Component: <LiveMap />,
+    Component: <LiveMonitoring />,
     isProtected: true,
     allowedUserRoles: [ROLES.OPERATOR],
     permissionValue: "Monitoring",
